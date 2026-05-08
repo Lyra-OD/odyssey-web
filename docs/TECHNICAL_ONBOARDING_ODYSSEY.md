@@ -203,25 +203,51 @@ Detail complet des autres chantiers: voir aussi **A terminer / consolider** ci-d
 
 ### A developper - Securite et resilience (objectif maximal, pas de promesse absolue)
 
+**Portee:** ce bloc documente **uniquement** la roadmap et l'ordre de priorite — **aucune implementation n'est engagee ni commencee par ce document.**
+
 **Constat honnete:** aucun systeme connecte n'est mathematiquement **impénétrable**. L'objectif produit est une posture **defense en profondeur**: reduire la surface d'attaque, limiter l'impact d'un incident, detecter et reagir vite.
 
-**Piliers a developper et maintenir:**
+**Principe directeur:** les attaquants ciblent surtout **sessions**, **donnees d'autres utilisateurs**, **paiements**, **uploads**, **webhooks**, **secrets**. La defense repose sur **couches cumulees**: auth + RLS + autorisation serveur + validation + limitation d'abus + secrets + observabilite.
 
-| Domaine | Actions concretes |
-|---------|-------------------|
-| **Identite et session** | MFA pour comptes sensibles (roadmap), sessions courtes / renouvellement securise (cookies Supabase SSR), revision des redirections auth. |
-| **Base et acces donnees** | **RLS** strict sur toutes les tables exposees; principe du moindre privilege; **service role** uniquement cote serveur isole (webhooks, jobs); revues regulieres des policies. |
-| **Stockage medias** | Politiques bucket Storage alignees sur `project_id` / tenant; pas d'acces public large par defaut; URLs signees si exposition temporaire necessaire. |
-| **API Next.js** | Validation stricte des entrees (schemas Zod ou equivalent); **autorisation** sur chaque route (pas seulement auth); verification que `project_id` appartient bien a l'utilisateur. |
-| **Limitation d'abus** | Rate limiting sur routes sensibles (login, upload, checkout, webhook tests non-prod); protection distribuee (ex: Edge middleware + stockage KV si besoin). |
-| **Paiements Stripe** | Webhook uniquement avec signature verifiee (deja); pas de montants clients-side sans reconciliation catalogue; rotation des secrets Stripe. |
-| **Navigateur et transport** | Headers securite (`Content-Security-Policy`, `Strict-Transport-Security`, protection clickjacking) via `next.config`; cookies `Secure`/`HttpOnly` selon conventions framework. |
-| **Secrets et configuration** | Jamais de secrets dans le repo; rotation periodique; environnements separes (preview/prod); audit des variables Vercel. |
-| **Dependances et supply chain** | `npm audit`, Dependabot / Renovate, revue des maj critiques; politique de versions figees pour prod. |
-| **Observabilite et reponse** | Logs structures sans donnees sensibles; alertes sur erreurs auth / webhook / spike traffic; playbook incident (desactivation cle, revoke tokens). |
-| **Verification externe** | Pentest reccurent ou bug bounty cible; checklist OWASP ASVS pour les modules critiques (upload, paiement, donnees personnelles). |
+#### Ordre de priorite — P0 (essentiel / bloquant pour une prod serieuse)
 
-**Principe directeur:** chaque couche peut etre contournee individuellement; la combinaison **auth + RLS + validation serveur + limitation de debit + secrets + monitoring** rend les attaques **beaucoup plus couteuses** et detectables — c'est la posture professionnelle attendue pour des donnees personnelles et du paiement.
+Ces points sont les **fondations**; sans eux, le risque jurisprudentiel et technique reste eleve.
+
+1. **RLS Supabase** sur toutes les tables exposees aux utilisateurs (`projects`, `media_assets`, `orders`, etc.) avec policies basees sur **`auth.uid()`** et **propriete du projet** (pas seulement "utilisateur connecte").
+2. **Autorisation serveur** sur chaque Route Handler / Server Action: le serveur verifie que le `project_id` (et tenant si applicable) **appartient** a l'utilisateur ou au partenaire autorise — le front ne fait pas foi.
+3. **Paiements Stripe**: webhook **uniquement** avec signature verifiee; **aucun** montant ou ligne de panier entierement forge cote client sans reconciliation avec **`billing_catalog`** / Stripe.
+4. **Secrets**: cle **service role** Supabase et **Stripe secret** uniquement cote serveur et dans les env deploy (Vercel); jamais dans le bundle client ni dans Git.
+5. **Stockage medias**: politiques Storage alignees sur **projet / utilisateur / tenant**; eviter un bucket trop ouvert en lecture publique pour du contenu sensible.
+
+#### Ordre de priorite — P1 (fort gain / effort raisonnable, apres P0)
+
+6. **Validation des entrees** sur toutes les APIs (schemas type Zod): IDs, URLs tierces (YouTube), metadonnees wizard.
+7. **Rate limiting** sur endpoints sensibles (login, sessions, uploads massifs, checkout, endpoints de test hors prod).
+8. **Headers HTTP** (`Strict-Transport-Security`, `Content-Security-Policy` progressive, anti-clickjacking) via `next.config` / middleware — en evitant de casser Supabase/Stripe en prod.
+9. **Journalisation** structuree des evenements sensibles (echecs auth, refus d'acces, erreurs webhook) **sans** corps de fichiers ni secrets dans les logs.
+10. **Dependances**: `npm audit`, Dependabot ou equivalent, politique de patchs critiques pour Next/React et libs auth.
+
+#### Ordre de priorite — P2 (durcissement continu / maturite)
+
+11. **MFA** pour comptes admin / studio internes (roadmap; pas forcement tous les clients au jour 1).
+12. **Pentest** ponctuel ou **bug bounty** cible avant forte exposition commerciale ou volume.
+13. **Plan d'incident**: rotation des cles, revocation tokens, communication interne, procedure de gel tenant/partenaire.
+
+#### Reference transversale par domaine (meme contenu, vue thematique)
+
+| Domaine | Lien prioritaire |
+|---------|------------------|
+| Identite et session | P0 (RLS + auth serveur); P2 MFA |
+| Base et acces donnees | P0 RLS + service role isole webhooks/jobs |
+| Stockage medias | P0 Storage policies |
+| API Next.js | P0 autorisation; P1 validation |
+| Limitation d'abus | P1 rate limiting |
+| Paiements Stripe | P0 webhook + catalogue |
+| Navigateur et transport | P1 headers |
+| Secrets et configuration | P0 secrets |
+| Dependances | P1 supply chain |
+| Observabilite et reponse | P1 logs; P2 playbook |
+| Verification externe | P2 pentest / OWASP ASVS cible |
 
 ---
 

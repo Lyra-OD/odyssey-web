@@ -52,4 +52,4 @@ Roadmap detaillee dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (section 10).
 - **signature de responsabilite** lorsque des sources tierces sont utilisees (ex: YouTube, imports URL),
 - autres options (HD, delai express, packaging): meme principe Stripe-First + trace dans `orders`.
 
-**Securite (roadmap):** defense en profondeur — RLS, validation serveur, rate limiting, headers, secrets, audit dependances, monitoring; voir le tableau detaille dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (section 10, sous-partie securite).
+**Securite (roadmap, priorites):** ordre **P0 → P1 → P2** (essentiel prod → renfort → maturite), sans implementation engagee par la doc seule — detail dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (section 10, sous-partie securite).
