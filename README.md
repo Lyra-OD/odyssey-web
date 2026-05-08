@@ -57,3 +57,5 @@ Roadmap detaillee dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (section 10).
 **Elevation produit (roadmap):** fiabilite du parcours, qualite percue du rendu, conformite/reputation, partenaires B2B2C — priorites **P1 / P2** et ordre suggere dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (section 10, sous-partie elevation produit).
 
 **Moteur video:** orchestration avec **outil tiers** (API templates type Creatomate ou equivalent), flux paiement → job → webhook fin de rendu — detail dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (section 10, **Architecture cible — Moteur video**).
+
+**Positionnement & adoption:** strategie haut de gamme (templates d'excellence, validation narrative, IA ciblee, ops robustes) et leviers adoption (friction, confiance, partenariats) — meme fichier, sous-sections **Positionnement haut de gamme** et **Potentiel marche et leviers adoption**.

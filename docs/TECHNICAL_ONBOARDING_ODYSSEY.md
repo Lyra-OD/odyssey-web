@@ -212,6 +212,42 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 
 **Lien avec le reste de la doc:** la qualite percue (preview, templates, section "Elevation produit") conditionne les parametres envoyes au moteur; la securite (P0) impose que seuls les medias du bon `project_id` soient references dans le job.
 
+#### Positionnement haut de gamme (recommandation strategique — doc uniquement)
+
+Le luxe percu ne repose pas sur une seule API, mais sur **trois piliers**: qualite du film, fiabilite du service, maitrise creative et legale.
+
+**Rendu principal (scalable, niveau studio):** privilegier un **moteur template API professionnel** (ex. Creatomate ou equivalent serieux: rendu cloud, templates maitrises, webhooks, preview). Investir dans **peu de templates mais tres finis** (typo, rythme, transitions, mix audio) plutot qu'un volume d'options mediocres.
+
+**Couche prestige (differentiation):** previsualisation / validation narrative avant rendu final; **upsell optionnel de revue humaine** (controle court coherence emotionnelle, son, texte); pack livraison (HD, version courte reseaux, lien securise, traçabilite).
+
+**IA:** ciblee et discrete (retouche, stabilisation legere) plutot que generation de scenes inventees au MVP — risques emotionnels et juridiques pour un hommage.
+
+**Excellence operationnelle:** idempotence webhook fin de rendu, statuts projet lisibles, notifications, observabilite (duree rendu, echecs, retries) — aligne securite P0 et section "Elevation produit".
+
+**Alternative haute exigence creative:** stack type **Remotion + rendu serverless** si controle visuel unique absolu — cout equipe et complexite nettement superieurs; a reserver si le positionnement marque l'exige.
+
+| Couche | Orientation |
+|--------|-------------|
+| Rendu principal | API template cloud + templates designers |
+| Differentiation | Validation narrative + review humaine optionnelle |
+| IA | Optionnelle, retouches ciblees |
+| Operations | Orchestration + webhooks + statuts + monitoring |
+
+#### Potentiel marche et leviers adoption (hypotheses produit — doc uniquement)
+
+**Potentiel:** le besoin (hommage video personnalise, multi-verticales) est large et emotionnellement fort; la différenciation viendra de la **confiance**, de la **qualite percue**, des **partenariats** (funeraires, veterinaires, mariage, etc.) et d'un parcours qui **reduit la charge cognitive** au moment du deuil ou du rassemblement.
+
+**Realisme sur un objectif type "80% d'usage":** un tel taux ne depend pas seulement du produit — distribution, prix, contexte culturel, et moment de vie importent. La doc fixe des **leviers** plutot qu'une garantie.
+
+**Leviers pour maximiser adoption et completion (a prioriser en discovery / UX):**
+
+1. **Friction minimale:** sauvegarde auto du parcours, reprise sans tout recommencer, upload mobile fluide, valeurs par defaut intelligentes (template, duree, ordre).
+2. **Premier succes rapide:** faire atteindre un resultat "deja beau" avec peu de decisions — options avancees ensuite.
+3. **Confiance:** prix et delais transparents, politique donnees/medias claire, statuts projet humains, pas de jargon technique.
+4. **Preuve sociale:** exemples video (avec consentement), temoignages, partenaires identifiables.
+5. **Canaux B2B2C:** partenaires qui introduisent le service au bon moment reduisent l'effort marketing direct et augmentent la conversion contextuelle.
+6. **Support humain sur incidents:** en segment sensible, la qualite du recours en cas d'echec compte autant que le rendu.
+
 ### A developper - Upsells dans le wizard (parcours produit)
 
 Objectif: enrichir le Tribute Wizard avec des options payantes coherentes avec le modele **Stripe-First** et le mix **base + upsells** (B2C / B2B2C).
