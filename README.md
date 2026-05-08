@@ -71,4 +71,4 @@ Chapitres couverts par la roadmap documentaire:
 
 **Positionnement & adoption:** strategie haut de gamme (templates d'excellence, validation narrative, IA ciblee, ops robustes) et leviers adoption (friction, confiance, partenaires) — meme fichier, sous-sections **Positionnement haut de gamme** et **Potentiel marche et leviers adoption**.
 
-**Diffusion organique ("viral"):** boucles ethiques + **co-creation invite**, formats courts verticalaux, QR rituel, premiere diffusion controlee; sous-partie **verticaliste animaux** (partenaires vet/refuges, formats, communautes); tout dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (**Croissance "virale" et partage**).
+**Diffusion organique ("viral"):** boucles ethiques; **co-creation invitee** (rationale, **etapes rapides** tableau, moderation); formats courts verticalaux, QR rituel, premiere diffusion controlee; **verticaliste animaux** + **backlog discovery** (6 pistes); tout dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (**Croissance "virale" et partage**).

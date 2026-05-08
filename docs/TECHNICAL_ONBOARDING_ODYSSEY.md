@@ -300,9 +300,30 @@ Le luxe percu ne repose pas sur une seule API, mais sur **trois piliers**: quali
 - **Referrals** attribues (codes partenaires / campagne Stripe).
 - Part des projets **issus d'un partenaire** vs organique.
 
+#### Co-creation invitee (hommage collectif — doc uniquement)
+
+**Pourquoi ca peut amplifier la diffusion, sans etre agressif:**
+
+- chaque personne invitee entre dans l'univers du projet et devient **porteur naturel du recit** ;
+- la famille principale garde le **controle** (validation avant inclusion dans le film ou dans une sequence dediee) ;
+- cela cree une **raison sociale** de parler d'Odyssey a plusieurs personnes au **bon moment**, avec une charge emotionnelle **positive** (hommage collectif), pas avec des popups « parrainez ».
+
+**Techniquement:** au depart ce n'est qu'une **couche produit** (liens invites, quota, moderation, consentement) — **pas** une nouvelle chaine de rendu complete; le branchement timeline/template peut arriver en phase 2.
+
+**Etapes et a faire rapidement (ordre propose — discovery puis MVP):**
+
+| Etape | Action |
+|-------|--------|
+| **1. Cadrage produit** | Definir quota invites (ex. 3–8), format contribution (1 photo + texte court), duree de validite du lien, niveaux de visibilite (prive / famille etendue). |
+| **2. Consentement & legal light** | Textes clairs pour invites et createur (droits image, usage dans le film); trace horodatee en base liee au `project_id`. |
+| **3. Flux invite** | Lien securise (token signe / lien magique); arbitrage **compte obligatoire vs invite sans compte** selon risque abus et RGPD. |
+| **4. Moderation createur** | Statuts type `pending` / `approved` / `rejected`; notifications discretes (email) sans harceler. |
+| **5. Stockage contributions** | Bucket ou prefix dedie par projet; alignement RLS / isolation (voir section 12). |
+| **6. Rendu (phase 2)** | Injection des segments approuves dans le job Creatomate (ou equivalent) ou sequence « credits hommage » — peut suivre un MVP ou les contributions restent visibles dans le wizard uniquement. |
+| **7. Mesure** | Taux d'invitations envoyees, taux de completion invite, taux d'approbation — sans exposer contenu sensible dans les analytics tiers. |
+
 **Leviers supplementaires (meme ethique — doc uniquement):**
 
-- **Co-creation limitee:** inviter un petit cercle (ex. 3–8 personnes) a ajouter **une photo** et **un souvenir court**, avec **validation** par le createur du projet avant inclusion — augmente naturellement les points de contact sans popups "parrainez".
 - **Derive "reseaux natifs":** export ou rendu **court vertical** (Stories / Reels) en complement du master — souvent ce qui est partage publiquement; le long format reste plus intime.
 - **Objet physique du rituel:** QR sur livret, urne animaliere, carte de remerciement clinique — viralite **dans la piece** (meme logique que programme funeraire humain).
 - **Premiere "famille / meute":** lien prive court avant tout partage large — bouche-a-oreille controle parmi le cercle intime.
@@ -337,6 +358,15 @@ Le luxe percu ne repose pas sur une seule API, mais sur **trois piliers**: quali
 
 - Eviter memes / ton **inapproprie** sur la mort d'un compagnon.
 - Respect des **droits image** si photos tierces (autres proprietaires au parc).
+
+**Backlog discovery supplementaire (verticaliste animaux — a prioriser par tests terrain):**
+
+1. **Photographes animaliers & pet sitters:** partenariats referral ou pack **shooting + video Odyssey** — reseau client existant et assets deja emotionnels.
+2. **Clubs de race / rescue specialises:** bouche-a-oreille de niche; presence **utile** (guides, temoignages autorises) plutot que pub groupe sauvage.
+3. **Saisonnalite douce:** journees internationales chat/chien ou mois sensibilisation perte — editions template limitees **non exploitantes**, ton digne.
+4. **Marques premium animalieres:** pack condoléances dans colis VIP (carte + QR discret) — viralite par **experience produit recue**, pas par harcelement marketing.
+5. **Educateurs canins / comportementalistes:** souvent presents fin de vie / separation; **kit partenaire** (phrase + lien) au moment pertinent.
+6. **Hommage « double famille »:** adoption refuge — mention du refuge **avec accord** familial + refuge; incitation au **relai propre** par l'association.
 
 ### A developper - Upsells dans le wizard (parcours produit)
 
