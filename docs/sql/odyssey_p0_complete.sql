@@ -236,8 +236,12 @@ GRANT SELECT ON TABLE public.orders TO authenticated;
 REVOKE ALL ON TABLE public.media_assets FROM authenticated;
 GRANT SELECT, INSERT, UPDATE ON TABLE public.media_assets TO authenticated;
 
-GRANT USAGE ON SCHEMA storage TO authenticated;
-GRANT SELECT, INSERT ON TABLE storage.objects TO authenticated;
+-- Storage : ne pas exécuter GRANT sur storage.objects depuis le SQL Editor Supabase
+--   (erreur 42501 « must be owner of table objects » : la table appartient au
+--   sous-système Storage). Les rôles authenticated/anon ont déjà les privilèges
+--   nécessaires côté plateforme ; l’accès effectif est contrôlé par les policies
+--   ci-dessus sur storage.objects. Si un upload échoue encore, vérifier le
+--   Dashboard → Storage → Policies (pas de GRANT manuel requis ici).
 
 -- ---------------------------------------------------------------------------
 -- 10) service_role — tables public (webhooks / jobs ; ne pas être bloqué par REVOKE ciblés)
