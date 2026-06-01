@@ -12,7 +12,6 @@ const localizedRoutes = [
   "/partenaires",
   "/auth",
   "/dashboard",
-  "/ingestion",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

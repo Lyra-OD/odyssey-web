@@ -27,6 +27,25 @@ const DEFAULT_ACCEPT: Accept = {
   "video/quicktime": [".mov"],
 };
 
+/**
+ * Extensions tolérées même quand le navigateur renvoie un MIME vide.
+ * Chrome / Firefox / Edge ne reconnaissent pas HEIC/HEIF nativement et
+ * renvoient `file.type = ""` pour ces fichiers — sans ce validator,
+ * react-dropzone les rejette silencieusement comme `file-invalid-type`.
+ */
+const EXTENSION_FALLBACK = /\.(heic|heif)$/i;
+
+const customFileValidator = (file: File): { code: string; message: string } | null => {
+  // Si le navigateur a fourni un MIME, on laisse react-dropzone décider via `accept`.
+  if (file.type) return null;
+  // MIME vide : accepter si l'extension est dans la liste de fallback.
+  if (EXTENSION_FALLBACK.test(file.name)) return null;
+  return {
+    code: "file-invalid-type",
+    message: "Format non supporté (extension ou type MIME).",
+  };
+};
+
 type AdapterCode =
   | "file-invalid-type"
   | "file-too-large"
@@ -80,6 +99,8 @@ export type MediaDropzoneAdapterRenderContext = {
   start: () => Promise<void>;
   cancel: () => void;
   retryFailed: () => Promise<void>;
+  retryItem: (id: string) => Promise<void>;
+  removeItem: (id: string) => void;
   clearCompleted: () => void;
   clearAll: () => void;
 };
@@ -243,6 +264,7 @@ export function MediaDropzoneAdapter({
       maxSize: maxFileSizeBytes,
       maxFiles,
       onDrop,
+      validator: customFileValidator,
     });
 
   useEffect(() => {
@@ -283,6 +305,8 @@ export function MediaDropzoneAdapter({
     start,
     cancel: upload.cancel,
     retryFailed,
+    retryItem: upload.retryItem,
+    removeItem: upload.removeItem,
     clearCompleted: upload.clearCompleted,
     clearAll: upload.clearAll,
   };

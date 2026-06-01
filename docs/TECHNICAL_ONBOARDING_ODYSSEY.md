@@ -64,55 +64,139 @@ La logique metier vise un modele hybride:
 
 ---
 
-## 4) Fonctions deja implementees
+## 4) Architecture scellee pour le MVP
 
-### 4.1 Auth + session
-- Login avec metadata utilisateur (nom, telephone, consentement marketing).
-- Callback auth robuste vers dashboard.
-- Dashboard protege et coherent avec l'experience Studio.
+Ce bloc decrit la fondation technique stable au 26 mai 2026. Toutes les sections ci-dessous sont en production locale et alignees avec le code + le schema Supabase.
 
-### 4.2 Tribute Wizard (UX + logique)
-- Wizard en **4 etapes**:
-  1. Essentials
-  2. Social Sources
-  3. Local Media
-  4. Musical Ambiance
-- Integration de l'etape upload avec composants headless.
-- Etat de progression et validation metier dans le flux.
+### 4.1 Authentification & Profils
 
-### 4.3 Upload massif media (robuste)
-- Upload direct navigateur -> Supabase Storage (`user-assets` bucket).
-- Worker pool concurrent (uploads paralleles), retries, gestion erreurs.
-- Insertion DB idempotente avec `upsert` + `onConflict` pour eviter doublons.
-- Hook React dedie pour exposer:
-  - queue d'uploads,
-  - progression globale,
-  - actions `start`, `retryFailed`, `cancel`, `clear*`.
+**Pipeline d'inscription unifie.**
 
-### 4.4 Stripe webhook (production-grade)
-- Verification de signature Stripe.
-- Pattern **Atomic Lock Token & Process** sur `webhook_events`.
-- Re-check strict, TTL configurable, protection anti double-traitement.
-- Transitions d'etat conditionnelles avec verification `rows_affected === 1`.
-- Ecriture DB via client Supabase admin (service role) uniquement.
+- Login / signup via Supabase Auth (`@supabase/ssr`).
+- Sur chaque INSERT dans `auth.users`, un trigger Postgres `on_auth_user_created` (AFTER INSERT, FOR EACH ROW) appelle la fonction `public.handle_new_user()` en `SECURITY DEFINER`.
+- Cette fonction unique fait deux choses atomiquement:
+  1. Insere une ligne minimale dans `public.profiles (id)` -- colonne referencee par `projects.user_id_fkey`.
+  2. Insere une ligne dans `public.tenant_members (user_id, tenant_id, role)` avec le tenant par defaut (`slug = 'humans'`).
+
+**Backfill des comptes existants**: le script `docs/sql/odyssey_p1_user_bootstrap.sql` contient un seed idempotent qui rattache tous les utilisateurs deja crees.
+
+**Important**: ne pas creer d'autre trigger sur `auth.users` pour le bootstrap user -- tout doit passer par `handle_new_user()`. Ajouts futurs (org auto-creee, email transactionnel de bienvenue, etc.) -> etendre cette fonction.
+
+### 4.2 Multi-tenant (B2B / B2B2C / white-label ready)
+
+Table `public.tenants` (existante):
+- `id uuid PK`, `name text`, `slug text`, `vertical text`, `settings jsonb`, `created_at`.
+- 2 lignes seedees: `humans` (vertical `human`) et `pets` (vertical `pet`).
+
+Table `public.tenant_members` (creee par P1):
+- `id uuid PK`, `user_id uuid FK auth.users`, `tenant_id uuid FK tenants`, `role text DEFAULT 'member'`, `created_at`.
+- Contrainte `UNIQUE (user_id, tenant_id)` -> empeche les doublons + permet `ON CONFLICT DO NOTHING` dans le trigger.
+- RLS activee: `tenant_members_select_own` -- un utilisateur ne voit que ses propres rattachements (`user_id = auth.uid()`).
+- Pas de policy INSERT/UPDATE/DELETE pour `authenticated`; ces operations passent par le trigger `SECURITY DEFINER` ou via `service_role`.
+
+**Convention de naming**:
+- `slug` = identifiant technique stable (immutable une fois en prod).
+- `name` = label commercial modifiable (les vraies marques house-of-brands type "Empreintes", "Compagnons" iront plus tard dans `settings.brand_label`).
+- `vertical` = categorie metier (`human`, `pet`, futur `wedding`, `event`...) -- permet d'avoir plusieurs tenants par vertical (ex. white-label d'un studio funeraire dans `vertical = 'human'`).
+
+**Resolution du tenant dans le code**: la route `app/api/projects/draft/route.ts` fait un `SELECT tenant_id FROM tenant_members WHERE user_id = auth.uid() ORDER BY created_at ASC LIMIT 1` pour recuperer le tenant principal. Si demain un user appartient a plusieurs tenants, le wizard lui demandera explicitement de choisir.
+
+### 4.3 Stockage media -- bucket `user-assets`
+
+- Bucket prive Supabase Storage, accede via le SDK navigateur (`@supabase/supabase-js`).
+- Chemin canonique d'un fichier:
+  ```
+  projects/<project_id>/<yyyy>/<mm>/<dd>/<order_index>-<safe-name>-<random>.<ext>
+  ```
+- Construit par `buildStoragePath()` dans `src/lib/uploads/mediaUploadService.ts`.
+- Les policies RLS du bucket sont definies dans `docs/sql/odyssey_p0_storage_policies_REFERENCE.sql` -- a appliquer **via Dashboard -> Storage -> user-assets -> Policies** (le SQL Editor n'a pas les droits sur `storage.objects`).
+- Regle: un utilisateur ne peut SELECT/INSERT que sur un fichier dont le 2e segment de chemin (`<project_id>`) correspond a un projet qu'il possede dans `public.projects`.
+
+### 4.4 Schema `public.media_assets`
+
+Aligne avec le payload du service d'upload (`MediaAssetInsertRow`):
+
+| Colonne | Type | NOT NULL | Notes |
+|---|---|---|---|
+| `id` | uuid | oui | PK, default `gen_random_uuid()` |
+| `project_id` | uuid | -- | FK `projects.id`, indexe |
+| `owner_user_id` | uuid | oui | FK `auth.users.id` -- **convention DB Odyssey**, pas `user_id` |
+| `tenant_id` | uuid | oui | FK `tenants.id` |
+| `storage_path` | text | -- | Chemin dans le bucket `user-assets` |
+| `mime_type` | text | -- | Ex. `image/jpeg`, `video/mp4`, vide pour HEIC sur Chrome |
+| `size_bytes` | bigint | -- | Taille fichier |
+| `source` | text | oui | `'local'`, `'facebook'`, `'instagram'`, `'tiktok'`, `'google_photos'` (default `'local'`) |
+| `upload_status` | text | oui | `'queued'`, `'uploaded'`, ... (default `'queued'`) |
+| `order_index` | integer | oui | Ordre voulu par l'utilisateur (default `0`) |
+| `created_at` | timestamptz | oui | default `now()` |
+| `file_type`, `display_order`, `status`, `file_hash` | text/int | -- | **Colonnes heritees, non utilisees** par le pipeline actuel |
+
+**Contraintes critiques**:
+- `UNIQUE (project_id, storage_path)` -> indispensable pour le `onConflict: "project_id,storage_path"` du upsert client.
+- Index `idx_media_assets_owner_user_id` et `idx_media_assets_tenant_id` pour les requetes back-office.
+
+**RLS**:
+- `media_assets_select_owner_project`, `media_assets_insert_owner_project`, `media_assets_update_owner_project` -- toutes basees sur l'ownership du projet via `EXISTS (SELECT 1 FROM projects WHERE id = media_assets.project_id AND user_id = auth.uid())`.
+- Pas de policy DELETE pour `authenticated`.
+
+### 4.5 Upload frontend -- pipeline complet
+
+**Composants en couches**:
+
+| Couche | Fichier | Role |
+|---|---|---|
+| UI dropzone | `src/components/media/MediaDropzoneAdapter.tsx` | Adaptateur headless `react-dropzone`. Validator custom pour HEIC (cf. ci-dessous). |
+| UI queue | `src/components/media/MediaQueueGrid.tsx` | Grille de miniatures avec statuts, erreurs full text, bouton "Copier l'erreur", retry et delete par item. |
+| Orchestration | `src/hooks/useMassMediaUpload.ts` | State queue + actions (`enqueue`, `start`, `retryFailed`, `retryItem`, `removeItem`, `cancel`, `clearCompleted`, `clearAll`). **Auto-relance** d'un batch quand de nouveaux fichiers sont ajoutes pendant qu'un batch tourne (via `useEffect` sur `[isRunning, items, start]`). |
+| Service | `src/lib/uploads/mediaUploadService.ts` | Worker pool concurrent (4), retries exponentiels (300ms x 2^n), upload Storage + upsert `media_assets` atomique. |
+
+**Validator HEIC custom (point critique iPhone)**:
+- Chrome / Firefox / Edge **ne reconnaissent pas HEIC** comme MIME type valide et renvoient `file.type = ""`.
+- Sans patch, `react-dropzone` rejette les `.heic` en `file-invalid-type` meme si le fichier est liste dans `accept`.
+- Solution: un `customFileValidator` qui accepte les fichiers sans MIME si l'extension matche `/\.(heic|heif)$/i`.
+- Cote affichage: la grille saute la previsualisation `<img>` pour HEIC (Chrome ne sait pas la decoder) et affiche un badge `HEIC` propre a la place.
+
+**Auto-relance des batches**:
+- Si l'utilisateur drop un 2e lot pendant qu'un 1er batch tourne, le `start()` du hook refuse l'appel concurrent (`if (isRunning) return`).
+- Sans patch, le 2e lot reste eternellement en `queued`.
+- Solution: un `useEffect` qui detecte `isRunning === false && items.some(i => i.status === 'queued')` et relance automatiquement.
+
+### 4.6 Webhook Stripe (inchange depuis mai)
+
+- Verification de signature.
+- Pattern Atomic Lock Token & Process sur `webhook_events` (TTL configurable, anti double-traitement).
+- Ecriture DB uniquement via client Supabase admin (`service_role`).
 - Sync `billing_catalog` depuis `product.*` et `price.*`.
-- Logs structures + helper de serialisation erreur (`serializeError`).
+- Logs structures + helper `serializeError`.
 
 ---
 
-## 5) Modeles de donnees (vision appliquee)
+## 5) Modeles de donnees -- source de verite
 
-Tables principales impliquees:
-- `projects`: statut projet + contexte acquisition/partenaire + capacites
-- `orders`: details paiement base/upsells + snapshot pricing + session Stripe
-- `billing_catalog`: cache local des produits/prix Stripe (source de verite Stripe)
-- `webhook_events`: idempotence, lock token, statut de traitement, erreurs
-- `media_assets` (utilisee par ingestion): assets lies au projet
+Tables actives dans `public`:
 
-Points importants:
-- Gestion des statuts projets et extension propre des ENUMs.
-- Contraintes d'unicite sur ids Stripe critiques (ex: checkout session).
-- Modele compatible B2C et B2B2C sans casser le schema principal.
+| Table | Role | Securite |
+|---|---|---|
+| `tenants` | Verticale Odyssey (humans, pets, ...) + futurs white-labels | Lecture interne (catalogue verticales, non sensible) |
+| `tenant_members` | Jointure M:N user <-> tenant | RLS: un user voit ses propres rattachements |
+| `profiles` | Profil enrichi par user (FK auth.users) | RLS si necessaire (au minimum SELECT own) |
+| `projects` | Hommage en cours (FK profiles + tenants) | RLS: ownership via `user_id = auth.uid()` |
+| `media_assets` | Photos / videos uploadees | RLS: ownership transitif via le projet parent |
+| `orders` | Paiements Stripe (base + upsells) | RLS SELECT only (ecriture = service_role) |
+| `billing_catalog` | Cache local des Products/Prices Stripe | Lecture interne |
+| `webhook_events` | Idempotence webhook Stripe (lock token) | service_role uniquement |
+
+Relations critiques:
+
+```
+auth.users --1:1--> profiles --1:N--> projects --1:N--> media_assets
+              |
+              +-----M:N via tenant_members----> tenants
+
+projects --1:N--> orders --N:1--> billing_catalog
+```
+
+**Tous les scripts SQL qui produisent cette base sont dans `docs/sql/` et listes dans `docs/sql/README.md` avec leur ordre d'execution sur une base vierge.**
 
 ---
 
@@ -182,12 +266,16 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 
 ## 10) Etat actuel et prochaines etapes
 
-### Fait
-- Auth + callback + dashboard en place.
-- Wizard 4 etapes + etape media integree.
-- Pipeline upload massif headless implemente.
-- Webhook Stripe robuste (lock token, TTL, idempotence, logs).
-- Scripts de verification disponibles.
+### Fait (au 26 mai 2026)
+- Auth Supabase + bootstrap unifie `handle_new_user` (profiles + tenant_members).
+- Modele multi-tenant complet: tenants enrichis (`vertical`, `settings`), `tenant_members` avec RLS.
+- Wizard 4 etapes operationnel jusqu'a l'etape 3 (upload).
+- Route `/api/projects/draft` (POST): creation projet draft avec resolution tenant + fallback resilient colonnes.
+- Pipeline upload massif: queue UI complete, validator HEIC, auto-relance batches, retries, erreurs visibles.
+- Schema `media_assets` aligne (`owner_user_id`, `source`, `upload_status`, UNIQUE `project_id+storage_path`).
+- Webhook Stripe production-grade (atomic lock token).
+- Scripts de diagnostic Stripe + stress test webhook.
+- Documentation SQL versionnee dans `docs/sql/` avec README et ordre d'execution.
 
 ### A terminer / consolider
 - Route checkout Stripe complete (creation session base + upsells).
@@ -482,6 +570,21 @@ Objectif: completer la roadmap technique (checkout, rendu, securite) par les cha
 
 ---
 
+## 10b) Migrations SQL -- ordre d'execution
+
+Le dossier `docs/sql/` est la **source de verite** des migrations. Voir `docs/sql/README.md` pour le tableau complet. Sur une base vierge:
+
+1. `odyssey_p0_complete.sql` -- RLS de base, orders, grants service_role
+2. `odyssey_p0_fix_grants.sql` -- patch grants si P0 a plante en cours
+3. `odyssey_p1_user_bootstrap.sql` -- multi-tenant + trigger `handle_new_user`
+4. `odyssey_p2_media_assets_schema_sync.sql` -- alignement schema `media_assets`
+5. `odyssey_p2b_media_assets_cleanup.sql` -- patch cible (supprime `user_id` en doublon si present)
+6. `odyssey_p0_storage_policies_REFERENCE.sql` -- **via Dashboard uniquement** (pas SQL Editor)
+
+Toutes ces migrations sont **idempotentes** et utilisent `IF NOT EXISTS` / `ON CONFLICT DO NOTHING` / `DROP ... IF EXISTS`. Re-executer sans crainte.
+
+---
+
 ## 11) Vision produit extensible (multi-skins, moteur unique)
 
 La direction produit inclut explicitement une strategie de reutilisation:
@@ -500,21 +603,18 @@ Implications techniques:
 
 ---
 
-## 12) Isolation des medias entre cibles (point critique)
+## 12) Isolation des medias entre cibles
 
-Objectif:
-- garantir qu'un media importe pour une cible (ex: animaux) ne puisse jamais etre melange avec une autre (ex: famille, mariage, fete).
+**Etat actuel (MVP)**:
+- Isolation forte via `project_id` (chemin Storage + colonne FK).
+- `tenant_id` desormais **obligatoire (NOT NULL)** sur `media_assets` et resolu cote serveur via `tenant_members` -- un user ne peut pas ecrire dans le tenant d'un autre.
+- `owner_user_id` (NOT NULL) garantit qu'on peut tracer le proprietaire historique meme si le projet est partage plus tard.
 
-Etat actuel:
-- l'isolation est forte par `project_id` (storage path `projects/<project_id>/...` + colonne `project_id` en DB),
-- `tenant_id` est supporte dans le pipeline upload, mais reste optionnel selon l'appel.
-
-Regles a respecter pour la suite multi-cibles:
-1. Rendre le contexte cible explicite a chaque upload (au minimum `project_id`, idealement `tenant_id` + `target_vertical`).
-2. Etendre le chemin storage pour inclure la cible/tenant quand la verticale sera active (ex: `targets/<vertical>/tenants/<tenant_id>/projects/<project_id>/...`).
-3. Ajouter des contraintes DB/uniques et policies RLS coherentes avec cette segmentation.
-4. Interdire les lectures cross-cibles au niveau API et policy, meme en cas d'erreur de front.
-5. Ajouter des tests d'integration "anti-mixage" (imports paralleles sur cibles differentes).
+**A durcir avant ouverture multi-vertical**:
+1. Chemin Storage a enrichir: `targets/<vertical>/tenants/<tenant_id>/projects/<project_id>/...` (actuellement juste `projects/<project_id>/...`).
+2. Policy Storage a etendre pour verifier le segment `<vertical>` contre `tenant_members.tenant.vertical`.
+3. Tests d'integration "anti-mixage": importer simultanement depuis 2 users de verticales differentes et verifier l'isolation au niveau API et Storage.
+4. Vue `media_assets_isolated` qui joint avec `tenants.vertical` pour aider les requetes d'audit cross-cibles.
 
 ---
 

@@ -41,7 +41,9 @@ export type MediaAssetInsertRow = {
   source: MediaUploadSource | string;
   upload_status: "uploaded";
   order_index: number;
-  user_id?: string;
+  // Convention DB Odyssey : owner_user_id (NOT NULL) et tenant_id (NOT NULL).
+  // Cf. docs/sql/odyssey_p2b_media_assets_cleanup.sql.
+  owner_user_id?: string;
   tenant_id?: string;
 };
 
@@ -165,7 +167,7 @@ async function uploadAndInsert(
       source: params.source,
       upload_status: "uploaded",
       order_index: params.item.orderIndex ?? 0,
-      ...(params.userId ? { user_id: params.userId } : {}),
+      ...(params.userId ? { owner_user_id: params.userId } : {}),
       ...(params.tenantId ? { tenant_id: params.tenantId } : {}),
     } satisfies MediaAssetInsertRow);
 

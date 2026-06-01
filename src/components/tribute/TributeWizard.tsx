@@ -20,6 +20,7 @@ import {
   useState,
 } from "react";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
+import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
 import type { AppDictionary } from "@/lib/dictionaries";
 
 export type TributeWizardCopy = AppDictionary["tributeWizard"];
@@ -80,7 +81,17 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const wizardTitleId = useId();
-  const uploadProjectId = useMemo(() => crypto.randomUUID(), []);
+
+  // Identifiants DB nécessaires pour passer RLS Storage + insert media_assets.
+  // Le service d'upload écrit owner_user_id (convention Odyssey, pas user_id)
+  // et tenant_id : les deux colonnes sont NOT NULL côté DB, donc indispensables
+  // sous peine de faire planter l'upsert.
+  const [uploadProjectId, setUploadProjectId] = useState<string | null>(null);
+  const [uploadUserId, setUploadUserId] = useState<string | null>(null);
+  const [uploadTenantId, setUploadTenantId] = useState<string | null>(null);
+  const [projectDraftError, setProjectDraftError] = useState<string | null>(null);
+  const [projectDraftLoading, setProjectDraftLoading] = useState(false);
+  const draftRequestedRef = useRef(false);
 
   const moodOptions = useMemo(
     () =>
@@ -125,6 +136,74 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
       }
     };
   }, [avatarPreview]);
+
+  // À l'entrée dans l'étape 3, crée un projet "draft" en DB pour disposer d'un
+  // project_id réel — exigé par les policies RLS sur Storage et media_assets.
+  useEffect(() => {
+    if (currentStep !== 3) return;
+    if (uploadProjectId) return;
+    if (draftRequestedRef.current) return;
+    draftRequestedRef.current = true;
+
+    let aborted = false;
+    setProjectDraftLoading(true);
+    setProjectDraftError(null);
+
+    (async () => {
+      try {
+        const res = await fetch("/api/projects/draft", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            firstName: firstName.trim() || undefined,
+            lastName: lastName.trim() || undefined,
+            birthDate: birthDate || undefined,
+            deathDate: deathDate || undefined,
+          }),
+        });
+        const payload = (await res.json().catch(() => null)) as
+          | {
+              id?: string;
+              user_id?: string;
+              tenant_id?: string;
+              error?: string;
+              message?: string;
+            }
+          | null;
+
+        if (!res.ok || !payload?.id) {
+          const reason =
+            payload?.message ??
+            payload?.error ??
+            `HTTP ${res.status}`;
+          if (!aborted) {
+            setProjectDraftError(reason);
+            draftRequestedRef.current = false;
+          }
+          return;
+        }
+
+        if (!aborted) {
+          setUploadProjectId(payload.id);
+          setUploadUserId(payload.user_id ?? null);
+          setUploadTenantId(payload.tenant_id ?? null);
+        }
+      } catch (err) {
+        if (!aborted) {
+          setProjectDraftError(
+            err instanceof Error ? err.message : "network_error",
+          );
+          draftRequestedRef.current = false;
+        }
+      } finally {
+        if (!aborted) setProjectDraftLoading(false);
+      }
+    })();
+
+    return () => {
+      aborted = true;
+    };
+  }, [currentStep, uploadProjectId]);
 
   const canProceedEssential =
     firstName.trim().length > 0 &&
@@ -518,119 +597,180 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                 {copy.stepMediaDescription}
               </p>
 
-              <MediaDropzoneAdapter
-                projectId={uploadProjectId}
-                autoStart
-                maxFiles={150}
-                maxFileSizeBytes={300 * 1024 * 1024}
-              >
-                {(dz) => {
-                  const isStep3Locked = dz.isRunning || dz.totals.uploaded === 0;
+              {projectDraftError ? (
+                <div className="mt-6 rounded-xl border border-fuchsia-500/45 bg-fuchsia-950/10 p-4 shadow-[0_0_24px_rgba(255,0,255,0.22)] backdrop-blur-md">
+                  <p className="text-sm font-medium text-fuchsia-200/95">
+                    {copy.projectDraftErrorTitle}
+                  </p>
+                  <p className="mt-1 text-xs text-fuchsia-100/90">
+                    {projectDraftError}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      draftRequestedRef.current = false;
+                      setProjectDraftError(null);
+                      setUploadProjectId(null);
+                    }}
+                    className="mt-3 inline-flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-light text-zinc-200 transition-colors hover:border-white/20 hover:bg-white/[0.08]"
+                  >
+                    {copy.projectDraftRetry}
+                  </button>
+                </div>
+              ) : null}
 
-                  return (
-                    <>
-                      <div
-                        {...dz.getRootProps({
-                          className: `group relative mt-10 flex w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white/[0.03] px-6 py-16 text-center backdrop-blur-xl shadow-[0_0_24px_rgba(99,102,241,0.08)] transition-[border,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${
-                            dz.isDragReject
-                              ? "border-fuchsia-500/60 shadow-[0_0_32px_rgba(255,0,255,0.24)] focus-visible:ring-fuchsia-500/40"
-                              : dz.isDragAccept || dz.isDragActive
-                                ? "border-teal-400/30 shadow-[0_0_32px_rgba(34,211,238,0.16)] focus-visible:ring-teal-400/35"
-                                : "border-white/12 hover:border-teal-400/25 hover:shadow-[0_0_32px_rgba(34,211,238,0.12)] focus-visible:ring-teal-400/35"
-                          }`,
-                        })}
-                        aria-describedby="wizard-step3-dropzone-hint"
-                      >
-                        <input {...dz.getInputProps({ "aria-label": copy.uploadAria })} />
+              {!uploadProjectId ? (
+                <div
+                  className="mt-10 flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-white/12 bg-white/[0.03] px-6 py-16 text-center text-sm font-light text-zinc-400 backdrop-blur-xl"
+                  aria-live="polite"
+                >
+                  {projectDraftLoading
+                    ? copy.projectDraftLoading
+                    : copy.projectDraftIdle}
+                </div>
+              ) : (
+                <MediaDropzoneAdapter
+                  projectId={uploadProjectId}
+                  userId={uploadUserId ?? undefined}
+                  tenantId={uploadTenantId ?? undefined}
+                  autoStart
+                  maxFiles={150}
+                  maxFileSizeBytes={300 * 1024 * 1024}
+                >
+                  {(dz) => {
+                    const totalQueued = dz.items.length;
+                    const isStep3Locked =
+                      dz.isRunning || dz.totals.uploaded === 0;
 
-                        <span
-                          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-400 group-hover:opacity-100"
-                          style={{
-                            background: dz.isDragReject
-                              ? "radial-gradient(ellipse 80% 70% at 50% 80%, rgba(255, 0, 255, 0.24) 0%, transparent 55%)"
-                              : "radial-gradient(ellipse 80% 70% at 50% 80%, rgba(34,211,238,0.15) 0%, transparent 55%)",
+                    return (
+                      <>
+                        <div
+                          {...dz.getRootProps({
+                            className: `group relative mt-10 flex w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white/[0.03] px-6 py-16 text-center backdrop-blur-xl shadow-[0_0_24px_rgba(99,102,241,0.08)] transition-[border,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${
+                              dz.isDragReject
+                                ? "border-fuchsia-500/60 shadow-[0_0_32px_rgba(255,0,255,0.24)] focus-visible:ring-fuchsia-500/40"
+                                : dz.isDragAccept || dz.isDragActive
+                                  ? "border-teal-400/30 shadow-[0_0_32px_rgba(34,211,238,0.16)] focus-visible:ring-teal-400/35"
+                                  : "border-white/12 hover:border-teal-400/25 hover:shadow-[0_0_32px_rgba(34,211,238,0.12)] focus-visible:ring-teal-400/35"
+                            }`,
+                          })}
+                          aria-describedby="wizard-step3-dropzone-hint"
+                        >
+                          <input {...dz.getInputProps({ "aria-label": copy.uploadAria })} />
+
+                          <span
+                            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-400 group-hover:opacity-100"
+                            style={{
+                              background: dz.isDragReject
+                                ? "radial-gradient(ellipse 80% 70% at 50% 80%, rgba(255, 0, 255, 0.24) 0%, transparent 55%)"
+                                : "radial-gradient(ellipse 80% 70% at 50% 80%, rgba(34,211,238,0.15) 0%, transparent 55%)",
+                            }}
+                          />
+
+                          <div className="relative flex items-center gap-3 text-teal-300/85">
+                            <ImageIcon className="h-11 w-11 shrink-0" strokeWidth={1.1} />
+                            <Music2 className="h-9 w-9 shrink-0 opacity-70" strokeWidth={1.1} />
+                          </div>
+                          <span className="relative mt-6 text-lg font-light text-zinc-200 md:text-xl">
+                            {copy.uploadPrompt}
+                          </span>
+                          <span
+                            id="wizard-step3-dropzone-hint"
+                            className="relative mt-2 text-sm font-light text-zinc-500"
+                          >
+                            {copy.uploadSubtext}
+                          </span>
+                          {totalQueued > 0 ? (
+                            <span
+                              className="relative mt-4 text-sm text-teal-400/90"
+                              aria-live="polite"
+                            >
+                              {copy.uploadFilesCount.replace(
+                                "{count}",
+                                String(totalQueued),
+                              )}
+                              {dz.totals.uploaded > 0 || dz.totals.uploading > 0 || dz.totals.failed > 0 ? (
+                                <span className="ml-2 text-xs font-light text-zinc-400">
+                                  {copy.uploadBreakdown
+                                    .replace("{uploaded}", String(dz.totals.uploaded))
+                                    .replace("{uploading}", String(dz.totals.uploading))
+                                    .replace("{failed}", String(dz.totals.failed))}
+                                </span>
+                              ) : null}
+                            </span>
+                          ) : null}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              dz.open();
+                            }}
+                            className="relative mt-4 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/[0.08]"
+                          >
+                            {copy.uploadPrompt}
+                          </button>
+                        </div>
+
+                        {dz.rejections.length > 0 ? (
+                          <div className="mt-5 rounded-xl border border-fuchsia-500/45 bg-fuchsia-950/10 p-4 shadow-[0_0_24px_rgba(255,0,255,0.22)] backdrop-blur-md">
+                            <div className="mb-2 flex items-center justify-between gap-2">
+                              <p className="text-sm font-medium text-fuchsia-200/95">
+                                {copy.rejectionsTitle}
+                              </p>
+                              <button
+                                type="button"
+                                onClick={dz.clearRejections}
+                                className="text-xs text-fuchsia-200/80 underline decoration-fuchsia-300/40 underline-offset-4 hover:text-fuchsia-100"
+                              >
+                                {copy.rejectionsClear}
+                              </button>
+                            </div>
+                            <ul className="space-y-1.5">
+                              {dz.rejections.slice(0, 6).map((r, idx) => (
+                                <li key={`${r.fileName}-${idx}`} className="text-xs text-fuchsia-100/90">
+                                  <span className="font-medium text-[#ff00ff]">{r.code}</span>{" "}
+                                  <span className="text-fuchsia-100/80">- {r.fileName}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : null}
+
+                        <MediaQueueGrid
+                          items={dz.items}
+                          isRunning={dz.isRunning}
+                          onRemove={dz.removeItem}
+                          onRetry={dz.retryItem}
+                          copy={{
+                            emptyTitle: copy.queueEmpty,
+                            statusQueued: copy.queueStatusQueued,
+                            statusUploading: copy.queueStatusUploading,
+                            statusUploaded: copy.queueStatusUploaded,
+                            statusFailed: copy.queueStatusFailed,
+                            statusCancelled: copy.queueStatusCancelled,
+                            remove: copy.queueRemove,
+                            retry: copy.queueRetry,
                           }}
                         />
 
-                        <div className="relative flex items-center gap-3 text-teal-300/85">
-                          <ImageIcon className="h-11 w-11 shrink-0" strokeWidth={1.1} />
-                          <Music2 className="h-9 w-9 shrink-0 opacity-70" strokeWidth={1.1} />
-                        </div>
-                        <span className="relative mt-6 text-lg font-light text-zinc-200 md:text-xl">
-                          {copy.uploadPrompt}
-                        </span>
-                        <span
-                          id="wizard-step3-dropzone-hint"
-                          className="relative mt-2 text-sm font-light text-zinc-500"
-                        >
-                          {copy.uploadSubtext}
-                        </span>
-                        {(dz.totals.uploaded > 0 || dz.totals.uploading > 0) ? (
-                          <span
-                            className="relative mt-4 text-sm text-teal-400/90"
-                            aria-live="polite"
-                          >
-                            {copy.uploadFilesCount.replace(
-                              "{count}",
-                              String(dz.totals.uploaded),
-                            )}
-                          </span>
-                        ) : null}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            dz.open();
-                          }}
-                          className="relative mt-4 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/[0.08]"
-                        >
-                          {copy.uploadPrompt}
-                        </button>
-                      </div>
+                        <p className="mt-4 text-sm font-light text-zinc-500">
+                          {dz.isRunning
+                            ? copy.uploadInProgress
+                            : dz.totals.uploaded === 0
+                              ? copy.uploadAtLeastOne
+                              : null}
+                        </p>
 
-                      {dz.rejections.length > 0 ? (
-                        <div className="mt-5 rounded-xl border border-fuchsia-500/45 bg-fuchsia-950/10 p-4 shadow-[0_0_24px_rgba(255,0,255,0.22)] backdrop-blur-md">
-                          <div className="mb-2 flex items-center justify-between gap-2">
-                            <p className="text-sm font-medium text-fuchsia-200/95">
-                              Fichiers rejetes
-                            </p>
+                        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
+                          <div className="mx-auto flex max-w-xl gap-3">
                             <button
                               type="button"
-                              onClick={dz.clearRejections}
-                              className="text-xs text-fuchsia-200/80 underline decoration-fuchsia-300/40 underline-offset-4 hover:text-fuchsia-100"
+                              onClick={goBack}
+                              className="font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/10 bg-white/[0.06] px-4 text-base font-normal text-zinc-200 shadow-[0_0_20px_rgba(255,255,255,0.04)] transition-colors hover:bg-white/[0.09]"
                             >
-                              Effacer
+                              {copy.back}
                             </button>
-                          </div>
-                          <ul className="space-y-1.5">
-                            {dz.rejections.slice(0, 6).map((r, idx) => (
-                              <li key={`${r.fileName}-${idx}`} className="text-xs text-fuchsia-100/90">
-                                <span className="font-medium text-[#ff00ff]">{r.code}</span>{" "}
-                                <span className="text-fuchsia-100/80">- {r.fileName}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ) : null}
-
-                      <p className="mt-4 text-sm font-light text-zinc-500">
-                        {dz.isRunning
-                          ? "Televersement en cours..."
-                          : dz.totals.uploaded === 0
-                            ? "Ajoutez au moins un media pour passer a l'etape 4."
-                            : null}
-                      </p>
-
-                      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
-                        <div className="mx-auto flex max-w-xl gap-3">
-                          <button
-                            type="button"
-                            onClick={goBack}
-                            className="font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/10 bg-white/[0.06] px-4 text-base font-normal text-zinc-200 shadow-[0_0_20px_rgba(255,255,255,0.04)] transition-colors hover:bg-white/[0.09]"
-                          >
-                            {copy.back}
-                          </button>
 
                           <button
                             type="button"
@@ -646,6 +786,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                   );
                 }}
               </MediaDropzoneAdapter>
+              )}
             </>
           ) : null}
 

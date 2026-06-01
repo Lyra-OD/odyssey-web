@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   uploadMediaBatch,
   type MediaUploadSource,
@@ -32,6 +32,8 @@ export type UseMassMediaUploadReturn = {
   enqueue: (files: FileList | File[]) => void;
   start: (options: StartOptions) => Promise<void>;
   retryFailed: () => Promise<void>;
+  retryItem: (id: string) => Promise<void>;
+  removeItem: (id: string) => void;
   cancel: () => void;
   clearCompleted: () => void;
   clearAll: () => void;
@@ -139,6 +141,51 @@ export function useMassMediaUpload(
     await start(latestStart);
   }, [isRunning, start]);
 
+  const retryItem = useCallback(
+    async (id: string) => {
+      if (isRunning) return;
+      const latestStart = lastStartRef.current;
+      if (!latestStart) return;
+      let found = false;
+      setItems((prev) =>
+        prev.map((item) => {
+          if (item.id !== id) return item;
+          if (item.status !== "failed" && item.status !== "cancelled") return item;
+          found = true;
+          return { ...item, status: "queued", error: null };
+        }),
+      );
+      if (!found) return;
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      await start(latestStart);
+    },
+    [isRunning, start],
+  );
+
+  const removeItem = useCallback(
+    (id: string) => {
+      setItems((prev) => {
+        const target = prev.find((item) => item.id === id);
+        if (!target) return prev;
+        if (target.status === "uploading") return prev;
+        return prev.filter((item) => item.id !== id);
+      });
+    },
+    [],
+  );
+
+  // Auto-relance d'un batch quand de nouveaux fichiers sont enqueued
+  // PENDANT qu'un batch précédent tournait : start() refuse les appels
+  // concurrents (early-return sur isRunning) — sans cet effet, ces
+  // fichiers resteraient bloqués en statut "queued".
+  useEffect(() => {
+    if (isRunning) return;
+    if (!lastStartRef.current) return;
+    const hasQueued = items.some((item) => item.status === "queued");
+    if (!hasQueued) return;
+    void start(lastStartRef.current);
+  }, [isRunning, items, start]);
+
   const cancel = useCallback(() => {
     abortRef.current?.abort();
     setItems((prev) =>
@@ -176,6 +223,8 @@ export function useMassMediaUpload(
     enqueue,
     start,
     retryFailed,
+    retryItem,
+    removeItem,
     cancel,
     clearCompleted,
     clearAll,
