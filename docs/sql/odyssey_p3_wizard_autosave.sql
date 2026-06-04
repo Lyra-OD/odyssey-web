@@ -2,16 +2,21 @@
 -- Odyssey P3 — Wizard Autosave (Tribute Wizard)
 -- =====================================================================
 -- Contexte :
---   Le Tribute Wizard est multi-étapes (4 actuellement). Sans autosave,
---   tout reload de la page perd l'état UI (firstName, mood, trackOrder…).
+--   Le Tribute Wizard compte 8 etapes (voir docs/WIZARD_ARCHITECTURE.md).
+--   Sans autosave, un reload perd l'etat UI (firstName, montage, tracks…).
 --
---   Pour permettre la reprise du parcours, on ajoute sur `projects` :
---     - wizard_state  (jsonb) : snapshot UI sérialisable, ex.
+--   Colonnes sur `projects` :
+--     - wizard_state  (jsonb) : snapshot UI, ex.
 --         {
 --           "version": 1,
 --           "essentials": { "firstName": "...", "lastName": "...", "avatarPath": "..." },
 --           "socialSources": { "selected": "instagram", "url": "..." },
---           "musicalAmbiance": { "mood": "tender", "trackOrder": ["b","a","c"] }
+--           "montage": { "acts": { "spark": [], "epic": [], "legacy": [] }, ... },
+--           "musicalAmbiance": {
+--             "tracks": { "acte1": { "title", "artist", "trackId", "coverUrl" } },
+--             "catalogProvider": "stingray"
+--           },
+--           "extensions": { "aiRetouch": true, ... }
 --         }
 --     - wizard_step   (smallint) : étape actuelle (1..N), pour rouvrir
 --         le wizard exactement où l'utilisateur l'a laissé.

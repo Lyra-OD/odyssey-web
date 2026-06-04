@@ -20,7 +20,7 @@ import { createClient } from "@/utils/supabase/server";
  *
  * JSONB merge strategy:
  *   - Top-level shallow merge: PATCH bodies replace an entire section
- *     (`essentials`, `socialSources`, `musicalAmbiance`) but never wipe
+ *     (`essentials`, `socialSources`, `montage`, `musicalAmbiance`) but never wipe
  *     sibling sections.
  *   - Read-modify-write done server-side. Concurrent PATCH for the same
  *     project from the same user are mitigated client-side via AbortController
@@ -41,6 +41,8 @@ const EssentialsSchema = z
   .object({
     firstName: z.string().trim().max(120).optional(),
     lastName: z.string().trim().max(120).optional(),
+    birthDate: z.string().trim().max(32).optional(),
+    deathDate: z.string().trim().max(32).optional(),
     avatarPath: z.string().trim().max(500).optional(),
   })
   .strict()
@@ -54,10 +56,76 @@ const SocialSourcesSchema = z
   .strict()
   .partial();
 
+const SelectedTrackSchema = z
+  .object({
+    title: z.string().trim().max(200),
+    artist: z.string().trim().max(200),
+    trackId: z.string().trim().max(120),
+        coverUrl: z.string().trim().max(500),
+        previewUrl: z.string().trim().max(800).optional(),
+      })
+  .strict();
+
 const MusicalAmbianceSchema = z
   .object({
+    tracks: z
+      .object({
+        acte1: SelectedTrackSchema.optional(),
+        acte2: SelectedTrackSchema.optional(),
+        acte3: SelectedTrackSchema.optional(),
+      })
+      .strict()
+      .optional(),
+    catalogProvider: z.string().trim().max(80).optional(),
+    /** Legacy — accepté à l'entrée */
+    selectedTrack: SelectedTrackSchema.optional(),
     mood: z.string().trim().max(40).optional(),
     trackOrder: z.array(z.string().trim().max(40)).max(20).optional(),
+    catalogTrackId: z.string().trim().max(120).optional(),
+  })
+  .strict()
+  .partial();
+
+const ExtensionsSchema = z
+  .object({
+    aiRetouch: z.boolean().optional(),
+    extendedLicense: z.boolean().optional(),
+    collectorUsb: z.boolean().optional(),
+    digitalVault: z.boolean().optional(),
+    heritagePack: z.boolean().optional(),
+  })
+  .strict()
+  .partial();
+
+const UuidSchema = z.string().uuid();
+
+const MontageActListSchema = z.array(UuidSchema).max(150);
+
+const MontageFocalPointSchema = z
+  .object({
+    x: z.number().min(0).max(1),
+    y: z.number().min(0).max(1),
+  })
+  .strict();
+
+const MontageSchema = z
+  .object({
+    acts: z
+      .object({
+        spark: MontageActListSchema.optional(),
+        epic: MontageActListSchema.optional(),
+        legacy: MontageActListSchema.optional(),
+      })
+      .strict()
+      .optional(),
+    unassignedIds: z.array(UuidSchema).max(150).optional(),
+    excludedIds: z.array(UuidSchema).max(150).optional(),
+    focalPoints: z
+      .record(UuidSchema, MontageFocalPointSchema)
+      .refine((record) => Object.keys(record).length <= 150, {
+        message: "Too many focal points",
+      })
+      .optional(),
   })
   .strict()
   .partial();
@@ -67,6 +135,8 @@ const WizardStatePartialSchema = z
     version: z.literal(1).optional(),
     essentials: EssentialsSchema.optional(),
     socialSources: SocialSourcesSchema.optional(),
+    montage: MontageSchema.optional(),
+    extensions: ExtensionsSchema.optional(),
     musicalAmbiance: MusicalAmbianceSchema.optional(),
   })
   .strict();

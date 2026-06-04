@@ -42,6 +42,17 @@ export default async function DashboardPage({ params }: PageProps) {
     displayName,
   );
 
+  const { data: draftProject } = await supabase
+    .from("projects")
+    .select(
+      "id, user_id, tenant_id, wizard_state, wizard_step, last_saved_at, status",
+    )
+    .eq("user_id", user.id)
+    .eq("status", "draft")
+    .order("last_saved_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100">
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
@@ -74,7 +85,11 @@ export default async function DashboardPage({ params }: PageProps) {
           />
         </header>
 
-        <TributeWizard copy={dictionary.tributeWizard} />
+        <TributeWizard
+          copy={dictionary.tributeWizard}
+          initialDraft={draftProject ?? null}
+          locale={lang}
+        />
       </div>
     </main>
   );

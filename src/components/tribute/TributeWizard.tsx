@@ -1,11 +1,10 @@
 "use client";
 
 import {
+  ArrowLeft,
   Calendar,
   Camera,
   Cloud,
-  GripVertical,
-  Heart,
   Image as ImageIcon,
   Music2,
   Share2,
@@ -19,33 +18,79 @@ import {
   useRef,
   useState,
 } from "react";
+import { PreviewStep } from "@/src/components/tribute/PreviewStep";
+import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
 import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
+import { MontageExtensionsStep } from "@/src/components/tribute/MontageExtensionsStep";
+import { MontageStep } from "@/src/components/tribute/MontageStep";
+import { SoundSignatureStep } from "@/src/components/tribute/SoundSignatureStep";
+import {
+  ExtensionsStickyFooter,
+  WizardCartSummary,
+} from "@/src/components/tribute/WizardCartSummary";
+import { WizardStepper } from "@/src/components/tribute/WizardStepper";
+import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
+import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
 import type { AppDictionary } from "@/lib/dictionaries";
+import { createClient } from "@/utils/supabase/client";
+import {
+  coerceWizardState,
+  countIncludedMedia,
+  emptyMontageState,
+  resolveInitialWizardStep,
+  WIZARD_STATE_VERSION,
+  type SocialId,
+  type WizardInitialDraft,
+  type WizardMontageState,
+  type WizardExtensionsState,
+  type WizardActTracks,
+  type WizardStateV1,
+} from "@/src/lib/wizard/wizardState";
+import { normalizeWizardStateForSave } from "@/src/lib/wizard/wizardExtensions";
+import {
+  emptyActTracks,
+  hasAnyActTrack,
+  STINGRAY_CATALOG_PROVIDER,
+} from "@/src/lib/wizard/stingrayCatalog";
+import type { Locale } from "@/i18n.config";
 
 export type TributeWizardCopy = AppDictionary["tributeWizard"];
 
-type Step = 1 | 2 | 3 | 4;
-type MoodId = "soft" | "classical" | "melancholic" | "bright";
-type SocialId = "facebook" | "instagram" | "tiktok" | "google";
-type TrackId = "a" | "b" | "c";
+type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 8;
+const AVATAR_SIGNED_URL_TTL_SEC = 3600;
 
-function replaceStepLabel(
-  template: string,
-  current: number,
-  total: number,
-): string {
-  return template
-    .replace("{current}", String(current))
-    .replace("{total}", String(total));
-}
+type WizardFieldsSnapshot = {
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  deathDate: string;
+  avatarPath: string | null;
+  selectedSocial: SocialId | null;
+  montage: WizardMontageState;
+  extensions: WizardExtensionsState;
+  actTracks: WizardActTracks;
+};
 
 function yearFromDateInput(iso: string): string {
   if (!iso?.trim()) return "";
   const y = Number.parseInt(iso.slice(0, 4), 10);
   return Number.isFinite(y) ? String(y) : "";
+}
+
+function buildAvatarStoragePath(projectId: string, file: File): string {
+  const fromName = file.name.split(".").pop();
+  const ext =
+    fromName && fromName.length <= 10
+      ? fromName.toLowerCase()
+      : file.type === "image/png"
+        ? "png"
+        : file.type === "image/webp"
+          ? "webp"
+          : "jpg";
+  return `projects/${projectId}/avatar/primary-${crypto.randomUUID()}.${ext}`;
 }
 
 /** Halos radial pour boutons réseaux — très doux, effet premium */
@@ -63,55 +108,141 @@ const SOCIAL_HALOS: Record<
     "radial-gradient(circle at 50% 80%, rgba(52,211,153,0.26) 0%, rgba(34,197,94,0.12) 45%, transparent 70%)",
 };
 
-export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
-  const [currentStep, setCurrentStep] = useState<Step>(1);
-  const [completed, setCompleted] = useState(false);
+export function TributeWizard({
+  copy,
+  initialDraft = null,
+  locale = "fr",
+}: {
+  copy: TributeWizardCopy;
+  initialDraft?: WizardInitialDraft | null;
+  locale?: Locale;
+}) {
+  const hydrated = coerceWizardState(initialDraft?.wizard_state);
+
+  const [currentStep, setCurrentStep] = useState<Step>(() =>
+    resolveInitialWizardStep(
+      initialDraft?.wizard_step,
+      hydrated,
+      TOTAL_STEPS,
+    ) as Step,
+  );
   const [essentialError, setEssentialError] = useState(false);
+  const [montageError, setMontageError] = useState(false);
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [deathDate, setDeathDate] = useState("");
+  const [firstName, setFirstName] = useState(
+    hydrated.essentials?.firstName ?? "",
+  );
+  const [lastName, setLastName] = useState(hydrated.essentials?.lastName ?? "");
+  const [birthDate, setBirthDate] = useState(
+    hydrated.essentials?.birthDate ?? "",
+  );
+  const [deathDate, setDeathDate] = useState(
+    hydrated.essentials?.deathDate ?? "",
+  );
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarPath, setAvatarPath] = useState<string | null>(
+    () => hydrated.essentials?.avatarPath?.trim() || null,
+  );
 
-  const [selectedSocial, setSelectedSocial] = useState<SocialId | null>(null);
-  const [selectedMood, setSelectedMood] = useState<MoodId | null>(null);
-  const [trackOrder, setTrackOrder] = useState<TrackId[]>(["a", "b", "c"]);
-  const [draggingId, setDraggingId] = useState<TrackId | null>(null);
+  const [selectedSocial, setSelectedSocial] = useState<SocialId | null>(
+    hydrated.socialSources?.selected ?? null,
+  );
+  const [montage, setMontage] = useState<WizardMontageState>(
+    () => hydrated.montage ?? emptyMontageState(),
+  );
+  const [extensions, setExtensions] = useState<WizardExtensionsState>(
+    () => hydrated.extensions ?? {},
+  );
+  const [actTracks, setActTracks] = useState<WizardActTracks>(
+    () => hydrated.musicalAmbiance?.tracks ?? emptyActTracks(),
+  );
+  const [isPaying, setIsPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const avatarHydratedPathRef = useRef<string | null>(null);
+  const avatarHydrateInflightRef = useRef<string | null>(null);
+  const pendingAvatarFileRef = useRef<File | null>(null);
+  const avatarUploadingRef = useRef(false);
   const wizardTitleId = useId();
 
   // Identifiants DB nécessaires pour passer RLS Storage + insert media_assets.
   // Le service d'upload écrit owner_user_id (convention Odyssey, pas user_id)
   // et tenant_id : les deux colonnes sont NOT NULL côté DB, donc indispensables
   // sous peine de faire planter l'upsert.
-  const [uploadProjectId, setUploadProjectId] = useState<string | null>(null);
-  const [uploadUserId, setUploadUserId] = useState<string | null>(null);
-  const [uploadTenantId, setUploadTenantId] = useState<string | null>(null);
-  const [projectDraftError, setProjectDraftError] = useState<string | null>(null);
+  const [uploadProjectId, setUploadProjectId] = useState<string | null>(
+    initialDraft?.id ?? null,
+  );
+  const [uploadUserId, setUploadUserId] = useState<string | null>(
+    initialDraft?.user_id ?? null,
+  );
+  const [uploadTenantId, setUploadTenantId] = useState<string | null>(
+    initialDraft?.tenant_id ?? null,
+  );
+  const [projectDraftError, setProjectDraftError] = useState<string | null>(
+    null,
+  );
   const [projectDraftLoading, setProjectDraftLoading] = useState(false);
-  const draftRequestedRef = useRef(false);
 
-  const moodOptions = useMemo(
-    () =>
-      [
-        { id: "soft" as const, label: copy.moodSoft },
-        { id: "classical" as const, label: copy.moodClassical },
-        { id: "melancholic" as const, label: copy.moodMelancholic },
-        { id: "bright" as const, label: copy.moodBright },
-      ] as const,
-    [copy],
-  );
+  const wizardFieldsRef = useRef<WizardFieldsSnapshot>({
+    firstName,
+    lastName,
+    birthDate,
+    deathDate,
+    avatarPath,
+    selectedSocial,
+    montage,
+    extensions,
+    actTracks,
+  });
+  wizardFieldsRef.current = {
+    firstName,
+    lastName,
+    birthDate,
+    deathDate,
+    avatarPath,
+    selectedSocial,
+    montage,
+    extensions,
+    actTracks,
+  };
 
-  const trackLabels = useMemo(
-    (): Record<TrackId, string> => ({
-      a: copy.trackA,
-      b: copy.trackB,
-      c: copy.trackC,
-    }),
-    [copy],
-  );
+  const skipInitialAutosaveRef = useRef(Boolean(initialDraft?.id));
+  const skipStepAutosaveRef = useRef(true);
+
+  const buildWizardState = useCallback((): WizardStateV1 => {
+    const s = wizardFieldsRef.current;
+    return normalizeWizardStateForSave({
+      version: WIZARD_STATE_VERSION,
+      essentials: {
+        firstName: s.firstName.trim() || undefined,
+        lastName: s.lastName.trim() || undefined,
+        birthDate: s.birthDate || undefined,
+        deathDate: s.deathDate || undefined,
+        avatarPath: s.avatarPath?.trim() || undefined,
+      },
+      socialSources: s.selectedSocial
+        ? { selected: s.selectedSocial }
+        : undefined,
+      montage: s.montage,
+      extensions: s.extensions,
+      ...(hasAnyActTrack(s.actTracks)
+        ? {
+            musicalAmbiance: {
+              tracks: s.actTracks,
+              catalogProvider: STINGRAY_CATALOG_PROVIDER,
+            },
+          }
+        : {}),
+    });
+  }, []);
+
+  const { status: autosaveStatus, queueSave, flush, ensureDraft } =
+    useWizardAutosave({
+      projectId: uploadProjectId,
+      wizardStep: currentStep,
+      buildWizardState,
+    });
 
   const deceasedDisplayName = useMemo(() => {
     const fn = firstName.trim();
@@ -130,6 +261,13 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
   }, [birthDate, deathDate, copy.headerYears]);
 
   useEffect(() => {
+    console.log(
+      "[TributeWizard] hydrated.essentials?.avatarPath:",
+      hydrated.essentials?.avatarPath ?? null,
+    );
+  }, [hydrated.essentials?.avatarPath]);
+
+  useEffect(() => {
     return () => {
       if (avatarPreview?.startsWith("blob:")) {
         URL.revokeObjectURL(avatarPreview);
@@ -137,13 +275,134 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
     };
   }, [avatarPreview]);
 
-  // À l'entrée dans l'étape 3, crée un projet "draft" en DB pour disposer d'un
-  // project_id réel — exigé par les policies RLS sur Storage et media_assets.
+  const hydrateAvatarPreview = useCallback(
+    async (storagePath: string, projectId: string) => {
+      if (avatarHydrateInflightRef.current === storagePath) return;
+      avatarHydrateInflightRef.current = storagePath;
+
+      try {
+        const apiRes = await fetch(
+          `/api/projects/${projectId}/avatar?path=${encodeURIComponent(storagePath)}`,
+        );
+
+        if (apiRes.ok) {
+          const body = (await apiRes.json()) as { signedUrl?: string };
+          if (body.signedUrl) {
+            console.log(
+              "[TributeWizard] avatar signed URL (API):",
+              storagePath,
+            );
+            avatarHydratedPathRef.current = storagePath;
+            setAvatarPreview(body.signedUrl);
+            return;
+          }
+        }
+
+        const supabase = createClient();
+        const { data: signed, error: signError } = await supabase.storage
+          .from("user-assets")
+          .createSignedUrl(storagePath, AVATAR_SIGNED_URL_TTL_SEC);
+
+        if (!signError && signed?.signedUrl) {
+          console.log(
+            "[TributeWizard] avatar signed URL (client):",
+            storagePath,
+          );
+          avatarHydratedPathRef.current = storagePath;
+          setAvatarPreview(signed.signedUrl);
+          return;
+        }
+
+        const { data: blob, error: downloadError } = await supabase.storage
+          .from("user-assets")
+          .download(storagePath);
+
+        if (downloadError || !blob) {
+          console.warn(
+            "[TributeWizard] avatar hydrate failed:",
+            downloadError?.message ?? signError?.message ?? "unknown",
+          );
+          return;
+        }
+
+        const blobUrl = URL.createObjectURL(blob);
+        console.log("[TributeWizard] avatar blob URL:", storagePath);
+        avatarHydratedPathRef.current = storagePath;
+        setAvatarPreview(blobUrl);
+      } finally {
+        avatarHydrateInflightRef.current = null;
+      }
+    },
+    [],
+  );
+
+  // Réhydrate l'avatar depuis Storage après F5 (blob local perdu, avatarPath en DB).
   useEffect(() => {
-    if (currentStep !== 3) return;
+    const path =
+      avatarPath?.trim() || hydrated.essentials?.avatarPath?.trim() || "";
+    if (!path) return;
+    if (avatarPreview?.startsWith("blob:")) return;
+    if (avatarHydratedPathRef.current === path && avatarPreview) return;
+    if (!uploadProjectId) return;
+
+    void hydrateAvatarPreview(path, uploadProjectId);
+  }, [
+    avatarPath,
+    avatarPreview,
+    hydrated.essentials?.avatarPath,
+    uploadProjectId,
+    hydrateAvatarPreview,
+  ]);
+
+  useEffect(() => {
+    const fromDraft = hydrated.essentials?.avatarPath?.trim();
+    if (fromDraft && !avatarPath) {
+      setAvatarPath(fromDraft);
+      wizardFieldsRef.current.avatarPath = fromDraft;
+    }
+  }, [avatarPath, hydrated.essentials?.avatarPath]);
+
+  const uploadAvatarToStorage = useCallback(
+    async (file: File, projectId: string) => {
+      if (avatarUploadingRef.current) return;
+      avatarUploadingRef.current = true;
+      try {
+        const supabase = createClient();
+        const storagePath = buildAvatarStoragePath(projectId, file);
+        const { error } = await supabase.storage
+          .from("user-assets")
+          .upload(storagePath, file, {
+            cacheControl: "3600",
+            upsert: true,
+            contentType: file.type || undefined,
+          });
+
+        if (error) throw error;
+
+        setAvatarPath(storagePath);
+        wizardFieldsRef.current.avatarPath = storagePath;
+        avatarHydratedPathRef.current = null;
+        queueSave("immediate");
+      } catch {
+        // Preview blob reste visible ; path non persisté jusqu'à retry.
+      } finally {
+        avatarUploadingRef.current = false;
+      }
+    },
+    [queueSave],
+  );
+
+  useEffect(() => {
+    if (!uploadProjectId || !pendingAvatarFileRef.current) return;
+    const file = pendingAvatarFileRef.current;
+    pendingAvatarFileRef.current = null;
+    void uploadAvatarToStorage(file, uploadProjectId);
+  }, [uploadProjectId, uploadAvatarToStorage]);
+
+  // Crée le projet draft dès que le prénom atteint 2 caractères (autosave + RLS étape 3).
+  useEffect(() => {
     if (uploadProjectId) return;
-    if (draftRequestedRef.current) return;
-    draftRequestedRef.current = true;
+    if (firstName.trim().length < 2) return;
 
     let aborted = false;
     setProjectDraftLoading(true);
@@ -151,49 +410,28 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
 
     (async () => {
       try {
-        const res = await fetch("/api/projects/draft", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            firstName: firstName.trim() || undefined,
-            lastName: lastName.trim() || undefined,
-            birthDate: birthDate || undefined,
-            deathDate: deathDate || undefined,
-          }),
+        const draft = await ensureDraft({
+          firstName,
+          lastName,
+          birthDate,
+          deathDate,
         });
-        const payload = (await res.json().catch(() => null)) as
-          | {
-              id?: string;
-              user_id?: string;
-              tenant_id?: string;
-              error?: string;
-              message?: string;
-            }
-          | null;
 
-        if (!res.ok || !payload?.id) {
-          const reason =
-            payload?.message ??
-            payload?.error ??
-            `HTTP ${res.status}`;
-          if (!aborted) {
-            setProjectDraftError(reason);
-            draftRequestedRef.current = false;
-          }
+        if (aborted) return;
+
+        if (!draft?.id) {
+          setProjectDraftError("project_insert_failed");
           return;
         }
 
-        if (!aborted) {
-          setUploadProjectId(payload.id);
-          setUploadUserId(payload.user_id ?? null);
-          setUploadTenantId(payload.tenant_id ?? null);
-        }
+        setUploadProjectId(draft.id);
+        setUploadUserId(draft.user_id ?? null);
+        setUploadTenantId(draft.tenant_id ?? null);
       } catch (err) {
         if (!aborted) {
           setProjectDraftError(
             err instanceof Error ? err.message : "network_error",
           );
-          draftRequestedRef.current = false;
         }
       } finally {
         if (!aborted) setProjectDraftLoading(false);
@@ -203,7 +441,34 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
     return () => {
       aborted = true;
     };
-  }, [currentStep, uploadProjectId]);
+  }, [
+    firstName,
+    lastName,
+    birthDate,
+    deathDate,
+    uploadProjectId,
+    ensureDraft,
+  ]);
+
+  // Seed wizard_state en DB après la première création de projet (pas à la reprise).
+  useEffect(() => {
+    if (!uploadProjectId) return;
+    if (skipInitialAutosaveRef.current) {
+      skipInitialAutosaveRef.current = false;
+      return;
+    }
+    queueSave("immediate");
+  }, [uploadProjectId, queueSave]);
+
+  // Persiste wizard_step après navigation (flush couvre les champs ; ceci met à jour l'étape).
+  useEffect(() => {
+    if (!uploadProjectId) return;
+    if (skipStepAutosaveRef.current) {
+      skipStepAutosaveRef.current = false;
+      return;
+    }
+    queueSave("immediate");
+  }, [currentStep, uploadProjectId, queueSave]);
 
   const canProceedEssential =
     firstName.trim().length > 0 &&
@@ -211,7 +476,16 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
     birthDate.length > 0 &&
     deathDate.length > 0;
 
-  const goNext = useCallback(() => {
+  const navigateToStep = useCallback(
+    async (step: Step) => {
+      if (step === currentStep) return;
+      await flush();
+      setCurrentStep(step);
+    },
+    [currentStep, flush],
+  );
+
+  const goNext = useCallback(async () => {
     if (currentStep === 1) {
       if (!canProceedEssential) {
         setEssentialError(true);
@@ -219,12 +493,145 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
       }
       setEssentialError(false);
     }
-    setCurrentStep((s) => (s < TOTAL_STEPS ? ((s + 1) as Step) : s));
-  }, [currentStep, canProceedEssential]);
+    if (currentStep === 4) {
+      if (countIncludedMedia(montage) === 0) {
+        setMontageError(true);
+        return;
+      }
+      setMontageError(false);
+    }
+    if (currentStep >= TOTAL_STEPS) return;
+    await navigateToStep((currentStep + 1) as Step);
+  }, [currentStep, canProceedEssential, navigateToStep, montage]);
 
-  const goBack = useCallback(() => {
-    setCurrentStep((s) => (s > 1 ? ((s - 1) as Step) : s));
-  }, []);
+  const handleMontageChange = useCallback(
+    (next: WizardMontageState) => {
+      setMontage(next);
+      wizardFieldsRef.current.montage = next;
+      if (countIncludedMedia(next) > 0) setMontageError(false);
+      queueSave("immediate");
+    },
+    [queueSave],
+  );
+
+  const goBack = useCallback(async () => {
+    if (currentStep <= 1) return;
+    await navigateToStep((currentStep - 1) as Step);
+  }, [currentStep, navigateToStep]);
+
+  const handleStepperClick = useCallback(
+    (step: number) => {
+      void navigateToStep(step as Step);
+    },
+    [navigateToStep],
+  );
+
+  const handleFirstNameChange = useCallback(
+    (value: string) => {
+      setFirstName(value);
+      wizardFieldsRef.current.firstName = value;
+      queueSave("text");
+    },
+    [queueSave],
+  );
+
+  const handleLastNameChange = useCallback(
+    (value: string) => {
+      setLastName(value);
+      wizardFieldsRef.current.lastName = value;
+      queueSave("text");
+    },
+    [queueSave],
+  );
+
+  const handleBirthDateChange = useCallback(
+    (value: string) => {
+      setBirthDate(value);
+      wizardFieldsRef.current.birthDate = value;
+      queueSave("text");
+    },
+    [queueSave],
+  );
+
+  const handleDeathDateChange = useCallback(
+    (value: string) => {
+      setDeathDate(value);
+      wizardFieldsRef.current.deathDate = value;
+      queueSave("text");
+    },
+    [queueSave],
+  );
+
+  const handleSocialSelect = useCallback(
+    (id: SocialId) => {
+      const next = id === selectedSocial ? null : id;
+      setSelectedSocial(next);
+      wizardFieldsRef.current.selectedSocial = next;
+      queueSave("immediate");
+    },
+    [selectedSocial, queueSave],
+  );
+
+  const handleActTracksChange = useCallback(
+    (next: WizardActTracks) => {
+      setActTracks(next);
+      wizardFieldsRef.current.actTracks = next;
+      queueSave("immediate");
+    },
+    [queueSave],
+  );
+
+  const handleExtensionsChange = useCallback(
+    (next: WizardExtensionsState) => {
+      setExtensions(next);
+      wizardFieldsRef.current.extensions = next;
+      queueSave("immediate");
+    },
+    [queueSave],
+  );
+
+  const handleContinueToPreview = useCallback(async () => {
+    await navigateToStep(7);
+  }, [navigateToStep]);
+
+  const handleProceedToPayment = useCallback(async () => {
+    await navigateToStep(8);
+  }, [navigateToStep]);
+
+  const handlePreviewEdit = useCallback(async () => {
+    await navigateToStep(6);
+  }, [navigateToStep]);
+
+  const handlePay = useCallback(async () => {
+    if (!uploadProjectId) {
+      setPayError(copy.checkoutMissingProject);
+      return;
+    }
+
+    setIsPaying(true);
+    setPayError(null);
+
+    try {
+      await flush();
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectId: uploadProjectId, locale }),
+      });
+      const data = (await res.json()) as { url?: string; error?: string };
+
+      if (!res.ok || !data.url) {
+        setPayError(copy.checkoutPayError);
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch {
+      setPayError(copy.checkoutPayError);
+    } finally {
+      setIsPaying(false);
+    }
+  }, [uploadProjectId, locale, flush, copy]);
 
   const handleAvatarChange = useCallback(
     (list: FileList | null) => {
@@ -234,27 +641,16 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
         if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
         return URL.createObjectURL(file);
       });
+      avatarHydratedPathRef.current = null;
+
+      if (uploadProjectId) {
+        void uploadAvatarToStorage(file, uploadProjectId);
+      } else {
+        pendingAvatarFileRef.current = file;
+      }
     },
-    [],
+    [uploadProjectId, uploadAvatarToStorage],
   );
-
-  const finish = useCallback(() => {
-    if (!selectedMood) return;
-    setCompleted(true);
-  }, [selectedMood]);
-
-  const reorderTracks = useCallback((from: TrackId, to: TrackId) => {
-    if (from === to) return;
-    setTrackOrder((order) => {
-      const arr = [...order];
-      const fromIdx = arr.indexOf(from);
-      const toIdx = arr.indexOf(to);
-      if (fromIdx === -1 || toIdx === -1) return order;
-      const [item] = arr.splice(fromIdx, 1);
-      arr.splice(toIdx, 0, item);
-      return arr;
-    });
-  }, []);
 
   const socialRows = useMemo(
     () =>
@@ -287,26 +683,64 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
     [copy],
   );
 
-  if (completed) {
-    return (
-      <section
-        className="mx-auto mt-12 max-w-xl rounded-2xl border border-white/10 bg-white/[0.03] px-8 py-14 text-center shadow-[0_0_40px_rgba(6,182,212,0.08)] backdrop-blur-md"
-        aria-live="polite"
-      >
-        <Heart
-          className="mx-auto mb-6 h-10 w-10 text-teal-400/75"
-          strokeWidth={1.25}
-          aria-hidden
-        />
-        <p className="font-[family-name:var(--font-label)] text-lg font-light leading-relaxed tracking-wide text-zinc-200 md:text-xl">
-          {copy.completedMessage}
-        </p>
-      </section>
-    );
-  }
+  const extensionRecapLineLabels = useMemo(
+    () => ({
+      aiRetouch: copy.recapLineAiRetouch,
+      extendedLicense: copy.recapLineExtendedLicense,
+      collectorUsb: copy.recapLineCollectorUsb,
+      digitalVault: copy.recapLineDigitalVault,
+      heritagePack: copy.recapLineHeritagePack,
+    }),
+    [copy],
+  );
+
+  const stepperSteps = useMemo(
+    () => [
+      { id: 1, label: copy.stepperEssentials },
+      { id: 2, label: copy.stepperSources },
+      { id: 3, label: copy.stepperVault },
+      { id: 4, label: copy.stepperMontage },
+      { id: 5, label: copy.stepperSound },
+      { id: 6, label: copy.stepperExtensions },
+      { id: 7, label: copy.stepperPreview },
+      { id: 8, label: copy.stepperCheckout },
+    ],
+    [copy],
+  );
 
   return (
-    <div className="relative mx-auto mt-10 w-full max-w-xl">
+    <div
+      className={`relative mx-auto mt-10 w-full ${
+        currentStep === 4
+          ? "max-w-6xl px-2 md:px-4"
+          : currentStep === 7
+            ? "max-w-4xl"
+            : currentStep >= 5
+              ? "max-w-3xl"
+              : "max-w-xl"
+      }`}
+    >
+      {currentStep > 1 ? (
+        <button
+          type="button"
+          onClick={() => void goBack()}
+          className="mb-6 inline-flex items-center gap-2 rounded-lg px-1 py-1 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-100"
+        >
+          <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
+          {copy.back}
+        </button>
+      ) : null}
+
+      <AutosaveIndicator
+        status={autosaveStatus}
+        copy={{
+          saving: copy.autosaveSaving,
+          saved: copy.autosaveSaved,
+          error: copy.autosaveError,
+        }}
+        className="-translate-y-1 md:-translate-y-2"
+      />
+
       {/* Sticky tribute header — à partir de l’étape 2 */}
       {currentStep >= 2 ? (
         <header className="sticky top-0 z-50 -mx-6 mb-8 border-b border-white/10 bg-black/40 px-6 py-3.5 backdrop-blur-xl md:-mx-10 md:px-10">
@@ -318,6 +752,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
               {avatarPreview ? (
                 <img
                   alt=""
+                  key={avatarPreview}
                   src={avatarPreview}
                   className="h-full w-full object-cover"
                 />
@@ -343,30 +778,30 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
         className="flex flex-col"
         aria-labelledby={wizardTitleId}
       >
-        <div
-          className="mb-10 flex flex-col items-center gap-3"
-          role="group"
-          aria-label={copy.progressAria}
-        >
-          <p className="sr-only">
-            {replaceStepLabel(copy.stepLabel, currentStep, TOTAL_STEPS)}
-          </p>
-          <div className="flex items-center gap-2" aria-hidden>
-            {[1, 2, 3, 4].map((dot) => (
-              <span
-                key={dot}
-                className={`h-1.5 rounded-full transition-all duration-500 ease-out ${
-                  dot === currentStep
-                    ? "w-7 bg-white/50 shadow-[0_0_12px_rgba(167,139,250,0.35)]"
-                    : dot < currentStep
-                      ? "w-1.5 bg-white/30"
-                      : "w-1.5 bg-white/12"
-                }`}
-              />
-            ))}
+        <WizardStepper
+          steps={stepperSteps}
+          currentStep={currentStep}
+          totalSteps={TOTAL_STEPS}
+          onStepClick={handleStepperClick}
+          copy={{
+            ariaLabel: copy.progressAria,
+            stepLabel: copy.stepLabel,
+          }}
+        />
+
+        {currentStep >= 5 && currentStep <= 6 ? (
+          <div className="mb-8">
+            <WizardCartSummary
+              locale={locale}
+              extensions={extensions}
+              copy={{
+                labelWithOptions: copy.cartLabelWithOptions,
+                labelBaseOnly: copy.cartLabelBaseOnly,
+                totalFormula: copy.cartTotalFormula,
+              }}
+            />
           </div>
-          <div className="h-px w-full max-w-[12rem] bg-gradient-to-r from-transparent via-white/12 to-transparent" />
-        </div>
+        ) : null}
 
         <div className="min-h-[min(48vh,26rem)] pb-40">
           {currentStep === 1 ? (
@@ -408,6 +843,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                   {avatarPreview ? (
                     <img
                       alt=""
+                      key={avatarPreview}
                       src={avatarPreview}
                       className="relative z-[1] h-full w-full object-cover"
                     />
@@ -453,7 +889,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                   <input
                     id="tw-first"
                     value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
+                    onChange={(e) => handleFirstNameChange(e.target.value)}
                     autoComplete="given-name"
                     className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-violet-400/25 focus:shadow-[0_0_24px_rgba(139,92,246,0.12)]"
                     placeholder={copy.firstNameLabel}
@@ -470,7 +906,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                   <input
                     id="tw-last"
                     value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
+                    onChange={(e) => handleLastNameChange(e.target.value)}
                     autoComplete="family-name"
                     className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-violet-400/25 focus:shadow-[0_0_24px_rgba(139,92,246,0.12)]"
                     placeholder={copy.lastNameLabel}
@@ -492,7 +928,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                       id="tw-birth"
                       type="date"
                       value={birthDate}
-                      onChange={(e) => setBirthDate(e.target.value)}
+                      onChange={(e) => handleBirthDateChange(e.target.value)}
                       className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-base font-light text-zinc-200 outline-none focus:border-teal-400/25 focus:shadow-[0_0_20px_rgba(6,182,212,0.12)]"
                     />
                   </div>
@@ -511,7 +947,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                       id="tw-death"
                       type="date"
                       value={deathDate}
-                      onChange={(e) => setDeathDate(e.target.value)}
+                      onChange={(e) => handleDeathDateChange(e.target.value)}
                       className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-base font-light text-zinc-200 outline-none focus:border-teal-400/25 focus:shadow-[0_0_20px_rgba(6,182,212,0.12)]"
                     />
                   </div>
@@ -555,9 +991,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                         : "border-white/10 hover:border-white/16"
                     }`}
                     aria-pressed={selectedSocial === id}
-                    onClick={() =>
-                      setSelectedSocial(id === selectedSocial ? null : id)
-                    }
+                    onClick={() => handleSocialSelect(id)}
                   >
                     <span
                       className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -578,7 +1012,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
               <button
                 type="button"
                 className="mt-10 w-full rounded-2xl border border-dashed border-white/15 bg-white/[0.02] py-4 text-center text-base font-light text-zinc-400 transition-colors hover:border-white/22 hover:bg-white/[0.05] hover:text-zinc-200"
-                onClick={goNext}
+                onClick={() => void goNext()}
               >
                 {copy.skipSources}
               </button>
@@ -608,7 +1042,6 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                   <button
                     type="button"
                     onClick={() => {
-                      draftRequestedRef.current = false;
                       setProjectDraftError(null);
                       setUploadProjectId(null);
                     }}
@@ -740,7 +1173,8 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                         <MediaQueueGrid
                           items={dz.items}
                           isRunning={dz.isRunning}
-                          onRemove={dz.removeItem}
+                          deletingId={dz.deletingId}
+                          onRemove={dz.handleRemoveItem}
                           onRetry={dz.retryItem}
                           copy={{
                             emptyTitle: copy.queueEmpty,
@@ -766,7 +1200,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
                           <div className="mx-auto flex max-w-xl gap-3">
                             <button
                               type="button"
-                              onClick={goBack}
+                              onClick={() => void goBack()}
                               className="font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/10 bg-white/[0.06] px-4 text-base font-normal text-zinc-200 shadow-[0_0_20px_rgba(255,255,255,0.04)] transition-colors hover:bg-white/[0.09]"
                             >
                               {copy.back}
@@ -774,7 +1208,7 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
 
                           <button
                             type="button"
-                            onClick={goNext}
+                            onClick={() => void goNext()}
                             disabled={isStep3Locked}
                             className="font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-white/12 bg-white/[0.08] px-4 text-base font-normal text-zinc-50 shadow-[0_0_24px_rgba(167,139,250,0.12)] transition-colors hover:bg-white/[0.11] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
                           >
@@ -794,126 +1228,208 @@ export function TributeWizard({ copy }: { copy: TributeWizardCopy }) {
             <>
               <h2
                 id={wizardTitleId}
-                className="font-[family-name:var(--font-label)] text-balance text-2xl font-light tracking-wide text-zinc-100 md:text-[1.65rem]"
+                className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl"
               >
-                {copy.stepAmbianceTitle}
+                {copy.stepMontageTitle}
               </h2>
-              <p className="mt-5 text-lg font-light leading-relaxed text-zinc-400 md:text-xl">
-                {copy.stepAmbianceDescription}
-              </p>
-              <p className="mt-3 text-sm font-light text-zinc-500">
-                {copy.moodHint}
-              </p>
 
-              <div
-                className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2"
-                role="radiogroup"
-                aria-label={copy.stepAmbianceTitle}
-              >
-                {moodOptions.map(({ id, label }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    role="radio"
-                    aria-checked={selectedMood === id}
-                    className={`group relative overflow-hidden rounded-2xl border px-4 py-5 text-left text-base transition-[border,box-shadow] md:text-lg ${
-                      selectedMood === id
-                        ? "border-cyan-400/35 shadow-[0_0_28px_rgba(34,211,238,0.18)]"
-                        : "border-white/10 shadow-[0_0_16px_rgba(6,182,212,0.06)] hover:border-white/15"
-                    }`}
-                    onClick={() => setSelectedMood(id)}
-                  >
-                    <span
-                      className={`pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
-                        selectedMood === id ? "opacity-60" : ""
-                      }`}
-                      style={{
-                        background:
-                          "radial-gradient(circle at 50% 120%, rgba(34,211,238,0.18) 0%, rgba(139,92,246,0.08) 45%, transparent 70%)",
-                      }}
-                    />
-                    <span className="relative font-[family-name:var(--font-label)] text-zinc-100">
-                      {label}
-                    </span>
-                  </button>
-                ))}
-              </div>
+              {uploadProjectId ? (
+                <div className="mt-6">
+                  <MontageStep
+                    projectId={uploadProjectId}
+                    montage={montage}
+                    onMontageChange={handleMontageChange}
+                    copy={{
+                      loading: copy.montageLoading,
+                      empty: copy.montageEmpty,
+                      instruction: copy.stepMontageDescription,
+                      shortcutSelect: copy.montageShortcutSelect,
+                      shortcutSelectAll: copy.montageShortcutSelectAll,
+                      shortcutDrag: copy.montageShortcutDrag,
+                      focalHint: copy.montageFocalHint,
+                      clickToEdit: copy.montageClickToEdit,
+                      dragHandle: copy.montageDragHandle,
+                      remove: copy.montageRemove,
+                      unassignedTitle: copy.montageUnassignedTitle,
+                      unassignedHint: copy.montageUnassignedHint,
+                      multiDragLabel: copy.montageMultiDragLabel,
+                      selectAll: copy.montageSelectAll,
+                      selectionCount: copy.montageSelectionCount,
+                      allSelected: copy.montageAllSelected,
+                      shortcutEscape: copy.montageShortcutEscape,
+                      selectionHint: copy.montageSelectionHint,
+                      clearSelection: copy.montageClearSelection,
+                      duplicatesBanner: copy.montageDuplicatesBanner,
+                      duplicatesHint: copy.montageDuplicatesHint,
+                      removeDuplicates: copy.montageRemoveDuplicates,
+                      removingDuplicates: copy.montageRemovingDuplicates,
+                      duplicateBadge: copy.montageDuplicateBadge,
+                      deleteDuplicate: copy.montageDeleteDuplicate,
+                      actSparkLabel: copy.montageActSparkLabel,
+                      actSparkSubtitle: copy.montageActSparkSubtitle,
+                      actEpicLabel: copy.montageActEpicLabel,
+                      actEpicSubtitle: copy.montageActEpicSubtitle,
+                      actLegacyLabel: copy.montageActLegacyLabel,
+                      actLegacySubtitle: copy.montageActLegacySubtitle,
+                      actEmptyHint: copy.montageActEmptyHint,
+                      exclude: copy.montageExclude,
+                      include: copy.montageInclude,
+                      excludedBadge: copy.montageExcludedBadge,
+                      directorClose: copy.montageDirectorClose,
+                      directorPrevious: copy.montageDirectorPrevious,
+                      directorNext: copy.montageDirectorNext,
+                      directorCounter: copy.montageDirectorCounter,
+                    }}
+                  />
+                </div>
+              ) : null}
 
-              <div className="mt-14 border-t border-white/10 pt-10">
-                <p className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-zinc-500">
-                  <Music2 className="h-3.5 w-3.5" aria-hidden />
-                  {copy.tracksTitle}
+              {montageError ? (
+                <p
+                  className="mt-6 text-center text-sm font-light text-rose-400/90"
+                  role="alert"
+                >
+                  {copy.montageNeedOneIncluded}
                 </p>
-                <p className="mt-2 text-sm font-light text-zinc-500">
-                  {copy.tracksReorderHint}
-                </p>
-                <ul className="mt-5 space-y-2" aria-label={copy.tracksTitle}>
-                  {trackOrder.map((tid) => (
-                    <li
-                      key={tid}
-                      draggable
-                      onDragStart={() => setDraggingId(tid)}
-                      onDragEnd={() => setDraggingId(null)}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={() => {
-                        if (draggingId && draggingId !== tid) {
-                          reorderTracks(draggingId, tid);
-                        }
-                        setDraggingId(null);
-                      }}
-                      className={`flex cursor-grab items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3.5 shadow-[0_0_16px_rgba(99,102,241,0.06)] active:cursor-grabbing ${
-                        draggingId === tid ? "opacity-70" : ""
-                      }`}
-                    >
-                      <GripVertical
-                        className="h-5 w-5 shrink-0 text-zinc-600"
-                        aria-hidden
-                      />
-                      <span className="flex-1 text-left text-base font-light text-zinc-300">
-                        {trackLabels[tid]}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              ) : null}
             </>
+          ) : null}
+
+          {currentStep === 5 ? (
+            <SoundSignatureStep
+              tracks={actTracks}
+              onTracksChange={handleActTracksChange}
+              copy={{
+                title: copy.stepSoundTitle,
+                description: copy.stepSoundDescription,
+                act1Title: copy.soundAct1Title,
+                act2Title: copy.soundAct2Title,
+                act3Title: copy.soundAct3Title,
+                actEmptyLabel: copy.soundActEmptyLabel,
+                actProgress: copy.soundActProgress,
+                searchPlaceholder: copy.soundSearchPlaceholder,
+                searchHint: copy.soundSearchHint,
+                searching: copy.soundSearching,
+                noResults: copy.soundNoResults,
+                listenCta: copy.soundListenCta,
+                chooseCta: copy.soundChooseCta,
+                changeCta: copy.soundChangeCta,
+                serviceUnavailable: copy.soundServiceUnavailable,
+                previewUnavailable: copy.soundPreviewUnavailable,
+                licensedNote: copy.soundLicensedNote,
+              }}
+            />
+          ) : null}
+
+          {currentStep === 6 ? (
+            <MontageExtensionsStep
+              locale={locale}
+              extensions={extensions}
+              onChange={handleExtensionsChange}
+              copy={{
+                title: copy.stepExtensionsTitle,
+                description: copy.stepExtensionsDescription,
+                aiRetouchTitle: copy.extensionAiRetouchTitle,
+                aiRetouchDescription: copy.extensionAiRetouchDescription,
+                extendedLicenseTitle: copy.extensionExtendedLicenseTitle,
+                extendedLicenseDescription:
+                  copy.extensionExtendedLicenseDescription,
+                collectorUsbTitle: copy.extensionCollectorUsbTitle,
+                collectorUsbDescription: copy.extensionCollectorUsbDescription,
+                digitalVaultTitle: copy.extensionDigitalVaultTitle,
+                digitalVaultDescription: copy.extensionDigitalVaultDescription,
+                heritagePackTitle: copy.extensionHeritagePackTitle,
+                heritagePackDescription: copy.extensionHeritagePackDescription,
+                heritagePackSavings: copy.extensionHeritagePackSavings,
+                heritagePackIncludes: copy.extensionHeritagePackIncludes,
+                selectedBadge: copy.extensionSelectedBadge,
+                recapTitle: copy.extensionsRecapTitle,
+                recapEmpty: copy.extensionsRecapEmpty,
+                recapLineLabels: extensionRecapLineLabels,
+              }}
+            />
+          ) : null}
+
+          {currentStep === 7 ? (
+            <PreviewStep
+              projectId={uploadProjectId}
+              montage={montage}
+              actTracks={actTracks}
+              extensions={extensions}
+              onProceedToPayment={() => void handleProceedToPayment()}
+              onEdit={() => void handlePreviewEdit()}
+              copy={{
+                title: copy.stepPreviewTitle,
+                description: copy.stepPreviewDescription,
+                loadingMedia: copy.previewLoadingMedia,
+                payCta: copy.previewPayCta,
+                editLink: copy.previewEditLink,
+                valueNote: copy.previewValueNote,
+                valueAiRetouch: copy.previewValueAiRetouch,
+                valueLicense: copy.previewValueLicense,
+                teaserLoading: copy.previewTeaserLoading,
+                teaserEmpty: copy.previewTeaserEmpty,
+                teaserNowPlaying: copy.previewTeaserNowPlaying,
+                teaserPlay: copy.previewTeaserPlay,
+                teaserPause: copy.previewTeaserPause,
+              }}
+            />
+          ) : null}
+
+          {currentStep === 8 ? (
+            <CheckoutStep
+              locale={locale}
+              extensions={extensions}
+              isPaying={isPaying}
+              payError={payError}
+              onPay={() => void handlePay()}
+              copy={{
+                title: copy.stepCheckoutTitle,
+                description: copy.stepCheckoutDescription,
+                recapTitle: copy.checkoutRecapTitle,
+                baseLabel: copy.checkoutBaseLabel,
+                recapLineLabels: extensionRecapLineLabels,
+                totalLabel: copy.checkoutTotalLabel,
+                secureNote: copy.checkoutSecureNote,
+                payCta: copy.checkoutPayCta,
+                paying: copy.checkoutPaying,
+                payError: copy.checkoutPayError,
+              }}
+            />
           ) : null}
         </div>
       </section>
 
-      {currentStep !== 3 ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
-          <div className="mx-auto flex max-w-xl gap-3">
-            {currentStep > 1 ? (
-              <button
-                type="button"
-                onClick={goBack}
-                className="font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/10 bg-white/[0.06] px-4 text-base font-normal text-zinc-200 shadow-[0_0_20px_rgba(255,255,255,0.04)] transition-colors hover:bg-white/[0.09]"
-              >
-                {copy.back}
-              </button>
-            ) : (
-              <span className="min-h-[52px] flex-1" aria-hidden />
-            )}
+      {currentStep === 6 ? (
+        <ExtensionsStickyFooter
+          locale={locale}
+          extensions={extensions}
+          onSkip={() => void handleContinueToPreview()}
+          onContinue={() => void handleContinueToPreview()}
+          copy={{
+            totalFormula: copy.extensionsFooterTotalFormula,
+            continueCta: copy.extensionsFooterContinueCta,
+            skipStep: copy.skipStep,
+          }}
+        />
+      ) : null}
 
-            {currentStep < TOTAL_STEPS ? (
+      {currentStep !== 3 && currentStep !== 6 && currentStep !== 7 && currentStep !== 8 ? (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
+          <div
+            className={`mx-auto ${
+              currentStep >= 5 ? "max-w-3xl" : "max-w-xl"
+            }`}
+          >
+            {currentStep <= 5 ? (
               <button
                 type="button"
-                onClick={goNext}
-                className="font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-white/12 bg-white/[0.08] px-4 text-base font-normal text-zinc-50 shadow-[0_0_24px_rgba(167,139,250,0.12)] transition-colors hover:bg-white/[0.11]"
+                onClick={() => void goNext()}
+                className="font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-white/12 bg-white/[0.08] px-4 text-base font-normal text-zinc-50 shadow-[0_0_24px_rgba(167,139,250,0.12)] transition-colors hover:bg-white/[0.11]"
               >
                 {copy.next}
               </button>
-            ) : (
-              <button
-                type="button"
-                onClick={finish}
-                disabled={!selectedMood}
-                className="font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/30 bg-teal-950/35 px-4 text-base font-normal text-teal-50 shadow-[0_0_28px_rgba(45,212,191,0.35)] transition-[background,box-shadow,opacity] hover:bg-teal-900/40 hover:shadow-[0_0_40px_rgba(34,211,238,0.38)] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
-              >
-                {copy.finishCta}
-              </button>
-            )}
+            ) : null}
           </div>
         </div>
       ) : null}

@@ -1,51 +1,37 @@
 import { createClient } from "@/utils/supabase/client";
+import {
+  computeUploadProgress,
+  isLocalMediaItem,
+  type MediaAssetInsertRow,
+  type MediaGridItem,
+  type MediaUploadSource,
+  type UploadProgress,
+  type UploadQueueItem,
+} from "@/src/lib/media/mediaTypes";
 
-export type MediaUploadStatus =
-  | "queued"
-  | "uploading"
-  | "uploaded"
-  | "failed"
-  | "cancelled";
+export type {
+  HydratedMediaApiItem,
+  HydratedMediaListResponse,
+  MediaAssetInsertRow,
+  MediaGridItem,
+  MediaItemOrigin,
+  MediaUploadSource,
+  MediaUploadStatus,
+  UploadProgress,
+  UploadQueueItem,
+} from "@/src/lib/media/mediaTypes";
 
-export type MediaUploadSource =
-  | "local"
-  | "facebook"
-  | "instagram"
-  | "tiktok"
-  | "google_photos";
-
-export type UploadQueueItem = {
-  id: string;
-  file: File;
-  status: MediaUploadStatus;
-  attempts: number;
-  error?: string | null;
-  storagePath?: string | null;
-  orderIndex?: number;
-};
-
-export type UploadProgress = {
-  total: number;
-  queued: number;
-  uploading: number;
-  uploaded: number;
-  failed: number;
-  cancelled: number;
-};
-
-export type MediaAssetInsertRow = {
-  project_id: string;
-  storage_path: string;
-  mime_type: string | null;
-  size_bytes: number;
-  source: MediaUploadSource | string;
-  upload_status: "uploaded";
-  order_index: number;
-  // Convention DB Odyssey : owner_user_id (NOT NULL) et tenant_id (NOT NULL).
-  // Cf. docs/sql/odyssey_p2b_media_assets_cleanup.sql.
-  owner_user_id?: string;
-  tenant_id?: string;
-};
+export {
+  computeUploadProgress,
+  createLocalQueueItem,
+  displayNameFromStoragePath,
+  getItemDisplayName,
+  getItemMimeType,
+  getItemSizeBytes,
+  hydratedApiItemToGridItem,
+  isLocalMediaItem,
+  isRemoteMediaItem,
+} from "@/src/lib/media/mediaTypes";
 
 export type UploadCallbacks = {
   onItemUpdate?: (item: UploadQueueItem) => void;
@@ -83,17 +69,6 @@ const DEFAULT_BUCKET = "user-assets";
 const DEFAULT_MAX_CONCURRENCY = 4;
 const DEFAULT_MAX_RETRIES = 2;
 
-function computeProgress(items: UploadQueueItem[]): UploadProgress {
-  return {
-    total: items.length,
-    queued: items.filter((i) => i.status === "queued").length,
-    uploading: items.filter((i) => i.status === "uploading").length,
-    uploaded: items.filter((i) => i.status === "uploaded").length,
-    failed: items.filter((i) => i.status === "failed").length,
-    cancelled: items.filter((i) => i.status === "cancelled").length,
-  };
-}
-
 function safeFileName(fileName: string): string {
   return fileName
     .toLowerCase()
@@ -109,7 +84,11 @@ function extFromFile(file: File): string {
   return "bin";
 }
 
-function buildStoragePath(projectId: string, item: UploadQueueItem): string {
+function buildStoragePath(projectId: string, item: MediaGridItem): string {
+  if (!isLocalMediaItem(item)) {
+    throw new Error("Cannot build storage path for non-local media item");
+  }
+
   const now = new Date();
   const yyyy = String(now.getUTCFullYear());
   const mm = String(now.getUTCMonth() + 1).padStart(2, "0");
@@ -134,7 +113,11 @@ async function uploadAndInsert(
     bucket: string;
     insertRowFactory?: UploadBatchParams["insertRowFactory"];
   },
-): Promise<{ storagePath: string }> {
+): Promise<{ storagePath: string; assetId: string | null }> {
+  if (!isLocalMediaItem(params.item)) {
+    throw new Error("Upload requires a local file item");
+  }
+
   const supabase = createClient();
   const storagePath = buildStoragePath(params.projectId, params.item);
 
@@ -171,17 +154,22 @@ async function uploadAndInsert(
       ...(params.tenantId ? { tenant_id: params.tenantId } : {}),
     } satisfies MediaAssetInsertRow);
 
-  const { error: insertError } = await supabase
+  const { data: inserted, error: insertError } = await supabase
     .from("media_assets")
     .upsert(row, {
       onConflict: "project_id,storage_path",
-      ignoreDuplicates: true,
-    });
+      ignoreDuplicates: false,
+    })
+    .select("id")
+    .maybeSingle();
   if (insertError) {
     throw new Error(`media_assets upsert failed: ${insertError.message}`);
   }
 
-  return { storagePath };
+  return {
+    storagePath,
+    assetId: inserted?.id ?? null,
+  };
 }
 
 async function uploadWithRetries(
@@ -196,7 +184,7 @@ async function uploadWithRetries(
     signal?: AbortSignal;
     insertRowFactory?: UploadBatchParams["insertRowFactory"];
   },
-): Promise<{ storagePath: string }> {
+): Promise<{ storagePath: string; assetId: string | null }> {
   let lastError: unknown = null;
 
   for (let attempt = 1; attempt <= params.maxRetries + 1; attempt += 1) {
@@ -217,7 +205,6 @@ async function uploadWithRetries(
     } catch (error) {
       lastError = error;
       if (attempt <= params.maxRetries) {
-        // Backoff progressif pour réduire la pression réseau.
         await sleep(300 * 2 ** (attempt - 1));
       }
     }
@@ -239,7 +226,6 @@ export async function uploadMediaBatch(
   const maxRetries = Math.max(0, params.maxRetries ?? DEFAULT_MAX_RETRIES);
   const bucket = params.bucket ?? DEFAULT_BUCKET;
 
-  // Copie locale mutée par les workers, puis renvoyée.
   const items = params.items.map((item, index) => ({
     ...item,
     orderIndex: item.orderIndex ?? index,
@@ -248,7 +234,7 @@ export async function uploadMediaBatch(
   let cursor = 0;
 
   const emit = () => {
-    params.onProgress?.(computeProgress(items));
+    params.onProgress?.(computeUploadProgress(items));
   };
 
   const worker = async () => {
@@ -259,7 +245,15 @@ export async function uploadMediaBatch(
       cursor += 1;
       const item = items[currentIndex];
 
-      if (item.status === "uploaded") {
+      if (item.origin === "remote" || item.status === "uploaded") {
+        continue;
+      }
+
+      if (!isLocalMediaItem(item)) {
+        item.status = "failed";
+        item.error = "Missing local file for upload";
+        params.onItemUpdate?.({ ...item });
+        emit();
         continue;
       }
 
@@ -283,6 +277,10 @@ export async function uploadMediaBatch(
 
         item.status = "uploaded";
         item.storagePath = result.storagePath;
+        if (result.assetId) {
+          item.assetId = result.assetId;
+          item.id = result.assetId;
+        }
         item.attempts += 1;
         item.error = null;
       } catch (error) {
@@ -301,6 +299,6 @@ export async function uploadMediaBatch(
 
   return {
     items,
-    progress: computeProgress(items),
+    progress: computeUploadProgress(items),
   };
 }

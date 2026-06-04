@@ -12,6 +12,7 @@ import {
   useMassMediaUpload,
   type UseMassMediaUploadReturn,
 } from "@/src/hooks/useMassMediaUpload";
+import { isRemoteMediaItem } from "@/src/lib/media/mediaTypes";
 import type { MediaUploadSource } from "@/src/lib/uploads/mediaUploadService";
 
 const DEFAULT_MAX_FILES = 150;
@@ -85,6 +86,9 @@ export type MediaDropzoneAdapterRenderContext = {
   totals: UseMassMediaUploadReturn["totals"];
   globalProgress: number;
   isRunning: boolean;
+  isHydrating: boolean;
+  isPersistingOrder: boolean;
+  deletingId: string | null;
 
   // Rejets normalisés (pour surface UI dédiée aux erreurs).
   rejections: MediaDropzoneRejection[];
@@ -101,6 +105,8 @@ export type MediaDropzoneAdapterRenderContext = {
   retryFailed: () => Promise<void>;
   retryItem: (id: string) => Promise<void>;
   removeItem: (id: string) => void;
+  deleteRemoteItem: (id: string) => Promise<void>;
+  handleRemoveItem: (id: string) => void;
   clearCompleted: () => void;
   clearAll: () => void;
 };
@@ -163,6 +169,7 @@ export function MediaDropzoneAdapter({
   children,
 }: MediaDropzoneAdapterProps) {
   const upload = useMassMediaUpload({
+    projectId,
     maxConcurrency,
     maxRetries,
     bucket,
@@ -170,6 +177,7 @@ export function MediaDropzoneAdapter({
 
   const [rejections, setRejections] = useState<MediaDropzoneRejection[]>([]);
   const wasRunningRef = useRef(false);
+  const hydratedProjectRef = useRef<string | null>(null);
 
   const remainingSlots = useMemo(() => {
     const used = upload.items.length;
@@ -267,6 +275,41 @@ export function MediaDropzoneAdapter({
       validator: customFileValidator,
     });
 
+  const handleRemoveItem = useCallback(
+    (id: string) => {
+      const target = upload.items.find((item) => item.id === id);
+      if (!target) return;
+
+      if (
+        isRemoteMediaItem(target) ||
+        (target.status === "uploaded" && target.assetId)
+      ) {
+        void upload.deleteRemoteItem(id).catch((error) => {
+          onUploadError?.(
+            error instanceof Error ? error : new Error("Delete failed"),
+          );
+        });
+        return;
+      }
+
+      upload.removeItem(id);
+    },
+    [onUploadError, upload],
+  );
+
+  useEffect(() => {
+    if (!projectId) return;
+    if (hydratedProjectRef.current === projectId) return;
+    hydratedProjectRef.current = projectId;
+
+    void upload.loadProjectMedia(projectId).catch((error) => {
+      hydratedProjectRef.current = null;
+      onUploadError?.(
+        error instanceof Error ? error : new Error("Media hydration failed"),
+      );
+    });
+  }, [onUploadError, projectId, upload.loadProjectMedia]);
+
   useEffect(() => {
     // Détection de fin d'exécution pour notifier une seule fois le résumé.
     if (!wasRunningRef.current || upload.isRunning) {
@@ -282,8 +325,13 @@ export function MediaDropzoneAdapter({
     };
 
     onUploadComplete?.(summary);
+    void upload.persistOrder().catch((error) => {
+      onUploadError?.(
+        error instanceof Error ? error : new Error("Order persist failed"),
+      );
+    });
     wasRunningRef.current = upload.isRunning;
-  }, [onUploadComplete, upload.isRunning, upload.totals]);
+  }, [onUploadComplete, onUploadError, upload.isRunning, upload.persistOrder, upload.totals]);
 
   const context: MediaDropzoneAdapterRenderContext = {
     getRootProps,
@@ -297,6 +345,9 @@ export function MediaDropzoneAdapter({
     totals: upload.totals,
     globalProgress: upload.globalProgress,
     isRunning: upload.isRunning,
+    isHydrating: upload.isHydrating,
+    isPersistingOrder: upload.isPersistingOrder,
+    deletingId: upload.deletingId,
     rejections,
     clearRejections,
     remainingSlots,
@@ -307,6 +358,8 @@ export function MediaDropzoneAdapter({
     retryFailed,
     retryItem: upload.retryItem,
     removeItem: upload.removeItem,
+    deleteRemoteItem: upload.deleteRemoteItem,
+    handleRemoveItem,
     clearCompleted: upload.clearCompleted,
     clearAll: upload.clearAll,
   };

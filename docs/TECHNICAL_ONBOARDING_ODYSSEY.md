@@ -1,10 +1,14 @@
-# Odyssey Frontend - Onboarding Technique
+# Odyssey Frontend - Technical Onboarding
 
-Ce document permet a n'importe quel developpeur (frontend, backend, DevOps, QA) d'arriver sur le projet et de comprendre rapidement:
-- ce qui est deja implemente,
-- comment l'architecture fonctionne,
-- comment lancer/tester localement,
-- et quelles sont les prochaines etapes.
+**Last code review: June 2026**
+
+This document helps any developer (frontend, backend, DevOps, QA) onboard quickly: what is implemented, how the architecture works, how to run and test locally, and what comes next.
+
+**Deep dives (English, kept in sync with code):**
+- [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, state, autosave, act/music mapping
+- [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, composite `trackId`, preview proxy
+
+Ce document reste partiellement en francais pour l'historique produit; les sections **4.7**, **6 (Stingray)**, **10** et les annexes ci-dessus sont la reference a jour pour Jon et l'equipe technique.
 
 ---
 
@@ -15,12 +19,13 @@ Recherche rapide: les titres sont prefixes **## N)** dans ce fichier.
 | Section | Contenu |
 |---------|---------|
 | **1–3** | Contexte, stack, structure du repo |
-| **4** | Fonctions deja implementees (auth, wizard, upload, webhook Stripe) |
+| **4** | Fonctions deja implementees (auth, wizard, upload, webhook Stripe) — **§4.7 = Tribute Wizard 8 steps** |
 | **5** | Modeles de donnees (projects, orders, billing_catalog, webhook_events, media) |
-| **6–8** | Variables d'environnement, scripts, lancement local |
+| **6–8** | Variables d'environnement (**Stingray**), scripts, lancement local |
 | **9** | Check-list Vercel / GitHub |
-| **10** | **Roadmap centralisee:** fait; a terminer; **moteur video** (architecture + positionnement + adoption + **croissance virale** + **verticaliste animaux**); upsells wizard; securite P0–P2; elevation produit |
-| **11–14** | Multi-skins; isolation medias entre cibles; regles d'equipe; notes |
+| **10** | **Roadmap:** Done (May–Jun 2026) / In progress / To do |
+| **10b** | Migrations SQL (incl. P3 autosave) |
+| **11–14** | Multi-skins; isolation medias; regles d'equipe; notes |
 
 ---
 
@@ -49,18 +54,26 @@ La logique metier vise un modele hybride:
 
 ---
 
-## 3) Structure utile du repo (partie active)
+## 3) Active repo structure (high-signal paths)
 
-- `app/`: routes Next.js App Router (pages + API routes)
-- `app/api/stripe/webhook/route.ts`: webhook Stripe central
-- `app/auth/callback/route.ts`: callback auth Supabase
-- `src/components/tribute/TributeWizard.tsx`: wizard principal (4 etapes)
-- `src/components/media/MediaDropzoneAdapter.tsx`: adaptateur headless dropzone
-- `src/hooks/useMassMediaUpload.ts`: orchestration state upload
-- `src/lib/uploads/mediaUploadService.ts`: service upload concurrent + persistence
-- `lib/stripe.ts`: client Stripe singleton
-- `scripts/`: scripts de diagnostic/test Stripe & webhook
-- `dictionaries/`: traduction FR/EN des labels UX
+- `app/`: Next.js App Router (pages + API routes)
+- `app/api/stripe/webhook/route.ts`: central Stripe webhook
+- `app/api/projects/[id]/autosave/route.ts`: wizard autosave (GET/PATCH)
+- `app/api/projects/[id]/media/route.ts`: list project media (signed URLs)
+- `app/api/music/search|preview|stream/route.ts`: licensed music (Stingray proxy)
+- `app/api/checkout/route.ts`: Stripe Checkout session from `wizard_state`
+- `app/auth/callback/route.ts`: Supabase auth callback
+- `src/components/tribute/TributeWizard.tsx`: **8-step** tribute wizard orchestrator
+- `src/components/tribute/WizardStepper.tsx`: clickable step navigation
+- `src/components/tribute/SoundSignatureStep.tsx`: Stingray search + preview (step 5)
+- `src/components/tribute/CinematicTeaser.tsx`: cinematic preview player (step 7)
+- `src/components/media/MediaDropzoneAdapter.tsx`: headless dropzone adapter
+- `src/hooks/useMassMediaUpload.ts` / `useWizardAutosave.ts`: upload + autosave orchestration
+- `src/lib/wizard/wizardState.ts`: `wizard_state` v1 schema + coercion
+- `src/lib/music/stingrayClient.ts`: server-only Stingray MAPI client
+- `lib/stripe.ts`: Stripe server singleton
+- `scripts/`: Stripe / webhook diagnostics
+- `dictionaries/`: FR/EN UX copy
 
 ---
 
@@ -169,6 +182,67 @@ Aligne avec le payload du service d'upload (`MediaAssetInsertRow`):
 - Sync `billing_catalog` depuis `product.*` et `price.*`.
 - Logs structures + helper `serializeError`.
 
+### 4.7 Tribute Wizard (8 steps) — June 2026
+
+The tribute flow is a **premium 8-step tunnel** with free step navigation, server autosave, and Stripe checkout. Full detail: [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
+
+| Step | UX label (i18n) | Component | Persisted in `wizard_state` |
+|------|-----------------|-----------|-----------------------------|
+| 1 | Essentials | `TributeWizard` | `essentials` |
+| 2 | Sources | `TributeWizard` | `socialSources` |
+| 3 | Vault (upload) | `MediaDropzoneAdapter` + `MediaQueueGrid` | `media_assets` (DB) + reload via `GET .../media` |
+| 4 | Montage table | `MontageStep` | `montage` (acts `spark` / `epic` / `legacy`, focal points, exclusions) |
+| 5 | Sound signature | `SoundSignatureStep` | `musicalAmbiance.tracks` (`acte1`–`acte3`) — **Stingray**, not mood picker |
+| 6 | Memory extensions | `MontageExtensionsStep` | `extensions` |
+| 7 | Film preview | `PreviewStep` + `CinematicTeaser` | reads montage + act tracks (no separate blob) |
+| 8 | Checkout | `CheckoutStep` | `POST /api/checkout` → Stripe metadata |
+
+**`WizardStepper` (`WizardStepper.tsx`):**
+- Renders steps 1–8; completed steps show a checkmark.
+- Clicking a step calls `navigateToStep()` in `TributeWizard.tsx`, which **flushes autosave** then updates `currentStep`.
+- Top-left **Back** control on steps 2+ uses the same flush-before-navigate pattern.
+
+**Autosave (P3 — `docs/sql/odyssey_p3_wizard_autosave.sql`):**
+- Columns on `projects`: `wizard_state` (jsonb), `wizard_step` (1..10), `last_saved_at`.
+- API: `GET/PATCH /api/projects/[id]/autosave` with Zod validation and shallow JSONB merge per section.
+- Client: `useWizardAutosave` (800ms debounce for text, immediate flush on step change) + `AutosaveIndicator` UI.
+- Draft creation: `POST /api/projects/draft` when `firstName` ≥ 2 characters (required before step 3 upload).
+
+**Sound signature (step 5) — Stingray, not legacy “Musical Ambiance”:**
+- Removed: mood-based catalog (`soft`, `melancholic`, etc.) as the primary UX.
+- Current: debounced search → `GET /api/music/search?q=…` → licensed tracks with composite `trackId` (`sr:{playlistId}:{songId}`).
+- See [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md).
+
+**`musicalAmbiance` shape (v1):**
+
+```json
+{
+  "tracks": {
+    "acte1": { "title", "artist", "trackId", "coverUrl", "previewUrl?" },
+    "acte2": { ... },
+    "acte3": { ... }
+  },
+  "catalogProvider": "stingray"
+}
+```
+
+Legacy fields (`mood`, `trackOrder`, `selectedTrack`, `catalogTrackId`) are **read-only for migration** in `wizardState.ts`; do not persist them on new saves.
+
+**Act mapping (montage ↔ music):**
+
+| Montage act (`montage.acts`) | Music act key (`musicalAmbiance.tracks`) | Narrative |
+|------------------------------|------------------------------------------|-----------|
+| `spark` | `acte1` | Spark |
+| `epic` | `acte2` | Epic |
+| `legacy` | `acte3` | Legacy |
+
+**`CinematicTeaser` (step 7):**
+- Builds slides from montage photos (`teaserHelpers.ts`) and plays the track selected for each act.
+- Audio uses `track.previewUrl` (same-origin proxy) tied to the persisted `trackId`.
+- Apple TV–style controls; auto-play when the preview step mounts.
+
+**Checkout metadata:** `POST /api/checkout` embeds `extensions` and `act_tracks` (JSON) in Stripe session metadata for downstream render jobs.
+
 ---
 
 ## 5) Modeles de donnees -- source de verite
@@ -200,20 +274,33 @@ projects --1:N--> orders --N:1--> billing_catalog
 
 ---
 
-## 6) Variables d'environnement critiques
+## 6) Critical environment variables
 
-Variables necessaires cote serveur:
+**Core (server):**
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (front)
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (client)
 
-Bonnes pratiques:
-- Ne jamais commiter de secret.
-- Eviter espaces/quotes parasites dans `.env.local`.
-- Repliquer les memes variables dans Vercel (les env locales ne montent pas automatiquement).
+**Licensed music — Stingray Music API (MAPI), server-only:**
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `STINGRAY_CLIENT_ID` | Yes (prod) | API key sent as `x-client-id` on every MAPI request |
+| `STINGRAY_BEARER_TOKEN` | Optional | `Authorization: Bearer …` if your contract requires it (alias: `STINGRAY_API_TOKEN`) |
+| `STINGRAY_API_BASE_URL` | No | Default `https://music-service.stingray.com` |
+| `STINGRAY_DEVICE_ID` | No | Default `odyssey-wizard` — sent as `X-Device-Id` |
+| `STINGRAY_LANGUAGE` | No | Default `fr` — sent as `X-Language` |
+| `STINGRAY_USE_MOCK` | No | Set `true` **only for local dev** without credentials; uses local catalog fallback |
+
+Without `STINGRAY_CLIENT_ID` (and without `STINGRAY_USE_MOCK=true`), `GET /api/music/search` returns **503** with a user-facing unavailable message.
+
+**Best practices:**
+- Never commit secrets.
+- Avoid stray spaces/quotes in `.env.local`.
+- Mirror all variables on Vercel (local env is not deployed automatically).
 
 ---
 
@@ -264,25 +351,56 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 
 ---
 
-## 10) Etat actuel et prochaines etapes
+## 10) Current state and roadmap
 
-### Fait (au 26 mai 2026)
-- Auth Supabase + bootstrap unifie `handle_new_user` (profiles + tenant_members).
-- Modele multi-tenant complet: tenants enrichis (`vertical`, `settings`), `tenant_members` avec RLS.
-- Wizard 4 etapes operationnel jusqu'a l'etape 3 (upload).
-- Route `/api/projects/draft` (POST): creation projet draft avec resolution tenant + fallback resilient colonnes.
-- Pipeline upload massif: queue UI complete, validator HEIC, auto-relance batches, retries, erreurs visibles.
-- Schema `media_assets` aligne (`owner_user_id`, `source`, `upload_status`, UNIQUE `project_id+storage_path`).
-- Webhook Stripe production-grade (atomic lock token).
-- Scripts de diagnostic Stripe + stress test webhook.
-- Documentation SQL versionnee dans `docs/sql/` avec README et ordre d'execution.
+### Done — foundation (May 2026)
 
-### A terminer / consolider
-- Route checkout Stripe complete (creation session base + upsells).
+- Supabase auth + unified `handle_new_user` bootstrap (`profiles` + `tenant_members`).
+- Multi-tenant model: enriched `tenants`, `tenant_members` with RLS.
+- `POST /api/projects/draft`: draft project creation with tenant resolution.
+- Mass upload pipeline: queue UI, HEIC validator, batch auto-restart, retries, visible errors.
+- `media_assets` schema aligned (`owner_user_id`, `source`, `upload_status`, UNIQUE `project_id+storage_path`).
+- Production-grade Stripe webhook (atomic lock token).
+- Stripe / webhook diagnostic scripts.
+- Versioned SQL in `docs/sql/` + execution order in `docs/sql/README.md`.
+
+### Done — tribute wizard tunnel (June 2026)
+
+- **8-step wizard** with `WizardStepper` (click navigation + flush autosave before step change).
+- **P3 autosave**: `wizard_state`, `wizard_step`, `last_saved_at` + `useWizardAutosave` + `AutosaveIndicator`.
+- **Media reload** after refresh: `GET /api/projects/[id]/media` (+ reorder / delete routes).
+- **Montage** (step 4): three narrative acts, focal points, exclusions, director modal.
+- **Sound signature** (step 5): Stingray search API + preview proxy; per-act tracks `acte1`–`acte3`; composite `trackId` for Stripe.
+- **Extensions** (step 6): four upsell cards + Heritage Pack; persisted in `wizard_state.extensions`.
+- **Cinematic preview** (step 7): `PreviewStep` + `CinematicTeaser` (photos + act music).
+- **`POST /api/checkout`**: Stripe Checkout session; metadata includes `extensions` and `act_tracks`.
+
+See §4.7 and [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
+
+### In progress / configuration
+
+- **Stingray credentials** on Vercel (`STINGRAY_CLIENT_ID`, optional bearer token).
+- End-to-end QA of search → preview → selection → checkout metadata.
+- Checkout prices still defined in `wizardPricing.ts` (not yet driven by `billing_catalog`).
+
+### To do — technical (priority)
+
+- Wire checkout line items to **`billing_catalog`** / Stripe Price IDs (no client-only amounts).
+- **Video render pipeline** after payment: enqueue job → Creatomate (or equivalent) → completion webhook → project status.
+- Automated tests (unit + integration: webhook, autosave, checkout, music search).
+- Centralized monitoring / alerting and ops dashboards.
+- Legal consent journal (YouTube / third-party sources) if not yet wired in UI.
+
+### Product roadmap (unchanged intent — see subsections below)
+
+The following blocks remain valid **product/strategy** references (video engine architecture, premium positioning, adoption, viral growth, pets vertical, security P0–P2, product elevation). They are **not** implementation checklists.
+
+### A terminer / consolider (legacy FR index — superseded by blocks above)
+
+- ~~Route checkout Stripe~~ → **done** (catalog sync still to do).
 - Enqueue rendu video (Creatomate/worker) apres paiement confirme.
 - Suite de tests automatique (unit + integration webhook/checkout).
 - Monitoring centralise (traces/alerting) et tableaux de bord d'exploitation.
-- Documentation SQL "source de verite" versionnee (migrations finalisees).
 
 ### Architecture cible — Moteur video (outillage existant)
 
@@ -456,26 +574,18 @@ Le luxe percu ne repose pas sur une seule API, mais sur **trois piliers**: quali
 5. **Educateurs canins / comportementalistes:** souvent presents fin de vie / separation; **kit partenaire** (phrase + lien) au moment pertinent.
 6. **Hommage « double famille »:** adoption refuge — mention du refuge **avec accord** familial + refuge; incitation au **relai propre** par l'association.
 
-### A developper - Upsells dans le wizard (parcours produit)
+### Wizard upsells (product) — partially implemented
 
-Objectif: enrichir le Tribute Wizard avec des options payantes coherentes avec le modele **Stripe-First** et le mix **base + upsells** (B2C / B2B2C).
+**Implemented (step 6 — `MontageExtensionsStep`):**
+- AI retouch, extended broadcast license, collector USB, digital vault, Heritage Pack (bundle pricing in `wizardPricing.ts`).
+- State in `wizard_state.extensions`; sent to Stripe via `POST /api/checkout` metadata.
 
-**Exemples d'upsells a concevoir dans l'UX et brancher au catalogue Stripe:**
+**Still to align with Stripe-First principles:**
+- Load sellable options from **`billing_catalog`** (Stripe Price IDs + `odyssey_code` metadata), not hardcoded cents only.
+- Timestamped legal acceptances (YouTube / third-party imports, music license) on `project_id`.
+- Additional packaging (HD, rush, extra copies) as catalog lines when product defines them.
 
-| Upsell (concept) | Role UX | Notes techniques / conformite |
-|------------------|---------|--------------------------------|
-| **Retouche photo / video assistee par IA** | Etape dediee ou bloc optionnel apres selection des medias (qualite, stabilisation, restauration legere, etc.) | Prix Stripe par niveau ou par lot; flags projet (`ai_enhancement_*`); job async post-upload si besoin. |
-| **Musique premium / bande son etendue** | Etendre l'etape "Musical Ambiance" avec tires payants | Alignement `billing_catalog` + metadata `odyssey_code`; respect du modele hybride (base prepayee partenaire vs upsell famille). |
-| **Frais droits d'auteur / licence musicale** | Ligne claire au checkout ou sous-etape "Licence" lors du choix musique tierce | Snapshot pricing dans `orders` / metadata legale; pas de melange avec des prix "creatifs" sans licence. |
-| **Sources tierces (YouTube, reseaux, Google Photos)** | Si l'utilisateur importe depuis YouTube ou URLs: **signature de responsabilite / declaration** | Checkbox obligatoire + horodatage + stockage sur `projects` (metadata ou colonnes dediees); copy i18n FR/EN; bloquer le passage suivant sans acceptation. |
-| **Autres upsells** | Packaging HD, duree video etendue, rush delivery, copies supplementaires, cartes imprimees, etc. | Meme principe: ligne Stripe identifiable, trace dans `orders.upsell_breakdown`, pas de logique en dur hors catalogue. |
-
-**Principes d'implementation:**
-- Chaque upsell vendable = **Price Stripe** reference dans `billing_catalog` avec metadata stable (`odyssey_code`, `item_type`).
-- Le wizard affiche et valide les options; le serveur reconstruit la session Checkout a partir du catalogue (pas de prix client-only).
-- Les acceptations legales (YouTube, droits image, musique) restent **persistees** et liees au `project_id`.
-
-Detail complet des autres chantiers: voir aussi **A terminer / consolider** ci-dessus.
+**Music (step 5):** licensed search via **Stingray MAPI** (see [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md)) — not the legacy mood-based “Musical Ambiance” picker.
 
 ### A developper - Securite et resilience (objectif maximal, pas de promesse absolue)
 
@@ -535,12 +645,12 @@ Objectif: completer la roadmap technique (checkout, rendu, securite) par les cha
 
 1. **Statuts projet lisibles** tout au long du parcours (upload, paiement, file d'attente rendu, livraison) avec libelles humains.
 2. **Notifications** aux jalons critiques (echec upload, paiement confirme, video prete, erreur rendu) — email minimum, SMS ulterieur si pertinent.
-3. **Reprise de parcours** sans tout recommencer (wizard / uploads partiels / erreurs reseau).
+3. **Reprise de parcours** sans tout recommencer — **wizard state: done (P3 autosave)**; upload partial retry still to harden.
 4. **Engagement sur les delais** (fourchette ou SLA honnete selon charge / type de rendu).
 
 #### Priorite P1 — Qualite du rendu video (coeur de la promesse)
 
-5. **Previsualisation / validation narrative** avant rendu final (storyboard, ordre des sequences, ton general).
+5. **Previsualisation / validation narrative** avant rendu final — **partial: step 7 `CinematicTeaser`** (not final render).
 6. **Templates limites mais exemplaires** plutot que volume d'options faibles (qualite percue > nombre de boutons).
 7. **Controles legers**: ordre des clips, titre, sous-titres optionnels — sans transformer en suite de montage pro.
 
@@ -579,7 +689,8 @@ Le dossier `docs/sql/` est la **source de verite** des migrations. Voir `docs/sq
 3. `odyssey_p1_user_bootstrap.sql` -- multi-tenant + trigger `handle_new_user`
 4. `odyssey_p2_media_assets_schema_sync.sql` -- alignement schema `media_assets`
 5. `odyssey_p2b_media_assets_cleanup.sql` -- patch cible (supprime `user_id` en doublon si present)
-6. `odyssey_p0_storage_policies_REFERENCE.sql` -- **via Dashboard uniquement** (pas SQL Editor)
+6. `odyssey_p3_wizard_autosave.sql` -- autosave wizard (`wizard_state`, `wizard_step`, `last_saved_at`)
+7. `odyssey_p0_storage_policies_REFERENCE.sql` -- **via Dashboard uniquement** (pas SQL Editor)
 
 Toutes ces migrations sont **idempotentes** et utilisent `IF NOT EXISTS` / `ON CONFLICT DO NOTHING` / `DROP ... IF EXISTS`. Re-executer sans crainte.
 
@@ -618,21 +729,20 @@ Implications techniques:
 
 ---
 
-## 13) Regles d'equipe recommandees
+## 13) Recommended team rules
 
-- Toujours valider `npm run build` avant merge.
-- Toute ecriture webhook doit rester idempotente et conditionnelle.
-- Toute operation sensible DB cote serveur doit utiliser le client admin approprie.
-- Ne pas modifier la logique lock/TTL sans revue architecture.
-- Conserver la separation:
-  - UI (presentation),
-  - headless adapters/hooks (orchestration),
-  - services (I/O reseau/DB).
+- Always run `npm run build` before merge.
+- Any webhook write must stay idempotent and conditional.
+- Sensitive DB operations on the server must use the appropriate admin client.
+- Do not change lock/TTL logic without architecture review.
+- Keep separation: UI (presentation), headless adapters/hooks (orchestration), services (network/DB I/O).
+- **After any change to wizard steps or `/api/music/*` routes, update §4.7 and §10 in this file and the relevant annex (`WIZARD_ARCHITECTURE.md` / `STINGRAY_MUSIC_INTEGRATION.md`).**
 
 ---
 
-## 14) Notes importantes
+## 14) Important notes
 
-- Le `README.md` racine donne le quickstart, l'index resume et la vision; le **detail complet** (architecture, roadmap, securite, moteur video, adoption, upsells) est dans ce document — voir le **Sommaire** en tete de fichier.
-- Les sous-sections de la **section 10** constituent la **reference unique** pour tout ce qui est "a developper" ou "a terminer" jusqu'a revision produit.
+- Root `README.md` gives the quickstart and high-level vision; **implementation detail** for the wizard and music stack lives in §4.7, §10, and the annexes linked at the top.
+- Subsections under **§10 “Product roadmap”** are strategy-only until explicitly moved to “Done”.
+- **Last code review: June 2026** — if code and doc diverge, trust the annexes and `TributeWizard.tsx` (`TOTAL_STEPS = 8`).
 

@@ -12,6 +12,12 @@ import {
   X,
 } from "lucide-react";
 import type { UploadQueueItem } from "@/src/lib/uploads/mediaUploadService";
+import {
+  getItemDisplayName,
+  getItemMimeType,
+  getItemSizeBytes,
+  isRemoteMediaItem,
+} from "@/src/lib/media/mediaTypes";
 
 export type MediaQueueGridCopy = {
   emptyTitle: string;
@@ -27,6 +33,7 @@ export type MediaQueueGridCopy = {
 type Props = {
   items: UploadQueueItem[];
   isRunning: boolean;
+  deletingId?: string | null;
   copy: MediaQueueGridCopy;
   onRemove: (id: string) => void;
   onRetry: (id: string) => void;
@@ -35,25 +42,34 @@ type Props = {
 const VIDEO_PREFIX = "video/";
 
 function isImageItem(item: UploadQueueItem): boolean {
-  if (item.file.type.startsWith("image/")) return true;
-  return /\.(jpe?g|png|webp|heic|heif)$/i.test(item.file.name);
+  const mime = getItemMimeType(item);
+  if (mime.startsWith("image/")) return true;
+  const name = getItemDisplayName(item);
+  return /\.(jpe?g|png|webp|heic|heif)$/i.test(name);
 }
 
 function isVideoItem(item: UploadQueueItem): boolean {
-  if (item.file.type.startsWith(VIDEO_PREFIX)) return true;
-  return /\.(mp4|mov)$/i.test(item.file.name);
+  const mime = getItemMimeType(item);
+  if (mime.startsWith(VIDEO_PREFIX)) return true;
+  return /\.(mp4|mov)$/i.test(getItemDisplayName(item));
 }
 
-/**
- * HEIC/HEIF ne sont pas affichables nativement par Chrome/Firefox/Edge.
- * On affiche une icône image + badge "HEIC" plutôt qu'une miniature cassée.
- * (Le fichier est bien uploadé — c'est seulement l'aperçu local qui n'est
- *  pas rendable en l'absence de conversion server-side.)
- */
 function isPreviewableImage(item: UploadQueueItem): boolean {
+  if (isRemoteMediaItem(item) && item.previewUrl) {
+    const name = getItemDisplayName(item);
+    if (/\.(heic|heif)$/i.test(name)) return false;
+    if (item.mimeType === "image/heic" || item.mimeType === "image/heif") {
+      return false;
+    }
+    return isImageItem(item);
+  }
+  if (!item.file) return false;
   if (!isImageItem(item)) return false;
-  if (/\.(heic|heif)$/i.test(item.file.name)) return false;
-  if (item.file.type === "image/heic" || item.file.type === "image/heif") return false;
+  const name = getItemDisplayName(item);
+  if (/\.(heic|heif)$/i.test(name)) return false;
+  if (item.file.type === "image/heic" || item.file.type === "image/heif") {
+    return false;
+  }
   return true;
 }
 
@@ -77,19 +93,25 @@ function useImagePreviews(items: UploadQueueItem[]): Map<string, string> {
     const seen = new Set<string>();
     items.forEach((item) => {
       seen.add(item.id);
+      if (isRemoteMediaItem(item) && item.previewUrl) {
+        map.set(item.id, item.previewUrl);
+        return;
+      }
       if (map.has(item.id)) return;
-      if (!isPreviewableImage(item)) return;
+      if (!item.file || !isPreviewableImage(item)) return;
       try {
         map.set(item.id, URL.createObjectURL(item.file));
       } catch {
-        // ignore preview creation errors (very large files / unsupported)
+        // ignore preview creation errors
       }
     });
-    // Revoke orphan previews.
     Array.from(map.keys()).forEach((id) => {
       if (!seen.has(id)) {
         const url = map.get(id);
-        if (url) URL.revokeObjectURL(url);
+        const item = items.find((entry) => entry.id === id);
+        if (url && item && !isRemoteMediaItem(item)) {
+          URL.revokeObjectURL(url);
+        }
         map.delete(id);
       }
     });
@@ -110,13 +132,19 @@ function useImagePreviews(items: UploadQueueItem[]): Map<string, string> {
 export function MediaQueueGrid({
   items,
   isRunning,
+  deletingId = null,
   copy,
   onRemove,
   onRetry,
 }: Props) {
   const previews = useImagePreviews(items);
 
-  if (!items.length) {
+  const sortedItems = useMemo(
+    () => [...items].sort((a, b) => a.orderIndex - b.orderIndex),
+    [items],
+  );
+
+  if (!sortedItems.length) {
     return (
       <div
         className="mt-6 rounded-2xl border border-dashed border-white/8 bg-white/[0.02] px-4 py-8 text-center text-sm font-light text-zinc-500"
@@ -132,14 +160,17 @@ export function MediaQueueGrid({
       className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
       aria-label="Files queued for upload"
     >
-      {items.map((item) => {
+      {sortedItems.map((item) => {
         const showPreview = isPreviewableImage(item) && previews.has(item.id);
         const previewUrl = previews.get(item.id);
-        const isHeic = /\.(heic|heif)$/i.test(item.file.name) ||
-          item.file.type === "image/heic" ||
-          item.file.type === "image/heif";
+        const displayName = getItemDisplayName(item);
+        const isHeic =
+          /\.(heic|heif)$/i.test(displayName) ||
+          getItemMimeType(item) === "image/heic" ||
+          getItemMimeType(item) === "image/heif";
         const removable = item.status !== "uploading";
         const retryable = item.status === "failed" || item.status === "cancelled";
+        const isDeleting = deletingId === item.id;
 
         const statusLabel =
           item.status === "queued"
@@ -164,14 +195,16 @@ export function MediaQueueGrid({
         return (
           <li
             key={item.id}
-            className={`group relative overflow-hidden rounded-xl border border-white/8 bg-white/[0.03] ${ringClass}`}
+            className={`group relative overflow-hidden rounded-xl border border-white/8 bg-white/[0.03] transition-opacity duration-200 ${ringClass} ${
+              isDeleting ? "pointer-events-none opacity-40" : ""
+            }`}
           >
             <div className="relative aspect-square w-full overflow-hidden bg-black/40">
               {showPreview && previewUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={previewUrl}
-                  alt={item.file.name}
+                  alt={displayName}
                   className="h-full w-full object-cover"
                   loading="lazy"
                   decoding="async"
@@ -180,7 +213,7 @@ export function MediaQueueGrid({
                 <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-zinc-300">
                   <Film className="h-8 w-8" strokeWidth={1.2} />
                   <span className="text-[10px] uppercase tracking-widest text-zinc-500">
-                    {item.file.name.split(".").pop()?.toUpperCase() ?? "VIDEO"}
+                    {displayName.split(".").pop()?.toUpperCase() ?? "VIDEO"}
                   </span>
                 </div>
               ) : isHeic ? (
@@ -196,7 +229,6 @@ export function MediaQueueGrid({
                 </div>
               )}
 
-              {/* Status badge */}
               <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-2 pb-1.5 pt-4">
                 <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider text-zinc-200">
                   {item.status === "uploading" ? (
@@ -209,17 +241,17 @@ export function MediaQueueGrid({
                   <span>{statusLabel}</span>
                 </span>
                 <span className="text-[10px] text-zinc-400">
-                  {formatSize(item.file.size)}
+                  {formatSize(getItemSizeBytes(item))}
                 </span>
               </div>
 
-              {/* Remove button */}
               {removable ? (
                 <button
                   type="button"
-                  aria-label={`${copy.remove} ${item.file.name}`}
+                  aria-label={`${copy.remove} ${displayName}`}
                   onClick={() => onRemove(item.id)}
-                  className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-black/55 text-zinc-200 opacity-0 transition-opacity hover:bg-black/80 focus-visible:opacity-100 group-hover:opacity-100"
+                  disabled={isDeleting}
+                  className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-black/55 text-zinc-200 opacity-0 transition-opacity hover:bg-black/80 focus-visible:opacity-100 group-hover:opacity-100 disabled:opacity-30"
                 >
                   <X className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
@@ -229,10 +261,11 @@ export function MediaQueueGrid({
             <div className="space-y-1 px-2 py-2">
               <p
                 className="truncate text-xs font-light text-zinc-200"
-                title={item.file.name}
+                title={displayName}
               >
-                {item.file.name}
+                {displayName}
               </p>
+
               {item.status === "failed" && item.error ? (
                 <div className="space-y-1">
                   <p
