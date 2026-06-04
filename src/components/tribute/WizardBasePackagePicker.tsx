@@ -1,9 +1,12 @@
 "use client";
 
 import {
+  bundleSavingsDollarsLabel,
+  calculateBundleSavings,
   formatWizardPrice,
   packageCents,
   WIZARD_BASE_PACKAGES,
+  WIZARD_PRICING,
   type WizardBasePackage,
 } from "@/src/lib/wizard/wizardPricing";
 
@@ -16,6 +19,8 @@ export type WizardBasePackagePickerCopy = {
   signatureDescription: string;
   heritageLabel: string;
   heritageDescription: string;
+  /** « Le choix complet (Économisez {savings} $) » */
+  heritageBundlePromo: string;
 };
 
 type Props = {
@@ -36,6 +41,11 @@ export function WizardBasePackagePicker({
   compact = false,
   hidePrices = false,
 }: Props) {
+  const heritageSavingsCents = calculateBundleSavings(
+    WIZARD_PRICING.packages.HERITAGE.id,
+  );
+  const heritageSavingsLabel = bundleSavingsDollarsLabel(heritageSavingsCents);
+
   const labels: Record<
     WizardBasePackage,
     { label: string; description: string }
@@ -78,6 +88,10 @@ export function WizardBasePackagePicker({
           const selected = value === pkgId;
           const meta = labels[pkgId];
           const price = formatWizardPrice(packageCents(pkgId), locale);
+          const isHeritage = pkgId === WIZARD_PRICING.packages.HERITAGE.id;
+          const showBundlePromo =
+            isHeritage && heritageSavingsCents > 0 && !hidePrices;
+
           return (
             <button
               key={pkgId}
@@ -88,7 +102,7 @@ export function WizardBasePackagePicker({
                 selected
                   ? "border-violet-400/40 bg-violet-500/[0.08] shadow-[0_0_28px_rgba(139,92,246,0.18)]"
                   : "border-white/10 bg-white/[0.02] hover:border-white/16"
-              }`}
+              } ${isHeritage ? "ring-1 ring-amber-400/15" : ""}`}
             >
               <div className="flex items-start justify-between gap-2">
                 <span className="font-[family-name:var(--font-label)] text-sm font-medium text-zinc-100">
@@ -100,6 +114,14 @@ export function WizardBasePackagePicker({
                   </span>
                 ) : null}
               </div>
+              {showBundlePromo ? (
+                <p className="mt-2 text-[11px] font-medium leading-snug text-amber-200/95">
+                  {copy.heritageBundlePromo.replace(
+                    "{savings}",
+                    heritageSavingsLabel,
+                  )}
+                </p>
+              ) : null}
               <p className="mt-1.5 text-xs font-light leading-relaxed text-zinc-500">
                 {meta.description}
               </p>

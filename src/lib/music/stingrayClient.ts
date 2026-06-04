@@ -12,6 +12,7 @@ import {
   type StingrayConfig,
 } from "@/src/lib/music/stingrayConfig";
 import { searchStingrayTracksForApi } from "@/src/lib/wizard/stingrayCatalog";
+import type { MusicCatalogTier } from "@/src/lib/wizard/pricingConfig";
 
 type StingrayChannel = {
   id: string;
@@ -287,12 +288,13 @@ export async function fetchStingrayTrackStream(
 export async function searchMusicCatalog(
   query: string,
   limit = 12,
+  catalogTier: MusicCatalogTier = "standard",
 ): Promise<{ tracks: StingrayTrackApiPayload[]; source: "stingray" | "mock" }> {
   const config = getStingrayConfig();
 
   if (shouldUseStingrayMock(config)) {
     return {
-      tracks: searchStingrayTracksForApi(query, limit),
+      tracks: searchStingrayTracksForApi(query, limit, catalogTier),
       source: "mock",
     };
   }

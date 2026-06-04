@@ -36,8 +36,8 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | 2 | `stepperSources` | Social source + URL, formula (compact) | `socialSources`, `basePackage` |
 | 3 | `stepperVault` | Dropzone + upload queue | `media_assets` rows; reload `GET /api/projects/[id]/media` |
 | 4 | `stepperMontage` | Three-act timeline, focal points | `montage` |
-| 5 | `stepperSound` | Stingray search, listen, choose per act | `musicalAmbiance.tracks` |
-| 6 | `stepperExtensions` | Upsell cards + Heritage Pack | `extensions` |
+| 5 | `stepperSound` | Stingray search (tier **standard** / **premium**), listen, choose per act | `musicalAmbiance.tracks` |
+| 6 | `stepperExtensions` | Upsell cards + Heritage Pack; **bundle rules** when `basePackage=heritage` | `extensions` |
 | 7 | `stepperPreview` | Copy + `CinematicTeaser` | Reads montage + tracks (no extra JSON section) |
 | 8 | `stepperCheckout` | Cart recap + pay CTA | `POST /api/checkout` |
 
@@ -169,14 +169,14 @@ export const WIZARD_PRICING = {
   packages: {
     ESSENTIEL:  { id: "essential", priceCents: 7900,  tokens: 1 },   // 79.00 $
     SIGNATURE:  { id: "signature", priceCents: 14900, tokens: 2 },   // 149.00 $
-    HERITAGE:   { id: "heritage",  priceCents: 29900, tokens: 4 },   // 299.00 $
+    HERITAGE:   { id: "heritage",  priceCents: 29900, tokens: 4, musicCatalog: "premium" },
   },
   extensions: {
-    RETOUCHE_IA:    { id: "aiRetouch",         priceCents: 4900 },
-    LICENCE:        { id: "extendedLicense",   priceCents: 3900 },
-    USB:            { id: "collectorUsb",      priceCents: 7900 },
-    COFFRE_FORT:    { id: "digitalVault",      priceCents: 9900 },
-    PACK_HERITAGE:  { id: "heritagePack",      priceCents: 14900 },
+    RETOUCHE_IA:       { id: "aiRetouch",       priceCents: 4900 },
+    LICENCE_PREMIUM:   { id: "extendedLicense", priceCents: 3900 },  // Option Licence Premium
+    USB:               { id: "collectorUsb",    priceCents: 7900 },
+    COFFRE_FORT:       { id: "digitalVault",    priceCents: 9900 },
+    PACK_HERITAGE:     { id: "heritagePack",    priceCents: 14900 },
   },
 };
 ```
@@ -186,11 +186,75 @@ export const WIZARD_PRICING = {
 | `packageCents(id)` | Base package cents |
 | `packagePartnerTokens(id)` | B2B token debit for package |
 | `extensionCents(id)` | Extension line cents |
-| `computeWizardCart()` | `totalCents = baseCents + optionsCents` (integers) |
+| `computeWizardCart()` | `totalCents = baseCents + optionsCents` (integers); skips extensions bundled in Heritage |
 | `sumCartLineItemsCents()` | Checkout verification (sum of line items) |
 | `calculatePartnerMargin(packageId, tokens?)` | `priceCents − PARTNER_TOKEN_COST_CENTS × tokens` |
+| `heritageBundleAlaCarteCents()` | Signature + Licence Premium + USB + Coffre (à la carte reference) |
+| `calculateBundleSavings("heritage")` | `max(0, alaCarte − heritage.priceCents)` → **6700¢ (67 $)** |
+| `bundleSavingsDollarsLabel(cents)` | Integer dollars for UI badges (`67`) |
+| `isExtensionBundledInBasePackage()` | Heritage includes licence + USB + vault (no extra charge) |
+| `resolveMusicCatalogTier()` | `standard` vs `premium` from package + extensions |
 
-Display-only: `StickyPriceBar` converts `totalCents / 100` for B2C label `Total : {amount} $`.
+Display-only: `StickyPriceBar` converts `totalCents / 100` for B2C label `Total : {amount} $` (cart reflects bundle rules via `computeWizardCart`).
+
+---
+
+## Economic bundle — Heritage package (marketing + cart)
+
+**Goal:** make the **Heritage** formula irresistible by showing savings vs buying Signature plus the main physical/digital options separately, while keeping **Signature** customers able to upsell via **Option Licence Premium** (39 $).
+
+### Savings calculation
+
+```text
+à_la_carte = packageCents("signature")
+           + extensionCents("extendedLicense")   // 39 $
+           + extensionCents("collectorUsb")      // 79 $
+           + extensionCents("digitalVault")      // 99 $
+           = 14900 + 3900 + 7900 + 9900 = 36600¢ (366 $)
+
+heritage     = packageCents("heritage") = 29900¢ (299 $)
+
+savings      = calculateBundleSavings("heritage") = 6700¢ → UI: « Économisez 67 $ »
+```
+
+Implemented in `heritageBundleAlaCarteCents()` and `calculateBundleSavings()` (`pricingConfig.ts`). AI Retouch is **not** part of this comparison (remains an optional upsell on Heritage).
+
+### UI — `WizardBasePackagePicker`
+
+- On the **Heritage** card (B2C only, `hidePrices=false`): promo line from i18n `basePackageHeritageBundlePromo` — e.g. **« Le choix complet (Économisez 67 $) »**.
+- Uses `bundleSavingsDollarsLabel(calculateBundleSavings("heritage"))` — no float math in the label.
+
+### UI — step 6 extensions (`MontageExtensionsStep`)
+
+When `basePackage === "heritage"`:
+
+| Behaviour | Detail |
+|-----------|--------|
+| **Hide** Heritage Pack upsell | Pack targets Signature/Essentiel customers; redundant on Heritage formula |
+| **Badge « Déjà inclus »** | `extendedLicense`, `collectorUsb`, `digitalVault` — cards disabled, price hidden |
+| **Still purchasable** | `aiRetouch` (optional) |
+
+Cart: `computeWizardCart()` does not add line items for bundled extension ids when base is Heritage (`isExtensionBundledInBasePackage`).
+
+### Upsell path (Signature / Essentiel)
+
+- Step 5: info banner if catalog tier is **standard** — prompts adding **Licence Premium** at step 6.
+- Step 6: toggling `extendedLicense` unlocks **premium** catalog on step 5 (re-search with `tier=premium`).
+
+See [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) for catalog tiers.
+
+---
+
+## Music catalog tiers (Standard vs Premium)
+
+| Access | Packages / options | Search API |
+|--------|-------------------|------------|
+| **Standard** | Essentiel, Signature (default) | `GET /api/music/search?tier=standard` |
+| **Premium** | Heritage (included), or **Option Licence Premium** (`extendedLicense`), or Heritage Pack | `GET /api/music/search?tier=premium` |
+
+Resolution: `resolveMusicCatalogTier(basePackage, extensions)` in `pricingConfig.ts`; wired in `TributeWizard` → `SoundSignatureStep` (`catalogTier` prop).
+
+Mock catalog (`stingrayCatalog.ts`): each track has `musicTier: "standard" | "premium"`; premium filter returns the full library, standard filter excludes premium-tier tracks.
 
 ---
 
@@ -232,11 +296,13 @@ flowchart TD
 
 ### UI pricing
 
-| Component | Location |
-|-----------|----------|
-| `StickyPriceBar` | Sticky under stepper, every step |
-| `WizardBasePackagePicker` | Steps 1–2 (`hidePrices` when partner) |
-| `WizardCartSummary` | Steps 5–6 (B2C only) |
+| Component | Location | Role |
+|-----------|----------|------|
+| `StickyPriceBar` | Sticky under stepper, every step | Live **total** (B2C $) or **tokens** (B2B); reflects `computeWizardCart` including Heritage bundle rules |
+| `WizardBasePackagePicker` | Steps 1–2 (`hidePrices` when partner) | Formula cards + **Heritage savings badge** (67 $) |
+| `WizardCartSummary` | Steps 5–6 (B2C only) | Line recap |
+| `SoundSignatureStep` | Step 5 | Catalog tier banner (Standard vs Premium upsell) |
+| `MontageExtensionsStep` | Step 6 | Extensions + « Déjà inclus » when Heritage |
 
 ---
 

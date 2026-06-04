@@ -9,8 +9,10 @@ import {
   buildTeaserSlides,
   estimateFilmDurationMinutes,
 } from "@/src/lib/wizard/teaserHelpers";
+import { hasPremiumMusicCatalogAccess } from "@/src/lib/wizard/wizardPricing";
 import type {
   WizardActTracks,
+  WizardBasePackage,
   WizardExtensionsState,
   WizardMontageState,
 } from "@/src/lib/wizard/wizardState";
@@ -37,6 +39,7 @@ type Props = {
   montage: WizardMontageState;
   actTracks: WizardActTracks;
   extensions: WizardExtensionsState;
+  basePackage?: WizardBasePackage;
   onProceedToPayment: () => void;
   onEdit: () => void;
 };
@@ -45,11 +48,10 @@ function buildValueNote(
   copy: PreviewStepCopy,
   minutes: number,
   extensions: WizardExtensionsState,
+  basePackage: WizardBasePackage = "signature",
 ): string {
   const hasAi = Boolean(extensions.aiRetouch || extensions.heritagePack);
-  const hasLicense = Boolean(
-    extensions.extendedLicense || extensions.heritagePack,
-  );
+  const hasLicense = hasPremiumMusicCatalogAccess(basePackage, extensions);
 
   let note = copy.valueNote.replace("{minutes}", String(minutes));
   if (hasAi) note += copy.valueAiRetouch;
@@ -64,6 +66,7 @@ export function PreviewStep({
   montage,
   actTracks,
   extensions,
+  basePackage = "signature",
   onProceedToPayment,
   onEdit,
 }: Props) {
@@ -78,8 +81,8 @@ export function PreviewStep({
   );
 
   const valueNote = useMemo(
-    () => buildValueNote(copy, durationMinutes, extensions),
-    [copy, durationMinutes, extensions],
+    () => buildValueNote(copy, durationMinutes, extensions, basePackage),
+    [basePackage, copy, durationMinutes, extensions],
   );
 
   useEffect(() => {

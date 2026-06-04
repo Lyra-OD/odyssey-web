@@ -8,6 +8,7 @@ import {
   extensionCents,
   heritagePackIndividualTotalCents,
   heritagePackSavingsCents,
+  isExtensionBundledInBasePackage,
   packageCents,
   packagePartnerTokens,
   PARTNER_TOKEN_COST_CENTS,
@@ -34,7 +35,16 @@ export {
   calculatePartnerMargin,
   heritagePackIndividualTotalCents,
   heritagePackSavingsCents,
+  heritageBundleAlaCarteCents,
+  calculateBundleSavings,
+  bundleSavingsDollarsLabel,
+  isExtensionBundledInBasePackage,
+  resolveMusicCatalogTier,
+  hasPremiumMusicCatalogAccess,
+  HERITAGE_PACKAGE_BUNDLED_EXTENSION_IDS,
 } from "@/src/lib/wizard/pricingConfig";
+
+export type { MusicCatalogTier } from "@/src/lib/wizard/pricingConfig";
 
 /** @deprecated Utiliser `packageCents("signature")` */
 export const WIZARD_BASE_PRICE_CENTS =
@@ -57,7 +67,7 @@ export function basePackageCents(
 export const EXTENSION_AI_RETOUCH_CENTS =
   WIZARD_PRICING.extensions.RETOUCHE_IA.priceCents;
 export const EXTENSION_EXTENDED_LICENSE_CENTS =
-  WIZARD_PRICING.extensions.LICENCE.priceCents;
+  WIZARD_PRICING.extensions.LICENCE_PREMIUM.priceCents;
 export const EXTENSION_COLLECTOR_USB_CENTS =
   WIZARD_PRICING.extensions.USB.priceCents;
 export const EXTENSION_DIGITAL_VAULT_CENTS =
@@ -179,6 +189,9 @@ export function computeWizardCart(
   const lineItems: ExtensionLineItem[] = [{ key: "base", cents: baseCents }];
   let optionsCents = 0;
 
+  const skipExtensionCharge = (id: WizardExtensionId) =>
+    isExtensionBundledInBasePackage(basePackage, id);
+
   if (normalized.heritagePack) {
     const cents = extensionCents("heritagePack");
     lineItems.push({ key: "heritagePack", cents });
@@ -189,19 +202,19 @@ export function computeWizardCart(
       lineItems.push({ key: "aiRetouch", cents });
       optionsCents += cents;
     }
-    if (normalized.extendedLicense) {
+    if (normalized.extendedLicense && !skipExtensionCharge("extendedLicense")) {
       const cents = extensionCents("extendedLicense");
       lineItems.push({ key: "extendedLicense", cents });
       optionsCents += cents;
     }
-    if (normalized.digitalVault) {
+    if (normalized.digitalVault && !skipExtensionCharge("digitalVault")) {
       const cents = extensionCents("digitalVault");
       lineItems.push({ key: "digitalVault", cents });
       optionsCents += cents;
     }
   }
 
-  if (normalized.collectorUsb) {
+  if (normalized.collectorUsb && !skipExtensionCharge("collectorUsb")) {
     const cents = extensionCents("collectorUsb");
     lineItems.push({ key: "collectorUsb", cents });
     optionsCents += cents;
@@ -241,7 +254,7 @@ export function buildPricingSnapshot(
 export const CHECKOUT_LINE_LABELS: Record<ExtensionLineKey, string> = {
   base: "Odyssey — Cinematic Tribute (Base)",
   aiRetouch: "Premium AI Retouch",
-  extendedLicense: "Extended Broadcast License (Stingray)",
+  extendedLicense: "Premium Music License (Stingray Premium Catalog)",
   collectorUsb: "Collector USB Key — Laser Engraving",
   digitalVault: "Digital Vault — 50-Year Secure Hosting",
   heritagePack: "Heritage Pack (AI Retouch + License + Vault)",

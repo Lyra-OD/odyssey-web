@@ -20,6 +20,7 @@ import {
   type WizardSelectedTrack,
   WIZARD_ACT_TRACK_KEYS,
 } from "@/src/lib/wizard/stingrayCatalog";
+import type { MusicCatalogTier } from "@/src/lib/wizard/pricingConfig";
 
 export type SoundSignatureStepCopy = {
   title: string;
@@ -40,10 +41,14 @@ export type SoundSignatureStepCopy = {
   changeCta: string;
   licensedNote: string;
   previewPremiumBadge: string;
+  catalogAccessStandard: string;
+  catalogAccessPremium: string;
 };
 
 type Props = {
   copy: SoundSignatureStepCopy;
+  /** `standard` ou `premium` selon forfait + Option Licence Premium. */
+  catalogTier: MusicCatalogTier;
   tracks: WizardActTracks;
   onTracksChange: (tracks: WizardActTracks) => void;
 };
@@ -121,6 +126,7 @@ async function waitForAudioReady(audio: HTMLAudioElement): Promise<void> {
 type ActMusicPanelProps = {
   actKey: WizardActTrackKey;
   actTitle: string;
+  catalogTier: MusicCatalogTier;
   selectedTrack: WizardSelectedTrack | undefined;
   copy: SoundSignatureStepCopy;
   previewTrackId: string | null;
@@ -136,6 +142,7 @@ type ActMusicPanelProps = {
 function ActMusicPanel({
   actKey,
   actTitle,
+  catalogTier,
   selectedTrack,
   copy,
   previewTrackId,
@@ -161,7 +168,11 @@ function ActMusicPanel({
 
     const runSearch = async () => {
       try {
-        const params = new URLSearchParams({ q: debouncedQuery, limit: "12" });
+        const params = new URLSearchParams({
+          q: debouncedQuery,
+          limit: "12",
+          tier: catalogTier,
+        });
         const res = await fetch(`/api/music/search?${params.toString()}`);
         const body = (await res.json()) as {
           ok?: boolean;
@@ -199,7 +210,7 @@ function ActMusicPanel({
     return () => {
       cancelled = true;
     };
-  }, [copy.serviceUnavailable, debouncedQuery]);
+  }, [catalogTier, copy.serviceUnavailable, debouncedQuery]);
 
   if (selectedTrack) {
     return (
@@ -396,6 +407,7 @@ function ActMusicPanel({
 
 export function SoundSignatureStep({
   copy,
+  catalogTier,
   tracks,
   onTracksChange,
 }: Props) {
@@ -561,6 +573,14 @@ export function SoundSignatureStep({
         <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
           {copy.description}
         </p>
+        <p
+          className="max-w-2xl rounded-xl border border-indigo-400/20 bg-indigo-500/[0.06] px-4 py-3 text-sm font-light leading-relaxed text-indigo-100/90"
+          role="status"
+        >
+          {catalogTier === "premium"
+            ? copy.catalogAccessPremium
+            : copy.catalogAccessStandard}
+        </p>
         {isMockCatalog ? (
           <p className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center rounded-full border border-violet-400/25 bg-violet-500/[0.08] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-violet-200/90">
@@ -644,6 +664,7 @@ export function SoundSignatureStep({
         <ActMusicPanel
           actKey={activeAct}
           actTitle={actTitleForKey(activeAct, copy)}
+          catalogTier={catalogTier}
           selectedTrack={tracks[activeAct]}
           copy={copy}
           previewTrackId={previewTrackId}

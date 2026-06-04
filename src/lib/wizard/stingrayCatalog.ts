@@ -1,6 +1,7 @@
 /** Catalogue musique licencié — mode offline si `STINGRAY_MODE=mock`. */
 
 import { buildMusicPreviewProxyUrl } from "@/src/lib/music/stingrayTrackId";
+import type { MusicCatalogTier } from "@/src/lib/wizard/pricingConfig";
 
 export type StingrayCatalogTrack = {
   id: string;
@@ -10,6 +11,8 @@ export type StingrayCatalogTrack = {
   coverUrl: string;
   /** URL de preview Stingray (champ `preview_url` côté API). */
   previewUrl: string;
+  /** STANDARD = inclus Signature ; PREMIUM = droits étendus / forfait Héritage. */
+  musicTier: MusicCatalogTier;
   /** @deprecated Legacy — conservé pour migration catalogTrackId */
   subtitle?: string;
   moodTag?: string;
@@ -103,6 +106,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "3:42",
     coverUrl: COVER("aznavour-la-mamma"),
     previewUrl: previewUrlForTrack("stingray-aznavour-la-mamma"),
+    musicTier: "standard",
     moodTag: "melancholic",
   },
   {
@@ -112,6 +116,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "3:08",
     coverUrl: COVER("aznavour-hier"),
     previewUrl: previewUrlForTrack("stingray-aznavour-hier-encore"),
+    musicTier: "standard",
     moodTag: "melancholic",
   },
   {
@@ -121,6 +126,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "2:22",
     coverUrl: COVER("piaf-non"),
     previewUrl: previewUrlForTrack("stingray-piaf-non-je-ne-regrette"),
+    musicTier: "standard",
     moodTag: "cinematic",
   },
   {
@@ -130,6 +136,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "3:12",
     coverUrl: COVER("horizon-memoire"),
     previewUrl: previewUrlForTrack("stingray-cinematic-01"),
+    musicTier: "standard",
     subtitle: "Orchestre cinématographique · Creatone",
     moodTag: "cinematic",
   },
@@ -140,6 +147,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "2:48",
     coverUrl: COVER("veille-silencieuse"),
     previewUrl: previewUrlForTrack("stingray-melancholic-02"),
+    musicTier: "standard",
     subtitle: "Piano & cordes · Stingray Music",
     moodTag: "melancholic",
   },
@@ -150,6 +158,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "3:34",
     coverUrl: COVER("lueur-intime"),
     previewUrl: previewUrlForTrack("stingray-soft-03"),
+    musicTier: "standard",
     subtitle: "Ambiance douce · Creatone",
     moodTag: "soft",
   },
@@ -160,6 +169,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "2:56",
     coverUrl: COVER("eclat-espoir"),
     previewUrl: previewUrlForTrack("stingray-bright-04"),
+    musicTier: "standard",
     subtitle: "Cordes lumineuses · Stingray Music",
     moodTag: "bright",
   },
@@ -170,6 +180,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "3:28",
     coverUrl: COVER("nat-unforgettable"),
     previewUrl: previewUrlForTrack("stingray-nat-king-unforgettable"),
+    musicTier: "premium",
     moodTag: "soft",
   },
   {
@@ -179,6 +190,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "4:35",
     coverUrl: COVER("sinatra-my-way"),
     previewUrl: previewUrlForTrack("stingray-sinatra-my-way"),
+    musicTier: "premium",
     moodTag: "cinematic",
   },
   {
@@ -188,6 +200,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "3:32",
     coverUrl: COVER("adele-feel"),
     previewUrl: previewUrlForTrack("stingray-adele-make-you-feel"),
+    musicTier: "premium",
     moodTag: "melancholic",
   },
   {
@@ -197,6 +210,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "3:38",
     coverUrl: COVER("enya-time"),
     previewUrl: previewUrlForTrack("stingray-enya-only-time"),
+    musicTier: "premium",
     moodTag: "soft",
   },
   {
@@ -206,6 +220,7 @@ export const STINGRAY_CATALOG_TRACKS: StingrayCatalogTrack[] = [
     duration: "5:57",
     coverUrl: COVER("einaudi-nuvole"),
     previewUrl: previewUrlForTrack("stingray-ludovico-nuvole"),
+    musicTier: "premium",
     moodTag: "classical",
   },
 ];
@@ -294,20 +309,30 @@ export function resolveTrackPreviewUrl(
   return resolveStingrayStreamUrl(trackId);
 }
 
+function filterTracksByCatalogTier(
+  tracks: StingrayCatalogTrack[],
+  catalogTier: MusicCatalogTier,
+): StingrayCatalogTrack[] {
+  if (catalogTier === "premium") return tracks;
+  return tracks.filter((track) => track.musicTier === "standard");
+}
+
 /** Recherche locale — remplacer par appel API Stingray en production. */
 export function searchStingrayTracks(
   query: string,
   limit = 12,
+  catalogTier: MusicCatalogTier = "standard",
 ): StingrayCatalogTrack[] {
   const q = query.trim().toLowerCase();
+  const tierPool = filterTracksByCatalogTier(STINGRAY_CATALOG_TRACKS, catalogTier);
   const pool = q
-    ? STINGRAY_CATALOG_TRACKS.filter((track) => {
+    ? tierPool.filter((track) => {
         const tokens = q.split(/\s+/).filter(Boolean);
         const haystack =
           `${track.title} ${track.artist} ${track.subtitle ?? ""}`.toLowerCase();
         return tokens.every((token) => haystack.includes(token));
       })
-    : STINGRAY_CATALOG_TRACKS.slice(0, 8);
+    : tierPool.slice(0, 8);
 
   return pool.slice(0, limit);
 }
@@ -315,6 +340,9 @@ export function searchStingrayTracks(
 export function searchStingrayTracksForApi(
   query: string,
   limit = 12,
+  catalogTier: MusicCatalogTier = "standard",
 ): StingrayTrackApiPayload[] {
-  return searchStingrayTracks(query, limit).map(serializeStingrayTrackForApi);
+  return searchStingrayTracks(query, limit, catalogTier).map(
+    serializeStingrayTrackForApi,
+  );
 }

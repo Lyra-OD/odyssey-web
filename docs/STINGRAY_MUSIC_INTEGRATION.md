@@ -46,7 +46,8 @@ Parent reference: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSS
 | `src/lib/music/stingrayClient.ts` | Search + playlist + stream fetch (`server-only`) |
 | `src/lib/music/stingrayTrackId.ts` | Composite `trackId` encode/decode + preview URL builder |
 | `src/lib/wizard/stingrayCatalog.ts` | Types, mock catalog (dev fallback only) |
-| `app/api/music/search/route.ts` | `GET ?q=&limit=` |
+| `app/api/music/search/route.ts` | `GET ?q=&limit=&tier=standard\|premium` |
+| `src/lib/wizard/pricingConfig.ts` | `resolveMusicCatalogTier()`, package `musicCatalog` |
 | `app/api/music/preview/route.ts` | `GET ?trackId=` → audio stream |
 | `app/api/music/stream/route.ts` | `GET ?trackId=` → JSON `{ streamUrl }` (proxy path) |
 | `src/components/tribute/SoundSignatureStep.tsx` | Search UI + `HTMLAudioElement` on `previewUrl` |
@@ -62,8 +63,8 @@ sequenceDiagram
   participant Client as stingrayClient
   participant MAPI as Stingray MAPI
 
-  UI->>Search: q=Charles+Aznavour
-  Search->>Client: searchMusicCatalog()
+  UI->>Search: q=Charles+Aznavour&tier=standard|premium
+  Search->>Client: searchMusicCatalog(q, limit, catalogTier)
   Client->>MAPI: GET /api/v1/channel?artist_name=&channel_name=
   loop Per channel (up to limit)
     Client->>MAPI: POST /api/v1/playlist { channel_id, quality, size }
@@ -81,6 +82,56 @@ sequenceDiagram
 With `STINGRAY_MODE=mock` **or without API credentials**, search uses `stingrayCatalog.ts` (`source: "mock"`). UI shows badge **Preview** on step 5.
 
 If credentials are missing and mock is disabled via `STINGRAY_MODE=live` explicitly → **503** with message: *“Music service temporarily unavailable…”*
+
+---
+
+## Catalog tiers — Standard vs Premium
+
+Odyssey splits licensed music into two **commercial tiers**, aligned with wizard packages and the **Option Licence Premium** upsell (39 $, id `extendedLicense` in `wizard_state.extensions`).
+
+| Tier | Who gets it | Product meaning |
+|------|-------------|-----------------|
+| **standard** | Forfait **Essentiel** or **Signature** (default) | Core cleared catalog for ceremony use |
+| **premium** | Forfait **Héritage** (included), **or** Option Licence Premium on Essentiel/Signature, **or** Heritage Pack (includes licence) | Extended-rights catalog (major artists / premium mock tracks) |
+
+### Resolution (server + client)
+
+```typescript
+// pricingConfig.ts
+resolveMusicCatalogTier(basePackage, extensions): "standard" | "premium"
+```
+
+| `basePackage` | `extensions.extendedLicense` | `extensions.heritagePack` | Effective tier |
+|---------------|-------------------------------|---------------------------|----------------|
+| `essential` | false | false | **standard** |
+| `signature` | false | false | **standard** |
+| `signature` | true | — | **premium** |
+| `heritage` | — | — | **premium** (package `musicCatalog`) |
+
+`TributeWizard` computes tier with `useMemo` and passes `catalogTier` to `SoundSignatureStep`.
+
+### Search API
+
+```http
+GET /api/music/search?q=Aznavour&limit=12&tier=standard
+GET /api/music/search?q=Adele&limit=12&tier=premium
+```
+
+- Query param `tier`: `standard` | `premium` (default **`standard`**).
+- **Mock mode:** `searchStingrayTracks(query, limit, catalogTier)` filters `STINGRAY_CATALOG_TRACKS` by `musicTier` on each track.
+- **Live MAPI (roadmap):** pass tier to playlist/channel selection when product rules are wired upstream.
+
+### Step 5 UX (`SoundSignatureStep`)
+
+- Banner **standard:** explains Standard access and upsell to Licence Premium (39 $) at step 6 (i18n `soundCatalogAccessStandard`).
+- Banner **premium:** confirms Premium catalog unlocked (`soundCatalogAccessPremium`).
+- Debounced search always sends the current `tier` matching `resolveMusicCatalogTier`.
+
+### Checkout / persistence
+
+Tier is **not** stored separately in `wizard_state`; it is derived from `basePackage` + `extensions` on read. Stripe metadata still receives selected `act_tracks` with `trackId` for downstream licensing.
+
+Pricing linkage: [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — Economic bundle (Heritage) and `calculateBundleSavings`.
 
 ---
 
@@ -216,7 +267,8 @@ Official docs: [music-service.stingray.com/swagger-ui.html](https://music-servic
 5. DevTools → `/api/music/search` → 200 `{ source: "mock" }`; `/api/music/preview` → `audio/mpeg`
 
 ```bash
-curl -s "http://localhost:3000/api/music/search?q=test&limit=3" | jq .
+curl -s "http://localhost:3000/api/music/search?q=test&limit=3&tier=standard" | jq .
+curl -s "http://localhost:3000/api/music/search?q=test&limit=3&tier=premium" | jq .
 curl -sI "http://localhost:3000/api/music/preview?trackId=sr:YOUR_PLAYLIST:YOUR_SONG"
 ```
 

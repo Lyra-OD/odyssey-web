@@ -53,6 +53,7 @@ import {
 import {
   buildPricingSnapshot,
   computeWizardCart,
+  resolveMusicCatalogTier,
 } from "@/src/lib/wizard/wizardPricing";
 import { normalizeWizardStateForSave } from "@/src/lib/wizard/wizardExtensions";
 import {
@@ -169,6 +170,10 @@ export function TributeWizard({
   );
   const [extensions, setExtensions] = useState<WizardExtensionsState>(
     () => hydrated.extensions ?? {},
+  );
+  const musicCatalogTier = useMemo(
+    () => resolveMusicCatalogTier(basePackage, extensions),
+    [basePackage, extensions],
   );
   const [actTracks, setActTracks] = useState<WizardActTracks>(
     () => hydrated.musicalAmbiance?.tracks ?? emptyActTracks(),
@@ -1041,6 +1046,7 @@ export function TributeWizard({
                   signatureDescription: copy.basePackageSignatureDesc,
                   heritageLabel: copy.basePackageHeritage,
                   heritageDescription: copy.basePackageHeritageDesc,
+                  heritageBundlePromo: copy.basePackageHeritageBundlePromo,
                 }}
               />
 
@@ -1085,6 +1091,7 @@ export function TributeWizard({
                   signatureDescription: copy.basePackageSignatureDesc,
                   heritageLabel: copy.basePackageHeritage,
                   heritageDescription: copy.basePackageHeritageDesc,
+                  heritageBundlePromo: copy.basePackageHeritageBundlePromo,
                 }}
               />
 
@@ -1405,6 +1412,7 @@ export function TributeWizard({
 
           {currentStep === 5 ? (
             <SoundSignatureStep
+              catalogTier={musicCatalogTier}
               tracks={actTracks}
               onTracksChange={handleActTracksChange}
               copy={{
@@ -1426,6 +1434,8 @@ export function TributeWizard({
                 previewUnavailable: copy.soundPreviewUnavailable,
                 licensedNote: copy.soundLicensedNote,
                 previewPremiumBadge: copy.soundPreviewPremiumBadge,
+                catalogAccessStandard: copy.soundCatalogAccessStandard,
+                catalogAccessPremium: copy.soundCatalogAccessPremium,
               }}
             />
           ) : null}
@@ -1452,6 +1462,7 @@ export function TributeWizard({
                 heritagePackDescription: copy.extensionHeritagePackDescription,
                 heritagePackSavings: copy.extensionHeritagePackSavings,
                 heritagePackIncludes: copy.extensionHeritagePackIncludes,
+                includedInHeritageBadge: copy.extensionIncludedInHeritage,
                 selectedBadge: copy.extensionSelectedBadge,
                 recapTitle: copy.extensionsRecapTitle,
                 recapEmpty: copy.extensionsRecapEmpty,
@@ -1466,6 +1477,7 @@ export function TributeWizard({
               montage={montage}
               actTracks={actTracks}
               extensions={extensions}
+              basePackage={basePackage}
               onProceedToPayment={() => void handleProceedToPayment()}
               onEdit={() => void handlePreviewEdit()}
               copy={{

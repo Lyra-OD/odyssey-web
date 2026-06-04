@@ -5,8 +5,8 @@
 This document helps any developer (frontend, backend, DevOps, QA) onboard quickly: what is implemented, how the architecture works, how to run and test locally, and what comes next.
 
 **Deep dives (English, kept in sync with code):**
-- [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, state, autosave, **hybrid pricing B2C/B2B**, act/music mapping
-- [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, mock mode, composite `trackId`, preview proxy
+- [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, state, autosave, **hybrid pricing B2C/B2B**, **Heritage economic bundle**, **Standard/Premium music tiers**
+- [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, **catalog tiers**, mock mode, composite `trackId`, preview proxy
 - [`docs/sql/README.md`](sql/README.md) — SQL migrations P0–P4 (including `partner_token_wallets`)
 
 Ce document reste partiellement en francais pour l'historique produit; les sections **4.7**, **6 (Stingray)**, **10** et les annexes ci-dessus sont la reference a jour pour Jon et l'equipe technique.
@@ -204,7 +204,10 @@ The tribute flow is a **premium 8-step tunnel** with free step navigation, serve
 - All amounts in **integer cents** (7900 = 79.00 USD). Cart: `computeWizardCart()` + `sumCartLineItemsCents()` at checkout.
 - Packages: Essentiel 7900¢ / 1 token · Signature 14900¢ / 2 tokens · Heritage 29900¢ / 4 tokens.
 - Wholesale: `PARTNER_TOKEN_COST_CENTS = 4000` (40 USD/token). Margin: `calculatePartnerMargin(packageId, tokens?)`.
-- **`StickyPriceBar`**: B2C `Total : {amount} $` · B2B `Coût : {tokens} jeton(s)` (no `$` for partners).
+- **`StickyPriceBar`**: B2C `Total : {amount} $` · B2B `Coût : {tokens} jeton(s)` (no `$` for partners). Total updates live as the user changes formula/extensions; when **Heritage** is selected, bundled extensions (Licence Premium, USB, Coffre) are **not** added to `totalCents` (`isExtensionBundledInBasePackage`).
+- **`WizardBasePackagePicker`** (steps 1–2): marketing upsell on the Heritage card — **`calculateBundleSavings("heritage")` → 67 $** displayed via `basePackageHeritageBundlePromo` (« Le choix complet (Économisez 67 $) »). Hidden when `hidePrices` (B2B partner).
+- **Option Licence Premium** (3900¢): `extendedLicense` — unlocks **Premium** music catalog for Essentiel/Signature; included in Heritage formula without extra line item.
+- **Economic bundle reference:** Signature + Licence + USB + Coffre = 36600¢ vs Heritage 29900¢ → savings **6700¢** (`heritageBundleAlaCarteCents`, `calculateBundleSavings`). Details: [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 - Dashboard sets `isPartner` from `tenant_members.role`; checkout uses **`resolveUserIsPartner()`** (server-side).
 
 **`WizardStepper` (`WizardStepper.tsx`):**
@@ -220,7 +223,8 @@ The tribute flow is a **premium 8-step tunnel** with free step navigation, serve
 
 **Sound signature (step 5) — Stingray, not legacy “Musical Ambiance”:**
 - Removed: mood-based catalog (`soft`, `melancholic`, etc.) as the primary UX.
-- Current: debounced search → `GET /api/music/search?q=…` → licensed tracks with composite `trackId` (`sr:{playlistId}:{songId}`).
+- Current: debounced search → `GET /api/music/search?q=…&tier=standard|premium` → licensed tracks with composite `trackId` (`sr:{playlistId}:{songId}`).
+- **Catalog tiers:** Signature/Essentiel → **Standard**; Heritage or **Licence Premium** (39 $) → **Premium**. Banner on step 5 upsells Premium when still on Standard.
 - See [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md).
 
 **`musicalAmbiance` shape (v1):**
@@ -389,6 +393,8 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 - **Extensions** (step 6): four upsell cards + Heritage Pack; persisted in `wizard_state.extensions`.
 - **Cinematic preview** (step 7): `PreviewStep` + `CinematicTeaser` (photos + act music).
 - **Hybrid pricing**: `pricingConfig.ts` + `StickyPriceBar` + `WizardBasePackagePicker` (steps 1–2).
+- **Economic bundle (Heritage)**: savings badge **67 $** on formula picker; extensions Licence/USB/Coffre marked « Déjà inclus » on step 6; cart excludes bundled lines.
+- **Music tiers**: Standard vs Premium search + step 5 upsell to Licence Premium (39 $).
 - **`POST /api/checkout`**: B2C Stripe (cents) or B2B token debit; metadata includes `extensions` and `act_tracks`.
 
 See §4.7 and [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
@@ -594,7 +600,7 @@ Le luxe percu ne repose pas sur une seule API, mais sur **trois piliers**: quali
 ### Wizard upsells (product) — partially implemented
 
 **Implemented (step 6 — `MontageExtensionsStep`):**
-- AI retouch, extended broadcast license, collector USB, digital vault, Heritage Pack (cents in `pricingConfig.ts`, cart via `wizardPricing.ts`).
+- AI retouch, **Option Licence Premium** (`extendedLicense`, 39 $), collector USB, digital vault, Heritage Pack (cents in `pricingConfig.ts`, cart via `wizardPricing.ts`). Heritage forfait bundles licence + USB + coffre (no extra charge).
 - State in `wizard_state.extensions`; cents from `pricingConfig`; sent via `POST /api/checkout` (B2C Stripe or B2B token flow).
 
 **Still to align with Stripe-First principles:**

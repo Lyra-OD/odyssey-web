@@ -9,6 +9,8 @@ import {
 const QuerySchema = z.object({
   q: z.string().trim().max(120).optional(),
   limit: z.coerce.number().int().min(1).max(24).optional(),
+  /** `standard` | `premium` — filtre catalogue mock / future MAPI. */
+  tier: z.enum(["standard", "premium"]).optional(),
 });
 
 const SERVICE_UNAVAILABLE_MESSAGE =
@@ -23,6 +25,7 @@ export async function GET(request: Request) {
   const parsed = QuerySchema.safeParse({
     q: searchParams.get("q") ?? "",
     limit: searchParams.get("limit") ?? 12,
+    tier: searchParams.get("tier") ?? undefined,
   });
 
   if (!parsed.success) {
@@ -32,10 +35,10 @@ export async function GET(request: Request) {
     );
   }
 
-  const { q = "", limit = 12 } = parsed.data;
+  const { q = "", limit = 12, tier = "standard" } = parsed.data;
 
   try {
-    const { tracks, source } = await searchMusicCatalog(q, limit);
+    const { tracks, source } = await searchMusicCatalog(q, limit, tier);
     return NextResponse.json({
       ok: true,
       source,
