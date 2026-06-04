@@ -39,6 +39,7 @@ export type SoundSignatureStepCopy = {
   chooseCta: string;
   changeCta: string;
   licensedNote: string;
+  previewPremiumBadge: string;
 };
 
 type Props = {
@@ -85,7 +86,11 @@ function actTitleForKey(
 }
 
 function resolvePreviewUrl(track: StingrayTrackApiPayload): string {
-  const url = track.previewUrl?.trim() || track.streamUrl?.trim() || "";
+  const url =
+    track.playbackUrl?.trim() ||
+    track.previewUrl?.trim() ||
+    track.streamUrl?.trim() ||
+    "";
   if (!url) {
     console.error("URL audio manquante pour", track.title);
   }
@@ -160,6 +165,7 @@ function ActMusicPanel({
         const res = await fetch(`/api/music/search?${params.toString()}`);
         const body = (await res.json()) as {
           ok?: boolean;
+          source?: "mock" | "stingray";
           tracks?: StingrayTrackApiPayload[];
           message?: string;
           error?: string;
@@ -525,6 +531,23 @@ export function SoundSignatureStep({
     [stopPreview],
   );
 
+  const [isMockCatalog, setIsMockCatalog] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/music/search?limit=1")
+      .then((res) => res.json())
+      .then((body: { source?: string }) => {
+        if (!cancelled && body.source === "mock") {
+          setIsMockCatalog(true);
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const selectedCount = WIZARD_ACT_TRACK_KEYS.filter((key) =>
     Boolean(tracks[key]?.trackId),
   ).length;
@@ -538,6 +561,16 @@ export function SoundSignatureStep({
         <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
           {copy.description}
         </p>
+        {isMockCatalog ? (
+          <p className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center rounded-full border border-violet-400/25 bg-violet-500/[0.08] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-violet-200/90">
+              {copy.previewPremiumBadge}
+            </span>
+            <span className="text-xs font-light text-zinc-600">
+              {copy.licensedNote}
+            </span>
+          </p>
+        ) : null}
         <p className="text-xs font-light text-zinc-500">
           {copy.actProgress.replace("{count}", String(selectedCount))}
         </p>

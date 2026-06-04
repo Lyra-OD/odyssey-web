@@ -5,8 +5,9 @@
 This document helps any developer (frontend, backend, DevOps, QA) onboard quickly: what is implemented, how the architecture works, how to run and test locally, and what comes next.
 
 **Deep dives (English, kept in sync with code):**
-- [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, state, autosave, act/music mapping
-- [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, composite `trackId`, preview proxy
+- [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, state, autosave, **hybrid pricing B2C/B2B**, act/music mapping
+- [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, mock mode, composite `trackId`, preview proxy
+- [`docs/sql/README.md`](sql/README.md) — SQL migrations P0–P4 (including `partner_token_wallets`)
 
 Ce document reste partiellement en francais pour l'historique produit; les sections **4.7**, **6 (Stingray)**, **10** et les annexes ci-dessus sont la reference a jour pour Jon et l'equipe technique.
 
@@ -61,7 +62,9 @@ La logique metier vise un modele hybride:
 - `app/api/projects/[id]/autosave/route.ts`: wizard autosave (GET/PATCH)
 - `app/api/projects/[id]/media/route.ts`: list project media (signed URLs)
 - `app/api/music/search|preview|stream/route.ts`: licensed music (Stingray proxy)
-- `app/api/checkout/route.ts`: Stripe Checkout session from `wizard_state`
+- `app/api/checkout/route.ts`: hybrid checkout (B2C Stripe / B2B partner tokens)
+- `src/lib/wizard/pricingConfig.ts`: pricing source of truth (cents + B2B tokens)
+- `src/components/StickyPriceBar.tsx`: sticky total (B2C $) or token cost (B2B)
 - `app/auth/callback/route.ts`: Supabase auth callback
 - `src/components/tribute/TributeWizard.tsx`: **8-step** tribute wizard orchestrator
 - `src/components/tribute/WizardStepper.tsx`: clickable step navigation
@@ -188,14 +191,21 @@ The tribute flow is a **premium 8-step tunnel** with free step navigation, serve
 
 | Step | UX label (i18n) | Component | Persisted in `wizard_state` |
 |------|-----------------|-----------|-----------------------------|
-| 1 | Essentials | `TributeWizard` | `essentials` |
-| 2 | Sources | `TributeWizard` | `socialSources` |
+| 1 | Essentials | `TributeWizard` + `WizardBasePackagePicker` | `essentials`, `basePackage`, `pricing` |
+| 2 | Sources | `TributeWizard` + formula (compact) | `socialSources`, `basePackage` |
 | 3 | Vault (upload) | `MediaDropzoneAdapter` + `MediaQueueGrid` | `media_assets` (DB) + reload via `GET .../media` |
 | 4 | Montage table | `MontageStep` | `montage` (acts `spark` / `epic` / `legacy`, focal points, exclusions) |
 | 5 | Sound signature | `SoundSignatureStep` | `musicalAmbiance.tracks` (`acte1`–`acte3`) — **Stingray**, not mood picker |
 | 6 | Memory extensions | `MontageExtensionsStep` | `extensions` |
 | 7 | Film preview | `PreviewStep` + `CinematicTeaser` | reads montage + act tracks (no separate blob) |
-| 8 | Checkout | `CheckoutStep` | `POST /api/checkout` → Stripe metadata |
+| 8 | Checkout | `CheckoutStep` | `POST /api/checkout` → Stripe (B2C) or token debit (B2B) |
+
+**Hybrid pricing (B2C / B2B) — `src/lib/wizard/pricingConfig.ts`:**
+- All amounts in **integer cents** (7900 = 79.00 USD). Cart: `computeWizardCart()` + `sumCartLineItemsCents()` at checkout.
+- Packages: Essentiel 7900¢ / 1 token · Signature 14900¢ / 2 tokens · Heritage 29900¢ / 4 tokens.
+- Wholesale: `PARTNER_TOKEN_COST_CENTS = 4000` (40 USD/token). Margin: `calculatePartnerMargin(packageId, tokens?)`.
+- **`StickyPriceBar`**: B2C `Total : {amount} $` · B2B `Coût : {tokens} jeton(s)` (no `$` for partners).
+- Dashboard sets `isPartner` from `tenant_members.role`; checkout uses **`resolveUserIsPartner()`** (server-side).
 
 **`WizardStepper` (`WizardStepper.tsx`):**
 - Renders steps 1–8; completed steps show a checkmark.
@@ -241,7 +251,9 @@ Legacy fields (`mood`, `trackOrder`, `selectedTrack`, `catalogTrackId`) are **re
 - Audio uses `track.previewUrl` (same-origin proxy) tied to the persisted `trackId`.
 - Apple TV–style controls; auto-play when the preview step mounts.
 
-**Checkout metadata:** `POST /api/checkout` embeds `extensions` and `act_tracks` (JSON) in Stripe session metadata for downstream render jobs.
+**Checkout:**
+- **B2C:** Stripe session; `metadata.total_cents` (integer sum of package + extensions), plus `extensions`, `act_tracks`.
+- **B2B:** `debitPartnerTokens()` → `partner_token_wallets` (see `docs/sql/odyssey_p4_partner_token_wallets.sql`); project `status = submitted`.
 
 ---
 
@@ -259,6 +271,8 @@ Tables actives dans `public`:
 | `orders` | Paiements Stripe (base + upsells) | RLS SELECT only (ecriture = service_role) |
 | `billing_catalog` | Cache local des Products/Prices Stripe | Lecture interne |
 | `webhook_events` | Idempotence webhook Stripe (lock token) | service_role uniquement |
+| `partner_token_wallets` | Solde jetons B2B par tenant (P4) | SELECT member; write service_role |
+| `partner_token_ledger` | Journal des mouvements jetons | SELECT member; write service_role |
 
 Relations critiques:
 
@@ -293,9 +307,10 @@ projects --1:N--> orders --N:1--> billing_catalog
 | `STINGRAY_API_BASE_URL` | No | Default `https://music-service.stingray.com` |
 | `STINGRAY_DEVICE_ID` | No | Default `odyssey-wizard` — sent as `X-Device-Id` |
 | `STINGRAY_LANGUAGE` | No | Default `fr` — sent as `X-Language` |
-| `STINGRAY_USE_MOCK` | No | Set `true` **only for local dev** without credentials; uses local catalog fallback |
+| `STINGRAY_MODE` | No | `mock` = offline catalog + cinematic preview MP3; `live` = MAPI (default) |
+| `STINGRAY_USE_MOCK` | No | Deprecated — equivalent to `STINGRAY_MODE=mock` |
 
-Without `STINGRAY_CLIENT_ID` (and without `STINGRAY_USE_MOCK=true`), `GET /api/music/search` returns **503** with a user-facing unavailable message.
+Without `STINGRAY_CLIENT_ID`, `getStingrayConfig()` forces **mock** mode (log: equivalent `STINGRAY_USE_MOCK=true`). `shouldUseStingrayMock()` also covers explicit `STINGRAY_MODE=mock` / `STINGRAY_USE_MOCK=true`. Staging works without API keys.
 
 **Best practices:**
 - Never commit secrets.
@@ -373,7 +388,8 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 - **Sound signature** (step 5): Stingray search API + preview proxy; per-act tracks `acte1`–`acte3`; composite `trackId` for Stripe.
 - **Extensions** (step 6): four upsell cards + Heritage Pack; persisted in `wizard_state.extensions`.
 - **Cinematic preview** (step 7): `PreviewStep` + `CinematicTeaser` (photos + act music).
-- **`POST /api/checkout`**: Stripe Checkout session; metadata includes `extensions` and `act_tracks`.
+- **Hybrid pricing**: `pricingConfig.ts` + `StickyPriceBar` + `WizardBasePackagePicker` (steps 1–2).
+- **`POST /api/checkout`**: B2C Stripe (cents) or B2B token debit; metadata includes `extensions` and `act_tracks`.
 
 See §4.7 and [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 
@@ -381,7 +397,8 @@ See §4.7 and [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 
 - **Stingray credentials** on Vercel (`STINGRAY_CLIENT_ID`, optional bearer token).
 - End-to-end QA of search → preview → selection → checkout metadata.
-- Checkout prices still defined in `wizardPricing.ts` (not yet driven by `billing_catalog`).
+- Checkout line amounts from `pricingConfig.ts` (not yet synced to Stripe `billing_catalog` Price IDs).
+- B2B extensions not yet billed in tokens (package only in v1).
 
 ### To do — technical (priority)
 
@@ -577,8 +594,8 @@ Le luxe percu ne repose pas sur une seule API, mais sur **trois piliers**: quali
 ### Wizard upsells (product) — partially implemented
 
 **Implemented (step 6 — `MontageExtensionsStep`):**
-- AI retouch, extended broadcast license, collector USB, digital vault, Heritage Pack (bundle pricing in `wizardPricing.ts`).
-- State in `wizard_state.extensions`; sent to Stripe via `POST /api/checkout` metadata.
+- AI retouch, extended broadcast license, collector USB, digital vault, Heritage Pack (cents in `pricingConfig.ts`, cart via `wizardPricing.ts`).
+- State in `wizard_state.extensions`; cents from `pricingConfig`; sent via `POST /api/checkout` (B2C Stripe or B2B token flow).
 
 **Still to align with Stripe-First principles:**
 - Load sellable options from **`billing_catalog`** (Stripe Price IDs + `odyssey_code` metadata), not hardcoded cents only.
@@ -690,6 +707,7 @@ Le dossier `docs/sql/` est la **source de verite** des migrations. Voir `docs/sq
 4. `odyssey_p2_media_assets_schema_sync.sql` -- alignement schema `media_assets`
 5. `odyssey_p2b_media_assets_cleanup.sql` -- patch cible (supprime `user_id` en doublon si present)
 6. `odyssey_p3_wizard_autosave.sql` -- autosave wizard (`wizard_state`, `wizard_step`, `last_saved_at`)
+7. `odyssey_p4_partner_token_wallets.sql` -- portefeuilles jetons partenaires B2B (wallet + ledger)
 7. `odyssey_p0_storage_policies_REFERENCE.sql` -- **via Dashboard uniquement** (pas SQL Editor)
 
 Toutes ces migrations sont **idempotentes** et utilisent `IF NOT EXISTS` / `ON CONFLICT DO NOTHING` / `DROP ... IF EXISTS`. Re-executer sans crainte.
@@ -736,7 +754,7 @@ Implications techniques:
 - Sensitive DB operations on the server must use the appropriate admin client.
 - Do not change lock/TTL logic without architecture review.
 - Keep separation: UI (presentation), headless adapters/hooks (orchestration), services (network/DB I/O).
-- **After any change to wizard steps or `/api/music/*` routes, update §4.7 and §10 in this file and the relevant annex (`WIZARD_ARCHITECTURE.md` / `STINGRAY_MUSIC_INTEGRATION.md`).**
+- **After any change to wizard steps, pricing, checkout, or `/api/music/*` routes, update §4.7 and §10 in this file and the relevant annex (`WIZARD_ARCHITECTURE.md` / `STINGRAY_MUSIC_INTEGRATION.md` / `pricingConfig.ts`).**
 
 ---
 

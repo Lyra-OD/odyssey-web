@@ -1,4 +1,4 @@
-/** Catalogue musique licencié — mock dev uniquement si STINGRAY_USE_MOCK=true. */
+/** Catalogue musique licencié — mode offline si `STINGRAY_MODE=mock`. */
 
 import { buildMusicPreviewProxyUrl } from "@/src/lib/music/stingrayTrackId";
 
@@ -49,6 +49,10 @@ export type WizardActTracks = Partial<
 >;
 
 export const STINGRAY_CATALOG_PROVIDER = "stingray";
+export const STINGRAY_MOCK_CATALOG_PROVIDER = "mock";
+
+/** Piste unique jouée en preview lorsque `STINGRAY_MODE=mock`. */
+export const CINEMATIC_AMBIANCE_TRACK_ID = "stingray-cinematic-01";
 
 const COVER = (seed: string) =>
   `https://picsum.photos/seed/${encodeURIComponent(seed)}/120/120`;
@@ -212,7 +216,18 @@ if (typeof console !== "undefined") {
   }
 }
 
-export function resolveStingrayStreamUrl(trackId: string): string | null {
+/** MP3 haute qualité — ambiance cinématique (preview unifiée en mode mock). */
+export function getCinematicAmbianceStreamUrl(): string {
+  return previewUrlForTrack(CINEMATIC_AMBIANCE_TRACK_ID);
+}
+
+export function resolveStingrayStreamUrl(
+  trackId: string,
+  options?: { useMockPlayback?: boolean },
+): string | null {
+  if (options?.useMockPlayback) {
+    return getCinematicAmbianceStreamUrl();
+  }
   const track = findCatalogTrack(trackId);
   return track?.previewUrl ?? null;
 }

@@ -3,9 +3,13 @@ import { z } from "zod";
 
 import { getStripe } from "@/lib/stripe";
 import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { debitPartnerTokens } from "@/src/lib/partner/partnerCheckout";
+import { resolveUserIsPartner } from "@/src/lib/partner/resolvePartnerAccess";
 import {
   CHECKOUT_LINE_LABELS,
   computeWizardCart,
+  packagePartnerTokens,
+  sumCartLineItemsCents,
   type ExtensionLineItem,
 } from "@/src/lib/wizard/wizardPricing";
 import { coerceWizardState } from "@/src/lib/wizard/wizardState";
@@ -43,7 +47,8 @@ function toStripeLineItem(line: ExtensionLineItem) {
 
 /**
  * POST /api/checkout
- * Crée une session Stripe Checkout à partir du wizard_state du projet.
+ * B2C : session Stripe Checkout.
+ * B2B (`wizard_state.isPartner`) : débit jetons partenaire (pas de Stripe).
  */
 export async function POST(request: Request) {
   let body: unknown;
@@ -69,7 +74,7 @@ export async function POST(request: Request) {
 
   const { data: project, error: fetchError } = await supabase
     .from("projects")
-    .select("id, wizard_state")
+    .select("id, tenant_id, wizard_state, status")
     .eq("id", projectId)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -86,11 +91,117 @@ export async function POST(request: Request) {
   }
 
   const wizardState = coerceWizardState(project.wizard_state);
+  const isPartnerFromRole = await resolveUserIsPartner(supabase, user.id);
+  const isPartner = isPartnerFromRole;
   const extensions = wizardState.extensions ?? {};
   const actTracks = wizardState.musicalAmbiance?.tracks ?? {};
-  const cart = computeWizardCart(extensions);
+  const basePackage =
+    wizardState.basePackage ?? wizardState.pricing?.basePackage ?? "signature";
 
-  if (cart.totalCents <= 0) {
+  const cart = computeWizardCart(extensions, basePackage);
+
+  /** Total en cents : somme entière forfait + extensions (pas de float $). */
+  const totalCents = sumCartLineItemsCents(cart.lineItems);
+  if (totalCents !== cart.totalCents) {
+    console.error("[checkout] cart total mismatch", {
+      fromLines: totalCents,
+      fromCart: cart.totalCents,
+    });
+    return NextResponse.json({ error: "cart_total_invalid" }, { status: 500 });
+  }
+
+  if (
+    wizardState.pricing?.totalCents &&
+    wizardState.pricing.totalCents !== totalCents &&
+    !isPartner
+  ) {
+    console.warn(
+      "[checkout] pricing snapshot mismatch — using recalculated cart",
+      {
+        stored: wizardState.pricing.totalCents,
+        computed: totalCents,
+      },
+    );
+  }
+
+  const origin = resolveSiteOrigin(request);
+  const dashboardPath = `/${locale}/dashboard`;
+
+  if (isPartner) {
+    const tenantId = project.tenant_id as string | null;
+    if (!tenantId) {
+      return NextResponse.json(
+        { error: "missing_tenant", message: "Projet sans tenant partenaire." },
+        { status: 400 },
+      );
+    }
+
+    const tokensRequired = packagePartnerTokens(basePackage);
+    const debit = await debitPartnerTokens({
+      tenantId,
+      packageId: basePackage,
+      projectId,
+      userId: user.id,
+    });
+
+    if (!debit.ok) {
+      const status =
+        debit.error === "insufficient_tokens"
+          ? 402
+          : debit.error === "wallet_table_missing"
+            ? 503
+            : 400;
+      return NextResponse.json(
+        { error: debit.error, message: debit.message },
+        { status },
+      );
+    }
+
+    const nextWizardState = {
+      ...wizardState,
+      pricing: {
+        basePackage: cart.basePackage,
+        baseCents: cart.baseCents,
+        optionsCents: cart.optionsCents,
+        totalCents,
+        partnerTokenCost: tokensRequired,
+      },
+    };
+
+    const { error: updateError } = await supabase
+      .from("projects")
+      .update({
+        wizard_state: nextWizardState,
+        status: "submitted",
+      })
+      .eq("id", projectId)
+      .eq("user_id", user.id);
+
+    if (updateError) {
+      return NextResponse.json(
+        { error: "project_update_failed", message: updateError.message },
+        { status: 400 },
+      );
+    }
+
+    return NextResponse.json({
+      ok: true,
+      mode: "partner",
+      redirectUrl: `${origin}${dashboardPath}?checkout=partner_success`,
+      tokensDebited: debit.tokensDebited,
+      balanceAfter: debit.balanceAfter,
+      partnerTokenCost: tokensRequired,
+      totalCents,
+      metadata: {
+        project_id: projectId,
+        base_package: cart.basePackage,
+        extensions: JSON.stringify(extensions),
+        act_tracks: JSON.stringify(actTracks),
+      },
+    });
+  }
+
+  if (totalCents <= 0) {
     return NextResponse.json({ error: "invalid_total" }, { status: 400 });
   }
 
@@ -107,9 +218,6 @@ export async function POST(request: Request) {
     );
   }
 
-  const origin = resolveSiteOrigin(request);
-  const dashboardPath = `/${locale}/dashboard`;
-
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -120,8 +228,11 @@ export async function POST(request: Request) {
       metadata: {
         project_id: projectId,
         user_id: user.id,
-        total_cents: String(cart.totalCents),
-        options_cents: String(cart.optionsCents),
+        checkout_mode: "b2c",
+        total_cents: String(totalCents),
+        base_cents: String(Math.trunc(cart.baseCents)),
+        base_package: cart.basePackage,
+        options_cents: String(Math.trunc(cart.optionsCents)),
         ai_retouch: String(Boolean(extensions.aiRetouch)),
         extended_license: String(Boolean(extensions.extendedLicense)),
         collector_usb: String(Boolean(extensions.collectorUsb)),
@@ -141,9 +252,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       ok: true,
+      mode: "stripe",
       url: session.url,
       sessionId: session.id,
-      totalCents: cart.totalCents,
+      totalCents,
     });
   } catch (error) {
     return NextResponse.json(

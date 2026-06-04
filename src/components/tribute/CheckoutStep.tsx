@@ -2,10 +2,12 @@
 
 import { Loader2, Lock } from "lucide-react";
 
+import { packagePartnerTokens } from "@/src/lib/wizard/pricingConfig";
 import {
   computeWizardCart,
   formatWizardPrice,
   type ExtensionLineKey,
+  type WizardBasePackage,
   type WizardExtensionsState,
 } from "@/src/lib/wizard/wizardPricing";
 
@@ -18,14 +20,18 @@ export type CheckoutStepCopy = {
   totalLabel: string;
   secureNote: string;
   payCta: string;
+  partnerPayCta: string;
   paying: string;
   payError: string;
+  partnerRecapLabel: string;
 };
 
 type Props = {
   copy: CheckoutStepCopy;
   locale?: "fr" | "en";
   extensions: WizardExtensionsState;
+  basePackage?: WizardBasePackage;
+  isPartner?: boolean;
   isPaying: boolean;
   payError: string | null;
   onPay: () => void;
@@ -35,12 +41,59 @@ export function CheckoutStep({
   copy,
   locale = "fr",
   extensions,
+  basePackage = "signature",
+  isPartner = false,
   isPaying,
   payError,
   onPay,
 }: Props) {
-  const cart = computeWizardCart(extensions);
+  const cart = computeWizardCart(extensions, basePackage);
   const optionLines = cart.lineItems.filter((line) => line.key !== "base");
+  const tokenCost = packagePartnerTokens(basePackage);
+
+  if (isPartner) {
+    return (
+      <div className="space-y-10 pb-44">
+        <header className="space-y-3">
+          <h2 className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl">
+            {copy.title}
+          </h2>
+          <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+            {copy.description}
+          </p>
+        </header>
+
+        <section className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
+          <p className="text-sm font-light text-zinc-400">{copy.partnerRecapLabel}</p>
+          <p className="mt-4 font-[family-name:var(--font-label)] text-3xl font-semibold text-teal-200/95">
+            {copy.partnerPayCta.replace("{tokens}", String(tokenCost))}
+          </p>
+        </section>
+
+        {payError ? (
+          <p className="text-sm text-rose-400/90" role="alert">
+            {payError}
+          </p>
+        ) : null}
+
+        <button
+          type="button"
+          onClick={onPay}
+          disabled={isPaying}
+          className="font-[family-name:var(--font-label)] flex min-h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-teal-400/45 bg-gradient-to-r from-violet-600/35 via-teal-500/30 to-teal-400/25 px-6 text-lg font-semibold text-white shadow-[0_0_56px_rgba(139,92,246,0.3),0_0_40px_rgba(45,212,191,0.25)] transition-all duration-300 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isPaying ? (
+            <>
+              <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+              {copy.paying}
+            </>
+          ) : (
+            copy.partnerPayCta.replace("{tokens}", String(tokenCost))
+          )}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10 pb-44">

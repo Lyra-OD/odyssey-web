@@ -16,8 +16,18 @@
 --             "tracks": { "acte1": { "title", "artist", "trackId", "coverUrl" } },
 --             "catalogProvider": "stingray"
 --           },
+--           "basePackage": "signature",
+--           "isPartner": true,
+--           "pricing": {
+--             "basePackage": "signature",
+--             "baseCents": 14900,
+--             "optionsCents": 0,
+--             "totalCents": 14900,
+--             "partnerTokenCost": 2
+--           },
 --           "extensions": { "aiRetouch": true, ... }
 --         }
+--         (all monetary fields are integer CENTS — see pricingConfig.ts)
 --     - wizard_step   (smallint) : étape actuelle (1..N), pour rouvrir
 --         le wizard exactement où l'utilisateur l'a laissé.
 --     - last_saved_at (timestamptz) : dernier commit serveur ; sert à

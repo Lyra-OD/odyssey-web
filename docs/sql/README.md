@@ -12,6 +12,7 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 4 | `odyssey_p2_media_assets_schema_sync.sql`        | Alignement du schéma `media_assets` avec le payload du service d'upload (storage_path, mime_type, size_bytes, source, upload_status, order_index) + index + contrainte UNIQUE (project_id, storage_path). Repose sur les colonnes historiques `owner_user_id` et `tenant_id` (déjà NOT NULL). |
 | 5 | `odyssey_p2b_media_assets_cleanup.sql`           | Patch ciblé : supprime la colonne `user_id` créée en doublon par une version antérieure du script P2 (convention DB officielle = `owner_user_id`). À exécuter une seule fois si tu vois encore `user_id` dans le schéma. |
 | 6 | `odyssey_p3_wizard_autosave.sql`                 | Autosave du Tribute Wizard : colonnes `wizard_state` (jsonb), `wizard_step` (smallint, CHECK 1..10), `last_saved_at` (timestamptz) sur `projects` + index composite `(user_id, status, last_saved_at DESC)` pour la reprise rapide du brouillon. |
+| 7 | `odyssey_p4_partner_token_wallets.sql`           | B2B : `partner_token_wallets` (solde par `tenant_id`) + `partner_token_ledger` ; débit via `POST /api/checkout` quand rôle partenaire (`pricingConfig` tokens). |
 | 7 | `odyssey_p0_storage_policies_REFERENCE.sql`      | **Référence uniquement** : policies du bucket `user-assets`. À appliquer via Supabase Dashboard → Storage → Policies (le SQL Editor n'a pas les droits sur `storage.objects`). |
 
 ## Convention

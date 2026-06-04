@@ -42,6 +42,20 @@ export default async function DashboardPage({ params }: PageProps) {
     displayName,
   );
 
+  const { data: memberships } = await supabase
+    .from("tenant_members")
+    .select("role")
+    .eq("user_id", user.id);
+
+  const isPartner = Boolean(
+    memberships?.some(
+      (row) =>
+        row.role === "partner" ||
+        row.role === "partner_admin" ||
+        row.role === "admin",
+    ),
+  );
+
   const { data: draftProject } = await supabase
     .from("projects")
     .select(
@@ -89,6 +103,7 @@ export default async function DashboardPage({ params }: PageProps) {
           copy={dictionary.tributeWizard}
           initialDraft={draftProject ?? null}
           locale={lang}
+          isPartner={isPartner}
         />
       </div>
     </main>

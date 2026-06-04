@@ -12,10 +12,17 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 |------|------|
 | `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff |
 | `src/components/tribute/WizardStepper.tsx` | Visual stepper; click → `onStepClick` |
+| `src/components/StickyPriceBar.tsx` | Sticky B2C total / B2B token cost (all steps) |
+| `src/components/tribute/WizardBasePackagePicker.tsx` | Formula selection (steps 1–2) |
 | `src/hooks/useWizardAutosave.ts` | Debounced + immediate PATCH to `/api/projects/[id]/autosave` |
 | `src/components/tribute/AutosaveIndicator.tsx` | “Saving / Saved / Error” UX |
+| `src/lib/wizard/pricingConfig.ts` | **Source of truth** — `WIZARD_PRICING` (cents + tokens) |
+| `src/lib/wizard/wizardPricing.ts` | Cart math (`computeWizardCart`, integer cents only) |
 | `src/lib/wizard/wizardState.ts` | `WizardStateV1` type + coercion/migration from legacy payloads |
+| `src/lib/partner/partnerCheckout.ts` | B2B token debit (`partner_token_wallets`) |
+| `src/lib/partner/resolvePartnerAccess.ts` | Partner role detection (`tenant_members`) |
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
+| `app/api/checkout/route.ts` | B2C Stripe or B2B token checkout |
 
 `TOTAL_STEPS = 8` in `TributeWizard.tsx`.
 
@@ -25,8 +32,8 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 
 | Step | Label (i18n key) | Main UI | Server / DB |
 |------|------------------|---------|-------------|
-| 1 | `stepperEssentials` | Name, dates, avatar | `essentials` in `wizard_state`; draft via `POST /api/projects/draft` |
-| 2 | `stepperSources` | Social source + URL | `socialSources` |
+| 1 | `stepperEssentials` | Name, dates, avatar, **formula** | `essentials`, `basePackage`; draft via `POST /api/projects/draft` |
+| 2 | `stepperSources` | Social source + URL, formula (compact) | `socialSources`, `basePackage` |
 | 3 | `stepperVault` | Dropzone + upload queue | `media_assets` rows; reload `GET /api/projects/[id]/media` |
 | 4 | `stepperMontage` | Three-act timeline, focal points | `montage` |
 | 5 | `stepperSound` | Stingray search, listen, choose per act | `musicalAmbiance.tracks` |
@@ -66,6 +73,15 @@ sequenceDiagram
 // src/lib/wizard/wizardState.ts — simplified
 {
   version: 1,
+  isPartner?: true,                    // B2B UI flag (checkout uses tenant role)
+  basePackage?: "essential" | "signature" | "heritage",
+  pricing?: {
+    basePackage: "signature",
+    baseCents: 14900,                  // integers only
+    optionsCents: 4900,
+    totalCents: 19800,
+    partnerTokenCost?: 2               // B2B only
+  },
   essentials?: { firstName, lastName, birthDate, deathDate, avatarPath },
   socialSources?: { selected, url },
   montage?: {
@@ -84,10 +100,12 @@ sequenceDiagram
       acte2?: { ... },
       acte3?: { ... }
     },
-    catalogProvider?: "stingray"
+    catalogProvider?: "stingray" | "mock"
   }
 }
 ```
+
+**Legacy package id:** `prestige` is coerced to `signature` on read (`pricingConfig.ts`).
 
 **Legacy (read-only migration, do not write on new saves):**
 - `musicalAmbiance.mood`, `trackOrder`, `selectedTrack`, `catalogTrackId`
@@ -139,30 +157,105 @@ Audio `src` uses `track.previewUrl` (typically `/api/music/preview?trackId=…`)
 
 ---
 
-## Step 8 — Checkout
+## Pricing — hybrid B2C / B2B (`pricingConfig.ts`)
 
-- **Component:** `CheckoutStep.tsx`
-- **API:** `app/api/checkout/route.ts`
-- Builds cart from `wizard_state.extensions` via `computeWizardCart()` (`wizardPricing.ts`).
-- Stripe session `metadata` includes:
-  - `extensions` (JSON)
-  - `act_tracks` (JSON) — **required for final render licensing**
+**Rule:** all money is stored and computed as **integer USD cents** (no float dollars in cart math).
 
-**Gap:** prices are currently hardcoded in `wizardPricing.ts`; target is `billing_catalog`-backed Price IDs.
+```typescript
+// src/lib/wizard/pricingConfig.ts
+export const PARTNER_TOKEN_COST_CENTS = 4000; // 40.00 USD per token (wholesale)
+
+export const WIZARD_PRICING = {
+  packages: {
+    ESSENTIEL:  { id: "essential", priceCents: 7900,  tokens: 1 },   // 79.00 $
+    SIGNATURE:  { id: "signature", priceCents: 14900, tokens: 2 },   // 149.00 $
+    HERITAGE:   { id: "heritage",  priceCents: 29900, tokens: 4 },   // 299.00 $
+  },
+  extensions: {
+    RETOUCHE_IA:    { id: "aiRetouch",         priceCents: 4900 },
+    LICENCE:        { id: "extendedLicense",   priceCents: 3900 },
+    USB:            { id: "collectorUsb",      priceCents: 7900 },
+    COFFRE_FORT:    { id: "digitalVault",      priceCents: 9900 },
+    PACK_HERITAGE:  { id: "heritagePack",      priceCents: 14900 },
+  },
+};
+```
+
+| Helper | Role |
+|--------|------|
+| `packageCents(id)` | Base package cents |
+| `packagePartnerTokens(id)` | B2B token debit for package |
+| `extensionCents(id)` | Extension line cents |
+| `computeWizardCart()` | `totalCents = baseCents + optionsCents` (integers) |
+| `sumCartLineItemsCents()` | Checkout verification (sum of line items) |
+| `calculatePartnerMargin(packageId, tokens?)` | `priceCents − PARTNER_TOKEN_COST_CENTS × tokens` |
+
+Display-only: `StickyPriceBar` converts `totalCents / 100` for B2C label `Total : {amount} $`.
 
 ---
 
-## Database (P3)
+## Step 8 — Checkout
 
-Migration: `docs/sql/odyssey_p3_wizard_autosave.sql`
+- **Component:** `CheckoutStep.tsx` (B2C recap + pay / B2B token confirm)
+- **API:** `app/api/checkout/route.ts`
 
-| Column | Type | Purpose |
-|--------|------|---------|
-| `wizard_state` | jsonb | UI snapshot |
-| `wizard_step` | smallint | 1..10 (CHECK) |
-| `last_saved_at` | timestamptz | Server save time |
+```mermaid
+flowchart TD
+  A[POST /api/checkout] --> B{resolveUserIsPartner?}
+  B -->|yes| C[debitPartnerTokens]
+  C --> D[project status submitted]
+  B -->|no| E[sumCartLineItemsCents]
+  E --> F[Stripe Checkout session]
+  F --> G[metadata.total_cents]
+```
 
-Index: `(user_id, status, last_saved_at DESC)` for “resume latest draft” on dashboard.
+### B2C (family)
+
+- User **without** partner role on `tenant_members`.
+- `StickyPriceBar`: **Total : {amount} $** (`amount = totalCents ÷ 100` at render time).
+- `POST /api/checkout` → Stripe `line_items` with `unit_amount` in cents; metadata `total_cents`, `base_cents`, `options_cents`, `extensions`, `act_tracks`.
+
+### B2B (funeral partner)
+
+- `resolveUserIsPartner()` — roles `partner`, `partner_admin`, or `admin` on `tenant_members`.
+- `StickyPriceBar`: **Cost: {tokens} token(s)** — **no `$` symbol** in partner UI.
+- `POST /api/checkout` → `debitPartnerTokens()` on `partner_token_wallets` (migration P4); **no Stripe**.
+- v1 debits **package tokens only** (extensions token pricing = roadmap).
+
+| `basePackage` | `priceCents` (B2C list) | Tokens debited | Example margin* |
+|---------------|-------------------------|----------------|-----------------|
+| `essential` | 7900 (79 $) | 1 | 3900¢ (39 $) |
+| `signature` | 14900 (149 $) | 2 | 6900¢ (69 $) |
+| `heritage` | 29900 (299 $) | 4 | 13900¢ (139 $) |
+
+\* `calculatePartnerMargin(packageId)` — partner sets their own retail price to families.
+
+### UI pricing
+
+| Component | Location |
+|-----------|----------|
+| `StickyPriceBar` | Sticky under stepper, every step |
+| `WizardBasePackagePicker` | Steps 1–2 (`hidePrices` when partner) |
+| `WizardCartSummary` | Steps 5–6 (B2C only) |
+
+---
+
+## Database
+
+| Migration | Purpose |
+|-----------|---------|
+| `docs/sql/odyssey_p3_wizard_autosave.sql` | `wizard_state`, `wizard_step`, `last_saved_at` |
+| `docs/sql/odyssey_p4_partner_token_wallets.sql` | B2B token balance + ledger |
+
+| Column / table | Type | Purpose |
+|----------------|------|---------|
+| `projects.wizard_state` | jsonb | UI snapshot (includes `pricing`, `basePackage`) |
+| `projects.wizard_step` | smallint | 1..10 (CHECK) |
+| `projects.last_saved_at` | timestamptz | Server save time |
+| `partner_token_wallets` | table | Per-tenant token balance (B2B) |
+| `partner_token_ledger` | table | Debit/credit audit trail |
+
+Index: `(user_id, status, last_saved_at DESC)` on `projects` for “resume latest draft” on dashboard.
 
 ---
 

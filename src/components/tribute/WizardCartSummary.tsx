@@ -2,9 +2,11 @@
 
 import { motion } from "framer-motion";
 
+import { packagePartnerTokens } from "@/src/lib/wizard/pricingConfig";
 import {
   computeWizardCart,
   formatWizardPrice,
+  type WizardBasePackage,
   type WizardExtensionsState,
 } from "@/src/lib/wizard/wizardPricing";
 
@@ -18,6 +20,7 @@ type Props = {
   copy: WizardCartSummaryCopy;
   locale?: "fr" | "en";
   extensions: WizardExtensionsState;
+  basePackage?: WizardBasePackage;
   compact?: boolean;
 };
 
@@ -25,9 +28,10 @@ export function WizardCartSummary({
   copy,
   locale = "fr",
   extensions,
+  basePackage = "signature",
   compact = false,
 }: Props) {
-  const cart = computeWizardCart(extensions);
+  const cart = computeWizardCart(extensions, basePackage);
   const base = formatWizardPrice(cart.baseCents, locale);
   const options = formatWizardPrice(cart.optionsCents, locale);
   const total = formatWizardPrice(cart.totalCents, locale);
@@ -69,6 +73,7 @@ export function WizardCartSummary({
 
 export type ExtensionsFooterCopy = {
   totalFormula: string;
+  partnerTokenCostLabel: string;
   continueCta: string;
   skipStep: string;
 };
@@ -77,6 +82,8 @@ type ExtensionsFooterProps = {
   copy: ExtensionsFooterCopy;
   locale?: "fr" | "en";
   extensions: WizardExtensionsState;
+  basePackage?: WizardBasePackage;
+  isPartner?: boolean;
   onSkip: () => void;
   onContinue: () => void;
 };
@@ -85,18 +92,27 @@ export function ExtensionsStickyFooter({
   copy,
   locale = "fr",
   extensions,
+  basePackage = "signature",
+  isPartner = false,
   onSkip,
   onContinue,
 }: ExtensionsFooterProps) {
-  const cart = computeWizardCart(extensions);
-  const base = formatWizardPrice(cart.baseCents, locale);
-  const options = formatWizardPrice(cart.optionsCents, locale);
-  const total = formatWizardPrice(cart.totalCents, locale);
+  const cart = computeWizardCart(extensions, basePackage);
 
-  const totalLine = copy.totalFormula
-    .replace("{base}", base)
-    .replace("{options}", options)
-    .replace("{total}", total);
+  const totalLine = isPartner
+    ? copy.partnerTokenCostLabel.replace(
+        "{tokens}",
+        String(packagePartnerTokens(basePackage)),
+      )
+    : (() => {
+        const base = formatWizardPrice(cart.baseCents, locale);
+        const options = formatWizardPrice(cart.optionsCents, locale);
+        const total = formatWizardPrice(cart.totalCents, locale);
+        return copy.totalFormula
+          .replace("{base}", base)
+          .replace("{options}", options)
+          .replace("{total}", total);
+      })();
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/95 px-4 py-4 backdrop-blur-xl md:px-8">

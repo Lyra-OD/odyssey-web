@@ -27,7 +27,14 @@ Parent reference: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSS
 | `STINGRAY_API_BASE_URL` | No | Default `https://music-service.stingray.com` |
 | `STINGRAY_DEVICE_ID` | No | Header `X-Device-Id` (default `odyssey-wizard`) |
 | `STINGRAY_LANGUAGE` | No | Header `X-Language` (default `fr`) |
-| `STINGRAY_USE_MOCK=true` | Dev only | Falls back to local catalog in `stingrayCatalog.ts` if API fails or credentials missing |
+| `STINGRAY_MODE=mock` | Dev / offline tunnel | Local catalog search (real titles & covers); preview audio = single cinematic MP3 via `/api/music/preview` |
+| `STINGRAY_USE_MOCK=true` | Deprecated | Treated as `STINGRAY_MODE=mock` |
+
+**Résilience (staging / dev):**
+- If `STINGRAY_CLIENT_ID` is missing → `resolveStingrayMode()` returns **`mock`** (server log: equivalent `STINGRAY_USE_MOCK=true`).
+- `shouldUseStingrayMock()` = explicit mock **or** missing credentials.
+- Search uses `stingrayCatalog.ts` (real titles/covers); preview streams one cinematic MP3.
+- UI badge **Preview** on step 5. No 503 unless `STINGRAY_MODE=live` is forced without credentials.
 
 ---
 
@@ -35,7 +42,7 @@ Parent reference: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSS
 
 | Path | Role |
 |------|------|
-| `src/lib/music/stingrayConfig.ts` | Reads env, `isStingrayConfigured()` |
+| `src/lib/music/stingrayConfig.ts` | Env, `shouldUseStingrayMock()`, auto-mock if no `STINGRAY_CLIENT_ID` |
 | `src/lib/music/stingrayClient.ts` | Search + playlist + stream fetch (`server-only`) |
 | `src/lib/music/stingrayTrackId.ts` | Composite `trackId` encode/decode + preview URL builder |
 | `src/lib/wizard/stingrayCatalog.ts` | Types, mock catalog (dev fallback only) |
@@ -71,7 +78,9 @@ sequenceDiagram
 3. Filter songs by query tokens (title / artist / album).
 4. Map each song to our API payload.
 
-If credentials are missing and `STINGRAY_USE_MOCK` is not set → **503** with message: *“Music service temporarily unavailable…”*
+With `STINGRAY_MODE=mock` **or without API credentials**, search uses `stingrayCatalog.ts` (`source: "mock"`). UI shows badge **Preview** on step 5.
+
+If credentials are missing and mock is disabled via `STINGRAY_MODE=live` explicitly → **503** with message: *“Music service temporarily unavailable…”*
 
 ---
 
@@ -112,7 +121,7 @@ sr:{playlistId}:{songId}
 
 **Example:** `sr:550e8400-e29b-41d4-a716-446655440000:SONG123`
 
-Legacy mock ids (`stingray-aznavour-la-mamma`, …) still parse via `stingrayCatalog.ts` only when `STINGRAY_USE_MOCK=true` on preview route.
+In `mock` mode, any catalog `trackId` (e.g. `stingray-aznavour-la-mamma`) is proxied to the **cinematic ambiance** MP3 (`stingray-cinematic-01` / SoundHelix Song 4).
 
 ---
 
@@ -177,9 +186,10 @@ Downstream render jobs must use **`trackId`** (composite) to re-resolve licensed
 
 | Case | HTTP | UX |
 |------|------|-----|
-| Missing `STINGRAY_CLIENT_ID` | 503 from `/api/music/search` | Banner: service unavailable |
-| MAPI upstream error | 502 | Same + server log `[music/search] Stingray error` |
-| Preview 404/502 | `/api/music/preview` | Listen disabled; “Playback unavailable” |
+| Missing `STINGRAY_CLIENT_ID` | 200, `source: "mock"` | Local catalog + Preview badge |
+| `STINGRAY_MODE=live` without credentials | 503 from `/api/music/search` | Service unavailable |
+| MAPI upstream error (live mode) | 502 | Banner + server log |
+| Preview 404/502 | `/api/music/preview` | “Playback unavailable” |
 | Empty search | 200, `tracks: []` | “No tracks found” |
 
 ---
@@ -199,16 +209,26 @@ Official docs: [music-service.stingray.com/swagger-ui.html](https://music-servic
 
 ## Testing locally
 
-1. Add credentials to `.env.local` (or `STINGRAY_USE_MOCK=true` for offline UI).
-2. `npm run dev`
-3. Open wizard step 5, search e.g. `Aznavour`
-4. DevTools → Network: `/api/music/search` → 200; `/api/music/preview` → 200 `audio/mpeg`
-5. Console: `Lecture de la piste : … URL: /api/music/preview?…`
+1. **Offline / staging:** omit `STINGRAY_CLIENT_ID` (auto mock) or set `STINGRAY_MODE=mock` / `STINGRAY_USE_MOCK=true`.
+2. **Production:** add `STINGRAY_CLIENT_ID` (+ optional bearer) to `.env.local` / Vercel.
+3. `npm run dev`
+4. Wizard step 5 — search e.g. `Aznavour`
+5. DevTools → `/api/music/search` → 200 `{ source: "mock" }`; `/api/music/preview` → `audio/mpeg`
 
 ```bash
 curl -s "http://localhost:3000/api/music/search?q=test&limit=3" | jq .
 curl -sI "http://localhost:3000/api/music/preview?trackId=sr:YOUR_PLAYLIST:YOUR_SONG"
 ```
+
+---
+
+## Partner token model (wizard checkout)
+
+Pricing is **not** part of Stingray; see [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) and `src/lib/wizard/pricingConfig.ts`.
+
+- **B2C:** amounts in cents; Stripe `total_cents` = sum of package + extensions.
+- **B2B:** partners debit **tokens** (1 / 2 / 4 per package); wholesale **4000¢ per token** (`PARTNER_TOKEN_COST_CENTS`).
+- Partner retail margin ≈ `calculatePartnerMargin(packageId)` = public `priceCents` − (4000 × tokens). Partners set their own resale price; the wizard shows **token cost only**, not dollars.
 
 ---
 

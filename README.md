@@ -11,6 +11,9 @@ Application Next.js 14 (App Router) pour le Studio Odyssey:
 | Document | Contenu |
 |----------|---------|
 | `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` | **Document central:** stack, structure repo, fait / a terminer, **moteur video**, positionnement haut de gamme, **potentiel & adoption**, **croissance virale** (ethique, co-creation, formats, **verticaliste animaux**), upsells, **securite P0–P2**, elevation produit, multi-skins, isolation medias, regles d'equipe — **sommaire en tete de fichier**. |
+| `docs/WIZARD_ARCHITECTURE.md` | Wizard 8 etapes, autosave, **pricing hybride B2C/B2B** (`pricingConfig.ts`, `StickyPriceBar`). |
+| `docs/STINGRAY_MUSIC_INTEGRATION.md` | Musique licenciee (MAPI + mode mock staging). |
+| `docs/sql/README.md` | Migrations SQL ordonnees (P0–P4, dont jetons partenaires). |
 | `docs/CONVENTIONS.md` | Conventions de code (anglais, brain vs engine). |
 | `docs/Manifesto-V10.4.md` | Vision produit manifeste. |
 

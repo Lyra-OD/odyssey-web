@@ -8,6 +8,7 @@ import {
 import {
   getStingrayConfig,
   isStingrayConfigured,
+  shouldUseStingrayMock,
   type StingrayConfig,
 } from "@/src/lib/music/stingrayConfig";
 import { searchStingrayTracksForApi } from "@/src/lib/wizard/stingrayCatalog";
@@ -289,31 +290,18 @@ export async function searchMusicCatalog(
 ): Promise<{ tracks: StingrayTrackApiPayload[]; source: "stingray" | "mock" }> {
   const config = getStingrayConfig();
 
-  if (!isStingrayConfigured(config)) {
-    if (config.useMock) {
-      return {
-        tracks: searchStingrayTracksForApi(query, limit),
-        source: "mock",
-      };
-    }
-    throw new StingrayApiError(
-      "Service musical non configuré (STINGRAY_CLIENT_ID manquant).",
-      503,
-      "service_unavailable",
-    );
+  if (shouldUseStingrayMock(config)) {
+    return {
+      tracks: searchStingrayTracksForApi(query, limit),
+      source: "mock",
+    };
   }
 
   try {
     const tracks = await searchStingrayMusicTracks(query, limit);
     return { tracks, source: "stingray" };
   } catch (error) {
-    if (config.useMock) {
-      console.error("[StingrayClient] API indisponible — fallback mock:", error);
-      return {
-        tracks: searchStingrayTracksForApi(query, limit),
-        source: "mock",
-      };
-    }
+    console.error("[StingrayClient] API indisponible:", error);
     throw error;
   }
 }

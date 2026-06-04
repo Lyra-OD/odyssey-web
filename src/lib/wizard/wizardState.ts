@@ -12,7 +12,16 @@ import {
   type WizardSelectedTrack,
   WIZARD_ACT_TRACK_KEYS,
 } from "@/src/lib/wizard/stingrayCatalog";
-import type { WizardExtensionsState } from "@/src/lib/wizard/wizardPricing";
+import { buildPricingSnapshot } from "@/src/lib/wizard/wizardPricing";
+import type {
+  WizardBasePackage,
+  WizardExtensionsState,
+  WizardPricingSnapshot,
+} from "@/src/lib/wizard/wizardPricing";
+import {
+  normalizeBasePackageId,
+  packagePartnerTokens,
+} from "@/src/lib/wizard/pricingConfig";
 
 export type { WizardExtensionsState } from "@/src/lib/wizard/wizardPricing";
 export type {
@@ -46,8 +55,15 @@ export type WizardMontageState = {
   focalPoints: Record<string, MontageFocalPoint>;
 };
 
+export type { WizardBasePackage } from "@/src/lib/wizard/wizardPricing";
+
 export type WizardStateV1 = {
   version: typeof WIZARD_STATE_VERSION;
+  /** Mode funérarium / partenaire B2B (jetons) vs famille B2C (Stripe). */
+  isPartner?: boolean;
+  basePackage?: WizardBasePackage;
+  /** Snapshot tarifaire pour checkout (recalculé à chaque autosave). */
+  pricing?: WizardPricingSnapshot;
   essentials?: {
     firstName?: string;
     lastName?: string;
@@ -277,6 +293,45 @@ export function emptyWizardState(): WizardStateV1 {
   return { version: WIZARD_STATE_VERSION };
 }
 
+function coerceIsPartner(raw: unknown): boolean {
+  return raw === true;
+}
+
+function coercePricingSnapshot(
+  raw: unknown,
+  fallbackPackage: WizardBasePackage,
+  isPartner: boolean,
+): WizardPricingSnapshot | undefined {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
+  const obj = raw as Record<string, unknown>;
+  const basePackage = coerceBasePackage(obj.basePackage ?? fallbackPackage);
+  const baseCents = typeof obj.baseCents === "number" ? obj.baseCents : 0;
+  const optionsCents = typeof obj.optionsCents === "number" ? obj.optionsCents : 0;
+  const totalCents = typeof obj.totalCents === "number" ? obj.totalCents : 0;
+  if (totalCents <= 0) return undefined;
+  const storedTokens =
+    typeof obj.partnerTokenCost === "number" ? obj.partnerTokenCost : undefined;
+  return {
+    basePackage,
+    baseCents,
+    optionsCents,
+    totalCents,
+    ...(isPartner
+      ? {
+          partnerTokenCost:
+            storedTokens ?? packagePartnerTokens(basePackage),
+        }
+      : {}),
+  };
+}
+
+function coerceBasePackage(raw: unknown): WizardBasePackage {
+  if (typeof raw === "string") {
+    return normalizeBasePackageId(raw);
+  }
+  return normalizeBasePackageId(undefined);
+}
+
 export function coerceWizardState(raw: unknown): WizardStateV1 {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     return emptyWizardState();
@@ -286,9 +341,18 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
     obj,
     coerceExtensionsState(obj.extensions),
   );
+  const isPartner = coerceIsPartner(obj.isPartner);
+  const basePackage = coerceBasePackage(obj.basePackage);
+
+  const pricing =
+    coercePricingSnapshot(obj.pricing, basePackage, isPartner) ??
+    buildPricingSnapshot(extensions, basePackage, isPartner);
 
   const state: WizardStateV1 = {
     version: WIZARD_STATE_VERSION,
+    ...(isPartner ? { isPartner: true } : {}),
+    basePackage,
+    pricing,
     ...(obj.essentials && typeof obj.essentials === "object"
       ? { essentials: obj.essentials as WizardStateV1["essentials"] }
       : {}),

@@ -133,6 +133,25 @@ const MontageSchema = z
 const WizardStatePartialSchema = z
   .object({
     version: z.literal(1).optional(),
+    isPartner: z.boolean().optional(),
+    basePackage: z
+      .enum(["essential", "heritage", "prestige", "signature"])
+      .optional(),
+    pricing: z
+      .object({
+        basePackage: z.enum([
+          "essential",
+          "heritage",
+          "prestige",
+          "signature",
+        ]),
+        baseCents: z.number().int().min(0),
+        optionsCents: z.number().int().min(0),
+        totalCents: z.number().int().min(0),
+        partnerTokenCost: z.number().int().min(0).optional(),
+      })
+      .strict()
+      .optional(),
     essentials: EssentialsSchema.optional(),
     socialSources: SocialSourcesSchema.optional(),
     montage: MontageSchema.optional(),

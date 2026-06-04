@@ -25,10 +25,12 @@ import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
 import { MontageExtensionsStep } from "@/src/components/tribute/MontageExtensionsStep";
 import { MontageStep } from "@/src/components/tribute/MontageStep";
 import { SoundSignatureStep } from "@/src/components/tribute/SoundSignatureStep";
+import { WizardBasePackagePicker } from "@/src/components/tribute/WizardBasePackagePicker";
 import {
   ExtensionsStickyFooter,
   WizardCartSummary,
 } from "@/src/components/tribute/WizardCartSummary";
+import { StickyPriceBar } from "@/src/components/StickyPriceBar";
 import { WizardStepper } from "@/src/components/tribute/WizardStepper";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
@@ -43,10 +45,15 @@ import {
   type SocialId,
   type WizardInitialDraft,
   type WizardMontageState,
+  type WizardBasePackage,
   type WizardExtensionsState,
   type WizardActTracks,
   type WizardStateV1,
 } from "@/src/lib/wizard/wizardState";
+import {
+  buildPricingSnapshot,
+  computeWizardCart,
+} from "@/src/lib/wizard/wizardPricing";
 import { normalizeWizardStateForSave } from "@/src/lib/wizard/wizardExtensions";
 import {
   emptyActTracks,
@@ -69,6 +76,8 @@ type WizardFieldsSnapshot = {
   deathDate: string;
   avatarPath: string | null;
   selectedSocial: SocialId | null;
+  isPartner: boolean;
+  basePackage: WizardBasePackage;
   montage: WizardMontageState;
   extensions: WizardExtensionsState;
   actTracks: WizardActTracks;
@@ -112,12 +121,16 @@ export function TributeWizard({
   copy,
   initialDraft = null,
   locale = "fr",
+  isPartner: isPartnerProp = false,
 }: {
   copy: TributeWizardCopy;
   initialDraft?: WizardInitialDraft | null;
   locale?: Locale;
+  /** Compte funérarium / partenaire B2B (jetons). */
+  isPartner?: boolean;
 }) {
   const hydrated = coerceWizardState(initialDraft?.wizard_state);
+  const isPartnerInitial = hydrated.isPartner === true || isPartnerProp;
 
   const [currentStep, setCurrentStep] = useState<Step>(() =>
     resolveInitialWizardStep(
@@ -149,6 +162,10 @@ export function TributeWizard({
   );
   const [montage, setMontage] = useState<WizardMontageState>(
     () => hydrated.montage ?? emptyMontageState(),
+  );
+  const [isPartner] = useState(isPartnerInitial);
+  const [basePackage, setBasePackage] = useState<WizardBasePackage>(
+    () => hydrated.basePackage ?? "signature",
   );
   const [extensions, setExtensions] = useState<WizardExtensionsState>(
     () => hydrated.extensions ?? {},
@@ -191,6 +208,8 @@ export function TributeWizard({
     deathDate,
     avatarPath,
     selectedSocial,
+    isPartner,
+    basePackage,
     montage,
     extensions,
     actTracks,
@@ -202,6 +221,8 @@ export function TributeWizard({
     deathDate,
     avatarPath,
     selectedSocial,
+    isPartner,
+    basePackage,
     montage,
     extensions,
     actTracks,
@@ -212,8 +233,16 @@ export function TributeWizard({
 
   const buildWizardState = useCallback((): WizardStateV1 => {
     const s = wizardFieldsRef.current;
+    const pricing = buildPricingSnapshot(
+      s.extensions,
+      s.basePackage,
+      s.isPartner,
+    );
     return normalizeWizardStateForSave({
       version: WIZARD_STATE_VERSION,
+      ...(s.isPartner ? { isPartner: true } : {}),
+      basePackage: pricing.basePackage,
+      pricing,
       essentials: {
         firstName: s.firstName.trim() || undefined,
         lastName: s.lastName.trim() || undefined,
@@ -259,6 +288,12 @@ export function TributeWizard({
       .replace("{birth}", b || "—")
       .replace("{death}", d || "—");
   }, [birthDate, deathDate, copy.headerYears]);
+
+  useEffect(() => {
+    if (isPartnerProp) {
+      wizardFieldsRef.current.isPartner = true;
+    }
+  }, [isPartnerProp]);
 
   useEffect(() => {
     console.log(
@@ -572,6 +607,15 @@ export function TributeWizard({
     [selectedSocial, queueSave],
   );
 
+  const handleBasePackageChange = useCallback(
+    (pkg: WizardBasePackage) => {
+      setBasePackage(pkg);
+      wizardFieldsRef.current.basePackage = pkg;
+      queueSave("immediate");
+    },
+    [queueSave],
+  );
+
   const handleActTracksChange = useCallback(
     (next: WizardActTracks) => {
       setActTracks(next);
@@ -618,9 +662,27 @@ export function TributeWizard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ projectId: uploadProjectId, locale }),
       });
-      const data = (await res.json()) as { url?: string; error?: string };
+      const data = (await res.json()) as {
+        url?: string;
+        redirectUrl?: string;
+        mode?: string;
+        message?: string;
+        error?: string;
+      };
 
-      if (!res.ok || !data.url) {
+      if (!res.ok) {
+        setPayError(
+          typeof data.message === "string" ? data.message : copy.checkoutPayError,
+        );
+        return;
+      }
+
+      if (data.mode === "partner" && data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+        return;
+      }
+
+      if (!data.url) {
         setPayError(copy.checkoutPayError);
         return;
       }
@@ -789,11 +851,22 @@ export function TributeWizard({
           }}
         />
 
-        {currentStep >= 5 && currentStep <= 6 ? (
+        <StickyPriceBar
+          extensions={extensions}
+          basePackage={basePackage}
+          isPartner={isPartner}
+          copy={{
+            consumerTotalLabel: copy.stickyConsumerTotal,
+            partnerTokenCostLabel: copy.stickyPartnerTokenCost,
+          }}
+        />
+
+        {currentStep >= 5 && currentStep <= 6 && !isPartner ? (
           <div className="mb-8">
             <WizardCartSummary
               locale={locale}
               extensions={extensions}
+              basePackage={basePackage}
               copy={{
                 labelWithOptions: copy.cartLabelWithOptions,
                 labelBaseOnly: copy.cartLabelBaseOnly,
@@ -954,6 +1027,23 @@ export function TributeWizard({
                 </div>
               </div>
 
+              <WizardBasePackagePicker
+                locale={locale}
+                value={basePackage}
+                onChange={handleBasePackageChange}
+                hidePrices={isPartner}
+                copy={{
+                  title: copy.basePackageTitle,
+                  hint: copy.basePackageHint,
+                  essentialLabel: copy.basePackageEssential,
+                  essentialDescription: copy.basePackageEssentialDesc,
+                  signatureLabel: copy.basePackageSignature,
+                  signatureDescription: copy.basePackageSignatureDesc,
+                  heritageLabel: copy.basePackageHeritage,
+                  heritageDescription: copy.basePackageHeritageDesc,
+                }}
+              />
+
               {essentialError ? (
                 <p
                   className="mt-6 text-center text-sm font-light text-rose-400/90"
@@ -979,6 +1069,24 @@ export function TributeWizard({
               <p className="mt-4 text-sm font-light leading-relaxed text-zinc-500">
                 {copy.socialQuickLoginNote}
               </p>
+
+              <WizardBasePackagePicker
+                locale={locale}
+                value={basePackage}
+                onChange={handleBasePackageChange}
+                compact
+                hidePrices={isPartner}
+                copy={{
+                  title: copy.basePackageTitle,
+                  hint: copy.basePackageHint,
+                  essentialLabel: copy.basePackageEssential,
+                  essentialDescription: copy.basePackageEssentialDesc,
+                  signatureLabel: copy.basePackageSignature,
+                  signatureDescription: copy.basePackageSignatureDesc,
+                  heritageLabel: copy.basePackageHeritage,
+                  heritageDescription: copy.basePackageHeritageDesc,
+                }}
+              />
 
               <div className="mt-10 flex flex-col gap-3">
                 {socialRows.map(({ id, label, Icon, halo }) => (
@@ -1317,6 +1425,7 @@ export function TributeWizard({
                 serviceUnavailable: copy.soundServiceUnavailable,
                 previewUnavailable: copy.soundPreviewUnavailable,
                 licensedNote: copy.soundLicensedNote,
+                previewPremiumBadge: copy.soundPreviewPremiumBadge,
               }}
             />
           ) : null}
@@ -1325,6 +1434,7 @@ export function TributeWizard({
             <MontageExtensionsStep
               locale={locale}
               extensions={extensions}
+              basePackage={basePackage}
               onChange={handleExtensionsChange}
               copy={{
                 title: copy.stepExtensionsTitle,
@@ -1380,6 +1490,8 @@ export function TributeWizard({
             <CheckoutStep
               locale={locale}
               extensions={extensions}
+              basePackage={basePackage}
+              isPartner={isPartner}
               isPaying={isPaying}
               payError={payError}
               onPay={() => void handlePay()}
@@ -1392,6 +1504,8 @@ export function TributeWizard({
                 totalLabel: copy.checkoutTotalLabel,
                 secureNote: copy.checkoutSecureNote,
                 payCta: copy.checkoutPayCta,
+                partnerPayCta: copy.checkoutPartnerPayCta,
+                partnerRecapLabel: copy.checkoutPartnerRecap,
                 paying: copy.checkoutPaying,
                 payError: copy.checkoutPayError,
               }}
@@ -1404,10 +1518,13 @@ export function TributeWizard({
         <ExtensionsStickyFooter
           locale={locale}
           extensions={extensions}
+          basePackage={basePackage}
+          isPartner={isPartner}
           onSkip={() => void handleContinueToPreview()}
           onContinue={() => void handleContinueToPreview()}
           copy={{
             totalFormula: copy.extensionsFooterTotalFormula,
+            partnerTokenCostLabel: copy.stickyPartnerTokenCost,
             continueCta: copy.extensionsFooterContinueCta,
             skipStep: copy.skipStep,
           }}

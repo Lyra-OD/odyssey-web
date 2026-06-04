@@ -6,8 +6,14 @@ import {
   StingrayApiError,
 } from "@/src/lib/music/stingrayClient";
 import { parseStingrayTrackId } from "@/src/lib/music/stingrayTrackId";
-import { resolveStingrayStreamUrl } from "@/src/lib/wizard/stingrayCatalog";
-import { getStingrayConfig } from "@/src/lib/music/stingrayConfig";
+import {
+  getCinematicAmbianceStreamUrl,
+  resolveStingrayStreamUrl,
+} from "@/src/lib/wizard/stingrayCatalog";
+import {
+  getStingrayConfig,
+  shouldUseStingrayMock,
+} from "@/src/lib/music/stingrayConfig";
 
 const QuerySchema = z.object({
   trackId: z.string().trim().min(1).max(200),
@@ -31,9 +37,11 @@ export async function GET(request: Request) {
   }
 
   const { trackId } = parsed.data;
+  const config = getStingrayConfig();
+  const mockMode = shouldUseStingrayMock(config);
   const parsedStingray = parseStingrayTrackId(trackId);
 
-  if (parsedStingray) {
+  if (parsedStingray && !mockMode) {
     try {
       const upstream = await fetchStingrayTrackStream(
         parsedStingray.playlistId,
@@ -63,17 +71,11 @@ export async function GET(request: Request) {
     }
   }
 
-  const config = getStingrayConfig();
-  const upstreamUrl = resolveStingrayStreamUrl(trackId);
+  const upstreamUrl = mockMode
+    ? getCinematicAmbianceStreamUrl()
+    : resolveStingrayStreamUrl(trackId);
   if (!upstreamUrl) {
     return NextResponse.json({ error: "track_not_found" }, { status: 404 });
-  }
-
-  if (!config.useMock) {
-    return NextResponse.json(
-      { error: "legacy_mock_track_disabled" },
-      { status: 404 },
-    );
   }
 
   let upstream: Response;

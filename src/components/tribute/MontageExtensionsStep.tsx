@@ -8,15 +8,13 @@ import { EXTENSION_VISUALS } from "@/src/lib/wizard/extensionVisuals";
 import { toggleWizardExtension } from "@/src/lib/wizard/wizardExtensions";
 import {
   computeWizardCart,
-  EXTENSION_AI_RETOUCH_CENTS,
-  EXTENSION_COLLECTOR_USB_CENTS,
-  EXTENSION_DIGITAL_VAULT_CENTS,
-  EXTENSION_EXTENDED_LICENSE_CENTS,
-  EXTENSION_HERITAGE_PACK_CENTS,
+  extensionCents,
   formatWizardPrice,
-  HERITAGE_PACK_INDIVIDUAL_TOTAL_CENTS,
-  HERITAGE_PACK_SAVINGS_CENTS,
+  heritagePackIndividualTotalCents,
+  heritagePackSavingsCents,
+  WIZARD_PRICING,
   type ExtensionLineKey,
+  type WizardBasePackage,
   type WizardExtensionsState,
 } from "@/src/lib/wizard/wizardPricing";
 
@@ -58,6 +56,7 @@ type Props = {
   copy: MontageExtensionsStepCopy;
   locale?: "fr" | "en";
   extensions: WizardExtensionsState;
+  basePackage?: WizardBasePackage;
   onChange: (next: WizardExtensionsState) => void;
 };
 
@@ -108,9 +107,10 @@ export function MontageExtensionsStep({
   copy,
   locale = "fr",
   extensions,
+  basePackage = "signature",
   onChange,
 }: Props) {
-  const cart = computeWizardCart(extensions);
+  const cart = computeWizardCart(extensions, basePackage);
   const recapLines = cart.lineItems.filter((line) => line.key !== "base");
 
   const cards: ExtensionCardConfig[] = [
@@ -119,7 +119,7 @@ export function MontageExtensionsStep({
       icon: Wand2,
       title: copy.aiRetouchTitle,
       description: copy.aiRetouchDescription,
-      priceCents: EXTENSION_AI_RETOUCH_CENTS,
+      priceCents: extensionCents("aiRetouch"),
       accent: "text-teal-300",
       selectedRing:
         "border-teal-400/40 bg-teal-400/[0.04] shadow-[0_0_40px_rgba(45,212,191,0.18),0_0_24px_rgba(139,92,246,0.08)]",
@@ -130,7 +130,7 @@ export function MontageExtensionsStep({
       icon: Music2,
       title: copy.extendedLicenseTitle,
       description: copy.extendedLicenseDescription,
-      priceCents: EXTENSION_EXTENDED_LICENSE_CENTS,
+      priceCents: extensionCents("extendedLicense"),
       accent: "text-indigo-300",
       selectedRing:
         "border-indigo-400/40 bg-indigo-400/[0.04] shadow-[0_0_40px_rgba(129,140,248,0.18),0_0_24px_rgba(45,212,191,0.06)]",
@@ -142,7 +142,7 @@ export function MontageExtensionsStep({
       imageAlt: EXTENSION_VISUALS.collectorUsb.alt,
       title: copy.collectorUsbTitle,
       description: copy.collectorUsbDescription,
-      priceCents: EXTENSION_COLLECTOR_USB_CENTS,
+      priceCents: extensionCents("collectorUsb"),
       accent: "text-zinc-200",
       selectedRing:
         "border-white/30 bg-white/[0.04] shadow-[0_0_36px_rgba(255,255,255,0.1),0_0_20px_rgba(167,139,250,0.08)]",
@@ -153,7 +153,7 @@ export function MontageExtensionsStep({
       icon: Vault,
       title: copy.digitalVaultTitle,
       description: copy.digitalVaultDescription,
-      priceCents: EXTENSION_DIGITAL_VAULT_CENTS,
+      priceCents: extensionCents("digitalVault"),
       accent: "text-violet-300",
       selectedRing:
         "border-violet-400/40 bg-violet-400/[0.04] shadow-[0_0_40px_rgba(167,139,250,0.2),0_0_24px_rgba(45,212,191,0.08)]",
@@ -225,15 +225,18 @@ export function MontageExtensionsStep({
           </div>
           <div className="text-right">
             <p className="text-lg font-semibold text-amber-200">
-              {formatWizardPrice(EXTENSION_HERITAGE_PACK_CENTS, locale)}
+              {formatWizardPrice(
+                WIZARD_PRICING.extensions.PACK_HERITAGE.priceCents,
+                locale,
+              )}
             </p>
             <p className="text-xs text-zinc-500 line-through">
-              {formatWizardPrice(HERITAGE_PACK_INDIVIDUAL_TOTAL_CENTS, locale)}
+              {formatWizardPrice(heritagePackIndividualTotalCents(), locale)}
             </p>
             <p className="mt-1 text-[11px] font-medium text-teal-400/90">
               {copy.heritagePackSavings.replace(
                 "{savings}",
-                formatWizardPrice(HERITAGE_PACK_SAVINGS_CENTS, locale),
+                formatWizardPrice(heritagePackSavingsCents(), locale),
               )}
             </p>
           </div>
