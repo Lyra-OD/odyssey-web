@@ -16,15 +16,58 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | `src/components/tribute/WizardBasePackagePicker.tsx` | Formula selection (steps 1–2) |
 | `src/hooks/useWizardAutosave.ts` | Debounced + immediate PATCH to `/api/projects/[id]/autosave` |
 | `src/components/tribute/AutosaveIndicator.tsx` | “Saving / Saved / Error” UX |
-| `src/lib/wizard/pricingConfig.ts` | **Source of truth** — `WIZARD_PRICING` (cents + tokens) |
+| `src/lib/wizard/wizardDeliverables.ts` | **Deliverables manifest** — `PACKAGE_MANIFEST`, jetons/$, Salon/Social (pilotage UI cible) |
+| `src/lib/wizard/wizardDeliverables.utils.ts` | Présentation partenaire (cartes invitation, copy dérivée du manifeste) |
+| `src/lib/wizard/pricingConfig.ts` | **Checkout cents** — `WIZARD_PRICING`, extensions, bundle 67 $ (aligné manifeste via `assertManifestPricingAlignedWithLegacyConfig`) |
 | `src/lib/wizard/wizardPricing.ts` | Cart math (`computeWizardCart`, integer cents only) |
 | `src/lib/wizard/wizardState.ts` | `WizardStateV1` type + coercion/migration from legacy payloads |
 | `src/lib/partner/partnerCheckout.ts` | B2B token debit (`partner_token_wallets`) |
 | `src/lib/partner/resolvePartnerAccess.ts` | Partner role detection (`tenant_members`) |
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
-| `app/api/checkout/route.ts` | B2C Stripe or B2B token checkout |
+| `app/api/checkout/route.ts` | Checkout (**cible** 3 modes — voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)) |
+| `app/[lang]/(partner)/partner/` | Dashboard partenaire (header, portefeuille, `InvitationComposer` sur manifeste) |
 
 `TOTAL_STEPS = 8` in `TributeWizard.tsx`.
+
+---
+
+## Deliverables manifest
+
+The tribute wizard is **no longer a static 8-step product definition** in documentation alone: package capabilities (Salon vs Social, MP3 vs Stingray, token vs dollar display) are driven by [`src/lib/wizard/wizardDeliverables.ts`](../src/lib/wizard/wizardDeliverables.ts) (`PACKAGE_MANIFEST`).
+
+**Canonical product doc:** [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) (marketing names Souvenir / Héritage / Éternité ↔ technical IDs `essential` / `signature` / `heritage`).
+
+### Dynamic UI (target — partial today)
+
+| Rule (manifest) | Wizard behaviour |
+|---------------|------------------|
+| `salon.audio === 'stingray_acts'` | Step 5 — Stingray per act (**implemented**) |
+| `salon.audio === 'personal_mp3'` | Step 5 — personal MP3 upload + legal gatekeeper (**not implemented**) |
+| `social.enabled === true` | Additional Social step — Safe Music only, 9:16 preview (**not implemented**) |
+| `social.enabled === false` | Hide Social step (e.g. **Souvenir** / `SOUVENIR`) |
+| `resolveTransactionMode()` | `StickyPriceBar` / pickers: **tokens** (partner) vs **dollars** (family) |
+
+**Today:** `InvitationComposer` (partner dashboard) reads the manifest + `packages.names` from dictionaries; `TributeWizard` uses `WizardBasePackagePicker` with **marketing labels** via i18n (`tributeWizard.basePackage*` = Souvenir / Héritage / Éternité) while persisting legacy IDs (`essential` / `signature` / `heritage`). Step 5 remains Stingray-only until MP3/Social steps ship.
+
+### i18n (marketing names)
+
+| Technical ID | FR | EN | Dictionary keys |
+|--------------|----|----|-----------------|
+| `essential` | Souvenir | Keepsake | `packages.names.essential`, `tributeWizard.basePackageEssential` |
+| `signature` | Héritage | Legacy | `packages.names.signature`, `tributeWizard.basePackageSignature` |
+| `heritage` | Éternité | Eternity | `packages.names.heritage`, `tributeWizard.basePackageHeritage` |
+
+See [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) and `src/lib/wizard/packageI18n.ts`.
+
+### Pricing split
+
+| Concern | Source |
+|---------|--------|
+| Deliverables, jetons, public $, Salon/Social flags | `wizardDeliverables.ts` |
+| Cart line items, extension cents, Stripe totals | `pricingConfig.ts` + `wizardPricing.ts` |
+| Drift guard | `assertManifestPricingAlignedWithLegacyConfig()` in `wizardDeliverables.ts` |
+
+Do not duplicate package prices in UI strings — use `formatPackagePriceForMode(packageId, mode, locale)` after resolving `manifestPackageFromLegacy(basePackage)`.
 
 ---
 
@@ -260,34 +303,51 @@ Mock catalog (`stingrayCatalog.ts`): each track has `musicTier: "standard" | "pr
 
 ## Step 8 — Checkout
 
-- **Component:** `CheckoutStep.tsx` (B2C recap + pay / B2B token confirm)
+- **Component:** `CheckoutStep.tsx` (recap + pay CTA)
 - **API:** `app/api/checkout/route.ts`
+- **Référence commerce :** [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (saga P5, règles `granted_package`)
+
+**Implémentation actuelle du code :** 2 branches (`resolveUserIsPartner` → jetons TS **ou** Stripe). **Cible :** 3 modes via `tribute_checkouts.checkout_mode` + `debit_partner_tokens_for_checkout()`.
 
 ```mermaid
 flowchart TD
-  A[POST /api/checkout] --> B{resolveUserIsPartner?}
-  B -->|yes| C[debitPartnerTokens]
-  C --> D[project status submitted]
-  B -->|no| E[sumCartLineItemsCents]
-  E --> F[Stripe Checkout session]
-  F --> G[metadata.total_cents]
+  A[POST /api/checkout] --> B{checkout_mode}
+  B -->|b2c| C[Stripe: total catalogue]
+  C --> C1[metadata.total_cents]
+  B -->|b2b_partner| D[debitPartnerTokens TS ou RPC P5]
+  D --> D1[tokens = selected_package]
+  D1 --> D2[no Stripe]
+  B -->|b2b2c_family| E[debit_partner_tokens_for_checkout]
+  E --> E1[tokens = granted_package only]
+  E1 --> F{family_total_cents > 0?}
+  F -->|no| G[completed]
+  F -->|yes| H[Stripe delta famille]
+  H --> I[webhook → completed]
 ```
 
-### B2C (family)
+### Mode `b2c` (famille directe)
 
-- User **without** partner role on `tenant_members`.
-- `StickyPriceBar`: **Total : {amount} $** (`amount = totalCents ÷ 100` at render time).
-- `POST /api/checkout` → Stripe `line_items` with `unit_amount` in cents; metadata `total_cents`, `base_cents`, `options_cents`, `extensions`, `act_tracks`.
+- Pas d’invitation partenaire ; `checkout_mode = b2c`.
+- `StickyPriceBar`: **Total : {amount} $** (`totalCents ÷ 100`).
+- Stripe : somme forfait + extensions (`computeWizardCart`).
 
-### B2B (funeral partner)
+### Mode `b2b_partner` (conseiller funérarium)
 
-- `resolveUserIsPartner()` — roles `partner`, `partner_admin`, or `admin` on `tenant_members`.
-- `StickyPriceBar`: **Cost: {tokens} token(s)** — **no `$` symbol** in partner UI.
-- `POST /api/checkout` → `debitPartnerTokens()` on `partner_token_wallets` (migration P4); **no Stripe**.
-- v1 debits **package tokens only** (extensions token pricing = roadmap).
+- Rôles `partner`, `partner_admin` (ou `admin`) sur `tenant_members`.
+- `StickyPriceBar`: **Coût : {tokens} jeton(s)** — pas de `$`.
+- Jetons = **`tokens(selected_package)`** (1 / 2 / 4).
+- **Code actuel :** `debitPartnerTokens()` (TypeScript, P4). **Cible :** ligne `tribute_checkouts` + RPC P5.
 
-| `basePackage` | `priceCents` (B2C list) | Tokens debited | Example margin* |
-|---------------|-------------------------|----------------|-----------------|
+### Mode `b2b2c_family` (famille invitée — gant blanc)
+
+- `projects.invitation_id` → `partner_invitations.granted_package`.
+- Partenaire débité : **`tokens(granted_package)`** uniquement — **pas** de jetons sur l’upsell famille.
+- Famille : **`family_total_cents`** = delta vs forfait offert (+ extensions) → Stripe si montant > 0.
+- UX : pas de mention « jeton » ; prix relatifs (ex. Essentiel offert → Signature **+70 $**).
+- **DB P5 ✅ · API / UI ⏳** — détail saga : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
+
+| `basePackage` | `priceCents` (B2C list) | Tokens (B2B / granted) | Example margin* |
+|---------------|-------------------------|------------------------|-----------------|
 | `essential` | 7900 (79 $) | 1 | 3900¢ (39 $) |
 | `signature` | 14900 (149 $) | 2 | 6900¢ (69 $) |
 | `heritage` | 29900 (299 $) | 4 | 13900¢ (139 $) |
@@ -311,17 +371,26 @@ flowchart TD
 | Migration | Purpose |
 |-----------|---------|
 | `docs/sql/odyssey_p3_wizard_autosave.sql` | `wizard_state`, `wizard_step`, `last_saved_at` |
-| `docs/sql/odyssey_p4_partner_token_wallets.sql` | B2B token balance + ledger |
+| `docs/sql/odyssey_p4_partner_token_wallets.sql` | Wallets + ledger |
+| `docs/sql/odyssey_p4_1_security_fixes.sql` | RLS wallets/ledger (`partner` / `partner_admin`) |
+| `docs/sql/odyssey_p5_b2b2c_core.sql` | `partner_invitations`, `tribute_checkouts`, RPC débit |
 
 | Column / table | Type | Purpose |
 |----------------|------|---------|
 | `projects.wizard_state` | jsonb | UI snapshot (includes `pricing`, `basePackage`) |
 | `projects.wizard_step` | smallint | 1..10 (CHECK) |
 | `projects.last_saved_at` | timestamptz | Server save time |
-| `partner_token_wallets` | table | Per-tenant token balance (B2B) |
-| `partner_token_ledger` | table | Debit/credit audit trail |
+| `projects.invitation_id` | uuid FK | Lien invitation B2B2C (P5) |
+| `partner_invitations` | table | Forfait offert, email, statut invitation |
+| `tribute_checkouts` | table | Saga checkout (`checkout_mode`, statuts) |
+| `partner_token_wallets` | table | Solde jetons par tenant |
+| `partner_token_ledger` | table | Audit ; `tribute_checkout_id` (P5) |
+
+Fonction : `debit_partner_tokens_for_checkout(uuid)` — **`service_role`** only.
 
 Index: `(user_id, status, last_saved_at DESC)` on `projects` for “resume latest draft” on dashboard.
+
+Ordre SQL : [`docs/sql/README.md`](sql/README.md).
 
 ---
 
@@ -333,4 +402,4 @@ Copy lives in `dictionaries/fr.json` and `dictionaries/en.json` under `tributeWi
 
 ## When you change this flow
 
-Update this file and [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 + §10 per team rule §13.
+Update this file, [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), and [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 + §5 + §10 per team rule §13.

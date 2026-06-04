@@ -5,9 +5,12 @@
 This document helps any developer (frontend, backend, DevOps, QA) onboard quickly: what is implemented, how the architecture works, how to run and test locally, and what comes next.
 
 **Deep dives (English, kept in sync with code):**
-- [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, state, autosave, **hybrid pricing B2C/B2B**, **Heritage economic bundle**, **Standard/Premium music tiers**
+- [`docs/DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) — **Deliverables manifest** (Souvenir/Héritage/Éternité), tokens vs dollars, Salon 16:9 / Social 9:16
+- [`docs/B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — **3 checkout modes**, prix/jetons, `granted_package`, saga `tribute_checkouts`, DB vs API status
+- [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, state, autosave, pricing, Heritage bundle, music tiers, checkout diagram
 - [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, **catalog tiers**, mock mode, composite `trackId`, preview proxy
-- [`docs/sql/README.md`](sql/README.md) — SQL migrations P0–P4 (including `partner_token_wallets`)
+- [`docs/sql/README.md`](sql/README.md) — SQL migrations **P0–P5** (P4.1 security patch, QA seed)
+- [`docs/CONVENTIONS.md`](CONVENTIONS.md) — Code language, doc hierarchy, repo scope
 
 Ce document reste partiellement en francais pour l'historique produit; les sections **4.7**, **6 (Stingray)**, **10** et les annexes ci-dessus sont la reference a jour pour Jon et l'equipe technique.
 
@@ -62,7 +65,8 @@ La logique metier vise un modele hybride:
 - `app/api/projects/[id]/autosave/route.ts`: wizard autosave (GET/PATCH)
 - `app/api/projects/[id]/media/route.ts`: list project media (signed URLs)
 - `app/api/music/search|preview|stream/route.ts`: licensed music (Stingray proxy)
-- `app/api/checkout/route.ts`: hybrid checkout (B2C Stripe / B2B partner tokens)
+- `app/api/checkout/route.ts`: checkout (**cible** 3 modes — see [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md))
+- `docs/B2B2C_COMMERCE.md`: commerce B2B2C reference (invitations, saga, granted_package rule)
 - `src/lib/wizard/pricingConfig.ts`: pricing source of truth (cents + B2B tokens)
 - `src/components/StickyPriceBar.tsx`: sticky total (B2C $) or token cost (B2B)
 - `app/auth/callback/route.ts`: Supabase auth callback
@@ -198,17 +202,24 @@ The tribute flow is a **premium 8-step tunnel** with free step navigation, serve
 | 5 | Sound signature | `SoundSignatureStep` | `musicalAmbiance.tracks` (`acte1`–`acte3`) — **Stingray**, not mood picker |
 | 6 | Memory extensions | `MontageExtensionsStep` | `extensions` |
 | 7 | Film preview | `PreviewStep` + `CinematicTeaser` | reads montage + act tracks (no separate blob) |
-| 8 | Checkout | `CheckoutStep` | `POST /api/checkout` → Stripe (B2C) or token debit (B2B) |
+| 8 | Checkout | `CheckoutStep` | `POST /api/checkout` → **cible** `b2c` / `b2b_partner` / `b2b2c_family` (see [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)) |
+
+**Packages (marketing vs technical IDs):** product names **Souvenir / Héritage / Éternité** (EN: Keepsake / Legacy / Eternity) are the UI façade in **`dictionaries/*/json` → `packages.names`** (keys `essential`, `signature`, `heritage`); persisted IDs remain **`essential` / `signature` / `heritage`** in SQL and `wizard_state`. Full matrix and deliverables (Salon 16:9, Social 9:16, tokens vs dollars): [`docs/DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · code: `wizardDeliverables.ts`, `packageI18n.ts`.
 
 **Hybrid pricing (B2C / B2B) — `src/lib/wizard/pricingConfig.ts`:**
 - All amounts in **integer cents** (7900 = 79.00 USD). Cart: `computeWizardCart()` + `sumCartLineItemsCents()` at checkout.
-- Packages: Essentiel 7900¢ / 1 token · Signature 14900¢ / 2 tokens · Heritage 29900¢ / 4 tokens.
+- Technical packages: `essential` 7900¢ / 1 token · `signature` 14900¢ / 2 tokens · `heritage` 29900¢ / 4 tokens (maps to Souvenir / Héritage / Éternité in the manifest).
 - Wholesale: `PARTNER_TOKEN_COST_CENTS = 4000` (40 USD/token). Margin: `calculatePartnerMargin(packageId, tokens?)`.
 - **`StickyPriceBar`**: B2C `Total : {amount} $` · B2B `Coût : {tokens} jeton(s)` (no `$` for partners). Total updates live as the user changes formula/extensions; when **Heritage** is selected, bundled extensions (Licence Premium, USB, Coffre) are **not** added to `totalCents` (`isExtensionBundledInBasePackage`).
 - **`WizardBasePackagePicker`** (steps 1–2): marketing upsell on the Heritage card — **`calculateBundleSavings("heritage")` → 67 $** displayed via `basePackageHeritageBundlePromo` (« Le choix complet (Économisez 67 $) »). Hidden when `hidePrices` (B2B partner).
 - **Option Licence Premium** (3900¢): `extendedLicense` — unlocks **Premium** music catalog for Essentiel/Signature; included in Heritage formula without extra line item.
 - **Economic bundle reference:** Signature + Licence + USB + Coffre = 36600¢ vs Heritage 29900¢ → savings **6700¢** (`heritageBundleAlaCarteCents`, `calculateBundleSavings`). Details: [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
-- Dashboard sets `isPartner` from `tenant_members.role`; checkout uses **`resolveUserIsPartner()`** (server-side).
+- Dashboard sets `isPartner` from `tenant_members.role`; checkout uses **`resolveUserIsPartner()`** today (**2 modes**). **Target:** `tribute_checkouts.checkout_mode` + invitation context — [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
+
+**B2B2C (DB ready, app pending):**
+- Tables `partner_invitations`, `tribute_checkouts`, `projects.invitation_id` (P5).
+- Partner debited **`tokens(granted_package)`** only; family pays upsell delta via Stripe.
+- RPC `debit_partner_tokens_for_checkout(checkout_id)` — ledger first, then Stripe.
 
 **`WizardStepper` (`WizardStepper.tsx`):**
 - Renders steps 1–8; completed steps show a checkmark.
@@ -255,9 +266,10 @@ Legacy fields (`mood`, `trackOrder`, `selectedTrack`, `catalogTrackId`) are **re
 - Audio uses `track.previewUrl` (same-origin proxy) tied to the persisted `trackId`.
 - Apple TV–style controls; auto-play when the preview step mounts.
 
-**Checkout:**
-- **B2C:** Stripe session; `metadata.total_cents` (integer sum of package + extensions), plus `extensions`, `act_tracks`.
-- **B2B:** `debitPartnerTokens()` → `partner_token_wallets` (see `docs/sql/odyssey_p4_partner_token_wallets.sql`); project `status = submitted`.
+**Checkout (see [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)):**
+- **`b2c`:** Stripe full cart; metadata `total_cents`, `extensions`, `act_tracks`.
+- **`b2b_partner`:** Token debit on `selected_package` (code: `debitPartnerTokens()` TS — target RPC P5).
+- **`b2b2c_family`:** Token debit on **`granted_package`** + Stripe for `family_total_cents` only — **not implemented in API yet**.
 
 ---
 
@@ -275,8 +287,10 @@ Tables actives dans `public`:
 | `orders` | Paiements Stripe (base + upsells) | RLS SELECT only (ecriture = service_role) |
 | `billing_catalog` | Cache local des Products/Prices Stripe | Lecture interne |
 | `webhook_events` | Idempotence webhook Stripe (lock token) | service_role uniquement |
-| `partner_token_wallets` | Solde jetons B2B par tenant (P4) | SELECT member; write service_role |
-| `partner_token_ledger` | Journal des mouvements jetons | SELECT member; write service_role |
+| `partner_token_wallets` | Solde jetons B2B par tenant (P4) | SELECT `partner` / `partner_admin` (P4.1); write `service_role` |
+| `partner_token_ledger` | Journal des mouvements jetons (P4) | SELECT `partner` / `partner_admin` (P4.1); write `service_role` |
+| `partner_invitations` | Invitation funérarium → famille (P5) | SELECT partner roles + accepted family; INSERT partner roles |
+| `tribute_checkouts` | Saga checkout 3 modes (P5) | SELECT project owner + partner roles; write `service_role` |
 
 Relations critiques:
 
@@ -284,8 +298,14 @@ Relations critiques:
 auth.users --1:1--> profiles --1:N--> projects --1:N--> media_assets
               |
               +-----M:N via tenant_members----> tenants
+                        |
+                        +--> partner_token_wallets
+                        +--> partner_invitations (P5)
+                        +--> tribute_checkouts (P5)
 
+projects.invitation_id --> partner_invitations
 projects --1:N--> orders --N:1--> billing_catalog
+tribute_checkouts --optional--> partner_token_ledger.tribute_checkout_id
 ```
 
 **Tous les scripts SQL qui produisent cette base sont dans `docs/sql/` et listes dans `docs/sql/README.md` avec leur ordre d'execution sur une base vierge.**
@@ -395,9 +415,16 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 - **Hybrid pricing**: `pricingConfig.ts` + `StickyPriceBar` + `WizardBasePackagePicker` (steps 1–2).
 - **Economic bundle (Heritage)**: savings badge **67 $** on formula picker; extensions Licence/USB/Coffre marked « Déjà inclus » on step 6; cart excludes bundled lines.
 - **Music tiers**: Standard vs Premium search + step 5 upsell to Licence Premium (39 $).
-- **`POST /api/checkout`**: B2C Stripe (cents) or B2B token debit; metadata includes `extensions` and `act_tracks`.
+- **`POST /api/checkout`**: B2C Stripe or B2B partner token debit (2 modes in code today); metadata includes `extensions` and `act_tracks`.
 
-See §4.7 and [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
+### Done — commerce database (B2B2C core, June 2026)
+
+- **P4** `partner_token_wallets` + `partner_token_ledger`.
+- **P4.1** RLS wallets/ledger restricted to `partner` / `partner_admin`.
+- **P5** `partner_invitations`, `tribute_checkouts`, `projects.invitation_id`, `debit_partner_tokens_for_checkout()`.
+- Documentation: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`sql/README.md`](sql/README.md) (P0–P5).
+
+See §4.7, [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), and [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
 
 ### In progress / configuration
 
@@ -405,9 +432,11 @@ See §4.7 and [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 - End-to-end QA of search → preview → selection → checkout metadata.
 - Checkout line amounts from `pricingConfig.ts` (not yet synced to Stripe `billing_catalog` Price IDs).
 - B2B extensions not yet billed in tokens (package only in v1).
+- **B2B2C application layer:** invitations UI, magic link, `checkout_mode` in API, family delta pricing UI, Stripe webhook tied to `tribute_checkouts`, token compensation.
 
 ### To do — technical (priority)
 
+- **Implement `b2b2c_family`** in `POST /api/checkout` + webhook (use P5 RPC + saga).
 - Wire checkout line items to **`billing_catalog`** / Stripe Price IDs (no client-only amounts).
 - **Video render pipeline** after payment: enqueue job → Creatomate (or equivalent) → completion webhook → project status.
 - Automated tests (unit + integration: webhook, autosave, checkout, music search).
@@ -714,7 +743,10 @@ Le dossier `docs/sql/` est la **source de verite** des migrations. Voir `docs/sq
 5. `odyssey_p2b_media_assets_cleanup.sql` -- patch cible (supprime `user_id` en doublon si present)
 6. `odyssey_p3_wizard_autosave.sql` -- autosave wizard (`wizard_state`, `wizard_step`, `last_saved_at`)
 7. `odyssey_p4_partner_token_wallets.sql` -- portefeuilles jetons partenaires B2B (wallet + ledger)
-7. `odyssey_p0_storage_policies_REFERENCE.sql` -- **via Dashboard uniquement** (pas SQL Editor)
+8. `odyssey_p4_1_security_fixes.sql` -- **patch** RLS partner roles + index ledger `project_id`
+9. `odyssey_p5_b2b2c_core.sql` -- invitations, tribute_checkouts, RPC debit atomique
+— `odyssey_p0_storage_policies_REFERENCE.sql` -- **via Dashboard uniquement** (pas SQL Editor)
+— `odyssey_p4_partner_token_qa_seed.sql` -- **seed QA** (apres P4, non prod)
 
 Toutes ces migrations sont **idempotentes** et utilisent `IF NOT EXISTS` / `ON CONFLICT DO NOTHING` / `DROP ... IF EXISTS`. Re-executer sans crainte.
 
@@ -760,7 +792,7 @@ Implications techniques:
 - Sensitive DB operations on the server must use the appropriate admin client.
 - Do not change lock/TTL logic without architecture review.
 - Keep separation: UI (presentation), headless adapters/hooks (orchestration), services (network/DB I/O).
-- **After any change to wizard steps, pricing, checkout, or `/api/music/*` routes, update §4.7 and §10 in this file and the relevant annex (`WIZARD_ARCHITECTURE.md` / `STINGRAY_MUSIC_INTEGRATION.md` / `pricingConfig.ts`).**
+- **After any change to wizard steps, deliverables/packages, pricing, checkout, invitations, or `/api/music/*` routes, update §4.7 and §10 in this file and the relevant annex (`DELIVERABLES_AND_PACKAGES.md` / `B2B2C_COMMERCE.md` / `WIZARD_ARCHITECTURE.md` / `STINGRAY_MUSIC_INTEGRATION.md` / `sql/README.md` / `wizardDeliverables.ts` / `pricingConfig.ts`).**
 
 ---
 

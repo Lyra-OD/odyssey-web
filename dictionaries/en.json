@@ -136,6 +136,18 @@
     "recommendedBadge": "RECOMMENDED",
     "recommended": "Recommended"
   },
+  "packages": {
+    "names": {
+      "essential": "Keepsake",
+      "signature": "Legacy",
+      "heritage": "Eternity"
+    },
+    "styles": {
+      "essential": "Pure and steady",
+      "signature": "Sensitive rhythm, music at heart",
+      "heritage": "Deep narrative, documentary feel"
+    }
+  },
   "manifesto": {
     "title": "Manifesto",
     "body": "Every life is a masterpiece that deserves its own cinema. Odyssey is not a tool; it is a visual sanctuary. In the noise of grief, we orchestrate silence, light, and memory to create an unbreakable bond. We don't just make videos; we restore the sovereign dignity of remembrance."
@@ -313,12 +325,12 @@
     "stickyPartnerTokenCost": "Cost: {tokens} token(s)",
     "basePackageTitle": "Choose your plan",
     "basePackageHint": "Select the foundation for your tribute — change it here or on the next step.",
-    "basePackageEssential": "Essential",
+    "basePackageEssential": "Keepsake",
     "basePackageEssentialDesc": "Full narrative edit and digital delivery.",
-    "basePackageSignature": "Signature",
-    "basePackageSignatureDesc": "Standard music catalog included · cinematic pacing.",
-    "basePackageHeritage": "Heritage",
-    "basePackageHeritageDesc": "Premium catalog · license, collector USB, and digital vault included.",
+    "basePackageSignature": "Legacy",
+    "basePackageSignatureDesc": "Standard music catalog included · 9:16 Social clip.",
+    "basePackageHeritage": "Eternity",
+    "basePackageHeritageDesc": "Premium catalog · personal MP3 (salon) · license, collector USB, and digital vault included.",
     "basePackageHeritageBundlePromo": "The complete choice (Save ${savings})",
     "cartLabelWithOptions": "Tribute total: {base} + {options}",
     "cartLabelBaseOnly": "Tribute total: {base}",
@@ -349,7 +361,7 @@
     "extensionAiRetouchTitle": "Premium AI retouch",
     "extensionAiRetouchDescription": "I automatically refresh and beautify your photos.",
     "extensionExtendedLicenseTitle": "Premium License option",
-    "extensionExtendedLicenseDescription": "Unlocks the Premium music catalog (extended-rights tracks) for Essential and Signature packages.",
+    "extensionExtendedLicenseDescription": "Unlocks the Premium music catalog (extended-rights tracks) for Keepsake and Legacy packages.",
     "extensionIncludedInHeritage": "Already included",
     "extensionCollectorUsbTitle": "Collector USB key",
     "extensionCollectorUsbDescription": "I receive a beautiful metal USB key in a luxury case to keep my film forever.",

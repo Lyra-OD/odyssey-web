@@ -1,87 +1,102 @@
 # SQL Odyssey — état courant
 
-Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle** de la base Supabase d'Odyssey. Tous les scripts sont **idempotents** : on peut les ré-exécuter sans dégât.
+> **Attention :** les `CHECK` et colonnes forfaits (`granted_package`, `selected_package`, `basePackage` côté app) utilisent les **IDs legacy** `essential`, `signature`, `heritage`. **Ne pas les renommer** en SQL sans migration P6+. Correspondance avec les noms commerciaux (Souvenir / Héritage / Éternité) : [`docs/DELIVERABLES_AND_PACKAGES.md`](../DELIVERABLES_AND_PACKAGES.md).
+
+Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle** de la base Supabase d'Odyssey. Tous les scripts de migration sont **idempotents** : on peut les ré-exécuter sans dégât.
+
+**Commerce B2B2C (schéma + saga)** : voir [`docs/B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md).  
+**Note :** les migrations P4–P5 sont en base ; le code Next.js (`/api/checkout`) n'utilise pas encore `tribute_checkouts` ni `debit_partner_tokens_for_checkout()`.
+
+---
 
 ## Ordre d'exécution sur une base vierge
 
-| # | Fichier                                          | Rôle                                                                                                  |
-| - | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| 1 | `odyssey_p0_complete.sql`                        | Schéma P0 : table `orders`, RLS sur `projects`/`orders`/`media_assets`, index, grants service_role.   |
-| 2 | `odyssey_p0_fix_grants.sql`                      | Patch ciblé : ré-applique les `GRANT` aux rôles `authenticated`/`service_role` si l'init P0 a planté. |
-| 3 | `odyssey_p1_user_bootstrap.sql`                  | Multi-tenant : `tenant_members`, enrichissement `tenants`, trigger unifié `on_auth_user_created` qui peuple `profiles` + `tenant_members`, backfill des comptes existants. |
-| 4 | `odyssey_p2_media_assets_schema_sync.sql`        | Alignement du schéma `media_assets` avec le payload du service d'upload (storage_path, mime_type, size_bytes, source, upload_status, order_index) + index + contrainte UNIQUE (project_id, storage_path). Repose sur les colonnes historiques `owner_user_id` et `tenant_id` (déjà NOT NULL). |
-| 5 | `odyssey_p2b_media_assets_cleanup.sql`           | Patch ciblé : supprime la colonne `user_id` créée en doublon par une version antérieure du script P2 (convention DB officielle = `owner_user_id`). À exécuter une seule fois si tu vois encore `user_id` dans le schéma. |
-| 6 | `odyssey_p3_wizard_autosave.sql`                 | Autosave du Tribute Wizard : colonnes `wizard_state` (jsonb), `wizard_step` (smallint, CHECK 1..10), `last_saved_at` (timestamptz) sur `projects` + index composite `(user_id, status, last_saved_at DESC)` pour la reprise rapide du brouillon. |
-| 7 | `odyssey_p4_partner_token_wallets.sql`           | B2B : `partner_token_wallets` (solde par `tenant_id`) + `partner_token_ledger` ; débit via `POST /api/checkout` quand rôle partenaire (`pricingConfig` tokens). |
-| 7 | `odyssey_p0_storage_policies_REFERENCE.sql`      | **Référence uniquement** : policies du bucket `user-assets`. À appliquer via Supabase Dashboard → Storage → Policies (le SQL Editor n'a pas les droits sur `storage.objects`). |
+| # | Fichier | Type | Rôle |
+|---|---------|------|------|
+| 1 | `odyssey_p0_complete.sql` | Migration | Schéma P0 : `orders`, RLS `projects` / `orders` / `media_assets`, index, grants `service_role`. |
+| 2 | `odyssey_p0_fix_grants.sql` | Patch | Ré-applique les `GRANT` si l'init P0 a échoué en cours de route. |
+| 3 | `odyssey_p1_user_bootstrap.sql` | Migration | Multi-tenant : `tenant_members`, enrichissement `tenants`, trigger `handle_new_user` → `profiles` + `tenant_members`. |
+| 4 | `odyssey_p2_media_assets_schema_sync.sql` | Migration | Alignement `media_assets` (upload service). |
+| 5 | `odyssey_p2b_media_assets_cleanup.sql` | Patch | Supprime `user_id` en doublon si présent (convention = `owner_user_id`). |
+| 6 | `odyssey_p3_wizard_autosave.sql` | Migration | `wizard_state`, `wizard_step`, `last_saved_at` sur `projects`. |
+| 7 | `odyssey_p4_partner_token_wallets.sql` | Migration | `partner_token_wallets` + `partner_token_ledger` (jetons B2B). |
+| 8 | `odyssey_p4_1_security_fixes.sql` | **Patch sécurité** | RLS wallets/ledger : rôles `partner` / `partner_admin` uniquement ; index `ledger.project_id`. |
+| 9 | `odyssey_p5_b2b2c_core.sql` | Migration | `partner_invitations`, `tribute_checkouts`, `projects.invitation_id`, `debit_partner_tokens_for_checkout()`. |
+| — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
+| — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed QA** | Partenaire fictif + 100 jetons — **après P4**, hors chaîne prod. |
 
-## Convention
+---
 
-- **P0** = sécurité de base (RLS, grants, structure orders).
-- **P1** = couche multi-tenant (vertical → tenant → membership → profile).
-- **P2** = alignement des schémas applicatifs avec le code (media_assets, etc.).
-- **P3** = enrichissements parcours utilisateur (autosave wizard, reprise brouillon, etc.).
-- **REFERENCE** suffix = à appliquer hors SQL Editor (Dashboard ou CLI).
+## Convention de nommage
 
-## Modèle de données — vue rapide
+| Préfixe | Signification |
+|---------|----------------|
+| **P0–P5** | Migrations numérotées — ordre obligatoire sur base vierge. |
+| **P4.1, P2b** | Patch ciblé — à exécuter après la migration parente. |
+| **REFERENCE** | Documentation / policies hors SQL Editor. |
+| **Seed / QA** | Données de test — jamais en pipeline CI prod automatique. |
+
+---
+
+## Modèle de données — vue rapide (post-P5)
 
 ```
 auth.users
    │
-   ├──→ public.profiles            (1:1, créé par trigger on_auth_user_created)
-   │       └── id = auth.users.id
-   │
-   ├──→ public.tenant_members      (M:N, créé par même trigger)
-   │       ├── user_id  → auth.users.id
-   │       ├── tenant_id → public.tenants.id
-   │       └── role
+   ├──→ public.profiles
+   ├──→ public.tenant_members  (role: member | partner | partner_admin | …)
    │
    └──→ public.projects
-           ├── user_id        → public.profiles.id
-           ├── tenant_id      → public.tenants.id
-           ├── status         (ENUM project_status : 'draft', 'submitted', 'paid', ...)
-           ├── wizard_state   (jsonb)        — snapshot UI sérialisé pour autosave
-           ├── wizard_step    (smallint 1..10)
-           ├── last_saved_at  (timestamptz)
-           └── (first_name, last_name, birth_date, death_date, ...)
+           ├── tenant_id
+           ├── invitation_id  → partner_invitations (P5, nullable)
+           ├── wizard_state / wizard_step / last_saved_at
+           └── user_id → profiles
 
 public.tenants
-   ├── id, name, slug, vertical, settings (jsonb), created_at
-   └── 2 lignes seedées : "Verticale Humains" (humans/human) et "Verticale Animaux" (pets/pet)
+   ├── partner_token_wallets   (PK tenant_id, balance)
+   ├── partner_invitations     (granted_package, status, magic link hash)
+   └── (funérarium / vertical)
 
-public.media_assets
-   ├── project_id     → public.projects.id (nullable historique)
-   ├── owner_user_id  → auth.users.id (NOT NULL, convention DB Odyssey)
-   ├── tenant_id      → public.tenants.id (NOT NULL)
-   ├── storage_path, mime_type, size_bytes
-   ├── source ('local' | 'facebook' | 'instagram' | 'tiktok' | 'google_photos')
-   ├── upload_status ('queued' | 'uploaded' | ...)
-   ├── order_index, created_at
-   ├── (héritées non utilisées : file_type, display_order, status, file_hash)
-   └── UNIQUE (project_id, storage_path)  -- requis pour upsert ON CONFLICT
+public.tribute_checkouts        (P5 — saga checkout)
+   ├── checkout_mode: b2c | b2b_partner | b2b2c_family
+   ├── granted_package / selected_package
+   ├── partner_tokens_debited / family_total_cents
+   └── status: pending → partner_debited → awaiting_payment → completed | compensated
+
+public.partner_token_ledger
+   └── tribute_checkout_id (FK nullable, P5)
 ```
 
-⚠️ La colonne propriétaire est `owner_user_id` (pas `user_id`). Le service d'upload `src/lib/uploads/mediaUploadService.ts` mappe son paramètre `userId` vers cette colonne.
+Tables historiques inchangées : `media_assets`, `orders`, `billing_catalog`, `webhook_events`.
+
+---
+
+## Fonction SQL critique (P5)
+
+| Fonction | Rôle |
+|----------|------|
+| `partner_tokens_for_granted_package(text)` | Mappe `essential`→1, `signature`→2, `heritage`→4 jetons. |
+| `debit_partner_tokens_for_checkout(uuid)` | `FOR UPDATE` wallet + ledger + `tribute_checkouts.status = partner_debited`. Exécutable par **`service_role`** uniquement. |
+
+---
 
 ## Trigger Supabase
 
-Une seule fonction `public.handle_new_user()` (SECURITY DEFINER) est appelée par le trigger `on_auth_user_created` sur `auth.users` AFTER INSERT. Elle peuple simultanément :
-1. `public.profiles` (FK cible de `projects.user_id`).
-2. `public.tenant_members` (rattachement au tenant par défaut, slug `humans`).
+`public.handle_new_user()` (SECURITY DEFINER) sur `auth.users` AFTER INSERT → `profiles` + `tenant_members` (tenant par défaut `humans`).
 
-Tout autre trigger sur `auth.users` lié au bootstrap user doit passer par cette fonction unifiée.
+---
 
 ## Storage
 
-Le bucket `user-assets` est régi par les policies définies dans `odyssey_p0_storage_policies_REFERENCE.sql`. Le chemin canonique d'un fichier est :
+Bucket `user-assets` — policies dans `odyssey_p0_storage_policies_REFERENCE.sql`. Chemin canonique :
 
 ```
 projects/<project_id>/<yyyy>/<mm>/<dd>/<filename>
 ```
 
-Les policies vérifient que `<project_id>` (segment 2 du path) appartient à `auth.uid()` via la table `projects`.
+---
 
-## Historique (fichiers supprimés)
+## Historique (fichiers supprimés du repo)
 
-- `supabase_p0_rls_projects_orders_media_storage.sql` — supersédé par `odyssey_p0_complete.sql` (mai 2026).
-- `odyssey_p1_tenant_members.sql` — consolidé dans `odyssey_p1_user_bootstrap.sql` (ajout du bootstrap `profiles` + trigger unifié) (mai 2026).
+- `supabase_p0_rls_projects_orders_media_storage.sql` → `odyssey_p0_complete.sql`
+- `odyssey_p1_tenant_members.sql` → `odyssey_p1_user_bootstrap.sql`

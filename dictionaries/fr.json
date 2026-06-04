@@ -136,6 +136,18 @@
     "recommendedBadge": "RECOMMANDÉ",
     "recommended": "Recommandé"
   },
+  "packages": {
+    "names": {
+      "essential": "Souvenir",
+      "signature": "Héritage",
+      "heritage": "Éternité"
+    },
+    "styles": {
+      "essential": "Épuré et constant",
+      "signature": "Rythme sensible, musique au cœur",
+      "heritage": "Récit profond, façon documentaire"
+    }
+  },
   "manifesto": {
     "title": "Manifeste",
     "body": "Chaque vie est une œuvre qui mérite son propre cinéma. Odyssey n'est pas un outil, c'est un sanctuaire visuel. Dans le fracas du deuil, nous orchestrons le silence, la lumière et le souvenir pour créer un lien indestructible. Nous ne faisons pas que des vidéos ; nous rendons à la mémoire sa dignité souveraine."
@@ -313,12 +325,12 @@
     "stickyPartnerTokenCost": "Coût : {tokens} jeton(s)",
     "basePackageTitle": "Sélection de votre formule",
     "basePackageHint": "Choisissez le socle de votre hommage — modifiable ici ou à l’étape suivante.",
-    "basePackageEssential": "Essentiel",
+    "basePackageEssential": "Souvenir",
     "basePackageEssentialDesc": "Montage narratif complet et livraison digitale.",
-    "basePackageSignature": "Signature",
-    "basePackageSignatureDesc": "Catalogue musical Standard inclus · rythme cinématographique.",
-    "basePackageHeritage": "Héritage",
-    "basePackageHeritageDesc": "Catalogue Premium · licence, clef USB et coffre-fort inclus.",
+    "basePackageSignature": "Héritage",
+    "basePackageSignatureDesc": "Catalogue musical Standard inclus · clip Social 9:16.",
+    "basePackageHeritage": "Éternité",
+    "basePackageHeritageDesc": "Catalogue Premium · MP3 personnel (salon) · licence, clef USB et coffre-fort inclus.",
     "basePackageHeritageBundlePromo": "Le choix complet (Économisez {savings} $)",
     "cartLabelWithOptions": "Total de votre hommage : {base} + {options}",
     "cartLabelBaseOnly": "Total de votre hommage : {base}",
@@ -349,7 +361,7 @@
     "extensionAiRetouchTitle": "Retouche IA Premium",
     "extensionAiRetouchDescription": "Je rajeunis et embellis vos photos automatiquement.",
     "extensionExtendedLicenseTitle": "Option Licence Premium",
-    "extensionExtendedLicenseDescription": "Débloque le catalogue musical Premium (titres à droits étendus) pour Essentiel et Signature.",
+    "extensionExtendedLicenseDescription": "Débloque le catalogue musical Premium (titres à droits étendus) pour Souvenir et Héritage.",
     "extensionIncludedInHeritage": "Déjà inclus",
     "extensionCollectorUsbTitle": "Clef USB Collector",
     "extensionCollectorUsbDescription": "Je reçois une belle clef USB en métal dans un écrin pour garder mon film à vie.",

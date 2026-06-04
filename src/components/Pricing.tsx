@@ -10,19 +10,21 @@ import {
   editorialSectionShell,
 } from "../lib/editorialSkin";
 import { LOCOMOTIVE_EASE, CINEMATIC_VIEWPORT } from "../lib/cinematicMotion";
+import {
+  getTierCardMotionState,
+  TIER_CARD_SELECT_TRANSITION,
+  tierCardCtaClass,
+  tierCardFeatureClass,
+  tierCardPriceClass,
+  tierCardStyleClass,
+  tierCardSurfaceClass,
+  tierCardTitleClass,
+  UV_RADIAL,
+} from "../lib/pricingTierCardSkin";
 import { playProcessStepHoverChime } from "../lib/processHoverChime";
 import { CinematicWordReveal } from "./CinematicWordReveal";
 
 const KICKER_DURATION = 0.85;
-
-/** Same easing family as Process spotlight */
-const SELECT_TRANSITION = {
-  duration: 0.85,
-  ease: LOCOMOTIVE_EASE,
-} as const;
-
-const UV_RADIAL =
-  "radial-gradient(circle at 30% 20%, rgba(124,58,237,0.42) 0%, rgba(139,92,246,0.22) 38%, transparent 72%)";
 
 export function Pricing({
   lang,
@@ -75,9 +77,12 @@ export function Pricing({
                 const isSelected = selectedTierKey === tier.key;
                 /** Middle column default state (no user pick yet) — same UV language as “recommended” */
                 const isDefaultPopularGlow = isPopular && !hasSelection;
-                /** Full ultraviolet treatment (matches former middle card when chosen) */
-                const isUltraviolet = isSelected || isDefaultPopularGlow;
-                const showRadialBlur = isUltraviolet;
+                const { isUltraviolet, showRadialBlur, animate } =
+                  getTierCardMotionState(
+                    isSelected,
+                    isDefaultPopularGlow,
+                    prefersReducedMotion,
+                  );
 
                 return (
                   <motion.article
@@ -94,39 +99,14 @@ export function Pricing({
                       opacity: { duration: 1.08, ease: LOCOMOTIVE_EASE },
                       filter: { duration: 1.08, ease: LOCOMOTIVE_EASE },
                       y: { duration: 1.08, ease: LOCOMOTIVE_EASE },
-                      scale: SELECT_TRANSITION,
-                      borderColor: SELECT_TRANSITION,
-                      backgroundColor: SELECT_TRANSITION,
-                      boxShadow: SELECT_TRANSITION,
+                      scale: TIER_CARD_SELECT_TRANSITION,
+                      borderColor: TIER_CARD_SELECT_TRANSITION,
+                      backgroundColor: TIER_CARD_SELECT_TRANSITION,
+                      boxShadow: TIER_CARD_SELECT_TRANSITION,
                     }}
-                    animate={{
-                      scale:
-                        isSelected && prefersReducedMotion !== true ? 1.045 : 1,
-                      borderColor: isSelected
-                        ? "rgba(192, 132, 252, 0.65)"
-                        : isDefaultPopularGlow
-                          ? "rgba(168, 85, 247, 0.38)"
-                          : "rgba(255, 255, 255, 0.1)",
-                      backgroundColor: isSelected
-                        ? "rgba(88, 28, 135, 0.14)"
-                        : isDefaultPopularGlow
-                          ? "rgba(46, 16, 78, 0.35)"
-                          : "rgba(255, 255, 255, 0.02)",
-                      boxShadow: isSelected
-                        ? "0 0 0 1px rgba(192,132,252,0.45), 0 0 90px rgba(124,58,237,0.48), 0 0 120px rgba(88,28,135,0.2), 0 20px 50px rgba(0,0,0,0.55)"
-                        : isDefaultPopularGlow
-                          ? "0 0 0 1px rgba(168,85,247,0.18), 0 0 65px rgba(124,58,237,0.28)"
-                          : "0 0 0 rgba(0,0,0,0)",
-                    }}
+                    animate={animate}
                     style={{ transformOrigin: "center center" }}
-                    className={[
-                      "relative cursor-pointer overflow-hidden rounded-sm border bg-white/[0.02] p-7 backdrop-blur-md outline-none will-change-transform",
-                      !isUltraviolet && "hover:border-purple-500/35",
-                      "focus-visible:ring-2 focus-visible:ring-purple-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
-                      isSelected ? "z-10" : "z-0",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
+                    className={tierCardSurfaceClass(isUltraviolet, isSelected)}
                     onClick={() => selectTier(tier.key)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
@@ -167,11 +147,7 @@ export function Pricing({
                         lang={lang}
                         text={t.tierTitles[tier.key as keyof typeof t.tierTitles]}
                         preset="card"
-                        className={
-                          isSelected
-                            ? "font-label text-[11px] font-bold uppercase tracking-[0.46em] text-violet-100"
-                            : "font-label text-[11px] font-bold uppercase tracking-[0.46em] text-zinc-300"
-                        }
+                        className={tierCardTitleClass(isSelected)}
                       />
                       <div className="mt-5 flex items-baseline gap-3">
                         <motion.div
@@ -183,11 +159,7 @@ export function Pricing({
                             ease: LOCOMOTIVE_EASE,
                             delay: 0.12 + index * 0.05,
                           }}
-                          className={
-                            isSelected
-                              ? "font-editorial text-5xl font-medium tracking-tight text-white drop-shadow-[0_0_28px_rgba(167,139,250,0.35)]"
-                              : "font-editorial text-5xl font-medium tracking-tight text-white"
-                          }
+                          className={tierCardPriceClass(isSelected)}
                         >
                           {tier.price}
                         </motion.div>
@@ -200,11 +172,7 @@ export function Pricing({
                             ease: LOCOMOTIVE_EASE,
                             delay: 0.28 + index * 0.05,
                           }}
-                          className={
-                            isSelected
-                              ? "font-label text-[10px] font-bold uppercase tracking-[0.36em] text-violet-300/90"
-                              : "font-label text-[10px] font-bold uppercase tracking-[0.36em] text-zinc-500"
-                          }
+                          className={tierCardStyleClass(isSelected)}
                         >
                           {tier.style}
                         </motion.div>
@@ -223,11 +191,7 @@ export function Pricing({
                             ease: LOCOMOTIVE_EASE,
                             delay: 0.22 + index * 0.06 + featureIndex * 0.07,
                           }}
-                          className={
-                            isSelected
-                              ? "font-label text-xs font-medium uppercase tracking-[0.22em] text-violet-100/85"
-                              : "font-label text-xs font-medium uppercase tracking-[0.22em] text-zinc-400"
-                          }
+                          className={tierCardFeatureClass(isSelected)}
                         >
                           {feature}
                         </motion.li>
@@ -245,14 +209,7 @@ export function Pricing({
                       }}
                       className="relative mt-10"
                     >
-                      <span
-                        className={[
-                          "flex w-full items-center justify-center border px-5 py-3 font-label text-[10px] font-bold uppercase tracking-[0.5em] transition-colors",
-                          isSelected
-                            ? "border-purple-400/70 bg-purple-500/25 text-white shadow-[0_0_32px_rgba(139,92,246,0.35)]"
-                            : "border-white/10 bg-black/30 text-white",
-                        ].join(" ")}
-                      >
+                      <span className={tierCardCtaClass(isSelected)}>
                         {t.cta}
                       </span>
                     </motion.div>
