@@ -4,14 +4,10 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { Locale } from "@/i18n.config";
+import { usePartner } from "@/src/lib/partner/PartnerContext";
 import { OdysseyBrandLockup } from "@/src/components/OdysseyBrandLockup";
 
 const LOGO_STORAGE_KEY = "odyssey_partner_dashboard_logo";
-
-const DEMO_TENANTS = [
-  { id: "demo", labelFr: "Maison Funéraire Démo", labelEn: "Demo Funeral Home" },
-  { id: "qa", labelFr: "Partenaire QA", labelEn: "Partner QA" },
-] as const;
 
 type PartnerHeaderProps = {
   lang: Locale;
@@ -20,7 +16,8 @@ type PartnerHeaderProps = {
 export function PartnerHeader({ lang }: PartnerHeaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
-  const [tenantId, setTenantId] = useState<string>(DEMO_TENANTS[0].id);
+  const { activeTenantId, availableTenants, isLoading, setActiveTenantId } =
+    usePartner();
 
   const copy =
     lang === "en"
@@ -28,12 +25,16 @@ export function PartnerHeader({ lang }: PartnerHeaderProps) {
           uploadLogo: "Upload logo",
           changeLogo: "Change logo",
           tenantAria: "Active partner",
+          tenantLoading: "Loading…",
+          tenantEmpty: "No partner workspace",
           homeHref: `/${lang}`,
         }
       : {
           uploadLogo: "Ajouter un logo",
           changeLogo: "Modifier le logo",
           tenantAria: "Partenaire actif",
+          tenantLoading: "Chargement…",
+          tenantEmpty: "Aucun espace partenaire",
           homeHref: `/${lang}`,
         };
 
@@ -68,8 +69,8 @@ export function PartnerHeader({ lang }: PartnerHeaderProps) {
     [],
   );
 
-  const activeTenant =
-    DEMO_TENANTS.find((t) => t.id === tenantId) ?? DEMO_TENANTS[0];
+  const tenantSelectValue = activeTenantId ?? "";
+  const hasTenants = availableTenants.length > 0;
 
   return (
     <header className="relative z-10 border-b border-white/[0.06]">
@@ -117,25 +118,30 @@ export function PartnerHeader({ lang }: PartnerHeaderProps) {
           <label className="flex min-w-0 items-center gap-2">
             <span className="sr-only">{copy.tenantAria}</span>
             <select
-              value={tenantId}
-              onChange={(e) => setTenantId(e.target.value)}
-              className="max-w-[min(100%,14rem)] cursor-pointer border-0 border-b border-white/15 bg-transparent py-1 font-label text-[10px] font-bold uppercase tracking-[0.36em] text-zinc-400 outline-none transition-colors hover:text-zinc-200 focus:border-purple-400/50 focus:text-white"
+              value={tenantSelectValue}
+              disabled={isLoading || !hasTenants}
+              onChange={(e) => setActiveTenantId(e.target.value)}
+              className="max-w-[min(100%,16rem)] cursor-pointer border-0 border-b border-white/15 bg-transparent py-1 font-label text-[10px] font-bold uppercase tracking-[0.36em] text-zinc-400 outline-none transition-colors hover:text-zinc-200 focus:border-purple-400/50 focus:text-white disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {DEMO_TENANTS.map((tenant) => (
-                <option
-                  key={tenant.id}
-                  value={tenant.id}
-                  className="bg-black text-zinc-200"
-                >
-                  {lang === "en" ? tenant.labelEn : tenant.labelFr}
-                </option>
-              ))}
+              {isLoading ? (
+                <option value="">{copy.tenantLoading}</option>
+              ) : !hasTenants ? (
+                <option value="">{copy.tenantEmpty}</option>
+              ) : (
+                availableTenants.map((tenant) => (
+                  <option
+                    key={tenant.id}
+                    value={tenant.id}
+                    className="bg-black text-zinc-200"
+                  >
+                    {tenant.name}
+                  </option>
+                ))
+              )}
             </select>
           </label>
         </div>
       </div>
-
-      <p className="sr-only">{activeTenant.labelFr}</p>
     </header>
   );
 }

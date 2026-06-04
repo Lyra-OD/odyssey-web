@@ -71,14 +71,23 @@ function mapAuthError(
   return t.generic;
 }
 
-function buildAuthCallbackUrl(lang: Locale): string {
+function sanitizeClientNextPath(raw: string | null, lang: Locale): string {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) {
+    return `/${lang}/dashboard`;
+  }
+  if (!/^\/(fr|en)(\/|$)/.test(raw)) {
+    return `/${lang}/dashboard`;
+  }
+  return raw;
+}
+
+function buildAuthCallbackUrl(lang: Locale, nextPath: string): string {
   const origin =
     typeof window !== "undefined"
       ? window.location.origin
       : process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
         "http://localhost:3000";
-  const dashboard = `/${lang}/dashboard`;
-  const next = encodeURIComponent(dashboard);
+  const next = encodeURIComponent(nextPath);
   return `${origin}/auth/callback?next=${next}`;
 }
 
@@ -140,6 +149,11 @@ export function LoginForm({
   const [shakeActive, setShakeActive] = useState(false);
 
   const supabase = useMemo(() => createClient(), []);
+
+  const postAuthPath = useMemo(
+    () => sanitizeClientNextPath(searchParams.get("next"), lang),
+    [searchParams, lang],
+  );
 
   const raiseError = useCallback((message: string) => {
     setError(message);
@@ -221,11 +235,7 @@ export function LoginForm({
         raiseError(mapAuthError(signInError, t.errors));
         return;
       }
-      await fadeThenNavigate(
-        router,
-        `/${lang}/dashboard`,
-        setExitFade,
-      );
+      await fadeThenNavigate(router, postAuthPath, setExitFade);
       return;
     }
 
@@ -234,7 +244,7 @@ export function LoginForm({
      * « Confirm email » est activé dans Authentication > Providers > Email (projet).
      * Ne pas contourner côté client ; `emailRedirectTo` aligne le lien sur /auth/callback.
      */
-    const emailRedirectTo = buildAuthCallbackUrl(lang);
+    const emailRedirectTo = buildAuthCallbackUrl(lang, postAuthPath);
     const display_name = displayName.trim();
     /** Métadonnées Supabase : propriété littérale `phone` (minuscules). */
     const phoneMeta =
@@ -260,11 +270,7 @@ export function LoginForm({
     }
 
     if (data.session) {
-      await fadeThenNavigate(
-        router,
-        `/${lang}/dashboard`,
-        setExitFade,
-      );
+      await fadeThenNavigate(router, postAuthPath, setExitFade);
       return;
     }
 

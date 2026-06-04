@@ -13,15 +13,6 @@ function sanitizeNextPath(raw: string | null): string {
   return raw;
 }
 
-/** Dérive fr|en depuis le param `next` ; le chemin final est toujours `/${lang}/dashboard` en cas de succès. */
-function getLangFromNextPath(nextPath: string): "fr" | "en" {
-  return nextPath.startsWith("/en") ? "en" : "fr";
-}
-
-function dashboardPathForLang(lang: "fr" | "en"): string {
-  return `/${lang}/dashboard`;
-}
-
 function loginErrorRedirect(requestUrl: URL, nextPath: string): NextResponse {
   const seg = nextPath.match(/^\/(fr|en)\//);
   const l = seg?.[1];
@@ -36,9 +27,7 @@ export async function GET(request: NextRequest) {
   const url = request.nextUrl.clone();
   const code = url.searchParams.get("code");
   const sanitizedNext = sanitizeNextPath(url.searchParams.get("next"));
-  const lang = getLangFromNextPath(sanitizedNext);
-  const destinationPath = dashboardPathForLang(lang);
-  const redirectUrl = new URL(destinationPath, url.origin);
+  const redirectUrl = new URL(sanitizedNext, url.origin);
 
   const token_hash = url.searchParams.get("token_hash");
   const type = url.searchParams.get("type") as
@@ -75,7 +64,7 @@ export async function GET(request: NextRequest) {
       console.error("[auth/callback] exchangeCodeForSession:", error.message);
       return loginErrorRedirect(url, sanitizedNext);
     }
-    console.log("Redirection vers :", destinationPath);
+    console.log("Redirection vers :", sanitizedNext);
     /* Même instance `response` : les cookies de session ont été posés via setAll. */
     return response;
   }
@@ -89,7 +78,7 @@ export async function GET(request: NextRequest) {
       console.error("[auth/callback] verifyOtp:", error.message);
       return loginErrorRedirect(url, sanitizedNext);
     }
-    console.log("Redirection vers :", destinationPath);
+    console.log("Redirection vers :", sanitizedNext);
     return response;
   }
 
