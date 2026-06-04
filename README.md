@@ -2,17 +2,17 @@
 
 Application Next.js 14 (App Router) pour le Studio Odyssey:
 - authentification Supabase,
-- wizard de creation,
+- **wizard hommage 8 etapes** (autosave, montage, musique Stingray, extensions, checkout hybride),
 - ingestion media massive,
-- pipeline Stripe (catalog + webhook robuste).
+- pipeline Stripe (catalog + webhook robuste) et **checkout B2B jetons** (partenaires funeraires).
 
 ## Documentation principale
 
 | Document | Contenu |
 |----------|---------|
 | `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` | **Document central:** stack, structure repo, fait / a terminer, **moteur video**, positionnement haut de gamme, **potentiel & adoption**, **croissance virale** (ethique, co-creation, formats, **verticaliste animaux**), upsells, **securite P0–P2**, elevation produit, multi-skins, isolation medias, regles d'equipe — **sommaire en tete de fichier**. |
-| `docs/WIZARD_ARCHITECTURE.md` | Wizard 8 etapes, autosave, **pricing hybride B2C/B2B** (`pricingConfig.ts`, `StickyPriceBar`). |
-| `docs/STINGRAY_MUSIC_INTEGRATION.md` | Musique licenciee (MAPI + mode mock staging). |
+| `docs/WIZARD_ARCHITECTURE.md` | Wizard 8 etapes, autosave, **pricing hybride B2C/B2B** (`pricingConfig.ts`, `StickyPriceBar`), **bundle economique Heritage** (economie 67 $), tiers musique Standard / Premium. |
+| `docs/STINGRAY_MUSIC_INTEGRATION.md` | Musique licenciee (MAPI + mock auto), **catalogues Standard / Premium**, param `tier` sur `/api/music/search`. |
 | `docs/sql/README.md` | Migrations SQL ordonnees (P0–P4, dont jetons partenaires). |
 | `docs/CONVENTIONS.md` | Conventions de code (anglais, brain vs engine). |
 | `docs/Manifesto-V10.4.md` | Vision produit manifeste. |
@@ -60,11 +60,15 @@ Chapitres couverts par la roadmap documentaire:
 - **Securite** P0 → P2.
 - **Elevation produit** P1 / P2 (fiabilite, rendu, conformite, partenaires).
 
-**Upsells prevus dans le wizard** (a brancher au catalogue Stripe):
-- retouche photo / video assistee par IA,
-- musique premium et ligne **frais / droits d'auteur** selon la licence choisie,
-- **signature de responsabilite** lorsque des sources tierces sont utilisees (ex: YouTube, imports URL),
-- autres options (HD, delai express, packaging): meme principe Stripe-First + trace dans `orders`.
+**Pricing & extensions wizard** (implementes — source `src/lib/wizard/pricingConfig.ts`):
+- forfaits **Essentiel / Signature / Heritage** (montants en cents entiers),
+- **Option Licence Premium** (39 $) — debloque le catalogue musique Premium pour Essentiel / Signature,
+- retouche IA, clef USB Collector, coffre-fort digital, Pack Heritage (upsell step 6),
+- forfait **Heritage** : bundle economique affiche (**economie 67 $**), extensions Licence / USB / Coffre deja incluses.
+
+**Encore a brancher au catalogue Stripe** (`billing_catalog` Price IDs) et roadmap produit:
+- signature de responsabilite (sources tierces YouTube / URL),
+- HD, delai express, packaging — meme principe Stripe-First + trace dans `orders`.
 
 **Securite (roadmap, priorites):** ordre **P0 → P1 → P2** (essentiel prod → renfort → maturite), sans implementation engagee par la doc seule — detail dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (section 10, sous-partie securite).
 
