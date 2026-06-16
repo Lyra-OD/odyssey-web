@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import { LoginForm, type LoginAudience } from "@/src/components/auth/LoginForm";
 import type { AppDictionary } from "@/lib/dictionaries";
@@ -19,12 +19,16 @@ export function AuthConnexionPage({
   animateConnexion?: boolean;
 }) {
   return (
-    <LoginForm
-      lang={lang}
-      copy={copy}
-      audience={audience}
-      brandSlot={brandSlot}
-      animateConnexion={animateConnexion}
-    />
+    <Suspense
+      fallback={<div className="min-h-screen bg-[#020202]" aria-hidden />}
+    >
+      <LoginForm
+        lang={lang}
+        copy={copy}
+        audience={audience}
+        brandSlot={brandSlot}
+        animateConnexion={animateConnexion}
+      />
+    </Suspense>
   );
 }
