@@ -23,10 +23,15 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 8 | `odyssey_p4_1_security_fixes.sql` | **Patch sécurité** | RLS wallets/ledger : rôles `partner` / `partner_admin` uniquement ; index `ledger.project_id`. |
 | 9 | `odyssey_p5_b2b2c_core.sql` | Migration | `partner_invitations`, `tribute_checkouts`, `projects.invitation_id`, `debit_partner_tokens_for_checkout()`. |
 | 10 | `odyssey_p5_1_invitation_unique_pending.sql` | **Patch** | Index unique `pending` par `(tenant_id, email)` — anti double-clic invitations. |
-
-**Branding Salon (app, pas de migration dédiée)** : champs optionnels dans `tenants.settings` — `brand_label`, `brand_logo_url`. Voir [`docs/ROUTES_AND_AUTH.md`](../ROUTES_AND_AUTH.md).
+| 11 | `odyssey_p5_2_partner_public_branding.sql` | **Patch** | RPC `get_partner_public_branding(slug)` — page Salon connexion co-brandée. |
+| 12 | `odyssey_p5_3_tenant_partner_select.sql` | **Patch** | RLS SELECT `tenants` pour rôles `partner` / `partner_admin`. |
+| 13 | `odyssey_p5_4_partner_tenants_for_member.sql` | **Patch** | RPC `get_partner_tenants_for_member()` — logo + dropdown Salon après login. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
 | — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed QA** | Partenaire fictif + 100 jetons — **après P4**, hors chaîne prod. |
+| — | `odyssey_partner_tenant_branding_example.sql` | **Référence** | Mise à jour `tenants.settings` (`brand_label`, `brand_logo_url`) — Salon connexion. |
+| — | `odyssey_schema_health_check.sql` | **Référence** | Audit lecture seule — migrations P0–P5.4, RPC branding. |
+
+**Branding Salon (app)** : champs dans `tenants.settings` — voir [`docs/ROUTES_AND_AUTH.md`](../ROUTES_AND_AUTH.md), [`docs/DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md) et le script exemple ci-dessus. **P5.2** (connexion) + **P5.3 ou P5.4** (dashboard) + membership partenaire (seed P4 QA).
 
 ---
 
@@ -38,6 +43,44 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | **P4.1, P2b** | Patch ciblé — à exécuter après la migration parente. |
 | **REFERENCE** | Documentation / policies hors SQL Editor. |
 | **Seed / QA** | Données de test — jamais en pipeline CI prod automatique. |
+
+### Requêtes ad hoc — SQL Editor Supabase
+
+**Toujours nommer l’onglet** (pas « Untitled query »). Format recommandé :
+
+```
+[P5.x | QA | ops] — Description courte — YYYY-MM-DD
+```
+
+Exemples :
+
+| Titre SQL Editor | Usage |
+|------------------|--------|
+| `QA — Branding tenant Urgel Bourgie — 2026-06-16` | `UPDATE tenants.settings` + vérif SELECT |
+| `QA — Seed partenaire demo + 100 jetons` | Exécution `odyssey_p4_partner_token_qa_seed.sql` |
+| `P5.1 — Index unique invitation pending` | Migration `odyssey_p5_1_invitation_unique_pending.sql` |
+
+Dans le corps du script, reprendre le même titre en en-tête de commentaire (comme les fichiers `odyssey_p*.sql` du repo).
+
+### Ménage SQL Editor Supabase
+
+Les requêtes sauvegardées dans le **dashboard Supabase** ne sont pas dans Git — seul toi peux les trier. Méthode recommandée :
+
+1. **Audit base** — exécuter `odyssey_schema_health_check.sql` (onglet : `ops — Schema health check`).
+2. **Source de vérité** — garder uniquement les scripts du repo `docs/sql/` ; le reste est historique ou doublon.
+3. **Classer chaque onglet** :
+
+| Action | Critère |
+|--------|---------|
+| **Garder** | Référence / QA réutilisable, titre explicite, aligné repo |
+| **Archiver** | Migration déjà appliquée (health check OK) — renommer préfixe `[ARCHIVE]` |
+| **Supprimer** | `Untitled query`, doublon exact, script supplanté par un `odyssey_p*.sql` du repo |
+
+4. **Ne pas supprimer** sans health check : migrations P0–P5.1 non confirmées en base.
+
+Scripts **déjà appliqués** sur ta prod actuelle (à ne ré-exécuter que si health check échoue) : P0 → P5.1 selon résultats du health check.
+
+Scripts **jamais à supprimer du repo** : fichiers `odyssey_p*.sql` (historique versionné). Le ménage concerne les **onglets Supabase**, pas le dossier Git.
 
 ---
 

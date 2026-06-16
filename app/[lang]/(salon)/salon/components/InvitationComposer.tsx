@@ -110,7 +110,7 @@ export function InvitationComposer({
           validUntil: "This link is valid until",
           newInvitation: "Create another invitation",
           tenantMissing:
-            "Partner workspace not found. Check your account or contact support.",
+            "No partner workspace linked to this account. Sign in via the partner link or run the QA seed (P5.4 + odyssey_p4_partner_token_qa_seed.sql).",
         }
       : {
           kicker: "Invitation",
@@ -132,7 +132,7 @@ export function InvitationComposer({
           validUntil: "Ce lien est valide jusqu’au",
           newInvitation: "Créer une nouvelle invitation",
           tenantMissing:
-            "Espace partenaire introuvable. Vérifiez votre compte ou contactez le support.",
+            "Aucun espace partenaire rattaché à ce compte. Reconnectez-vous via le lien partenaire ou exécutez le seed QA (P5.4 + odyssey_p4_partner_token_qa_seed.sql).",
         };
 
   const hasSelection = selectedPackageId !== null;
@@ -308,7 +308,7 @@ export function InvitationComposer({
   }
 
   return (
-    <section className="mt-16 md:mt-20" aria-labelledby="partner-invite-kicker">
+    <section className="mt-2 md:mt-4" aria-labelledby="partner-invite-kicker">
       <div
         className={`mb-10 md:mb-14 ${editorialColumn} md:max-w-[76rem] ${editorialAccentRule}`}
       >
@@ -342,7 +342,7 @@ export function InvitationComposer({
             onChange={(e) => setEmail(e.target.value)}
             placeholder={copy.emailPlaceholder}
             disabled={isSubmitting}
-            className="mt-3 w-full border-0 border-b border-white/15 bg-transparent py-3 font-label text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-purple-400/55 disabled:opacity-50"
+            className="mt-3 w-full max-w-xl rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-sm text-white/90 outline-none transition-[border,box-shadow] placeholder:text-white/25 focus:border-purple-400/45 focus:shadow-[0_0_0_1px_rgba(168,85,247,0.2)] disabled:opacity-50"
           />
         </div>
 

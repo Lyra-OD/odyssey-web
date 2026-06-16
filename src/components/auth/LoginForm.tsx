@@ -16,15 +16,17 @@
 import { Eye, EyeOff, Loader2, Phone, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { AppDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
 import {
   defaultPartnerPostAuthPath,
   defaultPostAuthPath,
 } from "@/src/lib/appRoutes";
-import { SalonConnexionBrand } from "@/src/components/auth/SalonConnexionBrand";
-import type { PartnerPublicBranding } from "@/src/lib/partner/partnerBrandingTypes";
+import {
+  normalizePartnerSlugParam,
+  storePartnerConnexionSlug,
+} from "@/src/lib/partner/partnerBrandingTypes";
 import { createClient } from "@/utils/supabase/client";
 
 type AuthCopy = AppDictionary["auth"];
@@ -154,14 +156,14 @@ export function LoginForm({
   lang,
   copy,
   audience,
-  salonBranding = null,
-  defaultWordmark = "Odyssey",
+  brandSlot,
+  animateConnexion = true,
 }: {
   lang: Locale;
   copy: AuthCopy;
   audience: LoginAudience;
-  salonBranding?: PartnerPublicBranding | null;
-  defaultWordmark?: string;
+  brandSlot?: ReactNode;
+  animateConnexion?: boolean;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -272,6 +274,12 @@ export function LoginForm({
         raiseError(mapAuthError(signInError, t.errors));
         return;
       }
+      if (audience === "salon") {
+        const slug =
+          normalizePartnerSlugParam(searchParams.get("partenaire")) ??
+          normalizePartnerSlugParam(searchParams.get("partner"));
+        if (slug) storePartnerConnexionSlug(slug);
+      }
       const destination = resolveDestination(
         lang,
         searchParams.get("next"),
@@ -330,11 +338,10 @@ export function LoginForm({
   const headline = isSignUp
     ? t.createAccess
     : audience === "salon"
-      ? salonBranding?.brandLabel ?? t.salonAccess
+      ? t.salonAccess
       : t.studioAccess;
   const subtitle =
     audience === "salon" && !isSignUp ? t.salonSubtitle : null;
-  const isSalonBranded = audience === "salon" && salonBranding !== null;
 
   const tabActiveRingSignIn =
     "bg-white/[0.08] text-white shadow-[0_0_24px_-8px_rgba(139,92,246,0.45)]";
@@ -420,22 +427,21 @@ export function LoginForm({
       />
 
       <div className="relative z-10 isolate w-full max-w-md">
-        {audience === "salon" ? (
-          <SalonConnexionBrand
-            branding={salonBranding}
-            poweredByLabel={t.poweredByOdyssey}
-            defaultWordmark={defaultWordmark}
-          />
-        ) : (
-          <p className="mb-2 text-center text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
-            Odyssey
-          </p>
-        )}
-        <h1 className="mb-2 text-center text-xl font-light tracking-[0.08em] text-white transition-colors duration-300 md:text-2xl">
-          {isSalonBranded ? t.salonAccess : headline}
+        {brandSlot}
+
+        <h1
+          className={`mb-2 text-center text-white transition-colors duration-300 ${
+            audience === "salon"
+              ? `font-brand text-lg font-medium uppercase tracking-[0.22em] md:text-xl md:tracking-[0.26em] ${animateConnexion ? "salon-title-reveal" : ""}`
+              : `text-xl font-light tracking-[0.08em] md:text-2xl ${animateConnexion ? "salon-title-reveal" : ""}`
+          }`}
+        >
+          {headline}
         </h1>
         {subtitle ? (
-          <p className="mb-8 text-center text-sm font-light leading-relaxed text-white/45">
+          <p
+            className={`mb-8 text-center text-sm font-light leading-relaxed text-white/45 ${animateConnexion ? "salon-subtitle-reveal" : ""}`}
+          >
             {subtitle}
           </p>
         ) : (
@@ -444,7 +450,7 @@ export function LoginForm({
 
         {allowSignUp ? (
           <div
-            className="mb-8 flex rounded-xl border border-white/10 bg-black/30 p-1 backdrop-blur-sm"
+            className={`mb-8 flex rounded-xl border border-white/10 bg-black/30 p-1 backdrop-blur-sm ${animateConnexion ? "salon-subtitle-reveal" : ""}`}
             role="tablist"
             aria-label={headline}
           >
@@ -478,7 +484,7 @@ export function LoginForm({
         ) : null}
 
         <div
-          className={`rounded-2xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl transition-shadow duration-500 ${cardGlow} ${shakeActive ? "animate-login-form-shake" : ""}`}
+          className={`rounded-2xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl transition-shadow duration-500 ${cardGlow} ${shakeActive ? "animate-login-form-shake" : ""} ${animateConnexion ? "salon-form-reveal" : ""}`}
         >
           <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
@@ -493,6 +499,7 @@ export function LoginForm({
                 name="email"
                 type="email"
                 autoComplete="email"
+                suppressHydrationWarning
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -576,6 +583,7 @@ export function LoginForm({
                   autoComplete={
                     mode === "signIn" ? "current-password" : "new-password"
                   }
+                  suppressHydrationWarning
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required

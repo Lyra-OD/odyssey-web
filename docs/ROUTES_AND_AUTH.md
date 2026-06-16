@@ -76,23 +76,33 @@ Alias anglais : `?partner=<slug>` (même comportement).
 | Logo | — | `brand_logo_url` (URL HTTPS publique) |
 
 **Comportement :**
-- Slug valide + tenant trouvé → logo en grand (ou typographie du `brand_label`) + co-brand discret « Propulsé par Odyssey ».
+- Slug valide + tenant trouvé → logo (même PNG que le dashboard) + « Propulsé par Odyssey » aligné à droite + séquence cinéma CSS (~3,3 s).
 - Pas de paramètre, slug invalide ou tenant inconnu → lockup Odyssey standard (pas d’erreur visible).
+- Après login brandé, le slug `?partenaire=` est mémorisé (`localStorage`) — fallback logo header si le tenant met du temps à charger.
 
-**Lecture serveur :** `fetchPartnerBrandingBySlug()` (`src/lib/partner/fetchPartnerBrandingBySlug.ts`) via client **service_role** — expose uniquement `slug`, `brandLabel`, `logoUrl`.
+**Lecture serveur (connexion) :** `fetchPartnerBrandingBySlug()` → RPC **`get_partner_public_branding`** (P5.2), pas de `service_role`.
 
-**Exemple SQL (QA) :**
+**Dashboard Salon (`/salon`) :**
+- Même `brand_logo_url` via `fetchPartnerTenantsForUser()` (layout serveur) et `GET /api/partner/tenants`.
+- Header : `PartnerBrandLockup` + `PartnerLogoBand` variant `dashboard` + animation courte (~1,8 s) à chaque chargement.
+- Atmosphère : `SalonAtmosphere` (halos violet atténués), alignée sur la connexion.
+- Hiérarchie page : `PartnerSalonPageIntro` (contexte + jetons compacts) → `InvitationComposer`.
 
-```sql
-UPDATE public.tenants
-SET settings = settings || '{
-  "brand_label": "Maison Dupont",
-  "brand_logo_url": "https://example.com/logo.svg"
-}'::jsonb
-WHERE slug = 'partner-qa-demo';
-```
+**SQL requis (Supabase) :**
 
-**Phase 2 (pas encore doc d’implémentation) :** upload logo depuis le Salon → Supabase Storage + écriture `settings.brand_logo_url` ; générateur de lien brandé dans le dashboard. Aujourd’hui le logo du `PartnerHeader` reste en `localStorage` (cosmétique local uniquement).
+| Script | Rôle |
+|--------|------|
+| `odyssey_p5_2_partner_public_branding.sql` | RPC branding public connexion |
+| `odyssey_p5_3_tenant_partner_select.sql` | RLS SELECT `tenants` pour `partner` / `partner_admin` |
+| `odyssey_p5_4_partner_tenants_for_member.sql` | RPC liste tenants + branding (alternative / complément à P5.3) |
+| `odyssey_partner_tenant_branding_example.sql` | Exemple QA Urgel Bourgie |
+| `odyssey_p4_partner_token_qa_seed.sql` | Membership `partner_admin` + jetons QA |
+
+Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brandés.
+
+**Exemple SQL (QA) :** voir `docs/sql/odyssey_partner_tenant_branding_example.sql`.
+
+**Phase 2 (pas encore) :** upload logo depuis le Salon → Storage + `settings.brand_logo_url` ; générateur de lien brandé dans le dashboard.
 
 ---
 
@@ -122,23 +132,32 @@ WHERE slug = 'partner-qa-demo';
 | Fichier | Rôle |
 |---------|------|
 | `src/lib/appRoutes.ts` | Chemins canoniques |
-| `src/components/auth/LoginForm.tsx` | Formulaire auth (`audience`) |
-| `src/components/auth/SalonConnexionBrand.tsx` | Header brandé Salon |
-| `src/lib/partner/fetchPartnerBrandingBySlug.ts` | Résolution branding public |
+| `src/components/auth/LoginForm.tsx` | Formulaire auth (`audience`, animations) |
+| `src/components/auth/SalonConnexionBrand.tsx` | Branding connexion Salon (server) |
+| `src/components/auth/StudioConnexionBrand.tsx` | Branding connexion Studio |
+| `src/components/auth/PartnerLogoBand.tsx` | Logo partenaire (`cinema` / `dashboard`) |
+| `src/components/partner/PartnerBrandLockup.tsx` | Logo + « Propulsé par Odyssey » |
+| `src/components/partner/SalonAtmosphere.tsx` | Halos fond connexion / salon |
+| `src/lib/partner/fetchPartnerBrandingBySlug.ts` | Branding public par slug (P5.2) |
+| `src/lib/partner/fetchPartnerTenantsForUser.ts` | Tenants + branding membre (P5.3/P5.4) |
 | `app/[lang]/studio/connexion/page.tsx` | Page connexion famille |
 | `app/[lang]/salon/connexion/page.tsx` | Page connexion partenaire (+ `searchParams`) |
-| `app/[lang]/(salon)/salon/layout.tsx` | Garde auth Salon |
+| `app/[lang]/(salon)/salon/layout.tsx` | Garde auth + branding serveur initial |
+| `app/[lang]/(salon)/salon/components/PartnerHeader.tsx` | Header co-brandé |
+| `app/[lang]/(salon)/salon/components/PartnerSalonPageIntro.tsx` | Hiérarchie workspace + jetons |
 | `src/lib/partner/PartnerContext.tsx` | Tenant actif côté Salon |
 | `app/api/partner/tenants/route.ts` | Liste tenants partenaire (session) |
 | `app/api/partner/invitations/route.ts` | Création invitation + magic link |
+| `docs/DESIGN_SYSTEM.md` | Palette, hiérarchie, co-branding, animations |
 
 ---
 
 ## Tests manuels (checklist courte)
 
-1. `/fr/studio/connexion` — inscription + login → `/fr/studio`.
+1. `/fr/studio/connexion` — inscription + login → `/fr/studio` ; animation lockup Odyssey.
 2. `/fr/salon/connexion` — login partenaire, pas d’onglet inscription → `/fr/salon`.
 3. `/fr/login` → redirect studio connexion.
-4. `/fr/salon/connexion?partenaire=partner-qa-demo` — branding si `settings` renseignés.
-5. Déconnexion studio → retour studio connexion.
-6. Invitation magic link → accept → tribute welcome (voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)).
+4. `/fr/salon/connexion?partenaire=partner-qa-demo` — branding + séquence cinéma.
+5. `/fr/salon` — header logo = même PNG, dropdown tenant, pas d’erreur « espace introuvable ».
+6. Déconnexion studio → retour studio connexion.
+7. Invitation magic link → accept → tribute welcome (voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)).

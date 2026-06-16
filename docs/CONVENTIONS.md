@@ -26,13 +26,14 @@
 
 ## Documentation — hiérarchie
 
-1. [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) — routes applicatives, auth, branding Salon (si touché).
-2. [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) + `wizardDeliverables.ts` — forfaits, livrables, double tarification.
-3. `pricingConfig.ts` — cents checkout et extensions.
-4. `docs/sql/README.md` — ordre des migrations.
-5. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce 3 modes + saga.
-6. [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — wizard 8 étapes.
-7. [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) — hub onboarding.
+1. [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) — palette, typographie, co-branding, hiérarchie Salon/Studio.
+2. [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) — routes applicatives, auth, branding Salon (si touché).
+3. [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) + `wizardDeliverables.ts` — forfaits, livrables, double tarification.
+4. `pricingConfig.ts` — cents checkout et extensions.
+5. `docs/sql/README.md` — ordre des migrations.
+6. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce 3 modes + saga.
+7. [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — wizard 8 étapes.
+8. [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) — hub onboarding.
 
 Après toute modification wizard, forfaits/livrables, pricing, checkout, routes/auth ou `/api/music/*` : mettre à jour les fichiers concernés (règle §13 de l’onboarding).
 

@@ -1,6 +1,7 @@
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
 import { AuthConnexionPage } from "@/src/components/auth/AuthConnexionPage";
+import { SalonConnexionBrand } from "@/src/components/auth/SalonConnexionBrand";
 import { fetchPartnerBrandingBySlug } from "@/src/lib/partner/fetchPartnerBrandingBySlug";
 import { normalizePartnerSlugParam } from "@/src/lib/partner/partnerBrandingTypes";
 
@@ -31,8 +32,13 @@ export default async function SalonConnexionPage({
       lang={lang}
       copy={dictionary.auth}
       audience="salon"
-      salonBranding={salonBranding}
-      defaultWordmark={dictionary.header.logoFallback}
+      brandSlot={
+        <SalonConnexionBrand
+          branding={salonBranding}
+          poweredByLabel={dictionary.auth.poweredByOdyssey}
+          defaultWordmark={dictionary.header.logoFallback}
+        />
+      }
     />
   );
 }

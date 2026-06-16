@@ -47,3 +47,163 @@ body {
 .animate-login-form-shake {
   animation: login-form-shake 0.2s ease-out;
 }
+
+@keyframes salon-cinema-logo-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.84);
+    filter: blur(18px) brightness(1.35);
+  }
+  55% {
+    filter: blur(3px) brightness(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0) brightness(1);
+  }
+}
+
+@keyframes salon-logo-glow-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes salon-logo-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+    scale: 1;
+  }
+  50% {
+    opacity: 1;
+    scale: 1.02;
+  }
+}
+
+@keyframes salon-cinema-kicker-in {
+  from {
+    opacity: 0;
+    transform: translateX(0.5rem);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes salon-cinema-wordmark-in {
+  from {
+    opacity: 0;
+    transform: translateX(0.65rem);
+    filter: blur(3px);
+    letter-spacing: 0.14em;
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+    letter-spacing: 0.26em;
+  }
+}
+
+@keyframes salon-title-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.65rem);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes salon-form-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Acte I — logo partenaire (lent, confiant) */
+.salon-cinema-logo {
+  animation: salon-cinema-logo-in 1.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
+.salon-logo-glow {
+  opacity: 0;
+  animation:
+    salon-logo-glow-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards,
+    salon-logo-glow-pulse 5s ease-in-out 2.5s infinite;
+}
+
+/* Acte III — crédit Odyssey, aligné sous le bord droit du logo */
+.salon-cinema-kicker {
+  animation: salon-cinema-kicker-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) 2.25s both;
+}
+
+.salon-cinema-wordmark {
+  animation: salon-cinema-wordmark-in 1.05s cubic-bezier(0.16, 1, 0.3, 1) 2.5s both;
+}
+
+/* Acte IV — titre + formulaire */
+.salon-title-reveal {
+  animation: salon-title-reveal-in 0.95s cubic-bezier(0.22, 1, 0.36, 1) 2.85s both;
+}
+
+.salon-subtitle-reveal {
+  animation: salon-title-reveal-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 3.05s both;
+}
+
+.salon-form-reveal {
+  animation: salon-form-reveal-in 1s cubic-bezier(0.22, 1, 0.36, 1) 3.25s both;
+}
+
+/* Header salon — même langage, séquence plus courte (~1,8 s) à chaque chargement */
+.salon-dashboard-logo {
+  animation: salon-cinema-logo-in 1.15s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.salon-dashboard-glow {
+  opacity: 0;
+  animation: salon-logo-glow-in 1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+}
+
+.salon-dashboard-kicker {
+  animation: salon-cinema-kicker-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.72s both;
+}
+
+.salon-dashboard-wordmark {
+  animation: salon-cinema-wordmark-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.88s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .salon-cinema-logo,
+  .salon-logo-glow,
+  .salon-cinema-kicker,
+  .salon-cinema-wordmark,
+  .salon-title-reveal,
+  .salon-subtitle-reveal,
+  .salon-form-reveal,
+  .salon-dashboard-logo,
+  .salon-dashboard-glow,
+  .salon-dashboard-kicker,
+  .salon-dashboard-wordmark {
+    animation: none;
+    filter: none;
+    transform: none;
+    opacity: 1;
+  }
+}

@@ -4,6 +4,8 @@ export const PartnerTenantSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   slug: z.string().optional(),
+  brandLabel: z.string().optional(),
+  logoUrl: z.string().url().nullable().optional(),
 });
 
 export type PartnerTenant = z.infer<typeof PartnerTenantSchema>;

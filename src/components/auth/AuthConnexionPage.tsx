@@ -1,34 +1,30 @@
-import { Suspense } from "react";
+import type { ReactNode } from "react";
 
 import { LoginForm, type LoginAudience } from "@/src/components/auth/LoginForm";
 import type { AppDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
-import type { PartnerPublicBranding } from "@/src/lib/partner/partnerBrandingTypes";
 
 export function AuthConnexionPage({
   lang,
   copy,
   audience,
-  salonBranding = null,
-  defaultWordmark = "Odyssey",
+  brandSlot,
+  animateConnexion = true,
 }: {
   lang: Locale;
   copy: AppDictionary["auth"];
   audience: LoginAudience;
-  salonBranding?: PartnerPublicBranding | null;
-  defaultWordmark?: string;
+  /** En-tête brandé rendu côté serveur (évite l’hydratation client). */
+  brandSlot?: ReactNode;
+  animateConnexion?: boolean;
 }) {
   return (
-    <Suspense
-      fallback={<div className="min-h-screen bg-[#020202]" aria-hidden />}
-    >
-      <LoginForm
-        lang={lang}
-        copy={copy}
-        audience={audience}
-        salonBranding={salonBranding}
-        defaultWordmark={defaultWordmark}
-      />
-    </Suspense>
+    <LoginForm
+      lang={lang}
+      copy={copy}
+      audience={audience}
+      brandSlot={brandSlot}
+      animateConnexion={animateConnexion}
+    />
   );
 }

@@ -2,7 +2,7 @@ import type { Locale } from "@/i18n.config";
 import { getDictionary } from "@/lib/dictionaries";
 
 import { InvitationComposer } from "./components/InvitationComposer";
-import { PartnerWalletSection } from "./components/PartnerWalletSection";
+import { PartnerSalonPageIntro } from "./components/PartnerSalonPageIntro";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +17,7 @@ export default async function SalonPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col">
-      <PartnerWalletSection lang={lang} balance={42} />
+      <PartnerSalonPageIntro lang={lang} balance={42} />
       <InvitationComposer
         lang={lang}
         packageLabels={{

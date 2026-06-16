@@ -128,8 +128,8 @@ Table `public.tenant_members` (creee par P1):
 **Convention de naming**:
 - `slug` = identifiant technique stable (immutable une fois en prod).
 - `name` = label commercial modifiable.
-- `settings.brand_label` = marque affichée famille / connexion Salon (white-label).
-- `settings.brand_logo_url` = URL publique du logo sur `/salon/connexion?partenaire=<slug>` (voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md)).
+- `settings.brand_label` = marque affichée connexion Salon + header dashboard partenaire.
+- `settings.brand_logo_url` = URL publique du logo (connexion `?partenaire=<slug>` et `/salon`) — RPC P5.2 / P5.4 (voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md), [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md)).
 - `vertical` = categorie metier (`human`, `pet`, futur `wedding`, `event`...) -- permet d'avoir plusieurs tenants par vertical (ex. white-label d'un studio funeraire dans `vertical = 'human'`).
 
 **Resolution du tenant dans le code**: la route `app/api/projects/draft/route.ts` fait un `SELECT tenant_id FROM tenant_members WHERE user_id = auth.uid() ORDER BY created_at ASC LIMIT 1` pour recuperer le tenant principal. Si demain un user appartient a plusieurs tenants, le wizard lui demandera explicitement de choisir.
