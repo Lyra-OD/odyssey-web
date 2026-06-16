@@ -19,9 +19,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { AppDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
+import {
+  defaultPartnerPostAuthPath,
+  defaultPostAuthPath,
+} from "@/src/lib/appRoutes";
+import { SalonConnexionBrand } from "@/src/components/auth/SalonConnexionBrand";
+import type { PartnerPublicBranding } from "@/src/lib/partner/partnerBrandingTypes";
 import { createClient } from "@/utils/supabase/client";
 
 type AuthCopy = AppDictionary["auth"];
+export type LoginAudience = "salon" | "studio";
 
 /** Halos atmosphériques (pur UI) — centrés au foyer ; ellipse légèrement resserrée pour éviter la “bave” sur la carte. */
 const HALO_SIGN_IN =
@@ -71,14 +78,35 @@ function mapAuthError(
   return t.generic;
 }
 
-function sanitizeClientNextPath(raw: string | null, lang: Locale): string {
+function defaultPathForAudience(lang: Locale, audience: LoginAudience): string {
+  return audience === "salon"
+    ? defaultPartnerPostAuthPath(lang)
+    : defaultPostAuthPath(lang);
+}
+
+function sanitizeClientNextPath(
+  raw: string | null,
+  lang: Locale,
+  audience: LoginAudience,
+): string {
   if (!raw || !raw.startsWith("/") || raw.startsWith("//")) {
-    return `/${lang}/dashboard`;
+    return defaultPathForAudience(lang, audience);
   }
   if (!/^\/(fr|en)(\/|$)/.test(raw)) {
-    return `/${lang}/dashboard`;
+    return defaultPathForAudience(lang, audience);
   }
   return raw;
+}
+
+function resolveDestination(
+  lang: Locale,
+  explicitNext: string | null,
+  audience: LoginAudience,
+): string {
+  if (explicitNext) {
+    return sanitizeClientNextPath(explicitNext, lang, audience);
+  }
+  return defaultPathForAudience(lang, audience);
 }
 
 function buildAuthCallbackUrl(lang: Locale, nextPath: string): string {
@@ -125,9 +153,15 @@ async function fadeThenNavigate(
 export function LoginForm({
   lang,
   copy,
+  audience,
+  salonBranding = null,
+  defaultWordmark = "Odyssey",
 }: {
   lang: Locale;
   copy: AuthCopy;
+  audience: LoginAudience;
+  salonBranding?: PartnerPublicBranding | null;
+  defaultWordmark?: string;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -150,9 +184,11 @@ export function LoginForm({
 
   const supabase = useMemo(() => createClient(), []);
 
+  const allowSignUp = audience === "studio";
+
   const postAuthPath = useMemo(
-    () => sanitizeClientNextPath(searchParams.get("next"), lang),
-    [searchParams, lang],
+    () => sanitizeClientNextPath(searchParams.get("next"), lang, audience),
+    [searchParams, lang, audience],
   );
 
   const raiseError = useCallback((message: string) => {
@@ -160,7 +196,7 @@ export function LoginForm({
     setShakeGeneration((g) => g + 1);
   }, []);
 
-  const isSignUp = mode === "signUp";
+  const isSignUp = allowSignUp && mode === "signUp";
   const passwordsMatch = password === passwordConfirm;
   const confirmMismatchVisible =
     isSignUp &&
@@ -192,6 +228,7 @@ export function LoginForm({
   }, [shakeGeneration]);
 
   function switchMode(next: "signIn" | "signUp") {
+    if (!allowSignUp && next === "signUp") return;
     setMode(next);
     setError(null);
     setPasswordVisible(false);
@@ -235,7 +272,12 @@ export function LoginForm({
         raiseError(mapAuthError(signInError, t.errors));
         return;
       }
-      await fadeThenNavigate(router, postAuthPath, setExitFade);
+      const destination = resolveDestination(
+        lang,
+        searchParams.get("next"),
+        audience,
+      );
+      await fadeThenNavigate(router, destination, setExitFade);
       return;
     }
 
@@ -270,7 +312,12 @@ export function LoginForm({
     }
 
     if (data.session) {
-      await fadeThenNavigate(router, postAuthPath, setExitFade);
+      const destination = resolveDestination(
+        lang,
+        searchParams.get("next"),
+        audience,
+      );
+      await fadeThenNavigate(router, destination, setExitFade);
       return;
     }
 
@@ -280,7 +327,14 @@ export function LoginForm({
   const homeHref = `/${lang}`;
   const haloNormal = isSignUp ? HALO_SIGN_UP : HALO_SIGN_IN;
   const haloBackground = error ? HALO_ERROR : haloNormal;
-  const headline = isSignUp ? t.createAccess : t.studioAccess;
+  const headline = isSignUp
+    ? t.createAccess
+    : audience === "salon"
+      ? salonBranding?.brandLabel ?? t.salonAccess
+      : t.studioAccess;
+  const subtitle =
+    audience === "salon" && !isSignUp ? t.salonSubtitle : null;
+  const isSalonBranded = audience === "salon" && salonBranding !== null;
 
   const tabActiveRingSignIn =
     "bg-white/[0.08] text-white shadow-[0_0_24px_-8px_rgba(139,92,246,0.45)]";
@@ -366,45 +420,62 @@ export function LoginForm({
       />
 
       <div className="relative z-10 isolate w-full max-w-md">
-        <p className="mb-2 text-center text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
-          Odyssey
-        </p>
-        <h1 className="mb-8 text-center text-xl font-light tracking-[0.08em] text-white transition-colors duration-300 md:text-2xl">
-          {headline}
+        {audience === "salon" ? (
+          <SalonConnexionBrand
+            branding={salonBranding}
+            poweredByLabel={t.poweredByOdyssey}
+            defaultWordmark={defaultWordmark}
+          />
+        ) : (
+          <p className="mb-2 text-center text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
+            Odyssey
+          </p>
+        )}
+        <h1 className="mb-2 text-center text-xl font-light tracking-[0.08em] text-white transition-colors duration-300 md:text-2xl">
+          {isSalonBranded ? t.salonAccess : headline}
         </h1>
+        {subtitle ? (
+          <p className="mb-8 text-center text-sm font-light leading-relaxed text-white/45">
+            {subtitle}
+          </p>
+        ) : (
+          <div className="mb-8" aria-hidden />
+        )}
 
-        <div
-          className="mb-8 flex rounded-xl border border-white/10 bg-black/30 p-1 backdrop-blur-sm"
-          role="tablist"
-          aria-label={headline}
-        >
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === "signIn"}
-            onClick={() => switchMode("signIn")}
-            className={`flex-1 rounded-lg py-2.5 text-[10px] font-semibold uppercase tracking-[0.28em] transition-[color,background,box-shadow] ${
-              mode === "signIn"
-                ? tabActiveRingSignIn
-                : "text-white/40 hover:text-white/65"
-            }`}
+        {allowSignUp ? (
+          <div
+            className="mb-8 flex rounded-xl border border-white/10 bg-black/30 p-1 backdrop-blur-sm"
+            role="tablist"
+            aria-label={headline}
           >
-            {t.tabSignIn}
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === "signUp"}
-            onClick={() => switchMode("signUp")}
-            className={`flex-1 rounded-lg py-2.5 text-[10px] font-semibold uppercase tracking-[0.28em] transition-[color,background,box-shadow] ${
-              mode === "signUp"
-                ? tabActiveRingSignUp
-                : "text-white/40 hover:text-white/65"
-            }`}
-          >
-            {t.tabSignUp}
-          </button>
-        </div>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "signIn"}
+              onClick={() => switchMode("signIn")}
+              className={`flex-1 rounded-lg py-2.5 text-[10px] font-semibold uppercase tracking-[0.28em] transition-[color,background,box-shadow] ${
+                mode === "signIn"
+                  ? tabActiveRingSignIn
+                  : "text-white/40 hover:text-white/65"
+              }`}
+            >
+              {t.tabSignIn}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "signUp"}
+              onClick={() => switchMode("signUp")}
+              className={`flex-1 rounded-lg py-2.5 text-[10px] font-semibold uppercase tracking-[0.28em] transition-[color,background,box-shadow] ${
+                mode === "signUp"
+                  ? tabActiveRingSignUp
+                  : "text-white/40 hover:text-white/65"
+              }`}
+            >
+              {t.tabSignUp}
+            </button>
+          </div>
+        ) : null}
 
         <div
           className={`rounded-2xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl transition-shadow duration-500 ${cardGlow} ${shakeActive ? "animate-login-form-shake" : ""}`}

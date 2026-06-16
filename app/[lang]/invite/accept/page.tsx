@@ -6,6 +6,7 @@ import {
   redeemInvitationErrorMessage,
   redeemPartnerInvitation,
 } from "@/src/lib/partner/redeemPartnerInvitation";
+import { appRoutes } from "@/src/lib/appRoutes";
 import { createClient } from "@/utils/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -55,7 +56,9 @@ export default async function InviteAcceptPage({
 
   if (!user) {
     const returnPath = `/${lang}/invite/accept?token=${encodeURIComponent(token)}`;
-    redirect(`/${lang}/login?next=${encodeURIComponent(returnPath)}`);
+    redirect(
+      `${appRoutes.studioConnexion(lang)}?next=${encodeURIComponent(returnPath)}`,
+    );
   }
 
   const result = await redeemPartnerInvitation({

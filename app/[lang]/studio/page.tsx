@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
 import { TributeWizard } from "@/src/components/tribute/TributeWizard";
+import { appRoutes } from "@/src/lib/appRoutes";
 import { getDictionary } from "@/lib/dictionaries";
 import { createClient } from "@/utils/supabase/server";
 import type { Locale } from "@/i18n.config";
@@ -17,7 +18,7 @@ type PageProps = {
   params: Promise<{ lang: string }>;
 };
 
-export default async function DashboardPage({ params }: PageProps) {
+export default async function StudioPage({ params }: PageProps) {
   const { lang: routeLang } = await params;
   const lang: Locale = routeLang === "en" ? "en" : "fr";
   const dictionary = await getDictionary(lang);
@@ -28,7 +29,10 @@ export default async function DashboardPage({ params }: PageProps) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect(`/${lang}/login`);
+    const returnPath = appRoutes.studio(lang);
+    redirect(
+      `${appRoutes.studioConnexion(lang)}?next=${encodeURIComponent(returnPath)}`,
+    );
   }
 
   const rawName = user.user_metadata?.display_name;

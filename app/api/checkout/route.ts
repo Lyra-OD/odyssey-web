@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { appRoutes } from "@/src/lib/appRoutes";
 import { getStripe } from "@/lib/stripe";
 import { requireProjectOwner } from "@/src/lib/api/projectAccess";
 import { debitPartnerTokens } from "@/src/lib/partner/partnerCheckout";
@@ -125,7 +126,7 @@ export async function POST(request: Request) {
   }
 
   const origin = resolveSiteOrigin(request);
-  const dashboardPath = `/${locale}/dashboard`;
+  const studioPath = appRoutes.studio(locale);
 
   if (isPartner) {
     const tenantId = project.tenant_id as string | null;
@@ -187,7 +188,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       mode: "partner",
-      redirectUrl: `${origin}${dashboardPath}?checkout=partner_success`,
+      redirectUrl: `${origin}${studioPath}?checkout=partner_success`,
       tokensDebited: debit.tokensDebited,
       balanceAfter: debit.balanceAfter,
       partnerTokenCost: tokensRequired,
@@ -222,8 +223,8 @@ export async function POST(request: Request) {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: cart.lineItems.map(toStripeLineItem),
-      success_url: `${origin}${dashboardPath}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}${dashboardPath}?checkout=cancel`,
+      success_url: `${origin}${studioPath}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}${studioPath}?checkout=cancel`,
       client_reference_id: projectId,
       metadata: {
         project_id: projectId,

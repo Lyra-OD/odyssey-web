@@ -25,7 +25,7 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | `src/lib/partner/resolvePartnerAccess.ts` | Partner role detection (`tenant_members`) |
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
 | `app/api/checkout/route.ts` | Checkout (**cible** 3 modes — voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)) |
-| `app/[lang]/(partner)/partner/` | Dashboard partenaire (header, portefeuille, `InvitationComposer` sur manifeste) |
+| `app/[lang]/(salon)/salon/` | Console partenaire Salon (header, portefeuille, `InvitationComposer` sur manifeste) — auth via layout |
 
 `TOTAL_STEPS = 8` in `TributeWizard.tsx`.
 
@@ -47,7 +47,7 @@ The tribute wizard is **no longer a static 8-step product definition** in docume
 | `social.enabled === false` | Hide Social step (e.g. **Souvenir** / `SOUVENIR`) |
 | `resolveTransactionMode()` | `StickyPriceBar` / pickers: **tokens** (partner) vs **dollars** (family) |
 
-**Today:** `InvitationComposer` (partner dashboard) reads the manifest + `packages.names` from dictionaries; `TributeWizard` uses `WizardBasePackagePicker` with **marketing labels** via i18n (`tributeWizard.basePackage*` = Souvenir / Héritage / Éternité) while persisting legacy IDs (`essential` / `signature` / `heritage`). Step 5 remains Stingray-only until MP3/Social steps ship.
+**Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries; `TributeWizard` uses `WizardBasePackagePicker` with **marketing labels** via i18n (`tributeWizard.basePackage*` = Souvenir / Héritage / Éternité) while persisting legacy IDs (`essential` / `signature` / `heritage`). Step 5 remains Stingray-only until MP3/Social steps ship.
 
 ### i18n (marketing names)
 

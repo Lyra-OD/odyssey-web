@@ -26,12 +26,14 @@ Détail livrables et double tarification : [`DELIVERABLES_AND_PACKAGES.md`](DELI
 
 | Couche | Statut | Détail |
 |--------|--------|--------|
-| **Base de données** | **Terminée** | P4 wallets/ledger · P4.1 RLS rôles · **P5** invitations + checkouts + `debit_partner_tokens_for_checkout()` |
+| **Base de données** | **Terminée** | P4 wallets/ledger · P4.1 RLS rôles · **P5** invitations + checkouts + `debit_partner_tokens_for_checkout()` · **P5.1** index unique invitation `pending` |
 | **Contrat manifeste (TS)** | **Terminée** | `wizardDeliverables.ts` + `wizardDeliverables.utils.ts` |
-| **UI partenaire** | **Terminée** | Dashboard `/[lang]/partner` — `InvitationComposer` branché sur le manifeste (jetons, forfaits Souvenir/Héritage/Éternité) |
-| **API invitations & magic link** | **À faire** | `POST /api/partner/invitations`, acceptation, lien famille → `projects.invitation_id` |
+| **Routes & auth** | **Terminée** | Studio `/[lang]/studio` · Salon `/[lang]/salon` · connexions séparées · redirects legacy — voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) |
+| **UI partenaire (Salon)** | **Terminée** | `/[lang]/salon` — `PartnerContext`, portefeuille, `InvitationComposer` (manifeste jetons / Souvenir·Héritage·Éternité) |
+| **Branding Salon connexion** | **MVP** | Lien `?partenaire=<slug>` + `tenants.settings.brand_*` — upload self-service Phase 2 |
+| **API invitations & magic link** | **Terminée** | `POST /api/partner/invitations`, `GET /api/partner/tenants`, acceptation `/invite/accept`, `redeemPartnerInvitation` |
 | **Checkout 3 modes** | **À faire** | `checkout_mode` (`b2c` / `b2b_partner` / `b2b2c_family`), RPC P5, `computeB2B2CFamilyPricing()` |
-| **UI famille B2B2C** | **À faire** | `StickyPriceBar` delta $ (pas de mot « jeton »), wizard seed depuis invitation |
+| **UI famille B2B2C** | **Partielle** | `/tribute/welcome` + wizard seed invitation · `StickyPriceBar` delta $ (pas de mot « jeton ») — à finaliser |
 | **i18n forfaits** | **Terminée** | `packages.names` FR/EN (Souvenir/Keepsake, etc.) — IDs SQL inchangés |
 
 ---
@@ -42,7 +44,7 @@ Détail livrables et double tarification : [`DELIVERABLES_AND_PACKAGES.md`](DELI
 |-------|------------------|---------|-------------|
 | 3 modes checkout | ✅ | ✅ `checkout_mode` | ⏳ 2 branches (`isPartner` / Stripe) |
 | Débit = `granted_package` | ✅ | ✅ fonction SQL | ⏳ `packagePartnerTokens(selected)` en TS |
-| Invitations | ✅ | ✅ `partner_invitations` | ⏳ API absente · UI dashboard ✅ (composer manifeste) |
+| Invitations | ✅ | ✅ `partner_invitations` | ✅ API + accept + `projects.invitation_id` |
 | Saga + compensation | ✅ | ✅ statuts `tribute_checkouts` | ⏳ absent |
 | Prix 79 / 149 / 299 | ✅ | N/A (app) | ✅ `pricingConfig.ts` |
 

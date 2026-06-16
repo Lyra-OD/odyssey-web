@@ -5,7 +5,10 @@ import { useCallback, useMemo, useRef, useState } from "react";
 
 import type { Locale } from "@/i18n.config";
 import { usePartner } from "@/src/lib/partner/PartnerContext";
-import { CreatePartnerInvitationResponseSchema } from "@/src/lib/partner/invitationSchemas";
+import {
+  CreatePartnerInvitationResponseSchema,
+  InvitationAlreadyPendingErrorSchema,
+} from "@/src/lib/partner/invitationSchemas";
 import type { PackageLabelsI18n } from "@/src/lib/wizard/packageI18n";
 import {
   formatPackagePriceForMode,
@@ -98,6 +101,8 @@ export function InvitationComposer({
           sending: "Preparing the link…",
           errorGeneric:
             "An error occurred while creating the invitation. Please try again.",
+          invitationAlreadyPending:
+            "An invitation is already pending for this email address.",
           successTitle: "The invitation was created successfully.",
           linkLabel: "Invitation link",
           copyLink: "Copy link",
@@ -118,6 +123,8 @@ export function InvitationComposer({
           sending: "Préparation du lien…",
           errorGeneric:
             "Une erreur est survenue lors de la création de l’invitation. Veuillez réessayer.",
+          invitationAlreadyPending:
+            "Une invitation est déjà en attente pour cette adresse.",
           successTitle: "L’invitation a été générée avec succès.",
           linkLabel: "Lien d’invitation",
           copyLink: "Copier le lien",
@@ -180,6 +187,7 @@ export function InvitationComposer({
           familyEmail: email.trim(),
           grantedPackage,
           tenantId: activeTenantId,
+          locale: lang,
         }),
       });
 
@@ -188,6 +196,16 @@ export function InvitationComposer({
         payload = await response.json();
       } catch {
         payload = null;
+      }
+
+      if (response.status === 409) {
+        const conflict = InvitationAlreadyPendingErrorSchema.safeParse(payload);
+        setError(
+          conflict.success
+            ? conflict.data.message
+            : copy.invitationAlreadyPending,
+        );
+        return;
       }
 
       if (!response.ok) {
@@ -216,7 +234,9 @@ export function InvitationComposer({
   }, [
     canSubmit,
     copy.errorGeneric,
+    copy.invitationAlreadyPending,
     email,
+    lang,
     activeTenantId,
     selectedPackageId,
   ]);

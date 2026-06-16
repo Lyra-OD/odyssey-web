@@ -2,25 +2,32 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+import type { Locale } from "@/i18n.config";
+import { appRoutes } from "@/src/lib/appRoutes";
 import { createClient } from "@/utils/supabase/client";
 
 export function DashboardSignOut({
   lang,
   label,
   className = "",
+  signInHref,
 }: {
   lang: string;
   label: string;
   className?: string;
+  signInHref?: string;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
+  const locale: Locale = lang === "en" ? "en" : "fr";
+  const destination = signInHref ?? appRoutes.studioConnexion(locale);
 
   async function handleSignOut() {
     setPending(true);
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push(`/${lang}/login`);
+    router.push(destination);
     router.refresh();
   }
 

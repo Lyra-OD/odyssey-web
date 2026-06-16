@@ -4,14 +4,15 @@ import { getSiteUrl } from "@/lib/siteUrl";
 
 const localizedRoutes = [
   "",
-  "/login",
+  "/studio/connexion",
   "/manifesto",
   "/process",
   "/contact",
   "/partners",
   "/partenaires",
   "/auth",
-  "/dashboard",
+  "/studio",
+  "/salon",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

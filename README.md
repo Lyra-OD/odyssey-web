@@ -4,7 +4,7 @@ Application Next.js 14 (App Router) pour le Studio Odyssey:
 - authentification Supabase,
 - **wizard hommage 8 etapes** (autosave, montage, musique Stingray, extensions, checkout hybride),
 - ingestion media massive,
-- pipeline Stripe (catalog + webhook robuste), **checkout B2B jetons** (partenaires) et **architecture B2B2C** (invitations famille, saga `tribute_checkouts` — **DB P5 en place**, API à brancher).
+- pipeline Stripe (catalog + webhook robuste), **checkout B2B jetons** (partenaires) et **architecture B2B2C** (invitations famille, saga `tribute_checkouts` — **DB P5 en place**, checkout 3 modes encore à brancher).
 
 ## Documentation principale
 
@@ -13,6 +13,7 @@ Application Next.js 14 (App Router) pour le Studio Odyssey:
 | `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` | **Document central:** stack, structure repo, fait / a terminer, **moteur video**, positionnement haut de gamme, **potentiel & adoption**, **croissance virale** (ethique, co-creation, formats, **verticaliste animaux**), upsells, **securite P0–P2**, elevation produit, multi-skins, isolation medias, regles d'equipe — **sommaire en tete de fichier**. |
 | `docs/DELIVERABLES_AND_PACKAGES.md` | **Contrat des livrables et double tarification** (manifeste `wizardDeliverables.ts`, Souvenir/Héritage/Éternité, Salon 16:9 / Social 9:16). |
 | `docs/B2B2C_COMMERCE.md` | **Commerce 3 modes** (`b2c`, `b2b_partner`, `b2b2c_family`), prix/jetons, regle `granted_package`, saga Stripe + jetons, etat DB vs API. |
+| `docs/ROUTES_AND_AUTH.md` | **Routes canoniques** (`studio` / `salon`), double connexion, legacy `/login`, branding partenaire sur Salon connexion. |
 | `docs/WIZARD_ARCHITECTURE.md` | Wizard 8 etapes, autosave, **pricing hybride**, bundle Heritage (67 $), tiers musique, checkout (3 branches). |
 | `docs/STINGRAY_MUSIC_INTEGRATION.md` | Musique licenciee (MAPI + mock auto), **catalogues Standard / Premium**, param `tier` sur `/api/music/search`. |
 | `docs/sql/README.md` | Migrations SQL ordonnees (**P0–P5**, patch P4.1, seed QA). |

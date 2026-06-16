@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { AppDictionary } from "../../lib/dictionaries";
 import type { Locale } from "../../i18n.config";
+import { appRoutes } from "@/src/lib/appRoutes";
 
 const MotionLink = motion(Link);
 
@@ -64,14 +65,27 @@ export function Navbar({
 
   const switchLocale = (nextLang: Locale) => {
     const currentPath = pathname ?? "/";
-    /* /login legacy → même page dans l’autre langue */
+    const search =
+      typeof window !== "undefined" ? window.location.search : "";
+    /* Legacy /login → connexion studio */
     if (currentPath === "/login") {
-      router.push(`/${nextLang}/login`);
+      router.push(appRoutes.studioConnexion(nextLang));
       return;
     }
-    const loginMatch = /^\/(fr|en)\/login$/.exec(currentPath);
-    if (loginMatch) {
-      router.push(`/${nextLang}/login`);
+    const legacyLoginMatch = /^\/(fr|en)\/login$/.exec(currentPath);
+    if (legacyLoginMatch) {
+      router.push(appRoutes.studioConnexion(nextLang));
+      return;
+    }
+    const connexionMatch =
+      /^\/(fr|en)\/(studio|salon)\/connexion$/.exec(currentPath);
+    if (connexionMatch) {
+      const segment = connexionMatch[2] as "studio" | "salon";
+      const base =
+        segment === "salon"
+          ? appRoutes.salonConnexion(nextLang)
+          : appRoutes.studioConnexion(nextLang);
+      router.push(`${base}${search}`);
       return;
     }
     const parts = currentPath.split("/").filter(Boolean);
@@ -182,7 +196,7 @@ export function Navbar({
           </div>
 
           <MotionLink
-            href={`/${lang}/login`}
+            href={appRoutes.studioConnexion(lang)}
             className="font-label group hidden min-h-[44px] items-center gap-2 text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-400 transition-colors duration-300 hover:text-violet-300 sm:inline-flex sm:text-[11px] touch-manipulation"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
@@ -237,7 +251,7 @@ export function Navbar({
                 </MotionLink>
               ))}
               <MotionLink
-                href={`/${lang}/login`}
+                href={appRoutes.studioConnexion(lang)}
                 onClick={closeMobile}
                 className="mt-2 flex min-h-[48px] items-center gap-2 border border-zinc-800 bg-zinc-950/60 px-3 py-3 text-[11px] font-medium uppercase tracking-[0.22em] text-zinc-300 touch-manipulation"
                 whileTap={{ scale: 0.99 }}

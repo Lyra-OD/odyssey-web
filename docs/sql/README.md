@@ -22,6 +22,9 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 7 | `odyssey_p4_partner_token_wallets.sql` | Migration | `partner_token_wallets` + `partner_token_ledger` (jetons B2B). |
 | 8 | `odyssey_p4_1_security_fixes.sql` | **Patch sécurité** | RLS wallets/ledger : rôles `partner` / `partner_admin` uniquement ; index `ledger.project_id`. |
 | 9 | `odyssey_p5_b2b2c_core.sql` | Migration | `partner_invitations`, `tribute_checkouts`, `projects.invitation_id`, `debit_partner_tokens_for_checkout()`. |
+| 10 | `odyssey_p5_1_invitation_unique_pending.sql` | **Patch** | Index unique `pending` par `(tenant_id, email)` — anti double-clic invitations. |
+
+**Branding Salon (app, pas de migration dédiée)** : champs optionnels dans `tenants.settings` — `brand_label`, `brand_logo_url`. Voir [`docs/ROUTES_AND_AUTH.md`](../ROUTES_AND_AUTH.md).
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
 | — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed QA** | Partenaire fictif + 100 jetons — **après P4**, hors chaîne prod. |
 
@@ -53,6 +56,8 @@ auth.users
            └── user_id → profiles
 
 public.tenants
+   ├── slug (identifiant stable — liens ?partenaire=)
+   ├── settings jsonb (brand_label, brand_logo_url, …)
    ├── partner_token_wallets   (PK tenant_id, balance)
    ├── partner_invitations     (granted_package, status, magic link hash)
    └── (funérarium / vertical)

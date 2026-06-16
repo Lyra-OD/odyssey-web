@@ -181,6 +181,9 @@
   },
   "auth": {
     "studioAccess": "Accéder au studio",
+    "salonAccess": "Espace professionnel",
+    "salonSubtitle": "Connexion réservée aux équipes partenaires.",
+    "poweredByOdyssey": "Propulsé par",
     "createAccess": "Créer un accès",
     "tabSignIn": "Connexion",
     "tabSignUp": "Inscription",

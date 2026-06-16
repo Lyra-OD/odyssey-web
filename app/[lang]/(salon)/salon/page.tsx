@@ -10,7 +10,7 @@ type PageProps = {
   params: Promise<{ lang: string }>;
 };
 
-export default async function PartnerDashboardPage({ params }: PageProps) {
+export default async function SalonPage({ params }: PageProps) {
   const { lang: routeLang } = await params;
   const lang: Locale = routeLang === "en" ? "en" : "fr";
   const dictionary = await getDictionary(lang);

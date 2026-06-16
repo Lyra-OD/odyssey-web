@@ -8,6 +8,10 @@ export const LegacyGrantedPackageSchema = z.enum([
 
 export type LegacyGrantedPackage = z.infer<typeof LegacyGrantedPackageSchema>;
 
+export const InvitationLocaleSchema = z.enum(["fr", "en"]);
+
+export type InvitationLocale = z.infer<typeof InvitationLocaleSchema>;
+
 export const CreatePartnerInvitationBodySchema = z
   .object({
     familyEmail: z
@@ -19,6 +23,7 @@ export const CreatePartnerInvitationBodySchema = z
       .transform((value) => value.toLowerCase()),
     grantedPackage: LegacyGrantedPackageSchema,
     tenantId: z.string().uuid({ message: "invalid_tenant_id" }),
+    locale: InvitationLocaleSchema.default("fr"),
   })
   .strict();
 
@@ -41,4 +46,19 @@ export const CreatePartnerInvitationResponseSchema = z
 
 export type CreatePartnerInvitationResponse = z.infer<
   typeof CreatePartnerInvitationResponseSchema
+>;
+
+/** Réponse `409` — invitation pending déjà active pour ce tenant + email. */
+export const InvitationAlreadyPendingErrorSchema = z
+  .object({
+    error: z.literal("invitation_already_pending"),
+    message: z.string(),
+    invitationId: z.string().uuid().optional(),
+    expiresAt: z.string().nullable().optional(),
+    grantedPackage: LegacyGrantedPackageSchema.optional(),
+  })
+  .strict();
+
+export type InvitationAlreadyPendingError = z.infer<
+  typeof InvitationAlreadyPendingErrorSchema
 >;

@@ -10,6 +10,7 @@ This document helps any developer (frontend, backend, DevOps, QA) onboard quickl
 - [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, state, autosave, pricing, Heritage bundle, music tiers, checkout diagram
 - [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, **catalog tiers**, mock mode, composite `trackId`, preview proxy
 - [`docs/sql/README.md`](sql/README.md) — SQL migrations **P0–P5** (P4.1 security patch, QA seed)
+- [`docs/ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) — routes `studio` / `salon`, double connexion, branding partenaire
 - [`docs/CONVENTIONS.md`](CONVENTIONS.md) — Code language, doc hierarchy, repo scope
 
 Ce document reste partiellement en francais pour l'historique produit; les sections **4.7**, **6 (Stingray)**, **10** et les annexes ci-dessus sont la reference a jour pour Jon et l'equipe technique.
@@ -100,6 +101,16 @@ Ce bloc decrit la fondation technique stable au 26 mai 2026. Toutes les sections
 
 **Backfill des comptes existants**: le script `docs/sql/odyssey_p1_user_bootstrap.sql` contient un seed idempotent qui rattache tous les utilisateurs deja crees.
 
+**Routes & connexion (juin 2026)** — reference complete : [`docs/ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).
+
+| Zone | URL connexion | URL app | Inscription |
+|------|---------------|---------|-------------|
+| Famille (Studio) | `/[lang]/studio/connexion` | `/[lang]/studio` | Oui |
+| Partenaire (Salon) | `/[lang]/salon/connexion?partenaire=<slug>` (optionnel) | `/[lang]/salon` | Non |
+| Legacy | `/[lang]/login` → redirect studio connexion | — | — |
+
+Chemins canoniques : `src/lib/appRoutes.ts`. Redirects anciens `/dashboard` et `/partner` : `next.config.mjs`.
+
 **Important**: ne pas creer d'autre trigger sur `auth.users` pour le bootstrap user -- tout doit passer par `handle_new_user()`. Ajouts futurs (org auto-creee, email transactionnel de bienvenue, etc.) -> etendre cette fonction.
 
 ### 4.2 Multi-tenant (B2B / B2B2C / white-label ready)
@@ -116,7 +127,9 @@ Table `public.tenant_members` (creee par P1):
 
 **Convention de naming**:
 - `slug` = identifiant technique stable (immutable une fois en prod).
-- `name` = label commercial modifiable (les vraies marques house-of-brands type "Empreintes", "Compagnons" iront plus tard dans `settings.brand_label`).
+- `name` = label commercial modifiable.
+- `settings.brand_label` = marque affichée famille / connexion Salon (white-label).
+- `settings.brand_logo_url` = URL publique du logo sur `/salon/connexion?partenaire=<slug>` (voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md)).
 - `vertical` = categorie metier (`human`, `pet`, futur `wedding`, `event`...) -- permet d'avoir plusieurs tenants par vertical (ex. white-label d'un studio funeraire dans `vertical = 'human'`).
 
 **Resolution du tenant dans le code**: la route `app/api/projects/draft/route.ts` fait un `SELECT tenant_id FROM tenant_members WHERE user_id = auth.uid() ORDER BY created_at ASC LIMIT 1` pour recuperer le tenant principal. Si demain un user appartient a plusieurs tenants, le wizard lui demandera explicitement de choisir.

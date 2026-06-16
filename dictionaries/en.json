@@ -181,6 +181,9 @@
   },
   "auth": {
     "studioAccess": "Studio access",
+    "salonAccess": "Professional access",
+    "salonSubtitle": "Sign in for partner teams.",
+    "poweredByOdyssey": "Powered by",
     "createAccess": "Create Access",
     "tabSignIn": "Sign in",
     "tabSignUp": "Sign up",

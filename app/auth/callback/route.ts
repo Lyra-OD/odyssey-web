@@ -1,25 +1,31 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-const DEFAULT_NEXT = "/fr/dashboard";
+import { appRoutes, defaultPostAuthPath } from "@/src/lib/appRoutes";
+import type { Locale } from "@/i18n.config";
 
 function sanitizeNextPath(raw: string | null): string {
   if (!raw || !raw.startsWith("/") || raw.startsWith("//")) {
-    return DEFAULT_NEXT;
+    return defaultPostAuthPath("fr");
   }
   if (!/^\/(fr|en)(\/|$)/.test(raw)) {
-    return DEFAULT_NEXT;
+    return defaultPostAuthPath("fr");
   }
   return raw;
 }
 
-function loginErrorRedirect(requestUrl: URL, nextPath: string): NextResponse {
+function connexionErrorPath(nextPath: string): string {
   const seg = nextPath.match(/^\/(fr|en)\//);
-  const l = seg?.[1];
-  const path =
-    l === "fr" || l === "en"
-      ? `/${l}/login?error=callback`
-      : "/fr/login?error=callback";
+  const lang: Locale = seg?.[1] === "en" ? "en" : "fr";
+  const isSalon = /^\/(fr|en)\/salon(\/|$)/.test(nextPath);
+  const base = isSalon
+    ? appRoutes.salonConnexion(lang)
+    : appRoutes.studioConnexion(lang);
+  return `${base}?error=callback`;
+}
+
+function loginErrorRedirect(requestUrl: URL, nextPath: string): NextResponse {
+  const path = connexionErrorPath(nextPath);
   return NextResponse.redirect(new URL(path, requestUrl));
 }
 

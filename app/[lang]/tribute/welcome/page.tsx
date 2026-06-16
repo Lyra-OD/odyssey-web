@@ -5,6 +5,7 @@ import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
 import { TributeWizard } from "@/src/components/tribute/TributeWizard";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
+import { appRoutes } from "@/src/lib/appRoutes";
 import { createClient } from "@/utils/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -40,7 +41,7 @@ export default async function TributeWelcomePage({
   const projectId = pickProjectId((await searchParams).projectId);
 
   if (!projectId) {
-    redirect(`/${lang}/dashboard`);
+    redirect(appRoutes.studio(lang));
   }
 
   const supabase = await createClient();
@@ -50,7 +51,9 @@ export default async function TributeWelcomePage({
 
   if (!user) {
     const returnPath = `/${lang}/tribute/welcome?projectId=${encodeURIComponent(projectId)}`;
-    redirect(`/${lang}/login?next=${encodeURIComponent(returnPath)}`);
+    redirect(
+      `${appRoutes.studioConnexion(lang)}?next=${encodeURIComponent(returnPath)}`,
+    );
   }
 
   const { data: project, error } = await supabase
