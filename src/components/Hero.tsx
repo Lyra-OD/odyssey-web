@@ -13,13 +13,8 @@ type HeroPitchDeck = {
   signatures: string[];
 };
 
-// CONFIGURATION DES VIDÉOS - Si tu n'as pas encore les fichiers, laisse seulement "/hero.mp4"
-const VIDEOS = [
-  "/hero.mp4",
-  "/reel-02.mp4",
-  "/reel-03.mp4",
-  "/reel-04.mp4",
-];
+// CONFIGURATION DES VIDÉOS — fichiers dans `public/`
+const VIDEOS = ["/hero.mp4"];
 
 const FILM_GRAIN_STYLES = `
   .grain-engine::before {
