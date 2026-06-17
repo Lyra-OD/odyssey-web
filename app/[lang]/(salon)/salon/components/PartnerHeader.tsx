@@ -56,24 +56,38 @@ export function PartnerHeader({
     initialBrand?.brandLabel ??
     slugBranding?.brandLabel ??
     "Partenaire";
+
+  const tenantLogoUrl = activeTenant?.logoUrl ?? null;
   const logoUrl =
-    activeTenant?.logoUrl ??
+    tenantLogoUrl ??
     initialBrand?.logoUrl ??
     slugBranding?.logoUrl ??
     null;
 
-  useEffect(() => {
-    if (logoUrl || availableTenants.length > 0) return;
+  const brandingSlug = useMemo(() => {
+    const fromTenant = activeTenant?.slug?.trim();
+    if (fromTenant) return fromTenant;
+    const fromStorage = readPartnerConnexionSlug();
+    if (fromStorage) return fromStorage;
+    return availableTenants.find((t) => t.slug?.trim())?.slug?.trim() ?? null;
+  }, [activeTenant?.slug, availableTenants]);
 
-    const slug = readPartnerConnexionSlug();
-    if (!slug) return;
+  const needsSlugBranding =
+    !tenantLogoUrl && !initialBrand?.logoUrl && !slugBranding?.logoUrl;
+
+  useEffect(() => {
+    setSlugBranding(null);
+  }, [activeTenantId, brandingSlug]);
+
+  useEffect(() => {
+    if (!needsSlugBranding || !brandingSlug) return;
 
     let cancelled = false;
     const supabase = createClient();
 
     void (async () => {
       const { data, error } = await supabase.rpc("get_partner_public_branding", {
-        p_slug: slug,
+        p_slug: brandingSlug,
       });
       if (cancelled || error || !data || typeof data !== "object") return;
 
@@ -91,10 +105,10 @@ export function PartnerHeader({
     return () => {
       cancelled = true;
     };
-  }, [logoUrl, availableTenants.length]);
+  }, [needsSlugBranding, brandingSlug]);
 
   return (
-    <header className="relative z-10 border-b border-white/[0.06] bg-[#020202]/40 backdrop-blur-md">
+    <header className="relative z-30 border-b border-white/[0.06] bg-[#020202]/40 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-[1400px] items-start justify-between gap-6 px-5 py-5 md:px-12 md:py-6">
         <PartnerBrandLockup
           key={activeTenantId ?? logoUrl ?? brandLabel}

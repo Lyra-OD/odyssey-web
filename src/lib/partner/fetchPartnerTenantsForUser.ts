@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
-import { partnerBrandingFromSettings } from "@/src/lib/partner/partnerBrandingFromSettings";
+import { partnerBrandingFromSettings, parsePartnerLogoUrl } from "@/src/lib/partner/partnerBrandingFromSettings";
 import {
   PartnerTenantSchema,
   type PartnerTenant,
@@ -45,9 +45,7 @@ function normalizeTenantJoin(
 function rpcItemToPartnerTenant(
   item: z.infer<typeof PartnerTenantRpcItemSchema>,
 ): PartnerTenant | null {
-  const logoRaw = item.brand_logo_url?.trim();
-  const logoUrl =
-    logoRaw && z.string().url().safeParse(logoRaw).success ? logoRaw : null;
+  const logoUrl = parsePartnerLogoUrl(item.brand_logo_url);
 
   const parsed = PartnerTenantSchema.safeParse({
     id: item.id,
@@ -143,5 +141,25 @@ export function primaryPartnerBrand(
   return {
     brandLabel: first.brandLabel ?? first.name,
     logoUrl: first.logoUrl ?? null,
+  };
+}
+
+/** Enrichit le branding serveur via RPC publique si le tenant n'a pas de logo en settings. */
+export async function resolvePartnerInitialBrand(
+  tenants: PartnerTenant[],
+  fetchBySlug: (slug: string) => Promise<{ brandLabel: string; logoUrl: string | null } | null>,
+): Promise<PartnerInitialBrand | null> {
+  const base = primaryPartnerBrand(tenants);
+  if (!base || base.logoUrl) return base;
+
+  const slug = tenants.find((t) => t.slug?.trim())?.slug?.trim();
+  if (!slug) return base;
+
+  const publicBrand = await fetchBySlug(slug);
+  if (!publicBrand?.logoUrl) return base;
+
+  return {
+    brandLabel: publicBrand.brandLabel || base.brandLabel,
+    logoUrl: publicBrand.logoUrl,
   };
 }

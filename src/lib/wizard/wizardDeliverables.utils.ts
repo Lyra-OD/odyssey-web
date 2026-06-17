@@ -19,78 +19,107 @@ import {
 /** Forfait mis en avant sur le dashboard partenaire. */
 export const RECOMMENDED_PACKAGE_ID: PackageId = "HERITAGE";
 
+export type PartnerInvitationFeatureId =
+  | "salon"
+  | "social"
+  | "aiRestoration"
+  | "cloudVault";
+
+export type PartnerInvitationFeature = {
+  id: PartnerInvitationFeatureId;
+  label: string;
+  included: boolean;
+};
+
 export type PartnerInvitationTierPresentation = {
   packageId: PackageId;
   title: string;
   style: string;
-  features: string[];
+  /** Donnée transactionnelle — débit jetons à l’envoi (hors matrice features). */
+  tokenDebitLabel: string;
+  features: PartnerInvitationFeature[];
   recommended: boolean;
 };
 
-function buildFeatures(
+function buildTokenDebitLabel(packageId: PackageId, locale: Locale): string {
+  const { tokens } = getPackageManifest(packageId).pricing;
+  if (locale === "en") {
+    return tokens === 1
+      ? "1 token debited on send"
+      : `${tokens} tokens debited on send`;
+  }
+  return tokens === 1
+    ? "1 jeton débité à l’envoi"
+    : `${tokens} jetons débités à l’envoi`;
+}
+
+function buildFeatureRows(
   packageId: PackageId,
   locale: Locale,
-): string[] {
+): PartnerInvitationFeature[] {
   const m = getPackageManifest(packageId);
-  const { tokens } = m.pricing;
 
   if (locale === "en") {
-    const tokenLine =
-      tokens === 1
-        ? "1 token debited on send"
-        : `${tokens} tokens debited on send`;
-    const lines = [tokenLine];
-
-    if (m.salon.audio === "personal_mp3") {
-      lines.push("Salon 16:9 · personal MP3 or catalog");
-    } else {
-      lines.push("Salon 16:9 · Stingray music");
-    }
-
-    if (m.social.enabled) {
-      lines.push(
-        `Social clip ${m.social.aspect} · ${m.social.duration}s · rights-safe music`,
-      );
-    } else {
-      lines.push("Social clip not included");
-    }
-
-    if (m.features.aiRestoration) {
-      lines.push("AI restoration included");
-    }
-
-    lines.push(`Cloud vault · ${m.features.cloudStorageYears} years`);
-
-    return lines;
+    return [
+      {
+        id: "salon",
+        label:
+          m.salon.audio === "personal_mp3"
+            ? "Salon 16:9 · personal MP3 or catalog"
+            : "Salon 16:9 · Stingray music",
+        included: true,
+      },
+      {
+        id: "social",
+        label: m.social.enabled
+          ? `Social clip ${m.social.aspect} · ${m.social.duration}s · rights-safe music`
+          : "Social clip not included",
+        included: m.social.enabled,
+      },
+      {
+        id: "aiRestoration",
+        label: m.features.aiRestoration
+          ? "AI restoration included"
+          : "AI restoration not included",
+        included: m.features.aiRestoration,
+      },
+      {
+        id: "cloudVault",
+        label: `Cloud vault · ${m.features.cloudStorageYears} years`,
+        included: true,
+      },
+    ];
   }
 
-  const tokenLine =
-    tokens === 1
-      ? "1 jeton débité à l’envoi"
-      : `${tokens} jetons débités à l’envoi`;
-  const lines = [tokenLine];
-
-  if (m.salon.audio === "personal_mp3") {
-    lines.push("Salon 16:9 · MP3 personnel ou catalogue");
-  } else {
-    lines.push("Salon 16:9 · musique Stingray");
-  }
-
-  if (m.social.enabled) {
-    lines.push(
-      `Clip Social ${m.social.aspect} · ${m.social.duration} s · musique libre de droits`,
-    );
-  } else {
-    lines.push("Clip Social non inclus");
-  }
-
-  if (m.features.aiRestoration) {
-    lines.push("Restauration IA incluse");
-  }
-
-  lines.push(`Coffre cloud · ${m.features.cloudStorageYears} ans`);
-
-  return lines;
+  return [
+    {
+      id: "salon",
+      label:
+        m.salon.audio === "personal_mp3"
+          ? "Salon 16:9 · MP3 personnel ou catalogue"
+          : "Salon 16:9 · musique Stingray",
+      included: true,
+    },
+    {
+      id: "social",
+      label: m.social.enabled
+        ? `Clip Social ${m.social.aspect} · ${m.social.duration} s · musique libre de droits`
+        : "Clip Social non inclus",
+      included: m.social.enabled,
+    },
+    {
+      id: "aiRestoration",
+      label: m.features.aiRestoration
+        ? "Restauration IA incluse"
+        : "Restauration IA non incluse",
+      included: m.features.aiRestoration,
+    },
+    {
+      id: "cloudVault",
+      label: `Coffre cloud · ${m.features.cloudStorageYears} ans`,
+      included: true,
+    },
+  ];
 }
 
 export function getPartnerInvitationTierPresentation(
@@ -102,7 +131,8 @@ export function getPartnerInvitationTierPresentation(
     packageId,
     title: packageNameFromLabels(packageId, labels.names),
     style: packageStyleFromLabels(packageId, labels.styles),
-    features: buildFeatures(packageId, locale),
+    tokenDebitLabel: buildTokenDebitLabel(packageId, locale),
+    features: buildFeatureRows(packageId, locale),
     recommended: packageId === RECOMMENDED_PACKAGE_ID,
   };
 }

@@ -1,14 +1,35 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import type { Locale } from "@/i18n.config";
+import { SalonTierFeatureRow } from "@/src/components/partner/SalonTierFeatureRow";
 import { usePartner } from "@/src/lib/partner/PartnerContext";
 import {
   CreatePartnerInvitationResponseSchema,
   InvitationAlreadyPendingErrorSchema,
 } from "@/src/lib/partner/invitationSchemas";
+import {
+  getSalonTierCardMotionState,
+  SALON_INVITE_CARD_VARIANTS,
+  SALON_INVITE_STAGGER_CONTAINER,
+  SALON_INVITE_STAGGER_ITEM,
+  SALON_UV_RADIAL,
+  salonInviteEmailBoxClass,
+  salonInviteEmailInputClass,
+  salonInviteEmailLabelClass,
+  salonInviteSubmitCtaClass,
+  salonRecommendedBadgeClass,
+  salonTierCardCtaClass,
+  salonTierFeatureDividerClass,
+  salonTierCardPriceAmountClass,
+  salonTierCardPriceSuffixClass,
+  salonTierCardStyleClass,
+  salonTierCardSurfaceClass,
+  salonTierCardTitleClass,
+  salonTierTokenDebitClass,
+} from "@/src/lib/salonTierCardSkin";
 import type { PackageLabelsI18n } from "@/src/lib/wizard/packageI18n";
 import {
   formatPackagePriceForMode,
@@ -19,18 +40,8 @@ import {
 import {
   listPartnerInvitationTiers,
   packagePricePartsForMode,
+  RECOMMENDED_PACKAGE_ID,
 } from "@/src/lib/wizard/wizardDeliverables.utils";
-import {
-  getTierCardMotionState,
-  TIER_CARD_SELECT_TRANSITION,
-  tierCardCtaClass,
-  tierCardFeatureClass,
-  tierCardPriceClass,
-  tierCardStyleClass,
-  tierCardSurfaceClass,
-  tierCardTitleClass,
-  UV_RADIAL,
-} from "@/src/lib/pricingTierCardSkin";
 import { editorialAccentRule, editorialColumn } from "@/src/lib/editorialSkin";
 
 type InvitationSuccessData = {
@@ -78,6 +89,7 @@ export function InvitationComposer({
   const [copied, setCopied] = useState(false);
 
   const locale = lang === "en" ? "en" : "fr";
+  const reducedMotion = prefersReducedMotion === true;
 
   const transactionMode = resolveTransactionMode({
     isPartnerAccount,
@@ -308,186 +320,283 @@ export function InvitationComposer({
   }
 
   return (
-    <section className="mt-2 md:mt-4" aria-labelledby="partner-invite-kicker">
-      <div
-        className={`mb-10 md:mb-14 ${editorialColumn} md:max-w-[76rem] ${editorialAccentRule}`}
+    <section
+      className="mt-2 flex w-full flex-col items-center text-center md:mt-4"
+      aria-labelledby="partner-invite-kicker"
+    >
+      <motion.div
+        className="flex w-full flex-col items-center"
+        variants={SALON_INVITE_STAGGER_CONTAINER}
+        initial={reducedMotion ? "visible" : "hidden"}
+        animate="visible"
       >
-        <p
-          id="partner-invite-kicker"
-          className="font-label text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-500"
+        <motion.div
+          variants={SALON_INVITE_STAGGER_ITEM}
+          className="mb-10 w-full max-w-2xl md:mb-14"
         >
-          {copy.kicker}
-        </p>
-        <h2 className="font-editorial mt-5 text-3xl tracking-tight text-white md:text-4xl">
-          {copy.title}
-        </h2>
-      </div>
-
-      <div
-        className={formLocked ? "pointer-events-none opacity-60" : undefined}
-        aria-busy={isSubmitting}
-      >
-        <div className="mb-12 max-w-xl">
-          <label
-            htmlFor="partner-invite-email"
-            className="font-label text-[10px] font-bold uppercase tracking-[0.42em] text-zinc-500"
+          <p
+            id="partner-invite-kicker"
+            className="font-label text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-500"
           >
-            {copy.emailLabel}
-          </label>
-          <input
-            id="partner-invite-email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={copy.emailPlaceholder}
-            disabled={isSubmitting}
-            className="mt-3 w-full max-w-xl rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-sm text-white/90 outline-none transition-[border,box-shadow] placeholder:text-white/25 focus:border-purple-400/45 focus:shadow-[0_0_0_1px_rgba(168,85,247,0.2)] disabled:opacity-50"
-          />
-        </div>
+            {copy.kicker}
+          </p>
+          <h2 className="font-editorial mt-5 text-3xl tracking-tight text-white md:text-4xl">
+            {copy.title}
+          </h2>
+        </motion.div>
 
-        <div className="relative py-3 md:py-6">
-          <div className="grid grid-cols-1 gap-6 overflow-visible md:grid-cols-3 md:gap-8">
-            {tiers.map((tier) => {
-              const packageId = tier.packageId;
-              const isPopular = tier.recommended;
-              const isSelected = selectedPackageId === packageId;
-              const isDefaultPopularGlow = isPopular && !hasSelection;
-              const { isUltraviolet, showRadialBlur, animate } =
-                getTierCardMotionState(
+        <div
+          className={
+            formLocked
+              ? "pointer-events-none w-full opacity-60"
+              : "w-full"
+          }
+          aria-busy={isSubmitting}
+        >
+          <motion.div
+            variants={SALON_INVITE_STAGGER_ITEM}
+            className="mb-12 flex w-full flex-col items-center"
+          >
+            <label
+              htmlFor="partner-invite-email"
+              className={salonInviteEmailLabelClass()}
+            >
+              {copy.emailLabel}
+            </label>
+            <div className={`mt-3 ${salonInviteEmailBoxClass()}`}>
+              <input
+                id="partner-invite-email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={copy.emailPlaceholder}
+                disabled={isSubmitting}
+                className={salonInviteEmailInputClass()}
+              />
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={SALON_INVITE_STAGGER_ITEM}
+            className="relative w-full py-3 md:py-6"
+          >
+            <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 overflow-visible md:grid-cols-3 md:gap-8">
+              {tiers.map((tier, index) => {
+                const packageId = tier.packageId;
+                const isPopular = tier.recommended;
+                const isSelected = selectedPackageId === packageId;
+                const isDefaultPopularGlow = isPopular && !hasSelection;
+                const showRecommendedBadge =
+                  isPopular &&
+                  (!hasSelection || selectedPackageId === RECOMMENDED_PACKAGE_ID);
+                const {
+                  isAccent,
+                  showRadialBlur,
+                  cardAnimate,
+                  cardTransition,
+                  neonAnimate,
+                  neonTransition,
+                  radialAnimate,
+                  radialTransition,
+                  secondaryTextAnimate,
+                  secondaryTextTransition,
+                  hoverScale,
+                  hoverTransition,
+                } = getSalonTierCardMotionState(
                   isSelected,
                   isDefaultPopularGlow,
                   prefersReducedMotion,
+                  hasSelection,
                 );
 
-              const priceFormatted = formatPackagePriceForMode(
-                packageId,
-                transactionMode,
-                locale,
-              );
-              const priceParts = packagePricePartsForMode(
-                packageId,
-                transactionMode,
-                priceFormatted,
-              );
+                const priceFormatted = formatPackagePriceForMode(
+                  packageId,
+                  transactionMode,
+                  locale,
+                );
+                const priceParts = packagePricePartsForMode(
+                  packageId,
+                  transactionMode,
+                  priceFormatted,
+                );
 
-              return (
-                <motion.article
-                  key={packageId}
-                  role="button"
-                  tabIndex={isSubmitting ? -1 : 0}
-                  aria-pressed={isSelected}
-                  aria-label={`${tier.title} — ${priceFormatted}`}
-                  aria-disabled={isSubmitting}
-                  transition={{
-                    scale: TIER_CARD_SELECT_TRANSITION,
-                    borderColor: TIER_CARD_SELECT_TRANSITION,
-                    backgroundColor: TIER_CARD_SELECT_TRANSITION,
-                    boxShadow: TIER_CARD_SELECT_TRANSITION,
-                  }}
-                  animate={animate}
-                  style={{ transformOrigin: "center center" }}
-                  className={tierCardSurfaceClass(isUltraviolet, isSelected)}
-                  onClick={() => selectPackage(packageId)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      selectPackage(packageId);
-                    }
-                  }}
-                >
-                  {showRadialBlur && (
-                    <div
-                      aria-hidden
-                      className={[
-                        "pointer-events-none absolute -inset-24 blur-3xl",
-                        isSelected ? "opacity-95" : "opacity-80",
-                      ].join(" ")}
-                      style={{ background: UV_RADIAL }}
-                    />
-                  )}
+                return (
+                  <motion.div
+                    key={packageId}
+                    custom={index}
+                    variants={SALON_INVITE_CARD_VARIANTS}
+                    initial={reducedMotion ? "visible" : "hidden"}
+                    animate="visible"
+                    className="flex w-full"
+                  >
+                    <motion.article
+                      role="button"
+                      tabIndex={isSubmitting ? -1 : 0}
+                      aria-pressed={isSelected}
+                      aria-label={`${tier.title} — ${priceFormatted}`}
+                      aria-disabled={isSubmitting}
+                      initial={false}
+                      animate={cardAnimate}
+                      transition={cardTransition}
+                      whileHover={
+                        !reducedMotion && !isAccent
+                          ? { scale: hoverScale, transition: hoverTransition }
+                          : undefined
+                      }
+                      style={{ transformOrigin: "center center" }}
+                      className={`flex w-full flex-col ${salonTierCardSurfaceClass(isSelected)}`}
+                      onClick={() => selectPackage(packageId)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          selectPackage(packageId);
+                        }
+                      }}
+                    >
+                      {showRadialBlur ? (
+                        <motion.div
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 overflow-hidden blur-2xl"
+                          initial={false}
+                          animate={radialAnimate}
+                          transition={radialTransition}
+                          style={{ background: SALON_UV_RADIAL }}
+                        />
+                      ) : null}
 
-                  {isPopular && (
-                    <div className="absolute right-5 top-5 border border-purple-500/40 bg-black/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.32em] text-white">
-                      {copy.recommended}
-                    </div>
-                  )}
+                      <motion.div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[var(--salon-cyan)]"
+                        initial={false}
+                        animate={neonAnimate}
+                        transition={neonTransition}
+                      />
 
-                  <header className="relative">
-                    <p className={tierCardTitleClass(isSelected)}>
-                      {tier.title}
-                    </p>
-                    <div className="mt-5 flex items-baseline gap-3">
-                      <div className={tierCardPriceClass(isSelected)}>
-                        {transactionMode === "tokens"
-                          ? priceParts.amount
-                          : priceFormatted}
-                      </div>
-                      {transactionMode === "tokens" && priceParts.suffix ? (
-                        <div className={tierCardStyleClass(isSelected)}>
-                          {priceParts.suffix}
+                      <AnimatePresence>
+                        {showRecommendedBadge ? (
+                          <motion.div
+                            key="recommended-badge"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{
+                              type: "tween",
+                              duration: 0.5,
+                              ease: [0.22, 1, 0.36, 1],
+                            }}
+                            className={salonRecommendedBadgeClass()}
+                          >
+                            {copy.recommended}
+                          </motion.div>
+                        ) : null}
+                      </AnimatePresence>
+
+                      <header className="relative text-left">
+                        <p className={salonTierCardTitleClass(isSelected)}>
+                          {tier.title}
+                        </p>
+                        <motion.p
+                          initial={false}
+                          animate={secondaryTextAnimate}
+                          transition={secondaryTextTransition}
+                          className={`mt-3 ${salonTierCardStyleClass()}`}
+                        >
+                          {tier.style}
+                        </motion.p>
+                        <div className="mt-5 flex items-baseline gap-3">
+                          <div
+                            className={salonTierCardPriceAmountClass(isAccent)}
+                          >
+                            {transactionMode === "tokens"
+                              ? priceParts.amount
+                              : priceFormatted}
+                          </div>
+                          {transactionMode === "tokens" && priceParts.suffix ? (
+                            <motion.div
+                              initial={false}
+                              animate={secondaryTextAnimate}
+                              transition={secondaryTextTransition}
+                              className={salonTierCardPriceSuffixClass()}
+                            >
+                              {priceParts.suffix}
+                            </motion.div>
+                          ) : null}
+                        </div>
+                      </header>
+
+                      {transactionMode === "tokens" ? (
+                        <div className="relative mt-8 text-left">
+                          <p className={salonTierTokenDebitClass()}>
+                            {tier.tokenDebitLabel}
+                          </p>
+                          <div
+                            aria-hidden
+                            className={salonTierFeatureDividerClass()}
+                          />
                         </div>
                       ) : null}
-                    </div>
-                    <p
-                      className={
-                        isSelected
-                          ? "font-label mt-3 text-[10px] font-bold uppercase tracking-[0.32em] text-violet-200/80"
-                          : "font-label mt-3 text-[10px] font-bold uppercase tracking-[0.32em] text-zinc-500"
-                      }
-                    >
-                      {tier.style}
-                    </p>
-                  </header>
 
-                  <ul className="relative mt-8 space-y-3">
-                    {tier.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className={tierCardFeatureClass(isSelected)}
+                      <ul
+                        className={`relative space-y-2.5 ${transactionMode === "tokens" ? "" : "mt-8"}`}
                       >
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+                        {tier.features.map((feature) => (
+                          <SalonTierFeatureRow
+                            key={feature.id}
+                            feature={feature}
+                            isAccent={isAccent}
+                            isSelected={isSelected}
+                            reducedMotion={reducedMotion}
+                          />
+                        ))}
+                      </ul>
 
-                  <div className="relative mt-10">
-                    <span className={tierCardCtaClass(isSelected)}>
-                      {copy.cta}
-                    </span>
-                  </div>
-                </motion.article>
-              );
-            })}
-          </div>
+                      <div className="relative mt-10">
+                        <span className={salonTierCardCtaClass(isSelected)}>
+                          {copy.cta}
+                        </span>
+                      </div>
+                    </motion.article>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
         </div>
-      </div>
 
-      {!activeTenantId && !isPartnerLoading && !isSubmitting ? (
-        <p className="mb-4 max-w-xl font-label text-xs font-light text-amber-200/70">
-          {copy.tenantMissing}
-        </p>
-      ) : null}
+        {!activeTenantId && !isPartnerLoading && !isSubmitting ? (
+          <motion.p
+            variants={SALON_INVITE_STAGGER_ITEM}
+            className="mb-4 max-w-md font-label text-xs font-light text-amber-200/70"
+          >
+            {copy.tenantMissing}
+          </motion.p>
+        ) : null}
 
-      {error ? (
-        <p
-          className="mb-4 max-w-xl font-label text-sm font-light text-red-300/90"
-          role="alert"
+        {error ? (
+          <motion.p
+            variants={SALON_INVITE_STAGGER_ITEM}
+            className="mb-4 max-w-md font-label text-sm font-light text-red-300/90"
+            role="alert"
+          >
+            {error}
+          </motion.p>
+        ) : null}
+
+        <motion.div
+          variants={SALON_INVITE_STAGGER_ITEM}
+          className="mt-10 flex w-full justify-center px-4"
         >
-          {error}
-        </p>
-      ) : null}
-
-      <div className="mt-10 flex justify-start">
-        <button
-          type="button"
-          disabled={!canSubmit}
-          onClick={() => void handleSubmit()}
-          className="font-label border border-white/10 bg-black/30 px-8 py-3 text-[10px] font-bold uppercase tracking-[0.5em] text-white transition-colors enabled:hover:border-purple-400/50 enabled:hover:bg-purple-500/15 disabled:cursor-not-allowed disabled:opacity-35"
-        >
-          {isSubmitting ? copy.sending : copy.send}
-        </button>
-      </div>
+          <button
+            type="button"
+            disabled={!canSubmit}
+            onClick={() => void handleSubmit()}
+            className={salonInviteSubmitCtaClass(canSubmit)}
+          >
+            {isSubmitting ? copy.sending : copy.send}
+          </button>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

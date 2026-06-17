@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 type TenantSettingsSource = {
   name: string;
   settings: unknown;
@@ -22,8 +24,17 @@ export function partnerBrandingFromSettings(tenant: TenantSettingsSource): {
 
   const logoUrl =
     typeof logoUrlRaw === "string" && logoUrlRaw.trim().length > 0
-      ? logoUrlRaw.trim()
+      ? parsePartnerLogoUrl(logoUrlRaw)
       : null;
 
   return { brandLabel, logoUrl };
+}
+
+/** Accepte les URLs HTTPS publiques Supabase Storage (ne rejette pas tout le tenant). */
+export function parsePartnerLogoUrl(raw: string | null | undefined): string | null {
+  const trimmed = raw?.trim();
+  if (!trimmed) return null;
+  if (z.string().url().safeParse(trimmed).success) return trimmed;
+  if (/^https?:\/\/.+/i.test(trimmed)) return trimmed;
+  return null;
 }

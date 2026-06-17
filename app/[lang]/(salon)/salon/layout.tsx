@@ -6,8 +6,9 @@ import { appRoutes } from "@/src/lib/appRoutes";
 import { getDictionary } from "@/lib/dictionaries";
 import {
   fetchPartnerTenantsForUser,
-  primaryPartnerBrand,
+  resolvePartnerInitialBrand,
 } from "@/src/lib/partner/fetchPartnerTenantsForUser";
+import { fetchPartnerBrandingBySlug } from "@/src/lib/partner/fetchPartnerBrandingBySlug";
 import { createClient } from "@/utils/supabase/server";
 
 import { PartnerDashboardShell } from "./components/PartnerDashboardShell";
@@ -35,7 +36,10 @@ export default async function SalonLayout({ children, params }: LayoutProps) {
   }
 
   const partnerTenants = await fetchPartnerTenantsForUser(supabase, user.id);
-  const initialBrand = primaryPartnerBrand(partnerTenants);
+  const initialBrand = await resolvePartnerInitialBrand(
+    partnerTenants,
+    fetchPartnerBrandingBySlug,
+  );
 
   return (
     <PartnerDashboardShell

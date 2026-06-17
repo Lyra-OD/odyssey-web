@@ -47,7 +47,20 @@ Fond sombre, typographie, structure.
 | `text-muted` | `zinc-400` – `zinc-500` | Kickers, métadonnées |
 | `border-subtle` | `white / 6–10 %` | Cartes glass, séparateurs |
 
-### 2.3 Tertiaire proposée — Champagne memorial
+### 2.3 Tertiaire Salon — Cyan action (Quiet Luxury)
+
+Accent **chirurgical** réservé au Salon partenaire (invitations, jetons). **Ne pas utiliser** sur le marketing B2C ni le co-branding header.
+
+| Token | Valeur | Usage |
+|-------|--------|--------|
+| `--salon-cyan` | `#00E8F0` | Ligne carte active, chiffres accent, débit jetons, CTA invitation |
+| `--salon-cyan-dim` | `rgba(0, 232, 240, 0.4)` | Badges recommandé |
+
+**Règle d’or tertiaire Salon :** jamais sur le logo partenaire ni « Propulsé par » ; maximum **5–10 %** de la surface ; halo mauve **uniquement** sur Héritage au repos (Option A) ; à la sélection : ligne cyan + scale (Camera Dolly).
+
+**Studio / Marketing B2C :** conserve le violet UV (`pricingTierCardSkin.ts`) — pas de cyan fluo sur `Pricing.tsx`.
+
+### 2.4 Champagne memorial (Studio / éditorial — optionnel)
 
 Pour éviter un site 100 % violet + noir, une **couleur tertiaire chaude** apporte chaleur humaine (hommage, mémoire, premium funéraire) sans entrer en conflit avec le vert partenaire (ex. Urgel Bourgie).
 
@@ -58,9 +71,9 @@ Pour éviter un site 100 % violet + noir, une **couleur tertiaire chaude** appor
 
 **Alternative** (plus nature) : `sage-memorial` `#7A9E87` — validation, confirmation invitation, badges « actif ».
 
-**Règle d’or tertiaire :** jamais sur le co-branding header ; maximum **5–10 %** de la surface écran ; jamais en compétition avec le violet des forfaits.
+**Règle d’or tertiaire :** jamais sur le co-branding header ; maximum **5–10 %** de la surface écran ; jamais en compétition avec le violet des forfaits marketing.
 
-### 2.4 Couleur partenaire (contextuelle)
+### 2.5 Couleur partenaire (contextuelle)
 
 Chaque tenant peut avoir une accent couleur dans son logo (ex. vert `#2D6A4F` Urgel Bourgie). **Ne pas globaliser** — rester dans le cadre du logo PNG, pas dans l’UI Odyssey globale.
 
@@ -94,8 +107,8 @@ Niveau 1 — Bandeau workspace (PartnerSalonPageIntro)
 Niveau 2 — Action principale (InvitationComposer)
   └─ Kicker INVITATION (10 px, zinc-500)
   └─ Titre serif (32–40 px) — héros de la page
-  └─ Champ courriel glass
-  └─ Cartes forfaits (glow violet sur recommandé)
+  └─ Champ courriel glass (centré, coins `rounded-sm`)
+  └─ Cartes forfaits — skin `salonTierCardSkin.ts` (ligne cyan + dolly ; halo mauve Héritage au repos)
 
 Niveau 3 — Signature Odyssey (header uniquement sur salon)
   └─ Jamais en lockup éclipse centre page
@@ -174,11 +187,20 @@ Champs : `bg-black/40`, `rounded-lg`, focus `border-purple-400/45`.
 
 ### 6.2 Cartes forfaits (InvitationComposer)
 
-Skin : `src/lib/pricingTierCardSkin.ts` — glow UV sur sélection / recommandé, bordures `white/10` au repos.
+Skin Salon dédié : `src/lib/salonTierCardSkin.ts` (isolé de `pricingTierCardSkin.ts` marketing).
+
+| État | Visuel |
+|------|--------|
+| Repos | Bordure `white/10`, fond glass |
+| Héritage (aucune sélection) | Halo mauve discret + scale 1.02 + ligne cyan |
+| Sélection explicite | Scale **1.04**, ligne cyan 2 px, bordure renforcée |
+| CTA carte | Outline ; CTA principal « Envoyer l’invitation » en cyan plein |
+
+Features : matrice structurée (`SalonTierFeatureRow`) ; débit jetons **hors** liste features (`tokenDebitLabel`).
 
 ### 6.3 Header salon
 
-`bg-[#020202]/40`, `backdrop-blur-md`, `border-b white/6`.
+`bg-[#020202]/40`, `backdrop-blur-md`, `border-b white/6`, **`z-30`** (au-dessus des halos cartes).
 
 ---
 
@@ -189,8 +211,8 @@ Skin : `src/lib/pricingTierCardSkin.ts` — glow UV sur sélection / recommandé
 | Connexion salon | Séquence ~3,3 s (`salon-cinema-*`) | `prefers-reduced-motion: reduce` |
 | Connexion studio | Même reveal titre / formulaire | idem |
 | Header dashboard salon | Séquence ~1,8 s (`salon-dashboard-*`) à chaque reload / changement tenant | idem |
-| Contenu salon (invitation) | **Aucune** au chargement | — |
-| Cartes forfaits | Framer Motion (sélection) | `useReducedMotion` |
+| Contenu salon (invitation) | Stagger entrée (`SALON_INVITE_STAGGER_*`), dolly carte 0,8 s | `useReducedMotion` |
+| Cartes forfaits | Framer Motion (sélection + halo repos) | idem |
 
 Courbe signature : `cubic-bezier(0.16, 1, 0.3, 1)` (locomotive / Apple-like).
 
@@ -236,7 +258,10 @@ Voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) pour les chemins canoniques.
 | Atmosphère | `src/components/partner/SalonAtmosphere.tsx` |
 | Co-branding | `src/components/partner/PartnerBrandLockup.tsx` |
 | Logo band | `src/components/auth/PartnerLogoBand.tsx` |
-| Animations CSS | `app/globals.css` (bloc `salon-cinema-*`) |
+| Animations CSS | `app/globals.css` (`salon-cinema-*`, `--salon-cyan`) |
+| Skin cartes Salon | `src/lib/salonTierCardSkin.ts` |
+| Features cartes Salon | `src/components/partner/SalonTierFeatureRow.tsx` |
+| Invitation partenaire | `app/[lang]/(salon)/salon/components/InvitationComposer.tsx` |
 | Branding DB | `tenants.settings.brand_label`, `brand_logo_url` |
 | SQL branding public | `docs/sql/odyssey_p5_2_partner_public_branding.sql` |
 | SQL tenants membre | `docs/sql/odyssey_p5_3_tenant_partner_select.sql`, `odyssey_p5_4_partner_tenants_for_member.sql` |
@@ -250,8 +275,9 @@ Voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) pour les chemins canoniques.
 2. Upload Storage `partner-branding`
 3. SQL : `brand_label` + `brand_logo_url`
 4. Tester connexion `?partenaire=<slug>`
-5. Exécuter P5.3 → logo header salon après login
-6. Valider hiérarchie : partenaire > action invitation > jetons > Odyssey
+5. Exécuter P5.2 + (P5.3 ou P5.4) + seed → logo header salon après login
+6. Connexion brandée `?partenaire=<slug>` puis `/fr/salon` — même PNG header
+7. Valider hiérarchie : partenaire > action invitation > jetons > Odyssey
 
 ---
 

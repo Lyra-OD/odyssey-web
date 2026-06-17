@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 
 import type { PartnerPublicBranding } from "@/src/lib/partner/partnerBrandingTypes";
+import { parsePartnerLogoUrl } from "@/src/lib/partner/partnerBrandingFromSettings";
 import { createClient } from "@/utils/supabase/server";
 
 const BrandingRpcSchema = z.object({
@@ -34,9 +35,7 @@ export async function fetchPartnerBrandingBySlug(
   const parsed = BrandingRpcSchema.safeParse(data);
   if (!parsed.success) return null;
 
-  const logoRaw = parsed.data.brand_logo_url?.trim();
-  const logoUrl =
-    logoRaw && z.string().url().safeParse(logoRaw).success ? logoRaw : null;
+  const logoUrl = parsePartnerLogoUrl(parsed.data.brand_logo_url);
 
   return {
     slug: parsed.data.slug,
