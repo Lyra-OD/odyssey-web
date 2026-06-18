@@ -5,10 +5,10 @@ import type { Locale } from "@/i18n.config";
 import { appRoutes } from "@/src/lib/appRoutes";
 import { getDictionary } from "@/lib/dictionaries";
 import {
-  fetchPartnerTenantsForUser,
   resolvePartnerInitialBrand,
 } from "@/src/lib/partner/fetchPartnerTenantsForUser";
 import { fetchPartnerBrandingBySlug } from "@/src/lib/partner/fetchPartnerBrandingBySlug";
+import { resolveSalonLayoutAccess } from "@/src/lib/partner/resolveSalonLayoutAccess";
 import { createClient } from "@/utils/supabase/server";
 
 import { PartnerDashboardShell } from "./components/PartnerDashboardShell";
@@ -35,7 +35,12 @@ export default async function SalonLayout({ children, params }: LayoutProps) {
     );
   }
 
-  const partnerTenants = await fetchPartnerTenantsForUser(supabase, user.id);
+  const salonAccess = await resolveSalonLayoutAccess(supabase, user.id);
+  if (!salonAccess.ok) {
+    redirect(appRoutes.studio(lang));
+  }
+
+  const partnerTenants = salonAccess.partnerTenants;
   const initialBrand = await resolvePartnerInitialBrand(
     partnerTenants,
     fetchPartnerBrandingBySlug,

@@ -433,6 +433,15 @@
     "autosaveSaved": "Saved just now",
     "autosaveError": "Offline"
   },
+  "salon": {
+    "apiErrors": {
+      "ERR_UNAUTHENTICATED": "Your session has expired. Sign in again to access the partner space.",
+      "ERR_FORBIDDEN": "You do not have access to this resource for this partner workspace.",
+      "ERR_INVALID_TENANT": "Invalid or missing partner workspace.",
+      "ERR_WALLET_NOT_FOUND": "Token wallet not found for this partner workspace.",
+      "ERR_INTERNAL": "Something went wrong. Please try again."
+    }
+  },
   "partnerships": {
     "kicker": "For funeral professionals",
     "title": "A cinematic standard for high-trust funeral homes.",

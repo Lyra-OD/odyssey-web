@@ -5,19 +5,14 @@ import { usePartner } from "@/src/lib/partner/PartnerContext";
 
 type PartnerSalonPageIntroProps = {
   lang: Locale;
-  /** Solde affiché (mock jusqu’à branchement API). */
-  balance?: number;
 };
 
 /**
  * Bandeau de hiérarchie : contexte workspace (niveau 2) + jetons compacts (niveau 3).
  * L’action principale (invitation) reste dans InvitationComposer (niveau 1 contenu).
  */
-export function PartnerSalonPageIntro({
-  lang,
-  balance = 42,
-}: PartnerSalonPageIntroProps) {
-  const { capabilities } = usePartner();
+export function PartnerSalonPageIntro({ lang }: PartnerSalonPageIntroProps) {
+  const { capabilities, walletBalance, isWalletLoading } = usePartner();
   const copy =
     lang === "en"
       ? {
@@ -50,14 +45,14 @@ export function PartnerSalonPageIntro({
         </p>
       </div>
 
-      {capabilities?.canViewBalance && (
+      {capabilities?.canViewBalance && !isWalletLoading && walletBalance !== null && (
         <div className="shrink-0 md:text-right">
           <p className="font-label text-[9px] font-bold uppercase tracking-[0.45em] text-zinc-500">
             {copy.tokens}
           </p>
           <div className="mt-2 flex flex-wrap items-baseline gap-x-5 gap-y-2 md:justify-end">
             <p className="font-editorial text-3xl font-medium tabular-nums tracking-tight text-white/90 md:text-4xl">
-              {balance}
+              {walletBalance}
             </p>
             <button
               type="button"

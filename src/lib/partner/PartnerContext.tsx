@@ -12,6 +12,8 @@ import {
 
 import type { PartnerCapabilities } from "@/src/lib/partner/partnerTenantTypes";
 import { PartnerTenantsResponseSchema } from "@/src/lib/partner/partnerTenantTypes";
+import { PartnerWalletResponseSchema } from "@/src/lib/partner/partnerWalletTypes";
+import type { PartnerApiErrorCode } from "@/src/lib/partner/partnerApiErrors";
 import type { PartnerMemberRole } from "@/src/lib/partner/partnerRoles";
 import type { PartnerTenant } from "@/src/lib/partner/partnerTenantTypes";
 
@@ -25,6 +27,11 @@ export type PartnerContextValue = {
   capabilities: PartnerCapabilities | null;
   availableTenants: PartnerTenant[];
   isLoading: boolean;
+  /** Real wallet balance for admin (`null` until loaded or if unavailable). */
+  walletBalance: number | null;
+  walletCreditLimitTokens: number | null;
+  isWalletLoading: boolean;
+  walletErrorCode: PartnerApiErrorCode | null;
   setActiveTenantId: (id: string) => void;
 };
 
@@ -59,6 +66,14 @@ export function PartnerProvider({ children }: { children: ReactNode }) {
   const [availableTenants, setAvailableTenants] = useState<PartnerTenant[]>([]);
   const [activeTenantId, setActiveTenantIdState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [walletCreditLimitTokens, setWalletCreditLimitTokens] = useState<
+    number | null
+  >(null);
+  const [isWalletLoading, setIsWalletLoading] = useState(false);
+  const [walletErrorCode, setWalletErrorCode] = useState<PartnerApiErrorCode | null>(
+    null,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -125,6 +140,72 @@ export function PartnerProvider({ children }: { children: ReactNode }) {
   const activeTenantRole = activeTenant?.role ?? null;
   const capabilities = activeTenant?.capabilities ?? null;
 
+  useEffect(() => {
+    if (isLoading || !activeTenantId || !capabilities?.canViewBalance) {
+      setWalletBalance(null);
+      setWalletCreditLimitTokens(null);
+      setWalletErrorCode(null);
+      setIsWalletLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    void (async () => {
+      setIsWalletLoading(true);
+      setWalletErrorCode(null);
+
+      try {
+        const response = await fetch(
+          `/api/partner/wallet?tenantId=${encodeURIComponent(activeTenantId)}`,
+          { method: "GET", credentials: "same-origin" },
+        );
+
+        const payload: unknown = await response.json().catch(() => null);
+
+        if (cancelled) return;
+
+        if (!response.ok) {
+          const code =
+            payload &&
+            typeof payload === "object" &&
+            "error" in payload &&
+            typeof (payload as { error: unknown }).error === "string"
+              ? ((payload as { error: string }).error as PartnerApiErrorCode)
+              : null;
+          setWalletBalance(null);
+          setWalletCreditLimitTokens(null);
+          setWalletErrorCode(code);
+          return;
+        }
+
+        const parsed = PartnerWalletResponseSchema.safeParse(payload);
+        if (!parsed.success) {
+          setWalletBalance(null);
+          setWalletCreditLimitTokens(null);
+          setWalletErrorCode(null);
+          return;
+        }
+
+        setWalletBalance(parsed.data.balance);
+        setWalletCreditLimitTokens(parsed.data.creditLimitTokens);
+        setWalletErrorCode(null);
+      } catch {
+        if (!cancelled) {
+          setWalletBalance(null);
+          setWalletCreditLimitTokens(null);
+          setWalletErrorCode(null);
+        }
+      } finally {
+        if (!cancelled) setIsWalletLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTenantId, capabilities?.canViewBalance, isLoading]);
+
   const value = useMemo<PartnerContextValue>(
     () => ({
       activeTenantId,
@@ -132,6 +213,10 @@ export function PartnerProvider({ children }: { children: ReactNode }) {
       capabilities,
       availableTenants,
       isLoading,
+      walletBalance,
+      walletCreditLimitTokens,
+      isWalletLoading,
+      walletErrorCode,
       setActiveTenantId,
     }),
     [
@@ -140,6 +225,10 @@ export function PartnerProvider({ children }: { children: ReactNode }) {
       capabilities,
       availableTenants,
       isLoading,
+      walletBalance,
+      walletCreditLimitTokens,
+      isWalletLoading,
+      walletErrorCode,
       setActiveTenantId,
     ],
   );

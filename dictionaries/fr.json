@@ -433,6 +433,15 @@
     "autosaveSaved": "Enregistré à l'instant",
     "autosaveError": "Hors ligne"
   },
+  "salon": {
+    "apiErrors": {
+      "ERR_UNAUTHENTICATED": "Session expirée. Reconnectez-vous pour accéder à l’espace partenaire.",
+      "ERR_FORBIDDEN": "Vous n’avez pas accès à cette ressource pour cet espace partenaire.",
+      "ERR_INVALID_TENANT": "Espace partenaire invalide ou manquant.",
+      "ERR_WALLET_NOT_FOUND": "Portefeuille jetons introuvable pour cet espace partenaire.",
+      "ERR_INTERNAL": "Une erreur est survenue. Réessayez."
+    }
+  },
   "partnerships": {
     "kicker": "Pour les professionnels",
     "title": "Un standard cinématographique pour les maisons funéraires exigeantes.",
