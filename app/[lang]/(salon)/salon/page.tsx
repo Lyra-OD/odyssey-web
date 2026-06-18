@@ -17,7 +17,7 @@ export default async function SalonPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col">
-      <PartnerSalonPageIntro lang={lang} balance={42} />
+      <PartnerSalonPageIntro lang={lang} />
       <InvitationComposer
         lang={lang}
         packageLabels={{

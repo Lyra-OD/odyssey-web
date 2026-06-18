@@ -1,4 +1,7 @@
+"use client";
+
 import type { Locale } from "@/i18n.config";
+import { usePartner } from "@/src/lib/partner/PartnerContext";
 
 type PartnerSalonPageIntroProps = {
   lang: Locale;
@@ -14,6 +17,7 @@ export function PartnerSalonPageIntro({
   lang,
   balance = 42,
 }: PartnerSalonPageIntroProps) {
+  const { capabilities } = usePartner();
   const copy =
     lang === "en"
       ? {
@@ -46,22 +50,24 @@ export function PartnerSalonPageIntro({
         </p>
       </div>
 
-      <div className="shrink-0 md:text-right">
-        <p className="font-label text-[9px] font-bold uppercase tracking-[0.45em] text-zinc-500">
-          {copy.tokens}
-        </p>
-        <div className="mt-2 flex flex-wrap items-baseline gap-x-5 gap-y-2 md:justify-end">
-          <p className="font-editorial text-3xl font-medium tabular-nums tracking-tight text-white/90 md:text-4xl">
-            {balance}
+      {capabilities?.canViewBalance && (
+        <div className="shrink-0 md:text-right">
+          <p className="font-label text-[9px] font-bold uppercase tracking-[0.45em] text-zinc-500">
+            {copy.tokens}
           </p>
-          <button
-            type="button"
-            className="font-label text-[10px] font-bold uppercase tracking-[0.38em] text-violet-300/75 transition-colors hover:text-violet-200"
-          >
-            {copy.recharge}
-          </button>
+          <div className="mt-2 flex flex-wrap items-baseline gap-x-5 gap-y-2 md:justify-end">
+            <p className="font-editorial text-3xl font-medium tabular-nums tracking-tight text-white/90 md:text-4xl">
+              {balance}
+            </p>
+            <button
+              type="button"
+              className="font-label text-[10px] font-bold uppercase tracking-[0.38em] text-violet-300/75 transition-colors hover:text-violet-200"
+            >
+              {copy.recharge}
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }
