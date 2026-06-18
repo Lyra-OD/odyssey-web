@@ -34,6 +34,7 @@
 6. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce 3 modes + saga.
 7. [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — wizard 8 étapes.
 8. [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) — hub onboarding.
+9. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) — dated audit, debt register, 2-week plan (living doc).
 
 Après toute modification wizard, forfaits/livrables, pricing, checkout, routes/auth ou `/api/music/*` : mettre à jour les fichiers concernés (règle §13 de l’onboarding).
 

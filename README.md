@@ -18,6 +18,7 @@ Application Next.js 14 (App Router) pour le Studio Odyssey:
 | `docs/STINGRAY_MUSIC_INTEGRATION.md` | Musique licenciee (MAPI + mock auto), **catalogues Standard / Premium**, param `tier` sur `/api/music/search`. |
 | `docs/sql/README.md` | Migrations SQL ordonnees (**P0–P5**, patch P4.1, seed QA). |
 | `docs/CONVENTIONS.md` | Conventions de code (anglais, perimetre Next vs app-backend, hierarchie doc). |
+| `docs/PROJECT_STATUS.md` | **Audit + plan 2 semaines** (EN) — maturite, dette technique, P5.5/RBAC, actions prioritaires. |
 | `docs/Manifesto-V10.4.md` | Vision produit (non reference d'implementation checkout). |
 
 ## Quickstart

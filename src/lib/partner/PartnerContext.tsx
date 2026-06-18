@@ -10,13 +10,19 @@ import {
   type ReactNode,
 } from "react";
 
+import type { PartnerCapabilities } from "@/src/lib/partner/partnerTenantTypes";
 import { PartnerTenantsResponseSchema } from "@/src/lib/partner/partnerTenantTypes";
+import type { PartnerMemberRole } from "@/src/lib/partner/partnerRoles";
 import type { PartnerTenant } from "@/src/lib/partner/partnerTenantTypes";
 
 const ACTIVE_TENANT_STORAGE_KEY = "odyssey_partner_active_tenant_id";
 
 export type PartnerContextValue = {
   activeTenantId: string | null;
+  /** Role on the active tenant (`partner` = Director, `partner_admin` = Admin). */
+  activeTenantRole: PartnerMemberRole | null;
+  /** RBAC capabilities for the active tenant — derived from API, not hard-coded in UI. */
+  capabilities: PartnerCapabilities | null;
   availableTenants: PartnerTenant[];
   isLoading: boolean;
   setActiveTenantId: (id: string) => void;
@@ -111,14 +117,31 @@ export function PartnerProvider({ children }: { children: ReactNode }) {
     [availableTenants],
   );
 
+  const activeTenant = useMemo(
+    () => availableTenants.find((t) => t.id === activeTenantId) ?? null,
+    [availableTenants, activeTenantId],
+  );
+
+  const activeTenantRole = activeTenant?.role ?? null;
+  const capabilities = activeTenant?.capabilities ?? null;
+
   const value = useMemo<PartnerContextValue>(
     () => ({
       activeTenantId,
+      activeTenantRole,
+      capabilities,
       availableTenants,
       isLoading,
       setActiveTenantId,
     }),
-    [activeTenantId, availableTenants, isLoading, setActiveTenantId],
+    [
+      activeTenantId,
+      activeTenantRole,
+      capabilities,
+      availableTenants,
+      isLoading,
+      setActiveTenantId,
+    ],
   );
 
   return (

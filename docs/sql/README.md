@@ -5,7 +5,7 @@
 Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle** de la base Supabase d'Odyssey. Tous les scripts de migration sont **idempotents** : on peut les ré-exécuter sans dégât.
 
 **Commerce B2B2C (schéma + saga)** : voir [`docs/B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md).  
-**Note :** les migrations P4–P5 sont en base ; le code Next.js (`/api/checkout`) n'utilise pas encore `tribute_checkouts` ni `debit_partner_tokens_for_checkout()`.
+**Note :** les migrations P4–P5.5 peuvent être en base ; le code Next.js (`/api/checkout`) n'utilise pas encore `tribute_checkouts` ni `debit_partner_tokens_for_checkout()`. Voir [`PROJECT_STATUS.md`](../PROJECT_STATUS.md).
 
 ---
 
@@ -25,11 +25,12 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 10 | `odyssey_p5_1_invitation_unique_pending.sql` | **Patch** | Index unique `pending` par `(tenant_id, email)` — anti double-clic invitations. |
 | 11 | `odyssey_p5_2_partner_public_branding.sql` | **Patch** | RPC `get_partner_public_branding(slug)` — page Salon connexion co-brandée. |
 | 12 | `odyssey_p5_3_tenant_partner_select.sql` | **Patch** | RLS SELECT `tenants` pour rôles `partner` / `partner_admin`. |
-| 13 | `odyssey_p5_4_partner_tenants_for_member.sql` | **Patch** | RPC `get_partner_tenants_for_member()` — logo + dropdown Salon après login. |
+| 14 | `odyssey_p5_4_partner_tenants_for_member.sql` | **Patch** | RPC `get_partner_tenants_for_member()` — logo + dropdown Salon après login. |
+| 15 | `odyssey_p5_5_partner_rbac_overdraft.sql` | **Patch** | RBAC admin wallet/ledger, overdraft limité, débit atomique invitation, crédit manuel, anti double-débit checkout. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
 | — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed QA** | Partenaire fictif + 100 jetons — **après P4**, hors chaîne prod. |
 | — | `odyssey_partner_tenant_branding_example.sql` | **Référence** | Mise à jour `tenants.settings` (`brand_label`, `brand_logo_url`) — Salon connexion. |
-| — | `odyssey_schema_health_check.sql` | **Référence** | Audit lecture seule — migrations P0–P5.4, RPC branding. |
+| — | `odyssey_schema_health_check.sql` | **Référence** | Audit lecture seule — migrations P0–P5.5, RPC branding. |
 
 **Branding Salon (app)** : champs dans `tenants.settings` — voir [`docs/ROUTES_AND_AUTH.md`](../ROUTES_AND_AUTH.md), [`docs/DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md) et le script exemple ci-dessus. **P5.2** (connexion) + **P5.3 ou P5.4** (dashboard) + membership partenaire (seed P4 QA).
 

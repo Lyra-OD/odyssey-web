@@ -405,6 +405,8 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 
 ## 10) Current state and roadmap
 
+**Latest detailed audit and 2-week action plan:** [`docs/PROJECT_STATUS.md`](PROJECT_STATUS.md) (June 2026 snapshot — update that file after milestones; this section remains the long-form onboarding roadmap).
+
 ### Done — foundation (May 2026)
 
 - Supabase auth + unified `handle_new_user` bootstrap (`profiles` + `tenant_members`).

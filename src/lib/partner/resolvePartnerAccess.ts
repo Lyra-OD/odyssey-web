@@ -2,10 +2,10 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-const PARTNER_ROLES = new Set(["partner", "partner_admin", "admin"]);
+import { isPartnerPlatformAccessRole } from "@/src/lib/partner/partnerRoles";
 
 /**
- * Détermine si l'utilisateur appartient à un tenant partenaire (B2B).
+ * Coarse check: user belongs to any partner-capable tenant membership (includes platform `admin`).
  */
 export async function resolveUserIsPartner(
   supabase: SupabaseClient,
@@ -22,6 +22,8 @@ export async function resolveUserIsPartner(
   }
 
   return Boolean(
-    memberships?.some((row) => PARTNER_ROLES.has(String(row.role))),
+    memberships?.some((row) =>
+      isPartnerPlatformAccessRole(String(row.role)),
+    ),
   );
 }

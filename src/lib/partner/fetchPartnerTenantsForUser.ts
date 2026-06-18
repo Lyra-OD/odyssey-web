@@ -1,13 +1,17 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
+import { getPartnerCapabilities } from "@/src/lib/partner/partnerCapabilities";
 import { partnerBrandingFromSettings, parsePartnerLogoUrl } from "@/src/lib/partner/partnerBrandingFromSettings";
+import {
+  isPartnerMemberRole,
+  PARTNER_MEMBER_ROLES,
+  type PartnerMemberRole,
+} from "@/src/lib/partner/partnerRoles";
 import {
   PartnerTenantSchema,
   type PartnerTenant,
 } from "@/src/lib/partner/partnerTenantTypes";
-
-const PARTNER_ROLES = ["partner", "partner_admin"] as const;
 
 const PartnerTenantRpcItemSchema = z.object({
   id: z.string().uuid(),
@@ -26,6 +30,14 @@ type TenantRow = {
   settings: unknown;
 };
 
+type TenantBrandingFields = {
+  id: string;
+  name: string;
+  slug?: string;
+  brandLabel?: string;
+  logoUrl?: string | null;
+};
+
 function normalizeTenantJoin(
   raw: TenantRow | TenantRow[] | null | undefined,
   fallbackTenantId: string,
@@ -42,23 +54,68 @@ function normalizeTenantJoin(
   return row;
 }
 
-function rpcItemToPartnerTenant(
-  item: z.infer<typeof PartnerTenantRpcItemSchema>,
+async function fetchPartnerRolesByTenantId(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<Map<string, PartnerMemberRole>> {
+  const { data, error } = await supabase
+    .from("tenant_members")
+    .select("tenant_id, role")
+    .eq("user_id", userId)
+    .in("role", [...PARTNER_MEMBER_ROLES]);
+
+  if (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[fetchPartnerTenantsForUser] roles lookup", error.message);
+    }
+    return new Map();
+  }
+
+  const roleByTenantId = new Map<string, PartnerMemberRole>();
+  for (const row of data ?? []) {
+    const role = String(row.role);
+    if (isPartnerMemberRole(role)) {
+      roleByTenantId.set(String(row.tenant_id), role);
+    }
+  }
+  return roleByTenantId;
+}
+
+function buildPartnerTenant(
+  fields: TenantBrandingFields,
+  role: PartnerMemberRole,
 ): PartnerTenant | null {
-  const logoUrl = parsePartnerLogoUrl(item.brand_logo_url);
+  const capabilities = getPartnerCapabilities(role);
+  if (!capabilities) return null;
 
   const parsed = PartnerTenantSchema.safeParse({
+    id: fields.id,
+    name: fields.name,
+    ...(fields.slug ? { slug: fields.slug } : {}),
+    ...(fields.brandLabel ? { brandLabel: fields.brandLabel } : {}),
+    logoUrl: fields.logoUrl ?? null,
+    role,
+    capabilities,
+  });
+
+  return parsed.success ? parsed.data : null;
+}
+
+function rpcItemToBrandingFields(
+  item: z.infer<typeof PartnerTenantRpcItemSchema>,
+): TenantBrandingFields {
+  return {
     id: item.id,
     name: item.name,
     ...(item.slug ? { slug: item.slug } : {}),
     brandLabel: item.brand_label,
-    logoUrl,
-  });
-  return parsed.success ? parsed.data : null;
+    logoUrl: parsePartnerLogoUrl(item.brand_logo_url),
+  };
 }
 
 async function fetchPartnerTenantsViaRpc(
   supabase: SupabaseClient,
+  roleByTenantId: Map<string, PartnerMemberRole>,
 ): Promise<PartnerTenant[] | null> {
   const { data, error } = await supabase.rpc("get_partner_tenants_for_member");
 
@@ -74,7 +131,10 @@ async function fetchPartnerTenantsViaRpc(
 
   const tenants: PartnerTenant[] = [];
   for (const item of parsed.data) {
-    const tenant = rpcItemToPartnerTenant(item);
+    const role = roleByTenantId.get(item.id);
+    if (!role) continue;
+
+    const tenant = buildPartnerTenant(rpcItemToBrandingFields(item), role);
     if (tenant) tenants.push(tenant);
   }
   return tenants;
@@ -88,7 +148,7 @@ async function fetchPartnerTenantsViaJoin(
     .from("tenant_members")
     .select("tenant_id, role, tenants(id, name, slug, settings)")
     .eq("user_id", userId)
-    .in("role", [...PARTNER_ROLES])
+    .in("role", [...PARTNER_MEMBER_ROLES])
     .order("created_at", { ascending: true });
 
   if (error) return [];
@@ -96,6 +156,9 @@ async function fetchPartnerTenantsViaJoin(
   const tenants: PartnerTenant[] = [];
 
   for (const row of rows ?? []) {
+    const role = String(row.role);
+    if (!isPartnerMemberRole(role)) continue;
+
     const tenant = normalizeTenantJoin(
       row.tenants as TenantRow | TenantRow[] | null,
       row.tenant_id as string,
@@ -104,25 +167,31 @@ async function fetchPartnerTenantsViaJoin(
 
     const { brandLabel, logoUrl } = partnerBrandingFromSettings(tenant);
 
-    const parsed = PartnerTenantSchema.safeParse({
-      id: tenant.id,
-      name: tenant.name,
-      ...(tenant.slug ? { slug: tenant.slug } : {}),
-      brandLabel,
-      logoUrl,
-    });
-    if (parsed.success) tenants.push(parsed.data);
+    const parsed = buildPartnerTenant(
+      {
+        id: tenant.id,
+        name: tenant.name,
+        ...(tenant.slug ? { slug: tenant.slug } : {}),
+        brandLabel,
+        logoUrl,
+      },
+      role,
+    );
+    if (parsed) tenants.push(parsed);
   }
 
   return tenants;
 }
 
-/** Tenants partenaire + branding (`brand_logo_url` = même PNG que la connexion). */
+/** Partner tenants + branding + per-tenant role and RBAC capabilities. */
 export async function fetchPartnerTenantsForUser(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<PartnerTenant[]> {
-  const viaRpc = await fetchPartnerTenantsViaRpc(supabase);
+  const roleByTenantId = await fetchPartnerRolesByTenantId(supabase, userId);
+  if (roleByTenantId.size === 0) return [];
+
+  const viaRpc = await fetchPartnerTenantsViaRpc(supabase, roleByTenantId);
   if (viaRpc !== null) return viaRpc;
 
   return fetchPartnerTenantsViaJoin(supabase, userId);
