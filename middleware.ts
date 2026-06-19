@@ -1,8 +1,32 @@
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+
+import {
+  normalizePartnerSlugParam,
+  PARTNER_CONNEXION_SLUG_KEY,
+} from "@/src/lib/partner/partnerBrandingTypes";
+import { partnerConnexionSlugCookieOptions } from "@/src/lib/partner/partnerConnexionSlugCookie";
 import { updateSession } from "@/utils/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request);
+  const response = await updateSession(request);
+
+  const isSalonConnexion = /^\/(fr|en)\/salon\/connexion\/?$/.test(
+    request.nextUrl.pathname,
+  );
+  if (isSalonConnexion) {
+    const slug =
+      normalizePartnerSlugParam(request.nextUrl.searchParams.get("partenaire")) ??
+      normalizePartnerSlugParam(request.nextUrl.searchParams.get("partner"));
+    if (slug) {
+      response.cookies.set(
+        PARTNER_CONNEXION_SLUG_KEY,
+        slug,
+        partnerConnexionSlugCookieOptions(),
+      );
+    }
+  }
+
+  return response;
 }
 
 export const config = {

@@ -9,9 +9,28 @@ export type PartnerPublicBranding = {
 export type SalonBrandAnimationPreset = "connexion" | "dashboard";
 export const PARTNER_CONNEXION_SLUG_KEY = "odyssey_partner_connexion_slug";
 
+/** @deprecated Prefer `persistPartnerConnexionSlug` (localStorage + cookie). */
 export function storePartnerConnexionSlug(slug: string): void {
+  persistPartnerConnexionSlug(slug);
+}
+
+/** Mémorise le slug partenaire (Option B) — localStorage + cookie navigateur. */
+export function persistPartnerConnexionSlug(slug: string): void {
+  const normalized = normalizePartnerSlugParam(slug);
+  if (!normalized) return;
+
   try {
-    localStorage.setItem(PARTNER_CONNEXION_SLUG_KEY, slug);
+    localStorage.setItem(PARTNER_CONNEXION_SLUG_KEY, normalized);
+  } catch {
+    /* ignore */
+  }
+
+  try {
+    const secure =
+      typeof window !== "undefined" && window.location.protocol === "https:"
+        ? "; Secure"
+        : "";
+    document.cookie = `${PARTNER_CONNEXION_SLUG_KEY}=${encodeURIComponent(normalized)}; Path=/; Max-Age=${60 * 60 * 24 * 365}; SameSite=Lax${secure}`;
   } catch {
     /* ignore */
   }

@@ -25,7 +25,7 @@ import {
 } from "@/src/lib/appRoutes";
 import {
   normalizePartnerSlugParam,
-  storePartnerConnexionSlug,
+  persistPartnerConnexionSlug,
 } from "@/src/lib/partner/partnerBrandingTypes";
 import { createClient } from "@/utils/supabase/client";
 
@@ -222,6 +222,20 @@ export function LoginForm({
     }
   }, [searchParams, t.errors, raiseError]);
 
+  const partnerSlugFromUrl = useMemo(() => {
+    if (audience !== "salon") return null;
+    return (
+      normalizePartnerSlugParam(searchParams.get("partenaire")) ??
+      normalizePartnerSlugParam(searchParams.get("partner"))
+    );
+  }, [audience, searchParams]);
+
+  useEffect(() => {
+    if (partnerSlugFromUrl) {
+      persistPartnerConnexionSlug(partnerSlugFromUrl);
+    }
+  }, [partnerSlugFromUrl]);
+
   useEffect(() => {
     if (!shakeGeneration) return;
     setShakeActive(true);
@@ -274,11 +288,8 @@ export function LoginForm({
         raiseError(mapAuthError(signInError, t.errors));
         return;
       }
-      if (audience === "salon") {
-        const slug =
-          normalizePartnerSlugParam(searchParams.get("partenaire")) ??
-          normalizePartnerSlugParam(searchParams.get("partner"));
-        if (slug) storePartnerConnexionSlug(slug);
+      if (audience === "salon" && partnerSlugFromUrl) {
+        persistPartnerConnexionSlug(partnerSlugFromUrl);
       }
       const destination = resolveDestination(
         lang,

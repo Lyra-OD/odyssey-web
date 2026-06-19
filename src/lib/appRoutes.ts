@@ -10,6 +10,18 @@ export const appRoutes = {
   studioConnexion: (lang: Locale) => `/${lang}/studio/connexion`,
   /** Connexion partenaire — provisionnement admin uniquement. */
   salonConnexion: (lang: Locale) => `/${lang}/salon/connexion`,
+  /** Connexion Salon avec query (`next`, `partenaire`). */
+  salonConnexionWithParams: (
+    lang: Locale,
+    params?: { next?: string; partenaire?: string | null },
+  ) => {
+    const search = new URLSearchParams();
+    if (params?.next) search.set("next", params.next);
+    if (params?.partenaire) search.set("partenaire", params.partenaire);
+    const qs = search.toString();
+    const base = `/${lang}/salon/connexion`;
+    return qs ? `${base}?${qs}` : base;
+  },
   /** @deprecated Alias → studioConnexion (redirect serveur). */
   login: (lang: Locale) => `/${lang}/login`,
   /** Page marketing « devenir partenaire » (≠ salon). */
