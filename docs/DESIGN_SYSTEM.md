@@ -371,7 +371,6 @@ Voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) pour les chemins canoniques.
 ## 12. Évolutions prévues (non implémentées)
 
 - `brand_logo_url_on_dark` / `_on_light` si variantes officielles multiples
-- Jetons réels (API wallet) à la place du mock `42`
 - Upload logo depuis dashboard Salon (Phase 2)
 - Token CSS `--memorial-champagne` dans `tailwind.config` si adoption tertiaire
 

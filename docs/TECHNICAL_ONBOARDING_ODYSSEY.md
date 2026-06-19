@@ -460,6 +460,15 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 
 See §4.7, [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), and [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
 
+### Done — Salon partner surface (June 2026)
+
+- **P5.5 RBAC (app):** `PartnerContext.capabilities` — Directeur vs Admin ; bloc jetons masqué si `!canViewBalance`.
+- **Salon layout gate:** `resolveSalonLayoutAccess` — utilisateur sans rôle partenaire → redirect `/studio` ; non-auth → connexion salon avec slug mémorisé.
+- **`GET /api/partner/wallet`:** snapshot solde + `credit_limit_tokens` (admin only) ; consommé par `PartnerContext` (plus de mock `42`).
+- **Branding connexion persist:** `?partenaire=` + cookie serveur + localStorage ; hotfix cookie en RSC.
+- **Header salon:** déconnexion → `/salon/connexion?partenaire=<slug>` ; toggle FR/EN (`LocaleSwitcher`).
+- **Signature visuelle connexion Halo-Éclipse:** `ConnexionEclipseLayer`, halos d’état, `OdysseyConnexionMark`, CTA cyan — voir [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon) et [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).
+
 ### In progress / configuration
 
 - **Stingray credentials** on Vercel (`STINGRAY_CLIENT_ID`, optional bearer token).

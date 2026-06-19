@@ -15,11 +15,11 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 |-----------|--------|-------|
 | **Family Studio (B2C wizard)** | 🟢 Mature | 8 steps, autosave, media, music, Stripe checkout |
 | **Partner Salon (UI)** | 🟢 Solid MVP | Co-branding, invitations, cyan skin, magic link |
-| **B2B2C commerce (app layer)** | 🟡 Partial | SQL P0–P5.5 ready; checkout saga / webhook / real wallet API lagging |
+| **B2B2C commerce (app layer)** | 🟡 Partial | SQL P0–P5.5 ready; wallet API + salon gate ✅ ; checkout saga / webhook / `/salon/facturation` still open |
 | **RBAC & tokens (P5.5)** | 🟢 Shipped | SQL + TS Phase 2 on `main`; Salon UI Phase 3 (`canViewBalance` gate) deployed |
 | **Automated tests & CI** | 🔴 None | No test framework, no `.github/` workflows |
 | **Documentation** | 🟢 Strong | Rich; some docs ahead/behind code (see §4) |
-| **Security** | 🟡 Adequate with gaps | RLS solid; Salon UI role gate missing |
+| **Security** | 🟡 Adequate with gaps | RLS solid; salon layout gate ✅; checkout saga still open |
 
 **Overall: 7/10** — demonstrable B2C and pilot Salon; **not production-ready for scaled B2B2C** until the transaction loop (checkout + webhook + wallet) matches the SQL schema.
 
@@ -37,7 +37,7 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | B2C checkout (Stripe) | 🟢 | Checkout Session |
 | B2B token checkout | 🟡 | Works via legacy TS debit; not P5 saga RPC |
 | Salon UI + invitations | 🟢 | `InvitationComposer`, branding, design system |
-| Salon wallet / billing UI | 🟡 | Admin-only mock `42` gated by `canViewBalance`; real API + `/salon/facturation` pending |
+| Salon wallet / billing UI | 🟡 | Admin voit solde **réel** via `GET /api/partner/wallet` + `PartnerContext` ; page `/salon/facturation` + recharge Stripe pending |
 | B2B2C family delta pricing | 🔴 | `b2b2c_family` not in API |
 | Invitation → family wizard | 🟢 | Magic link + `/tribute/welcome` |
 | Video render pipeline | 🔴 | Documented only (Creatomate target) |
@@ -76,7 +76,7 @@ flowchart LR
 | `tribute_checkouts` saga | ✅ | ❌ |
 | Checkout mode `b2b2c_family` | ✅ | ❌ |
 | Webhook → order / checkout completed | Partial catalog sync | ❌ payment completion |
-| Real Salon wallet balance | ✅ | 🟡 mock `42` for admin only; `GET /api/partner/wallet` pending |
+| Real Salon wallet balance | ✅ | ✅ `GET /api/partner/wallet` (admin, `canViewBalance`) ; UI `PartnerSalonPageIntro` |
 | RBAC Admin vs Director (UI) | ✅ RLS | ✅ `PartnerContext.capabilities`; wallet block hidden for Director |
 | Video render after payment | — | ❌ |
 
@@ -91,7 +91,10 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/READ
 - Studio / Salon route split, dual login, partner co-branding (P5.2–P5.4)
 - Salon invitation UI: cyan skin (`salonTierCardSkin.ts`), structured features, logo fallback
 - Docs: `DESIGN_SYSTEM.md`, `ROUTES_AND_AUTH.md`
-- **Connexion — signature Halo-Éclipse (juin 2026):** vidéo `eclipse_login.mp4` (corona constante) + halos CSS d’état (violet / cyan / vert / magenta) ; `OdysseyConnexionMark` (Montserrat blanc lumineux) ; CTA cyan respirant ; toggle FR/EN ; séquence cinéma Actes I–V — voir [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)
+- **P5.5 Phase 1 (Salon gate + wallet API):** `resolveSalonLayoutAccess` in salon layout — non-partner → redirect `/studio` ; `GET /api/partner/wallet` ; solde réel dans `PartnerContext` (`f5a375a`)
+- **Branding connexion persist:** slug `?partenaire=` via URL + cookie + localStorage ; hotfix RSC cookie (`3475421`, `7433457`)
+- **Salon header:** déconnexion → connexion salon avec slug ; toggle FR/EN (`fb5dff7`, `c653542`)
+- **Connexion — signature Halo-Éclipse (juin 2026):** vidéo `eclipse_login.mp4` (corona constante) + halos CSS d’état (violet / cyan / vert / magenta) ; `OdysseyConnexionMark` (Montserrat blanc lumineux) ; CTA cyan respirant ; séquence cinéma Actes I–V — voir [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)
 - **P5.5 Phase 2 (RBAC foundation):** `partnerRoles.ts`, `partnerCapabilities.ts`, `resolvePartnerMembership.ts`, `createPartnerInvitationWithDebit.ts`; `GET /api/partner/tenants` returns `role` + `capabilities`; `PartnerContext` exposes active tenant capabilities; invitation route uses P5.5 RPC + maps `overdraft_limit_exceeded` → HTTP 402
 - **P5.5 Phase 3 (Salon UI):** `PartnerSalonPageIntro` gates wallet/recharge on `capabilities.canViewBalance` (Directors see no balance); removed dead `PartnerWalletSection.tsx`
 
@@ -120,6 +123,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/READ
 | `/api/checkout` | 🟡 Partial | B2C Stripe + B2B TS debit; no `tribute_checkouts`, no `b2b2c_family` |
 | `/api/partner/invitations` | 🟢 | P5.5 RPC debit + `canInvite`; `402` on overdraft limit |
 | `/api/partner/tenants` | 🟢 | RPC P5.4 or join fallback; `role` + `capabilities` per tenant |
+| `/api/partner/wallet` | 🟢 | Admin-only snapshot (`canViewBalance`); balance + credit limit |
 | `/api/stripe/webhook` | 🟡 | Robust idempotence; **catalog sync only** — no `checkout.session.completed` → orders |
 | `/auth/callback` | 🟢 | PKCE, sanitized `?next=` |
 
@@ -136,7 +140,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/READ
 
 ### 🟡 Medium
 
-5. **Salon layout** — any authenticated user can open `/salon` UI; APIs enforce partner role, UI does not.
+5. ~~**Salon layout** — any authenticated user can open `/salon` UI~~ → **✅ gate** (`resolveSalonLayoutAccess`, redirect studio if no partner role).
 6. **Partner roles duplicated** — `resolvePartnerTenant.ts` still used in places; prefer `resolvePartnerMembership()` everywhere.
 7. **Supabase vs Vercel drift** — ensure P5.5 SQL applied in every env; API returns `503 schema_not_ready` if RPC missing.
 
@@ -159,8 +163,8 @@ Steps 1–3 and Director wallet hide (Phase 3) are **done**. Remaining before he
 | 2 | `resolvePartnerMembership()` → `{ role, capabilities }` | ✅ |
 | 3 | `GET /api/partner/tenants` + `PartnerContext` capabilities | ✅ |
 | 4 | `partnerWallet.ts` — RPC wrappers only | ⏳ deprecate `partnerCheckout.ts` |
-| 5 | Real admin balance via `GET /api/partner/wallet` (replace mock `42`) | ⏳ |
-| 6 | `partnerRpcErrors.ts` — map RPC error → HTTP status | ⏳ |
+| 5 | Real admin balance via `GET /api/partner/wallet` (replace mock `42`) | ✅ `f5a375a` |
+| 6 | `partnerRpcErrors.ts` — map RPC error → HTTP status | ⏳ partial (`partnerApiErrors.ts`) |
 
 **Do not merge** branding + wallet + invitations into mega-files. **Do not** move invitation debit back to TS UPDATE — keep P5.5 RPC as source of truth.
 
@@ -174,7 +178,7 @@ Steps 1–3 and Director wallet hide (Phase 3) are **done**. Remaining before he
 
 | Risk | Severity | Detail |
 |------|----------|--------|
-| Salon without partner role gate | Medium | UI open to any auth user |
+| ~~Salon without partner role gate~~ | — | ✅ Layout gate redirects non-partners to `/studio` |
 | Non-atomic B2B checkout debit (TS) | Medium | Race vs SQL `FOR UPDATE` RPC |
 | Checkout without saga | High (business) | Stripe payment not tied to `tribute_checkouts` |
 | P5.5 not deployed everywhere | Ops | API returns `503 schema_not_ready` if RPC missing |
@@ -189,7 +193,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | Doc | Gap |
 |-----|-----|
 | `TECHNICAL_ONBOARDING` §10b | Stops at P5; P5.1–P5.5 pointer only — defer full rewrite |
-| `B2B2C_COMMERCE` § implementation | Updated this pass (RBAC UI ✅; wallet API pending) |
+| `B2B2C_COMMERCE` § implementation | Synced June 2026 (RBAC UI ✅; wallet API ✅; facturation pending) |
 | `sql/README.md` | P5.5 in migration table |
 | This file | Point-in-time audit; onboarding stays timeless |
 
@@ -206,17 +210,17 @@ Effort estimates: **1 senior dev**, focused scope. Adjust if multiple contributo
 | 1.1 | Commit + deploy P5.5 SQL reference + Phase 2 TS | 0.5 d | ✅ `main` (`94e035d`); invitation RPC + ledger `invitation_debit` |
 | 1.2 | `partnerRoles.ts` + `resolvePartnerMembership()` | 0.5 d | ✅ |
 | 1.3 | Extend `GET /api/partner/tenants` with `role` + `capabilities` | 0.5 d | ✅ `PartnerContext` exposes capabilities |
-| 1.4 | Salon layout: redirect non-partner users away from `/salon` | 0.25 d | ⏳ |
-| 1.5 | Hide wallet block for Directors (`canViewBalance`) | 0.25 d | ✅ Phase 3 (`1acd375`); admin still sees mock `42` |
-| 1.6 | Manual QA checklist: branded login, invite, overdraft (402), admin credit | 0.5 d | ⏳ partial (Director/Admin UI verified) |
+| 1.4 | Salon layout: redirect non-partner users away from `/salon` | 0.25 d | ✅ `f5a375a` |
+| 1.5 | Hide wallet block for Directors (`canViewBalance`) | 0.25 d | ✅ Phase 3 (`1acd375`) |
+| 1.6 | Manual QA checklist: branded login, invite, overdraft (402), admin credit | 0.5 d | ⏳ partial (Director/Admin UI + wallet API verified) |
 
-**Week 1 exit criteria:** ✅ invitation RPC on `main`; ✅ capabilities client-side; ✅ Directors see no balance. **Remaining:** layout gate (1.4), full QA doc (1.6), Supabase P5.5 in all envs.
+**Week 1 exit criteria:** ✅ invitation RPC on `main`; ✅ capabilities client-side; ✅ Directors see no balance; ✅ salon layout gate; ✅ wallet API. **Remaining:** full QA doc (1.6), Supabase P5.5 in all envs.
 
 ### Week 2 — Wallet admin + commerce bridge start
 
 | # | Task | Effort | Done when |
 |---|------|--------|-----------|
-| 2.1 | `GET /api/partner/wallet` (admin only, `canViewBalance`) | 0.5 d | Admin sees real balance for active tenant |
+| 2.1 | `GET /api/partner/wallet` (admin only, `canViewBalance`) | 0.5 d | ✅ Admin sees real balance (`f5a375a`) |
 | 2.2 | `/salon/facturation` page shell (admin only) + link in header | 1 d | `canRecharge` / `canViewLedger` gated; Payment Link CTA (Option A+) |
 | 2.3 | `partnerWallet.ts` + mark `partnerCheckout.ts` `@deprecated` | 0.5 d | New code paths use RPC only |
 | 2.4 | Spike: `POST /api/checkout` inserts `tribute_checkouts` row + calls `debit_partner_tokens_for_checkout` for one mode | 1 d | One happy-path E2E documented (even if family Stripe still stub) |
@@ -247,7 +251,25 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 
 ---
 
-## 12. Related documents
+## 12. Guide lecture rapide (revue partenaire / Jon)
+
+**Ordre recommandé ce soir :**
+
+1. **[`PROJECT_STATUS.md`](PROJECT_STATUS.md)** (ce fichier) — où on en est, dette, plan 2 semaines.
+2. **[`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)** — signature visuelle connexion **Halo-Éclipse**.
+3. **[`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md)** — URLs studio/salon, branding `?partenaire=`, checklist QA manuelle.
+4. **[`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)** — modèle commerce 3 modes ; ce qui reste (saga checkout, `b2b2c_family`).
+5. **[`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md)** — hub technique complet (§4 auth, §10 roadmap).
+
+**Démo prod / QA :** tenant `partner-qa-demo` (Urgel Bourgie) · compte partenaire QA · base Vercel `odyssey-web-eta.vercel.app`.
+
+**Ce qui est shippé récemment (juin 2026, `main`) :** RBAC P5.5 (Directeur vs Admin) · gate `/salon` · wallet API réel · invitations + débit RPC · co-branding connexion · signature Halo-Éclipse · toggle FR/EN · déconnexion salon.
+
+**Ce qui n’est pas encore prod-ready :** saga `tribute_checkouts` · webhook paiement complet · `/salon/facturation` · tests automatisés · dépréciation `partnerCheckout.ts`.
+
+---
+
+## 13. Related documents
 
 | Topic | Document |
 |-------|----------|
