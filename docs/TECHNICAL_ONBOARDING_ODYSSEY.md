@@ -11,6 +11,7 @@ This document helps any developer (frontend, backend, DevOps, QA) onboard quickl
 - [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, **catalog tiers**, mock mode, composite `trackId`, preview proxy
 - [`docs/sql/README.md`](sql/README.md) — SQL migrations **P0–P5** (P4.1 security patch, QA seed)
 - [`docs/ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) — routes `studio` / `salon`, double connexion, branding partenaire
+- [`docs/DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) — palette, co-branding, **signature Halo-Éclipse** (connexion)
 - [`docs/CONVENTIONS.md`](CONVENTIONS.md) — Code language, doc hierarchy, repo scope
 
 Ce document reste partiellement en francais pour l'historique produit; les sections **4.7**, **6 (Stingray)**, **10** et les annexes ci-dessus sont la reference a jour pour Jon et l'equipe technique.
@@ -70,6 +71,10 @@ La logique metier vise un modele hybride:
 - `docs/B2B2C_COMMERCE.md`: commerce B2B2C reference (invitations, saga, granted_package rule)
 - `src/lib/wizard/pricingConfig.ts`: pricing source of truth (cents + B2B tokens)
 - `src/components/StickyPriceBar.tsx`: sticky total (B2C $) or token cost (B2B)
+- `src/components/auth/LoginForm.tsx`: pages connexion Studio + Salon (halos d’état, formulaire partagé)
+- `src/components/auth/ConnexionEclipseLayer.tsx`: couche vidéo `eclipse_login.mp4` (signature Halo-Éclipse)
+- `src/components/auth/OdysseyConnexionMark.tsx`: wordmark Odyssey connexion (Montserrat, blanc lumineux)
+- `src/components/auth/StudioConnexionBrand.tsx` / `SalonConnexionBrand.tsx`: branding header connexion
 - `app/auth/callback/route.ts`: Supabase auth callback
 - `src/components/tribute/TributeWizard.tsx`: **8-step** tribute wizard orchestrator
 - `src/components/tribute/WizardStepper.tsx`: clickable step navigation
@@ -110,6 +115,20 @@ Ce bloc decrit la fondation technique stable au 26 mai 2026. Toutes les sections
 | Legacy | `/[lang]/login` → redirect studio connexion | — | — |
 
 Chemins canoniques : `src/lib/appRoutes.ts`. Redirects anciens `/dashboard` et `/partner` : `next.config.mjs`.
+
+**Signature visuelle connexion — Halo-Éclipse (juin 2026)**
+
+Document canonique : [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon).
+
+| Couche | Implementation | Regle |
+|--------|----------------|-------|
+| Fond | `#020202` | Identique Studio / Salon |
+| Halo d'etat | `HALO_SIGN_IN` / `HALO_SIGN_UP` / `HALO_CONFIRMATION` / `HALO_ERROR` dans `LoginForm.tsx` | **Seule** couche qui change de couleur (violet, cyan, vert, magenta) |
+| Eclipse | `ConnexionEclipseLayer` + `public/eclipse_login.mp4`, ~11 % opacity, `mix-blend-screen` | **Constante** — prolongation organique du halo, jamais teintee par etat |
+| Wordmark | `OdysseyConnexionMark` si pas de logo partenaire | Blanc pur + glow ; reste du form en blanc casse (`zinc-200`/`300`) |
+| CTA | `connexionSubmitButtonClass` | Contour cyan + respiration (`connexion-submit-breathe`) |
+
+**Ne pas** reutiliser `OdysseyBrandLockup` (video `/eclipse.mp4`) sur les pages connexion — lockup marketing navbar / hero uniquement.
 
 **Important**: ne pas creer d'autre trigger sur `auth.users` pour le bootstrap user -- tout doit passer par `handle_new_user()`. Ajouts futurs (org auto-creee, email transactionnel de bienvenue, etc.) -> etendre cette fonction.
 

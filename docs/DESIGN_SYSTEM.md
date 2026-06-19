@@ -43,6 +43,8 @@ Fond sombre, typographie, structure.
 | `bg-deep` | `#020202` | Fond connexion + salon (identique) |
 | `bg-black` | `#000000` | Fusion logos partenaires à carré noir intégré |
 | `text-primary` | `white / 90–100 %` | Titres, actions principales |
+| `text-primary-connexion` | `#FFFFFF` pur + glow | **Uniquement** wordmark `OdysseyConnexionMark` |
+| `text-secondary-connexion` | `zinc-200` – `zinc-300` | Titres + inputs pages login (blanc cassé) |
 | `text-secondary` | `white / 38–55 %` | Sous-titres, labels |
 | `text-muted` | `zinc-400` – `zinc-500` | Kickers, métadonnées |
 | `border-subtle` | `white / 6–10 %` | Cartes glass, séparateurs |
@@ -114,17 +116,30 @@ Niveau 3 — Signature Odyssey (header uniquement sur salon)
   └─ Jamais en lockup éclipse centre page
 ```
 
-### 3.3 Connexion Salon
+### 3.3 Connexion Studio & Salon (fallback Odyssey)
+
+```
+OdysseyConnexionMark (blanc pur lumineux, Montserrat espacé)
+  → Titre contexte (zinc-200 — « Accéder au studio », « Espace partenaires »)
+  → Sous-titre (white/45 %)
+  → Carte formulaire glass
+  → CTA cyan (contour + respiration)
+  → « Retour au site » (Acte V — dernier reveal)
+```
+
+**Signature Halo-Éclipse** en fond : voir **§4.1**. Animations cinéma sur connexion (`salon-cinema-*`, `odyssey-connexion-mark-*` dans `globals.css`).
+
+### 3.4 Connexion Salon (avec logo partenaire)
 
 ```
 Logo partenaire (cinema, grand)
   → Propulsé par Odyssey (discret, aligné droite)
-  → ESPACE PARTENAIRES (blanc, caps)
+  → ESPACE PARTENAIRES (zinc-200, caps)
   → Sous-titre (white/45 %)
   → Carte formulaire glass
 ```
 
-Animations cinéma **uniquement** sur la connexion (`salon-cinema-*` dans `globals.css`).
+Même signature **Halo-Éclipse** (§4.1) derrière le co-branding.
 
 ---
 
@@ -140,6 +155,76 @@ Composant : `SalonAtmosphere` (`src/components/partner/SalonAtmosphere.tsx`).
 Gradient partagé (`SALON_HALO_GRADIENT`) — ellipse violet/magenta, blur 200–240 px, centré haut de page.
 
 **Studio connexion** : même halos via `LoginForm` (sign-in violet, sign-up cyan).
+
+### 4.1 Signature **Halo-Éclipse** (connexion Studio + Salon)
+
+> **Phrase produit :** *Une éclipse vivante dont la couleur reflète l’état du parcours.*
+
+Signature visuelle Odyssey sur **toutes** les pages de connexion (`LoginForm` partagé). À préserver sur tout nouvel écran auth ou variante de login.
+
+#### Principe — deux registres, un seul phénomène
+
+| Couche | Rôle | Variable ? |
+|--------|------|------------|
+| **Éclipse** (`eclipse_login.mp4`) | Corona organique, respiration, profondeur céleste | **Non** — constante, neutre (blanc/gris) |
+| **Halo** (gradients radiaux CSS) | Atmosphère, émotion, **état du parcours** | **Oui** — couleur selon le contexte |
+
+L’éclipse est le **corps** ; le halo est l’**âme**. En `mix-blend-screen` à faible opacité (~11 %), la corona **prolonge** le halo coloré — ce n’est pas un fond décoratif indépendant.
+
+#### Empilement (z-index bas → haut)
+
+```
+1. Fond #020202
+2. Halo coloré (gradient radial, blur 200–240 px)     ← couleur d’état
+3. Éclipse plein écran (object-cover, screen-blend)   ← toujours identique
+4. Contenu (logo, titre, formulaire, CTA)
+```
+
+**Règle d’or :** ne jamais teinter l’éclipse selon l’état. Seul le **halo** change. Ne jamais ajouter une 2ᵉ vidéo éclipse derrière le wordmark (cf. `OdysseyConnexionMark`).
+
+#### États canoniques (couleur du halo)
+
+| État | Token code | Couleur | Déclencheur |
+|------|------------|---------|-------------|
+| **Connexion** | `HALO_SIGN_IN` | Violet / UV (`#8B5CF6`, `#C0A7FF`) | Onglet Connexion, login salon sans inscription |
+| **Inscription** | `HALO_SIGN_UP` | Cyan (`#22D3EE`, `#67E8F9`) | Onglet Inscription (Studio) |
+| **Succès** | `HALO_CONFIRMATION` | Vert émeraude | Email de vérification envoyé |
+| **Erreur** | `HALO_ERROR` | Magenta (`#FF00FF` ~30 % cœur) | Identifiants invalides, erreur auth |
+
+Transitions halo : `transition-[background-image] duration-300` dans `LoginForm` (ex. bascule connexion ↔ inscription, apparition erreur).
+
+#### Wordmark Odyssey (fallback sans logo partenaire)
+
+Composant **`OdysseyConnexionMark`** — distinct de `OdysseyBrandLockup` (navbar, marketing).
+
+| Propriété | Valeur |
+|-----------|--------|
+| Police | Montserrat (`font-brand`), uppercase, tracking large |
+| Couleur | **Blanc pur `#FFFFFF`** + glow blanc lumineux — **seul** élément « soleil » de la page |
+| Reste du form | Blanc cassé (`zinc-200` titres, `zinc-300` inputs) pour hiérarchie |
+| Animation | Acte I — `odyssey-connexion-mark-reveal` (~1,85 s) |
+| Pied de page | « Retour au site » — Acte V (`salon-footer-reveal`, après le formulaire) |
+
+Salon **avec** logo partenaire : `PartnerBrandLockup` inchangé ; Odyssey reste « Propulsé par » discret.
+
+#### Fichiers code
+
+| Sujet | Fichier |
+|-------|---------|
+| Halos d’état | `src/components/auth/LoginForm.tsx` (`HALO_*`) |
+| Couche éclipse | `src/components/auth/ConnexionEclipseLayer.tsx` |
+| Asset vidéo | `public/eclipse_login.mp4` (distinct de `/eclipse.mp4` marketing) |
+| Wordmark connexion | `src/components/auth/OdysseyConnexionMark.tsx` |
+| Animations séquence | `app/globals.css` (`salon-cinema-*`, `odyssey-connexion-mark-*`, `connexion-submit-breathe`) |
+| CTA connexion | `src/components/salon/SalonCyanGlowText.tsx` (`connexionSubmitButtonClass`) |
+
+#### Checklist — ne pas casser la signature
+
+1. Une seule vidéo fond : `eclipse_login.mp4` — pas de duplication par état.
+2. Changer la couleur = changer le **halo**, pas l’éclipse.
+3. Pas de rectangle / lockup éclipse derrière « ODYSSEY » sur connexion.
+4. `prefers-reduced-motion` : éclipse figée, animations CSS off.
+5. Co-branding partenaire : le halo violet/cyan/erreur reste **derrière** le logo client, sans le recouvrir agressivement.
 
 ---
 
@@ -229,7 +314,7 @@ Courbe signature : `cubic-bezier(0.16, 1, 0.3, 1)` (locomotive / Apple-like).
 ### 8.2 Studio (`/studio`, wizard)
 
 - Wizard : halos par étape, progress, autosave
-- Connexion studio : `StudioConnexionBrand` + halos cyan/sign-up
+- Connexion studio : `OdysseyConnexionMark` + signature **Halo-Éclipse** (§4.1) — halos violet (connexion) / cyan (inscription)
 
 ### 8.3 Salon (`/salon`)
 
@@ -255,7 +340,9 @@ Voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) pour les chemins canoniques.
 
 | Sujet | Fichier |
 |-------|---------|
-| Atmosphère | `src/components/partner/SalonAtmosphere.tsx` |
+| **Signature Halo-Éclipse** | `ConnexionEclipseLayer.tsx`, `LoginForm.tsx` (`HALO_*`), `public/eclipse_login.mp4` |
+| Wordmark connexion | `OdysseyConnexionMark.tsx`, `StudioConnexionBrand.tsx`, `SalonConnexionBrand.tsx` |
+| Atmosphère dashboard | `src/components/partner/SalonAtmosphere.tsx` |
 | Co-branding | `src/components/partner/PartnerBrandLockup.tsx` |
 | Logo band | `src/components/auth/PartnerLogoBand.tsx` |
 | Animations CSS | `app/globals.css` (`salon-cinema-*`, `--salon-cyan`) |

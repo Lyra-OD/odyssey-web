@@ -30,7 +30,8 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | Surface | Status | Detail |
 |---------|--------|--------|
 | Marketing / landing | 🟢 | Hero, process, pricing, FR/EN i18n |
-| Studio login + 8-step wizard | 🟢 | Core product path |
+| Studio login + 8-step wizard | 🟢 | Core product path ; login = signature **Halo-Éclipse** |
+| Connexion UX (Studio + Salon) | 🟢 | Halo-Éclipse, `OdysseyConnexionMark`, i18n toggle, CTA cyan — [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon) |
 | Media upload / Storage | 🟢 | Client upload + signed URLs + admin delete |
 | Licensed music (Stingray) | 🟢 | Live MAPI + auto-mock without credentials |
 | B2C checkout (Stripe) | 🟢 | Checkout Session |
@@ -90,6 +91,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/READ
 - Studio / Salon route split, dual login, partner co-branding (P5.2–P5.4)
 - Salon invitation UI: cyan skin (`salonTierCardSkin.ts`), structured features, logo fallback
 - Docs: `DESIGN_SYSTEM.md`, `ROUTES_AND_AUTH.md`
+- **Connexion — signature Halo-Éclipse (juin 2026):** vidéo `eclipse_login.mp4` (corona constante) + halos CSS d’état (violet / cyan / vert / magenta) ; `OdysseyConnexionMark` (Montserrat blanc lumineux) ; CTA cyan respirant ; toggle FR/EN ; séquence cinéma Actes I–V — voir [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)
 - **P5.5 Phase 2 (RBAC foundation):** `partnerRoles.ts`, `partnerCapabilities.ts`, `resolvePartnerMembership.ts`, `createPartnerInvitationWithDebit.ts`; `GET /api/partner/tenants` returns `role` + `capabilities`; `PartnerContext` exposes active tenant capabilities; invitation route uses P5.5 RPC + maps `overdraft_limit_exceeded` → HTTP 402
 - **P5.5 Phase 3 (Salon UI):** `PartnerSalonPageIntro` gates wallet/recharge on `capabilities.canViewBalance` (Directors see no balance); removed dead `PartnerWalletSection.tsx`
 

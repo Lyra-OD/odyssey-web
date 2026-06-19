@@ -26,7 +26,7 @@
 
 ## Documentation — hiérarchie
 
-1. [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) — palette, typographie, co-branding, hiérarchie Salon/Studio.
+1. [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) — palette, typographie, co-branding, **signature Halo-Éclipse** (connexion §4.1), hiérarchie Salon/Studio.
 2. [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) — routes applicatives, auth, branding Salon (si touché).
 3. [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) + `wizardDeliverables.ts` — forfaits, livrables, double tarification.
 4. `pricingConfig.ts` — cents checkout et extensions.
