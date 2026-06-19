@@ -194,6 +194,40 @@ body {
   animation: salon-cinema-wordmark-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.88s both;
 }
 
+@keyframes connexion-submit-breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px rgba(255, 255, 255, 0.16),
+      0 0 18px rgba(0, 232, 240, 0.3);
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    box-shadow:
+      0 0 16px rgba(255, 255, 255, 0.3),
+      0 0 28px rgba(0, 232, 240, 0.48),
+      0 0 44px rgba(0, 232, 240, 0.14);
+    background-color: rgba(255, 255, 255, 0.085);
+  }
+}
+
+.connexion-submit-breathe:not(:disabled):not(:hover) {
+  animation: connexion-submit-breathe 3.6s ease-in-out infinite;
+}
+
+.connexion-submit-breathe:hover:not(:disabled) {
+  animation: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 16px rgba(255, 255, 255, 0.34),
+    0 0 30px rgba(0, 232, 240, 0.52);
+}
+
+.connexion-submit-breathe:disabled {
+  animation: none;
+  box-shadow: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .salon-cinema-logo,
   .salon-logo-glow,
@@ -205,10 +239,17 @@ body {
   .salon-dashboard-logo,
   .salon-dashboard-glow,
   .salon-dashboard-kicker,
-  .salon-dashboard-wordmark {
+  .salon-dashboard-wordmark,
+  .connexion-submit-breathe {
     animation: none;
     filter: none;
     transform: none;
     opacity: 1;
+  }
+
+  .connexion-submit-breathe:not(:disabled) {
+    box-shadow:
+      0 0 12px rgba(255, 255, 255, 0.22),
+      0 0 20px rgba(0, 232, 240, 0.4);
   }
 }

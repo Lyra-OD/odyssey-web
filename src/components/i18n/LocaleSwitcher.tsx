@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 
 import type { Locale } from "@/i18n.config";
+import { SalonCyanGlowText } from "@/src/components/salon/SalonCyanGlowText";
 import { buildLocaleSwitchedHref } from "@/src/lib/i18n/buildLocaleSwitchedHref";
 
 export type LocaleSwitcherLabels = {
@@ -38,21 +39,7 @@ function LocaleOption({
 
   return (
     <button type="button" onClick={onClick} className="relative transition-colors">
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 select-none text-white opacity-80 blur-[5px]"
-      >
-        {label}
-      </span>
-      <span
-        className="relative text-[var(--salon-cyan)]"
-        style={{
-          textShadow:
-            "0 0 8px rgba(255, 255, 255, 0.9), 0 0 18px rgba(255, 255, 255, 0.45)",
-        }}
-      >
-        {label}
-      </span>
+      <SalonCyanGlowText>{label}</SalonCyanGlowText>
     </button>
   );
 }

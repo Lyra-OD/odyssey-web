@@ -27,6 +27,7 @@ import {
   LocaleSwitcher,
   type LocaleSwitcherLabels,
 } from "@/src/components/i18n/LocaleSwitcher";
+import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
 import {
   normalizePartnerSlugParam,
   persistPartnerConnexionSlug,
@@ -753,7 +754,7 @@ export function LoginForm({
               disabled={loading || (isSignUp && signUpSubmitBlocked)}
               aria-busy={loading}
               aria-label={loading ? t.loading : undefined}
-              className="flex min-h-[44px] w-full items-center justify-center rounded-lg border border-white/12 bg-white/[0.06] py-3.5 text-[11px] font-semibold uppercase tracking-[0.35em] text-white/90 transition-[background,opacity] hover:bg-white/[0.09] disabled:cursor-not-allowed disabled:opacity-45"
+              className={connexionSubmitButtonClass}
             >
               {loading ? (
                 <Loader2
