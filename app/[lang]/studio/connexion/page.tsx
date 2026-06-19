@@ -17,6 +17,11 @@ export default async function StudioConnexionPage({ params }: PageProps) {
       lang={lang}
       copy={dictionary.auth}
       audience="studio"
+      localeSwitcher={{
+        languageLabel: dictionary.header.languageLabel,
+        langOptionFr: dictionary.header.langOptionFr,
+        langOptionEn: dictionary.header.langOptionEn,
+      }}
       brandSlot={
         <StudioConnexionBrand wordmark={dictionary.header.logoFallback} />
       }

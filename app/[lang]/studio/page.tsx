@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { LocaleSwitcher } from "@/src/components/i18n/LocaleSwitcher";
 import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
 import { TributeWizard } from "@/src/components/tribute/TributeWizard";
 import { appRoutes } from "@/src/lib/appRoutes";
@@ -96,11 +97,18 @@ export default async function StudioPage({ params }: PageProps) {
               {welcomeLine}
             </h1>
           </div>
-          <DashboardSignOut
-            lang={lang}
-            label={dictionary.dashboard.signOut}
-            className="shrink-0 sm:mt-1"
-          />
+          <div className="flex shrink-0 flex-col items-end gap-3 sm:mt-1">
+            <LocaleSwitcher
+              lang={lang}
+              languageLabel={dictionary.header.languageLabel}
+              langOptionFr={dictionary.header.langOptionFr}
+              langOptionEn={dictionary.header.langOptionEn}
+            />
+            <DashboardSignOut
+              lang={lang}
+              label={dictionary.dashboard.signOut}
+            />
+          </div>
         </header>
 
         <TributeWizard

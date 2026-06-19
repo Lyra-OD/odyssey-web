@@ -24,6 +24,10 @@ import {
   defaultPostAuthPath,
 } from "@/src/lib/appRoutes";
 import {
+  LocaleSwitcher,
+  type LocaleSwitcherLabels,
+} from "@/src/components/i18n/LocaleSwitcher";
+import {
   normalizePartnerSlugParam,
   persistPartnerConnexionSlug,
 } from "@/src/lib/partner/partnerBrandingTypes";
@@ -157,12 +161,14 @@ export function LoginForm({
   copy,
   audience,
   brandSlot,
+  localeSwitcher,
   animateConnexion = true,
 }: {
   lang: Locale;
   copy: AuthCopy;
   audience: LoginAudience;
   brandSlot?: ReactNode;
+  localeSwitcher: LocaleSwitcherLabels;
   animateConnexion?: boolean;
 }) {
   const router = useRouter();
@@ -385,6 +391,9 @@ export function LoginForm({
   if (verificationSent) {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#020202] px-6 py-16">
+        <div className="absolute right-5 top-5 z-20 md:right-8 md:top-8">
+          <LocaleSwitcher lang={lang} {...localeSwitcher} />
+        </div>
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
           <div
             aria-hidden
@@ -419,6 +428,9 @@ export function LoginForm({
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#020202] px-6 py-16 transition-[background] duration-500">
+      <div className="absolute right-5 top-5 z-20 md:right-8 md:top-8">
+        <LocaleSwitcher lang={lang} {...localeSwitcher} />
+      </div>
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden transition-[background-image] duration-300 ease-out">
         <div
           aria-hidden

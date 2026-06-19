@@ -54,6 +54,11 @@ export default async function SalonLayout({ children, params }: LayoutProps) {
       lang={lang}
       poweredByLabel={dictionary.auth.poweredByOdyssey}
       signOutLabel={dictionary.dashboard.signOut}
+      localeSwitcher={{
+        languageLabel: dictionary.header.languageLabel,
+        langOptionFr: dictionary.header.langOptionFr,
+        langOptionEn: dictionary.header.langOptionEn,
+      }}
       initialBrand={initialBrand}
     >
       {children}

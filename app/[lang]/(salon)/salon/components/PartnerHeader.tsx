@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
+import { LocaleSwitcher } from "@/src/components/i18n/LocaleSwitcher";
+import type { LocaleSwitcherLabels } from "@/src/components/i18n/LocaleSwitcher";
 import { PartnerBrandLockup } from "@/src/components/partner/PartnerBrandLockup";
 import type { PartnerInitialBrand } from "@/src/lib/partner/fetchPartnerTenantsForUser";
 import type { Locale } from "@/i18n.config";
@@ -15,6 +17,7 @@ type PartnerHeaderProps = {
   lang: Locale;
   poweredByLabel: string;
   signOutLabel: string;
+  localeSwitcher: LocaleSwitcherLabels;
   initialBrand: PartnerInitialBrand | null;
 };
 
@@ -27,6 +30,7 @@ export function PartnerHeader({
   lang,
   poweredByLabel,
   signOutLabel,
+  localeSwitcher,
   initialBrand,
 }: PartnerHeaderProps) {
   const { activeTenantId, availableTenants, isLoading, setActiveTenantId } =
@@ -133,6 +137,7 @@ export function PartnerHeader({
         />
 
         <div className="flex shrink-0 flex-col items-end gap-3 pt-1">
+          <LocaleSwitcher lang={lang} {...localeSwitcher} />
           <label className="flex items-center">
             <span className="sr-only">{copy.tenantAria}</span>
             <select

@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { SalonAtmosphere } from "@/src/components/partner/SalonAtmosphere";
 import { PartnerConnexionSlugPersist } from "@/src/components/partner/PartnerConnexionSlugPersist";
+import type { LocaleSwitcherLabels } from "@/src/components/i18n/LocaleSwitcher";
 import type { PartnerInitialBrand } from "@/src/lib/partner/fetchPartnerTenantsForUser";
 import type { Locale } from "@/i18n.config";
 import { PartnerProvider } from "@/src/lib/partner/PartnerContext";
@@ -14,6 +15,7 @@ type PartnerDashboardShellProps = {
   lang: Locale;
   poweredByLabel: string;
   signOutLabel: string;
+  localeSwitcher: LocaleSwitcherLabels;
   initialBrand: PartnerInitialBrand | null;
   children: ReactNode;
 };
@@ -22,6 +24,7 @@ export function PartnerDashboardShell({
   lang,
   poweredByLabel,
   signOutLabel,
+  localeSwitcher,
   initialBrand,
   children,
 }: PartnerDashboardShellProps) {
@@ -34,6 +37,7 @@ export function PartnerDashboardShell({
           lang={lang}
           poweredByLabel={poweredByLabel}
           signOutLabel={signOutLabel}
+          localeSwitcher={localeSwitcher}
           initialBrand={initialBrand}
         />
         <main className="relative z-10 mx-auto w-full max-w-[1400px] px-5 pb-24 pt-10 md:px-12 md:pt-12">

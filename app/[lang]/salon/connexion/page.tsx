@@ -69,6 +69,11 @@ export default async function SalonConnexionPage({
       lang={lang}
       copy={dictionary.auth}
       audience="salon"
+      localeSwitcher={{
+        languageLabel: dictionary.header.languageLabel,
+        langOptionFr: dictionary.header.langOptionFr,
+        langOptionEn: dictionary.header.langOptionEn,
+      }}
       brandSlot={
         <>
           <Suspense fallback={null}>
