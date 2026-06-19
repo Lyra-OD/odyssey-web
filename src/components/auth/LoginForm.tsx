@@ -363,9 +363,9 @@ export function LoginForm({
     audience === "salon" && !isSignUp ? t.salonSubtitle : null;
 
   const tabActiveRingSignIn =
-    "bg-white/[0.08] text-white shadow-[0_0_24px_-8px_rgba(139,92,246,0.45)]";
+    "bg-white/[0.08] text-zinc-100 shadow-[0_0_24px_-8px_rgba(139,92,246,0.45)]";
   const tabActiveRingSignUp =
-    "bg-white/[0.08] text-white shadow-[0_0_24px_-8px_rgba(34,211,238,0.42)]";
+    "bg-white/[0.08] text-zinc-100 shadow-[0_0_24px_-8px_rgba(34,211,238,0.42)]";
 
   const cardGlow = isSignUp
     ? "shadow-[0_0_80px_-20px_rgba(34,211,238,0.32)]"
@@ -457,7 +457,7 @@ export function LoginForm({
         {brandSlot}
 
         <h1
-          className={`mb-2 text-center text-white transition-colors duration-300 ${
+          className={`mb-2 text-center text-zinc-200 transition-colors duration-300 ${
             audience === "salon"
               ? `font-brand text-lg font-medium uppercase tracking-[0.22em] md:text-xl md:tracking-[0.26em] ${animateConnexion ? "salon-title-reveal" : ""}`
               : `text-xl font-light tracking-[0.08em] md:text-2xl ${animateConnexion ? "salon-title-reveal" : ""}`
@@ -531,7 +531,7 @@ export function LoginForm({
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
-                className={`w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-sm text-white/90 outline-none transition-[border,box-shadow] placeholder:text-white/25 disabled:opacity-50 ${inputFocus}`}
+                className={`w-full rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-sm text-zinc-300 outline-none transition-[border,box-shadow] placeholder:text-white/25 disabled:opacity-50 ${inputFocus}`}
                 placeholder={t.emailPlaceholder}
               />
             </div>
@@ -560,7 +560,7 @@ export function LoginForm({
                       onChange={(e) => setDisplayName(e.target.value)}
                       required={isSignUp}
                       disabled={loading}
-                      className={`w-full rounded-lg border border-white/10 bg-black/40 py-3 pl-10 pr-4 text-sm text-white/90 outline-none transition-[border,box-shadow] placeholder:text-white/25 disabled:opacity-50 ${inputFocus}`}
+                      className={`w-full rounded-lg border border-white/10 bg-black/40 py-3 pl-10 pr-4 text-sm text-zinc-300 outline-none transition-[border,box-shadow] placeholder:text-white/25 disabled:opacity-50 ${inputFocus}`}
                       placeholder={t.displayNamePlaceholder}
                     />
                   </div>
@@ -587,7 +587,7 @@ export function LoginForm({
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       disabled={loading}
-                      className={`w-full rounded-lg border border-white/10 bg-black/40 py-3 pl-10 pr-4 text-sm text-white/90 outline-none transition-[border,box-shadow] placeholder:text-white/25 disabled:opacity-50 ${inputFocus}`}
+                      className={`w-full rounded-lg border border-white/10 bg-black/40 py-3 pl-10 pr-4 text-sm text-zinc-300 outline-none transition-[border,box-shadow] placeholder:text-white/25 disabled:opacity-50 ${inputFocus}`}
                       placeholder={t.phonePlaceholder}
                     />
                   </div>
@@ -616,7 +616,7 @@ export function LoginForm({
                   required
                   minLength={isSignUp ? 8 : 6}
                   disabled={loading}
-                  className={`w-full rounded-lg border border-white/10 bg-black/40 py-3 pl-4 pr-11 text-sm text-white/90 outline-none transition-[border,box-shadow] placeholder:text-white/25 disabled:opacity-50 ${inputFocus}`}
+                  className={`w-full rounded-lg border border-white/10 bg-black/40 py-3 pl-4 pr-11 text-sm text-zinc-300 outline-none transition-[border,box-shadow] placeholder:text-white/25 disabled:opacity-50 ${inputFocus}`}
                   placeholder={t.passwordPlaceholder}
                 />
                 <button
@@ -670,7 +670,7 @@ export function LoginForm({
                     required
                     minLength={8}
                     disabled={loading}
-                    className={`w-full rounded-lg border border-white/10 bg-black/40 py-3 pl-4 pr-11 text-sm text-white/90 outline-none transition-[border,box-shadow] placeholder:text-white/25 disabled:opacity-50 ${inputFocus}`}
+                    className={`w-full rounded-lg border border-white/10 bg-black/40 py-3 pl-4 pr-11 text-sm text-zinc-300 outline-none transition-[border,box-shadow] placeholder:text-white/25 disabled:opacity-50 ${inputFocus}`}
                     placeholder={t.passwordConfirmPlaceholder}
                     aria-invalid={confirmMismatchVisible}
                   />
@@ -773,7 +773,9 @@ export function LoginForm({
           </form>
         </div>
 
-        <p className="mt-10 text-center text-[11px] text-white/30">
+        <p
+          className={`mt-10 text-center text-[11px] text-white/30 ${animateConnexion ? "salon-footer-reveal" : ""}`}
+        >
           <Link
             href={homeHref}
             className="underline decoration-white/15 underline-offset-4 transition-colors hover:text-white/55"

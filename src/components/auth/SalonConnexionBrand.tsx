@@ -1,6 +1,6 @@
-import { OdysseyBrandLockup } from "@/src/components/OdysseyBrandLockup";
 import type { PartnerPublicBranding } from "@/src/lib/partner/partnerBrandingTypes";
 
+import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
 import { PartnerBrandLockup } from "@/src/components/partner/PartnerBrandLockup";
 
 type SalonConnexionBrandProps = {
@@ -16,11 +16,11 @@ export function SalonConnexionBrand({
 }: SalonConnexionBrandProps) {
   if (!branding) {
     return (
-      <div className="salon-cinema mb-8 flex w-full justify-center">
-        <div className="salon-cinema-logo">
-          <OdysseyBrandLockup wordmark={defaultWordmark} size="page" />
-        </div>
-      </div>
+      <OdysseyConnexionMark
+        wordmark={defaultWordmark}
+        animate
+        className="mb-8"
+      />
     );
   }
 

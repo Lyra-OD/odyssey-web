@@ -118,6 +118,37 @@ body {
   }
 }
 
+@keyframes odyssey-connexion-mark-in {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.odyssey-connexion-mark {
+  text-shadow:
+    0 0 12px rgba(255, 255, 255, 0.95),
+    0 0 24px rgba(255, 255, 255, 0.5),
+    0 0 40px rgba(255, 255, 255, 0.2);
+}
+
+.odyssey-connexion-mark-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  color: #fff;
+  opacity: 0.75;
+  filter: blur(6px);
+}
+
+.odyssey-connexion-mark-reveal {
+  animation: odyssey-connexion-mark-in 1.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
 @keyframes salon-title-reveal-in {
   from {
     opacity: 0;
@@ -174,6 +205,11 @@ body {
 
 .salon-form-reveal {
   animation: salon-form-reveal-in 1s cubic-bezier(0.22, 1, 0.36, 1) 3.25s both;
+}
+
+/* Acte V — pied de page connexion (après le formulaire) */
+.salon-footer-reveal {
+  animation: salon-title-reveal-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 4.35s both;
 }
 
 /* Header salon — même langage, séquence plus courte (~1,8 s) à chaque chargement */
@@ -236,11 +272,13 @@ body {
   .salon-title-reveal,
   .salon-subtitle-reveal,
   .salon-form-reveal,
+  .salon-footer-reveal,
   .salon-dashboard-logo,
   .salon-dashboard-glow,
   .salon-dashboard-kicker,
   .salon-dashboard-wordmark,
-  .connexion-submit-breathe {
+  .connexion-submit-breathe,
+  .odyssey-connexion-mark-reveal {
     animation: none;
     filter: none;
     transform: none;
