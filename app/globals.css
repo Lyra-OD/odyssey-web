@@ -252,4 +252,8 @@ body {
       0 0 12px rgba(255, 255, 255, 0.22),
       0 0 20px rgba(0, 232, 240, 0.4);
   }
+
+  .connexion-eclipse-video {
+    animation: none;
+  }
 }

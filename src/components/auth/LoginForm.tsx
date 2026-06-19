@@ -28,6 +28,7 @@ import {
   type LocaleSwitcherLabels,
 } from "@/src/components/i18n/LocaleSwitcher";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
+import { ConnexionEclipseLayer } from "@/src/components/auth/ConnexionEclipseLayer";
 import {
   normalizePartnerSlugParam,
   persistPartnerConnexionSlug,
@@ -406,6 +407,7 @@ export function LoginForm({
             className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[min(105vh,980px)] w-[min(185vw,82rem)] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.17] blur-[240px]"
             style={{ backgroundImage: HALO_CONFIRMATION }}
           />
+          <ConnexionEclipseLayer />
         </div>
         <div className="relative z-10 isolate mx-auto flex min-h-[70vh] w-full max-w-lg flex-col items-center justify-center px-4 text-center">
           <p className="mb-8 text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
@@ -443,6 +445,7 @@ export function LoginForm({
           className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[min(112vh,1020px)] w-[min(195vw,88rem)] max-w-none -translate-x-1/2 -translate-y-1/2 blur-[240px]"
           style={{ backgroundImage: haloBackground }}
         />
+        <ConnexionEclipseLayer />
       </div>
 
       <div
