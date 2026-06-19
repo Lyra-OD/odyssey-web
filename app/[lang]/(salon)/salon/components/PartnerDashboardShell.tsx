@@ -13,6 +13,7 @@ import { PartnerHeader } from "./PartnerHeader";
 type PartnerDashboardShellProps = {
   lang: Locale;
   poweredByLabel: string;
+  signOutLabel: string;
   initialBrand: PartnerInitialBrand | null;
   children: ReactNode;
 };
@@ -20,6 +21,7 @@ type PartnerDashboardShellProps = {
 export function PartnerDashboardShell({
   lang,
   poweredByLabel,
+  signOutLabel,
   initialBrand,
   children,
 }: PartnerDashboardShellProps) {
@@ -31,6 +33,7 @@ export function PartnerDashboardShell({
         <PartnerHeader
           lang={lang}
           poweredByLabel={poweredByLabel}
+          signOutLabel={signOutLabel}
           initialBrand={initialBrand}
         />
         <main className="relative z-10 mx-auto w-full max-w-[1400px] px-5 pb-24 pt-10 md:px-12 md:pt-12">

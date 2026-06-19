@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
 import { PartnerBrandLockup } from "@/src/components/partner/PartnerBrandLockup";
 import type { PartnerInitialBrand } from "@/src/lib/partner/fetchPartnerTenantsForUser";
 import type { Locale } from "@/i18n.config";
+import { appRoutes } from "@/src/lib/appRoutes";
 import { readPartnerConnexionSlug } from "@/src/lib/partner/partnerBrandingTypes";
 import { usePartner } from "@/src/lib/partner/PartnerContext";
 import { createClient } from "@/utils/supabase/client";
@@ -12,6 +14,7 @@ import { createClient } from "@/utils/supabase/client";
 type PartnerHeaderProps = {
   lang: Locale;
   poweredByLabel: string;
+  signOutLabel: string;
   initialBrand: PartnerInitialBrand | null;
 };
 
@@ -23,6 +26,7 @@ type SlugBranding = {
 export function PartnerHeader({
   lang,
   poweredByLabel,
+  signOutLabel,
   initialBrand,
 }: PartnerHeaderProps) {
   const { activeTenantId, availableTenants, isLoading, setActiveTenantId } =
@@ -107,6 +111,14 @@ export function PartnerHeader({
     };
   }, [needsSlugBranding, brandingSlug]);
 
+  const signInHref = useMemo(
+    () =>
+      appRoutes.salonConnexionWithParams(lang, {
+        partenaire: brandingSlug,
+      }),
+    [lang, brandingSlug],
+  );
+
   return (
     <header className="relative z-30 border-b border-white/[0.06] bg-[#020202]/40 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-[1400px] items-start justify-between gap-6 px-5 py-5 md:px-12 md:py-6">
@@ -120,31 +132,39 @@ export function PartnerHeader({
           animationPreset="dashboard"
         />
 
-        <label className="flex shrink-0 items-center pt-1">
-          <span className="sr-only">{copy.tenantAria}</span>
-          <select
-            value={tenantSelectValue}
-            disabled={isLoading || !hasTenants}
-            onChange={(e) => setActiveTenantId(e.target.value)}
-            className="max-w-[min(100%,16rem)] cursor-pointer border-0 border-b border-white/15 bg-transparent py-1 font-label text-[10px] font-bold uppercase tracking-[0.36em] text-zinc-400 outline-none transition-colors hover:text-zinc-200 focus:border-purple-400/50 focus:text-white disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {isLoading ? (
-              <option value="">{copy.tenantLoading}</option>
-            ) : !hasTenants ? (
-              <option value="">{copy.tenantEmpty}</option>
-            ) : (
-              availableTenants.map((tenant) => (
-                <option
-                  key={tenant.id}
-                  value={tenant.id}
-                  className="bg-black text-zinc-200"
-                >
-                  {tenant.brandLabel ?? tenant.name}
-                </option>
-              ))
-            )}
-          </select>
-        </label>
+        <div className="flex shrink-0 flex-col items-end gap-3 pt-1">
+          <label className="flex items-center">
+            <span className="sr-only">{copy.tenantAria}</span>
+            <select
+              value={tenantSelectValue}
+              disabled={isLoading || !hasTenants}
+              onChange={(e) => setActiveTenantId(e.target.value)}
+              className="max-w-[min(100%,16rem)] cursor-pointer border-0 border-b border-white/15 bg-transparent py-1 font-label text-[10px] font-bold uppercase tracking-[0.36em] text-zinc-400 outline-none transition-colors hover:text-zinc-200 focus:border-purple-400/50 focus:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {isLoading ? (
+                <option value="">{copy.tenantLoading}</option>
+              ) : !hasTenants ? (
+                <option value="">{copy.tenantEmpty}</option>
+              ) : (
+                availableTenants.map((tenant) => (
+                  <option
+                    key={tenant.id}
+                    value={tenant.id}
+                    className="bg-black text-zinc-200"
+                  >
+                    {tenant.brandLabel ?? tenant.name}
+                  </option>
+                ))
+              )}
+            </select>
+          </label>
+          <DashboardSignOut
+            lang={lang}
+            label={signOutLabel}
+            signInHref={signInHref}
+            className="px-0 py-0 text-[10px] font-bold uppercase tracking-[0.36em] text-zinc-500 shadow-none hover:border-transparent hover:bg-transparent hover:text-zinc-200"
+          />
+        </div>
       </div>
     </header>
   );

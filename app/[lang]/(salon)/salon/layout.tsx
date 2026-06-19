@@ -53,6 +53,7 @@ export default async function SalonLayout({ children, params }: LayoutProps) {
     <PartnerDashboardShell
       lang={lang}
       poweredByLabel={dictionary.auth.poweredByOdyssey}
+      signOutLabel={dictionary.dashboard.signOut}
       initialBrand={initialBrand}
     >
       {children}
