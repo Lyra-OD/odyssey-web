@@ -8,10 +8,7 @@ import { SalonConnexionBrand } from "@/src/components/auth/SalonConnexionBrand";
 import { SalonConnexionSlugSync } from "@/src/components/auth/SalonConnexionSlugSync";
 import { fetchPartnerBrandingBySlug } from "@/src/lib/partner/fetchPartnerBrandingBySlug";
 import { fetchPartnerTenantsForUser } from "@/src/lib/partner/fetchPartnerTenantsForUser";
-import {
-  readPartnerConnexionSlugFromCookie,
-  writePartnerConnexionSlugCookie,
-} from "@/src/lib/partner/partnerConnexionSlug.server";
+import { readPartnerConnexionSlugFromCookie } from "@/src/lib/partner/partnerConnexionSlug.server";
 import { normalizePartnerSlugParam } from "@/src/lib/partner/partnerBrandingTypes";
 import { createClient } from "@/utils/supabase/server";
 
@@ -51,10 +48,6 @@ export default async function SalonConnexionPage({
     slug =
       normalizePartnerSlugParam(tenants.find((t) => t.slug?.trim())?.slug) ??
       null;
-  }
-
-  if (slug) {
-    writePartnerConnexionSlugCookie(slug);
   }
 
   if (user && slug) {

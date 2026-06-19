@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 
 import { SalonAtmosphere } from "@/src/components/partner/SalonAtmosphere";
+import { PartnerConnexionSlugPersist } from "@/src/components/partner/PartnerConnexionSlugPersist";
 import type { PartnerInitialBrand } from "@/src/lib/partner/fetchPartnerTenantsForUser";
 import type { Locale } from "@/i18n.config";
 import { PartnerProvider } from "@/src/lib/partner/PartnerContext";
@@ -24,6 +25,7 @@ export function PartnerDashboardShell({
 }: PartnerDashboardShellProps) {
   return (
     <PartnerProvider>
+      <PartnerConnexionSlugPersist />
       <div className="relative min-h-screen overflow-x-hidden bg-[#020202] text-white">
         <SalonAtmosphere variant="dashboard" />
         <PartnerHeader

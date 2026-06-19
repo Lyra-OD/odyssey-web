@@ -6,7 +6,6 @@ import { appRoutes } from "@/src/lib/appRoutes";
 import { getDictionary } from "@/lib/dictionaries";
 import { resolvePartnerInitialBrand } from "@/src/lib/partner/fetchPartnerTenantsForUser";
 import { fetchPartnerBrandingBySlug } from "@/src/lib/partner/fetchPartnerBrandingBySlug";
-import { writePartnerConnexionSlugCookie } from "@/src/lib/partner/partnerConnexionSlug.server";
 import { readPartnerConnexionSlugFromCookie } from "@/src/lib/partner/partnerConnexionSlug.server";
 import { resolveSalonLayoutAccess } from "@/src/lib/partner/resolveSalonLayoutAccess";
 import { createClient } from "@/utils/supabase/server";
@@ -44,10 +43,6 @@ export default async function SalonLayout({ children, params }: LayoutProps) {
   }
 
   const partnerTenants = salonAccess.partnerTenants;
-  const primarySlug = partnerTenants.find((t) => t.slug?.trim())?.slug?.trim();
-  if (primarySlug) {
-    writePartnerConnexionSlugCookie(primarySlug);
-  }
 
   const initialBrand = await resolvePartnerInitialBrand(
     partnerTenants,

@@ -14,6 +14,11 @@ export function readPartnerConnexionSlugFromCookie(): string | null {
   return normalizePartnerSlugParam(raw);
 }
 
+/**
+ * Écriture cookie — Route Handler / middleware uniquement (pas dans RSC render).
+ * @see middleware.ts pour connexion ?partenaire=
+ * @see persistPartnerConnexionSlug() côté client pour le dashboard
+ */
 export function writePartnerConnexionSlugCookie(slug: string): void {
   const normalized = normalizePartnerSlugParam(slug);
   if (!normalized) return;
