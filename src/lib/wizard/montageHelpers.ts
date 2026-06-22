@@ -14,6 +14,7 @@ export type MontageMediaItem = {
   assetId: string;
   displayName: string;
   previewUrl: string | null;
+  fullPreviewUrl: string | null;
   mimeType: string | null;
   sizeBytes: number;
   orderIndex: number;
@@ -31,6 +32,7 @@ export function mediaApiToMontageItems(
       assetId: item.assetId,
       displayName: item.displayName,
       previewUrl: item.previewUrl,
+      fullPreviewUrl: item.fullPreviewUrl,
       mimeType: item.mimeType,
       sizeBytes: item.sizeBytes,
       orderIndex: item.orderIndex,

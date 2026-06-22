@@ -39,8 +39,10 @@ export type MediaGridItem = {
   mimeType?: string | null;
   sizeBytes?: number;
   displayName?: string;
-  /** Signed Storage URL — remote items and optional local preview fallback. */
+  /** Signed Storage URL — remote items (thumb when available). */
   previewUrl?: string | null;
+  /** Full-resolution signed URL — modal / director view. */
+  fullPreviewUrl?: string | null;
   ownerUserId?: string;
   tenantId?: string;
   source?: MediaUploadSource | string;
@@ -80,6 +82,7 @@ export type HydratedMediaApiItem = {
   orderIndex: number;
   displayName: string;
   previewUrl: string | null;
+  fullPreviewUrl: string | null;
   source: string;
   ownerUserId: string;
   tenantId: string;
@@ -161,6 +164,7 @@ export function hydratedApiItemToGridItem(
     sizeBytes: item.sizeBytes,
     displayName: item.displayName,
     previewUrl: item.previewUrl,
+    fullPreviewUrl: item.fullPreviewUrl,
     ownerUserId: item.ownerUserId,
     tenantId: item.tenantId,
     source: item.source,

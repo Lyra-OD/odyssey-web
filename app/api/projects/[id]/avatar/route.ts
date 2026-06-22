@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { SIGNED_URL_TTL_SEC } from "@/src/lib/media/storageEgressPolicy";
 
 const DEFAULT_BUCKET = "user-assets";
-const SIGNED_URL_TTL_SEC = 3600;
 
 const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 

@@ -4,9 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   hydratedApiItemToGridItem,
   type HydratedMediaApiItem,
-  type HydratedMediaListResponse,
   isRemoteMediaItem,
 } from "@/src/lib/media/mediaTypes";
+import {
+  fetchProjectMediaCached,
+  invalidateProjectMediaCache,
+} from "@/src/lib/media/projectMediaCache";
 import {
   uploadMediaBatch,
   createLocalQueueItem,
@@ -165,6 +168,7 @@ export function useMassMediaUpload(
             );
           },
         });
+        invalidateProjectMediaCache(startOptions.projectId);
       } finally {
         setIsRunning(false);
         abortRef.current = null;
@@ -291,6 +295,8 @@ export function useMassMediaUpload(
           throw new Error(body?.message ?? body?.error ?? `HTTP ${res.status}`);
         }
 
+        invalidateProjectMediaCache(projectId);
+
         const remaining = itemsRef.current;
         if (remaining.some((item) => item.assetId)) {
           await persistOrderRef.current();
@@ -321,7 +327,7 @@ export function useMassMediaUpload(
       setIsHydrating(true);
       projectIdRef.current = projectId;
       try {
-        const apiItems = await fetchProjectMedia(projectId);
+        const apiItems = await fetchProjectMediaCached(projectId);
         hydrateFromServer(apiItems);
       } finally {
         setIsHydrating(false);
@@ -439,21 +445,12 @@ export function useMassMediaUpload(
   };
 }
 
-/** Fetches project media from API and hydrates the hook state. */
+/** Fetches project media from API (session cache). Prefer this over a raw fetch. */
 export async function fetchProjectMedia(
   projectId: string,
+  options?: { force?: boolean },
 ): Promise<HydratedMediaApiItem[]> {
-  const res = await fetch(`/api/projects/${projectId}/media`);
-  const body = (await res.json().catch(() => null)) as
-    | HydratedMediaListResponse
-    | { error?: string }
-    | null;
-
-  if (!res.ok || !body || !("items" in body)) {
-    throw new Error(
-      body && "error" in body ? body.error : `HTTP ${res.status}`,
-    );
-  }
-
-  return body.items;
+  return fetchProjectMediaCached(projectId, options);
 }
+
+export { invalidateProjectMediaCache } from "@/src/lib/media/projectMediaCache";

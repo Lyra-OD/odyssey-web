@@ -198,7 +198,7 @@ export function MontageDirectorModal({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, ease: EASE_OUT_LUXE }}
         >
-          {item.previewUrl ? (
+          {(item.fullPreviewUrl ?? item.previewUrl) ? (
             <div className="relative mx-auto inline-block max-h-[min(78vh,900px)] max-w-full">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
@@ -211,9 +211,11 @@ export function MontageDirectorModal({
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <motion.img
-                    src={item.previewUrl}
+                    src={item.fullPreviewUrl ?? item.previewUrl ?? ""}
                     alt={item.displayName}
                     draggable={false}
+                    loading="eager"
+                    decoding="async"
                     onClick={(e) => {
                       onSetFocalPoint(item.assetId, focalFromImageClick(e));
                     }}

@@ -62,13 +62,13 @@ import {
   STINGRAY_CATALOG_PROVIDER,
 } from "@/src/lib/wizard/stingrayCatalog";
 import type { Locale } from "@/i18n.config";
+import { SIGNED_URL_TTL_SEC, STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
 
 export type TributeWizardCopy = AppDictionary["tributeWizard"];
 
 type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 const TOTAL_STEPS = 8;
-const AVATAR_SIGNED_URL_TTL_SEC = 3600;
 
 type WizardFieldsSnapshot = {
   firstName: string;
@@ -341,7 +341,7 @@ export function TributeWizard({
         const supabase = createClient();
         const { data: signed, error: signError } = await supabase.storage
           .from("user-assets")
-          .createSignedUrl(storagePath, AVATAR_SIGNED_URL_TTL_SEC);
+          .createSignedUrl(storagePath, SIGNED_URL_TTL_SEC);
 
         if (!signError && signed?.signedUrl) {
           console.log(
@@ -353,22 +353,10 @@ export function TributeWizard({
           return;
         }
 
-        const { data: blob, error: downloadError } = await supabase.storage
-          .from("user-assets")
-          .download(storagePath);
-
-        if (downloadError || !blob) {
-          console.warn(
-            "[TributeWizard] avatar hydrate failed:",
-            downloadError?.message ?? signError?.message ?? "unknown",
-          );
-          return;
-        }
-
-        const blobUrl = URL.createObjectURL(blob);
-        console.log("[TributeWizard] avatar blob URL:", storagePath);
-        avatarHydratedPathRef.current = storagePath;
-        setAvatarPreview(blobUrl);
+        console.warn(
+          "[TributeWizard] avatar hydrate failed:",
+          signError?.message ?? "unknown",
+        );
       } finally {
         avatarHydrateInflightRef.current = null;
       }
@@ -412,7 +400,7 @@ export function TributeWizard({
         const { error } = await supabase.storage
           .from("user-assets")
           .upload(storagePath, file, {
-            cacheControl: "3600",
+            cacheControl: STORAGE_CACHE_CONTROL,
             upsert: true,
             contentType: file.type || undefined,
           });

@@ -4,7 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 
 import { CinematicTeaser } from "@/src/components/tribute/CinematicTeaser";
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
-import { mediaApiToMontageItems } from "@/src/lib/wizard/montageHelpers";
+import {
+  mediaApiToMontageItems,
+  type MontageMediaItem,
+} from "@/src/lib/wizard/montageHelpers";
 import {
   buildTeaserSlides,
   estimateFilmDurationMinutes,
@@ -71,8 +74,13 @@ export function PreviewStep({
   onEdit,
 }: Props) {
   const [isLoading, setIsLoading] = useState(true);
-  const [slides, setSlides] = useState(() =>
-    buildTeaserSlides(montage, new Map()),
+  const [mediaById, setMediaById] = useState<Map<string, MontageMediaItem>>(
+    () => new Map(),
+  );
+
+  const slides = useMemo(
+    () => buildTeaserSlides(montage, mediaById),
+    [montage, mediaById],
   );
 
   const durationMinutes = useMemo(
@@ -88,6 +96,7 @@ export function PreviewStep({
   useEffect(() => {
     if (!projectId) {
       setIsLoading(false);
+      setMediaById(new Map());
       return;
     }
 
@@ -98,8 +107,7 @@ export function PreviewStep({
       .then((items) => {
         if (cancelled) return;
         const mediaItems = mediaApiToMontageItems(items);
-        const byId = new Map(mediaItems.map((item) => [item.assetId, item]));
-        setSlides(buildTeaserSlides(montage, byId));
+        setMediaById(new Map(mediaItems.map((item) => [item.assetId, item])));
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -108,7 +116,7 @@ export function PreviewStep({
     return () => {
       cancelled = true;
     };
-  }, [projectId, montage]);
+  }, [projectId]);
 
   return (
     <div className="space-y-10 pb-44">

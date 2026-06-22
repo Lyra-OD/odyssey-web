@@ -2,14 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { requireProjectOwner } from "@/src/lib/api/projectAccess";
-import {
-  displayNameFromStoragePath,
-  type HydratedMediaApiItem,
-  type HydratedMediaListResponse,
-} from "@/src/lib/media/mediaTypes";
-
-const DEFAULT_BUCKET = "user-assets";
-const SIGNED_URL_TTL_SEC = 3600;
+import { hydrateMediaRowsWithSignedUrls } from "@/src/lib/media/hydrateMediaSignedUrls.server";
+import type { HydratedMediaListResponse } from "@/src/lib/media/mediaTypes";
 
 const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 
@@ -31,6 +25,7 @@ type MediaAssetRow = {
  *
  * Lists uploaded media_assets for a project owned by the caller.
  * Generates signed Storage URLs server-side (private bucket `user-assets`).
+ * Grid `previewUrl` prefers WebP thumb when present; `fullPreviewUrl` is always original.
  */
 export async function GET(
   _req: Request,
@@ -65,36 +60,7 @@ export async function GET(
   }
 
   const assets = (rows ?? []) as MediaAssetRow[];
-
-  const items: HydratedMediaApiItem[] = await Promise.all(
-    assets.map(async (row) => {
-      let previewUrl: string | null = null;
-
-      if (row.storage_path) {
-        const { data: signed, error: signError } = await supabase.storage
-          .from(DEFAULT_BUCKET)
-          .createSignedUrl(row.storage_path, SIGNED_URL_TTL_SEC);
-
-        if (!signError && signed?.signedUrl) {
-          previewUrl = signed.signedUrl;
-        }
-      }
-
-      return {
-        id: row.id,
-        assetId: row.id,
-        storagePath: row.storage_path,
-        mimeType: row.mime_type,
-        sizeBytes: row.size_bytes ?? 0,
-        orderIndex: row.order_index ?? 0,
-        displayName: displayNameFromStoragePath(row.storage_path),
-        previewUrl,
-        source: row.source,
-        ownerUserId: row.owner_user_id,
-        tenantId: row.tenant_id,
-      };
-    }),
-  );
+  const items = await hydrateMediaRowsWithSignedUrls(supabase, assets);
 
   const body: HydratedMediaListResponse = { items };
   return NextResponse.json(body);

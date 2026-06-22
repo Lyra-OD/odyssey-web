@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import type { UploadQueueItem } from "@/src/lib/uploads/mediaUploadService";
+import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
 import {
   getItemDisplayName,
   getItemMimeType,
@@ -201,14 +202,23 @@ export function MediaQueueGrid({
           >
             <div className="relative aspect-square w-full overflow-hidden bg-black/40">
               {showPreview && previewUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={previewUrl}
-                  alt={displayName}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
+                isRemoteMediaItem(item) ? (
+                  <StoragePreviewImage
+                    src={previewUrl}
+                    fallbackSrc={item.fullPreviewUrl}
+                    alt={displayName}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={previewUrl}
+                    alt={displayName}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )
               ) : isVideoItem(item) ? (
                 <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-zinc-300">
                   <Film className="h-8 w-8" strokeWidth={1.2} />

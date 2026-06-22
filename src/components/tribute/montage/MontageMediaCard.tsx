@@ -7,6 +7,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { motion } from "framer-motion";
 import { Film, GripVertical, Check, Image as ImageIcon, Trash2 } from "lucide-react";
 
+import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
 import { getMontageActTheme } from "@/src/lib/wizard/montageActTheme";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import type { MontageActId } from "@/src/lib/wizard/wizardState";
@@ -129,9 +130,9 @@ function MontageMediaCardSurface({
           onClick={(event) => onCardClick(item.assetId, event)}
         >
           {item.previewUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <StoragePreviewImage
               src={item.previewUrl}
+              fallbackSrc={item.fullPreviewUrl}
               alt=""
               className="pointer-events-none h-full w-full object-cover"
               draggable={false}
@@ -147,9 +148,9 @@ function MontageMediaCardSurface({
           )}
         </button>
       ) : item.previewUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <StoragePreviewImage
           src={item.previewUrl}
+          fallbackSrc={item.fullPreviewUrl}
           alt=""
           className="h-full w-full object-cover"
           draggable={false}

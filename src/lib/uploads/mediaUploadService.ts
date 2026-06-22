@@ -1,4 +1,9 @@
 import { createClient } from "@/utils/supabase/client";
+import { generateImageThumbnailBlob } from "@/src/lib/media/generateImageThumbnail";
+import {
+  STORAGE_CACHE_CONTROL,
+} from "@/src/lib/media/storageEgressPolicy";
+import { thumbStoragePathFor } from "@/src/lib/media/thumbnailPath";
 import {
   computeUploadProgress,
   isLocalMediaItem,
@@ -124,13 +129,31 @@ async function uploadAndInsert(
   const { error: uploadError } = await supabase.storage
     .from(params.bucket)
     .upload(storagePath, params.item.file, {
-      cacheControl: "3600",
+      cacheControl: STORAGE_CACHE_CONTROL,
       upsert: false,
       contentType: params.item.file.type || undefined,
     });
 
   if (uploadError) {
     throw new Error(`Storage upload failed: ${uploadError.message}`);
+  }
+
+  const thumbBlob = await generateImageThumbnailBlob(params.item.file);
+  if (thumbBlob) {
+    const thumbPath = thumbStoragePathFor(storagePath);
+    const { error: thumbError } = await supabase.storage
+      .from(params.bucket)
+      .upload(thumbPath, thumbBlob, {
+        cacheControl: STORAGE_CACHE_CONTROL,
+        upsert: false,
+        contentType: "image/webp",
+      });
+    if (thumbError) {
+      console.warn(
+        "[mediaUpload] thumbnail upload skipped:",
+        thumbError.message,
+      );
+    }
   }
 
   const row =

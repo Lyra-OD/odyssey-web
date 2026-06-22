@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { thumbStoragePathFor, isImageStoragePath } from "@/src/lib/media/thumbnailPath";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
 const DEFAULT_BUCKET = "user-assets";
@@ -100,9 +101,14 @@ export async function DELETE(
 
   const admin = getSupabaseAdminClient();
 
+  const pathsToRemove = [row.storage_path];
+  if (isImageStoragePath(row.storage_path)) {
+    pathsToRemove.push(thumbStoragePathFor(row.storage_path));
+  }
+
   const { error: storageError } = await admin.storage
     .from(DEFAULT_BUCKET)
-    .remove([row.storage_path]);
+    .remove(pathsToRemove);
 
   if (storageError) {
     const message = storageError.message.toLowerCase();
