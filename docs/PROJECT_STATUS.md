@@ -15,7 +15,7 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 |-----------|--------|-------|
 | **Family Studio (B2C wizard)** | 🟢 Mature | 8 steps, autosave, media, music, Stripe checkout |
 | **Partner Salon (UI)** | 🟢 Solid MVP | Co-branding, invitations, cyan skin, magic link |
-| **B2B2C commerce (app layer)** | 🟡 Partial | SQL P0–P5.5 ready; wallet API + salon gate ✅ ; checkout saga / webhook / `/salon/facturation` still open |
+| **B2B2C commerce (app layer)** | 🟡 Partial | SQL P0–P5.5 ready; wallet API + salon gate + facturation shell ✅ ; checkout saga / webhook / Stripe Payment Link ⏳ |
 | **RBAC & tokens (P5.5)** | 🟢 Shipped | SQL + TS Phase 2 on `main`; Salon UI Phase 3 (`canViewBalance` gate) deployed |
 | **Automated tests & CI** | 🔴 None | No test framework, no `.github/` workflows |
 | **Documentation** | 🟢 Strong | Rich; some docs ahead/behind code (see §4) |
@@ -37,7 +37,7 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | B2C checkout (Stripe) | 🟢 | Checkout Session |
 | B2B token checkout | 🟡 | Works via legacy TS debit; not P5 saga RPC |
 | Salon UI + invitations | 🟢 | `InvitationComposer`, branding, design system |
-| Salon wallet / billing UI | 🟡 | Admin voit solde **réel** via `GET /api/partner/wallet` + `PartnerContext` ; page `/salon/facturation` + recharge Stripe pending |
+| Salon wallet / billing UI | 🟡 | Admin : solde réel + page `/salon/facturation` (shell ✅) ; Stripe Payment Link + ledger UI ⏳ |
 | B2B2C family delta pricing | 🔴 | `b2b2c_family` not in API |
 | Invitation → family wizard | 🟢 | Magic link + `/tribute/welcome` |
 | Video render pipeline | 🔴 | Documented only (Creatomate target) |
@@ -98,6 +98,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/READ
 - **P5.5 Phase 2 (RBAC foundation):** `partnerRoles.ts`, `partnerCapabilities.ts`, `resolvePartnerMembership.ts`, `createPartnerInvitationWithDebit.ts`; `GET /api/partner/tenants` returns `role` + `capabilities`; `PartnerContext` exposes active tenant capabilities; invitation route uses P5.5 RPC + maps `overdraft_limit_exceeded` → HTTP 402
 - **P5.5 Phase 3 (Salon UI):** `PartnerSalonPageIntro` gates wallet/recharge on `capabilities.canViewBalance` (Directors see no balance); removed dead `PartnerWalletSection.tsx`
 - **Storage egress (wizard médias):** thumbs WebP + cache session + `cacheControl` long sur nouveaux uploads — §4.1 (`39460bd`)
+- **Salon facturation (shell):** `/salon/facturation` admin-only (`canRecharge`) — solde, découvert, nav header, CTA recharge si `NEXT_PUBLIC_PARTNER_TOKEN_RECHARGE_URL` ; sinon message ops / crédit manuel RPC
 
 ### SQL reference (apply in Supabase before prod API)
 
@@ -152,6 +153,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/READ
 | `/api/partner/invitations` | 🟢 | P5.5 RPC debit + `canInvite`; `402` on overdraft limit |
 | `/api/partner/tenants` | 🟢 | RPC P5.4 or join fallback; `role` + `capabilities` per tenant |
 | `/api/partner/wallet` | 🟢 | Admin-only snapshot (`canViewBalance`); balance + credit limit |
+| `/[lang]/salon/facturation` | 🟡 Shell | Admin UI ; Payment Link env optional ; ledger list ⏳ |
 | `/api/stripe/webhook` | 🟡 | Robust idempotence; **catalog sync only** — no `checkout.session.completed` → orders |
 | `/auth/callback` | 🟢 | PKCE, sanitized `?next=` |
 
@@ -221,7 +223,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | Doc | Gap |
 |-----|-----|
 | `TECHNICAL_ONBOARDING` §10b | Stops at P5; P5.1–P5.5 pointer only — defer full rewrite |
-| `B2B2C_COMMERCE` § implementation | Synced June 2026 (RBAC UI ✅; wallet API ✅; facturation pending) |
+| `B2B2C_COMMERCE` § implementation | Synced June 2026 (RBAC UI ✅; wallet API ✅; facturation shell ✅; Payment Link ⏳) |
 | `sql/README.md` | P5.5 in migration table |
 | This file | Point-in-time audit; onboarding stays timeless |
 
@@ -249,13 +251,13 @@ Effort estimates: **1 senior dev**, focused scope. Adjust if multiple contributo
 | # | Task | Effort | Done when |
 |---|------|--------|-----------|
 | 2.1 | `GET /api/partner/wallet` (admin only, `canViewBalance`) | 0.5 d | ✅ Admin sees real balance (`f5a375a`) |
-| 2.2 | `/salon/facturation` page shell (admin only) + link in header | 1 d | `canRecharge` / `canViewLedger` gated; Payment Link CTA (Option A+) |
+| 2.2 | `/salon/facturation` page shell (admin only) + link in header | 1 d | ✅ Shell (`canRecharge` gate, wallet snapshot) ; ⏳ `NEXT_PUBLIC_PARTNER_TOKEN_RECHARGE_URL` + ledger UI |
 | 2.3 | `partnerWallet.ts` + mark `partnerCheckout.ts` `@deprecated` | 0.5 d | New code paths use RPC only |
 | 2.4 | Spike: `POST /api/checkout` inserts `tribute_checkouts` row + calls `debit_partner_tokens_for_checkout` for one mode | 1 d | One happy-path E2E documented (even if family Stripe still stub) |
 | 2.5 | Smoke tests: invitation RPC parse, capabilities map, autosave PATCH (minimal Vitest or script) | 1 d | `npm test` or documented script in CI-ready form |
 | 2.6 | Update `B2B2C_COMMERCE.md` + onboarding §10b pointer only | 0.25 d | Doc matches wallet + P5.5 state |
 
-**Week 2 exit criteria:** Admin sees real wallet; facturation route exists; first step toward checkout saga; minimal regression guard.
+**Week 2 exit criteria:** ✅ Admin sees real wallet; ✅ facturation route (shell). **Remaining:** Stripe Payment Link env, ledger UI, checkout saga spike, minimal regression guard.
 
 ### Explicitly deferred (after 2 weeks)
 
@@ -294,7 +296,7 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 
 **Ce qui est shippé récemment (juin 2026, `main`) :** RBAC P5.5 (Directeur vs Admin) · gate `/salon` · wallet API réel · invitations + débit RPC · co-branding connexion · signature Halo-Éclipse · toggle FR/EN · déconnexion salon.
 
-**Ce qui n’est pas encore prod-ready :** saga `tribute_checkouts` · webhook paiement complet · `/salon/facturation` · tests automatisés · dépréciation `partnerCheckout.ts`.
+**Ce qui n’est pas encore prod-ready :** saga `tribute_checkouts` · webhook paiement complet · Stripe Payment Link recharge · ledger UI · tests automatisés · dépréciation `partnerCheckout.ts`.
 
 ---
 

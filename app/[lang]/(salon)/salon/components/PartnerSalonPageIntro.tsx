@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
+
 import type { Locale } from "@/i18n.config";
+import { appRoutes } from "@/src/lib/appRoutes";
 import { usePartner } from "@/src/lib/partner/PartnerContext";
 
 type PartnerSalonPageIntroProps = {
@@ -54,12 +57,12 @@ export function PartnerSalonPageIntro({ lang }: PartnerSalonPageIntroProps) {
             <p className="font-editorial text-3xl font-medium tabular-nums tracking-tight text-white/90 md:text-4xl">
               {walletBalance}
             </p>
-            <button
-              type="button"
+            <Link
+              href={appRoutes.salonFacturation(lang)}
               className="font-label text-[10px] font-bold uppercase tracking-[0.38em] text-violet-300/75 transition-colors hover:text-violet-200"
             >
               {copy.recharge}
-            </button>
+            </Link>
           </div>
         </div>
       )}

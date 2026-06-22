@@ -30,7 +30,7 @@ Détail livrables et double tarification : [`DELIVERABLES_AND_PACKAGES.md`](DELI
 | **Base de données** | **Terminée** | P4 wallets/ledger · P4.1 RLS rôles · **P5** invitations + checkouts + `debit_partner_tokens_for_checkout()` · **P5.1** index unique invitation `pending` · **P5.5** RBAC overdraft + débit invitation (SQL) |
 | **Contrat manifeste (TS)** | **Terminée** | `wizardDeliverables.ts` + `wizardDeliverables.utils.ts` |
 | **Routes & auth** | **Terminée** | Studio `/[lang]/studio` · Salon `/[lang]/salon` · connexions séparées · redirects legacy — voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) |
-| **UI partenaire (Salon)** | **Partielle** | Invitation + branding ✅ · RBAC UI ✅ (`PartnerContext.capabilities`, bloc jetons masqué pour Directeur) · solde admin **réel** via `GET /api/partner/wallet` ✅ · page `/salon/facturation` + recharge Stripe ⏳ — voir [`PROJECT_STATUS.md`](PROJECT_STATUS.md) |
+| **UI partenaire (Salon)** | **Partielle** | Invitation + branding ✅ · RBAC UI ✅ · wallet API ✅ · page `/salon/facturation` shell ✅ · Stripe Payment Link + ledger UI ⏳ — voir [`PROJECT_STATUS.md`](PROJECT_STATUS.md) |
 | **Branding Salon connexion** | **MVP** | Lien `?partenaire=<slug>` + `tenants.settings.brand_*` — upload self-service Phase 2 |
 | **API invitations & magic link** | **Partielle** | Flow ✅ · débit P5.5 RPC sur `main` (`create_partner_invitation_with_debit`, HTTP 402 si overdraft) |
 | **Checkout 3 modes** | **À faire** | `checkout_mode` (`b2c` / `b2b_partner` / `b2b2c_family`), RPC P5, `computeB2B2CFamilyPricing()` |

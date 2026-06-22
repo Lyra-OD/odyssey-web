@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
@@ -33,7 +34,7 @@ export function PartnerHeader({
   localeSwitcher,
   initialBrand,
 }: PartnerHeaderProps) {
-  const { activeTenantId, availableTenants, isLoading, setActiveTenantId } =
+  const { activeTenantId, availableTenants, isLoading, setActiveTenantId, capabilities } =
     usePartner();
   const [slugBranding, setSlugBranding] = useState<SlugBranding | null>(null);
 
@@ -48,11 +49,15 @@ export function PartnerHeader({
           tenantAria: "Active partner workspace",
           tenantLoading: "Loading…",
           tenantEmpty: "No partner workspace",
+          navHome: "Invitations",
+          navBilling: "Billing",
         }
       : {
           tenantAria: "Espace partenaire actif",
           tenantLoading: "Chargement…",
           tenantEmpty: "Aucun espace partenaire",
+          navHome: "Invitations",
+          navBilling: "Facturation",
         };
 
   const tenantSelectValue = activeTenantId ?? "";
@@ -126,15 +131,39 @@ export function PartnerHeader({
   return (
     <header className="relative z-30 border-b border-white/[0.06] bg-[#020202]/40 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-[1400px] items-start justify-between gap-6 px-5 py-5 md:px-12 md:py-6">
-        <PartnerBrandLockup
-          key={activeTenantId ?? logoUrl ?? brandLabel}
-          brandLabel={brandLabel}
-          logoUrl={logoUrl}
-          poweredByLabel={poweredByLabel}
-          variant="dashboard"
-          animate
-          animationPreset="dashboard"
-        />
+        <div className="min-w-0 flex-1">
+          <PartnerBrandLockup
+            key={activeTenantId ?? logoUrl ?? brandLabel}
+            brandLabel={brandLabel}
+            logoUrl={logoUrl}
+            poweredByLabel={poweredByLabel}
+            variant="dashboard"
+            animate
+            animationPreset="dashboard"
+          />
+
+          {capabilities?.canRecharge ? (
+            <nav
+              aria-label={
+                lang === "en" ? "Partner console" : "Console partenaire"
+              }
+              className="mt-4 flex flex-wrap gap-5 md:mt-5"
+            >
+              <Link
+                href={appRoutes.salon(lang)}
+                className="font-label text-[10px] font-bold uppercase tracking-[0.36em] text-zinc-500 transition-colors hover:text-white"
+              >
+                {copy.navHome}
+              </Link>
+              <Link
+                href={appRoutes.salonFacturation(lang)}
+                className="font-label text-[10px] font-bold uppercase tracking-[0.36em] text-violet-300/80 transition-colors hover:text-violet-200"
+              >
+                {copy.navBilling}
+              </Link>
+            </nav>
+          ) : null}
+        </div>
 
         <div className="flex shrink-0 flex-col items-end gap-3 pt-1">
           <LocaleSwitcher lang={lang} {...localeSwitcher} />

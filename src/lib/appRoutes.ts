@@ -6,6 +6,8 @@ export const appRoutes = {
   studio: (lang: Locale) => `/${lang}/studio`,
   /** Console funérarium — invitations B2B2C, jetons. */
   salon: (lang: Locale) => `/${lang}/salon`,
+  /** Facturation partenaire — solde, recharge (admin). */
+  salonFacturation: (lang: Locale) => `/${lang}/salon/facturation`,
   /** Connexion famille — inscription autorisée. */
   studioConnexion: (lang: Locale) => `/${lang}/studio/connexion`,
   /** Connexion partenaire — provisionnement admin uniquement. */
