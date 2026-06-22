@@ -32,7 +32,7 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | Marketing / landing | 🟢 | Hero, process, pricing, FR/EN i18n |
 | Studio login + 8-step wizard | 🟢 | Core product path ; login = signature **Halo-Éclipse** |
 | Connexion UX (Studio + Salon) | 🟢 | Halo-Éclipse, `OdysseyConnexionMark`, i18n toggle, CTA cyan — [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon) |
-| Media upload / Storage | 🟢 | Client upload + signed URLs + admin delete |
+| Media upload / Storage | 🟢 | Client upload + signed URLs + **WebP thumbs** + session cache egress (`39460bd`) — voir §4.1 |
 | Licensed music (Stingray) | 🟢 | Live MAPI + auto-mock without credentials |
 | B2C checkout (Stripe) | 🟢 | Checkout Session |
 | B2B token checkout | 🟡 | Works via legacy TS debit; not P5 saga RPC |
@@ -97,6 +97,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/READ
 - **Connexion — signature Halo-Éclipse (juin 2026):** vidéo `eclipse_login.mp4` (corona constante) + halos CSS d’état (violet / cyan / vert / magenta) ; `OdysseyConnexionMark` (Montserrat blanc lumineux) ; CTA cyan respirant ; séquence cinéma Actes I–V — voir [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)
 - **P5.5 Phase 2 (RBAC foundation):** `partnerRoles.ts`, `partnerCapabilities.ts`, `resolvePartnerMembership.ts`, `createPartnerInvitationWithDebit.ts`; `GET /api/partner/tenants` returns `role` + `capabilities`; `PartnerContext` exposes active tenant capabilities; invitation route uses P5.5 RPC + maps `overdraft_limit_exceeded` → HTTP 402
 - **P5.5 Phase 3 (Salon UI):** `PartnerSalonPageIntro` gates wallet/recharge on `capabilities.canViewBalance` (Directors see no balance); removed dead `PartnerWalletSection.tsx`
+- **Storage egress (wizard médias):** thumbs WebP + cache session + `cacheControl` long sur nouveaux uploads — §4.1 (`39460bd`)
 
 ### SQL reference (apply in Supabase before prod API)
 
@@ -111,6 +112,33 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/READ
 - `partner` (Director): can invite; never sees balance/ledger/billing
 - `partner_admin` (Admin): balance, ledger, manual top-up (Stripe Payment Links + ops for MVP)
 - Checkout `b2b2c_family` skips wallet debit if `invitation_debit` already in ledger
+
+### 4.1 Supabase Storage egress (juin 2026)
+
+**Contexte :** pic ~5,5 Go egress (plan Free 5 Go) lors de sessions dev/QA wizard (juin 3–4) — médias en pleine résolution re-téléchargés à chaque étape ; cached egress quasi nul.
+
+**Shippé sur `main` (`39460bd`) — sans transformations Supabase (plan Free) :**
+
+| Mesure | Détail |
+|--------|--------|
+| Thumbs WebP ~400px | Générés **côté client** à l’upload ; path `photo.jpg` → `photo-thumb.webp` (pas de colonne DB) |
+| Grilles / queue | `previewUrl` = thumb ; modal directeur = `fullPreviewUrl` (original) |
+| Cache session | `fetchProjectMediaCached` — 50 min ; invalidation après upload/delete |
+| `cacheControl` | **1 an** sur **nouveaux** uploads uniquement (`storageEgressPolicy.ts`) |
+| Legacy sans thumb | `StoragePreviewImage` : fallback automatique sur l’original (rien de cassé) |
+
+**Fichiers clés :** `src/lib/media/storageEgressPolicy.ts`, `thumbnailPath.ts`, `generateImageThumbnail.ts`, `projectMediaCache.ts`, `hydrateMediaSignedUrls.server.ts`, `StoragePreviewImage.tsx`.
+
+**Décision équipe — ne pas faire maintenant (revisité après surveillance dashboard) :**
+
+| Option | Priorité | Verdict |
+|--------|----------|---------|
+| **Transformations Supabase** (`/render/image/…`) | — | **Ne pas faire** — hors scope Free / redondant avec nos thumbs |
+| **Script backfill thumbs** (médias historiques) | 5/10 | Optionnel ; dry-run + 1 projet QA d’abord ; pic egress **pendant** le script |
+| **Mettre à jour `cacheControl` objets existants** | 3/10 | **Non recommandé** — re-upload souvent requis → pic egress/ingress ; ROI faible vs nouveaux uploads déjà couverts |
+| **Logos partenaire → `/public` ou CDN** | 2/10 | Gain faible ; plus tard si multi-partenaires |
+
+**Prochaine étape egress :** surveiller **Usage → Storage egress** Supabase **2 semaines** post-deploy. Si courbe stable → rien de plus. Si pic sur **vieux** projets → backfill thumbs avant tout script `cacheControl` legacy.
 
 ---
 
@@ -236,6 +264,7 @@ Effort estimates: **1 senior dev**, focused scope. Adjust if multiple contributo
 - Full `b2b2c_family` family delta UI (`computeB2B2CFamilyPricing`)
 - Video render pipeline
 - Full test suite + GitHub Actions
+- **Storage legacy :** backfill thumbs historiques ; update `cacheControl` objets existants — voir §4.1 (surveiller dashboard 2 sem. d’abord)
 
 ---
 
