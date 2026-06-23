@@ -35,6 +35,7 @@
 7. [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — wizard 8 étapes.
 8. [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) — hub onboarding.
 9. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) — dated audit, debt register, 2-week plan (living doc).
+10. [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) — **checklist QA Salon** (invitation, 402, solde) — **feu vert requis avant checkout saga**.
 
 Après toute modification wizard, forfaits/livrables, pricing, checkout, routes/auth ou `/api/music/*` : mettre à jour les fichiers concernés (règle §13 de l’onboarding).
 

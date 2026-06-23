@@ -242,7 +242,7 @@ Effort estimates: **1 senior dev**, focused scope. Adjust if multiple contributo
 | 1.3 | Extend `GET /api/partner/tenants` with `role` + `capabilities` | 0.5 d | ✅ `PartnerContext` exposes capabilities |
 | 1.4 | Salon layout: redirect non-partner users away from `/salon` | 0.25 d | ✅ `f5a375a` |
 | 1.5 | Hide wallet block for Directors (`canViewBalance`) | 0.25 d | ✅ Phase 3 (`1acd375`) |
-| 1.6 | Manual QA checklist: branded login, invite, overdraft (402), admin credit | 0.5 d | ⏳ partial (Director/Admin UI + wallet API verified) |
+| 1.6 | Manual QA checklist: branded login, invite, overdraft (402), admin credit | 0.5 d | ⏳ doc prêt — [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) ; exécution en cours |
 
 **Week 1 exit criteria:** ✅ invitation RPC on `main`; ✅ capabilities client-side; ✅ Directors see no balance; ✅ salon layout gate; ✅ wallet API. **Remaining:** full QA doc (1.6), Supabase P5.5 in all envs.
 
@@ -288,7 +288,8 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 
 1. **[`PROJECT_STATUS.md`](PROJECT_STATUS.md)** (ce fichier) — où on en est, dette, plan 2 semaines.
 2. **[`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)** — signature visuelle connexion **Halo-Éclipse**.
-3. **[`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md)** — URLs studio/salon, branding `?partenaire=`, checklist QA manuelle.
+3. **[`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md)** — URLs studio/salon, branding `?partenaire=`, checklist QA connexion.
+3b. **[`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)** — checklist QA partenaire (invitation, 402, solde) — **avant checkout saga**.
 4. **[`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)** — modèle commerce 3 modes ; ce qui reste (saga checkout, `b2b2c_family`).
 5. **[`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md)** — hub technique complet (§4 auth, §10 roadmap).
 
