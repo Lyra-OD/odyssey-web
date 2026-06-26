@@ -25,6 +25,49 @@ Le schéma P4/P5.5 **reste valide** pour les tenants non-freemium et le mode `b2
 
 ---
 
+## Agnosticité backend & multi-verticalité pilotée par le Tenant
+
+> **Règle CEO (juin 2026) :** Odyssey n’est pas une application funéraire. Le back-end (Supabase, RPC, webhook, saga checkout) reste **strictement agnostique**. Le **modèle d’affaires** (freemium + RevShare vs jetons prépayés legacy) est **piloté par la configuration du locataire** (`tenants`), **jamais hardcodé globalement** dans le code applicatif.
+
+### Séparation des axes
+
+| Axe | Colonne / source | Rôle | Hardcodé globalement ? |
+|-----|------------------|------|------------------------|
+| **Vertical métier** | `tenants.vertical` | Catégorie produit (`human`, `pet`, `wedding`, `event`…) — branding, copy UI, limites manifeste | **Non** — par tenant |
+| **Modèle commercial B2B2C** | `tenants.is_freemium` | `true` → freemium + RevShare · `false` → jetons P5.5 | **Non** — par tenant |
+| **Taux RevShare** | `tenants.settings.revshare_bps` + snapshot `tribute_checkouts.commission_rate_bps` | Default **3000** (30 %) si absent · figé au checkout T | **Non** — default ≠ override tenant |
+| **Canal checkout** | `tribute_checkouts.checkout_mode` + `projects.invitation_id` | `b2c` / `b2b_partner` / `b2b2c_family` | **Non** — résolu par contexte projet |
+
+### Isolation garantie par T1 (P6)
+
+La migration **`odyssey_p6_freemium_revshare.sql`** n’introduit **aucune** règle métier globale :
+
+1. **`tenants.is_freemium`** (bool, default `false`) — chaque partenaire choisit son modèle :
+   - **Gros acteur funéraire** (ex. Urgel Bourgie) → `is_freemium = true` · Souvenir 0 $ · RevShare sur upsell
+   - **Petit salon, vétérinaire, autre vertical** → `is_freemium = false` · wallet jetons P5.5 inchangé
+   - **Mariage / événement futur** → même schéma ; seul le vertical + le manifeste UI diffèrent
+
+2. **`commission_rate_bps`** — **jamais** une constante unique dans le webhook :
+   - Lecture `COALESCE(tenants.settings->>'revshare_bps', '3000')` au moment du checkout
+   - **Snapshot** sur `tribute_checkouts.commission_rate_bps` pour audit et clawback
+   - Accrual RPC idempotente **par `tenant_id`** — ledger commissions isolé du ledger jetons
+
+3. **Coexistence sans fuite** :
+   - `partner_token_wallets` / `partner_token_ledger` → **legacy jetons uniquement**
+   - `partner_commission_balances` / `partner_commission_ledger` → **RevShare uniquement** (si `is_freemium = true` et paiement famille > 0)
+   - Aucun tenant freemium ne déclenche un débit jetons ; aucun tenant legacy ne reçoit de commission RevShare (v1)
+
+### Ce que le code ne doit jamais faire
+
+- `if (vertical === 'human') { isFreemium = true }` — **interdit**
+- Taux RevShare 30 % en dur sans lire le tenant — **interdit** (default 3000 acceptable en fallback config)
+- Mélanger jetons et centimes dans le même ledger — **interdit**
+- Inférer le modèle commercial depuis le rôle utilisateur ou le slug partenaire — **interdit**
+
+**Référence implémentation Phase A :** `resolveCheckoutContext()` lit `tenant_id` → `is_freemium` + `revshare_bps` ; branche saga et webhook en conséquence. Voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) et [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.2.
+
+---
+
 ## Matrice de nommage (Option A)
 
 Noms **marketing** en UI · IDs **techniques** inchangés en SQL / `wizard_state` / checkout.

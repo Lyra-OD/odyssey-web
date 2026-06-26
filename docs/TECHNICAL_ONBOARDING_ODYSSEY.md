@@ -54,6 +54,25 @@ La logique metier vise un modele hybride **v2 (juin 2026)** :
 
 Canon commerce : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.
 
+### Agnosticité backend & multi-verticalité (règle CEO)
+
+Odyssey n'est **pas** une application funéraire. Le back-end Supabase / API reste **agnostique** : funérariums, animaux de compagnie, mariages, événements = **même schéma**, **même saga checkout**, **même webhook Stripe**.
+
+Le **modèle d'affaires B2B2C** est **strictement piloté par la configuration du Tenant** — jamais hardcodé globalement :
+
+| Configuration tenant | Effet |
+|----------------------|-------|
+| `tenants.vertical` | Catégorie métier (`human`, `pet`, `wedding`…) — copy UI, manifeste livrables |
+| `tenants.is_freemium` (P6) | `true` → freemium + RevShare · `false` → jetons prépayés legacy P5.5 |
+| `tenants.settings.revshare_bps` | Taux commission (default 3000 = 30 %) — snapshot sur `tribute_checkouts.commission_rate_bps` |
+
+**Exemples coexistants (prod cible) :**
+- Urgel Bourgie (`vertical = human`, `is_freemium = true`) → Souvenir 0 $, RevShare 30 % upsell
+- Petit salon funéraire (`is_freemium = false`) → wallet jetons, débit à l'invitation, pas de RevShare
+- Clinique vétérinaire future (`vertical = pet`, `is_freemium = false`) → jetons prépayés, même RPC P5.5
+
+Detail complet : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) § Agnosticité backend.
+
 ---
 
 ## 2) Stack technique
@@ -145,8 +164,11 @@ Document canonique : [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-ha
 
 ### 4.2 Multi-tenant (B2B / B2B2C / white-label ready)
 
+> **Multi-verticalité :** `vertical` décrit le **marché** (human, pet, wedding…). `is_freemium` + `revshare_bps` décrivent le **modèle commercial** — axes indépendants, tous deux sur `tenants`. Voir §1 et [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) § Agnosticité backend.
+
 Table `public.tenants` (existante):
 - `id uuid PK`, `name text`, `slug text`, `vertical text`, `settings jsonb`, `created_at`.
+- **P6 :** `is_freemium boolean NOT NULL DEFAULT false` — freemium + RevShare vs jetons legacy (par tenant, jamais global).
 - 2 lignes seedees: `humans` (vertical `human`) et `pets` (vertical `pet`).
 
 Table `public.tenant_members` (creee par P1):
@@ -160,6 +182,7 @@ Table `public.tenant_members` (creee par P1):
 - `name` = label commercial modifiable.
 - `settings.brand_label` = marque affichée connexion Salon + header dashboard partenaire.
 - `settings.brand_logo_url` = URL publique du logo (connexion `?partenaire=<slug>` et `/salon`) — RPC P5.2 / P5.4 (voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md), [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md)).
+- `settings.revshare_bps` = taux RevShare partenaire (default **3000** = 30 %) — lu au checkout, snapshot sur `tribute_checkouts.commission_rate_bps`.
 - `vertical` = categorie metier (`human`, `pet`, futur `wedding`, `event`...) -- permet d'avoir plusieurs tenants par vertical (ex. white-label d'un studio funeraire dans `vertical = 'human'`).
 
 **Resolution du tenant dans le code**: la route `app/api/projects/draft/route.ts` fait un `SELECT tenant_id FROM tenant_members WHERE user_id = auth.uid() ORDER BY created_at ASC LIMIT 1` pour recuperer le tenant principal. Si demain un user appartient a plusieurs tenants, le wizard lui demandera explicitement de choisir.
@@ -346,7 +369,7 @@ Tables actives dans `public`:
 
 | Table | Role | Securite |
 |---|---|---|
-| `tenants` | Verticale + partenaires ; **`is_freemium`** (P6) = canal Souvenir gratuit | Lecture interne + partner SELECT |
+| `tenants` | Verticale + partenaires ; **`vertical`** (marché) · **`is_freemium`** (P6, modèle commercial) · **`settings.revshare_bps`** (taux commission) | Lecture interne + partner SELECT |
 | `tenant_members` | Jointure M:N user <-> tenant | RLS: un user voit ses propres rattachements |
 | `profiles` | Profil enrichi par user (FK auth.users) | RLS si necessaire (au minimum SELECT own) |
 | `projects` | Hommage en cours (FK profiles + tenants) | RLS: ownership via `user_id = auth.uid()` |
