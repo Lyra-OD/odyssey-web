@@ -1,16 +1,25 @@
 # QA P5.5 — Salon partenaire (checklist manuelle)
 
+> ## ✅ QA TERMINÉE — PRODUCTION (juin 2026)
+>
+> Cette checklist a été **exécutée et validée en conditions réelles** (prod) : RBAC §2 · solde bout en bout §3 · gate non-partenaire R6.
+>
+> **Important — coexistence B2B2C v2 :** les scénarios **débit à l'invitation** et **overdraft 402** documentés ici concernent le modèle **legacy jetons** (`tenants.is_freemium = false`). Pour les gros clients freemium (ex. Urgel Bourgie), le Souvenir offert coûte **0 jeton** — voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 et le sprint Phase A (P6).
+>
+> Ce document reste une **référence historique** pour les petits salons en jetons.
+
 **Last updated: June 2026**
 
-Document **exécutable** pour valider le tunnel partenaire **avant** tout spike `tribute_checkouts` / checkout saga.
+Document **exécutable** — tunnel partenaire **legacy jetons** (P5.5), QA **terminée prod**.
 
-**Principe :** pas de logique de paiement B2B2C avancée tant que cette checklist n’est pas **feu vert total** sur les trois piliers :
+**Piliers validés (historique jetons) :**
 
 1. **Tunnel invitation** (création → magic link → accept → wizard famille)
-2. **402 Overdraft** (limite de découvert respectée)
+2. **402 Overdraft** (legacy — tenants non-freemium)
 3. **Solde bout en bout** (DB ↔ API ↔ UI accueil ↔ facturation)
 
-**Références :** [`PROJECT_STATUS.md`](PROJECT_STATUS.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) · [`sql/odyssey_p5_5_partner_rbac_overdraft.sql`](sql/odyssey_p5_5_partner_rbac_overdraft.sql)
+**Références :** [`PROJECT_STATUS.md`](PROJECT_STATUS.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 · [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) · [`sql/odyssey_p5_5_partner_rbac_overdraft.sql`](sql/odyssey_p5_5_partner_rbac_overdraft.sql)
+
 
 ---
 
@@ -237,7 +246,7 @@ Puis revérifier solde UI (S2/S3).
 
 ## 7. Critère de passage (feu vert)
 
-**GO** pour ouvrir le spike `tribute_checkouts` **uniquement si** :
+**GO** (historique — **atteint juin 2026**) :
 
 | Pilier | Sections | Statut |
 |--------|----------|--------|
@@ -247,7 +256,7 @@ Puis revérifier solde UI (S2/S3).
 | 402 Overdraft | §5 — O1–O6 | ☐ Tous OK |
 | RBAC | §2 — R1–R5 minimum | ☐ Tous OK |
 
-**NO-GO :** un seul ☐ sur I3, O3, O4, S2 ou R4/R5 → corriger avant checkout saga.
+**Suite :** sprint **B2B2C v2 Phase A** — P6, saga checkout freemium, RevShare — voir [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §10.
 
 ---
 

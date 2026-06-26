@@ -1,11 +1,11 @@
 # SQL Odyssey — état courant
 
-> **Attention :** les `CHECK` et colonnes forfaits (`granted_package`, `selected_package`, `basePackage` côté app) utilisent les **IDs legacy** `essential`, `signature`, `heritage`. **Ne pas les renommer** en SQL sans migration P6+. Correspondance avec les noms commerciaux (Souvenir / Héritage / Éternité) : [`docs/DELIVERABLES_AND_PACKAGES.md`](../DELIVERABLES_AND_PACKAGES.md).
+> **P6+ :** l'ID technique `legendary` (forfait Légendaire / Gants Blancs, B2C 499 $) sera ajouté par `odyssey_p6_freemium_revshare.sql`. Jusque-là, les CHECK SQL n'acceptent que `essential`, `signature`, `heritage`.
 
 Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle** de la base Supabase d'Odyssey. Tous les scripts de migration sont **idempotents** : on peut les ré-exécuter sans dégât.
 
-**Commerce B2B2C (schéma + saga)** : voir [`docs/B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md).  
-**Note :** les migrations P4–P5.5 peuvent être en base ; le code Next.js (`/api/checkout`) n'utilise pas encore `tribute_checkouts` ni `debit_partner_tokens_for_checkout()`. Voir [`PROJECT_STATUS.md`](../PROJECT_STATUS.md).
+**Commerce B2B2C v2 :** voir [`docs/B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · RevShare [`PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md).  
+**Note :** migrations P4–P5.5 en base ✅ ; **P6** (freemium + commissions) documentée · code Phase A sprint. Voir [`PROJECT_STATUS.md`](../PROJECT_STATUS.md).
 
 ---
 
@@ -27,6 +27,8 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 12 | `odyssey_p5_3_tenant_partner_select.sql` | **Patch** | RLS SELECT `tenants` pour rôles `partner` / `partner_admin`. |
 | 14 | `odyssey_p5_4_partner_tenants_for_member.sql` | **Patch** | RPC `get_partner_tenants_for_member()` — logo + dropdown Salon après login. |
 | 15 | `odyssey_p5_5_partner_rbac_overdraft.sql` | **Patch** | RBAC admin wallet/ledger, overdraft limité, débit atomique invitation, crédit manuel, anti double-débit checkout. |
+| 16 | `odyssey_p6_freemium_revshare.sql` | **Migration** | **B2B2C v2 Phase A** — voir [§ P6](#p6--freemium--revshare-b2b2c-v2) |
+| — | `odyssey_p6_1_scan_sessions.sql` | **Migration (Phase B)** | Scanner Compagnon — table `scan_sessions` |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
 | — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed QA** | Partenaire fictif + 100 jetons — **après P4**, hors chaîne prod. |
 | — | `odyssey_partner_tenant_branding_example.sql` | **Référence** | Mise à jour `tenants.settings` (`brand_label`, `brand_logo_url`) — Salon connexion. |
@@ -85,7 +87,30 @@ Scripts **jamais à supprimer du repo** : fichiers `odyssey_p*.sql` (historique 
 
 ---
 
-## Modèle de données — vue rapide (post-P5)
+## P6 — Freemium + RevShare (B2B2C v2)
+
+**Fichier :** `odyssey_p6_freemium_revshare.sql` *(à créer — Phase A sprint)*  
+**Prérequis :** P5 + P5.5 appliqués.
+
+| Objet | Rôle |
+|-------|------|
+| **`tenants.is_freemium`** | `boolean` default `false` — `true` = canal acquisition Souvenir gratuit (ex. Urgel Bourgie) |
+| **`partner_commission_balances`** | Agrégat RevShare par tenant : `accrued_cents`, `paid_cents`, `pending_cents` |
+| **`partner_commission_ledger`** | Journal append-only : `commission_accrual`, `commission_clawback`, `payout` — idempotence `stripe_event_id` |
+| **`tribute_checkouts`** (ALTER) | Colonnes `commission_cents`, `commission_rate_bps`, `commission_status` ; package id `legendary` |
+| **`accrue_partner_commission_for_checkout()`** | RPC idempotente — 30 % du brut Stripe · `service_role` only |
+
+Détail métier : [`PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · saga : [`B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) v2.
+
+**Seed QA recommandé (post-migration) :**
+
+```sql
+UPDATE public.tenants SET is_freemium = true WHERE slug = 'partner-qa-demo';
+```
+
+---
+
+## Modèle de données — vue rapide (post-P5 / cible P6)
 
 ```
 auth.users
@@ -101,19 +126,22 @@ auth.users
 
 public.tenants
    ├── slug (identifiant stable — liens ?partenaire=)
-   ├── settings jsonb (brand_label, brand_logo_url, …)
-   ├── partner_token_wallets   (PK tenant_id, balance)
+   ├── is_freemium (P6 — canal Souvenir 0 $)
+   ├── settings jsonb (brand_label, brand_logo_url, revshare_bps, …)
+   ├── partner_token_wallets   (PK tenant_id — legacy jetons)
+   ├── partner_commission_balances (P6 — RevShare agrégat)
+   ├── partner_commission_ledger   (P6 — journal commissions)
    ├── partner_invitations     (granted_package, status, magic link hash)
    └── (funérarium / vertical)
 
-public.tribute_checkouts        (P5 — saga checkout)
+public.tribute_checkouts        (P5 + P6 — saga checkout v2)
    ├── checkout_mode: b2c | b2b_partner | b2b2c_family
-   ├── granted_package / selected_package
-   ├── partner_tokens_debited / family_total_cents
-   └── status: pending → partner_debited → awaiting_payment → completed | compensated
+   ├── granted_package / selected_package (+ legendary P6)
+   ├── family_total_cents / commission_cents / commission_status
+   └── status: pending → awaiting_payment → completed | failed | refunded
 
-public.partner_token_ledger
-   └── tribute_checkout_id (FK nullable, P5)
+public.partner_token_ledger     (legacy jetons — coexistence)
+public.partner_commission_ledger (P6 — RevShare, séparé des jetons)
 ```
 
 Tables historiques inchangées : `media_assets`, `orders`, `billing_catalog`, `webhook_events`.
@@ -124,8 +152,9 @@ Tables historiques inchangées : `media_assets`, `orders`, `billing_catalog`, `w
 
 | Fonction | Rôle |
 |----------|------|
-| `partner_tokens_for_granted_package(text)` | Mappe `essential`→1, `signature`→2, `heritage`→4 jetons. |
-| `debit_partner_tokens_for_checkout(uuid)` | `FOR UPDATE` wallet + ledger + `tribute_checkouts.status = partner_debited`. Exécutable par **`service_role`** uniquement. |
+| `partner_tokens_for_granted_package(text)` | Legacy — mappe jetons (1/2/4) ; **0 pour freemium Souvenir** (app P6) |
+| `debit_partner_tokens_for_checkout(uuid)` | Legacy — jetons · `partner_debited` (tenants non-freemium) |
+| `accrue_partner_commission_for_checkout(...)` | **P6** — RevShare 30 % brut · idempotent webhook |
 
 ---
 

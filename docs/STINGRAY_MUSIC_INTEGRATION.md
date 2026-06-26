@@ -274,13 +274,28 @@ curl -sI "http://localhost:3000/api/music/preview?trackId=sr:YOUR_PLAYLIST:YOUR_
 
 ---
 
-## Partner token model (wizard checkout)
+## Partner token model & B2B2C v2 freemium (wizard checkout)
 
-Pricing is **not** part of Stingray; see [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) and `src/lib/wizard/pricingConfig.ts`.
+Pricing is **not** part of Stingray; see [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2, and `src/lib/wizard/pricingConfig.ts`.
 
-- **B2C:** amounts in cents; Stripe `total_cents` = sum of package + extensions.
-- **B2B:** partners debit **tokens** (1 / 2 / 4 per package); wholesale **4000¢ per token** (`PARTNER_TOKEN_COST_CENTS`).
-- Partner retail margin ≈ `calculatePartnerMargin(packageId)` = public `priceCents` − (4000 × tokens). Partners set their own resale price; the wizard shows **token cost only**, not dollars.
+### B2C direct (Quiet Luxury)
+
+- Amounts in cents via Stripe: **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $**.
+- **Stingray** (Standard/Premium tiers) is included in the paid package value proposition — monetized through **family upsell**, not partner tokens.
+
+### B2B2C freemium (`tenants.is_freemium = true`)
+
+- Partner offers **Souvenir at 0 $ / 0 jetons** — acquisition lead-magnet.
+- Family upsell (Héritage / Éternité) pays **full price** via Stripe.
+- **Stingray** on Souvenir/Héritage is part of the **free or paid family experience**; partner RevShare (30 % gross Stripe) is on upsell + extensions — see [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
+- Partner **never** sees token debit for freemium Souvenir invitations.
+
+### B2B legacy jetons (`is_freemium = false`)
+
+- Partners debit **tokens** (1 / 2 / 4 per package); wholesale **4000¢ per token** (`PARTNER_TOKEN_COST_CENTS`).
+- Coexists with freemium v2 — see [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) (✅ terminée prod).
+
+**Catalog tiers (unchanged):** Souvenir / Héritage → **Standard** Stingray search · Éternité / Licence Premium → **Premium**.
 
 ---
 

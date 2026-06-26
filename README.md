@@ -1,25 +1,34 @@
 # Odyssey Frontend
 
-Application Next.js 14 (App Router) pour le Studio Odyssey:
-- authentification Supabase,
-- **wizard hommage 8 etapes** (autosave, montage, musique Stingray, extensions, checkout hybride),
-- ingestion media massive,
-- pipeline Stripe (catalog + webhook robuste), **checkout B2B jetons** (partenaires) et **architecture B2B2C** (invitations famille, saga `tribute_checkouts` — **DB P5 en place**, checkout 3 modes encore à brancher).
+Application Next.js 14 (App Router) pour le **Studio Odyssey** — hommages vidéo premium en B2C direct et via le canal partenaire funéraire (B2B2C).
+
+## Résumé exécutif
+
+- **Wizard hommage 8 étapes** — autosave, montage trois actes, musique Stingray licenciée, extensions à la carte, checkout Stripe.
+- **Salon partenaire (B2B2C)** — co-branding, invitations famille, RBAC Admin/Directeur, wallet legacy jetons (P5.5 ✅ QA prod).
+- **Modèle B2B2C v2 (Scrypta Killer)** — **Freemium** : le forfait **Souvenir** est offert gratuitement par le partenaire (lead-magnet) ; upsell famille en prix plein ; **RevShare 30 %** du brut Stripe reversé au partenaire via ledger commissions (P6).
+- **B2C direct (Quiet Luxury)** — 3 forfaits premium : **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $** (Gants Blancs) — sans tier gratuit.
+- **Scanner Compagnon IA** — Killer App d’ingestion : QR Code sur le wizard desktop → session web mobile → scan photos papier → restauration IA Avant/Après → conversion vers Éternité ou Légendaire.
+- **Stack** — Supabase (auth, RLS, Storage), Stripe (checkout + webhook), déploiement Vercel.
+
+**État juin 2026 :** fondations Salon **certifiées prod** (QA P5.5 ✅) · doc commerce v2 **complète** · implémentation P6 (saga checkout, RevShare, Scanner) = **prochain sprint**.
 
 ## Documentation principale
 
 | Document | Contenu |
 |----------|---------|
-| `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` | **Document central:** stack, structure repo, fait / a terminer, **moteur video**, positionnement haut de gamme, **potentiel & adoption**, **croissance virale** (ethique, co-creation, formats, **verticaliste animaux**), upsells, **securite P0–P2**, elevation produit, multi-skins, isolation medias, regles d'equipe — **sommaire en tete de fichier**. |
-| `docs/DELIVERABLES_AND_PACKAGES.md` | **Contrat des livrables et double tarification** (manifeste `wizardDeliverables.ts`, Souvenir/Héritage/Éternité, Salon 16:9 / Social 9:16). |
-| `docs/B2B2C_COMMERCE.md` | **Commerce 3 modes** (`b2c`, `b2b_partner`, `b2b2c_family`), prix/jetons, regle `granted_package`, saga Stripe + jetons, etat DB vs API. |
-| `docs/ROUTES_AND_AUTH.md` | **Routes canoniques** (`studio` / `salon`), double connexion, legacy `/login`, branding partenaire sur Salon connexion. |
-| `docs/WIZARD_ARCHITECTURE.md` | Wizard 8 etapes, autosave, **pricing hybride**, bundle Heritage (67 $), tiers musique, checkout (3 branches). |
-| `docs/STINGRAY_MUSIC_INTEGRATION.md` | Musique licenciee (MAPI + mock auto), **catalogues Standard / Premium**, param `tier` sur `/api/music/search`. |
-| `docs/sql/README.md` | Migrations SQL ordonnees (**P0–P5**, patch P4.1, seed QA). |
-| `docs/CONVENTIONS.md` | Conventions de code (anglais, perimetre Next vs app-backend, hierarchie doc). |
-| `docs/PROJECT_STATUS.md` | **Audit + plan 2 semaines** (EN) — maturite, dette technique, P5.5/RBAC, actions prioritaires. |
-| `docs/Manifesto-V10.4.md` | Vision produit (non reference d'implementation checkout). |
+| [`docs/B2B2C_COMMERCE.md`](docs/B2B2C_COMMERCE.md) | **Commerce v2** — freemium, RevShare, saga checkout, coexistence legacy jetons. |
+| [`docs/DELIVERABLES_AND_PACKAGES.md`](docs/DELIVERABLES_AND_PACKAGES.md) | Contrat livrables — Souvenir lead-magnet · Quiet Luxury B2C · Légendaire Gants Blancs. |
+| [`docs/PARTNER_REVSHARE.md`](docs/PARTNER_REVSHARE.md) | Ledger commissions 30 %, webhook idempotent, clawback, payout mensuel. |
+| [`docs/SCANNER_COMPANION.md`](docs/SCANNER_COMPANION.md) | Architecture Scanner Compagnon (QR → mobile → IA → upsell). |
+| [`docs/WIZARD_ARCHITECTURE.md`](docs/WIZARD_ARCHITECTURE.md) | Wizard 8 étapes, pricing v2, schéma DB P6. |
+| [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) | Audit + plan sprint v2 (QA P5.5 terminée, spike checkout v1 annulé). |
+| [`docs/TECHNICAL_ONBOARDING_ODYSSEY.md`](docs/TECHNICAL_ONBOARDING_ODYSSEY.md) | Hub technique — stack, structure, roadmap. |
+| [`docs/ROUTES_AND_AUTH.md`](docs/ROUTES_AND_AUTH.md) | Routes Studio / Salon, auth, branding partenaire. |
+| [`docs/STINGRAY_MUSIC_INTEGRATION.md`](docs/STINGRAY_MUSIC_INTEGRATION.md) | Musique licenciée Stingray (Standard / Premium). |
+| [`docs/QA_P5_5_PARTNER_SALON.md`](docs/QA_P5_5_PARTNER_SALON.md) | Checklist QA Salon — **✅ terminée prod**. |
+| [`docs/sql/README.md`](docs/sql/README.md) | Migrations SQL P0–P6. |
+| [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) | Conventions code + hiérarchie documentation. |
 
 ## Quickstart
 
@@ -28,7 +37,7 @@ npm install
 npm run dev
 ```
 
-Build de verification (comme en deploiement):
+Build de vérification (comme en déploiement) :
 
 ```bash
 npm run build
@@ -36,50 +45,39 @@ npm run build
 
 ## Vision architecture
 
-Le projet suit une strategie **moteur unique + multi-skins**:
-- une base metier commune (auth, medias, paiements, rendu),
-- plusieurs experiences cibles (famille, animaux, mariage, fete, etc.),
-- adaptation du branding/copy sans fork de logique coeur.
+Stratégie **moteur unique + multi-skins** :
+- base métier commune (auth, médias, paiements, rendu),
+- expériences cibles (famille, partenaires funéraires, verticales futures),
+- branding adaptable sans fork de la logique cœur.
 
-## Isolation des medias entre cibles
+## Isolation des médias
 
-Principe actuel:
-- separation forte par `project_id` (storage path + DB),
-- `tenant_id` disponible pour renforcer la segmentation.
+- séparation forte par `project_id` (Storage + DB),
+- `tenant_id` pour segmentation partenaire,
+- aucune fuite inter-projets / inter-tenants (RLS P0–P5.5).
 
-Principe produit a maintenir:
-- aucune cible ne doit partager les medias d'une autre cible,
-- toute nouvelle verticale doit garder une isolation explicite (projet/tenant/cible) dans storage + DB + policies.
+## Prochain sprint (implémentation v2)
 
-## A developper (resume)
+Voir [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) §10 :
 
-**Source unique:** `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` — **section 10** (+ sommaire du meme fichier pour navigation).
+1. Migration SQL **P6** (`is_freemium`, commission ledger)
+2. Saga checkout **v2** (freemium 0 $ + Stripe upsell)
+3. Webhook Stripe → completed + **RevShare**
+4. **Scanner Compagnon** Phase A (QR + mobile upload)
+5. `pricingConfig` + manifeste v2 (0 / 149 / 299 / 499)
 
-Chapitres couverts par la roadmap documentaire:
+## Pricing (cible v2 — doc canon)
 
-- **A terminer / consolider** (checkout, rendu, tests, monitoring, SQL versionne).
-- **Architecture moteur video** (orchestration outil tiers, webhooks, idempotence).
-- **Positionnement haut de gamme**, **Potentiel marche / leviers adoption**, **Croissance virale** (ethique, leviers supplementaires, **verticaliste animaux**).
-- **Upsells wizard** (Stripe-First, conformite sources tierces).
-- **Securite** P0 → P2.
-- **Elevation produit** P1 / P2 (fiabilite, rendu, conformite, partenaires).
+Source : [`docs/DELIVERABLES_AND_PACKAGES.md`](docs/DELIVERABLES_AND_PACKAGES.md) · code actuel encore v1 dans `pricingConfig.ts`.
 
-**Pricing & extensions wizard** (implementes — source `src/lib/wizard/pricingConfig.ts`):
-- forfaits **Essentiel / Signature / Heritage** (montants en cents entiers),
-- **Option Licence Premium** (39 $) — debloque le catalogue musique Premium pour Essentiel / Signature,
-- retouche IA, clef USB Collector, coffre-fort digital, Pack Heritage (upsell step 6),
-- forfait **Heritage** : bundle economique affiche (**economie 67 $**), extensions Licence / USB / Coffre deja incluses.
+| Canal | Forfaits |
+|-------|----------|
+| **B2B2C freemium** | Souvenir **0 $** offert · upsell 149 $ / 299 $ + RevShare 30 % |
+| **B2C direct** | Héritage **149 $** · Éternité **299 $** · Légendaire **499 $** |
+| **Legacy jetons** | Petits salons — wallet P5.5 (coexistence) |
 
-**Encore a brancher au catalogue Stripe** (`billing_catalog` Price IDs) et roadmap produit:
-- signature de responsabilite (sources tierces YouTube / URL),
-- HD, delai express, packaging — meme principe Stripe-First + trace dans `orders`.
+Extensions à la carte (Retouche IA, Licence Premium, USB, Coffre…) — commissionnables en canal freemium.
 
-**Securite (roadmap, priorites):** ordre **P0 → P1 → P2** (essentiel prod → renfort → maturite), sans implementation engagee par la doc seule — detail dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (section 10, sous-partie securite).
+## Roadmap produit
 
-**Elevation produit (roadmap):** fiabilite du parcours, qualite percue du rendu, conformite/reputation, partenaires B2B2C — priorites **P1 / P2** et ordre suggere dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (section 10, sous-partie elevation produit).
-
-**Moteur video:** orchestration avec **outil tiers** (API templates type Creatomate ou equivalent), flux paiement → job → webhook fin de rendu — detail dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (section 10, **Architecture cible — Moteur video**).
-
-**Positionnement & adoption:** strategie haut de gamme (templates d'excellence, validation narrative, IA ciblee, ops robustes) et leviers adoption (friction, confiance, partenaires) — meme fichier, sous-sections **Positionnement haut de gamme** et **Potentiel marche et leviers adoption**.
-
-**Diffusion organique ("viral"):** boucles ethiques; **co-creation invitee** (rationale, **etapes rapides** tableau, moderation); formats courts verticalaux, QR rituel, premiere diffusion controlee; **verticaliste animaux** + **backlog discovery** (6 pistes); tout dans `docs/TECHNICAL_ONBOARDING_ODYSSEY.md` (**Croissance "virale" et partage**).
+Détail : [`docs/TECHNICAL_ONBOARDING_ODYSSEY.md`](docs/TECHNICAL_ONBOARDING_ODYSSEY.md) section 10 — moteur vidéo Creatomate, tests CI, croissance virale, verticaliste animaux, sécurité P0–P2.

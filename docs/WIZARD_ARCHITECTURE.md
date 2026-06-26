@@ -1,8 +1,8 @@
 # Tribute Wizard — Architecture
 
-**Last code review: June 2026**
+**Last code review: June 2026 · B2B2C v2**
 
-This document describes the 8-step tribute wizard: navigation, state, autosave, and how montage acts map to soundtrack selection. Parent overview: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7.
+This document describes the 8-step tribute wizard: navigation, state, autosave, montage acts, **pricing v2** (freemium B2B2C vs Quiet Luxury B2C), and checkout. Parent overview: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7.
 
 ---
 
@@ -26,6 +26,7 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
 | `app/api/checkout/route.ts` | Checkout (**cible** 3 modes — voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)) |
 | `app/[lang]/(salon)/salon/` | Console partenaire Salon (header, portefeuille, `InvitationComposer` sur manifeste) — auth via layout |
+| `src/components/scanner/ScannerCompanionPanel.tsx` | **Cible P6** — QR Scanner Compagnon (étape médias) — [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 
 `TOTAL_STEPS = 8` in `TributeWizard.tsx`.
 
@@ -35,7 +36,17 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 
 The tribute wizard is **no longer a static 8-step product definition** in documentation alone: package capabilities (Salon vs Social, MP3 vs Stingray, token vs dollar display) are driven by [`src/lib/wizard/wizardDeliverables.ts`](../src/lib/wizard/wizardDeliverables.ts) (`PACKAGE_MANIFEST`).
 
-**Canonical product doc:** [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) (marketing names Souvenir / Héritage / Éternité ↔ technical IDs `essential` / `signature` / `heritage`).
+**Canonical product doc:** [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) — marketing names Souvenir / Héritage / Éternité / Légendaire ↔ technical IDs `essential` / `signature` / `heritage` / `legendary` (P6).
+
+### Pricing v2 — dédoublement canal (doc canon · code ⏳)
+
+| Canal | Forfaits visibles | Règle |
+|-------|-------------------|-------|
+| **B2B2C freemium** (invitation partenaire) | **Souvenir** (0 $ offert) + upsell **Héritage 149 $** · **Éternité 299 $** | Lead-magnet · pas de Légendaire |
+| **B2C direct** (Quiet Luxury) | **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $** (Gants Blancs) | Pas de Souvenir · effet de leurre |
+| **B2B legacy jetons** (`is_freemium = false`) | Souvenir / Héritage / Éternité en **jetons** | Coexistence P5.5 |
+
+Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.
 
 ### Dynamic UI (target — partial today)
 
@@ -56,6 +67,7 @@ The tribute wizard is **no longer a static 8-step product definition** in docume
 | `essential` | Souvenir | Keepsake | `packages.names.essential`, `tributeWizard.basePackageEssential` |
 | `signature` | Héritage | Legacy | `packages.names.signature`, `tributeWizard.basePackageSignature` |
 | `heritage` | Éternité | Eternity | `packages.names.heritage`, `tributeWizard.basePackageHeritage` |
+| `legendary` | Légendaire | Legendary | `packages.names.legendary` *(P6 — B2C only)* |
 
 See [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) and `src/lib/wizard/packageI18n.ts`.
 
@@ -77,7 +89,7 @@ Do not duplicate package prices in UI strings — use `formatPackagePriceForMode
 |------|------------------|---------|-------------|
 | 1 | `stepperEssentials` | Name, dates, avatar, **formula** | `essentials`, `basePackage`; draft via `POST /api/projects/draft` |
 | 2 | `stepperSources` | Social source + URL, formula (compact) | `socialSources`, `basePackage` |
-| 3 | `stepperVault` | Dropzone + upload queue | `media_assets` rows; reload `GET /api/projects/[id]/media` |
+| 3 | `stepperVault` | Dropzone + upload queue + **Scanner Compagnon QR** (cible) | `media_assets` rows; reload `GET /api/projects/[id]/media` · voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | 4 | `stepperMontage` | Three-act timeline, focal points | `montage` |
 | 5 | `stepperSound` | Stingray search (tier **standard** / **premium**), listen, choose per act | `musicalAmbiance.tracks` |
 | 6 | `stepperExtensions` | Upsell cards + Heritage Pack; **bundle rules** when `basePackage=heritage` | `extensions` |
@@ -117,7 +129,7 @@ sequenceDiagram
 {
   version: 1,
   isPartner?: true,                    // B2B UI flag (checkout uses tenant role)
-  basePackage?: "essential" | "signature" | "heritage",
+  basePackage?: "essential" | "signature" | "heritage" | "legendary",  // legendary = B2C P6
   pricing?: {
     basePackage: "signature",
     baseCents: 14900,                  // integers only
@@ -200,43 +212,45 @@ Audio `src` uses `track.previewUrl` (typically `/api/music/preview?trackId=…`)
 
 ---
 
-## Pricing — hybrid B2C / B2B (`pricingConfig.ts`)
+## Pricing — hybrid B2C / B2B / B2B2C v2
 
 **Rule:** all money is stored and computed as **integer USD cents** (no float dollars in cart math).
 
+**Source of truth (target v2):** [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
+
+### Grille cible v2 (cents)
+
+| Technical ID | Marketing | B2C direct | B2B2C freemium (famille) | Legacy jetons |
+|--------------|-----------|------------|--------------------------|---------------|
+| `essential` | Souvenir | **Non vendu** | **0** (offert) | 1 |
+| `signature` | Héritage | **14 900** (149 $) | **14 900** (upsell plein) | 2 |
+| `heritage` | Éternité | **29 900** (299 $) | **29 900** (upsell plein) | 4 |
+| `legendary` | Légendaire (Gants Blancs) | **49 900** (499 $) | **Non proposé** | — |
+
+**Code actuel** (`pricingConfig.ts`) — encore v1 (7900 / 14900 / 29900) · migration S5 prochain sprint.
+
 ```typescript
-// src/lib/wizard/pricingConfig.ts
-export const PARTNER_TOKEN_COST_CENTS = 4000; // 40.00 USD per token (wholesale)
+// src/lib/wizard/pricingConfig.ts — CURRENT (v1) · TARGET v2 in DELIVERABLES doc
+export const PARTNER_TOKEN_COST_CENTS = 4000; // legacy wholesale
 
 export const WIZARD_PRICING = {
   packages: {
-    ESSENTIEL:  { id: "essential", priceCents: 7900,  tokens: 1 },   // 79.00 $
-    SIGNATURE:  { id: "signature", priceCents: 14900, tokens: 2 },   // 149.00 $
+    ESSENTIEL:  { id: "essential", priceCents: 7900,  tokens: 1 },   // → v2: 0 freemium
+    SIGNATURE:  { id: "signature", priceCents: 14900, tokens: 2 },
     HERITAGE:   { id: "heritage",  priceCents: 29900, tokens: 4, musicCatalog: "premium" },
+    // LEGENDAIRE: { id: "legendary", priceCents: 49900, tokens: 0 }  — P6
   },
-  extensions: {
-    RETOUCHE_IA:       { id: "aiRetouch",       priceCents: 4900 },
-    LICENCE_PREMIUM:   { id: "extendedLicense", priceCents: 3900 },  // Option Licence Premium
-    USB:               { id: "collectorUsb",    priceCents: 7900 },
-    COFFRE_FORT:       { id: "digitalVault",    priceCents: 9900 },
-    PACK_HERITAGE:     { id: "heritagePack",    priceCents: 14900 },
-  },
+  extensions: { /* aiRetouch, extendedLicense, collectorUsb, digitalVault, heritagePack */ },
 };
 ```
 
 | Helper | Role |
 |--------|------|
 | `packageCents(id)` | Base package cents |
-| `packagePartnerTokens(id)` | B2B token debit for package |
-| `extensionCents(id)` | Extension line cents |
-| `computeWizardCart()` | `totalCents = baseCents + optionsCents` (integers); skips extensions bundled in Heritage |
-| `sumCartLineItemsCents()` | Checkout verification (sum of line items) |
-| `calculatePartnerMargin(packageId, tokens?)` | `priceCents − PARTNER_TOKEN_COST_CENTS × tokens` |
-| `heritageBundleAlaCarteCents()` | Signature + Licence Premium + USB + Coffre (à la carte reference) |
-| `calculateBundleSavings("heritage")` | `max(0, alaCarte − heritage.priceCents)` → **6700¢ (67 $)** |
-| `bundleSavingsDollarsLabel(cents)` | Integer dollars for UI badges (`67`) |
-| `isExtensionBundledInBasePackage()` | Heritage includes licence + USB + vault (no extra charge) |
-| `resolveMusicCatalogTier()` | `standard` vs `premium` from package + extensions |
+| `packagePartnerTokens(id)` | B2B legacy token debit |
+| `computeWizardCart()` | `totalCents = baseCents + optionsCents` |
+| `computeB2B2CFamilyPricing()` | **Cible v2** — freemium prix plein upsell vs legacy delta |
+| `calculatePartnerMargin()` | Legacy jetons wholesale margin |
 
 Display-only: `StickyPriceBar` converts `totalCents / 100` for B2C label `Total : {amount} $` (cart reflects bundle rules via `computeWizardCart`).
 
@@ -305,54 +319,42 @@ Mock catalog (`stingrayCatalog.ts`): each track has `musicTier: "standard" | "pr
 
 - **Component:** `CheckoutStep.tsx` (recap + pay CTA)
 - **API:** `app/api/checkout/route.ts`
-- **Référence commerce :** [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (saga P5, règles `granted_package`)
+- **Référence commerce :** [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 (saga freemium · RevShare · legacy jetons)
 
-**Implémentation actuelle du code :** 2 branches (`resolveUserIsPartner` → jetons TS **ou** Stripe). **Cible :** 3 modes via `tribute_checkouts.checkout_mode` + `debit_partner_tokens_for_checkout()`.
+**Implémentation actuelle :** 2 branches legacy (`isPartner` → jetons TS **ou** Stripe). **Cible v2 :** saga `tribute_checkouts` + branche `is_freemium` + webhook commission.
+
+**Spike checkout v1 (jetons-first) : annulé** — remplacé par pivot B2B2C v2.
 
 ```mermaid
 flowchart TD
   A[POST /api/checkout] --> B{checkout_mode}
-  B -->|b2c| C[Stripe: total catalogue]
-  C --> C1[metadata.total_cents]
-  B -->|b2b_partner| D[debitPartnerTokens TS ou RPC P5]
-  D --> D1[tokens = selected_package]
-  D1 --> D2[no Stripe]
-  B -->|b2b2c_family| E[debit_partner_tokens_for_checkout]
-  E --> E1[tokens = granted_package only]
-  E1 --> F{family_total_cents > 0?}
-  F -->|no| G[completed]
-  F -->|yes| H[Stripe delta famille]
-  H --> I[webhook → completed]
+  B -->|b2c| C[Stripe: Quiet Luxury 149/299/499 + extensions]
+  B -->|b2b_partner| D[Legacy jetons — RPC P5.5]
+  B -->|b2b2c_family| E{tenant.is_freemium?}
+  E -->|true| F[Saga v2: 0$ ou Stripe upsell plein]
+  F --> F1[webhook → RevShare 30%]
+  E -->|false| G[Saga v1: debit jetons + delta Stripe]
 ```
 
-### Mode `b2c` (famille directe)
+### Mode `b2c` (famille directe — Quiet Luxury)
 
-- Pas d’invitation partenaire ; `checkout_mode = b2c`.
-- `StickyPriceBar`: **Total : {amount} $** (`totalCents ÷ 100`).
-- Stripe : somme forfait + extensions (`computeWizardCart`).
+- Pas d’invitation partenaire ; **pas de Souvenir**.
+- Forfaits : **Héritage 149 $** · **Éternité 299 $** (recommandé) · **Légendaire 499 $** (Gants Blancs).
+- Extensions à la carte · **pas de RevShare**.
 
-### Mode `b2b_partner` (conseiller funérarium)
+### Mode `b2b_partner` (legacy jetons funérarium)
 
-- Rôles `partner`, `partner_admin` (ou `admin`) sur `tenant_members`.
-- `StickyPriceBar`: **Coût : {tokens} jeton(s)** — pas de `$`.
-- Jetons = **`tokens(selected_package)`** (1 / 2 / 4).
-- **Code actuel :** `debitPartnerTokens()` (TypeScript, P4). **Cible :** ligne `tribute_checkouts` + RPC P5.
+- Inchangé P5.5 · `StickyPriceBar` en jetons · pas de Stripe.
 
-### Mode `b2b2c_family` (famille invitée — gant blanc)
+### Mode `b2b2c_family` — freemium (`is_freemium = true`)
 
-- `projects.invitation_id` → `partner_invitations.granted_package`.
-- Partenaire débité : **`tokens(granted_package)`** uniquement — **pas** de jetons sur l’upsell famille.
-- Famille : **`family_total_cents`** = delta vs forfait offert (+ extensions) → Stripe si montant > 0.
-- UX : pas de mention « jeton » ; prix relatifs (ex. Essentiel offert → Signature **+70 $**).
-- **DB P5 ✅ · API / UI ⏳** — détail saga : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
+- Souvenir offert → **`family_total_cents = 0`** → completed sans Stripe.
+- Upsell Héritage / Éternité → **prix plein** + extensions → Stripe → webhook → **RevShare 30 %** ([`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md)).
+- UX gant blanc : jamais « jeton » ni « commission ».
 
-| `basePackage` | `priceCents` (B2C list) | Tokens (B2B / granted) | Example margin* |
-|---------------|-------------------------|------------------------|-----------------|
-| `essential` | 7900 (79 $) | 1 | 3900¢ (39 $) |
-| `signature` | 14900 (149 $) | 2 | 6900¢ (69 $) |
-| `heritage` | 29900 (299 $) | 4 | 13900¢ (139 $) |
+### Mode `b2b2c_family` — legacy (`is_freemium = false`)
 
-\* `calculatePartnerMargin(packageId)` — partner sets their own retail price to families.
+- Débit jetons P5.5 · delta famille · pas de RevShare v2.
 
 ### UI pricing
 
@@ -374,6 +376,8 @@ flowchart TD
 | `docs/sql/odyssey_p4_partner_token_wallets.sql` | Wallets + ledger |
 | `docs/sql/odyssey_p4_1_security_fixes.sql` | RLS wallets/ledger (`partner` / `partner_admin`) |
 | `docs/sql/odyssey_p5_b2b2c_core.sql` | `partner_invitations`, `tribute_checkouts`, RPC débit |
+| `docs/sql/odyssey_p6_freemium_revshare.sql` | **Cible** — `is_freemium`, commission ledger, RPC accrue/clawback |
+| `docs/sql/odyssey_p6_1_scan_sessions.sql` | **Cible** — Scanner Compagnon sessions |
 
 | Column / table | Type | Purpose |
 |----------------|------|---------|
@@ -381,12 +385,18 @@ flowchart TD
 | `projects.wizard_step` | smallint | 1..10 (CHECK) |
 | `projects.last_saved_at` | timestamptz | Server save time |
 | `projects.invitation_id` | uuid FK | Lien invitation B2B2C (P5) |
+| `tenants.is_freemium` | boolean | **P6** — canal acquisition Souvenir gratuit |
 | `partner_invitations` | table | Forfait offert, email, statut invitation |
-| `tribute_checkouts` | table | Saga checkout (`checkout_mode`, statuts) |
-| `partner_token_wallets` | table | Solde jetons par tenant |
-| `partner_token_ledger` | table | Audit ; `tribute_checkout_id` (P5) |
+| `tribute_checkouts` | table | Saga checkout (`checkout_mode`, `commission_*` P6) |
+| `partner_token_wallets` | table | Solde jetons legacy par tenant |
+| `partner_token_ledger` | table | Audit jetons ; `tribute_checkout_id` (P5) |
+| `partner_commission_balances` | table | **P6** — agrégat RevShare par tenant (`accrued_cents`, `paid_cents`) |
+| `partner_commission_ledger` | table | **P6** — journal append-only commissions (accrual, clawback, payout) |
+| `scan_sessions` | table | **P6.1** — sessions QR Scanner Compagnon |
 
-Fonction : `debit_partner_tokens_for_checkout(uuid)` — **`service_role`** only.
+Fonctions legacy : `debit_partner_tokens_for_checkout(uuid)` — **`service_role`** only.
+
+Fonctions cibles P6 : `accrue_partner_commission_for_checkout`, `clawback_partner_commission`, `record_partner_commission_payout` — voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
 
 Index: `(user_id, status, last_saved_at DESC)` on `projects` for “resume latest draft” on dashboard.
 
@@ -402,4 +412,4 @@ Copy lives in `dictionaries/fr.json` and `dictionaries/en.json` under `tributeWi
 
 ## When you change this flow
 
-Update this file, [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), and [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 + §5 + §10 per team rule §13.
+Update this file, [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md), [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md), and [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 + §5 + §10 per team rule §13.

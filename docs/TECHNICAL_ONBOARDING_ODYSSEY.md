@@ -1,20 +1,23 @@
 # Odyssey Frontend - Technical Onboarding
 
-**Last code review: June 2026**
+**Last code review: June 2026 · B2B2C v2**
 
 This document helps any developer (frontend, backend, DevOps, QA) onboard quickly: what is implemented, how the architecture works, how to run and test locally, and what comes next.
 
 **Deep dives (English, kept in sync with code):**
-- [`docs/DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) — **Deliverables manifest** (Souvenir/Héritage/Éternité), tokens vs dollars, Salon 16:9 / Social 9:16
-- [`docs/B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — **3 checkout modes**, prix/jetons, `granted_package`, saga `tribute_checkouts`, DB vs API status
-- [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, state, autosave, pricing, Heritage bundle, music tiers, checkout diagram
-- [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, **catalog tiers**, mock mode, composite `trackId`, preview proxy
-- [`docs/sql/README.md`](sql/README.md) — SQL migrations **P0–P5** (P4.1 security patch, QA seed)
-- [`docs/ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) — routes `studio` / `salon`, double connexion, branding partenaire
-- [`docs/DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) — palette, co-branding, **signature Halo-Éclipse** (connexion)
+- [`docs/DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) — **Deliverables manifest** v2 (Souvenir lead-magnet · Quiet Luxury B2C 149/299/499 · Légendaire Gants Blancs)
+- [`docs/B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — **B2B2C v2** : freemium, RevShare 30 %, saga checkout, legacy jetons coexistence
+- [`docs/PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) — Commission ledger, webhook accrual, clawback, payout
+- [`docs/SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — Scanner Compagnon (QR → mobile → IA → upsell)
+- [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, pricing v2, checkout saga, P6 schema
+- [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, catalog tiers, mock mode
+- [`docs/sql/README.md`](sql/README.md) — SQL migrations **P0–P6** (P5.5 RBAC, P6 freemium + commissions)
+- [`docs/ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) — routes `studio` / `salon` / `scan`, auth, branding
+- [`docs/DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) — palette, co-branding, Halo-Éclipse
 - [`docs/CONVENTIONS.md`](CONVENTIONS.md) — Code language, doc hierarchy, repo scope
+- [`docs/PROJECT_STATUS.md`](PROJECT_STATUS.md) — Living audit + sprint plan v2
 
-Ce document reste partiellement en francais pour l'historique produit; les sections **4.7**, **6 (Stingray)**, **10** et les annexes ci-dessus sont la reference a jour pour Jon et l'equipe technique.
+Ce document reste partiellement en francais pour l'historique produit; les sections **4.7**, **5**, **10** et les annexes ci-dessus sont la reference a jour pour Jon et l'equipe technique.
 
 ---
 
@@ -43,9 +46,13 @@ Odyssey est une application Next.js 14 (App Router) avec:
 - une base de paiement Stripe "Stripe-First",
 - un webhook Stripe robuste avec idempotence forte (pattern lock token).
 
-La logique metier vise un modele hybride:
-- B2C (famille paie directement),
-- B2B2C (partenaire pre-paie la base, famille paie les upsells).
+La logique metier vise un modele hybride **v2 (juin 2026)** :
+- **B2C direct (Quiet Luxury)** — 3 forfaits payants : Héritage **149 $**, Éternité **299 $**, Légendaire **499 $** (Gants Blancs). Pas de tier gratuit.
+- **B2B2C freemium** — le partenaire offre **Souvenir à 0 $** (lead-magnet) ; la famille paie l’upsell **prix plein** ; Odyssey reverse **30 % RevShare** (brut Stripe) via `partner_commission_ledger`.
+- **B2B legacy jetons** — petits salons (`is_freemium = false`) : wallet P5.5 inchangé (débit à l’invitation).
+- **Scanner Compagnon** — ingestion mobile photos papier → restauration IA → conversion Éternité / Légendaire.
+
+Canon commerce : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.
 
 ---
 
@@ -67,8 +74,12 @@ La logique metier vise un modele hybride:
 - `app/api/projects/[id]/autosave/route.ts`: wizard autosave (GET/PATCH)
 - `app/api/projects/[id]/media/route.ts`: list project media (signed URLs)
 - `app/api/music/search|preview|stream/route.ts`: licensed music (Stingray proxy)
-- `app/api/checkout/route.ts`: checkout (**cible** 3 modes — see [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md))
-- `docs/B2B2C_COMMERCE.md`: commerce B2B2C reference (invitations, saga, granted_package rule)
+- `app/api/checkout/route.ts`: checkout — **cible saga v2** (see [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md))
+- `app/api/stripe/webhook/route.ts`: Stripe webhook (catalog sync + **cible** `checkout.session.completed` + RevShare)
+- `app/[lang]/scan/[token]/page.tsx`: **cible P6** — Scanner Compagnon mobile PWA
+- `app/api/scan/sessions/route.ts`: **cible P6** — création session QR
+- `docs/B2B2C_COMMERCE.md`: commerce B2B2C v2 (freemium, RevShare, saga)
+- `docs/PARTNER_REVSHARE.md` / `docs/SCANNER_COMPANION.md`: commissions + Killer App
 - `src/lib/wizard/pricingConfig.ts`: pricing source of truth (cents + B2B tokens)
 - `src/components/StickyPriceBar.tsx`: sticky total (B2C $) or token cost (B2B)
 - `src/components/auth/LoginForm.tsx`: pages connexion Studio + Salon (halos d’état, formulaire partagé)
@@ -221,37 +232,60 @@ Aligne avec le payload du service d'upload (`MediaAssetInsertRow`):
 - Sync `billing_catalog` depuis `product.*` et `price.*`.
 - Logs structures + helper `serializeError`.
 
-### 4.7 Tribute Wizard (8 steps) — June 2026
+### 4.7 Tribute Wizard (8 steps) — B2B2C v2 (June 2026)
 
-The tribute flow is a **premium 8-step tunnel** with free step navigation, server autosave, and Stripe checkout. Full detail: [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
+The tribute flow is a **premium 8-step tunnel** with free step navigation, server autosave, and checkout (Stripe and/or freemium 0 $). Full detail: [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 
 | Step | UX label (i18n) | Component | Persisted in `wizard_state` |
 |------|-----------------|-----------|-----------------------------|
 | 1 | Essentials | `TributeWizard` + `WizardBasePackagePicker` | `essentials`, `basePackage`, `pricing` |
 | 2 | Sources | `TributeWizard` + formula (compact) | `socialSources`, `basePackage` |
-| 3 | Vault (upload) | `MediaDropzoneAdapter` + `MediaQueueGrid` | `media_assets` (DB) + reload via `GET .../media` |
+| 3 | Vault (upload) | `MediaDropzoneAdapter` + **`ScannerCompanionPanel`** (cible) | `media_assets` + scan sessions — [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | 4 | Montage table | `MontageStep` | `montage` (acts `spark` / `epic` / `legacy`, focal points, exclusions) |
-| 5 | Sound signature | `SoundSignatureStep` | `musicalAmbiance.tracks` (`acte1`–`acte3`) — **Stingray**, not mood picker |
-| 6 | Memory extensions | `MontageExtensionsStep` | `extensions` |
-| 7 | Film preview | `PreviewStep` + `CinematicTeaser` | reads montage + act tracks (no separate blob) |
-| 8 | Checkout | `CheckoutStep` | `POST /api/checkout` → **cible** `b2c` / `b2b_partner` / `b2b2c_family` (see [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)) |
+| 5 | Sound signature | `SoundSignatureStep` | `musicalAmbiance.tracks` (`acte1`–`acte3`) — **Stingray** |
+| 6 | Memory extensions | `MontageExtensionsStep` | `extensions` (à la carte — commissionnables en freemium) |
+| 7 | Film preview | `PreviewStep` + `CinematicTeaser` | reads montage + act tracks |
+| 8 | Checkout | `CheckoutStep` | `POST /api/checkout` → saga `tribute_checkouts` — [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 |
 
-**Packages (marketing vs technical IDs):** product names **Souvenir / Héritage / Éternité** (EN: Keepsake / Legacy / Eternity) are the UI façade in **`dictionaries/*/json` → `packages.names`** (keys `essential`, `signature`, `heritage`); persisted IDs remain **`essential` / `signature` / `heritage`** in SQL and `wizard_state`. Full matrix and deliverables (Salon 16:9, Social 9:16, tokens vs dollars): [`docs/DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · code: `wizardDeliverables.ts`, `packageI18n.ts`.
+**Packages (marketing vs technical IDs):**
 
-**Hybrid pricing (B2C / B2B) — `src/lib/wizard/pricingConfig.ts`:**
-- All amounts in **integer cents** (7900 = 79.00 USD). Cart: `computeWizardCart()` + `sumCartLineItemsCents()` at checkout.
-- Technical packages: `essential` 7900¢ / 1 token · `signature` 14900¢ / 2 tokens · `heritage` 29900¢ / 4 tokens (maps to Souvenir / Héritage / Éternité in the manifest).
-- Wholesale: `PARTNER_TOKEN_COST_CENTS = 4000` (40 USD/token). Margin: `calculatePartnerMargin(packageId, tokens?)`.
-- **`StickyPriceBar`**: B2C `Total : {amount} $` · B2B `Coût : {tokens} jeton(s)` (no `$` for partners). Total updates live as the user changes formula/extensions; when **Heritage** is selected, bundled extensions (Licence Premium, USB, Coffre) are **not** added to `totalCents` (`isExtensionBundledInBasePackage`).
-- **`WizardBasePackagePicker`** (steps 1–2): marketing upsell on the Heritage card — **`calculateBundleSavings("heritage")` → 67 $** displayed via `basePackageHeritageBundlePromo` (« Le choix complet (Économisez 67 $) »). Hidden when `hidePrices` (B2B partner).
-- **Option Licence Premium** (3900¢): `extendedLicense` — unlocks **Premium** music catalog for Essentiel/Signature; included in Heritage formula without extra line item.
-- **Economic bundle reference:** Signature + Licence + USB + Coffre = 36600¢ vs Heritage 29900¢ → savings **6700¢** (`heritageBundleAlaCarteCents`, `calculateBundleSavings`). Details: [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
-- Dashboard sets `isPartner` from `tenant_members.role`; checkout uses **`resolveUserIsPartner()`** today (**2 modes**). **Target:** `tribute_checkouts.checkout_mode` + invitation context — [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
+| Marketing FR | EN | ID technique | Canal |
+|--------------|-----|--------------|-------|
+| Souvenir | Keepsake | `essential` | **B2B2C freemium only** (0 $ offert) — lead-magnet |
+| Héritage | Legacy | `signature` | B2C entrée 149 $ · upsell freemium |
+| Éternité | Eternity | `heritage` | B2C choix privilégié 299 $ · upsell freemium |
+| Légendaire (Gants Blancs) | Legendary | `legendary` | **B2C direct only** 499 $ (P6) |
 
-**B2B2C (DB ready, app pending):**
-- Tables `partner_invitations`, `tribute_checkouts`, `projects.invitation_id` (P5).
-- Partner debited **`tokens(granted_package)`** only; family pays upsell delta via Stripe.
-- RPC `debit_partner_tokens_for_checkout(checkout_id)` — ledger first, then Stripe.
+Full matrix : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · code: `wizardDeliverables.ts`, `packageI18n.ts`.
+
+**Pricing v2 — `src/lib/wizard/pricingConfig.ts` (target; code migration Phase A):**
+- All amounts in **integer cents**. Cart: `computeWizardCart()` + `sumCartLineItemsCents()`.
+- **Target grid:** `essential` **0¢** (freemium) · `signature` **14900¢** · `heritage` **29900¢** · `legendary` **49900¢**.
+- **B2C direct:** Héritage / Éternité / Légendaire only — **no Souvenir**.
+- **B2B2C freemium:** family pays **full upsell price** (not delta vs 79 $). Extensions à la carte added to Stripe total.
+- **Legacy jetons** (`is_freemium = false`): wholesale **4000¢/token** · débit P5.5 à l’invitation — see [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) (✅ terminée prod).
+- **`StickyPriceBar`:** B2C `Total : {amount} $` · B2B legacy `Coût : {tokens} jeton(s)` · freemium family: dollars only (never « jeton »).
+- Heritage bundle marketing (67 $ savings) remains for B2C positioning — see [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
+
+**Checkout modes (target v2):**
+
+| Mode | Trigger | Payment |
+|------|---------|---------|
+| `b2c` | No `projects.invitation_id` | Stripe — Quiet Luxury 149/299/499 + extensions |
+| `b2b_partner` | Partner funerarium path | Legacy jetons (P5.5) |
+| `b2b2c_family` + `is_freemium` | Invitation + freemium tenant | **0 $** → `completed` sans Stripe · upsell → Stripe → **RevShare 30 %** webhook |
+| `b2b2c_family` + legacy | Invitation + non-freemium | Jetons P5.5 + delta Stripe (coexistence) |
+
+**Resolution rule:** `projects.invitation_id` → `b2b2c_family` — **not** `resolveUserIsPartner()` alone.
+
+**Spike checkout v1 (jetons-first saga) : cancelled** — replaced by freemium + RevShare pivot. See [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
+
+**Scanner Compagnon (Killer App — cible Phase B):**
+- Desktop wizard step 3 displays QR → mobile `/[lang]/scan/[token]` (PWA, no native app).
+- Paper photo capture → Supabase upload → IA before/after preview → upsell Éternité / Légendaire.
+- Spec: [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md).
+
+**`WizardStepper`, autosave, Stingray step 5, montage, CinematicTeaser:** unchanged — see subsections below and [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 
 **`WizardStepper` (`WizardStepper.tsx`):**
 - Renders steps 1–8; completed steps show a checkmark.
@@ -298,10 +332,11 @@ Legacy fields (`mood`, `trackOrder`, `selectedTrack`, `catalogTrackId`) are **re
 - Audio uses `track.previewUrl` (same-origin proxy) tied to the persisted `trackId`.
 - Apple TV–style controls; auto-play when the preview step mounts.
 
-**Checkout (see [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)):**
-- **`b2c`:** Stripe full cart; metadata `total_cents`, `extensions`, `act_tracks`.
-- **`b2b_partner`:** Token debit on `selected_package` (code: `debitPartnerTokens()` TS — target RPC P5).
-- **`b2b2c_family`:** Token debit on **`granted_package`** + Stripe for `family_total_cents` only — **not implemented in API yet**.
+**Checkout (see [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2):**
+- **`b2c`:** Stripe full cart (149/299/499 + extensions) — no RevShare.
+- **`b2b_partner`:** Legacy token debit (`debitPartnerTokens()` TS — P5.5 RPC target).
+- **`b2b2c_family` freemium:** `family_total_cents = 0` → `completed` without Stripe · else Stripe full upsell → webhook → `accrue_partner_commission_for_checkout()` — **Phase A sprint**.
+- **`b2b2c_family` legacy:** jetons P5.5 + delta — coexistence, not Phase A focus.
 
 ---
 
@@ -311,7 +346,7 @@ Tables actives dans `public`:
 
 | Table | Role | Securite |
 |---|---|---|
-| `tenants` | Verticale Odyssey (humans, pets, ...) + futurs white-labels | Lecture interne (catalogue verticales, non sensible) |
+| `tenants` | Verticale + partenaires ; **`is_freemium`** (P6) = canal Souvenir gratuit | Lecture interne + partner SELECT |
 | `tenant_members` | Jointure M:N user <-> tenant | RLS: un user voit ses propres rattachements |
 | `profiles` | Profil enrichi par user (FK auth.users) | RLS si necessaire (au minimum SELECT own) |
 | `projects` | Hommage en cours (FK profiles + tenants) | RLS: ownership via `user_id = auth.uid()` |
@@ -319,10 +354,13 @@ Tables actives dans `public`:
 | `orders` | Paiements Stripe (base + upsells) | RLS SELECT only (ecriture = service_role) |
 | `billing_catalog` | Cache local des Products/Prices Stripe | Lecture interne |
 | `webhook_events` | Idempotence webhook Stripe (lock token) | service_role uniquement |
-| `partner_token_wallets` | Solde jetons B2B par tenant (P4) | SELECT `partner` / `partner_admin` (P4.1); write `service_role` |
-| `partner_token_ledger` | Journal des mouvements jetons (P4) | SELECT `partner` / `partner_admin` (P4.1); write `service_role` |
-| `partner_invitations` | Invitation funérarium → famille (P5) | SELECT partner roles + accepted family; INSERT partner roles |
-| `tribute_checkouts` | Saga checkout 3 modes (P5) | SELECT project owner + partner roles; write `service_role` |
+| `partner_token_wallets` | Solde jetons B2B **legacy** par tenant (P4) | SELECT `partner_admin` (P5.5); write `service_role` |
+| `partner_token_ledger` | Journal jetons **legacy** (P4) | SELECT `partner_admin`; write `service_role` |
+| `partner_commission_balances` | Agrégat RevShare par tenant (**P6**) | SELECT `partner_admin`; write `service_role` |
+| `partner_commission_ledger` | Journal commissions append-only (**P6**) | SELECT `partner_admin`; write `service_role` |
+| `partner_invitations` | Invitation funérarium → famille (P5) | SELECT partner roles + accepted family |
+| `tribute_checkouts` | Saga checkout v2 (P5 + P6 columns) | SELECT project owner + partner roles; write `service_role` |
+| `scan_sessions` | Sessions QR Scanner Compagnon (**P6.1**, cible) | write `service_role` ; validate via token |
 
 Relations critiques:
 
@@ -331,13 +369,17 @@ auth.users --1:1--> profiles --1:N--> projects --1:N--> media_assets
               |
               +-----M:N via tenant_members----> tenants
                         |
-                        +--> partner_token_wallets
+                        +--> partner_token_wallets (legacy jetons)
+                        +--> partner_commission_balances (P6 RevShare)
+                        +--> partner_commission_ledger (P6)
                         +--> partner_invitations (P5)
-                        +--> tribute_checkouts (P5)
+                        +--> tribute_checkouts (P5 + P6)
 
 projects.invitation_id --> partner_invitations
 projects --1:N--> orders --N:1--> billing_catalog
-tribute_checkouts --optional--> partner_token_ledger.tribute_checkout_id
+tribute_checkouts --optional--> partner_token_ledger.tribute_checkout_id (legacy)
+tribute_checkouts --optional--> partner_commission_ledger.tribute_checkout_id (P6)
+scan_sessions --> projects (P6.1 Scanner)
 ```
 
 **Tous les scripts SQL qui produisent cette base sont dans `docs/sql/` et listes dans `docs/sql/README.md` avec leur ordre d'execution sur une base vierge.**
@@ -460,7 +502,7 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 
 See §4.7, [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), and [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
 
-### Done — Salon partner surface (June 2026)
+### Done — Salon partner surface + QA P5.5 (June 2026) ✅
 
 - **P5.5 RBAC (app):** `PartnerContext.capabilities` — Directeur vs Admin ; bloc jetons masqué si `!canViewBalance`.
 - **Salon layout gate:** `resolveSalonLayoutAccess` — utilisateur sans rôle partenaire → redirect `/studio` ; non-auth → connexion salon avec slug mémorisé.
@@ -469,22 +511,21 @@ See §4.7, [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), and [`B2B2C_COMME
 - **Header salon:** déconnexion → `/salon/connexion?partenaire=<slug>` ; toggle FR/EN (`LocaleSwitcher`).
 - **Signature visuelle connexion Halo-Éclipse:** `ConnexionEclipseLayer`, halos d’état, `OdysseyConnexionMark`, CTA cyan — voir [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon) et [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).
 
-### In progress / configuration
+### Done — B2B2C v2 documentation (June 2026) ✅
 
-- **Stingray credentials** on Vercel (`STINGRAY_CLIENT_ID`, optional bearer token).
-- End-to-end QA of search → preview → selection → checkout metadata.
-- Checkout line amounts from `pricingConfig.ts` (not yet synced to Stripe `billing_catalog` Price IDs).
-- B2B extensions not yet billed in tokens (package only in v1).
-- **B2B2C application layer:** invitations UI, magic link, `checkout_mode` in API, family delta pricing UI, Stripe webhook tied to `tribute_checkouts`, token compensation.
+- Canon: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2, [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md), [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md).
+- Spike checkout v1 **cancelled** → freemium + RevShare pivot.
+- **QA P5.5 terminée prod** — [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md).
 
-### To do — technical (priority)
+### In progress — Phase A sprint (Monday)
 
-- **Implement `b2b2c_family`** in `POST /api/checkout` + webhook (use P5 RPC + saga).
-- Wire checkout line items to **`billing_catalog`** / Stripe Price IDs (no client-only amounts).
-- **Video render pipeline** after payment: enqueue job → Creatomate (or equivalent) → completion webhook → project status.
-- Automated tests (unit + integration: webhook, autosave, checkout, music search).
-- Centralized monitoring / alerting and ops dashboards.
-- Legal consent journal (YouTube / third-party sources) if not yet wired in UI.
+- **P6 SQL:** `is_freemium`, `partner_commission_*`, RPC accrue.
+- **pricingConfig + wizardDeliverables v2** (0 / 149 / 299 / 499).
+- **Saga checkout v2** + webhook RevShare 30 %.
+
+### To do — after Phase A
+
+- Scanner Compagnon · Légendaire fulfillment · clawback · tests CI · video render pipeline.
 
 ### Product roadmap (unchanged intent — see subsections below)
 
@@ -788,6 +829,9 @@ Le dossier `docs/sql/` est la **source de verite** des migrations. Voir `docs/sq
 7. `odyssey_p4_partner_token_wallets.sql` -- portefeuilles jetons partenaires B2B (wallet + ledger)
 8. `odyssey_p4_1_security_fixes.sql` -- **patch** RLS partner roles + index ledger `project_id`
 9. `odyssey_p5_b2b2c_core.sql` -- invitations, tribute_checkouts, RPC debit atomique
+10. `odyssey_p5_1` through `odyssey_p5_5` -- branding, tenants RPC, RBAC, overdraft (see [`sql/README.md`](sql/README.md))
+11. **`odyssey_p6_freemium_revshare.sql`** -- **Phase A** : `tenants.is_freemium`, `partner_commission_balances`, `partner_commission_ledger`, RPC `accrue_partner_commission_for_checkout`, extend `tribute_checkouts` commission columns + `legendary` package id
+12. **`odyssey_p6_1_scan_sessions.sql`** -- **Phase B** (Scanner) : `scan_sessions` table
 — `odyssey_p0_storage_policies_REFERENCE.sql` -- **via Dashboard uniquement** (pas SQL Editor)
 — `odyssey_p4_partner_token_qa_seed.sql` -- **seed QA** (apres P4, non prod)
 

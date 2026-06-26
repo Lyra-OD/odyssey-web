@@ -1,6 +1,6 @@
 # Odyssey — Routes applicatives & authentification
 
-**Last updated: June 2026**
+**Last updated: June 2026 · B2B2C v2**
 
 Document canonique pour les **URLs**, les **deux pages de connexion** (famille vs partenaire), les **redirects legacy**, et le **branding Salon** (gant blanc). Source de vérité code : `src/lib/appRoutes.ts`.
 
@@ -21,6 +21,22 @@ Complète [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) �
 | **Acceptation invitation** | `/[lang]/invite/accept?token=…` | Oui (redir. studio connexion) | Magic link famille → projet B2B2C |
 | **Bienvenue hommage** | `/[lang]/tribute/welcome?projectId=…` | Oui | Wizard seedé après invitation |
 | **Auth callback** | `/auth/callback?next=…` | — | Échange code Supabase (signup / magic link) |
+
+### Scanner Compagnon (cible P6 — Killer App)
+
+Routes **prévues** pour l’ingestion mobile photos papier via QR Code wizard desktop. Spec : [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md).
+
+| Route | Auth | Rôle |
+|-------|------|------|
+| **`/[lang]/scan/[token]`** | Token session (opaque, TTL 2 h) | **PWA mobile** — caméra, recadrage, upload vers projet Studio |
+| **`/[lang]/scan/[token]/done`** | Token session | Confirmation « Retournez à votre ordinateur » |
+| **`POST /api/scan/sessions`** | Owner projet (session) | Crée session QR · retourne payload QR |
+| **`POST /api/scan/sessions/[token]/upload`** | Token session | Upload image recadrée → Supabase Storage |
+| **`GET /api/scan/sessions/[token]/validate`** | Token session | Valide TTL · métadonnées projet minimales |
+
+**Sécurité :** pas de login mobile requis — token lié à **un seul** `project_id` · rate limit uploads · pas d’app native (web only).
+
+**Pont conversion :** preview IA Avant/Après → upsell forfaits **Éternité (299 $)** ou **Légendaire (499 $)** — voir [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
 
 `lang` = `fr` | `en`.
 

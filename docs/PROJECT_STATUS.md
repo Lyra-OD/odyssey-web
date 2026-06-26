@@ -1,11 +1,11 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: June 2026**
+**Last revised: June 2026 · B2B2C v2 pivot documented**
 
-Living snapshot: **audit**, **recommended consolidations**, and **2-week action plan**.  
+Living snapshot: **audit**, **recommended consolidations**, and **next sprint plan**.  
 For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) and the specialized docs listed in [`CONVENTIONS.md`](CONVENTIONS.md).
 
-**Update this file** after major milestones (P5.5 in prod, checkout B2B2C, wallet UI, etc.) or at monthly team checkpoints.
+**Update this file** after major milestones (P6 commerce, Scanner MVP, etc.) or at monthly team checkpoints.
 
 ---
 
@@ -14,14 +14,15 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | Dimension | Status | Notes |
 |-----------|--------|-------|
 | **Family Studio (B2C wizard)** | 🟢 Mature | 8 steps, autosave, media, music, Stripe checkout |
-| **Partner Salon (UI)** | 🟢 Solid MVP | Co-branding, invitations, cyan skin, magic link |
-| **B2B2C commerce (app layer)** | 🟡 Partial | SQL P0–P5.5 ready; wallet API + salon gate + facturation shell ✅ ; checkout saga / webhook / Stripe Payment Link ⏳ |
-| **RBAC & tokens (P5.5)** | 🟢 Shipped | SQL + TS Phase 2 on `main`; Salon UI Phase 3 (`canViewBalance` gate) deployed |
+| **Partner Salon (UI + QA P5.5)** | 🟢 **Terminée** | RBAC, wallet API, gate R6, solde bout en bout — QA prod validée ([`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)) |
+| **B2B2C commerce v2 (doc)** | 🟢 Spec ready | Freemium + RevShare 30 % + Scanner — canon [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 |
+| **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 + saga v2 + webhook commission** = prochain sprint |
+| **RBAC & tokens (P5.5)** | 🟢 Shipped & QA | SQL + TS + UI ; coexistence avec freemium (`is_freemium`) documentée |
 | **Automated tests & CI** | 🔴 None | No test framework, no `.github/` workflows |
 | **Documentation** | 🟢 Strong | Rich; some docs ahead/behind code (see §4) |
 | **Security** | 🟡 Adequate with gaps | RLS solid; salon layout gate ✅; checkout saga still open |
 
-**Overall: 7/10** — demonstrable B2C and pilot Salon; **not production-ready for scaled B2B2C** until the transaction loop (checkout + webhook + wallet) matches the SQL schema.
+**Overall: 7.5/10** — B2C wizard + Salon partenaire **certifiés en prod** (P5.5 ✅) ; **grand chantier = B2B2C v2** (P6 SQL, saga checkout, RevShare webhook, Scanner Compagnon).
 
 ---
 
@@ -38,7 +39,9 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | B2B token checkout | 🟡 | Works via legacy TS debit; not P5 saga RPC |
 | Salon UI + invitations | 🟢 | `InvitationComposer`, branding, design system |
 | Salon wallet / billing UI | 🟡 | Admin : solde réel + page `/salon/facturation` (shell ✅) ; Stripe Payment Link + ledger UI ⏳ |
-| B2B2C family delta pricing | 🔴 | `b2b2c_family` not in API |
+| B2B2C family pricing v2 | 🔴 | Freemium 0 $ + upsell plein + RevShare — doc ✅ · code ⏳ |
+| Scanner Compagnon (Killer App) | 🔴 | Spec [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) ✅ · MVP ⏳ |
+| Partner commission ledger (P6) | 🔴 | Spec [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) ✅ · SQL ⏳ |
 | Invitation → family wizard | 🟢 | Magic link + `/tribute/welcome` |
 | Video render pipeline | 🔴 | Documented only (Creatomate target) |
 | Multi-vertical (e.g. pets) | 🟡 | `tenants.vertical` in DB; UI not forked |
@@ -48,39 +51,58 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 
 ## 3. Database vs application layer
 
-The **SQL schema is ahead of the Next.js commerce code**. This is the main structural risk.
+The **SQL schema P4/P5.5 is production-ready for legacy jetons**; **P6 (freemium + commissions) is documented but not migrated**. App commerce code still lags both.
 
 ```mermaid
 flowchart LR
-  subgraph DB["Supabase SQL ✅"]
+  subgraph DB["Supabase SQL"]
     W[partner_token_wallets]
     I[partner_invitations]
     C[tribute_checkouts]
-    R[RPC P5 / P5.5]
+    R[RPC P5 / P5.5 ✅]
+    P6[is_freemium + commission ledger ⏳]
   end
   subgraph App["Next.js API ⚠️"]
     A["POST /api/partner/invitations"]
     B["POST /api/checkout"]
     S["Stripe webhook"]
+    SC["Scanner / RevShare ⏳"]
   end
   R --> A
   A --> R
-  C -.->|"not wired"| B
-  C -.->|"not wired"| S
+  C -.->|"saga v2 not wired"| B
+  C -.->|"completed + commission"| S
+  P6 -.-> SC
   B -->|"B2C + basic B2B"| Stripe
 ```
 
 | Capability | SQL | App code |
 |------------|-----|----------|
-| Token debit at invitation (P5.5) | ✅ | ✅ RPC via `POST /api/partner/invitations` |
-| `tribute_checkouts` saga | ✅ | ❌ |
-| Checkout mode `b2b2c_family` | ✅ | ❌ |
-| Webhook → order / checkout completed | Partial catalog sync | ❌ payment completion |
-| Real Salon wallet balance | ✅ | ✅ `GET /api/partner/wallet` (admin, `canViewBalance`) ; UI `PartnerSalonPageIntro` |
-| RBAC Admin vs Director (UI) | ✅ RLS | ✅ `PartnerContext.capabilities`; wallet block hidden for Director |
+| Token debit at invitation (P5.5, legacy tenants) | ✅ | ✅ RPC via `POST /api/partner/invitations` |
+| QA P5.5 Salon (RBAC, wallet, gate R6) | ✅ | ✅ **Validée prod** |
+| `tribute_checkouts` saga **v1** (jetons) | ✅ | ❌ spike **annulé** |
+| `tribute_checkouts` saga **v2** (freemium + RevShare) | ⏳ P6 | ❌ **prochain sprint** |
+| `tenants.is_freemium` | ⏳ P6 | ❌ |
+| `partner_commission_ledger` + accrual webhook | ⏳ P6 | ❌ |
+| Checkout mode `b2b2c_family` | ✅ column | ❌ |
+| Webhook → checkout completed + commission | — | ❌ (catalog sync only) |
+| Scanner Compagnon sessions | ⏳ P6.1 | ❌ |
+| Real Salon wallet balance | ✅ | ✅ |
+| RBAC Admin vs Director (UI) | ✅ RLS | ✅ |
 | Video render after payment | — | ❌ |
 
-Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/README.md`](sql/README.md) (migration order).
+Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) · [`sql/README.md`](sql/README.md).
+
+### Pivot stratégique — Saga Checkout (juin 2026)
+
+| Décision | Détail |
+|----------|--------|
+| **Spike `tribute_checkouts` v1** | **Annulé** — modèle jetons + delta famille remplacé pour les gros clients |
+| **B2B2C v2 (Scrypta Killer)** | **Freemium** Souvenir 0 $ · **RevShare 30 %** brut Stripe · **Scanner Compagnon IA** |
+| **Legacy coexistence** | P4/P5.5 jetons **conservé** pour petits salons (`is_freemium = false`) |
+| **Prochain sprint** | P6 SQL · saga checkout v2 · webhook commission · Scanner Phase A |
+
+Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
 
 ---
 
@@ -98,7 +120,8 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/READ
 - **P5.5 Phase 2 (RBAC foundation):** `partnerRoles.ts`, `partnerCapabilities.ts`, `resolvePartnerMembership.ts`, `createPartnerInvitationWithDebit.ts`; `GET /api/partner/tenants` returns `role` + `capabilities`; `PartnerContext` exposes active tenant capabilities; invitation route uses P5.5 RPC + maps `overdraft_limit_exceeded` → HTTP 402
 - **P5.5 Phase 3 (Salon UI):** `PartnerSalonPageIntro` gates wallet/recharge on `capabilities.canViewBalance` (Directors see no balance); removed dead `PartnerWalletSection.tsx`
 - **Storage egress (wizard médias):** thumbs WebP + cache session + `cacheControl` long sur nouveaux uploads — §4.1 (`39460bd`)
-- **Salon facturation (shell):** `/salon/facturation` admin-only (`canRecharge`) — solde, découvert, nav header, CTA recharge si `NEXT_PUBLIC_PARTNER_TOKEN_RECHARGE_URL` ; sinon message ops / crédit manuel RPC
+- **QA P5.5 — terminée prod ✅** : RBAC §2 · solde §3 · gate R6 · checklist [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)
+- **Documentation B2B2C v2** : `B2B2C_COMMERCE.md`, `DELIVERABLES_AND_PACKAGES.md`, `PARTNER_REVSHARE.md`, `SCANNER_COMPANION.md`
 
 ### SQL reference (apply in Supabase before prod API)
 
@@ -161,12 +184,18 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) (commerce rules), [`sql/READ
 
 ## 6. Technical debt (prioritized)
 
-### 🔴 High — address before partner scale
+### 🔴 High — next sprint (B2B2C v2)
 
-1. **Three token debit paths** — RPC P5.5 invitation + RPC P5 checkout + `partnerCheckout.ts` (manual UPDATE, no overdraft, inconsistent ledger). Consolidate to RPC wrappers; deprecate TS debit.
-2. **Checkout without saga** — `POST /api/checkout` does not use `tribute_checkouts` or `debit_partner_tokens_for_checkout()`.
-3. **Incomplete Stripe webhook** — no post-payment project/checkout completion loop.
-4. **Zero automated tests** — no Jest/Vitest/Playwright; no CI.
+1. **Saga checkout v2** — freemium 0 $ path · Stripe upsell · `tribute_checkouts` · pas de spike v1 jetons-first pour freemium tenants.
+2. **P6 SQL** — `tenants.is_freemium`, `partner_commission_balances`, `partner_commission_ledger`, RPC accrue/clawback.
+3. **Stripe webhook** — `checkout.session.completed` → completed + RevShare accrual (idempotent).
+4. **Scanner Compagnon Phase A** — QR session + mobile upload + realtime sync (see [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).
+5. **Zero automated tests** — no Jest/Vitest/Playwright; no CI.
+
+### 🔴 High — legacy (before partner scale on jetons path)
+
+6. **Three token debit paths** — consolidate legacy tenants to RPC; deprecate `partnerCheckout.ts` TS debit.
+7. **Incomplete Stripe webhook** — extends to item 3 above for v2.
 
 ### 🟡 Medium
 
@@ -222,51 +251,52 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 
 | Doc | Gap |
 |-----|-----|
-| `TECHNICAL_ONBOARDING` §10b | Stops at P5; P5.1–P5.5 pointer only — defer full rewrite |
-| `B2B2C_COMMERCE` § implementation | Synced June 2026 (RBAC UI ✅; wallet API ✅; facturation shell ✅; Payment Link ⏳) |
-| `sql/README.md` | P5.5 in migration table |
-| This file | Point-in-time audit; onboarding stays timeless |
+| `B2B2C_COMMERCE.md` | ✅ **v2** (freemium, RevShare, saga v2, legacy coexistence) |
+| `DELIVERABLES_AND_PACKAGES.md` | ✅ v2 (Quiet Luxury B2C, Légendaire 499 $) |
+| `PARTNER_REVSHARE.md` | ✅ spec · code ⏳ |
+| `SCANNER_COMPANION.md` | ✅ spec · code ⏳ |
+| `TECHNICAL_ONBOARDING` §4.7 / §5 / §10 | ✅ v2 (freemium, Légendaire, Scanner, P6) |
+| `sql/README.md` | ✅ P6 migration row + § P6 détaillé |
+| `QA_P5_5_PARTNER_SALON.md` | ✅ **Terminée prod** — bannière + legacy vs freemium |
+| `ROUTES_AND_AUTH.md` | ✅ routes Scanner prévues |
+| `STINGRAY_MUSIC_INTEGRATION.md` | ✅ freemium 0 jeton Studio |
 
 ---
 
-## 10. Two-week action plan
+## 10. Next sprint — B2B2C v2 (post QA P5.5)
 
-Effort estimates: **1 senior dev**, focused scope. Adjust if multiple contributors.
+**Prerequisite ✅:** QA P5.5 terminée prod · doc v2 canonique rédigée (juin 2026).
 
-### Week 1 — Close P5.5 loop + RBAC foundation
-
-| # | Task | Effort | Status |
-|---|------|--------|--------|
-| 1.1 | Commit + deploy P5.5 SQL reference + Phase 2 TS | 0.5 d | ✅ `main` (`94e035d`); invitation RPC + ledger `invitation_debit` |
-| 1.2 | `partnerRoles.ts` + `resolvePartnerMembership()` | 0.5 d | ✅ |
-| 1.3 | Extend `GET /api/partner/tenants` with `role` + `capabilities` | 0.5 d | ✅ `PartnerContext` exposes capabilities |
-| 1.4 | Salon layout: redirect non-partner users away from `/salon` | 0.25 d | ✅ `f5a375a` |
-| 1.5 | Hide wallet block for Directors (`canViewBalance`) | 0.25 d | ✅ Phase 3 (`1acd375`) |
-| 1.6 | Manual QA checklist: branded login, invite, overdraft (402), admin credit | 0.5 d | ⏳ doc prêt — [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) ; exécution en cours |
-
-**Week 1 exit criteria:** ✅ invitation RPC on `main`; ✅ capabilities client-side; ✅ Directors see no balance; ✅ salon layout gate; ✅ wallet API. **Remaining:** full QA doc (1.6), Supabase P5.5 in all envs.
-
-### Week 2 — Wallet admin + commerce bridge start
+**Spike checkout v1 : annulé** → pivot Freemium + RevShare + Scanner.
 
 | # | Task | Effort | Done when |
 |---|------|--------|-----------|
-| 2.1 | `GET /api/partner/wallet` (admin only, `canViewBalance`) | 0.5 d | ✅ Admin sees real balance (`f5a375a`) |
-| 2.2 | `/salon/facturation` page shell (admin only) + link in header | 1 d | ✅ Shell (`canRecharge` gate, wallet snapshot) ; ⏳ `NEXT_PUBLIC_PARTNER_TOKEN_RECHARGE_URL` + ledger UI |
-| 2.3 | `partnerWallet.ts` + mark `partnerCheckout.ts` `@deprecated` | 0.5 d | New code paths use RPC only |
-| 2.4 | Spike: `POST /api/checkout` inserts `tribute_checkouts` row + calls `debit_partner_tokens_for_checkout` for one mode | 1 d | One happy-path E2E documented (even if family Stripe still stub) |
-| 2.5 | Smoke tests: invitation RPC parse, capabilities map, autosave PATCH (minimal Vitest or script) | 1 d | `npm test` or documented script in CI-ready form |
-| 2.6 | Update `B2B2C_COMMERCE.md` + onboarding §10b pointer only | 0.25 d | Doc matches wallet + P5.5 state |
+| S1 | P6 SQL : `is_freemium`, commission tables, RPC accrue/clawback | 1 d | Migration applied + README |
+| S2 | Saga checkout v2 : freemium 0 $ + Stripe upsell + `tribute_checkouts` | 2 d | Happy path E2E documented |
+| S3 | Webhook `checkout.session.completed` + commission idempotent | 1 d | RevShare line in ledger |
+| S4 | Scanner Phase A : QR + mobile `/scan/[token]` + upload | 2 d | Photo appears on desktop wizard |
+| S5 | `pricingConfig` + manifest v2 (0/149/299/499, `legendary`) | 1 d | Align deliverables doc |
+| S6 | Invitation API : skip debit when `is_freemium` + Souvenir | 0.5 d | No 402 on freemium invite |
+| S7 | Smoke tests commission math + checkout idempotency | 1 d | Script or Vitest |
 
-**Week 2 exit criteria:** ✅ Admin sees real wallet; ✅ facturation route (shell). **Remaining:** Stripe Payment Link env, ledger UI, checkout saga spike, minimal regression guard.
+**Sprint exit criteria:** one freemium tenant (ex. Urgel Bourgie) can invite → family completes Souvenir 0 $ OR pays upsell → commission accrued on webhook.
 
-### Explicitly deferred (after 2 weeks)
+### Completed — P5.5 + doc v2 (juin 2026)
 
-- Stripe Billing subscriptions (retainer)
-- Automated Stripe top-up webhooks
-- Full `b2b2c_family` family delta UI (`computeB2B2CFamilyPricing`)
-- Video render pipeline
+| # | Task | Status |
+|---|------|--------|
+| 1.1–1.5 | P5.5 RBAC, wallet API, salon gate | ✅ |
+| 1.6 | QA P5.5 checklist prod | ✅ **Terminée** |
+| Doc | B2B2C v2, RevShare, Scanner, Deliverables | ✅ |
+
+### Explicitly deferred (after v2 Phase A)
+
+- Stripe Connect auto-payout
+- Scanner Phase B (crop papier + Avant/Après IA)
+- Légendaire Gants Blancs fulfillment ops (boîte physique)
 - Full test suite + GitHub Actions
-- **Storage legacy :** backfill thumbs historiques ; update `cacheControl` objets existants — voir §4.1 (surveiller dashboard 2 sem. d’abord)
+- Video render pipeline
+- Storage legacy backfill — voir §4.1
 
 ---
 
@@ -289,15 +319,19 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 1. **[`PROJECT_STATUS.md`](PROJECT_STATUS.md)** (ce fichier) — où on en est, dette, plan 2 semaines.
 2. **[`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)** — signature visuelle connexion **Halo-Éclipse**.
 3. **[`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md)** — URLs studio/salon, branding `?partenaire=`, checklist QA connexion.
-3b. **[`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)** — checklist QA partenaire (invitation, 402, solde) — **avant checkout saga**.
-4. **[`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)** — modèle commerce 3 modes ; ce qui reste (saga checkout, `b2b2c_family`).
-5. **[`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md)** — hub technique complet (§4 auth, §10 roadmap).
+3b. **[`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)** — ✅ **QA terminée prod** (RBAC, solde, gate R6).
+4. **[`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)** — **v2** freemium + RevShare + saga checkout (spike v1 annulé).
+4b. **[`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md)** · **[`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)** — ledger commissions + Killer App.
+5. **[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md)** — grille Quiet Luxury B2C (149/299/499) + Souvenir lead-magnet B2B2C.
+6. **[`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md)** — hub technique complet (§4 auth, §10 roadmap).
 
 **Démo prod / QA :** tenant `partner-qa-demo` (Urgel Bourgie) · compte partenaire QA · base Vercel `odyssey-web-eta.vercel.app`.
 
-**Ce qui est shippé récemment (juin 2026, `main`) :** RBAC P5.5 (Directeur vs Admin) · gate `/salon` · wallet API réel · invitations + débit RPC · co-branding connexion · signature Halo-Éclipse · toggle FR/EN · déconnexion salon.
+**Ce qui est shippé récemment (juin 2026, `main`) :** QA P5.5 ✅ · RBAC · gate `/salon` · wallet API · invitations RPC · doc B2B2C v2 · Halo-Éclipse · co-branding.
 
-**Ce qui n’est pas encore prod-ready :** saga `tribute_checkouts` · webhook paiement complet · Stripe Payment Link recharge · ledger UI · tests automatisés · dépréciation `partnerCheckout.ts`.
+**Grand chantier prochain sprint :** B2B2C v2 — P6 SQL · saga checkout freemium · webhook RevShare · Scanner Phase A · `pricingConfig` v2.
+
+**Ce qui n’est pas encore prod-ready :** implémentation P6 · commission UI · Scanner · Légendaire fulfillment · tests automatisés.
 
 ---
 
@@ -305,7 +339,9 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 
 | Topic | Document |
 |-------|----------|
-| Commerce rules & saga | [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
+| Commerce rules & saga v2 | [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
+| RevShare & commission ledger | [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) |
+| Scanner Compagnon (Killer App) | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | Routes & Salon auth | [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) |
 | Packages & tokens | [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) |
 | Wizard | [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) |
