@@ -27,8 +27,8 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 12 | `odyssey_p5_3_tenant_partner_select.sql` | **Patch** | RLS SELECT `tenants` pour rôles `partner` / `partner_admin`. |
 | 14 | `odyssey_p5_4_partner_tenants_for_member.sql` | **Patch** | RPC `get_partner_tenants_for_member()` — logo + dropdown Salon après login. |
 | 15 | `odyssey_p5_5_partner_rbac_overdraft.sql` | **Patch** | RBAC admin wallet/ledger, overdraft limité, débit atomique invitation, crédit manuel, anti double-débit checkout. |
-| 16 | `odyssey_p6_freemium_revshare.sql` | **Migration** | **B2B2C v2 Phase A** — voir [§ P6](#p6--freemium--revshare-b2b2c-v2) |
-| — | `odyssey_p6_1_scan_sessions.sql` | **Migration (Phase B)** | Scanner Compagnon — table `scan_sessions` |
+| 16 | `odyssey_p6_freemium_revshare.sql` | **Migration** | **B2B2C v2 Phase A** + stubs Phase 2 — voir [§ P6](#p6--freemium--revshare-b2b2c-v2) |
+| — | ~~`odyssey_p6_1_scan_sessions.sql`~~ | *(absorbé P6)* | `scan_sessions` inclus dans P6 Partie B |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
 | — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed QA** | Partenaire fictif + 100 jetons — **après P4**, hors chaîne prod. |
 | — | `odyssey_partner_tenant_branding_example.sql` | **Référence** | Mise à jour `tenants.settings` (`brand_label`, `brand_logo_url`) — Salon connexion. |
@@ -89,18 +89,33 @@ Scripts **jamais à supprimer du repo** : fichiers `odyssey_p*.sql` (historique 
 
 ## P6 — Freemium + RevShare (B2B2C v2)
 
-**Fichier :** `odyssey_p6_freemium_revshare.sql` *(à créer — Phase A sprint)*  
+**Fichier :** `odyssey_p6_freemium_revshare.sql` *(Phase A sprint — T1 lundi)*  
 **Prérequis :** P5 + P5.5 appliqués.
+
+### Partie A — Commerce Phase A (logique active T1–T7)
 
 | Objet | Rôle |
 |-------|------|
-| **`tenants.is_freemium`** | `boolean` default `false` — `true` = canal acquisition Souvenir gratuit (ex. Urgel Bourgie) |
+| **`tenants.is_freemium`** | `boolean` default `false` — modèle commercial **par tenant** (freemium vs jetons legacy) |
 | **`partner_commission_balances`** | Agrégat RevShare par tenant : `accrued_cents`, `paid_cents`, `pending_cents` |
 | **`partner_commission_ledger`** | Journal append-only : `commission_accrual`, `commission_clawback`, `payout` — idempotence `stripe_event_id` |
 | **`tribute_checkouts`** (ALTER) | Colonnes `commission_cents`, `commission_rate_bps`, `commission_status` ; package id `legendary` |
-| **`accrue_partner_commission_for_checkout()`** | RPC idempotente — 30 % du brut Stripe · `service_role` only |
+| **`accrue_partner_commission_for_checkout()`** | RPC idempotente — RevShare brut Stripe · `service_role` only |
 
-Détail métier : [`PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · saga : [`B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) v2.
+### Partie B — Stubs Phase 2 (schéma only — pas de RPC métier en T1)
+
+| Objet | Rôle | Activation prévue |
+|-------|------|-------------------|
+| **`projects.lifecycle_status`** | `active` → `grace_period` → `subscription_required` → `archived` | Phase 2 Sanctuaire MRR |
+| **`media_assets.contributor_*`** | `contributor_type`, `contributor_email`, `review_status` | Semaine 3 Scanner async |
+| **`consent_records`** | Preuve consentement Loi 25 (marketing / biometric) | Phase 2 CPL |
+| **`project_access_tokens`** | Liens invités longue durée (`/contribute/[token]`) | Semaine 3 Scanner async |
+| **`scan_sessions`** | Sessions Scanner QR + async | Semaine 3 |
+| **`guest_micro_checkouts`** | Micro-transactions invités (≠ `tribute_checkouts`) | Semaine 4 Family Fund |
+| **`family_tribute_fund_*`** | Solde + ledger allocation % invités → famille | Semaine 4 Family Fund |
+| **`persons` / `person_faces`** | Stub LYRA Data Graph (embeddings hors DB) | Phase 2 |
+
+Détail stratégique : [`VISION_PHASE_2.md`](../VISION_PHASE_2.md) §4 · commerce : [`PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · saga : [`B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) v2.
 
 **Seed QA recommandé (post-migration) :**
 

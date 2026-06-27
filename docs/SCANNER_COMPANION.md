@@ -13,7 +13,8 @@ Complète [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`B2
 Le Scanner Compagnon est la **Killer App** qui différencie Odyssey des outils obsolètes (ex. Scrypta) :
 
 - Le conseiller ou la famille travaille sur **desktop** dans le wizard Studio.
-- Les **vieilles photos papier** sont numérisées **sur place** via le **téléphone** (sans app native).
+- Les **vieilles photos papier** sont numérisées via le **téléphone** (sans app native).
+- **Phase 1 (juin 2026) — Scanner async :** les **invités** contribuent aussi **avant / après la cérémonie** et **à distance** (diaspora) — voir [`VISION_PHASE_2.md`](VISION_PHASE_2.md) §2.1.
 - L’**IA de restauration** produit un aperçu **Avant/Après** immédiat — preuve de valeur tangible.
 - L’upsell vers **Éternité** ou **Légendaire** devient **émotionnellement évident**.
 

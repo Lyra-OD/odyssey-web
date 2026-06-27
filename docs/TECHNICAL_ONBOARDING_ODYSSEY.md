@@ -853,8 +853,8 @@ Le dossier `docs/sql/` est la **source de verite** des migrations. Voir `docs/sq
 8. `odyssey_p4_1_security_fixes.sql` -- **patch** RLS partner roles + index ledger `project_id`
 9. `odyssey_p5_b2b2c_core.sql` -- invitations, tribute_checkouts, RPC debit atomique
 10. `odyssey_p5_1` through `odyssey_p5_5` -- branding, tenants RPC, RBAC, overdraft (see [`sql/README.md`](sql/README.md))
-11. **`odyssey_p6_freemium_revshare.sql`** -- **Phase A** : `tenants.is_freemium`, `partner_commission_balances`, `partner_commission_ledger`, RPC `accrue_partner_commission_for_checkout`, extend `tribute_checkouts` commission columns + `legendary` package id
-12. **`odyssey_p6_1_scan_sessions.sql`** -- **Phase B** (Scanner) : `scan_sessions` table
+11. **`odyssey_p6_freemium_revshare.sql`** -- **Phase A (T1)** : Partie A commerce (freemium, commission ledger, RPC accrue, legendary) + **Partie B stubs Phase 2** (consent_records, project_access_tokens, scan_sessions, guest_micro_checkouts, family_tribute_fund_*, lifecycle_status, persons/person_faces, media contributor columns)
+12. ~~**`odyssey_p6_1_scan_sessions.sql`**~~ -- absorbé dans P6 Partie B
 — `odyssey_p0_storage_policies_REFERENCE.sql` -- **via Dashboard uniquement** (pas SQL Editor)
 — `odyssey_p4_partner_token_qa_seed.sql` -- **seed QA** (apres P4, non prod)
 

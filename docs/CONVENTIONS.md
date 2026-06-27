@@ -45,4 +45,6 @@ Après toute modification wizard, forfaits/livrables, pricing, checkout, RevShar
 
 ## Vision produit
 
-[`Manifesto-V10.4.md`](Manifesto-V10.4.md) = intention produit long terme — **pas** référence d’implémentation du checkout (préférer `B2B2C_COMMERCE.md` v2).
+- [`Manifesto-V10.4.md`](Manifesto-V10.4.md) = constitution technique (Brain/Engine, Loi 25, stack) — **pas** référence checkout.
+- [`VISION_PHASE_2.md`](VISION_PHASE_2.md) = feuille de route stratégique Phase 1 (Scanner async, Family Tribute Fund) + Phase 2 (CPL, MRR Sanctuaire, LYRA Data Graph).
+- Implémentation commerce : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.

@@ -1,6 +1,12 @@
 # Odyssey — Manifesto V10.4
 
-> Source of truth for architecture, product intent, and operating rules.
+> **Constitution technique** — séparation Brain/Engine, privacy, stack.  
+> **Feuille de route stratégique (Phase 1 ajustements + Phase 2 Licorne) :** [`VISION_PHASE_2.md`](VISION_PHASE_2.md) *(juin 2026)*.
+
+**Status:** Absolute reference (technical) · **Strategic addendum:** V10.4.1 (June 2026)  
+**Scope:** Architecture, Privacy (Law 25), Stack, Product intent.
+
+---
 
 ## Separation of Intelligence (Brain) vs Execution (Engine)
 
@@ -11,16 +17,12 @@
 
 All variables, filenames, module names, and comments must be in **English** for global scalability.
 
-## TODO
-
-Paste the full Manifesto V10.4 content here.
+---
 
 # 🏛️ ODYSSEY-Lyra TECHNICAL CONSTITUTION (V10.4)
 
-`/callout`ℹ️
-
-**STATUS: ABSOLUTE REFERENCEVersion:** 10.4 (The Sovereign Edition)
-**Date:** Feb 5, 2026
+**Version:** 10.4 (The Sovereign Edition) · **Strategic addendum:** 10.4.1 (June 2026)  
+**Date:** Feb 5, 2026 (constitution) · June 2026 (vision Phase 1/2)  
 **Scope:** Architecture, Privacy (Law 25), & Stack.
 
 # 1. DOCUMENT: THE MANIFESTO
@@ -29,9 +31,22 @@ Paste the full Manifesto V10.4 content here.
 
 Odyssey is the "Emotional Engine" and "Trojan Horse" for **LYRA**.
 
-- **M&A Strategy:** Build a "Deep Tech" asset (Data/Social Graph).
+- **M&A Strategy:** Build a "Deep Tech" asset (Data/Social Graph) — see [`VISION_PHASE_2.md`](VISION_PHASE_2.md) § Pilier 3 (Projet LYRA).
 - **Black Box:** We provide API services but retain 100% IP/Source Code.
-- **Value Loop:** Attention (Video) -> Data (Brain) -> Lyra Hub (Services).
+- **Value Loop:** Attention (Video) → Data (Brain) → Lyra Hub (Services).
+
+### 1.1 Strategic evolution (June 2026 — partner session)
+
+> Full detail: [`VISION_PHASE_2.md`](VISION_PHASE_2.md)
+
+| Horizon | Pillars |
+|---------|---------|
+| **Phase 1 (immediate)** | B2B2C v2 commerce (freemium + RevShare) · **Scanner web async** (guests, diaspora, pre/post ceremony) · **Family Tribute Fund** (% of guest micro-transactions credited to family) |
+| **Phase 2 (unicorn roadmap)** | **Lead-Gen CPL** (pre-arrangement leads from guest emails) · **Sanctuaire MRR** (49$/yr after year 1 + AI anniversary capsule to all guests) · **Data Graph LYRA** (face recognition → genealogy + social graph) |
+
+**Commerce implementation** (pricing, checkout, SQL) is **not** defined in this manifesto — use [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.
+
+**Tenant agnosticity:** business model (freemium vs prepaid tokens) and vertical (`human`, `pet`, `wedding`) are **per-tenant configuration**, never globally hardcoded.
 
 ## 2. Engineering Prime Directives
 
@@ -91,17 +106,24 @@ This structure strictly separates Intelligence (Brain) from Execution (Engine).
 
 ## 7. Data Strategy (Law 25 / GDPR)
 
-- **🔒 The Vault (Hidden):** PII, Names, Raw Footage. **NEVER SOLD.**
-- **🏭 The Refinery:** AI extracts anonymous patterns (vectors).
-- **💰 The Market (Sold):** Aggregated insights (e.g., "Crowd size trends", "Religious rites stats").
+- **🔒 The Vault (Hidden):** PII, Names, Raw Footage, **biometric data (face embeddings)**. **NEVER SOLD.**
+- **🏭 The Refinery:** AI extracts anonymous patterns (vectors) — with **explicit consent** for Phase 2 LYRA graph.
+- **💰 The Market (Sold):** Aggregated insights only (e.g., "Crowd size trends", "Religious rites stats") — no re-identification.
+
+**Phase 2 implications:** guest email capture (CPL), face clustering (LYRA), and anniversary outreach require **`consent_records`** and marketing opt-in **separate** from transactional upload — see [`VISION_PHASE_2.md`](VISION_PHASE_2.md) §5.
 
 ## 8. Tier Logic (The Cash Register)
+
+> **Superseded for checkout implementation** by [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) and [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 (Quiet Luxury 149/299/499 · freemium Souvenir canal partenaire).  
+> Table below = **historical Manifesto intent** (CRM / LYRA data objectives).
 
 | Tier | Tokens | Price | Style | Lyra Data Objective (CRM) |
 | --- | --- | --- | --- | --- |
 | **ESSENTIAL** | 0.5 | $49 | Sober, Constant | **Lead Gen:** Identify the Payer & Date. |
 | **TRIBUTE** | 1.0 | $99 | Pulse, Smart Ducking | **Social Graph:** Identify Contributors. |
 | **LEGACY** | 2.0 | $199 | Narrative, Docu | **Emotional Graph:** Religion, Tastes, Rites. |
+
+**Phase 2 revenue layers** (not in tier table): guest micro-transactions + Family Tribute Fund · Sanctuaire MRR 49$/yr · CPL pre-arrangement leads — [`VISION_PHASE_2.md`](VISION_PHASE_2.md).
 
 # **9. TECHNICAL FILES (APPENDICES)**
 
