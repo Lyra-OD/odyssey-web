@@ -7,6 +7,7 @@ import {
 import { buildMusicPreviewProxyUrl } from "@/src/lib/music/stingrayTrackId";
 import {
   findCatalogTrack,
+  STINGRAY_CATALOG_PROVIDER,
   type WizardActTrackKey,
   type WizardActTracks,
   type WizardSelectedTrack,
@@ -30,7 +31,7 @@ export type {
   WizardActTracks,
 } from "@/src/lib/wizard/stingrayCatalog";
 
-export const WIZARD_STATE_VERSION = 1 as const;
+export const WIZARD_STATE_VERSION = 2 as const;
 
 export type MoodId = "soft" | "classical" | "melancholic" | "bright";
 export type SocialId = "facebook" | "instagram" | "tiktok" | "google";
@@ -55,8 +56,96 @@ export type WizardMontageState = {
   focalPoints: Record<string, MontageFocalPoint>;
 };
 
+export type WizardStoryboardSongBase = {
+  /** Libellé affichable dans l'UI. */
+  title: string;
+  /**
+   * Durée réelle en secondes.
+   * `null` = inconnue au moment de la migration / parsing.
+   */
+  durationSec?: number | null;
+};
+
+export type WizardStoryboardStingraySong = WizardStoryboardSongBase & {
+  source: "stingray";
+  /** Identifiant catalogue durable. */
+  trackId: string;
+  artist: string;
+  coverUrl?: string;
+};
+
+export type WizardStoryboardUploadSong = WizardStoryboardSongBase & {
+  source: "upload";
+  /** Chemin Storage durable, jamais une URL signée. */
+  storagePath: string;
+  /** Nom de fichier d'origine ou libellé dérivé. */
+  fileName?: string;
+  mimeType?: string;
+  artist?: string;
+};
+
+export type WizardStoryboardSong =
+  | WizardStoryboardStingraySong
+  | WizardStoryboardUploadSong;
+
+export type WizardStoryboardChapter = {
+  /**
+   * ID stable du chapitre.
+   * L'ordre visuel = index dans `chapters`.
+   */
+  id: string;
+  /**
+   * Liste ordonnée des media_assets assignés à ce chapitre.
+   * L'ordre narratif du chapitre = ordre du tableau.
+   */
+  mediaIds: string[];
+  /**
+   * Chanson liée au chapitre.
+   * Absente si le chapitre n'a pas encore de piste.
+   */
+  song?: WizardStoryboardSong;
+};
+
+export type WizardStoryboardState = {
+  /**
+   * Liste ordonnée des chapitres.
+   * Le schéma autorise `[]` pour les drafts précoces.
+   */
+  chapters: WizardStoryboardChapter[];
+  /**
+   * Médias présents dans le projet mais pas encore assignés à un chapitre.
+   */
+  unassignedIds: string[];
+  /**
+   * Médias exclus du rendu mais conservés dans l'organisation.
+   * Un média peut rester dans un chapitre ET être exclu.
+   */
+  excludedIds: string[];
+  /**
+   * Focal points conservés par media asset id.
+   */
+  focalPoints: Record<string, MontageFocalPoint>;
+};
+
+export type WizardLegacyMusicalAmbianceState = {
+  /** @deprecated Conservé pour rehydratation legacy — ne pas persister */
+  mood?: MoodId;
+  /** @deprecated Conservé pour rehydratation legacy — ne pas persister */
+  trackOrder?: TrackId[];
+  /** @deprecated Migré vers tracks.acte1 */
+  selectedTrack?: WizardSelectedTrack;
+  tracks?: WizardActTracks;
+  catalogProvider?: string;
+};
+
 export type { WizardBasePackage } from "@/src/lib/wizard/wizardPricing";
 
+/**
+ * Runtime transitional state:
+ * - `storyboard` devient la source de vérité canonique
+ * - `montage` et `musicalAmbiance` restent exposés temporairement
+ *   pour ne pas casser l'UI actuelle avant la refonte Storyboard.
+ */
 export type WizardStateV1 = {
   version: typeof WIZARD_STATE_VERSION;
   /** Mode funérarium / partenaire B2B (jetons) vs famille B2C (Stripe). */
@@ -75,18 +164,27 @@ export type WizardStateV1 = {
     selected?: SocialId;
     url?: string;
   };
+  /**
+   * Nouvelle source de vérité canonique.
+   * Persistée côté DB à partir de S2.
+   */
+  storyboard?: WizardStoryboardState;
+  /**
+   * Legacy runtime bridge — lecture uniquement pendant la transition.
+   */
   montage?: WizardMontageState;
   extensions?: WizardExtensionsState;
-  musicalAmbiance?: {
-    /** @deprecated Conservé pour rehydratation legacy — ne pas persister */
-    mood?: MoodId;
-    /** @deprecated Conservé pour rehydratation legacy — ne pas persister */
-    trackOrder?: TrackId[];
-    /** @deprecated Migré vers tracks.acte1 */
-    selectedTrack?: WizardSelectedTrack;
-    tracks?: WizardActTracks;
-    catalogProvider?: string;
-  };
+  /**
+   * Legacy runtime bridge — lecture uniquement pendant la transition.
+   */
+  musicalAmbiance?: WizardLegacyMusicalAmbianceState;
+};
+
+export type WizardStatePersistedV2 = Omit<
+  WizardStateV1,
+  "montage" | "musicalAmbiance"
+> & {
+  version: typeof WIZARD_STATE_VERSION;
 };
 
 export type WizardInitialDraft = {
@@ -195,6 +293,82 @@ export function coerceMontageState(raw: unknown): WizardMontageState {
   return { acts, unassignedIds, excludedIds, focalPoints };
 }
 
+const CHAPTER_ID_RE = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/;
+
+type LegacyStoryboardBridge = {
+  actId: MontageActId;
+  trackKey: WizardActTrackKey;
+  chapterId: string;
+};
+
+const LEGACY_STORYBOARD_BRIDGE: readonly LegacyStoryboardBridge[] = [
+  { actId: "spark", trackKey: "acte1", chapterId: "chapter-1" },
+  { actId: "epic", trackKey: "acte2", chapterId: "chapter-2" },
+  { actId: "legacy", trackKey: "acte3", chapterId: "chapter-3" },
+] as const;
+
+function parseDurationLabelToSeconds(value: string | undefined): number | null {
+  if (!value) return null;
+  const match = /^(\d{1,2}):([0-5]\d)$/.exec(value.trim());
+  if (!match) return null;
+  return Number(match[1]) * 60 + Number(match[2]);
+}
+
+function coerceDurationSec(raw: unknown): number | null | undefined {
+  if (raw === null) return null;
+  if (typeof raw !== "number" || !Number.isFinite(raw)) return undefined;
+  const normalized = Math.trunc(raw);
+  if (normalized <= 0 || normalized > 3600) return undefined;
+  return normalized;
+}
+
+function normalizeChapterId(raw: unknown, fallbackIndex: number): string {
+  const value = typeof raw === "string" ? raw.trim() : "";
+  if (value && CHAPTER_ID_RE.test(value)) return value;
+  return `chapter-${fallbackIndex + 1}`;
+}
+
+function ensureUniqueChapterId(
+  requestedId: string,
+  usedIds: Set<string>,
+): string {
+  if (!usedIds.has(requestedId)) return requestedId;
+  let suffix = 2;
+  let next = `${requestedId}-${suffix}`;
+  while (usedIds.has(next)) {
+    suffix += 1;
+    next = `${requestedId}-${suffix}`;
+  }
+  return next;
+}
+
+export function emptyStoryboardState(): WizardStoryboardState {
+  return {
+    chapters: [],
+    unassignedIds: [],
+    excludedIds: [],
+    focalPoints: {},
+  };
+}
+
+function hasMontageSignal(montage: WizardMontageState | undefined): boolean {
+  if (!montage) return false;
+  if ((montage.unassignedIds ?? []).length > 0) return true;
+  if (montage.excludedIds.length > 0) return true;
+  if (Object.keys(montage.focalPoints).length > 0) return true;
+  return MONTAGE_ACT_IDS.some((actId) => (montage.acts[actId] ?? []).length > 0);
+}
+
+function hasStoryboardSignal(storyboard: WizardStoryboardState | undefined): boolean {
+  if (!storyboard) return false;
+  return (
+    storyboard.chapters.length > 0 ||
+    storyboard.unassignedIds.length > 0 ||
+    storyboard.excludedIds.length > 0 ||
+    Object.keys(storyboard.focalPoints).length > 0
+  );
+}
+
 function coerceSelectedTrack(raw: unknown): WizardSelectedTrack | undefined {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
   const obj = raw as Record<string, unknown>;
@@ -235,9 +409,309 @@ function coerceActTracks(raw: unknown): WizardActTracks {
   return result;
 }
 
+function coerceStoryboardSong(
+  raw: unknown,
+): WizardStoryboardSong | undefined {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
+  const obj = raw as Record<string, unknown>;
+  const source = typeof obj.source === "string" ? obj.source.trim() : "";
+
+  if (source === "stingray") {
+    const trackId = typeof obj.trackId === "string" ? obj.trackId.trim() : "";
+    const catalog = trackId ? findCatalogTrack(trackId) : undefined;
+    const title =
+      typeof obj.title === "string" && obj.title.trim()
+        ? obj.title.trim()
+        : catalog?.title?.trim() ?? "";
+    const artist =
+      typeof obj.artist === "string" && obj.artist.trim()
+        ? obj.artist.trim()
+        : catalog?.artist?.trim() ?? "";
+    const coverUrl =
+      typeof obj.coverUrl === "string" && obj.coverUrl.trim()
+        ? obj.coverUrl.trim()
+        : catalog?.coverUrl?.trim() ?? "";
+    const durationSec =
+      coerceDurationSec(obj.durationSec) ??
+      parseDurationLabelToSeconds(catalog?.duration) ??
+      undefined;
+
+    if (!trackId || !title || !artist) return undefined;
+
+    return {
+      source: "stingray",
+      trackId,
+      title,
+      artist,
+      ...(coverUrl ? { coverUrl } : {}),
+      ...(durationSec !== undefined ? { durationSec } : {}),
+    };
+  }
+
+  if (source === "upload") {
+    const storagePath =
+      typeof obj.storagePath === "string" ? obj.storagePath.trim() : "";
+    const title = typeof obj.title === "string" ? obj.title.trim() : "";
+    const fileName =
+      typeof obj.fileName === "string" && obj.fileName.trim()
+        ? obj.fileName.trim()
+        : undefined;
+    const mimeType =
+      typeof obj.mimeType === "string" && obj.mimeType.trim()
+        ? obj.mimeType.trim()
+        : undefined;
+    const artist =
+      typeof obj.artist === "string" && obj.artist.trim()
+        ? obj.artist.trim()
+        : undefined;
+    const durationSec = coerceDurationSec(obj.durationSec);
+
+    if (!storagePath || !title) return undefined;
+
+    return {
+      source: "upload",
+      storagePath,
+      title,
+      ...(fileName ? { fileName } : {}),
+      ...(mimeType ? { mimeType } : {}),
+      ...(artist ? { artist } : {}),
+      ...(durationSec !== undefined ? { durationSec } : {}),
+    };
+  }
+
+  return undefined;
+}
+
+function coerceStoryboardChapter(
+  raw: unknown,
+  index: number,
+): WizardStoryboardChapter | undefined {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
+  const obj = raw as Record<string, unknown>;
+
+  const mediaIdsRaw = Array.isArray(obj.mediaIds) ? obj.mediaIds : [];
+  const seen = new Set<string>();
+  const mediaIds: string[] = [];
+
+  for (const value of mediaIdsRaw) {
+    if (typeof value !== "string" || !isUuid(value) || seen.has(value)) continue;
+    seen.add(value);
+    mediaIds.push(value);
+  }
+
+  const song = coerceStoryboardSong(obj.song);
+  if (mediaIds.length === 0 && !song) return undefined;
+
+  return {
+    id: normalizeChapterId(obj.id, index),
+    mediaIds,
+    ...(song ? { song } : {}),
+  };
+}
+
+export function coerceStoryboardState(raw: unknown): WizardStoryboardState {
+  const base = emptyStoryboardState();
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return base;
+
+  const obj = raw as Record<string, unknown>;
+  const chaptersRaw = Array.isArray(obj.chapters) ? obj.chapters : [];
+  const usedChapterIds = new Set<string>();
+  const assignedMediaIds = new Set<string>();
+  const chapters: WizardStoryboardChapter[] = [];
+
+  for (let index = 0; index < chaptersRaw.length; index += 1) {
+    const chapter = coerceStoryboardChapter(chaptersRaw[index], index);
+    if (!chapter) continue;
+
+    const id = ensureUniqueChapterId(chapter.id, usedChapterIds);
+    usedChapterIds.add(id);
+
+    const mediaIds = chapter.mediaIds.filter((mediaId) => {
+      if (assignedMediaIds.has(mediaId)) return false;
+      assignedMediaIds.add(mediaId);
+      return true;
+    });
+
+    if (mediaIds.length === 0 && !chapter.song) continue;
+
+    chapters.push({
+      id,
+      mediaIds,
+      ...(chapter.song ? { song: chapter.song } : {}),
+    });
+  }
+
+  const seenUnassigned = new Set<string>();
+  const unassignedIds = Array.isArray(obj.unassignedIds)
+    ? obj.unassignedIds.filter((id): id is string => {
+        if (typeof id !== "string" || !isUuid(id)) return false;
+        if (assignedMediaIds.has(id)) return false;
+        if (seenUnassigned.has(id)) return false;
+        seenUnassigned.add(id);
+        return true;
+      })
+    : [];
+
+  const seenExcluded = new Set<string>();
+  const excludedIds = Array.isArray(obj.excludedIds)
+    ? obj.excludedIds.filter((id): id is string => {
+        if (typeof id !== "string" || !isUuid(id)) return false;
+        if (seenExcluded.has(id)) return false;
+        seenExcluded.add(id);
+        return true;
+      })
+    : [];
+
+  const focalPoints: Record<string, MontageFocalPoint> = {};
+  if (
+    obj.focalPoints &&
+    typeof obj.focalPoints === "object" &&
+    !Array.isArray(obj.focalPoints)
+  ) {
+    for (const [key, value] of Object.entries(obj.focalPoints)) {
+      if (!isUuid(key)) continue;
+      if (!value || typeof value !== "object" || Array.isArray(value)) continue;
+      const pt = value as Record<string, unknown>;
+      if (typeof pt.x !== "number" || typeof pt.y !== "number") continue;
+      focalPoints[key] = { x: clampUnit(pt.x), y: clampUnit(pt.y) };
+    }
+  }
+
+  return {
+    chapters,
+    unassignedIds,
+    excludedIds,
+    focalPoints,
+  };
+}
+
+function storyboardSongFromLegacyTrack(
+  track: WizardSelectedTrack | undefined,
+): WizardStoryboardSong | undefined {
+  if (!track?.trackId?.trim()) return undefined;
+  const catalog = findCatalogTrack(track.trackId.trim());
+  const durationSec =
+    parseDurationLabelToSeconds(catalog?.duration) ?? null;
+
+  return {
+    source: "stingray",
+    trackId: track.trackId.trim(),
+    title: track.title.trim(),
+    artist: track.artist.trim(),
+    ...(track.coverUrl?.trim() ? { coverUrl: track.coverUrl.trim() } : {}),
+    durationSec,
+  };
+}
+
+export function migrateLegacyWizardStateToStoryboard(input: {
+  montage?: WizardMontageState;
+  musicalAmbiance?: WizardLegacyMusicalAmbianceState;
+}): WizardStoryboardState | undefined {
+  const montage = input.montage;
+  const musicalAmbiance = input.musicalAmbiance;
+  const tracks = musicalAmbiance?.tracks ?? {};
+  const hasLegacyTracks = hasAnyActTrack(tracks);
+  const hasLegacyMontage = hasMontageSignal(montage);
+
+  if (!hasLegacyTracks && !hasLegacyMontage) return undefined;
+
+  const safeMontage = montage ?? emptyMontageState();
+  const chapters: WizardStoryboardChapter[] = [];
+
+  for (const bridge of LEGACY_STORYBOARD_BRIDGE) {
+    const mediaIds = [...(safeMontage.acts[bridge.actId] ?? [])];
+    const song = storyboardSongFromLegacyTrack(tracks[bridge.trackKey]);
+
+    if (mediaIds.length === 0 && !song) continue;
+
+    chapters.push({
+      id: bridge.chapterId,
+      mediaIds,
+      ...(song ? { song } : {}),
+    });
+  }
+
+  return {
+    chapters,
+    unassignedIds: [...(safeMontage.unassignedIds ?? [])],
+    excludedIds: [...safeMontage.excludedIds],
+    focalPoints: { ...safeMontage.focalPoints },
+  };
+}
+
+function selectedTrackFromStoryboardSong(
+  song: WizardStoryboardSong | undefined,
+): WizardSelectedTrack | undefined {
+  if (!song || song.source !== "stingray") return undefined;
+  return {
+    title: song.title,
+    artist: song.artist,
+    trackId: song.trackId,
+    coverUrl: song.coverUrl ?? "",
+    previewUrl: buildMusicPreviewProxyUrl(song.trackId),
+  };
+}
+
+function legacyMontageFromStoryboard(
+  storyboard: WizardStoryboardState,
+): WizardMontageState {
+  const base = emptyMontageState();
+
+  for (let index = 0; index < LEGACY_STORYBOARD_BRIDGE.length; index += 1) {
+    const bridge = LEGACY_STORYBOARD_BRIDGE[index];
+    const chapter = storyboard.chapters[index];
+    base.acts[bridge.actId] = [...(chapter?.mediaIds ?? [])];
+  }
+
+  // Les chapitres > 3 sont projetés en zone non assignée pendant la transition UI,
+  // afin d'éviter de "perdre" des médias dans le runtime legacy.
+  const overflowChapterMediaIds = storyboard.chapters
+    .slice(LEGACY_STORYBOARD_BRIDGE.length)
+    .flatMap((chapter) => chapter.mediaIds);
+
+  const seen = new Set<string>();
+  const unassignedIds = [
+    ...storyboard.unassignedIds,
+    ...overflowChapterMediaIds,
+  ].filter((id) => {
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+
+  return {
+    acts: base.acts,
+    unassignedIds,
+    excludedIds: [...storyboard.excludedIds],
+    focalPoints: { ...storyboard.focalPoints },
+  };
+}
+
+function legacyMusicalAmbianceFromStoryboard(
+  storyboard: WizardStoryboardState,
+): WizardLegacyMusicalAmbianceState | undefined {
+  const tracks: WizardActTracks = {};
+
+  for (let index = 0; index < LEGACY_STORYBOARD_BRIDGE.length; index += 1) {
+    const bridge = LEGACY_STORYBOARD_BRIDGE[index];
+    const chapter = storyboard.chapters[index];
+    const selectedTrack = selectedTrackFromStoryboardSong(chapter?.song);
+    if (selectedTrack) {
+      tracks[bridge.trackKey] = selectedTrack;
+    }
+  }
+
+  if (!hasAnyActTrack(tracks)) return undefined;
+
+  return {
+    tracks,
+    catalogProvider: STINGRAY_CATALOG_PROVIDER,
+  };
+}
+
 function coerceMusicalAmbiance(
   raw: unknown,
-): WizardStateV1["musicalAmbiance"] | undefined {
+): WizardLegacyMusicalAmbianceState | undefined {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
   const obj = raw as Record<string, unknown>;
 
@@ -342,6 +816,7 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     return emptyWizardState();
   }
+
   const obj = raw as Record<string, unknown>;
   const extensions = migrateLegacyExtensions(
     obj,
@@ -354,6 +829,35 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
     coercePricingSnapshot(obj.pricing, basePackage, isPartner) ??
     buildPricingSnapshot(extensions, basePackage, isPartner);
 
+  const legacyMontage =
+    obj.montage !== undefined ? coerceMontageState(obj.montage) : undefined;
+  const legacyMusicalAmbiance =
+    obj.musicalAmbiance !== undefined
+      ? coerceMusicalAmbiance(obj.musicalAmbiance)
+      : undefined;
+
+  const explicitStoryboard =
+    obj.storyboard !== undefined
+      ? coerceStoryboardState(obj.storyboard)
+      : undefined;
+  const migratedLegacyStoryboard = migrateLegacyWizardStateToStoryboard({
+    montage: legacyMontage,
+    musicalAmbiance: legacyMusicalAmbiance,
+  });
+  const storyboard = explicitStoryboard
+    ? hasStoryboardSignal(explicitStoryboard)
+      ? explicitStoryboard
+      : migratedLegacyStoryboard ?? explicitStoryboard
+    : migratedLegacyStoryboard;
+
+  const runtimeMontage = storyboard
+    ? legacyMontageFromStoryboard(storyboard)
+    : legacyMontage;
+
+  const runtimeMusicalAmbiance = storyboard
+    ? legacyMusicalAmbianceFromStoryboard(storyboard) ?? legacyMusicalAmbiance
+    : legacyMusicalAmbiance;
+
   const state: WizardStateV1 = {
     version: WIZARD_STATE_VERSION,
     ...(isPartner ? { isPartner: true } : {}),
@@ -365,16 +869,37 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
     ...(obj.socialSources && typeof obj.socialSources === "object"
       ? { socialSources: obj.socialSources as WizardStateV1["socialSources"] }
       : {}),
-    ...(obj.montage !== undefined
-      ? { montage: coerceMontageState(obj.montage) }
-      : {}),
+    ...(storyboard ? { storyboard } : {}),
+    ...(runtimeMontage ? { montage: runtimeMontage } : {}),
     ...(Object.keys(extensions).length ? { extensions } : {}),
-    ...(obj.musicalAmbiance !== undefined
-      ? { musicalAmbiance: coerceMusicalAmbiance(obj.musicalAmbiance) }
+    ...(runtimeMusicalAmbiance
+      ? { musicalAmbiance: runtimeMusicalAmbiance }
       : {}),
   };
 
   return state;
+}
+
+export function buildPersistedWizardState(
+  state: WizardStateV1,
+): WizardStatePersistedV2 {
+  const storyboard =
+    state.storyboard ??
+    migrateLegacyWizardStateToStoryboard({
+      montage: state.montage,
+      musicalAmbiance: state.musicalAmbiance,
+    });
+
+  return {
+    version: WIZARD_STATE_VERSION,
+    ...(state.isPartner ? { isPartner: true } : {}),
+    ...(state.basePackage ? { basePackage: state.basePackage } : {}),
+    ...(state.pricing ? { pricing: state.pricing } : {}),
+    ...(state.essentials ? { essentials: state.essentials } : {}),
+    ...(state.socialSources ? { socialSources: state.socialSources } : {}),
+    ...(storyboard ? { storyboard } : {}),
+    ...(state.extensions ? { extensions: state.extensions } : {}),
+  };
 }
 
 export function clampWizardStep(step: number, max = 10): number {

@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: July 2026 · P6 SQL applied, T2 manifest in progress**
+**Last revised: July 2026 · P6 SQL applied, storyboard foundations S1/S2 shipped**
 
 Living snapshot: **audit**, **recommended consolidations**, and **next sprint plan**.  
 For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) and the specialized docs listed in [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -16,13 +16,13 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | **Family Studio (B2C wizard)** | 🟢 Mature | 8 steps, autosave, media, music, Stripe checkout |
 | **Partner Salon (UI + QA P5.5)** | 🟢 **Terminée** | RBAC, wallet API, gate R6, solde bout en bout — QA prod validée ([`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)) |
 | **B2B2C commerce v2 (doc)** | 🟢 Spec ready | Freemium + RevShare 30 % + Scanner — canon [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 |
-| **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 SQL ✅** ; TS contract / saga / webhook in progress |
+| **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 SQL ✅** ; freemium partner UI ✅ ; storyboard foundations `S1/S2` ✅ ; saga / webhook in progress |
 | **RBAC & tokens (P5.5)** | 🟢 Shipped & QA | SQL + TS + UI ; coexistence avec freemium (`is_freemium`) documentée |
 | **Automated tests & CI** | 🔴 None | No test framework, no `.github/` workflows |
 | **Documentation** | 🟢 Strong | Rich; some docs ahead/behind code (see §4) |
 | **Security** | 🟡 Adequate with gaps | RLS solid; salon layout gate ✅; checkout saga still open |
 
-**Overall: 7.8/10** — B2C wizard + Salon partenaire **certifiés en prod** (P5.5 ✅) ; **P6 SQL est appliqué** ; grand chantier restant = saga checkout v2, webhook RevShare, consommateurs TS/UI et Scanner.
+**Overall: 8.0/10** — B2C wizard + Salon partenaire **certifiés en prod** (P5.5 ✅) ; **P6 SQL est appliqué** ; fondations `storyboard` V2 en place ; grand chantier restant = saga checkout v2, webhook RevShare, refonte UI storyboard et Scanner.
 
 ---
 
@@ -39,7 +39,7 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | B2B token checkout | 🟡 | Works via legacy TS debit; not P5 saga RPC |
 | Salon UI + invitations | 🟢 | `InvitationComposer`, branding, design system |
 | Salon wallet / billing UI | 🟡 | Admin : solde réel + page `/salon/facturation` (shell ✅) ; Stripe Payment Link + ledger UI ⏳ |
-| B2B2C family pricing v2 | 🟡 | Freemium 0 $ + upsell plein + RevShare — doc ✅ · TS contract T2 en cours · checkout ⏳ |
+| B2B2C family pricing v2 | 🟡 | Freemium 0 $ + upsell plein + RevShare — doc ✅ · types/storyboard V2 ✅ · checkout ⏳ |
 | Scanner Compagnon (Killer App) | 🟡 | Spec [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) ✅ · tables stub P6 ✅ · MVP app ⏳ |
 | Partner commission ledger (P6) | 🟡 | Spec [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) ✅ · SQL ✅ · webhook/app ⏳ |
 | Invitation → family wizard | 🟢 | Magic link + `/tribute/welcome` |
@@ -82,7 +82,7 @@ flowchart LR
 | QA P5.5 Salon (RBAC, wallet, gate R6) | ✅ | ✅ **Validée prod** |
 | `tribute_checkouts` saga **v1** (jetons) | ✅ | ❌ spike **annulé** |
 | `tribute_checkouts` saga **v2** (freemium + RevShare) | ✅ P6 schema | ❌ app + webhook en cours |
-| `tenants.is_freemium` | ✅ P6 | ❌ app |
+| `tenants.is_freemium` | ✅ P6 | 🟡 Partner UI ✅ ; checkout family saga ⏳ |
 | `partner_commission_ledger` + accrual webhook | ✅ P6 schema | ❌ webhook |
 | Checkout mode `b2b2c_family` | ✅ column | ❌ |
 | Webhook → checkout completed + commission | — | ❌ (catalog sync only) |
@@ -100,7 +100,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 · [`PARTNER_REVSHARE.md`
 | **Spike `tribute_checkouts` v1** | **Annulé** — modèle jetons + delta famille remplacé pour les gros clients |
 | **B2B2C v2 (Scrypta Killer)** | **Freemium** Souvenir 0 $ · **RevShare 30 %** brut Stripe · **Scanner Compagnon IA** |
 | **Legacy coexistence** | P4/P5.5 jetons **conservé** pour petits salons (`is_freemium = false`) |
-| **Exécution en cours** | T1 SQL ✅ · T2 pricing/manifest TS ✅ partiel · T3/T4/T5 à suivre |
+| **Exécution en cours** | P6 SQL ✅ · Phase 0 freemium UI ✅ · Storyboard `S1/S2` ✅ · `S3–S10` à suivre |
 
 Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
 
@@ -108,7 +108,7 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 
 ## 4. Recent work (Salon + P5.5)
 
-### Shipped on `main` (June 2026)
+### Shipped on `main` (June–July 2026)
 
 - Studio / Salon route split, dual login, partner co-branding (P5.2–P5.4)
 - Salon invitation UI: cyan skin (`salonTierCardSkin.ts`), structured features, logo fallback
@@ -124,6 +124,8 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 - **Documentation B2B2C v2** : `B2B2C_COMMERCE.md`, `DELIVERABLES_AND_PACKAGES.md`, `PARTNER_REVSHARE.md`, `SCANNER_COMPANION.md`
 - **P6 SQL appliqué (juillet 2026)** : `is_freemium`, `partner_commission_*`, `scan_sessions`, stubs Phase 2, package `legendary`
 - **T2 manifeste TS démarré** : `pricingConfig.ts`, `wizardDeliverables.ts`, `wizardDeliverables.utils.ts` — consommateurs TS/UI restants à migrer
+- **Phase 0 B2B2C livrée** : propagation `is_freemium` -> `PartnerContext` -> `InvitationComposer` ; Souvenir freemium affiche désormais **« Gratuit / 0 jeton »**
+- **Storyboard refactor S1/S2 livrés** : `wizardState.ts` + `/api/projects/[id]/autosave` persistent désormais `storyboard` V2 avec bridge runtime legacy pour préserver l’UI actuelle
 
 ### SQL reference (apply in Supabase before prod API)
 
@@ -254,7 +256,8 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | Doc | Gap |
 |-----|-----|
 | `B2B2C_COMMERCE.md` | ✅ **v2** (freemium, RevShare, saga v2, legacy coexistence) |
-| `DELIVERABLES_AND_PACKAGES.md` | ✅ v2 (Quiet Luxury B2C, Légendaire 499 $, caps médias/chansons, pacing) |
+| `DELIVERABLES_AND_PACKAGES.md` | ✅ v2 + pacing temporel / buckets par chanson documentés |
+| `WIZARD_ARCHITECTURE.md` | ✅ pivot storyboard documenté + bridge runtime explicité |
 | `PARTNER_REVSHARE.md` | ✅ spec · code ⏳ |
 | `SCANNER_COMPANION.md` | ✅ spec à jour (caps + P6 stub) · code ⏳ |
 | `TECHNICAL_ONBOARDING` §4.7 / §5 / §10 | ✅ v2 (freemium, Légendaire, Scanner, P6) |
@@ -273,20 +276,23 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 
 ### Current execution snapshot (July 2026)
 
-- **T1 / S1 — done:** migration `odyssey_p6_freemium_revshare.sql` appliquée
-- **T2 / S5 — done:** `pricingConfig.ts`, `wizardDeliverables.ts`, `wizardPricing.ts`, `wizardState.ts` et UI consumers alignés ; `tsc --noEmit` = **0 erreur**
-- **Known accepted debt:** manifeste autorise désormais 2 / 4 / 5 / 7 chansons, alors que l’UI audio reste encore structurée autour de **3 tracks** (`acte1`–`acte3`)
-- **Immediate next task:** **Bind Tenant Config** — propager `is_freemium` depuis le payload API (`/api/partner/tenants`) jusqu’au `PartnerContext` et à l’UI `InvitationComposer` pour que le forfait **SOUVENIR** s’affiche correctement en **« Gratuit / 0 jeton »** pour les salons freemium.
+- **Phase 0 — done:** propagation `is_freemium` côté partenaire ; Souvenir freemium = **« Gratuit / 0 jeton »**
+- **S1 — done:** `wizardState.ts` introduit `storyboard` V2 + migration douce legacy -> storyboard
+- **S2 — done:** `/api/projects/[id]/autosave` valide et persiste désormais le snapshot canonique `storyboard`
+- **Known accepted transition debt:** l’UI steps 4–7 reste encore rendue via un bridge runtime legacy (`montage` / `musicalAmbiance`) tant que `S5–S8` ne sont pas implémentés
 
 | # | Task | Effort | Done when |
 |---|------|--------|-----------|
-| S1 | P6 SQL : `is_freemium`, commission tables, RPC accrue/clawback | ✅ | Migration applied + README |
-| S2 | Saga checkout v2 : freemium 0 $ + Stripe upsell + `tribute_checkouts` | 2 d | Happy path E2E documented |
-| S3 | Webhook `checkout.session.completed` + commission idempotent | 1 d | RevShare line in ledger |
-| S4 | Scanner Phase A : QR + mobile `/scan/[token]` + upload | 2 d | Photo appears on desktop wizard |
-| S5 | `pricingConfig` + manifest v2 (0/149/299/499, `legendary`, caps/pacing) | ✅ | Contract TS + consumers migrated; `tsc --noEmit` = 0 |
-| S6 | Invitation API : skip debit when `is_freemium` + Souvenir | 0.5 d | No 402 on freemium invite |
-| S7 | Smoke tests commission math + checkout idempotency | 1 d | Script or Vitest |
+| S1 | Nouveau data model `storyboard` + bridge legacy runtime | ✅ | `wizard_state.storyboard` canonical + rehydration legacy |
+| S2 | Autosave V2 : Zod `storyboard`, write path canonique | ✅ | PATCH persists `storyboard` snapshot |
+| S3 | Quotas upload package-aware (`maxMediaItems`) | 0.5–1 d | Upload step blocks / warns by package limits |
+| S4 | Moteur pacing temporel (`durationSec` / `targetSecondsPerMedia`) | 1 d | Pure helpers compute chapter capacity and overload |
+| S5 | UI storyboard dynamique (chapitres / bacs chanson) | 1.5–2 d | Step 4 no longer hard-coded to 3 acts |
+| S6 | UI musique dynamique par chapitre | 1–1.5 d | Step 5 no longer hard-coded to `acte1–3` |
+| S7 | Validation wizard orientée storyboard | 0.5–1 d | No navigation logic depends on `hasAnyActTrack` |
+| S8 | Preview / teaser alignés sur storyboard | 0.5–1 d | Preview reads chapters instead of acts |
+| S9 | Checkout / metadata alignés sur `storyboard` | 0.5–1 d | `storyboard` transported to checkout safely |
+| S10 | Nettoyage final legacy | 0.5 d | `spark/epic/legacy` no longer central |
 
 **Sprint exit criteria:** one freemium tenant (ex. Urgel Bourgie) can invite → family completes Souvenir 0 $ OR pays upsell → commission accrued on webhook.
 
@@ -307,9 +313,10 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 - Video render pipeline
 - Storage legacy backfill — voir §4.1
 
-### Immediate next step (post-TS refactor)
+### Immediate next step (post S1/S2)
 
-- **Bind Tenant Config** — propager `is_freemium` depuis le payload API (`/api/partner/tenants`) jusqu’au `PartnerContext` et à l’UI `InvitationComposer` pour que le forfait **SOUVENIR** s’affiche correctement en **« Gratuit / 0 jeton »** pour les salons freemium.
+- **S3** — rendre l’étape Upload sensible au package (`maxMediaItems`) et ajouter le garde-fou serveur correspondant
+- **S4** — faire évoluer le manifeste vers le pacing temporel (`targetSecondsPerMedia`) pour que chaque chapitre calcule sa capacité à partir de `durationSec`
 
 ---
 
@@ -342,7 +349,7 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 
 **Ce qui est shippé récemment (juin 2026, `main`) :** QA P5.5 ✅ · RBAC · gate `/salon` · wallet API · invitations RPC · doc B2B2C v2 · Halo-Éclipse · co-branding.
 
-**Grand chantier immédiat :** terminer les consommateurs TS/UI (`wizardPricing.ts`, `wizardState.ts`, picker/cart/sticky bar), puis saga checkout freemium et webhook RevShare.
+**Grand chantier immédiat :** exécuter `S3–S10` du plan [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md), puis brancher saga checkout freemium et webhook RevShare.
 
 **Ce qui n’est pas encore prod-ready :** implémentation P6 · commission UI · Scanner · Légendaire fulfillment · tests automatisés.
 

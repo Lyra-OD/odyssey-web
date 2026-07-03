@@ -1,6 +1,6 @@
 # Contrat de Livrables & Packages (Manifeste) — v2
 
-**Last updated: June 2026 · Version: B2B2C v2 (Scrypta Killer)**
+**Last updated: July 2026 · Version: B2B2C v2 + Storyboard pivot**
 
 Document canonique pour l’architecture **« gant blanc »** B2C / B2B2C : forfaits, livrables vidéo, tarification (freemium partenaire · legacy jetons · B2C direct), extensions à la carte.
 
@@ -130,15 +130,15 @@ Source actuelle : `PACKAGE_MANIFEST` dans `wizardDeliverables.ts`.
 
 | `PackageId` | Résolution | Médias max | Chansons max | Jetons legacy | $ B2C / upsell | Musique Salon | Social 9:16 | Restauration IA | Scanner Compagnon |
 |-------------|------------|------------|--------------|---------------|----------------|---------------|-------------|-------------------|-------------------|
-| **SOUVENIR** | 1080p | 50 | 2 | 0 (freemium) / 1 (legacy) | 0 $ (freemium offert) · N/A B2C | **Stingray** (actes) | **Non** | Non | Non |
-| **HERITAGE** | 1080p | 125 | 4 | 0 (freemium) / 2 (legacy) | **149 $** | **Stingray** (actes) | **Oui** · Safe Music | Non | Non |
+| **SOUVENIR** | 1080p | 50 | 2 | 0 (freemium) / 1 (legacy) | 0 $ (freemium offert) · N/A B2C | **Stingray** (chapitres) | **Non** | Non | Non |
+| **HERITAGE** | 1080p | 125 | 4 | 0 (freemium) / 2 (legacy) | **149 $** | **Stingray** (chapitres) | **Oui** · Safe Music | Non | Non |
 | **ETERNITE** | 4K | 175 | 5 | 0 (freemium) / 4 (legacy) | **299 $** | MP3 perso *ou* parcours salon | **Oui** · Safe Music | **Oui** | **Oui** (QR web) |
 | **LEGENDAIRE** | 4K | 250 | 7 | — | **499 $** (B2C only) | MP3 perso *ou* parcours salon | **Oui** · Safe Music | **Oui** | **Oui** + **boîte pré-affranchie** |
 
 Forfait **recommandé** (dashboard partenaire) : `HERITAGE` (`RECOMMENDED_PACKAGE_ID`).  
 Forfait **recommandé** (B2C direct — Quiet Luxury) : `ETERNITE` (`RECOMMENDED_B2C_PACKAGE_ID` cible).
 
-### Capacités techniques par forfait (structure TS actuelle)
+### Capacités techniques par forfait (direction produit validée)
 
 ```typescript
 pricing: {
@@ -154,7 +154,7 @@ rendering: {
   renderPriority: 'standard' | 'high' | 'ultra';
 }
 pacing: {
-  maxMediaItemsPerSong: number;     // 25 / 32 / 35 / 36
+  targetSecondsPerMedia: number;    // ex. 6 s / média (S4)
 }
 features: {
   aiRestoration: boolean;           // Éternité + Légendaire
@@ -164,34 +164,45 @@ features: {
 }
 ```
 
-### Nouvelle règle métier — doubles plafonds + pacing
+### Nouvelle règle métier — storyboard par chanson + pacing temporel
 
-Odyssey n’utilise plus de « durée vidéo max » comme garde-fou principal. Le contrôle des coûts et du rythme repose désormais sur **deux limites strictes** :
+Odyssey n’utilise plus de « durée vidéo max » comme garde-fou principal, ni un quota abstrait `maxMediaItemsPerSong` comme modèle éditorial final. Le contrôle des coûts et du rythme repose désormais sur :
 
 1. **`maxMediaItems`** — plafond absolu de médias acceptés dans le package
 2. **`maxSongs`** — plafond absolu de chansons autorisées pour ce package
 
-Pour éviter un montage trop rapide ou un effet stroboscopique, le manifeste encode aussi une règle éditoriale de pacing :
+La narration est désormais pensée en **bacs / chapitres pilotés par les chansons** :
+
+- un chapitre = un bloc narratif
+- un chapitre porte une chanson
+- la **durée réelle** de cette chanson (`durationSec`) détermine la capacité recommandée du chapitre
+
+Pour éviter un montage trop rapide ou un effet stroboscopique, le pacing devient une règle **temporelle** :
 
 ```text
-minSongsRequired = ceil(mediaCount / maxMediaItemsPerSong)
+recommendedMediaCapacity = floor(durationSec / targetSecondsPerMedia)
 ```
 
-Exemples :
+Exemple avec une cible éditoriale `targetSecondsPerMedia = 6` :
 
-| Package | `maxMediaItemsPerSong` | Exemple |
-|---------|------------------------|---------|
-| **SOUVENIR** | 25 | 50 médias → `ceil(50 / 25)` = **2** chansons requises |
-| **HERITAGE** | 32 | 96 médias → `ceil(96 / 32)` = **3** chansons requises |
-| **ETERNITE** | 35 | 140 médias → `ceil(140 / 35)` = **4** chansons requises |
-| **LEGENDAIRE** | 36 | 250 médias → `ceil(250 / 36)` = **7** chansons requises |
+| Chanson | `durationSec` | Cible | Capacité recommandée |
+|---------|---------------|-------|----------------------|
+| Piste courte | 120 s | 6 s / média | ~20 médias |
+| Piste standard | 180 s | 6 s / média | ~30 médias |
+| Piste longue | 240 s | 6 s / média | ~40 médias |
 
-Helpers TypeScript :
+Conséquence UX :
 
-- `getRequiredSongCountForMediaCount(packageId, mediaCount)`
-- `validatePackagePacing(packageId, mediaCount, selectedSongCount)`
+- si l’utilisateur surcharge un chapitre, on affiche un **warning local** sur ce chapitre
+- si plusieurs chapitres existent, le pacing se lit naturellement chanson par chanson
+- les garde-fous globaux restent `maxMediaItems` et `maxSongs`
 
-**Important :** ces helpers sont des fonctions **pures** du manifeste. L’enforcement UI / wizard vient dans un ticket séparé.
+**Important :**
+
+- le pivot `storyboard` + `durationSec` est désormais la direction produit validée
+- `wizardState.ts` et l’autosave V2 sont déjà alignés sur ce modèle
+- la mutation du manifeste TS de `maxMediaItemsPerSong` vers `targetSecondsPerMedia` est planifiée en **S4**
+- l’enforcement UI / wizard vient dans les tickets `S5–S7`
 
 ---
 
@@ -232,7 +243,7 @@ Proxy d’ingestion (pipeline) : conversion immédiate en proxy **1080p** minimu
 
 - **Ratio :** 16:9 (`salon.aspect`).
 - **Musique :**
-  - **SOUVENIR / HÉRITAGE :** catalogue **Stingray** par acte narratif (`stingray_acts`) — wizard étape 5 ✅.
+  - **SOUVENIR / HÉRITAGE :** catalogue **Stingray** par chapitre narratif — fondations state/autosave ✅ ; UI dynamique ⏳
   - **ÉTERNITÉ / LÉGENDAIRE :** **MP3 personnel** (`personal_mp3`) ou parcours salon dédié — gatekeeper juridique ⏳.
 - **Rendu :** pipeline Creatomate (cible) — résolution = tier export.
 
@@ -321,13 +332,15 @@ Directeur (`partner`) : pas de solde wallet ni commissions — RBAC P5.5 inchang
 | Capacité | Statut |
 |----------|--------|
 | Manifeste TS v2 (4 packages, listes par canal, caps médias/chansons, pacing) | ✅ |
+| Fondations `storyboard` (`wizardState.ts` + autosave V2) | ✅ |
 | `pricingConfig.ts` v2 (0 / 149 / 299 / 499) | ✅ |
 | Forfait `legendary` (P6 SQL + manifeste) | ✅ |
 | Légendaire Gants Blancs (fulfillment ops) | ⏳ |
-| `tenants.is_freemium` | ⏳ P6 SQL |
-| Dashboard partenaire freemium (0 jeton Souvenir) | ⏳ |
+| `tenants.is_freemium` | ✅ P6 SQL + propagation partner UI |
+| Dashboard partenaire freemium (0 jeton Souvenir) | ✅ |
 | Gate upload photos par tier | ⏳ |
-| Gate pacing dynamique chansons / médias | ⏳ |
+| Moteur pacing temporel `durationSec / targetSecondsPerMedia` | ⏳ S4 |
+| UI storyboard dynamique (chapitres / bacs par chanson) | ⏳ S5–S7 |
 | Checkout saga v2 + RevShare | ⏳ |
 | Scanner Compagnon (QR web) | ⏳ |
 | Restauration IA pipeline | ⏳ |
@@ -340,12 +353,13 @@ Directeur (`partner`) : pas de solde wallet ni commissions — RBAC P5.5 inchang
 
 Lors de l’implémentation, mettre à jour dans l’ordre :
 
-1. **`wizardDeliverables.ts`** — `PACKAGE_MANIFEST` v2 (4 packages, limits/rendering/pacing/features)
-2. **`pricingConfig.ts`** — cents : Souvenir `0` (freemium) · Héritage `14900` · Éternité `29900` · Légendaire `49900` · B2C sans Souvenir
-3. **`wizardPricing.ts`** — `computeB2B2CFamilyPricing()` · branche `is_freemium`
-4. **`wizardDeliverables.utils.ts`** — cartes Salon = `PARTNER_PACKAGE_IDS`
-5. **`dictionaries/fr.json` + `en.json`** — features forfaits (1080p/50/2, 1080p/125/4, 4K/175/5, 4K/250/7)
-6. **Ce document** + [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)
+1. **`wizardState.ts`** + `autosave/route.ts` — fondations `storyboard` V2 + bridge runtime legacy
+2. **`wizardDeliverables.ts`** — faire évoluer `pacing.maxMediaItemsPerSong` vers `pacing.targetSecondsPerMedia`
+3. **`pricingConfig.ts`** — cents : Souvenir `0` (freemium) · Héritage `14900` · Éternité `29900` · Légendaire `49900` · B2C sans Souvenir
+4. **`wizardPricing.ts`** — `computeB2B2CFamilyPricing()` · branche `is_freemium`
+5. **`wizardDeliverables.utils.ts`** — cartes Salon = `PARTNER_PACKAGE_IDS`
+6. **`dictionaries/fr.json` + `en.json`** — features forfaits et copy storyboard
+7. **Ce document** + [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) + [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md)
 
 ---
 

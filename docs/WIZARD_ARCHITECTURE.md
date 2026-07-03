@@ -1,8 +1,8 @@
 # Tribute Wizard — Architecture
 
-**Last code review: July 2026 · B2B2C v2**
+**Last code review: July 2026 · B2B2C v2 + Storyboard foundations**
 
-This document describes the 8-step tribute wizard: navigation, state, autosave, montage acts, **pricing v2** (freemium B2B2C vs Quiet Luxury B2C), and checkout. Parent overview: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7.
+This document describes the 8-step tribute wizard: navigation, state, autosave, **song-based storyboard foundations**, pricing v2 (freemium B2B2C vs Quiet Luxury B2C), and checkout. Parent overview: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7.
 
 ---
 
@@ -20,7 +20,7 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | `src/lib/wizard/wizardDeliverables.utils.ts` | Présentation partenaire (cartes invitation, copy dérivée du manifeste) |
 | `src/lib/wizard/pricingConfig.ts` | **Checkout cents** — `WIZARD_PRICING`, extensions, bundle 67 $ (aligné manifeste via `assertManifestPricingAlignedWithLegacyConfig`) |
 | `src/lib/wizard/wizardPricing.ts` | Cart math (`computeWizardCart`, integer cents only) |
-| `src/lib/wizard/wizardState.ts` | `WizardStateV1` type + coercion/migration from legacy payloads |
+| `src/lib/wizard/wizardState.ts` | Canonical `storyboard` V2 + coercion/migration from legacy payloads + runtime bridge vers l'UI actuelle |
 | `src/lib/partner/partnerCheckout.ts` | B2B token debit (`partner_token_wallets`) |
 | `src/lib/partner/resolvePartnerAccess.ts` | Partner role detection (`tenant_members`) |
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
@@ -48,42 +48,54 @@ The tribute wizard is **no longer a static 8-step product definition** in docume
 
 Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.
 
-### Dynamic UI (target — partial today)
+### Dynamic UI (target — foundations S1/S2 shipped)
 
 | Rule (manifest) | Wizard behaviour |
 |---------------|------------------|
-| `salon.audio === 'stingray_acts'` | Step 5 — Stingray per act (**implemented**) |
-| `salon.audio === 'personal_mp3'` | Step 5 — personal MP3 upload + legal gatekeeper (**not implemented**) |
+| `storyboard.chapters[].song.source === 'stingray'` | Step 5 — selection Stingray par chapitre (**fondations S1/S2 prêtes ; UI S6 pending**) |
+| `storyboard.chapters[].song.source === 'upload'` | Step 5 — MP3 personnel par chapitre + gatekeeper juridique (**not implemented**) |
 | `social.enabled === true` | Additional Social step — Safe Music only, 9:16 preview (**not implemented**) |
 | `social.enabled === false` | Hide Social step (e.g. **Souvenir** / `SOUVENIR`) |
-| `limits.maxMediaItems` | Gate upload volume by package (**not implemented**) |
-| `limits.maxSongs` + `pacing.maxMediaItemsPerSong` | Validate media/song pacing (**not implemented**) |
+| `limits.maxMediaItems` | Gate upload volume by package (**S3 pending**) |
+| `limits.maxSongs` + `pacing.targetSecondsPerMedia` | Validate chapter capacity from real song duration (**S4 pending**) |
 | `resolveTransactionMode()` | `StickyPriceBar` / pickers: **tokens** (partner) vs **dollars** (family) |
 
-**Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries; `TributeWizard` uses `WizardBasePackagePicker` with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`). Step 5 remains Stingray-only until MP3/Social steps ship.
+**Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries; `TributeWizard` uses `WizardBasePackagePicker` with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`). The canonical persisted model is now `storyboard`, but steps 4–7 still render through a temporary legacy bridge until the Storyboard UI refactor ships.
 
-### Known temporary debt — audio model vs manifest
+### Major architecture change — from 3 acts to song-based storyboard
 
-The manifest now allows **package-specific song limits**:
+The previous model coupled montage and music around **3 fixed acts**:
 
-- `SOUVENIR` → 2 songs
-- `HERITAGE` → 4 songs
-- `ETERNITE` → 5 songs
-- `LEGENDAIRE` → 7 songs
+- `spark`
+- `epic`
+- `legacy`
 
-But the current persisted audio model and UI are still centered on **3 act tracks only**:
+This created a structural deadlock:
 
-```typescript
-musicalAmbiance.tracks.acte1
-musicalAmbiance.tracks.acte2
-musicalAmbiance.tracks.acte3
-```
+- the product contract allows **2 / 4 / 5 / 7 songs** depending on package
+- the UI could only expose **3 music slots**
+- pacing validation could never be enforced cleanly for higher tiers
 
-This is an **accepted debt** for T2:
+The new canonical model solves this by moving to a **song-based storyboard**:
 
-- the **manifest contract** is correct now
-- the **music selector UI** and `wizardState.ts` still expose only 3 tracks
-- a dedicated future ticket will generalize Step 5 to dynamic song counts without blocking the current commerce sprint
+- `wizard_state.storyboard.chapters[]` becomes the source of truth
+- each chapter owns an ordered list of `mediaIds`
+- each chapter can own a `song`
+- each song carries its real `durationSec`
+- pacing can now be evaluated **per chapter**, not against an abstract 3-act shell
+
+**Why this is better**
+
+- natural sync between narration and music
+- no hard-coded limit of 3 chapters
+- direct path to MP3 uploads and Stingray chapters in the same model
+- future pacing logic can use `durationSec / targetSecondsPerMedia`
+
+**Current transition state**
+
+- `storyboard` is now persisted as the canonical V2 shape
+- `wizardState.ts` rebuilds temporary `montage` + `musicalAmbiance` legacy views at runtime
+- steps 4–7 still render through this bridge until `S5–S8`
 
 ### i18n (marketing names)
 
@@ -115,10 +127,10 @@ Do not duplicate package prices in UI strings — use `formatPackagePriceForMode
 | 1 | `stepperEssentials` | Name, dates, avatar, **formula** | `essentials`, `basePackage`; draft via `POST /api/projects/draft` |
 | 2 | `stepperSources` | Social source + URL, formula (compact) | `socialSources`, `basePackage` |
 | 3 | `stepperVault` | Dropzone + upload queue + **Scanner Compagnon QR** (cible) | `media_assets` rows; reload `GET /api/projects/[id]/media` · voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
-| 4 | `stepperMontage` | Three-act timeline, focal points | `montage` |
-| 5 | `stepperSound` | Stingray search (tier **standard** / **premium**), listen, choose per act | `musicalAmbiance.tracks` |
+| 4 | `stepperMontage` | Legacy 3-column timeline UI (temporary) backed by canonical storyboard | `storyboard` (projected to `montage` bridge) |
+| 5 | `stepperSound` | Legacy 3-track Stingray UI (temporary) backed by canonical storyboard | `storyboard` (projected to `musicalAmbiance` bridge) |
 | 6 | `stepperExtensions` | Upsell cards + Heritage Pack; **bundle rules** when `basePackage=heritage` | `extensions` |
-| 7 | `stepperPreview` | Copy + `CinematicTeaser` | Reads montage + tracks (no extra JSON section) |
+| 7 | `stepperPreview` | Copy + `CinematicTeaser` | Reads canonical `storyboard` through the temporary legacy preview bridge |
 | 8 | `stepperCheckout` | Cart recap + pay CTA | `POST /api/checkout` |
 
 ---
@@ -147,12 +159,12 @@ sequenceDiagram
 
 ---
 
-## `wizard_state` v1 shape
+## `wizard_state` v2 shape
 
 ```typescript
 // src/lib/wizard/wizardState.ts — simplified
 {
-  version: 1,
+  version: 2,
   isPartner?: true,                    // B2B UI flag (checkout uses tenant role)
   basePackage?: "essential" | "signature" | "heritage" | "legendary",  // legendary = B2C P6
   pricing?: {
@@ -164,8 +176,15 @@ sequenceDiagram
   },
   essentials?: { firstName, lastName, birthDate, deathDate, avatarPath },
   socialSources?: { selected, url },
-  montage?: {
-    acts: { spark: string[], epic: string[], legacy: string[] },
+  storyboard?: {
+    chapters: Array<{
+      id: string,
+      mediaIds: string[],
+      song?: (
+        | { source: "stingray", trackId, title, artist, coverUrl?, durationSec? }
+        | { source: "upload", storagePath, title, fileName?, mimeType?, artist?, durationSec? }
+      )
+    }>,
     unassignedIds?: string[],
     excludedIds: string[],
     focalPoints: Record<mediaId, { x, y }>
@@ -173,37 +192,33 @@ sequenceDiagram
   extensions?: {
     aiRetouch?, extendedLicense?, collectorUsb?,
     digitalVault?, heritagePack?
-  },
-  musicalAmbiance?: {
-    tracks?: {
-      acte1?: { title, artist, trackId, coverUrl, previewUrl? },
-      acte2?: { ... },
-      acte3?: { ... }
-    },
-    catalogProvider?: "stingray" | "mock"
   }
 }
 ```
 
+**Runtime bridge during transition:** `coerceWizardState()` still reconstructs temporary `montage` and `musicalAmbiance` views from `storyboard` so the existing UI keeps working while Storyboard UI tickets ship.
+
 **Legacy package id:** `prestige` is coerced to `signature` on read (`pricingConfig.ts`).
 
-**Legacy (read-only migration, do not write on new saves):**
+**Legacy accepted in read / migration only (do not write on new saves):**
 - `musicalAmbiance.mood`, `trackOrder`, `selectedTrack`, `catalogTrackId`
 - Old `upsell` / `copyrightOption` → migrated to `extensions` via `wizardExtensions.ts`
+- `montage.acts.spark|epic|legacy`
+- `musicalAmbiance.tracks.acte1|acte2|acte3`
 
 ---
 
-## Montage ↔ music act mapping
+## Storyboard transition bridge
 
-Narrative montage uses English act IDs; licensed music uses French persist keys aligned with product copy.
+To preserve backward compatibility while the UI still renders 3 legacy slots, the first three storyboard chapters are projected as follows:
 
-| Montage (`montage.acts`) | Music (`musicalAmbiance.tracks`) | Product act |
-|--------------------------|----------------------------------|-------------|
-| `spark` | `acte1` | Spark |
-| `epic` | `acte2` | Epic |
-| `legacy` | `acte3` | Legacy |
+| Canonical storyboard chapter | Legacy montage bridge | Legacy music bridge |
+|------------------------------|-----------------------|---------------------|
+| `chapters[0]` | `spark` | `acte1` |
+| `chapters[1]` | `epic` | `acte2` |
+| `chapters[2]` | `legacy` | `acte3` |
 
-`CinematicTeaser` and `teaserHelpers.ts` resolve slides per montage act and play the matching `acteN` track.
+Additional chapters beyond index 2 are temporarily projected into `unassignedIds` on the runtime montage bridge so the old UI does not silently lose media.
 
 ---
 
@@ -211,7 +226,8 @@ Narrative montage uses English act IDs; licensed music uses French persist keys 
 
 - **Component:** `MontageStep.tsx`, `MontageDirectorModal.tsx`, `MontageMediaCard.tsx`
 - **Helpers:** `montageHelpers.ts`, `montageDirector.ts`
-- User assigns each uploaded `media_assets.id` to spark/epic/legacy, sets focal point (0–1), or excludes media.
+- **Current UI:** user assigns each uploaded `media_assets.id` to `spark/epic/legacy`, sets focal point (0–1), or excludes media.
+- **Canonical state:** those assignments are now persisted under `storyboard.chapters[]` and projected back to the legacy 3-column UI at runtime.
 - Validation before leaving step 4: at least one included photo in the timeline (see `TributeWizard` montage gate).
 
 ---
@@ -220,7 +236,8 @@ Narrative montage uses English act IDs; licensed music uses French persist keys 
 
 - **Component:** `SoundSignatureStep.tsx`
 - **API:** `GET /api/music/search?q=…` (see [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md))
-- UI: three act tabs (cover or “To choose”), debounced search, Listen / Choose per row.
+- **Current UI:** three legacy act tabs (cover or “To choose”), debounced search, Listen / Choose per row.
+- **Canonical state:** selected music is now persisted under `storyboard.chapters[].song` and projected back to `acte1/acte2/acte3` during the transition.
 - **No** mood-based catalog as primary UX (removed).
 
 ---
@@ -230,10 +247,10 @@ Narrative montage uses English act IDs; licensed music uses French persist keys 
 | File | Role |
 |------|------|
 | `PreviewStep.tsx` | Marketing copy, CTA to checkout, link to edit earlier steps |
-| `CinematicTeaser.tsx` | Photo crossfade per slide + audio from selected act track |
-| `teaserHelpers.ts` | Slide list, duration estimate, act grouping |
+| `CinematicTeaser.tsx` | Photo crossfade per slide + audio from selected track |
+| `teaserHelpers.ts` | Slide list, duration estimate, temporary bridge grouping |
 
-Audio `src` uses `track.previewUrl` (typically `/api/music/preview?trackId=…`).
+Audio `src` uses `track.previewUrl` (typically `/api/music/preview?trackId=…`). Until `S8`, preview still consumes the legacy bridge rebuilt from `storyboard`.
 
 ---
 
@@ -408,7 +425,7 @@ flowchart TD
 
 | Column / table | Type | Purpose |
 |----------------|------|---------|
-| `projects.wizard_state` | jsonb | UI snapshot (includes `pricing`, `basePackage`) |
+| `projects.wizard_state` | jsonb | UI snapshot canonique V2 (`storyboard`, `pricing`, `basePackage`) |
 | `projects.wizard_step` | smallint | 1..10 (CHECK) |
 | `projects.last_saved_at` | timestamptz | Server save time |
 | `projects.invitation_id` | uuid FK | Lien invitation B2B2C (P5) |
@@ -439,4 +456,4 @@ Copy lives in `dictionaries/fr.json` and `dictionaries/en.json` under `tributeWi
 
 ## When you change this flow
 
-Update this file, [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md), [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md), and [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 + §5 + §10 per team rule §13.
+Update this file, [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md), [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md), [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md), and [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 + §5 + §10 per team rule §13.

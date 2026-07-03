@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import {
+  buildPersistedWizardState,
+  coerceWizardState,
+} from "@/src/lib/wizard/wizardState";
 import { createClient } from "@/utils/supabase/server";
 
 /**
@@ -20,7 +24,7 @@ import { createClient } from "@/utils/supabase/server";
  *
  * JSONB merge strategy:
  *   - Top-level shallow merge: PATCH bodies replace an entire section
- *     (`essentials`, `socialSources`, `montage`, `musicalAmbiance`) but never wipe
+ *     (`essentials`, `socialSources`, `storyboard`, `montage`, `musicalAmbiance`) but never wipe
  *     sibling sections.
  *   - Read-modify-write done server-side. Concurrent PATCH for the same
  *     project from the same user are mitigated client-side via AbortController
@@ -56,14 +60,22 @@ const SocialSourcesSchema = z
   .strict()
   .partial();
 
+const BasePackageSchema = z.enum([
+  "essential",
+  "signature",
+  "heritage",
+  "legendary",
+  "prestige",
+]);
+
 const SelectedTrackSchema = z
   .object({
     title: z.string().trim().max(200),
     artist: z.string().trim().max(200),
-    trackId: z.string().trim().max(120),
-        coverUrl: z.string().trim().max(500),
-        previewUrl: z.string().trim().max(800).optional(),
-      })
+    trackId: z.string().trim().max(160),
+    coverUrl: z.string().trim().max(500),
+    previewUrl: z.string().trim().max(800).optional(),
+  })
   .strict();
 
 const MusicalAmbianceSchema = z
@@ -130,21 +142,148 @@ const MontageSchema = z
   .strict()
   .partial();
 
+const DurationSecondsSchema = z
+  .number()
+  .int()
+  .positive()
+  .max(60 * 60)
+  .nullable()
+  .optional();
+
+const StoryboardChapterIdSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(64)
+  .regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/, "invalid_chapter_id");
+
+const StoryboardStingraySongSchema = z
+  .object({
+    source: z.literal("stingray"),
+    trackId: z.string().trim().min(1).max(160),
+    title: z.string().trim().min(1).max(200),
+    artist: z.string().trim().min(1).max(200),
+    coverUrl: z.string().trim().max(500).optional(),
+    durationSec: DurationSecondsSchema,
+  })
+  .strict();
+
+const StoryboardUploadSongSchema = z
+  .object({
+    source: z.literal("upload"),
+    storagePath: z.string().trim().min(1).max(500),
+    title: z.string().trim().min(1).max(200),
+    fileName: z.string().trim().max(200).optional(),
+    mimeType: z.string().trim().max(120).optional(),
+    artist: z.string().trim().max(200).optional(),
+    durationSec: DurationSecondsSchema,
+  })
+  .strict()
+  .superRefine((song, ctx) => {
+    if (song.mimeType && !song.mimeType.startsWith("audio/")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["mimeType"],
+        message: "upload_song_mime_must_be_audio",
+      });
+    }
+  });
+
+const StoryboardSongSchema = z.discriminatedUnion("source", [
+  StoryboardStingraySongSchema,
+  StoryboardUploadSongSchema,
+]);
+
+const StoryboardChapterSchema = z
+  .object({
+    id: StoryboardChapterIdSchema,
+    mediaIds: z.array(UuidSchema).max(250),
+    song: StoryboardSongSchema.optional(),
+  })
+  .strict()
+  .superRefine((chapter, ctx) => {
+    const seen = new Set<string>();
+    for (const [index, mediaId] of chapter.mediaIds.entries()) {
+      if (seen.has(mediaId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["mediaIds", index],
+          message: "duplicate_media_id_in_chapter",
+        });
+      }
+      seen.add(mediaId);
+    }
+  });
+
+const StoryboardSchema = z
+  .object({
+    chapters: z.array(StoryboardChapterSchema).max(12),
+    unassignedIds: z.array(UuidSchema).max(250),
+    excludedIds: z.array(UuidSchema).max(250),
+    focalPoints: z
+      .record(UuidSchema, MontageFocalPointSchema)
+      .refine((record) => Object.keys(record).length <= 250, {
+        message: "too_many_focal_points",
+      }),
+  })
+  .strict()
+  .superRefine((storyboard, ctx) => {
+    const chapterIds = new Set<string>();
+    const assignedMediaIds = new Map<string, string>();
+
+    for (const [chapterIndex, chapter] of storyboard.chapters.entries()) {
+      if (chapterIds.has(chapter.id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["chapters", chapterIndex, "id"],
+          message: "duplicate_chapter_id",
+        });
+      }
+      chapterIds.add(chapter.id);
+
+      for (const [mediaIndex, mediaId] of chapter.mediaIds.entries()) {
+        const owner = assignedMediaIds.get(mediaId);
+        if (owner) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["chapters", chapterIndex, "mediaIds", mediaIndex],
+            message: `media_id_already_assigned_to_${owner}`,
+          });
+        } else {
+          assignedMediaIds.set(mediaId, chapter.id);
+        }
+      }
+    }
+
+    const seenUnassigned = new Set<string>();
+    for (const [index, mediaId] of storyboard.unassignedIds.entries()) {
+      if (seenUnassigned.has(mediaId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["unassignedIds", index],
+          message: "duplicate_unassigned_media_id",
+        });
+      }
+      seenUnassigned.add(mediaId);
+
+      if (assignedMediaIds.has(mediaId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["unassignedIds", index],
+          message: "unassigned_media_id_already_in_chapter",
+        });
+      }
+    }
+  });
+
 const WizardStatePartialSchema = z
   .object({
-    version: z.literal(1).optional(),
+    version: z.union([z.literal(1), z.literal(2)]).optional(),
     isPartner: z.boolean().optional(),
-    basePackage: z
-      .enum(["essential", "heritage", "prestige", "signature"])
-      .optional(),
+    basePackage: BasePackageSchema.optional(),
     pricing: z
       .object({
-        basePackage: z.enum([
-          "essential",
-          "heritage",
-          "prestige",
-          "signature",
-        ]),
+        basePackage: BasePackageSchema,
         baseCents: z.number().int().min(0),
         optionsCents: z.number().int().min(0),
         totalCents: z.number().int().min(0),
@@ -154,8 +293,19 @@ const WizardStatePartialSchema = z
       .optional(),
     essentials: EssentialsSchema.optional(),
     socialSources: SocialSourcesSchema.optional(),
+    /**
+     * Nouveau snapshot canonique : jamais partial.
+     * Si `storyboard` est fourni, il doit être complet.
+     */
+    storyboard: StoryboardSchema.optional(),
+    /**
+     * Legacy accepté pendant la transition S1/S2.
+     */
     montage: MontageSchema.optional(),
     extensions: ExtensionsSchema.optional(),
+    /**
+     * Legacy accepté pendant la transition S1/S2.
+     */
     musicalAmbiance: MusicalAmbianceSchema.optional(),
   })
   .strict();
@@ -315,7 +465,13 @@ export async function PATCH(req: Request, { params }: RouteParams) {
     parsed.data.wizard_state,
   );
 
-  if (Buffer.byteLength(JSON.stringify(mergedState), "utf8") > WIZARD_STATE_MAX_BYTES) {
+  const runtimeState = coerceWizardState(mergedState);
+  const persistedState = buildPersistedWizardState(runtimeState);
+
+  if (
+    Buffer.byteLength(JSON.stringify(persistedState), "utf8") >
+    WIZARD_STATE_MAX_BYTES
+  ) {
     return NextResponse.json(
       {
         error: "wizard_state_too_large",
@@ -326,7 +482,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
   }
 
   const updatePayload: Record<string, unknown> = {
-    wizard_state: mergedState,
+    wizard_state: persistedState,
     last_saved_at: new Date().toISOString(),
   };
   if (parsed.data.wizard_step !== undefined) {
