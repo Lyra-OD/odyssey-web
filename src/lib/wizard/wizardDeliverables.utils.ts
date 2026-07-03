@@ -12,12 +12,13 @@ import {
 import {
   getPackageManifest,
   type PackageId,
-  PACKAGE_IDS,
+  PARTNER_PACKAGE_IDS,
+  type PartnerPackageId,
   type TransactionMode,
 } from "@/src/lib/wizard/wizardDeliverables";
 
 /** Forfait mis en avant sur le dashboard partenaire. */
-export const RECOMMENDED_PACKAGE_ID: PackageId = "HERITAGE";
+export const RECOMMENDED_PACKAGE_ID: PartnerPackageId = "HERITAGE";
 
 export type PartnerInvitationFeatureId =
   | "salon"
@@ -32,7 +33,7 @@ export type PartnerInvitationFeature = {
 };
 
 export type PartnerInvitationTierPresentation = {
-  packageId: PackageId;
+  packageId: PartnerPackageId;
   title: string;
   style: string;
   /** Donnée transactionnelle — débit jetons à l’envoi (hors matrice features). */
@@ -41,7 +42,10 @@ export type PartnerInvitationTierPresentation = {
   recommended: boolean;
 };
 
-function buildTokenDebitLabel(packageId: PackageId, locale: Locale): string {
+function buildTokenDebitLabel(
+  packageId: PartnerPackageId,
+  locale: Locale,
+): string {
   const { tokens } = getPackageManifest(packageId).pricing;
   if (locale === "en") {
     return tokens === 1
@@ -54,7 +58,7 @@ function buildTokenDebitLabel(packageId: PackageId, locale: Locale): string {
 }
 
 function buildFeatureRows(
-  packageId: PackageId,
+  packageId: PartnerPackageId,
   locale: Locale,
 ): PartnerInvitationFeature[] {
   const m = getPackageManifest(packageId);
@@ -123,7 +127,7 @@ function buildFeatureRows(
 }
 
 export function getPartnerInvitationTierPresentation(
-  packageId: PackageId,
+  packageId: PartnerPackageId,
   labels: PackageLabelsI18n,
   locale: Locale,
 ): PartnerInvitationTierPresentation {
@@ -142,7 +146,7 @@ export function listPartnerInvitationTiers(
   locale: Locale,
   labels: PackageLabelsI18n,
 ): PartnerInvitationTierPresentation[] {
-  return PACKAGE_IDS.map((packageId) =>
+  return PARTNER_PACKAGE_IDS.map((packageId) =>
     getPartnerInvitationTierPresentation(packageId, labels, locale),
   );
 }

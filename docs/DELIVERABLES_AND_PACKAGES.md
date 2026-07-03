@@ -29,6 +29,32 @@ Les **noms marketing** sont la façade UI (FR/EN). Les **IDs techniques** resten
 - `legacyGrantedFromManifest('HERITAGE')` → `signature`
 - SQL legacy `partner_tokens_for_granted_package('signature')` → **2** jetons (tenants **non-freemium**)
 
+### Séparation stricte des listes runtime
+
+Le manifeste TypeScript sépare désormais explicitement les packages selon le **canal métier** :
+
+| Liste TS | Contenu | Rôle |
+|----------|---------|------|
+| `PACKAGE_IDS` | `SOUVENIR`, `HERITAGE`, `ETERNITE`, `LEGENDAIRE` | Catalogue runtime complet |
+| `PARTNER_PACKAGE_IDS` | `SOUVENIR`, `HERITAGE`, `ETERNITE` | Invitations partenaire, legacy jetons, catalogue Salon |
+| `B2C_DIRECT_PACKAGE_IDS` | `HERITAGE`, `ETERNITE`, `LEGENDAIRE` | Tunnel Studio B2C direct |
+
+**Pourquoi `LEGENDAIRE` n’existe pas dans les types legacy partenaire :**
+
+- `LEGENDAIRE` / `legendary` est **B2C direct only**
+- il n’existe **aucun** mapping vers `partner_invitations.granted_package`
+- il n’existe **aucun** mapping vers `LegacyGrantedPackage`
+- il n’existe **aucune** tarification jetons legacy
+
+Autrement dit :
+
+```text
+wizard runtime          : essential | signature | heritage | legendary
+legacy partner / SQL    : essential | signature | heritage
+```
+
+Cette séparation est volontaire : elle empêche qu’un forfait **Légendaire** fuite dans les flows partenaire, wallet jetons, invitations ou delta legacy.
+
 ### i18n (façade UI)
 
 | ID technique | Clé i18n | FR | EN |
@@ -60,12 +86,12 @@ Acquisition **organique pure** (Studio, sans invitation partenaire) : **3 forfai
 
 ### Résumé exécutif
 
-| `PackageId` | Résolution export | Photos max | B2C direct | Canal partenaire freemium | Legacy jetons (non-freemium) |
-|-------------|-------------------|------------|------------|---------------------------|------------------------------|
-| **SOUVENIR** | **720p** | **50** | **Non vendu** (lead-magnet B2B2C) | **0 $ · 0 jeton** (offert) | **1 jeton** |
-| **HERITAGE** | **1080p** | **150** | **149 $** (entrée B2C) | **149 $** (upsell famille) | **2 jetons** |
-| **ETERNITE** | **4K** | **Illimité** | **299 $** (choix privilégié) | **299 $** (upsell famille) | **4 jetons** |
-| **LEGENDAIRE** | **4K** | **Illimité** | **499 $** (Gants Blancs) | **Non proposé** | **Non proposé** *(legacy TBD)* |
+| `PackageId` | Résolution export | Médias max | Chansons max | B2C direct | Canal partenaire freemium | Legacy jetons (non-freemium) |
+|-------------|-------------------|------------|--------------|------------|---------------------------|------------------------------|
+| **SOUVENIR** | **1080p** | **50** | **2** | **Non vendu** (lead-magnet B2B2C) | **0 $ · 0 jeton** (offert) | **1 jeton** |
+| **HERITAGE** | **1080p** | **125** | **4** | **149 $** (entrée B2C) | **149 $** (upsell famille) | **2 jetons** |
+| **ETERNITE** | **4K** | **175** | **5** | **299 $** (choix privilégié) | **299 $** (upsell famille) | **4 jetons** |
+| **LEGENDAIRE** | **4K** | **250** | **7** | **499 $** (Gants Blancs) | **Non proposé** | **Non proposé** |
 
 Wholesale legacy : **40 $ / jeton** (`PARTNER_TOKEN_COST_CENTS = 4000`).
 
@@ -100,31 +126,72 @@ Utilitaires cibles : `resolveTransactionMode()`, `formatPackagePriceForMode()`, 
 
 ## `PACKAGE_MANIFEST` — contrat v2
 
-Source cible : `PACKAGE_MANIFEST` dans `wizardDeliverables.ts` *(à mettre à jour)*.
+Source actuelle : `PACKAGE_MANIFEST` dans `wizardDeliverables.ts`.
 
-| `PackageId` | Résolution | Photos max | Jetons legacy | $ B2C / upsell | Musique Salon | Social 9:16 | Restauration IA | Scanner Compagnon |
-|-------------|------------|------------|---------------|----------------|---------------|-------------|-------------------|-------------------|
-| **SOUVENIR** | 720p | 50 | 0 (freemium) / 1 (legacy) | 0 $ (freemium offert) · N/A B2C | **Stingray** (actes) | **Non** | Non | Non |
-| **HERITAGE** | 1080p | 150 | 0 (freemium) / 2 (legacy) | **149 $** | **Stingray** (actes) | **Oui** · Safe Music | Non | Non |
-| **ETERNITE** | 4K | Illimité | 0 (freemium) / 4 (legacy) | **299 $** | MP3 perso *ou* parcours salon | **Oui** · Safe Music | **Oui** | **Oui** (QR web) |
-| **LEGENDAIRE** | 4K | Illimité | — | **499 $** (B2C only) | MP3 perso *ou* parcours salon | **Oui** · Safe Music | **Oui** | **Oui** + **boîte pré-affranchie** |
+| `PackageId` | Résolution | Médias max | Chansons max | Jetons legacy | $ B2C / upsell | Musique Salon | Social 9:16 | Restauration IA | Scanner Compagnon |
+|-------------|------------|------------|--------------|---------------|----------------|---------------|-------------|-------------------|-------------------|
+| **SOUVENIR** | 1080p | 50 | 2 | 0 (freemium) / 1 (legacy) | 0 $ (freemium offert) · N/A B2C | **Stingray** (actes) | **Non** | Non | Non |
+| **HERITAGE** | 1080p | 125 | 4 | 0 (freemium) / 2 (legacy) | **149 $** | **Stingray** (actes) | **Oui** · Safe Music | Non | Non |
+| **ETERNITE** | 4K | 175 | 5 | 0 (freemium) / 4 (legacy) | **299 $** | MP3 perso *ou* parcours salon | **Oui** · Safe Music | **Oui** | **Oui** (QR web) |
+| **LEGENDAIRE** | 4K | 250 | 7 | — | **499 $** (B2C only) | MP3 perso *ou* parcours salon | **Oui** · Safe Music | **Oui** | **Oui** + **boîte pré-affranchie** |
 
 Forfait **recommandé** (dashboard partenaire) : `HERITAGE` (`RECOMMENDED_PACKAGE_ID`).  
 Forfait **recommandé** (B2C direct — Quiet Luxury) : `ETERNITE` (`RECOMMENDED_B2C_PACKAGE_ID` cible).
 
-### Capacités techniques par forfait (nouveaux champs manifeste cibles)
+### Capacités techniques par forfait (structure TS actuelle)
 
 ```typescript
-// Structure cible — wizardDeliverables.ts (à implémenter)
+pricing: {
+  tokens: number;
+  dollars: number;
+}
+limits: {
+  maxMediaItems: number;            // 50 / 125 / 175 / 250
+  maxSongs: number;                 // 2 / 4 / 5 / 7
+}
+rendering: {
+  exportResolution: '1080p' | '4K';
+  renderPriority: 'standard' | 'high' | 'ultra';
+}
+pacing: {
+  maxMediaItemsPerSong: number;     // 25 / 32 / 35 / 36
+}
 features: {
   aiRestoration: boolean;           // Éternité + Légendaire
   cloudStorageYears: number;        // 5 / 50 / 50 / 50
-  maxPhotos: number | null;         // 50 / 150 / null / null
-  exportResolution: '720p' | '1080p' | '4K';
   scannerCompanion: boolean;        // Éternité + Légendaire
   whiteGloveDigitization: boolean;  // Légendaire — boîte pré-affranchie Odyssey
 }
 ```
+
+### Nouvelle règle métier — doubles plafonds + pacing
+
+Odyssey n’utilise plus de « durée vidéo max » comme garde-fou principal. Le contrôle des coûts et du rythme repose désormais sur **deux limites strictes** :
+
+1. **`maxMediaItems`** — plafond absolu de médias acceptés dans le package
+2. **`maxSongs`** — plafond absolu de chansons autorisées pour ce package
+
+Pour éviter un montage trop rapide ou un effet stroboscopique, le manifeste encode aussi une règle éditoriale de pacing :
+
+```text
+minSongsRequired = ceil(mediaCount / maxMediaItemsPerSong)
+```
+
+Exemples :
+
+| Package | `maxMediaItemsPerSong` | Exemple |
+|---------|------------------------|---------|
+| **SOUVENIR** | 25 | 50 médias → `ceil(50 / 25)` = **2** chansons requises |
+| **HERITAGE** | 32 | 96 médias → `ceil(96 / 32)` = **3** chansons requises |
+| **ETERNITE** | 35 | 140 médias → `ceil(140 / 35)` = **4** chansons requises |
+| **LEGENDAIRE** | 36 | 250 médias → `ceil(250 / 36)` = **7** chansons requises |
+
+Helpers TypeScript :
+
+- `getRequiredSongCountForMediaCount(packageId, mediaCount)`
+- `validatePackagePacing(packageId, mediaCount, selectedSongCount)`
+
+**Important :** ces helpers sont des fonctions **pures** du manifeste. L’enforcement UI / wizard vient dans un ticket séparé.
 
 ---
 
@@ -152,12 +219,12 @@ Le bundle marketing « économie 67 $ » (Héritage vs à la carte) reste valide
 
 ### Résolution & quotas photos
 
-| Forfait | Export final | Quota upload wizard | Enforcement |
-|---------|--------------|---------------------|-------------|
-| **Souvenir** | **720p** H.264 | **50 photos max** | Gate upload étape médias (à implémenter) |
-| **Héritage** | **1080p** H.264 | **150 photos max** | Gate upload |
-| **Éternité** | **4K** H.264/H.265 | **Illimité** (fair use policy TBD) | Gate upload + restauration IA |
-| **Légendaire** | **4K** H.264/H.265 | **Illimité** | Idem Éternité + workflow **boîte physique** (ops Odyssey) |
+| Forfait | Export final | Médias max | Chansons max | Enforcement |
+|---------|--------------|------------|--------------|-------------|
+| **Souvenir** | **1080p** H.264 | **50** | **2** | Gate upload + pacing helper |
+| **Héritage** | **1080p** H.264 | **125** | **4** | Gate upload + pacing helper |
+| **Éternité** | **4K** H.264/H.265 | **175** | **5** | Gate upload + pacing helper + restauration IA |
+| **Légendaire** | **4K** H.264/H.265 | **250** | **7** | Idem Éternité + workflow **boîte physique** (ops Odyssey) |
 
 Proxy d’ingestion (pipeline) : conversion immédiate en proxy **1080p** minimum à l’upload — voir [`Manifesto-V10.4.md`](Manifesto-V10.4.md) · rendu final selon tier.
 
@@ -178,7 +245,7 @@ Proxy d’ingestion (pipeline) : conversion immédiate en proxy **1080p** minimu
 ```text
 Salon 16:9  → Stingray (Souvenir/Héritage) ou MP3 perso (Éternité)
 Social 9:16 → Safe Music obligatoire si forfait l'inclut
-Export      → 720p / 1080p / 4K selon tier
+Export      → 1080p / 4K selon tier
 ```
 
 ---
@@ -195,7 +262,7 @@ Feature différenciante (« Killer App ») justifiant l’upsell **Éternité 29
 | **Upsell** | Composant **Avant/Après** IA → pont checkout **Éternité (299 $)** ou **Légendaire (499 $)** |
 | **Doc technique** | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 
-Le Scanner **n’est pas** une extension payante — c’est un **levier d’conversion** vers les tiers IA.
+Le Scanner **n’est pas** une extension payante — c’est un **levier de conversion** vers les tiers IA.
 
 ---
 
@@ -253,14 +320,14 @@ Directeur (`partner`) : pas de solde wallet ni commissions — RBAC P5.5 inchang
 
 | Capacité | Statut |
 |----------|--------|
-| Manifeste TS v1 (sans quotas/résolution v2) | ✅ code actuel |
-| Manifeste TS v2 (720p/50, 1080p/150, 4K/∞) | ⏳ |
-| `pricingConfig.ts` v2 (0 / 149 / 299 / 499) | ⏳ |
-| Forfait `legendary` (P6 SQL + manifeste) | ⏳ |
+| Manifeste TS v2 (4 packages, listes par canal, caps médias/chansons, pacing) | ✅ |
+| `pricingConfig.ts` v2 (0 / 149 / 299 / 499) | ✅ |
+| Forfait `legendary` (P6 SQL + manifeste) | ✅ |
 | Légendaire Gants Blancs (fulfillment ops) | ⏳ |
 | `tenants.is_freemium` | ⏳ P6 SQL |
 | Dashboard partenaire freemium (0 jeton Souvenir) | ⏳ |
 | Gate upload photos par tier | ⏳ |
+| Gate pacing dynamique chansons / médias | ⏳ |
 | Checkout saga v2 + RevShare | ⏳ |
 | Scanner Compagnon (QR web) | ⏳ |
 | Restauration IA pipeline | ⏳ |
@@ -273,11 +340,11 @@ Directeur (`partner`) : pas de solde wallet ni commissions — RBAC P5.5 inchang
 
 Lors de l’implémentation, mettre à jour dans l’ordre :
 
-1. **`wizardDeliverables.ts`** — `PACKAGE_MANIFEST` v2 (résolution, photos, scanner, tokens freemium)
+1. **`wizardDeliverables.ts`** — `PACKAGE_MANIFEST` v2 (4 packages, limits/rendering/pacing/features)
 2. **`pricingConfig.ts`** — cents : Souvenir `0` (freemium) · Héritage `14900` · Éternité `29900` · Légendaire `49900` · B2C sans Souvenir
 3. **`wizardPricing.ts`** — `computeB2B2CFamilyPricing()` · branche `is_freemium`
-4. **`wizardDeliverables.utils.ts`** — cartes Salon freemium vs legacy
-5. **`dictionaries/fr.json` + `en.json`** — features forfaits (720p, 50 photos, Scanner, IA)
+4. **`wizardDeliverables.utils.ts`** — cartes Salon = `PARTNER_PACKAGE_IDS`
+5. **`dictionaries/fr.json` + `en.json`** — features forfaits (1080p/50/2, 1080p/125/4, 4K/175/5, 4K/250/7)
 6. **Ce document** + [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)
 
 ---

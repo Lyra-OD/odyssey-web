@@ -1,6 +1,6 @@
 # Tribute Wizard — Architecture
 
-**Last code review: June 2026 · B2B2C v2**
+**Last code review: July 2026 · B2B2C v2**
 
 This document describes the 8-step tribute wizard: navigation, state, autosave, montage acts, **pricing v2** (freemium B2B2C vs Quiet Luxury B2C), and checkout. Parent overview: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7.
 
@@ -16,7 +16,7 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | `src/components/tribute/WizardBasePackagePicker.tsx` | Formula selection (steps 1–2) |
 | `src/hooks/useWizardAutosave.ts` | Debounced + immediate PATCH to `/api/projects/[id]/autosave` |
 | `src/components/tribute/AutosaveIndicator.tsx` | “Saving / Saved / Error” UX |
-| `src/lib/wizard/wizardDeliverables.ts` | **Deliverables manifest** — `PACKAGE_MANIFEST`, jetons/$, Salon/Social (pilotage UI cible) |
+| `src/lib/wizard/wizardDeliverables.ts` | **Deliverables manifest** — `PACKAGE_MANIFEST`, lists by channel, limits, rendering, pacing |
 | `src/lib/wizard/wizardDeliverables.utils.ts` | Présentation partenaire (cartes invitation, copy dérivée du manifeste) |
 | `src/lib/wizard/pricingConfig.ts` | **Checkout cents** — `WIZARD_PRICING`, extensions, bundle 67 $ (aligné manifeste via `assertManifestPricingAlignedWithLegacyConfig`) |
 | `src/lib/wizard/wizardPricing.ts` | Cart math (`computeWizardCart`, integer cents only) |
@@ -56,9 +56,34 @@ Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.
 | `salon.audio === 'personal_mp3'` | Step 5 — personal MP3 upload + legal gatekeeper (**not implemented**) |
 | `social.enabled === true` | Additional Social step — Safe Music only, 9:16 preview (**not implemented**) |
 | `social.enabled === false` | Hide Social step (e.g. **Souvenir** / `SOUVENIR`) |
+| `limits.maxMediaItems` | Gate upload volume by package (**not implemented**) |
+| `limits.maxSongs` + `pacing.maxMediaItemsPerSong` | Validate media/song pacing (**not implemented**) |
 | `resolveTransactionMode()` | `StickyPriceBar` / pickers: **tokens** (partner) vs **dollars** (family) |
 
-**Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries; `TributeWizard` uses `WizardBasePackagePicker` with **marketing labels** via i18n (`tributeWizard.basePackage*` = Souvenir / Héritage / Éternité) while persisting legacy IDs (`essential` / `signature` / `heritage`). Step 5 remains Stingray-only until MP3/Social steps ship.
+**Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries; `TributeWizard` uses `WizardBasePackagePicker` with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`). Step 5 remains Stingray-only until MP3/Social steps ship.
+
+### Known temporary debt — audio model vs manifest
+
+The manifest now allows **package-specific song limits**:
+
+- `SOUVENIR` → 2 songs
+- `HERITAGE` → 4 songs
+- `ETERNITE` → 5 songs
+- `LEGENDAIRE` → 7 songs
+
+But the current persisted audio model and UI are still centered on **3 act tracks only**:
+
+```typescript
+musicalAmbiance.tracks.acte1
+musicalAmbiance.tracks.acte2
+musicalAmbiance.tracks.acte3
+```
+
+This is an **accepted debt** for T2:
+
+- the **manifest contract** is correct now
+- the **music selector UI** and `wizardState.ts` still expose only 3 tracks
+- a dedicated future ticket will generalize Step 5 to dynamic song counts without blocking the current commerce sprint
 
 ### i18n (marketing names)
 
@@ -227,27 +252,30 @@ Audio `src` uses `track.previewUrl` (typically `/api/music/preview?trackId=…`)
 | `heritage` | Éternité | **29 900** (299 $) | **29 900** (upsell plein) | 4 |
 | `legendary` | Légendaire (Gants Blancs) | **49 900** (499 $) | **Non proposé** | — |
 
-**Code actuel** (`pricingConfig.ts`) — encore v1 (7900 / 14900 / 29900) · migration S5 prochain sprint.
+**Current transition state** (`pricingConfig.ts`) — catalogue v2 in place; downstream consumers still migrating.
 
 ```typescript
-// src/lib/wizard/pricingConfig.ts — CURRENT (v1) · TARGET v2 in DELIVERABLES doc
+// src/lib/wizard/pricingConfig.ts — current v2 catalog
 export const PARTNER_TOKEN_COST_CENTS = 4000; // legacy wholesale
 
 export const WIZARD_PRICING = {
   packages: {
-    ESSENTIEL:  { id: "essential", priceCents: 7900,  tokens: 1 },   // → v2: 0 freemium
+    ESSENTIEL:  { id: "essential", priceCents: 0,     tokens: 1 },
     SIGNATURE:  { id: "signature", priceCents: 14900, tokens: 2 },
     HERITAGE:   { id: "heritage",  priceCents: 29900, tokens: 4, musicCatalog: "premium" },
-    // LEGENDAIRE: { id: "legendary", priceCents: 49900, tokens: 0 }  — P6
+    LEGENDAIRE: { id: "legendary", priceCents: 49900, tokens: 0, musicCatalog: "premium" },
   },
   extensions: { /* aiRetouch, extendedLicense, collectorUsb, digitalVault, heritagePack */ },
 };
+
+export const WIZARD_B2C_DIRECT_PACKAGES = ["signature", "heritage", "legendary"];
+export const WIZARD_PARTNER_GRANTED_PACKAGES = ["essential", "signature", "heritage"];
 ```
 
 | Helper | Role |
 |--------|------|
 | `packageCents(id)` | Base package cents |
-| `packagePartnerTokens(id)` | B2B legacy token debit |
+| `packagePartnerTokens(id)` | B2B legacy token debit (strictly no `legendary`) |
 | `computeWizardCart()` | `totalCents = baseCents + optionsCents` |
 | `computeB2B2CFamilyPricing()` | **Cible v2** — freemium prix plein upsell vs legacy delta |
 | `calculatePartnerMargin()` | Legacy jetons wholesale margin |
@@ -376,8 +404,7 @@ flowchart TD
 | `docs/sql/odyssey_p4_partner_token_wallets.sql` | Wallets + ledger |
 | `docs/sql/odyssey_p4_1_security_fixes.sql` | RLS wallets/ledger (`partner` / `partner_admin`) |
 | `docs/sql/odyssey_p5_b2b2c_core.sql` | `partner_invitations`, `tribute_checkouts`, RPC débit |
-| `docs/sql/odyssey_p6_freemium_revshare.sql` | **Cible** — `is_freemium`, commission ledger, RPC accrue/clawback |
-| `docs/sql/odyssey_p6_1_scan_sessions.sql` | **Cible** — Scanner Compagnon sessions |
+| `docs/sql/odyssey_p6_freemium_revshare.sql` | **Appliqué** — `is_freemium`, commission ledger, `scan_sessions` stub, RPC accrue/clawback |
 
 | Column / table | Type | Purpose |
 |----------------|------|---------|
@@ -392,7 +419,7 @@ flowchart TD
 | `partner_token_ledger` | table | Audit jetons ; `tribute_checkout_id` (P5) |
 | `partner_commission_balances` | table | **P6** — agrégat RevShare par tenant (`accrued_cents`, `paid_cents`) |
 | `partner_commission_ledger` | table | **P6** — journal append-only commissions (accrual, clawback, payout) |
-| `scan_sessions` | table | **P6.1** — sessions QR Scanner Compagnon |
+| `scan_sessions` | table | **P6 Part B** — sessions QR Scanner Compagnon |
 
 Fonctions legacy : `debit_partner_tokens_for_checkout(uuid)` — **`service_role`** only.
 

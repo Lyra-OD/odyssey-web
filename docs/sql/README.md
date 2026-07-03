@@ -1,11 +1,11 @@
 # SQL Odyssey — état courant
 
-> **P6+ :** l'ID technique `legendary` (forfait Légendaire / Gants Blancs, B2C 499 $) sera ajouté par `odyssey_p6_freemium_revshare.sql`. Jusque-là, les CHECK SQL n'acceptent que `essential`, `signature`, `heritage`.
+> **P6 appliqué :** l'ID technique `legendary` (forfait Légendaire / Gants Blancs, B2C 499 $) est maintenant pris en charge par `odyssey_p6_freemium_revshare.sql`, avec `is_freemium`, commission ledger et stubs Phase 2.
 
 Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle** de la base Supabase d'Odyssey. Tous les scripts de migration sont **idempotents** : on peut les ré-exécuter sans dégât.
 
 **Commerce B2B2C v2 :** voir [`docs/B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · RevShare [`PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md).  
-**Note :** migrations P4–P5.5 en base ✅ ; **P6** (freemium + commissions) documentée · code Phase A sprint. Voir [`PROJECT_STATUS.md`](../PROJECT_STATUS.md).
+**Note :** migrations P4–P6 en base active ✅ ; l’app Next.js rattrape maintenant le schéma (Sprint P6 T2+). Voir [`PROJECT_STATUS.md`](../PROJECT_STATUS.md).
 
 ---
 
@@ -89,7 +89,7 @@ Scripts **jamais à supprimer du repo** : fichiers `odyssey_p*.sql` (historique 
 
 ## P6 — Freemium + RevShare (B2B2C v2)
 
-**Fichier :** `odyssey_p6_freemium_revshare.sql` *(Phase A sprint — T1 lundi)*  
+**Fichier :** `odyssey_p6_freemium_revshare.sql` *(appliqué — fondation Phase A)*  
 **Prérequis :** P5 + P5.5 appliqués.
 
 ### Partie A — Commerce Phase A (logique active T1–T7)
@@ -125,7 +125,7 @@ UPDATE public.tenants SET is_freemium = true WHERE slug = 'partner-qa-demo';
 
 ---
 
-## Modèle de données — vue rapide (post-P5 / cible P6)
+## Modèle de données — vue rapide (post-P6)
 
 ```
 auth.users

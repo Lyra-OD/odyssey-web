@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: June 2026 · B2B2C v2 pivot documented**
+**Last revised: July 2026 · P6 SQL applied, T2 manifest in progress**
 
 Living snapshot: **audit**, **recommended consolidations**, and **next sprint plan**.  
 For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) and the specialized docs listed in [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -16,13 +16,13 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | **Family Studio (B2C wizard)** | 🟢 Mature | 8 steps, autosave, media, music, Stripe checkout |
 | **Partner Salon (UI + QA P5.5)** | 🟢 **Terminée** | RBAC, wallet API, gate R6, solde bout en bout — QA prod validée ([`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)) |
 | **B2B2C commerce v2 (doc)** | 🟢 Spec ready | Freemium + RevShare 30 % + Scanner — canon [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 |
-| **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 + saga v2 + webhook commission** = prochain sprint |
+| **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 SQL ✅** ; TS contract / saga / webhook in progress |
 | **RBAC & tokens (P5.5)** | 🟢 Shipped & QA | SQL + TS + UI ; coexistence avec freemium (`is_freemium`) documentée |
 | **Automated tests & CI** | 🔴 None | No test framework, no `.github/` workflows |
 | **Documentation** | 🟢 Strong | Rich; some docs ahead/behind code (see §4) |
 | **Security** | 🟡 Adequate with gaps | RLS solid; salon layout gate ✅; checkout saga still open |
 
-**Overall: 7.5/10** — B2C wizard + Salon partenaire **certifiés en prod** (P5.5 ✅) ; **grand chantier = B2B2C v2** (P6 SQL, saga checkout, RevShare webhook, Scanner Compagnon).
+**Overall: 7.8/10** — B2C wizard + Salon partenaire **certifiés en prod** (P5.5 ✅) ; **P6 SQL est appliqué** ; grand chantier restant = saga checkout v2, webhook RevShare, consommateurs TS/UI et Scanner.
 
 ---
 
@@ -39,9 +39,9 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | B2B token checkout | 🟡 | Works via legacy TS debit; not P5 saga RPC |
 | Salon UI + invitations | 🟢 | `InvitationComposer`, branding, design system |
 | Salon wallet / billing UI | 🟡 | Admin : solde réel + page `/salon/facturation` (shell ✅) ; Stripe Payment Link + ledger UI ⏳ |
-| B2B2C family pricing v2 | 🔴 | Freemium 0 $ + upsell plein + RevShare — doc ✅ · code ⏳ |
-| Scanner Compagnon (Killer App) | 🔴 | Spec [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) ✅ · MVP ⏳ |
-| Partner commission ledger (P6) | 🔴 | Spec [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) ✅ · SQL ⏳ |
+| B2B2C family pricing v2 | 🟡 | Freemium 0 $ + upsell plein + RevShare — doc ✅ · TS contract T2 en cours · checkout ⏳ |
+| Scanner Compagnon (Killer App) | 🟡 | Spec [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) ✅ · tables stub P6 ✅ · MVP app ⏳ |
+| Partner commission ledger (P6) | 🟡 | Spec [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) ✅ · SQL ✅ · webhook/app ⏳ |
 | Invitation → family wizard | 🟢 | Magic link + `/tribute/welcome` |
 | Video render pipeline | 🔴 | Documented only (Creatomate target) |
 | Multi-vertical (e.g. pets) | 🟡 | `tenants.vertical` in DB; UI not forked |
@@ -51,7 +51,7 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 
 ## 3. Database vs application layer
 
-The **SQL schema P4/P5.5 is production-ready for legacy jetons**; **P6 (freemium + commissions) is documented but not migrated**. App commerce code still lags both.
+The **SQL schema P4/P5.5 is production-ready for legacy jetons** and **P6 (freemium + commissions) is now migrated**. App commerce code still lags the database and is the active focus of T2–T5.
 
 ```mermaid
 flowchart LR
@@ -81,12 +81,12 @@ flowchart LR
 | Token debit at invitation (P5.5, legacy tenants) | ✅ | ✅ RPC via `POST /api/partner/invitations` |
 | QA P5.5 Salon (RBAC, wallet, gate R6) | ✅ | ✅ **Validée prod** |
 | `tribute_checkouts` saga **v1** (jetons) | ✅ | ❌ spike **annulé** |
-| `tribute_checkouts` saga **v2** (freemium + RevShare) | ⏳ P6 | ❌ **prochain sprint** |
-| `tenants.is_freemium` | ⏳ P6 | ❌ |
-| `partner_commission_ledger` + accrual webhook | ⏳ P6 | ❌ |
+| `tribute_checkouts` saga **v2** (freemium + RevShare) | ✅ P6 schema | ❌ app + webhook en cours |
+| `tenants.is_freemium` | ✅ P6 | ❌ app |
+| `partner_commission_ledger` + accrual webhook | ✅ P6 schema | ❌ webhook |
 | Checkout mode `b2b2c_family` | ✅ column | ❌ |
 | Webhook → checkout completed + commission | — | ❌ (catalog sync only) |
-| Scanner Compagnon sessions | ⏳ P6.1 | ❌ |
+| Scanner Compagnon sessions | ✅ P6 stub | ❌ app |
 | Real Salon wallet balance | ✅ | ✅ |
 | RBAC Admin vs Director (UI) | ✅ RLS | ✅ |
 | Video render after payment | — | ❌ |
@@ -100,7 +100,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 · [`PARTNER_REVSHARE.md`
 | **Spike `tribute_checkouts` v1** | **Annulé** — modèle jetons + delta famille remplacé pour les gros clients |
 | **B2B2C v2 (Scrypta Killer)** | **Freemium** Souvenir 0 $ · **RevShare 30 %** brut Stripe · **Scanner Compagnon IA** |
 | **Legacy coexistence** | P4/P5.5 jetons **conservé** pour petits salons (`is_freemium = false`) |
-| **Prochain sprint** | P6 SQL · saga checkout v2 · webhook commission · Scanner Phase A |
+| **Exécution en cours** | T1 SQL ✅ · T2 pricing/manifest TS ✅ partiel · T3/T4/T5 à suivre |
 
 Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
 
@@ -122,6 +122,8 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 - **Storage egress (wizard médias):** thumbs WebP + cache session + `cacheControl` long sur nouveaux uploads — §4.1 (`39460bd`)
 - **QA P5.5 — terminée prod ✅** : RBAC §2 · solde §3 · gate R6 · checklist [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)
 - **Documentation B2B2C v2** : `B2B2C_COMMERCE.md`, `DELIVERABLES_AND_PACKAGES.md`, `PARTNER_REVSHARE.md`, `SCANNER_COMPANION.md`
+- **P6 SQL appliqué (juillet 2026)** : `is_freemium`, `partner_commission_*`, `scan_sessions`, stubs Phase 2, package `legendary`
+- **T2 manifeste TS démarré** : `pricingConfig.ts`, `wizardDeliverables.ts`, `wizardDeliverables.utils.ts` — consommateurs TS/UI restants à migrer
 
 ### SQL reference (apply in Supabase before prod API)
 
@@ -187,7 +189,7 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 ### 🔴 High — next sprint (B2B2C v2)
 
 1. **Saga checkout v2** — freemium 0 $ path · Stripe upsell · `tribute_checkouts` · pas de spike v1 jetons-first pour freemium tenants.
-2. **P6 SQL** — `tenants.is_freemium`, `partner_commission_balances`, `partner_commission_ledger`, RPC accrue/clawback.
+2. **TS consumer migration** — `wizardPricing.ts`, `wizardState.ts`, picker/cart/sticky bar, checkout consumers after package split.
 3. **Stripe webhook** — `checkout.session.completed` → completed + RevShare accrual (idempotent).
 4. **Scanner Compagnon Phase A** — QR session + mobile upload + realtime sync (see [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).
 5. **Zero automated tests** — no Jest/Vitest/Playwright; no CI.
@@ -252,9 +254,9 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | Doc | Gap |
 |-----|-----|
 | `B2B2C_COMMERCE.md` | ✅ **v2** (freemium, RevShare, saga v2, legacy coexistence) |
-| `DELIVERABLES_AND_PACKAGES.md` | ✅ v2 (Quiet Luxury B2C, Légendaire 499 $) |
+| `DELIVERABLES_AND_PACKAGES.md` | ✅ v2 (Quiet Luxury B2C, Légendaire 499 $, caps médias/chansons, pacing) |
 | `PARTNER_REVSHARE.md` | ✅ spec · code ⏳ |
-| `SCANNER_COMPANION.md` | ✅ spec · code ⏳ |
+| `SCANNER_COMPANION.md` | ✅ spec à jour (caps + P6 stub) · code ⏳ |
 | `TECHNICAL_ONBOARDING` §4.7 / §5 / §10 | ✅ v2 (freemium, Légendaire, Scanner, P6) |
 | `sql/README.md` | ✅ P6 migration row + § P6 détaillé |
 | `QA_P5_5_PARTNER_SALON.md` | ✅ **Terminée prod** — bannière + legacy vs freemium |
@@ -265,17 +267,23 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 
 ## 10. Next sprint — B2B2C v2 (post QA P5.5)
 
-**Prerequisite ✅:** QA P5.5 terminée prod · doc v2 canonique rédigée (juin 2026).
+**Prerequisite ✅:** QA P5.5 terminée prod · doc v2 canonique rédigée · **P6 SQL appliqué**.
 
 **Spike checkout v1 : annulé** → pivot Freemium + RevShare + Scanner.
 
+### Current execution snapshot (July 2026)
+
+- **T1 / S1 — done:** migration `odyssey_p6_freemium_revshare.sql` appliquée
+- **T2 / S5 — in progress:** `pricingConfig.ts` + `wizardDeliverables.ts` refactorés ; `wizardPricing.ts`, `wizardState.ts` et UI consumers à suivre
+- **Known accepted debt:** manifeste autorise désormais 2 / 4 / 5 / 7 chansons, alors que l’UI audio reste encore structurée autour de **3 tracks** (`acte1`–`acte3`)
+
 | # | Task | Effort | Done when |
 |---|------|--------|-----------|
-| S1 | P6 SQL : `is_freemium`, commission tables, RPC accrue/clawback | 1 d | Migration applied + README |
+| S1 | P6 SQL : `is_freemium`, commission tables, RPC accrue/clawback | ✅ | Migration applied + README |
 | S2 | Saga checkout v2 : freemium 0 $ + Stripe upsell + `tribute_checkouts` | 2 d | Happy path E2E documented |
 | S3 | Webhook `checkout.session.completed` + commission idempotent | 1 d | RevShare line in ledger |
 | S4 | Scanner Phase A : QR + mobile `/scan/[token]` + upload | 2 d | Photo appears on desktop wizard |
-| S5 | `pricingConfig` + manifest v2 (0/149/299/499, `legendary`) | 1 d | Align deliverables doc |
+| S5 | `pricingConfig` + manifest v2 (0/149/299/499, `legendary`, caps/pacing) | 🟡 | Contract TS merged; consumers migrated |
 | S6 | Invitation API : skip debit when `is_freemium` + Souvenir | 0.5 d | No 402 on freemium invite |
 | S7 | Smoke tests commission math + checkout idempotency | 1 d | Script or Vitest |
 
@@ -329,7 +337,7 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 
 **Ce qui est shippé récemment (juin 2026, `main`) :** QA P5.5 ✅ · RBAC · gate `/salon` · wallet API · invitations RPC · doc B2B2C v2 · Halo-Éclipse · co-branding.
 
-**Grand chantier prochain sprint :** B2B2C v2 — P6 SQL · saga checkout freemium · webhook RevShare · Scanner Phase A · `pricingConfig` v2.
+**Grand chantier immédiat :** terminer les consommateurs TS/UI (`wizardPricing.ts`, `wizardState.ts`, picker/cart/sticky bar), puis saga checkout freemium et webhook RevShare.
 
 **Ce qui n’est pas encore prod-ready :** implémentation P6 · commission UI · Scanner · Légendaire fulfillment · tests automatisés.
 

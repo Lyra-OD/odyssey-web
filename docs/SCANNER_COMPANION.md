@@ -1,6 +1,6 @@
 # Odyssey — Scanner Compagnon (Killer App)
 
-**Last updated: June 2026 · Version: B2B2C v2**
+**Last updated: July 2026 · Version: B2B2C v2**
 
 Document canonique pour le **Scanner Compagnon Web** : ingestion mobile de photos papier via QR Code, restauration IA en temps réel, et pont de conversion vers les forfaits **Éternité (299 $)** et **Légendaire / Gants Blancs (499 $)**.
 
@@ -17,6 +17,8 @@ Le Scanner Compagnon est la **Killer App** qui différencie Odyssey des outils o
 - **Phase 1 (juin 2026) — Scanner async :** les **invités** contribuent aussi **avant / après la cérémonie** et **à distance** (diaspora) — voir [`VISION_PHASE_2.md`](VISION_PHASE_2.md) §2.1.
 - L’**IA de restauration** produit un aperçu **Avant/Après** immédiat — preuve de valeur tangible.
 - L’upsell vers **Éternité** ou **Légendaire** devient **émotionnellement évident**.
+
+> **Important — séparation des tokens :** le **QR live wizard** utilise `scan_sessions` (session courte), tandis que la contribution async invités / diaspora visée par la vision produit passera par `project_access_tokens` (liens longue durée) — tous deux déjà stubés dans `odyssey_p6_freemium_revshare.sql`.
 
 ```text
 Desktop Wizard  ←—— temps réel ——→  Mobile Scanner (PWA web)
@@ -118,7 +120,7 @@ flowchart TB
   subgraph Backend["Supabase"]
     SS[(scan_sessions)]
     ST[(Storage project-media)]
-    PM[(project_media)]
+    PM[(media_assets)]
     RT[Realtime channel]
   end
 
@@ -132,7 +134,7 @@ flowchart TB
 
 ---
 
-### Tables (cible P6 / P6.1)
+### Tables (P6 stub / cible Scanner)
 
 #### `scan_sessions`
 
@@ -140,21 +142,21 @@ flowchart TB
 |---------|------|
 | `id` | uuid PK |
 | `project_id` | FK → hommage |
-| `session_token_hash` | Hash du token URL (jamais en clair en DB) |
+| `token_hash` | Hash du token URL (jamais en clair en DB) |
 | `created_by_user_id` | Owner desktop |
-| `status` | `active` \| `expired` \| `revoked` |
-| `expires_at` | TTL default **2 h** |
-| `last_mobile_seen_at` | Heartbeat mobile |
+| `project_access_token_id` | Lien éventuel vers token async plus long |
+| `status` | `active` \| `expired` \| `revoked` \| `completed` |
+| `expires_at` | TTL QR live par défaut **2 h** |
 | `upload_count` | Compteur uploads session |
 
-**Index :** UNIQUE `(session_token_hash)` · INDEX `(project_id, status)`.
+**Index :** UNIQUE `(token_hash)` · INDEX `(project_id, status)`.
 
-#### `project_media` (existant — extension)
+#### `media_assets` (existant — extension)
 
 | Colonne | Rôle |
 |---------|------|
 | `source` | `'local'` \| `'scanner_companion'` |
-| `scanner_session_id` | FK nullable |
+| `scan_session_id` | FK nullable |
 | `restoration_status` | `none` \| `pending` \| `completed` \| `failed` |
 | `restoration_preview_path` | Storage path preview IA |
 
@@ -166,13 +168,14 @@ flowchart TB
 |-------|------|------|
 | `POST /api/scan/sessions` | Owner projet | Crée session · retourne QR payload (token signé court) |
 | `GET /api/scan/sessions/:token/validate` | Token session | Valide TTL · retourne `projectId` minimal |
-| `POST /api/scan/sessions/:token/upload` | Token session | Multipart image recadrée → Storage + `project_media` |
+| `POST /api/scan/sessions/:token/upload` | Token session | Multipart image recadrée → Storage + `media_assets` |
 | `POST /api/ai/restoration/preview` | Owner projet | Job IA preview · retourne signed URLs avant/après |
 | `GET /api/scan/sessions/:id/events` | Owner projet | SSE ou long-poll nouveaux médias *(alternative Realtime)* |
 
 **Sécurité session mobile :**
 
-- Token **opaque** 128-bit · TTL 2 h · **1 projet** par session
+- Token **opaque** 128-bit · TTL QR live **2 h** · **1 projet** par session
+- Contribution async invités : via `project_access_tokens` longue durée (stub P6, logique métier séparée)
 - Rate limit upload : max **30 photos / session / heure**
 - Validation MIME : `image/jpeg`, `image/png`, `image/webp` uniquement
 - Taille max : **12 Mo** par photo (mobile)
@@ -232,7 +235,7 @@ Alignement egress : [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §4.1 (thumbs WebP,
 
 ### Sync temps réel desktop ← mobile
 
-**Option A (recommandée Phase 1) :** Supabase **Realtime** sur `project_media` INSERT filtré par `project_id`.
+**Option A (recommandée Phase 1) :** Supabase **Realtime** sur `media_assets` INSERT filtré par `project_id`.
 
 **Option B :** Polling `GET /api/projects/:id/media` toutes les 3 s tant que session active.
 
@@ -269,13 +272,22 @@ Stocké sur `tribute_checkouts.metadata` et Stripe Session metadata pour analyti
 
 ## Limites & quotas (alignement forfait)
 
-| Forfait | Uploads Scanner | Restauration IA |
-|---------|-----------------|-----------------|
-| Souvenir | Compte dans **50 photos max** | Preview upsell only |
-| Héritage | Compte dans **150 photos max** | Preview upsell only |
-| Éternité / Légendaire | **Illimité** (fair use) | Complet |
+| Forfait | Uploads Scanner | Chansons max | Restauration IA |
+|---------|-----------------|--------------|-----------------|
+| Souvenir | Compte dans **50 médias max** | **2** | Preview upsell only |
+| Héritage | Compte dans **125 médias max** | **4** | Preview upsell only |
+| Éternité | Compte dans **175 médias max** | **5** | Complet |
+| Légendaire | Compte dans **250 médias max** | **7** | Complet |
 
-Gate serveur : `POST /api/scan/sessions/:token/upload` vérifie `count(project_media) < maxPhotos` du tier effectif.
+Gate serveur : `POST /api/scan/sessions/:token/upload` vérifie `count(media_assets) < maxMediaItems` du tier effectif.
+
+**Règle de pacing (manifest product):**
+
+```text
+minSongsRequired = ceil(mediaCount / maxMediaItemsPerSong)
+```
+
+Le Scanner n’enforce pas cette règle lui-même ; il alimente simplement le volume de médias. Le wizard / la validation audio vérifieront plus tard la cohérence `médias ↔ chansons`.
 
 ---
 
@@ -286,7 +298,7 @@ Gate serveur : `POST /api/scan/sessions/:token/upload` vérifie `count(project_m
 | Token session leak | TTL court · hash en DB · révocation à la fermeture wizard |
 | Upload non autorisé | Token lié à **1 seul** `project_id` |
 | Caméra refusée | Fallback « Import depuis galerie » mobile |
-| Données sensibles (décès) | RLS `project_media` · Storage policies existantes |
+| Données sensibles (décès) | RLS `media_assets` · Storage policies existantes |
 | ABUSE / spam uploads | Rate limit IP + session |
 
 ---
@@ -311,7 +323,7 @@ Gate serveur : `POST /api/scan/sessions/:token/upload` vérifie `count(project_m
 - [ ] `POST /api/scan/sessions` + table `scan_sessions`
 - [ ] Page mobile `/scan/[token]` · caméra + upload simple (sans crop IA)
 - [ ] QR panel desktop · Realtime ou polling médias
-- [ ] `source = scanner_companion` sur `project_media`
+- [ ] `source = scanner_companion` sur `media_assets`
 
 ### Phase B — Killer App (2 semaines)
 
@@ -340,7 +352,7 @@ Gate serveur : `POST /api/scan/sessions/:token/upload` vérifie `count(project_m
 | `app/api/scan/sessions/[token]/upload/route.ts` | **Créer** |
 | `app/api/ai/restoration/preview/route.ts` | **Créer** |
 | `src/lib/scanner/scanSessionToken.ts` | **Créer** — sign / hash |
-| `docs/sql/odyssey_p6_1_scan_sessions.sql` | **Créer** |
+| `docs/sql/odyssey_p6_freemium_revshare.sql` | **Déjà créé** — `scan_sessions` en Partie B |
 
 ---
 
