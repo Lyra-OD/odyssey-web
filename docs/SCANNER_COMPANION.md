@@ -284,10 +284,16 @@ Gate serveur : `POST /api/scan/sessions/:token/upload` vérifie `count(media_ass
 **Règle de pacing (manifest product):**
 
 ```text
-minSongsRequired = ceil(mediaCount / maxMediaItemsPerSong)
+recommendedMediaCapacity = floor(durationSec / targetSecondsPerMedia)
 ```
 
-Le Scanner n’enforce pas cette règle lui-même ; il alimente simplement le volume de médias. Le wizard / la validation audio vérifieront plus tard la cohérence `médias ↔ chansons`.
+Exemple avec `targetSecondsPerMedia = 6` :
+
+- chanson 120 s -> ~20 médias recommandés
+- chanson 180 s -> ~30 médias recommandés
+- chanson 240 s -> ~40 médias recommandés
+
+Le Scanner n’enforce pas cette règle lui-même ; il alimente simplement le volume de médias. Le Wizard Storyboard et la validation pacing calculeront ensuite la cohérence `médias ↔ chansons` à partir de la **durée réelle** de chaque piste (`durationSec`) et de la cible temporelle (`targetSecondsPerMedia`).
 
 ---
 

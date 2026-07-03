@@ -1,6 +1,6 @@
 # Odyssey Frontend - Technical Onboarding
 
-**Last code review: June 2026 · B2B2C v2**
+**Last code review: July 2026 · B2B2C v2 + storyboard foundations**
 
 This document helps any developer (frontend, backend, DevOps, QA) onboard quickly: what is implemented, how the architecture works, how to run and test locally, and what comes next.
 
@@ -10,6 +10,7 @@ This document helps any developer (frontend, backend, DevOps, QA) onboard quickl
 - [`docs/PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) — Commission ledger, webhook accrual, clawback, payout
 - [`docs/SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — Scanner Compagnon (QR → mobile → IA → upsell)
 - [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, pricing v2, checkout saga, P6 schema
+- [`docs/STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) — official roadmap for the song-based storyboard refactor
 - [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — Search API, catalog tiers, mock mode
 - [`docs/sql/README.md`](sql/README.md) — SQL migrations **P0–P6** (P5.5 RBAC, P6 freemium + commissions)
 - [`docs/ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) — routes `studio` / `salon` / `scan`, auth, branding
@@ -112,7 +113,7 @@ Detail complet : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) § Agnosticité backen
 - `src/components/tribute/CinematicTeaser.tsx`: cinematic preview player (step 7)
 - `src/components/media/MediaDropzoneAdapter.tsx`: headless dropzone adapter
 - `src/hooks/useMassMediaUpload.ts` / `useWizardAutosave.ts`: upload + autosave orchestration
-- `src/lib/wizard/wizardState.ts`: `wizard_state` v1 schema + coercion
+- `src/lib/wizard/wizardState.ts`: canonical `wizard_state` V2 (`storyboard`) + legacy compatibility bridge
 - `src/lib/music/stingrayClient.ts`: server-only Stingray MAPI client
 - `lib/stripe.ts`: Stripe server singleton
 - `scripts/`: Stripe / webhook diagnostics
@@ -255,7 +256,7 @@ Aligne avec le payload du service d'upload (`MediaAssetInsertRow`):
 - Sync `billing_catalog` depuis `product.*` et `price.*`.
 - Logs structures + helper `serializeError`.
 
-### 4.7 Tribute Wizard (8 steps) — B2B2C v2 (June 2026)
+### 4.7 Tribute Wizard (8 steps) — B2B2C v2 + storyboard pivot
 
 The tribute flow is a **premium 8-step tunnel** with free step navigation, server autosave, and checkout (Stripe and/or freemium 0 $). Full detail: [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 
@@ -264,10 +265,10 @@ The tribute flow is a **premium 8-step tunnel** with free step navigation, serve
 | 1 | Essentials | `TributeWizard` + `WizardBasePackagePicker` | `essentials`, `basePackage`, `pricing` |
 | 2 | Sources | `TributeWizard` + formula (compact) | `socialSources`, `basePackage` |
 | 3 | Vault (upload) | `MediaDropzoneAdapter` + **`ScannerCompanionPanel`** (cible) | `media_assets` + scan sessions — [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
-| 4 | Montage table | `MontageStep` | `montage` (acts `spark` / `epic` / `legacy`, focal points, exclusions) |
-| 5 | Sound signature | `SoundSignatureStep` | `musicalAmbiance.tracks` (`acte1`–`acte3`) — **Stingray** |
+| 4 | Montage table | `MontageStep` | `storyboard` (temporary legacy UI bridge for montage) |
+| 5 | Sound signature | `SoundSignatureStep` | `storyboard.chapters[].song` — **Stingray** today, MP3 upload tomorrow |
 | 6 | Memory extensions | `MontageExtensionsStep` | `extensions` (à la carte — commissionnables en freemium) |
-| 7 | Film preview | `PreviewStep` + `CinematicTeaser` | reads montage + act tracks |
+| 7 | Film preview | `PreviewStep` + `CinematicTeaser` | reads canonical `storyboard` through the temporary preview bridge |
 | 8 | Checkout | `CheckoutStep` | `POST /api/checkout` → saga `tribute_checkouts` — [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 |
 
 **Packages (marketing vs technical IDs):**
@@ -280,6 +281,20 @@ The tribute flow is a **premium 8-step tunnel** with free step navigation, serve
 | Légendaire (Gants Blancs) | Legendary | `legendary` | **B2C direct only** 499 $ (P6) |
 
 Full matrix : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · code: `wizardDeliverables.ts`, `packageI18n.ts`.
+
+**Pivot d’architecture validé (juillet 2026) :**
+
+- l’ancien modèle “3 actes + 3 pistes” n’est plus la source de vérité produit
+- la source de vérité canonique est désormais `WizardStoryboardState`
+- un `storyboard` contient des `chapters`
+- chaque chapitre contient un ordre de `mediaIds` et une `song` optionnelle
+- la durée réelle `durationSec` de la chanson devient la base du pacing futur
+
+**Pourquoi ce changement :**
+
+- le manifeste v2 autorise 2 / 4 / 5 / 7 chansons selon le package
+- l’ancienne UI était structurellement limitée à 3 slots musicaux
+- le modèle `storyboard` résout ce deadlock et aligne naturellement narration, musique et pacing
 
 **Pricing v2 — `src/lib/wizard/pricingConfig.ts` (target; code migration Phase A):**
 - All amounts in **integer cents**. Cart: `computeWizardCart()` + `sumCartLineItemsCents()`.
@@ -318,6 +333,7 @@ Full matrix : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · 
 **Autosave (P3 — `docs/sql/odyssey_p3_wizard_autosave.sql`):**
 - Columns on `projects`: `wizard_state` (jsonb), `wizard_step` (1..10), `last_saved_at`.
 - API: `GET/PATCH /api/projects/[id]/autosave` with Zod validation and shallow JSONB merge per section.
+- Since `S2`, the canonical persisted snapshot is `wizard_state.storyboard`; legacy runtime projections are rebuilt on read for backward compatibility.
 - Client: `useWizardAutosave` (800ms debounce for text, immediate flush on step change) + `AutosaveIndicator` UI.
 - Draft creation: `POST /api/projects/draft` when `firstName` ≥ 2 characters (required before step 3 upload).
 
@@ -327,31 +343,38 @@ Full matrix : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · 
 - **Catalog tiers:** Signature/Essentiel → **Standard**; Heritage or **Licence Premium** (39 $) → **Premium**. Banner on step 5 upsells Premium when still on Standard.
 - See [`docs/STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md).
 
-**`musicalAmbiance` shape (v1):**
+**`WizardStoryboardState` shape (v2, canonique):**
 
 ```json
 {
-  "tracks": {
-    "acte1": { "title", "artist", "trackId", "coverUrl", "previewUrl?" },
-    "acte2": { ... },
-    "acte3": { ... }
-  },
-  "catalogProvider": "stingray"
+  "storyboard": {
+    "chapters": [
+      {
+        "id": "chapter-1",
+        "mediaIds": ["uuid-1", "uuid-2"],
+        "song": {
+          "source": "stingray",
+          "trackId": "stingray-sinatra-my-way",
+          "title": "My Way",
+          "artist": "Frank Sinatra",
+          "coverUrl": "https://...",
+          "durationSec": 275
+        }
+      }
+    ],
+    "unassignedIds": ["uuid-3"],
+    "excludedIds": ["uuid-4"],
+    "focalPoints": {
+      "uuid-1": { "x": 0.421, "y": 0.318 }
+    }
+  }
 }
 ```
 
-Legacy fields (`mood`, `trackOrder`, `selectedTrack`, `catalogTrackId`) are **read-only for migration** in `wizardState.ts`; do not persist them on new saves.
-
-**Act mapping (montage ↔ music):**
-
-| Montage act (`montage.acts`) | Music act key (`musicalAmbiance.tracks`) | Narrative |
-|------------------------------|------------------------------------------|-----------|
-| `spark` | `acte1` | Spark |
-| `epic` | `acte2` | Epic |
-| `legacy` | `acte3` | Legacy |
+Legacy state is still accepted on read for migration, but new saves now persist the canonical `storyboard` form. The temporary runtime bridge keeps the old UI working until the dedicated Storyboard UI tickets ship.
 
 **`CinematicTeaser` (step 7):**
-- Builds slides from montage photos (`teaserHelpers.ts`) and plays the track selected for each act.
+- Builds slides from the current runtime bridge, which is itself rebuilt from canonical `storyboard` data until the preview refactor lands.
 - Audio uses `track.previewUrl` (same-origin proxy) tied to the persisted `trackId`.
 - Apple TV–style controls; auto-play when the preview step mounts.
 
@@ -507,14 +530,14 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 - **8-step wizard** with `WizardStepper` (click navigation + flush autosave before step change).
 - **P3 autosave**: `wizard_state`, `wizard_step`, `last_saved_at` + `useWizardAutosave` + `AutosaveIndicator`.
 - **Media reload** after refresh: `GET /api/projects/[id]/media` (+ reorder / delete routes).
-- **Montage** (step 4): three narrative acts, focal points, exclusions, director modal.
-- **Sound signature** (step 5): Stingray search API + preview proxy; per-act tracks `acte1`–`acte3`; composite `trackId` for Stripe.
+- **Montage** (step 4): current legacy 3-column UI, but canonical persisted state is now `storyboard`.
+- **Sound signature** (step 5): Stingray search API + preview proxy; canonical persisted state is now chapter-based `storyboard.chapters[].song`.
 - **Extensions** (step 6): four upsell cards + Heritage Pack; persisted in `wizard_state.extensions`.
-- **Cinematic preview** (step 7): `PreviewStep` + `CinematicTeaser` (photos + act music).
+- **Cinematic preview** (step 7): `PreviewStep` + `CinematicTeaser` via temporary runtime bridge rebuilt from `storyboard`.
 - **Hybrid pricing**: `pricingConfig.ts` + `StickyPriceBar` + `WizardBasePackagePicker` (steps 1–2).
 - **Economic bundle (Heritage)**: savings badge **67 $** on formula picker; extensions Licence/USB/Coffre marked « Déjà inclus » on step 6; cart excludes bundled lines.
 - **Music tiers**: Standard vs Premium search + step 5 upsell to Licence Premium (39 $).
-- **`POST /api/checkout`**: B2C Stripe or B2B partner token debit (2 modes in code today); metadata includes `extensions` and `act_tracks`.
+- **`POST /api/checkout`**: B2C Stripe or B2B partner token debit (2 modes in code today); metadata still carries the legacy music payload until `S9`.
 
 ### Done — commerce database (B2B2C core, June 2026)
 
