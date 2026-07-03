@@ -21,6 +21,7 @@ export const PartnerTenantSchema = z.object({
   slug: z.string().optional(),
   brandLabel: z.string().optional(),
   logoUrl: z.string().url().nullable().optional(),
+  isFreemium: z.boolean(),
   role: PartnerMemberRoleSchema,
   capabilities: PartnerCapabilitiesSchema,
 });

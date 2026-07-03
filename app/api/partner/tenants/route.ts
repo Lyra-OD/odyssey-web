@@ -5,7 +5,8 @@ import { createClient } from "@/utils/supabase/server";
 
 /**
  * GET /api/partner/tenants
- * Liste les espaces partenaire (RPC P5.4 ou jointure RLS P5.3).
+ * Liste les espaces partenaire (RPC P5.4 ou jointure RLS P5.3),
+ * y compris le mode commercial tenant (`isFreemium`) pour piloter l'UI B2B2C.
  */
 export async function GET() {
   const supabase = await createClient();

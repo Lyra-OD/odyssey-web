@@ -28,6 +28,7 @@ type TenantRow = {
   name: string;
   slug: string | null;
   settings: unknown;
+  is_freemium: boolean | null;
 };
 
 type TenantBrandingFields = {
@@ -36,6 +37,7 @@ type TenantBrandingFields = {
   slug?: string;
   brandLabel?: string;
   logoUrl?: string | null;
+  isFreemium: boolean;
 };
 
 function normalizeTenantJoin(
@@ -49,9 +51,30 @@ function normalizeTenantJoin(
       name: "Partenaire",
       slug: null,
       settings: {},
+      is_freemium: false,
     };
   }
   return row;
+}
+
+async function fetchFreemiumFlagsByTenantId(
+  supabase: SupabaseClient,
+  tenantIds: string[],
+): Promise<Map<string, boolean>> {
+  if (tenantIds.length === 0) return new Map();
+
+  const { data, error } = await supabase
+    .from("tenants")
+    .select("id, is_freemium")
+    .in("id", tenantIds);
+
+  if (error) return new Map();
+
+  const flagByTenantId = new Map<string, boolean>();
+  for (const row of data ?? []) {
+    flagByTenantId.set(String(row.id), row.is_freemium === true);
+  }
+  return flagByTenantId;
 }
 
 async function fetchPartnerRolesByTenantId(
@@ -94,6 +117,7 @@ function buildPartnerTenant(
     ...(fields.slug ? { slug: fields.slug } : {}),
     ...(fields.brandLabel ? { brandLabel: fields.brandLabel } : {}),
     logoUrl: fields.logoUrl ?? null,
+    isFreemium: fields.isFreemium,
     role,
     capabilities,
   });
@@ -103,7 +127,7 @@ function buildPartnerTenant(
 
 function rpcItemToBrandingFields(
   item: z.infer<typeof PartnerTenantRpcItemSchema>,
-): TenantBrandingFields {
+): Omit<TenantBrandingFields, "isFreemium"> {
   return {
     id: item.id,
     name: item.name,
@@ -129,12 +153,23 @@ async function fetchPartnerTenantsViaRpc(
   const parsed = PartnerTenantsRpcSchema.safeParse(data ?? []);
   if (!parsed.success) return null;
 
+  const freemiumByTenantId = await fetchFreemiumFlagsByTenantId(
+    supabase,
+    parsed.data.map((item) => item.id),
+  );
+
   const tenants: PartnerTenant[] = [];
   for (const item of parsed.data) {
     const role = roleByTenantId.get(item.id);
     if (!role) continue;
 
-    const tenant = buildPartnerTenant(rpcItemToBrandingFields(item), role);
+    const tenant = buildPartnerTenant(
+      {
+        ...rpcItemToBrandingFields(item),
+        isFreemium: freemiumByTenantId.get(item.id) === true,
+      },
+      role,
+    );
     if (tenant) tenants.push(tenant);
   }
   return tenants;
@@ -146,7 +181,7 @@ async function fetchPartnerTenantsViaJoin(
 ): Promise<PartnerTenant[]> {
   const { data: rows, error } = await supabase
     .from("tenant_members")
-    .select("tenant_id, role, tenants(id, name, slug, settings)")
+    .select("tenant_id, role, tenants(id, name, slug, settings, is_freemium)")
     .eq("user_id", userId)
     .in("role", [...PARTNER_MEMBER_ROLES])
     .order("created_at", { ascending: true });
@@ -174,6 +209,7 @@ async function fetchPartnerTenantsViaJoin(
         ...(tenant.slug ? { slug: tenant.slug } : {}),
         brandLabel,
         logoUrl,
+        isFreemium: tenant.is_freemium === true,
       },
       role,
     );

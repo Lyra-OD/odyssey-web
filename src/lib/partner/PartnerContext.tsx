@@ -21,6 +21,7 @@ const ACTIVE_TENANT_STORAGE_KEY = "odyssey_partner_active_tenant_id";
 
 export type PartnerContextValue = {
   activeTenantId: string | null;
+  activeTenant: PartnerTenant | null;
   /** Role on the active tenant (`partner` = Director, `partner_admin` = Admin). */
   activeTenantRole: PartnerMemberRole | null;
   /** RBAC capabilities for the active tenant — derived from API, not hard-coded in UI. */
@@ -209,6 +210,7 @@ export function PartnerProvider({ children }: { children: ReactNode }) {
   const value = useMemo<PartnerContextValue>(
     () => ({
       activeTenantId,
+      activeTenant,
       activeTenantRole,
       capabilities,
       availableTenants,
@@ -221,6 +223,7 @@ export function PartnerProvider({ children }: { children: ReactNode }) {
     }),
     [
       activeTenantId,
+      activeTenant,
       activeTenantRole,
       capabilities,
       availableTenants,

@@ -75,7 +75,7 @@ export function InvitationComposer({
 }: InvitationComposerProps) {
   const prefersReducedMotion = useReducedMotion();
   const submitLockRef = useRef(false);
-  const { activeTenantId, isLoading: isPartnerLoading } = usePartner();
+  const { activeTenant, activeTenantId, isLoading: isPartnerLoading } = usePartner();
 
   const [selectedPackageId, setSelectedPackageId] = useState<PackageId | null>(
     null,
@@ -90,6 +90,7 @@ export function InvitationComposer({
 
   const locale = lang === "en" ? "en" : "fr";
   const reducedMotion = prefersReducedMotion === true;
+  const isFreemiumTenant = activeTenant?.isFreemium === true;
 
   const transactionMode = resolveTransactionMode({
     isPartnerAccount,
@@ -384,6 +385,8 @@ export function InvitationComposer({
             <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 overflow-visible md:grid-cols-3 md:gap-8">
               {tiers.map((tier, index) => {
                 const packageId = tier.packageId;
+                const isFreemiumSouvenir =
+                  isFreemiumTenant && packageId === "SOUVENIR";
                 const isPopular = tier.recommended;
                 const isSelected = selectedPackageId === packageId;
                 const isDefaultPopularGlow = isPopular && !hasSelection;
@@ -410,16 +413,31 @@ export function InvitationComposer({
                   hasSelection,
                 );
 
-                const priceFormatted = formatPackagePriceForMode(
-                  packageId,
-                  transactionMode,
-                  locale,
-                );
-                const priceParts = packagePricePartsForMode(
-                  packageId,
-                  transactionMode,
-                  priceFormatted,
-                );
+                const priceFormatted = isFreemiumSouvenir
+                  ? locale === "en"
+                    ? "Free"
+                    : "Gratuit"
+                  : formatPackagePriceForMode(
+                      packageId,
+                      transactionMode,
+                      locale,
+                    );
+                const priceParts = isFreemiumSouvenir
+                  ? {
+                      amount: priceFormatted,
+                      suffix: "",
+                      formatted: priceFormatted,
+                    }
+                  : packagePricePartsForMode(
+                      packageId,
+                      transactionMode,
+                      priceFormatted,
+                    );
+                const tokenDebitLabel = isFreemiumSouvenir
+                  ? locale === "en"
+                    ? "0 tokens debited on send"
+                    : "0 jeton debité à l'envoi"
+                  : tier.tokenDebitLabel;
 
                 return (
                   <motion.div
@@ -528,7 +546,7 @@ export function InvitationComposer({
                       {transactionMode === "tokens" ? (
                         <div className="relative mt-8 text-left">
                           <p className={salonTierTokenDebitClass()}>
-                            {tier.tokenDebitLabel}
+                            {tokenDebitLabel}
                           </p>
                           <div
                             aria-hidden
