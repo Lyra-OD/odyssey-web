@@ -12,16 +12,16 @@ import {
   type WizardSelectedTrack,
   WIZARD_ACT_TRACK_KEYS,
 } from "@/src/lib/wizard/stingrayCatalog";
-import { buildPricingSnapshot } from "@/src/lib/wizard/wizardPricing";
+import {
+  buildPricingSnapshot,
+  resolvePartnerTokenCost,
+} from "@/src/lib/wizard/wizardPricing";
 import type {
   WizardBasePackage,
   WizardExtensionsState,
   WizardPricingSnapshot,
 } from "@/src/lib/wizard/wizardPricing";
-import {
-  normalizeBasePackageId,
-  packagePartnerTokens,
-} from "@/src/lib/wizard/pricingConfig";
+import { normalizeBasePackageId } from "@/src/lib/wizard/pricingConfig";
 
 export type { WizardExtensionsState } from "@/src/lib/wizard/wizardPricing";
 export type {
@@ -308,19 +308,25 @@ function coercePricingSnapshot(
   const baseCents = typeof obj.baseCents === "number" ? obj.baseCents : 0;
   const optionsCents = typeof obj.optionsCents === "number" ? obj.optionsCents : 0;
   const totalCents = typeof obj.totalCents === "number" ? obj.totalCents : 0;
-  if (totalCents <= 0) return undefined;
+  if (baseCents < 0 || optionsCents < 0 || totalCents < 0) return undefined;
   const storedTokens =
     typeof obj.partnerTokenCost === "number" ? obj.partnerTokenCost : undefined;
+
+  const resolvedPartnerTokenCost = isPartner
+    ? resolvePartnerTokenCost(basePackage)
+    : undefined;
+
   return {
     basePackage,
     baseCents,
     optionsCents,
     totalCents,
     ...(isPartner
-      ? {
-          partnerTokenCost:
-            storedTokens ?? packagePartnerTokens(basePackage),
-        }
+      ? resolvedPartnerTokenCost !== undefined
+        ? {
+            partnerTokenCost: storedTokens ?? resolvedPartnerTokenCost,
+          }
+        : {}
       : {}),
   };
 }

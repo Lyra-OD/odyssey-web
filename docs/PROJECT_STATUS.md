@@ -274,8 +274,9 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 ### Current execution snapshot (July 2026)
 
 - **T1 / S1 — done:** migration `odyssey_p6_freemium_revshare.sql` appliquée
-- **T2 / S5 — in progress:** `pricingConfig.ts` + `wizardDeliverables.ts` refactorés ; `wizardPricing.ts`, `wizardState.ts` et UI consumers à suivre
+- **T2 / S5 — done:** `pricingConfig.ts`, `wizardDeliverables.ts`, `wizardPricing.ts`, `wizardState.ts` et UI consumers alignés ; `tsc --noEmit` = **0 erreur**
 - **Known accepted debt:** manifeste autorise désormais 2 / 4 / 5 / 7 chansons, alors que l’UI audio reste encore structurée autour de **3 tracks** (`acte1`–`acte3`)
+- **Immediate next task:** **Bind Tenant Config** — propager `is_freemium` depuis le payload API (`/api/partner/tenants`) jusqu’au `PartnerContext` et à l’UI `InvitationComposer` pour que le forfait **SOUVENIR** s’affiche correctement en **« Gratuit / 0 jeton »** pour les salons freemium.
 
 | # | Task | Effort | Done when |
 |---|------|--------|-----------|
@@ -283,7 +284,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | S2 | Saga checkout v2 : freemium 0 $ + Stripe upsell + `tribute_checkouts` | 2 d | Happy path E2E documented |
 | S3 | Webhook `checkout.session.completed` + commission idempotent | 1 d | RevShare line in ledger |
 | S4 | Scanner Phase A : QR + mobile `/scan/[token]` + upload | 2 d | Photo appears on desktop wizard |
-| S5 | `pricingConfig` + manifest v2 (0/149/299/499, `legendary`, caps/pacing) | 🟡 | Contract TS merged; consumers migrated |
+| S5 | `pricingConfig` + manifest v2 (0/149/299/499, `legendary`, caps/pacing) | ✅ | Contract TS + consumers migrated; `tsc --noEmit` = 0 |
 | S6 | Invitation API : skip debit when `is_freemium` + Souvenir | 0.5 d | No 402 on freemium invite |
 | S7 | Smoke tests commission math + checkout idempotency | 1 d | Script or Vitest |
 
@@ -305,6 +306,10 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 - Full test suite + GitHub Actions
 - Video render pipeline
 - Storage legacy backfill — voir §4.1
+
+### Immediate next step (post-TS refactor)
+
+- **Bind Tenant Config** — propager `is_freemium` depuis le payload API (`/api/partner/tenants`) jusqu’au `PartnerContext` et à l’UI `InvitationComposer` pour que le forfait **SOUVENIR** s’affiche correctement en **« Gratuit / 0 jeton »** pour les salons freemium.
 
 ---
 

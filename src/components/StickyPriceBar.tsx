@@ -3,10 +3,10 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useRef } from "react";
 
-import { packagePartnerTokens } from "@/src/lib/wizard/pricingConfig";
 import {
   buildPricingSnapshot,
   computeWizardCart,
+  resolvePartnerTokenCost,
   type WizardBasePackage,
   type WizardExtensionsState,
 } from "@/src/lib/wizard/wizardPricing";
@@ -51,16 +51,20 @@ export function StickyPriceBar({
   );
 
   const tokenCount =
-    pricing.partnerTokenCost ?? packagePartnerTokens(basePackage);
+    pricing.partnerTokenCost ?? resolvePartnerTokenCost(basePackage);
 
-  const displayLine = isPartner
-    ? copy.partnerTokenCostLabel.replace("{tokens}", String(tokenCount))
-    : copy.consumerTotalLabel.replace(
-        "{amount}",
-        centsToDisplayAmount(cart.totalCents),
-      );
+  const consumerLine = copy.consumerTotalLabel.replace(
+    "{amount}",
+    centsToDisplayAmount(cart.totalCents),
+  );
 
-  const pulseKeySource = isPartner ? tokenCount : cart.totalCents;
+  const displayLine =
+    isPartner && tokenCount !== undefined
+      ? copy.partnerTokenCostLabel.replace("{tokens}", String(tokenCount))
+      : consumerLine;
+
+  const pulseKeySource =
+    isPartner && tokenCount !== undefined ? tokenCount : cart.totalCents;
 
   const prevPulseRef = useRef(pulseKeySource);
   const pulseKeyRef = useRef(0);

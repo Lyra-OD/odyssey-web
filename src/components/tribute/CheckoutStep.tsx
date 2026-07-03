@@ -2,10 +2,10 @@
 
 import { Loader2, Lock } from "lucide-react";
 
-import { packagePartnerTokens } from "@/src/lib/wizard/pricingConfig";
 import {
   computeWizardCart,
   formatWizardPrice,
+  resolvePartnerTokenCost,
   type ExtensionLineKey,
   type WizardBasePackage,
   type WizardExtensionsState,
@@ -49,7 +49,7 @@ export function CheckoutStep({
 }: Props) {
   const cart = computeWizardCart(extensions, basePackage);
   const optionLines = cart.lineItems.filter((line) => line.key !== "base");
-  const tokenCost = packagePartnerTokens(basePackage);
+  const tokenCost = resolvePartnerTokenCost(basePackage);
 
   if (isPartner) {
     return (
@@ -66,7 +66,9 @@ export function CheckoutStep({
         <section className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
           <p className="text-sm font-light text-zinc-400">{copy.partnerRecapLabel}</p>
           <p className="mt-4 font-[family-name:var(--font-label)] text-3xl font-semibold text-teal-200/95">
-            {copy.partnerPayCta.replace("{tokens}", String(tokenCost))}
+            {tokenCost !== undefined
+              ? copy.partnerPayCta.replace("{tokens}", String(tokenCost))
+              : copy.payError}
           </p>
         </section>
 
@@ -79,7 +81,7 @@ export function CheckoutStep({
         <button
           type="button"
           onClick={onPay}
-          disabled={isPaying}
+          disabled={isPaying || tokenCost === undefined}
           className="font-[family-name:var(--font-label)] flex min-h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-teal-400/45 bg-gradient-to-r from-violet-600/35 via-teal-500/30 to-teal-400/25 px-6 text-lg font-semibold text-white shadow-[0_0_56px_rgba(139,92,246,0.3),0_0_40px_rgba(45,212,191,0.25)] transition-all duration-300 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPaying ? (
@@ -88,7 +90,9 @@ export function CheckoutStep({
               {copy.paying}
             </>
           ) : (
-            copy.partnerPayCta.replace("{tokens}", String(tokenCost))
+            tokenCost !== undefined
+              ? copy.partnerPayCta.replace("{tokens}", String(tokenCost))
+              : copy.payError
           )}
         </button>
       </div>

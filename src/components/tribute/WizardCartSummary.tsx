@@ -2,10 +2,10 @@
 
 import { motion } from "framer-motion";
 
-import { packagePartnerTokens } from "@/src/lib/wizard/pricingConfig";
 import {
   computeWizardCart,
   formatWizardPrice,
+  resolvePartnerTokenCost,
   type WizardBasePackage,
   type WizardExtensionsState,
 } from "@/src/lib/wizard/wizardPricing";
@@ -98,12 +98,23 @@ export function ExtensionsStickyFooter({
   onContinue,
 }: ExtensionsFooterProps) {
   const cart = computeWizardCart(extensions, basePackage);
+  const partnerTokenCost = resolvePartnerTokenCost(basePackage);
 
   const totalLine = isPartner
-    ? copy.partnerTokenCostLabel.replace(
-        "{tokens}",
-        String(packagePartnerTokens(basePackage)),
-      )
+    ? partnerTokenCost !== undefined
+      ? copy.partnerTokenCostLabel.replace(
+          "{tokens}",
+          String(partnerTokenCost),
+        )
+      : (() => {
+          const base = formatWizardPrice(cart.baseCents, locale);
+          const options = formatWizardPrice(cart.optionsCents, locale);
+          const total = formatWizardPrice(cart.totalCents, locale);
+          return copy.totalFormula
+            .replace("{base}", base)
+            .replace("{options}", options)
+            .replace("{total}", total);
+        })()
     : (() => {
         const base = formatWizardPrice(cart.baseCents, locale);
         const options = formatWizardPrice(cart.optionsCents, locale);

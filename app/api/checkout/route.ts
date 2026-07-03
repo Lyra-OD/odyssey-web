@@ -6,6 +6,7 @@ import { getStripe } from "@/lib/stripe";
 import { requireProjectOwner } from "@/src/lib/api/projectAccess";
 import { debitPartnerTokens } from "@/src/lib/partner/partnerCheckout";
 import { resolveUserIsPartner } from "@/src/lib/partner/resolvePartnerAccess";
+import { hasLegacyTokenPricing } from "@/src/lib/wizard/pricingConfig";
 import {
   CHECKOUT_LINE_LABELS,
   computeWizardCart,
@@ -75,7 +76,7 @@ export async function POST(request: Request) {
 
   const { data: project, error: fetchError } = await supabase
     .from("projects")
-    .select("id, tenant_id, wizard_state, status")
+    .select("id, tenant_id, invitation_id, wizard_state, status")
     .eq("id", projectId)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -94,10 +95,31 @@ export async function POST(request: Request) {
   const wizardState = coerceWizardState(project.wizard_state);
   const isPartnerFromRole = await resolveUserIsPartner(supabase, user.id);
   const isPartner = isPartnerFromRole;
+  const tenantId = project.tenant_id as string | null;
+  const invitationId = project.invitation_id as string | null;
+  const hasPartnerInvitation = Boolean(invitationId);
   const extensions = wizardState.extensions ?? {};
   const actTracks = wizardState.musicalAmbiance?.tracks ?? {};
   const basePackage =
     wizardState.basePackage ?? wizardState.pricing?.basePackage ?? "signature";
+
+  let isFreemiumTenant = false;
+  if (tenantId) {
+    const { data: tenant, error: tenantError } = await supabase
+      .from("tenants")
+      .select("is_freemium")
+      .eq("id", tenantId)
+      .maybeSingle();
+
+    if (tenantError) {
+      return NextResponse.json(
+        { error: "tenant_fetch_failed", message: tenantError.message },
+        { status: 400 },
+      );
+    }
+
+    isFreemiumTenant = tenant?.is_freemium === true;
+  }
 
   const cart = computeWizardCart(extensions, basePackage);
 
@@ -129,10 +151,20 @@ export async function POST(request: Request) {
   const studioPath = appRoutes.studio(locale);
 
   if (isPartner) {
-    const tenantId = project.tenant_id as string | null;
     if (!tenantId) {
       return NextResponse.json(
         { error: "missing_tenant", message: "Projet sans tenant partenaire." },
+        { status: 400 },
+      );
+    }
+
+    if (!hasLegacyTokenPricing(basePackage)) {
+      return NextResponse.json(
+        {
+          error: "invalid_partner_package",
+          message:
+            "Le forfait sélectionné n'est pas compatible avec un débit jetons partenaire.",
+        },
         { status: 400 },
       );
     }
@@ -203,6 +235,50 @@ export async function POST(request: Request) {
   }
 
   if (totalCents <= 0) {
+    if (hasPartnerInvitation && isFreemiumTenant) {
+      const nextWizardState = {
+        ...wizardState,
+        pricing: {
+          basePackage: cart.basePackage,
+          baseCents: cart.baseCents,
+          optionsCents: cart.optionsCents,
+          totalCents,
+        },
+      };
+
+      const { error: updateError } = await supabase
+        .from("projects")
+        .update({
+          wizard_state: nextWizardState,
+          status: "submitted",
+        })
+        .eq("id", projectId)
+        .eq("user_id", user.id);
+
+      if (updateError) {
+        return NextResponse.json(
+          { error: "project_update_failed", message: updateError.message },
+          { status: 400 },
+        );
+      }
+
+      return NextResponse.json({
+        ok: true,
+        mode: "freemium_free",
+        url: `${origin}${studioPath}?checkout=freemium_success`,
+        totalCents,
+        metadata: {
+          project_id: projectId,
+          base_package: cart.basePackage,
+          invitation_id: invitationId,
+          checkout_mode: "b2b2c_family",
+          is_freemium: "true",
+          extensions: JSON.stringify(extensions),
+          act_tracks: JSON.stringify(actTracks),
+        },
+      });
+    }
+
     return NextResponse.json({ error: "invalid_total" }, { status: 400 });
   }
 
@@ -229,7 +305,10 @@ export async function POST(request: Request) {
       metadata: {
         project_id: projectId,
         user_id: user.id,
-        checkout_mode: "b2c",
+        checkout_mode: hasPartnerInvitation ? "b2b2c_family" : "b2c",
+        invitation_id: invitationId ?? "",
+        tenant_id: tenantId ?? "",
+        is_freemium: String(isFreemiumTenant),
         total_cents: String(totalCents),
         base_cents: String(Math.trunc(cart.baseCents)),
         base_package: cart.basePackage,

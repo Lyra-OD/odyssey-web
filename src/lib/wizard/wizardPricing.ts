@@ -6,26 +6,41 @@
 import {
   calculatePartnerMargin,
   extensionCents,
+  hasLegacyTokenPricing,
   heritagePackIndividualTotalCents,
   heritagePackSavingsCents,
   isExtensionBundledInBasePackage,
   packageCents,
   packagePartnerTokens,
+  WIZARD_B2C_DIRECT_PACKAGES,
   PARTNER_TOKEN_COST_CENTS,
+  WIZARD_ALL_PACKAGES,
+  WIZARD_LEGACY_TOKEN_PACKAGES,
+  WIZARD_PARTNER_GRANTED_PACKAGES,
   WIZARD_PRICING,
   WIZARD_BASE_PACKAGES,
   type WizardBasePackage,
+  type WizardB2CDirectPackage,
   type WizardExtensionId,
+  type WizardLegacyTokenPackage,
+  type WizardPartnerGrantedPackage,
 } from "@/src/lib/wizard/pricingConfig";
 
 export type {
   WizardBasePackage,
+  WizardB2CDirectPackage,
   WizardExtensionId,
   WizardPackageKey,
   WizardExtensionConfigKey,
+  WizardLegacyTokenPackage,
+  WizardPartnerGrantedPackage,
 } from "@/src/lib/wizard/pricingConfig";
 
 export {
+  WIZARD_ALL_PACKAGES,
+  WIZARD_B2C_DIRECT_PACKAGES,
+  WIZARD_PARTNER_GRANTED_PACKAGES,
+  WIZARD_LEGACY_TOKEN_PACKAGES,
   WIZARD_PRICING,
   WIZARD_BASE_PACKAGES,
   PARTNER_TOKEN_COST_CENTS,
@@ -233,6 +248,20 @@ export function computeWizardCart(
   };
 }
 
+/**
+ * Safe partner-token resolver for mixed runtime package ids.
+ *
+ * `legendary` is intentionally excluded from legacy token pricing and returns
+ * `undefined` here instead of leaking a fake token value into B2B paths.
+ */
+export function resolvePartnerTokenCost(
+  basePackage: WizardBasePackage,
+): number | undefined {
+  return hasLegacyTokenPricing(basePackage)
+    ? packagePartnerTokens(basePackage)
+    : undefined;
+}
+
 export function buildPricingSnapshot(
   extensions: WizardExtensionsState,
   basePackage: WizardBasePackage,
@@ -245,7 +274,10 @@ export function buildPricingSnapshot(
     optionsCents: cart.optionsCents,
     totalCents: cart.totalCents,
     ...(isPartner
-      ? { partnerTokenCost: packagePartnerTokens(basePackage) }
+      ? (() => {
+          const partnerTokenCost = resolvePartnerTokenCost(basePackage);
+          return partnerTokenCost !== undefined ? { partnerTokenCost } : {};
+        })()
       : {}),
   };
 }

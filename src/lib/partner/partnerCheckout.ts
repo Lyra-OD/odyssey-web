@@ -2,8 +2,9 @@ import "server-only";
 
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import {
+  hasLegacyTokenPricing,
   packagePartnerTokens,
-  type WizardBasePackage,
+  type WizardPartnerGrantedPackage,
 } from "@/src/lib/wizard/pricingConfig";
 
 export type PartnerTokenDebitResult =
@@ -15,6 +16,7 @@ export type PartnerTokenDebitResult =
   | {
       ok: false;
       error:
+        | "invalid_package"
         | "wallet_not_found"
         | "insufficient_tokens"
         | "debit_failed"
@@ -28,10 +30,19 @@ export type PartnerTokenDebitResult =
  */
 export async function debitPartnerTokens(params: {
   tenantId: string;
-  packageId: WizardBasePackage;
+  packageId: WizardPartnerGrantedPackage;
   projectId: string;
   userId: string;
 }): Promise<PartnerTokenDebitResult> {
+  if (!hasLegacyTokenPricing(params.packageId)) {
+    return {
+      ok: false,
+      error: "invalid_package",
+      message:
+        "Forfait invalide pour un débit jetons partenaire. `legendary` est réservé au B2C direct.",
+    };
+  }
+
   const tokensRequired = packagePartnerTokens(params.packageId);
   const admin = getSupabaseAdminClient();
 

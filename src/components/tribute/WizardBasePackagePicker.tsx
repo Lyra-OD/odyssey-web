@@ -1,11 +1,12 @@
 "use client";
 
 import {
+  WIZARD_B2C_DIRECT_PACKAGES,
   bundleSavingsDollarsLabel,
   calculateBundleSavings,
   formatWizardPrice,
   packageCents,
-  WIZARD_BASE_PACKAGES,
+  WIZARD_PARTNER_GRANTED_PACKAGES,
   WIZARD_PRICING,
   type WizardBasePackage,
 } from "@/src/lib/wizard/wizardPricing";
@@ -19,6 +20,8 @@ export type WizardBasePackagePickerCopy = {
   signatureDescription: string;
   heritageLabel: string;
   heritageDescription: string;
+  legendaryLabel?: string;
+  legendaryDescription?: string;
   /** « Le choix complet (Économisez {savings} $) » */
   heritageBundlePromo: string;
 };
@@ -29,6 +32,8 @@ type Props = {
   value: WizardBasePackage;
   onChange: (pkg: WizardBasePackage) => void;
   compact?: boolean;
+  /** Liste explicite de packages autorisés dans ce contexte. */
+  availablePackages?: readonly WizardBasePackage[];
   /** Masque les montants B2C (partenaire B2B). */
   hidePrices?: boolean;
 };
@@ -39,12 +44,26 @@ export function WizardBasePackagePicker({
   value,
   onChange,
   compact = false,
+  availablePackages,
   hidePrices = false,
 }: Props) {
   const heritageSavingsCents = calculateBundleSavings(
     WIZARD_PRICING.packages.HERITAGE.id,
   );
   const heritageSavingsLabel = bundleSavingsDollarsLabel(heritageSavingsCents);
+
+  const defaultLegendaryLabel = locale === "en" ? "Legendary" : "Légendaire";
+  const defaultLegendaryDescription =
+    locale === "en"
+      ? "White Gloves service, 4K finish, and premium handling."
+      : "Service Gants Blancs, finition 4K et prise en charge premium.";
+
+  const displayedPackages =
+    availablePackages && availablePackages.length > 0
+      ? availablePackages
+      : hidePrices
+        ? WIZARD_PARTNER_GRANTED_PACKAGES
+        : WIZARD_B2C_DIRECT_PACKAGES;
 
   const labels: Record<
     WizardBasePackage,
@@ -61,6 +80,11 @@ export function WizardBasePackagePicker({
     heritage: {
       label: copy.heritageLabel,
       description: copy.heritageDescription,
+    },
+    legendary: {
+      label: copy.legendaryLabel ?? defaultLegendaryLabel,
+      description:
+        copy.legendaryDescription ?? defaultLegendaryDescription,
     },
   };
 
@@ -83,8 +107,12 @@ export function WizardBasePackagePicker({
         </p>
       )}
 
-      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {WIZARD_BASE_PACKAGES.map((pkgId) => {
+      <div
+        className={`mt-4 grid grid-cols-1 gap-3 ${
+          displayedPackages.length >= 4 ? "sm:grid-cols-4" : "sm:grid-cols-3"
+        }`}
+      >
+        {displayedPackages.map((pkgId) => {
           const selected = value === pkgId;
           const meta = labels[pkgId];
           const price = formatWizardPrice(packageCents(pkgId), locale);
