@@ -81,7 +81,7 @@ Faire de `storyboard` la structure persistée de référence.
 
 ## Phase 2 - Moteur quotas et pacing
 
-### Ticket S3 - Rendre les quotas upload pilotés par package
+### Ticket S3 - Rendre les quotas upload pilotés par package ✅ livré
 **But**
 Brancher enfin `maxMediaItems` sur l'étape Upload.
 
@@ -89,15 +89,24 @@ Brancher enfin `maxMediaItems` sur l'étape Upload.
 - `src/components/tribute/TributeWizard.tsx`
 - `src/components/media/MediaDropzoneAdapter.tsx`
 - `src/lib/wizard/wizardDeliverables.ts`
-- couche serveur média si nécessaire
+- `src/lib/uploads/mediaUploadService.ts`
+- `src/components/media/MediaQueueGrid.tsx`
+- `dictionaries/fr.json` / `dictionaries/en.json`
+- `docs/sql/odyssey_p7_media_quota_guard.sql` (nouveau)
 
-**Travail**
-- Remplacer le `maxFiles={150}` en dur par une valeur issue du package actif.
-- Afficher les slots restants.
-- Ajouter un garde-fou serveur pour éviter le dépassement via client modifié.
+**Travail réalisé**
+- Remplacé le `maxFiles={150}` en dur par `packageMaxMediaItems(manifestPackageFromWizardBasePackage(basePackage))`, recalculé via `useMemo` à chaque changement de forfait.
+- Compteur UI mis à jour (`{count} / {max} médias inclus dans votre forfait`) + bandeau d'avertissement dédié quand `remainingSlots === 0`.
+- Message de rejet `too-many-files-cumulative` externalisé en copy localisée (FR/EN) plutôt que hardcodé en anglais dans `MediaDropzoneAdapter.tsx`.
+- **Garde-fou serveur (le vrai enjeu du ticket)** : l'upload écrit directement du navigateur vers Supabase Storage + `media_assets` — il n'existe aucune route `POST /api/projects/[id]/media` à sécuriser côté Next.js. Le rempart infalsifiable est donc un **trigger Postgres `BEFORE INSERT`** (`enforce_media_asset_quota()` dans `odyssey_p7_media_quota_guard.sql`) qui verrouille le projet (`pg_advisory_xact_lock`), compte les médias existants et lève `media_quota_exceeded` au-delà du plafond du `basePackage`.
+- `mediaUploadService.ts` détecte ce code d'erreur SQL stable (`MEDIA_QUOTA_EXCEEDED_ERROR`), n'insiste pas en retry (rejet déterministe, pas transitoire), et `MediaQueueGrid` l'affiche traduit plutôt que le message Postgres brut.
+
+**Limite connue / dette assumée**
+- Les plafonds sont dupliqués dans le trigger SQL (copie manuelle de `PACKAGE_MANIFEST.*.limits.maxMediaItems`) — pas de pont automatique TS → SQL. Même risque de dérive que celui déjà accepté côté prix (`assertManifestPricingAlignedWithLegacyConfig()`).
+- Comportement volontairement non-destructif : une rétrogradation de forfait après dépassement ne supprime jamais de médias existants, seuls les nouveaux INSERT sont bloqués.
 
 **Critère d'acceptation**
-- Les packages 50 / 125 / 175 / 250 respectent leurs plafonds réels.
+- ✅ Les packages 50 / 125 / 175 / 250 respectent leurs plafonds réels côté UI et côté DB.
 
 ### Ticket S4 - Introduire le pacing temporel
 **But**
@@ -245,9 +254,9 @@ Retirer le code mort une fois la migration stabilisée.
 - Le repo ne dépend plus architecturalement du concept `3 actes`.
 
 ## Ordre d'exécution obligatoire
-1. `S1` Nouveau state `storyboard`
-2. `S2` Autosave compatible
-3. `S3` Quotas upload package-aware
+1. `S1` Nouveau state `storyboard` ✅
+2. `S2` Autosave compatible ✅
+3. `S3` Quotas upload package-aware ✅
 4. `S4` Moteur pacing temporel
 5. `S5` UI storyboard dynamique
 6. `S6` UI musique dynamique

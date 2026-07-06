@@ -55,6 +55,10 @@ import {
   computeWizardCart,
   resolveMusicCatalogTier,
 } from "@/src/lib/wizard/wizardPricing";
+import {
+  manifestPackageFromWizardBasePackage,
+  packageMaxMediaItems,
+} from "@/src/lib/wizard/wizardDeliverables";
 import { normalizeWizardStateForSave } from "@/src/lib/wizard/wizardExtensions";
 import {
   emptyActTracks,
@@ -174,6 +178,11 @@ export function TributeWizard({
   const musicCatalogTier = useMemo(
     () => resolveMusicCatalogTier(basePackage, extensions),
     [basePackage, extensions],
+  );
+  const currentMaxMediaItems = useMemo(
+    () =>
+      packageMaxMediaItems(manifestPackageFromWizardBasePackage(basePackage)),
+    [basePackage],
   );
   const [actTracks, setActTracks] = useState<WizardActTracks>(
     () => hydrated.musicalAmbiance?.tracks ?? emptyActTracks(),
@@ -1170,8 +1179,9 @@ export function TributeWizard({
                   userId={uploadUserId ?? undefined}
                   tenantId={uploadTenantId ?? undefined}
                   autoStart
-                  maxFiles={150}
+                  maxFiles={currentMaxMediaItems}
                   maxFileSizeBytes={300 * 1024 * 1024}
+                  overflowRejectionMessage={copy.uploadLimitOverflowRejection}
                 >
                   {(dz) => {
                     const totalQueued = dz.items.length;
@@ -1221,10 +1231,9 @@ export function TributeWizard({
                               className="relative mt-4 text-sm text-teal-400/90"
                               aria-live="polite"
                             >
-                              {copy.uploadFilesCount.replace(
-                                "{count}",
-                                String(totalQueued),
-                              )}
+                              {copy.uploadLimitCount
+                                .replace("{count}", String(totalQueued))
+                                .replace("{max}", String(currentMaxMediaItems))}
                               {dz.totals.uploaded > 0 || dz.totals.uploading > 0 || dz.totals.failed > 0 ? (
                                 <span className="ml-2 text-xs font-light text-zinc-400">
                                   {copy.uploadBreakdown
@@ -1247,6 +1256,24 @@ export function TributeWizard({
                             {copy.uploadPrompt}
                           </button>
                         </div>
+
+                        {dz.remainingSlots <= 0 ? (
+                          <div
+                            className="mt-5 rounded-xl border border-amber-400/40 bg-amber-950/10 p-4 shadow-[0_0_24px_rgba(251,191,36,0.14)] backdrop-blur-md"
+                            role="status"
+                            aria-live="polite"
+                          >
+                            <p className="text-sm font-medium text-amber-200/95">
+                              {copy.uploadLimitReachedTitle}
+                            </p>
+                            <p className="mt-1 text-xs text-amber-100/85">
+                              {copy.uploadLimitReachedHint.replace(
+                                "{max}",
+                                String(currentMaxMediaItems),
+                              )}
+                            </p>
+                          </div>
+                        ) : null}
 
                         {dz.rejections.length > 0 ? (
                           <div className="mt-5 rounded-xl border border-fuchsia-500/45 bg-fuchsia-950/10 p-4 shadow-[0_0_24px_rgba(255,0,255,0.22)] backdrop-blur-md">
@@ -1288,6 +1315,11 @@ export function TributeWizard({
                             statusCancelled: copy.queueStatusCancelled,
                             remove: copy.queueRemove,
                             retry: copy.queueRetry,
+                            quotaExceededError:
+                              copy.uploadLimitExceededItemError.replace(
+                                "{max}",
+                                String(currentMaxMediaItems),
+                              ),
                           }}
                         />
 

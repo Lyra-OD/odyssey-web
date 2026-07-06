@@ -74,6 +74,20 @@ const DEFAULT_BUCKET = "user-assets";
 const DEFAULT_MAX_CONCURRENCY = 4;
 const DEFAULT_MAX_RETRIES = 2;
 
+/**
+ * Code d'erreur stable levé par le trigger Postgres
+ * `public.enforce_media_asset_quota()` (voir docs/sql/odyssey_p7_media_quota_guard.sql)
+ * quand l'insert dépasserait `packageMaxMediaItems(basePackage)`.
+ * Ce garde-fou est le rempart final côté serveur : l'UI (TributeWizard /
+ * MediaDropzoneAdapter) bloque déjà l'utilisateur en amont, mais un client
+ * malveillant qui appellerait directement l'API Supabase doit être stoppé ici.
+ */
+export const MEDIA_QUOTA_EXCEEDED_ERROR = "media_quota_exceeded";
+
+function isMediaQuotaExceededError(message: string): boolean {
+  return message.toLowerCase().includes(MEDIA_QUOTA_EXCEEDED_ERROR);
+}
+
 function safeFileName(fileName: string): string {
   return fileName
     .toLowerCase()
@@ -186,6 +200,9 @@ async function uploadAndInsert(
     .select("id")
     .maybeSingle();
   if (insertError) {
+    if (isMediaQuotaExceededError(insertError.message)) {
+      throw new Error(MEDIA_QUOTA_EXCEEDED_ERROR);
+    }
     throw new Error(`media_assets upsert failed: ${insertError.message}`);
   }
 
@@ -227,6 +244,13 @@ async function uploadWithRetries(
       });
     } catch (error) {
       lastError = error;
+
+      // Rejet de quota déterministe (pas transitoire) : inutile de retenter,
+      // la limite ne bougera pas pendant les retries.
+      if (error instanceof Error && error.message === MEDIA_QUOTA_EXCEEDED_ERROR) {
+        break;
+      }
+
       if (attempt <= params.maxRetries) {
         await sleep(300 * 2 ** (attempt - 1));
       }

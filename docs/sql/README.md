@@ -1,6 +1,8 @@
 # SQL Odyssey — état courant
 
 > **P6 appliqué :** l'ID technique `legendary` (forfait Légendaire / Gants Blancs, B2C 499 $) est maintenant pris en charge par `odyssey_p6_freemium_revshare.sql`, avec `is_freemium`, commission ledger et stubs Phase 2.
+>
+> **P7 (Storyboard refactor S3) :** `odyssey_p7_media_quota_guard.sql` ajoute un trigger `BEFORE INSERT` sur `media_assets` qui fait respecter `packageMaxMediaItems(basePackage)` au niveau base de données — garde-fou nécessaire car l'upload écrit directement depuis le navigateur (pas de route API intermédiaire).
 
 Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle** de la base Supabase d'Odyssey. Tous les scripts de migration sont **idempotents** : on peut les ré-exécuter sans dégât.
 
@@ -29,6 +31,7 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 15 | `odyssey_p5_5_partner_rbac_overdraft.sql` | **Patch** | RBAC admin wallet/ledger, overdraft limité, débit atomique invitation, crédit manuel, anti double-débit checkout. |
 | 16 | `odyssey_p6_freemium_revshare.sql` | **Migration** | **B2B2C v2 Phase A** + stubs Phase 2 — voir [§ P6](#p6--freemium--revshare-b2b2c-v2) |
 | — | ~~`odyssey_p6_1_scan_sessions.sql`~~ | *(absorbé P6)* | `scan_sessions` inclus dans P6 Partie B |
+| 17 | `odyssey_p7_media_quota_guard.sql` | **Migration** | **Storyboard S3** — trigger `enforce_media_asset_quota()` : bloque l'INSERT `media_assets` au-delà de `packageMaxMediaItems(basePackage)` — voir [§ P7](#p7--garde-fou-quota-de-medias-package-aware) |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
 | — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed QA** | Partenaire fictif + 100 jetons — **après P4**, hors chaîne prod. |
 | — | `odyssey_partner_tenant_branding_example.sql` | **Référence** | Mise à jour `tenants.settings` (`brand_label`, `brand_logo_url`) — Salon connexion. |
@@ -122,6 +125,31 @@ Détail stratégique : [`VISION_PHASE_2.md`](../VISION_PHASE_2.md) §4 · commer
 ```sql
 UPDATE public.tenants SET is_freemium = true WHERE slug = 'partner-qa-demo';
 ```
+
+---
+
+## P7 — Garde-fou quota de médias package-aware
+
+**Fichier :** `odyssey_p7_media_quota_guard.sql` *(Storyboard refactor — ticket S3)*
+**Prérequis :** P2 (`media_assets`) + P3 (`projects.wizard_state`).
+
+| Objet | Rôle |
+|-------|------|
+| **`enforce_media_asset_quota()`** | Fonction trigger : lit `projects.wizard_state->>'basePackage'`, calcule le plafond (dupliqué depuis `wizardDeliverables.ts`), verrouille le projet (`pg_advisory_xact_lock`) et compare au `COUNT(*)` courant de `media_assets`. |
+| **`trg_media_assets_quota_guard`** | `BEFORE INSERT ON media_assets FOR EACH ROW` — lève `media_quota_exceeded` si le plafond serait dépassé. |
+
+**Pourquoi un trigger DB et pas une route API :** l'upload (`src/lib/uploads/mediaUploadService.ts`) écrit directement du navigateur vers Supabase Storage puis `media_assets`, sans route `POST /api/projects/[id]/media` intermédiaire. L'UI (`TributeWizard.tsx` + `MediaDropzoneAdapter.tsx`) bloque déjà l'utilisateur en amont via `packageMaxMediaItems(basePackage)`, mais seul un garde-fou côté base de données est réellement infalsifiable.
+
+**Plafonds actuels** (à garder synchronisés manuellement avec `PACKAGE_MANIFEST` côté TS) :
+
+| `basePackage` | Manifeste | `maxMediaItems` |
+|---------------|-----------|------------------|
+| `essential` | SOUVENIR | 50 |
+| `signature` | HERITAGE | 125 |
+| `heritage` | ETERNITE | 175 |
+| `legendary` | LEGENDAIRE | 250 |
+
+**Comportement non-destructif :** le trigger ne bloque que les **nouveaux** INSERT ; il ne supprime jamais de médias existants si un projet est rétrogradé vers un forfait plus petit après avoir dépassé son nouveau plafond.
 
 ---
 

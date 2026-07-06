@@ -126,6 +126,14 @@ export type MediaDropzoneAdapterProps = {
   disabled?: boolean;
   autoStart?: boolean;
 
+  /**
+   * Message affiché pour les fichiers en excès du quota cumulatif
+   * (`too-many-files-cumulative`). Support du placeholder `{max}`.
+   * Permet à l'appelant d'injecter une copy localisée (fr/en) plutôt
+   * que le message anglais par défaut.
+   */
+  overflowRejectionMessage?: string;
+
   onFilesRejected?: (rejections: MediaDropzoneRejection[]) => void;
   onUploadComplete?: (summary: MediaDropzoneSummary) => void;
   onUploadError?: (error: Error) => void;
@@ -163,6 +171,7 @@ export function MediaDropzoneAdapter({
   accept = DEFAULT_ACCEPT,
   disabled = false,
   autoStart = false,
+  overflowRejectionMessage,
   onFilesRejected,
   onUploadComplete,
   onUploadError,
@@ -233,13 +242,16 @@ export function MediaDropzoneAdapter({
       const overflow = acceptedFiles.slice(remainingSlots);
 
       if (overflow.length) {
+        const message =
+          overflowRejectionMessage?.replace("{max}", String(maxFiles)) ??
+          `Maximum ${maxFiles} files allowed in total queue.`;
         const overflowRejections: MediaDropzoneRejection[] = overflow.map(
           (file) => ({
             fileName: file.name,
             fileSize: file.size,
             fileType: file.type,
             code: "too-many-files-cumulative",
-            message: `Maximum ${maxFiles} files allowed in total queue.`,
+            message,
           }),
         );
         appendRejections(overflowRejections);
@@ -257,6 +269,7 @@ export function MediaDropzoneAdapter({
       appendRejections,
       autoStart,
       maxFiles,
+      overflowRejectionMessage,
       remainingSlots,
       start,
       upload,

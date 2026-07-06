@@ -11,7 +11,10 @@ import {
   RefreshCcw,
   X,
 } from "lucide-react";
-import type { UploadQueueItem } from "@/src/lib/uploads/mediaUploadService";
+import {
+  MEDIA_QUOTA_EXCEEDED_ERROR,
+  type UploadQueueItem,
+} from "@/src/lib/uploads/mediaUploadService";
 import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
 import {
   getItemDisplayName,
@@ -29,6 +32,8 @@ export type MediaQueueGridCopy = {
   statusCancelled: string;
   remove: string;
   retry: string;
+  /** Message affiché quand item.error === MEDIA_QUOTA_EXCEEDED_ERROR (support `{max}`). */
+  quotaExceededError?: string;
 };
 
 type Props = {
@@ -39,6 +44,16 @@ type Props = {
   onRemove: (id: string) => void;
   onRetry: (id: string) => void;
 };
+
+function displayItemError(
+  error: string,
+  quotaExceededMessage: string | undefined,
+): string {
+  if (error === MEDIA_QUOTA_EXCEEDED_ERROR && quotaExceededMessage) {
+    return quotaExceededMessage;
+  }
+  return error;
+}
 
 const VIDEO_PREFIX = "video/";
 
@@ -282,7 +297,7 @@ export function MediaQueueGrid({
                     className="max-h-28 overflow-y-auto whitespace-pre-wrap break-words text-[11px] leading-snug text-fuchsia-200/90"
                     title={item.error}
                   >
-                    {item.error}
+                    {displayItemError(item.error, copy.quotaExceededError)}
                   </p>
                   <button
                     type="button"

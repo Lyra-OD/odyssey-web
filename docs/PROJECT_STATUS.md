@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: July 2026 · P6 SQL applied, storyboard foundations S1/S2 shipped**
+**Last revised: July 2026 · P6 SQL applied, storyboard foundations S1/S2/S3 shipped**
 
 Living snapshot: **audit**, **recommended consolidations**, and **next sprint plan**.  
 For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) and the specialized docs listed in [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -16,7 +16,7 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | **Family Studio (B2C wizard)** | 🟢 Mature | 8 steps, autosave, media, music, Stripe checkout |
 | **Partner Salon (UI + QA P5.5)** | 🟢 **Terminée** | RBAC, wallet API, gate R6, solde bout en bout — QA prod validée ([`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)) |
 | **B2B2C commerce v2 (doc)** | 🟢 Spec ready | Freemium + RevShare 30 % + Scanner — canon [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 |
-| **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 SQL ✅** ; freemium partner UI ✅ ; storyboard foundations `S1/S2` ✅ ; saga / webhook in progress |
+| **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 SQL ✅** ; freemium partner UI ✅ ; storyboard foundations `S1/S2/S3` ✅ ; saga / webhook in progress |
 | **RBAC & tokens (P5.5)** | 🟢 Shipped & QA | SQL + TS + UI ; coexistence avec freemium (`is_freemium`) documentée |
 | **Automated tests & CI** | 🔴 None | No test framework, no `.github/` workflows |
 | **Documentation** | 🟢 Strong | Rich; some docs ahead/behind code (see §4) |
@@ -100,7 +100,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 · [`PARTNER_REVSHARE.md`
 | **Spike `tribute_checkouts` v1** | **Annulé** — modèle jetons + delta famille remplacé pour les gros clients |
 | **B2B2C v2 (Scrypta Killer)** | **Freemium** Souvenir 0 $ · **RevShare 30 %** brut Stripe · **Scanner Compagnon IA** |
 | **Legacy coexistence** | P4/P5.5 jetons **conservé** pour petits salons (`is_freemium = false`) |
-| **Exécution en cours** | P6 SQL ✅ · Phase 0 freemium UI ✅ · Storyboard `S1/S2` ✅ · `S3–S10` à suivre |
+| **Exécution en cours** | P6 SQL ✅ · Phase 0 freemium UI ✅ · Storyboard `S1/S2/S3` ✅ · `S4–S10` à suivre |
 
 Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
 
@@ -126,6 +126,7 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 - **T2 manifeste TS démarré** : `pricingConfig.ts`, `wizardDeliverables.ts`, `wizardDeliverables.utils.ts` — consommateurs TS/UI restants à migrer
 - **Phase 0 B2B2C livrée** : propagation `is_freemium` -> `PartnerContext` -> `InvitationComposer` ; Souvenir freemium affiche désormais **« Gratuit / 0 jeton »**
 - **Storyboard refactor S1/S2 livrés** : `wizardState.ts` + `/api/projects/[id]/autosave` persistent désormais `storyboard` V2 avec bridge runtime legacy pour préserver l’UI actuelle
+- **Storyboard refactor S3 livré** : quota `maxMediaItems` package-aware à l'étape Upload (`TributeWizard.tsx` + `MediaDropzoneAdapter.tsx`, avertissement UI) **et** garde-fou serveur infalsifiable — trigger Postgres `enforce_media_asset_quota()` (`docs/sql/odyssey_p7_media_quota_guard.sql`), car l'upload écrit directement du navigateur vers Supabase sans route API intermédiaire
 
 ### SQL reference (apply in Supabase before prod API)
 
@@ -261,7 +262,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | `PARTNER_REVSHARE.md` | ✅ spec · code ⏳ |
 | `SCANNER_COMPANION.md` | ✅ spec à jour (caps + P6 stub) · code ⏳ |
 | `TECHNICAL_ONBOARDING` §4.7 / §5 / §10 | ✅ v2 (freemium, Légendaire, Scanner, P6) |
-| `sql/README.md` | ✅ P6 migration row + § P6 détaillé |
+| `sql/README.md` | ✅ P6 + **P7** (garde-fou quota médias) migration rows + sections détaillées |
 | `QA_P5_5_PARTNER_SALON.md` | ✅ **Terminée prod** — bannière + legacy vs freemium |
 | `ROUTES_AND_AUTH.md` | ✅ routes Scanner prévues |
 | `STINGRAY_MUSIC_INTEGRATION.md` | ✅ freemium 0 jeton Studio |
@@ -279,13 +280,14 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 - **Phase 0 — done:** propagation `is_freemium` côté partenaire ; Souvenir freemium = **« Gratuit / 0 jeton »**
 - **S1 — done:** `wizardState.ts` introduit `storyboard` V2 + migration douce legacy -> storyboard
 - **S2 — done:** `/api/projects/[id]/autosave` valide et persiste désormais le snapshot canonique `storyboard`
+- **S3 — done:** quota `maxMediaItems` package-aware — UI (`TributeWizard.tsx`) + garde-fou serveur infalsifiable (trigger Postgres `enforce_media_asset_quota()`, `docs/sql/odyssey_p7_media_quota_guard.sql`)
 - **Known accepted transition debt:** l’UI steps 4–7 reste encore rendue via un bridge runtime legacy (`montage` / `musicalAmbiance`) tant que `S5–S8` ne sont pas implémentés
 
 | # | Task | Effort | Done when |
 |---|------|--------|-----------|
 | S1 | Nouveau data model `storyboard` + bridge legacy runtime | ✅ | `wizard_state.storyboard` canonical + rehydration legacy |
 | S2 | Autosave V2 : Zod `storyboard`, write path canonique | ✅ | PATCH persists `storyboard` snapshot |
-| S3 | Quotas upload package-aware (`maxMediaItems`) | 0.5–1 d | Upload step blocks / warns by package limits |
+| S3 | Quotas upload package-aware (`maxMediaItems`) | ✅ | Upload step blocks / warns by package limits + DB trigger guard |
 | S4 | Moteur pacing temporel (`durationSec` / `targetSecondsPerMedia`) | 1 d | Pure helpers compute chapter capacity and overload |
 | S5 | UI storyboard dynamique (chapitres / bacs chanson) | 1.5–2 d | Step 4 no longer hard-coded to 3 acts |
 | S6 | UI musique dynamique par chapitre | 1–1.5 d | Step 5 no longer hard-coded to `acte1–3` |
@@ -313,10 +315,10 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 - Video render pipeline
 - Storage legacy backfill — voir §4.1
 
-### Immediate next step (post S1/S2)
+### Immediate next step (post S1/S2/S3)
 
-- **S3** — rendre l’étape Upload sensible au package (`maxMediaItems`) et ajouter le garde-fou serveur correspondant
 - **S4** — faire évoluer le manifeste vers le pacing temporel (`targetSecondsPerMedia`) pour que chaque chapitre calcule sa capacité à partir de `durationSec`
+- **S5** — refonte UI storyboard dynamique (chapitres / bacs chanson) pour sortir du bridge runtime legacy
 
 ---
 
@@ -349,7 +351,7 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 
 **Ce qui est shippé récemment (juin 2026, `main`) :** QA P5.5 ✅ · RBAC · gate `/salon` · wallet API · invitations RPC · doc B2B2C v2 · Halo-Éclipse · co-branding.
 
-**Grand chantier immédiat :** exécuter `S3–S10` du plan [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md), puis brancher saga checkout freemium et webhook RevShare.
+**Grand chantier immédiat :** exécuter `S4–S10` du plan [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (`S1–S3` livrés), puis brancher saga checkout freemium et webhook RevShare.
 
 **Ce qui n’est pas encore prod-ready :** implémentation P6 · commission UI · Scanner · Légendaire fulfillment · tests automatisés.
 
