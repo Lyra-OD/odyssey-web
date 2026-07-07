@@ -23,23 +23,27 @@ import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
 import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
 import { MontageExtensionsStep } from "@/src/components/tribute/MontageExtensionsStep";
-import { MontageStep } from "@/src/components/tribute/MontageStep";
-import { SoundSignatureStep } from "@/src/components/tribute/SoundSignatureStep";
-import { WizardBasePackagePicker } from "@/src/components/tribute/WizardBasePackagePicker";
+import { StoryboardMontageStep } from "@/src/components/tribute/StoryboardMontageStep";
+import { StoryboardChaptersStep } from "@/src/components/tribute/StoryboardChaptersStep";
 import {
   ExtensionsStickyFooter,
   WizardCartSummary,
 } from "@/src/components/tribute/WizardCartSummary";
 import { StickyPriceBar } from "@/src/components/StickyPriceBar";
-import { WizardStepper } from "@/src/components/tribute/WizardStepper";
+import { WizardPhaseProgress } from "@/src/components/tribute/WizardPhaseProgress";
+import {
+  PackageDossierPanel,
+  PackageDossierTrigger,
+  type PackageDossierOption,
+} from "@/src/components/tribute/PackageDossierPanel";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
 import type { AppDictionary } from "@/lib/dictionaries";
 import { createClient } from "@/utils/supabase/client";
 import {
   coerceWizardState,
-  countIncludedMedia,
   emptyMontageState,
+  emptyStoryboardState,
   resolveInitialWizardStep,
   WIZARD_STATE_VERSION,
   type SocialId,
@@ -49,22 +53,33 @@ import {
   type WizardExtensionsState,
   type WizardActTracks,
   type WizardStateV1,
+  type WizardStoryboardState,
 } from "@/src/lib/wizard/wizardState";
 import {
   buildPricingSnapshot,
+  bundleSavingsDollarsLabel,
+  calculateBundleSavings,
   computeWizardCart,
+  DEFAULT_B2C_BASE_PACKAGE,
+  packageCents,
   resolveMusicCatalogTier,
+  WIZARD_B2C_DIRECT_PACKAGES,
+  WIZARD_PARTNER_GRANTED_PACKAGES,
 } from "@/src/lib/wizard/wizardPricing";
 import {
   manifestPackageFromWizardBasePackage,
   packageMaxMediaItems,
+  packageMaxSongs,
 } from "@/src/lib/wizard/wizardDeliverables";
 import { normalizeWizardStateForSave } from "@/src/lib/wizard/wizardExtensions";
+import { resolvePackageDossierRows } from "@/src/lib/wizard/packageDossier";
 import {
   emptyActTracks,
   hasAnyActTrack,
   STINGRAY_CATALOG_PROVIDER,
 } from "@/src/lib/wizard/stingrayCatalog";
+import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
+import { useWizardStoryboard } from "@/src/hooks/useWizardStoryboard";
 import type { Locale } from "@/i18n.config";
 import { SIGNED_URL_TTL_SEC, STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
 
@@ -84,6 +99,7 @@ type WizardFieldsSnapshot = {
   isPartner: boolean;
   basePackage: WizardBasePackage;
   montage: WizardMontageState;
+  storyboard: WizardStoryboardState;
   extensions: WizardExtensionsState;
   actTracks: WizardActTracks;
 };
@@ -145,7 +161,7 @@ export function TributeWizard({
     ) as Step,
   );
   const [essentialError, setEssentialError] = useState(false);
-  const [montageError, setMontageError] = useState(false);
+  const [chaptersStructureError, setChaptersStructureError] = useState(false);
 
   const [firstName, setFirstName] = useState(
     hydrated.essentials?.firstName ?? "",
@@ -165,12 +181,20 @@ export function TributeWizard({
   const [selectedSocial, setSelectedSocial] = useState<SocialId | null>(
     hydrated.socialSources?.selected ?? null,
   );
-  const [montage, setMontage] = useState<WizardMontageState>(
+  // `montage` reste un pont legacy en lecture seule pour Preview/Checkout —
+  // il n'est plus manipulé par une UI depuis le passage à `storyboard`
+  // (Étape 4). Sera retiré lors du ticket cleanup-legacy.
+  const [montage] = useState<WizardMontageState>(
     () => hydrated.montage ?? emptyMontageState(),
   );
+  const [projectMediaCount, setProjectMediaCount] = useState(0);
   const [isPartner] = useState(isPartnerInitial);
+  // Règle d'or métier : ancrage sur « Éternité » (299 $, milieu de gamme
+  // réel) par défaut pour un nouveau projet — voir DEFAULT_B2C_BASE_PACKAGE.
+  // Le client ne clique plus une carte de forfait à l'Étape 1 ; ce choix
+  // doit donc être intentionnel.
   const [basePackage, setBasePackage] = useState<WizardBasePackage>(
-    () => hydrated.basePackage ?? "signature",
+    () => hydrated.basePackage ?? DEFAULT_B2C_BASE_PACKAGE,
   );
   const [extensions, setExtensions] = useState<WizardExtensionsState>(
     () => hydrated.extensions ?? {},
@@ -179,12 +203,151 @@ export function TributeWizard({
     () => resolveMusicCatalogTier(basePackage, extensions),
     [basePackage, extensions],
   );
-  const currentMaxMediaItems = useMemo(
-    () =>
-      packageMaxMediaItems(manifestPackageFromWizardBasePackage(basePackage)),
+  const currentPackageId = useMemo(
+    () => manifestPackageFromWizardBasePackage(basePackage),
     [basePackage],
   );
-  const [actTracks, setActTracks] = useState<WizardActTracks>(
+  const currentMaxMediaItems = useMemo(
+    () => packageMaxMediaItems(currentPackageId),
+    [currentPackageId],
+  );
+  const currentMaxSongs = useMemo(
+    () => packageMaxSongs(currentPackageId),
+    [currentPackageId],
+  );
+  // Trampoline de persistance : `useWizardStoryboard` doit être appelé avant
+  // que `queueSave`/`wizardFieldsRef` n'existent (voir plus bas), mais son
+  // callback `onChange` ne peut être invoqué qu'après le rendu complet — ce
+  // ref est réassigné une fois `queueSave` disponible, sans jamais casser
+  // l'ordre des hooks.
+  const persistStoryboardRef = useRef<(next: WizardStoryboardState) => void>(
+    () => {},
+  );
+  const handleStoryboardDomainChange = useCallback(
+    (next: WizardStoryboardState) => persistStoryboardRef.current(next),
+    [],
+  );
+  // Isole tout le domaine `WizardStoryboardState` (chapitres musicaux,
+  // resynchronisation avec le forfait, doublons, validation structurelle) —
+  // voir `useWizardStoryboard`. Ne gère jamais l'autosave lui-même.
+  const wizardStoryboard = useWizardStoryboard({
+    initialStoryboard: hydrated.storyboard ?? emptyStoryboardState(),
+    packageId: currentPackageId,
+    maxSongs: currentMaxSongs,
+    projectMediaCount,
+    onChange: handleStoryboardDomainChange,
+  });
+  const packageDisplayNameFor = useCallback(
+    (pkg: WizardBasePackage): string => {
+      switch (pkg) {
+        case "essential":
+          return copy.basePackageEssential;
+        case "signature":
+          return copy.basePackageSignature;
+        case "heritage":
+          return copy.basePackageHeritage;
+        case "legendary":
+          return copy.basePackageLegendary;
+        default:
+          return copy.basePackageEssential;
+      }
+    },
+    [copy],
+  );
+  // Même liste que le Dossier de forfait global (en-tête) selon le canal —
+  // ne doit jamais proposer un forfait invalide pour ce contexte (ex. jamais
+  // Légendaire en canal partenaire freemium).
+  const availableBasePackagesForWizard = useMemo(
+    () => (isPartner ? WIZARD_PARTNER_GRANTED_PACKAGES : WIZARD_B2C_DIRECT_PACKAGES),
+    [isPartner],
+  );
+  const basePackageOptions: PackageDossierOption[] = useMemo(
+    () =>
+      availableBasePackagesForWizard.map((pkg) => ({
+        id: pkg,
+        label: packageDisplayNameFor(pkg),
+        priceCents: packageCents(pkg),
+      })),
+    [availableBasePackagesForWizard, packageDisplayNameFor],
+  );
+  // Tagline éditoriale par forfait (Dossier) — réutilise les descriptions
+  // déjà rédigées pour l'ancien `WizardBasePackagePicker`.
+  const packageTaglineFor = useCallback(
+    (pkg: WizardBasePackage): string => {
+      switch (pkg) {
+        case "essential":
+          return copy.basePackageEssentialDesc;
+        case "signature":
+          return copy.basePackageSignatureDesc;
+        case "heritage":
+          return copy.basePackageHeritageDesc;
+        case "legendary":
+          return copy.basePackageLegendaryDesc;
+        default:
+          return copy.basePackageEssentialDesc;
+      }
+    },
+    [copy],
+  );
+  // Mention d'économie (Éternité uniquement) — `calculateBundleSavings`
+  // renvoie 0 pour tout autre forfait, donc `null` en dehors de ce cas.
+  const packageSavingsLabelFor = useCallback(
+    (pkg: WizardBasePackage): string | null => {
+      const savingsCents = calculateBundleSavings(pkg);
+      if (savingsCents <= 0) return null;
+      return copy.dossierSavingsBadge.replace(
+        "{savings}",
+        bundleSavingsDollarsLabel(savingsCents),
+      );
+    },
+    [copy],
+  );
+  // Liste exhaustive des inclusions d'un forfait — sourcée de PACKAGE_MANIFEST
+  // (jamais de texte marketing figé), consommée par le Dossier.
+  const packageDossierRowsFor = useCallback(
+    (pkg: WizardBasePackage) =>
+      resolvePackageDossierRows(manifestPackageFromWizardBasePackage(pkg), {
+        mediaLabel: copy.dossierRowMediaLabel,
+        mediaValue: copy.dossierRowMediaValue,
+        songsLabel: copy.dossierRowSongsLabel,
+        songsValue: copy.dossierRowSongsValue,
+        resolutionLabel: copy.dossierRowResolutionLabel,
+        resolution1080p: copy.dossierRowResolution1080p,
+        resolution4k: copy.dossierRowResolution4k,
+        priorityLabel: copy.dossierRowPriorityLabel,
+        priorityStandard: copy.dossierRowPriorityStandard,
+        priorityHigh: copy.dossierRowPriorityHigh,
+        priorityUltra: copy.dossierRowPriorityUltra,
+        salonLabel: copy.dossierRowSalonLabel,
+        salonPersonal: copy.dossierRowSalonPersonal,
+        salonCatalog: copy.dossierRowSalonCatalog,
+        socialLabel: copy.dossierRowSocialLabel,
+        vaultLabel: copy.dossierRowVaultLabel,
+        vaultValue: copy.dossierRowVaultValue,
+        aiRestorationLabel: copy.dossierRowAiRestorationLabel,
+        scannerLabel: copy.dossierRowScannerLabel,
+        whiteGloveLabel: copy.dossierRowWhiteGloveLabel,
+        included: copy.dossierRowIncluded,
+        notIncluded: copy.dossierRowNotIncluded,
+      }),
+    [copy],
+  );
+  // Combien de chansons déjà choisies seraient perdues si ce forfait était
+  // appliqué — pure, dérivée du storyboard courant. Consommé par le Dossier
+  // pour son garde-fou "Gant Blanc" inline.
+  const songsLostIfBasePackageSelected = useCallback(
+    (pkg: WizardBasePackage) => {
+      const targetMaxSongs = packageMaxSongs(manifestPackageFromWizardBasePackage(pkg));
+      return wizardStoryboard.songsLostIfCappedTo(targetMaxSongs);
+    },
+    [wizardStoryboard.songsLostIfCappedTo],
+  );
+  const [isPackageDossierOpen, setIsPackageDossierOpen] = useState(false);
+  // `actTracks` reste un pont legacy en lecture seule pour PreviewStep/
+  // CheckoutStep — il n'est plus manipulé par une UI depuis la neutralisation
+  // de SoundSignatureStep (ex-Étape 5, cul-de-sac fonctionnel remplacé par
+  // StoryboardMontageStep). Sera retiré lors du ticket cleanup-legacy.
+  const [actTracks] = useState<WizardActTracks>(
     () => hydrated.musicalAmbiance?.tracks ?? emptyActTracks(),
   );
   const [isPaying, setIsPaying] = useState(false);
@@ -225,6 +388,7 @@ export function TributeWizard({
     isPartner,
     basePackage,
     montage,
+    storyboard: wizardStoryboard.storyboard,
     extensions,
     actTracks,
   });
@@ -238,6 +402,7 @@ export function TributeWizard({
     isPartner,
     basePackage,
     montage,
+    storyboard: wizardStoryboard.storyboard,
     extensions,
     actTracks,
   };
@@ -268,6 +433,7 @@ export function TributeWizard({
         ? { selected: s.selectedSocial }
         : undefined,
       montage: s.montage,
+      storyboard: s.storyboard,
       extensions: s.extensions,
       ...(hasAnyActTrack(s.actTracks)
         ? {
@@ -286,6 +452,15 @@ export function TributeWizard({
       wizardStep: currentStep,
       buildWizardState,
     });
+
+  // Persistance des changements de storyboard (manuels ou resynchronisation
+  // automatique déclenchée par `useWizardStoryboard`) — voir le trampoline
+  // `persistStoryboardRef` déclaré plus haut.
+  persistStoryboardRef.current = (next: WizardStoryboardState) => {
+    wizardFieldsRef.current.storyboard = next;
+    setChaptersStructureError(false);
+    queueSave("immediate");
+  };
 
   const deceasedDisplayName = useMemo(() => {
     const fn = firstName.trim();
@@ -310,13 +485,6 @@ export function TributeWizard({
   }, [isPartnerProp]);
 
   useEffect(() => {
-    console.log(
-      "[TributeWizard] hydrated.essentials?.avatarPath:",
-      hydrated.essentials?.avatarPath ?? null,
-    );
-  }, [hydrated.essentials?.avatarPath]);
-
-  useEffect(() => {
     return () => {
       if (avatarPreview?.startsWith("blob:")) {
         URL.revokeObjectURL(avatarPreview);
@@ -337,10 +505,6 @@ export function TributeWizard({
         if (apiRes.ok) {
           const body = (await apiRes.json()) as { signedUrl?: string };
           if (body.signedUrl) {
-            console.log(
-              "[TributeWizard] avatar signed URL (API):",
-              storagePath,
-            );
             avatarHydratedPathRef.current = storagePath;
             setAvatarPreview(body.signedUrl);
             return;
@@ -353,10 +517,6 @@ export function TributeWizard({
           .createSignedUrl(storagePath, SIGNED_URL_TTL_SEC);
 
         if (!signError && signed?.signedUrl) {
-          console.log(
-            "[TributeWizard] avatar signed URL (client):",
-            storagePath,
-          );
           avatarHydratedPathRef.current = storagePath;
           setAvatarPreview(signed.signedUrl);
           return;
@@ -507,6 +667,24 @@ export function TributeWizard({
     queueSave("immediate");
   }, [currentStep, uploadProjectId, queueSave]);
 
+  // Volume total de médias (Étape 3) — pilote le nombre minimum de chapitres
+  // pré-générés à l'Étape 4 (S4). Refetch à chaque entrée dans l'étape pour
+  // capter d'éventuels ajouts/suppressions faits en revenant en arrière.
+  useEffect(() => {
+    if (!uploadProjectId || currentStep !== 4) return;
+    let aborted = false;
+    void fetchProjectMedia(uploadProjectId)
+      .then((items) => {
+        if (!aborted) setProjectMediaCount(items.length);
+      })
+      .catch(() => {
+        // Best-effort — la pré-génération retombe sur le dernier compte connu.
+      });
+    return () => {
+      aborted = true;
+    };
+  }, [uploadProjectId, currentStep]);
+
   const canProceedEssential =
     firstName.trim().length > 0 &&
     lastName.trim().length > 0 &&
@@ -531,25 +709,28 @@ export function TributeWizard({
       setEssentialError(false);
     }
     if (currentStep === 4) {
-      if (countIncludedMedia(montage) === 0) {
-        setMontageError(true);
+      if (!wizardStoryboard.structureValidation.isValid) {
+        setChaptersStructureError(true);
         return;
       }
-      setMontageError(false);
+      setChaptersStructureError(false);
+      if (
+        wizardStoryboard.duplicateSongInfo.hasDuplicates &&
+        !wizardStoryboard.duplicateSongsAcknowledged
+      ) {
+        return;
+      }
     }
     if (currentStep >= TOTAL_STEPS) return;
     await navigateToStep((currentStep + 1) as Step);
-  }, [currentStep, canProceedEssential, navigateToStep, montage]);
-
-  const handleMontageChange = useCallback(
-    (next: WizardMontageState) => {
-      setMontage(next);
-      wizardFieldsRef.current.montage = next;
-      if (countIncludedMedia(next) > 0) setMontageError(false);
-      queueSave("immediate");
-    },
-    [queueSave],
-  );
+  }, [
+    currentStep,
+    canProceedEssential,
+    navigateToStep,
+    wizardStoryboard.structureValidation,
+    wizardStoryboard.duplicateSongInfo,
+    wizardStoryboard.duplicateSongsAcknowledged,
+  ]);
 
   const goBack = useCallback(async () => {
     if (currentStep <= 1) return;
@@ -613,15 +794,6 @@ export function TributeWizard({
     (pkg: WizardBasePackage) => {
       setBasePackage(pkg);
       wizardFieldsRef.current.basePackage = pkg;
-      queueSave("immediate");
-    },
-    [queueSave],
-  );
-
-  const handleActTracksChange = useCallback(
-    (next: WizardActTracks) => {
-      setActTracks(next);
-      wizardFieldsRef.current.actTracks = next;
       queueSave("immediate");
     },
     [queueSave],
@@ -763,8 +935,8 @@ export function TributeWizard({
       { id: 1, label: copy.stepperEssentials },
       { id: 2, label: copy.stepperSources },
       { id: 3, label: copy.stepperVault },
-      { id: 4, label: copy.stepperMontage },
-      { id: 5, label: copy.stepperSound },
+      { id: 4, label: copy.stepperChapters },
+      { id: 5, label: copy.stepperMontage },
       { id: 6, label: copy.stepperExtensions },
       { id: 7, label: copy.stepperPreview },
       { id: 8, label: copy.stepperCheckout },
@@ -772,16 +944,30 @@ export function TributeWizard({
     [copy],
   );
 
+  // Stepper en 3 "phases" cinématiques (Déposer / Composer / Recevoir) plutôt
+  // que 8 cercles linéaires — réduit la charge cognitive tout en gardant la
+  // notion d'avancement (voir refonte en-tête global).
+  const wizardPhases = useMemo(
+    () => [
+      { id: 1, label: copy.phaseGatherLabel, firstStep: 1, lastStep: 3 },
+      { id: 2, label: copy.phaseComposeLabel, firstStep: 4, lastStep: 6 },
+      { id: 3, label: copy.phaseReceiveLabel, firstStep: 7, lastStep: 8 },
+    ],
+    [copy],
+  );
+  const currentStepLabel = useMemo(
+    () => stepperSteps.find((step) => step.id === currentStep)?.label ?? "",
+    [stepperSteps, currentStep],
+  );
+
   return (
     <div
       className={`relative mx-auto mt-10 w-full ${
-        currentStep === 4
-          ? "max-w-6xl px-2 md:px-4"
-          : currentStep === 7
-            ? "max-w-4xl"
-            : currentStep >= 5
-              ? "max-w-3xl"
-              : "max-w-xl"
+        currentStep === 7
+          ? "max-w-4xl"
+          : currentStep >= 4
+            ? "max-w-3xl"
+            : "max-w-xl"
       }`}
     >
       {currentStep > 1 ? (
@@ -805,51 +991,104 @@ export function TributeWizard({
         className="-translate-y-1 md:-translate-y-2"
       />
 
-      {/* Sticky tribute header — à partir de l’étape 2 */}
-      {currentStep >= 2 ? (
-        <header className="sticky top-0 z-50 -mx-6 mb-8 border-b border-white/10 bg-black/40 px-6 py-3.5 backdrop-blur-xl md:-mx-10 md:px-10">
-          <div className="mx-auto flex max-w-5xl items-center gap-4">
-            <div
-              className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/10 shadow-[0_0_20px_rgba(6,182,212,0.15)] ring-1 ring-white/5"
-              aria-hidden={!avatarPreview}
-            >
-              {avatarPreview ? (
-                <img
-                  alt=""
-                  key={avatarPreview}
-                  src={avatarPreview}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-white/[0.06]">
-                  <User className="h-5 w-5 text-zinc-500" strokeWidth={1.2} />
-                </div>
-              )}
+      {/* En-tête sticky — dès l'Étape 1. Le déclencheur du Dossier de forfait
+          (typographique, sans chrome de bouton) y est toujours visible, même
+          avant que l'identité du défunt ne soit renseignée ; le bloc
+          avatar/nom ne rejoint l'en-tête qu'à partir de l'Étape 2. */}
+      <header className="sticky top-0 z-50 -mx-6 mb-8 border-b border-white/10 bg-black/40 px-6 py-3.5 backdrop-blur-xl md:-mx-10 md:px-10">
+        <div
+          className={`mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 ${
+            currentStep >= 2 ? "sm:justify-between" : "sm:justify-end"
+          }`}
+        >
+          {currentStep >= 2 ? (
+            <div className="flex items-center gap-4">
+              <div
+                className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/10 shadow-[0_0_20px_rgba(6,182,212,0.15)] ring-1 ring-white/5"
+                aria-hidden={!avatarPreview}
+              >
+                {avatarPreview ? (
+                  <img
+                    alt=""
+                    key={avatarPreview}
+                    src={avatarPreview}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-white/[0.06]">
+                    <User className="h-5 w-5 text-zinc-500" strokeWidth={1.2} />
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-editorial truncate text-lg font-medium leading-tight tracking-[0.02em] text-zinc-100 md:text-xl">
+                  {deceasedDisplayName}
+                </p>
+                <p className="font-[family-name:var(--font-label)] mt-0.5 text-xs font-normal tracking-[0.18em] text-zinc-500 uppercase">
+                  {yearsDisplay}
+                </p>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-editorial truncate text-lg font-medium leading-tight tracking-[0.02em] text-zinc-100 md:text-xl">
-                {deceasedDisplayName}
-              </p>
-              <p className="font-[family-name:var(--font-label)] mt-0.5 text-xs font-normal tracking-[0.18em] text-zinc-500 uppercase">
-                {yearsDisplay}
-              </p>
-            </div>
+          ) : null}
+
+          <div className="sm:w-60 sm:shrink-0">
+            <PackageDossierTrigger
+              packageLabel={packageDisplayNameFor(basePackage)}
+              onOpen={() => setIsPackageDossierOpen(true)}
+              copy={{
+                label: copy.headerPackageLabel,
+                openAria: copy.dossierOpenAria,
+              }}
+            />
+            {/* Masqué sur mobile — l'en-tête sticky y reste volontairement compact (2 lignes max) ; le détail complet reste consultable dans le Dossier. */}
+            <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-500 sm:block">
+              {copy.headerNarrativeSummary
+                .replace("{minutes}", String(wizardStoryboard.estimatedTotalMinutes))
+                .replace("{mediaMax}", String(currentMaxMediaItems))}
+            </p>
           </div>
-        </header>
-      ) : null}
+        </div>
+      </header>
+
+      <PackageDossierPanel
+        isOpen={isPackageDossierOpen}
+        onClose={() => setIsPackageDossierOpen(false)}
+        currentPackage={basePackage}
+        options={basePackageOptions}
+        hidePrices={isPartner}
+        locale={locale}
+        taglineFor={packageTaglineFor}
+        savingsLabelFor={packageSavingsLabelFor}
+        rowsFor={packageDossierRowsFor}
+        songsLostIfSelected={songsLostIfBasePackageSelected}
+        onSelect={handleBasePackageChange}
+        copy={{
+          inclusionsTitle: copy.dossierInclusionsTitle,
+          discoverTitle: copy.dossierDiscoverTitle,
+          backToCurrentCta: copy.dossierBackToCurrentCta,
+          currentBadge: copy.dossierCurrentBadge,
+          switchCta: copy.dossierSwitchCta,
+          closeAria: copy.dossierCloseAria,
+          downgradeWarning: copy.headerDowngradeWarning,
+          downgradeConfirmCta: copy.headerDowngradeConfirmCta,
+          downgradeCancelCta: copy.headerDowngradeCancelCta,
+        }}
+      />
 
       <section
         className="flex flex-col"
         aria-labelledby={wizardTitleId}
       >
-        <WizardStepper
-          steps={stepperSteps}
+        <WizardPhaseProgress
+          phases={wizardPhases}
           currentStep={currentStep}
           totalSteps={TOTAL_STEPS}
-          onStepClick={handleStepperClick}
+          currentStepLabel={currentStepLabel}
+          onPhaseClick={handleStepperClick}
           copy={{
             ariaLabel: copy.progressAria,
-            stepLabel: copy.stepLabel,
+            stepAnnouncement: copy.stepLabel,
+            stepProgressLabel: copy.stepProgressLabel,
           }}
         />
 
@@ -1029,24 +1268,6 @@ export function TributeWizard({
                 </div>
               </div>
 
-              <WizardBasePackagePicker
-                locale={locale}
-                value={basePackage}
-                onChange={handleBasePackageChange}
-                hidePrices={isPartner}
-                copy={{
-                  title: copy.basePackageTitle,
-                  hint: copy.basePackageHint,
-                  essentialLabel: copy.basePackageEssential,
-                  essentialDescription: copy.basePackageEssentialDesc,
-                  signatureLabel: copy.basePackageSignature,
-                  signatureDescription: copy.basePackageSignatureDesc,
-                  heritageLabel: copy.basePackageHeritage,
-                  heritageDescription: copy.basePackageHeritageDesc,
-                  heritageBundlePromo: copy.basePackageHeritageBundlePromo,
-                }}
-              />
-
               {essentialError ? (
                 <p
                   className="mt-6 text-center text-sm font-light text-rose-400/90"
@@ -1072,25 +1293,6 @@ export function TributeWizard({
               <p className="mt-4 text-sm font-light leading-relaxed text-zinc-500">
                 {copy.socialQuickLoginNote}
               </p>
-
-              <WizardBasePackagePicker
-                locale={locale}
-                value={basePackage}
-                onChange={handleBasePackageChange}
-                compact
-                hidePrices={isPartner}
-                copy={{
-                  title: copy.basePackageTitle,
-                  hint: copy.basePackageHint,
-                  essentialLabel: copy.basePackageEssential,
-                  essentialDescription: copy.basePackageEssentialDesc,
-                  signatureLabel: copy.basePackageSignature,
-                  signatureDescription: copy.basePackageSignatureDesc,
-                  heritageLabel: copy.basePackageHeritage,
-                  heritageDescription: copy.basePackageHeritageDesc,
-                  heritageBundlePromo: copy.basePackageHeritageBundlePromo,
-                }}
-              />
 
               <div className="mt-10 flex flex-col gap-3">
                 {socialRows.map(({ id, label, Icon, halo }) => (
@@ -1361,101 +1563,93 @@ export function TributeWizard({
 
           {currentStep === 4 ? (
             <>
-              <h2
-                id={wizardTitleId}
-                className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl"
-              >
-                {copy.stepMontageTitle}
-              </h2>
-
               {uploadProjectId ? (
-                <div className="mt-6">
-                  <MontageStep
-                    projectId={uploadProjectId}
-                    montage={montage}
-                    onMontageChange={handleMontageChange}
-                    copy={{
-                      loading: copy.montageLoading,
-                      empty: copy.montageEmpty,
-                      instruction: copy.stepMontageDescription,
-                      shortcutSelect: copy.montageShortcutSelect,
-                      shortcutSelectAll: copy.montageShortcutSelectAll,
-                      shortcutDrag: copy.montageShortcutDrag,
-                      focalHint: copy.montageFocalHint,
-                      clickToEdit: copy.montageClickToEdit,
-                      dragHandle: copy.montageDragHandle,
-                      remove: copy.montageRemove,
-                      unassignedTitle: copy.montageUnassignedTitle,
-                      unassignedHint: copy.montageUnassignedHint,
-                      multiDragLabel: copy.montageMultiDragLabel,
-                      selectAll: copy.montageSelectAll,
-                      selectionCount: copy.montageSelectionCount,
-                      allSelected: copy.montageAllSelected,
-                      shortcutEscape: copy.montageShortcutEscape,
-                      selectionHint: copy.montageSelectionHint,
-                      clearSelection: copy.montageClearSelection,
-                      duplicatesBanner: copy.montageDuplicatesBanner,
-                      duplicatesHint: copy.montageDuplicatesHint,
-                      removeDuplicates: copy.montageRemoveDuplicates,
-                      removingDuplicates: copy.montageRemovingDuplicates,
-                      duplicateBadge: copy.montageDuplicateBadge,
-                      deleteDuplicate: copy.montageDeleteDuplicate,
-                      actSparkLabel: copy.montageActSparkLabel,
-                      actSparkSubtitle: copy.montageActSparkSubtitle,
-                      actEpicLabel: copy.montageActEpicLabel,
-                      actEpicSubtitle: copy.montageActEpicSubtitle,
-                      actLegacyLabel: copy.montageActLegacyLabel,
-                      actLegacySubtitle: copy.montageActLegacySubtitle,
-                      actEmptyHint: copy.montageActEmptyHint,
-                      exclude: copy.montageExclude,
-                      include: copy.montageInclude,
-                      excludedBadge: copy.montageExcludedBadge,
-                      directorClose: copy.montageDirectorClose,
-                      directorPrevious: copy.montageDirectorPrevious,
-                      directorNext: copy.montageDirectorNext,
-                      directorCounter: copy.montageDirectorCounter,
-                    }}
-                  />
-                </div>
+                <StoryboardChaptersStep
+                  packageId={currentPackageId}
+                  maxSongs={currentMaxSongs}
+                  minSongsRequired={wizardStoryboard.structureValidation.minSongsRequired}
+                  maxMediaItems={currentMaxMediaItems}
+                  projectMediaCount={projectMediaCount}
+                  catalogTier={musicCatalogTier}
+                  storyboard={wizardStoryboard.storyboard}
+                  onStoryboardChange={wizardStoryboard.setStoryboard}
+                  duplicateChapterIds={wizardStoryboard.duplicateSongInfo.duplicateChapterIds}
+                  hasDuplicateSongs={wizardStoryboard.duplicateSongInfo.hasDuplicates}
+                  duplicateSongsAcknowledged={wizardStoryboard.duplicateSongsAcknowledged}
+                  onDuplicateSongsAcknowledgedChange={
+                    wizardStoryboard.setDuplicateSongsAcknowledged
+                  }
+                  copy={{
+                    title: copy.stepChaptersTitle,
+                    description: copy.stepChaptersDescription,
+                    educationBanner: copy.chapterEducationBanner,
+                    progress: copy.chaptersProgress,
+                    chapterTitleFallback: copy.chapterTitleFallback,
+                    chapterEmptyLabel: copy.chapterEmptyLabel,
+                    addChapterCta: copy.chapterAddCta,
+                    removeChapterCta: copy.chapterRemoveCta,
+                    maxReachedHint: copy.chapterMaxReachedHint,
+                    capacityRecommended: copy.chapterCapacityRecommended,
+                    capacityPending: copy.chapterCapacityPending,
+                    shortTrackWarning: copy.chapterShortTrackWarning,
+                    statsMediaLabel: copy.chapterStatsMediaLabel,
+                    statsMediaValue: copy.chapterStatsMediaValue,
+                    statsSongsLabel: copy.chapterStatsSongsLabel,
+                    statsSongsValue: copy.chapterStatsSongsValue,
+                    duplicateWarning: copy.chapterDuplicateWarning,
+                    duplicateAckLabel: copy.chapterDuplicateAckLabel,
+                    searchPlaceholder: copy.soundSearchPlaceholder,
+                    searchHint: copy.soundSearchHint,
+                    searching: copy.soundSearching,
+                    noResults: copy.soundNoResults,
+                    listenCta: copy.soundListenCta,
+                    chooseCta: copy.soundChooseCta,
+                    changeCta: copy.soundChangeCta,
+                    serviceUnavailable: copy.soundServiceUnavailable,
+                    previewUnavailable: copy.soundPreviewUnavailable,
+                    licensedNote: copy.soundLicensedNote,
+                    previewPremiumBadge: copy.soundPreviewPremiumBadge,
+                    catalogAccessStandard: copy.soundCatalogAccessStandard,
+                    catalogAccessPremium: copy.soundCatalogAccessPremium,
+                  }}
+                />
               ) : null}
 
-              {montageError ? (
+              {chaptersStructureError ? (
                 <p
                   className="mt-6 text-center text-sm font-light text-rose-400/90"
                   role="alert"
                 >
-                  {copy.montageNeedOneIncluded}
+                  {wizardStoryboard.structureValidation.minSongsRequired > 0
+                    ? copy.chapterStructureErrorHint
+                        .replace(
+                          "{min}",
+                          String(
+                            wizardStoryboard.structureValidation.minSongsRequired,
+                          ),
+                        )
+                        .replace("{mediaCount}", String(projectMediaCount))
+                        .replace(
+                          "{selected}",
+                          String(
+                            wizardStoryboard.storyboard.chapters.filter((c) =>
+                              Boolean(c.song),
+                            ).length,
+                          ),
+                        )
+                    : copy.chapterStructureErrorTitle}
                 </p>
               ) : null}
             </>
           ) : null}
 
           {currentStep === 5 ? (
-            <SoundSignatureStep
-              catalogTier={musicCatalogTier}
-              tracks={actTracks}
-              onTracksChange={handleActTracksChange}
+            <StoryboardMontageStep
               copy={{
-                title: copy.stepSoundTitle,
-                description: copy.stepSoundDescription,
-                act1Title: copy.soundAct1Title,
-                act2Title: copy.soundAct2Title,
-                act3Title: copy.soundAct3Title,
-                actEmptyLabel: copy.soundActEmptyLabel,
-                actProgress: copy.soundActProgress,
-                searchPlaceholder: copy.soundSearchPlaceholder,
-                searchHint: copy.soundSearchHint,
-                searching: copy.soundSearching,
-                noResults: copy.soundNoResults,
-                listenCta: copy.soundListenCta,
-                chooseCta: copy.soundChooseCta,
-                changeCta: copy.soundChangeCta,
-                serviceUnavailable: copy.soundServiceUnavailable,
-                previewUnavailable: copy.soundPreviewUnavailable,
-                licensedNote: copy.soundLicensedNote,
-                previewPremiumBadge: copy.soundPreviewPremiumBadge,
-                catalogAccessStandard: copy.soundCatalogAccessStandard,
-                catalogAccessPremium: copy.soundCatalogAccessPremium,
+                title: copy.stepMontageTitle,
+                description: copy.stepMontageDescription,
+                placeholderBadge: copy.montagePlaceholderBadge,
+                placeholderBody: copy.montagePlaceholderBody,
               }}
             />
           ) : null}

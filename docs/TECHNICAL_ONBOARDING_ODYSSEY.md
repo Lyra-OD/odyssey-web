@@ -108,8 +108,12 @@ Detail complet : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) § Agnosticité backen
 - `src/components/auth/StudioConnexionBrand.tsx` / `SalonConnexionBrand.tsx`: branding header connexion
 - `app/auth/callback/route.ts`: Supabase auth callback
 - `src/components/tribute/TributeWizard.tsx`: **8-step** tribute wizard orchestrator
-- `src/components/tribute/WizardStepper.tsx`: clickable step navigation
-- `src/components/tribute/SoundSignatureStep.tsx`: Stingray search + preview (step 5)
+- `src/components/tribute/WizardPhaseProgress.tsx`: 3-phase progress indicator (replaces `WizardStepper`)
+- `src/components/tribute/PackageDossierPanel.tsx`: global off-canvas package selector (« Le Dossier »)
+- `src/components/tribute/StoryboardChaptersStep.tsx`: dynamic musical chapters (step 4, live)
+- `src/components/tribute/storyboard/ChapterMusicPanel.tsx`: Stingray search + preview per chapter (step 4)
+- `src/components/tribute/StoryboardMontageStep.tsx`: montage placeholder (step 5 — `S5` dnd-kit next)
+- `src/hooks/useWizardStoryboard.ts`: storyboard domain hook (resync, validation, pacing)
 - `src/components/tribute/CinematicTeaser.tsx`: cinematic preview player (step 7)
 - `src/components/media/MediaDropzoneAdapter.tsx`: headless dropzone adapter
 - `src/hooks/useMassMediaUpload.ts` / `useWizardAutosave.ts`: upload + autosave orchestration
@@ -260,16 +264,20 @@ Aligne avec le payload du service d'upload (`MediaAssetInsertRow`):
 
 The tribute flow is a **premium 8-step tunnel** with free step navigation, server autosave, and checkout (Stripe and/or freemium 0 $). Full detail: [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 
+Package selection is global, not step-bound: the **« Dossier »** trigger (`PackageDossierPanel`) lives in the sticky header from step 1 onward — `WizardBasePackagePicker` has been removed.
+
 | Step | UX label (i18n) | Component | Persisted in `wizard_state` |
 |------|-----------------|-----------|-----------------------------|
-| 1 | Essentials | `TributeWizard` + `WizardBasePackagePicker` | `essentials`, `basePackage`, `pricing` |
-| 2 | Sources | `TributeWizard` + formula (compact) | `socialSources`, `basePackage` |
+| 1 | Essentials | `TributeWizard` (+ global `PackageDossierPanel` trigger) | `essentials`, `basePackage`, `pricing` |
+| 2 | Sources | `TributeWizard` | `socialSources`, `basePackage` |
 | 3 | Vault (upload) | `MediaDropzoneAdapter` + **`ScannerCompanionPanel`** (cible) | `media_assets` + scan sessions — [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
-| 4 | Montage table | `MontageStep` | `storyboard` (temporary legacy UI bridge for montage) |
-| 5 | Sound signature | `SoundSignatureStep` | `storyboard.chapters[].song` — **Stingray** today, MP3 upload tomorrow |
+| 4 | Musical chapters (**live**) | `StoryboardChaptersStep` + `ChapterMusicPanel` | `storyboard.chapters[].song` — canonical, no bridge |
+| 5 | Montage (**placeholder**) | `StoryboardMontageStep` — table de montage en construction (`S5` dnd-kit next) | `storyboard` (canonique) |
 | 6 | Memory extensions | `MontageExtensionsStep` | `extensions` (à la carte — commissionnables en freemium) |
 | 7 | Film preview | `PreviewStep` + `CinematicTeaser` | reads canonical `storyboard` through the temporary preview bridge |
 | 8 | Checkout | `CheckoutStep` | `POST /api/checkout` → saga `tribute_checkouts` — [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 |
+
+> Steps have been reordered: music/chapters now come **before** montage, since chapter media capacity depends on the chosen song's duration. `S5` (`StoryboardMontageStep` + `dnd-kit`) will replace step 5's current placeholder — see [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md). Clean Slate (juillet 2026) removed the inert `SoundSignatureStep` that silently ignored user input.
 
 **Packages (marketing vs technical IDs):**
 
@@ -303,7 +311,7 @@ Full matrix : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · 
 - **B2B2C freemium:** family pays **full upsell price** (not delta vs 79 $). Extensions à la carte added to Stripe total.
 - **Legacy jetons** (`is_freemium = false`): wholesale **4000¢/token** · débit P5.5 à l’invitation — see [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) (✅ terminée prod).
 - **`StickyPriceBar`:** B2C `Total : {amount} $` · B2B legacy `Coût : {tokens} jeton(s)` · freemium family: dollars only (never « jeton »).
-- Heritage bundle marketing (67 $ savings) remains for B2C positioning — see [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
+- Heritage bundle marketing (67 $ savings) shown in the global Dossier (`PackageDossierPanel`) — see [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md). `DEFAULT_B2C_BASE_PACKAGE = "heritage"` (Éternité) is now the explicit default anchor for new B2C projects.
 
 **Checkout modes (target v2):**
 
@@ -323,11 +331,11 @@ Full matrix : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · 
 - Paper photo capture → Supabase upload → IA before/after preview → upsell Éternité / Légendaire.
 - Spec: [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md).
 
-**`WizardStepper`, autosave, Stingray step 5, montage, CinematicTeaser:** unchanged — see subsections below and [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
+**Autosave, CinematicTeaser:** unchanged — see subsections below and [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 
-**`WizardStepper` (`WizardStepper.tsx`):**
-- Renders steps 1–8; completed steps show a checkmark.
-- Clicking a step calls `navigateToStep()` in `TributeWizard.tsx`, which **flushes autosave** then updates `currentStep`.
+**`WizardPhaseProgress` (`WizardPhaseProgress.tsx`) — replaces the old 8-circle `WizardStepper`:**
+- Renders 3 macro-phases (Déposer 1–3 / Composer 4–6 / Recevoir 7–8) with a 1px progress line and a discrete current-step label — reduces cognitive load vs. 8 explicit circles.
+- Clicking a phase calls `navigateToStep()` in `TributeWizard.tsx`, which **flushes autosave** then updates `currentStep`.
 - Top-left **Back** control on steps 2+ uses the same flush-before-navigate pattern.
 
 **Autosave (P3 — `docs/sql/odyssey_p3_wizard_autosave.sql`):**
@@ -527,16 +535,17 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 
 ### Done — tribute wizard tunnel (June 2026)
 
-- **8-step wizard** with `WizardStepper` (click navigation + flush autosave before step change).
+- **8-step wizard** with `WizardPhaseProgress` (3-phase, click navigation + flush autosave before step change).
 - **P3 autosave**: `wizard_state`, `wizard_step`, `last_saved_at` + `useWizardAutosave` + `AutosaveIndicator`.
 - **Media reload** after refresh: `GET /api/projects/[id]/media` (+ reorder / delete routes).
-- **Montage** (step 4): current legacy 3-column UI, but canonical persisted state is now `storyboard`.
-- **Sound signature** (step 5): Stingray search API + preview proxy; canonical persisted state is now chapter-based `storyboard.chapters[].song`.
+- **Musical chapters** (step 4, live): `StoryboardChaptersStep` + `ChapterMusicPanel` — dynamic chapters read/write `storyboard.chapters[].song` directly, no bridge.
+- **Montage** (step 5, placeholder): `StoryboardMontageStep` — honest UX message while `S5` (dnd-kit) is built. `SoundSignatureStep` removed during Clean Slate (was silently ignoring input).
+- **Storyboard domain hook**: `useWizardStoryboard` extracted from `TributeWizard` (juillet 2026 Clean Slate).
 - **Extensions** (step 6): four upsell cards + Heritage Pack; persisted in `wizard_state.extensions`.
 - **Cinematic preview** (step 7): `PreviewStep` + `CinematicTeaser` via temporary runtime bridge rebuilt from `storyboard`.
-- **Hybrid pricing**: `pricingConfig.ts` + `StickyPriceBar` + `WizardBasePackagePicker` (steps 1–2).
+- **Hybrid pricing**: `pricingConfig.ts` + `StickyPriceBar` + global `PackageDossierPanel` (steps 1+).
 - **Economic bundle (Heritage)**: savings badge **67 $** on formula picker; extensions Licence/USB/Coffre marked « Déjà inclus » on step 6; cart excludes bundled lines.
-- **Music tiers**: Standard vs Premium search + step 5 upsell to Licence Premium (39 $).
+- **Music tiers**: Standard vs Premium search on step 4 (`ChapterMusicPanel`) + upsell to Licence Premium (39 $) at step 6.
 - **`POST /api/checkout`**: B2C Stripe or B2B partner token debit (2 modes in code today); metadata still carries the legacy music payload until `S9`.
 
 ### Done — commerce database (B2B2C core, June 2026)

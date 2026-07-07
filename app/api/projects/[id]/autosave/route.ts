@@ -157,6 +157,25 @@ const StoryboardChapterIdSchema = z
   .max(64)
   .regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/, "invalid_chapter_id");
 
+/** Intention narrative du chapitre — pacing dynamique par mood (S4, futur). */
+const StoryboardChapterMoodSchema = z.enum([
+  "contemplative",
+  "energetic",
+  "nostalgic",
+]);
+
+/**
+ * Extrait vidéo retenu (trim) pour un media_asset — `durationSec` est
+ * borné à 60s côté schéma (garde-fou large ; la règle produit S4 fixe
+ * la cible à VIDEO_TRIM_DURATION_SEC = 10s côté storyboardPacing.ts).
+ */
+const StoryboardVideoTrimSchema = z
+  .object({
+    trimStartSec: z.number().min(0).max(24 * 60 * 60),
+    durationSec: z.number().positive().max(60),
+  })
+  .strict();
+
 const StoryboardStingraySongSchema = z
   .object({
     source: z.literal("stingray"),
@@ -199,6 +218,7 @@ const StoryboardChapterSchema = z
     id: StoryboardChapterIdSchema,
     mediaIds: z.array(UuidSchema).max(250),
     song: StoryboardSongSchema.optional(),
+    mood: StoryboardChapterMoodSchema.optional(),
   })
   .strict()
   .superRefine((chapter, ctx) => {
@@ -224,6 +244,11 @@ const StoryboardSchema = z
       .record(UuidSchema, MontageFocalPointSchema)
       .refine((record) => Object.keys(record).length <= 250, {
         message: "too_many_focal_points",
+      }),
+    videoTrims: z
+      .record(UuidSchema, StoryboardVideoTrimSchema)
+      .refine((record) => Object.keys(record).length <= 250, {
+        message: "too_many_video_trims",
       }),
   })
   .strict()

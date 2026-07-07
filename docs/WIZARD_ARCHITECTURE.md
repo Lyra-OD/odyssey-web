@@ -1,6 +1,6 @@
 # Tribute Wizard — Architecture
 
-**Last code review: July 2026 · B2B2C v2 + Storyboard foundations**
+**Last code review: July 2026 · B2B2C v2 + Storyboard `S1–S4`/`S6`/`S6bis`/Clean Slate shipped, `S5` (dnd-kit) next**
 
 This document describes the 8-step tribute wizard: navigation, state, autosave, **song-based storyboard foundations**, pricing v2 (freemium B2B2C vs Quiet Luxury B2C), and checkout. Parent overview: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7.
 
@@ -10,10 +10,12 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 
 | File | Role |
 |------|------|
-| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff |
-| `src/components/tribute/WizardStepper.tsx` | Visual stepper; click → `onStepClick` |
+| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (package Dossier + phase progress) |
+| `src/hooks/useWizardStoryboard.ts` | Domaine storyboard pur — resync chapitres, doublons, validation structurelle, estimation durée ; autosave reste dans `TributeWizard` via `persistStoryboardRef` |
+| `src/components/tribute/WizardPhaseProgress.tsx` | Minimalist 3-phase progress indicator (Déposer / Composer / Recevoir) — replaces the old 8-circle `WizardStepper` |
+| `src/components/tribute/PackageDossierPanel.tsx` | Global off-canvas package selector (« Le Dossier ») — editorial trigger, exhaustive inclusions from `PACKAGE_MANIFEST`, cross-fade comparison, inline downgrade guard. Visible from Step 1 onward, replaces the per-step `WizardBasePackagePicker` and the short-lived `StoryboardPackageSwitcher` dropdown |
+| `src/lib/wizard/packageDossier.ts` | Resolves a package's exhaustive inclusion rows from `PACKAGE_MANIFEST` for the Dossier |
 | `src/components/StickyPriceBar.tsx` | Sticky B2C total / B2B token cost (all steps) |
-| `src/components/tribute/WizardBasePackagePicker.tsx` | Formula selection (steps 1–2) |
 | `src/hooks/useWizardAutosave.ts` | Debounced + immediate PATCH to `/api/projects/[id]/autosave` |
 | `src/components/tribute/AutosaveIndicator.tsx` | “Saving / Saved / Error” UX |
 | `src/lib/wizard/wizardDeliverables.ts` | **Deliverables manifest** — `PACKAGE_MANIFEST`, lists by channel, limits, rendering, pacing |
@@ -21,6 +23,14 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | `src/lib/wizard/pricingConfig.ts` | **Checkout cents** — `WIZARD_PRICING`, extensions, bundle 67 $ (aligné manifeste via `assertManifestPricingAlignedWithLegacyConfig`) |
 | `src/lib/wizard/wizardPricing.ts` | Cart math (`computeWizardCart`, integer cents only) |
 | `src/lib/wizard/wizardState.ts` | Canonical `storyboard` V2 + coercion/migration from legacy payloads + runtime bridge vers l'UI actuelle |
+| `src/components/tribute/StoryboardChaptersStep.tsx` | **Step 4 (live)** — chapitres musicaux dynamiques, panneau musique (`ChapterMusicPanel`, inline), bandeau éducatif, doublons, stats forfait |
+| `src/lib/wizard/storyboardPacing.ts` | Moteur de pacing pur — capacité recommandée, marges intro/outro, coût vidéo fixe, estimation durée totale |
+| `src/lib/wizard/storyboardHelpers.ts` | Gestion des chapitres (ajout/retrait/cap), validation structurelle, détection de doublons, prévision de perte au downgrade, `findChapterForMedia()` |
+| `src/lib/wizard/chapterTheme.ts` | Palette dynamique par chapitre (`getChapterCardTheme`) |
+| `src/components/tribute/StoryboardMontageStep.tsx` | **Step 5 (placeholder)** — message UX honnête en attendant la table de montage `dnd-kit` |
+| `src/components/tribute/montage/MontageDirectorModal.tsx` | Modal directeur plein écran — retypé chapitres, conservé pour `S5` |
+| `src/components/tribute/montage/MontageMediaCard.tsx` | Carte média drag — retypé chapitres, conservé pour `S5` |
+| `src/components/tribute/montage/MontageFocalReticle.tsx` | Sélecteur point focal — conservé pour `S5` |
 | `src/lib/partner/partnerCheckout.ts` | B2B token debit (`partner_token_wallets`) |
 | `src/lib/partner/resolvePartnerAccess.ts` | Partner role detection (`tenant_members`) |
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
@@ -48,19 +58,32 @@ The tribute wizard is **no longer a static 8-step product definition** in docume
 
 Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.
 
-### Dynamic UI (target — foundations S1/S2 shipped)
+### Dynamic UI (S1–S4 + S6 + Clean Slate shipped, S5 dnd-kit next)
 
 | Rule (manifest) | Wizard behaviour |
 |---------------|------------------|
-| `storyboard.chapters[].song.source === 'stingray'` | Step 5 — selection Stingray par chapitre (**fondations S1/S2 prêtes ; UI S6 pending**) |
-| `storyboard.chapters[].song.source === 'upload'` | Step 5 — MP3 personnel par chapitre + gatekeeper juridique (**not implemented**) |
+| `storyboard.chapters[].song.source === 'stingray'` | **Step 4 (live)** — sélection Stingray par chapitre, chapitres dynamiques (`StoryboardChaptersStep`) ✅ |
+| `storyboard.chapters[].song.source === 'upload'` | MP3 personnel par chapitre + gatekeeper juridique (**not implemented**) |
 | `social.enabled === true` | Additional Social step — Safe Music only, 9:16 preview (**not implemented**) |
 | `social.enabled === false` | Hide Social step (e.g. **Souvenir** / `SOUVENIR`) |
-| `limits.maxMediaItems` | Gate upload volume by package (**S3 pending**) |
-| `limits.maxSongs` + `pacing.targetSecondsPerMedia` | Validate chapter capacity from real song duration (**S4 pending**) |
-| `resolveTransactionMode()` | `StickyPriceBar` / pickers: **tokens** (partner) vs **dollars** (family) |
+| `limits.maxMediaItems` | Gate upload volume by package ✅ (**S3**) |
+| `limits.maxSongs` + `pacing.targetSecondsPerMedia` | Validate chapter capacity from real song duration ✅ (**S4**), incl. marges intro/outro et coût vidéo fixe |
+| `resolveTransactionMode()` | `StickyPriceBar` / Dossier: **tokens** (partner) vs **dollars** (family) |
 
-**Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries; `TributeWizard` uses `WizardBasePackagePicker` with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`). The canonical persisted model is now `storyboard`, but steps 4–7 still render through a temporary legacy bridge until the Storyboard UI refactor ships.
+**Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is now `storyboard`; Step 4 (music/chapters) reads and writes it directly via `useWizardStoryboard`. **Step 5** renders an honest placeholder (`StoryboardMontageStep`) — `SoundSignatureStep` was removed during Clean Slate because it was a silent dead-end (server always preferred Step 4's canonical `storyboard`). Steps 7–8 still use a temporary legacy bridge (`actTracks`) for Preview/Checkout until `S8`/`S9`.
+
+### Design decisions — why (juillet 2026)
+
+| Decision | Why |
+|----------|-----|
+| **Le Dossier** (off-canvas vs dropdown) | Reduce visual cognitive load (8 circles → 3 phases); avoid cheap e-commerce dropdown; package consultable from any step without polluting step body |
+| **DEFAULT_B2C_BASE_PACKAGE = "heritage"** (Éternité, 299 $) | Psychological anchoring on real mid-tier B2C (149/299/499 $) + best savings ratio (67 $ badge); no card picker at Step 1 since `WizardBasePackagePicker` removal |
+| **Step 4 ↔ 5 reorder** | Chapter media capacity depends on `durationSec` — music choice must precede media assignment |
+| **Clean Slate Step 5** | `SoundSignatureStep` showed functional UI but inputs were silently ignored by `coerceWizardState()` — misleading UX, not mere tech debt |
+| **`useWizardStoryboard`** | Isolate chapter domain from `TributeWizard` (~1780 lines) before `dnd-kit`; hook stays pure (no autosave) |
+| **montage/* triage** | Purge 3-act logic (`MontageStep`, act columns); keep pure UI (`MontageDirectorModal`, `MontageMediaCard`, `MontageFocalReticle`) retyped for chapters |
+| **`actTracks` kept read-only** | Preview/Checkout still depend on legacy bridge — removal would regress Steps 7–8 before `S8`/`S9` |
+| **EMFILE / `ulimit -n 65536`** | Next.js Watchpack failed silently → 404 on all routes in dev; restart `npm run dev` with raised fd limit |
 
 ### Major architecture change — from 3 acts to song-based storyboard
 
@@ -94,8 +117,9 @@ The new canonical model solves this by moving to a **song-based storyboard**:
 **Current transition state**
 
 - `storyboard` is now persisted as the canonical V2 shape
-- `wizardState.ts` rebuilds temporary `montage` + `musicalAmbiance` legacy views at runtime
-- steps 4–7 still render through this bridge until `S5–S8`
+- `wizardState.ts` rebuilds temporary `montage` + `musicalAmbiance` legacy views at runtime for Preview/Checkout
+- Steps 4–5 use canonical `storyboard` directly (`StoryboardChaptersStep` + placeholder `StoryboardMontageStep`)
+- Steps 7–8 still render through the legacy bridge until `S8`/`S9`
 
 ### i18n (marketing names)
 
@@ -122,13 +146,15 @@ Do not duplicate package prices in UI strings — use `formatPackagePriceForMode
 
 ## Step-by-step flow
 
+Package selection is no longer step-bound: the Dossier trigger (`PackageDossierPanel`) lives in the global sticky header from Step 1 onward.
+
 | Step | Label (i18n key) | Main UI | Server / DB |
 |------|------------------|---------|-------------|
-| 1 | `stepperEssentials` | Name, dates, avatar, **formula** | `essentials`, `basePackage`; draft via `POST /api/projects/draft` |
-| 2 | `stepperSources` | Social source + URL, formula (compact) | `socialSources`, `basePackage` |
+| 1 | `stepperEssentials` | Name, dates, avatar | `essentials`, `basePackage`; draft via `POST /api/projects/draft` |
+| 2 | `stepperSources` | Social source + URL | `socialSources`, `basePackage` |
 | 3 | `stepperVault` | Dropzone + upload queue + **Scanner Compagnon QR** (cible) | `media_assets` rows; reload `GET /api/projects/[id]/media` · voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
-| 4 | `stepperMontage` | Legacy 3-column timeline UI (temporary) backed by canonical storyboard | `storyboard` (projected to `montage` bridge) |
-| 5 | `stepperSound` | Legacy 3-track Stingray UI (temporary) backed by canonical storyboard | `storyboard` (projected to `musicalAmbiance` bridge) |
+| 4 | `stepperChapters` | **Chapitres musicaux dynamiques** (`StoryboardChaptersStep`, live — ✅ `S6`) | `storyboard.chapters[].song` (canonique, plus de bridge) |
+| 5 | `stepperSound` | **Placeholder** `StoryboardMontageStep` — table de montage en construction (`S5` dnd-kit à venir) | `storyboard` (canonique, pas de bridge) |
 | 6 | `stepperExtensions` | Upsell cards + Heritage Pack; **bundle rules** when `basePackage=heritage` | `extensions` |
 | 7 | `stepperPreview` | Copy + `CinematicTeaser` | Reads canonical `storyboard` through the temporary legacy preview bridge |
 | 8 | `stepperCheckout` | Cart recap + pay CTA | `POST /api/checkout` |
@@ -140,7 +166,7 @@ Do not duplicate package prices in UI strings — use `formatPackagePriceForMode
 ```mermaid
 sequenceDiagram
   participant User
-  participant Stepper as WizardStepper
+  participant Stepper as WizardPhaseProgress
   participant TW as TributeWizard
   participant AS as useWizardAutosave
   participant API as PATCH autosave
@@ -222,23 +248,27 @@ Additional chapters beyond index 2 are temporarily projected into `unassignedIds
 
 ---
 
-## Step 4 — Montage
+## Step 4 — Chapitres musicaux (live)
 
-- **Component:** `MontageStep.tsx`, `MontageDirectorModal.tsx`, `MontageMediaCard.tsx`
-- **Helpers:** `montageHelpers.ts`, `montageDirector.ts`
-- **Current UI:** user assigns each uploaded `media_assets.id` to `spark/epic/legacy`, sets focal point (0–1), or excludes media.
-- **Canonical state:** those assignments are now persisted under `storyboard.chapters[]` and projected back to the legacy 3-column UI at runtime.
-- Validation before leaving step 4: at least one included photo in the timeline (see `TributeWizard` montage gate).
+- **Component:** `StoryboardChaptersStep.tsx` (+ inline `ChapterMusicPanel`), `StoryboardCapacityBadge.tsx`, `StoryboardChapterStats.tsx`
+- **Helpers:** `storyboardHelpers.ts`, `storyboardPacing.ts`
+- **API:** `GET /api/music/search?q=…` (see [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md))
+- **Current UI:** un chapitre par chanson, pré-générés selon `minSongsRequired` (dérivé du volume média de l'Étape 3), extensibles jusqu'à `maxSongs` du forfait. Bandeau éducatif (durée piste recommandée), badge de capacité recommandée par chapitre, détection + acquittement obligatoire des doublons de chanson, tuiles de stats (médias / chansons).
+- **Canonical state:** lit et écrit directement `storyboard.chapters[].song` — **aucun bridge legacy** sur cette étape.
+- Validation avant de quitter l'étape 4 : structure `[minSongsRequired, maxSongs]` (`validateStoryboardPackageStructure`, bloquant) + acquittement doublons (bloquant, état local).
 
 ---
 
-## Step 5 — Sound signature
+## Step 5 — Montage (placeholder — `S5` dnd-kit next)
 
-- **Component:** `SoundSignatureStep.tsx`
-- **API:** `GET /api/music/search?q=…` (see [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md))
-- **Current UI:** three legacy act tabs (cover or “To choose”), debounced search, Listen / Choose per row.
-- **Canonical state:** selected music is now persisted under `storyboard.chapters[].song` and projected back to `acte1/acte2/acte3` during the transition.
-- **No** mood-based catalog as primary UX (removed).
+- **Component:** `StoryboardMontageStep.tsx` — placeholder honnête indiquant que la table de montage interactive arrive bientôt ; les médias seront répartis automatiquement en attendant.
+- **Pourquoi le placeholder :** `SoundSignatureStep` (supprimé lors du Clean Slate) affichait une UI fonctionnelle mais dont les saisies étaient silencieusement ignorées par `coerceWizardState()` — bug UX trompeur, pas une simple dette technique.
+- **Fondations prêtes pour `S5` :**
+  - `useWizardStoryboard` — domaine chapitres extrait de `TributeWizard`
+  - `montage/MontageDirectorModal.tsx`, `MontageMediaCard.tsx`, `MontageFocalReticle.tsx` — retypés chapitres
+  - `chapterTheme.ts`, `storyboardHelpers.ts` — palette et helpers chapitres
+- **Supprimés (Clean Slate) :** `SoundSignatureStep.tsx`, `MontageStep.tsx`, `MontageActColumn.tsx`, `MontageUnassignedColumn.tsx`, `MontageSelectionBar.tsx`, `MontageInsertionIndicator.tsx`
+- **Cible `S5`** (voir [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md)) : remplacer le placeholder par drag & drop `dnd-kit` — un bac média par chapitre dimensionné par l'Étape 4, rognage vidéo (`videoTrims`) via icône ciseaux.
 
 ---
 
@@ -321,10 +351,11 @@ savings      = calculateBundleSavings("heritage") = 6700¢ → UI: « Économise
 
 Implemented in `heritageBundleAlaCarteCents()` and `calculateBundleSavings()` (`pricingConfig.ts`). AI Retouch is **not** part of this comparison (remains an optional upsell on Heritage).
 
-### UI — `WizardBasePackagePicker`
+### UI — `PackageDossierPanel` (« Le Dossier »)
 
-- On the **Heritage** card (B2C only, `hidePrices=false`): promo line from i18n `basePackageHeritageBundlePromo` — e.g. **« Le choix complet (Économisez 67 $) »**.
+- Sur le forfait **Éternité** (B2C only, `hidePrices=false`) : badge d'économie depuis i18n `dossierSavingsBadge` — e.g. **« Économisez 67 $ »** — affiché à côté du prix (vue courante, vue comparaison) et dans la pastille de sélection.
 - Uses `bundleSavingsDollarsLabel(calculateBundleSavings("heritage"))` — no float math in the label.
+- `DEFAULT_B2C_BASE_PACKAGE = "heritage"` (`pricingConfig.ts`) : nouveau projet B2C ancré sur Éternité par défaut — c'est aussi le forfait avec la meilleure économie relative, ancrage produit + commercial cohérent.
 
 ### UI — step 6 extensions (`MontageExtensionsStep`)
 
@@ -354,7 +385,7 @@ See [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) for catalog
 | **Standard** | Essentiel, Signature (default) | `GET /api/music/search?tier=standard` |
 | **Premium** | Heritage (included), or **Option Licence Premium** (`extendedLicense`), or Heritage Pack | `GET /api/music/search?tier=premium` |
 
-Resolution: `resolveMusicCatalogTier(basePackage, extensions)` in `pricingConfig.ts`; wired in `TributeWizard` → `SoundSignatureStep` (`catalogTier` prop).
+Resolution: `resolveMusicCatalogTier(basePackage, extensions)` in `pricingConfig.ts`; wired in `TributeWizard` → `StoryboardChaptersStep` / `ChapterMusicPanel` (`catalogTier` prop).
 
 Mock catalog (`stingrayCatalog.ts`): each track has `musicTier: "standard" | "premium"`; premium filter returns the full library, standard filter excludes premium-tier tracks.
 
@@ -406,9 +437,9 @@ flowchart TD
 | Component | Location | Role |
 |-----------|----------|------|
 | `StickyPriceBar` | Sticky under stepper, every step | Live **total** (B2C $) or **tokens** (B2B); reflects `computeWizardCart` including Heritage bundle rules |
-| `WizardBasePackagePicker` | Steps 1–2 (`hidePrices` when partner) | Formula cards + **Heritage savings badge** (67 $) |
+| `PackageDossierPanel` | Global header, Step 1+ (`hidePrices` when partner) | Off-canvas — inclusions exhaustives + **Éternité savings badge** (67 $) + comparaison cross-fade |
 | `WizardCartSummary` | Steps 5–6 (B2C only) | Line recap |
-| `SoundSignatureStep` | Step 5 | Catalog tier banner (Standard vs Premium upsell) |
+| `StoryboardMontageStep` | Step 5 | Placeholder — table de montage en construction |
 | `MontageExtensionsStep` | Step 6 | Extensions + « Déjà inclus » when Heritage |
 
 ---

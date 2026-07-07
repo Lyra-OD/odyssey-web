@@ -153,6 +153,21 @@ export const WIZARD_LEGACY_TOKEN_PACKAGES: WizardLegacyTokenPackage[] =
   WIZARD_PARTNER_GRANTED_PACKAGES;
 
 /**
+ * Règle d'or métier : un nouveau projet B2C démarre ancré sur « Éternité »
+ * (id technique `heritage`, 299 $) — le forfait milieu de gamme réel parmi
+ * les 3 offerts en B2C direct (Héritage 149 $ / Éternité 299 $ / Légendaire
+ * 499 $), et celui qui offre le meilleur rapport qualité-prix (cf.
+ * `calculateBundleSavings()`, ≈ 67 $ d'économie vs. à la carte). Depuis que
+ * le client ne clique plus explicitement une carte à l'Étape 1 (le picker
+ * en a été retiré au profit du Dossier de forfait global), cet ancrage
+ * psychologique doit être intentionnel et nommé — pas un simple fallback
+ * silencieux. `normalizeBasePackageId()` s'en sert comme valeur par défaut ;
+ * ne pas dupliquer la chaîne littérale ailleurs.
+ */
+export const DEFAULT_B2C_BASE_PACKAGE: WizardBasePackage =
+  WIZARD_PRICING.packages.HERITAGE.id;
+
+/**
  * @deprecated Ambigu pour le modèle v2.
  * Historique UI — ancien triplet affichable avant séparation par canal.
  * Utiliser `WIZARD_B2C_DIRECT_PACKAGES` ou `WIZARD_PARTNER_GRANTED_PACKAGES`
@@ -180,11 +195,11 @@ export const LEGACY_PACKAGE_ALIASES: Record<string, WizardBasePackage> = {
 export function normalizeBasePackageId(
   raw: string | undefined,
 ): WizardBasePackage {
-  if (!raw) return WIZARD_PRICING.packages.SIGNATURE.id;
+  if (!raw) return DEFAULT_B2C_BASE_PACKAGE;
   if ((WIZARD_ALL_PACKAGES as readonly string[]).includes(raw)) {
     return raw as WizardBasePackage;
   }
-  return LEGACY_PACKAGE_ALIASES[raw] ?? WIZARD_PRICING.packages.SIGNATURE.id;
+  return LEGACY_PACKAGE_ALIASES[raw] ?? DEFAULT_B2C_BASE_PACKAGE;
 }
 
 export function isB2CDirectPackage(

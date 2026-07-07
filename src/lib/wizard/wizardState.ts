@@ -88,6 +88,16 @@ export type WizardStoryboardSong =
   | WizardStoryboardStingraySong
   | WizardStoryboardUploadSong;
 
+/**
+ * Intention narrative d'un chapitre — capturée dès S4 pour préparer un
+ * pacing dynamique par mood (ticket futur, non implémenté : voir
+ * `storyboardPacing.ts`). `undefined` = pacing par défaut du forfait.
+ */
+export type WizardStoryboardChapterMood =
+  | "contemplative"
+  | "energetic"
+  | "nostalgic";
+
 export type WizardStoryboardChapter = {
   /**
    * ID stable du chapitre.
@@ -104,6 +114,24 @@ export type WizardStoryboardChapter = {
    * Absente si le chapitre n'a pas encore de piste.
    */
   song?: WizardStoryboardSong;
+  /** Voir `WizardStoryboardChapterMood`. */
+  mood?: WizardStoryboardChapterMood;
+};
+
+/**
+ * Extrait vidéo retenu pour un media_asset de type vidéo.
+ * Indexé par media asset id dans `WizardStoryboardState.videoTrims`
+ * (même convention que `focalPoints`) car une vidéo garde son point de
+ * coupe indépendamment du chapitre auquel elle est rattachée.
+ */
+export type WizardStoryboardVideoTrim = {
+  /** Début de l'extrait retenu, en secondes depuis le début du fichier source. */
+  trimStartSec: number;
+  /**
+   * Durée de l'extrait, en secondes — fixée à `VIDEO_TRIM_DURATION_SEC` (10s,
+   * voir storyboardPacing.ts) pour préserver le rythme cinématographique.
+   */
+  durationSec: number;
 };
 
 export type WizardStoryboardState = {
@@ -125,6 +153,12 @@ export type WizardStoryboardState = {
    * Focal points conservés par media asset id.
    */
   focalPoints: Record<string, MontageFocalPoint>;
+  /**
+   * Extraits vidéo (trim) conservés par media asset id — voir
+   * `WizardStoryboardVideoTrim`. Indépendant du chapitre pour survivre à un
+   * déplacement de la vidéo entre bacs.
+   */
+  videoTrims: Record<string, WizardStoryboardVideoTrim>;
 };
 
 export type WizardLegacyMusicalAmbianceState = {
@@ -348,6 +382,7 @@ export function emptyStoryboardState(): WizardStoryboardState {
     unassignedIds: [],
     excludedIds: [],
     focalPoints: {},
+    videoTrims: {},
   };
 }
 
@@ -365,7 +400,8 @@ function hasStoryboardSignal(storyboard: WizardStoryboardState | undefined): boo
     storyboard.chapters.length > 0 ||
     storyboard.unassignedIds.length > 0 ||
     storyboard.excludedIds.length > 0 ||
-    Object.keys(storyboard.focalPoints).length > 0
+    Object.keys(storyboard.focalPoints).length > 0 ||
+    Object.keys(storyboard.videoTrims).length > 0
   );
 }
 
@@ -482,6 +518,21 @@ function coerceStoryboardSong(
   return undefined;
 }
 
+const CHAPTER_MOODS: readonly WizardStoryboardChapterMood[] = [
+  "contemplative",
+  "energetic",
+  "nostalgic",
+];
+
+function coerceChapterMood(
+  raw: unknown,
+): WizardStoryboardChapterMood | undefined {
+  return typeof raw === "string" &&
+    (CHAPTER_MOODS as readonly string[]).includes(raw)
+    ? (raw as WizardStoryboardChapterMood)
+    : undefined;
+}
+
 function coerceStoryboardChapter(
   raw: unknown,
   index: number,
@@ -500,13 +551,32 @@ function coerceStoryboardChapter(
   }
 
   const song = coerceStoryboardSong(obj.song);
+  const mood = coerceChapterMood(obj.mood);
   if (mediaIds.length === 0 && !song) return undefined;
 
   return {
     id: normalizeChapterId(obj.id, index),
     mediaIds,
     ...(song ? { song } : {}),
+    ...(mood ? { mood } : {}),
   };
+}
+
+function coerceVideoTrim(raw: unknown): WizardStoryboardVideoTrim | undefined {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
+  const obj = raw as Record<string, unknown>;
+  const trimStartSec =
+    typeof obj.trimStartSec === "number" && Number.isFinite(obj.trimStartSec)
+      ? Math.max(0, Math.round(obj.trimStartSec * 100) / 100)
+      : undefined;
+  const durationSec =
+    typeof obj.durationSec === "number" &&
+    Number.isFinite(obj.durationSec) &&
+    obj.durationSec > 0
+      ? Math.round(obj.durationSec * 100) / 100
+      : undefined;
+  if (trimStartSec === undefined || durationSec === undefined) return undefined;
+  return { trimStartSec, durationSec };
 }
 
 export function coerceStoryboardState(raw: unknown): WizardStoryboardState {
@@ -538,6 +608,7 @@ export function coerceStoryboardState(raw: unknown): WizardStoryboardState {
       id,
       mediaIds,
       ...(chapter.song ? { song: chapter.song } : {}),
+      ...(chapter.mood ? { mood: chapter.mood } : {}),
     });
   }
 
@@ -577,11 +648,25 @@ export function coerceStoryboardState(raw: unknown): WizardStoryboardState {
     }
   }
 
+  const videoTrims: Record<string, WizardStoryboardVideoTrim> = {};
+  if (
+    obj.videoTrims &&
+    typeof obj.videoTrims === "object" &&
+    !Array.isArray(obj.videoTrims)
+  ) {
+    for (const [key, value] of Object.entries(obj.videoTrims)) {
+      if (!isUuid(key)) continue;
+      const trim = coerceVideoTrim(value);
+      if (trim) videoTrims[key] = trim;
+    }
+  }
+
   return {
     chapters,
     unassignedIds,
     excludedIds,
     focalPoints,
+    videoTrims,
   };
 }
 
@@ -636,6 +721,7 @@ export function migrateLegacyWizardStateToStoryboard(input: {
     unassignedIds: [...(safeMontage.unassignedIds ?? [])],
     excludedIds: [...safeMontage.excludedIds],
     focalPoints: { ...safeMontage.focalPoints },
+    videoTrims: {},
   };
 }
 

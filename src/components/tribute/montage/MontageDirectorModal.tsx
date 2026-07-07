@@ -13,12 +13,13 @@ import {
 } from "lucide-react";
 
 import { MontageFocalReticle } from "@/src/components/tribute/montage/MontageFocalReticle";
-import { findActForAsset, type MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
-import type {
-  MontageActId,
-  MontageFocalPoint,
-  WizardMontageState,
-} from "@/src/lib/wizard/wizardState";
+import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
+import type { MontageFocalPoint } from "@/src/lib/wizard/wizardState";
+
+export type StoryboardDirectorChapter = {
+  id: string;
+  label: string;
+};
 
 export type MontageDirectorModalCopy = {
   close: string;
@@ -28,37 +29,27 @@ export type MontageDirectorModalCopy = {
   remove: string;
   previous: string;
   next: string;
-  actSpark: string;
-  actEpic: string;
-  actLegacy: string;
   counter: string;
+  chapterTablistAria: string;
 };
 
 type Props = {
   item: MontageMediaItem;
-  montage: WizardMontageState;
+  chapters: readonly StoryboardDirectorChapter[];
+  /** `null` si le média n'est assigné à aucun chapitre. */
+  currentChapterId: string | null;
+  excludedIds: readonly string[];
+  focalPoints: Readonly<Record<string, MontageFocalPoint>>;
   navigationOrder: string[];
   copy: MontageDirectorModalCopy;
   onClose: () => void;
   onNavigate: (assetId: string) => void;
-  onAssignAct: (assetId: string, act: MontageActId) => void;
+  onAssignChapter: (assetId: string, chapterId: string) => void;
   onToggleExclude: (assetId: string) => void;
   onSetFocalPoint: (assetId: string, point: MontageFocalPoint) => void;
   onClearFocalPoint: (assetId: string) => void;
   onRemoveMedia: (assetId: string) => void;
 };
-
-const ACT_SEGMENTS: {
-  id: MontageActId;
-  labelKey: keyof Pick<
-    MontageDirectorModalCopy,
-    "actSpark" | "actEpic" | "actLegacy"
-  >;
-}[] = [
-  { id: "spark", labelKey: "actSpark" },
-  { id: "epic", labelKey: "actEpic" },
-  { id: "legacy", labelKey: "actLegacy" },
-];
 
 const EASE_OUT_LUXE = [0.16, 1, 0.3, 1] as const;
 
@@ -78,23 +69,31 @@ function DockDivider() {
   return <span className="mx-0.5 h-6 w-px shrink-0 bg-white/10" aria-hidden />;
 }
 
+/**
+ * Modal plein écran « directeur de montage » — référence d'interaction pour
+ * `StoryboardMontageStep` (S5). Retypé depuis le modèle 3-actes vers des
+ * chapitres dynamiques (`storyboard.chapters`).
+ */
 export function MontageDirectorModal({
   item,
-  montage,
+  chapters,
+  currentChapterId,
+  excludedIds,
+  focalPoints,
   navigationOrder,
   copy,
   onClose,
   onNavigate,
-  onAssignAct,
+  onAssignChapter,
   onToggleExclude,
   onSetFocalPoint,
   onClearFocalPoint,
   onRemoveMedia,
 }: Props) {
-  const isExcluded = montage.excludedIds.includes(item.assetId);
-  const focalPoint = montage.focalPoints[item.assetId] ?? null;
-  const currentAct = findActForAsset(montage.acts, item.assetId);
+  const isExcluded = excludedIds.includes(item.assetId);
+  const focalPoint = focalPoints[item.assetId] ?? null;
   const [slideDirection, setSlideDirection] = useState(0);
+  const activeChapterRef = useRef<HTMLButtonElement | null>(null);
 
   const currentIndex = useMemo(
     () => navigationOrder.indexOf(item.assetId),
@@ -139,6 +138,14 @@ export function MontageDirectorModal({
     };
   }, [handleKeyDown]);
 
+  useEffect(() => {
+    activeChapterRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }, [currentChapterId]);
+
   const counterLabel =
     currentIndex >= 0
       ? copy.counter
@@ -161,7 +168,6 @@ export function MontageDirectorModal({
       exit={{ opacity: 0, pointerEvents: "none" }}
       transition={{ duration: 0.25, ease: EASE_OUT_LUXE }}
     >
-      {/* Ambient glow — brand link Teal / Ultraviolet */}
       <div
         className="pointer-events-none absolute inset-0 overflow-hidden"
         aria-hidden
@@ -285,26 +291,27 @@ export function MontageDirectorModal({
           <DockDivider />
 
           <div
-            className="relative flex items-center gap-0.5 rounded-full bg-black/20 p-0.5"
+            className="relative flex max-w-[min(52vw,28rem)] items-center gap-0.5 overflow-x-auto rounded-full bg-black/20 p-0.5 scrollbar-none"
             role="tablist"
-            aria-label="Assign act"
+            aria-label={copy.chapterTablistAria}
           >
-            {ACT_SEGMENTS.map(({ id, labelKey }) => {
-              const active = currentAct === id;
+            {chapters.map((chapter) => {
+              const active = currentChapterId === chapter.id;
               return (
                 <button
-                  key={id}
+                  key={chapter.id}
+                  ref={active ? activeChapterRef : undefined}
                   type="button"
                   role="tab"
                   aria-selected={active}
-                  onClick={() => onAssignAct(item.assetId, id)}
-                  className={`relative whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium tracking-wide transition-colors duration-200 ${
+                  onClick={() => onAssignChapter(item.assetId, chapter.id)}
+                  className={`relative shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium tracking-wide transition-colors duration-200 ${
                     active ? "text-teal-400" : "text-zinc-500 hover:text-zinc-300"
                   }`}
                 >
                   {active ? (
                     <motion.span
-                      layoutId="montage-act-pill"
+                      layoutId="storyboard-chapter-pill"
                       className="absolute inset-0 rounded-full bg-teal-500/10 shadow-[0_0_24px_rgba(45,212,191,0.18)]"
                       transition={{
                         type: "spring",
@@ -313,7 +320,7 @@ export function MontageDirectorModal({
                       }}
                     />
                   ) : null}
-                  <span className="relative z-[1]">{copy[labelKey]}</span>
+                  <span className="relative z-[1]">{chapter.label}</span>
                 </button>
               );
             })}

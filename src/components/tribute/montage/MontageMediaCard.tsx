@@ -8,9 +8,12 @@ import { motion } from "framer-motion";
 import { Film, GripVertical, Check, Image as ImageIcon, Trash2 } from "lucide-react";
 
 import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
-import { getMontageActTheme } from "@/src/lib/wizard/montageActTheme";
+import {
+  getChapterCardTheme,
+  getUnassignedCardTheme,
+  type ChapterCardTheme,
+} from "@/src/lib/wizard/chapterTheme";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
-import type { MontageActId } from "@/src/lib/wizard/wizardState";
 
 export type MontageMediaCardCopy = {
   clickToEdit: string;
@@ -24,8 +27,8 @@ export const MONTAGE_CARD_DND_TYPE = "montage-card";
 
 type SurfaceProps = {
   item: MontageMediaItem;
-  actId: MontageActId;
-  variant?: "act" | "unassigned";
+  theme: ChapterCardTheme;
+  variant?: "chapter" | "unassigned";
   index: number;
   isSelected: boolean;
   isDuplicate?: boolean;
@@ -67,8 +70,8 @@ function formatSequenceIndex(index: number) {
 
 function MontageMediaCardSurface({
   item,
-  actId,
-  variant = "act",
+  theme,
+  variant = "chapter",
   index,
   isSelected,
   isDuplicate = false,
@@ -83,22 +86,6 @@ function MontageMediaCardSurface({
   onCardClick,
   onRemove,
 }: SurfaceProps) {
-  const theme =
-    variant === "unassigned"
-      ? {
-          badgeBg: "bg-zinc-500/20",
-          badgeText: "text-zinc-400",
-          focalBg: "bg-zinc-400",
-          focalGlow: [
-            "0 0 8px rgba(161,161,170,0.45)",
-            "0 0 16px rgba(161,161,170,0.75)",
-            "0 0 8px rgba(161,161,170,0.45)",
-          ] as [string, string, string],
-          overlayShadow:
-            "0 24px 80px rgba(0,0,0,0.65), 0 0 48px rgba(161,161,170,0.1)",
-          focusRing: "focus-visible:ring-zinc-400/30",
-        }
-      : getMontageActTheme(actId);
   const sequence = formatSequenceIndex(index);
   const handleListeners = dragHandleProps?.listeners;
   const {
@@ -165,7 +152,7 @@ function MontageMediaCardSurface({
         </div>
       )}
 
-      {variant === "act" ? (
+      {variant === "chapter" ? (
         <span
           className={`pointer-events-none absolute left-2 top-2 z-[2] rounded-md px-2 py-1 font-mono text-xs font-semibold tabular-nums tracking-wider ${theme.badgeBg} ${theme.badgeText}`}
           aria-hidden
@@ -216,7 +203,7 @@ function MontageMediaCardSurface({
 
       <div className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-[#020202]/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover/card:opacity-100" />
 
-      {hasFocalPoint && variant === "act" ? (
+      {hasFocalPoint && variant === "chapter" ? (
         <motion.span
           className={`pointer-events-none absolute bottom-2 z-[2] h-2 w-2 rounded-full ${theme.focalBg} ${
             isSelected ? "right-9" : "right-2"
@@ -241,8 +228,9 @@ function MontageMediaCardSurface({
 
 type Props = {
   item: MontageMediaItem;
-  actId: MontageActId;
-  variant?: "act" | "unassigned";
+  /** Index du chapitre dans `storyboard.chapters` (palette de couleurs). */
+  chapterIndex: number;
+  variant?: "chapter" | "unassigned";
   index: number;
   isSelected: boolean;
   isDuplicate?: boolean;
@@ -256,8 +244,8 @@ type Props = {
 
 export function MontageMediaCard({
   item,
-  actId,
-  variant = "act",
+  chapterIndex,
+  variant = "chapter",
   index,
   isSelected,
   isDuplicate = false,
@@ -268,7 +256,10 @@ export function MontageMediaCard({
   onCardClick,
   onRemove,
 }: Props) {
-  const theme = getMontageActTheme(actId);
+  const theme =
+    variant === "unassigned"
+      ? getUnassignedCardTheme()
+      : getChapterCardTheme(chapterIndex);
   const {
     attributes,
     listeners,
@@ -280,7 +271,7 @@ export function MontageMediaCard({
     id: item.assetId,
     data: {
       type: MONTAGE_CARD_DND_TYPE,
-      actId,
+      chapterIndex,
       variant,
     },
   });
@@ -319,7 +310,7 @@ export function MontageMediaCard({
       >
         <MontageMediaCardSurface
           item={item}
-          actId={actId}
+          theme={theme}
           variant={variant}
           index={index}
           isSelected={isSelected}
@@ -340,7 +331,7 @@ export function MontageMediaCard({
 
 type OverlayProps = {
   item: MontageMediaItem;
-  actId: MontageActId;
+  chapterIndex: number;
   index: number;
   isExcluded: boolean;
   hasFocalPoint: boolean;
@@ -349,7 +340,7 @@ type OverlayProps = {
 
 export function MontageMediaCardDragOverlay({
   item,
-  actId,
+  chapterIndex,
   index,
   isExcluded,
   hasFocalPoint,
@@ -358,7 +349,7 @@ export function MontageMediaCardDragOverlay({
   return (
     <MontageMediaCardSurface
       item={item}
-      actId={actId}
+      theme={getChapterCardTheme(chapterIndex)}
       index={index}
       isSelected={false}
       isExcluded={isExcluded}
@@ -374,7 +365,7 @@ type MultiOverlayProps = {
   count: number;
   label: string;
   items: MontageMediaItem[];
-  actId: MontageActId;
+  chapterIndex: number;
   copy: MontageMediaCardCopy;
 };
 
@@ -382,7 +373,7 @@ export function MontageMultiDragOverlay({
   count,
   label,
   items,
-  actId,
+  chapterIndex,
   copy,
 }: MultiOverlayProps) {
   const stack = items.slice(0, 3);
@@ -400,7 +391,7 @@ export function MontageMultiDragOverlay({
         >
           <MontageMediaCardSurface
             item={item}
-            actId={actId}
+            theme={getChapterCardTheme(chapterIndex)}
             index={stackIndex}
             isSelected={false}
             isExcluded={false}

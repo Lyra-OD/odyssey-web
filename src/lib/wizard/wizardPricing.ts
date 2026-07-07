@@ -5,6 +5,7 @@
 
 import {
   calculatePartnerMargin,
+  DEFAULT_B2C_BASE_PACKAGE,
   extensionCents,
   hasLegacyTokenPricing,
   heritagePackIndividualTotalCents,
@@ -37,6 +38,7 @@ export type {
 } from "@/src/lib/wizard/pricingConfig";
 
 export {
+  DEFAULT_B2C_BASE_PACKAGE,
   WIZARD_ALL_PACKAGES,
   WIZARD_B2C_DIRECT_PACKAGES,
   WIZARD_PARTNER_GRANTED_PACKAGES,

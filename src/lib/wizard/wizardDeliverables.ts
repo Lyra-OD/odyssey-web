@@ -80,8 +80,19 @@ export interface DeliverablesConfig {
     renderPriority: RenderPriority;
   };
   pacing: {
-    /** Décision éditoriale : nombre max de médias toléré par chanson. */
+    /**
+     * Décision éditoriale : nombre max de médias toléré par chanson.
+     * @deprecated Conservé comme proxy de calcul (nombre de chansons minimum
+     * requis avant que l'utilisateur ait choisi ses pistes / connu `durationSec`).
+     * La règle produit de référence est désormais `targetSecondsPerMedia` (S4).
+     */
     maxMediaItemsPerSong: number;
+    /**
+     * Cible éditoriale du pacing temporel (S4) : rythme strict de 7 s / média,
+     * quel que soit le forfait. Capacité recommandée d'un chapitre =
+     * `floor(chanson.durationSec / targetSecondsPerMedia)`.
+     */
+    targetSecondsPerMedia: number;
   };
   features: {
     aiRestoration: boolean;
@@ -107,7 +118,7 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
     },
     limits: { maxMediaItems: 50, maxSongs: 2 },
     rendering: { exportResolution: "1080p", renderPriority: "standard" },
-    pacing: { maxMediaItemsPerSong: 25 },
+    pacing: { maxMediaItemsPerSong: 25, targetSecondsPerMedia: 7 },
     features: {
       aiRestoration: false,
       cloudStorageYears: 5,
@@ -124,9 +135,14 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
       duration: 45,
       audio: "safe_music",
     },
-    limits: { maxMediaItems: 125, maxSongs: 4 },
+    // maxSongs et maxMediaItemsPerSong recalculés pour tenir le rythme
+    // éditorial strict de 7 s/média (S4) : ~25 médias/chapitre pour une
+    // chanson type de ~2:55 (125 / 25 = 5 chapitres). L'art prime sur la
+    // contrainte de coût : on donne l'espace nécessaire plutôt que de forcer
+    // un montage trop dense. Valeur à valider produit.
+    limits: { maxMediaItems: 125, maxSongs: 5 },
     rendering: { exportResolution: "1080p", renderPriority: "standard" },
-    pacing: { maxMediaItemsPerSong: 32 },
+    pacing: { maxMediaItemsPerSong: 25, targetSecondsPerMedia: 7 },
     features: {
       aiRestoration: false,
       cloudStorageYears: 50,
@@ -143,9 +159,10 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
       duration: 45,
       audio: "safe_music",
     },
-    limits: { maxMediaItems: 175, maxSongs: 5 },
+    // Idem HERITAGE : 175 / 25 ≈ 7 chapitres pour tenir 7 s/média.
+    limits: { maxMediaItems: 175, maxSongs: 7 },
     rendering: { exportResolution: "4K", renderPriority: "high" },
-    pacing: { maxMediaItemsPerSong: 35 },
+    pacing: { maxMediaItemsPerSong: 25, targetSecondsPerMedia: 7 },
     features: {
       aiRestoration: true,
       cloudStorageYears: 50,
@@ -162,9 +179,11 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
       duration: 45,
       audio: "safe_music",
     },
-    limits: { maxMediaItems: 250, maxSongs: 7 },
+    // Idem : 250 / 25 = 10 chapitres — Légendaire est le forfait Gants Blancs,
+    // l'art prime, on donne le maximum d'espace narratif.
+    limits: { maxMediaItems: 250, maxSongs: 10 },
     rendering: { exportResolution: "4K", renderPriority: "ultra" },
-    pacing: { maxMediaItemsPerSong: 36 },
+    pacing: { maxMediaItemsPerSong: 25, targetSecondsPerMedia: 7 },
     features: {
       aiRestoration: true,
       cloudStorageYears: 50,
@@ -341,6 +360,11 @@ export function packageMaxSongs(packageId: PackageId): number {
 
 export function packageMaxMediaItemsPerSong(packageId: PackageId): number {
   return PACKAGE_MANIFEST[packageId].pacing.maxMediaItemsPerSong;
+}
+
+/** Cible éditoriale du pacing temporel (S4) — secondes de chanson par média. */
+export function packageTargetSecondsPerMedia(packageId: PackageId): number {
+  return PACKAGE_MANIFEST[packageId].pacing.targetSecondsPerMedia;
 }
 
 export function salonAllowsPersonalMp3(packageId: PackageId): boolean {

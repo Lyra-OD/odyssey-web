@@ -1,8 +1,8 @@
 # Stingray Music Integration (MAPI)
 
-**Last code review: June 2026**
+**Last code review: July 2026**
 
-Odyssey uses the **Stingray Music API** (MAPI) for licensed search and preview in wizard step 5. Stingray disables CORS on their origin — all MAPI calls run **server-side**; the browser only hits our Next.js routes.
+Odyssey uses the **Stingray Music API** (MAPI) for licensed search and preview in wizard **step 4** (`ChapterMusicPanel` inside `StoryboardChaptersStep`). Stingray disables CORS on their origin — all MAPI calls run **server-side**; the browser only hits our Next.js routes.
 
 Parent reference: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 and §6.
 
@@ -34,7 +34,7 @@ Parent reference: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSS
 - If `STINGRAY_CLIENT_ID` is missing → `resolveStingrayMode()` returns **`mock`** (server log: equivalent `STINGRAY_USE_MOCK=true`).
 - `shouldUseStingrayMock()` = explicit mock **or** missing credentials.
 - Search uses `stingrayCatalog.ts` (real titles/covers); preview streams one cinematic MP3.
-- UI badge **Preview** on step 5. No 503 unless `STINGRAY_MODE=live` is forced without credentials.
+- UI badge **Preview** on step 4 music panels. No 503 unless `STINGRAY_MODE=live` is forced without credentials.
 
 ---
 
@@ -50,7 +50,7 @@ Parent reference: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSS
 | `src/lib/wizard/pricingConfig.ts` | `resolveMusicCatalogTier()`, package `musicCatalog` |
 | `app/api/music/preview/route.ts` | `GET ?trackId=` → audio stream |
 | `app/api/music/stream/route.ts` | `GET ?trackId=` → JSON `{ streamUrl }` (proxy path) |
-| `src/components/tribute/SoundSignatureStep.tsx` | Search UI + `HTMLAudioElement` on `previewUrl` |
+| `src/components/tribute/storyboard/ChapterMusicPanel.tsx` | Search UI + `HTMLAudioElement` on `previewUrl` (step 4, per chapter) |
 
 ---
 
@@ -58,7 +58,7 @@ Parent reference: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSS
 
 ```mermaid
 sequenceDiagram
-  participant UI as SoundSignatureStep
+  participant UI as ChapterMusicPanel
   participant Search as GET /api/music/search
   participant Client as stingrayClient
   participant MAPI as Stingray MAPI
@@ -79,7 +79,7 @@ sequenceDiagram
 3. Filter songs by query tokens (title / artist / album).
 4. Map each song to our API payload.
 
-With `STINGRAY_MODE=mock` **or without API credentials**, search uses `stingrayCatalog.ts` (`source: "mock"`). UI shows badge **Preview** on step 5.
+With `STINGRAY_MODE=mock` **or without API credentials**, search uses `stingrayCatalog.ts` (`source: "mock"`). UI shows badge **Preview** on step 4 music panels.
 
 If credentials are missing and mock is disabled via `STINGRAY_MODE=live` explicitly → **503** with message: *“Music service temporarily unavailable…”*
 
@@ -108,7 +108,7 @@ resolveMusicCatalogTier(basePackage, extensions): "standard" | "premium"
 | `signature` | true | — | **premium** |
 | `heritage` | — | — | **premium** (package `musicCatalog`) |
 
-`TributeWizard` computes tier with `useMemo` and passes `catalogTier` to `SoundSignatureStep`.
+`TributeWizard` computes tier with `useMemo` and passes `catalogTier` to `StoryboardChaptersStep` / `ChapterMusicPanel`.
 
 ### Search API
 
@@ -121,11 +121,12 @@ GET /api/music/search?q=Adele&limit=12&tier=premium
 - **Mock mode:** `searchStingrayTracks(query, limit, catalogTier)` filters `STINGRAY_CATALOG_TRACKS` by `musicTier` on each track.
 - **Live MAPI (roadmap):** pass tier to playlist/channel selection when product rules are wired upstream.
 
-### Step 5 UX (`SoundSignatureStep`)
+### Step 4 UX (`ChapterMusicPanel`)
 
 - Banner **standard:** explains Standard access and upsell to Licence Premium (39 $) at step 6 (i18n `soundCatalogAccessStandard`).
 - Banner **premium:** confirms Premium catalog unlocked (`soundCatalogAccessPremium`).
 - Debounced search always sends the current `tier` matching `resolveMusicCatalogTier`.
+- One music panel per storyboard chapter; `durationSec` saved with selected track for pacing (`storyboardPacing.ts`).
 
 ### Checkout / persistence
 
@@ -178,9 +179,9 @@ In `mock` mode, any catalog `trackId` (e.g. `stingray-aznavour-la-mamma`) is pro
 
 ## Preview playback
 
-### Browser (step 5)
+### Browser (step 4 — `ChapterMusicPanel`)
 
-`SoundSignatureStep` sets:
+`ChapterMusicPanel` sets:
 
 ```typescript
 audio.pause();
