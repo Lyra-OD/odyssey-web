@@ -320,3 +320,23 @@ export function validateStoryboardPackageStructure(
 }
 
 export { getRequiredSongCountForMediaCount };
+
+/** Met à jour le titre personnalisé d'un chapitre (Étape 5 — inline edit). */
+export function setChapterLabel(
+  storyboard: WizardStoryboardState,
+  chapterId: string,
+  label: string,
+): WizardStoryboardState {
+  const trimmed = label.trim().slice(0, 40);
+  return {
+    ...storyboard,
+    chapters: storyboard.chapters.map((chapter) => {
+      if (chapter.id !== chapterId) return chapter;
+      if (!trimmed) {
+        const { label: _, ...rest } = chapter;
+        return rest;
+      }
+      return { ...chapter, label: trimmed };
+    }),
+  };
+}

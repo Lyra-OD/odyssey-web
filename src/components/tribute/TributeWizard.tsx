@@ -343,20 +343,9 @@ export function TributeWizard({
     [wizardStoryboard.songsLostIfCappedTo],
   );
   const [isPackageDossierOpen, setIsPackageDossierOpen] = useState(false);
-  const [isMediaBankOpen, setIsMediaBankOpen] = useState(false);
 
   const openPackageDossier = useCallback(() => {
-    setIsMediaBankOpen(false);
     setIsPackageDossierOpen(true);
-  }, []);
-
-  const openMediaBank = useCallback(() => {
-    setIsPackageDossierOpen(false);
-    setIsMediaBankOpen(true);
-  }, []);
-
-  const closeMediaBank = useCallback(() => {
-    setIsMediaBankOpen(false);
   }, []);
   // `actTracks` reste un pont legacy en lecture seule pour PreviewStep/
   // CheckoutStep — il n'est plus manipulé par une UI depuis la neutralisation
@@ -699,11 +688,6 @@ export function TributeWizard({
       aborted = true;
     };
   }, [uploadProjectId, currentStep]);
-
-  // Ferme la banque de médias en quittant l'Étape 5 (un seul tiroir à la fois).
-  useEffect(() => {
-    if (currentStep !== 5) setIsMediaBankOpen(false);
-  }, [currentStep]);
 
   const canProceedEssential =
     firstName.trim().length > 0 &&
@@ -1669,40 +1653,16 @@ export function TributeWizard({
               projectId={uploadProjectId}
               storyboard={wizardStoryboard.storyboard}
               onStoryboardChange={wizardStoryboard.setStoryboard}
-              isMediaBankOpen={isMediaBankOpen}
-              onMediaBankOpen={openMediaBank}
-              onMediaBankClose={closeMediaBank}
               copy={{
                 title: copy.stepMontageTitle,
                 description: copy.stepMontageDescription,
                 loading: copy.montageLoading,
-                bankTrigger: {
-                  label: copy.mediaBankTriggerLabel,
-                  value: copy.mediaBankTriggerValue,
-                  openAria: copy.mediaBankOpenAria,
-                },
-                bankPanel: {
-                  title: copy.mediaBankTitle,
-                  hint: copy.mediaBankHint,
-                  empty: copy.mediaBankEmpty,
-                  closeAria: copy.mediaBankCloseAria,
-                  selectAll: copy.mediaBankSelectAll,
-                  deselectAll: copy.mediaBankDeselectAll,
-                  selectedCount: copy.mediaBankSelectedCount,
-                  assignCta: copy.mediaBankAssignCta,
-                  toggleSelectAria: copy.mediaBankToggleSelectAria,
-                },
                 chapterTabs: {
                   ariaLabel: copy.montageChapterTabsAria,
                   tabSpark: copy.montageActSparkLabel,
                   tabEpic: copy.montageActEpicLabel,
                   tabLegacy: copy.montageActLegacyLabel,
                   tabFallback: copy.chapterTitleFallback,
-                },
-                timeline: {
-                  emptyTitle: copy.montageTimelineEmptyTitle,
-                  emptyHint: copy.montageTimelineEmptyHint,
-                  sequenceAria: copy.montageTimelineSequenceAria,
                 },
                 card: {
                   clickToEdit: copy.montageClickToEdit,
@@ -1724,6 +1684,19 @@ export function TributeWizard({
                 },
                 capacityRecommended: copy.chapterCapacityRecommended,
                 capacityPending: copy.chapterCapacityPending,
+                bankColumn: {
+                  title: copy.mediaBankColumnTitle,
+                  count: copy.mediaBankColumnCount,
+                  empty: copy.mediaBankColumnEmpty,
+                },
+                chapterGrid: {
+                  emptyHint: copy.montageChapterGridEmptyHint,
+                },
+                chapterTitleEditAria: copy.montageChapterTitleEditAria,
+                filmMap: {
+                  ariaLabel: copy.montageFilmMapAria,
+                  segmentAria: copy.montageFilmMapSegmentAria,
+                },
               }}
             />
           ) : null}

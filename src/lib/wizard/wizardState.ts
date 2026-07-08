@@ -104,6 +104,8 @@ export type WizardStoryboardChapter = {
    * L'ordre visuel = index dans `chapters`.
    */
   id: string;
+  /** Titre personnalisé — si absent, l'UI utilise le libellé par défaut du chapitre. */
+  label?: string;
   /**
    * Liste ordonnée des media_assets assignés à ce chapitre.
    * L'ordre narratif du chapitre = ordre du tableau.
@@ -552,11 +554,16 @@ function coerceStoryboardChapter(
 
   const song = coerceStoryboardSong(obj.song);
   const mood = coerceChapterMood(obj.mood);
+  const label =
+    typeof obj.label === "string" && obj.label.trim().length > 0
+      ? obj.label.trim().slice(0, 40)
+      : undefined;
   if (mediaIds.length === 0 && !song) return undefined;
 
   return {
     id: normalizeChapterId(obj.id, index),
     mediaIds,
+    ...(label ? { label } : {}),
     ...(song ? { song } : {}),
     ...(mood ? { mood } : {}),
   };

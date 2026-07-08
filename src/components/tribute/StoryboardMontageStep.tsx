@@ -10,33 +10,26 @@ import {
 } from "@/src/components/tribute/montage/MontageDirectorModal";
 import type { MontageMediaCardCopy } from "@/src/components/tribute/montage/MontageMediaCard";
 import {
-  MediaBankPanel,
-  type MediaBankPanelCopy,
-} from "@/src/components/tribute/storyboard/MediaBankPanel";
-import {
-  MediaBankTrigger,
-  type MediaBankTriggerCopy,
-} from "@/src/components/tribute/storyboard/MediaBankTrigger";
-import {
-  MontageChapterTabs,
   resolveMontageChapterTabLabel,
   type MontageChapterTabsCopy,
 } from "@/src/components/tribute/storyboard/MontageChapterTabs";
+import type { MediaBankColumnCopy } from "@/src/components/tribute/storyboard/MediaBankColumn";
+import type { ChapterCanvasGridCopy } from "@/src/components/tribute/storyboard/ChapterCanvasGrid";
 import {
-  MontageTimeline,
-  type MontageTimelineCopy,
-} from "@/src/components/tribute/storyboard/MontageTimeline";
-import { StoryboardCapacityBadge } from "@/src/components/tribute/storyboard/StoryboardCapacityBadge";
+  StoryboardFilmMap,
+  type StoryboardFilmMapCopy,
+  type StoryboardFilmMapSegment,
+} from "@/src/components/tribute/storyboard/StoryboardFilmMap";
+import { StoryboardOpenBookLayout } from "@/src/components/tribute/storyboard/StoryboardOpenBookLayout";
+import { StoryboardChapterStack } from "@/src/components/tribute/storyboard/StoryboardChapterStack";
 import {
-  chapterIndexById,
   findChapterForMedia,
+  setChapterLabel,
 } from "@/src/lib/wizard/storyboardHelpers";
 import {
-  assignManyMediaToChapter,
   assignMediaToChapter,
   clearStoryboardFocalPoint,
   mergeStoryboardWithMedia,
-  reorderChapterMedia,
   setStoryboardFocalPoint,
   toggleStoryboardMediaExclude,
   unassignMediaFromChapter,
@@ -59,14 +52,15 @@ export type StoryboardMontageStepCopy = {
   title: string;
   description: string;
   loading: string;
-  bankTrigger: MediaBankTriggerCopy;
-  bankPanel: MediaBankPanelCopy;
   chapterTabs: MontageChapterTabsCopy;
-  timeline: MontageTimelineCopy;
   card: MontageMediaCardCopy;
   director: MontageDirectorModalCopy;
   capacityRecommended: string;
   capacityPending: string;
+  bankColumn: MediaBankColumnCopy;
+  chapterGrid: ChapterCanvasGridCopy;
+  chapterTitleEditAria: string;
+  filmMap: StoryboardFilmMapCopy;
 };
 
 type Props = {
@@ -74,63 +68,32 @@ type Props = {
   projectId: string | null;
   storyboard: WizardStoryboardState;
   onStoryboardChange: (next: WizardStoryboardState) => void;
-  isMediaBankOpen: boolean;
-  onMediaBankOpen: () => void;
-  onMediaBankClose: () => void;
   copy: StoryboardMontageStepCopy;
 };
+
+function resolveChapterTitle(
+  chapter: WizardStoryboardState["chapters"][number],
+  index: number,
+  chapterTabsCopy: MontageChapterTabsCopy,
+): string {
+  return (
+    chapter.label?.trim() ||
+    resolveMontageChapterTabLabel(index, chapterTabsCopy)
+  );
+}
 
 export function StoryboardMontageStep({
   packageId,
   projectId,
   storyboard,
   onStoryboardChange,
-  isMediaBankOpen,
-  onMediaBankOpen,
-  onMediaBankClose,
   copy,
 }: Props) {
   const [mediaItems, setMediaItems] = useState<MontageMediaItem[]>([]);
   const [isLoadingMedia, setIsLoadingMedia] = useState(false);
-  const [activeChapterId, setActiveChapterId] = useState<string | null>(null);
   const [directorAssetId, setDirectorAssetId] = useState<string | null>(null);
-  const [recentlyAddedIds, setRecentlyAddedIds] = useState<ReadonlySet<string>>(
-    () => new Set(),
-  );
-  /** Snapshot du chapitre cible à l'ouverture de la banque — ne suit pas les onglets tant que le panneau est ouvert. */
-  const [bankTargetChapterId, setBankTargetChapterId] = useState<string | null>(
-    null,
-  );
   const storyboardRef = useRef(storyboard);
-  const wasBankOpenRef = useRef(false);
   storyboardRef.current = storyboard;
-
-  useEffect(() => {
-    if (!storyboard.chapters.length) {
-      setActiveChapterId(null);
-      return;
-    }
-    if (
-      activeChapterId &&
-      storyboard.chapters.some((chapter) => chapter.id === activeChapterId)
-    ) {
-      return;
-    }
-    setActiveChapterId(storyboard.chapters[0]?.id ?? null);
-  }, [storyboard.chapters, activeChapterId]);
-
-  useEffect(() => {
-    if (isMediaBankOpen && !wasBankOpenRef.current && activeChapterId) {
-      setBankTargetChapterId(activeChapterId);
-    }
-    wasBankOpenRef.current = isMediaBankOpen;
-  }, [isMediaBankOpen, activeChapterId]);
-
-  useEffect(() => {
-    if (recentlyAddedIds.size === 0) return;
-    const timer = window.setTimeout(() => setRecentlyAddedIds(new Set()), 500);
-    return () => window.clearTimeout(timer);
-  }, [recentlyAddedIds]);
 
   useEffect(() => {
     if (!projectId) return;
@@ -149,7 +112,7 @@ export function StoryboardMontageStep({
         );
       })
       .catch(() => {
-        // Best-effort — la timeline reste vide si le fetch échoue.
+        // Best-effort — les grilles restent vides si le fetch échoue.
       })
       .finally(() => {
         if (!aborted) setIsLoadingMedia(false);
@@ -174,38 +137,37 @@ export function StoryboardMontageStep({
     [storyboard.unassignedIds, mediaById],
   );
 
-  const activeChapter = useMemo(
-    () => storyboard.chapters.find((chapter) => chapter.id === activeChapterId) ?? null,
-    [storyboard.chapters, activeChapterId],
-  );
-
-  const bankTargetChapterIndex = useMemo(() => {
-    if (!bankTargetChapterId) return 0;
-    return chapterIndexById(storyboard.chapters, bankTargetChapterId);
-  }, [bankTargetChapterId, storyboard.chapters]);
-
-  const bankTargetChapterLabel = useMemo(
+  const chapterViewModels = useMemo(
     () =>
-      resolveMontageChapterTabLabel(bankTargetChapterIndex, copy.chapterTabs),
-    [bankTargetChapterIndex, copy.chapterTabs],
+      storyboard.chapters.map((chapter, index) => ({
+        chapter,
+        index,
+        title: resolveChapterTitle(chapter, index, copy.chapterTabs),
+        items: chapter.mediaIds
+          .map((id) => mediaById.get(id))
+          .filter((item): item is MontageMediaItem => Boolean(item)),
+      })),
+    [storyboard.chapters, mediaById, copy.chapterTabs],
   );
 
-  const activeChapterIndex = activeChapter
-    ? chapterIndexById(storyboard.chapters, activeChapter.id)
-    : 0;
-
-  const timelineItems = useMemo(() => {
-    if (!activeChapter) return [];
-    return activeChapter.mediaIds
-      .map((id) => mediaById.get(id))
-      .filter((item): item is MontageMediaItem => Boolean(item));
-  }, [activeChapter, mediaById]);
+  const filmMapSegments = useMemo((): StoryboardFilmMapSegment[] => {
+    return storyboard.chapters.map((chapter, index) => ({
+      chapterId: chapter.id,
+      index,
+      label: resolveChapterTitle(chapter, index, copy.chapterTabs),
+      assignedCount: chapter.mediaIds.length,
+      recommendedCapacity: chapterRecommendedCapacity(
+        chapter.song?.durationSec,
+        resolveTargetSecondsPerMedia(packageId, chapter.mood),
+      ),
+    }));
+  }, [storyboard.chapters, copy.chapterTabs, packageId]);
 
   const directorChapters = useMemo(
     () =>
       storyboard.chapters.map((chapter, index) => ({
         id: chapter.id,
-        label: resolveMontageChapterTabLabel(index, copy.chapterTabs),
+        label: resolveChapterTitle(chapter, index, copy.chapterTabs),
       })),
     [storyboard.chapters, copy.chapterTabs],
   );
@@ -221,34 +183,15 @@ export function StoryboardMontageStep({
     ? (mediaById.get(directorAssetId) ?? null)
     : null;
 
-  const chapterCapacity = useMemo(() => {
-    if (!activeChapter) return null;
-    return chapterRecommendedCapacity(
-      activeChapter.song?.durationSec,
-      resolveTargetSecondsPerMedia(packageId, activeChapter.mood),
-    );
-  }, [activeChapter, packageId]);
+  const handleMediaClick = useCallback((assetId: string) => {
+    setDirectorAssetId(assetId);
+  }, []);
 
-  const handleAssignBatch = useCallback(
-    (mediaIds: string[]) => {
-      if (!bankTargetChapterId || mediaIds.length === 0) return;
-      onStoryboardChange(
-        assignManyMediaToChapter(storyboard, bankTargetChapterId, mediaIds),
-      );
-      setRecentlyAddedIds(new Set(mediaIds));
-      onMediaBankClose();
+  const handleTitleChange = useCallback(
+    (chapterId: string, nextTitle: string) => {
+      onStoryboardChange(setChapterLabel(storyboard, chapterId, nextTitle));
     },
-    [bankTargetChapterId, onMediaBankClose, onStoryboardChange, storyboard],
-  );
-
-  const handleTimelineReorder = useCallback(
-    (activeId: string, overId: string) => {
-      if (!activeChapterId) return;
-      onStoryboardChange(
-        reorderChapterMedia(storyboard, activeChapterId, activeId, overId),
-      );
-    },
-    [activeChapterId, onStoryboardChange, storyboard],
+    [onStoryboardChange, storyboard],
   );
 
   const handleDirectorAssignChapter = useCallback(
@@ -289,21 +232,13 @@ export function StoryboardMontageStep({
 
   return (
     <div className="space-y-8 pb-10">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0 space-y-3">
-          <h2 className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl">
-            {copy.title}
-          </h2>
-          <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
-            {copy.description}
-          </p>
-        </div>
-        <MediaBankTrigger
-          count={unassignedItems.length}
-          onOpen={onMediaBankOpen}
-          copy={copy.bankTrigger}
-          className="shrink-0"
-        />
+      <header className="space-y-3">
+        <h2 className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl">
+          {copy.title}
+        </h2>
+        <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+          {copy.description}
+        </p>
       </header>
 
       {isLoadingMedia ? (
@@ -313,56 +248,32 @@ export function StoryboardMontageStep({
       ) : null}
 
       {storyboard.chapters.length > 0 ? (
-        <div className="space-y-6">
-          <MontageChapterTabs
-            chapters={storyboard.chapters}
-            activeChapterId={activeChapterId ?? storyboard.chapters[0].id}
-            onSelect={setActiveChapterId}
-            copy={copy.chapterTabs}
+        <StoryboardOpenBookLayout
+          bankItems={unassignedItems}
+          bankCopy={copy.bankColumn}
+          cardCopy={copy.card}
+          onBankMediaClick={handleMediaClick}
+          filmMap={
+            <StoryboardFilmMap segments={filmMapSegments} copy={copy.filmMap} />
+          }
+        >
+          <StoryboardChapterStack
+            chapters={chapterViewModels}
+            packageId={packageId}
+            excludedIds={storyboard.excludedIds}
+            focalPoints={storyboard.focalPoints}
+            capacityCopy={{
+              recommended: copy.capacityRecommended,
+              pending: copy.capacityPending,
+            }}
+            gridCopy={copy.chapterGrid}
+            cardCopy={copy.card}
+            titleEditAria={copy.chapterTitleEditAria}
+            onMediaClick={handleMediaClick}
+            onTitleChange={handleTitleChange}
           />
-
-          {activeChapter ? (
-            <div className="flex items-center justify-between gap-4">
-              <p className="truncate text-sm font-light text-zinc-400">
-                {activeChapter.song?.title ?? activeChapter.song?.artist ?? ""}
-              </p>
-              <StoryboardCapacityBadge
-                capacity={chapterCapacity}
-                assignedCount={activeChapter.mediaIds.length}
-                showAssigned
-                copy={{
-                  recommended: copy.capacityRecommended,
-                  pending: copy.capacityPending,
-                }}
-              />
-            </div>
-          ) : null}
-
-          {activeChapter ? (
-            <MontageTimeline
-              items={timelineItems}
-              chapterId={activeChapter.id}
-              chapterIndex={activeChapterIndex}
-              excludedIds={storyboard.excludedIds}
-              focalPoints={storyboard.focalPoints}
-              recentlyAddedIds={recentlyAddedIds}
-              copy={copy.timeline}
-              cardCopy={copy.card}
-              onReorder={handleTimelineReorder}
-              onCardClick={setDirectorAssetId}
-            />
-          ) : null}
-        </div>
+        </StoryboardOpenBookLayout>
       ) : null}
-
-      <MediaBankPanel
-        isOpen={isMediaBankOpen}
-        onClose={onMediaBankClose}
-        items={unassignedItems}
-        targetChapterLabel={bankTargetChapterLabel}
-        onAssignBatch={handleAssignBatch}
-        copy={copy.bankPanel}
-      />
 
       <AnimatePresence>
         {directorItem ? (

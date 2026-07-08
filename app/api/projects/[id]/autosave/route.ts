@@ -216,6 +216,7 @@ const StoryboardSongSchema = z.discriminatedUnion("source", [
 const StoryboardChapterSchema = z
   .object({
     id: StoryboardChapterIdSchema,
+    label: z.string().trim().min(1).max(40).optional(),
     mediaIds: z.array(UuidSchema).max(250),
     song: StoryboardSongSchema.optional(),
     mood: StoryboardChapterMoodSchema.optional(),
