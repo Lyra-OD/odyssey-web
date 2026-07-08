@@ -1,7 +1,19 @@
 "use client";
 
-import type { MontageMediaCardCopy } from "@/src/components/tribute/montage/MontageMediaCard";
+import {
+  SortableContext,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
+
+import {
+  MontageMediaCard,
+  type MontageMediaCardCopy,
+} from "@/src/components/tribute/montage/MontageMediaCard";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
+import {
+  STORYBOARD_MEDIA_DND_TYPE,
+  type StoryboardMediaDragData,
+} from "@/src/lib/wizard/storyboardDnd";
 import type { MontageFocalPoint } from "@/src/lib/wizard/wizardState";
 
 import { CanvasGhostSlot } from "@/src/components/tribute/storyboard/CanvasGhostSlot";
@@ -12,28 +24,43 @@ export type ChapterCanvasGridCopy = {
 };
 
 type Props = {
+  chapterId: string;
   items: readonly MontageMediaItem[];
   chapterIndex: number;
-  /** Capacité recommandée — `null` si durée chanson inconnue. */
   recommendedCapacity: number | null;
   excludedIds: readonly string[];
   focalPoints: Readonly<Record<string, MontageFocalPoint>>;
+  activeDragIds: readonly string[];
+  selectedMediaIds: readonly string[];
+  sortableEnabled: boolean;
   copy: ChapterCanvasGridCopy;
   cardCopy: MontageMediaCardCopy;
-  onMediaClick: (assetId: string) => void;
+  toggleSelectAria: string;
+  onMediaClick: (assetId: string, event?: React.MouseEvent) => void;
+  onToggleMediaSelect: (assetId: string) => void;
+  onShiftMediaSelect: (assetId: string) => void;
+  resolveChapterDragMediaIds: (assetId: string) => readonly string[];
 };
 
 const MAX_VISIBLE_GHOSTS = 6;
 
 export function ChapterCanvasGrid({
+  chapterId,
   items,
   chapterIndex,
   recommendedCapacity,
   excludedIds,
   focalPoints,
+  activeDragIds,
+  selectedMediaIds,
+  sortableEnabled,
   copy,
   cardCopy,
+  toggleSelectAria,
   onMediaClick,
+  onToggleMediaSelect,
+  onShiftMediaSelect,
+  resolveChapterDragMediaIds,
 }: Props) {
   const assignedCount = items.length;
   const ghostCount =
@@ -47,6 +74,14 @@ export function ChapterCanvasGrid({
         );
 
   const isEmpty = assignedCount === 0;
+  const activeDragSet = new Set(activeDragIds);
+  const selectedSet = new Set(selectedMediaIds);
+  const sortableIds = items.map((item) => item.assetId);
+
+  const storyboardDragBase = {
+    type: STORYBOARD_MEDIA_DND_TYPE,
+    source: { kind: "chapter" as const, chapterId },
+  } satisfies Partial<StoryboardMediaDragData>;
 
   return (
     <div className="relative">
@@ -61,20 +96,54 @@ export function ChapterCanvasGrid({
         role="list"
         aria-label={`Médias du chapitre — ${assignedCount} placé(s)`}
       >
-        {items.map((item, index) => (
-          <div key={item.assetId} role="listitem">
-            <MediaInstantTile
-              item={item}
-              chapterIndex={chapterIndex}
-              sequenceIndex={index}
-              variant="chapter"
-              isExcluded={excludedIds.includes(item.assetId)}
-              hasFocalPoint={Boolean(focalPoints[item.assetId])}
-              copy={cardCopy}
-              onClick={onMediaClick}
-            />
-          </div>
-        ))}
+        {sortableEnabled ? (
+          <SortableContext items={sortableIds} strategy={rectSortingStrategy}>
+            {items.map((item, index) => (
+              <div key={item.assetId} role="listitem">
+                <MontageMediaCard
+                  item={item}
+                  chapterIndex={chapterIndex}
+                  index={index}
+                  isSelected={selectedSet.has(item.assetId)}
+                  isGroupDragging={activeDragSet.has(item.assetId)}
+                  isExcluded={excludedIds.includes(item.assetId)}
+                  hasFocalPoint={Boolean(focalPoints[item.assetId])}
+                  copy={cardCopy}
+                  selectable
+                  toggleSelectAria={toggleSelectAria}
+                  onToggleSelect={() => onToggleMediaSelect(item.assetId)}
+                  sortableData={{
+                    ...storyboardDragBase,
+                    mediaIds: [...resolveChapterDragMediaIds(item.assetId)],
+                  }}
+                  onCardClick={(assetId, event) => {
+                    if (event.shiftKey) {
+                      event.stopPropagation();
+                      onShiftMediaSelect(assetId);
+                      return;
+                    }
+                    onMediaClick(assetId, event);
+                  }}
+                />
+              </div>
+            ))}
+          </SortableContext>
+        ) : (
+          items.map((item, index) => (
+            <div key={item.assetId} role="listitem">
+              <MediaInstantTile
+                item={item}
+                chapterIndex={chapterIndex}
+                sequenceIndex={index}
+                variant="chapter"
+                isExcluded={excludedIds.includes(item.assetId)}
+                hasFocalPoint={Boolean(focalPoints[item.assetId])}
+                copy={cardCopy}
+                onClick={(assetId) => onMediaClick(assetId)}
+              />
+            </div>
+          ))
+        )}
 
         {Array.from({ length: ghostCount }, (_, index) => (
           <CanvasGhostSlot key={`ghost-${index}`} />

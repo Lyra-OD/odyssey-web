@@ -3,12 +3,7 @@
  * Fonctions pures, sans dépendance React.
  */
 
-import { findChapterForMedia } from "@/src/lib/wizard/storyboardHelpers";
 import type { WizardStoryboardState } from "@/src/lib/wizard/wizardState";
-
-function withoutMediaId(ids: string[], mediaId: string): string[] {
-  return ids.filter((id) => id !== mediaId);
-}
 
 /** Réconcilie le storyboard persisté avec la liste courante des `media_assets`. */
 export function mergeStoryboardWithMedia(
@@ -108,18 +103,26 @@ export function unassignMediaFromChapter(
   storyboard: WizardStoryboardState,
   mediaId: string,
 ): WizardStoryboardState {
-  const chapterId = findChapterForMedia(storyboard.chapters, mediaId);
-  if (!chapterId) return storyboard;
+  return unassignManyMediaFromChapters(storyboard, [mediaId]);
+}
 
-  const chapters = storyboard.chapters.map((chapter) =>
-    chapter.id === chapterId
-      ? { ...chapter, mediaIds: withoutMediaId(chapter.mediaIds, mediaId) }
-      : chapter,
-  );
+/** Retire plusieurs médias de leurs chapitres vers la banque non assignée. */
+export function unassignManyMediaFromChapters(
+  storyboard: WizardStoryboardState,
+  mediaIds: readonly string[],
+): WizardStoryboardState {
+  if (mediaIds.length === 0) return storyboard;
 
-  const unassignedIds = storyboard.unassignedIds.includes(mediaId)
-    ? storyboard.unassignedIds
-    : [...storyboard.unassignedIds, mediaId];
+  const removeSet = new Set(mediaIds);
+  const chapters = storyboard.chapters.map((chapter) => ({
+    ...chapter,
+    mediaIds: chapter.mediaIds.filter((id) => !removeSet.has(id)),
+  }));
+
+  const unassignedIds = [...storyboard.unassignedIds];
+  for (const id of mediaIds) {
+    if (!unassignedIds.includes(id)) unassignedIds.push(id);
+  }
 
   return { ...storyboard, chapters, unassignedIds };
 }

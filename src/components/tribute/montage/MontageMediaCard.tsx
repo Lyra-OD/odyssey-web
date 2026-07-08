@@ -40,6 +40,9 @@ type SurfaceProps = {
   isOverlay?: boolean;
   showDragHandle?: boolean;
   showRemove?: boolean;
+  selectable?: boolean;
+  onToggleSelect?: (event: React.MouseEvent) => void;
+  toggleSelectAria?: string;
   dragHandleProps?: {
     attributes: DraggableAttributes;
     listeners: SyntheticListenerMap | undefined;
@@ -83,6 +86,9 @@ function MontageMediaCardSurface({
   isOverlay = false,
   showDragHandle = true,
   showRemove = false,
+  selectable = false,
+  onToggleSelect,
+  toggleSelectAria = "",
   dragHandleProps,
   onCardClick,
   onRemove,
@@ -171,6 +177,25 @@ function MontageMediaCardSurface({
         </span>
       ) : null}
 
+      {selectable && onToggleSelect && !isOverlay ? (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onToggleSelect(event);
+          }}
+          aria-pressed={isSelected}
+          aria-label={toggleSelectAria}
+          className={`absolute right-2 top-2 z-[20] flex h-6 w-6 items-center justify-center rounded-full border transition-all duration-200 ${
+            isSelected
+              ? "border-amber-400/60 bg-amber-400 text-[#020202] opacity-100"
+              : "border-white/20 bg-black/50 text-transparent opacity-0 group-hover/card:opacity-100"
+          }`}
+        >
+          <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />
+        </button>
+      ) : null}
+
       {showDragHandle && dragHandleProps ? (
         <button
           type="button"
@@ -241,6 +266,13 @@ type Props = {
   copy: MontageMediaCardCopy;
   onCardClick: (assetId: string, event: React.MouseEvent) => void;
   onRemove?: (assetId: string) => void;
+  /** Données dnd-kit additionnelles (Étape 5 storyboard). */
+  sortableData?: Record<string, unknown>;
+  selectable?: boolean;
+  onToggleSelect?: (event: React.MouseEvent) => void;
+  toggleSelectAria?: string;
+  /** Teinte de l'overlay drag (connexion visuelle au chapitre cible). */
+  accentChapterIndex?: number;
 };
 
 export function MontageMediaCard({
@@ -256,6 +288,10 @@ export function MontageMediaCard({
   copy,
   onCardClick,
   onRemove,
+  sortableData,
+  selectable = false,
+  onToggleSelect,
+  toggleSelectAria,
 }: Props) {
   const theme =
     variant === "unassigned"
@@ -274,6 +310,7 @@ export function MontageMediaCard({
       type: MONTAGE_CARD_DND_TYPE,
       chapterIndex,
       variant,
+      ...sortableData,
     },
   });
 
@@ -298,7 +335,9 @@ export function MontageMediaCard({
       style={style}
       className={`relative w-full rounded-xl transition-[box-shadow,transform] duration-200 ${
         isSelected
-          ? "ring-2 ring-teal-400 shadow-[0_0_24px_rgba(45,212,191,0.28)]"
+          ? selectable
+            ? "ring-2 ring-amber-400/70 shadow-[0_0_20px_rgba(251,191,36,0.12)]"
+            : "ring-2 ring-teal-400 shadow-[0_0_24px_rgba(45,212,191,0.28)]"
           : ""
       } ${dragFromWholeCard ? "cursor-grab touch-none active:cursor-grabbing" : ""}`}
       {...cardDragAttributes}
@@ -331,6 +370,9 @@ export function MontageMediaCard({
           copy={copy}
           isGhost={isGhost}
           showRemove={Boolean(onRemove)}
+          selectable={selectable}
+          onToggleSelect={onToggleSelect}
+          toggleSelectAria={toggleSelectAria}
           onCardClick={onCardClick}
           onRemove={onRemove}
           showDragHandle={!dragFromWholeCard}
@@ -348,6 +390,8 @@ type OverlayProps = {
   isExcluded: boolean;
   hasFocalPoint: boolean;
   copy: MontageMediaCardCopy;
+  /** Teinte de l'overlay selon le chapitre survolé pendant le drag. */
+  accentChapterIndex?: number;
   /** Lévitation timeline — scale + rotation légère. */
   elevated?: boolean;
 };
@@ -359,8 +403,10 @@ export function MontageMediaCardDragOverlay({
   isExcluded,
   hasFocalPoint,
   copy,
+  accentChapterIndex,
   elevated = false,
 }: OverlayProps) {
+  const theme = getChapterCardTheme(accentChapterIndex ?? chapterIndex);
   return (
     <div
       className={
@@ -372,13 +418,14 @@ export function MontageMediaCardDragOverlay({
         elevated
           ? {
               filter: "drop-shadow(0 24px 48px rgba(0,0,0,0.55))",
+              boxShadow: theme.cardHoverShadow,
             }
-          : undefined
+          : { boxShadow: theme.cardHoverShadow }
       }
     >
       <MontageMediaCardSurface
         item={item}
-        theme={getChapterCardTheme(chapterIndex)}
+        theme={theme}
         index={index}
         isSelected={false}
         isExcluded={isExcluded}
@@ -397,6 +444,7 @@ type MultiOverlayProps = {
   items: MontageMediaItem[];
   chapterIndex: number;
   copy: MontageMediaCardCopy;
+  accentChapterIndex?: number;
 };
 
 export function MontageMultiDragOverlay({
@@ -405,11 +453,16 @@ export function MontageMultiDragOverlay({
   items,
   chapterIndex,
   copy,
+  accentChapterIndex,
 }: MultiOverlayProps) {
   const stack = items.slice(0, 3);
+  const theme = getChapterCardTheme(accentChapterIndex ?? chapterIndex);
 
   return (
-    <div className="relative w-[min(100%,11rem)] pb-9 sm:w-44">
+    <div
+      className="relative w-[min(100%,11rem)] pb-9 sm:w-44"
+      style={{ filter: "drop-shadow(0 24px 48px rgba(0,0,0,0.55))" }}
+    >
       {stack.map((item, stackIndex) => (
         <div
           key={item.assetId}
@@ -433,7 +486,14 @@ export function MontageMultiDragOverlay({
         </div>
       ))}
       <div className="aspect-video w-full opacity-0" aria-hidden />
-      <div className="absolute -bottom-1 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-full border border-teal-400/25 bg-[#0a0a0a]/95 px-3 py-1 text-[11px] font-medium text-teal-300 shadow-lg backdrop-blur-md">
+      <div className="absolute -bottom-1 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-full border bg-[#0a0a0a]/95 px-3 py-1 text-[11px] font-medium shadow-lg backdrop-blur-md"
+        style={{
+          borderColor: "rgba(251, 191, 36, 0.25)",
+          color: theme.badgeText.includes("amber")
+            ? "rgb(251, 191, 36)"
+            : undefined,
+        }}
+      >
         {label.replace("{count}", String(count))}
       </div>
     </div>

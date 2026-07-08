@@ -9,9 +9,17 @@ import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 
 type Props = {
   bankItems: readonly MontageMediaItem[];
+  selectedMediaIds: readonly string[];
+  activeDragIds: readonly string[];
+  isBankDropHighlighted: boolean;
   bankCopy: MediaBankColumnCopy;
   cardCopy: MontageMediaCardCopy;
+  resolveBankDragMediaIds: (assetId: string) => readonly string[];
   onBankMediaClick: (assetId: string) => void;
+  onToggleMediaSelect: (assetId: string) => void;
+  onShiftMediaSelect: (assetId: string) => void;
+  onSelectAllBank: () => void;
+  onDeselectAllBank: () => void;
   filmMap: ReactNode;
   children: ReactNode;
 };
@@ -22,9 +30,17 @@ type Props = {
  */
 export function StoryboardOpenBookLayout({
   bankItems,
+  selectedMediaIds,
+  activeDragIds,
+  isBankDropHighlighted,
   bankCopy,
   cardCopy,
+  resolveBankDragMediaIds,
   onBankMediaClick,
+  onToggleMediaSelect,
+  onShiftMediaSelect,
+  onSelectAllBank,
+  onDeselectAllBank,
   filmMap,
   children,
 }: Props) {
@@ -35,9 +51,17 @@ export function StoryboardOpenBookLayout({
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
         <MediaBankColumn
           items={bankItems}
+          selectedMediaIds={selectedMediaIds}
+          activeDragIds={activeDragIds}
+          isDropHighlighted={isBankDropHighlighted}
           copy={bankCopy}
           cardCopy={cardCopy}
+          resolveBankDragMediaIds={resolveBankDragMediaIds}
           onMediaClick={onBankMediaClick}
+          onToggleMediaSelect={onToggleMediaSelect}
+          onShiftMediaSelect={onShiftMediaSelect}
+          onSelectAll={onSelectAllBank}
+          onDeselectAll={onDeselectAllBank}
         />
 
         <div className="min-w-0">{children}</div>

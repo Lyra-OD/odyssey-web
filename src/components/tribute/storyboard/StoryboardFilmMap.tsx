@@ -22,16 +22,6 @@ type Props = {
   copy: StoryboardFilmMapCopy;
 };
 
-function segmentFillRatio(
-  assignedCount: number,
-  recommendedCapacity: number | null,
-): number {
-  if (recommendedCapacity === null || recommendedCapacity <= 0) {
-    return assignedCount > 0 ? 1 : 0;
-  }
-  return Math.min(1, assignedCount / recommendedCapacity);
-}
-
 export function StoryboardFilmMap({ segments, copy }: Props) {
   if (segments.length === 0) return null;
 
@@ -49,17 +39,20 @@ export function StoryboardFilmMap({ segments, copy }: Props) {
       <div className="flex h-9 gap-1 overflow-hidden rounded-lg bg-white/[0.03] p-1">
         {segments.map((segment) => {
           const theme = getChapterTheme(segment.index);
-          const fill = segmentFillRatio(
-            segment.assignedCount,
-            segment.recommendedCapacity,
-          );
-          const flexGrow = Math.max(
-            segment.recommendedCapacity ?? 1,
-            1,
-          );
-          const isBeyond =
-            segment.recommendedCapacity !== null &&
-            segment.assignedCount > segment.recommendedCapacity;
+          const capacity = segment.recommendedCapacity;
+          const assigned = segment.assignedCount;
+          const flexGrow = Math.max(capacity ?? 1, 1);
+
+          const inCapacityPct =
+            capacity === null || capacity <= 0
+              ? assigned > 0
+                ? 100
+                : 0
+              : Math.min((assigned / capacity) * 100, 100);
+          const overflowPct =
+            capacity !== null && capacity > 0 && assigned > capacity
+              ? Math.min(((assigned - capacity) / capacity) * 100, 35)
+              : 0;
 
           return (
             <button
@@ -70,29 +63,34 @@ export function StoryboardFilmMap({ segments, copy }: Props) {
               style={{ flex: `${flexGrow} 1 0%` }}
               aria-label={copy.segmentAria
                 .replace("{label}", segment.label)
-                .replace("{assigned}", String(segment.assignedCount))
+                .replace("{assigned}", String(assigned))
                 .replace(
                   "{capacity}",
-                  segment.recommendedCapacity === null
-                    ? "—"
-                    : String(segment.recommendedCapacity),
+                  capacity === null ? "—" : String(capacity),
                 )}
             >
               <span
                 className="absolute inset-0 bg-white/[0.04]"
                 aria-hidden
               />
+
               <span
-                className={`absolute inset-y-0 left-0 ${theme.dot} opacity-60 transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]`}
-                style={{ width: `${fill * 100}%` }}
+                className={`absolute inset-y-0 left-0 ${theme.dot} opacity-70 transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]`}
+                style={{ width: `${inCapacityPct}%` }}
                 aria-hidden
               />
-              {isBeyond ? (
+
+              {overflowPct > 0 ? (
                 <span
-                  className="absolute inset-y-0 right-0 w-0.5 bg-amber-400/70"
+                  className={`absolute inset-y-0 ${theme.dot} opacity-20 transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]`}
+                  style={{
+                    left: `${inCapacityPct}%`,
+                    width: `${overflowPct}%`,
+                  }}
                   aria-hidden
                 />
               ) : null}
+
               <span className="relative z-[1] block truncate px-2 py-1.5 text-[10px] font-medium tracking-wide text-zinc-500 opacity-0 transition-opacity duration-200 group-hover/segment:opacity-100 md:text-[11px]">
                 {segment.label}
               </span>

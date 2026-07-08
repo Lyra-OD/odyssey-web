@@ -340,3 +340,23 @@ export function setChapterLabel(
     }),
   };
 }
+
+/** Réordonne les chapitres (bloc entier + contenu). */
+export function reorderStoryboardChapters(
+  storyboard: WizardStoryboardState,
+  activeChapterId: string,
+  overChapterId: string,
+): WizardStoryboardState {
+  const oldIndex = storyboard.chapters.findIndex(
+    (chapter) => chapter.id === activeChapterId,
+  );
+  const newIndex = storyboard.chapters.findIndex(
+    (chapter) => chapter.id === overChapterId,
+  );
+  if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return storyboard;
+
+  const chapters = [...storyboard.chapters];
+  const [moved] = chapters.splice(oldIndex, 1);
+  chapters.splice(newIndex, 0, moved);
+  return { ...storyboard, chapters };
+}

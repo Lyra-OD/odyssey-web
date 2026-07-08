@@ -1,9 +1,18 @@
 "use client";
 
+import { GripVertical } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+
+import type { DraggableAttributes } from "@dnd-kit/core";
+import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
 import { StoryboardCapacityBadge } from "@/src/components/tribute/storyboard/StoryboardCapacityBadge";
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
+
+type ChapterDragHandle = {
+  attributes: DraggableAttributes;
+  listeners: SyntheticListenerMap | undefined;
+};
 
 type Props = {
   chapterIndex: number;
@@ -13,6 +22,8 @@ type Props = {
   capacity: number | null;
   assignedCount: number;
   titleEditAria: string;
+  chapterReorderAria: string;
+  chapterDragHandle?: ChapterDragHandle;
   capacityCopy: {
     recommended: string;
     pending: string;
@@ -28,6 +39,8 @@ export function ChapterNarrativeHeader({
   capacity,
   assignedCount,
   titleEditAria,
+  chapterReorderAria,
+  chapterDragHandle,
   capacityCopy,
   onTitleChange,
 }: Props) {
@@ -52,12 +65,34 @@ export function ChapterNarrativeHeader({
 
   const songLine = [songTitle, songArtist].filter(Boolean).join(" — ");
 
+  const handleListeners = chapterDragHandle?.listeners;
+  const {
+    onPointerDown: dndPointerDown,
+    ...restHandleListeners
+  } = handleListeners ?? {};
+
   return (
     <header className="space-y-3">
       <div className="flex flex-wrap items-start justify-between gap-3 gap-y-2">
-        <div className="flex min-w-0 flex-1 items-center gap-2.5">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          {chapterDragHandle ? (
+            <button
+              type="button"
+              className={`mt-0.5 flex h-8 w-8 shrink-0 cursor-grab touch-none items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-zinc-500 transition-colors hover:border-white/20 hover:text-zinc-300 active:cursor-grabbing ${theme.text}`}
+              aria-label={chapterReorderAria}
+              {...chapterDragHandle.attributes}
+              {...restHandleListeners}
+              onPointerDown={(event) => {
+                dndPointerDown?.(event);
+                event.stopPropagation();
+              }}
+            >
+              <GripVertical className="h-4 w-4" strokeWidth={1.5} aria-hidden />
+            </button>
+          ) : null}
+
           <span
-            className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${theme.dot}`}
+            className={`h-1.5 w-1.5 shrink-0 rounded-full ${theme.dot}`}
             aria-hidden
           />
 
@@ -105,7 +140,9 @@ export function ChapterNarrativeHeader({
       </div>
 
       {songLine ? (
-        <p className="truncate pl-4 text-sm font-light text-zinc-500">{songLine}</p>
+        <p className="truncate pl-4 text-sm font-light text-zinc-500 md:pl-12">
+          {songLine}
+        </p>
       ) : null}
     </header>
   );

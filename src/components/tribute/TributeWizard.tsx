@@ -1688,15 +1688,41 @@ export function TributeWizard({
                   title: copy.mediaBankColumnTitle,
                   count: copy.mediaBankColumnCount,
                   empty: copy.mediaBankColumnEmpty,
+                  selectAll: copy.mediaBankSelectAll,
+                  deselectAll: copy.mediaBankDeselectAll,
+                  selectedCount: copy.mediaBankSelectedCount,
+                  toggleSelectAria: copy.mediaBankToggleSelectAria,
                 },
                 chapterGrid: {
                   emptyHint: copy.montageChapterGridEmptyHint,
                 },
+                chapterActions: {
+                  autoFill: copy.montageChapterAutoFill,
+                  clear: copy.montageChapterClear,
+                  manage: copy.montageChapterManage,
+                  clearConfirmTitle: copy.montageChapterClearConfirmTitle,
+                  clearConfirmCancel: copy.montageChapterClearConfirmCancel,
+                  clearConfirmAction: copy.montageChapterClearConfirmAction,
+                },
                 chapterTitleEditAria: copy.montageChapterTitleEditAria,
+                chapterReorderAria: copy.montageDragHandle,
+                toggleSelectAria: copy.mediaBankToggleSelectAria,
                 filmMap: {
                   ariaLabel: copy.montageFilmMapAria,
                   segmentAria: copy.montageFilmMapSegmentAria,
                 },
+                refinement: {
+                  title: copy.montageRefinementTitle,
+                  closeAria: copy.montageRefinementCloseAria,
+                  inCapacity: copy.montageRefinementInCapacity,
+                  beyondCapacity: copy.montageRefinementBeyondCapacity,
+                  capacityDivider: copy.montageRefinementCapacityDivider,
+                  returnToBank: copy.montageRefinementReturnToBank,
+                  moveToNextChapter: copy.montageRefinementMoveToNext,
+                  capacityRecommended: copy.chapterCapacityRecommended,
+                  capacityPending: copy.chapterCapacityPending,
+                },
+                multiDragLabel: copy.montageMultiDragLabel,
               }}
             />
           ) : null}
