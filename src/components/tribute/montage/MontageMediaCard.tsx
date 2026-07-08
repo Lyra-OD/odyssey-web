@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { Film, GripVertical, Check, Image as ImageIcon, Trash2 } from "lucide-react";
 
 import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
+import { useFinePointer } from "@/src/hooks/useFinePointer";
 import {
   getChapterCardTheme,
   getUnassignedCardTheme,
@@ -281,6 +282,14 @@ export function MontageMediaCard({
     transition,
   };
   const isGhost = isDragging || isGroupDragging;
+  const finePointer = useFinePointer();
+  const dragFromWholeCard = finePointer;
+
+  const cardDragListeners = dragFromWholeCard ? listeners : undefined;
+  const cardDragAttributes = dragFromWholeCard ? attributes : undefined;
+  const handleDragProps = dragFromWholeCard
+    ? undefined
+    : { attributes, listeners };
 
   return (
     <div
@@ -291,7 +300,9 @@ export function MontageMediaCard({
         isSelected
           ? "ring-2 ring-teal-400 shadow-[0_0_24px_rgba(45,212,191,0.28)]"
           : ""
-      }`}
+      } ${dragFromWholeCard ? "cursor-grab touch-none active:cursor-grabbing" : ""}`}
+      {...cardDragAttributes}
+      {...cardDragListeners}
     >
       <motion.div
         variants={montageCardVariants}
@@ -322,7 +333,8 @@ export function MontageMediaCard({
           showRemove={Boolean(onRemove)}
           onCardClick={onCardClick}
           onRemove={onRemove}
-          dragHandleProps={{ attributes, listeners }}
+          showDragHandle={!dragFromWholeCard}
+          dragHandleProps={handleDragProps}
         />
       </motion.div>
     </div>
@@ -336,6 +348,8 @@ type OverlayProps = {
   isExcluded: boolean;
   hasFocalPoint: boolean;
   copy: MontageMediaCardCopy;
+  /** Lévitation timeline — scale + rotation légère. */
+  elevated?: boolean;
 };
 
 export function MontageMediaCardDragOverlay({
@@ -345,19 +359,35 @@ export function MontageMediaCardDragOverlay({
   isExcluded,
   hasFocalPoint,
   copy,
+  elevated = false,
 }: OverlayProps) {
   return (
-    <MontageMediaCardSurface
-      item={item}
-      theme={getChapterCardTheme(chapterIndex)}
-      index={index}
-      isSelected={false}
-      isExcluded={isExcluded}
-      hasFocalPoint={hasFocalPoint}
-      copy={copy}
-      isOverlay
-      showDragHandle={false}
-    />
+    <div
+      className={
+        elevated
+          ? "w-36 rotate-[2deg] scale-105 sm:w-44"
+          : "w-full"
+      }
+      style={
+        elevated
+          ? {
+              filter: "drop-shadow(0 24px 48px rgba(0,0,0,0.55))",
+            }
+          : undefined
+      }
+    >
+      <MontageMediaCardSurface
+        item={item}
+        theme={getChapterCardTheme(chapterIndex)}
+        index={index}
+        isSelected={false}
+        isExcluded={isExcluded}
+        hasFocalPoint={hasFocalPoint}
+        copy={copy}
+        isOverlay
+        showDragHandle={false}
+      />
+    </div>
   );
 }
 

@@ -343,6 +343,21 @@ export function TributeWizard({
     [wizardStoryboard.songsLostIfCappedTo],
   );
   const [isPackageDossierOpen, setIsPackageDossierOpen] = useState(false);
+  const [isMediaBankOpen, setIsMediaBankOpen] = useState(false);
+
+  const openPackageDossier = useCallback(() => {
+    setIsMediaBankOpen(false);
+    setIsPackageDossierOpen(true);
+  }, []);
+
+  const openMediaBank = useCallback(() => {
+    setIsPackageDossierOpen(false);
+    setIsMediaBankOpen(true);
+  }, []);
+
+  const closeMediaBank = useCallback(() => {
+    setIsMediaBankOpen(false);
+  }, []);
   // `actTracks` reste un pont legacy en lecture seule pour PreviewStep/
   // CheckoutStep — il n'est plus manipulé par une UI depuis la neutralisation
   // de SoundSignatureStep (ex-Étape 5, cul-de-sac fonctionnel remplacé par
@@ -671,7 +686,7 @@ export function TributeWizard({
   // pré-générés à l'Étape 4 (S4). Refetch à chaque entrée dans l'étape pour
   // capter d'éventuels ajouts/suppressions faits en revenant en arrière.
   useEffect(() => {
-    if (!uploadProjectId || currentStep !== 4) return;
+    if (!uploadProjectId || (currentStep !== 4 && currentStep !== 5)) return;
     let aborted = false;
     void fetchProjectMedia(uploadProjectId)
       .then((items) => {
@@ -684,6 +699,11 @@ export function TributeWizard({
       aborted = true;
     };
   }, [uploadProjectId, currentStep]);
+
+  // Ferme la banque de médias en quittant l'Étape 5 (un seul tiroir à la fois).
+  useEffect(() => {
+    if (currentStep !== 5) setIsMediaBankOpen(false);
+  }, [currentStep]);
 
   const canProceedEssential =
     firstName.trim().length > 0 &&
@@ -1034,7 +1054,7 @@ export function TributeWizard({
           <div className="sm:w-60 sm:shrink-0">
             <PackageDossierTrigger
               packageLabel={packageDisplayNameFor(basePackage)}
-              onOpen={() => setIsPackageDossierOpen(true)}
+              onOpen={openPackageDossier}
               copy={{
                 label: copy.headerPackageLabel,
                 openAria: copy.dossierOpenAria,
@@ -1645,11 +1665,65 @@ export function TributeWizard({
 
           {currentStep === 5 ? (
             <StoryboardMontageStep
+              packageId={currentPackageId}
+              projectId={uploadProjectId}
+              storyboard={wizardStoryboard.storyboard}
+              onStoryboardChange={wizardStoryboard.setStoryboard}
+              isMediaBankOpen={isMediaBankOpen}
+              onMediaBankOpen={openMediaBank}
+              onMediaBankClose={closeMediaBank}
               copy={{
                 title: copy.stepMontageTitle,
                 description: copy.stepMontageDescription,
-                placeholderBadge: copy.montagePlaceholderBadge,
-                placeholderBody: copy.montagePlaceholderBody,
+                loading: copy.montageLoading,
+                bankTrigger: {
+                  label: copy.mediaBankTriggerLabel,
+                  value: copy.mediaBankTriggerValue,
+                  openAria: copy.mediaBankOpenAria,
+                },
+                bankPanel: {
+                  title: copy.mediaBankTitle,
+                  hint: copy.mediaBankHint,
+                  empty: copy.mediaBankEmpty,
+                  closeAria: copy.mediaBankCloseAria,
+                  selectAll: copy.mediaBankSelectAll,
+                  deselectAll: copy.mediaBankDeselectAll,
+                  selectedCount: copy.mediaBankSelectedCount,
+                  assignCta: copy.mediaBankAssignCta,
+                  toggleSelectAria: copy.mediaBankToggleSelectAria,
+                },
+                chapterTabs: {
+                  ariaLabel: copy.montageChapterTabsAria,
+                  tabSpark: copy.montageActSparkLabel,
+                  tabEpic: copy.montageActEpicLabel,
+                  tabLegacy: copy.montageActLegacyLabel,
+                  tabFallback: copy.chapterTitleFallback,
+                },
+                timeline: {
+                  emptyTitle: copy.montageTimelineEmptyTitle,
+                  emptyHint: copy.montageTimelineEmptyHint,
+                  sequenceAria: copy.montageTimelineSequenceAria,
+                },
+                card: {
+                  clickToEdit: copy.montageClickToEdit,
+                  dragHandle: copy.montageDragHandle,
+                  remove: copy.montageRemove,
+                  duplicateBadge: copy.montageDuplicateBadge,
+                  deleteDuplicate: copy.montageDeleteDuplicate,
+                },
+                director: {
+                  close: copy.montageDirectorClose,
+                  focalHint: copy.montageFocalHint,
+                  exclude: copy.montageExclude,
+                  include: copy.montageInclude,
+                  remove: copy.montageRemove,
+                  previous: copy.montageDirectorPrevious,
+                  next: copy.montageDirectorNext,
+                  counter: copy.montageDirectorCounter,
+                  chapterTablistAria: copy.montageChapterTabsAria,
+                },
+                capacityRecommended: copy.chapterCapacityRecommended,
+                capacityPending: copy.chapterCapacityPending,
               }}
             />
           ) : null}
