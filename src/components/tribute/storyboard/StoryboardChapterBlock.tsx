@@ -18,6 +18,7 @@ import {
 import { ChapterNarrativeHeader } from "@/src/components/tribute/storyboard/ChapterNarrativeHeader";
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
+import { MAGIC_SCROLL_MARGIN_TOP_PX } from "@/src/lib/wizard/magicTimelinePlayer";
 import {
   STORYBOARD_CHAPTER_BLOCK_DND_TYPE,
   storyboardChapterDroppableId,
@@ -54,6 +55,9 @@ type Props = {
   sortableEnabled: boolean;
   chapterSortableEnabled: boolean;
   isDropHighlighted: boolean;
+  isMagicHighlighted: boolean;
+  magicEntranceMediaIds: ReadonlySet<string>;
+  magicEntranceStaggerByMediaId: ReadonlyMap<string, number>;
   hasUnassignedMedia: boolean;
   onMediaClick: (assetId: string, event?: React.MouseEvent) => void;
   onToggleMediaSelect: (assetId: string) => void;
@@ -85,6 +89,9 @@ export function StoryboardChapterBlock({
   sortableEnabled,
   chapterSortableEnabled,
   isDropHighlighted,
+  isMagicHighlighted,
+  magicEntranceMediaIds,
+  magicEntranceStaggerByMediaId,
   hasUnassignedMedia,
   onMediaClick,
   onToggleMediaSelect,
@@ -96,7 +103,6 @@ export function StoryboardChapterBlock({
   resolveChapterDragMediaIds,
 }: Props) {
   const theme = getChapterTheme(chapterIndex);
-  const selectedSet = new Set(selectedMediaIds);
 
   const {
     attributes: chapterSortAttributes,
@@ -121,6 +127,7 @@ export function StoryboardChapterBlock({
   const chapterStyle = {
     transform: CSS.Transform.toString(chapterTransform),
     transition: chapterTransition,
+    scrollMarginTop: MAGIC_SCROLL_MARGIN_TOP_PX,
   };
 
   const setRefs = (node: HTMLElement | null) => {
@@ -128,13 +135,24 @@ export function StoryboardChapterBlock({
     setDropRef(node);
   };
 
+  const inCapacityItems =
+    recommendedCapacity === null
+      ? items
+      : items.slice(0, Math.max(recommendedCapacity, 0));
+  const beyondCapacityCount =
+    recommendedCapacity === null
+      ? 0
+      : Math.max(0, items.length - recommendedCapacity);
+
   return (
     <article
       ref={setRefs}
       id={storyboardChapterDomId(chapter.id)}
       style={chapterStyle}
-      className={`scroll-mt-24 rounded-2xl border p-6 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:p-8 ${
-        isDropHighlighted
+      className={`rounded-2xl border p-6 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:p-8 ${
+        isMagicHighlighted
+          ? `${theme.active} ring-2 ${theme.ring} shadow-[0_0_56px_rgba(255,255,255,0.08)]`
+          : isDropHighlighted
           ? `${theme.active} ring-2 ${theme.ring} shadow-[0_0_48px_rgba(255,255,255,0.06)]`
           : "border-white/[0.06] bg-white/[0.02]"
       } ${isChapterDragging ? "opacity-50" : ""}`}
@@ -170,9 +188,22 @@ export function StoryboardChapterBlock({
           onManage={onManage}
         />
 
+        {beyondCapacityCount > 0 && sortableEnabled ? (
+          <button
+            type="button"
+            onClick={onManage}
+            className="w-full rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3 text-left text-sm font-light text-zinc-400 transition-colors hover:border-white/10 hover:text-zinc-300"
+          >
+            {gridCopy.beyondRhythmHint.replace(
+              "{count}",
+              String(beyondCapacityCount),
+            )}
+          </button>
+        ) : null}
+
         <ChapterCanvasGrid
           chapterId={chapter.id}
-          items={items}
+          items={inCapacityItems}
           chapterIndex={chapterIndex}
           recommendedCapacity={recommendedCapacity}
           excludedIds={excludedIds}
@@ -180,6 +211,8 @@ export function StoryboardChapterBlock({
           activeDragIds={activeDragIds}
           selectedMediaIds={selectedMediaIds}
           sortableEnabled={sortableEnabled}
+          magicEntranceMediaIds={magicEntranceMediaIds}
+          magicEntranceStaggerByMediaId={magicEntranceStaggerByMediaId}
           copy={gridCopy}
           cardCopy={cardCopy}
           toggleSelectAria={toggleSelectAria}

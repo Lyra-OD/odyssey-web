@@ -264,6 +264,165 @@ body {
   box-shadow: none;
 }
 
+.magic-depth-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 72;
+  pointer-events: none;
+  opacity: 0;
+  contain: strict;
+  animation: magic-depth-scrim-enter 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: opacity cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.magic-depth-scrim.is-exiting {
+  animation: none;
+  opacity: 0;
+}
+
+.magic-depth-scrim__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 52% 48% at 50% 38%,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.05) 40%,
+    rgba(0, 0, 0, 0.38) 72%,
+    rgba(0, 0, 0, 0.52) 100%
+  );
+}
+
+.magic-depth-scrim__blur {
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  -webkit-mask-image: radial-gradient(
+    ellipse 46% 42% at 50% 38%,
+    transparent 0%,
+    transparent 52%,
+    rgba(0, 0, 0, 0.55) 78%,
+    black 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 46% 42% at 50% 38%,
+    transparent 0%,
+    transparent 52%,
+    rgba(0, 0, 0, 0.55) 78%,
+    black 100%
+  );
+}
+
+@keyframes magic-depth-scrim-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* —— Composition Magique : 3 couches (enter → frame → text) —— */
+
+.magic-capsule-enter {
+  animation: magic-capsule-enter 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition:
+    opacity cubic-bezier(0.16, 1, 0.3, 1),
+    transform cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.magic-capsule-enter.is-exiting {
+  animation: none;
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.magic-capsule-enter.is-exiting .magic-capsule-frame,
+.magic-capsule-enter.is-exiting .magic-capsule-text {
+  animation: none;
+}
+
+.magic-capsule-spotlight {
+  z-index: 0;
+}
+
+@keyframes magic-capsule-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.magic-capsule-frame {
+  animation: magic-capsule-frame-breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes magic-capsule-frame-breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px rgba(255, 255, 255, 0.16),
+      0 0 18px rgba(0, 232, 240, 0.3);
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    box-shadow:
+      0 0 16px rgba(255, 255, 255, 0.3),
+      0 0 28px rgba(0, 232, 240, 0.48),
+      0 0 44px rgba(0, 232, 240, 0.14);
+    background-color: rgba(255, 255, 255, 0.085);
+  }
+}
+
+.magic-capsule-text {
+  display: block;
+  animation: magic-capsule-text-breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes magic-capsule-text-breathe {
+  0%,
+  100% {
+    opacity: 0.72;
+    text-shadow:
+      0 0 6px rgba(255, 255, 255, 0.55),
+      0 0 14px rgba(255, 255, 255, 0.28),
+      0 0 20px rgba(0, 232, 240, 0.2);
+  }
+  50% {
+    opacity: 1;
+    text-shadow:
+      0 0 8px rgba(255, 255, 255, 0.9),
+      0 0 18px rgba(255, 255, 255, 0.45),
+      0 0 28px rgba(0, 232, 240, 0.38);
+  }
+}
+
+.magic-media-enter {
+  --magic-stagger-step: 45ms;
+  animation: magic-media-enter 160ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--magic-stagger-index, 0) * var(--magic-stagger-step));
+  will-change: opacity, transform;
+}
+
+.magic-media-enter-done {
+  will-change: auto;
+}
+
+@keyframes magic-media-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .salon-cinema-logo,
   .salon-logo-glow,
@@ -286,6 +445,30 @@ body {
   }
 
   .connexion-submit-breathe:not(:disabled) {
+    box-shadow:
+      0 0 12px rgba(255, 255, 255, 0.22),
+      0 0 20px rgba(0, 232, 240, 0.4);
+  }
+
+  .magic-depth-scrim,
+  .magic-capsule-enter,
+  .magic-capsule-frame,
+  .magic-capsule-text,
+  .magic-media-enter {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    text-shadow:
+      0 0 8px rgba(255, 255, 255, 0.9),
+      0 0 18px rgba(255, 255, 255, 0.45);
+  }
+
+  .magic-depth-scrim__blur {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .magic-capsule-frame {
     box-shadow:
       0 0 12px rgba(255, 255, 255, 0.22),
       0 0 20px rgba(0, 232, 240, 0.4);

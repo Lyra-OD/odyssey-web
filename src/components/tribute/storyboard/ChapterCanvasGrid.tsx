@@ -21,6 +21,8 @@ import { MediaInstantTile } from "@/src/components/tribute/storyboard/MediaInsta
 
 export type ChapterCanvasGridCopy = {
   emptyHint: string;
+  /** Doit contenir `{count}`. */
+  beyondRhythmHint: string;
 };
 
 type Props = {
@@ -33,6 +35,8 @@ type Props = {
   activeDragIds: readonly string[];
   selectedMediaIds: readonly string[];
   sortableEnabled: boolean;
+  magicEntranceMediaIds: ReadonlySet<string>;
+  magicEntranceStaggerByMediaId: ReadonlyMap<string, number>;
   copy: ChapterCanvasGridCopy;
   cardCopy: MontageMediaCardCopy;
   toggleSelectAria: string;
@@ -54,6 +58,8 @@ export function ChapterCanvasGrid({
   activeDragIds,
   selectedMediaIds,
   sortableEnabled,
+  magicEntranceMediaIds,
+  magicEntranceStaggerByMediaId,
   copy,
   cardCopy,
   toggleSelectAria,
@@ -108,6 +114,10 @@ export function ChapterCanvasGrid({
                   isGroupDragging={activeDragSet.has(item.assetId)}
                   isExcluded={excludedIds.includes(item.assetId)}
                   hasFocalPoint={Boolean(focalPoints[item.assetId])}
+                  magicEntrance={magicEntranceMediaIds.has(item.assetId)}
+                  magicStaggerIndex={
+                    magicEntranceStaggerByMediaId.get(item.assetId) ?? 0
+                  }
                   copy={cardCopy}
                   selectable
                   toggleSelectAria={toggleSelectAria}

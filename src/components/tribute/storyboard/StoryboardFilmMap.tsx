@@ -1,5 +1,7 @@
 "use client";
 
+import { memo, useCallback } from "react";
+
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
 
 import { storyboardChapterDomId } from "@/src/components/tribute/storyboard/StoryboardChapterBlock";
@@ -22,14 +24,17 @@ type Props = {
   copy: StoryboardFilmMapCopy;
 };
 
-export function StoryboardFilmMap({ segments, copy }: Props) {
-  if (segments.length === 0) return null;
-
-  const scrollToChapter = (chapterId: string) => {
+export const StoryboardFilmMap = memo(function StoryboardFilmMap({
+  segments,
+  copy,
+}: Props) {
+  const scrollToChapter = useCallback((chapterId: string) => {
     document
       .getElementById(storyboardChapterDomId(chapterId))
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  }, []);
+
+  if (segments.length === 0) return null;
 
   return (
     <nav
@@ -100,4 +105,4 @@ export function StoryboardFilmMap({ segments, copy }: Props) {
       </div>
     </nav>
   );
-}
+});

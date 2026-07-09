@@ -51,3 +51,11 @@ export function autoFillChapter(
   const toAssign = storyboard.unassignedIds.slice(0, slotsLeft);
   return assignManyMediaToChapter(storyboard, chapterId, toAssign);
 }
+
+/** Storyboard vierge : aucun média assigné à un chapitre. */
+export function isStoryboardMontageVirgin(
+  storyboard: WizardStoryboardState,
+): boolean {
+  if (storyboard.chapters.length === 0) return false;
+  return storyboard.chapters.every((chapter) => chapter.mediaIds.length === 0);
+}

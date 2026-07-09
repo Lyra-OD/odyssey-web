@@ -20,6 +20,9 @@ type Props = {
   onShiftMediaSelect: (assetId: string) => void;
   onSelectAllBank: () => void;
   onDeselectAllBank: () => void;
+  isMagicRunning: boolean;
+  hasUnassignedMedia: boolean;
+  onMagicComposition: () => void;
   filmMap: ReactNode;
   children: ReactNode;
 };
@@ -41,6 +44,9 @@ export function StoryboardOpenBookLayout({
   onShiftMediaSelect,
   onSelectAllBank,
   onDeselectAllBank,
+  isMagicRunning,
+  hasUnassignedMedia,
+  onMagicComposition,
   filmMap,
   children,
 }: Props) {
@@ -62,6 +68,9 @@ export function StoryboardOpenBookLayout({
           onShiftMediaSelect={onShiftMediaSelect}
           onSelectAll={onSelectAllBank}
           onDeselectAll={onDeselectAllBank}
+          isMagicRunning={isMagicRunning}
+          hasUnassignedMedia={hasUnassignedMedia}
+          onMagicComposition={onMagicComposition}
         />
 
         <div className="min-w-0">{children}</div>

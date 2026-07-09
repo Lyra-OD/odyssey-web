@@ -40,6 +40,9 @@ type Props = {
   selectedMediaIds: readonly string[];
   selectionScope: MediaSelectionScope | null;
   dropTargetChapterId: string | null;
+  magicHighlightChapterId: string | null;
+  magicEntranceMediaIds: ReadonlySet<string>;
+  magicEntranceStaggerByMediaId: ReadonlyMap<string, number>;
   refinementChapterId: string | null;
   hasUnassignedMedia: boolean;
   capacityCopy: {
@@ -74,6 +77,9 @@ export function StoryboardChapterStack({
   selectedMediaIds,
   selectionScope,
   dropTargetChapterId,
+  magicHighlightChapterId,
+  magicEntranceMediaIds,
+  magicEntranceStaggerByMediaId,
   refinementChapterId,
   hasUnassignedMedia,
   capacityCopy,
@@ -136,6 +142,9 @@ export function StoryboardChapterStack({
               sortableEnabled={refinementChapterId !== chapter.id}
               chapterSortableEnabled={refinementChapterId === null}
               isDropHighlighted={dropTargetChapterId === chapter.id}
+              isMagicHighlighted={magicHighlightChapterId === chapter.id}
+              magicEntranceMediaIds={magicEntranceMediaIds}
+              magicEntranceStaggerByMediaId={magicEntranceStaggerByMediaId}
               hasUnassignedMedia={hasUnassignedMedia}
               onMediaClick={(assetId, event) => onMediaClick(assetId, event)}
               onToggleMediaSelect={(assetId) =>

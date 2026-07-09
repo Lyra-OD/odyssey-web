@@ -17,6 +17,7 @@ export type MediaBankColumnCopy = {
   /** Doit contenir `{count}`. */
   selectedCount: string;
   toggleSelectAria: string;
+  magicComposition: string;
 };
 
 type Props = {
@@ -32,6 +33,9 @@ type Props = {
   onShiftMediaSelect: (assetId: string) => void;
   onSelectAll: () => void;
   onDeselectAll: () => void;
+  isMagicRunning: boolean;
+  hasUnassignedMedia: boolean;
+  onMagicComposition: () => void;
 };
 
 export function MediaBankColumn({
@@ -47,6 +51,9 @@ export function MediaBankColumn({
   onShiftMediaSelect,
   onSelectAll,
   onDeselectAll,
+  isMagicRunning,
+  hasUnassignedMedia,
+  onMagicComposition,
 }: Props) {
   const { setNodeRef } = useDroppable({
     id: STORYBOARD_BANK_DROPPABLE_ID,
@@ -90,6 +97,14 @@ export function MediaBankColumn({
               ? copy.count.replace("{count}", String(items.length))
               : copy.empty}
         </p>
+        <button
+          type="button"
+          disabled={!hasUnassignedMedia || isMagicRunning}
+          onClick={onMagicComposition}
+          className="w-full rounded-lg border border-amber-400/20 bg-amber-400/[0.06] px-3 py-2.5 text-left text-xs font-light text-amber-100/90 transition-all duration-300 hover:border-amber-400/35 hover:bg-amber-400/[0.1] disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {copy.magicComposition}
+        </button>
       </div>
 
       <div ref={setNodeRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-4">

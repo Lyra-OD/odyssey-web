@@ -223,6 +223,7 @@ export function TributeWizard({
   const persistStoryboardRef = useRef<(next: WizardStoryboardState) => void>(
     () => {},
   );
+  const magicPerformingRef = useRef(false);
   const handleStoryboardDomainChange = useCallback(
     (next: WizardStoryboardState) => persistStoryboardRef.current(next),
     [],
@@ -463,7 +464,9 @@ export function TributeWizard({
   persistStoryboardRef.current = (next: WizardStoryboardState) => {
     wizardFieldsRef.current.storyboard = next;
     setChaptersStructureError(false);
-    queueSave("immediate");
+    if (!magicPerformingRef.current) {
+      queueSave("immediate");
+    }
   };
 
   const deceasedDisplayName = useMemo(() => {
@@ -1653,6 +1656,12 @@ export function TributeWizard({
               projectId={uploadProjectId}
               storyboard={wizardStoryboard.storyboard}
               onStoryboardChange={wizardStoryboard.setStoryboard}
+              onMagicPerformingChange={(performing) => {
+                magicPerformingRef.current = performing;
+              }}
+              onMagicSequenceComplete={() => {
+                queueSave("immediate");
+              }}
               copy={{
                 title: copy.stepMontageTitle,
                 description: copy.stepMontageDescription,
@@ -1692,9 +1701,11 @@ export function TributeWizard({
                   deselectAll: copy.mediaBankDeselectAll,
                   selectedCount: copy.mediaBankSelectedCount,
                   toggleSelectAria: copy.mediaBankToggleSelectAria,
+                  magicComposition: copy.mediaBankMagicComposition,
                 },
                 chapterGrid: {
                   emptyHint: copy.montageChapterGridEmptyHint,
+                  beyondRhythmHint: copy.montageChapterBeyondRhythmHint,
                 },
                 chapterActions: {
                   autoFill: copy.montageChapterAutoFill,
@@ -1723,6 +1734,17 @@ export function TributeWizard({
                   capacityPending: copy.chapterCapacityPending,
                 },
                 multiDragLabel: copy.montageMultiDragLabel,
+                onboarding: {
+                  title: copy.montageOnboardingTitle,
+                  description: copy.montageOnboardingDescription,
+                  magic: copy.montageOnboardingMagic,
+                  magicHint: copy.montageOnboardingMagicHint,
+                  manual: copy.montageOnboardingManual,
+                  manualHint: copy.montageOnboardingManualHint,
+                },
+                magicComposition: {
+                  message: copy.montageMagicMessage,
+                },
               }}
             />
           ) : null}

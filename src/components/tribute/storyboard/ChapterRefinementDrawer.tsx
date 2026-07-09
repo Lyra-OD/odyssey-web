@@ -158,12 +158,19 @@ export function ChapterRefinementDrawer({
             <div
               ref={setNodeRef}
               className={`min-h-0 flex-1 overflow-y-auto px-5 py-5 md:px-8 ${
-                isOver ? "ring-1 ring-inset ring-amber-400/20" : ""
+                isOver ? `ring-1 ring-inset ${theme.ring}` : ""
               }`}
             >
-              <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
-                {copy.inCapacity}
-              </p>
+              <section className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${theme.dot}`}
+                    aria-hidden
+                  />
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
+                    {copy.inCapacity}
+                  </p>
+                </div>
               <SortableContext
                 items={sortableIds}
                 strategy={rectSortingStrategy}
@@ -192,9 +199,10 @@ export function ChapterRefinementDrawer({
                   ))}
                 </div>
               </SortableContext>
+              </section>
 
               {beyondCapacityItems.length > 0 ? (
-                <div className="mt-8 space-y-4">
+                <section className="mt-10 space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="h-px flex-1 bg-white/[0.06]" />
                     <p className="shrink-0 text-xs font-light text-zinc-500">
@@ -208,16 +216,23 @@ export function ChapterRefinementDrawer({
                     <div className="h-px flex-1 bg-white/[0.06]" />
                   </div>
 
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
-                    {copy.beyondCapacity}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${theme.dot} opacity-30`}
+                      aria-hidden
+                    />
+                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+                      {copy.beyondCapacity}
+                    </p>
+                  </div>
 
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                    {beyondCapacityItems.map((item, index) => (
-                      <div
-                        key={item.assetId}
-                        className="opacity-40 saturate-50 grayscale transition-opacity hover:opacity-55"
-                      >
+                  <div className="rounded-xl border border-white/[0.04] bg-white/[0.01] p-4">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                      {beyondCapacityItems.map((item, index) => (
+                        <div
+                          key={item.assetId}
+                          className="opacity-50 saturate-[0.65] transition-opacity hover:opacity-70"
+                        >
                         <MontageMediaCard
                           item={item}
                           chapterIndex={chapterIndex}
@@ -236,7 +251,7 @@ export function ChapterRefinementDrawer({
                     ))}
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="mt-4 flex flex-wrap gap-2">
                     <button
                       type="button"
                       className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/10 px-3 text-xs font-light text-zinc-300 hover:border-white/20"
@@ -258,7 +273,8 @@ export function ChapterRefinementDrawer({
                       {copy.moveToNextChapter}
                     </button>
                   </div>
-                </div>
+                  </div>
+                </section>
               ) : null}
             </div>
           </motion.aside>

@@ -1,6 +1,7 @@
 "use client";
 
 import type { DraggableAttributes } from "@dnd-kit/core";
+import type { CSSProperties } from "react";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -14,6 +15,7 @@ import {
   getUnassignedCardTheme,
   type ChapterCardTheme,
 } from "@/src/lib/wizard/chapterTheme";
+import { EASE_OUT_LUXE } from "@/src/lib/motion/easing";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 
 export type MontageMediaCardCopy = {
@@ -63,7 +65,7 @@ export const montageCardVariants = {
     scale: 1,
     transition: {
       duration: 0.45,
-      ease: [0.16, 1, 0.3, 1],
+      ease: EASE_OUT_LUXE,
     },
   },
 };
@@ -271,6 +273,9 @@ type Props = {
   selectable?: boolean;
   onToggleSelect?: (event: React.MouseEvent) => void;
   toggleSelectAria?: string;
+  /** Entrée cascade CSS pendant la Composition Magique. */
+  magicEntrance?: boolean;
+  magicStaggerIndex?: number;
   /** Teinte de l'overlay drag (connexion visuelle au chapitre cible). */
   accentChapterIndex?: number;
 };
@@ -292,6 +297,8 @@ export function MontageMediaCard({
   selectable = false,
   onToggleSelect,
   toggleSelectAria,
+  magicEntrance = false,
+  magicStaggerIndex = 0,
 }: Props) {
   const theme =
     variant === "unassigned"
@@ -343,7 +350,43 @@ export function MontageMediaCard({
       {...cardDragAttributes}
       {...cardDragListeners}
     >
+      {magicEntrance ? (
+        <div
+          className="magic-media-enter"
+          style={
+            {
+              "--magic-stagger-index": magicStaggerIndex,
+            } as CSSProperties
+          }
+          onAnimationEnd={(event) => {
+            if (event.animationName !== "magic-media-enter") return;
+            event.currentTarget.classList.add("magic-media-enter-done");
+          }}
+        >
+          <MontageMediaCardSurface
+            item={item}
+            theme={theme}
+            variant={variant}
+            index={index}
+            isSelected={isSelected}
+            isDuplicate={isDuplicate}
+            isExcluded={isExcluded}
+            hasFocalPoint={hasFocalPoint}
+            copy={copy}
+            isGhost={isGhost}
+            showRemove={Boolean(onRemove)}
+            selectable={selectable}
+            onToggleSelect={onToggleSelect}
+            toggleSelectAria={toggleSelectAria}
+            onCardClick={onCardClick}
+            onRemove={onRemove}
+            showDragHandle={!dragFromWholeCard}
+            dragHandleProps={handleDragProps}
+          />
+        </div>
+      ) : (
       <motion.div
+        layout
         variants={montageCardVariants}
         initial="hidden"
         animate="visible"
@@ -356,7 +399,7 @@ export function MontageMediaCard({
               }
         }
         whileTap={isGhost ? undefined : { scale: 0.98 }}
-        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.3, ease: EASE_OUT_LUXE }}
       >
         <MontageMediaCardSurface
           item={item}
@@ -379,6 +422,7 @@ export function MontageMediaCard({
           dragHandleProps={handleDragProps}
         />
       </motion.div>
+      )}
     </div>
   );
 }

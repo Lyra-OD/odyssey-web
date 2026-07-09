@@ -14,6 +14,7 @@ import {
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { AnimatePresence } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
 import { useMontageAutoScroll } from "@/src/hooks/useMontageAutoScroll";
@@ -44,7 +45,24 @@ import {
 } from "@/src/components/tribute/storyboard/StoryboardFilmMap";
 import { StoryboardOpenBookLayout } from "@/src/components/tribute/storyboard/StoryboardOpenBookLayout";
 import { StoryboardChapterStack } from "@/src/components/tribute/storyboard/StoryboardChapterStack";
-import { autoFillChapter, clearChapterMedia } from "@/src/lib/wizard/storyboardAutoFill";
+import {
+  MagicCinematicOverlay,
+  type MagicCinematicOverlayCopy,
+} from "@/src/components/tribute/storyboard/MagicCinematicOverlay";
+import {
+  MontageOnboardingGate,
+  type MontageOnboardingGateCopy,
+} from "@/src/components/tribute/storyboard/MontageOnboardingGate";
+import {
+  autoFillChapter,
+  clearChapterMedia,
+  isStoryboardMontageVirgin,
+} from "@/src/lib/wizard/storyboardAutoFill";
+import { buildMagicTimeline } from "@/src/lib/wizard/storyboardMagicTimeline";
+import {
+  playMagicTimeline,
+  type MagicCinematicPhase,
+} from "@/src/lib/wizard/magicTimelinePlayer";
 import {
   findChapterForMedia,
   reorderStoryboardChapters,
@@ -111,6 +129,8 @@ export type StoryboardMontageStepCopy = {
   filmMap: StoryboardFilmMapCopy;
   refinement: ChapterRefinementDrawerCopy;
   multiDragLabel: string;
+  onboarding: MontageOnboardingGateCopy;
+  magicComposition: MagicCinematicOverlayCopy;
 };
 
 type Props = {
@@ -118,6 +138,8 @@ type Props = {
   projectId: string | null;
   storyboard: WizardStoryboardState;
   onStoryboardChange: (next: WizardStoryboardState) => void;
+  onMagicPerformingChange?: (performing: boolean) => void;
+  onMagicSequenceComplete?: () => void;
   copy: StoryboardMontageStepCopy;
 };
 
@@ -137,6 +159,8 @@ export function StoryboardMontageStep({
   projectId,
   storyboard,
   onStoryboardChange,
+  onMagicPerformingChange,
+  onMagicSequenceComplete,
   copy,
 }: Props) {
   const [mediaItems, setMediaItems] = useState<MontageMediaItem[]>([]);
@@ -159,12 +183,30 @@ export function StoryboardMontageStep({
   const [refinementChapterId, setRefinementChapterId] = useState<string | null>(
     null,
   );
+  const [gateAcknowledged, setGateAcknowledged] = useState(false);
+  const [isMagicRunning, setIsMagicRunning] = useState(false);
+  const [magicPhase, setMagicPhase] = useState<MagicCinematicPhase>("idle");
+  const [magicHighlightChapterId, setMagicHighlightChapterId] = useState<
+    string | null
+  >(null);
   const storyboardRef = useRef(storyboard);
+  const magicRunIdRef = useRef(0);
+  const isMagicRunningRef = useRef(false);
+  const magicEntranceMediaIdsRef = useRef<Set<string>>(new Set());
+  const magicEntranceStaggerRef = useRef<Map<string, number>>(new Map());
+  const wasVirginRef = useRef(isStoryboardMontageVirgin(storyboard));
   const dragPayloadRef = useRef<{
     mediaIds: string[];
     source: StoryboardDragSource;
   } | null>(null);
   storyboardRef.current = storyboard;
+
+  useEffect(
+    () => () => {
+      magicRunIdRef.current += 1;
+    },
+    [],
+  );
 
   const autoScroll = useMontageAutoScroll();
   const sensors = useSensors(
@@ -201,6 +243,25 @@ export function StoryboardMontageStep({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
+
+  useEffect(() => {
+    const isVirgin = isStoryboardMontageVirgin(storyboard);
+    const wasVirgin = wasVirginRef.current;
+
+    if (!isVirgin) {
+      setGateAcknowledged(false);
+    } else if (!wasVirgin && isVirgin) {
+      setGateAcknowledged(false);
+    }
+
+    wasVirginRef.current = isVirgin;
+  }, [storyboard]);
+
+  const showOnboardingGate =
+    isStoryboardMontageVirgin(storyboard) &&
+    !isLoadingMedia &&
+    !isMagicRunning &&
+    !gateAcknowledged;
 
   const mediaById = useMemo(
     () => new Map(mediaItems.map((item) => [item.assetId, item])),
@@ -240,6 +301,17 @@ export function StoryboardMontageStep({
       ),
     }));
   }, [storyboard.chapters, copy.chapterTabs, packageId]);
+
+  const chapterCapacities = useMemo(
+    () =>
+      storyboard.chapters.map((chapter) =>
+        chapterRecommendedCapacity(
+          chapter.song?.durationSec,
+          resolveTargetSecondsPerMedia(packageId, chapter.mood),
+        ),
+      ),
+    [packageId, storyboard.chapters],
+  );
 
   const refinementChapter = useMemo(() => {
     if (!refinementChapterId) return null;
@@ -717,6 +789,78 @@ export function StoryboardMontageStep({
     setRefinementChapterId(chapterId);
   }, []);
 
+  const runMagicComposition = useCallback(async () => {
+    if (isMagicRunningRef.current) return;
+    if (storyboardRef.current.unassignedIds.length === 0) return;
+
+    const runId = magicRunIdRef.current + 1;
+    magicRunIdRef.current = runId;
+
+    setGateAcknowledged(true);
+    isMagicRunningRef.current = true;
+    setIsMagicRunning(true);
+    magicEntranceMediaIdsRef.current = new Set();
+    magicEntranceStaggerRef.current = new Map();
+    onMagicPerformingChange?.(true);
+    clearMediaSelection();
+
+    const events = buildMagicTimeline(
+      storyboardRef.current,
+      chapterCapacities,
+    );
+
+    await playMagicTimeline(events, {
+      shouldAbort: () => magicRunIdRef.current !== runId,
+      setPhase: setMagicPhase,
+      setHighlightChapterId: setMagicHighlightChapterId,
+      assignChapterBatch: (chapterId, mediaIds) => {
+        mediaIds.forEach((mediaId, index) => {
+          magicEntranceMediaIdsRef.current.add(mediaId);
+          magicEntranceStaggerRef.current.set(mediaId, index);
+        });
+        const next = assignManyMediaToChapter(
+          storyboardRef.current,
+          chapterId,
+          mediaIds,
+        );
+        storyboardRef.current = next;
+        onStoryboardChange(next);
+      },
+    });
+
+    if (magicRunIdRef.current !== runId) {
+      flushSync(() => {
+        setMagicPhase("idle");
+        isMagicRunningRef.current = false;
+        setIsMagicRunning(false);
+        setMagicHighlightChapterId(null);
+      });
+      return;
+    }
+
+    flushSync(() => {
+      isMagicRunningRef.current = false;
+      setIsMagicRunning(false);
+      setMagicHighlightChapterId(null);
+    });
+    onMagicPerformingChange?.(false);
+    onMagicSequenceComplete?.();
+  }, [
+    chapterCapacities,
+    clearMediaSelection,
+    onMagicPerformingChange,
+    onMagicSequenceComplete,
+    onStoryboardChange,
+  ]);
+
+  const handleChooseMagic = useCallback(() => {
+    void runMagicComposition();
+  }, [runMagicComposition]);
+
+  const handleChooseManual = useCallback(() => {
+    setGateAcknowledged(true);
+  }, []);
+
   const handleReturnToBank = useCallback(
     (mediaIds: readonly string[]) => {
       onStoryboardChange(unassignManyMediaFromChapters(storyboard, mediaIds));
@@ -819,6 +963,12 @@ export function StoryboardMontageStep({
         onDragCancel={handleDragCancel}
       >
         {storyboard.chapters.length > 0 ? (
+          <div
+            className={
+              isMagicRunning ? "pointer-events-none select-none" : undefined
+            }
+            aria-hidden={isMagicRunning}
+          >
           <StoryboardOpenBookLayout
             bankItems={unassignedItems}
             selectedMediaIds={visibleBankSelection}
@@ -832,6 +982,9 @@ export function StoryboardMontageStep({
             onShiftMediaSelect={(assetId) => handleShiftMediaSelect(assetId)}
             onSelectAllBank={handleSelectAllBank}
             onDeselectAllBank={handleDeselectAll}
+            isMagicRunning={isMagicRunning}
+            hasUnassignedMedia={storyboard.unassignedIds.length > 0}
+            onMagicComposition={handleChooseMagic}
             filmMap={
               <StoryboardFilmMap
                 segments={filmMapSegments}
@@ -848,6 +1001,9 @@ export function StoryboardMontageStep({
               selectedMediaIds={selectedMediaIds}
               selectionScope={selectionScope}
               dropTargetChapterId={dropTargetChapterId}
+              magicHighlightChapterId={magicHighlightChapterId}
+              magicEntranceMediaIds={magicEntranceMediaIdsRef.current}
+              magicEntranceStaggerByMediaId={magicEntranceStaggerRef.current}
               refinementChapterId={refinementChapterId}
               hasUnassignedMedia={storyboard.unassignedIds.length > 0}
               capacityCopy={{
@@ -870,6 +1026,7 @@ export function StoryboardMontageStep({
               resolveChapterDragMediaIds={resolveChapterDragMediaIds}
             />
           </StoryboardOpenBookLayout>
+          </div>
         ) : null}
 
         <DragOverlay
@@ -927,6 +1084,22 @@ export function StoryboardMontageStep({
           />
         ) : null}
       </DndContext>
+
+      <MagicCinematicOverlay
+        phase={magicPhase}
+        message={copy.magicComposition.message}
+      />
+
+      <AnimatePresence>
+        {showOnboardingGate ? (
+          <MontageOnboardingGate
+            key="montage-onboarding"
+            copy={copy.onboarding}
+            onChooseMagic={handleChooseMagic}
+            onChooseManual={handleChooseManual}
+          />
+        ) : null}
+      </AnimatePresence>
 
       <AnimatePresence>
         {directorItem ? (
