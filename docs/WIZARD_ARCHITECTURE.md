@@ -403,11 +403,61 @@ Mock catalog (`stingrayCatalog.ts`): each track has `musicTier: "standard" | "pr
 
 - **Component:** `CheckoutStep.tsx` (recap + pay CTA)
 - **API:** `app/api/checkout/route.ts`
-- **Référence commerce :** [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 (saga freemium · RevShare · legacy jetons)
+- **Référence commerce :** [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 (saga freemium · **Bulletproof waterfall** · legacy jetons)
 
-**Implémentation actuelle :** 2 branches legacy (`isPartner` → jetons TS **ou** Stripe). **Cible v2 :** saga `tribute_checkouts` + branche `is_freemium` + webhook commission.
+**Implémentation actuelle :** 2 branches legacy (`isPartner` → jetons TS **ou** Stripe). **Cible v2 :** saga `tribute_checkouts` + branche `is_freemium` + webhook waterfall P6.
 
 **Spike checkout v1 (jetons-first) : annulé** — remplacé par pivot B2B2C v2.
+
+### Diagramme de flux P6 complet (Bulletproof)
+
+```mermaid
+flowchart TD
+  subgraph POST ["POST /api/checkout — Checkout T"]
+    A[Valider permissions + invitation] --> B[resolveCheckoutContext]
+    B --> C{checkout_mode}
+    C -->|b2c| C1[Stripe catalogue 149/299/499]
+    C -->|b2b_partner| C2[RPC debit jetons P5.5]
+    C -->|b2b2c_family| D{tenant.is_freemium?}
+    D -->|false| C3[Saga v1 jetons + delta Stripe]
+    D -->|true| E[computeB2B2CFamilyPricing]
+    E --> F[INSERT tribute_checkouts pending]
+    F --> G[Snapshot platform_fee_bps + commission_rate_bps]
+    G --> H{family_total_cents = 0?}
+    H -->|oui| I[completed synchrone sans Stripe]
+    H -->|non| J[Stripe Session + awaiting_payment]
+  end
+
+  subgraph WH ["Webhook checkout.session.completed"]
+    K[Vérifier signature + idempotence evt] --> L[Charger tribute_checkouts]
+    L --> M{Éligible RevShare?<br/>b2b2c_family + freemium + gross > 0}
+    M -->|non| N[completed projet seulement]
+    M -->|oui| O[compute_revenue_waterfall<br/>gross = amount_total]
+    O --> P[accrue_partner_commission_for_checkout]
+    P --> Q[Snapshots gross / fee / Net Distribuable / commission]
+    Q --> R[completed + project submitted]
+    R --> S{Family Fund Phase 2?}
+    S -->|optionnel| T[allocate_family_tribute_fund<br/>depuis odyssey_margin uniquement]
+  end
+
+  subgraph REF ["Webhook charge.refunded"]
+    U[charge.refunded] --> V[clawback proportionnel<br/>floor commission × refund / gross]
+    V --> W[commission_clawback ledger]
+  end
+
+  J --> K
+  C1 --> K
+```
+
+**Waterfall (freemium payant) :**
+
+```text
+Gross Volume (amount_total) → Platform Fee 10% → Net Distribuable → Commission 30% → Odyssey Margin 70%
+```
+
+Détail formules + QA : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md).
+
+### Vue simplifiée par mode
 
 ```mermaid
 flowchart TD
@@ -416,7 +466,7 @@ flowchart TD
   B -->|b2b_partner| D[Legacy jetons — RPC P5.5]
   B -->|b2b2c_family| E{tenant.is_freemium?}
   E -->|true| F[Saga v2: 0$ ou Stripe upsell plein]
-  F --> F1[webhook → RevShare 30%]
+  F --> F1[webhook → Bulletproof waterfall P6.1]
   E -->|false| G[Saga v1: debit jetons + delta Stripe]
 ```
 
@@ -433,7 +483,7 @@ flowchart TD
 ### Mode `b2b2c_family` — freemium (`is_freemium = true`)
 
 - Souvenir offert → **`family_total_cents = 0`** → completed sans Stripe.
-- Upsell Héritage / Éternité → **prix plein** + extensions → Stripe → webhook → **RevShare 30 %** ([`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md)).
+- Upsell Héritage / Éternité → **prix plein** + extensions → Stripe → webhook → **Bulletproof waterfall** (10 % platform · 30 % **Net Distribuable**) — [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
 - UX gant blanc : jamais « jeton » ni « commission ».
 
 ### Mode `b2b2c_family` — legacy (`is_freemium = false`)
@@ -460,7 +510,8 @@ flowchart TD
 | `docs/sql/odyssey_p4_partner_token_wallets.sql` | Wallets + ledger |
 | `docs/sql/odyssey_p4_1_security_fixes.sql` | RLS wallets/ledger (`partner` / `partner_admin`) |
 | `docs/sql/odyssey_p5_b2b2c_core.sql` | `partner_invitations`, `tribute_checkouts`, RPC débit |
-| `docs/sql/odyssey_p6_freemium_revshare.sql` | **Appliqué** — `is_freemium`, commission ledger, `scan_sessions` stub, RPC accrue/clawback |
+| `docs/sql/odyssey_p6_freemium_revshare.sql` | **Appliqué** — `is_freemium`, commission ledger (base brut — migrer P6.1) |
+| `docs/sql/odyssey_p6_1_bulletproof_waterfall.sql` | **Cible P6.1** — Net Distribuable, `compute_revenue_waterfall()` |
 
 | Column / table | Type | Purpose |
 |----------------|------|---------|
@@ -470,7 +521,7 @@ flowchart TD
 | `projects.invitation_id` | uuid FK | Lien invitation B2B2C (P5) |
 | `tenants.is_freemium` | boolean | **P6** — canal acquisition Souvenir gratuit |
 | `partner_invitations` | table | Forfait offert, email, statut invitation |
-| `tribute_checkouts` | table | Saga checkout (`checkout_mode`, `commission_*` P6) |
+| `tribute_checkouts` | table | Saga checkout (`checkout_mode`, waterfall `commission_*` / `platform_fee_*` P6.1) |
 | `partner_token_wallets` | table | Solde jetons legacy par tenant |
 | `partner_token_ledger` | table | Audit jetons ; `tribute_checkout_id` (P5) |
 | `partner_commission_balances` | table | **P6** — agrégat RevShare par tenant (`accrued_cents`, `paid_cents`) |
@@ -479,7 +530,7 @@ flowchart TD
 
 Fonctions legacy : `debit_partner_tokens_for_checkout(uuid)` — **`service_role`** only.
 
-Fonctions cibles P6 : `accrue_partner_commission_for_checkout`, `clawback_partner_commission`, `record_partner_commission_payout` — voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
+Fonctions cibles P6.1 : `compute_revenue_waterfall`, `accrue_partner_commission_for_checkout`, `clawback_partner_commission`, `record_partner_commission_payout` — voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
 
 Index: `(user_id, status, last_saved_at DESC)` on `projects` for “resume latest draft” on dashboard.
 

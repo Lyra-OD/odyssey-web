@@ -15,7 +15,7 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 |-----------|--------|-------|
 | **Family Studio (B2C wizard)** | 🟢 Mature | 8 steps, autosave, media, music (Étape 4), **Livre Ouvert montage** (Étape 5 — DnD + Composition Magique), Stripe checkout |
 | **Partner Salon (UI + QA P5.5)** | 🟢 **Terminée** | RBAC, wallet API, gate R6, solde bout en bout — QA prod validée ([`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)) |
-| **B2B2C commerce v2 (doc)** | 🟢 Spec ready | Freemium + RevShare 30 % + Scanner — canon [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 |
+| **B2B2C commerce v2 (doc)** | 🟢 Spec ready | Freemium + **Bulletproof** (10 % platform · 30 % Net Distribuable) + Scanner — [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
 | **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 SQL ✅** ; freemium partner UI ✅ ; storyboard S1–S4/S6/S6bis/Clean Slate ✅ ; **S5 partiel (PR-1/2/3)** ✅ ; saga / webhook in progress |
 | **RBAC & tokens (P5.5)** | 🟢 Shipped & QA | SQL + TS + UI ; coexistence avec freemium (`is_freemium`) documentée |
 | **Automated tests & CI** | 🔴 None | No test framework, no `.github/` workflows |
@@ -42,7 +42,7 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | Salon wallet / billing UI | 🟡 | Admin : solde réel + page `/salon/facturation` (shell ✅) ; Stripe Payment Link + ledger UI ⏳ |
 | B2B2C family pricing v2 | 🟡 | Freemium 0 $ + upsell plein + RevShare — doc ✅ · types/storyboard V2 ✅ · checkout ⏳ |
 | Scanner Compagnon (Killer App) | 🟡 | Spec [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) ✅ · tables stub P6 ✅ · MVP app ⏳ |
-| Partner commission ledger (P6) | 🟡 | Spec [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) ✅ · SQL ✅ · webhook/app ⏳ |
+| Partner commission ledger (P6) | 🟡 | Spec Bulletproof [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) ✅ · P6 SQL ✅ (brut) · **P6.1** waterfall ⏳ · webhook/app ⏳ |
 | Invitation → family wizard | 🟢 | Magic link + `/tribute/welcome` |
 | Video render pipeline | 🔴 | Documented only (Creatomate target) |
 | Multi-vertical (e.g. pets) | 🟡 | `tenants.vertical` in DB; UI not forked |
@@ -99,7 +99,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 · [`PARTNER_REVSHARE.md`
 | Décision | Détail |
 |----------|--------|
 | **Spike `tribute_checkouts` v1** | **Annulé** — modèle jetons + delta famille remplacé pour les gros clients |
-| **B2B2C v2 (Scrypta Killer)** | **Freemium** Souvenir 0 $ · **RevShare 30 %** brut Stripe · **Scanner Compagnon IA** |
+| **B2B2C v2 (Scrypta Killer)** | **Freemium** Souvenir 0 $ · **Bulletproof** RevShare (10 % platform + 30 % **Net Distribuable**) · **Scanner Compagnon IA** |
 | **Legacy coexistence** | P4/P5.5 jetons **conservé** pour petits salons (`is_freemium = false`) |
 | **Exécution en cours** | P6 SQL ✅ · Phase 0 freemium UI ✅ · Storyboard S1–S4/S6/S6bis ✅ · **S5 partiel PR-1/2/3** ✅ · S5-J/K/L + S7–S10 à suivre |
 
@@ -122,7 +122,7 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 - **P5.5 Phase 3 (Salon UI):** `PartnerSalonPageIntro` gates wallet/recharge on `capabilities.canViewBalance` (Directors see no balance); removed dead `PartnerWalletSection.tsx`
 - **Storage egress (wizard médias):** thumbs WebP + cache session + `cacheControl` long sur nouveaux uploads — §4.1 (`39460bd`)
 - **QA P5.5 — terminée prod ✅** : RBAC §2 · solde §3 · gate R6 · checklist [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)
-- **Documentation B2B2C v2** : `B2B2C_COMMERCE.md`, `DELIVERABLES_AND_PACKAGES.md`, `PARTNER_REVSHARE.md`, `SCANNER_COMPANION.md`
+- **Documentation B2B2C v2** : `B2B2C_COMMERCE.md`, `DELIVERABLES_AND_PACKAGES.md`, `PARTNER_REVSHARE.md` (Bulletproof), `QA_P6_COMMISSION_WATERFALL.md`, `SCANNER_COMPANION.md`
 - **P6 SQL appliqué (juillet 2026)** : `is_freemium`, `partner_commission_*`, `scan_sessions`, stubs Phase 2, package `legendary`
 - **T2 manifeste TS démarré** : `pricingConfig.ts`, `wizardDeliverables.ts`, `wizardDeliverables.utils.ts` — consommateurs TS/UI restants à migrer
 - **Phase 0 B2B2C livrée** : propagation `is_freemium` -> `PartnerContext` -> `InvitationComposer` ; Souvenir freemium affiche désormais **« Gratuit / 0 jeton »**
@@ -215,7 +215,7 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 1. **Bugs UX résiduels Étape 5** — liste QA utilisateur post-PR-3 ; checklist [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
 2. **S5-J/K/L** — dimensions sensorielles (audio chapitre, focus organique, copy narrative)
 3. **Saga checkout v2** — freemium 0 $ path · Stripe upsell · `tribute_checkouts`
-4. **Stripe webhook** — `checkout.session.completed` → completed + RevShare accrual (idempotent)
+4. **Stripe webhook** — `checkout.session.completed` → completed + waterfall accrual Bulletproof (idempotent)
 5. **Scanner Compagnon Phase A** — QR session + mobile upload + realtime sync
 6. **Zero automated tests** — no Jest/Vitest/Playwright; no CI (priorité : `storyboardMagicTimeline.ts`)
 
@@ -286,14 +286,15 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 
 | Doc | Gap |
 |-----|-----|
-| `B2B2C_COMMERCE.md` | ✅ **v2** (freemium, RevShare, saga v2, legacy coexistence) |
+| `B2B2C_COMMERCE.md` | ✅ **v2 Bulletproof** (waterfall 10 % + 30 % Net Distribuable, saga v2) |
+| `PARTNER_REVSHARE.md` | ✅ Bulletproof · pseudo-SQL · QA liée |
+| `QA_P6_COMMISSION_WATERFALL.md` | ✅ 5 scénarios QA chiffrés |
 | `DELIVERABLES_AND_PACKAGES.md` | ✅ v2 + pacing temporel / buckets par chanson documentés |
 | `STORYBOARD_REFACTOR.md` | ✅ S5 partiel documenté · S5-J/K/L ⏳ |
 | `STORYBOARD_STEP5_LIVRE_OUVERT.md` | ✅ **Canon Étape 5** — Livre Ouvert + Composition Magique |
 | `QA_S5_MONTAGE_STEP.md` | ✅ Checklist régression Étape 5 |
 | `MOBILE_WIZARD_STRATEGY.md` | ✅ Stratégie mobile wizard (M0–M0.5–M6, micro-animations, Scanner P1) |
 | `DESIGN_SYSTEM.md` | ✅ §4.2 Composition Magique (capsule + scrim) |
-| `PARTNER_REVSHARE.md` | ✅ spec · code ⏳ |
 | `SCANNER_COMPANION.md` | ✅ spec à jour (caps + P6 stub) · code ⏳ |
 | `TECHNICAL_ONBOARDING` §4.7 / §5 / §10 | ✅ v2 (freemium, Légendaire, Scanner, P6) |
 | `sql/README.md` | ✅ P6 + **P7** (garde-fou quota médias) migration rows + sections détaillées |
@@ -340,7 +341,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | S9 | Checkout / metadata alignés sur `storyboard` | 0.5–1 d | `storyboard` transported to checkout safely |
 | S10 | Nettoyage final legacy | 0.5 d | Retirer pont `actTracks` / `montageHelpers` après S8/S9 |
 
-**Sprint exit criteria:** one freemium tenant (ex. Urgel Bourgie) can invite → family completes Souvenir 0 $ OR pays upsell → commission accrued on webhook.
+**Sprint exit criteria:** one freemium tenant (ex. Urgel Bourgie) can invite → family completes Souvenir 0 $ OR pays upsell → waterfall accrual on webhook (ex. Héritage → commission **4 023¢** sur Net Distribuable **13 410¢**).
 
 ### Completed — P5.5 + doc v2 (juin 2026)
 
@@ -390,8 +391,8 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 2. **[`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)** — signature visuelle connexion **Halo-Éclipse**.
 3. **[`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md)** — URLs studio/salon, branding `?partenaire=`, checklist QA connexion.
 3b. **[`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)** — ✅ **QA terminée prod** (RBAC, solde, gate R6).
-4. **[`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)** — **v2** freemium + RevShare + saga checkout (spike v1 annulé).
-4b. **[`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md)** · **[`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)** — ledger commissions + Killer App.
+4. **[`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)** — **v2 Bulletproof** freemium + waterfall + saga checkout.
+4b. **[`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md)** · **[`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md)** · **[`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)** — commissions Net Distribuable + QA + Killer App.
 5. **[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md)** — grille Quiet Luxury B2C (149/299/499) + Souvenir lead-magnet B2B2C.
 6. **[`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)** — **Étape 5** Livre Ouvert + Composition Magique (canon).
 6b. **[`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md)** — stratégie mobile wizard (Forbes + Ferpection, Scanner).
@@ -412,7 +413,7 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 | Topic | Document |
 |-------|----------|
 | Commerce rules & saga v2 | [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
-| RevShare & commission ledger | [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) |
+| RevShare & commission ledger (Bulletproof) | [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · QA [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) |
 | Scanner Compagnon (Killer App) | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | Routes & Salon auth | [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) |
 | Packages & tokens | [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) |

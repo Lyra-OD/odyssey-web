@@ -6,7 +6,7 @@
 
 Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle** de la base Supabase d'Odyssey. Tous les scripts de migration sont **idempotents** : on peut les ré-exécuter sans dégât.
 
-**Commerce B2B2C v2 :** voir [`docs/B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · RevShare [`PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md).  
+**Commerce B2B2C v2 Bulletproof :** voir [`docs/B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · RevShare [`PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · QA [`QA_P6_COMMISSION_WATERFALL.md`](../QA_P6_COMMISSION_WATERFALL.md).  
 **Note :** migrations P4–P6 en base active ✅ ; l’app Next.js rattrape maintenant le schéma (Sprint P6 T2+). Voir [`PROJECT_STATUS.md`](../PROJECT_STATUS.md).
 
 ---
@@ -30,8 +30,9 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 14 | `odyssey_p5_4_partner_tenants_for_member.sql` | **Patch** | RPC `get_partner_tenants_for_member()` — logo + dropdown Salon après login. |
 | 15 | `odyssey_p5_5_partner_rbac_overdraft.sql` | **Patch** | RBAC admin wallet/ledger, overdraft limité, débit atomique invitation, crédit manuel, anti double-débit checkout. |
 | 16 | `odyssey_p6_freemium_revshare.sql` | **Migration** | **B2B2C v2 Phase A** + stubs Phase 2 — voir [§ P6](#p6--freemium--revshare-b2b2c-v2) |
+| 17 | `odyssey_p6_1_bulletproof_waterfall.sql` | **Migration** | **Bulletproof** — Net Distribuable · `compute_revenue_waterfall()` — [§ P6.1](#p61--bulletproof-waterfall-cible) |
 | — | ~~`odyssey_p6_1_scan_sessions.sql`~~ | *(absorbé P6)* | `scan_sessions` inclus dans P6 Partie B |
-| 17 | `odyssey_p7_media_quota_guard.sql` | **Migration** | **Storyboard S3** — trigger `enforce_media_asset_quota()` : bloque l'INSERT `media_assets` au-delà de `packageMaxMediaItems(basePackage)` — voir [§ P7](#p7--garde-fou-quota-de-medias-package-aware) |
+| 18 | `odyssey_p7_media_quota_guard.sql` | **Migration** | **Storyboard S3** — trigger `enforce_media_asset_quota()` — voir [§ P7](#p7--garde-fou-quota-de-medias-package-aware) |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
 | — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed QA** | Partenaire fictif + 100 jetons — **après P4**, hors chaîne prod. |
 | — | `odyssey_partner_tenant_branding_example.sql` | **Référence** | Mise à jour `tenants.settings` (`brand_label`, `brand_logo_url`) — Salon connexion. |
@@ -103,7 +104,7 @@ Scripts **jamais à supprimer du repo** : fichiers `odyssey_p*.sql` (historique 
 | **`partner_commission_balances`** | Agrégat RevShare par tenant : `accrued_cents`, `paid_cents`, `pending_cents` |
 | **`partner_commission_ledger`** | Journal append-only : `commission_accrual`, `commission_clawback`, `payout` — idempotence `stripe_event_id` |
 | **`tribute_checkouts`** (ALTER) | Colonnes `commission_cents`, `commission_rate_bps`, `commission_status` ; package id `legendary` |
-| **`accrue_partner_commission_for_checkout()`** | RPC idempotente — RevShare brut Stripe · `service_role` only |
+| **`accrue_partner_commission_for_checkout()`** | RPC idempotente — **base brut (legacy)** · à migrer P6.1 · `service_role` only |
 
 ### Partie B — Stubs Phase 2 (schéma only — pas de RPC métier en T1)
 
@@ -124,6 +125,30 @@ Détail stratégique : [`VISION_PHASE_2.md`](../VISION_PHASE_2.md) §4 · commer
 
 ```sql
 UPDATE public.tenants SET is_freemium = true WHERE slug = 'partner-qa-demo';
+```
+
+---
+
+## P6.1 — Bulletproof waterfall (cible)
+
+**Fichier :** `odyssey_p6_1_bulletproof_waterfall.sql` *(à créer — Phase 1 doc juillet 2026)*  
+**Prérequis :** P6 appliqué.
+
+| Objet | Rôle |
+|-------|------|
+| **`compute_revenue_waterfall()`** | Single source of truth : Gross → Platform Fee 10 % → **Net Distribuable** → commission 30 % |
+| **`tribute_checkouts`** (ALTER) | `gross_payment_cents`, `platform_fee_bps`, `platform_fee_cents`, `net_distributable_cents` |
+| **`partner_commission_ledger`** (ALTER) | Colonnes waterfall pour audit |
+| **`accrue_partner_commission_for_checkout()`** | REPLACE — appelle `compute_revenue_waterfall` |
+| **`clawback_partner_commission()`** | Clawback proportionnel à l’accrual snapshot |
+
+**Spec doc :** [`PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) § Annexe · **QA :** [`QA_P6_COMMISSION_WATERFALL.md`](../QA_P6_COMMISSION_WATERFALL.md).
+
+**Exemple attendu post-migration :**
+
+```sql
+SELECT compute_revenue_waterfall(14900, 1000, 3000);
+-- net_distributable_cents: 13410, commission_cents: 4023, platform_fee_cents: 1490
 ```
 
 ---
@@ -197,7 +222,7 @@ Tables historiques inchangées : `media_assets`, `orders`, `billing_catalog`, `w
 |----------|------|
 | `partner_tokens_for_granted_package(text)` | Legacy — mappe jetons (1/2/4) ; **0 pour freemium Souvenir** (app P6) |
 | `debit_partner_tokens_for_checkout(uuid)` | Legacy — jetons · `partner_debited` (tenants non-freemium) |
-| `accrue_partner_commission_for_checkout(...)` | **P6** — RevShare 30 % brut · idempotent webhook |
+| `accrue_partner_commission_for_checkout(...)` | **P6** brut (legacy) · **P6.1** Net Distribuable via `compute_revenue_waterfall()` |
 
 ---
 

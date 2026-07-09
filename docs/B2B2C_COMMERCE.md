@@ -1,6 +1,6 @@
 # Odyssey — Commerce B2B2C v2 (référence architecture)
 
-**Last updated: June 2026 · Version: B2B2C v2 (Scrypta Killer)**
+**Last updated: July 2026 · Version: B2B2C v2 (Scrypta Killer) · Modèle Bulletproof**
 
 Document canonique pour le modèle **funérarium → famille** (« gant blanc »), les trois modes de checkout, la saga `tribute_checkouts`, le **freemium partenaire**, et la **RevShare 30 %**.
 
@@ -35,7 +35,8 @@ Le schéma P4/P5.5 **reste valide** pour les tenants non-freemium et le mode `b2
 |-----|------------------|------|------------------------|
 | **Vertical métier** | `tenants.vertical` | Catégorie produit (`human`, `pet`, `wedding`, `event`…) — branding, copy UI, limites manifeste | **Non** — par tenant |
 | **Modèle commercial B2B2C** | `tenants.is_freemium` | `true` → freemium + RevShare · `false` → jetons P5.5 | **Non** — par tenant |
-| **Taux RevShare** | `tenants.settings.revshare_bps` + snapshot `tribute_checkouts.commission_rate_bps` | Default **3000** (30 %) si absent · figé au checkout T | **Non** — default ≠ override tenant |
+| **Platform Fee** | `tenants.settings.platform_fee_bps` + snapshot `tribute_checkouts.platform_fee_bps` | Default **1000** (10 %) si absent · figé au checkout T | **Non** — default ≠ override tenant |
+| **Taux RevShare** | `tenants.settings.revshare_bps` + snapshot `tribute_checkouts.commission_rate_bps` | Default **3000** (30 % du **Net Distribuable**) · figé au checkout T | **Non** — default ≠ override tenant |
 | **Canal checkout** | `tribute_checkouts.checkout_mode` + `projects.invitation_id` | `b2c` / `b2b_partner` / `b2b2c_family` | **Non** — résolu par contexte projet |
 
 ### Isolation garantie par T1 (P6)
@@ -47,9 +48,9 @@ La migration **`odyssey_p6_freemium_revshare.sql`** n’introduit **aucune** rè
    - **Petit salon, vétérinaire, autre vertical** → `is_freemium = false` · wallet jetons P5.5 inchangé
    - **Mariage / événement futur** → même schéma ; seul le vertical + le manifeste UI diffèrent
 
-2. **`commission_rate_bps`** — **jamais** une constante unique dans le webhook :
-   - Lecture `COALESCE(tenants.settings->>'revshare_bps', '3000')` au moment du checkout
-   - **Snapshot** sur `tribute_checkouts.commission_rate_bps` pour audit et clawback
+2. **`platform_fee_bps` + `commission_rate_bps`** — **jamais** des constantes uniques dans le webhook :
+   - Lecture `COALESCE(tenants.settings->>'platform_fee_bps', '1000')` et `revshare_bps` au checkout
+   - **Snapshot** sur `tribute_checkouts` pour audit et clawback
    - Accrual RPC idempotente **par `tenant_id`** — ledger commissions isolé du ledger jetons
 
 3. **Coexistence sans fuite** :
@@ -64,7 +65,7 @@ La migration **`odyssey_p6_freemium_revshare.sql`** n’introduit **aucune** rè
 - Mélanger jetons et centimes dans le même ledger — **interdit**
 - Inférer le modèle commercial depuis le rôle utilisateur ou le slug partenaire — **interdit**
 
-**Référence implémentation Phase A :** `resolveCheckoutContext()` lit `tenant_id` → `is_freemium` + `revshare_bps` ; branche saga et webhook en conséquence. Voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) et [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.2.
+**Référence implémentation Phase A :** `resolveCheckoutContext()` lit `tenant_id` → `is_freemium` + `platform_fee_bps` + `revshare_bps` ; branche saga et webhook en conséquence. Voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) et [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.2.
 
 ---
 
@@ -105,7 +106,7 @@ Détail livrables : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.m
 | 3 modes checkout | ✅ v2 | ✅ `checkout_mode` | ⏳ 2 branches legacy |
 | Flag `is_freemium` tenant | ✅ v2 | ⏳ P6 | ⏳ absent |
 | Freemium Souvenir 0 $ | ✅ v2 | ⏳ P6 | ⏳ absent |
-| RevShare 30 % brut Stripe | ✅ v2 | ⏳ P6 | ⏳ absent |
+| Waterfall Bulletproof (10 % platform + 30 % Net Distribuable) | ✅ v2 | 🟡 P6 · **P6.1** cible | ⏳ absent |
 | Legacy jetons P5.5 | ✅ coexistence | ✅ | ✅ invitations non-freemium |
 | Saga v2 (sans débit wallet) | ✅ | ⏳ statuts enrichis | ⏳ absent |
 | Prix 0 / 149 / 299 (canal partenaire) | ✅ | N/A (app) | ⏳ `pricingConfig` v1 (79/149/299) |
@@ -123,10 +124,10 @@ Ex. **Urgel Bourgie** — acquisition pure, pas de débit wallet sur Souvenir.
 | Forfait (marketing) | `id` | Coût partenaire | Famille (upsell) | RevShare si payant |
 |---------------------|------|-----------------|------------------|-------------------|
 | **Souvenir** | `essential` | **0 jeton · 0 $** | **0 $** (inclus) | — |
-| **Héritage** | `signature` | **0 jeton** | **149 $** (14 900¢) | **30 %** du brut Stripe |
-| **Éternité** | `heritage` | **0 jeton** | **299 $** (29 900¢) | **30 %** du brut Stripe |
+| **Héritage** | `signature` | **0 jeton** | **149 $** (14 900¢) | **30 %** du **Net Distribuable** → **40,23 $** |
+| **Éternité** | `heritage` | **0 jeton** | **299 $** (29 900¢) | **30 %** du **Net Distribuable** → **80,73 $** |
 
-**Extensions à la carte** (famille) : ajoutées au panier Stripe · **commissionnables** (30 % du montant extension, base brut).
+**Extensions à la carte** (famille) : ajoutées au panier Stripe · **commissionnables** (incluses dans le Gross Volume · RevShare sur le **Net Distribuable** total).
 
 ### B2C direct (sans invitation partenaire)
 
@@ -185,9 +186,9 @@ Wholesale : `PARTNER_TOKEN_COST_CENTS = 4000` (40,00 $ / jeton).
 
 > **Sur un tenant `is_freemium = true`, le partenaire n’est jamais débité en jetons pour une invitation Souvenir (`granted_package = essential`).**  
 > **La famille paie le prix plein du forfait upsell (149 $ ou 299 $) et les extensions à la carte via Stripe.**  
-> **Odyssey reverse 30 % du montant brut Stripe (`amount_total`) au partenaire via le ledger commissions.**
+> **Odyssey déduit 10 % de Platform Fee sur le brut Stripe, puis reverse 30 % du Net Distribuable restant au partenaire via le ledger commissions.**
 
-Exemple : partenaire freemium offre **Souvenir** → famille choisit **Héritage** → partenaire : **0 jeton** ; famille : **149 $** ; commission partenaire : **44,70 $** (30 % × 149 $).
+Exemple : partenaire freemium offre **Souvenir** → famille choisit **Héritage** → partenaire : **0 jeton** ; famille : **149 $** (Gross) ; Platform Fee : **14,90 $** ; Net Distribuable : **134,10 $** ; commission partenaire : **40,23 $** (30 % × 134,10 $).
 
 ### Règle legacy B2B2C (officielle v1 — coexistence)
 
@@ -274,9 +275,13 @@ FK nullable — ancre serveur du parcours B2B2C. Présence → `checkout_mode = 
 | `granted_package` | Obligatoire si `b2b2c_family` |
 | `selected_package` | Forfait choisi à la validation |
 | `partner_tokens_debited` | Jetons débités (legacy uniquement ; `0` en freemium) |
-| `family_total_cents` | Montant Stripe famille (snapshot serveur) |
-| `commission_cents` | Commission calculée (P6) |
-| `commission_rate_bps` | Taux figé au moment T (3000 = 30 %) |
+| `family_total_cents` | Montant Stripe famille (= **Gross Volume** snapshot serveur) |
+| `gross_payment_cents` | **P6.1** — brut confirmé webhook (= `amount_total` Stripe) |
+| `platform_fee_bps` | **P6.1** — taux figé au checkout T (default 1000 = 10 %) |
+| `platform_fee_cents` | **P6.1** — `floor(gross × platform_fee_bps / 10000)` |
+| `net_distributable_cents` | **P6.1** — `gross − platform_fee` — **assiette RevShare** |
+| `commission_cents` | Commission partenaire calculée (30 % du Net Distribuable) |
+| `commission_rate_bps` | Taux RevShare figé au moment T (3000 = 30 %) |
 | `commission_status` | `none` \| `accrued` \| `clawed_back` \| `paid` |
 | `status` | Machine à états (ci-dessous) |
 | `idempotency_key` | Anti double-clic |
@@ -302,8 +307,11 @@ FK nullable — ancre serveur du parcours B2B2C. Présence → `checkout_mode = 
 | `invitation_id` | Canal acquisition |
 | `reason` | `commission_accrual` \| `commission_clawback` \| `payout` \| `adjustment` |
 | `delta_cents` | + accrual · − clawback / payout |
-| `gross_payment_cents` | Base calcul (= `amount_total` Stripe) |
-| `commission_rate_bps` | ex. 3000 |
+| `gross_payment_cents` | **Gross Volume** (= `amount_total` Stripe) |
+| `platform_fee_bps` | **P6.1** — snapshot (ex. 1000) |
+| `platform_fee_cents` | **P6.1** — déduction plateforme |
+| `net_distributable_cents` | **P6.1** — assiette RevShare |
+| `commission_rate_bps` | ex. 3000 (30 % du Net Distribuable) |
 | `commission_cents` | Montant commission |
 | `stripe_event_id` | **Idempotence webhook** (UNIQUE) |
 | `stripe_payment_intent_id` | Réconciliation |
@@ -320,28 +328,99 @@ Détail opérationnel : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
 
 ---
 
-## RevShare 30 % — règles officielles
+## Modèle Bulletproof — Waterfall revenus (juillet 2026)
+
+> **Décision CEO / finance :** le RevShare partenaire s’applique sur le **Net Distribuable**, pas sur le brut Stripe. Odyssey déduit d’abord une **Platform & Processing Fee** de 10 % pour couvrir les coûts incompressibles (Stripe, infra, processing IA).
+
+### Définitions (terminologie figée)
+
+| Terme | Définition | Source |
+|-------|------------|--------|
+| **Gross Volume** | Montant total payé par la famille | `checkout.session.amount_total` |
+| **Platform Fee** | Réserve plateforme Odyssey (10 % du brut) | Contractuel — **≠** net comptable Stripe (`balance_transaction.net`) |
+| **Net Distribuable** | Montant partageable après Platform Fee | `Gross − Platform Fee` — **assiette RevShare** |
+| **Partner Commission** | RevShare B2B2C (30 % du Net Distribuable) | `partner_commission_ledger` |
+| **Odyssey Margin** | Reste après commission partenaire | `Net Distribuable − Partner Commission` (≈ 63 % du brut) |
+| **Family Tribute Fund** | Allocation famille depuis la marge Odyssey | Ledger séparé — **n’impacte jamais** la commission partenaire |
+
+### Waterfall (ordre des opérations)
+
+```text
+1. gross_payment_cents        = session.amount_total
+2. platform_fee_cents         = floor(gross × platform_fee_bps / 10000)     — default 1000
+3. net_distributable_cents    = gross − platform_fee
+4. commission_cents           = floor(net_distributable × revshare_bps / 10000) — default 3000
+5. odyssey_margin_cents       = net_distributable − commission_cents
+6. family_fund_cents (opt.)   ⊆ odyssey_margin — RPC séparée, Phase 2+
+```
+
+```mermaid
+flowchart LR
+  G[Gross Volume<br/>amount_total] --> PF[Platform Fee 10%]
+  PF --> ND[Net Distribuable]
+  ND --> PC[Partner Commission 30%]
+  ND --> OM[Odyssey Margin 70%]
+  OM --> FF[Family Tribute Fund<br/>optionnel]
+```
+
+### Table d’impact catalogue (default 10 % + 30 %)
+
+| Scénario | Gross | Platform Fee | **Net Distribuable** | Commission | Odyssey Margin |
+|----------|-------|--------------|----------------------|------------|----------------|
+| Héritage seul | 14 900¢ | 1 490¢ | **13 410¢** | **4 023¢** | 9 387¢ |
+| Éternité seul | 29 900¢ | 2 990¢ | **26 910¢** | **8 073¢** | 18 837¢ |
+| Héritage + Retouche IA | 19 800¢ | 1 980¢ | **17 820¢** | **5 346¢** | 12 474¢ |
+
+**QA détaillée :** [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md).
+
+### Règles d’implémentation
+
+| Règle | Détail |
+|-------|--------|
+| Snapshot au checkout T | `platform_fee_bps` + `commission_rate_bps` figés sur `tribute_checkouts` |
+| Accrual | **Webhook uniquement** — jamais au POST |
+| Arrondi | `floor` à chaque étape (centimes entiers) |
+| Config tenant | `tenants.settings.platform_fee_bps` · `revshare_bps` — defaults 1000 / 3000 |
+| B2C direct | Pas de commission partenaire — waterfall interne Odyssey optionnel |
+| Family Fund | Alimenté depuis **Odyssey Margin** — jamais depuis la poche partenaire |
+
+### Ce que le Net Distribuable n’est pas
+
+| ❌ Confusion | ✅ Réalité Bulletproof |
+|-------------|------------------------|
+| Net Stripe après frais carte | **Non** — on utilise le brut `amount_total` puis fee contractuelle 10 % |
+| Montant après déduction commission | **Non** — le Net Distribuable est **avant** RevShare partenaire |
+| Base variable par transaction Stripe | **Non** — fee en bps snapshot, calcul déterministe |
+
+**Spec SQL cible :** `compute_revenue_waterfall()` — voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) § Annexe.
+
+---
+
+## RevShare 30 % — règles officielles (modèle Bulletproof)
 
 | Décision CEO | Valeur |
 |--------------|--------|
-| **Taux default** | 30 % (`commission_rate_bps = 3000`) |
-| **Base de calcul** | **Brut Stripe** (`checkout.session.amount_total`) |
-| **Scope** | Forfait upsell **+ extensions à la carte** payées par la famille |
-| **Moment d’accrual** | **Webhook `checkout.session.completed` uniquement** — jamais au POST |
-| **Arrondi** | Centimes entiers · `floor(gross_cents × rate_bps / 10000)` |
-| **Taux par tenant** | Override possible via `tenants.settings.revshare_bps` |
-| **Payout Phase 1** | Manuel admin (comme crédit jetons manuel) |
-| **Clawback** | `charge.refunded` / session expirée après accrual → `commission_clawback` idempotent |
+| **Platform Fee default** | 10 % (`platform_fee_bps = 1000`) |
+| **Taux RevShare default** | 30 % du **Net Distribuable** (`commission_rate_bps = 3000`) |
+| **Gross Volume** | `checkout.session.amount_total` (forfait + extensions) |
+| **Assiette commission** | **Net Distribuable** (= Gross − Platform Fee) |
+| **Moment d’accrual** | **Webhook `checkout.session.completed` uniquement** |
+| **Arrondi** | Centimes entiers · `floor` à chaque étape du waterfall |
+| **Taux par tenant** | Override `platform_fee_bps` / `revshare_bps` via `tenants.settings` |
+| **Payout Phase 1** | Manuel admin |
+| **Clawback** | Proportionnel à l’accrual snapshot — voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) |
 
-**Formule** :
+**Formule :**
 
 ```text
-commission_cents = floor(gross_payment_cents × commission_rate_bps / 10000)
+platform_fee_cents      = floor(gross_payment_cents × platform_fee_bps / 10000)
+net_distributable_cents = gross_payment_cents − platform_fee_cents
+commission_cents        = floor(net_distributable_cents × commission_rate_bps / 10000)
 ```
 
-Exemple Héritage seul : `floor(14900 × 3000 / 10000) = 4470` (44,70 $).
+Exemple Héritage seul : brut 14 900¢ → fee 1 490¢ → **Net Distribuable 13 410¢** → commission **4 023¢** (40,23 $).
 
-Exemple Héritage + Retouche IA (49 $) : brut 19 800¢ → commission 5 940¢ (59,40 $).
+Exemple Héritage + Retouche IA (49 $) : brut 19 800¢ → fee 1 980¢ → net 17 820¢ → commission **5 346¢** (53,46 $).
 
 ---
 
@@ -374,6 +453,7 @@ sequenceDiagram
   API->>DB: Résoudre tenant.is_freemium + invitation
   API->>DB: Calcul serveur family_total_cents
   API->>DB: INSERT tribute_checkouts (pending)
+  API->>DB: Snapshot platform_fee_bps + commission_rate_bps
 
   alt family_total_cents = 0
     API->>DB: status=completed · project=submitted
@@ -385,7 +465,7 @@ sequenceDiagram
     API-->>F: redirect Stripe
     S-->>API: webhook checkout.session.completed
     API->>DB: status=completed · project=submitted (idempotent)
-    API->>DB: accrue_partner_commission (30% brut, idempotent)
+    API->>DB: compute_revenue_waterfall + accrue_partner_commission (Bulletproof, idempotent)
   end
 
   opt Remboursement / session expirée après paiement
@@ -445,7 +525,7 @@ sequenceDiagram
 | **Échec Stripe après INSERT** | Checkout `awaiting_payment` sans session → retry idempotent recréation session |
 | **Remboursement partiel** | Clawback au prorata du montant remboursé |
 | **B2C direct** | Pas de commission · pas de `tenant_id` partenaire sur le ledger |
-| **Extensions seules** | Si Souvenir + extension payante → Stripe pour extension · commission 30 % sur brut total |
+| **Extensions seules** | Si Souvenir + extension payante → Stripe pour extension · waterfall sur **Gross total** session |
 
 ---
 
@@ -486,11 +566,12 @@ b2b2c_family + NOT tenant.is_freemium →  saga v1 (jetons)
 | [`sql/odyssey_p4_partner_token_wallets.sql`](sql/odyssey_p4_partner_token_wallets.sql) | Wallets + ledger jetons (legacy) |
 | [`sql/odyssey_p5_b2b2c_core.sql`](sql/odyssey_p5_b2b2c_core.sql) | Invitations + checkouts + RPC débit |
 | [`sql/odyssey_p5_5_partner_rbac_overdraft.sql`](sql/odyssey_p5_5_partner_rbac_overdraft.sql) | RBAC + débit invitation legacy |
-| [`sql/odyssey_p6_freemium_revshare.sql`](sql/odyssey_p6_freemium_revshare.sql) | **À créer** — `is_freemium`, commission ledger, RPC accrual/clawback |
+| [`sql/odyssey_p6_freemium_revshare.sql`](sql/odyssey_p6_freemium_revshare.sql) | P6 — `is_freemium`, commission ledger, RPC accrue (base brut — **à migrer P6.1**) |
+| [`sql/odyssey_p6_1_bulletproof_waterfall.sql`](sql/odyssey_p6_1_bulletproof_waterfall.sql) | **P6.1 cible** — waterfall Net Distribuable, `compute_revenue_waterfall()` |
 | [`sql/README.md`](sql/README.md) | Ordre d’exécution P0→P6 |
 
 ---
 
 ## Quand modifier ce document
 
-Toute évolution de : freemium, RevShare, `checkout_mode`, saga, prix catalogue, coexistence legacy → mettre à jour **ce fichier**, [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md), [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 / §5 / §10, et [`sql/README.md`](sql/README.md).
+Toute évolution de : freemium, RevShare, Platform Fee, **Net Distribuable**, `checkout_mode`, saga, prix catalogue, coexistence legacy → mettre à jour **ce fichier**, [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md), [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md), [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 / §5 / §10, et [`sql/README.md`](sql/README.md).

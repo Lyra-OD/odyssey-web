@@ -67,21 +67,31 @@ P6 checkout + RevShare     Data Graph LYRA (faces + arbre)
 
 ### 2.2 Family Tribute Fund (incitation conseiller + aide famille)
 
-**Décision stratégique :** une partie des profits des **micro-transactions invités** (livre photos, vidéos HD, extensions à la carte) est **reversée à la famille** pour l'aider à payer les frais funéraires — argument de vente pour le conseiller funéraire.
+**Décision stratégique :** une partie de la **marge Odyssey** (après Platform Fee et RevShare partenaire) finance un solde d’aide à la famille — argument de vente pour le conseiller funéraire. **Le fonds n’impacte jamais la commission partenaire.**
 
 | Élément | Détail |
 |---------|--------|
-| **Sources de revenus** | Achats invités sur le portail hommage (print book, HD download, extensions) — **distinct** du checkout forfait principal famille |
-| **Allocation Family Fund** | Pourcentage configurable par tenant (ex. **10–20 %** du net micro-transaction) crédité sur un solde famille |
+| **Sources de revenus (Phase 1)** | Micro-transactions invités (`guest_micro_checkouts`) — livre photos, HD, extensions portail |
+| **Sources de revenus (Phase 2+)** | Option : % de `odyssey_margin_cents` sur `tribute_checkouts` famille — décision produit à confirmer |
+| **Allocation Family Fund** | Pourcentage configurable sur la **marge Odyssey** (ex. 10–20 % du net après commission partenaire sur micro-transactions) |
 | **Bénéficiaire** | Famille porteuse du projet (`projects.user_id`) — versement manuel ou crédit Stripe (Phase 1 : ledger + ops) |
 | **Visibilité conseiller** | Dashboard Salon : « Ce hommage a généré X $ pour la famille via les contributions invités » |
-| **RevShare partenaire** | Le modèle RevShare 30 % (upsell forfait B2B2C) **coexiste** — Family Fund = couche **additionnelle** sur micro-transactions invités |
+| **RevShare partenaire (Bulletproof)** | 30 % du **Net Distribuable** sur upsell forfait B2B2C — **couche distincte** · Family Fund prélevé sur marge Odyssey uniquement |
+
+**Waterfall et Family Fund :**
+
+```text
+Gross → Platform Fee 10% → Net Distribuable → Partner Commission 30%
+                                              → Odyssey Margin 70%
+                                                    → Family Fund (subset)
+```
 
 **Principes produit :**
 
 1. **Transparence** — la famille voit le solde Family Fund ; le conseiller voit l'impact commercial.
-2. **Séparation comptable** — ledger dédié (`family_tribute_fund_ledger` ou colonnes sur checkout invité) — **ne pas mélanger** avec `partner_commission_ledger`.
+2. **Séparation comptable** — ledger dédié (`family_tribute_fund_ledger`) — **ne pas mélanger** avec `partner_commission_ledger`.
 3. **Phase 1 scope** — spec ledger + affichage solde ; payout automatique = Phase 2.
+4. **Garantie CEO** — `allocate_family_tribute_fund_*` ne modifie **jamais** `partner_commission_ledger`.
 
 **Argument conseiller (pitch) :** « Odyssey ne coûte pas seulement rien en freemium — il **rapporte** à la famille pendant que vos invités contribuent. »
 

@@ -22,7 +22,7 @@
 | Services / API | `app/api/`, `src/lib/` | I/O serveur, Supabase, Stripe |
 | Livrables & forfaits (manifeste) | `src/lib/wizard/wizardDeliverables.ts` | **Contrat produit** jetons/$, Salon/Social — doc [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) |
 | Prix catalogue (checkout cents) | `src/lib/wizard/pricingConfig.ts` | Montants Stripe, extensions, alignement manifeste |
-| Commissions partenaire (P6) | SQL + `app/api/stripe/webhook` | RevShare 30 % — doc [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) |
+| Commissions partenaire (P6) | SQL + `app/api/stripe/webhook` | Bulletproof — 30 % **Net Distribuable** — doc [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · QA [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) |
 | Scanner Compagnon | `app/[lang]/scan/`, `app/api/scan/` | Ingestion mobile QR — doc [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | Schéma DB | `docs/sql/odyssey_p*.sql` | Migrations Supabase ordonnées |
 
@@ -33,7 +33,7 @@
 3. [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) + `wizardDeliverables.ts` — forfaits, livrables, freemium B2B2C vs Quiet Luxury B2C (149/299/499).
 4. `pricingConfig.ts` — cents checkout et extensions.
 5. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce v2 : freemium, saga checkout, coexistence legacy jetons.
-6. [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) — **RevShare 30 %** : tables `partner_commission_balances` / `partner_commission_ledger`, accrual webhook Stripe, clawback remboursements, payout mensuel manuel admin Odyssey.
+6. [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) — **Bulletproof RevShare** : Platform Fee 10 % → **Net Distribuable** → commission 30 % · tables `partner_commission_*` · `compute_revenue_waterfall()` · webhook · clawback · payout mensuel.
 7. [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — **Killer App** : QR wizard desktop → session web mobile → ingestion photos papier → preview IA Avant/Après → pont upsell Éternité / Légendaire.
 8. [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — wizard 8 étapes, pricing v2, schéma DB P6.
 8b. [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) — **Étape 5** Livre Ouvert, Composition Magique, constantes timing, roadmap S5-J/K/L.

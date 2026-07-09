@@ -6,7 +6,7 @@ This document helps any developer (frontend, backend, DevOps, QA) onboard quickl
 
 **Deep dives (English, kept in sync with code):**
 - [`docs/DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) — **Deliverables manifest** v2 (Souvenir lead-magnet · Quiet Luxury B2C 149/299/499 · Légendaire Gants Blancs)
-- [`docs/B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — **B2B2C v2** : freemium, RevShare 30 %, saga checkout, legacy jetons coexistence
+- [`docs/B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — **B2B2C v2 Bulletproof** : freemium, waterfall 10 % + 30 % Net Distribuable, saga checkout, legacy jetons coexistence
 - [`docs/PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) — Commission ledger, webhook accrual, clawback, payout
 - [`docs/SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — Scanner Compagnon (QR → mobile → IA → upsell)
 - [`docs/WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — 8-step flow, pricing v2, checkout saga, P6 schema
@@ -49,7 +49,7 @@ Odyssey est une application Next.js 14 (App Router) avec:
 
 La logique metier vise un modele hybride **v2 (juin 2026)** :
 - **B2C direct (Quiet Luxury)** — 3 forfaits payants : Héritage **149 $**, Éternité **299 $**, Légendaire **499 $** (Gants Blancs). Pas de tier gratuit.
-- **B2B2C freemium** — le partenaire offre **Souvenir à 0 $** (lead-magnet) ; la famille paie l’upsell **prix plein** ; Odyssey reverse **30 % RevShare** (brut Stripe) via `partner_commission_ledger`.
+- **B2B2C freemium** — le partenaire offre **Souvenir à 0 $** (lead-magnet) ; la famille paie l’upsell **prix plein** ; Odyssey applique le **waterfall Bulletproof** (10 % Platform Fee → **Net Distribuable** → 30 % RevShare partenaire) via `partner_commission_ledger`.
 - **B2B legacy jetons** — petits salons (`is_freemium = false`) : wallet P5.5 inchangé (débit à l’invitation).
 - **Scanner Compagnon** — ingestion mobile photos papier → restauration IA → conversion Éternité / Légendaire.
 
@@ -65,10 +65,11 @@ Le **modèle d'affaires B2B2C** est **strictement piloté par la configuration d
 |----------------------|-------|
 | `tenants.vertical` | Catégorie métier (`human`, `pet`, `wedding`…) — copy UI, manifeste livrables |
 | `tenants.is_freemium` (P6) | `true` → freemium + RevShare · `false` → jetons prépayés legacy P5.5 |
-| `tenants.settings.revshare_bps` | Taux commission (default 3000 = 30 %) — snapshot sur `tribute_checkouts.commission_rate_bps` |
+| `tenants.settings.platform_fee_bps` | Platform Fee (default **1000** = 10 %) — snapshot sur `tribute_checkouts.platform_fee_bps` |
+| `tenants.settings.revshare_bps` | Taux commission sur **Net Distribuable** (default 3000 = 30 %) — snapshot sur `tribute_checkouts.commission_rate_bps` |
 
 **Exemples coexistants (prod cible) :**
-- Urgel Bourgie (`vertical = human`, `is_freemium = true`) → Souvenir 0 $, RevShare 30 % upsell
+- Urgel Bourgie (`vertical = human`, `is_freemium = true`) → Souvenir 0 $, RevShare 30 % du **Net Distribuable**
 - Petit salon funéraire (`is_freemium = false`) → wallet jetons, débit à l'invitation, pas de RevShare
 - Clinique vétérinaire future (`vertical = pet`, `is_freemium = false`) → jetons prépayés, même RPC P5.5
 
@@ -95,7 +96,7 @@ Detail complet : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) § Agnosticité backen
 - `app/api/projects/[id]/media/route.ts`: list project media (signed URLs)
 - `app/api/music/search|preview|stream/route.ts`: licensed music (Stingray proxy)
 - `app/api/checkout/route.ts`: checkout — **cible saga v2** (see [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md))
-- `app/api/stripe/webhook/route.ts`: Stripe webhook (catalog sync + **cible** `checkout.session.completed` + RevShare)
+- `app/api/stripe/webhook/route.ts`: Stripe webhook (catalog sync + **cible** `checkout.session.completed` + waterfall Bulletproof)
 - `app/[lang]/scan/[token]/page.tsx`: **cible P6** — Scanner Compagnon mobile PWA
 - `app/api/scan/sessions/route.ts`: **cible P6** — création session QR
 - `docs/B2B2C_COMMERCE.md`: commerce B2B2C v2 (freemium, RevShare, saga)
@@ -320,7 +321,7 @@ Full matrix : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · 
 |------|---------|---------|
 | `b2c` | No `projects.invitation_id` | Stripe — Quiet Luxury 149/299/499 + extensions |
 | `b2b_partner` | Partner funerarium path | Legacy jetons (P5.5) |
-| `b2b2c_family` + `is_freemium` | Invitation + freemium tenant | **0 $** → `completed` sans Stripe · upsell → Stripe → **RevShare 30 %** webhook |
+| `b2b2c_family` + `is_freemium` | Invitation + freemium tenant | **0 $** → `completed` sans Stripe · upsell → Stripe → **Bulletproof waterfall** webhook |
 | `b2b2c_family` + legacy | Invitation + non-freemium | Jetons P5.5 + delta Stripe (coexistence) |
 
 **Resolution rule:** `projects.invitation_id` → `b2b2c_family` — **not** `resolveUserIsPartner()` alone.
@@ -390,7 +391,7 @@ Legacy state is still accepted on read for migration, but new saves now persist 
 **Checkout (see [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2):**
 - **`b2c`:** Stripe full cart (149/299/499 + extensions) — no RevShare.
 - **`b2b_partner`:** Legacy token debit (`debitPartnerTokens()` TS — P5.5 RPC target).
-- **`b2b2c_family` freemium:** `family_total_cents = 0` → `completed` without Stripe · else Stripe full upsell → webhook → `accrue_partner_commission_for_checkout()` — **Phase A sprint**.
+- **`b2b2c_family` freemium:** `family_total_cents = 0` → `completed` without Stripe · else Stripe full upsell → webhook → `compute_revenue_waterfall()` + `accrue_partner_commission_for_checkout()` — **Phase A sprint (P6.1)**.
 - **`b2b2c_family` legacy:** jetons P5.5 + delta — coexistence, not Phase A focus.
 
 ---
@@ -577,7 +578,7 @@ See §4.7, [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), and [`B2B2C_COMME
 
 - **P6 SQL:** `is_freemium`, `partner_commission_*`, RPC accrue.
 - **pricingConfig + wizardDeliverables v2** (0 / 149 / 299 / 499).
-- **Saga checkout v2** + webhook RevShare 30 %.
+- **Saga checkout v2** + webhook waterfall Bulletproof.
 
 ### To do — after Phase A
 

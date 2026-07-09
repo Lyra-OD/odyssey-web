@@ -100,7 +100,7 @@ Wholesale legacy : **40 $ / jeton** (`PARTNER_TOKEN_COST_CENTS = 4000`).
 | Canal | Qui paie le forfait | Extensions | Commission partenaire |
 |-------|---------------------|------------|----------------------|
 | **B2C direct** (Studio, sans invitation) | Famille — **149 $ / 299 $ / 499 $** + extensions | À la carte · Stripe | **Aucune** |
-| **B2B2C freemium** (`is_freemium = true`) | Souvenir offert · upsell famille **149 $ / 299 $** | À la carte · Stripe | **30 % brut Stripe** (forfait + extensions) |
+| **B2B2C freemium** (`is_freemium = true`) | Souvenir offert · upsell famille **149 $ / 299 $** | À la carte · Stripe | **30 % du Net Distribuable** (Bulletproof : 10 % platform puis 30 % net) |
 | **B2B2C legacy jetons** (`is_freemium = false`) | Partenaire débité en jetons · famille paie delta + extensions | À la carte · Stripe | **Aucune** (modèle v1) |
 | **B2B partner** (funérarium) | Partenaire débité en jetons (`selected_package`) | Selon forfait | **Aucune** |
 
@@ -208,15 +208,17 @@ Conséquence UX :
 
 ## Extensions à la carte
 
-Les extensions restent **séparées** du forfait dans le panier checkout. Elles s’ajoutent au total Stripe et **génèrent de la commission RevShare** (30 % du brut) lorsqu’elles sont payées par une famille invitée via un tenant freemium.
+Les extensions restent **séparées** du forfait dans le panier checkout. Elles s’ajoutent au **Gross Volume** Stripe et entrent dans le waterfall RevShare (Platform Fee 10 % → **Net Distribuable** → commission 30 %) lorsqu’elles sont payées par une famille invitée via un tenant freemium.
 
-| Extension (marketing) | `id` technique | Prix (cents) | Commissionnable (B2B2C freemium) |
-|-----------------------|----------------|--------------|----------------------------------|
-| Retouche IA | `aiRetouch` | 4 900 (49 $) | Oui — *redondant si forfait Éternité (IA incluse)* |
-| Licence Premium | `extendedLicense` | 3 900 (39 $) | Oui |
-| USB collector | `collectorUsb` | 7 900 (79 $) | Oui |
-| Coffre-fort numérique | `digitalVault` | 9 900 (99 $) | Oui |
-| Pack Héritage | `heritagePack` | 14 900 (149 $) | Oui |
+| Extension (marketing) | `id` technique | Prix (cents) | Commissionnable (B2B2C freemium) | Commission sur upsell Héritage* |
+|-----------------------|----------------|--------------|----------------------------------|--------------------------------|
+| Retouche IA | `aiRetouch` | 4 900 (49 $) | Oui | Inclus dans S3 : **5 346¢** total (pas 49 $ × 30 % isolé) |
+| Licence Premium | `extendedLicense` | 3 900 (39 $) | Oui | Waterfall sur Gross session |
+| USB collector | `collectorUsb` | 7 900 (79 $) | Oui | idem |
+| Coffre-fort numérique | `digitalVault` | 9 900 (99 $) | Oui | idem |
+| Pack Héritage | `heritagePack` | 14 900 (149 $) | Oui | idem |
+
+\*Exemple chiffré Héritage + Retouche : Gross **19 800¢** → Net Distribuable **17 820¢** → commission **5 346¢** — voir [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) S3.
 
 **Règle UI :** masquer ou désactiver les extensions **déjà incluses** dans le forfait sélectionné (ex. restauration IA sur Éternité).
 
@@ -320,7 +322,7 @@ La famille ne voit **jamais** : jeton, commission, RevShare, `is_freemium`.
 
 | Tenant | Invitation Souvenir | Invitation Héritage / Éternité |
 |--------|---------------------|--------------------------------|
-| **`is_freemium = true`** | **Gratuit** · 0 jeton | Message acquisition · upsell famille 149 $ / 299 $ · « Commission 30 % » (admin) |
+| **`is_freemium = true`** | **Gratuit** · 0 jeton | Message acquisition · upsell famille 149 $ / 299 $ · admin : waterfall commission (30 % **Net Distribuable**) |
 | **`is_freemium = false`** | **1 jeton** (legacy) | Jetons selon `granted_package` (2 / 4) |
 
 Directeur (`partner`) : pas de solde wallet ni commissions — RBAC P5.5 inchangé.

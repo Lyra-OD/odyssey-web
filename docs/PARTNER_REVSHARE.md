@@ -1,10 +1,10 @@
 # Odyssey — RevShare partenaire (Partner Commission)
 
-**Last updated: June 2026 · Version: B2B2C v2**
+**Last updated: July 2026 · Version: B2B2C v2 · Modèle Bulletproof**
 
-Document canonique pour la **commission partenaire 30 %** sur les paiements famille (canal freemium), le ledger `partner_commission_*`, l’idempotence webhook Stripe, le clawback, et le **payout manuel mensuel**.
+Document canonique pour la **commission partenaire 30 % du Net Distribuable** sur les paiements famille (canal freemium), le ledger `partner_commission_*`, l’idempotence webhook Stripe, le clawback, et le **payout manuel mensuel**.
 
-Complète [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · schéma cible P6 : [`sql/odyssey_p6_freemium_revshare.sql`](sql/odyssey_p6_freemium_revshare.sql) *(à créer)*.
+Complète [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · schéma P6 : [`sql/odyssey_p6_freemium_revshare.sql`](sql/odyssey_p6_freemium_revshare.sql) · migration cible P6.1 : [`sql/odyssey_p6_1_bulletproof_waterfall.sql`](sql/odyssey_p6_1_bulletproof_waterfall.sql) *(à créer)*.
 
 ---
 
@@ -12,14 +12,21 @@ Complète [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · schéma cible P6 : [`sql/o
 
 | Contexte | RevShare |
 |----------|----------|
-| **B2B2C freemium** (`tenants.is_freemium = true`) · famille paie via Stripe | **Oui** — 30 % du brut |
+| **B2B2C freemium** (`tenants.is_freemium = true`) · famille paie via Stripe | **Oui** — 30 % du **Net Distribuable** |
 | **B2C direct** (sans invitation partenaire) | **Non** |
 | **B2B2C legacy jetons** (`is_freemium = false`) | **Non** (v1) |
 | **B2B partner** (débit jetons funérarium) | **Non** |
 
-**Base de calcul CEO (figée) :** montant **brut Stripe** (`checkout.session.amount_total`) — forfait upsell **+ extensions à la carte** incluses dans la session.
+**Modèle Bulletproof (figé juillet 2026) :**
 
-**Taux default :** 30 % (`commission_rate_bps = 3000`). Override par tenant : `tenants.settings.revshare_bps`.
+1. **Gross Volume** = `checkout.session.amount_total` (forfait + extensions)
+2. **Platform Fee** = 10 % du brut (`platform_fee_bps = 1000`) — frais plateforme Odyssey (Stripe, infra, IA)
+3. **Net Distribuable** = Gross − Platform Fee — **assiette RevShare**
+4. **Partner Commission** = 30 % du Net Distribuable (`commission_rate_bps = 3000`)
+
+> **Important :** le **Net Distribuable** est une assiette **contractuelle Odyssey**. Ce n’est **pas** le net comptable Stripe (`balance_transaction.net` après frais carte).
+
+**Taux default :** Platform Fee **10 %** · RevShare **30 % du Net Distribuable**. Override par tenant : `tenants.settings.platform_fee_bps` · `revshare_bps`.
 
 ---
 
@@ -71,8 +78,11 @@ Journal **append-only** — source de vérité audit.
 | `invitation_id` | uuid | Canal acquisition (nullable) |
 | `reason` | text | Voir [§ Raisons ledger](#raisons-ledger) |
 | `delta_cents` | integer | **+** accrual · **−** clawback / payout |
-| `gross_payment_cents` | integer | Base calcul (= `amount_total` Stripe au moment de l’accrual) |
-| `commission_rate_bps` | integer | Taux figé (ex. 3000) |
+| `gross_payment_cents` | integer | **Gross Volume** (= `amount_total` Stripe) |
+| `platform_fee_bps` | integer | **P6.1** — snapshot (ex. 1000) |
+| `platform_fee_cents` | integer | **P6.1** — `floor(gross × platform_fee_bps / 10000)` |
+| `net_distributable_cents` | integer | **P6.1** — assiette RevShare |
+| `commission_rate_bps` | integer | Taux figé — 30 % du **Net Distribuable** (ex. 3000) |
 | `commission_cents` | integer | Montant absolu commission (≥ 0) |
 | `stripe_event_id` | text | **Idempotence webhook** |
 | `stripe_payment_intent_id` | text | Réconciliation Stripe |
@@ -113,27 +123,34 @@ CREATE INDEX idx_commission_ledger_tenant_created
 
 ---
 
-### Enrichissements `tribute_checkouts` (P6)
+### Enrichissements `tribute_checkouts` (P6 + P6.1)
 
 | Colonne | Rôle |
 |---------|------|
-| `commission_cents` | Snapshot commission calculée |
-| `commission_rate_bps` | Taux appliqué |
+| `gross_payment_cents` | **P6.1** — Gross Volume confirmé webhook |
+| `platform_fee_bps` | Snapshot Platform Fee (default 1000) |
+| `platform_fee_cents` | Montant Platform Fee calculé |
+| `net_distributable_cents` | **Net Distribuable** — assiette commission |
+| `commission_cents` | Snapshot commission partenaire |
+| `commission_rate_bps` | Taux RevShare appliqué (30 % du Net) |
 | `commission_status` | `none` \| `accrued` \| `clawed_back` \| `paid` |
 
 ---
 
-## Formule de calcul
+## Formule de calcul — Waterfall Bulletproof
 
 ```text
-commission_cents = floor(gross_payment_cents × commission_rate_bps / 10000)
+platform_fee_cents      = floor(gross_payment_cents × platform_fee_bps / 10000)
+net_distributable_cents = gross_payment_cents − platform_fee_cents
+commission_cents        = floor(net_distributable_cents × commission_rate_bps / 10000)
+odyssey_margin_cents    = net_distributable_cents − commission_cents
 ```
 
-| Exemple | Brut Stripe | Taux | Commission |
-|---------|-------------|------|------------|
-| Upsell Héritage seul | 14 900¢ (149 $) | 30 % | **4 470¢** (44,70 $) |
-| Upsell Éternité seul | 29 900¢ (299 $) | 30 % | **8 970¢** (89,70 $) |
-| Héritage + Retouche IA (49 $) | 19 800¢ | 30 % | **5 940¢** (59,40 $) |
+| Exemple | Gross Volume | Platform Fee | **Net Distribuable** | Taux | Commission |
+|---------|--------------|--------------|----------------------|------|------------|
+| Upsell Héritage seul | 14 900¢ (149 $) | 1 490¢ | **13 410¢** | 30 % | **4 023¢** (40,23 $) |
+| Upsell Éternité seul | 29 900¢ (299 $) | 2 990¢ | **26 910¢** | 30 % | **8 073¢** (80,73 $) |
+| Héritage + Retouche IA (49 $) | 19 800¢ | 1 980¢ | **17 820¢** | 30 % | **5 346¢** (53,46 $) |
 
 **Règles :**
 
@@ -141,7 +158,8 @@ commission_cents = floor(gross_payment_cents × commission_rate_bps / 10000)
 - Inclut **forfait + extensions** dans la même Checkout Session
 - **Pas** de commission sur checkout `family_total_cents = 0` (Souvenir gratuit)
 - **Pas** de commission B2C direct (`checkout_mode = b2c` ou absence `tenant_id` partenaire éligible)
-- Arrondi **floor** vers le bas (centimes entiers)
+- Arrondi **floor** à **chaque étape** du waterfall (centimes entiers)
+- **Family Tribute Fund** : alimenté depuis `odyssey_margin_cents` — RPC séparée — **n’impacte jamais** `commission_cents`
 
 ---
 
@@ -201,8 +219,9 @@ sequenceDiagram
   WH->>WH: Idempotence globale webhook_events (lock evt_xxx)
   WH->>DB: SELECT tribute_checkouts BY metadata.checkout_id
   WH->>WH: Éligibilité (b2b2c_family + is_freemium + amount_total > 0)
-  WH->>RPC: accrue(checkout_id, gross, rate_bps, evt_xxx)
-  RPC->>DB: INSERT commission_accrual (si UNIQUE OK)
+  WH->>RPC: compute_revenue_waterfall(gross, platform_bps, revshare_bps)
+  WH->>RPC: accrue(checkout_id, waterfall, evt_xxx)
+  RPC->>DB: INSERT commission_accrual + snapshots Net Distribuable
   RPC->>DB: UPDATE balances.accrued_cents
   RPC->>DB: UPDATE tribute_checkouts.commission_status = accrued
 ```
@@ -235,19 +254,27 @@ sequenceDiagram
 }
 ```
 
-### RPC cible
+### RPC cible (P6.1)
 
 ```sql
+-- Single source of truth — voir § Annexe
+compute_revenue_waterfall(
+  p_gross_payment_cents integer,
+  p_platform_fee_bps integer DEFAULT 1000,
+  p_commission_rate_bps integer DEFAULT 3000
+) RETURNS jsonb
+
 accrue_partner_commission_for_checkout(
   p_checkout_id uuid,
   p_gross_payment_cents integer,
   p_stripe_event_id text,
-  p_stripe_payment_intent_id text,
-  p_commission_rate_bps integer DEFAULT 3000
+  p_stripe_payment_intent_id text DEFAULT NULL,
+  p_platform_fee_bps integer DEFAULT NULL,
+  p_commission_rate_bps integer DEFAULT NULL
 ) RETURNS jsonb
 ```
 
-**Exécutable par :** `service_role` uniquement.
+**Exécutable par :** `service_role` uniquement. La RPC accrue appelle `compute_revenue_waterfall` en interne.
 
 ---
 
@@ -262,13 +289,15 @@ accrue_partner_commission_for_checkout(
 | `charge.dispute.closed` (lost) | Clawback définitif |
 | `checkout.session.expired` | **Pas** de clawback si jamais payé · clawback si remboursement post-paiement uniquement |
 
-### Formule clawback partiel
+### Formule clawback partiel (proportionnelle à l’accrual)
 
 ```text
-clawback_cents = floor(refunded_cents × commission_rate_bps / 10000)
+clawback_cents = floor(commission_cents_snapshot × refunded_cents / gross_payment_cents_snapshot)
 ```
 
-Exemple : remboursement 50 % de 149 $ → clawback 50 % de 44,70 $ = **22,35 $**.
+Exemple : S1 Héritage — commission 4 023¢ sur brut 14 900¢ — remboursement 50 % (7 450¢) → clawback `floor(4023 × 7450 / 14900)` = **2 011¢** (20,11 $).
+
+> **Pourquoi proportionnel ?** Préserve la cohérence du waterfall Bulletproof sur remboursements partiels, indépendamment des arrondis `floor` intermédiaires.
 
 ### RPC cible
 
@@ -348,7 +377,7 @@ WHERE tenant_id = :tenant_id;
 
 ```sql
 SELECT created_at, reason, delta_cents, gross_payment_cents,
-       commission_cents, stripe_event_id, status
+       net_distributable_cents, commission_cents, stripe_event_id, status
 FROM partner_commission_ledger
 WHERE tenant_id = :tenant_id
 ORDER BY created_at DESC
@@ -373,9 +402,12 @@ WHERE tc.project_id = :project_id;
 | ❌ Interdit | ✅ Correct |
 |-----------|-----------|
 | Accrue commission au POST checkout | Webhook `completed` uniquement |
-| Base nette Stripe (après frais) | **Brut** `amount_total` |
+| Utiliser `balance_transaction.net` Stripe comme assiette | **Net Distribuable** contractuel (= Gross − Platform Fee Odyssey) |
+| Confondre Net Distribuable et Net Stripe | Deux concepts distincts — voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
+| Commission sur le brut (modèle pré-Bulletproof) | 30 % du **Net Distribuable** uniquement |
 | Double accrual même checkout | UNIQUE `tribute_checkout_id` + idempotence event |
 | Commission sur B2C direct | Vérifier `checkout_mode` + `invitation_id` + `is_freemium` |
+| Family Fund depuis poche partenaire | RPC séparée sur `odyssey_margin_cents` |
 | Payout sans ligne ledger | Toujours `INSERT payout` + `actor_user_id` |
 | Mélanger jetons et centimes | Ledgers séparés |
 
@@ -385,13 +417,16 @@ WHERE tc.project_id = :project_id;
 
 | Composant | Statut |
 |-----------|--------|
-| Doc canonique (ce fichier) | ✅ |
-| Migration SQL P6 | ⏳ |
-| RPC accrue / clawback / payout | ⏳ |
+| Doc canonique Bulletproof (ce fichier) | ✅ juillet 2026 |
+| Migration SQL P6 (base brut) | ✅ appliquée |
+| Migration SQL **P6.1** waterfall | ⏳ à créer |
+| `compute_revenue_waterfall()` | ⏳ P6.1 |
+| RPC accrue / clawback / payout | ⏳ P6.1 |
 | Webhook handler `checkout.session.completed` | ⏳ |
 | Webhook handler `charge.refunded` | ⏳ |
-| UI Salon commissions (`partner_admin`) | ⏳ |
+| UI Salon commissions waterfall (`partner_admin`) | ⏳ |
 | Payout admin Odyssey | ⏳ |
+| QA checklist | ✅ [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) |
 | Stripe Connect auto-payout | 🔮 Phase 2 |
 
 ---
@@ -402,11 +437,88 @@ WHERE tc.project_id = :project_id;
 |----------|------|
 | [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) | Saga v2, éligibilité RevShare |
 | [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) | Grille forfaits, extensions commissionnables |
-| [`sql/README.md`](sql/README.md) | Ordre migrations P6 |
+| [`sql/README.md`](sql/README.md) | Ordre migrations P6 → **P6.1** |
+| [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) | 5 scénarios QA chiffrés |
 | [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) | QA wallet legacy (distinct commissions) |
+
+---
+
+## Annexe — Spec pseudo-SQL `compute_revenue_waterfall`
+
+**Single source of truth** pour accrual, clawback, tests QA et preview admin. À implémenter en P6.1.
+
+```sql
+CREATE OR REPLACE FUNCTION public.compute_revenue_waterfall(
+  p_gross_payment_cents integer,
+  p_platform_fee_bps integer DEFAULT 1000,
+  p_commission_rate_bps integer DEFAULT 3000
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+IMMUTABLE
+AS $$
+DECLARE
+  v_platform_fee_cents      integer;
+  v_net_distributable_cents integer;
+  v_commission_cents        integer;
+  v_odyssey_margin_cents    integer;
+BEGIN
+  IF p_gross_payment_cents IS NULL OR p_gross_payment_cents < 0 THEN
+    RAISE EXCEPTION 'invalid_gross_payment_cents';
+  END IF;
+
+  v_platform_fee_cents := floor(
+    p_gross_payment_cents::numeric * COALESCE(p_platform_fee_bps, 1000) / 10000
+  )::integer;
+
+  v_net_distributable_cents := p_gross_payment_cents - v_platform_fee_cents;
+
+  v_commission_cents := floor(
+    v_net_distributable_cents::numeric * COALESCE(p_commission_rate_bps, 3000) / 10000
+  )::integer;
+
+  v_odyssey_margin_cents := v_net_distributable_cents - v_commission_cents;
+
+  RETURN jsonb_build_object(
+    'gross_payment_cents', p_gross_payment_cents,
+    'platform_fee_bps', COALESCE(p_platform_fee_bps, 1000),
+    'platform_fee_cents', v_platform_fee_cents,
+    'net_distributable_cents', v_net_distributable_cents,
+    'commission_rate_bps', COALESCE(p_commission_rate_bps, 3000),
+    'commission_cents', v_commission_cents,
+    'odyssey_margin_cents', v_odyssey_margin_cents
+  );
+END;
+$$;
+```
+
+**Exemples attendus :**
+
+```sql
+-- Héritage seul
+SELECT compute_revenue_waterfall(14900, 1000, 3000);
+-- → net_distributable_cents: 13410, commission_cents: 4023, platform_fee_cents: 1490
+
+-- Éternité seul
+SELECT compute_revenue_waterfall(29900, 1000, 3000);
+-- → net_distributable_cents: 26910, commission_cents: 8073
+
+-- Héritage + Retouche IA
+SELECT compute_revenue_waterfall(19800, 1000, 3000);
+-- → net_distributable_cents: 17820, commission_cents: 5346
+```
+
+**Clawback helper (pseudo) :**
+
+```sql
+-- p_commission_cents et p_gross from accrual snapshot
+clawback_cents := floor(
+  p_commission_cents::numeric * p_refunded_cents / NULLIF(p_gross_payment_cents, 0)
+)::integer;
+```
 
 ---
 
 ## Quand modifier ce document
 
-Toute évolution de : taux RevShare, base de calcul, statuts commission, clawback, payout, ou schéma ledger → mettre à jour **ce fichier**, [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), et [`sql/odyssey_p6_freemium_revshare.sql`](sql/odyssey_p6_freemium_revshare.sql).
+Toute évolution de : Platform Fee, taux RevShare, **Net Distribuable**, statuts commission, clawback, payout, ou schéma ledger → mettre à jour **ce fichier**, [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md), et [`sql/odyssey_p6_1_bulletproof_waterfall.sql`](sql/odyssey_p6_1_bulletproof_waterfall.sql).

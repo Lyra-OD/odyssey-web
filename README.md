@@ -6,7 +6,7 @@ Application Next.js 14 (App Router) pour le **Studio Odyssey** — hommages vid�
 
 - **Wizard hommage 8 étapes** — autosave, storyboard chapitres/chansons, **Étape 5 Livre Ouvert** (DnD + Composition Magique), musique Stingray, extensions à la carte, checkout Stripe.
 - **Salon partenaire (B2B2C)** — co-branding, invitations famille, RBAC Admin/Directeur, wallet legacy jetons (P5.5 ✅ QA prod).
-- **Modèle B2B2C v2 (Scrypta Killer)** — **Freemium** : le forfait **Souvenir** est offert gratuitement par le partenaire (lead-magnet) ; upsell famille en prix plein ; **RevShare 30 %** du brut Stripe reversé au partenaire via ledger commissions (P6).
+- **Modèle B2B2C v2 (Scrypta Killer)** — **Freemium** : le forfait **Souvenir** est offert gratuitement par le partenaire (lead-magnet) ; upsell famille en prix plein ; **Bulletproof** : Platform Fee 10 % → RevShare **30 % du Net Distribuable** au partenaire (P6.1).
 - **B2C direct (Quiet Luxury)** — 3 forfaits premium : **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $** (Gants Blancs) — sans tier gratuit.
 - **Scanner Compagnon IA** — Killer App d’ingestion : QR Code sur le wizard desktop → session web mobile → scan photos papier → restauration IA Avant/Après → conversion vers Éternité ou Légendaire.
 - **Stack** — Supabase (auth, RLS, Storage), Stripe (checkout + webhook), déploiement Vercel.
@@ -17,9 +17,10 @@ Application Next.js 14 (App Router) pour le **Studio Odyssey** — hommages vid�
 
 | Document | Contenu |
 |----------|---------|
-| [`docs/B2B2C_COMMERCE.md`](docs/B2B2C_COMMERCE.md) | **Commerce v2** — freemium, RevShare, saga checkout, coexistence legacy jetons. |
+| [`docs/B2B2C_COMMERCE.md`](docs/B2B2C_COMMERCE.md) | **Commerce v2 Bulletproof** — waterfall 10 % + 30 % Net Distribuable, freemium, saga checkout. |
 | [`docs/DELIVERABLES_AND_PACKAGES.md`](docs/DELIVERABLES_AND_PACKAGES.md) | Contrat livrables — Souvenir lead-magnet · Quiet Luxury B2C · Légendaire Gants Blancs. |
-| [`docs/PARTNER_REVSHARE.md`](docs/PARTNER_REVSHARE.md) | Ledger commissions 30 %, webhook idempotent, clawback, payout mensuel. |
+| [`docs/PARTNER_REVSHARE.md`](docs/PARTNER_REVSHARE.md) | Ledger commissions · **Net Distribuable** · webhook · clawback · payout. |
+| [`docs/QA_P6_COMMISSION_WATERFALL.md`](docs/QA_P6_COMMISSION_WATERFALL.md) | QA chiffrée — 5 scénarios waterfall P6.1. |
 | [`docs/SCANNER_COMPANION.md`](docs/SCANNER_COMPANION.md) | Architecture Scanner Compagnon (QR → mobile → IA → upsell). |
 | [`docs/STORYBOARD_STEP5_LIVRE_OUVERT.md`](docs/STORYBOARD_STEP5_LIVRE_OUVERT.md) | **Étape 5** — Livre Ouvert, DnD, Composition Magique (canon). |
 | [`docs/MOBILE_WIZARD_STRATEGY.md`](docs/MOBILE_WIZARD_STRATEGY.md) | **Stratégie mobile** — Forbes + Ferpection, Scanner, plan M0–M6. |
@@ -76,7 +77,7 @@ Source : [`docs/DELIVERABLES_AND_PACKAGES.md`](docs/DELIVERABLES_AND_PACKAGES.md
 
 | Canal | Forfaits |
 |-------|----------|
-| **B2B2C freemium** | Souvenir **0 $** offert · upsell 149 $ / 299 $ + RevShare 30 % |
+| **B2B2C freemium** | Souvenir **0 $** offert · upsell 149 $ / 299 $ · RevShare 30 % **Net Distribuable** |
 | **B2C direct** | Héritage **149 $** · Éternité **299 $** · Légendaire **499 $** |
 | **Legacy jetons** | Petits salons — wallet P5.5 (coexistence) |
 
