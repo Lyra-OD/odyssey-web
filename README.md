@@ -22,6 +22,7 @@ Application Next.js 14 (App Router) pour le **Studio Odyssey** — hommages vid�
 | [`docs/PARTNER_REVSHARE.md`](docs/PARTNER_REVSHARE.md) | Ledger commissions 30 %, webhook idempotent, clawback, payout mensuel. |
 | [`docs/SCANNER_COMPANION.md`](docs/SCANNER_COMPANION.md) | Architecture Scanner Compagnon (QR → mobile → IA → upsell). |
 | [`docs/STORYBOARD_STEP5_LIVRE_OUVERT.md`](docs/STORYBOARD_STEP5_LIVRE_OUVERT.md) | **Étape 5** — Livre Ouvert, DnD, Composition Magique (canon). |
+| [`docs/MOBILE_WIZARD_STRATEGY.md`](docs/MOBILE_WIZARD_STRATEGY.md) | **Stratégie mobile** — Forbes + Ferpection, Scanner, plan M0–M6. |
 | [`docs/QA_S5_MONTAGE_STEP.md`](docs/QA_S5_MONTAGE_STEP.md) | Checklist QA régression Étape 5. |
 | [`docs/STORYBOARD_REFACTOR.md`](docs/STORYBOARD_REFACTOR.md) | Plan refactor storyboard S1–S10. |
 | [`docs/WIZARD_ARCHITECTURE.md`](docs/WIZARD_ARCHITECTURE.md) | Wizard 8 étapes, pricing v2, schéma DB P6. |

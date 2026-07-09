@@ -291,6 +291,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | `STORYBOARD_REFACTOR.md` | ✅ S5 partiel documenté · S5-J/K/L ⏳ |
 | `STORYBOARD_STEP5_LIVRE_OUVERT.md` | ✅ **Canon Étape 5** — Livre Ouvert + Composition Magique |
 | `QA_S5_MONTAGE_STEP.md` | ✅ Checklist régression Étape 5 |
+| `MOBILE_WIZARD_STRATEGY.md` | ✅ Stratégie mobile wizard (M0–M6, Scanner P1) |
 | `DESIGN_SYSTEM.md` | ✅ §4.2 Composition Magique (capsule + scrim) |
 | `PARTNER_REVSHARE.md` | ✅ spec · code ⏳ |
 | `SCANNER_COMPANION.md` | ✅ spec à jour (caps + P6 stub) · code ⏳ |
@@ -360,11 +361,12 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 
 ### Immediate next steps (post PR-3)
 
-1. **Bugs UX résiduels** — correctifs liste utilisateur + passage [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
-2. **S5-J/K/L** — immersion sonore, focus organique, copy narrative (spec §10 dans Step 5 doc)
-3. **S7** — warnings pacing visibles sur grilles chapitre
-4. **S8/S9** — migration Preview/Checkout hors pont legacy `actTracks`
-5. **Commerce parallèle** — saga checkout v2, webhook RevShare, Scanner Phase A
+1. **Stratégie mobile** — exécuter plan [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) (M0 → M3 → Scanner M2)
+2. **Bugs UX résiduels** — correctifs liste utilisateur + passage [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
+3. **Tests utilisateurs M6** — valider Étape 5 mobile avant refactor massif (Ferpection)
+4. **S5-J/K/L** — immersion sonore, focus organique, copy narrative (spec §10 Step 5 doc)
+5. **S7–S10** — pacing UI, Preview/Checkout, purge legacy
+6. **Commerce parallèle** — saga checkout v2, webhook RevShare
 
 ---
 
@@ -392,7 +394,7 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 4b. **[`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md)** · **[`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)** — ledger commissions + Killer App.
 5. **[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md)** — grille Quiet Luxury B2C (149/299/499) + Souvenir lead-magnet B2B2C.
 6. **[`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)** — **Étape 5** Livre Ouvert + Composition Magique (canon).
-6b. **[`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)** — checklist régression montage.
+6b. **[`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md)** — stratégie mobile wizard (Forbes + Ferpection, Scanner).
 7. **[`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md)** — hub technique complet (§4 auth, §10 roadmap).
 
 **Démo prod / QA :** tenant `partner-qa-demo` (Urgel Bourgie) · compte partenaire QA · base Vercel `odyssey-web-eta.vercel.app`.
