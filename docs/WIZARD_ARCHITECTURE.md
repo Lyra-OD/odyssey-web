@@ -1,6 +1,6 @@
 # Tribute Wizard — Architecture
 
-**Last code review: July 2026 · B2B2C v2 + Storyboard `S1–S4`/`S6`/`S6bis`/Clean Slate shipped, `S5` (dnd-kit) next**
+**Last code review: July 2026 · B2B2C v2 + Storyboard S5 partiel (Livre Ouvert PR-1/2/3) · S5-J/K/L next**
 
 This document describes the 8-step tribute wizard: navigation, state, autosave, **song-based storyboard foundations**, pricing v2 (freemium B2B2C vs Quiet Luxury B2C), and checkout. Parent overview: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7.
 
@@ -27,10 +27,17 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | `src/lib/wizard/storyboardPacing.ts` | Moteur de pacing pur — capacité recommandée, marges intro/outro, coût vidéo fixe, estimation durée totale |
 | `src/lib/wizard/storyboardHelpers.ts` | Gestion des chapitres (ajout/retrait/cap), validation structurelle, détection de doublons, prévision de perte au downgrade, `findChapterForMedia()` |
 | `src/lib/wizard/chapterTheme.ts` | Palette dynamique par chapitre (`getChapterCardTheme`) |
-| `src/components/tribute/StoryboardMontageStep.tsx` | **Step 5 (placeholder)** — message UX honnête en attendant la table de montage `dnd-kit` |
-| `src/components/tribute/montage/MontageDirectorModal.tsx` | Modal directeur plein écran — retypé chapitres, conservé pour `S5` |
-| `src/components/tribute/montage/MontageMediaCard.tsx` | Carte média drag — retypé chapitres, conservé pour `S5` |
-| `src/components/tribute/montage/MontageFocalReticle.tsx` | Sélecteur point focal — conservé pour `S5` |
+| `src/components/tribute/StoryboardMontageStep.tsx` | **Step 5 (live)** — Livre Ouvert : banque persistante, DnD, Composition Magique — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
+| `src/lib/wizard/storyboardMedia.ts` | Assignation / désassignation / réordonnancement médias (Étape 5) |
+| `src/lib/wizard/storyboardAutoFill.ts` | `autoFillChapter`, `clearChapterMedia`, `isStoryboardMontageVirgin` |
+| `src/lib/wizard/storyboardDnd.ts` | Collision detection et IDs droppables dnd-kit (Étape 5) |
+| `src/lib/wizard/storyboardMagicTimeline.ts` | Partition Composition Magique — shuffle, batches, constantes timing |
+| `src/lib/wizard/magicTimelinePlayer.ts` | Lecteur async timeline magique (`playMagicTimeline`) |
+| `src/components/tribute/storyboard/MagicCinematicOverlay.tsx` | Overlay scrim + capsule (Composition Magique) |
+| `src/components/tribute/storyboard/MontageOnboardingGate.tsx` | Gate onboarding magie / manuel |
+| `src/components/tribute/montage/MontageDirectorModal.tsx` | Modal directeur plein écran — retypé chapitres |
+| `src/components/tribute/montage/MontageMediaCard.tsx` | Carte média drag + entrée CSS magic |
+| `src/components/tribute/montage/MontageFocalReticle.tsx` | Sélecteur point focal |
 | `src/lib/partner/partnerCheckout.ts` | B2B token debit (`partner_token_wallets`) |
 | `src/lib/partner/resolvePartnerAccess.ts` | Partner role detection (`tenant_members`) |
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
@@ -58,7 +65,7 @@ The tribute wizard is **no longer a static 8-step product definition** in docume
 
 Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.
 
-### Dynamic UI (S1–S4 + S6 + Clean Slate shipped, S5 dnd-kit next)
+### Dynamic UI (S1–S4 + S6 + S5 partiel + Clean Slate)
 
 | Rule (manifest) | Wizard behaviour |
 |---------------|------------------|
@@ -70,7 +77,7 @@ Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.
 | `limits.maxSongs` + `pacing.targetSecondsPerMedia` | Validate chapter capacity from real song duration ✅ (**S4**), incl. marges intro/outro et coût vidéo fixe |
 | `resolveTransactionMode()` | `StickyPriceBar` / Dossier: **tokens** (partner) vs **dollars** (family) |
 
-**Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is now `storyboard`; Step 4 (music/chapters) reads and writes it directly via `useWizardStoryboard`. **Step 5** renders an honest placeholder (`StoryboardMontageStep`) — `SoundSignatureStep` was removed during Clean Slate because it was a silent dead-end (server always preferred Step 4's canonical `storyboard`). Steps 7–8 still use a temporary legacy bridge (`actTracks`) for Preview/Checkout until `S8`/`S9`.
+**Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is now `storyboard`; Step 4 reads/writes `storyboard.chapters[].song` via `useWizardStoryboard`. **Step 5** is the live **Livre Ouvert** montage UI (`StoryboardMontageStep`) — DnD, actions chapitre, onboarding gate, and **Composition Magique** (see [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)). `SoundSignatureStep` was removed during Clean Slate. Steps 7–8 still use a temporary legacy bridge (`actTracks`) for Preview/Checkout until `S8`/`S9`.
 
 ### Design decisions — why (juillet 2026)
 
@@ -118,7 +125,7 @@ The new canonical model solves this by moving to a **song-based storyboard**:
 
 - `storyboard` is now persisted as the canonical V2 shape
 - `wizardState.ts` rebuilds temporary `montage` + `musicalAmbiance` legacy views at runtime for Preview/Checkout
-- Steps 4–5 use canonical `storyboard` directly (`StoryboardChaptersStep` + placeholder `StoryboardMontageStep`)
+- Steps 4–5 use canonical `storyboard` directly (`StoryboardChaptersStep` + `StoryboardMontageStep` Livre Ouvert)
 - Steps 7–8 still render through the legacy bridge until `S8`/`S9`
 
 ### i18n (marketing names)
@@ -154,7 +161,7 @@ Package selection is no longer step-bound: the Dossier trigger (`PackageDossierP
 | 2 | `stepperSources` | Social source + URL | `socialSources`, `basePackage` |
 | 3 | `stepperVault` | Dropzone + upload queue + **Scanner Compagnon QR** (cible) | `media_assets` rows; reload `GET /api/projects/[id]/media` · voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | 4 | `stepperChapters` | **Chapitres musicaux dynamiques** (`StoryboardChaptersStep`, live — ✅ `S6`) | `storyboard.chapters[].song` (canonique, plus de bridge) |
-| 5 | `stepperSound` | **Placeholder** `StoryboardMontageStep` — table de montage en construction (`S5` dnd-kit à venir) | `storyboard` (canonique, pas de bridge) |
+| 5 | `stepperSound` | **Livre Ouvert** — `StoryboardMontageStep` (DnD, magie, actions chapitre) | `storyboard` (canonique) |
 | 6 | `stepperExtensions` | Upsell cards + Heritage Pack; **bundle rules** when `basePackage=heritage` | `extensions` |
 | 7 | `stepperPreview` | Copy + `CinematicTeaser` | Reads canonical `storyboard` through the temporary legacy preview bridge |
 | 8 | `stepperCheckout` | Cart recap + pay CTA | `POST /api/checkout` |
@@ -259,16 +266,17 @@ Additional chapters beyond index 2 are temporarily projected into `unassignedIds
 
 ---
 
-## Step 5 — Montage (placeholder — `S5` dnd-kit next)
+## Step 5 — Montage Livre Ouvert (live — S5 partiel)
 
-- **Component:** `StoryboardMontageStep.tsx` — placeholder honnête indiquant que la table de montage interactive arrive bientôt ; les médias seront répartis automatiquement en attendant.
-- **Pourquoi le placeholder :** `SoundSignatureStep` (supprimé lors du Clean Slate) affichait une UI fonctionnelle mais dont les saisies étaient silencieusement ignorées par `coerceWizardState()` — bug UX trompeur, pas une simple dette technique.
-- **Fondations prêtes pour `S5` :**
-  - `useWizardStoryboard` — domaine chapitres extrait de `TributeWizard`
-  - `montage/MontageDirectorModal.tsx`, `MontageMediaCard.tsx`, `MontageFocalReticle.tsx` — retypés chapitres
-  - `chapterTheme.ts`, `storyboardHelpers.ts` — palette et helpers chapitres
-- **Supprimés (Clean Slate) :** `SoundSignatureStep.tsx`, `MontageStep.tsx`, `MontageActColumn.tsx`, `MontageUnassignedColumn.tsx`, `MontageSelectionBar.tsx`, `MontageInsertionIndicator.tsx`
-- **Cible `S5`** (voir [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md)) : remplacer le placeholder par drag & drop `dnd-kit` — un bac média par chapitre dimensionné par l'Étape 4, rognage vidéo (`videoTrims`) via icône ciseaux.
+**Canon:** [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) · **QA:** [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
+
+- **Component:** `StoryboardMontageStep.tsx` — layout Livre Ouvert, banque persistante, chapitres empilés, `StoryboardFilmMap`, DnD global `dnd-kit`, actions chapitre, onboarding gate, Composition Magique.
+- **Why not placeholder anymore:** PR-1/2/3 (juillet 2026) replaced the post–Clean Slate placeholder with the full interactive experience.
+- **Magic composition:** `buildMagicTimeline` → `playMagicTimeline` — batch per chapter + CSS cascade; overlay `MagicCinematicOverlay` (scrim Option B + capsule Bouton Noir, **design locked**).
+- **Autosave:** suspended during magic via `magicPerformingRef` in `TributeWizard`; `queueSave("immediate")` on `onMagicSequenceComplete`.
+- **Delivered (PR-1/2/3):** layout, FilmMap, DnD, multi-select, auto-fill / clear / refine drawer, magic sequence, QA fixes (drop target, ghost selection).
+- **Remaining (S5-J/K/L):** chapter audio during montage, organic focus mode, narrative copy polish — see Step 5 doc §10–11.
+- **Legacy orphan files:** `MontageTimeline.tsx`, `MontageChapterTabs.tsx` — candidate removal in S10 cleanup.
 
 ---
 
@@ -439,7 +447,7 @@ flowchart TD
 | `StickyPriceBar` | Sticky under stepper, every step | Live **total** (B2C $) or **tokens** (B2B); reflects `computeWizardCart` including Heritage bundle rules |
 | `PackageDossierPanel` | Global header, Step 1+ (`hidePrices` when partner) | Off-canvas — inclusions exhaustives + **Éternité savings badge** (67 $) + comparaison cross-fade |
 | `WizardCartSummary` | Steps 5–6 (B2C only) | Line recap |
-| `StoryboardMontageStep` | Step 5 | Placeholder — table de montage en construction |
+| `StoryboardMontageStep` | Step 5 | Livre Ouvert — DnD, Composition Magique — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
 | `MontageExtensionsStep` | Step 6 | Extensions + « Déjà inclus » when Heritage |
 
 ---

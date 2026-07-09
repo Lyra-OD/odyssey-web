@@ -112,7 +112,8 @@ Detail complet : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) § Agnosticité backen
 - `src/components/tribute/PackageDossierPanel.tsx`: global off-canvas package selector (« Le Dossier »)
 - `src/components/tribute/StoryboardChaptersStep.tsx`: dynamic musical chapters (step 4, live)
 - `src/components/tribute/storyboard/ChapterMusicPanel.tsx`: Stingray search + preview per chapter (step 4)
-- `src/components/tribute/StoryboardMontageStep.tsx`: montage placeholder (step 5 — `S5` dnd-kit next)
+- `src/components/tribute/StoryboardMontageStep.tsx`: **Livre Ouvert** montage (step 5 — DnD + Composition Magique) — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)
+- `src/components/tribute/storyboard/`: composants Étape 5 (layout, FilmMap, magic overlay, onboarding gate)
 - `src/hooks/useWizardStoryboard.ts`: storyboard domain hook (resync, validation, pacing)
 - `src/components/tribute/CinematicTeaser.tsx`: cinematic preview player (step 7)
 - `src/components/media/MediaDropzoneAdapter.tsx`: headless dropzone adapter
@@ -272,12 +273,12 @@ Package selection is global, not step-bound: the **« Dossier »** trigger (`Pac
 | 2 | Sources | `TributeWizard` | `socialSources`, `basePackage` |
 | 3 | Vault (upload) | `MediaDropzoneAdapter` + **`ScannerCompanionPanel`** (cible) | `media_assets` + scan sessions — [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | 4 | Musical chapters (**live**) | `StoryboardChaptersStep` + `ChapterMusicPanel` | `storyboard.chapters[].song` — canonical, no bridge |
-| 5 | Montage (**placeholder**) | `StoryboardMontageStep` — table de montage en construction (`S5` dnd-kit next) | `storyboard` (canonique) |
+| 5 | Montage (**Livre Ouvert — live**) | `StoryboardMontageStep` — DnD, Composition Magique, actions chapitre — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) | `storyboard` (canonique) |
 | 6 | Memory extensions | `MontageExtensionsStep` | `extensions` (à la carte — commissionnables en freemium) |
 | 7 | Film preview | `PreviewStep` + `CinematicTeaser` | reads canonical `storyboard` through the temporary preview bridge |
 | 8 | Checkout | `CheckoutStep` | `POST /api/checkout` → saga `tribute_checkouts` — [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 |
 
-> Steps have been reordered: music/chapters now come **before** montage, since chapter media capacity depends on the chosen song's duration. `S5` (`StoryboardMontageStep` + `dnd-kit`) will replace step 5's current placeholder — see [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md). Clean Slate (juillet 2026) removed the inert `SoundSignatureStep` that silently ignored user input.
+> Steps have been reordered: music/chapters now come **before** montage, since chapter media capacity depends on the chosen song's duration. **Step 5** is the live **Livre Ouvert** UI (PR-1/2/3, juillet 2026) — see [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md). Clean Slate removed the inert `SoundSignatureStep` that silently ignored user input.
 
 **Packages (marketing vs technical IDs):**
 
@@ -539,7 +540,7 @@ Si "No git repositories found": c'est en general un probleme de permissions GitH
 - **P3 autosave**: `wizard_state`, `wizard_step`, `last_saved_at` + `useWizardAutosave` + `AutosaveIndicator`.
 - **Media reload** after refresh: `GET /api/projects/[id]/media` (+ reorder / delete routes).
 - **Musical chapters** (step 4, live): `StoryboardChaptersStep` + `ChapterMusicPanel` — dynamic chapters read/write `storyboard.chapters[].song` directly, no bridge.
-- **Montage** (step 5, placeholder): `StoryboardMontageStep` — honest UX message while `S5` (dnd-kit) is built. `SoundSignatureStep` removed during Clean Slate (was silently ignoring input).
+- **Montage** (step 5, live): `StoryboardMontageStep` — Livre Ouvert, DnD `dnd-kit`, Composition Magique, onboarding gate. `SoundSignatureStep` removed during Clean Slate. Canon: [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md).
 - **Storyboard domain hook**: `useWizardStoryboard` extracted from `TributeWizard` (juillet 2026 Clean Slate).
 - **Extensions** (step 6): four upsell cards + Heritage Pack; persisted in `wizard_state.extensions`.
 - **Cinematic preview** (step 7): `PreviewStep` + `CinematicTeaser` via temporary runtime bridge rebuilt from `storyboard`.

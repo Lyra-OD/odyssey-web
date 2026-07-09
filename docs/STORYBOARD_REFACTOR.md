@@ -141,34 +141,49 @@ Remplacer progressivement `maxMediaItemsPerSong` par `targetSecondsPerMedia`.
 
 ## Phase 3 - Refonte UI Storyboard
 
-### Ticket S5 - Refondre l'étape Montage en `StoryboardMontageStep` (Étape 5) 🟡 placeholder livré — dnd-kit à venir
+### Ticket S5 - Refondre l'étape Montage en `StoryboardMontageStep` (Étape 5) 🟡 partiellement livré — dimensions sensorielles à suivre
 **But**
 Remplacer les 3 colonnes fixes par des chapitres dynamiques — devient **l'Étape 5** suite à l'inversion de l'ordre des étapes (voir décision ci-dessus).
 
-**État actuel (post-Clean Slate)**
-- `StoryboardMontageStep.tsx` affiche un **placeholder honnête** : message UX indiquant que les médias seront répartis automatiquement en attendant la table de montage interactive.
-- `SoundSignatureStep.tsx` **supprimé** — l'ancien écran inerte (saisies silencieusement ignorées par `coerceWizardState()`) ne peut plus tromper l'utilisateur.
-- Fondations prêtes pour `dnd-kit` : `useWizardStoryboard`, `montage/MontageMediaCard`, `MontageDirectorModal`, `MontageFocalReticle` retypés chapitres ; logique 3-actes purgée (`MontageStep`, colonnes acte, barre de sélection supprimés).
+**Document canonique Étape 5 :** [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) · QA : [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
 
-**Fichiers cibles (reste à faire)**
-- `src/components/tribute/StoryboardMontageStep.tsx` (remplacer le placeholder)
-- `src/components/tribute/storyboard/*` (colonnes chapitre, bac non assignés)
-- `src/components/tribute/TributeWizard.tsx`
+#### Sous-tickets livrés (juillet 2026)
 
-**Travail restant**
-- Générer 1..N colonnes selon les chapitres déjà créés à l'Étape 4 (chansons + capacité déjà connues).
-- Conserver :
-  - `unassignedIds`
-  - `excludedIds`
-  - `focalPoints`
-  - `videoTrims` (rognage vidéo 10s, icône ciseaux sur `MontageMediaCard`)
-- Permettre :
-  - réordonnancement de chapitre
-  - déplacement média -> chapitre (`dnd-kit`)
+| Sous-ticket | Contenu | Commit |
+|-------------|---------|--------|
+| **S5-A/B/C** | Livre Ouvert — layout 280px\|1fr, FilmMap, banque persistante, grilles read-only | `fdeb7da` |
+| **S5-D/E/F** | DnD `dnd-kit`, multi-select, actions chapitre (auto-fill, vider, gérer) | `cc5f668` |
+| **S5-G/H/I** | Onboarding gate, Composition Magique (batch + overlay cinématographique) | `41235e8` |
 
-**Critère d'acceptation**
-- Plus aucune hypothèse codée en dur sur `spark/epic/legacy`.
-- Drag & drop fonctionnel desktop + proposition UX mobile validée.
+**État actuel (post-PR-3)**
+- `StoryboardMontageStep.tsx` est l'UI **interactive** Livre Ouvert — plus de placeholder.
+- Paradigme : tout visible, Composition Magique ou montage manuel.
+- `SoundSignatureStep.tsx` reste **supprimé** (Clean Slate).
+- Fondations : `useWizardStoryboard`, `montage/MontageMediaCard`, `MontageDirectorModal`, `storyboardDnd.ts`, `storyboardMagicTimeline.ts`.
+
+#### Sous-tickets restants
+
+| Sous-ticket | Contenu | Statut |
+|-------------|---------|--------|
+| **S5-J** | Immersion sonore — play chanson par chapitre pendant montage | ⏳ |
+| **S5-K** | Mode Focus organique (dim 40 % + blur hors chapitre actif) | ⏳ |
+| **S5-L** | Vocabulaire narratif final + polish matière & toucher | 🟡 partiel |
+| **S5-tests** | Unitaires `storyboardMagicTimeline.ts` | ⏳ |
+| **S5-cleanup** | Suppression `MontageTimeline.tsx`, `MontageChapterTabs.tsx`, ancien tiroir banque | ⏳ |
+
+**Fichiers actifs (Étape 5)**
+- `src/components/tribute/StoryboardMontageStep.tsx`
+- `src/components/tribute/storyboard/*` (voir inventaire dans [`STORYBOARD_STEP5_LIVRE_OUVERT.md` §3](STORYBOARD_STEP5_LIVRE_OUVERT.md#3-architecture-composants))
+- `src/lib/wizard/storyboardMedia.ts`, `storyboardAutoFill.ts`, `storyboardDnd.ts`, `storyboardMagicTimeline.ts`, `magicTimelinePlayer.ts`
+- `app/globals.css` — classes `.magic-*`
+
+**Critères d'acceptation — état**
+- ✅ Plus d'hypothèse codée en dur sur `spark/epic/legacy` dans l'UI Étape 5
+- ✅ Drag & drop fonctionnel desktop (+ correctifs QA drop target, sélection fantôme)
+- ✅ Composition Magique cinématographique (batch chapitre, < 3 s ~20 photos)
+- ⏳ Audio chapitre pendant montage (S5-J)
+- ⏳ Mode Focus organique (S5-K)
+- ⏳ Proposition UX mobile validée formellement (layout stack livré, polish à confirmer)
 
 ### Ticket S6 - Refondre l'étape Musique en chapitres dynamiques (devient l'Étape 4) ✅ livré
 **But**
@@ -228,7 +243,7 @@ Préparer le terrain pour `S5` (dnd-kit) en éliminant les bugs silencieux et le
 
 **Fichiers touchés**
 - `src/hooks/useWizardStoryboard.ts` (nouveau) — resync chapitres, doublons, validation, estimation durée ; **pur** (pas d'autosave, reste dans `TributeWizard` via `persistStoryboardRef`)
-- `src/components/tribute/StoryboardMontageStep.tsx` (nouveau) — placeholder honnête Étape 5
+- `src/components/tribute/StoryboardMontageStep.tsx` — placeholder honnête Étape 5 (remplacé par Livre Ouvert PR-1/2/3)
 - `src/components/tribute/storyboard/ChapterMusicPanel.tsx` (extrait de `StoryboardChaptersStep`)
 - `src/lib/wizard/chapterTheme.ts` (nouveau) — palette dynamique par chapitre
 - `src/components/tribute/montage/MontageDirectorModal.tsx`, `MontageMediaCard.tsx`, `MontageFocalReticle.tsx` — retypés chapitres
@@ -258,13 +273,13 @@ Remplacer les validations centrées sur `countIncludedMedia` et `hasAnyActTrack`
 - Quota médias global : déjà appliqué à l'Étape 3 (`S3`, garde-fou UI + trigger Postgres).
 - Acquittement obligatoire des doublons de chanson avant `goNext` (état local, non persisté).
 
-**Restant à faire (avec S5)**
-- Validation éditoriale par chapitre (warnings pacing média/chapitre) : le moteur existe (`storyboardPacing.ts`) mais l'UI de saisie média (Étape 5) n'existe pas encore pour l'exposer.
-- Pas de blocage dur sur pacing au premier passage ; warning visible d'abord — règle toujours valide, à appliquer dans `StoryboardMontageStep`.
+**Restant à faire (Étape 5 live — S7 suite)**
+- Validation éditoriale par chapitre (warnings pacing média/chapitre) : le moteur existe (`storyboardPacing.ts`) ; l'UI Livre Ouvert existe (PR-1/2/3) mais les **warnings pacing visibles** sur les grilles chapitre restent à brancher / renforcer.
+- Pas de blocage dur sur pacing au premier passage ; warning visible d'abord — règle toujours valide.
 
 **Critère d'acceptation**
 - ✅ La navigation Wizard ne dépend plus du legacy `hasAnyActTrack` à l'Étape 4.
-- ⏳ Idem à l'Étape 5, une fois `S5` livré.
+- 🟡 Étape 5 : assignation média OK ; warnings pacing UI à compléter (S7).
 
 ## Phase 4 - Preview, checkout et nettoyage
 
@@ -331,8 +346,8 @@ Retirer le code mort une fois la migration stabilisée.
 5. `S6` UI musique dynamique (devient Étape 4) ✅
 6. `S6bis` Refonte en-tête global / Dossier de forfait ✅
 7. `Clean Slate` Neutralisation Étape 5 + hook storyboard + triage montage/* ✅
-8. `S5` UI storyboard dynamique (Montage, devient Étape 5) 🟡 **prochain — placeholder livré, dnd-kit à implémenter**
-9. `S7` Validation wizard storyboard 🟡 partiel (chansons ✅, médias ⏳ avec S5)
+8. `S5` UI Livre Ouvert (Montage, Étape 5) 🟡 **partiel — PR-1/2/3 ✅ · S5-J/K/L ⏳** — voir [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)
+9. `S7` Validation wizard storyboard 🟡 partiel (chansons ✅ ; pacing UI Étape 5 ⏳)
 10. `S8` Preview / teaser
 11. `S9` Checkout / metadata
 12. `S10` Nettoyage legacy

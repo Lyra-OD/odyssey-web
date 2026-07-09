@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: July 2026 · P6 SQL applied, storyboard `S1–S4`/`S6`/`S6bis`/Clean Slate shipped, `S5` (dnd-kit) next**
+**Last revised: July 2026 · P6 SQL applied, storyboard S5 partiel (Livre Ouvert PR-1/2/3), S5-J/K/L + S7–S10 next**
 
 Living snapshot: **audit**, **recommended consolidations**, and **next sprint plan**.  
 For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) and the specialized docs listed in [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -13,16 +13,16 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 
 | Dimension | Status | Notes |
 |-----------|--------|-------|
-| **Family Studio (B2C wizard)** | 🟢 Mature | 8 steps, autosave, media, music (Étape 4), placeholder montage (Étape 5), Stripe checkout |
+| **Family Studio (B2C wizard)** | 🟢 Mature | 8 steps, autosave, media, music (Étape 4), **Livre Ouvert montage** (Étape 5 — DnD + Composition Magique), Stripe checkout |
 | **Partner Salon (UI + QA P5.5)** | 🟢 **Terminée** | RBAC, wallet API, gate R6, solde bout en bout — QA prod validée ([`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)) |
 | **B2B2C commerce v2 (doc)** | 🟢 Spec ready | Freemium + RevShare 30 % + Scanner — canon [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 |
-| **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 SQL ✅** ; freemium partner UI ✅ ; storyboard `S1–S4`/`S6`/`S6bis`/Clean Slate ✅ ; saga / webhook in progress |
+| **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 SQL ✅** ; freemium partner UI ✅ ; storyboard S1–S4/S6/S6bis/Clean Slate ✅ ; **S5 partiel (PR-1/2/3)** ✅ ; saga / webhook in progress |
 | **RBAC & tokens (P5.5)** | 🟢 Shipped & QA | SQL + TS + UI ; coexistence avec freemium (`is_freemium`) documentée |
 | **Automated tests & CI** | 🔴 None | No test framework, no `.github/` workflows |
-| **Documentation** | 🟢 Strong | Alignée sur le code post-Clean Slate (juillet 2026) |
+| **Documentation** | 🟢 Strong | Alignée post–PR-3 Étape 5 (juillet 2026) — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
 | **Security** | 🟡 Adequate with gaps | RLS solid; salon layout gate ✅; checkout saga still open |
 
-**Overall: 8.2/10** — B2C wizard + Salon partenaire **certifiés en prod** (P5.5 ✅) ; **P6 SQL est appliqué** ; fondations `storyboard` V2 + en-tête global « Le Dossier » en place ; prochain chantier = **S5** (Table de Montage + dnd-kit), saga checkout v2, webhook RevShare, Scanner.
+**Overall: 8.3/10** — B2C wizard + Salon partenaire **certifiés en prod** (P5.5 ✅) ; **P6 SQL est appliqué** ; **Étape 5 Livre Ouvert** interactive (DnD + Composition Magique) ; prochains chantiers = **S5-J/K/L** (dimensions sensorielles), bugs UX résiduels, **S7–S10**, saga checkout v2, webhook RevShare, Scanner.
 
 ---
 
@@ -31,8 +31,9 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_OD
 | Surface | Status | Detail |
 |---------|--------|--------|
 | Marketing / landing | 🟢 | Hero, process, pricing, FR/EN i18n |
-| Studio login + 8-step wizard | 🟢 | Core product path ; login = signature **Halo-Éclipse** |
+| Studio login + 8-step wizard | 🟢 | Core product path ; Étape 5 = **Livre Ouvert** (DnD + Composition Magique) |
 | Connexion UX (Studio + Salon) | 🟢 | Halo-Éclipse, `OdysseyConnexionMark`, i18n toggle, CTA cyan — [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon) |
+| **Étape 5 — Livre Ouvert** | 🟡 | Layout + DnD + magie ✅ · audio/focus/copy sensoriel ⏳ — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
 | Media upload / Storage | 🟢 | Client upload + signed URLs + **WebP thumbs** + session cache egress (`39460bd`) — voir §4.1 |
 | Licensed music (Stingray) | 🟢 | Live MAPI + auto-mock without credentials |
 | B2C checkout (Stripe) | 🟢 | Checkout Session |
@@ -100,7 +101,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 · [`PARTNER_REVSHARE.md`
 | **Spike `tribute_checkouts` v1** | **Annulé** — modèle jetons + delta famille remplacé pour les gros clients |
 | **B2B2C v2 (Scrypta Killer)** | **Freemium** Souvenir 0 $ · **RevShare 30 %** brut Stripe · **Scanner Compagnon IA** |
 | **Legacy coexistence** | P4/P5.5 jetons **conservé** pour petits salons (`is_freemium = false`) |
-| **Exécution en cours** | P6 SQL ✅ · Phase 0 freemium UI ✅ · Storyboard `S1–S4`/`S6`/`S6bis` ✅ · `S5`/`S7–S10` à suivre |
+| **Exécution en cours** | P6 SQL ✅ · Phase 0 freemium UI ✅ · Storyboard S1–S4/S6/S6bis ✅ · **S5 partiel PR-1/2/3** ✅ · S5-J/K/L + S7–S10 à suivre |
 
 Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
 
@@ -131,7 +132,11 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 - **Inversion Étape 4 ↔ Étape 5** : le Wizard affiche désormais le choix musical **avant** le montage (la capacité média d'un chapitre dépend de la durée de la chanson) — décision documentée dans [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md)
 - **Storyboard refactor S6 livré** : nouvelle Étape 4 « Chapitres musicaux » (`StoryboardChaptersStep.tsx`) — chapitres dynamiques pré-générés selon le volume média, bandeau éducatif, détection + acquittement obligatoire des doublons de chanson, validation structurelle bloquante (`[minSongsRequired, maxSongs]`)
 - **Storyboard refactor S6bis livré — refonte de l'en-tête global du Wizard** : sélecteur de forfait **« Le Dossier »** (off-canvas, `PackageDossierPanel.tsx`) remplace le dropdown et les cartes `WizardBasePackagePicker` (supprimé) ; stepper 8 cercles remplacé par `WizardPhaseProgress` (3 phases Déposer/Composer/Recevoir) ; ancrage produit `DEFAULT_B2C_BASE_PACKAGE = "heritage"` (Éternité, 299 $) ; badge « Économisez 67 $ » ; lexique « photos » → « médias »
-- **Opération Clean Slate (juillet 2026)** : neutralisation de l'Étape 5 (`SoundSignatureStep` supprimé → placeholder `StoryboardMontageStep`) pour stopper les bugs silencieux ; extraction `useWizardStoryboard` ; triage `montage/*` (conservation UI pure retypée chapitres, purge logique 3-actes) ; résolution EMFILE dev (`ulimit -n 65536`)
+- **Opération Clean Slate (juillet 2026)** : neutralisation de l'Étape 5 (`SoundSignatureStep` supprimé → placeholder temporaire) ; extraction `useWizardStoryboard` ; triage `montage/*` ; résolution EMFILE dev (`ulimit -n 65536`)
+- **S5 PR-1 — Livre Ouvert squelette (`fdeb7da`)** : layout 280px\|1fr, `StoryboardFilmMap`, banque persistante, chapitres empilés, grilles read-only
+- **S5 PR-2 — Interactivité (`cc5f668`)** : DnD `dnd-kit`, multi-select, auto-fill / vider / gérer ; correctifs QA drop target, sélection fantôme, FilmMap
+- **S5 PR-3 — Composition Magique (`41235e8`)** : onboarding gate, timeline batch chapitre, overlay scrim + capsule, perf P0/P1
+- **Documentation Étape 5** : [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md), [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md), mise à jour piliers storyboard
 
 ### Pourquoi ces décisions (résumé produit/technique)
 
@@ -205,19 +210,22 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 
 ## 6. Technical debt (prioritized)
 
-### 🔴 High — next sprint (B2B2C v2)
+### 🔴 High — next sprint
 
-1. **S5 — Table de Montage** (`StoryboardMontageStep` + dnd-kit) : remplacer le placeholder Étape 5 par l'UI drag & drop chapitres × médias.
-2. **Saga checkout v2** — freemium 0 $ path · Stripe upsell · `tribute_checkouts`.
-3. **Stripe webhook** — `checkout.session.completed` → completed + RevShare accrual (idempotent).
-4. **Scanner Compagnon Phase A** — QR session + mobile upload + realtime sync.
-5. **Zero automated tests** — no Jest/Vitest/Playwright; no CI.
+1. **Bugs UX résiduels Étape 5** — liste QA utilisateur post-PR-3 ; checklist [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
+2. **S5-J/K/L** — dimensions sensorielles (audio chapitre, focus organique, copy narrative)
+3. **Saga checkout v2** — freemium 0 $ path · Stripe upsell · `tribute_checkouts`
+4. **Stripe webhook** — `checkout.session.completed` → completed + RevShare accrual (idempotent)
+5. **Scanner Compagnon Phase A** — QR session + mobile upload + realtime sync
+6. **Zero automated tests** — no Jest/Vitest/Playwright; no CI (priorité : `storyboardMagicTimeline.ts`)
 
-### 🟡 Medium — Wizard (post-Clean Slate)
+### 🟡 Medium — Wizard (post-S5 partiel)
 
-- **`TributeWizard.tsx` encore dense** (~1780 lignes) — `useWizardStoryboard` extrait ✅ ; prochain découpage possible : identité/avatar, forfait/Dossier.
-- **Pont legacy `actTracks`** — conservé en lecture seule pour Preview/Checkout (`S8`/`S9`/`S10`) ; ne pas supprimer avant migration preview/teaser.
-- **`montageHelpers.ts` / `montageActTheme.ts`** — encore utilisés par `PreviewStep` et `teaserHelpers` ; migration lors de `S8`.
+- **`TributeWizard.tsx` encore dense** (~1800 lignes) — `useWizardStoryboard` extrait ✅ ; découpage identité/forfait possible
+- **Pont legacy `actTracks`** — Preview/Checkout (`S8`/`S9`/`S10`) ; ne pas supprimer avant migration preview
+- **`montageHelpers.ts` / `montageActTheme.ts`** — encore utilisés par `PreviewStep` et `teaserHelpers` ; migration lors de `S8`
+- **Fichiers orphelins Étape 5** — `MontageTimeline.tsx`, `MontageChapterTabs.tsx`, ancien tiroir banque — cleanup S10
+- **Tests unitaires magic timeline** — domaine pur, 0 couverture
 
 ### 🔴 High — legacy (before partner scale on jetons path)
 
@@ -280,7 +288,10 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 |-----|-----|
 | `B2B2C_COMMERCE.md` | ✅ **v2** (freemium, RevShare, saga v2, legacy coexistence) |
 | `DELIVERABLES_AND_PACKAGES.md` | ✅ v2 + pacing temporel / buckets par chanson documentés |
-| `WIZARD_ARCHITECTURE.md` | ✅ pivot storyboard documenté + bridge runtime explicité |
+| `STORYBOARD_REFACTOR.md` | ✅ S5 partiel documenté · S5-J/K/L ⏳ |
+| `STORYBOARD_STEP5_LIVRE_OUVERT.md` | ✅ **Canon Étape 5** — Livre Ouvert + Composition Magique |
+| `QA_S5_MONTAGE_STEP.md` | ✅ Checklist régression Étape 5 |
+| `DESIGN_SYSTEM.md` | ✅ §4.2 Composition Magique (capsule + scrim) |
 | `PARTNER_REVSHARE.md` | ✅ spec · code ⏳ |
 | `SCANNER_COMPANION.md` | ✅ spec à jour (caps + P6 stub) · code ⏳ |
 | `TECHNICAL_ONBOARDING` §4.7 / §5 / §10 | ✅ v2 (freemium, Légendaire, Scanner, P6) |
@@ -306,7 +317,8 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 - **S4 — done:** moteur de pacing temporel (`storyboardPacing.ts`) — marges intro/outro, coût vidéo fixe, `mood` préparé
 - **S6 — done (devient l'Étape 4, inversion validée) :** `StoryboardChaptersStep.tsx` — chapitres dynamiques, doublons, validation structurelle bloquante
 - **S6bis — done :** refonte en-tête global — « Le Dossier » (`PackageDossierPanel`) + `WizardPhaseProgress` (3 phases) + ancrage `heritage` par défaut
-- **Clean Slate — done (juillet 2026) :** neutralisation Étape 5 (`SoundSignatureStep` supprimé → placeholder `StoryboardMontageStep`) ; extraction `useWizardStoryboard` ; triage `montage/*` (UI pure conservée, logique 3-actes purgée) ; fix dev EMFILE (`ulimit -n 65536`)
+- **Clean Slate — done (juillet 2026) :** neutralisation Étape 5 (`SoundSignatureStep` supprimé) ; extraction `useWizardStoryboard` ; triage `montage/*` ; fix dev EMFILE (`ulimit -n 65536`)
+- **S5 PR-1/2/3 — done (juillet 2026) :** Livre Ouvert interactif — layout, DnD, actions, Composition Magique (`fdeb7da`, `cc5f668`, `41235e8`) — voir [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)
 - **Known accepted transition debt:** Preview/Checkout (`S8`/`S9`) utilisent encore le pont legacy `actTracks` / `montage` ; `actTracks` conservé en lecture seule dans `TributeWizard.tsx` jusqu'à migration preview
 
 | # | Task | Effort | Done when |
@@ -317,9 +329,12 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | S4 | Moteur pacing temporel (`durationSec` / `targetSecondsPerMedia`) | ✅ | Pure helpers compute chapter capacity and overload |
 | S6 | UI musique dynamique par chapitre (devient l'Étape 4) | ✅ | Step 4 no longer hard-coded to `acte1–3` |
 | S6bis | Refonte en-tête global (Dossier de forfait + stepper 3 phases) | ✅ | Package selector + progress global, out of Step 4 |
-| Clean Slate | Neutralisation Étape 5 + hook storyboard + triage montage/* | ✅ | No silent-ignore UI ; `useWizardStoryboard` extracted ; dead 3-act code removed |
-| S5 | UI storyboard dynamique (chapitres / bacs média, devient l'Étape 5) | 1.5–2 d | dnd-kit drag & drop remplace le placeholder `StoryboardMontageStep` |
-| S7 | Validation wizard orientée storyboard | 🟡 partiel | Chansons ✅ (Étape 4) ; médias ⏳ (avec S5) |
+| Clean Slate | Neutralisation Étape 5 + hook storyboard + triage montage/* | ✅ | No silent-ignore UI ; `useWizardStoryboard` extracted |
+| S5-A/B/C | Livre Ouvert layout + FilmMap + banque (read-only) | ✅ | `fdeb7da` |
+| S5-D/E/F | DnD + multi-select + actions chapitre | ✅ | `cc5f668` |
+| S5-G/H/I | Onboarding + Composition Magique | ✅ | `41235e8` |
+| S5-J/K/L | Dimensions sensorielles + copy + cleanup orphelins | ⏳ | Audio, focus, polish — voir Step 5 doc §10 |
+| S7 | Validation wizard orientée storyboard | 🟡 partiel | Chansons ✅ (Étape 4) ; pacing UI Étape 5 ⏳ |
 | S8 | Preview / teaser alignés sur storyboard | 0.5–1 d | Preview reads chapters instead of acts |
 | S9 | Checkout / metadata alignés sur `storyboard` | 0.5–1 d | `storyboard` transported to checkout safely |
 | S10 | Nettoyage final legacy | 0.5 d | Retirer pont `actTracks` / `montageHelpers` après S8/S9 |
@@ -343,10 +358,13 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 - Video render pipeline
 - Storage legacy backfill — voir §4.1
 
-### Immediate next step (post Clean Slate)
+### Immediate next steps (post PR-3)
 
-- **S5 — Table de Montage** : proposition UX Desktop/Mobile (Product Designer) puis implémentation `dnd-kit` sur les fondations nettoyées (`useWizardStoryboard`, `montage/MontageMediaCard`, `MontageDirectorModal` retypés chapitres)
-- **S8/S9** — migration Preview/Checkout hors pont legacy `actTracks`
+1. **Bugs UX résiduels** — correctifs liste utilisateur + passage [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
+2. **S5-J/K/L** — immersion sonore, focus organique, copy narrative (spec §10 dans Step 5 doc)
+3. **S7** — warnings pacing visibles sur grilles chapitre
+4. **S8/S9** — migration Preview/Checkout hors pont legacy `actTracks`
+5. **Commerce parallèle** — saga checkout v2, webhook RevShare, Scanner Phase A
 
 ---
 
@@ -373,13 +391,15 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 4. **[`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)** — **v2** freemium + RevShare + saga checkout (spike v1 annulé).
 4b. **[`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md)** · **[`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)** — ledger commissions + Killer App.
 5. **[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md)** — grille Quiet Luxury B2C (149/299/499) + Souvenir lead-magnet B2B2C.
-6. **[`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md)** — hub technique complet (§4 auth, §10 roadmap).
+6. **[`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)** — **Étape 5** Livre Ouvert + Composition Magique (canon).
+6b. **[`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)** — checklist régression montage.
+7. **[`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md)** — hub technique complet (§4 auth, §10 roadmap).
 
 **Démo prod / QA :** tenant `partner-qa-demo` (Urgel Bourgie) · compte partenaire QA · base Vercel `odyssey-web-eta.vercel.app`.
 
 **Ce qui est shippé récemment (juin 2026, `main`) :** QA P5.5 ✅ · RBAC · gate `/salon` · wallet API · invitations RPC · doc B2B2C v2 · Halo-Éclipse · co-branding.
 
-**Grand chantier immédiat :** audit d'architecture du Wizard (en cours) puis `S5` (Montage, Étape 5) du plan [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (`S1–S4`/`S6`/`S6bis` livrés), puis `S7–S10`, puis brancher saga checkout freemium et webhook RevShare.
+**Grand chantier immédiat :** polish UX Étape 5 + **S5-J/K/L** (dimensions sensorielles), puis **S7–S10** du plan [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md), en parallèle saga checkout freemium et webhook RevShare.
 
 **Ce qui n’est pas encore prod-ready :** implémentation P6 · commission UI · Scanner · Légendaire fulfillment · tests automatisés.
 

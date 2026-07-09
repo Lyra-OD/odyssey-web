@@ -1,6 +1,6 @@
 # Odyssey — Design System
 
-**Dernière mise à jour : juin 2026**
+**Dernière mise à jour : juillet 2026**
 
 Guide visuel et produit pour l’ensemble du site Next.js (Studio B2C, Salon B2B2C, pages marketing). Complète [`CONVENTIONS.md`](CONVENTIONS.md) et [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).
 
@@ -225,6 +225,71 @@ Salon **avec** logo partenaire : `PartnerBrandLockup` inchangé ; Odyssey reste 
 3. Pas de rectangle / lockup éclipse derrière « ODYSSEY » sur connexion.
 4. `prefers-reduced-motion` : éclipse figée, animations CSS off.
 5. Co-branding partenaire : le halo violet/cyan/erreur reste **derrière** le logo client, sans le recouvrir agressivement.
+
+### 4.2 Composition Magique — Étape 5
+
+> **Phrase produit :** *Nous tissons votre histoire — la lumière se concentre sur le geste, pas sur l'outil.*
+
+Signature visuelle de la **Composition Magique** (`MagicCinematicOverlay`). **Validée DP juillet 2026 — ne pas modifier sans accord produit.** Canon technique : [`STORYBOARD_STEP5_LIVRE_OUVERT.md` §5](STORYBOARD_STEP5_LIVRE_OUVERT.md#5-design-verrouillé--composition-magique).
+
+#### Contexte Studio (pas Salon)
+
+Le cyan `--salon-cyan` (`#00E8F0`) est réutilisé **chirurgicalement** sur la capsule montage — même token que le Salon, mais surface minimale (~capsule + message). Pas de cyan fluo sur marketing B2C hors cette séquence.
+
+#### Empilement (z-index)
+
+```
+1. Contenu Livre Ouvert (chapitres, banque) — dim implicite via scrim
+2. .magic-depth-scrim (z-72) — vignette + blur périphérique masqué
+3. .magic-capsule-enter (z-76) — capsule + spotlight
+```
+
+#### Capsule « Bouton Noir » — 3 couches
+
+| Couche | Classe | Animation |
+|--------|--------|-----------|
+| Entrée | `.magic-capsule-enter` | Fade + translateY 300 ms |
+| Frame | `.magic-capsule-frame` | `bg-white/[0.06]`, bordure cyan, breathe box-shadow 1,6 s |
+| Texte | `.magic-capsule-text` | Opacity + text-shadow breathe 1,6 s |
+| Spotlight | `.magic-capsule-spotlight` | `bg-black/60`, padding négatif — fond capsule |
+
+#### Scrim profondeur — Option B
+
+| Couche | Classe | Technique |
+|--------|--------|-----------|
+| Vignette | `.magic-depth-scrim__vignette` | `radial-gradient` elliptique (centre clair, bords ~52 % opacité) |
+| Blur | `.magic-depth-scrim__blur` | `backdrop-filter: blur(5px)` + `mask-image` radial (blur périphérique uniquement) |
+
+`contain: strict` sur le conteneur scrim — isolation GPU.
+
+#### Cascade médias
+
+| Classe | Rôle |
+|--------|------|
+| `.magic-media-enter` | Entrée translateY + scale ; stagger via `--magic-stagger-index` × 45 ms |
+| `.magic-media-enter-done` | Retire `will-change` post-animation (perf GPU) |
+
+**Règle :** pas de Framer Motion pendant `magicEntrance` — CSS pur sur `MontageMediaCard`.
+
+#### Constantes timing (sync TS ↔ CSS)
+
+Source TypeScript : `storyboardMagicTimeline.ts`. Toute modification → mettre à jour `app/globals.css` et [`STORYBOARD_STEP5_LIVRE_OUVERT.md` §6](STORYBOARD_STEP5_LIVRE_OUVERT.md#6-constantes-timing-source-de-vérité).
+
+#### Checklist — ne pas casser la séquence
+
+1. Capsule 3 couches + spotlight : **verrouillé** — pas de refonte sans DP.
+2. Scrim Option B : vignette et blur séparés — ne pas fusionner en une seule couche sans test GPU.
+3. `prefers-reduced-motion` : animations off + **`backdrop-filter: none`** sur le blur scrim.
+4. Durée cascade ~20 photos : budget **< 3 s** (batch chapitre, pas 1 React commit/photo).
+
+#### Fichiers code
+
+| Sujet | Fichier |
+|-------|---------|
+| Overlay React | `src/components/tribute/storyboard/MagicCinematicOverlay.tsx` |
+| CSS magic | `app/globals.css` (`.magic-*`) |
+| Timeline domaine | `src/lib/wizard/storyboardMagicTimeline.ts` |
+| Player | `src/lib/wizard/magicTimelinePlayer.ts` |
 
 ---
 

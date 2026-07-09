@@ -1,6 +1,6 @@
 # Odyssey Frontend — Conventions
 
-**Last updated: June 2026 · B2B2C v2**
+**Last updated: July 2026 · B2B2C v2 · S5 Livre Ouvert PR-1/2/3**
 
 ## Langue du code
 
@@ -36,12 +36,14 @@
 6. [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) — **RevShare 30 %** : tables `partner_commission_balances` / `partner_commission_ledger`, accrual webhook Stripe, clawback remboursements, payout mensuel manuel admin Odyssey.
 7. [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — **Killer App** : QR wizard desktop → session web mobile → ingestion photos papier → preview IA Avant/Après → pont upsell Éternité / Légendaire.
 8. [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — wizard 8 étapes, pricing v2, schéma DB P6.
+8b. [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) — **Étape 5** Livre Ouvert, Composition Magique, constantes timing, roadmap S5-J/K/L.
+8c. [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md) — checklist régression manuelle Étape 5.
 9. `docs/sql/README.md` — ordre des migrations (P0→P6).
 10. [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) — hub onboarding.
 11. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) — audit daté, dette, plan sprint v2 (living doc).
 12. [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) — checklist QA Salon — **✅ terminée prod** (règles legacy jetons ; freemium v2 = doc B2B2C).
 
-Après toute modification wizard, forfaits/livrables, pricing, checkout, RevShare, Scanner, routes/auth ou `/api/music/*` : mettre à jour les fichiers concernés (règle §13 de l’onboarding).
+Après toute modification wizard, **Étape 5 / Composition Magique** (`storyboard/*`, `magic-*` CSS, `storyboardMagicTimeline.ts`), forfaits/livrables, pricing, checkout, RevShare, Scanner, routes/auth ou `/api/music/*` : mettre à jour les fichiers concernés — en priorité [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) + [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) §4.2 si touch visuel magic (règle §13 de l'onboarding).
 
 ## Vision produit
 
