@@ -291,7 +291,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | `STORYBOARD_REFACTOR.md` | ✅ S5 partiel documenté · S5-J/K/L ⏳ |
 | `STORYBOARD_STEP5_LIVRE_OUVERT.md` | ✅ **Canon Étape 5** — Livre Ouvert + Composition Magique |
 | `QA_S5_MONTAGE_STEP.md` | ✅ Checklist régression Étape 5 |
-| `MOBILE_WIZARD_STRATEGY.md` | ✅ Stratégie mobile wizard (M0–M6, Scanner P1) |
+| `MOBILE_WIZARD_STRATEGY.md` | ✅ Stratégie mobile wizard (M0–M0.5–M6, micro-animations, Scanner P1) |
 | `DESIGN_SYSTEM.md` | ✅ §4.2 Composition Magique (capsule + scrim) |
 | `PARTNER_REVSHARE.md` | ✅ spec · code ⏳ |
 | `SCANNER_COMPANION.md` | ✅ spec à jour (caps + P6 stub) · code ⏳ |
@@ -361,7 +361,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 
 ### Immediate next steps (post PR-3)
 
-1. **Stratégie mobile** — exécuter plan [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) (M0 → M3 → Scanner M2)
+1. **Stratégie mobile** — exécuter plan [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) (M0 → M3 + M0.5 micro → Scanner M2)
 2. **Bugs UX résiduels** — correctifs liste utilisateur + passage [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
 3. **Tests utilisateurs M6** — valider Étape 5 mobile avant refactor massif (Ferpection)
 4. **S5-J/K/L** — immersion sonore, focus organique, copy narrative (spec §10 Step 5 doc)

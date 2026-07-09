@@ -120,6 +120,37 @@ flowchart LR
 | **CTAs clairs** | Microcopy actionnelle (pas « Cliquez ici ») — S5-L |
 | **Émotion / microcopy** | Ton Gant Blanc, prénom défunt dans header |
 | **Tester** | M6 : tests utilisateurs avant gros refactor |
+| **Micro-interactions** (UX Pilot #6) | Feedback fonctionnel, court, désactivable — pas de gamification |
+
+### Micro-animations — règles Odyssey
+
+> **Whisper par défaut, Ceremony une fois.** La Composition Magique reste l’exception rituelle ; le reste du wizard mobile confirme sans distraire.
+
+Aligné [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) §7 et [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) §10.4 (matière & toucher).
+
+| Niveau | Token | Durée | Usage mobile |
+|--------|-------|-------|--------------|
+| **Whisper** | `DURATION_WHISPER` | 180 ms | Tap média, ring sélection, toggle dock |
+| **Breath** | `DURATION_BREATH` | 320 ms | Ouverture bottom sheet, focus chapitre (S5-K) |
+| **Ritual** | `DURATION_RITUAL` | 480 ms | Drawer « Gérer », transitions overlay |
+| **Ceremony** | batch CSS `.magic-*` | 2–4 s | **Composition Magique uniquement** |
+
+**Courbe :** `EASE_OUT_LUXE` — `cubic-bezier(0.16, 1, 0.3, 1)` (`src/lib/motion/easing.ts`).
+
+| Contexte | Micro-animation cible | Remplace |
+|----------|----------------------|----------|
+| Tap tuile banque | Scale 0.98 + ring ambre 150 ms | Hover lift desktop |
+| Média « prêt à placer » | Pulse discret bordure teal | Surbrillance hover |
+| Assign réussi | Flash teal 200 ms puis fade | — |
+| Dock banque ouvert/fermé | Sheet slide + scrim 320 ms | Scroll banque entière |
+| Autosave OK | Toast slide bas, 2 s max | — |
+| Scanner : photo reçue | Thumb pop-in + check | Loader spinner long |
+
+**Interdits mobile hommage :** bounce type réseau social, confettis, parallax, streaks/gamification, animations qui **bloquent** l’action suivante, haptics systématiques (web peu fiable — P3 optionnel sur succès scan uniquement).
+
+**Accessibilité :** toute micro-animation respecte `prefers-reduced-motion: reduce` (instantané ou opacité seule — même règle que magic PR-3).
+
+**Perf / éthique (UX Pilot #8) :** pas d’animation décorative en boucle ; pas de `will-change` permanent ; privilégier CSS transform/opacity sur le GPU.
 
 ### Principe Cowboy (exemple Ferpection)
 
@@ -216,6 +247,7 @@ Le Scanner n’est pas un « nice-to-have » : c’est la **réponse produit** a
 | Phase | Contenu | Priorité | Effort |
 |-------|---------|----------|--------|
 | **M0** | Fondations tactiles transversales | P0 | Faible |
+| **M0.5** | Micro-animations fonctionnelles (tap, dock, autosave) | P1 | Faible |
 | **M1** | Header / footer unifié mobile | P2 | Moyen |
 | **M2** | Scanner Phase A (étape 3) | **P1** | Élevé |
 | **M3** | Shell mobile Étape 5 (dock + cut-off + 2 col.) | P0 | Moyen |
@@ -233,6 +265,19 @@ Le Scanner n’est pas un « nice-to-have » : c’est la **réponse produit** a
 | M0-D | `TouchSensor` + `PointerSensor` dans `DndContext` | `StoryboardMontageStep` |
 | M0-E | `useFinePointer` sur `BankDraggableMediaTile` | aligné `MontageMediaCard` |
 | M0-F | Mode sélection mobile (bouton, remplace Shift+clic) | `MediaBankColumn` |
+
+### M0.5 — Micro-animations (après M0, avec M3)
+
+| ID | Tâche | Fichiers typiques |
+|----|-------|-------------------|
+| M0.5-A | Tap feedback tuile banque (scale + ring, `DURATION_WHISPER`) | `BankDraggableMediaTile`, `globals.css` |
+| M0.5-B | État « prêt à placer » + flash assign réussi | shell mobile Étape 5, `storyboardMedia` |
+| M0.5-C | Transition `MediaBankDock` open/close (`DURATION_BREATH`) | `MediaBankDock` (M3-B) |
+| M0.5-D | Toast autosave discret (footer zone, pas modal) | `TributeWizard`, pattern existant |
+| M0.5-E | `prefers-reduced-motion` sur toutes les classes `.mobile-micro-*` | `globals.css` |
+| M0.5-F | Scanner : thumb pop-in post-upload (M2, optionnel) | route `/scan/` |
+
+**Règle :** livrer M0.5 **avec** M3 (dock) — les micro remplacent le hover desktop ; inutiles tant que le shell mobile n’existe pas.
 
 ### M1 — Navigation globale mobile
 
@@ -299,7 +344,7 @@ Voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) pour le détail technique.
 ```
 1. M6 (sessions pilotes) ────────────────┐ parallèle
 2. M0 (quick wins tactiles) ─────────────┤
-3. M3 (shell mobile Étape 5) ────────────┤ séquentiel après M0
+3. M3 + M0.5 (shell mobile + micro tap/dock) ┤ séquentiel après M0
 4. M2 (Scanner Phase A) ─────────────────┤ parallèle possible avec M3
 5. M4 (tap-to-assign) ───────────────────┘
 6. M1 (header/footer)
@@ -325,20 +370,43 @@ Voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) pour le détail technique.
 3. Livre Ouvert `280px | 1fr` sur téléphone
 4. Reporter le Scanner après le polish montage
 5. Réinventer la navigation (menus exotiques) — loi de Jakob
+6. Gamifier le parcours (streaks, célébrations type Duolingo)
+7. UI prédictive / agentique qui réorganise le wizard selon le comportement
 
 ---
 
-## 9. Références externes
+## 9. Annexe — tendances marché 2026 (UX Pilot)
+
+Source : [9 Mobile App Design Trends for 2026](https://uxpilot.ai/blogs/mobile-app-design-trends) (oct. 2025). **Filtrage Odyssey** — pas une roadmap produit.
+
+| # | Tendance UX Pilot | Verdict Odyssey | Action |
+|---|-------------------|-----------------|--------|
+| 1 | IA prédictive / UI qui se réorganise | ❌ Plus tard / non | Postures fixes (Capture / léger / Livre Ouvert) ; pas de modules qui bougent seuls |
+| 2 | Zero-UI / conversationnel | ❌ Hors scope MVP | Wizard formulaire + visuel ; ton Gant Blanc écrit, pas assistant vocal |
+| 3 | Agentic UX (agit pour l’utilisateur) | 🟡 Partiel | **Composition Magique** = agent de montage **explicite**, avec override manuel et transparence |
+| 4 | AR / spatial / 3D | ❌ Non | Valeur produit = montage hommage, pas essayage AR |
+| 5 | Glassmorphism / profondeur | 🟡 Déjà | Scrim blur Composition Magique ; usage limité + contrast + `prefers-reduced-motion` |
+| 6 | **Micro-interactions** | ✅ **Oui** | **M0.5** — feedback tap, dock, autosave ; voir §3 |
+| 7 | UI adaptive contextuelle | 🟡 Partiel | Breakpoint `lg` + shell mobile ; pas météo/heure ; Cowboy par **état** storyboard |
+| 8 | Durable / éthique / inclusif | ✅ Oui | Dark mode, reduced motion, thumbs WebP, charge cognitive basse |
+| 9 | Passkeys / biométrie | 🟡 Hors wizard | Auth studio/salon — pas bloquant montage mobile |
+
+**Synthèse article :** utile comme **checklist anti-mode** et pour **valider micro-interactions (#6)** ; ignorer la hype IA/agentique (#1–3) pour le wizard hommage.
+
+---
+
+## 10. Références externes
 
 | Source | URL | Usage |
 |--------|-----|-------|
 | Forbes Tech Council | [20 Expert Tips…](https://www.forbes.com/councils/forbestechcouncil/2023/09/05/20-expert-tips-for-building-an-ergonomic-user-friendly-mobile-app/) | Gestes, adaptive layout, cross-device, perf |
 | Ferpection | [Best Practices Ergonomics](https://blog.ferpection.com/en/the-ergonomics-of-a-mobile-application-best-practices) | Thumb zone, cut-off, Jakob, microcopy, tests |
 | Luke W (cité Ferpection) | Designing for Large Screen Phones | Thumb reach zones |
+| UX Pilot | [9 trends mobile 2026](https://uxpilot.ai/blogs/mobile-app-design-trends) | Micro-interactions, filtrage tendances §9 |
 
 ---
 
-## 10. Maintenance doc
+## 11. Maintenance doc
 
 Mettre à jour ce fichier quand :
 - Un ticket M0–M6 est livré ou repriorisé

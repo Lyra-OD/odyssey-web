@@ -328,7 +328,7 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 |----------------|-------|
 | Hover lift vignettes, ring sélection ambre/teal | Micro-interactions header chapitre |
 | Highlight dragover coloré par thème | Grain / texture subtile (optionnel) |
-| Ghost slots capacité | Feedback haptique mobile (optionnel) |
+| Ghost slots capacité | Micro-animations mobile tap/dock — [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) §3 **M0.5** ; haptics P3 optionnel |
 
 ### Tokens motion (spec — référence)
 
