@@ -24,6 +24,22 @@ Ne **jamais** écraser `grantedPackage` lors d’un Soft Cap.
 
 Atteinte / dépassement de **50** photos (Souvenir) → Soft Cap Quiet Luxury → `intendedPackage = signature` (après acceptation) + autosave. Upload non bloqué après acceptation.
 
+### Moment préféré : après Composition Magique
+
+Ne pas se contenter d’un toast froid à la 51ᵉ photo. **Le Soft Cap médias le plus puissant** s’affiche quand la famille a **déjà vécu** le chef-d’œuvre :
+
+1. Ils déposent / scannent (éventuellement au-delà de 50 avec Soft Cap soft ou plafond intended déjà monté).
+2. Ils lancent la **Composition Magique** (Livre Ouvert) — placement automatique des médias.
+3. **Ensuite** : modale Quiet Luxury du type :
+
+> *« Votre histoire compte déjà 110 souvenirs tissés ensemble. Pour ne laisser aucun moment dans l’ombre, débloquez la toile Héritage (jusqu’à 125 médias, master 4K). »*
+
+Règles :
+
+- Soft Cap **à 50** reste possible en étape Médias (filet de sécurité) — copy courte, pas de prix froid.
+- Soft Cap **post-Composition Magique** = moment d’aversion à la perte principal (Phase 4 UX).
+- Si `intended` est déjà `signature`+, ne pas re-spammer la modale.
+
 ---
 
 ## Déclencheur musique → Soft Cap **dual-choice** (Souvenir)

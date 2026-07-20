@@ -63,7 +63,8 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 
 | Déclencheur | Comportement |
 |-------------|--------------|
-| ≥ 50 médias | Soft Cap → proposer / poser `intendedPackage = signature` (toile Héritage) |
+| ≥ 50 médias | Soft Cap → `intendedPackage = signature` (toile Héritage) — **filet** étape Médias |
+| **Post Composition Magique** | Soft Cap **principal** — copy chef-d’œuvre déjà vécu (« N souvenirs tissés… ») → Héritage |
 | Piste catalogue **officiel** depuis Souvenir | **Ne pas bloquer** la sélection. Soft Cap à **deux options** (voir ci-dessous) |
 
 ### Soft Cap musique (Souvenir) — choix dual
