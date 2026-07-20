@@ -106,7 +106,10 @@ export async function POST(request: Request) {
 
   let isFreemiumTenant = false;
   if (tenantId) {
-    const { data: tenant, error: tenantError } = await supabase
+    // Lecture tenants via service_role : la RLS P5.3 n'autorise que partner/partner_admin.
+    // Une famille invitée n'a pas ce droit — SELECT session user → "permission denied for table tenants".
+    const admin = getSupabaseAdminClient();
+    const { data: tenant, error: tenantError } = await admin
       .from("tenants")
       .select("is_freemium")
       .eq("id", tenantId)
@@ -151,7 +154,9 @@ export async function POST(request: Request) {
   const origin = resolveSiteOrigin(request);
   const studioPath = appRoutes.studio(locale);
 
-  if (isPartner) {
+  // Jetons B2B : uniquement parcours conseiller (pas de projet famille / invitation).
+  // Sinon un compte partner qui teste en famille serait redirigé vers debitPartnerTokens.
+  if (isPartner && !hasPartnerInvitation) {
     if (!tenantId) {
       return NextResponse.json(
         { error: "missing_tenant", message: "Projet sans tenant partenaire." },
@@ -329,7 +334,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: tenantRow } = await supabase
+    const { data: tenantRow } = await getSupabaseAdminClient()
       .from("tenants")
       .select("settings")
       .eq("id", tenantId)
