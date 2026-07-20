@@ -3,6 +3,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
+import {
+  parseExtensionsFromMetadata,
+  upsertProjectPaidEntitlements,
+} from "@/src/lib/wizard/paidEntitlements";
+import { normalizeBasePackageId } from "@/src/lib/wizard/pricingConfig";
+import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
 
 export const runtime = "nodejs";
 
@@ -371,6 +377,36 @@ async function handleCheckoutSessionCompleted(
   }
 
   if (metadataMode && metadataMode !== "b2b2c_family") {
+    // B2C direct : pas de RevShare, mais entitlements payés pour le rendu
+    if (metadataMode === "b2c" && projectId && (session.amount_total ?? 0) > 0) {
+      const paidPackage = normalizeBasePackageId(
+        metadata.intended_package || metadata.base_package,
+      );
+      const extensions = parseExtensionsFromMetadata(metadata.extensions);
+      const entitlements = await upsertProjectPaidEntitlements(supabase, {
+        projectId,
+        paidPackage,
+        musicLicense: metadata.music_license === "true",
+        extensions,
+      });
+      if (!entitlements.ok) {
+        throw new Error(`paid_entitlements_b2c_failed: ${entitlements.message}`);
+      }
+      await supabase
+        .from("projects")
+        .update({ status: "submitted" })
+        .eq("id", projectId);
+      logWebhook({
+        level: "info",
+        context: "b2c_paid_entitlements_ok",
+        event_id: event.id,
+        project_id: projectId,
+        paid_package: paidPackage,
+        status_after: "processed",
+      });
+      return "processed";
+    }
+
     logWebhook({
       level: "info",
       context: "checkout_session_not_b2b2c_family_metadata",
@@ -511,6 +547,27 @@ async function handleCheckoutSessionCompleted(
   const result = (rpcData ?? {}) as AccrueRpcResult;
 
   if (result.ok === true) {
+    if (resolvedProjectId) {
+      const paidPackage: WizardBasePackage = normalizeBasePackageId(
+        metadata.intended_package ||
+          metadata.base_package ||
+          metadata.selected_package,
+      );
+      const extensions = parseExtensionsFromMetadata(metadata.extensions);
+      const entitlements = await upsertProjectPaidEntitlements(supabase, {
+        projectId: resolvedProjectId,
+        paidPackage,
+        musicLicense: metadata.music_license === "true",
+        extensions,
+        tributeCheckoutId: checkout.id,
+      });
+      if (!entitlements.ok) {
+        throw new Error(
+          `paid_entitlements_b2b2c_failed: ${entitlements.message}`,
+        );
+      }
+    }
+
     logWebhook({
       level: "info",
       context: "commission_accrual_ok",

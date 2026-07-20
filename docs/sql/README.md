@@ -1,8 +1,7 @@
 # SQL Odyssey — état courant
 
 > **Freemium V1 Pivot :** canon [`FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md).  
-> **P8 (Phase 2) :** [`odyssey_p8_freemium_v1_token_purge.sql`](odyssey_p8_freemium_v1_token_purge.sql) — invitation sans débit · quotas `intendedPackage` · `project_paid_entitlements` · `sanctuary_tokens` · **DROP** `partner_token_*` · `is_freemium=true`.  
-> **À appliquer** sur Supabase (SQL Editor) avant / avec le déploiement app Phase 2.
+> **P8 (Phase 2) :** [`odyssey_p8_freemium_v1_token_purge.sql`](odyssey_p8_freemium_v1_token_purge.sql) — ✅ **appliqué sur Supabase** (juillet 2026) — invitation sans débit · Soft Cap quota · entitlements · NFC · DROP wallets.
 >
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
 > **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).

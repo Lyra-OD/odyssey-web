@@ -177,17 +177,16 @@ flowchart TD
 9. ✅ Helpers : `resolveMusicEntitlement` · `canUploadPersonalAudio` · `computeWizardCartWithGrant` · strip Licence si ≥ Héritage.
 10. ✅ Alias `extendedLicense` / `collectorUsb` pour UI legacy.
 
-### Phase 2 — SQL — ✅ repo · ⏳ appliquer P8 sur Supabase
+### Phase 2 — SQL — ✅ repo · ✅ appliqué Supabase
 
-11. ✅ `docs/sql/odyssey_p8_freemium_v1_token_purge.sql` — `create_partner_invitation` · quota Soft Cap · `project_paid_entitlements` · `sanctuary_tokens` · DROP wallets · `is_freemium=true`.
-12. ✅ API invitations + checkout partenaire sans débit · wallet → snapshot commissions déprécié.
-13. ⏳ Exécuter le script P8 dans le SQL Editor Supabase (staging puis prod).
+11. ✅ `docs/sql/odyssey_p8_freemium_v1_token_purge.sql` — invitation sans débit · Soft Cap quota · entitlements · NFC · DROP wallets.
+12. ✅ API invitations + checkout partenaire sans débit · wallet → snapshot commissions.
 
-### Phase 3 — APIs
+### Phase 3 — APIs — ✅ FAIT
 
-14. Checkout : snapshot `intended` + `musicLicense` ; refuse master unpaid ; strip double charge.
-15. Webhook : entitlements (package et/ou licence) → accrue → enqueue export.
-16. Salon UI commissions complète.
+14. ✅ Checkout Soft Cap : `computeWizardCartWithGrant` · metadata granted/intended/music_license · amputation 422.
+15. ✅ Webhook → `project_paid_entitlements` (B2B2C + B2C) ; freemium_free écrit aussi les entitlements.
+16. ⏳ Salon UI commissions (wallet renvoie déjà les soldes commissions).
 
 ### Phase 4 — Soft Cap UX + musique
 

@@ -6,11 +6,19 @@ import { getStripe } from "@/lib/stripe";
 import { requireProjectOwner } from "@/src/lib/api/projectAccess";
 import { resolveUserIsPartner } from "@/src/lib/partner/resolvePartnerAccess";
 import {
+  packageMaxMediaForEntitlement,
+  upsertProjectPaidEntitlements,
+} from "@/src/lib/wizard/paidEntitlements";
+import {
   CHECKOUT_LINE_LABELS,
   computeWizardCart,
+  computeWizardCartWithGrant,
+  normalizeExtensionsState,
   sumCartLineItemsCents,
   type ExtensionLineItem,
 } from "@/src/lib/wizard/wizardPricing";
+import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
+import { normalizeBasePackageId } from "@/src/lib/wizard/pricingConfig";
 import { coerceWizardState } from "@/src/lib/wizard/wizardState";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
@@ -47,8 +55,8 @@ function toStripeLineItem(line: ExtensionLineItem) {
 
 /**
  * POST /api/checkout
- * B2C : session Stripe Checkout.
- * B2B (`wizard_state.isPartner`) : débit jetons partenaire (pas de Stripe).
+ * Freemium V1 Soft Cap : panier = delta (intended − granted) + add-ons.
+ * Entitlements payés écrits au webhook (ou freemium_free immédiat).
  */
 export async function POST(request: Request) {
   let body: unknown;
@@ -96,15 +104,21 @@ export async function POST(request: Request) {
   const tenantId = project.tenant_id as string | null;
   const invitationId = project.invitation_id as string | null;
   const hasPartnerInvitation = Boolean(invitationId);
-  const extensions = wizardState.extensions ?? {};
+  const extensions = normalizeExtensionsState(wizardState.extensions ?? {});
   const actTracks = wizardState.musicalAmbiance?.tracks ?? {};
-  const basePackage =
-    wizardState.basePackage ?? wizardState.pricing?.basePackage ?? "signature";
+
+  const intendedPackage: WizardBasePackage = normalizeBasePackageId(
+    wizardState.intendedPackage ??
+      wizardState.basePackage ??
+      wizardState.pricing?.basePackage,
+  );
+  const grantedPackage: WizardBasePackage = normalizeBasePackageId(
+    wizardState.grantedPackage ??
+      (hasPartnerInvitation ? "essential" : intendedPackage),
+  );
 
   let isFreemiumTenant = false;
   if (tenantId) {
-    // Lecture tenants via service_role : la RLS P5.3 n'autorise que partner/partner_admin.
-    // Une famille invitée n'a pas ce droit — SELECT session user → "permission denied for table tenants".
     const admin = getSupabaseAdminClient();
     const { data: tenant, error: tenantError } = await admin
       .from("tenants")
@@ -122,9 +136,10 @@ export async function POST(request: Request) {
     isFreemiumTenant = tenant?.is_freemium === true;
   }
 
-  const cart = computeWizardCart(extensions, basePackage);
+  const cart = hasPartnerInvitation
+    ? computeWizardCartWithGrant(extensions, intendedPackage, grantedPackage)
+    : computeWizardCart(extensions, intendedPackage);
 
-  /** Total en cents : somme entière forfait + extensions (pas de float $). */
   const totalCents = sumCartLineItemsCents(cart.lineItems);
   if (totalCents !== cart.totalCents) {
     console.error("[checkout] cart total mismatch", {
@@ -134,24 +149,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "cart_total_invalid" }, { status: 500 });
   }
 
-  if (
-    wizardState.pricing?.totalCents &&
-    wizardState.pricing.totalCents !== totalCents &&
-    !isPartner
-  ) {
-    console.warn(
-      "[checkout] pricing snapshot mismatch — using recalculated cart",
-      {
-        stored: wizardState.pricing.totalCents,
-        computed: totalCents,
-      },
-    );
-  }
-
   const origin = resolveSiteOrigin(request);
   const studioPath = appRoutes.studio(locale);
+  const admin = getSupabaseAdminClient();
 
-  // Freemium V1 : plus de débit jetons. Parcours conseiller = soumission sans wallet.
+  // Freemium V1 : parcours conseiller = soumission sans wallet.
   if (isPartner && !hasPartnerInvitation) {
     if (!tenantId) {
       return NextResponse.json(
@@ -162,6 +164,9 @@ export async function POST(request: Request) {
 
     const nextWizardState = {
       ...wizardState,
+      grantedPackage,
+      intendedPackage,
+      basePackage: intendedPackage,
       pricing: {
         basePackage: cart.basePackage,
         baseCents: cart.baseCents,
@@ -169,6 +174,7 @@ export async function POST(request: Request) {
         totalCents,
         partnerTokenCost: 0,
       },
+      extensions: cart.extensions,
     };
 
     const { error: updateError } = await supabase
@@ -192,13 +198,13 @@ export async function POST(request: Request) {
       mode: "partner",
       redirectUrl: `${origin}${studioPath}?checkout=partner_success`,
       tokensDebited: 0,
-      balanceAfter: 0,
-      partnerTokenCost: 0,
       totalCents,
       metadata: {
         project_id: projectId,
+        granted_package: grantedPackage,
+        intended_package: intendedPackage,
         base_package: cart.basePackage,
-        extensions: JSON.stringify(extensions),
+        extensions: JSON.stringify(cart.extensions),
         act_tracks: JSON.stringify(actTracks),
       },
     });
@@ -206,14 +212,60 @@ export async function POST(request: Request) {
 
   if (totalCents <= 0) {
     if (hasPartnerInvitation && isFreemiumTenant) {
+      // Amputation : quotas = granted (Souvenir), pas de musicLicense payante
+      const { count, error: countError } = await admin
+        .from("media_assets")
+        .select("id", { count: "exact", head: true })
+        .eq("project_id", projectId);
+
+      if (countError) {
+        return NextResponse.json(
+          { error: "media_count_failed", message: countError.message },
+          { status: 400 },
+        );
+      }
+
+      const maxMedia = packageMaxMediaForEntitlement(grantedPackage);
+      if ((count ?? 0) > maxMedia) {
+        return NextResponse.json(
+          {
+            error: "amputation_required",
+            message:
+              locale === "en"
+                ? `Remove media to fit the free package (max ${maxMedia}).`
+                : `Retirez des médias pour rester sur le forfait offert (max ${maxMedia}).`,
+            maxMedia,
+            currentMedia: count ?? 0,
+          },
+          { status: 422 },
+        );
+      }
+
+      if (cart.extensions.musicLicense) {
+        return NextResponse.json(
+          {
+            error: "music_license_requires_payment",
+            message:
+              locale === "en"
+                ? "Remove the Stingray Premium license or upgrade to pay."
+                : "Retirez la Licence Stingray ou passez à un forfait payant.",
+          },
+          { status: 422 },
+        );
+      }
+
       const nextWizardState = {
         ...wizardState,
+        grantedPackage,
+        intendedPackage: grantedPackage,
+        basePackage: grantedPackage,
         pricing: {
-          basePackage: cart.basePackage,
-          baseCents: cart.baseCents,
-          optionsCents: cart.optionsCents,
-          totalCents,
+          basePackage: grantedPackage,
+          baseCents: 0,
+          optionsCents: 0,
+          totalCents: 0,
         },
+        extensions: cart.extensions,
       };
 
       const { error: updateError } = await supabase
@@ -232,18 +284,34 @@ export async function POST(request: Request) {
         );
       }
 
+      const entitlements = await upsertProjectPaidEntitlements(admin, {
+        projectId,
+        paidPackage: grantedPackage,
+        musicLicense: false,
+        extensions: cart.extensions,
+      });
+
+      if (!entitlements.ok) {
+        console.error(
+          "[checkout] freemium_free entitlements failed:",
+          entitlements.message,
+        );
+      }
+
       return NextResponse.json({
         ok: true,
         mode: "freemium_free",
         url: `${origin}${studioPath}?checkout=freemium_success`,
-        totalCents,
+        totalCents: 0,
         metadata: {
           project_id: projectId,
-          base_package: cart.basePackage,
+          granted_package: grantedPackage,
+          intended_package: grantedPackage,
+          base_package: grantedPackage,
           invitation_id: invitationId,
           checkout_mode: "b2b2c_family",
           is_freemium: "true",
-          extensions: JSON.stringify(extensions),
+          extensions: JSON.stringify(cart.extensions),
           act_tracks: JSON.stringify(actTracks),
         },
       });
@@ -265,7 +333,6 @@ export async function POST(request: Request) {
     );
   }
 
-  /** Saga Bulletproof : freemium B2B2C payant uniquement (pas B2C pur). */
   const isB2B2CFreemiumPaid =
     hasPartnerInvitation && isFreemiumTenant && totalCents > 0;
 
@@ -298,7 +365,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: tenantRow } = await getSupabaseAdminClient()
+    const { data: tenantRow } = await admin
       .from("tenants")
       .select("settings")
       .eq("id", tenantId)
@@ -315,10 +382,8 @@ export async function POST(request: Request) {
         ? settings.revshare_bps
         : 3000;
 
-    const admin = getSupabaseAdminClient();
-    const idempotencyKey = `b2b2c:${projectId}:${cart.basePackage}:${totalCents}`;
+    const idempotencyKey = `b2b2c:${projectId}:${intendedPackage}:${totalCents}:${cart.extensions.musicLicense ? "ml" : "n"}`;
 
-    // INSERT avant Stripe — si échec (ex. double-clic idempotency) → stop
     const { data: tributeCheckout, error: insertError } = await admin
       .from("tribute_checkouts")
       .insert({
@@ -327,7 +392,7 @@ export async function POST(request: Request) {
         invitation_id: invitationId,
         checkout_mode: "b2b2c_family",
         granted_package: invitation.granted_package,
-        selected_package: cart.basePackage,
+        selected_package: intendedPackage,
         family_total_cents: totalCents,
         partner_tokens_debited: 0,
         status: "pending",
@@ -351,10 +416,14 @@ export async function POST(request: Request) {
     tributeCheckoutId = tributeCheckout.id;
   }
 
+  const normalizedExt = cart.extensions;
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      line_items: cart.lineItems.map(toStripeLineItem),
+      line_items: cart.lineItems
+        .filter((line) => line.cents > 0)
+        .map(toStripeLineItem),
       success_url: `${origin}${studioPath}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}${studioPath}?checkout=cancel`,
       client_reference_id: projectId,
@@ -374,21 +443,28 @@ export async function POST(request: Request) {
         is_freemium: String(isFreemiumTenant),
         total_cents: String(totalCents),
         base_cents: String(Math.trunc(cart.baseCents)),
-        base_package: cart.basePackage,
+        granted_package: grantedPackage,
+        intended_package: intendedPackage,
+        base_package: intendedPackage,
         options_cents: String(Math.trunc(cart.optionsCents)),
-        ai_retouch: String(Boolean(extensions.aiRetouch)),
-        extended_license: String(Boolean(extensions.extendedLicense)),
-        collector_usb: String(Boolean(extensions.collectorUsb)),
-        digital_vault: String(Boolean(extensions.digitalVault)),
-        heritage_pack: String(Boolean(extensions.heritagePack)),
-        extensions: JSON.stringify(extensions),
+        music_license: String(Boolean(normalizedExt.musicLicense)),
+        ai_retouch: String(Boolean(normalizedExt.aiRetouch)),
+        sanctuary_token: String(Boolean(normalizedExt.sanctuaryToken)),
+        story_voice: String(Boolean(normalizedExt.storyVoice)),
+        memory_book: String(Boolean(normalizedExt.memoryBook)),
+        digital_vault: String(Boolean(normalizedExt.digitalVault)),
+        heritage_pack: String(Boolean(normalizedExt.heritagePack)),
+        // legacy metadata keys
+        extended_license: String(Boolean(normalizedExt.musicLicense)),
+        collector_usb: String(Boolean(normalizedExt.sanctuaryToken)),
+        extensions: JSON.stringify(normalizedExt),
         act_tracks: JSON.stringify(actTracks),
       },
     });
 
     if (!session.url) {
       if (tributeCheckoutId) {
-        await getSupabaseAdminClient()
+        await admin
           .from("tribute_checkouts")
           .update({
             status: "failed",
@@ -404,7 +480,7 @@ export async function POST(request: Request) {
     }
 
     if (tributeCheckoutId) {
-      const { error: updateCheckoutError } = await getSupabaseAdminClient()
+      const { error: updateCheckoutError } = await admin
         .from("tribute_checkouts")
         .update({
           stripe_session_id: session.id,
@@ -432,10 +508,12 @@ export async function POST(request: Request) {
       sessionId: session.id,
       checkoutId: tributeCheckoutId,
       totalCents,
+      grantedPackage,
+      intendedPackage,
     });
   } catch (error) {
     if (tributeCheckoutId) {
-      await getSupabaseAdminClient()
+      await admin
         .from("tribute_checkouts")
         .update({
           status: "failed",
