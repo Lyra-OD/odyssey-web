@@ -3,9 +3,9 @@
 import { motion } from "framer-motion";
 
 import {
-  computeWizardCart,
   formatWizardPrice,
   resolvePartnerTokenCost,
+  resolveWizardDisplayCart,
   type WizardBasePackage,
   type WizardExtensionsState,
 } from "@/src/lib/wizard/wizardPricing";
@@ -21,6 +21,7 @@ type Props = {
   locale?: "fr" | "en";
   extensions: WizardExtensionsState;
   basePackage?: WizardBasePackage;
+  grantedPackage?: WizardBasePackage;
   compact?: boolean;
 };
 
@@ -29,9 +30,14 @@ export function WizardCartSummary({
   locale = "fr",
   extensions,
   basePackage = "signature",
+  grantedPackage,
   compact = false,
 }: Props) {
-  const cart = computeWizardCart(extensions, basePackage);
+  const cart = resolveWizardDisplayCart(
+    extensions,
+    basePackage,
+    grantedPackage ?? basePackage,
+  );
   const base = formatWizardPrice(cart.baseCents, locale);
   const options = formatWizardPrice(cart.optionsCents, locale);
   const total = formatWizardPrice(cart.totalCents, locale);
@@ -83,6 +89,7 @@ type ExtensionsFooterProps = {
   locale?: "fr" | "en";
   extensions: WizardExtensionsState;
   basePackage?: WizardBasePackage;
+  grantedPackage?: WizardBasePackage;
   isPartner?: boolean;
   onSkip: () => void;
   onContinue: () => void;
@@ -93,11 +100,16 @@ export function ExtensionsStickyFooter({
   locale = "fr",
   extensions,
   basePackage = "signature",
+  grantedPackage,
   isPartner = false,
   onSkip,
   onContinue,
 }: ExtensionsFooterProps) {
-  const cart = computeWizardCart(extensions, basePackage);
+  const cart = resolveWizardDisplayCart(
+    extensions,
+    basePackage,
+    grantedPackage ?? basePackage,
+  );
   const partnerTokenCost = resolvePartnerTokenCost(basePackage);
 
   const totalLine = isPartner

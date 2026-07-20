@@ -3,9 +3,9 @@
 import { Loader2, Lock } from "lucide-react";
 
 import {
-  computeWizardCart,
   formatWizardPrice,
   resolvePartnerTokenCost,
+  resolveWizardDisplayCart,
   type ExtensionLineKey,
   type WizardBasePackage,
   type WizardExtensionsState,
@@ -24,6 +24,9 @@ export type CheckoutStepCopy = {
   paying: string;
   payError: string;
   partnerRecapLabel: string;
+  stayFreeCta?: string;
+  stayFreeHint?: string;
+  amputationHint?: string;
 };
 
 type Props = {
@@ -31,10 +34,13 @@ type Props = {
   locale?: "fr" | "en";
   extensions: WizardExtensionsState;
   basePackage?: WizardBasePackage;
+  grantedPackage?: WizardBasePackage;
   isPartner?: boolean;
   isPaying: boolean;
   payError: string | null;
+  showStayFree?: boolean;
   onPay: () => void;
+  onStayFree?: () => void;
 };
 
 export function CheckoutStep({
@@ -42,12 +48,19 @@ export function CheckoutStep({
   locale = "fr",
   extensions,
   basePackage = "signature",
+  grantedPackage,
   isPartner = false,
   isPaying,
   payError,
+  showStayFree = false,
   onPay,
+  onStayFree,
 }: Props) {
-  const cart = computeWizardCart(extensions, basePackage);
+  const cart = resolveWizardDisplayCart(
+    extensions,
+    basePackage,
+    grantedPackage ?? basePackage,
+  );
   const optionLines = cart.lineItems.filter((line) => line.key !== "base");
   const tokenCost = resolvePartnerTokenCost(basePackage);
 
@@ -149,6 +162,22 @@ export function CheckoutStep({
         </div>
       </section>
 
+      {showStayFree && copy.stayFreeHint ? (
+        <div
+          className="rounded-xl border border-amber-400/25 bg-amber-950/15 px-4 py-3"
+          role="note"
+        >
+          <p className="text-sm font-light leading-relaxed text-amber-100/85">
+            {copy.stayFreeHint}
+          </p>
+          {copy.amputationHint ? (
+            <p className="mt-2 text-xs font-light text-amber-100/55">
+              {copy.amputationHint}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       <p className="flex items-center gap-2 text-xs font-light text-zinc-500">
         <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden />
         {copy.secureNote}
@@ -178,6 +207,17 @@ export function CheckoutStep({
           )
         )}
       </button>
+
+      {showStayFree && onStayFree && copy.stayFreeCta ? (
+        <button
+          type="button"
+          onClick={onStayFree}
+          disabled={isPaying}
+          className="w-full rounded-xl px-4 py-3 text-center text-sm text-white/55 transition hover:text-white/85 disabled:opacity-50"
+        >
+          {copy.stayFreeCta}
+        </button>
+      ) : null}
     </div>
   );
 }

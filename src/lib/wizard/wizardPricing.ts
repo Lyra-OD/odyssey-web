@@ -344,6 +344,25 @@ export function computeWizardCartWithGrant(
   };
 }
 
+/**
+ * Affichage panier UI : Soft Cap (cadeau Souvenir 0 $) → delta granted→intended.
+ * B2C / forfait déjà payant en grant → panier plein classique.
+ */
+export function resolveWizardDisplayCart(
+  extensions: WizardExtensionsState,
+  intendedPackage: WizardBasePackage,
+  grantedPackage: WizardBasePackage = intendedPackage,
+): WizardCartSnapshot {
+  if (packageCents(grantedPackage) === 0) {
+    return computeWizardCartWithGrant(
+      extensions,
+      intendedPackage,
+      grantedPackage,
+    );
+  }
+  return computeWizardCart(extensions, intendedPackage);
+}
+
 export function resolvePartnerTokenCost(
   _basePackage: WizardBasePackage,
 ): number | undefined {

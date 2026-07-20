@@ -5,8 +5,8 @@ import { useEffect, useMemo, useRef } from "react";
 
 import {
   buildPricingSnapshot,
-  computeWizardCart,
   resolvePartnerTokenCost,
+  resolveWizardDisplayCart,
   type WizardBasePackage,
   type WizardExtensionsState,
 } from "@/src/lib/wizard/wizardPricing";
@@ -22,6 +22,7 @@ type Props = {
   copy: StickyPriceBarCopy;
   extensions: WizardExtensionsState;
   basePackage: WizardBasePackage;
+  grantedPackage?: WizardBasePackage;
   isPartner?: boolean;
 };
 
@@ -38,12 +39,18 @@ export function StickyPriceBar({
   copy,
   extensions,
   basePackage,
+  grantedPackage,
   isPartner = false,
 }: Props) {
   const reduceMotion = useReducedMotion();
   const cart = useMemo(
-    () => computeWizardCart(extensions, basePackage),
-    [extensions, basePackage],
+    () =>
+      resolveWizardDisplayCart(
+        extensions,
+        basePackage,
+        grantedPackage ?? basePackage,
+      ),
+    [extensions, basePackage, grantedPackage],
   );
   const pricing = useMemo(
     () => buildPricingSnapshot(extensions, basePackage, isPartner),

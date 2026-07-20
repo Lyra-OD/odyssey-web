@@ -20,6 +20,7 @@ import {
 } from "react";
 import { PreviewStep } from "@/src/components/tribute/PreviewStep";
 import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
+import { SoftCapModal, SoftCapMediaCountSync, type SoftCapVariant } from "@/src/components/tribute/SoftCapModal";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
 import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
 import { MontageExtensionsStep } from "@/src/components/tribute/MontageExtensionsStep";
@@ -54,15 +55,16 @@ import {
   type WizardActTracks,
   type WizardStateV1,
   type WizardStoryboardState,
+  type WizardStoryboardSong,
 } from "@/src/lib/wizard/wizardState";
 import {
   buildPricingSnapshot,
   bundleSavingsDollarsLabel,
   calculateBundleSavings,
-  computeWizardCart,
   DEFAULT_B2C_BASE_PACKAGE,
   packageCents,
   resolveMusicCatalogTier,
+  resolveWizardDisplayCart,
   WIZARD_B2C_DIRECT_PACKAGES,
   WIZARD_PARTNER_GRANTED_PACKAGES,
 } from "@/src/lib/wizard/wizardPricing";
@@ -76,8 +78,15 @@ import { resolvePackageDossierRows } from "@/src/lib/wizard/packageDossier";
 import {
   emptyActTracks,
   hasAnyActTrack,
+  isOfficialCatalogTrack,
   STINGRAY_CATALOG_PROVIDER,
 } from "@/src/lib/wizard/stingrayCatalog";
+import {
+  isSoftCapEligible,
+  shouldOfferMagicSoftCap,
+  shouldOfferMediaSoftCap,
+  shouldOfferMusicSoftCap,
+} from "@/src/lib/wizard/softCap";
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
 import { useWizardStoryboard } from "@/src/hooks/useWizardStoryboard";
 import type { Locale } from "@/i18n.config";
@@ -216,6 +225,18 @@ export function TributeWizard({
     () => resolveMusicCatalogTier(basePackage, extensions),
     [basePackage, extensions],
   );
+  const softCapMusicBrowse = shouldOfferMusicSoftCap(
+    grantedPackage,
+    intendedPackage,
+    Boolean(extensions.musicLicense),
+  );
+  const musicBrowseTier = softCapMusicBrowse ? "premium" : musicCatalogTier;
+  const softCapEligible = isSoftCapEligible(grantedPackage, intendedPackage);
+  const [softCapOpen, setSoftCapOpen] = useState(false);
+  const [softCapVariant, setSoftCapVariant] =
+    useState<SoftCapVariant>("mediaUnlock");
+  const softCapMediaDismissedRef = useRef(false);
+  const softCapMagicDismissedRef = useRef(false);
   const currentPackageId = useMemo(
     () => manifestPackageFromWizardBasePackage(basePackage),
     [basePackage],
@@ -834,6 +855,125 @@ export function TributeWizard({
     [queueSave],
   );
 
+  const openSoftCap = useCallback((variant: SoftCapVariant) => {
+    setSoftCapVariant(variant);
+    setSoftCapOpen(true);
+  }, []);
+
+  const dismissSoftCap = useCallback(() => {
+    if (softCapVariant === "mediaUnlock") {
+      softCapMediaDismissedRef.current = true;
+    }
+    if (softCapVariant === "mediaMagic") {
+      softCapMagicDismissedRef.current = true;
+    }
+    setSoftCapOpen(false);
+  }, [softCapVariant]);
+
+  const acceptSoftCapHeritage = useCallback(() => {
+    softCapMediaDismissedRef.current = true;
+    softCapMagicDismissedRef.current = true;
+    setSoftCapOpen(false);
+    handleBasePackageChange("signature");
+    if (extensions.musicLicense) {
+      handleExtensionsChange({ ...extensions, musicLicense: false });
+    }
+  }, [extensions, handleBasePackageChange, handleExtensionsChange]);
+
+  const acceptSoftCapLicense = useCallback(() => {
+    setSoftCapOpen(false);
+    handleExtensionsChange({ ...extensions, musicLicense: true });
+  }, [extensions, handleExtensionsChange]);
+
+  const handleAfterChooseSong = useCallback(
+    (song: WizardStoryboardSong) => {
+      if (song.source !== "stingray") return;
+      if (
+        !shouldOfferMusicSoftCap(
+          grantedPackage,
+          intendedPackage,
+          Boolean(extensions.musicLicense),
+        )
+      ) {
+        return;
+      }
+      if (!isOfficialCatalogTrack(song.trackId)) return;
+      openSoftCap("musicDual");
+    },
+    [extensions.musicLicense, grantedPackage, intendedPackage, openSoftCap],
+  );
+
+  const handleStayOnGift = useCallback(() => {
+    softCapMediaDismissedRef.current = true;
+    softCapMagicDismissedRef.current = true;
+    handleBasePackageChange(grantedPackage);
+    if (extensions.musicLicense) {
+      handleExtensionsChange({ ...extensions, musicLicense: false });
+    }
+    setPayError(null);
+    void navigateToStep(3);
+  }, [
+    extensions,
+    grantedPackage,
+    handleBasePackageChange,
+    handleExtensionsChange,
+    navigateToStep,
+  ]);
+
+  useEffect(() => {
+    if (currentStep !== 3) return;
+    if (softCapOpen) return;
+    if (softCapMediaDismissedRef.current) return;
+    if (
+      !shouldOfferMediaSoftCap(
+        grantedPackage,
+        intendedPackage,
+        projectMediaCount,
+      )
+    ) {
+      return;
+    }
+    openSoftCap("mediaUnlock");
+  }, [
+    currentStep,
+    grantedPackage,
+    intendedPackage,
+    openSoftCap,
+    projectMediaCount,
+    softCapOpen,
+  ]);
+
+  /** Sync le volume médias pendant l'étape 3 (filet Soft Cap). */
+  const syncStep3MediaCount = useCallback((count: number) => {
+    setProjectMediaCount((prev) => (prev === count ? prev : count));
+  }, []);
+
+  const softCapCopy = useMemo(
+    () => ({
+      mediaUnlockTitle: copy.softCapMediaUnlockTitle,
+      mediaUnlockBody: copy.softCapMediaUnlockBody,
+      mediaMagicTitle: copy.softCapMediaMagicTitle,
+      mediaMagicBody: copy.softCapMediaMagicBody,
+      musicTitle: copy.softCapMusicTitle,
+      musicBody: copy.softCapMusicBody,
+      ctaHeritage: copy.softCapCtaHeritage,
+      ctaLicense: copy.softCapCtaLicense,
+      ctaContinue: copy.softCapCtaContinue,
+      ctaDismiss: copy.softCapCtaDismiss,
+      priceHeritage: copy.softCapPriceHeritage,
+      priceLicense: copy.softCapPriceLicense,
+    }),
+    [copy],
+  );
+
+  const displayCart = useMemo(
+    () =>
+      resolveWizardDisplayCart(extensions, intendedPackage, grantedPackage),
+    [extensions, intendedPackage, grantedPackage],
+  );
+  const showCheckoutStayFree =
+    packageCents(grantedPackage) === 0 && displayCart.totalCents > 0;
+
   const handleContinueToPreview = useCallback(async () => {
     await navigateToStep(7);
   }, [navigateToStep]);
@@ -868,9 +1008,22 @@ export function TributeWizard({
         mode?: string;
         message?: string;
         error?: string;
+        maxMedia?: number;
+        currentMedia?: number;
       };
 
       if (!res.ok) {
+        if (data.error === "amputation_required" && typeof data.message === "string") {
+          setPayError(data.message);
+          return;
+        }
+        if (
+          data.error === "music_license_requires_payment" &&
+          typeof data.message === "string"
+        ) {
+          setPayError(data.message);
+          return;
+        }
         setPayError(
           typeof data.message === "string" ? data.message : copy.checkoutPayError,
         );
@@ -879,6 +1032,11 @@ export function TributeWizard({
 
       if (data.mode === "partner" && data.redirectUrl) {
         window.location.href = data.redirectUrl;
+        return;
+      }
+
+      if (data.mode === "freemium_free" && data.url) {
+        window.location.href = data.url;
         return;
       }
 
@@ -1125,6 +1283,7 @@ export function TributeWizard({
         <StickyPriceBar
           extensions={extensions}
           basePackage={basePackage}
+          grantedPackage={grantedPackage}
           isPartner={isPartner}
           copy={{
             consumerTotalLabel: copy.stickyConsumerTotal,
@@ -1138,6 +1297,7 @@ export function TributeWizard({
               locale={locale}
               extensions={extensions}
               basePackage={basePackage}
+              grantedPackage={grantedPackage}
               copy={{
                 labelWithOptions: copy.cartLabelWithOptions,
                 labelBaseOnly: copy.cartLabelBaseOnly,
@@ -1422,6 +1582,10 @@ export function TributeWizard({
 
                     return (
                       <>
+                        <SoftCapMediaCountSync
+                          count={totalQueued}
+                          onCount={syncStep3MediaCount}
+                        />
                         <div
                           {...dz.getRootProps({
                             className: `group relative mt-10 flex w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white/[0.03] px-6 py-16 text-center backdrop-blur-xl shadow-[0_0_24px_rgba(99,102,241,0.08)] transition-[border,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${
@@ -1496,14 +1660,27 @@ export function TributeWizard({
                             aria-live="polite"
                           >
                             <p className="text-sm font-medium text-amber-200/95">
-                              {copy.uploadLimitReachedTitle}
+                              {softCapEligible
+                                ? copy.softCapMediaUnlockTitle
+                                : copy.uploadLimitReachedTitle}
                             </p>
                             <p className="mt-1 text-xs text-amber-100/85">
-                              {copy.uploadLimitReachedHint.replace(
-                                "{max}",
-                                String(currentMaxMediaItems),
-                              )}
+                              {softCapEligible
+                                ? copy.softCapMediaUnlockBody
+                                : copy.uploadLimitReachedHint.replace(
+                                    "{max}",
+                                    String(currentMaxMediaItems),
+                                  )}
                             </p>
+                            {softCapEligible ? (
+                              <button
+                                type="button"
+                                onClick={() => openSoftCap("mediaUnlock")}
+                                className="mt-3 rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-2 text-sm font-semibold text-[#1a1410] transition hover:brightness-105"
+                              >
+                                {copy.softCapMediaUnlockCta}
+                              </button>
+                            ) : null}
                           </div>
                         ) : null}
 
@@ -1600,9 +1777,10 @@ export function TributeWizard({
                   minSongsRequired={wizardStoryboard.structureValidation.minSongsRequired}
                   maxMediaItems={currentMaxMediaItems}
                   projectMediaCount={projectMediaCount}
-                  catalogTier={musicCatalogTier}
+                  catalogTier={musicBrowseTier}
                   storyboard={wizardStoryboard.storyboard}
                   onStoryboardChange={wizardStoryboard.setStoryboard}
+                  onAfterChooseSong={handleAfterChooseSong}
                   duplicateChapterIds={wizardStoryboard.duplicateSongInfo.duplicateChapterIds}
                   hasDuplicateSongs={wizardStoryboard.duplicateSongInfo.hasDuplicates}
                   duplicateSongsAcknowledged={wizardStoryboard.duplicateSongsAcknowledged}
@@ -1684,6 +1862,17 @@ export function TributeWizard({
               }}
               onMagicSequenceComplete={() => {
                 queueSave("immediate");
+                if (softCapMagicDismissedRef.current) return;
+                if (
+                  !shouldOfferMagicSoftCap(
+                    grantedPackage,
+                    intendedPackage,
+                    projectMediaCount,
+                  )
+                ) {
+                  return;
+                }
+                openSoftCap("mediaMagic");
               }}
               copy={{
                 title: copy.stepMontageTitle,
@@ -1835,10 +2024,13 @@ export function TributeWizard({
               locale={locale}
               extensions={extensions}
               basePackage={basePackage}
+              grantedPackage={grantedPackage}
               isPartner={isPartner}
               isPaying={isPaying}
               payError={payError}
+              showStayFree={showCheckoutStayFree}
               onPay={() => void handlePay()}
+              onStayFree={handleStayOnGift}
               copy={{
                 title: copy.stepCheckoutTitle,
                 description: copy.stepCheckoutDescription,
@@ -1852,6 +2044,9 @@ export function TributeWizard({
                 partnerRecapLabel: copy.checkoutPartnerRecap,
                 paying: copy.checkoutPaying,
                 payError: copy.checkoutPayError,
+                stayFreeCta: copy.checkoutStayFreeCta,
+                stayFreeHint: copy.checkoutStayFreeHint,
+                amputationHint: copy.checkoutAmputationHint,
               }}
             />
           ) : null}
@@ -1863,6 +2058,7 @@ export function TributeWizard({
           locale={locale}
           extensions={extensions}
           basePackage={basePackage}
+          grantedPackage={grantedPackage}
           isPartner={isPartner}
           onSkip={() => void handleContinueToPreview()}
           onContinue={() => void handleContinueToPreview()}
@@ -1874,6 +2070,16 @@ export function TributeWizard({
           }}
         />
       ) : null}
+
+      <SoftCapModal
+        open={softCapOpen}
+        variant={softCapVariant}
+        mediaCount={projectMediaCount}
+        copy={softCapCopy}
+        onAcceptHeritage={acceptSoftCapHeritage}
+        onAcceptLicense={acceptSoftCapLicense}
+        onDismiss={dismissSoftCap}
+      />
 
       {currentStep !== 3 && currentStep !== 6 && currentStep !== 7 && currentStep !== 8 ? (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">

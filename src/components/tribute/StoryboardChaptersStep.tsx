@@ -75,6 +75,11 @@ type Props = {
   catalogTier: MusicCatalogTier;
   storyboard: WizardStoryboardState;
   onStoryboardChange: (next: WizardStoryboardState) => void;
+  /**
+   * Soft Cap musique : appelé après sélection d'une piste (jamais bloquante).
+   * Le parent décide d'ouvrir la modale dual Licence / Héritage.
+   */
+  onAfterChooseSong?: (song: WizardStoryboardSong) => void;
   /** Chapitres dont la chanson est dupliquée ailleurs — dérivé, jamais stocké. */
   duplicateChapterIds: ReadonlySet<string>;
   hasDuplicateSongs: boolean;
@@ -97,6 +102,7 @@ export function StoryboardChaptersStep({
   catalogTier,
   storyboard,
   onStoryboardChange,
+  onAfterChooseSong,
   duplicateChapterIds,
   hasDuplicateSongs,
   duplicateSongsAcknowledged,
@@ -239,8 +245,9 @@ export function StoryboardChaptersStep({
           ? assignSongToChapter(storyboard, chapterId, song)
           : clearChapterSong(storyboard, chapterId),
       );
+      if (song) onAfterChooseSong?.(song);
     },
-    [onStoryboardChange, storyboard, stopPreview],
+    [onAfterChooseSong, onStoryboardChange, storyboard, stopPreview],
   );
 
   const handleAddChapter = useCallback(() => {

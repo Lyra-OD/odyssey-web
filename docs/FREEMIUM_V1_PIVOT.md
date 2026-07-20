@@ -191,10 +191,10 @@ flowchart TD
 
 ### Phase 4 — Soft Cap UX + musique
 
-15. Soft Cap médias → Héritage.
-16. Soft Cap musique Souvenir → **modale 2 choix** (Licence 39 $ | Héritage 149 $) ; piste non bloquée.
-17. Import MP3 + ToS (Héritage+).
-18. Étape 8 : synthèse ; amputation (médias et/ou retrait pistes officielles / clear `musicLicense`) pour 0 $.
+15. ✅ Soft Cap médias → Héritage (filet étape 3 + post Composition Magique).
+16. ✅ Soft Cap musique Souvenir → **modale 2 choix** (Licence 39 $ | Héritage 149 $) ; piste non bloquée.
+17. ⏳ Import MP3 + ToS (Héritage+) — Phase 5 / follow-up.
+18. ✅ Étape 8 : panier Soft Cap (`resolveWizardDisplayCart`) ; CTA rester à 0 $ ; surface amputation 422.
 
 ### Phase 5 — Export & add-ons
 

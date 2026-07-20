@@ -28,6 +28,8 @@ export type StingrayTrackApiPayload = {
   streamUrl: string;
   /** URL same-origin pour le lecteur HTML (`/api/music/preview`). */
   playbackUrl: string;
+  /** Catalogue officiel Stingray = premium — Soft Cap musique Souvenir. */
+  musicTier?: MusicCatalogTier;
 };
 
 export type WizardSelectedTrack = {
@@ -270,7 +272,18 @@ export function serializeStingrayTrackForApi(
     previewUrl,
     streamUrl: previewUrl,
     playbackUrl: getTrackPreviewPlaybackUrl(track.id),
+    musicTier: track.musicTier,
   };
+}
+
+/** Piste catalogue officiel (Soft Cap musique) — lookup local + payload API. */
+export function isOfficialCatalogTrack(
+  trackId: string,
+  musicTier?: MusicCatalogTier,
+): boolean {
+  if (musicTier === "premium") return true;
+  if (musicTier === "standard") return false;
+  return findCatalogTrack(trackId)?.musicTier === "premium";
 }
 
 export function emptyActTracks(): WizardActTracks {
