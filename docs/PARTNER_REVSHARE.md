@@ -2,7 +2,7 @@
 
 **Last updated: July 2026 · Version: Freemium V1 · Modèle Bulletproof**
 
-> **V1 Pivot :** le ledger `partner_commission_*` est le **seul** solde partenaire. Wallets jetons = **DEPRECATED** (DROP Phase 2). Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
+> **V1 Pivot :** le ledger `partner_commission_*` est le **seul** solde partenaire. Wallets jetons = **DROP P8 ✅**. Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
 
 Document canonique pour la **commission partenaire 30 % du Net Distribuable** sur les paiements famille, le ledger, l’idempotence webhook Stripe, le clawback, et le **payout manuel mensuel**.
 
@@ -38,7 +38,7 @@ Complète [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · schéma P6 : [`sql/odyssey
 
 ```text
 partner_commission_balances + partner_commission_ledger  → SEUL ledger partenaire (V1)
-partner_token_wallets + partner_token_ledger             → DEPRECATED — DROP Phase 2
+partner_token_wallets + partner_token_ledger             → **DROP P8 ✅** (ne plus utiliser)
 ```
 
 **Ne jamais** mélanger jetons et centimes. Après purge : seules les tables commission existent.
@@ -441,7 +441,8 @@ WHERE tc.project_id = :project_id;
 | [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) | Grille forfaits, extensions commissionnables |
 | [`sql/README.md`](sql/README.md) | Ordre migrations P6 → **P6.1** |
 | [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) | 5 scénarios QA chiffrés |
-| [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) | QA wallet legacy (distinct commissions) |
+| [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) | QA waterfall |
+| [`_archive/QA_P5_5_PARTNER_SALON.md`](_archive/QA_P5_5_PARTNER_SALON.md) | **HIST** wallet jetons — ne plus exécuter |
 
 ---
 

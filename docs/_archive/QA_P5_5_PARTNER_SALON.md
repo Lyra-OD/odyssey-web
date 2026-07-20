@@ -1,12 +1,13 @@
 # QA P5.5 — Salon partenaire (checklist manuelle)
 
-> ## ✅ QA TERMINÉE — PRODUCTION (juin 2026)
+> **ARCHIVED — juillet 2026.** Checklist **wallet jetons** — modèle **purgé (P8)**. **Ne plus exécuter.**  
+> Commerce vivant : [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · Canon : [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md).
+
+> ## ✅ QA TERMINÉE — PRODUCTION (juin 2026) — HISTORIQUE JETONS
 >
-> Cette checklist a été **exécutée et validée en conditions réelles** (prod) : RBAC §2 · solde bout en bout §3 · gate non-partenaire R6.
+> Cette checklist a été **exécutée et validée** sur le modèle legacy jetons (pré-purge).
 >
-> **Important — coexistence B2B2C v2 :** les scénarios **débit à l'invitation** et **overdraft 402** documentés ici concernent le modèle **legacy jetons** (`tenants.is_freemium = false`). Pour les gros clients freemium (ex. Urgel Bourgie), le Souvenir offert coûte **0 jeton** — voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 et le sprint Phase A (P6).
->
-> Ce document reste une **référence historique** pour les petits salons en jetons.
+> **Important :** débit invitation / overdraft 402 = **obsolète**. Ne plus utiliser comme guide Salon.
 
 **Last updated: June 2026**
 

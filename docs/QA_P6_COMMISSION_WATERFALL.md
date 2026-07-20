@@ -120,7 +120,7 @@ WHERE tribute_checkout_id = :checkout_id AND reason = 'commission_accrual';
 | ID | Scénario | Gross | Net Distribuable | Commission |
 |----|----------|-------|------------------|------------|
 | S6 | B2C direct Héritage (pas de RevShare) | 14 900¢ | — | **0¢** · `checkout_mode = b2c` |
-| S7 | Legacy jetons (`is_freemium = false`) | variable | — | **0¢** · saga v1 |
+| S7 | ~~Legacy jetons~~ | — | — | **PURGED P8** — ne plus tester |
 | S8 | Double webhook `checkout.session.completed` | S1 | — | **1 seule** accrual · seconde = `already_accrued` |
 
 ---
@@ -166,8 +166,8 @@ WHERE tribute_checkout_id = :checkout_id AND reason = 'commission_accrual';
 | Document | Rôle |
 |----------|------|
 | [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) | Spec ledger + RPC |
-| [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) | Saga checkout v2 |
-| [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) | Wallet jetons legacy (distinct) |
+| [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) | Commerce Soft Cap |
+| [`_archive/QA_P5_5_PARTNER_SALON.md`](_archive/QA_P5_5_PARTNER_SALON.md) | **HIST** — ne plus exécuter |
 
 ---
 

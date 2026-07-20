@@ -33,20 +33,19 @@
 1. [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) — **canon CEO** : purge jetons, Soft Cap dual (`musicLicense` 39 $), grille Héritage 4K. Specs : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) · [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md).
 2. [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) + `wizardDeliverables.ts` — contrat livrables.
 3. `pricingConfig.ts` / `wizardPricing.ts` — cents + panier Soft Cap.
-4. [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) — waterfall · ledger · clawback. **Jetons DEPRECATED.**
-5. [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — wizard 8 étapes *(croiser FREEMIUM si drift)*.
+4. [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) — waterfall · ledger · clawback. **Jetons DROP P8.**
+5. [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — wizard 8 étapes.
 5b. [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) — Étape 5 Livre Ouvert + Composition Magique.
 5c. [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md) · [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md).
 6. [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — proxy musique.
 7. [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) — positionnement Quiet Luxury.
 8. [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) · [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).
 9. [`sql/README.md`](sql/README.md) — migrations **P0→P8**.
-10. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) — living status *(peut drifter — croiser FREEMIUM)*.
-11. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce *(sections jetons = historique ; canon = FREEMIUM)*.
+10. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) — living status.
+11. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce Soft Cap / RevShare.
 12. [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — Killer App mobile.
 
-**Archive :** [`_archive/`](_archive/) — onboarding pré-Freemium, checklists jetons.  
-**Ne plus** pointer `QA_P5_5_PARTNER_SALON.md` comme guide exécutable (historique P5.5 jetons).
+**Archive :** [`_archive/`](_archive/) — onboarding pré-Freemium · B2B2C pré-purge · `QA_P5_5` jetons. **Ne plus exécuter.**
 
 Après modification wizard, Soft Cap, Étape 5 / Composition Magique, pricing, checkout, RevShare, musique : mettre à jour **FREEMIUM** + **TECHNICAL_ONBOARDING_V1** + annexes touchées.
 

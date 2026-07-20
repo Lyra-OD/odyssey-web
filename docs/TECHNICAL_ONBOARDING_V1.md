@@ -166,7 +166,7 @@ Ne plus seed / QA sur `partner_token_wallets` (DROP P8).
 | Hiérarchie | [`CONVENTIONS.md`](CONVENTIONS.md) |
 | Status living | [`PROJECT_STATUS.md`](PROJECT_STATUS.md) *(drift possible — croiser FREEMIUM)* |
 
-> Plusieurs docs filles (`B2B2C_COMMERCE`, `PROJECT_STATUS`, onboarding pré-V1) mentionnent encore la **coexistence jetons**. En cas de conflit : **FREEMIUM_V1_PIVOT gagne**.
+> En cas de conflit doc : **FREEMIUM_V1_PIVOT gagne**. Archive pré-purge : [`_archive/`](_archive/).
 
 ---
 

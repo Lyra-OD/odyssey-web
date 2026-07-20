@@ -86,7 +86,7 @@ flowchart LR
 
 **Pitch commercial partenaire (une phrase) :**
 
-> *« Vous offrez la base gratuitement — vous brillez. Ensuite le système élève la famille avec élégance. Sur chaque Restauration, USB, Coffre-fort ou Écrin, vous touchez 30 % du Net. Votre outil ne vous coûte plus : il vous rapporte. Sans vente sous pression. »*
+> *« Vous offrez la base gratuitement — vous brillez. Ensuite le système élève la famille avec élégance. Sur chaque Restauration, Jeton Sanctuaire, Coffre-fort ou Écrin, vous touchez 30 % du Net. Votre outil ne vous coûte plus : il vous rapporte. Sans vente sous pression. »*
 
 ### 3.2 B2B2C — Famille invitée (Archiviste)
 
@@ -95,7 +95,7 @@ flowchart LR
 3. **Aha IA** — avant/après ; le visage redevient net  
 4. **Upsell pérennité** — pas « 4K / 198 $ », mais :
 
-> *« Vous avez rassemblé des souvenirs inestimables. Ne les laissez pas disparaître. Avec l’Écrin Éternité, nous restaurons chaque photo, protégeons ce film 50 ans pour vos petits-enfants, et vous l’envoyons sur une Clef USB Collector. »*
+> *« Vous avez rassemblé des souvenirs inestimables. Ne les laissez pas disparaître. Avec l’Écrin Éternité, nous restaurons chaque photo, protégeons ce film 50 ans pour vos petits-enfants, et nous vous envoyons le Jeton du Sanctuaire (NFC) pour rouvrir l’histoire. »*
 
 Paiement = acte d’amour. Partenaire → RevShare Bulletproof (30 % du **Net Distribuable**) sans vendre.
 
@@ -152,7 +152,7 @@ IDs techniques : `essential` / `signature` / `heritage` / `legendary` — voir [
 | Email / SMS famille | Landing invitation | Aucune vente |
 | Upload / Scanner | Grille + avant/après IA | Modale Restauration IA 49 $ |
 | Composition Magique | Livre Ouvert | Désir forfait (pas de prix froid) |
-| Preview / Checkout | « Pérennité » | Écrin + USB + Coffre-fort |
+| Preview / Checkout | « Pérennité » | Écrin + NFC + Coffre-fort |
 | Post-cérémonie (V1.5) | Portail invités | Livre, HD, Tribute Fund |
 
 ---
@@ -161,7 +161,7 @@ IDs techniques : `essential` / `signature` / `heritage` / `legendary` — voir [
 
 | Élément | Référence |
 |---------|-----------|
-| Freemium Souvenir 0 $ / 0 jeton | [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
+| Freemium Souvenir 0 $ | [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
 | RevShare Bulletproof | Platform 10 % → Net Distribuable → 30 % — [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) |
 | Saga checkout + webhook | `POST /api/checkout` · `checkout.session.completed` |
 | Extensions V1 déjà en catalogue | `pricingConfig.ts` — **relanguage** émotionnel, pas nouveaux SKUs |
@@ -183,7 +183,7 @@ IDs techniques : `essential` / `signature` / `heritage` / `legendary` — voir [
 Mettre à jour ce fichier quand :
 - Le catalogue V1 / V1.5 change  
 - Le langage des rôles Héros / Archiviste est figé en i18n  
-- Le Gant Blanc (avance wholesale) est spécifié en SQL  
+- Le Gant Blanc (avance commissions) est une couche optionnelle post-freemium  
 
 Cross-références : [`PROJECT_STATUS.md`](PROJECT_STATUS.md), [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`CONVENTIONS.md`](CONVENTIONS.md).
 

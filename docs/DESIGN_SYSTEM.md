@@ -13,7 +13,7 @@ Odyssey est une plateforme **« quiet luxury »** : hommages vidéo, ton respect
 | Surface | Audience | Rôle |
 |---------|----------|------|
 | **Studio** | Familles (B2C) | Wizard hommage, checkout |
-| **Salon** | Partenaires (B2B2C) | Invitations, jetons, co-branding |
+| **Salon** | Partenaires (B2B2C) | Invitations, commissions, co-branding |
 | **Marketing** | Public | Storytelling, conversion vers Studio |
 
 Le Salon est un **gant blanc** : la marque partenaire est héroïne ; Odyssey est la signature technique discrète.
@@ -51,11 +51,11 @@ Fond sombre, typographie, structure.
 
 ### 2.3 Tertiaire Salon — Cyan action (Quiet Luxury)
 
-Accent **chirurgical** réservé au Salon partenaire (invitations, jetons). **Ne pas utiliser** sur le marketing B2C ni le co-branding header.
+Accent **chirurgical** réservé au Salon partenaire (invitations, commissions). **Ne pas utiliser** sur le marketing B2C ni le co-branding header.
 
 | Token | Valeur | Usage |
 |-------|--------|--------|
-| `--salon-cyan` | `#00E8F0` | Ligne carte active, chiffres accent, débit jetons, CTA invitation |
+| `--salon-cyan` | `#00E8F0` | Ligne carte active, chiffres accent, soldes commissions, CTA invitation |
 | `--salon-cyan-dim` | `rgba(0, 232, 240, 0.4)` | Badges recommandé |
 
 **Règle d’or tertiaire Salon :** jamais sur le logo partenaire ni « Propulsé par » ; maximum **5–10 %** de la surface ; halo mauve **uniquement** sur Héritage au repos (Option A) ; à la sélection : ligne cyan + scale (Camera Dolly).
@@ -89,7 +89,7 @@ Chaque tenant peut avoir une accent couleur dans son logo (ex. vert `#2D6A4F` Ur
 |------|---------------|--------|
 | Marque | `font-brand` | Odyssey, ESPACE PARTENAIRES, kickers caps |
 | Éditorial | `font-editorial` | Titres invitation, storytelling |
-| Interface | `font-label` | Labels formulaires, onglets, jetons |
+| Interface | `font-label` | Labels formulaires, onglets, soldes |
 
 ### 3.2 Échelle hiérarchique — Salon (dashboard)
 
@@ -346,7 +346,7 @@ Skin Salon dédié : `src/lib/salonTierCardSkin.ts` (isolé de `pricingTierCardS
 | Sélection explicite | Scale **1.04**, ligne cyan 2 px, bordure renforcée |
 | CTA carte | Outline ; CTA principal « Envoyer l’invitation » en cyan plein |
 
-Features : matrice structurée (`SalonTierFeatureRow`) ; débit jetons **hors** liste features (`tokenDebitLabel`).
+Features : matrice structurée (`SalonTierFeatureRow`) ; soldes commissions hors liste features.
 
 ### 6.3 Header salon
 
@@ -429,7 +429,7 @@ Voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) pour les chemins canoniques.
 4. Tester connexion `?partenaire=<slug>`
 5. Exécuter P5.2 + (P5.3 ou P5.4) + seed → logo header salon après login
 6. Connexion brandée `?partenaire=<slug>` puis `/fr/salon` — même PNG header
-7. Valider hiérarchie : partenaire > action invitation > jetons > Odyssey
+7. Valider hiérarchie : partenaire > action invitation > commissions > Odyssey
 
 ---
 

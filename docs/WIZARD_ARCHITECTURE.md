@@ -1,9 +1,9 @@
 # Tribute Wizard — Architecture
 
-**Last code review: July 2026 · Freemium V1 Pivot (docs) · Storyboard S5 partiel · Soft Cap code ⏳ Phase 4**
+**Last code review: 20 juillet 2026 · Freemium V1 Phases 0–4 ✅ · Soft Cap UX livré**
 
-> **Canon V1 :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · Soft Cap [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md).  
-> **État cible :** `grantedPackage` + `intendedPackage` + `extensions.musicLicense` (auj. `basePackage` + `extendedLicense` jusqu’à Phase 1).
+> **Canon V1 :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · Commerce [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).  
+> **État :** `grantedPackage` + `intendedPackage` + `extensions.musicLicense` (aliases UI legacy OK).
 
 This document describes the 8-step tribute wizard: navigation, state, autosave, **song-based storyboard**, pricing Freemium V1, and checkout. Parent overview: [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Wizard.
 
@@ -18,7 +18,7 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | `src/components/tribute/WizardPhaseProgress.tsx` | Minimalist 3-phase progress indicator (Déposer / Composer / Recevoir) — replaces the old 8-circle `WizardStepper` |
 | `src/components/tribute/PackageDossierPanel.tsx` | Global off-canvas package selector (« Le Dossier ») — editorial trigger, exhaustive inclusions from `PACKAGE_MANIFEST`, cross-fade comparison, inline downgrade guard. Visible from Step 1 onward, replaces the per-step `WizardBasePackagePicker` and the short-lived `StoryboardPackageSwitcher` dropdown |
 | `src/lib/wizard/packageDossier.ts` | Resolves a package's exhaustive inclusion rows from `PACKAGE_MANIFEST` for the Dossier |
-| `src/components/StickyPriceBar.tsx` | Sticky B2C total / B2B token cost (all steps) |
+| `src/components/StickyPriceBar.tsx` | Sticky total Soft Cap (`resolveWizardDisplayCart`) |
 | `src/hooks/useWizardAutosave.ts` | Debounced + immediate PATCH to `/api/projects/[id]/autosave` |
 | `src/components/tribute/AutosaveIndicator.tsx` | “Saving / Saved / Error” UX |
 | `src/lib/wizard/wizardDeliverables.ts` | **Deliverables manifest** — `PACKAGE_MANIFEST`, lists by channel, limits, rendering, pacing |
@@ -41,7 +41,7 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | `src/components/tribute/montage/MontageDirectorModal.tsx` | Modal directeur plein écran — retypé chapitres |
 | `src/components/tribute/montage/MontageMediaCard.tsx` | Carte média drag + entrée CSS magic |
 | `src/components/tribute/montage/MontageFocalReticle.tsx` | Sélecteur point focal |
-| `src/lib/partner/partnerCheckout.ts` | B2B token debit (`partner_token_wallets`) |
+| `src/lib/wizard/softCap.ts` · `SoftCapModal.tsx` | Soft Cap médias / magie / musique dual |
 | `src/lib/partner/resolvePartnerAccess.ts` | Partner role detection (`tenant_members`) |
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
 | `app/api/checkout/route.ts` | Checkout (**cible** 3 modes — voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)) |
@@ -54,26 +54,28 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 
 ## Deliverables manifest
 
-The tribute wizard is **no longer a static 8-step product definition** in documentation alone: package capabilities (Salon vs Social, MP3 vs Stingray, token vs dollar display) are driven by [`src/lib/wizard/wizardDeliverables.ts`](../src/lib/wizard/wizardDeliverables.ts) (`PACKAGE_MANIFEST`).
-
+The tribute wizard is driven by [`wizardDeliverables.ts`](../src/lib/wizard/wizardDeliverables.ts) (`PACKAGE_MANIFEST`) and Soft Cap state (`granted` / `intended`).
 **Canonical product doc:** [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) — marketing names Souvenir / Héritage / Éternité / Légendaire ↔ technical IDs `essential` / `signature` / `heritage` / `legendary` (P6).
 
-### Pricing Freemium V1 — canaux (doc canon · code Phase 1 ⏳)
+### Pricing Freemium V1 — canaux (Phases 1–4 ✅)
 
 | Canal | Forfaits visibles | Règle |
 |-------|-------------------|-------|
 | **B2B2C freemium** | **Souvenir** 0 $ + Soft Cap / upsell **Héritage 149 $** · **Éternité 299 $** + add-ons (`musicLicense`, etc.) | Lead-magnet · pas de Légendaire · **pas de jetons** |
 | **B2C direct** | **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $** | Pas de Souvenir |
-| ~~B2B legacy jetons~~ | — | **DEPRECATED** — purge Phase 2–3 |
+| ~~B2B legacy jetons~~ | — | **PURGED P8** |
 
 Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
 
-### Soft Cap (cible UX Phase 4)
+### Soft Cap (Phase 4 ✅)
 
-| Trigger | State |
-|---------|--------|
-| ≥ 50 médias | `intendedPackage = signature` |
-| Piste Stingray **officielle** (Souvenir) | Modale : `musicLicense` 39 $ **ou** upgrade Héritage — piste **non bloquée** |
+Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans `TributeWizard`.
+
+| Déclencheur | Effet |
+|-------------|--------|
+| ≥ 50 médias (filet) | Propose Héritage → `intended = signature` |
+| Post Composition Magique | Soft Cap principal (si encore Souvenir) |
+| Piste catalogue officiel | Dual Licence 39 $ / Héritage 149 $ — piste non bloquée |
 
 `resolveMusicEntitlement(intended, extensions)` → catalogue officiel si `intended >= signature` **OU** `musicLicense`.
 
@@ -82,9 +84,9 @@ Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMI
 | Rule (manifest) | Wizard behaviour |
 |---------------|------------------|
 | `storyboard.chapters[].song.source === 'stingray'` | **Step 4 (live)** — Stingray par chapitre ✅ |
-| `storyboard.chapters[].song.source === 'upload'` | MP3 personnel + ToS — [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) (**Phase 4**) |
-| `limits.maxMediaItems` | Gate upload — Soft Cap V1 remplace hard-block à 50 ✅/⏳ |
-| `resolveTransactionMode()` | Famille : **dollars** ; Salon : commissions (plus **tokens**) |
+| `storyboard.chapters[].song.source === 'upload'` | MP3 + ToS — Héritage+ · Phase 5 follow-up [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) |
+| `limits.maxMediaItems` | Soft Cap filet à 50 ✅ · quotas `intended` |
+| `resolveTransactionMode()` | Famille : **dollars Soft Cap** ; Salon : commissions |
 
 **Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is now `storyboard`; Step 4 reads/writes `storyboard.chapters[].song` via `useWizardStoryboard`. **Step 5** is the live **Livre Ouvert** montage UI (`StoryboardMontageStep`) — DnD, actions chapitre, onboarding gate, and **Composition Magique** (see [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)). `SoundSignatureStep` was removed during Clean Slate. Steps 7–8 still use a temporary legacy bridge (`actTracks`) for Preview/Checkout until `S8`/`S9`.
 
@@ -301,183 +303,67 @@ Audio `src` uses `track.previewUrl` (typically `/api/music/preview?trackId=…`)
 
 ---
 
-## Pricing — hybrid B2C / B2B / B2B2C v2
+## Pricing — Soft Cap / cents
 
-**Rule:** all money is stored and computed as **integer USD cents** (no float dollars in cart math).
+**Rule:** integer USD cents only. Soft Cap cart = `computeWizardCartWithGrant` / `resolveWizardDisplayCart`.
 
-**Source of truth (target v2):** [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
+**Source of truth:** [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · `pricingConfig.ts`.
 
-### Grille cible v2 (cents)
+| Technical ID | Marketing | B2C | B2B2C famille |
+|--------------|-----------|-----|---------------|
+| `essential` | Souvenir | non vendu | **0 $** (granted) |
+| `signature` | Héritage | 14 900¢ | 14 900¢ Soft Cap delta |
+| `heritage` | Éternité | 29 900¢ | 29 900¢ |
+| `legendary` | Légendaire | 49 900¢ | non proposé |
 
-| Technical ID | Marketing | B2C direct | B2B2C freemium (famille) | Legacy jetons |
-|--------------|-----------|------------|--------------------------|---------------|
-| `essential` | Souvenir | **Non vendu** | **0** (offert) | 1 |
-| `signature` | Héritage | **14 900** (149 $) | **14 900** (upsell plein) | 2 |
-| `heritage` | Éternité | **29 900** (299 $) | **29 900** (upsell plein) | 4 |
-| `legendary` | Légendaire (Gants Blancs) | **49 900** (499 $) | **Non proposé** | — |
+Helpers clés : `packageCents` · `computeWizardCart` · `computeWizardCartWithGrant` · `resolveMusicEntitlement`.  
+~~`PARTNER_TOKEN_COST_CENTS` / `packagePartnerTokens` / wholesale~~ — **purgés** (ne plus documenter comme API vivante).
 
-**Current transition state** (`pricingConfig.ts`) — catalogue v2 in place; downstream consumers still migrating.
-
-```typescript
-// src/lib/wizard/pricingConfig.ts — current v2 catalog
-export const PARTNER_TOKEN_COST_CENTS = 4000; // legacy wholesale
-
-export const WIZARD_PRICING = {
-  packages: {
-    ESSENTIEL:  { id: "essential", priceCents: 0,     tokens: 1 },
-    SIGNATURE:  { id: "signature", priceCents: 14900, tokens: 2 },
-    HERITAGE:   { id: "heritage",  priceCents: 29900, tokens: 4, musicCatalog: "premium" },
-    LEGENDAIRE: { id: "legendary", priceCents: 49900, tokens: 0, musicCatalog: "premium" },
-  },
-  extensions: { /* aiRetouch, extendedLicense, collectorUsb, digitalVault, heritagePack */ },
-};
-
-export const WIZARD_B2C_DIRECT_PACKAGES = ["signature", "heritage", "legendary"];
-export const WIZARD_PARTNER_GRANTED_PACKAGES = ["essential", "signature", "heritage"];
-```
-
-| Helper | Role |
-|--------|------|
-| `packageCents(id)` | Base package cents |
-| `packagePartnerTokens(id)` | B2B legacy token debit (strictly no `legendary`) |
-| `computeWizardCart()` | `totalCents = baseCents + optionsCents` |
-| `computeB2B2CFamilyPricing()` | **Cible v2** — freemium prix plein upsell vs legacy delta |
-| `calculatePartnerMargin()` | Legacy jetons wholesale margin |
-
-Display-only: `StickyPriceBar` converts `totalCents / 100` for B2C label `Total : {amount} $` (cart reflects bundle rules via `computeWizardCart`).
+Add-ons V1 : `musicLicense`, `sanctuaryToken`, `storyVoice`, `memoryBook`, `aiRetouch`, `digitalVault` (aliases `extendedLicense` / `collectorUsb` OK en code legacy).
 
 ---
 
-## Economic bundle — Heritage package (marketing + cart)
+## Music catalog tiers
 
-**Goal:** make the **Heritage** formula irresistible by showing savings vs buying Signature plus the main physical/digital options separately, while keeping **Signature** customers able to upsell via **Option Licence Premium** (39 $).
+| Access | Quand | API |
+|--------|--------|-----|
+| **Standard** | Souvenir sans Soft Cap musique | `tier=standard` |
+| **Premium (officiel)** | `intended >= signature` **OR** `musicLicense` | `tier=premium` |
 
-### Savings calculation
-
-```text
-à_la_carte = packageCents("signature")
-           + extensionCents("extendedLicense")   // 39 $
-           + extensionCents("collectorUsb")      // 79 $
-           + extensionCents("digitalVault")      // 99 $
-           = 14900 + 3900 + 7900 + 9900 = 36600¢ (366 $)
-
-heritage     = packageCents("heritage") = 29900¢ (299 $)
-
-savings      = calculateBundleSavings("heritage") = 6700¢ → UI: « Économisez 67 $ »
-```
-
-Implemented in `heritageBundleAlaCarteCents()` and `calculateBundleSavings()` (`pricingConfig.ts`). AI Retouch is **not** part of this comparison (remains an optional upsell on Heritage).
-
-### UI — `PackageDossierPanel` (« Le Dossier »)
-
-- Sur le forfait **Éternité** (B2C only, `hidePrices=false`) : badge d'économie depuis i18n `dossierSavingsBadge` — e.g. **« Économisez 67 $ »** — affiché à côté du prix (vue courante, vue comparaison) et dans la pastille de sélection.
-- Uses `bundleSavingsDollarsLabel(calculateBundleSavings("heritage"))` — no float math in the label.
-- `DEFAULT_B2C_BASE_PACKAGE = "heritage"` (`pricingConfig.ts`) : nouveau projet B2C ancré sur Éternité par défaut — c'est aussi le forfait avec la meilleure économie relative, ancrage produit + commercial cohérent.
-
-### UI — step 6 extensions (`MontageExtensionsStep`)
-
-When `basePackage === "heritage"`:
-
-| Behaviour | Detail |
-|-----------|--------|
-| **Hide** Heritage Pack upsell | Pack targets Signature/Essentiel customers; redundant on Heritage formula |
-| **Badge « Déjà inclus »** | `extendedLicense`, `collectorUsb`, `digitalVault` — cards disabled, price hidden |
-| **Still purchasable** | `aiRetouch` (optional) |
-
-Cart: `computeWizardCart()` does not add line items for bundled extension ids when base is Heritage (`isExtensionBundledInBasePackage`).
-
-### Upsell path (Signature / Essentiel)
-
-- Step 5: info banner if catalog tier is **standard** — prompts adding **Licence Premium** at step 6.
-- Step 6: toggling `extendedLicense` unlocks **premium** catalog on step 5 (re-search with `tier=premium`).
-
-See [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) for catalog tiers.
-
----
-
-## Music catalog tiers (Standard vs Premium)
-
-| Access | Packages / options | Search API |
-|--------|-------------------|------------|
-| **Standard** | Essentiel, Signature (default) | `GET /api/music/search?tier=standard` |
-| **Premium** | Heritage (included), or **Option Licence Premium** (`extendedLicense`), or Heritage Pack | `GET /api/music/search?tier=premium` |
-
-Resolution: `resolveMusicCatalogTier(basePackage, extensions)` in `pricingConfig.ts`; wired in `TributeWizard` → `StoryboardChaptersStep` / `ChapterMusicPanel` (`catalogTier` prop).
-
-Mock catalog (`stingrayCatalog.ts`): each track has `musicTier: "standard" | "premium"`; premium filter returns the full library, standard filter excludes premium-tier tracks.
+`resolveMusicEntitlement` / Soft Cap browse premium on Souvenir — see [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) · [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md).
 
 ---
 
 ## Step 8 — Checkout
 
-- **Component:** `CheckoutStep.tsx` (recap + pay CTA)
-- **API:** `app/api/checkout/route.ts`
-- **Référence commerce :** [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 (saga freemium · **Bulletproof waterfall** · legacy jetons)
+- **UI:** `CheckoutStep.tsx` — panier Soft Cap · CTA rester à 0 $ · erreurs amputation
+- **API:** `app/api/checkout/route.ts` — Soft Cap grant · `freemium_free` · Stripe
+- **Commerce:** [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)
 
-**Implémentation actuelle :** 2 branches legacy (`isPartner` → jetons TS **ou** Stripe). **Cible v2 :** saga `tribute_checkouts` + branche `is_freemium` + webhook waterfall P6.
+**Livré (Phase 3–4) :** Soft Cap cart, entitlements webhook, Soft Cap UX.  
+**Next (Phase 5) :** Creatomate gated on `project_paid_entitlements`.
 
-**Spike checkout v1 (jetons-first) : annulé** — remplacé par pivot B2B2C v2.
+~~Saga jetons / debit wallet~~ — **PURGED**.
 
-### Diagramme de flux P6 complet (Bulletproof)
+**Spike checkout v1 (jetons-first) : annulé** — remplacé par Freemium Soft Cap (Phases 3–4 ✅).
 
-```mermaid
-flowchart TD
-  subgraph POST ["POST /api/checkout — Checkout T"]
-    A[Valider permissions + invitation] --> B[resolveCheckoutContext]
-    B --> C{checkout_mode}
-    C -->|b2c| C1[Stripe catalogue 149/299/499]
-    C -->|b2b_partner| C2[RPC debit jetons P5.5]
-    C -->|b2b2c_family| D{tenant.is_freemium?}
-    D -->|false| C3[Saga v1 jetons + delta Stripe]
-    D -->|true| E[computeB2B2CFamilyPricing]
-    E --> F[INSERT tribute_checkouts pending]
-    F --> G[Snapshot platform_fee_bps + commission_rate_bps]
-    G --> H{family_total_cents = 0?}
-    H -->|oui| I[completed synchrone sans Stripe]
-    H -->|non| J[Stripe Session + awaiting_payment]
-  end
-
-  subgraph WH ["Webhook checkout.session.completed"]
-    K[Vérifier signature + idempotence evt] --> L[Charger tribute_checkouts]
-    L --> M{Éligible RevShare?<br/>b2b2c_family + freemium + gross > 0}
-    M -->|non| N[completed projet seulement]
-    M -->|oui| O[compute_revenue_waterfall<br/>gross = amount_total]
-    O --> P[accrue_partner_commission_for_checkout]
-    P --> Q[Snapshots gross / fee / Net Distribuable / commission]
-    Q --> R[completed + project submitted]
-    R --> S{Family Fund Phase 2?}
-    S -->|optionnel| T[allocate_family_tribute_fund<br/>depuis odyssey_margin uniquement]
-  end
-
-  subgraph REF ["Webhook charge.refunded"]
-    U[charge.refunded] --> V[clawback proportionnel<br/>floor commission × refund / gross]
-    V --> W[commission_clawback ledger]
-  end
-
-  J --> K
-  C1 --> K
-```
-
-**Waterfall (freemium payant) :**
-
-```text
-Gross Volume (amount_total) → Platform Fee 10% → Net Distribuable → Commission 30% → Odyssey Margin 70%
-```
-
-Détail formules + QA : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md).
-
-### Vue simplifiée par mode
+### Flux checkout Freemium V1
 
 ```mermaid
 flowchart TD
   A[POST /api/checkout] --> B{checkout_mode}
-  B -->|b2c| C[Stripe: Quiet Luxury 149/299/499 + extensions]
-  B -->|b2b_partner| D[Legacy jetons — RPC P5.5]
-  B -->|b2b2c_family| E{tenant.is_freemium?}
-  E -->|true| F[Saga v2: 0$ ou Stripe upsell plein]
-  F --> F1[webhook → Bulletproof waterfall P6.1]
-  E -->|false| G[Saga v1: debit jetons + delta Stripe]
+  B -->|b2c| C[Stripe prix plein + add-ons]
+  B -->|b2b_partner| D[Soumission conseiller — pas de wallet]
+  B -->|b2b2c_family| E{total Soft Cap}
+  E -->|0 $| F[Amputation si besoin → freemium_free + entitlements]
+  E -->|gt 0| G[Stripe Session Soft Cap delta]
+  G --> H[Webhook → project_paid_entitlements + RevShare]
+  F --> I[submitted]
+  H --> I
 ```
+
+**Waterfall (upsell payant) :** Gross → Platform Fee 10 % → Net Distribuable → Commission 30 %.  
+Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md).
 
 ### Mode `b2c` (famille directe — Quiet Luxury)
 
@@ -515,33 +401,21 @@ flowchart TD
 
 | Migration | Purpose |
 |-----------|---------|
-| `docs/sql/odyssey_p3_wizard_autosave.sql` | `wizard_state`, `wizard_step`, `last_saved_at` |
-| `docs/sql/odyssey_p4_partner_token_wallets.sql` | Wallets + ledger |
-| `docs/sql/odyssey_p4_1_security_fixes.sql` | RLS wallets/ledger (`partner` / `partner_admin`) |
-| `docs/sql/odyssey_p5_b2b2c_core.sql` | `partner_invitations`, `tribute_checkouts`, RPC débit |
-| `docs/sql/odyssey_p6_freemium_revshare.sql` | **Appliqué** — `is_freemium`, commission ledger (base brut — migrer P6.1) |
-| `docs/sql/odyssey_p6_1_bulletproof_waterfall.sql` | **Cible P6.1** — Net Distribuable, `compute_revenue_waterfall()` |
+| `odyssey_p3_wizard_autosave.sql` | `wizard_state`, `wizard_step`, `last_saved_at` |
+| `odyssey_p5_b2b2c_core.sql` | invitations, `tribute_checkouts` |
+| `odyssey_p6_freemium_revshare.sql` | `is_freemium`, commission ledger |
+| `odyssey_p6_1_bulletproof_waterfall.sql` | Net Distribuable waterfall |
+| `odyssey_p7_media_quota_guard.sql` | Soft Cap media quota trigger |
+| `odyssey_p8_freemium_v1_token_purge.sql` | **Purge jetons** · Soft Cap · entitlements · NFC |
 
-| Column / table | Type | Purpose |
-|----------------|------|---------|
-| `projects.wizard_state` | jsonb | UI snapshot canonique V2 (`storyboard`, `pricing`, `basePackage`) |
-| `projects.wizard_step` | smallint | 1..10 (CHECK) |
-| `projects.last_saved_at` | timestamptz | Server save time |
-| `projects.invitation_id` | uuid FK | Lien invitation B2B2C (P5) |
-| `tenants.is_freemium` | boolean | **P6** — canal acquisition Souvenir gratuit |
-| `partner_invitations` | table | Forfait offert, email, statut invitation |
-| `tribute_checkouts` | table | Saga checkout (`checkout_mode`, waterfall `commission_*` / `platform_fee_*` P6.1) |
-| `partner_token_wallets` | table | Solde jetons legacy par tenant |
-| `partner_token_ledger` | table | Audit jetons ; `tribute_checkout_id` (P5) |
-| `partner_commission_balances` | table | **P6** — agrégat RevShare par tenant (`accrued_cents`, `paid_cents`) |
-| `partner_commission_ledger` | table | **P6** — journal append-only commissions (accrual, clawback, payout) |
-| `scan_sessions` | table | **P6 Part B** — sessions QR Scanner Compagnon |
-
-Fonctions legacy : `debit_partner_tokens_for_checkout(uuid)` — **`service_role`** only.
-
-Fonctions cibles P6.1 : `compute_revenue_waterfall`, `accrue_partner_commission_for_checkout`, `clawback_partner_commission`, `record_partner_commission_payout` — voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
-
-Index: `(user_id, status, last_saved_at DESC)` on `projects` for “resume latest draft” on dashboard.
+| Column / table | Purpose |
+|----------------|---------|
+| `projects.wizard_state` | Snapshot V2 (`storyboard`, granted/intended, pricing) |
+| `tenants.is_freemium` | Canal freemium |
+| `tribute_checkouts` | Saga Soft Cap / Stripe |
+| `partner_commission_*` | **Seul** solde partenaire post-P8 |
+| `project_paid_entitlements` | Snapshot post-paiement (Phase 3+) |
+| ~~`partner_token_*`~~ | **DROP P8** |
 
 Ordre SQL : [`docs/sql/README.md`](sql/README.md).
 

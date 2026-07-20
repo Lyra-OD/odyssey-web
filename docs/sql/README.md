@@ -1,15 +1,15 @@
 # SQL Odyssey — état courant
 
 > **Freemium V1 Pivot :** canon [`FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md).  
-> **P8 (Phase 2) :** [`odyssey_p8_freemium_v1_token_purge.sql`](odyssey_p8_freemium_v1_token_purge.sql) — ✅ **appliqué sur Supabase** (juillet 2026) — invitation sans débit · Soft Cap quota · entitlements · NFC · DROP wallets.
+> **P8 (Phase 2) :** [`odyssey_p8_freemium_v1_token_purge.sql`](odyssey_p8_freemium_v1_token_purge.sql) — ✅ **appliqué sur Supabase** (juillet 2026) — invitation sans débit · Soft Cap quota · entitlements · NFC · **DROP `partner_token_*`**.
 >
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
-> **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).
+> **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).  
+> **Migrations P4 wallets** = historique de schéma (rejouées puis droppées par P8) — **ne plus seed « 100 jetons »**.
 
-Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle** de la base Supabase d'Odyssey. Tous les scripts de migration sont **idempotents** : on peut les ré-exécuter sans dégât.
+Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historique ordonné) de la base Supabase d'Odyssey. Migrations **idempotentes** quand applicable.
 
-**Commerce B2B2C v2 Bulletproof :** voir [`docs/B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · RevShare [`PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · QA [`QA_P6_COMMISSION_WATERFALL.md`](../QA_P6_COMMISSION_WATERFALL.md).  
-**Note :** migrations P4–P6 en base active ✅ ; l’app Next.js rattrape maintenant le schéma (Sprint P6 T2+). Voir [`PROJECT_STATUS.md`](../PROJECT_STATUS.md).
+**Commerce :** [`B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · RevShare [`PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · Status [`PROJECT_STATUS.md`](../PROJECT_STATUS.md).
 
 ---
 
@@ -23,8 +23,8 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 4 | `odyssey_p2_media_assets_schema_sync.sql` | Migration | Alignement `media_assets` (upload service). |
 | 5 | `odyssey_p2b_media_assets_cleanup.sql` | Patch | Supprime `user_id` en doublon si présent (convention = `owner_user_id`). |
 | 6 | `odyssey_p3_wizard_autosave.sql` | Migration | `wizard_state`, `wizard_step`, `last_saved_at` sur `projects`. |
-| 7 | `odyssey_p4_partner_token_wallets.sql` | Migration | `partner_token_wallets` + `partner_token_ledger` (jetons B2B). |
-| 8 | `odyssey_p4_1_security_fixes.sql` | **Patch sécurité** | RLS wallets/ledger : rôles `partner` / `partner_admin` uniquement ; index `ledger.project_id`. |
+| 7 | `odyssey_p4_partner_token_wallets.sql` | Migration **HIST** | Wallets jetons — **ensuite DROP P8** |
+| 8 | `odyssey_p4_1_security_fixes.sql` | Patch **HIST** | RLS wallets (pré-P8) |
 | 9 | `odyssey_p5_b2b2c_core.sql` | Migration | `partner_invitations`, `tribute_checkouts`, `projects.invitation_id`, `debit_partner_tokens_for_checkout()`. |
 | 10 | `odyssey_p5_1_invitation_unique_pending.sql` | **Patch** | Index unique `pending` par `(tenant_id, email)` — anti double-clic invitations. |
 | 11 | `odyssey_p5_2_partner_public_branding.sql` | **Patch** | RPC `get_partner_public_branding(slug)` — page Salon connexion co-brandée. |
@@ -37,7 +37,7 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 18 | `odyssey_p7_media_quota_guard.sql` | **Migration** | **Storyboard S3** — trigger `enforce_media_asset_quota()` — voir [§ P7](#p7--garde-fou-quota-de-medias-package-aware) |
 | 19 | `odyssey_p8_freemium_v1_token_purge.sql` | **Migration** | **Freemium V1** — invitation sans jetons · Soft Cap quota · entitlements · NFC · DROP wallets |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
-| — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed QA** | Partenaire fictif + 100 jetons — **après P4**, hors chaîne prod. |
+| — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed HIST** | Ancien seed 100 jetons — **ne plus utiliser** (wallets DROP P8) |
 | — | `odyssey_partner_tenant_branding_example.sql` | **Référence** | Mise à jour `tenants.settings` (`brand_label`, `brand_logo_url`) — Salon connexion. |
 | — | `odyssey_schema_health_check.sql` | **Référence** | Audit lecture seule — migrations P0–P5.5, RPC branding. |
 
@@ -67,7 +67,7 @@ Exemples :
 | Titre SQL Editor | Usage |
 |------------------|--------|
 | `QA — Branding tenant Urgel Bourgie — 2026-06-16` | `UPDATE tenants.settings` + vérif SELECT |
-| `QA — Seed partenaire demo + 100 jetons` | Exécution `odyssey_p4_partner_token_qa_seed.sql` |
+| `P8 — Verify token tables dropped` | `\dt partner_token_*` attendu vide |
 | `P5.1 — Index unique invitation pending` | Migration `odyssey_p5_1_invitation_unique_pending.sql` |
 
 Dans le corps du script, reprendre le même titre en en-tête de commentaire (comme les fichiers `odyssey_p*.sql` du repo).
@@ -197,22 +197,22 @@ auth.users
 
 public.tenants
    ├── slug (identifiant stable — liens ?partenaire=)
-   ├── is_freemium (P6 — canal Souvenir 0 $)
-   ├── settings jsonb (brand_label, brand_logo_url, revshare_bps, …)
-   ├── partner_token_wallets   (PK tenant_id — legacy jetons)
-   ├── partner_commission_balances (P6 — RevShare agrégat)
-   ├── partner_commission_ledger   (P6 — journal commissions)
+   ├── is_freemium (P6 — canal Souvenir 0 $ · cible V1 = true)
+   ├── settings jsonb (brand_label, brand_logo_url, platform_fee_bps, revshare_bps, …)
+   ├── partner_commission_balances (RevShare agrégat — **seul** solde partenaire post-P8)
+   ├── partner_commission_ledger   (journal commissions)
    ├── partner_invitations     (granted_package, status, magic link hash)
    └── (funérarium / vertical)
 
-public.tribute_checkouts        (P5 + P6 — saga checkout v2)
+public.tribute_checkouts        (saga checkout)
    ├── checkout_mode: b2c | b2b_partner | b2b2c_family
-   ├── granted_package / selected_package (+ legendary P6)
+   ├── granted_package / selected_package / intended (Soft Cap)
    ├── family_total_cents / commission_cents / commission_status
    └── status: pending → awaiting_payment → completed | failed | refunded
 
-public.partner_token_ledger     (legacy jetons — coexistence)
-public.partner_commission_ledger (P6 — RevShare, séparé des jetons)
+public.project_paid_entitlements  (P8 — snapshot post-webhook / freemium_free)
+
+~~partner_token_wallets / partner_token_ledger~~ — **DROP P8** (ne plus référencer comme schéma courant)
 ```
 
 Tables historiques inchangées : `media_assets`, `orders`, `billing_catalog`, `webhook_events`.
@@ -223,9 +223,8 @@ Tables historiques inchangées : `media_assets`, `orders`, `billing_catalog`, `w
 
 | Fonction | Rôle |
 |----------|------|
-| `partner_tokens_for_granted_package(text)` | Legacy — mappe jetons (1/2/4) ; **0 pour freemium Souvenir** (app P6) |
-| `debit_partner_tokens_for_checkout(uuid)` | Legacy — jetons · `partner_debited` (tenants non-freemium) |
-| `accrue_partner_commission_for_checkout(...)` | **P6** brut (legacy) · **P6.1** Net Distribuable via `compute_revenue_waterfall()` |
+| ~~`partner_tokens_for_granted_package`~~ / ~~`debit_partner_tokens_*`~~ | **HIST** pré-P8 — ne plus appeler |
+| `accrue_partner_commission_for_checkout(...)` | RevShare · Net Distribuable via `compute_revenue_waterfall()` (P6.1) |
 
 ---
 

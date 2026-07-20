@@ -56,7 +56,10 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 
 ## 3. Database vs application layer
 
-The **SQL schema P4/P5.5 is production-ready for legacy jetons** and **P6 (freemium + commissions) is now migrated**. App commerce code still lags the database and is the active focus of T2–T5.
+> **Post-P8 :** `partner_token_*` **DROP**. Schéma courant = commissions + Soft Cap quota + entitlements — [`sql/README.md`](sql/README.md).  
+> Les diagrammes historiques ci-dessous (wallets) sont **obsolètes** ; ne pas les traiter comme vérité.
+
+The **SQL P6 + P8** is the Freemium V1 baseline. App Soft Cap checkout / entitlements = Phases 3–4 ✅. Remaining gaps = Creatomate (Phase 5) + UI commissions Salon.
 
 ```mermaid
 flowchart LR
@@ -104,7 +107,7 @@ Reference: [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 · [`PARTNER_REVSHARE.md`
 |----------|--------|
 | **Spike `tribute_checkouts` v1** | **Annulé** — modèle jetons + delta famille remplacé pour les gros clients |
 | **B2B2C v2 (Scrypta Killer)** | **Freemium** Souvenir 0 $ · **Bulletproof** RevShare (10 % platform + 30 % **Net Distribuable**) · **Scanner Compagnon IA** |
-| **Legacy coexistence** | P4/P5.5 jetons **conservé** pour petits salons (`is_freemium = false`) |
+| **Legacy jetons** | ~~P4/P5.5~~ → **PURGED P8** |
 | **Exécution en cours** | P6 SQL ✅ · Phase 0 freemium UI ✅ · Storyboard S1–S4/S6/S6bis ✅ · **S5 partiel PR-1/2/3** ✅ · S5-J/K/L + S7–S10 à suivre |
 
 Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
@@ -129,7 +132,8 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 - **Documentation B2B2C v2** : `B2B2C_COMMERCE.md`, `DELIVERABLES_AND_PACKAGES.md`, `PARTNER_REVSHARE.md` (Bulletproof), `QA_P6_COMMISSION_WATERFALL.md`, `SCANNER_COMPANION.md`
 - **P6 SQL appliqué (juillet 2026)** : `is_freemium`, `partner_commission_*`, `scan_sessions`, stubs Phase 2, package `legendary`
 - **T2 manifeste TS démarré** : `pricingConfig.ts`, `wizardDeliverables.ts`, `wizardDeliverables.utils.ts` — consommateurs TS/UI restants à migrer
-- **Phase 0 B2B2C livrée** : propagation `is_freemium` -> `PartnerContext` -> `InvitationComposer` ; Souvenir freemium affiche désormais **« Gratuit / 0 jeton »**
+- **Phase 0 B2B2C livrée** : propagation `is_freemium` → invitations ; Souvenir = **Gratuit / 0 $** (plus de « 0 jeton »)
+- **Freemium Phases 1–4 ✅** : manifeste Soft Cap · P8 · checkout entitlements · Soft Cap UX
 - **Storyboard refactor S1/S2 livrés** : `wizardState.ts` + `/api/projects/[id]/autosave` persistent désormais `storyboard` V2 avec bridge runtime legacy pour préserver l’UI actuelle
 - **Storyboard refactor S3 livré** : quota `maxMediaItems` package-aware à l'étape Upload (`TributeWizard.tsx` + `MediaDropzoneAdapter.tsx`, avertissement UI) **et** garde-fou serveur infalsifiable — trigger Postgres `enforce_media_asset_quota()` (`docs/sql/odyssey_p7_media_quota_guard.sql`), car l'upload écrit directement du navigateur vers Supabase sans route API intermédiaire
 - **Storyboard refactor S4 livré** : moteur de pacing temporel (`storyboardPacing.ts`) — marges intro/outro 10s, coût vidéo fixe 10s, `mood` préparé pour un pacing dynamique futur, estimation de durée totale pour le résumé narratif
@@ -301,7 +305,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | `B2B2C_COMMERCE.md` | 🟡 Drift jetons / états ⏳ — croiser FREEMIUM |
 | `WIZARD_ARCHITECTURE.md` / `STINGRAY` / `sql/README` | 🟡 Drift possible — croiser FREEMIUM + onboarding V1 |
 | `STORYBOARD_STEP5_LIVRE_OUVERT.md` | ✅ Canon Étape 5 |
-| `QA_P5_5_PARTNER_SALON.md` | 📦 Archive historique jetons — ne plus exécuter |
+| `QA_P5_5` (archive) | 📦 [`_archive/QA_P5_5_PARTNER_SALON.md`](_archive/QA_P5_5_PARTNER_SALON.md) — ne plus exécuter |
 
 ---
 

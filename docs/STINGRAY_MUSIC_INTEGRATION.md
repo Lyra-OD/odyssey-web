@@ -283,31 +283,33 @@ curl -sI "http://localhost:3000/api/music/preview?trackId=sr:YOUR_PLAYLIST:YOUR_
 
 ---
 
-## Partner token model & B2B2C v2 freemium (wizard checkout)
+## Commerce & Soft Cap (wizard checkout)
 
-Pricing is **not** part of Stingray; see [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2, and `src/lib/wizard/pricingConfig.ts`.
+Pricing is **not** part of Stingray; see [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md), [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), and `src/lib/wizard/pricingConfig.ts`.
 
 ### B2C direct (Quiet Luxury)
 
-- Amounts in cents via Stripe: **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $**.
-- **Stingray** (Standard/Premium tiers) is included in the paid package value proposition — monetized through **family upsell**, not partner tokens.
+- Stripe cents: **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $**.
+- Catalogue Stingray **officiel (premium)** inclus dès Héritage+.
 
-### B2B2C freemium (`tenants.is_freemium = true`)
+### B2B2C freemium
 
-- Partner offers **Souvenir at 0 $ / 0 jetons** — acquisition lead-magnet.
-- Family upsell (Héritage / Éternité) pays **full price** via Stripe.
-- **Stingray** on Souvenir/Héritage is part of the **free or paid family experience**; partner RevShare (30 % gross Stripe) is on upsell + extensions — see [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
-- Partner **never** sees token debit for freemium Souvenir invitations.
+- Partner offers **Souvenir at 0 $** (no partner tokens — purged P8).
+- Soft Cap dual musique : **`musicLicense` 39 $** **or** upgrade Héritage — track never blocked.
+- Family upsell pays full / Soft Cap delta via Stripe; RevShare = **30 % Net Distribuable** — [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
 
-### B2B legacy jetons (`is_freemium = false`)
+### Catalog tiers (Freemium V1)
 
-- Partners debit **tokens** (1 / 2 / 4 per package); wholesale **4000¢ per token** (`PARTNER_TOKEN_COST_CENTS`).
-- Coexists with freemium v2 — see [`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md) (✅ terminée prod).
+| Accès | Quand |
+|-------|--------|
+| **Standard** | Souvenir sans Soft Cap musique / sans licence |
+| **Premium (officiel)** | `intended >= signature` **OR** `extensions.musicLicense` **OR** paid entitlements |
 
-**Catalog tiers (unchanged):** Souvenir / Héritage → **Standard** Stingray search · Éternité / Licence Premium → **Premium**.
+Helper : `resolveMusicEntitlement` (alias legacy `resolveMusicCatalogTier`).  
+Export Creatomate master Stingray : **post-paiement** uniquement (Phase 5).
 
 ---
 
 ## When you change this integration
 
-Update this file and onboarding §4.7, §6, §10 per team rule §13.
+Update this file + [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) + FREEMIUM per [`CONVENTIONS.md`](CONVENTIONS.md).
