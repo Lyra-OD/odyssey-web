@@ -18,6 +18,9 @@ Application Next.js 14 (App Router) pour le **Studio Odyssey** — hommages vid�
 | Document | Contenu |
 |----------|---------|
 | [`docs/B2B2C_COMMERCE.md`](docs/B2B2C_COMMERCE.md) | **Commerce v2 Bulletproof** — waterfall 10 % + 30 % Net Distribuable, freemium, saga checkout. |
+| [`docs/SANCTUARY_STRATEGY.md`](docs/SANCTUARY_STRATEGY.md) | **Stratégie Sanctuaire** — Héros / Archiviste, monétisation V1 émotionnelle. |
+| [`docs/FREEMIUM_V1_PIVOT.md`](docs/FREEMIUM_V1_PIVOT.md) | **Pivot CEO V1** — purge jetons, Soft Cap, grille 4K, musique Stingray + MP3/ToS. |
+| [`docs/NARRATIVE_SOFT_CAP.md`](docs/NARRATIVE_SOFT_CAP.md) | Soft Cap granted/intended + amputation checkout. |
 | [`docs/DELIVERABLES_AND_PACKAGES.md`](docs/DELIVERABLES_AND_PACKAGES.md) | Contrat livrables — Souvenir lead-magnet · Quiet Luxury B2C · Légendaire Gants Blancs. |
 | [`docs/PARTNER_REVSHARE.md`](docs/PARTNER_REVSHARE.md) | Ledger commissions · **Net Distribuable** · webhook · clawback · payout. |
 | [`docs/QA_P6_COMMISSION_WATERFALL.md`](docs/QA_P6_COMMISSION_WATERFALL.md) | QA chiffrée — 5 scénarios waterfall P6.1. |

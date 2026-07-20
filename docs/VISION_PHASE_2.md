@@ -3,7 +3,9 @@
 **Last updated: June 2026 · Session stratégique partenaires d'affaires**
 
 Document canonique pour la **feuille de route stratégique** au-delà du sprint commerce P6.  
-Complète le [`Manifesto-V10.4.md`](Manifesto-V10.4.md) (constitution technique) et les specs d'implémentation courantes ([`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).
+Complète le [`Manifesto-V10.4.md`](Manifesto-V10.4.md) (constitution technique) et les specs d'implémentation courantes ([`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).  
+**Positionnement émotionnel V1** : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md).  
+**Pivot produit V1 (freemium only)** : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
 
 > **Hiérarchie doc :** ce fichier = **vision & intention produit**. Le checkout, le pricing et le schéma SQL restent dans les docs techniques dédiées.
 

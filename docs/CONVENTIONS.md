@@ -33,6 +33,8 @@
 3. [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) + `wizardDeliverables.ts` — forfaits, livrables, freemium B2B2C vs Quiet Luxury B2C (149/299/499).
 4. `pricingConfig.ts` — cents checkout et extensions.
 5. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce v2 : freemium, saga checkout, coexistence legacy jetons.
+5b. [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) — **positionnement Sanctuaire** : Héros / Archiviste, flows 3 temps, catalogue monétisation V1.
+5c. [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) — **pivot CEO V1** (prime en cas de conflit) : purge jetons, Soft Cap, grille Héritage 4K, musique deux voies. Voir aussi [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 6. [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) — **Bulletproof RevShare** : Platform Fee 10 % → **Net Distribuable** → commission 30 % · tables `partner_commission_*` · `compute_revenue_waterfall()` · webhook · clawback · payout mensuel.
 7. [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — **Killer App** : QR wizard desktop → session web mobile → ingestion photos papier → preview IA Avant/Après → pont upsell Éternité / Légendaire.
 8. [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — wizard 8 étapes, pricing v2, schéma DB P6.

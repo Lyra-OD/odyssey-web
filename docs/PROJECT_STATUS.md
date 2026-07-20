@@ -287,6 +287,9 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | Doc | Gap |
 |-----|-----|
 | `B2B2C_COMMERCE.md` | ✅ **v2 Bulletproof** (waterfall 10 % + 30 % Net Distribuable, saga v2) |
+| `SANCTUARY_STRATEGY.md` | ✅ Positionnement Sanctuaire · catalogue monétisation V1 |
+| `FREEMIUM_V1_PIVOT.md` | ✅ **Pivot CEO V1 figé** — purge jetons · Soft Cap · 4K · musique ToS (code ⏳) |
+| `NARRATIVE_SOFT_CAP.md` / `MUSIC_RIGHTS_ATTESTATION.md` | ✅ Spec Soft Cap + attestation MP3 |
 | `PARTNER_REVSHARE.md` | ✅ Bulletproof · pseudo-SQL · QA liée |
 | `QA_P6_COMMISSION_WATERFALL.md` | ✅ 5 scénarios QA chiffrés |
 | `DELIVERABLES_AND_PACKAGES.md` | ✅ v2 + pacing temporel / buckets par chanson documentés |
@@ -392,6 +395,7 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 3. **[`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md)** — URLs studio/salon, branding `?partenaire=`, checklist QA connexion.
 3b. **[`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)** — ✅ **QA terminée prod** (RBAC, solde, gate R6).
 4. **[`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)** — **v2 Bulletproof** freemium + waterfall + saga checkout.
+4a. **[`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md)** — stratégie émotionnelle Sanctuaire + monétisation V1.
 4b. **[`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md)** · **[`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md)** · **[`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)** — commissions Net Distribuable + QA + Killer App.
 5. **[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md)** — grille Quiet Luxury B2C (149/299/499) + Souvenir lead-magnet B2B2C.
 6. **[`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)** — **Étape 5** Livre Ouvert + Composition Magique (canon).
@@ -413,6 +417,8 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 | Topic | Document |
 |-------|----------|
 | Commerce rules & saga v2 | [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
+| Stratégie Sanctuaire / monétisation émotionnelle | [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) |
+| Pivot Freemium V1 (CEO) | [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) |
 | RevShare & commission ledger (Bulletproof) | [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · QA [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) |
 | Scanner Compagnon (Killer App) | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | Routes & Salon auth | [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) |

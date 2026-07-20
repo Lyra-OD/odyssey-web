@@ -8,6 +8,8 @@ Complète [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`WIZA
 
 **Prix catalogue (application)** : `src/lib/wizard/pricingConfig.ts` (cents runtime) · **contrat livrables** : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) (`wizardDeliverables.ts`).  
 **RevShare (détail ledger)** : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).  
+**Stratégie émotionnelle / Sanctuaire** : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md).  
+**Pivot CEO V1 (purge jetons · Soft Cap · grille 4K)** : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) — **prime** jusqu’à réécriture complète de ce fichier.  
 **Audit projet** : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 
 ---

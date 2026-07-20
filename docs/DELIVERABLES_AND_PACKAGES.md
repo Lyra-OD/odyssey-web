@@ -2,6 +2,8 @@
 
 **Last updated: July 2026 · Version: B2B2C v2 + Storyboard pivot**
 
+> **Pivot CEO V1 (juillet 2026) :** la grille cible (Héritage 4K + Stingray officiel, purge jetons, Soft Cap, nouveaux add-ons) est figée dans [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md). Ce fichier sera réécrit en Phase 0 — en cas de conflit, **FREEMIUM_V1_PIVOT prime**.
+
 Document canonique pour l’architecture **« gant blanc »** B2C / B2B2C : forfaits, livrables vidéo, tarification (freemium partenaire · legacy jetons · B2C direct), extensions à la carte.
 
 **Implémentation TypeScript :** `src/lib/wizard/wizardDeliverables.ts` · UI partenaire : `src/lib/wizard/wizardDeliverables.utils.ts`.  
