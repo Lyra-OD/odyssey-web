@@ -38,6 +38,74 @@ export function storyboardSongFromCatalogTrack(
   };
 }
 
+/** Chanson chapitre depuis un fichier personnel (MP3/WAV) uploadé en Storage. */
+export function storyboardSongFromUploadFile(params: {
+  storagePath: string;
+  fileName: string;
+  mimeType?: string;
+  durationSec?: number | null;
+}): WizardStoryboardSong {
+  const title = params.fileName.replace(/\.[^.]+$/, "").trim() || params.fileName;
+  return {
+    source: "upload",
+    storagePath: params.storagePath,
+    title,
+    fileName: params.fileName,
+    ...(params.mimeType ? { mimeType: params.mimeType } : {}),
+    ...(params.durationSec != null && Number.isFinite(params.durationSec)
+      ? { durationSec: params.durationSec }
+      : {}),
+  };
+}
+
+export function buildChapterMusicUploadPath(
+  projectId: string,
+  file: File,
+): string {
+  const fromName = file.name.split(".").pop();
+  const ext =
+    fromName && fromName.length <= 8
+      ? fromName.toLowerCase()
+      : file.type.includes("wav")
+        ? "wav"
+        : "mp3";
+  return `projects/${projectId}/music/upload-${crypto.randomUUID()}.${ext}`;
+}
+
+export function isPersonalAudioFile(file: File): boolean {
+  const mime = (file.type || "").toLowerCase();
+  if (
+    mime === "audio/mpeg" ||
+    mime === "audio/mp3" ||
+    mime === "audio/wav" ||
+    mime === "audio/x-wav" ||
+    mime === "audio/wave"
+  ) {
+    return true;
+  }
+  const name = file.name.toLowerCase();
+  return name.endsWith(".mp3") || name.endsWith(".wav");
+}
+
+/** Lit la durée via le navigateur (metadata) — best-effort. */
+export function readAudioFileDurationSec(file: File): Promise<number | null> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const audio = new Audio();
+    audio.preload = "metadata";
+    const finish = (value: number | null) => {
+      URL.revokeObjectURL(url);
+      resolve(value);
+    };
+    audio.onloadedmetadata = () => {
+      const d = audio.duration;
+      finish(Number.isFinite(d) && d > 0 ? d : null);
+    };
+    audio.onerror = () => finish(null);
+    audio.src = url;
+  });
+}
+
 function nextChapterId(existingIds: ReadonlySet<string>): string {
   let n = existingIds.size + 1;
   let id = `chapter-${n}`;

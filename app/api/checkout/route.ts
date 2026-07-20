@@ -136,6 +136,24 @@ export async function POST(request: Request) {
     isFreemiumTenant = tenant?.is_freemium === true;
   }
 
+  const { assertCheckoutMusicRights } = await import(
+    "@/src/lib/wizard/exportGate"
+  );
+  const musicRightsGate = assertCheckoutMusicRights({
+    storyboard: wizardState.storyboard,
+    musicRightsAttestation: wizardState.musicRightsAttestation,
+    locale,
+  });
+  if (!musicRightsGate.ok) {
+    return NextResponse.json(
+      {
+        error: musicRightsGate.code,
+        message: musicRightsGate.message,
+      },
+      { status: 422 },
+    );
+  }
+
   const cart = hasPartnerInvitation
     ? computeWizardCartWithGrant(extensions, intendedPackage, grantedPackage)
     : computeWizardCart(extensions, intendedPackage);
@@ -296,6 +314,14 @@ export async function POST(request: Request) {
           "[checkout] freemium_free entitlements failed:",
           entitlements.message,
         );
+      } else {
+        const { enqueueQuietLuxuryFulfillment } = await import(
+          "@/src/lib/wizard/addonFulfillment"
+        );
+        await enqueueQuietLuxuryFulfillment(admin, {
+          projectId,
+          extensions: cart.extensions,
+        });
       }
 
       return NextResponse.json({

@@ -182,6 +182,7 @@ Ne plus seed / QA sur `partner_token_wallets` (DROP P8).
 
 ## 10. Prochaine priorité produit
 
-**Phase 5** — export Creatomate gated sur `project_paid_entitlements` (forfait ≥ Héritage **ou** `musicLicense` payé) + fulfillment add-ons (NFC, Voix, Livre).
+**Phase 5 ✅** — gate export stub (`POST /api/projects/[id]/export` + P9) · MP3/ToS · fulfillment Quiet Luxury stub · **worker Creatomate réel = follow-up**.  
+**Phase 6** — QA Soft Cap / RevShare / cutover.
 
 Puis **Phase 6** QA / cutover.

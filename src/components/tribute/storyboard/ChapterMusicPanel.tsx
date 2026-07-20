@@ -1,24 +1,42 @@
 "use client";
 
-import { Loader2, Music2, Pause, Play, Search, ArrowLeft } from "lucide-react";
+import {
+  Loader2,
+  Music2,
+  Pause,
+  Play,
+  Search,
+  ArrowLeft,
+  Upload,
+} from "lucide-react";
 import Image from "next/image";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { StoryboardCapacityBadge } from "@/src/components/tribute/storyboard/StoryboardCapacityBadge";
 import type { StoryboardChaptersStepCopy } from "@/src/components/tribute/StoryboardChaptersStep";
 import { useDebouncedValue } from "@/src/hooks/useDebouncedValue";
+import { STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
 import { resolvePreviewUrl } from "@/src/lib/wizard/musicPreview";
 import {
   chapterRecommendedCapacity,
   RECOMMENDED_MIN_TRACK_DURATION_SEC,
 } from "@/src/lib/wizard/storyboardPacing";
-import { storyboardSongFromCatalogTrack } from "@/src/lib/wizard/storyboardHelpers";
+import {
+  buildChapterMusicUploadPath,
+  isPersonalAudioFile,
+  readAudioFileDurationSec,
+  storyboardSongFromCatalogTrack,
+  storyboardSongFromUploadFile,
+} from "@/src/lib/wizard/storyboardHelpers";
 import type { StingrayTrackApiPayload } from "@/src/lib/wizard/stingrayCatalog";
 import type {
   WizardStoryboardChapter,
   WizardStoryboardSong,
 } from "@/src/lib/wizard/wizardState";
 import type { MusicCatalogTier } from "@/src/lib/wizard/pricingConfig";
+import { createClient } from "@/utils/supabase/client";
+
+const MAX_PERSONAL_AUDIO_BYTES = 40 * 1024 * 1024;
 
 function formatTime(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -41,6 +59,11 @@ export type ChapterMusicPanelProps = {
   onChoose: (song: WizardStoryboardSong | null) => void;
   onTogglePreview: (track: StingrayTrackApiPayload) => void;
   onSeek: (value: number) => void;
+  /** Héritage+ : soupape MP3/WAV. */
+  canUploadPersonalAudio?: boolean;
+  projectId?: string | null;
+  musicRightsAccepted?: boolean;
+  onAcceptMusicRights?: () => void;
 };
 
 /**
@@ -63,14 +86,70 @@ export function ChapterMusicPanel({
   onChoose,
   onTogglePreview,
   onSeek,
+  canUploadPersonalAudio = false,
+  projectId = null,
+  musicRightsAccepted = false,
+  onAcceptMusicRights,
 }: ChapterMusicPanelProps) {
   const searchId = useId();
+  const uploadInputId = useId();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<StingrayTrackApiPayload[]>([]);
   const [isSearching, setIsSearching] = useState(true);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [tosChecked, setTosChecked] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const debouncedQuery = useDebouncedValue(query, 280);
   const song = chapter.song;
+
+  const handlePersonalAudioFile = async (file: File | undefined) => {
+    if (!file || !projectId || !canUploadPersonalAudio) return;
+    setUploadError(null);
+
+    if (!isPersonalAudioFile(file)) {
+      setUploadError(copy.uploadUnsupported);
+      return;
+    }
+    if (file.size > MAX_PERSONAL_AUDIO_BYTES) {
+      setUploadError(copy.uploadTooLarge);
+      return;
+    }
+    if (!musicRightsAccepted) {
+      setUploadError(copy.uploadNeedsAttestation);
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const durationSec = await readAudioFileDurationSec(file);
+      const storagePath = buildChapterMusicUploadPath(projectId, file);
+      const supabase = createClient();
+      const { error } = await supabase.storage
+        .from("user-assets")
+        .upload(storagePath, file, {
+          cacheControl: STORAGE_CACHE_CONTROL,
+          upsert: false,
+          contentType: file.type || "audio/mpeg",
+        });
+      if (error) throw error;
+
+      onChoose(
+        storyboardSongFromUploadFile({
+          storagePath,
+          fileName: file.name,
+          mimeType: file.type || undefined,
+          durationSec,
+        }),
+      );
+    } catch {
+      setUploadError(copy.uploadFailed);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -150,7 +229,9 @@ export function ChapterMusicPanel({
               {song.title}
             </p>
             <p className="mt-0.5 text-sm font-light text-zinc-400">
-              {song.artist ?? ""}
+              {song.source === "upload"
+                ? (song.fileName ?? song.artist ?? copy.uploadPersonalLabel)
+                : (song.artist ?? "")}
             </p>
             <div className="mt-2">
               <StoryboardCapacityBadge
@@ -324,6 +405,83 @@ export function ChapterMusicPanel({
           );
         })}
       </ul>
+
+      {canUploadPersonalAudio ? (
+        <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-5">
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-400/10 text-teal-300">
+              <Upload className="h-5 w-5" strokeWidth={1.8} aria-hidden />
+            </span>
+            <div className="min-w-0 flex-1 space-y-3">
+              <div>
+                <p className="font-[family-name:var(--font-label)] text-sm font-medium text-zinc-100">
+                  {copy.uploadPersonalTitle}
+                </p>
+                <p className="mt-1 text-xs font-light leading-relaxed text-zinc-500">
+                  {copy.uploadPersonalHint}
+                </p>
+              </div>
+
+              {!musicRightsAccepted ? (
+                <div className="space-y-3 rounded-xl border border-white/10 bg-black/20 p-3.5">
+                  <label className="flex cursor-pointer items-start gap-2.5 text-xs font-light leading-relaxed text-zinc-300">
+                    <input
+                      type="checkbox"
+                      checked={tosChecked}
+                      onChange={(e) => setTosChecked(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-transparent accent-teal-400"
+                    />
+                    <span>{copy.uploadTosLabel}</span>
+                  </label>
+                  <button
+                    type="button"
+                    disabled={!tosChecked}
+                    onClick={() => onAcceptMusicRights?.()}
+                    className="inline-flex min-h-[36px] items-center justify-center rounded-lg border border-teal-400/30 bg-teal-400/[0.08] px-3 text-xs font-medium text-teal-100 transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {copy.uploadTosAccept}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <input
+                    ref={fileInputRef}
+                    id={uploadInputId}
+                    type="file"
+                    accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,.mp3,.wav"
+                    className="sr-only"
+                    disabled={isUploading || !projectId}
+                    onChange={(e) => {
+                      void handlePersonalAudioFile(e.target.files?.[0]);
+                    }}
+                  />
+                  <label
+                    htmlFor={uploadInputId}
+                    className={`inline-flex min-h-[36px] cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-teal-400/30 bg-teal-400/[0.08] px-3 text-xs font-medium text-teal-100 ${
+                      isUploading || !projectId
+                        ? "pointer-events-none opacity-40"
+                        : "hover:border-teal-400/45"
+                    }`}
+                  >
+                    {isUploading ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+                    ) : (
+                      <Upload className="h-3.5 w-3.5" aria-hidden />
+                    )}
+                    {isUploading ? copy.uploadUploading : copy.uploadCta}
+                  </label>
+                </div>
+              )}
+
+              {uploadError ? (
+                <p className="text-sm font-light text-amber-200/90" role="alert">
+                  {uploadError}
+                </p>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

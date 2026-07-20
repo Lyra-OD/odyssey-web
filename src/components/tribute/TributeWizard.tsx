@@ -61,6 +61,7 @@ import {
   buildPricingSnapshot,
   bundleSavingsDollarsLabel,
   calculateBundleSavings,
+  canUploadPersonalAudio,
   DEFAULT_B2C_BASE_PACKAGE,
   packageCents,
   resolveMusicCatalogTier,
@@ -87,6 +88,7 @@ import {
   shouldOfferMediaSoftCap,
   shouldOfferMusicSoftCap,
 } from "@/src/lib/wizard/softCap";
+import { MUSIC_RIGHTS_TOS_VERSION } from "@/src/lib/wizard/exportGate";
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
 import { useWizardStoryboard } from "@/src/hooks/useWizardStoryboard";
 import type { Locale } from "@/i18n.config";
@@ -113,6 +115,7 @@ type WizardFieldsSnapshot = {
   storyboard: WizardStoryboardState;
   extensions: WizardExtensionsState;
   actTracks: WizardActTracks;
+  musicRightsAttestation?: WizardStateV1["musicRightsAttestation"];
 };
 
 function yearFromDateInput(iso: string): string {
@@ -221,6 +224,10 @@ export function TributeWizard({
   const [extensions, setExtensions] = useState<WizardExtensionsState>(
     () => hydrated.extensions ?? {},
   );
+  const [musicRightsAttestation, setMusicRightsAttestation] = useState<
+    WizardStateV1["musicRightsAttestation"]
+  >(() => hydrated.musicRightsAttestation);
+  const allowPersonalAudioUpload = canUploadPersonalAudio(intendedPackage);
   const musicCatalogTier = useMemo(
     () => resolveMusicCatalogTier(basePackage, extensions),
     [basePackage, extensions],
@@ -432,6 +439,7 @@ export function TributeWizard({
     storyboard: wizardStoryboard.storyboard,
     extensions,
     actTracks,
+    musicRightsAttestation,
   });
   wizardFieldsRef.current = {
     firstName,
@@ -448,6 +456,7 @@ export function TributeWizard({
     storyboard: wizardStoryboard.storyboard,
     extensions,
     actTracks,
+    musicRightsAttestation,
   };
 
   const skipInitialAutosaveRef = useRef(Boolean(initialDraft?.id));
@@ -480,6 +489,9 @@ export function TributeWizard({
       montage: s.montage,
       storyboard: s.storyboard,
       extensions: s.extensions,
+      ...(s.musicRightsAttestation
+        ? { musicRightsAttestation: s.musicRightsAttestation }
+        : {}),
       ...(hasAnyActTrack(s.actTracks)
         ? {
             musicalAmbiance: {
@@ -885,6 +897,16 @@ export function TributeWizard({
     handleExtensionsChange({ ...extensions, musicLicense: true });
   }, [extensions, handleExtensionsChange]);
 
+  const handleAcceptMusicRights = useCallback(() => {
+    const next = {
+      acceptedAt: new Date().toISOString(),
+      tosVersion: MUSIC_RIGHTS_TOS_VERSION,
+    };
+    setMusicRightsAttestation(next);
+    wizardFieldsRef.current.musicRightsAttestation = next;
+    queueSave("immediate");
+  }, [queueSave]);
+
   const handleAfterChooseSong = useCallback(
     (song: WizardStoryboardSong) => {
       if (song.source !== "stingray") return;
@@ -1106,13 +1128,13 @@ export function TributeWizard({
   const extensionRecapLineLabels = useMemo(
     () => ({
       aiRetouch: copy.recapLineAiRetouch,
-      musicLicense: copy.recapLineExtendedLicense,
-      extendedLicense: copy.recapLineExtendedLicense,
-      storyVoice: copy.recapLineExtendedLicense,
-      sanctuaryToken: copy.recapLineCollectorUsb,
-      collectorUsb: copy.recapLineCollectorUsb,
+      musicLicense: copy.recapLineMusicLicense,
+      extendedLicense: copy.recapLineMusicLicense,
+      storyVoice: copy.recapLineStoryVoice,
+      sanctuaryToken: copy.recapLineSanctuaryToken,
+      collectorUsb: copy.recapLineSanctuaryToken,
       digitalVault: copy.recapLineDigitalVault,
-      memoryBook: copy.recapLineHeritagePack,
+      memoryBook: copy.recapLineMemoryBook,
       heritagePack: copy.recapLineHeritagePack,
     }),
     [copy],
@@ -1787,6 +1809,13 @@ export function TributeWizard({
                   onDuplicateSongsAcknowledgedChange={
                     wizardStoryboard.setDuplicateSongsAcknowledged
                   }
+                  canUploadPersonalAudio={allowPersonalAudioUpload}
+                  projectId={uploadProjectId}
+                  musicRightsAccepted={Boolean(
+                    musicRightsAttestation?.acceptedAt &&
+                      musicRightsAttestation?.tosVersion,
+                  )}
+                  onAcceptMusicRights={handleAcceptMusicRights}
                   copy={{
                     title: copy.stepChaptersTitle,
                     description: copy.stepChaptersDescription,
@@ -1819,6 +1848,17 @@ export function TributeWizard({
                     previewPremiumBadge: copy.soundPreviewPremiumBadge,
                     catalogAccessStandard: copy.soundCatalogAccessStandard,
                     catalogAccessPremium: copy.soundCatalogAccessPremium,
+                    uploadPersonalTitle: copy.musicUploadPersonalTitle,
+                    uploadPersonalHint: copy.musicUploadPersonalHint,
+                    uploadPersonalLabel: copy.musicUploadPersonalLabel,
+                    uploadTosLabel: copy.musicUploadTosLabel,
+                    uploadTosAccept: copy.musicUploadTosAccept,
+                    uploadCta: copy.musicUploadCta,
+                    uploadUploading: copy.musicUploadUploading,
+                    uploadFailed: copy.musicUploadFailed,
+                    uploadUnsupported: copy.musicUploadUnsupported,
+                    uploadTooLarge: copy.musicUploadTooLarge,
+                    uploadNeedsAttestation: copy.musicUploadNeedsAttestation,
                   }}
                 />
               ) : null}
@@ -1972,11 +2012,15 @@ export function TributeWizard({
                 description: copy.stepExtensionsDescription,
                 aiRetouchTitle: copy.extensionAiRetouchTitle,
                 aiRetouchDescription: copy.extensionAiRetouchDescription,
-                extendedLicenseTitle: copy.extensionExtendedLicenseTitle,
-                extendedLicenseDescription:
-                  copy.extensionExtendedLicenseDescription,
-                collectorUsbTitle: copy.extensionCollectorUsbTitle,
-                collectorUsbDescription: copy.extensionCollectorUsbDescription,
+                musicLicenseTitle: copy.extensionMusicLicenseTitle,
+                musicLicenseDescription: copy.extensionMusicLicenseDescription,
+                storyVoiceTitle: copy.extensionStoryVoiceTitle,
+                storyVoiceDescription: copy.extensionStoryVoiceDescription,
+                sanctuaryTokenTitle: copy.extensionSanctuaryTokenTitle,
+                sanctuaryTokenDescription:
+                  copy.extensionSanctuaryTokenDescription,
+                memoryBookTitle: copy.extensionMemoryBookTitle,
+                memoryBookDescription: copy.extensionMemoryBookDescription,
                 digitalVaultTitle: copy.extensionDigitalVaultTitle,
                 digitalVaultDescription: copy.extensionDigitalVaultDescription,
                 heritagePackTitle: copy.extensionHeritagePackTitle,

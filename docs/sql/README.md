@@ -3,6 +3,8 @@
 > **Freemium V1 Pivot :** canon [`FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md).  
 > **P8 (Phase 2) :** [`odyssey_p8_freemium_v1_token_purge.sql`](odyssey_p8_freemium_v1_token_purge.sql) — ✅ **appliqué sur Supabase** (juillet 2026) — invitation sans débit · Soft Cap quota · entitlements · NFC · **DROP `partner_token_*`**.
 >
+> **P9 (Phase 5) :** [`odyssey_p9_project_export_jobs.sql`](odyssey_p9_project_export_jobs.sql) — ⏳ **à appliquer sur Supabase** — file `project_export_jobs` (stub Creatomate / gate entitlements).
+>
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
 > **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).  
 > **Migrations P4 wallets** = historique de schéma (rejouées puis droppées par P8) — **ne plus seed « 100 jetons »**.
@@ -36,6 +38,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | — | ~~`odyssey_p6_1_scan_sessions.sql`~~ | *(absorbé P6)* | `scan_sessions` inclus dans P6 Partie B |
 | 18 | `odyssey_p7_media_quota_guard.sql` | **Migration** | **Storyboard S3** — trigger `enforce_media_asset_quota()` — voir [§ P7](#p7--garde-fou-quota-de-medias-package-aware) |
 | 19 | `odyssey_p8_freemium_v1_token_purge.sql` | **Migration** | **Freemium V1** — invitation sans jetons · Soft Cap quota · entitlements · NFC · DROP wallets |
+| 20 | `odyssey_p9_project_export_jobs.sql` | **Migration** | **Phase 5** — `project_export_jobs` (stub Creatomate) · RLS SELECT owner |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
 | — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed HIST** | Ancien seed 100 jetons — **ne plus utiliser** (wallets DROP P8) |
 | — | `odyssey_partner_tenant_branding_example.sql` | **Référence** | Mise à jour `tenants.settings` (`brand_label`, `brand_logo_url`) — Salon connexion. |

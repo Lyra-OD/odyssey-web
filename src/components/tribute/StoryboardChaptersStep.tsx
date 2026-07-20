@@ -63,6 +63,17 @@ export type StoryboardChaptersStepCopy = {
   previewPremiumBadge: string;
   catalogAccessStandard: string;
   catalogAccessPremium: string;
+  uploadPersonalTitle: string;
+  uploadPersonalHint: string;
+  uploadPersonalLabel: string;
+  uploadTosLabel: string;
+  uploadTosAccept: string;
+  uploadCta: string;
+  uploadUploading: string;
+  uploadFailed: string;
+  uploadUnsupported: string;
+  uploadTooLarge: string;
+  uploadNeedsAttestation: string;
 };
 
 type Props = {
@@ -90,6 +101,10 @@ type Props = {
    */
   duplicateSongsAcknowledged: boolean;
   onDuplicateSongsAcknowledgedChange: (value: boolean) => void;
+  canUploadPersonalAudio?: boolean;
+  projectId?: string | null;
+  musicRightsAccepted?: boolean;
+  onAcceptMusicRights?: () => void;
   copy: StoryboardChaptersStepCopy;
 };
 
@@ -107,6 +122,10 @@ export function StoryboardChaptersStep({
   hasDuplicateSongs,
   duplicateSongsAcknowledged,
   onDuplicateSongsAcknowledgedChange,
+  canUploadPersonalAudio = false,
+  projectId = null,
+  musicRightsAccepted = false,
+  onAcceptMusicRights,
   copy,
 }: Props) {
   // Le mood d'un chapitre (S4, structure prête) pondère à terme son propre
@@ -472,6 +491,10 @@ export function StoryboardChaptersStep({
             onChoose={(song) => handleChapterSongChange(activeChapter.id, song)}
             onTogglePreview={togglePreview}
             onSeek={handleSeek}
+            canUploadPersonalAudio={canUploadPersonalAudio}
+            projectId={projectId}
+            musicRightsAccepted={musicRightsAccepted}
+            onAcceptMusicRights={onAcceptMusicRights}
           />
         </div>
       ) : null}

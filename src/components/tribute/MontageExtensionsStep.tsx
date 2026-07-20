@@ -1,7 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check, Crown, Music2, Vault, Wand2, type LucideIcon } from "lucide-react";
+import {
+  BookOpen,
+  Check,
+  Crown,
+  Mic2,
+  Music2,
+  Vault,
+  Wand2,
+  type LucideIcon,
+} from "lucide-react";
 import Image from "next/image";
 
 import { EXTENSION_VISUALS } from "@/src/lib/wizard/extensionVisuals";
@@ -25,10 +34,20 @@ export type MontageExtensionsStepCopy = {
   description: string;
   aiRetouchTitle: string;
   aiRetouchDescription: string;
-  extendedLicenseTitle: string;
-  extendedLicenseDescription: string;
-  collectorUsbTitle: string;
-  collectorUsbDescription: string;
+  musicLicenseTitle: string;
+  musicLicenseDescription: string;
+  /** @deprecated alias — musicLicenseTitle */
+  extendedLicenseTitle?: string;
+  extendedLicenseDescription?: string;
+  storyVoiceTitle: string;
+  storyVoiceDescription: string;
+  sanctuaryTokenTitle: string;
+  sanctuaryTokenDescription: string;
+  /** @deprecated alias — sanctuaryTokenTitle */
+  collectorUsbTitle?: string;
+  collectorUsbDescription?: string;
+  memoryBookTitle: string;
+  memoryBookDescription: string;
   digitalVaultTitle: string;
   digitalVaultDescription: string;
   heritagePackTitle: string;
@@ -85,6 +104,19 @@ function isBundledInHeritagePackage(
   return isExtensionBundledInBasePackage(basePackage, extensionId);
 }
 
+function isExtensionSelected(
+  extensions: WizardExtensionsState,
+  key: keyof WizardExtensionsState,
+): boolean {
+  if (key === "extendedLicense" || key === "musicLicense") {
+    return Boolean(extensions.musicLicense || extensions.extendedLicense);
+  }
+  if (key === "collectorUsb" || key === "sanctuaryToken") {
+    return Boolean(extensions.sanctuaryToken || extensions.collectorUsb);
+  }
+  return Boolean(extensions[key]);
+}
+
 function ExtensionVisual({
   card,
 }: {
@@ -126,6 +158,15 @@ export function MontageExtensionsStep({
   const cart = computeWizardCart(extensions, basePackage);
   const recapLines = cart.lineItems.filter((line) => line.key !== "base");
 
+  const musicLicenseTitle =
+    copy.musicLicenseTitle || copy.extendedLicenseTitle || "";
+  const musicLicenseDescription =
+    copy.musicLicenseDescription || copy.extendedLicenseDescription || "";
+  const sanctuaryTokenTitle =
+    copy.sanctuaryTokenTitle || copy.collectorUsbTitle || "";
+  const sanctuaryTokenDescription =
+    copy.sanctuaryTokenDescription || copy.collectorUsbDescription || "";
+
   const cards: ExtensionCardConfig[] = [
     {
       key: "aiRetouch",
@@ -139,27 +180,49 @@ export function MontageExtensionsStep({
       iconBg: "bg-teal-400/10 text-teal-300",
     },
     {
-      key: "extendedLicense",
+      key: "musicLicense",
       icon: Music2,
-      title: copy.extendedLicenseTitle,
-      description: copy.extendedLicenseDescription,
-      priceCents: extensionCents("extendedLicense"),
+      title: musicLicenseTitle,
+      description: musicLicenseDescription,
+      priceCents: extensionCents("musicLicense"),
       accent: "text-indigo-300",
       selectedRing:
         "border-indigo-400/40 bg-indigo-400/[0.04] shadow-[0_0_40px_rgba(129,140,248,0.18),0_0_24px_rgba(45,212,191,0.06)]",
       iconBg: "bg-indigo-400/10 text-indigo-300",
     },
     {
-      key: "collectorUsb",
-      imageUrl: EXTENSION_VISUALS.collectorUsb.cardImage,
-      imageAlt: EXTENSION_VISUALS.collectorUsb.alt,
-      title: copy.collectorUsbTitle,
-      description: copy.collectorUsbDescription,
-      priceCents: extensionCents("collectorUsb"),
+      key: "storyVoice",
+      icon: Mic2,
+      title: copy.storyVoiceTitle,
+      description: copy.storyVoiceDescription,
+      priceCents: extensionCents("storyVoice"),
+      accent: "text-rose-300",
+      selectedRing:
+        "border-rose-400/35 bg-rose-400/[0.04] shadow-[0_0_36px_rgba(251,113,133,0.14)]",
+      iconBg: "bg-rose-400/10 text-rose-300",
+    },
+    {
+      key: "sanctuaryToken",
+      imageUrl: EXTENSION_VISUALS.sanctuaryToken.cardImage,
+      imageAlt: EXTENSION_VISUALS.sanctuaryToken.alt,
+      title: sanctuaryTokenTitle,
+      description: sanctuaryTokenDescription,
+      priceCents: extensionCents("sanctuaryToken"),
       accent: "text-zinc-200",
       selectedRing:
         "border-white/30 bg-white/[0.04] shadow-[0_0_36px_rgba(255,255,255,0.1),0_0_20px_rgba(167,139,250,0.08)]",
       iconBg: "bg-white/[0.08] text-zinc-300",
+    },
+    {
+      key: "memoryBook",
+      icon: BookOpen,
+      title: copy.memoryBookTitle,
+      description: copy.memoryBookDescription,
+      priceCents: extensionCents("memoryBook"),
+      accent: "text-amber-200",
+      selectedRing:
+        "border-amber-400/35 bg-amber-400/[0.04] shadow-[0_0_36px_rgba(251,191,36,0.12)]",
+      iconBg: "bg-amber-400/10 text-amber-200",
     },
     {
       key: "digitalVault",
@@ -177,13 +240,9 @@ export function MontageExtensionsStep({
   const toggle = (key: keyof WizardExtensionsState) => {
     if (isBundledInHeritagePackage(basePackage, key)) return;
     if (isCardLocked(extensions, key)) return;
-    const currentlyOn =
-      key === "extendedLicense" || key === "musicLicense"
-        ? Boolean(extensions.musicLicense || extensions.extendedLicense)
-        : key === "collectorUsb" || key === "sanctuaryToken"
-          ? Boolean(extensions.sanctuaryToken || extensions.collectorUsb)
-          : Boolean(extensions[key]);
-    onChange(toggleWizardExtension(extensions, key, !currentlyOn));
+    onChange(
+      toggleWizardExtension(extensions, key, !isExtensionSelected(extensions, key)),
+    );
   };
 
   const hideHeritagePackUpsell =
@@ -272,14 +331,7 @@ export function MontageExtensionsStep({
         {cards.map((card) => {
           const bundled = isBundledInHeritagePackage(basePackage, card.key);
           const selected =
-            bundled ||
-            (card.key === "extendedLicense" || card.key === "musicLicense"
-              ? Boolean(extensions.musicLicense || extensions.extendedLicense)
-              : card.key === "collectorUsb" || card.key === "sanctuaryToken"
-                ? Boolean(
-                    extensions.sanctuaryToken || extensions.collectorUsb,
-                  )
-                : Boolean(extensions[card.key]));
+            bundled || isExtensionSelected(extensions, card.key);
           const locked = bundled || isCardLocked(extensions, card.key);
           const hasHeroImage = Boolean(card.imageUrl);
 

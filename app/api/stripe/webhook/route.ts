@@ -392,6 +392,13 @@ async function handleCheckoutSessionCompleted(
       if (!entitlements.ok) {
         throw new Error(`paid_entitlements_b2c_failed: ${entitlements.message}`);
       }
+      const { enqueueQuietLuxuryFulfillment } = await import(
+        "@/src/lib/wizard/addonFulfillment"
+      );
+      await enqueueQuietLuxuryFulfillment(supabase, {
+        projectId,
+        extensions,
+      });
       await supabase
         .from("projects")
         .update({ status: "submitted" })
@@ -566,6 +573,13 @@ async function handleCheckoutSessionCompleted(
           `paid_entitlements_b2b2c_failed: ${entitlements.message}`,
         );
       }
+      const { enqueueQuietLuxuryFulfillment } = await import(
+        "@/src/lib/wizard/addonFulfillment"
+      );
+      await enqueueQuietLuxuryFulfillment(supabase, {
+        projectId: resolvedProjectId,
+        extensions,
+      });
     }
 
     logWebhook({

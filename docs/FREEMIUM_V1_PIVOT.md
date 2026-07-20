@@ -195,16 +195,20 @@ flowchart TD
 
 15. ✅ Soft Cap médias → Héritage (filet étape 3 + post Composition Magique).
 16. ✅ Soft Cap musique Souvenir → **modale 2 choix** (Licence 39 $ | Héritage 149 $) ; piste non bloquée.
-17. ⏳ Import MP3 + ToS (Héritage+) — Phase 5 / follow-up.
+17. ✅ Import MP3 + ToS (Héritage+) — UI Étape 4 + gate checkout.
 18. ✅ Étape 8 : panier Soft Cap (`resolveWizardDisplayCart`) ; CTA rester à 0 $ ; surface amputation 422.
 
-### Phase 5 — Export & add-ons
+### Phase 5 — Export & add-ons — ✅ FAIT (stub Creatomate)
 
-19. Creatomate : gate entitlements musique (package **ou** `musicLicense` payé) · NFC · Voix · Livre.
+19. ✅ Gate export : `assertExportAllowed` + `POST /api/projects/[id]/export` + table P9 `project_export_jobs` (provider `creatomate_stub`).
+20. ✅ Checkout : attestation MP3/WAV obligatoire si `source=upload`.
+21. ✅ Webhook / freemium_free : `enqueueQuietLuxuryFulfillment` (NFC · Voix · Livre → `wizard_state.quietLuxuryFulfillment`).
+22. ✅ UI add-ons : `storyVoice` · `sanctuaryToken` (NFC) · `memoryBook` · labels i18n.
+23. ⏳ Worker Creatomate réel + claim NFC claim / Gelato / TTS = follow-ups (hors stub).
 
 ### Phase 6 — QA & cutover
 
-20. QA : Soft Cap dual musique ; pas de double facturation ; bypass master ; RevShare sur 39 $ ; DROP jetons.
+24. QA : Soft Cap dual musique ; pas de double facturation ; bypass master ; RevShare sur 39 $ ; DROP jetons.
 
 **Ordre d’or :** Docs filles → Manifeste TS (`musicLicense` + `storyVoice`) → SQL → Purge APIs jetons → Soft Cap UI → Worker → Add-ons.
 
@@ -216,4 +220,5 @@ Mettre à jour ce fichier quand la grille, les SKUs (`musicLicense` / `storyVoic
 
 ---
 
-*Vision CEO figée — juillet 2026 (rév. Licence Stingray 39 $). Phases 0–4 livrées ; Phases 5–6 remaining. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*
+*Vision CEO figée — juillet 2026 (rév. Licence Stingray 39 $). Phases 0–5 livrées (Creatomate = stub) ; Phase 6 remaining. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
+*Appliquer SQL P9 sur Supabase : [`sql/odyssey_p9_project_export_jobs.sql`](sql/odyssey_p9_project_export_jobs.sql).*

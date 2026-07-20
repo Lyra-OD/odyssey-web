@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: 20 juillet 2026 · Freemium V1 Phases 0–4 ✅ · next = Phase 5 Creatomate + rails UX mobile / S5-J**
+**Last revised: 9 juillet 2026 · Freemium V1 Phases 0–5 ✅ · next = Phase 6 QA + worker Creatomate réel / rails UX mobile**
 
 Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -15,17 +15,17 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 |-----------|--------|-------|
 | **Family Studio (wizard)** | 🟢 Mature | 8 étapes, autosave, Stingray, **Livre Ouvert + Composition Magique**, Soft Cap UX, checkout Soft Cap |
 | **Partner Salon** | 🟢 Prod | RBAC, invitations, gate R6 — QA P5.5 historique ✅ ; solde = **commissions** (jetons purgés P8) |
-| **Freemium V1 commerce** | 🟢 Phases 0–4 | Canon + manifeste TS + SQL **P8 appliqué** + checkout Soft Cap + webhook entitlements + Soft Cap UI — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) |
+| **Freemium V1 commerce** | 🟢 Phases 0–5 | Canon + Soft Cap + entitlements + **gate export stub** + MP3/ToS + add-ons Quiet Luxury — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) |
 | **RevShare Bulletproof** | 🟡 Partiel | Spec + SQL P6/P8 ✅ · accrual webhook à durcir / UI Salon commissions ⏳ |
-| **Export vidéo (Creatomate)** | 🔴 Next | Phase 5 — gate `project_paid_entitlements` (forfait **ou** `musicLicense`) |
+| **Export vidéo (Creatomate)** | 🟡 Stub | Gate `project_paid_entitlements` + P9 jobs ✅ · **worker réel** ⏳ |
 | **UX mobile / ergonomie** | 🟡 Plan vivant | Canon [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 · **pas annulé** par Freemium |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-J/K/L** ⏳ (audio, focus, copy) |
 | **Scanner Compagnon** | 🟡 | Spec + stubs P6 ✅ · MVP app ⏳ (rail M2) |
 | **Docs hub** | 🟢 | README + [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · anciennes docs filles encore en drift |
 | **Tests & CI** | 🔴 | Aucun framework / `.github/` workflows |
-| **Security** | 🟡 | RLS + gate Salon ✅ · never-trust entitlements côté export à finaliser Phase 5 |
+| **Security** | 🟡 | RLS + gate Salon ✅ · export never-trust via entitlements (stub) |
 
-**Overall ~8.6/10 commerce wizard** — Soft Cap livré ; **prochain levier cash = Phase 5 Creatomate**.  
+**Overall ~8.8/10 commerce wizard** — Soft Cap + gate export stub ; **prochain levier = Phase 6 QA + worker Creatomate**.  
 **Rails parallèles (toujours au plan) :** mobile M0–M6 · S5-J/K/L · S7–S10 storyboard · Scanner · Phase 6 QA Soft Cap.
 
 ---
@@ -296,7 +296,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 |-----|-----|
 | `B2B2C_COMMERCE.md` | ✅ **v2 Bulletproof** (waterfall 10 % + 30 % Net Distribuable, saga v2) |
 | `SANCTUARY_STRATEGY.md` | ✅ Positionnement Sanctuaire · catalogue monétisation V1 |
-| `FREEMIUM_V1_PIVOT.md` | ✅ Canon · Phases **0–4 ✅** · Phase 5–6 remaining · onboarding V1 |
+| `FREEMIUM_V1_PIVOT.md` | ✅ Canon · Phases **0–5 ✅** · Phase 6 remaining · onboarding V1 |
 | `TECHNICAL_ONBOARDING_V1.md` | ✅ Hub Freemium V1 (remplace hub pré-purge archivé) |
 | `NARRATIVE_SOFT_CAP.md` / `MUSIC_RIGHTS_ATTESTATION.md` | ✅ Spec Soft Cap + attestation MP3 |
 | `MOBILE_WIZARD_STRATEGY.md` | ✅ Plan M0–M6 vivant (rail UX parallèle) |
@@ -309,11 +309,13 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 
 ---
 
-## 10. Next sprint — Freemium V1 Phase 5 + rails UX
+## 10. Next sprint — Freemium V1 Phase 6 + rails UX
 
 **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 
 **Jetons partenaire = purgés (P8).** Ne plus planifier débit wallet / wholesale 40 $ / coexistence `is_freemium=false`.
+
+**Action ops :** appliquer [`sql/odyssey_p9_project_export_jobs.sql`](sql/odyssey_p9_project_export_jobs.sql) sur Supabase si pas encore fait.
 
 ### Freemium V1 — snapshot exécution (juillet 2026)
 
@@ -324,17 +326,17 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | 2 | SQL P8 (purge jetons, Soft Cap quota, entitlements) — **appliqué Supabase** | ✅ |
 | 3 | Checkout Soft Cap + webhook `project_paid_entitlements` + `freemium_free` | ✅ |
 | 4 | Soft Cap UX (filet 50, post-Composition Magique, musique dual, stay 0 $) | ✅ |
-| **5** | **Creatomate** gate entitlements · NFC · Voix · Livre · import MP3+ToS | ⏳ **NEXT** |
-| 6 | QA Soft Cap dual · pas de double facturation · RevShare sur 39 $ | ⏳ |
+| **5** | Gate export stub + MP3/ToS + add-ons Quiet Luxury · SQL P9 | ✅ **FAIT** |
+| **6** | QA Soft Cap dual · pas de double facturation · RevShare sur 39 $ · worker Creatomate | ⏳ **NEXT** |
 
-### Priorité A — Phase 5 (commerce / export)
+### Priorité A — Phase 6 (QA) + follow-ups export
 
 | # | Task | Done when |
 |---|------|-----------|
-| 5.1 | Creatomate : master Stingray / 4K seulement si entitlements payés (forfait ≥ Héritage **ou** `musicLicense`) | Worker refuse bypass client |
-| 5.2 | Import MP3/WAV + ToS (`MUSIC_RIGHTS_ATTESTATION`) dès `intended >= signature` | UI + attestation |
-| 5.3 | Fulfillment add-ons : `sanctuaryToken` NFC · `storyVoice` · `memoryBook` | Spec → pipeline |
-| 5.4 | Salon UI commissions (soldes `partner_commission_*`) | Admin voit ledger, plus « wallet jetons » |
+| 6.1 | QA Soft Cap dual musique · pas de double facturation Licence+Héritage · RevShare 39 $ | Checklist verte |
+| 5.x | Worker Creatomate réel (consomme `project_export_jobs`) | Master / 4K gated |
+| 5.y | Fulfillment ops : NFC claim · TTS Voix · Gelato Livre | Pipelines hors stub |
+| 5.4 | Salon UI commissions (soldes `partner_commission_*`) | Admin voit ledger |
 
 **Exit critère commerce :** tenant freemium invite → famille Soft Cap → paie Héritage **ou** Licence 39 $ **ou** reste 0 $ (amputation) → entitlements corrects → rendu gated.
 
@@ -372,10 +374,10 @@ Ces chantiers **n’ont pas été annulés** par Freemium. Les enchaîner en par
 
 ### Ordre recommandé (prochaines sessions)
 
-1. **Phase 5.1** Creatomate + entitlements (bloquant monétisation master)
-2. En parallèle si bande passante : **M0** mobile quick wins **ou** **S5-J** audio
-3. Phase 5.2–5.4 add-ons / MP3 / Salon commissions
-4. **Phase 6** QA Soft Cap + RevShare 39 $
+1. **Phase 6** QA Soft Cap + RevShare 39 $
+2. Worker Creatomate réel (consomme P9 `project_export_jobs`)
+3. En parallèle si bande passante : **M0** mobile quick wins **ou** **S5-J** audio
+4. Fulfillment ops NFC / Voix / Livre + Salon commissions
 5. M3–M4 shell mobile · Scanner M2 · S8–S10
 
 ---
@@ -406,11 +408,11 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 
 **Démo prod / QA :** tenant `partner-qa-demo` (Urgel Bourgie) · compte partenaire QA · Vercel `odyssey-web-eta.vercel.app`.
 
-**Shippé récemment (juillet 2026) :** Freemium Phases 0–4 · Soft Cap UI · P8 purge jetons · README + onboarding V1 · Livre Ouvert PR-1/2/3.
+**Shippé récemment (juillet 2026) :** Freemium Phases 0–5 · Soft Cap UI · gate export stub + MP3/ToS · P8 purge jetons · README + onboarding V1 · Livre Ouvert PR-1/2/3.
 
-**Grand chantier immédiat :** **Phase 5 Creatomate** (entitlements). Rails parallèles : mobile M0–M6 · S5-J/K/L · Scanner.
+**Grand chantier immédiat :** **Phase 6 QA** + worker Creatomate réel. Rails parallèles : mobile M0–M6 · S5-J/K/L · Scanner.
 
-**Pas encore prod-ready :** rendu vidéo · UI commissions Salon complète · Scanner MVP · tests auto · docs filles B2B2C encore en drift jetons.
+**Pas encore prod-ready :** rendu vidéo réel · UI commissions Salon complète · Scanner MVP · tests auto.
 
 ---
 
