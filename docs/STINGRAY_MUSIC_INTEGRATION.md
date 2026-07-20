@@ -6,7 +6,7 @@
 
 Odyssey uses the **Stingray Music API** (MAPI) for licensed search and preview in wizard **step 4** (`ChapterMusicPanel` inside `StoryboardChaptersStep`). Stingray disables CORS on their origin — all MAPI calls run **server-side**; the browser only hits our Next.js routes.
 
-Parent reference: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 and §6.
+Parent reference: [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Musique / chemins code.
 
 ---
 

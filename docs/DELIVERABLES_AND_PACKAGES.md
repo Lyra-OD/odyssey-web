@@ -162,10 +162,10 @@ Jamais : jeton, commission, RevShare.
 | Capacité | Statut |
 |----------|--------|
 | Canon docs FREEMIUM_V1 + Soft Cap + musique | ✅ Phase 0 |
-| Manifeste TS grille 4K / musicLicense / sanctuaryToken | ⏳ Phase 1 |
-| `grantedPackage` / `intendedPackage` | ⏳ Phase 1 |
-| Purge SQL jetons + invitation sans débit | ⏳ Phase 2 |
-| Soft Cap UI dual musique | ⏳ Phase 4 |
+| Manifeste TS grille 4K / musicLicense / sanctuaryToken | ✅ Phase 1 |
+| `grantedPackage` / `intendedPackage` | ✅ Phase 1 |
+| Purge SQL jetons + invitation sans débit | ✅ Phase 2 (P8 appliqué) |
+| Soft Cap UI dual musique | ✅ Phase 4 |
 | Creatomate post-webhook | ⏳ Phase 5 |
 | NFC / Voix / Livre fulfillment | ⏳ Phase 5 |
 
@@ -173,4 +173,4 @@ Jamais : jeton, commission, RevShare.
 
 ## Maintenance
 
-Aligner ce fichier sur [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) à chaque changement de grille. Code = Phases 1–6.
+Aligner ce fichier sur [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) à chaque changement de grille. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md). Phases 0–4 livrées ; 5–6 remaining.

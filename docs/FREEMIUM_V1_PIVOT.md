@@ -1,8 +1,10 @@
 # Odyssey — Pivot Freemium V1 (canon CEO)
 
-**Dernière révision : juillet 2026 · Statut : vision figée · Phase 0 docs ✅ · code Phases 1–6 ⏳**
+**Dernière révision : juillet 2026 · Statut : vision figée · Phases 0–4 ✅ · Phase 5 Creatomate/add-ons ⏳ · Phase 6 QA ⏳**
 
 Document canonique du **pivot produit majeur** : purge totale des jetons, freemium B2B2C + RevShare only, Soft Cap (Expansion Narrative), grille forfaits 4K, musique à deux voies + add-on Licence Stingray, add-ons Quiet Luxury.
+
+**Onboarding :** [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · **Porte repo :** [`../README.md`](../README.md).
 
 **Docs filles alignées (Phase 0) :**
 [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) · [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md).
@@ -214,4 +216,4 @@ Mettre à jour ce fichier quand la grille, les SKUs (`musicLicense` / `storyVoic
 
 ---
 
-*Vision CEO figée — juillet 2026 (rév. Licence Stingray 39 $). Implémentation = phases 1–6 après Phase 0.*
+*Vision CEO figée — juillet 2026 (rév. Licence Stingray 39 $). Phases 0–4 livrées ; Phases 5–6 remaining. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*

@@ -3,7 +3,7 @@
 **Last revised: July 2026 · P6 SQL applied, storyboard S5 partiel (Livre Ouvert PR-1/2/3), S5-J/K/L + S7–S10 next**
 
 Living snapshot: **audit**, **recommended consolidations**, and **next sprint plan**.  
-For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) and the specialized docs listed in [`CONVENTIONS.md`](CONVENTIONS.md).
+For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) and the specialized docs listed in [`CONVENTIONS.md`](CONVENTIONS.md).
 
 **Update this file** after major milestones (P6 commerce, Scanner MVP, etc.) or at monthly team checkpoints.
 
@@ -401,7 +401,7 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 5. **[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md)** — grille Quiet Luxury B2C (149/299/499) + Souvenir lead-magnet B2B2C.
 6. **[`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)** — **Étape 5** Livre Ouvert + Composition Magique (canon).
 6b. **[`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md)** — stratégie mobile wizard (Forbes + Ferpection, Scanner).
-7. **[`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md)** — hub technique complet (§4 auth, §10 roadmap).
+7. **[`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md)** — hub technique Freemium V1 (stack, Soft Cap, chemins code, phases).
 
 **Démo prod / QA :** tenant `partner-qa-demo` (Urgel Bourgie) · compte partenaire QA · base Vercel `odyssey-web-eta.vercel.app`.
 
@@ -425,5 +425,5 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 | Routes & Salon auth | [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) |
 | Packages & tokens | [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) |
 | Wizard | [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) |
-| Onboarding hub | [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) |
+| Onboarding hub | [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) |
 | SQL order | [`sql/README.md`](sql/README.md) |

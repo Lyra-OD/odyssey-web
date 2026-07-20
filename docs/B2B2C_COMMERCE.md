@@ -8,7 +8,7 @@
 
 Document pour le modèle **funérarium → famille**, checkout, saga `tribute_checkouts`, freemium, **RevShare 30 % Net Distribuable**.
 
-Complète [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) et [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md).
+Complète [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) et [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 
 **Prix catalogue (cible Phase 1)** : `pricingConfig.ts` · **contrat livrables** : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).  
 **RevShare (détail ledger)** : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).  
@@ -82,7 +82,7 @@ La migration **`odyssey_p6_freemium_revshare.sql`** n’introduit **aucune** rè
 - Mélanger jetons et centimes dans le même ledger — **interdit**
 - Inférer le modèle commercial depuis le rôle utilisateur ou le slug partenaire — **interdit**
 
-**Référence implémentation Phase A :** `resolveCheckoutContext()` lit `tenant_id` → `is_freemium` + `platform_fee_bps` + `revshare_bps` ; branche saga et webhook en conséquence. Voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) et [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.2.
+**Référence implémentation Phase A :** `resolveCheckoutContext()` lit `tenant_id` → `is_freemium` + `platform_fee_bps` + `revshare_bps` ; branche saga et webhook en conséquence. Voir [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) et [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) §4.2.
 
 ---
 
@@ -591,4 +591,4 @@ b2b2c_family + NOT tenant.is_freemium →  saga v1 (jetons)
 
 ## Quand modifier ce document
 
-Toute évolution de : freemium, RevShare, Platform Fee, **Net Distribuable**, `checkout_mode`, saga, prix catalogue, coexistence legacy → mettre à jour **ce fichier**, [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md), [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md), [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7 / §5 / §10, et [`sql/README.md`](sql/README.md).
+Toute évolution de : freemium, RevShare, Platform Fee, **Net Distribuable**, `checkout_mode`, saga, prix catalogue, coexistence legacy → mettre à jour **ce fichier**, [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md), [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md), [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md), [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) §4.7 / §5 / §10, et [`sql/README.md`](sql/README.md).

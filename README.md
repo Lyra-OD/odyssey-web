@@ -1,43 +1,34 @@
 # Odyssey Frontend
 
-Application Next.js 14 (App Router) pour le **Studio Odyssey** — hommages vidéo premium en B2C direct et via le canal partenaire funéraire (B2B2C).
+Next.js 14 (App Router) — **Studio Odyssey** : hommages vidéo Quiet Luxury en B2C et **B2B2C freemium** (salon → famille).
 
-## Résumé exécutif
+## Produit (Freemium V1)
 
-- **Wizard hommage 8 étapes** — autosave, storyboard chapitres/chansons, **Étape 5 Livre Ouvert** (DnD + Composition Magique), musique Stingray, extensions à la carte, checkout Stripe.
-- **Salon partenaire (B2B2C)** — co-branding, invitations famille, RBAC Admin/Directeur, wallet legacy jetons (P5.5 ✅ QA prod).
-- **Modèle B2B2C v2 (Scrypta Killer)** — **Freemium** : le forfait **Souvenir** est offert gratuitement par le partenaire (lead-magnet) ; upsell famille en prix plein ; **Bulletproof** : Platform Fee 10 % → RevShare **30 % du Net Distribuable** au partenaire (P6.1).
-- **B2C direct (Quiet Luxury)** — 3 forfaits premium : **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $** (Gants Blancs) — sans tier gratuit.
-- **Scanner Compagnon IA** — Killer App d’ingestion : QR Code sur le wizard desktop → session web mobile → scan photos papier → restauration IA Avant/Après → conversion vers Éternité ou Légendaire.
-- **Stack** — Supabase (auth, RLS, Storage), Stripe (checkout + webhook), déploiement Vercel.
+| Canal | Modèle |
+|-------|--------|
+| **B2B2C** | Le salon offre **Souvenir 0 $** ; la famille construit via **Soft Cap** (Héritage / Licence musique) ; Odyssey reverse **30 % du Net Distribuable** (Platform Fee 10 %). |
+| **B2C** | Héritage **149 $** · Éternité **299 $** · Légendaire **499 $** (ancre Quiet Luxury). |
 
-**État juillet 2026 :** fondations Salon **certifiées prod** (QA P5.5 ✅) · **Étape 5 Livre Ouvert** livrée (PR-1/2/3) · doc commerce v2 **complète** · implémentation P6 (saga checkout, RevShare, Scanner) = **prochain sprint**.
+**Jetons partenaire = purgés.** Solde salon = commissions uniquement (`partner_commission_*`).
 
-## Documentation principale
+| Forfait | ID | Prix | Médias | Export | Musique |
+|---------|-----|------|--------|--------|---------|
+| Souvenir | `essential` | 0 $ | 50 | 1080p | Stingray standard (+ Soft Cap officiel) |
+| Héritage | `signature` | 149 $ | 125 | **4K** | Catalogue officiel **inclus** + MP3 |
+| Éternité | `heritage` | 299 $ | 175 | 4K | Idem + IA + coffre |
 
-| Document | Contenu |
-|----------|---------|
-| [`docs/B2B2C_COMMERCE.md`](docs/B2B2C_COMMERCE.md) | **Commerce v2 Bulletproof** — waterfall 10 % + 30 % Net Distribuable, freemium, saga checkout. |
-| [`docs/SANCTUARY_STRATEGY.md`](docs/SANCTUARY_STRATEGY.md) | **Stratégie Sanctuaire** — Héros / Archiviste, monétisation V1 émotionnelle. |
-| [`docs/FREEMIUM_V1_PIVOT.md`](docs/FREEMIUM_V1_PIVOT.md) | **Pivot CEO V1** — purge jetons, Soft Cap dual musique (`musicLicense` 39 $), grille 4K. |
-| [`docs/NARRATIVE_SOFT_CAP.md`](docs/NARRATIVE_SOFT_CAP.md) | Soft Cap granted/intended + Licence vs Héritage + amputation. |
-| [`docs/SANCTUARY_TOKEN_NFC.md`](docs/SANCTUARY_TOKEN_NFC.md) | Add-on Jeton Sanctuaire NFC 79 $. |
-| [`docs/DELIVERABLES_AND_PACKAGES.md`](docs/DELIVERABLES_AND_PACKAGES.md) | Contrat livrables — Souvenir lead-magnet · Quiet Luxury B2C · Légendaire Gants Blancs. |
-| [`docs/PARTNER_REVSHARE.md`](docs/PARTNER_REVSHARE.md) | Ledger commissions · **Net Distribuable** · webhook · clawback · payout. |
-| [`docs/QA_P6_COMMISSION_WATERFALL.md`](docs/QA_P6_COMMISSION_WATERFALL.md) | QA chiffrée — 5 scénarios waterfall P6.1. |
-| [`docs/SCANNER_COMPANION.md`](docs/SCANNER_COMPANION.md) | Architecture Scanner Compagnon (QR → mobile → IA → upsell). |
-| [`docs/STORYBOARD_STEP5_LIVRE_OUVERT.md`](docs/STORYBOARD_STEP5_LIVRE_OUVERT.md) | **Étape 5** — Livre Ouvert, DnD, Composition Magique (canon). |
-| [`docs/MOBILE_WIZARD_STRATEGY.md`](docs/MOBILE_WIZARD_STRATEGY.md) | **Stratégie mobile** — Forbes + Ferpection, Scanner, plan M0–M6. |
-| [`docs/QA_S5_MONTAGE_STEP.md`](docs/QA_S5_MONTAGE_STEP.md) | Checklist QA régression Étape 5. |
-| [`docs/STORYBOARD_REFACTOR.md`](docs/STORYBOARD_REFACTOR.md) | Plan refactor storyboard S1–S10. |
-| [`docs/WIZARD_ARCHITECTURE.md`](docs/WIZARD_ARCHITECTURE.md) | Wizard 8 étapes, pricing v2, schéma DB P6. |
-| [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) | Audit + plan sprint v2 (QA P5.5 terminée, spike checkout v1 annulé). |
-| [`docs/TECHNICAL_ONBOARDING_ODYSSEY.md`](docs/TECHNICAL_ONBOARDING_ODYSSEY.md) | Hub technique — stack, structure, roadmap. |
-| [`docs/ROUTES_AND_AUTH.md`](docs/ROUTES_AND_AUTH.md) | Routes Studio / Salon, auth, branding partenaire. |
-| [`docs/STINGRAY_MUSIC_INTEGRATION.md`](docs/STINGRAY_MUSIC_INTEGRATION.md) | Musique licenciée Stingray (Standard / Premium). |
-| [`docs/QA_P5_5_PARTNER_SALON.md`](docs/QA_P5_5_PARTNER_SALON.md) | Checklist QA Salon — **✅ terminée prod**. |
-| [`docs/sql/README.md`](docs/sql/README.md) | Migrations SQL P0–P6. |
-| [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) | Conventions code + hiérarchie documentation. |
+Add-ons V1 : `sanctuaryToken` 79 $ · `storyVoice` 39 $ · **`musicLicense` 39 $** · `memoryBook` 149 $ · `aiRetouch` 49 $ · `digitalVault` 99 $.
+
+## État (juillet 2026)
+
+| Phase | Contenu | Statut |
+|-------|---------|--------|
+| 0–1 | Canon docs + manifeste TS (`granted` / `intended` / `musicLicense`) | ✅ |
+| 2 | SQL P8 (purge jetons, Soft Cap quota, entitlements) — **appliqué Supabase** | ✅ |
+| 3 | Checkout Soft Cap + webhook `project_paid_entitlements` | ✅ |
+| 4 | Soft Cap UX (médias, post-Composition Magique, musique dual) | ✅ |
+| **5** | Creatomate (gate entitlements) · NFC · Voix · Livre | ⏳ next |
+| 6 | QA / cutover | ⏳ |
 
 ## Quickstart
 
@@ -46,47 +37,46 @@ npm install
 npm run dev
 ```
 
-Build de vérification (comme en déploiement) :
+Vérification build :
 
 ```bash
 npm run build
 ```
 
-## Vision architecture
+Variables d’environnement : voir [`docs/TECHNICAL_ONBOARDING_V1.md`](docs/TECHNICAL_ONBOARDING_V1.md) § Env.
 
-Stratégie **moteur unique + multi-skins** :
-- base métier commune (auth, médias, paiements, rendu),
-- expériences cibles (famille, partenaires funéraires, verticales futures),
-- branding adaptable sans fork de la logique cœur.
+## Documentation — par où commencer
 
-## Isolation des médias
+| Priorité | Document | Rôle |
+|----------|----------|------|
+| **1** | [`docs/FREEMIUM_V1_PIVOT.md`](docs/FREEMIUM_V1_PIVOT.md) | **Canon CEO** — grille, Soft Cap, musique, phases |
+| **2** | [`docs/TECHNICAL_ONBOARDING_V1.md`](docs/TECHNICAL_ONBOARDING_V1.md) | **Hub onboarding** — stack, chemins code, contrats |
+| **3** | [`docs/NARRATIVE_SOFT_CAP.md`](docs/NARRATIVE_SOFT_CAP.md) | Soft Cap granted/intended + dual musique + amputation |
+| **4** | [`docs/DELIVERABLES_AND_PACKAGES.md`](docs/DELIVERABLES_AND_PACKAGES.md) | Contrat livrables |
+| **5** | [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) | Hiérarchie docs + règles repo |
 
-- séparation forte par `project_id` (Storage + DB),
-- `tenant_id` pour segmentation partenaire,
-- aucune fuite inter-projets / inter-tenants (RLS P0–P5.5).
+### Annexes utiles
 
-## Prochain sprint (implémentation v2)
+| Document | Contenu |
+|----------|---------|
+| [`docs/PARTNER_REVSHARE.md`](docs/PARTNER_REVSHARE.md) | Waterfall Bulletproof · ledger commissions |
+| [`docs/STORYBOARD_STEP5_LIVRE_OUVERT.md`](docs/STORYBOARD_STEP5_LIVRE_OUVERT.md) | Étape 5 Livre Ouvert + Composition Magique |
+| [`docs/STINGRAY_MUSIC_INTEGRATION.md`](docs/STINGRAY_MUSIC_INTEGRATION.md) | Proxy musique Stingray |
+| [`docs/SANCTUARY_TOKEN_NFC.md`](docs/SANCTUARY_TOKEN_NFC.md) | Add-on NFC 79 $ |
+| [`docs/MUSIC_RIGHTS_ATTESTATION.md`](docs/MUSIC_RIGHTS_ATTESTATION.md) | Soupape MP3 / ToS |
+| [`docs/sql/README.md`](docs/sql/README.md) | Migrations P0→P8 |
+| [`docs/ROUTES_AND_AUTH.md`](docs/ROUTES_AND_AUTH.md) | Studio / Salon / auth |
+| [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) | Palette, Halo-Éclipse, magic |
 
-Voir [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) §10 :
+> **Archive :** l’ancien onboarding pré-purge jetons est dans [`docs/_archive/`](docs/_archive/). Ne plus l’utiliser pour onboarding.
 
-1. **Bugs UX Étape 5** + dimensions sensorielles **S5-J/K/L** (audio, focus, copy)
-2. Migration SQL **P6** (déjà appliqué) → brancher **saga checkout v2** (freemium 0 $ + Stripe upsell)
-3. Webhook Stripe → completed + **RevShare**
-4. **Scanner Compagnon** Phase A (QR + mobile upload)
-5. **S7–S10** — pacing UI, Preview/Checkout storyboard, purge legacy actes
+## Stack
 
-## Pricing (cible v2 — doc canon)
+Next.js 14 · React 18 · TypeScript · Tailwind · Supabase (Auth, RLS, Storage) · Stripe · Vercel.
 
-Source : [`docs/DELIVERABLES_AND_PACKAGES.md`](docs/DELIVERABLES_AND_PACKAGES.md) · code actuel encore v1 dans `pricingConfig.ts`.
+## Règles d’or
 
-| Canal | Forfaits |
-|-------|----------|
-| **B2B2C freemium** | Souvenir **0 $** offert · upsell 149 $ / 299 $ · RevShare 30 % **Net Distribuable** |
-| **B2C direct** | Héritage **149 $** · Éternité **299 $** · Légendaire **499 $** |
-| **Legacy jetons** | Petits salons — wallet P5.5 (coexistence) |
-
-Extensions à la carte (Retouche IA, Licence Premium, USB, Coffre…) — commissionnables en canal freemium.
-
-## Roadmap produit
-
-Détail : [`docs/TECHNICAL_ONBOARDING_ODYSSEY.md`](docs/TECHNICAL_ONBOARDING_ODYSSEY.md) section 10 — moteur vidéo Creatomate, tests CI, croissance virale, verticaliste animaux, sécurité P0–P2.
+1. **Never trust the client** pour 4K / master Stingray / IA full — entitlements = snapshot serveur post-webhook.
+2. Ne **jamais** écraser `grantedPackage` lors d’un Soft Cap.
+3. `musicLicense` ne relève **pas** le plafond médias / 4K.
+4. Après changement wizard / pricing / checkout / musique : mettre à jour le canon + onboarding V1 (voir `CONVENTIONS.md`).
