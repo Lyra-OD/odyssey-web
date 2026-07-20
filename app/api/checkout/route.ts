@@ -4,13 +4,10 @@ import { z } from "zod";
 import { appRoutes } from "@/src/lib/appRoutes";
 import { getStripe } from "@/lib/stripe";
 import { requireProjectOwner } from "@/src/lib/api/projectAccess";
-import { debitPartnerTokens } from "@/src/lib/partner/partnerCheckout";
 import { resolveUserIsPartner } from "@/src/lib/partner/resolvePartnerAccess";
-import { hasLegacyTokenPricing } from "@/src/lib/wizard/pricingConfig";
 import {
   CHECKOUT_LINE_LABELS,
   computeWizardCart,
-  packagePartnerTokens,
   sumCartLineItemsCents,
   type ExtensionLineItem,
 } from "@/src/lib/wizard/wizardPricing";
@@ -154,45 +151,12 @@ export async function POST(request: Request) {
   const origin = resolveSiteOrigin(request);
   const studioPath = appRoutes.studio(locale);
 
-  // Jetons B2B : uniquement parcours conseiller (pas de projet famille / invitation).
-  // Sinon un compte partner qui teste en famille serait redirigé vers debitPartnerTokens.
+  // Freemium V1 : plus de débit jetons. Parcours conseiller = soumission sans wallet.
   if (isPartner && !hasPartnerInvitation) {
     if (!tenantId) {
       return NextResponse.json(
         { error: "missing_tenant", message: "Projet sans tenant partenaire." },
         { status: 400 },
-      );
-    }
-
-    if (!hasLegacyTokenPricing(basePackage)) {
-      return NextResponse.json(
-        {
-          error: "invalid_partner_package",
-          message:
-            "Le forfait sélectionné n'est pas compatible avec un débit jetons partenaire.",
-        },
-        { status: 400 },
-      );
-    }
-
-    const tokensRequired = packagePartnerTokens(basePackage);
-    const debit = await debitPartnerTokens({
-      tenantId,
-      packageId: basePackage,
-      projectId,
-      userId: user.id,
-    });
-
-    if (!debit.ok) {
-      const status =
-        debit.error === "insufficient_tokens"
-          ? 402
-          : debit.error === "wallet_table_missing"
-            ? 503
-            : 400;
-      return NextResponse.json(
-        { error: debit.error, message: debit.message },
-        { status },
       );
     }
 
@@ -203,7 +167,7 @@ export async function POST(request: Request) {
         baseCents: cart.baseCents,
         optionsCents: cart.optionsCents,
         totalCents,
-        partnerTokenCost: tokensRequired,
+        partnerTokenCost: 0,
       },
     };
 
@@ -227,9 +191,9 @@ export async function POST(request: Request) {
       ok: true,
       mode: "partner",
       redirectUrl: `${origin}${studioPath}?checkout=partner_success`,
-      tokensDebited: debit.tokensDebited,
-      balanceAfter: debit.balanceAfter,
-      partnerTokenCost: tokensRequired,
+      tokensDebited: 0,
+      balanceAfter: 0,
+      partnerTokenCost: 0,
       totalCents,
       metadata: {
         project_id: projectId,

@@ -1,11 +1,11 @@
 # SQL Odyssey — état courant
 
 > **Freemium V1 Pivot :** canon [`FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md).  
-> **Phase 2 (à venir) :** RPC invitation **sans** débit · quotas sur `intendedPackage` · `project_paid_entitlements` · `sanctuary_tokens` · **DROP** `partner_token_*`.  
-> Scripts P4 / P5.5 jetons restent dans la chaîne historique jusqu’à migration de purge.
+> **P8 (Phase 2) :** [`odyssey_p8_freemium_v1_token_purge.sql`](odyssey_p8_freemium_v1_token_purge.sql) — invitation sans débit · quotas `intendedPackage` · `project_paid_entitlements` · `sanctuary_tokens` · **DROP** `partner_token_*` · `is_freemium=true`.  
+> **À appliquer** sur Supabase (SQL Editor) avant / avec le déploiement app Phase 2.
 >
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
-> **P7 :** trigger `enforce_media_asset_quota()` sur `basePackage` — à faire évoluer vers `intendedPackage` (Phase 2).
+> **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).
 
 Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle** de la base Supabase d'Odyssey. Tous les scripts de migration sont **idempotents** : on peut les ré-exécuter sans dégât.
 
@@ -36,6 +36,7 @@ Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle**
 | 17 | `odyssey_p6_1_bulletproof_waterfall.sql` | **Migration** | **Bulletproof** — Net Distribuable · `compute_revenue_waterfall()` — [§ P6.1](#p61--bulletproof-waterfall-cible) |
 | — | ~~`odyssey_p6_1_scan_sessions.sql`~~ | *(absorbé P6)* | `scan_sessions` inclus dans P6 Partie B |
 | 18 | `odyssey_p7_media_quota_guard.sql` | **Migration** | **Storyboard S3** — trigger `enforce_media_asset_quota()` — voir [§ P7](#p7--garde-fou-quota-de-medias-package-aware) |
+| 19 | `odyssey_p8_freemium_v1_token_purge.sql` | **Migration** | **Freemium V1** — invitation sans jetons · Soft Cap quota · entitlements · NFC · DROP wallets |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
 | — | `odyssey_p4_partner_token_qa_seed.sql` | **Seed QA** | Partenaire fictif + 100 jetons — **après P4**, hors chaîne prod. |
 | — | `odyssey_partner_tenant_branding_example.sql` | **Référence** | Mise à jour `tenants.settings` (`brand_label`, `brand_logo_url`) — Salon connexion. |

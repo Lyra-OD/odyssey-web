@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { createPartnerInvitationWithDebit } from "@/src/lib/partner/createPartnerInvitationWithDebit";
+import { createPartnerInvitation } from "@/src/lib/partner/createPartnerInvitation";
 import {
   CreatePartnerInvitationBodySchema,
   INVITATION_TTL_DAYS,
@@ -35,12 +35,6 @@ function buildMagicLinkUrl(
   return `${origin}/${locale}/invite/accept?token=${encodeURIComponent(secret)}`;
 }
 
-function overdraftLimitMessage(locale: InvitationLocale): string {
-  return locale === "en"
-    ? "The partner token credit limit has been reached. Please contact your administrator to top up the account."
-    : "La limite de découvert jetons du partenaire est atteinte. Veuillez contacter votre administrateur pour recharger le compte.";
-}
-
 function invitationAlreadyPendingMessage(locale: InvitationLocale): string {
   return locale === "en"
     ? "An invitation is already pending for this email address."
@@ -49,7 +43,7 @@ function invitationAlreadyPendingMessage(locale: InvitationLocale): string {
 
 /**
  * POST /api/partner/invitations
- * Crée une invitation B2B2C + débit jetons atomique (RPC P5.5, service_role).
+ * Freemium V1 — invitation sans débit jetons (RPC create_partner_invitation).
  */
 export async function POST(request: Request) {
   let body: unknown;
@@ -101,7 +95,7 @@ export async function POST(request: Request) {
   const magicLinkTokenHash = hashInvitationToken(secret);
   const expiresAt = invitationExpiresAt();
 
-  const rpcResult = await createPartnerInvitationWithDebit({
+  const rpcResult = await createPartnerInvitation({
     tenantId,
     actorUserId: user.id,
     familyEmail,
@@ -113,19 +107,6 @@ export async function POST(request: Request) {
 
   if (!rpcResult.ok) {
     switch (rpcResult.error) {
-      case "overdraft_limit_exceeded":
-        return NextResponse.json(
-          {
-            error: "overdraft_limit_exceeded",
-            message: overdraftLimitMessage(locale),
-            balance: rpcResult.balance,
-            creditLimitTokens: rpcResult.creditLimitTokens,
-            required: rpcResult.required,
-            wouldBeBalance: rpcResult.wouldBeBalance,
-          },
-          { status: 402 },
-        );
-
       case "invitation_already_pending": {
         const pendingBody: InvitationAlreadyPendingError = {
           error: "invitation_already_pending",
@@ -148,7 +129,7 @@ export async function POST(request: Request) {
           {
             error: "schema_not_ready",
             message:
-              "RPC create_partner_invitation_with_debit absente — exécuter odyssey_p5_5_partner_rbac_overdraft.sql",
+              "RPC create_partner_invitation absente — exécuter odyssey_p8_freemium_v1_token_purge.sql",
           },
           { status: 503 },
         );
@@ -156,22 +137,9 @@ export async function POST(request: Request) {
       case "invalid_granted_package":
       case "invalid_email":
       case "invalid_arguments":
-      case "invalid_token_amount":
         return NextResponse.json(
           { error: rpcResult.error, message: "Invalid invitation payload." },
           { status: 400 },
-        );
-
-      case "wallet_not_found":
-        return NextResponse.json(
-          {
-            error: "wallet_not_found",
-            message:
-              locale === "en"
-                ? "No token wallet exists for this partner."
-                : "Aucun portefeuille jetons pour ce partenaire.",
-          },
-          { status: 503 },
         );
 
       default:

@@ -177,15 +177,17 @@ flowchart TD
 9. Helpers : `resolveMusicEntitlement(intended, extensions)` ; `canUploadPersonalAudio(intended)` ; cart strip Licence si forfait ≥ Héritage.
 10. Purger `tokens` / `PARTNER_TOKEN_*` (pas la licence musique).
 
-### Phase 2 — SQL
+### Phase 2 — SQL — ✅ repo · ⏳ appliquer P8 sur Supabase
 
-11. RPC invitation sans débit · quotas `intended` · `project_paid_entitlements` (flags `music_license`, package) · `sanctuary_tokens` · DROP jetons.
+11. ✅ `docs/sql/odyssey_p8_freemium_v1_token_purge.sql` — `create_partner_invitation` · quota Soft Cap · `project_paid_entitlements` · `sanctuary_tokens` · DROP wallets · `is_freemium=true`.
+12. ✅ API invitations + checkout partenaire sans débit · wallet → snapshot commissions déprécié.
+13. ⏳ Exécuter le script P8 dans le SQL Editor Supabase (staging puis prod).
 
 ### Phase 3 — APIs
 
-12. Checkout : snapshot `intended` + `musicLicense` ; refuse master unpaid ; strip double charge.
-13. Webhook : entitlements (package et/ou licence) → accrue → enqueue export.
-14. Salon commissions · purge wallet.
+14. Checkout : snapshot `intended` + `musicLicense` ; refuse master unpaid ; strip double charge.
+15. Webhook : entitlements (package et/ou licence) → accrue → enqueue export.
+16. Salon UI commissions complète.
 
 ### Phase 4 — Soft Cap UX + musique
 
