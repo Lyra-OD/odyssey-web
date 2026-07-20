@@ -1,64 +1,50 @@
 /**
- * Source de vérité — tarification Odyssey (catalogue v2 multi-canaux).
+ * Source de vérité — tarification Odyssey (Freemium V1).
  *
  * RÈGLE : toutes les valeurs monétaires sont des entiers en CENTIMES uniquement.
- * Ex. 14900 = 149,00 $ · 4000 = 40,00 $.
+ * Canon produit : docs/FREEMIUM_V1_PIVOT.md
  *
- * Important :
- * - Le catalogue runtime connaît tous les forfaits (`essential`, `signature`, `heritage`, `legendary`)
- * - La disponibilité dépend du canal de vente
- * - Le modèle commercial (freemium vs jetons legacy) sera résolu plus tard par le tenant
+ * - `essential`  : Souvenir 0 $ (partenaire)
+ * - `signature`  : Héritage 149 $ — 4K + catalogue Stingray officiel inclus
+ * - `heritage`   : Éternité 299 $ — + IA + coffre inclus
+ * - `legendary`  : Légendaire 499 $ (B2C only)
  */
 
-/** Prix en cents (4000 = 40,00 $) — coût de gros par jeton partenaire legacy. */
-export const PARTNER_TOKEN_COST_CENTS = 4_000;
+/** @deprecated Freemium V1 — plus de wholesale jetons. Conservé à 0 pour imports legacy. */
+export const PARTNER_TOKEN_COST_CENTS = 0;
 
-/** Segmentation catalogue musique Stingray. */
+/** Segmentation catalogue musique Stingray (API `tier` reste standard|premium). */
 export type MusicCatalogTier = "standard" | "premium";
 
 /**
- * NOTE CANAUX
- *
- * - `essential`  : canal partenaire uniquement (Souvenir freemium ou legacy)
- * - `signature`  : B2C direct + upsell famille + legacy partenaire
- * - `heritage`   : B2C direct + upsell famille + legacy partenaire
- * - `legendary`  : B2C direct uniquement
- *
- * `tokens` représente le mapping legacy partenaire P5.5.
- * Pour `legendary`, il n'existe volontairement aucun prix jetons legacy.
+ * Catalogue runtime — `musicCatalog: premium` = catalogue **officiel** inclus
+ * (Héritage / Éternité / Légendaire). Souvenir = standard.
+ * `tokens` = 0 (purge jetons V1).
  */
 export const WIZARD_PRICING = {
   packages: {
     ESSENTIEL: {
       id: "essential",
-      /** Souvenir offert — 0¢ dans le catalogue v2. */
       priceCents: 0,
-      /** Mapping legacy partenaire (P5.5). */
-      tokens: 1,
-      /** Catalogue musical inclus sans extension Licence Premium. */
+      tokens: 0,
       musicCatalog: "standard" as MusicCatalogTier,
     },
     SIGNATURE: {
       id: "signature",
-      /** Héritage — 149,00 $. */
       priceCents: 14_900,
-      /** Mapping legacy partenaire (P5.5). */
-      tokens: 2,
-      musicCatalog: "standard" as MusicCatalogTier,
+      tokens: 0,
+      /** Catalogue Stingray officiel inclus (Freemium V1). */
+      musicCatalog: "premium" as MusicCatalogTier,
     },
     HERITAGE: {
       id: "heritage",
-      /** Éternité — 299,00 $. */
       priceCents: 29_900,
-      /** Mapping legacy partenaire (P5.5). */
-      tokens: 4,
+      tokens: 0,
       musicCatalog: "premium" as MusicCatalogTier,
     },
     LEGENDARY: {
       id: "legendary",
-      /** Légende / Gants Blancs — 499,00 $. */
       priceCents: 49_900,
-      /** B2C direct only — pas de mapping jetons legacy. */
       tokens: 0,
       musicCatalog: "premium" as MusicCatalogTier,
     },
@@ -66,28 +52,34 @@ export const WIZARD_PRICING = {
   extensions: {
     RETOUCHE_IA: {
       id: "aiRetouch",
-      /** Prix en cents (4900 = 49,00 $) */
       priceCents: 49_00,
     },
-    /** Option Licence Premium — débloque le catalogue PREMIUM. */
-    LICENCE_PREMIUM: {
-      id: "extendedLicense",
-      /** Prix en cents (3900 = 39,00 $) */
+    /** Licence Musique Premium Stingray — Soft Cap Souvenir. */
+    MUSIC_LICENSE: {
+      id: "musicLicense",
       priceCents: 39_00,
     },
-    USB: {
-      id: "collectorUsb",
-      /** Prix en cents (7900 = 79,00 $) */
+    /** Voix de l’Histoire — narration IA (≠ licence musique). */
+    STORY_VOICE: {
+      id: "storyVoice",
+      priceCents: 39_00,
+    },
+    /** Jeton du Sanctuaire NFC (remplace collectorUsb). */
+    SANCTUARY_TOKEN: {
+      id: "sanctuaryToken",
       priceCents: 79_00,
     },
     COFFRE_FORT: {
       id: "digitalVault",
-      /** Prix en cents (9900 = 99,00 $) */
       priceCents: 99_00,
     },
+    MEMORY_BOOK: {
+      id: "memoryBook",
+      priceCents: 149_00,
+    },
+    /** @deprecated Bundle marketing — conservé pour paniers legacy. */
     PACK_HERITAGE: {
       id: "heritagePack",
-      /** Prix en cents (14900 = 149,00 $) */
       priceCents: 149_00,
     },
   },
@@ -96,23 +88,20 @@ export const WIZARD_PRICING = {
 export type WizardPackageKey = keyof typeof WIZARD_PRICING.packages;
 export type WizardExtensionConfigKey = keyof typeof WIZARD_PRICING.extensions;
 
-/** Union complète du catalogue runtime v2. */
 export type WizardBasePackage =
   (typeof WIZARD_PRICING.packages)[WizardPackageKey]["id"];
 
-/** Packages autorisés en B2C direct (pas de Souvenir). */
 export type WizardB2CDirectPackage = Extract<
   WizardBasePackage,
   "signature" | "heritage" | "legendary"
 >;
 
-/** Packages autorisés côté partenaire / invitation / granted_package. */
 export type WizardPartnerGrantedPackage = Extract<
   WizardBasePackage,
   "essential" | "signature" | "heritage"
 >;
 
-/** Packages legacy avec équivalent jetons partenaire. */
+/** @deprecated Freemium V1 — plus de jetons. Alias type partenaire. */
 export type WizardLegacyTokenPackage = WizardPartnerGrantedPackage;
 
 export type WizardLegacyTokenPackageKey = Extract<
@@ -120,13 +109,15 @@ export type WizardLegacyTokenPackageKey = Extract<
   "ESSENTIEL" | "SIGNATURE" | "HERITAGE"
 >;
 
+/** IDs canoniques + alias legacy (`extendedLicense`, `collectorUsb`). */
 export type WizardExtensionId =
-  (typeof WIZARD_PRICING.extensions)[WizardExtensionConfigKey]["id"];
+  | (typeof WIZARD_PRICING.extensions)[WizardExtensionConfigKey]["id"]
+  | "extendedLicense"
+  | "collectorUsb";
 
 export type WizardPackageConfig =
   (typeof WIZARD_PRICING.packages)[WizardPackageKey];
 
-/** Catalogue complet v2. */
 export const WIZARD_ALL_PACKAGES: WizardBasePackage[] = [
   WIZARD_PRICING.packages.ESSENTIEL.id,
   WIZARD_PRICING.packages.SIGNATURE.id,
@@ -134,45 +125,25 @@ export const WIZARD_ALL_PACKAGES: WizardBasePackage[] = [
   WIZARD_PRICING.packages.LEGENDARY.id,
 ];
 
-/** B2C direct Quiet Luxury : pas de `essential`. */
 export const WIZARD_B2C_DIRECT_PACKAGES: WizardB2CDirectPackage[] = [
   WIZARD_PRICING.packages.SIGNATURE.id,
   WIZARD_PRICING.packages.HERITAGE.id,
   WIZARD_PRICING.packages.LEGENDARY.id,
 ];
 
-/** Canal partenaire : forfaits offerts / legacy tokens. */
 export const WIZARD_PARTNER_GRANTED_PACKAGES: WizardPartnerGrantedPackage[] = [
   WIZARD_PRICING.packages.ESSENTIEL.id,
   WIZARD_PRICING.packages.SIGNATURE.id,
   WIZARD_PRICING.packages.HERITAGE.id,
 ];
 
-/** Alias explicite pour le mapping jetons legacy. */
 export const WIZARD_LEGACY_TOKEN_PACKAGES: WizardLegacyTokenPackage[] =
   WIZARD_PARTNER_GRANTED_PACKAGES;
 
-/**
- * Règle d'or métier : un nouveau projet B2C démarre ancré sur « Éternité »
- * (id technique `heritage`, 299 $) — le forfait milieu de gamme réel parmi
- * les 3 offerts en B2C direct (Héritage 149 $ / Éternité 299 $ / Légendaire
- * 499 $), et celui qui offre le meilleur rapport qualité-prix (cf.
- * `calculateBundleSavings()`, ≈ 67 $ d'économie vs. à la carte). Depuis que
- * le client ne clique plus explicitement une carte à l'Étape 1 (le picker
- * en a été retiré au profit du Dossier de forfait global), cet ancrage
- * psychologique doit être intentionnel et nommé — pas un simple fallback
- * silencieux. `normalizeBasePackageId()` s'en sert comme valeur par défaut ;
- * ne pas dupliquer la chaîne littérale ailleurs.
- */
 export const DEFAULT_B2C_BASE_PACKAGE: WizardBasePackage =
   WIZARD_PRICING.packages.HERITAGE.id;
 
-/**
- * @deprecated Ambigu pour le modèle v2.
- * Historique UI — ancien triplet affichable avant séparation par canal.
- * Utiliser `WIZARD_B2C_DIRECT_PACKAGES` ou `WIZARD_PARTNER_GRANTED_PACKAGES`
- * selon le contexte métier.
- */
+/** @deprecated */
 export const WIZARD_BASE_PACKAGES: WizardPartnerGrantedPackage[] =
   WIZARD_PARTNER_GRANTED_PACKAGES;
 
@@ -180,14 +151,18 @@ const PACKAGE_BY_ID = Object.fromEntries(
   Object.values(WIZARD_PRICING.packages).map((pkg) => [pkg.id, pkg]),
 ) as Record<WizardBasePackage, WizardPackageConfig>;
 
-const EXTENSION_PRICE_BY_ID = Object.fromEntries(
-  Object.values(WIZARD_PRICING.extensions).map((ext) => [
-    ext.id,
-    ext.priceCents,
-  ]),
-) as Record<WizardExtensionId, number>;
+const EXTENSION_PRICE_BY_ID: Record<string, number> = {
+  ...Object.fromEntries(
+    Object.values(WIZARD_PRICING.extensions).map((ext) => [
+      ext.id,
+      ext.priceCents,
+    ]),
+  ),
+  /** Alias migration Freemium V1 */
+  extendedLicense: WIZARD_PRICING.extensions.MUSIC_LICENSE.priceCents,
+  collectorUsb: WIZARD_PRICING.extensions.SANCTUARY_TOKEN.priceCents,
+};
 
-/** @deprecated Alias migration `prestige` → `signature` */
 export const LEGACY_PACKAGE_ALIASES: Record<string, WizardBasePackage> = {
   prestige: WIZARD_PRICING.packages.SIGNATURE.id,
 };
@@ -216,10 +191,11 @@ export function isPartnerGrantedPackage(
   );
 }
 
+/** @deprecated Freemium V1 — toujours false (plus de jetons). */
 export function hasLegacyTokenPricing(
-  packageId: WizardBasePackage,
-): packageId is WizardLegacyTokenPackage {
-  return (WIZARD_LEGACY_TOKEN_PACKAGES as readonly string[]).includes(packageId);
+  _packageId: WizardBasePackage,
+): _packageId is WizardLegacyTokenPackage {
+  return false;
 }
 
 export function getPackageConfigById(
@@ -234,38 +210,28 @@ export function getPackageConfigByKey(
   return WIZARD_PRICING.packages[key];
 }
 
-/** Forfait en cents (entier). */
 export function packageCents(
   basePackage: WizardBasePackage = WIZARD_PRICING.packages.SIGNATURE.id,
 ): number {
   return getPackageConfigById(basePackage).priceCents;
 }
 
-/**
- * Jetons B2B legacy pour le forfait.
- * `legendary` est exclu du type : les jetons ne s'y appliquent jamais.
- */
+/** @deprecated Freemium V1 — retourne toujours 0. */
 export function packagePartnerTokens(
-  basePackage: WizardLegacyTokenPackage,
+  _basePackage: WizardLegacyTokenPackage,
 ): number {
-  return getPackageConfigById(basePackage).tokens;
+  return 0;
 }
 
-export function partnerWholesaleCents(tokenCount: number): number {
-  return PARTNER_TOKEN_COST_CENTS * Math.trunc(tokenCount);
+export function partnerWholesaleCents(_tokenCount: number): number {
+  return 0;
 }
 
-/**
- * Marge partenaire théorique en cents :
- * prix public (priceCents) − (PARTNER_TOKEN_COST_CENTS × tokens).
- */
 export function calculatePartnerMargin(
   packageId: WizardLegacyTokenPackage,
-  tokens?: number,
+  _tokens?: number,
 ): number {
-  const pkg = getPackageConfigById(packageId);
-  const tokenCount = tokens ?? pkg.tokens;
-  return pkg.priceCents - partnerWholesaleCents(tokenCount);
+  return getPackageConfigById(packageId).priceCents;
 }
 
 export function calculatePartnerMarginByKey(
@@ -276,20 +242,44 @@ export function calculatePartnerMarginByKey(
 }
 
 export function extensionCents(extensionId: WizardExtensionId): number {
-  return EXTENSION_PRICE_BY_ID[extensionId];
+  return EXTENSION_PRICE_BY_ID[extensionId] ?? 0;
 }
 
-/** Extensions physiques / droits incluses dans le forfait ÉTERNITÉ (legacy id `heritage`). */
-export const HERITAGE_PACKAGE_BUNDLED_EXTENSION_IDS: WizardExtensionId[] = [
+/** Rang forfait pour entitlements (Soft Cap / bundles). */
+export function packageTierRank(packageId: WizardBasePackage): number {
+  switch (packageId) {
+    case "essential":
+      return 0;
+    case "signature":
+      return 1;
+    case "heritage":
+      return 2;
+    case "legendary":
+      return 3;
+    default:
+      return 0;
+  }
+}
+
+/**
+ * Extensions incluses dans Éternité / Légendaire (pas facturées à part).
+ * `musicLicense` est inclus dès Héritage (`signature`).
+ */
+export const ETERNITE_BUNDLED_EXTENSION_IDS: WizardExtensionId[] = [
+  "musicLicense",
   "extendedLicense",
-  "collectorUsb",
+  "aiRetouch",
   "digitalVault",
 ];
+
+/** @deprecated Alias — utilise ETERNITE + musicLicense dès signature. */
+export const HERITAGE_PACKAGE_BUNDLED_EXTENSION_IDS =
+  ETERNITE_BUNDLED_EXTENSION_IDS;
 
 export function heritagePackIndividualTotalCents(): number {
   return (
     WIZARD_PRICING.extensions.RETOUCHE_IA.priceCents +
-    WIZARD_PRICING.extensions.LICENCE_PREMIUM.priceCents +
+    WIZARD_PRICING.extensions.MUSIC_LICENSE.priceCents +
     WIZARD_PRICING.extensions.COFFRE_FORT.priceCents
   );
 }
@@ -301,33 +291,22 @@ export function heritagePackSavingsCents(): number {
   );
 }
 
-/**
- * Panier à la carte comparé au forfait ÉTERNITÉ (`heritage`) :
- * SIGNATURE + Licence Premium + USB + Coffre-fort.
- */
 export function heritageBundleAlaCarteCents(): number {
   return (
     WIZARD_PRICING.packages.SIGNATURE.priceCents +
-    WIZARD_PRICING.extensions.LICENCE_PREMIUM.priceCents +
-    WIZARD_PRICING.extensions.USB.priceCents +
+    WIZARD_PRICING.extensions.MUSIC_LICENSE.priceCents +
+    WIZARD_PRICING.extensions.SANCTUARY_TOKEN.priceCents +
     WIZARD_PRICING.extensions.COFFRE_FORT.priceCents
   );
 }
 
-/**
- * Économie affichée pour le forfait ÉTERNITÉ (`heritage`) en cents entiers.
- * Ex. 6700 → « Économisez 67 $ ».
- */
-export function calculateBundleSavings(
-  packageId: WizardBasePackage,
-): number {
+export function calculateBundleSavings(packageId: WizardBasePackage): number {
   if (packageId !== WIZARD_PRICING.packages.HERITAGE.id) return 0;
   const alaCarte = heritageBundleAlaCarteCents();
   const heritagePrice = WIZARD_PRICING.packages.HERITAGE.priceCents;
   return Math.max(0, alaCarte - heritagePrice);
 }
 
-/** Montant entier en dollars pour badges UI (pas de float). */
 export function bundleSavingsDollarsLabel(savingsCents: number): string {
   return String(Math.trunc(savingsCents / 100));
 }
@@ -336,34 +315,79 @@ export function isExtensionBundledInBasePackage(
   basePackage: WizardBasePackage,
   extensionId: WizardExtensionId,
 ): boolean {
-  if (basePackage !== WIZARD_PRICING.packages.HERITAGE.id) return false;
-  return HERITAGE_PACKAGE_BUNDLED_EXTENSION_IDS.includes(extensionId);
+  const rank = packageTierRank(basePackage);
+
+  if (extensionId === "musicLicense" || extensionId === "extendedLicense") {
+    return rank >= 1; // Héritage+
+  }
+
+  if (
+    extensionId === "aiRetouch" ||
+    extensionId === "digitalVault" ||
+    extensionId === "heritagePack"
+  ) {
+    return rank >= 2; // Éternité+
+  }
+
+  return false;
 }
 
 export type WizardExtensionsLike = {
+  musicLicense?: boolean;
+  /** @deprecated → musicLicense */
   extendedLicense?: boolean;
   heritagePack?: boolean;
 };
 
 /**
- * Tier catalogue effectif : forfait + Option Licence Premium (ou Pack Héritage).
+ * Accès catalogue Stingray officiel (API tier `premium`).
+ * `intended >= signature` OU add-on musicLicense (ou alias extendedLicense).
  */
+export function resolveMusicEntitlement(
+  intendedPackage: WizardBasePackage,
+  extensions: WizardExtensionsLike = {},
+): MusicCatalogTier {
+  if (packageTierRank(intendedPackage) >= 1) {
+    return "premium";
+  }
+  if (
+    extensions.musicLicense ||
+    extensions.extendedLicense ||
+    extensions.heritagePack
+  ) {
+    return "premium";
+  }
+  return "standard";
+}
+
+/** @deprecated Prefer `resolveMusicEntitlement`. */
 export function resolveMusicCatalogTier(
   basePackage: WizardBasePackage,
   extensions: WizardExtensionsLike = {},
 ): MusicCatalogTier {
-  if (getPackageConfigById(basePackage).musicCatalog === "premium") {
-    return "premium";
-  }
-  if (extensions.extendedLicense || extensions.heritagePack) {
-    return "premium";
-  }
-  return "standard";
+  return resolveMusicEntitlement(basePackage, extensions);
 }
 
 export function hasPremiumMusicCatalogAccess(
   basePackage: WizardBasePackage,
   extensions: WizardExtensionsLike = {},
 ): boolean {
-  return resolveMusicCatalogTier(basePackage, extensions) === "premium";
+  return resolveMusicEntitlement(basePackage, extensions) === "premium";
+}
+
+/** Soupape MP3/WAV — masquée sur Souvenir. */
+export function canUploadPersonalAudio(
+  intendedPackage: WizardBasePackage,
+): boolean {
+  return packageTierRank(intendedPackage) >= 1;
+}
+
+/** Normalise les clés extension legacy → canon V1. */
+export function normalizeExtensionId(
+  id: string,
+): WizardExtensionId | undefined {
+  if (id === "extendedLicense") return "musicLicense";
+  if (id === "collectorUsb") return "sanctuaryToken";
+  if (id in EXTENSION_PRICE_BY_ID) return id as WizardExtensionId;
+  return undefined;
 }

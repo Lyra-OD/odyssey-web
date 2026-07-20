@@ -1,7 +1,10 @@
 import type { WizardExtensionsState, WizardStateV1 } from "@/src/lib/wizard/wizardState";
-import { toggleWizardExtension } from "@/src/lib/wizard/wizardPricing";
+import {
+  normalizeExtensionsState,
+  toggleWizardExtension,
+} from "@/src/lib/wizard/wizardPricing";
 
-export { toggleWizardExtension };
+export { toggleWizardExtension, normalizeExtensionsState };
 
 export function coerceExtensionsState(raw: unknown): WizardExtensionsState {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
@@ -12,17 +15,23 @@ export function coerceExtensionsState(raw: unknown): WizardExtensionsState {
   const result: WizardExtensionsState = {};
 
   if (obj.aiRetouch === true) result.aiRetouch = true;
-  if (obj.extendedLicense === true) result.extendedLicense = true;
-  if (obj.collectorUsb === true) result.collectorUsb = true;
+  if (obj.musicLicense === true || obj.extendedLicense === true) {
+    result.musicLicense = true;
+  }
+  if (obj.sanctuaryToken === true || obj.collectorUsb === true) {
+    result.sanctuaryToken = true;
+  }
+  if (obj.storyVoice === true) result.storyVoice = true;
+  if (obj.memoryBook === true) result.memoryBook = true;
   if (obj.digitalVault === true) result.digitalVault = true;
   if (obj.heritagePack === true) {
     result.heritagePack = true;
     result.aiRetouch = true;
-    result.extendedLicense = true;
+    result.musicLicense = true;
     result.digitalVault = true;
   }
 
-  return result;
+  return normalizeExtensionsState(result);
 }
 
 /** Mappe les anciens champs upsell / copyrightOption vers extensions. */
@@ -35,7 +44,11 @@ export function migrateLegacyExtensions(
   const upsell = raw.upsell;
   if (upsell && typeof upsell === "object" && !Array.isArray(upsell)) {
     const ai = (upsell as Record<string, unknown>).aiRetouch;
-    if (ai && typeof ai === "object" && (ai as Record<string, unknown>).enabled === true) {
+    if (
+      ai &&
+      typeof ai === "object" &&
+      (ai as Record<string, unknown>).enabled === true
+    ) {
       merged.aiRetouch = true;
     }
   }
@@ -47,10 +60,10 @@ export function migrateLegacyExtensions(
     !Array.isArray(copyright) &&
     (copyright as Record<string, unknown>).extendedBroadcast === true
   ) {
-    merged.extendedLicense = true;
+    merged.musicLicense = true;
   }
 
-  return merged;
+  return normalizeExtensionsState(merged);
 }
 
 /** État persisté sans les clés legacy. */

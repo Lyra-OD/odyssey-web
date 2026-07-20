@@ -169,13 +169,13 @@ flowchart TD
 4. ✅ STINGRAY : catalogue officiel + Soft Cap dual + entitlement.
 5. ✅ `SANCTUARY_TOKEN_NFC.md` + sql/README banner purge Phase 2.
 
-### Phase 1 — Manifeste TS
+### Phase 1 — Manifeste TS — ✅ FAIT
 
-6. `pricingConfig.ts` : SKU **`musicLicense`** 3900¢ **à côté de** `storyVoice` 3900¢ ; migrer / alias depuis `extendedLicense`.
-7. `wizardDeliverables.ts` : musique officielle incluse `signature`+ ; Souvenir = standard + soft path.
-8. `wizardState.ts` : `grantedPackage` + `intendedPackage` + attestation ; `extensions.musicLicense`.
-9. Helpers : `resolveMusicEntitlement(intended, extensions)` ; `canUploadPersonalAudio(intended)` ; cart strip Licence si forfait ≥ Héritage.
-10. Purger `tokens` / `PARTNER_TOKEN_*` (pas la licence musique).
+6. ✅ `pricingConfig` : `musicLicense` + `storyVoice` + `sanctuaryToken` + `memoryBook` ; Héritage `musicCatalog: premium` ; jetons = 0.
+7. ✅ `wizardDeliverables` : Héritage **4K** ; tokens 0.
+8. ✅ `wizardState` : `grantedPackage` + `intendedPackage` + attestation stub ; `basePackage` = miroir intended.
+9. ✅ Helpers : `resolveMusicEntitlement` · `canUploadPersonalAudio` · `computeWizardCartWithGrant` · strip Licence si ≥ Héritage.
+10. ✅ Alias `extendedLicense` / `collectorUsb` pour UI legacy.
 
 ### Phase 2 — SQL — ✅ repo · ⏳ appliquer P8 sur Supabase
 

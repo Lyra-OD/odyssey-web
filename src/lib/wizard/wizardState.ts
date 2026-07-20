@@ -184,9 +184,22 @@ export type { WizardBasePackage } from "@/src/lib/wizard/wizardPricing";
  */
 export type WizardStateV1 = {
   version: typeof WIZARD_STATE_VERSION;
-  /** Mode funérarium / partenaire B2B (jetons) vs famille B2C (Stripe). */
+  /** Mode funérarium / partenaire B2B vs famille B2C. */
   isPartner?: boolean;
+  /**
+   * @deprecated Freemium V1 — préférer `intendedPackage`.
+   * Conservé = miroir de `intendedPackage` pour compat P7/UI.
+   */
   basePackage?: WizardBasePackage;
+  /** Forfait offert par le salon (immuable côté Soft Cap). */
+  grantedPackage?: WizardBasePackage;
+  /** Forfait construit (Soft Cap / Dossier) — pilote quotas + panier. */
+  intendedPackage?: WizardBasePackage;
+  /** Attestation ToS upload MP3 (Phase 4). */
+  musicRightsAttestation?: {
+    acceptedAt: string;
+    tosVersion: string;
+  };
   /** Snapshot tarifaire pour checkout (recalculé à chaque autosave). */
   pricing?: WizardPricingSnapshot;
   essentials?: {
@@ -916,11 +929,36 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
     coerceExtensionsState(obj.extensions),
   );
   const isPartner = coerceIsPartner(obj.isPartner);
-  const basePackage = coerceBasePackage(obj.basePackage);
+  const intendedPackage = coerceBasePackage(
+    obj.intendedPackage ?? obj.basePackage,
+  );
+  const grantedPackage = coerceBasePackage(
+    obj.grantedPackage ?? obj.basePackage ?? intendedPackage,
+  );
+  /** Miroir Soft Cap — UI / P7 legacy lisent encore basePackage. */
+  const basePackage = intendedPackage;
 
   const pricing =
     coercePricingSnapshot(obj.pricing, basePackage, isPartner) ??
     buildPricingSnapshot(extensions, basePackage, isPartner);
+
+  let musicRightsAttestation: WizardStateV1["musicRightsAttestation"];
+  if (
+    obj.musicRightsAttestation &&
+    typeof obj.musicRightsAttestation === "object" &&
+    !Array.isArray(obj.musicRightsAttestation)
+  ) {
+    const att = obj.musicRightsAttestation as Record<string, unknown>;
+    if (
+      typeof att.acceptedAt === "string" &&
+      typeof att.tosVersion === "string"
+    ) {
+      musicRightsAttestation = {
+        acceptedAt: att.acceptedAt,
+        tosVersion: att.tosVersion,
+      };
+    }
+  }
 
   const legacyMontage =
     obj.montage !== undefined ? coerceMontageState(obj.montage) : undefined;
@@ -955,7 +993,10 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
     version: WIZARD_STATE_VERSION,
     ...(isPartner ? { isPartner: true } : {}),
     basePackage,
+    grantedPackage,
+    intendedPackage,
     pricing,
+    ...(musicRightsAttestation ? { musicRightsAttestation } : {}),
     ...(obj.essentials && typeof obj.essentials === "object"
       ? { essentials: obj.essentials as WizardStateV1["essentials"] }
       : {}),

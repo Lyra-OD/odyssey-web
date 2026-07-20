@@ -71,6 +71,7 @@ function isCardLocked(
   return (
     key === "aiRetouch" ||
     key === "extendedLicense" ||
+    key === "musicLicense" ||
     key === "digitalVault"
   );
 }
@@ -176,7 +177,13 @@ export function MontageExtensionsStep({
   const toggle = (key: keyof WizardExtensionsState) => {
     if (isBundledInHeritagePackage(basePackage, key)) return;
     if (isCardLocked(extensions, key)) return;
-    onChange(toggleWizardExtension(extensions, key, !extensions[key]));
+    const currentlyOn =
+      key === "extendedLicense" || key === "musicLicense"
+        ? Boolean(extensions.musicLicense || extensions.extendedLicense)
+        : key === "collectorUsb" || key === "sanctuaryToken"
+          ? Boolean(extensions.sanctuaryToken || extensions.collectorUsb)
+          : Boolean(extensions[key]);
+    onChange(toggleWizardExtension(extensions, key, !currentlyOn));
   };
 
   const hideHeritagePackUpsell =
@@ -264,7 +271,15 @@ export function MontageExtensionsStep({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {cards.map((card) => {
           const bundled = isBundledInHeritagePackage(basePackage, card.key);
-          const selected = bundled || Boolean(extensions[card.key]);
+          const selected =
+            bundled ||
+            (card.key === "extendedLicense" || card.key === "musicLicense"
+              ? Boolean(extensions.musicLicense || extensions.extendedLicense)
+              : card.key === "collectorUsb" || card.key === "sanctuaryToken"
+                ? Boolean(
+                    extensions.sanctuaryToken || extensions.collectorUsb,
+                  )
+                : Boolean(extensions[card.key]));
           const locked = bundled || isCardLocked(extensions, card.key);
           const hasHeroImage = Boolean(card.imageUrl);
 

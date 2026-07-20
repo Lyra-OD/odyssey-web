@@ -108,7 +108,7 @@ export interface DeliverablesConfig {
 
 export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
   SOUVENIR: {
-    pricing: { tokens: 1, dollars: 0 },
+    pricing: { tokens: 0, dollars: 0 },
     salon: { enabled: true, aspect: "16:9", audio: "stingray_acts" },
     social: {
       enabled: false,
@@ -127,7 +127,7 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
     },
   },
   HERITAGE: {
-    pricing: { tokens: 2, dollars: 149 },
+    pricing: { tokens: 0, dollars: 149 },
     salon: { enabled: true, aspect: "16:9", audio: "stingray_acts" },
     social: {
       enabled: true,
@@ -135,13 +135,9 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
       duration: 45,
       audio: "safe_music",
     },
-    // maxSongs et maxMediaItemsPerSong recalculés pour tenir le rythme
-    // éditorial strict de 7 s/média (S4) : ~25 médias/chapitre pour une
-    // chanson type de ~2:55 (125 / 25 = 5 chapitres). L'art prime sur la
-    // contrainte de coût : on donne l'espace nécessaire plutôt que de forcer
-    // un montage trop dense. Valeur à valider produit.
     limits: { maxMediaItems: 125, maxSongs: 5 },
-    rendering: { exportResolution: "1080p", renderPriority: "standard" },
+    /** Freemium V1 : Héritage = 4K + catalogue Stingray officiel. */
+    rendering: { exportResolution: "4K", renderPriority: "high" },
     pacing: { maxMediaItemsPerSong: 25, targetSecondsPerMedia: 7 },
     features: {
       aiRestoration: false,
@@ -151,15 +147,15 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
     },
   },
   ETERNITE: {
-    pricing: { tokens: 4, dollars: 299 },
-    salon: { enabled: true, aspect: "16:9", audio: "personal_mp3" },
+    pricing: { tokens: 0, dollars: 299 },
+    /** Stingray officiel + soupape MP3 (ToS) — audio primary stingray; upload gated in UI. */
+    salon: { enabled: true, aspect: "16:9", audio: "stingray_acts" },
     social: {
       enabled: true,
       aspect: "9:16",
       duration: 45,
       audio: "safe_music",
     },
-    // Idem HERITAGE : 175 / 25 ≈ 7 chapitres pour tenir 7 s/média.
     limits: { maxMediaItems: 175, maxSongs: 7 },
     rendering: { exportResolution: "4K", renderPriority: "high" },
     pacing: { maxMediaItemsPerSong: 25, targetSecondsPerMedia: 7 },
@@ -172,15 +168,13 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
   },
   LEGENDAIRE: {
     pricing: { tokens: 0, dollars: 499 },
-    salon: { enabled: true, aspect: "16:9", audio: "personal_mp3" },
+    salon: { enabled: true, aspect: "16:9", audio: "stingray_acts" },
     social: {
       enabled: true,
       aspect: "9:16",
       duration: 45,
       audio: "safe_music",
     },
-    // Idem : 250 / 25 = 10 chapitres — Légendaire est le forfait Gants Blancs,
-    // l'art prime, on donne le maximum d'espace narratif.
     limits: { maxMediaItems: 250, maxSongs: 10 },
     rendering: { exportResolution: "4K", renderPriority: "ultra" },
     pacing: { maxMediaItemsPerSong: 25, targetSecondsPerMedia: 7 },
@@ -542,5 +536,10 @@ export function assertManifestPricingAlignedWithLegacyConfig(): void {
         `Manifest/pricingConfig drift: ${packageId} tokens — manifest=${manifest.pricing.tokens} config=${tokens}`,
       );
     }
+  }
+
+  // Freemium V1 : Héritage = 4K
+  if (PACKAGE_MANIFEST.HERITAGE.rendering.exportResolution !== "4K") {
+    throw new Error("Freemium V1: HERITAGE must export 4K");
   }
 }

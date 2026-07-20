@@ -1,6 +1,7 @@
 /**
  * Calcul panier wizard — lit uniquement `pricingConfig.ts`.
- * Tous les totaux sont en cents (entiers). Aucune conversion $ en float pendant le calcul.
+ * Freemium V1 : musicLicense, sanctuaryToken, storyVoice, memoryBook.
+ * Alias legacy extendedLicense / collectorUsb encore acceptés.
  */
 
 import {
@@ -57,16 +58,20 @@ export {
   bundleSavingsDollarsLabel,
   isExtensionBundledInBasePackage,
   resolveMusicCatalogTier,
+  resolveMusicEntitlement,
   hasPremiumMusicCatalogAccess,
+  canUploadPersonalAudio,
+  packageTierRank,
   HERITAGE_PACKAGE_BUNDLED_EXTENSION_IDS,
+  ETERNITE_BUNDLED_EXTENSION_IDS,
+  normalizeExtensionId,
 } from "@/src/lib/wizard/pricingConfig";
 
 export type { MusicCatalogTier } from "@/src/lib/wizard/pricingConfig";
 
-/** @deprecated Utiliser `packageCents("signature")` */
+/** @deprecated */
 export const WIZARD_BASE_PRICE_CENTS =
   WIZARD_PRICING.packages.SIGNATURE.priceCents;
-
 /** @deprecated */
 export const WIZARD_PACKAGE_ESSENTIAL_CENTS =
   WIZARD_PRICING.packages.ESSENTIEL.priceCents;
@@ -74,7 +79,7 @@ export const WIZARD_PACKAGE_ESSENTIAL_CENTS =
 export const WIZARD_PACKAGE_PRESTIGE_CENTS =
   WIZARD_PRICING.packages.SIGNATURE.priceCents;
 
-/** @deprecated Utiliser `packageCents()` */
+/** @deprecated */
 export function basePackageCents(
   basePackage: WizardBasePackage = "signature",
 ): number {
@@ -83,12 +88,20 @@ export function basePackageCents(
 
 export const EXTENSION_AI_RETOUCH_CENTS =
   WIZARD_PRICING.extensions.RETOUCHE_IA.priceCents;
-export const EXTENSION_EXTENDED_LICENSE_CENTS =
-  WIZARD_PRICING.extensions.LICENCE_PREMIUM.priceCents;
-export const EXTENSION_COLLECTOR_USB_CENTS =
-  WIZARD_PRICING.extensions.USB.priceCents;
+export const EXTENSION_MUSIC_LICENSE_CENTS =
+  WIZARD_PRICING.extensions.MUSIC_LICENSE.priceCents;
+/** @deprecated Prefer EXTENSION_MUSIC_LICENSE_CENTS */
+export const EXTENSION_EXTENDED_LICENSE_CENTS = EXTENSION_MUSIC_LICENSE_CENTS;
+export const EXTENSION_STORY_VOICE_CENTS =
+  WIZARD_PRICING.extensions.STORY_VOICE.priceCents;
+export const EXTENSION_SANCTUARY_TOKEN_CENTS =
+  WIZARD_PRICING.extensions.SANCTUARY_TOKEN.priceCents;
+/** @deprecated Prefer EXTENSION_SANCTUARY_TOKEN_CENTS */
+export const EXTENSION_COLLECTOR_USB_CENTS = EXTENSION_SANCTUARY_TOKEN_CENTS;
 export const EXTENSION_DIGITAL_VAULT_CENTS =
   WIZARD_PRICING.extensions.COFFRE_FORT.priceCents;
+export const EXTENSION_MEMORY_BOOK_CENTS =
+  WIZARD_PRICING.extensions.MEMORY_BOOK.priceCents;
 export const EXTENSION_HERITAGE_PACK_CENTS =
   WIZARD_PRICING.extensions.PACK_HERITAGE.priceCents;
 
@@ -98,15 +111,19 @@ export const HERITAGE_PACK_SAVINGS_CENTS = heritagePackSavingsCents();
 
 export type WizardExtensionsState = {
   aiRetouch?: boolean;
+  musicLicense?: boolean;
+  /** @deprecated → musicLicense */
   extendedLicense?: boolean;
+  sanctuaryToken?: boolean;
+  /** @deprecated → sanctuaryToken */
   collectorUsb?: boolean;
+  storyVoice?: boolean;
+  memoryBook?: boolean;
   digitalVault?: boolean;
   heritagePack?: boolean;
 };
 
-export type ExtensionLineKey =
-  | "base"
-  | WizardExtensionId;
+export type ExtensionLineKey = "base" | WizardExtensionId;
 
 export type ExtensionLineItem = {
   key: ExtensionLineKey;
@@ -118,7 +135,7 @@ export type WizardPricingSnapshot = {
   baseCents: number;
   optionsCents: number;
   totalCents: number;
-  /** Coût B2B en jetons (forfait uniquement). */
+  /** @deprecated Freemium V1 */
   partnerTokenCost?: number;
 };
 
@@ -131,60 +148,89 @@ export function emptyExtensionsState(): WizardExtensionsState {
   return {};
 }
 
+/** Canonise musicLicense / sanctuaryToken (fusionne alias legacy). */
+export function normalizeExtensionsState(
+  extensions: WizardExtensionsState,
+): WizardExtensionsState {
+  const next: WizardExtensionsState = { ...extensions };
+
+  if (next.extendedLicense) {
+    next.musicLicense = true;
+    delete next.extendedLicense;
+  }
+  if (next.collectorUsb) {
+    next.sanctuaryToken = true;
+    delete next.collectorUsb;
+  }
+
+  return next;
+}
+
 export function hasExtensionSelection(
   extensions: WizardExtensionsState,
 ): boolean {
+  const n = normalizeExtensionsState(extensions);
   return Boolean(
-    extensions.aiRetouch ||
-      extensions.extendedLicense ||
-      extensions.collectorUsb ||
-      extensions.digitalVault ||
-      extensions.heritagePack,
+    n.aiRetouch ||
+      n.musicLicense ||
+      n.sanctuaryToken ||
+      n.storyVoice ||
+      n.memoryBook ||
+      n.digitalVault ||
+      n.heritagePack,
   );
 }
 
-/** Bascule une extension en gérant le Pack Héritage (retouche + licence + coffre). */
 export function toggleWizardExtension(
   current: WizardExtensionsState,
   key: keyof WizardExtensionsState,
   enabled: boolean,
 ): WizardExtensionsState {
+  const cur = normalizeExtensionsState(current);
+
   if (key === "heritagePack") {
     if (enabled) {
       return {
-        ...current,
+        ...cur,
         heritagePack: true,
         aiRetouch: true,
-        extendedLicense: true,
+        musicLicense: true,
         digitalVault: true,
       };
     }
     return {
-      ...current,
+      ...cur,
       heritagePack: false,
       aiRetouch: false,
-      extendedLicense: false,
+      musicLicense: false,
       digitalVault: false,
     };
   }
 
+  const canonicalKey =
+    key === "extendedLicense"
+      ? "musicLicense"
+      : key === "collectorUsb"
+        ? "sanctuaryToken"
+        : key;
+
   const next: WizardExtensionsState = {
-    ...current,
-    [key]: enabled,
+    ...cur,
+    [canonicalKey]: enabled,
   };
 
   if (
     !enabled &&
-    (key === "aiRetouch" ||
-      key === "extendedLicense" ||
-      key === "digitalVault")
+    (canonicalKey === "aiRetouch" ||
+      canonicalKey === "musicLicense" ||
+      canonicalKey === "digitalVault")
   ) {
     next.heritagePack = false;
   }
 
   if (
     next.aiRetouch &&
-    next.extendedLicense &&
+    next.musicLicense &&
     next.digitalVault &&
     !next.heritagePack
   ) {
@@ -201,7 +247,7 @@ export function computeWizardCart(
   extensions: WizardExtensionsState,
   basePackage: WizardBasePackage = "signature",
 ): WizardCartSnapshot {
-  const normalized = { ...extensions };
+  const normalized = normalizeExtensionsState(extensions);
   const baseCents = packageCents(basePackage);
   const lineItems: ExtensionLineItem[] = [{ key: "base", cents: baseCents }];
   let optionsCents = 0;
@@ -209,19 +255,24 @@ export function computeWizardCart(
   const skipExtensionCharge = (id: WizardExtensionId) =>
     isExtensionBundledInBasePackage(basePackage, id);
 
-  if (normalized.heritagePack) {
+  // Soft Cap : ne jamais facturer musicLicense si forfait ≥ Héritage
+  if (skipExtensionCharge("musicLicense")) {
+    normalized.musicLicense = false;
+  }
+
+  if (normalized.heritagePack && !skipExtensionCharge("heritagePack")) {
     const cents = extensionCents("heritagePack");
     lineItems.push({ key: "heritagePack", cents });
     optionsCents += cents;
-  } else {
-    if (normalized.aiRetouch) {
+  } else if (!normalized.heritagePack) {
+    if (normalized.aiRetouch && !skipExtensionCharge("aiRetouch")) {
       const cents = extensionCents("aiRetouch");
       lineItems.push({ key: "aiRetouch", cents });
       optionsCents += cents;
     }
-    if (normalized.extendedLicense && !skipExtensionCharge("extendedLicense")) {
-      const cents = extensionCents("extendedLicense");
-      lineItems.push({ key: "extendedLicense", cents });
+    if (normalized.musicLicense && !skipExtensionCharge("musicLicense")) {
+      const cents = extensionCents("musicLicense");
+      lineItems.push({ key: "musicLicense", cents });
       optionsCents += cents;
     }
     if (normalized.digitalVault && !skipExtensionCharge("digitalVault")) {
@@ -231,13 +282,24 @@ export function computeWizardCart(
     }
   }
 
-  if (normalized.collectorUsb && !skipExtensionCharge("collectorUsb")) {
-    const cents = extensionCents("collectorUsb");
-    lineItems.push({ key: "collectorUsb", cents });
+  if (normalized.sanctuaryToken && !skipExtensionCharge("sanctuaryToken")) {
+    const cents = extensionCents("sanctuaryToken");
+    lineItems.push({ key: "sanctuaryToken", cents });
     optionsCents += cents;
   }
 
-  /** Somme entière : forfait (cents) + extensions (cents). */
+  if (normalized.storyVoice) {
+    const cents = extensionCents("storyVoice");
+    lineItems.push({ key: "storyVoice", cents });
+    optionsCents += cents;
+  }
+
+  if (normalized.memoryBook) {
+    const cents = extensionCents("memoryBook");
+    lineItems.push({ key: "memoryBook", cents });
+    optionsCents += cents;
+  }
+
   const totalCents = baseCents + optionsCents;
 
   return {
@@ -251,23 +313,47 @@ export function computeWizardCart(
 }
 
 /**
- * Safe partner-token resolver for mixed runtime package ids.
- *
- * `legendary` is intentionally excluded from legacy token pricing and returns
- * `undefined` here instead of leaking a fake token value into B2B paths.
+ * Cart Soft Cap : facture le delta forfait (intended vs granted) + add-ons.
+ * Si intended === granted, base line = 0 $ (Souvenir offert).
  */
+export function computeWizardCartWithGrant(
+  extensions: WizardExtensionsState,
+  intendedPackage: WizardBasePackage,
+  grantedPackage: WizardBasePackage = "essential",
+): WizardCartSnapshot {
+  const full = computeWizardCart(extensions, intendedPackage);
+  const grantedCents = packageCents(grantedPackage);
+  const intendedCents = packageCents(intendedPackage);
+  const deltaCents = Math.max(0, intendedCents - grantedCents);
+
+  const lineItems: ExtensionLineItem[] = [
+    { key: "base", cents: deltaCents },
+    ...full.lineItems.filter((l) => l.key !== "base"),
+  ];
+  const optionsCents = lineItems
+    .filter((l) => l.key !== "base")
+    .reduce((s, l) => s + l.cents, 0);
+
+  return {
+    basePackage: intendedPackage,
+    baseCents: deltaCents,
+    optionsCents,
+    totalCents: deltaCents + optionsCents,
+    lineItems,
+    extensions: full.extensions,
+  };
+}
+
 export function resolvePartnerTokenCost(
-  basePackage: WizardBasePackage,
+  _basePackage: WizardBasePackage,
 ): number | undefined {
-  return hasLegacyTokenPricing(basePackage)
-    ? packagePartnerTokens(basePackage)
-    : undefined;
+  return undefined;
 }
 
 export function buildPricingSnapshot(
   extensions: WizardExtensionsState,
   basePackage: WizardBasePackage,
-  isPartner = false,
+  _isPartner = false,
 ): WizardPricingSnapshot {
   const cart = computeWizardCart(extensions, basePackage);
   return {
@@ -275,39 +361,26 @@ export function buildPricingSnapshot(
     baseCents: cart.baseCents,
     optionsCents: cart.optionsCents,
     totalCents: cart.totalCents,
-    ...(isPartner
-      ? (() => {
-          const partnerTokenCost = resolvePartnerTokenCost(basePackage);
-          return partnerTokenCost !== undefined ? { partnerTokenCost } : {};
-        })()
-      : {}),
   };
 }
 
-/** Labels Stripe (anglais) — l'UI utilise i18n. */
 export const CHECKOUT_LINE_LABELS: Record<ExtensionLineKey, string> = {
   base: "Odyssey — Cinematic Tribute (Base)",
   aiRetouch: "Premium AI Retouch",
-  extendedLicense: "Premium Music License (Stingray Premium Catalog)",
-  collectorUsb: "Collector USB Key — Laser Engraving",
+  musicLicense: "Stingray Premium Music License",
+  extendedLicense: "Stingray Premium Music License",
+  storyVoice: "Voice of History (AI Narration)",
+  sanctuaryToken: "Sanctuary Token (NFC)",
+  collectorUsb: "Sanctuary Token (NFC)",
   digitalVault: "Digital Vault — 50-Year Secure Hosting",
+  memoryBook: "Memory Book (Print)",
   heritagePack: "Heritage Pack (AI Retouch + License + Vault)",
 };
 
-/** Somme des lignes du panier en cents (vérification checkout / Stripe). */
-export function sumCartLineItemsCents(
-  lineItems: ExtensionLineItem[],
-): number {
-  return lineItems.reduce(
-    (sum, line) => sum + Math.trunc(line.cents),
-    0,
-  );
+export function sumCartLineItemsCents(lineItems: ExtensionLineItem[]): number {
+  return lineItems.reduce((sum, line) => sum + Math.trunc(line.cents), 0);
 }
 
-/**
- * Conversion affichage UI uniquement : cents → dollars (÷ 100).
- * À appeler au dernier moment côté interface, jamais pour calculer un total.
- */
 export function formatCentsForDisplay(
   cents: number,
   locale: "fr" | "en" = "fr",
@@ -315,13 +388,11 @@ export function formatCentsForDisplay(
   const wholeCents = Math.trunc(cents);
   const dollars = wholeCents / 100;
   const label =
-    dollars % 1 === 0
-      ? String(Math.trunc(dollars))
-      : dollars.toFixed(2);
+    dollars % 1 === 0 ? String(Math.trunc(dollars)) : dollars.toFixed(2);
   return locale === "en" ? `$${label}` : `${label}$`;
 }
 
-/** @deprecated Préférer `formatCentsForDisplay` (même comportement). */
+/** @deprecated */
 export function formatWizardPrice(
   cents: number,
   locale: "fr" | "en" = "fr",
@@ -332,4 +403,4 @@ export function formatWizardPrice(
 /** @deprecated */
 export const UPSELL_AI_RETOUCH_CENTS = EXTENSION_AI_RETOUCH_CENTS;
 /** @deprecated */
-export const UPSELL_EXTENDED_LICENSE_CENTS = EXTENSION_EXTENDED_LICENSE_CENTS;
+export const UPSELL_EXTENDED_LICENSE_CENTS = EXTENSION_MUSIC_LICENSE_CENTS;

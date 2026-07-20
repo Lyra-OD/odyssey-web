@@ -57,13 +57,15 @@ function buildInvitationWizardState(
   grantedPackage: LegacyGrantedPackage,
   invitationId: string,
 ): Record<string, unknown> {
-  const basePackage = grantedPackageToBasePackage(grantedPackage);
+  const pkg = grantedPackageToBasePackage(grantedPackage);
   const extensions = coerceExtensionsState({});
   return {
     version: WIZARD_STATE_VERSION,
     isPartner: false,
-    basePackage,
-    pricing: buildPricingSnapshot(extensions, basePackage, false),
+    grantedPackage: pkg,
+    intendedPackage: pkg,
+    basePackage: pkg,
+    pricing: buildPricingSnapshot(extensions, pkg, false),
     b2b2c: {
       invitationId,
       grantedPackage,

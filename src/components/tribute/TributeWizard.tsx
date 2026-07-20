@@ -98,6 +98,8 @@ type WizardFieldsSnapshot = {
   selectedSocial: SocialId | null;
   isPartner: boolean;
   basePackage: WizardBasePackage;
+  grantedPackage: WizardBasePackage;
+  intendedPackage: WizardBasePackage;
   montage: WizardMontageState;
   storyboard: WizardStoryboardState;
   extensions: WizardExtensionsState;
@@ -194,8 +196,19 @@ export function TributeWizard({
   // Le client ne clique plus une carte de forfait à l'Étape 1 ; ce choix
   // doit donc être intentionnel.
   const [basePackage, setBasePackage] = useState<WizardBasePackage>(
-    () => hydrated.basePackage ?? DEFAULT_B2C_BASE_PACKAGE,
+    () =>
+      hydrated.intendedPackage ??
+      hydrated.basePackage ??
+      DEFAULT_B2C_BASE_PACKAGE,
   );
+  const [grantedPackage] = useState<WizardBasePackage>(
+    () =>
+      hydrated.grantedPackage ??
+      hydrated.basePackage ??
+      hydrated.intendedPackage ??
+      DEFAULT_B2C_BASE_PACKAGE,
+  );
+  const intendedPackage = basePackage;
   const [extensions, setExtensions] = useState<WizardExtensionsState>(
     () => hydrated.extensions ?? {},
   );
@@ -392,6 +405,8 @@ export function TributeWizard({
     selectedSocial,
     isPartner,
     basePackage,
+    grantedPackage,
+    intendedPackage,
     montage,
     storyboard: wizardStoryboard.storyboard,
     extensions,
@@ -406,6 +421,8 @@ export function TributeWizard({
     selectedSocial,
     isPartner,
     basePackage,
+    grantedPackage,
+    intendedPackage,
     montage,
     storyboard: wizardStoryboard.storyboard,
     extensions,
@@ -426,6 +443,8 @@ export function TributeWizard({
       version: WIZARD_STATE_VERSION,
       ...(s.isPartner ? { isPartner: true } : {}),
       basePackage: pricing.basePackage,
+      grantedPackage: s.grantedPackage,
+      intendedPackage: s.intendedPackage,
       pricing,
       essentials: {
         firstName: s.firstName.trim() || undefined,
@@ -929,9 +948,13 @@ export function TributeWizard({
   const extensionRecapLineLabels = useMemo(
     () => ({
       aiRetouch: copy.recapLineAiRetouch,
+      musicLicense: copy.recapLineExtendedLicense,
       extendedLicense: copy.recapLineExtendedLicense,
+      storyVoice: copy.recapLineExtendedLicense,
+      sanctuaryToken: copy.recapLineCollectorUsb,
       collectorUsb: copy.recapLineCollectorUsb,
       digitalVault: copy.recapLineDigitalVault,
+      memoryBook: copy.recapLineHeritagePack,
       heritagePack: copy.recapLineHeritagePack,
     }),
     [copy],
