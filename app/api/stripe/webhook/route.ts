@@ -338,6 +338,208 @@ async function syncCatalogRowFromPrice(
   return "processed";
 }
 
+type AccrueRpcResult = {
+  ok?: boolean;
+  reason?: string;
+  already_processed?: boolean;
+  already_accrued?: boolean;
+  ledger_id?: string;
+  commission_cents?: number;
+  net_distributable_cents?: number;
+};
+
+async function handleCheckoutSessionCompleted(
+  session: Stripe.Checkout.Session,
+  event: Stripe.Event,
+  supabase: SupabaseAdmin,
+): Promise<"processed" | "ignored"> {
+  const metadata = session.metadata ?? {};
+  const checkoutIdRaw = metadata.checkout_id?.trim() || "";
+  const projectId = metadata.project_id?.trim() || "";
+  const metadataMode = metadata.checkout_mode?.trim() || "";
+
+  // Filtre rapide metadata : hors Odyssey / hors canal famille → ignore
+  if (!projectId && !checkoutIdRaw) {
+    logWebhook({
+      level: "info",
+      context: "checkout_session_missing_odyssey_metadata",
+      event_id: event.id,
+      stripe_session_id: session.id,
+      status_after: "ignored",
+    });
+    return "ignored";
+  }
+
+  if (metadataMode && metadataMode !== "b2b2c_family") {
+    logWebhook({
+      level: "info",
+      context: "checkout_session_not_b2b2c_family_metadata",
+      event_id: event.id,
+      checkout_mode: metadataMode,
+      status_after: "ignored",
+    });
+    return "ignored";
+  }
+
+  // Résoudre tribute_checkouts : checkout_id metadata → sinon stripe_session_id
+  let checkoutQuery = supabase
+    .from("tribute_checkouts")
+    .select(
+      "id, checkout_mode, status, tenant_id, project_id, family_total_cents, commission_status, platform_fee_bps, commission_rate_bps",
+    );
+
+  if (checkoutIdRaw) {
+    checkoutQuery = checkoutQuery.eq("id", checkoutIdRaw);
+  } else {
+    checkoutQuery = checkoutQuery.eq("stripe_session_id", session.id);
+  }
+
+  const { data: checkout, error: checkoutError } = await checkoutQuery.maybeSingle();
+
+  if (checkoutError) {
+    throw new Error(`tribute_checkout_lookup_failed: ${checkoutError.message}`);
+  }
+
+  if (!checkout) {
+    // Saga absente ou session legacy : ignore (pas 500)
+    logWebhook({
+      level: "warn",
+      context: "tribute_checkout_not_found",
+      event_id: event.id,
+      checkout_id: checkoutIdRaw || null,
+      stripe_session_id: session.id,
+      project_id: projectId || null,
+      status_after: "ignored",
+    });
+    return "ignored";
+  }
+
+  if (checkout.checkout_mode !== "b2b2c_family") {
+    return "ignored";
+  }
+
+  const { data: tenant, error: tenantError } = await supabase
+    .from("tenants")
+    .select("id, is_freemium")
+    .eq("id", checkout.tenant_id)
+    .maybeSingle();
+
+  if (tenantError) {
+    throw new Error(`tenant_lookup_failed: ${tenantError.message}`);
+  }
+
+  if (!tenant?.is_freemium) {
+    logWebhook({
+      level: "info",
+      context: "checkout_tenant_not_freemium",
+      event_id: event.id,
+      checkout_id: checkout.id,
+      tenant_id: checkout.tenant_id,
+      status_after: "ignored",
+    });
+    return "ignored";
+  }
+
+  const grossPaymentCents = session.amount_total;
+  if (grossPaymentCents == null || grossPaymentCents <= 0) {
+    // Souvenir 0 $ / session gratuite : pas d'accrual
+    logWebhook({
+      level: "info",
+      context: "checkout_session_zero_gross",
+      event_id: event.id,
+      checkout_id: checkout.id,
+      status_after: "ignored",
+    });
+    return "ignored";
+  }
+
+  const paymentIntentId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : session.payment_intent?.id ?? null;
+
+  // Snapshot session + statut saga (idempotent si déjà completed)
+  const { error: updateCheckoutError } = await supabase
+    .from("tribute_checkouts")
+    .update({
+      stripe_session_id: session.id,
+      stripe_payment_intent_id: paymentIntentId,
+      status: "completed",
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", checkout.id)
+    .in("status", ["pending", "awaiting_payment", "completed"]);
+
+  if (updateCheckoutError) {
+    throw new Error(`tribute_checkout_complete_failed: ${updateCheckoutError.message}`);
+  }
+
+  const resolvedProjectId =
+    (typeof checkout.project_id === "string" && checkout.project_id) ||
+    projectId ||
+    null;
+
+  if (resolvedProjectId) {
+    const { error: updateProjectError } = await supabase
+      .from("projects")
+      .update({ status: "submitted" })
+      .eq("id", resolvedProjectId);
+
+    if (updateProjectError) {
+      throw new Error(`project_submit_failed: ${updateProjectError.message}`);
+    }
+  }
+
+  // Accrual Bulletproof — Gross Volume = amount_total ; idempotence = event.id
+  const { data: rpcData, error: rpcError } = await supabase.rpc(
+    "accrue_partner_commission_for_checkout",
+    {
+      p_checkout_id: checkout.id,
+      p_gross_payment_cents: grossPaymentCents,
+      p_stripe_event_id: event.id,
+      p_stripe_payment_intent_id: paymentIntentId,
+      p_platform_fee_bps: checkout.platform_fee_bps ?? null,
+      p_commission_rate_bps: checkout.commission_rate_bps ?? null,
+    },
+  );
+
+  if (rpcError) {
+    throw new Error(`accrue_partner_commission_failed: ${rpcError.message}`);
+  }
+
+  const result = (rpcData ?? {}) as AccrueRpcResult;
+
+  if (result.ok === true) {
+    logWebhook({
+      level: "info",
+      context: "commission_accrual_ok",
+      event_id: event.id,
+      checkout_id: checkout.id,
+      project_id: resolvedProjectId,
+      gross_payment_cents: grossPaymentCents,
+      commission_cents: result.commission_cents ?? null,
+      net_distributable_cents: result.net_distributable_cents ?? null,
+      already_processed: Boolean(result.already_processed),
+      already_accrued: Boolean(result.already_accrued),
+      ledger_id: result.ledger_id ?? null,
+      status_after: "processed",
+    });
+    return "processed";
+  }
+
+  // Raisons métier RPC → ignore (200), pas retry
+  logWebhook({
+    level: "warn",
+    context: "commission_accrual_skipped",
+    event_id: event.id,
+    checkout_id: checkout.id,
+    reason: result.reason ?? "unknown",
+    status_after: "ignored",
+  });
+  return "ignored";
+}
+
 export async function POST(request: Request) {
   try {
     const stripe = getStripe();
@@ -457,6 +659,13 @@ export async function POST(request: Request) {
       } else if (event.type === "price.created" || event.type === "price.updated") {
         const price = event.data.object as Stripe.Price;
         processingStatus = await syncCatalogRowFromPrice(stripe, price, supabase, event);
+      } else if (event.type === "checkout.session.completed") {
+        const session = event.data.object as Stripe.Checkout.Session;
+        processingStatus = await handleCheckoutSessionCompleted(
+          session,
+          event,
+          supabase,
+        );
       } else {
         processingStatus = "ignored";
       }

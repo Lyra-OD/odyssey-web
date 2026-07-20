@@ -15,6 +15,7 @@ import {
   type ExtensionLineItem,
 } from "@/src/lib/wizard/wizardPricing";
 import { coerceWizardState } from "@/src/lib/wizard/wizardState";
+import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
 const BodySchema = z
   .object({
@@ -295,6 +296,92 @@ export async function POST(request: Request) {
     );
   }
 
+  /** Saga Bulletproof : freemium B2B2C payant uniquement (pas B2C pur). */
+  const isB2B2CFreemiumPaid =
+    hasPartnerInvitation && isFreemiumTenant && totalCents > 0;
+
+  let tributeCheckoutId: string | null = null;
+
+  if (isB2B2CFreemiumPaid) {
+    if (!tenantId || !invitationId) {
+      return NextResponse.json(
+        {
+          error: "missing_b2b2c_context",
+          message: "tenant_id et invitation_id requis.",
+        },
+        { status: 400 },
+      );
+    }
+
+    const { data: invitation, error: invitationError } = await supabase
+      .from("partner_invitations")
+      .select("id, granted_package, tenant_id")
+      .eq("id", invitationId)
+      .maybeSingle();
+
+    if (invitationError || !invitation?.granted_package) {
+      return NextResponse.json(
+        {
+          error: "invitation_lookup_failed",
+          message: invitationError?.message ?? "granted_package manquant",
+        },
+        { status: 400 },
+      );
+    }
+
+    const { data: tenantRow } = await supabase
+      .from("tenants")
+      .select("settings")
+      .eq("id", tenantId)
+      .maybeSingle();
+
+    const settings = (tenantRow?.settings ?? {}) as Record<string, unknown>;
+    const platformFeeBps =
+      typeof settings.platform_fee_bps === "number" &&
+      settings.platform_fee_bps > 0
+        ? settings.platform_fee_bps
+        : 1000;
+    const commissionRateBps =
+      typeof settings.revshare_bps === "number" && settings.revshare_bps > 0
+        ? settings.revshare_bps
+        : 3000;
+
+    const admin = getSupabaseAdminClient();
+    const idempotencyKey = `b2b2c:${projectId}:${cart.basePackage}:${totalCents}`;
+
+    // INSERT avant Stripe — si échec (ex. double-clic idempotency) → stop
+    const { data: tributeCheckout, error: insertError } = await admin
+      .from("tribute_checkouts")
+      .insert({
+        project_id: projectId,
+        tenant_id: tenantId,
+        invitation_id: invitationId,
+        checkout_mode: "b2b2c_family",
+        granted_package: invitation.granted_package,
+        selected_package: cart.basePackage,
+        family_total_cents: totalCents,
+        partner_tokens_debited: 0,
+        status: "pending",
+        platform_fee_bps: platformFeeBps,
+        commission_rate_bps: commissionRateBps,
+        idempotency_key: idempotencyKey,
+      })
+      .select("id")
+      .single();
+
+    if (insertError || !tributeCheckout?.id) {
+      return NextResponse.json(
+        {
+          error: "tribute_checkout_insert_failed",
+          message: insertError?.message ?? "insert_failed",
+        },
+        { status: 400 },
+      );
+    }
+
+    tributeCheckoutId = tributeCheckout.id;
+  }
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -303,9 +390,16 @@ export async function POST(request: Request) {
       cancel_url: `${origin}${studioPath}?checkout=cancel`,
       client_reference_id: projectId,
       metadata: {
+        ...(tributeCheckoutId
+          ? {
+              checkout_id: tributeCheckoutId,
+              checkout_mode: "b2b2c_family",
+            }
+          : {
+              checkout_mode: hasPartnerInvitation ? "b2b2c_family" : "b2c",
+            }),
         project_id: projectId,
         user_id: user.id,
-        checkout_mode: hasPartnerInvitation ? "b2b2c_family" : "b2c",
         invitation_id: invitationId ?? "",
         tenant_id: tenantId ?? "",
         is_freemium: String(isFreemiumTenant),
@@ -324,10 +418,42 @@ export async function POST(request: Request) {
     });
 
     if (!session.url) {
+      if (tributeCheckoutId) {
+        await getSupabaseAdminClient()
+          .from("tribute_checkouts")
+          .update({
+            status: "failed",
+            failure_reason: "checkout_session_missing_url",
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", tributeCheckoutId);
+      }
       return NextResponse.json(
         { error: "checkout_session_missing_url" },
         { status: 500 },
       );
+    }
+
+    if (tributeCheckoutId) {
+      const { error: updateCheckoutError } = await getSupabaseAdminClient()
+        .from("tribute_checkouts")
+        .update({
+          stripe_session_id: session.id,
+          status: "awaiting_payment",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", tributeCheckoutId);
+
+      if (updateCheckoutError) {
+        return NextResponse.json(
+          {
+            error: "tribute_checkout_update_failed",
+            message: updateCheckoutError.message,
+            sessionId: session.id,
+          },
+          { status: 500 },
+        );
+      }
     }
 
     return NextResponse.json({
@@ -335,9 +461,23 @@ export async function POST(request: Request) {
       mode: "stripe",
       url: session.url,
       sessionId: session.id,
+      checkoutId: tributeCheckoutId,
       totalCents,
     });
   } catch (error) {
+    if (tributeCheckoutId) {
+      await getSupabaseAdminClient()
+        .from("tribute_checkouts")
+        .update({
+          status: "failed",
+          failure_reason:
+            error instanceof Error
+              ? error.message.slice(0, 500)
+              : "stripe_error",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", tributeCheckoutId);
+    }
     return NextResponse.json(
       {
         error: "checkout_session_failed",
