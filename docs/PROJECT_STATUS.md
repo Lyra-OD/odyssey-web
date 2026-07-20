@@ -1,11 +1,11 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: July 2026 · P6 SQL applied, storyboard S5 partiel (Livre Ouvert PR-1/2/3), S5-J/K/L + S7–S10 next**
+**Last revised: 20 juillet 2026 · Freemium V1 Phases 0–4 ✅ · next = Phase 5 Creatomate + rails UX mobile / S5-J**
 
-Living snapshot: **audit**, **recommended consolidations**, and **next sprint plan**.  
-For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) and the specialized docs listed in [`CONVENTIONS.md`](CONVENTIONS.md).
+Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
+Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).
 
-**Update this file** after major milestones (P6 commerce, Scanner MVP, etc.) or at monthly team checkpoints.
+**Update this file** after chaque phase Freemium / milestone UX (mobile, S5-J) ou checkpoint mensuel.
 
 ---
 
@@ -13,16 +13,20 @@ For stable onboarding and architecture deep dives, see [`TECHNICAL_ONBOARDING_V1
 
 | Dimension | Status | Notes |
 |-----------|--------|-------|
-| **Family Studio (B2C wizard)** | 🟢 Mature | 8 steps, autosave, media, music (Étape 4), **Livre Ouvert montage** (Étape 5 — DnD + Composition Magique), Stripe checkout |
-| **Partner Salon (UI + QA P5.5)** | 🟢 **Terminée** | RBAC, wallet API, gate R6, solde bout en bout — QA prod validée ([`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)) |
-| **B2B2C commerce v2 (doc)** | 🟢 Spec ready | Freemium + **Bulletproof** (10 % platform · 30 % Net Distribuable) + Scanner — [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
-| **B2B2C commerce (app layer)** | 🟡 Partial | P4/P5.5 legacy jetons ✅ ; **P6 SQL ✅** ; freemium partner UI ✅ ; storyboard S1–S4/S6/S6bis/Clean Slate ✅ ; **S5 partiel (PR-1/2/3)** ✅ ; saga / webhook in progress |
-| **RBAC & tokens (P5.5)** | 🟢 Shipped & QA | SQL + TS + UI ; coexistence avec freemium (`is_freemium`) documentée |
-| **Automated tests & CI** | 🔴 None | No test framework, no `.github/` workflows |
-| **Documentation** | 🟢 Strong | Alignée post–PR-3 Étape 5 (juillet 2026) — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
-| **Security** | 🟡 Adequate with gaps | RLS solid; salon layout gate ✅; checkout saga still open |
+| **Family Studio (wizard)** | 🟢 Mature | 8 étapes, autosave, Stingray, **Livre Ouvert + Composition Magique**, Soft Cap UX, checkout Soft Cap |
+| **Partner Salon** | 🟢 Prod | RBAC, invitations, gate R6 — QA P5.5 historique ✅ ; solde = **commissions** (jetons purgés P8) |
+| **Freemium V1 commerce** | 🟢 Phases 0–4 | Canon + manifeste TS + SQL **P8 appliqué** + checkout Soft Cap + webhook entitlements + Soft Cap UI — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) |
+| **RevShare Bulletproof** | 🟡 Partiel | Spec + SQL P6/P8 ✅ · accrual webhook à durcir / UI Salon commissions ⏳ |
+| **Export vidéo (Creatomate)** | 🔴 Next | Phase 5 — gate `project_paid_entitlements` (forfait **ou** `musicLicense`) |
+| **UX mobile / ergonomie** | 🟡 Plan vivant | Canon [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 · **pas annulé** par Freemium |
+| **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-J/K/L** ⏳ (audio, focus, copy) |
+| **Scanner Compagnon** | 🟡 | Spec + stubs P6 ✅ · MVP app ⏳ (rail M2) |
+| **Docs hub** | 🟢 | README + [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · anciennes docs filles encore en drift |
+| **Tests & CI** | 🔴 | Aucun framework / `.github/` workflows |
+| **Security** | 🟡 | RLS + gate Salon ✅ · never-trust entitlements côté export à finaliser Phase 5 |
 
-**Overall: 8.3/10** — B2C wizard + Salon partenaire **certifiés en prod** (P5.5 ✅) ; **P6 SQL est appliqué** ; **Étape 5 Livre Ouvert** interactive (DnD + Composition Magique) ; prochains chantiers = **S5-J/K/L** (dimensions sensorielles), bugs UX résiduels, **S7–S10**, saga checkout v2, webhook RevShare, Scanner.
+**Overall ~8.6/10 commerce wizard** — Soft Cap livré ; **prochain levier cash = Phase 5 Creatomate**.  
+**Rails parallèles (toujours au plan) :** mobile M0–M6 · S5-J/K/L · S7–S10 storyboard · Scanner · Phase 6 QA Soft Cap.
 
 ---
 
@@ -288,90 +292,87 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 |-----|-----|
 | `B2B2C_COMMERCE.md` | ✅ **v2 Bulletproof** (waterfall 10 % + 30 % Net Distribuable, saga v2) |
 | `SANCTUARY_STRATEGY.md` | ✅ Positionnement Sanctuaire · catalogue monétisation V1 |
-| `FREEMIUM_V1_PIVOT.md` | ✅ Pivot CEO · **Phase 0 docs ✅** · code Phases 1–6 ⏳ |
-| `DELIVERABLES_AND_PACKAGES.md` | ✅ Réécrit Freemium V1 (4K, add-ons, Soft Cap) |
+| `FREEMIUM_V1_PIVOT.md` | ✅ Canon · Phases **0–4 ✅** · Phase 5–6 remaining · onboarding V1 |
+| `TECHNICAL_ONBOARDING_V1.md` | ✅ Hub Freemium V1 (remplace hub pré-purge archivé) |
 | `NARRATIVE_SOFT_CAP.md` / `MUSIC_RIGHTS_ATTESTATION.md` | ✅ Spec Soft Cap + attestation MP3 |
-| `PARTNER_REVSHARE.md` | ✅ Bulletproof · pseudo-SQL · QA liée |
-| `QA_P6_COMMISSION_WATERFALL.md` | ✅ 5 scénarios QA chiffrés |
-| `DELIVERABLES_AND_PACKAGES.md` | ✅ v2 + pacing temporel / buckets par chanson documentés |
-| `STORYBOARD_REFACTOR.md` | ✅ S5 partiel documenté · S5-J/K/L ⏳ |
-| `STORYBOARD_STEP5_LIVRE_OUVERT.md` | ✅ **Canon Étape 5** — Livre Ouvert + Composition Magique |
-| `QA_S5_MONTAGE_STEP.md` | ✅ Checklist régression Étape 5 |
-| `MOBILE_WIZARD_STRATEGY.md` | ✅ Stratégie mobile wizard (M0–M0.5–M6, micro-animations, Scanner P1) |
-| `DESIGN_SYSTEM.md` | ✅ §4.2 Composition Magique (capsule + scrim) |
-| `SCANNER_COMPANION.md` | ✅ spec à jour (caps + P6 stub) · code ⏳ |
-| `TECHNICAL_ONBOARDING` §4.7 / §5 / §10 | ✅ v2 (freemium, Légendaire, Scanner, P6) |
-| `sql/README.md` | ✅ P6 + **P7** (garde-fou quota médias) migration rows + sections détaillées |
-| `QA_P5_5_PARTNER_SALON.md` | ✅ **Terminée prod** — bannière + legacy vs freemium |
-| `ROUTES_AND_AUTH.md` | ✅ routes Scanner prévues |
-| `STINGRAY_MUSIC_INTEGRATION.md` | ✅ freemium 0 jeton Studio |
+| `MOBILE_WIZARD_STRATEGY.md` | ✅ Plan M0–M6 vivant (rail UX parallèle) |
+| `DELIVERABLES_AND_PACKAGES.md` | ✅ Grille V1 · matrice phases à jour |
+| `PARTNER_REVSHARE.md` | ✅ Bulletproof · jetons DEPRECATED |
+| `B2B2C_COMMERCE.md` | 🟡 Drift jetons / états ⏳ — croiser FREEMIUM |
+| `WIZARD_ARCHITECTURE.md` / `STINGRAY` / `sql/README` | 🟡 Drift possible — croiser FREEMIUM + onboarding V1 |
+| `STORYBOARD_STEP5_LIVRE_OUVERT.md` | ✅ Canon Étape 5 |
+| `QA_P5_5_PARTNER_SALON.md` | 📦 Archive historique jetons — ne plus exécuter |
 
 ---
 
-## 10. Next sprint — B2B2C v2 (post QA P5.5)
+## 10. Next sprint — Freemium V1 Phase 5 + rails UX
 
-**Prerequisite ✅:** QA P5.5 terminée prod · doc v2 canonique rédigée · **P6 SQL appliqué**.
+**Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 
-**Spike checkout v1 : annulé** → pivot Freemium + RevShare + Scanner.
+**Jetons partenaire = purgés (P8).** Ne plus planifier débit wallet / wholesale 40 $ / coexistence `is_freemium=false`.
 
-### Current execution snapshot (July 2026)
+### Freemium V1 — snapshot exécution (juillet 2026)
 
-- **Phase 0 — done:** propagation `is_freemium` côté partenaire ; Souvenir freemium = **« Gratuit / 0 jeton »**
-- **S1 — done:** `wizardState.ts` introduit `storyboard` V2 + migration douce legacy -> storyboard
-- **S2 — done:** `/api/projects/[id]/autosave` valide et persiste désormais le snapshot canonique `storyboard`
-- **S3 — done:** quota `maxMediaItems` package-aware — UI (`TributeWizard.tsx`) + garde-fou serveur infalsifiable (trigger Postgres `enforce_media_asset_quota()`, `docs/sql/odyssey_p7_media_quota_guard.sql`)
-- **S4 — done:** moteur de pacing temporel (`storyboardPacing.ts`) — marges intro/outro, coût vidéo fixe, `mood` préparé
-- **S6 — done (devient l'Étape 4, inversion validée) :** `StoryboardChaptersStep.tsx` — chapitres dynamiques, doublons, validation structurelle bloquante
-- **S6bis — done :** refonte en-tête global — « Le Dossier » (`PackageDossierPanel`) + `WizardPhaseProgress` (3 phases) + ancrage `heritage` par défaut
-- **Clean Slate — done (juillet 2026) :** neutralisation Étape 5 (`SoundSignatureStep` supprimé) ; extraction `useWizardStoryboard` ; triage `montage/*` ; fix dev EMFILE (`ulimit -n 65536`)
-- **S5 PR-1/2/3 — done (juillet 2026) :** Livre Ouvert interactif — layout, DnD, actions, Composition Magique (`fdeb7da`, `cc5f668`, `41235e8`) — voir [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)
-- **Known accepted transition debt:** Preview/Checkout (`S8`/`S9`) utilisent encore le pont legacy `actTracks` / `montage` ; `actTracks` conservé en lecture seule dans `TributeWizard.tsx` jusqu'à migration preview
+| Phase | Contenu | Statut |
+|-------|---------|--------|
+| 0 | Docs filles + canon | ✅ |
+| 1 | Manifeste TS (`musicLicense`, granted/intended, Héritage 4K) | ✅ |
+| 2 | SQL P8 (purge jetons, Soft Cap quota, entitlements) — **appliqué Supabase** | ✅ |
+| 3 | Checkout Soft Cap + webhook `project_paid_entitlements` + `freemium_free` | ✅ |
+| 4 | Soft Cap UX (filet 50, post-Composition Magique, musique dual, stay 0 $) | ✅ |
+| **5** | **Creatomate** gate entitlements · NFC · Voix · Livre · import MP3+ToS | ⏳ **NEXT** |
+| 6 | QA Soft Cap dual · pas de double facturation · RevShare sur 39 $ | ⏳ |
 
-| # | Task | Effort | Done when |
-|---|------|--------|-----------|
-| S1 | Nouveau data model `storyboard` + bridge legacy runtime | ✅ | `wizard_state.storyboard` canonical + rehydration legacy |
-| S2 | Autosave V2 : Zod `storyboard`, write path canonique | ✅ | PATCH persists `storyboard` snapshot |
-| S3 | Quotas upload package-aware (`maxMediaItems`) | ✅ | Upload step blocks / warns by package limits + DB trigger guard |
-| S4 | Moteur pacing temporel (`durationSec` / `targetSecondsPerMedia`) | ✅ | Pure helpers compute chapter capacity and overload |
-| S6 | UI musique dynamique par chapitre (devient l'Étape 4) | ✅ | Step 4 no longer hard-coded to `acte1–3` |
-| S6bis | Refonte en-tête global (Dossier de forfait + stepper 3 phases) | ✅ | Package selector + progress global, out of Step 4 |
-| Clean Slate | Neutralisation Étape 5 + hook storyboard + triage montage/* | ✅ | No silent-ignore UI ; `useWizardStoryboard` extracted |
-| S5-A/B/C | Livre Ouvert layout + FilmMap + banque (read-only) | ✅ | `fdeb7da` |
-| S5-D/E/F | DnD + multi-select + actions chapitre | ✅ | `cc5f668` |
-| S5-G/H/I | Onboarding + Composition Magique | ✅ | `41235e8` |
-| S5-J/K/L | Dimensions sensorielles + copy + cleanup orphelins | ⏳ | Audio, focus, polish — voir Step 5 doc §10 |
-| S7 | Validation wizard orientée storyboard | 🟡 partiel | Chansons ✅ (Étape 4) ; pacing UI Étape 5 ⏳ |
-| S8 | Preview / teaser alignés sur storyboard | 0.5–1 d | Preview reads chapters instead of acts |
-| S9 | Checkout / metadata alignés sur `storyboard` | 0.5–1 d | `storyboard` transported to checkout safely |
-| S10 | Nettoyage final legacy | 0.5 d | Retirer pont `actTracks` / `montageHelpers` après S8/S9 |
+### Priorité A — Phase 5 (commerce / export)
 
-**Sprint exit criteria:** one freemium tenant (ex. Urgel Bourgie) can invite → family completes Souvenir 0 $ OR pays upsell → waterfall accrual on webhook (ex. Héritage → commission **4 023¢** sur Net Distribuable **13 410¢**).
+| # | Task | Done when |
+|---|------|-----------|
+| 5.1 | Creatomate : master Stingray / 4K seulement si entitlements payés (forfait ≥ Héritage **ou** `musicLicense`) | Worker refuse bypass client |
+| 5.2 | Import MP3/WAV + ToS (`MUSIC_RIGHTS_ATTESTATION`) dès `intended >= signature` | UI + attestation |
+| 5.3 | Fulfillment add-ons : `sanctuaryToken` NFC · `storyVoice` · `memoryBook` | Spec → pipeline |
+| 5.4 | Salon UI commissions (soldes `partner_commission_*`) | Admin voit ledger, plus « wallet jetons » |
 
-### Completed — P5.5 + doc v2 (juin 2026)
+**Exit critère commerce :** tenant freemium invite → famille Soft Cap → paie Héritage **ou** Licence 39 $ **ou** reste 0 $ (amputation) → entitlements corrects → rendu gated.
 
-| # | Task | Status |
+### Priorité B — rails UX (toujours au plan, parallèles)
+
+Ces chantiers **n’ont pas été annulés** par Freemium. Les enchaîner en parallèle ou juste après 5.1 selon capacité.
+
+| Rail | Doc | Focus |
+|------|-----|--------|
+| **Mobile M0→M6** | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) | Capture téléphone · shell Étape 5 · tap-to-assign · Scanner M2 · tests M6 |
+| **S5-J/K/L** | [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) §10 | Audio montage, focus organique, copy narrative |
+| **S7–S10** | [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) | Pacing UI · Preview/Checkout storyboard · purge `actTracks` / `montage` |
+| **Scanner** | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) | MVP QR → upload mobile (Phase A) |
+
+### Backlog storyboard déjà livré (réf. historique)
+
+| # | Task | Statut |
 |---|------|--------|
-| 1.1–1.5 | P5.5 RBAC, wallet API, salon gate | ✅ |
-| 1.6 | QA P5.5 checklist prod | ✅ **Terminée** |
-| Doc | B2B2C v2, RevShare, Scanner, Deliverables | ✅ |
+| S1–S4, S6, S6bis, Clean Slate | storyboard V2, quotas, pacing, chapitres, Dossier | ✅ |
+| S5-A…I | Livre Ouvert + DnD + Composition Magique | ✅ |
+| Soft Cap Phase 4 | Médias + magie + musique dual | ✅ |
+| S5-J/K/L | Dimensions sensorielles | ⏳ |
+| S7 | Validation storyboard (chansons ✅ · pacing UI ⏳) | 🟡 |
+| S8–S10 | Preview/Checkout storyboard · purge legacy | ⏳ |
 
-### Explicitly deferred (after v2 Phase A)
+**Dette acceptée :** Preview/Checkout lisent encore le pont legacy `actTracks` / `montage` jusqu’à S8/S9.
+
+### Explicitement différé
 
 - Stripe Connect auto-payout
 - Scanner Phase B (crop papier + Avant/Après IA)
-- Légendaire Gants Blancs fulfillment ops (boîte physique)
-- Full test suite + GitHub Actions
-- Video render pipeline
-- Storage legacy backfill — voir §4.1
+- Légendaire Gants Blancs ops (boîte physique)
+- Suite de tests + GitHub Actions
+- Verticales pets UI forked
 
-### Immediate next steps (post PR-3)
+### Ordre recommandé (prochaines sessions)
 
-1. **Stratégie mobile** — exécuter plan [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) (M0 → M3 + M0.5 micro → Scanner M2)
-2. **Bugs UX résiduels** — correctifs liste utilisateur + passage [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
-3. **Tests utilisateurs M6** — valider Étape 5 mobile avant refactor massif (Ferpection)
-4. **S5-J/K/L** — immersion sonore, focus organique, copy narrative (spec §10 Step 5 doc)
-5. **S7–S10** — pacing UI, Preview/Checkout, purge legacy
-6. **Commerce parallèle** — saga checkout v2, webhook RevShare
+1. **Phase 5.1** Creatomate + entitlements (bloquant monétisation master)
+2. En parallèle si bande passante : **M0** mobile quick wins **ou** **S5-J** audio
+3. Phase 5.2–5.4 add-ons / MP3 / Salon commissions
+4. **Phase 6** QA Soft Cap + RevShare 39 $
+5. M3–M4 shell mobile · Scanner M2 · S8–S10
 
 ---
 
@@ -389,27 +390,23 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 
 ## 12. Guide lecture rapide (revue partenaire / Jon)
 
-**Ordre recommandé ce soir :**
+**Ordre recommandé :**
 
-1. **[`PROJECT_STATUS.md`](PROJECT_STATUS.md)** (ce fichier) — où on en est, dette, plan 2 semaines.
-2. **[`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)** — signature visuelle connexion **Halo-Éclipse**.
-3. **[`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md)** — URLs studio/salon, branding `?partenaire=`, checklist QA connexion.
-3b. **[`QA_P5_5_PARTNER_SALON.md`](QA_P5_5_PARTNER_SALON.md)** — ✅ **QA terminée prod** (RBAC, solde, gate R6).
-4. **[`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)** — **v2 Bulletproof** freemium + waterfall + saga checkout.
-4a. **[`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md)** — stratégie émotionnelle Sanctuaire + monétisation V1.
-4b. **[`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md)** · **[`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md)** · **[`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)** — commissions Net Distribuable + QA + Killer App.
-5. **[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md)** — grille Quiet Luxury B2C (149/299/499) + Souvenir lead-magnet B2B2C.
-6. **[`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)** — **Étape 5** Livre Ouvert + Composition Magique (canon).
-6b. **[`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md)** — stratégie mobile wizard (Forbes + Ferpection, Scanner).
-7. **[`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md)** — hub technique Freemium V1 (stack, Soft Cap, chemins code, phases).
+1. **[`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md)** — canon + phases.
+2. **[`PROJECT_STATUS.md`](PROJECT_STATUS.md)** (ce fichier) §1 + §10 — où on en est / next.
+3. **[`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md)** — hub technique.
+4. **[`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md)** · Soft Cap.
+5. **[`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)** · **[`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md)** — UX Étape 5 / mobile.
+6. **[`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md)** · RevShare.
+7. **[`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md)** · **[`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)** — auth / Halo-Éclipse.
 
-**Démo prod / QA :** tenant `partner-qa-demo` (Urgel Bourgie) · compte partenaire QA · base Vercel `odyssey-web-eta.vercel.app`.
+**Démo prod / QA :** tenant `partner-qa-demo` (Urgel Bourgie) · compte partenaire QA · Vercel `odyssey-web-eta.vercel.app`.
 
-**Ce qui est shippé récemment (juin 2026, `main`) :** QA P5.5 ✅ · RBAC · gate `/salon` · wallet API · invitations RPC · doc B2B2C v2 · Halo-Éclipse · co-branding.
+**Shippé récemment (juillet 2026) :** Freemium Phases 0–4 · Soft Cap UI · P8 purge jetons · README + onboarding V1 · Livre Ouvert PR-1/2/3.
 
-**Grand chantier immédiat :** polish UX Étape 5 + **S5-J/K/L** (dimensions sensorielles), puis **S7–S10** du plan [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md), en parallèle saga checkout freemium et webhook RevShare.
+**Grand chantier immédiat :** **Phase 5 Creatomate** (entitlements). Rails parallèles : mobile M0–M6 · S5-J/K/L · Scanner.
 
-**Ce qui n’est pas encore prod-ready :** implémentation P6 · commission UI · Scanner · Légendaire fulfillment · tests automatisés.
+**Pas encore prod-ready :** rendu vidéo · UI commissions Salon complète · Scanner MVP · tests auto · docs filles B2B2C encore en drift jetons.
 
 ---
 
