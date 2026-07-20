@@ -1,29 +1,44 @@
 # Odyssey — Commerce B2B2C v2 (référence architecture)
 
-**Last updated: July 2026 · Version: B2B2C v2 (Scrypta Killer) · Modèle Bulletproof**
+**Last updated: July 2026 · Version: Freemium V1 Pivot · Modèle Bulletproof**
 
-Document canonique pour le modèle **funérarium → famille** (« gant blanc »), les trois modes de checkout, la saga `tribute_checkouts`, le **freemium partenaire**, et la **RevShare 30 %**.
+> **Pivot CEO V1 (juillet 2026) — freemium only.**  
+> Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Livrables : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md).  
+> **Purge jetons** (wallets, débits invitation, wholesale 40 $) = Phase 2 SQL + Phase 3 APIs. Les sections « legacy jetons » ci-dessous sont **DEPRECATED** (référence historique jusqu’à DROP).
+
+Document pour le modèle **funérarium → famille**, checkout, saga `tribute_checkouts`, freemium, **RevShare 30 % Net Distribuable**.
 
 Complète [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md), [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) et [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md).
 
-**Prix catalogue (application)** : `src/lib/wizard/pricingConfig.ts` (cents runtime) · **contrat livrables** : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) (`wizardDeliverables.ts`).  
+**Prix catalogue (cible Phase 1)** : `pricingConfig.ts` · **contrat livrables** : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).  
 **RevShare (détail ledger)** : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).  
 **Stratégie émotionnelle / Sanctuaire** : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md).  
-**Pivot CEO V1 (purge jetons · Soft Cap · grille 4K)** : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) — **prime** jusqu’à réécriture complète de ce fichier.  
+**Pivot CEO V1** : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).  
 **Audit projet** : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 
 ---
 
-## Historique v1 → v2
+## Soft Cap & panier (V1)
 
-| v1 (jetons + delta) | v2 (freemium + RevShare) |
-|---------------------|--------------------------|
-| Partenaire débité en **jetons** à l’invitation / checkout | Tenant **`is_freemium`** : **0 jeton** sur Souvenir offert |
-| Famille paie le **delta** vs forfait offert (ex. +70 $) | Famille paie le **prix plein** du forfait upsell + extensions |
-| Compensation = recrédit jetons | Échec Stripe = **clawback commission** (pas de jetons) |
-| Un seul modèle B2B2C | **Coexistence** : freemium (gros clients) + legacy jetons (petits salons) |
+État : `grantedPackage` (cadeau salon) vs `intendedPackage` (construction famille) vs `extensions.musicLicense`.
 
-Le schéma P4/P5.5 **reste valide** pour les tenants non-freemium et le mode `b2b_partner`.
+| Événement | Panier |
+|-----------|--------|
+| Soft Cap médias (≥50) | `intended = signature` (149 $) |
+| Soft Cap musique officiel (Souvenir) | **Choix** : `musicLicense` 39 $ (reste Souvenir) **ou** `intended = signature` |
+| Checkout | Snapshot immuable `tribute_checkouts` ; strip `musicLicense` si forfait ≥ Héritage |
+| Export 4K / master Stingray | Post-webhook uniquement (`paid_entitlements`) |
+
+---
+
+## Historique v1 → v2 → V1 purge
+
+| v1 (jetons + delta) | v2 freemium | **V1 Pivot (cible)** |
+|---------------------|-------------|----------------------|
+| Débit jetons invitation | `is_freemium` skip Souvenir | **Plus de jetons du tout** |
+| Famille paie delta | Famille paie prix plein | Idem + Soft Cap + `musicLicense` |
+| Recrédit jetons | Clawback commission | Ledger commissions **seul** solde partenaire |
+| Coexistence legacy | `is_freemium` flag | Flag → toujours true / drop (Phase 2) |
 
 ---
 

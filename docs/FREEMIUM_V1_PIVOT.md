@@ -1,15 +1,15 @@
 # Odyssey — Pivot Freemium V1 (canon CEO)
 
-**Dernière révision : juillet 2026 · Statut : vision figée — implémentation code non démarrée**
+**Dernière révision : juillet 2026 · Statut : vision figée · Phase 0 docs ✅ · code Phases 1–6 ⏳**
 
-Document canonique du **pivot produit majeur** : purge totale des jetons, freemium B2B2C + RevShare only, Soft Cap (Expansion Narrative), grille forfaits 4K, musique à deux voies, add-ons Quiet Luxury.
+Document canonique du **pivot produit majeur** : purge totale des jetons, freemium B2B2C + RevShare only, Soft Cap (Expansion Narrative), grille forfaits 4K, musique à deux voies + add-on Licence Stingray, add-ons Quiet Luxury.
 
-**Complète** (et supersède partiellement jusqu’à réécriture) :
-[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md).
+**Docs filles alignées (Phase 0) :**
+[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) · [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md).
 
 **Specs liées :** [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 
-> **Règle de priorité :** en cas de conflit avec une doc plus ancienne (jetons 40 $, Héritage 1080p, `extendedLicense`), **ce fichier prime** jusqu’à alignement des docs filles.
+> SKU musique à la carte : **`musicLicense` (39 $)** — successeur de `extendedLicense` (migration TS Phase 1).
 
 ---
 
@@ -19,6 +19,7 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 2. **Entitlements payés** = snapshot serveur post-webhook Stripe — pas le `wizard_state` navigateur.
 3. **Purge jetons totale** — solde partenaire = uniquement `partner_commission_*`.
 4. **Musique à deux voies** — catalogue Stingray officiel (zéro copyright Odyssey) + soupape MP3/WAV (responsabilité famille via ToS).
+5. **Soft Cap musique Souvenir** — piste officielle **jamais bloquée** ; choix Licence 39 $ **ou** upgrade Héritage 149 $.
 
 ---
 
@@ -27,22 +28,24 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 | Forfait | ID | Prix | Médias | Export | Musique | Inclus |
 |---------|-----|------|--------|--------|---------|--------|
 | **Souvenir** | `essential` | 0 $ | 50 | 1080p | Stingray **standard** (sous-ensemble) | Cadeau salon |
-| **Héritage** | `signature` | 149 $ | 125 | **4K** | **Catalogue Stingray officiel** + soupape MP3/WAV | Chef-d’œuvre numérique |
-| **Éternité** | `heritage` | 299 $ | 175 | 4K | Idem Héritage | + IA complète + Coffre 50 ans |
+| **Héritage** | `signature` | 149 $ | 125 | **4K** | **Catalogue Stingray officiel inclus** + soupape MP3/WAV | Chef-d’œuvre numérique |
+| **Éternité** | `heritage` | 299 $ | 175 | 4K | Idem Héritage (officiel inclus) | + IA complète + Coffre 50 ans |
 
 **Légendaire 499 $** : B2C-only ancre Quiet Luxury (conservé jusqu’à décision contraire).
 
-### Add-ons Quiet Luxury
+### Add-ons Quiet Luxury (grille V1 officielle)
 
 | Add-on | Prix | ID technique | Notes |
 |--------|------|--------------|-------|
 | **Jeton du Sanctuaire** (NFC/QR) | 79 $ | `sanctuaryToken` | Remplace `collectorUsb` — stock global, association dynamique |
-| **Voix de l’Histoire** | 39 $ | `storyVoice` | Narration IA biographie — **remplace** l’ancien SKU `extendedLicense` |
+| **Voix de l’Histoire** | 39 $ | `storyVoice` | Narration IA biographie — **distinct** de la licence musique |
+| **Licence Musique Premium Stingray** | 39 $ | `musicLicense` | Upsell **Souvenir** : débloque catalogue officiel **sans** forcer Héritage. Inclus (gratuit) dès Héritage/Éternité → ne pas facturer si `intended >= signature` |
 | **Livre de Mémoire** | 149 $ | `memoryBook` | PDF → Print-on-Demand (Gelato) |
 | Restauration IA | 49 $ | `aiRetouch` | À la carte si pas Éternité |
 | Coffre-fort 50 ans | 99 $ | `digitalVault` | À la carte si pas Éternité |
 
-**Obsolète V1 :** wholesale jetons 40 $ · `partner_token_*` · upsell musique `extendedLicense`.
+**Obsolète V1 :** wholesale jetons 40 $ · `partner_token_*`.  
+**Migration TS :** `extendedLicense` → `musicLicense` (même rôle catalogue ; ne pas confondre avec `storyVoice`).
 
 ---
 
@@ -53,48 +56,85 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 | Champ | Rôle |
 |-------|------|
 | `grantedPackage` | Cadeau salon (ex. `essential`) — immuable côté client |
-| `intendedPackage` | Forfait construit (Soft Cap) — mutable sans CB |
+| `intendedPackage` | Forfait construit (Soft Cap médias / upgrade Héritage) — mutable sans CB |
+| `extensions.musicLicense` | Add-on panier virtuel — accès catalogue officiel **sans** monter `intended` |
 
-- ≥ 50 médias **ou** sélection piste catalogue officiel → `intendedPackage = signature`.
-- Checkout : payer Héritage/Éternité **ou** amputer (médias + musique) pour rester Souvenir 0 $.
-- Détail : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md).
+### Déclencheurs
+
+| Déclencheur | Comportement |
+|-------------|--------------|
+| ≥ 50 médias | Soft Cap → proposer / poser `intendedPackage = signature` (toile Héritage) |
+| Piste catalogue **officiel** depuis Souvenir | **Ne pas bloquer** la sélection. Soft Cap à **deux options** (voir ci-dessous) |
+
+### Soft Cap musique (Souvenir) — choix dual
+
+La famille a déjà « vécu » la piste. L’UI propose :
+
+1. **Licence Musique Premium Stingray — 39 $**  
+   - Garde `intendedPackage = essential` (Souvenir 0 $ + quotas 50 / 1080p).  
+   - Active `extensions.musicLicense = true` (panier virtuel).  
+   - Débloque catalogue officiel + export licence pour ces pistes.
+
+2. **Upgrader vers Héritage — 149 $**  
+   - `intendedPackage = signature`.  
+   - Débloque musique officielle **incluse** + 4K + 125 médias.  
+   - **Ne pas** ajouter `musicLicense` en line item (déjà inclus dans le forfait).
+
+Détail UX / amputation : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md).
 
 ---
 
 ## 4. Musique (règle canonique)
 
-### Catalogue Officiel (inclus)
+### Catalogue Officiel
 
-Catalogue orchestral / cinématique **Stingray**, licence plateforme — **aucun risque copyright** Odyssey / Athos / salon. Inclus dès Héritage / Éternité. Souvenir = sous-ensemble standard uniquement.
+- Orchestral / cinématique **Stingray**, licence plateforme — **zéro risque copyright** Odyssey / Athos / salon.
+- **Inclus sans frais** dans Héritage et Éternité.
+- Souvenir : sous-ensemble **standard** en entrée ; catalogue officiel accessible via Soft Cap (Licence 39 $ **ou** Héritage).
+
+### Entitlement (contrat code Phase 1)
+
+```text
+resolveMusicEntitlement(intendedPackage, extensions, paidEntitlements):
+  officialCatalog =
+       intendedPackage >= signature
+    OR extensions.musicLicense === true
+    OR paidEntitlements.musicLicense === true
+```
+
+- Preview : autoriser l’écoute Soft Cap même avant paiement (proxy).  
+- Export Creatomate master Stingray : uniquement si **payé** (`paid` package ≥ signature **ou** `paid.musicLicense`).
 
 ### Soupape émotionnelle
 
-Import **MP3 / WAV** personnel (ex. Aznavour). **Masqué sur Souvenir** ; visible dès Héritage (ou après Soft Cap). Creatomate mixe la piste sans licence sync Odyssey.
-
-### Sécurité juridique
-
-Attestation ToS avant upload ; checkout / export bloqués sans attestation. Publication réseaux = responsabilité famille. Détail : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
+Import **MP3 / WAV** : **masqué sur Souvenir** ; visible dès Héritage (ou `intended >= signature`). ToS : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 
 ```mermaid
 flowchart TD
   SongChoice[Choix_musique_chapitre]
-  Catalog[Catalogue_Stingray_officiel]
+  CatalogOfficial[Catalogue_Stingray_officiel]
+  SoftMusic[SoftCap_musique_Souvenir]
+  Lic39[AddOn_musicLicense_39]
+  Up149[Upgrade_Heritage_149]
   Upload[Import_MP3_WAV]
-  SoftCap[intended_signature]
   ToS[Attestation_ToS]
   Preview[Preview_proxy]
   Pay[Webhook_Stripe]
   Render[Creatomate_export]
 
-  SongChoice --> Catalog
+  SongChoice --> CatalogOfficial
   SongChoice --> Upload
-  Catalog -->|"Souvenir_vers_piste_Heritage"| SoftCap
-  Catalog -->|"Heritage_Eternite"| Preview
-  SoftCap --> Upload
+  CatalogOfficial -->|"Souvenir"| SoftMusic
+  SoftMusic --> Lic39
+  SoftMusic --> Up149
+  CatalogOfficial -->|"Heritage_Eternite_inclus"| Preview
+  Lic39 --> Preview
+  Up149 --> Preview
+  Up149 --> Upload
   Upload --> ToS
   ToS --> Preview
   Preview --> Pay
-  Pay -->|"Stingray_master_OU_asset_perso"| Render
+  Pay -->|"Stingray_master_si_entitled_OU_asset_perso"| Render
 ```
 
 ---
@@ -103,61 +143,73 @@ flowchart TD
 
 | Risque | Mitigation |
 |--------|------------|
-| Bypass 4K / render client | Worker lit `paid_entitlements` webhook-only ; jamais Creatomate depuis le front |
-| Spam preview / IA | Proxy basse rés, caps regen, IA full post-paiement |
-| Stripe abandon / double session | Snapshot immuable `tribute_checkouts` ; nouvelle Session si `intended` change |
-| NFC double-claim | RPC atomique + secret haute entropie + post-paiement |
+| Bypass 4K / render client | Worker lit `paid_entitlements` webhook-only |
+| Master Stingray sans payer Licence ni Héritage | Worker : `officialCatalog` **payé** requis ; preview ≠ master |
+| `musicLicense` forgé dans wizard_state | Checkout recalcule ; entitlements = webhook only |
+| Double facturation Licence + Héritage | Si `intended >= signature`, strip `musicLicense` du cart |
+| Spam preview / IA | Proxy basse rés, caps regen |
+| NFC double-claim | RPC atomique + secret + post-paiement |
 | Upload sans ToS | Gate serveur checkout + worker |
-| Fuite master Stingray | Preview stream seulement ; master URI serveur post-pay |
 
 ---
 
 ## 6. Purge jetons → Ledger commissions
 
-**Validé.** Remplacer wallets / débits invitation / UI 40 $ par `partner_commission_balances` + accruals webhook Bulletproof (10 % platform → 30 % Net Distribuable).
-
-Gap actuel à fermer : UI « 0 jeton » mais RPC `create_partner_invitation_with_debit` débite encore.
+**Validé.** Ledger `partner_commission_*` seul. Commissionnable : forfaits upsell **et** add-ons (dont `musicLicense` 39 $) via waterfall Bulletproof.
 
 ---
 
 ## 7. Plan d’exécution chirurgical
 
-### Phase 0 — Docs filles (alignement)
+### Phase 0 — Docs filles (alignement) — ✅ FAIT
 
-Réécrire DELIVERABLES, B2B2C, PARTNER_REVSHARE, WIZARD_ARCHITECTURE, STINGRAY ; cross-liens PROJECT_STATUS / README.
+1. ✅ DELIVERABLES réécrit (grille 4K, add-ons, Soft Cap, `musicLicense`).
+2. ✅ B2B2C / PARTNER_REVSHARE : freemium only + Soft Cap ; jetons DEPRECATED.
+3. ✅ WIZARD_ARCHITECTURE : cible `granted` / `intended` / Soft Cap.
+4. ✅ STINGRAY : catalogue officiel + Soft Cap dual + entitlement.
+5. ✅ `SANCTUARY_TOKEN_NFC.md` + sql/README banner purge Phase 2.
 
 ### Phase 1 — Manifeste TS
 
-`wizardDeliverables` / `pricingConfig` / `wizardState` (`granted`+`intended`+attestation) / cart ; purger `tokens` / `extendedLicense`.
+6. `pricingConfig.ts` : SKU **`musicLicense`** 3900¢ **à côté de** `storyVoice` 3900¢ ; migrer / alias depuis `extendedLicense`.
+7. `wizardDeliverables.ts` : musique officielle incluse `signature`+ ; Souvenir = standard + soft path.
+8. `wizardState.ts` : `grantedPackage` + `intendedPackage` + attestation ; `extensions.musicLicense`.
+9. Helpers : `resolveMusicEntitlement(intended, extensions)` ; `canUploadPersonalAudio(intended)` ; cart strip Licence si forfait ≥ Héritage.
+10. Purger `tokens` / `PARTNER_TOKEN_*` (pas la licence musique).
 
 ### Phase 2 — SQL
 
-RPC invitation sans débit · quotas sur `intended` · `project_paid_entitlements` · `sanctuary_tokens` · **DROP** `partner_token_*`.
+11. RPC invitation sans débit · quotas `intended` · `project_paid_entitlements` (flags `music_license`, package) · `sanctuary_tokens` · DROP jetons.
 
 ### Phase 3 — APIs
 
-Checkout sans jetons · webhook → entitlements → accrue → enqueue export · Salon = commissions.
+12. Checkout : snapshot `intended` + `musicLicense` ; refuse master unpaid ; strip double charge.
+13. Webhook : entitlements (package et/ou licence) → accrue → enqueue export.
+14. Salon commissions · purge wallet.
 
 ### Phase 4 — Soft Cap UX + musique
 
-Soft Cap médias/Stingray · import MP3 + ToS · amputation étape 8.
+15. Soft Cap médias → Héritage.
+16. Soft Cap musique Souvenir → **modale 2 choix** (Licence 39 $ | Héritage 149 $) ; piste non bloquée.
+17. Import MP3 + ToS (Héritage+).
+18. Étape 8 : synthèse ; amputation (médias et/ou retrait pistes officielles / clear `musicLicense`) pour 0 $.
 
 ### Phase 5 — Export & add-ons
 
-Creatomate post-webhook (audio dual-path) · NFC · Voix · Livre.
+19. Creatomate : gate entitlements musique (package **ou** `musicLicense` payé) · NFC · Voix · Livre.
 
 ### Phase 6 — QA & cutover
 
-Bypass, COGS, ToS, RevShare, DROP jetons staging→prod.
+20. QA : Soft Cap dual musique ; pas de double facturation ; bypass master ; RevShare sur 39 $ ; DROP jetons.
 
-**Ordre d’or :** Docs filles → Manifeste TS → SQL → Purge APIs → Soft Cap UI → Worker → Add-ons.
+**Ordre d’or :** Docs filles → Manifeste TS (`musicLicense` + `storyVoice`) → SQL → Purge APIs jetons → Soft Cap UI → Worker → Add-ons.
 
 ---
 
 ## 8. Maintenance
 
-Mettre à jour ce fichier quand la grille, les SKUs, la règle musique ou l’ordre de purge changent. Les docs filles doivent ensuite être alignées (Phase 0).
+Mettre à jour ce fichier quand la grille, les SKUs (`musicLicense` / `storyVoice`), la règle Soft Cap musique ou l’ordre de purge changent.
 
 ---
 
-*Vision CEO figée — juillet 2026. Implémentation code = phases 1–6 après alignement docs filles.*
+*Vision CEO figée — juillet 2026 (rév. Licence Stingray 39 $). Implémentation = phases 1–6 après Phase 0.*

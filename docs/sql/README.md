@@ -1,8 +1,11 @@
 # SQL Odyssey — état courant
 
-> **P6 appliqué :** l'ID technique `legendary` (forfait Légendaire / Gants Blancs, B2C 499 $) est maintenant pris en charge par `odyssey_p6_freemium_revshare.sql`, avec `is_freemium`, commission ledger et stubs Phase 2.
+> **Freemium V1 Pivot :** canon [`FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md).  
+> **Phase 2 (à venir) :** RPC invitation **sans** débit · quotas sur `intendedPackage` · `project_paid_entitlements` · `sanctuary_tokens` · **DROP** `partner_token_*`.  
+> Scripts P4 / P5.5 jetons restent dans la chaîne historique jusqu’à migration de purge.
 >
-> **P7 (Storyboard refactor S3) :** `odyssey_p7_media_quota_guard.sql` ajoute un trigger `BEFORE INSERT` sur `media_assets` qui fait respecter `packageMaxMediaItems(basePackage)` au niveau base de données — garde-fou nécessaire car l'upload écrit directement depuis le navigateur (pas de route API intermédiaire).
+> **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
+> **P7 :** trigger `enforce_media_asset_quota()` sur `basePackage` — à faire évoluer vers `intendedPackage` (Phase 2).
 
 Ce dossier contient tous les scripts SQL qui décrivent la **vérité actuelle** de la base Supabase d'Odyssey. Tous les scripts de migration sont **idempotents** : on peut les ré-exécuter sans dégât.
 

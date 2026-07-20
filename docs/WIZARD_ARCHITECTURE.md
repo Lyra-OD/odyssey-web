@@ -1,8 +1,11 @@
 # Tribute Wizard — Architecture
 
-**Last code review: July 2026 · B2B2C v2 + Storyboard S5 partiel (Livre Ouvert PR-1/2/3) · S5-J/K/L next**
+**Last code review: July 2026 · Freemium V1 Pivot (docs) · Storyboard S5 partiel · Soft Cap code ⏳ Phase 4**
 
-This document describes the 8-step tribute wizard: navigation, state, autosave, **song-based storyboard foundations**, pricing v2 (freemium B2B2C vs Quiet Luxury B2C), and checkout. Parent overview: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7.
+> **Canon V1 :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · Soft Cap [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md).  
+> **État cible :** `grantedPackage` + `intendedPackage` + `extensions.musicLicense` (auj. `basePackage` + `extendedLicense` jusqu’à Phase 1).
+
+This document describes the 8-step tribute wizard: navigation, state, autosave, **song-based storyboard**, pricing Freemium V1, and checkout. Parent overview: [`TECHNICAL_ONBOARDING_ODYSSEY.md`](TECHNICAL_ONBOARDING_ODYSSEY.md) §4.7.
 
 ---
 
@@ -55,27 +58,33 @@ The tribute wizard is **no longer a static 8-step product definition** in docume
 
 **Canonical product doc:** [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) — marketing names Souvenir / Héritage / Éternité / Légendaire ↔ technical IDs `essential` / `signature` / `heritage` / `legendary` (P6).
 
-### Pricing v2 — dédoublement canal (doc canon · code ⏳)
+### Pricing Freemium V1 — canaux (doc canon · code Phase 1 ⏳)
 
 | Canal | Forfaits visibles | Règle |
 |-------|-------------------|-------|
-| **B2B2C freemium** (invitation partenaire) | **Souvenir** (0 $ offert) + upsell **Héritage 149 $** · **Éternité 299 $** | Lead-magnet · pas de Légendaire |
-| **B2C direct** (Quiet Luxury) | **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $** (Gants Blancs) | Pas de Souvenir · effet de leurre |
-| **B2B legacy jetons** (`is_freemium = false`) | Souvenir / Héritage / Éternité en **jetons** | Coexistence P5.5 |
+| **B2B2C freemium** | **Souvenir** 0 $ + Soft Cap / upsell **Héritage 149 $** · **Éternité 299 $** + add-ons (`musicLicense`, etc.) | Lead-magnet · pas de Légendaire · **pas de jetons** |
+| **B2C direct** | **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $** | Pas de Souvenir |
+| ~~B2B legacy jetons~~ | — | **DEPRECATED** — purge Phase 2–3 |
 
-Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2.
+Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
+
+### Soft Cap (cible UX Phase 4)
+
+| Trigger | State |
+|---------|--------|
+| ≥ 50 médias | `intendedPackage = signature` |
+| Piste Stingray **officielle** (Souvenir) | Modale : `musicLicense` 39 $ **ou** upgrade Héritage — piste **non bloquée** |
+
+`resolveMusicEntitlement(intended, extensions)` → catalogue officiel si `intended >= signature` **OU** `musicLicense`.
 
 ### Dynamic UI (S1–S4 + S6 + S5 partiel + Clean Slate)
 
 | Rule (manifest) | Wizard behaviour |
 |---------------|------------------|
-| `storyboard.chapters[].song.source === 'stingray'` | **Step 4 (live)** — sélection Stingray par chapitre, chapitres dynamiques (`StoryboardChaptersStep`) ✅ |
-| `storyboard.chapters[].song.source === 'upload'` | MP3 personnel par chapitre + gatekeeper juridique (**not implemented**) |
-| `social.enabled === true` | Additional Social step — Safe Music only, 9:16 preview (**not implemented**) |
-| `social.enabled === false` | Hide Social step (e.g. **Souvenir** / `SOUVENIR`) |
-| `limits.maxMediaItems` | Gate upload volume by package ✅ (**S3**) |
-| `limits.maxSongs` + `pacing.targetSecondsPerMedia` | Validate chapter capacity from real song duration ✅ (**S4**), incl. marges intro/outro et coût vidéo fixe |
-| `resolveTransactionMode()` | `StickyPriceBar` / Dossier: **tokens** (partner) vs **dollars** (family) |
+| `storyboard.chapters[].song.source === 'stingray'` | **Step 4 (live)** — Stingray par chapitre ✅ |
+| `storyboard.chapters[].song.source === 'upload'` | MP3 personnel + ToS — [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) (**Phase 4**) |
+| `limits.maxMediaItems` | Gate upload — Soft Cap V1 remplace hard-block à 50 ✅/⏳ |
+| `resolveTransactionMode()` | Famille : **dollars** ; Salon : commissions (plus **tokens**) |
 
 **Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is now `storyboard`; Step 4 reads/writes `storyboard.chapters[].song` via `useWizardStoryboard`. **Step 5** is the live **Livre Ouvert** montage UI (`StoryboardMontageStep`) — DnD, actions chapitre, onboarding gate, and **Composition Magique** (see [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)). `SoundSignatureStep` was removed during Clean Slate. Steps 7–8 still use a temporary legacy bridge (`actTracks`) for Preview/Checkout until `S8`/`S9`.
 

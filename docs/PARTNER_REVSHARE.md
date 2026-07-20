@@ -1,10 +1,12 @@
 # Odyssey — RevShare partenaire (Partner Commission)
 
-**Last updated: July 2026 · Version: B2B2C v2 · Modèle Bulletproof**
+**Last updated: July 2026 · Version: Freemium V1 · Modèle Bulletproof**
 
-Document canonique pour la **commission partenaire 30 % du Net Distribuable** sur les paiements famille (canal freemium), le ledger `partner_commission_*`, l’idempotence webhook Stripe, le clawback, et le **payout manuel mensuel**.
+> **V1 Pivot :** le ledger `partner_commission_*` est le **seul** solde partenaire. Wallets jetons = **DEPRECATED** (DROP Phase 2). Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
 
-Complète [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · schéma P6 : [`sql/odyssey_p6_freemium_revshare.sql`](sql/odyssey_p6_freemium_revshare.sql) · migration cible P6.1 : [`sql/odyssey_p6_1_bulletproof_waterfall.sql`](sql/odyssey_p6_1_bulletproof_waterfall.sql) *(à créer)*.
+Document canonique pour la **commission partenaire 30 % du Net Distribuable** sur les paiements famille, le ledger, l’idempotence webhook Stripe, le clawback, et le **payout manuel mensuel**.
+
+Complète [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · schéma P6 : [`sql/odyssey_p6_freemium_revshare.sql`](sql/odyssey_p6_freemium_revshare.sql) · P6.1 : [`sql/odyssey_p6_1_bulletproof_waterfall.sql`](sql/odyssey_p6_1_bulletproof_waterfall.sql).
 
 ---
 
@@ -12,34 +14,34 @@ Complète [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · schéma P6 : [`sql/odyssey
 
 | Contexte | RevShare |
 |----------|----------|
-| **B2B2C freemium** (`tenants.is_freemium = true`) · famille paie via Stripe | **Oui** — 30 % du **Net Distribuable** |
+| **B2B2C freemium** · famille paie via Stripe (forfait **et/ou** add-ons dont `musicLicense`) | **Oui** — 30 % du **Net Distribuable** |
 | **B2C direct** (sans invitation partenaire) | **Non** |
-| **B2B2C legacy jetons** (`is_freemium = false`) | **Non** (v1) |
-| **B2B partner** (débit jetons funérarium) | **Non** |
+| ~~B2B2C legacy jetons~~ | **Non** — modèle purged V1 |
+| ~~B2B partner débit jetons~~ | **Non** — modèle purged V1 |
 
 **Modèle Bulletproof (figé juillet 2026) :**
 
-1. **Gross Volume** = `checkout.session.amount_total` (forfait + extensions)
-2. **Platform Fee** = 10 % du brut (`platform_fee_bps = 1000`) — frais plateforme Odyssey (Stripe, infra, IA)
-3. **Net Distribuable** = Gross − Platform Fee — **assiette RevShare**
+1. **Gross Volume** = `checkout.session.amount_total` (forfait + extensions, ex. Héritage 149 $ **ou** Souvenir 0 $ + `musicLicense` 39 $)
+2. **Platform Fee** = 10 % du brut (`platform_fee_bps = 1000`)
+3. **Net Distribuable** = Gross − Platform Fee
 4. **Partner Commission** = 30 % du Net Distribuable (`commission_rate_bps = 3000`)
 
-> **Important :** le **Net Distribuable** est une assiette **contractuelle Odyssey**. Ce n’est **pas** le net comptable Stripe (`balance_transaction.net` après frais carte).
+> **Important :** le **Net Distribuable** est une assiette **contractuelle Odyssey**. Ce n’est **pas** le net comptable Stripe.
 
-**Taux default :** Platform Fee **10 %** · RevShare **30 % du Net Distribuable**. Override par tenant : `tenants.settings.platform_fee_bps` · `revshare_bps`.
+**Taux default :** Platform Fee **10 %** · RevShare **30 % du Net Distribuable**. Override : `tenants.settings.platform_fee_bps` · `revshare_bps`.
 
 ---
 
 ## Modèle de données (P6)
 
-### Séparation jetons / commissions
+### Solde partenaire (V1)
 
 ```text
-partner_token_wallets + partner_token_ledger     → legacy jetons (P4/P5.5)
-partner_commission_balances + partner_commission_ledger  → RevShare v2 (P6)
+partner_commission_balances + partner_commission_ledger  → SEUL ledger partenaire (V1)
+partner_token_wallets + partner_token_ledger             → DEPRECATED — DROP Phase 2
 ```
 
-**Ne jamais** enregistrer des commissions en jetons ni des débits jetons en centimes.
+**Ne jamais** mélanger jetons et centimes. Après purge : seules les tables commission existent.
 
 ---
 

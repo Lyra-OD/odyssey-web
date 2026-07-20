@@ -28,8 +28,12 @@ Odyssey / Creatomate **mixent** la piste uploadée pour l’export familial. Ody
 
 ## Disponibilité UI
 
-- **Souvenir** : bouton import **masqué** (Quiet Luxury).
-- **Héritage / Éternité** (ou après Soft Cap) : Catalogue Stingray (défaut) + **Importer ma chanson**.
+- **Souvenir** : bouton import MP3 **masqué**. Catalogue officiel Stingray accessible via Soft Cap dual-choice ([`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md)) — Licence `musicLicense` 39 $ **ou** upgrade Héritage.
+- **Héritage / Éternité** : Catalogue Stingray officiel **inclus** + **Importer ma chanson** (ToS).
+
+## Add-on `musicLicense` (hors ToS upload)
+
+La Licence Premium Stingray (39 $) est un **droit plateforme** (SKU panier), pas une attestation user. Elle ne remplace pas le ToS MP3. Voir [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §4.
 
 ---
 

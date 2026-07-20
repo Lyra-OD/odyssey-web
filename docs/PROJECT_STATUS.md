@@ -288,7 +288,8 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 |-----|-----|
 | `B2B2C_COMMERCE.md` | ✅ **v2 Bulletproof** (waterfall 10 % + 30 % Net Distribuable, saga v2) |
 | `SANCTUARY_STRATEGY.md` | ✅ Positionnement Sanctuaire · catalogue monétisation V1 |
-| `FREEMIUM_V1_PIVOT.md` | ✅ **Pivot CEO V1 figé** — purge jetons · Soft Cap · 4K · musique ToS (code ⏳) |
+| `FREEMIUM_V1_PIVOT.md` | ✅ Pivot CEO · **Phase 0 docs ✅** · code Phases 1–6 ⏳ |
+| `DELIVERABLES_AND_PACKAGES.md` | ✅ Réécrit Freemium V1 (4K, add-ons, Soft Cap) |
 | `NARRATIVE_SOFT_CAP.md` / `MUSIC_RIGHTS_ATTESTATION.md` | ✅ Spec Soft Cap + attestation MP3 |
 | `PARTNER_REVSHARE.md` | ✅ Bulletproof · pseudo-SQL · QA liée |
 | `QA_P6_COMMISSION_WATERFALL.md` | ✅ 5 scénarios QA chiffrés |

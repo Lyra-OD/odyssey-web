@@ -1,6 +1,8 @@
 # Stingray Music Integration (MAPI)
 
-**Last code review: July 2026**
+**Last code review: July 2026 · Freemium V1 Pivot**
+
+> **Produit V1 :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap musique [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · ToS MP3 [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 
 Odyssey uses the **Stingray Music API** (MAPI) for licensed search and preview in wizard **step 4** (`ChapterMusicPanel` inside `StoryboardChaptersStep`). Stingray disables CORS on their origin — all MAPI calls run **server-side**; the browser only hits our Next.js routes.
 
@@ -85,30 +87,34 @@ If credentials are missing and mock is disabled via `STINGRAY_MODE=live` explici
 
 ---
 
-## Catalog tiers — Standard vs Premium
+## Catalog — Freemium V1 (standard vs officiel)
 
-Odyssey splits licensed music into two **commercial tiers**, aligned with wizard packages and the **Option Licence Premium** upsell (39 $, id `extendedLicense` in `wizard_state.extensions`).
+Deux voies commerciales Stingray + soupape MP3 :
 
-| Tier | Who gets it | Product meaning |
-|------|-------------|-----------------|
-| **standard** | Forfait **Essentiel** or **Signature** (default) | Core cleared catalog for ceremony use |
-| **premium** | Forfait **Héritage** (included), **or** Option Licence Premium on Essentiel/Signature, **or** Heritage Pack (includes licence) | Extended-rights catalog (major artists / premium mock tracks) |
+| Accès | Qui | SKU / forfait |
+|-------|-----|---------------|
+| **standard** (sous-ensemble) | Souvenir sans Soft Cap musique | `essential` |
+| **officiel** (orchestral / cinématique, zéro copyright Odyssey) | Héritage / Éternité **inclus** · **ou** Souvenir + add-on | `intended >= signature` **OU** `musicLicense` (39 $) |
+| **upload** MP3/WAV | Héritage+ uniquement | ToS user — pas Stingray |
 
-### Resolution (server + client)
+> **Soft Cap Souvenir :** sélection d’une piste **officielle** non bloquée → choix **Licence `musicLicense` 39 $** (reste Souvenir) **ou** upgrade **Héritage 149 $**.  
+> Migration TS : `extendedLicense` → **`musicLicense`** ; helper cible `resolveMusicEntitlement` (alias possible de `resolveMusicCatalogTier`).
+
+### Resolution (contrat Phase 1)
 
 ```typescript
-// pricingConfig.ts
-resolveMusicCatalogTier(basePackage, extensions): "standard" | "premium"
+// pricingConfig.ts — cible
+resolveMusicEntitlement(intendedPackage, extensions): "standard" | "official"
+// official si intended >= signature OR extensions.musicLicense
 ```
 
-| `basePackage` | `extensions.extendedLicense` | `extensions.heritagePack` | Effective tier |
-|---------------|-------------------------------|---------------------------|----------------|
-| `essential` | false | false | **standard** |
-| `signature` | false | false | **standard** |
-| `signature` | true | — | **premium** |
-| `heritage` | — | — | **premium** (package `musicCatalog`) |
+| `intendedPackage` | `extensions.musicLicense` | Effective |
+|-------------------|---------------------------|-----------|
+| `essential` | false | **standard** |
+| `essential` | true | **official** |
+| `signature` / `heritage` / `legendary` | — | **official** (inclus — strip line item Licence) |
 
-`TributeWizard` computes tier with `useMemo` and passes `catalogTier` to `StoryboardChaptersStep` / `ChapterMusicPanel`.
+`TributeWizard` passe le tier à `StoryboardChaptersStep` / `ChapterMusicPanel`.
 
 ### Search API
 
@@ -117,22 +123,24 @@ GET /api/music/search?q=Aznavour&limit=12&tier=standard
 GET /api/music/search?q=Adele&limit=12&tier=premium
 ```
 
-- Query param `tier`: `standard` | `premium` (default **`standard`**).
-- **Mock mode:** `searchStingrayTracks(query, limit, catalogTier)` filters `STINGRAY_CATALOG_TRACKS` by `musicTier` on each track.
-- **Live MAPI (roadmap):** pass tier to playlist/channel selection when product rules are wired upstream.
+- Query param `tier`: mappe `standard` \| `premium` (API actuelle) ↔ produit `standard` \| `official`.
+- **Mock :** filtre `musicTier` sur `STINGRAY_CATALOG_TRACKS`.
+- **Live MAPI :** roadmap filtrage catalogue officiel.
 
-### Step 4 UX (`ChapterMusicPanel`)
+### Step 4 UX (`ChapterMusicPanel`) — cible Phase 4
 
-- Banner **standard:** explains Standard access and upsell to Licence Premium (39 $) at step 6 (i18n `soundCatalogAccessStandard`).
-- Banner **premium:** confirms Premium catalog unlocked (`soundCatalogAccessPremium`).
-- Debounced search always sends the current `tier` matching `resolveMusicCatalogTier`.
-- One music panel per storyboard chapter; `durationSec` saved with selected track for pacing (`storyboardPacing.ts`).
+- Bannière standard : Soft Cap dual (Licence 39 $ \| Héritage 149 $) — pas de paywall brutal.
+- Bannière official : catalogue débloqué (forfait ou Licence).
+- Import MP3 : masqué Souvenir ; visible Héritage+ + attestation ToS.
+- `durationSec` pour pacing (`storyboardPacing.ts`).
 
-### Checkout / persistence
+### Checkout / export
 
-Tier is **not** stored separately in `wizard_state`; it is derived from `basePackage` + `extensions` on read. Stripe metadata still receives selected `act_tracks` with `trackId` for downstream licensing.
+- Entitlement dérivé de `intended` + `musicLicense` (pas de champ tier séparé).
+- **Master Stingray Creatomate** : uniquement si **payé** (`paid` package ≥ signature **ou** `paid.musicLicense`) — jamais depuis le front.
+- Metadata Stripe : `trackId` chapitres pour licensing downstream.
 
-Pricing linkage: [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — Economic bundle (Heritage) and `calculateBundleSavings`.
+Voir [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
 
 ---
 

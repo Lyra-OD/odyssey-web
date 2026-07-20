@@ -122,14 +122,17 @@ IDs techniques : `essential` / `signature` / `heritage` / `legendary` — voir [
 
 ## 5. Catalogue monétisation
 
-### V1 (tranché — juillet 2026)
+### V1 (tranché — juillet 2026 · aligné [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md))
 
 | Rang | SKU | Prix | ID technique | Moment d’accroche |
 |------|-----|------|--------------|-------------------|
-| 1 | **Restauration IA** (« Machine à remonter le temps ») | **49 $** | `aiRetouch` | Scanner / avant-après |
-| 2 | **Écrin USB Signature** | **79 $** | `collectorUsb` | Checkout pérennité |
-| 3 | **Coffre-fort multigénérationnel** | **99 $** | `digitalVault` | Checkout / peur de l’oubli |
-| Cœur | **Écrin Héritage / Éternité** | **149 $ / 299 $** | `signature` / `heritage` | Preview → checkout |
+| 1 | **Restauration IA** | **49 $** | `aiRetouch` | Scanner / avant-après |
+| 2 | **Licence Musique Premium Stingray** | **39 $** | `musicLicense` | Soft Cap musique Souvenir (alt. à Héritage) |
+| 3 | **Voix de l’Histoire** | **39 $** | `storyVoice` | Checkout / biographie |
+| 4 | **Jeton du Sanctuaire** (NFC) | **79 $** | `sanctuaryToken` | Checkout pérennité (remplace USB) |
+| 5 | **Coffre-fort multigénérationnel** | **99 $** | `digitalVault` | Checkout / peur de l’oubli |
+| 6 | **Livre de Mémoire** | **149 $** | `memoryBook` | Checkout / V1.5 ops si besoin |
+| Cœur | **Écrin Héritage / Éternité** | **149 $ / 299 $** | `signature` / `heritage` | Soft Cap médias / Preview → checkout |
 
 ### V1.5 (après launch Sanctuaire)
 
