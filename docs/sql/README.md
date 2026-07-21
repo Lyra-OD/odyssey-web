@@ -41,6 +41,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | 18 | `odyssey_p7_media_quota_guard.sql` | **Migration** | **Storyboard S3** — trigger `enforce_media_asset_quota()` — voir [§ P7](#p7--garde-fou-quota-de-medias-package-aware) |
 | 19 | `odyssey_p8_freemium_v1_token_purge.sql` | **Migration** | **Freemium V1** — invitation sans jetons · Soft Cap quota · entitlements · NFC · DROP wallets |
 | 20 | `odyssey_p9_project_export_jobs.sql` | **Migration** | **Phase 5** — `project_export_jobs` (stub Creatomate) · RLS SELECT owner |
+| 21 | `odyssey_p10_memorial_fund.sql` | **Migration** | **Cascade V-Final** — Fonds Commémoratif (crédit), `guest_micro_checkouts` waterfall, `projects.commemoration_date`, config `tenants.settings` — voir [§ P10](#p10--fonds-commémoratif-boucle-virale) et [`IMPLEMENTATION_CASCADE_VFINAL.md`](../IMPLEMENTATION_CASCADE_VFINAL.md) |
 | — | `odyssey_p6_1_waterfall_qa_assert.sql` | **QA** | Assert waterfall pur S1–S3 + clawback S5 (lecture seule). |
 | — | `odyssey_p6_qa_revshare_accrual.sql` | **QA** | Accrual RevShare E2E (solde +30 % net · idempotence · 0 jeton) — transactionnel ROLLBACK. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
@@ -185,6 +186,38 @@ SELECT compute_revenue_waterfall(14900, 1000, 3000);
 | `legendary` | LEGENDAIRE | 250 |
 
 **Comportement non-destructif :** le trigger ne bloque que les **nouveaux** INSERT ; il ne supprime jamais de médias existants si un projet est rétrogradé vers un forfait plus petit après avoir dépassé son nouveau plafond.
+
+---
+
+## P10 — Fonds Commémoratif (Boucle Virale)
+
+**Fichier :** `odyssey_p10_memorial_fund.sql` *(Cascade V-Final — juillet 2026)*
+**Prérequis :** P6 + P6.1 + P8 appliqués. **Idempotent.**
+**Canon :** [`IMPLEMENTATION_CASCADE_VFINAL.md`](../IMPLEMENTATION_CASCADE_VFINAL.md).
+
+Active les stubs Phase 2 (`guest_micro_checkouts`, `family_tribute_fund_*`, `project_access_tokens`)
+en **modèle crédit** : les contributions invités financent une remise sur le paywall famille.
+
+| Objet | Rôle |
+|-------|------|
+| **`projects.commemoration_date` / `date_of_passing`** | Champ temporel + index partiel — arme le cron Jour-365 (LTV Phase 3) |
+| **`tenants.settings`** (seed merge) | `fund_conversion_bps` (10000 = 100 %), `owner_floor_cents` (0), `viral_loop_enabled` (false) |
+| **`guest_micro_checkouts`** (ALTER) | Snapshot waterfall (`platform_fee_*`, `net_distributable_cents`, `commission_*`, `fund_credit_cents`), `contributor_name`, `project_access_token_id`, `consent_marketing` ; cap `gross_cents ≤ 100000` (1000 $) |
+| **`family_tribute_fund_balances.consumed_cents`** | Crédit appliqué à l'export (accrued = généré, consumed = appliqué, paid = payout legacy inutilisé V1) |
+| **`partner_commission_ledger`** (ALTER) | `guest_micro_checkout_id` + reasons `guest_commission_accrual` / `guest_commission_clawback` — ⚠️ **inversion** garde-fou VISION §2.2 |
+| **`family_tribute_fund_ledger`** | reasons `credit_applied` / `credit_reversal` |
+| **RLS** | `family_tribute_fund_balances` SELECT owner (thermomètre UI) |
+
+**RPC métier (Phase 2 — hors cette migration schéma) :** `accrue_guest_micro_checkout()`,
+`consume_family_fund_credit()`.
+
+**Seed feature flag (post-migration, par tenant) :**
+
+```sql
+UPDATE public.tenants
+SET settings = settings || jsonb_build_object('viral_loop_enabled', true)
+WHERE slug = 'partner-qa-demo';
+```
 
 ---
 

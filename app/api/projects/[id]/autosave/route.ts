@@ -101,13 +101,27 @@ const MusicalAmbianceSchema = z
 const ExtensionsSchema = z
   .object({
     aiRetouch: z.boolean().optional(),
-    extendedLicense: z.boolean().optional(),
-    collectorUsb: z.boolean().optional(),
+    // Freemium V1 — clés canoniques du Pivot.
+    musicLicense: z.boolean().optional(),
+    storyVoice: z.boolean().optional(),
+    sanctuaryToken: z.boolean().optional(),
+    memoryBook: z.boolean().optional(),
     digitalVault: z.boolean().optional(),
     heritagePack: z.boolean().optional(),
+    // Alias legacy conservés en entrée (migrés côté coerceExtensionsState).
+    extendedLicense: z.boolean().optional(),
+    collectorUsb: z.boolean().optional(),
   })
   .strict()
   .partial();
+
+/** Attestation ToS upload MP3/WAV (Phase 4/5). */
+const MusicRightsAttestationSchema = z
+  .object({
+    acceptedAt: z.string().trim().max(64),
+    tosVersion: z.string().trim().max(40),
+  })
+  .strict();
 
 const UuidSchema = z.string().uuid();
 
@@ -307,6 +321,10 @@ const WizardStatePartialSchema = z
     version: z.union([z.literal(1), z.literal(2)]).optional(),
     isPartner: z.boolean().optional(),
     basePackage: BasePackageSchema.optional(),
+    /** Soft Cap Freemium V1 — forfait offert (immuable) + intention construite. */
+    grantedPackage: BasePackageSchema.optional(),
+    intendedPackage: BasePackageSchema.optional(),
+    musicRightsAttestation: MusicRightsAttestationSchema.optional(),
     pricing: z
       .object({
         basePackage: BasePackageSchema,

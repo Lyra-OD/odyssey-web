@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: 21 juillet 2026 · Freemium V1 Phases 0–5 ✅ · Phase 6 QA ⏳ EN COURS (SQL P9 appliqué · suite Vitest business en place) · next = worker Creatomate réel / rails UX mobile**
+**Last revised: 21 juillet 2026 · Freemium V1 Phases 0–5 ✅ · Phase 6 QA ⏳ · Cascade V-Final (Boucle Virale / Fonds Commémoratif) 🚧 EN COURS — Phase 1 Data Layer (migration P10) — canon [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md)**
 
 Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).

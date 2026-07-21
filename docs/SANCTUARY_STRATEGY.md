@@ -101,8 +101,16 @@ Paiement = acte d’amour. Partenaire → RevShare Bulletproof (30 % du **Net Di
 
 ### 3.3 B2C — Client direct (Excellence)
 
-- Pas de gratuit. Landing = **résultats** (avant/après IA, templates, Stingray) — pas l’UI.  
-- Achat Héritage **149 $** ou Éternité **299 $** (Légendaire **499 $** = ancre).  
+> **⚠️ PIVOT CEO — Cascade V-Final (21 juillet 2026) :** la règle « **zéro gratuit à l'entrée** »
+> est **abandonnée** pour le B2C. Voir [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md),
+> qui **prime**.
+
+- **Brouillon gratuit** (sans carte) : le client construit et voit une **preview basse résolution /
+  filigranée**. L'attachement émotionnel se crée avant le prix.
+- **Paywall strict à l'export** : minimum **Héritage 149 $** ; ancre haute **Légendaire 499 $**.
+- **Boucle Virale (Fonds Commémoratif)** : les proches achètent des **Support Packs**, dont le Net
+  Distribuable devient un **crédit** qui fait fondre le paywall famille (jusqu'à **0 $**).
+- Landing = **résultats** (avant/après IA, templates, Stingray).
 - Message : *« Laissez notre moteur magique tisser votre histoire. Vous n’avez qu’à déposer vos émotions. »*
 
 ---
@@ -115,6 +123,10 @@ Paiement = acte d’amour. Partenaire → RevShare Bulletproof (30 % du **Net Di
 | **Héritage** | Le récit digne | Famille 149 $ **ou** Gant Blanc (avance commissions) |
 | **Éternité** | La mémoire restaurée | Famille 299 $ **ou** Gant Blanc |
 | **Légendaire** | Le rituel absolu | **B2C only** 499 $ — hors catalogue partenaire V1 |
+
+> **V-Final :** en B2C comme en B2B2C, l'entrée se fait en **brouillon gratuit** ; le paywall arrive
+> à l'export et peut être financé par le **Fonds Commémoratif** (contributions des proches). Détail :
+> [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
 
 IDs techniques : `essential` / `signature` / `heritage` / `legendary` — voir [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
 

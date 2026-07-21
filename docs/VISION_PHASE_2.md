@@ -71,6 +71,14 @@ P6 checkout + RevShare     Data Graph LYRA (faces + arbre)
 
 **Décision stratégique :** une partie de la **marge Odyssey** (après Platform Fee et RevShare partenaire) finance un solde d’aide à la famille — argument de vente pour le conseiller funéraire. **Le fonds n’impacte jamais la commission partenaire.**
 
+> **⚠️ MISE À JOUR CEO — Cascade V-Final (21 juillet 2026) :** le Family Tribute Fund est
+> **remonté de V1.5 → V1** sous le nom **Fonds Commémoratif**, avec une sémantique **CRÉDIT**
+> (remise sur le paywall famille) et non plus un versement comptant. **Deux règles ci-dessous sont
+> inversées** par [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md), qui **prime** :
+> (1) les micro-transactions invités **alimentent désormais** `partner_commission_ledger`
+> (30 % du Net à Athos, reason `guest_commission_accrual`) ; (2) le crédit famille =
+> `Net Distribuable × fundConversionRate` (défaut 1.0), **porté par Odyssey** (coût marginal ≈ 0 $).
+
 | Élément | Détail |
 |---------|--------|
 | **Sources de revenus (Phase 1)** | Micro-transactions invités (`guest_micro_checkouts`) — livre photos, HD, extensions portail |
@@ -78,7 +86,7 @@ P6 checkout + RevShare     Data Graph LYRA (faces + arbre)
 | **Allocation Family Fund** | Pourcentage configurable sur la **marge Odyssey** (ex. 10–20 % du net après commission partenaire sur micro-transactions) |
 | **Bénéficiaire** | Famille porteuse du projet (`projects.user_id`) — versement manuel ou crédit Stripe (Phase 1 : ledger + ops) |
 | **Visibilité conseiller** | Dashboard Salon : « Ce hommage a généré X $ pour la famille via les contributions invités » |
-| **RevShare partenaire (Bulletproof)** | 30 % du **Net Distribuable** sur upsell forfait B2B2C — **couche distincte** · Family Fund prélevé sur marge Odyssey uniquement |
+| **RevShare partenaire (Bulletproof)** | 30 % du **Net Distribuable** — sur upsell forfait B2B2C **ET** (V-Final) sur micro-transactions invités (`guest_commission_accrual`). Le crédit Fonds Commémoratif est porté par la **marge Odyssey**, jamais par la commission Athos. |
 
 **Waterfall et Family Fund :**
 
@@ -93,7 +101,11 @@ Gross → Platform Fee 10% → Net Distribuable → Partner Commission 30%
 1. **Transparence** — la famille voit le solde Family Fund ; le conseiller voit l'impact commercial.
 2. **Séparation comptable** — ledger dédié (`family_tribute_fund_ledger`) — **ne pas mélanger** avec `partner_commission_ledger`.
 3. **Phase 1 scope** — spec ledger + affichage solde ; payout automatique = Phase 2.
-4. **Garantie CEO** — `allocate_family_tribute_fund_*` ne modifie **jamais** `partner_commission_ledger`.
+4. **Garantie CEO (révisée V-Final)** — le **crédit** Fonds Commémoratif est porté par la marge
+   Odyssey et ne réduit **jamais** la commission cash d'Athos. Les micro-transactions invités, elles,
+   **alimentent** `partner_commission_ledger` (Athos gagne 30 % du Net aussi sur les contributions).
+   L'ancienne règle « `allocate_family_tribute_fund_*` ne touche jamais `partner_commission_ledger` »
+   est **remplacée** par [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
 
 **Argument conseiller (pitch) :** « Odyssey ne coûte pas seulement rien en freemium — il **rapporte** à la famille pendant que vos invités contribuent. »
 

@@ -1028,6 +1028,12 @@ export function buildPersistedWizardState(
     version: WIZARD_STATE_VERSION,
     ...(state.isPartner ? { isPartner: true } : {}),
     ...(state.basePackage ? { basePackage: state.basePackage } : {}),
+    // Freemium V1 : le Soft Cap dépend de granted/intended — DOIVENT persister.
+    ...(state.grantedPackage ? { grantedPackage: state.grantedPackage } : {}),
+    ...(state.intendedPackage ? { intendedPackage: state.intendedPackage } : {}),
+    ...(state.musicRightsAttestation
+      ? { musicRightsAttestation: state.musicRightsAttestation }
+      : {}),
     ...(state.pricing ? { pricing: state.pricing } : {}),
     ...(state.essentials ? { essentials: state.essentials } : {}),
     ...(state.socialSources ? { socialSources: state.socialSources } : {}),
