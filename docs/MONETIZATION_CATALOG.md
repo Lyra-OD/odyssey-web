@@ -21,8 +21,8 @@ l'**invité** peut offrir — plus les leviers **documentés à venir** et les *
 | Dimension | Valeur |
 |-----------|--------|
 | SKUs livrés (achetables) | **13** (4 forfaits + 6 add-ons actifs + 3 Support Packs) |
-| Leviers documentés à venir | **8** (V1.5 · Phase 2 · Phase 3) |
-| Idées à explorer (brainstorm) | **~21** |
+| Leviers documentés à venir | **9** (V1.5 · Phase 2 · Phase 3) — dont **Mécène / Saisie libre** (cap déjà codé) |
+| Idées à explorer (brainstorm) | **~32** |
 | Amplitude prix forfait famille | **0 $ → 499 $** |
 | Panier moyen invité cible | **~50 $** |
 
@@ -89,6 +89,7 @@ Leviers déjà écrits dans les canons mais **non implémentés**. Plusieurs son
 | Data Graph **LYRA** (insights agrégés, M&A) | licensing B2B | Phase 2+ | VISION §3 · Pilier 3 | 🔜 |
 | Gant Blanc Premium (avance commissions partenaire) | couche B2B | Post-freemium | SANCTUARY §7 | 🔜 |
 | % marge Odyssey → Fonds (checkouts famille) | configurable | Phase 2+ | VISION §2.2 | 🔜 |
+| **Mécène / Saisie libre** (contribution invité montant libre → éponge le forfait famille) | **99 $ → 1000 $** | **V1.5 quick-win** | Cap `1000 $/txn` **déjà codé** (`guestSupportPacks.ts`) · cascade | 🔜 |
 
 ---
 
@@ -105,6 +106,12 @@ Leviers déjà écrits dans les canons mais **non implémentés**. Plusieurs son
 | Message vidéo invité intégré au montage | ~29 $ |
 | Don caritatif au nom du défunt (Odyssey % traitement) | % du don |
 | Dédicace / page contributeur premium | ~19 $ |
+| **Générique de fin collaboratif (End Credits)** — section cinématique listant contributeurs/signataires (levier viral) | inclus / premium |
+| **Témoignage audio spatialisé** — mémo vocal invité (denoise studio) sur timeline acoustique | ~29 $ |
+| **Fonds Philanthropique / Leg** — surplus du fonds au-delà du forfait max (Éternité) redirigé vers cause / fondation / bourse au nom du défunt | **% traitement** — *cascade « P4 » (à trancher dans `IMPLEMENTATION_CASCADE_VFINAL.md`)* |
+| *Enrichissement Bougie* — + message de condoléances **mis en avant** | inclus `guest_candle` |
+| *Enrichissement Pilier* — + **badge distinctif** sur le livre d'or (reconnaissance) | inclus `guest_heritage` |
+| *Clarif. Soutien HD* — distinguer **copie perso** (actuel `guest_hd`) vs **contribution au mémorial collaboratif** (2 valeurs) | — |
 
 ### C.2 Add-ons famille (extensions produit)
 
@@ -116,6 +123,9 @@ Leviers déjà écrits dans les canons mais **non implémentés**. Plusieurs son
 | Narration multi-voix (plusieurs proches) | +29 $/voix |
 | Album audio / podcast mémoriel | ~39 $ |
 | Livre premium cuir gravé | ~299 $ |
+| **Capsule temporelle programmée par la famille** — contenus cachés débloqués à J+1 / 5 / 10 ans (≠ capsule IA auto de la section B) | ~39 $ |
+| **Restauration par lot / VHS-vidéo** — tiering de `aiRetouch` (cassettes abîmées, stabilisation, étalonnage) | par lot |
+| **Livre d'Or invités imprimé** — compilation des messages/photos/poèmes du mémorial (≠ `memoryBook` hommage) | POD |
 
 ### C.3 Objets physiques & hardware
 
@@ -125,6 +135,7 @@ Leviers déjà écrits dans les canons mais **non implémentés**. Plusieurs son
 | Cadre photo numérique connecté | ~149 $ |
 | Plaque / QR extérieur pierre tombale (NFC durci) | ~99 $ |
 | Vinyle / CD de la bande-son | ~49 $ |
+| **Coffret Collector** — clé USB cryptée, boîtier alu noir mat gravé, film 4K brut **sans cloud** (réintro de l'ex-`collectorUsb`, à arbitrer vs Jeton NFC) | ~129 $ |
 
 ### C.4 Récurrent / anniversaire (LTV)
 
