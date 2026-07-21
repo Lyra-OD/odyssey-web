@@ -354,6 +354,142 @@ type AccrueRpcResult = {
   net_distributable_cents?: number;
 };
 
+/**
+ * Cascade V-Final — contribution invité (Boucle Virale).
+ * Waterfall via RPC accrue_guest_micro_checkout (commission Athos si freemium +
+ * crédit Fonds Commémoratif). Idempotent par stripe_event_id.
+ */
+async function handleGuestSupportCompleted(
+  session: Stripe.Checkout.Session,
+  event: Stripe.Event,
+  supabase: SupabaseAdmin,
+): Promise<"processed" | "ignored"> {
+  const metadata = session.metadata ?? {};
+  const guestCheckoutId = metadata.guest_checkout_id?.trim() || "";
+
+  if (!guestCheckoutId) {
+    logWebhook({
+      level: "warn",
+      context: "guest_support_missing_checkout_id",
+      event_id: event.id,
+      stripe_session_id: session.id,
+      status_after: "ignored",
+    });
+    return "ignored";
+  }
+
+  const grossCents = session.amount_total;
+  if (grossCents == null || grossCents <= 0) {
+    logWebhook({
+      level: "info",
+      context: "guest_support_zero_gross",
+      event_id: event.id,
+      guest_checkout_id: guestCheckoutId,
+      status_after: "ignored",
+    });
+    return "ignored";
+  }
+
+  const paymentIntentId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : session.payment_intent?.id ?? null;
+
+  const { data: rpcData, error: rpcError } = await supabase.rpc(
+    "accrue_guest_micro_checkout",
+    {
+      p_guest_checkout_id: guestCheckoutId,
+      p_gross_cents: grossCents,
+      p_stripe_event_id: event.id,
+      p_stripe_payment_intent_id: paymentIntentId,
+    },
+  );
+
+  if (rpcError) {
+    throw new Error(`accrue_guest_micro_checkout_failed: ${rpcError.message}`);
+  }
+
+  const result = (rpcData ?? {}) as AccrueRpcResult & {
+    fund_credit_cents?: number;
+    commission_accrued?: boolean;
+  };
+
+  if (result.ok === true) {
+    logWebhook({
+      level: "info",
+      context: "guest_support_accrual_ok",
+      event_id: event.id,
+      guest_checkout_id: guestCheckoutId,
+      gross_cents: grossCents,
+      fund_credit_cents: result.fund_credit_cents ?? null,
+      commission_accrued: Boolean(result.commission_accrued),
+      already_processed: Boolean(result.already_processed),
+      already_accrued: Boolean(result.already_accrued),
+      status_after: "processed",
+    });
+    return "processed";
+  }
+
+  logWebhook({
+    level: "warn",
+    context: "guest_support_accrual_skipped",
+    event_id: event.id,
+    guest_checkout_id: guestCheckoutId,
+    reason: result.reason ?? "unknown",
+    status_after: "ignored",
+  });
+  return "ignored";
+}
+
+/**
+ * Cascade V-Final — consommation du crédit Fonds Commémoratif au paiement du
+ * paywall famille (partiel). Best-effort : le paiement a réussi, une erreur de
+ * booking crédit ne doit pas 500 (Stripe rejouerait et re-livrerait). La
+ * couverture 100 % (0 $) est consommée en amont (inline) dans /api/checkout.
+ */
+async function maybeConsumeFamilyFundCredit(
+  supabase: SupabaseAdmin,
+  params: {
+    projectId: string | null;
+    metadata: Record<string, string>;
+    tributeCheckoutId: string | null;
+    eventId: string;
+  },
+): Promise<void> {
+  if (!params.projectId) return;
+  const applied = Number.parseInt(params.metadata.fund_credit_applied_cents ?? "0", 10);
+  if (!Number.isFinite(applied) || applied <= 0) return;
+
+  const precredit = Number.parseInt(params.metadata.precredit_total_cents ?? "0", 10);
+  if (!Number.isFinite(precredit) || precredit <= 0) return;
+
+  const floorRaw = Number.parseInt(params.metadata.owner_floor_cents ?? "0", 10);
+  const floor = Number.isFinite(floorRaw) && floorRaw > 0 ? floorRaw : 0;
+
+  const { data, error } = await supabase.rpc("consume_family_fund_credit", {
+    p_project_id: params.projectId,
+    p_package_price_cents: precredit,
+    p_owner_floor_cents: floor,
+    p_tribute_checkout_id: params.tributeCheckoutId,
+  });
+
+  if (error) {
+    logWebhookError("fund_consume_failed", error, {
+      event_id: params.eventId,
+      project_id: params.projectId,
+    });
+    return;
+  }
+
+  logWebhook({
+    level: "info",
+    context: "fund_credit_consumed",
+    event_id: params.eventId,
+    project_id: params.projectId,
+    result: data ?? null,
+  });
+}
+
 async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session,
   event: Stripe.Event,
@@ -374,6 +510,11 @@ async function handleCheckoutSessionCompleted(
       status_after: "ignored",
     });
     return "ignored";
+  }
+
+  // Cascade V-Final — micro-transaction invité (Boucle Virale), canal isolé.
+  if (metadataMode === "guest_support") {
+    return handleGuestSupportCompleted(session, event, supabase);
   }
 
   if (metadataMode && metadataMode !== "b2b2c_family") {
@@ -403,6 +544,12 @@ async function handleCheckoutSessionCompleted(
         .from("projects")
         .update({ status: "submitted" })
         .eq("id", projectId);
+      await maybeConsumeFamilyFundCredit(supabase, {
+        projectId,
+        metadata,
+        tributeCheckoutId: null,
+        eventId: event.id,
+      });
       logWebhook({
         level: "info",
         context: "b2c_paid_entitlements_ok",
@@ -579,6 +726,12 @@ async function handleCheckoutSessionCompleted(
       await enqueueQuietLuxuryFulfillment(supabase, {
         projectId: resolvedProjectId,
         extensions,
+      });
+      await maybeConsumeFamilyFundCredit(supabase, {
+        projectId: resolvedProjectId,
+        metadata,
+        tributeCheckoutId: checkout.id,
+        eventId: event.id,
       });
     }
 

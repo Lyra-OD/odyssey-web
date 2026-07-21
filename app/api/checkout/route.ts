@@ -118,11 +118,14 @@ export async function POST(request: Request) {
   );
 
   let isFreemiumTenant = false;
+  // Cascade V-Final : feature flag + plancher configurables par tenant.
+  let viralLoopEnabled = false;
+  let ownerFloorCents = 0;
   if (tenantId) {
     const admin = getSupabaseAdminClient();
     const { data: tenant, error: tenantError } = await admin
       .from("tenants")
-      .select("is_freemium")
+      .select("is_freemium, settings")
       .eq("id", tenantId)
       .maybeSingle();
 
@@ -134,6 +137,13 @@ export async function POST(request: Request) {
     }
 
     isFreemiumTenant = tenant?.is_freemium === true;
+    const settings = (tenant?.settings ?? {}) as Record<string, unknown>;
+    viralLoopEnabled = settings.viral_loop_enabled === true;
+    ownerFloorCents =
+      typeof settings.owner_floor_cents === "number" &&
+      settings.owner_floor_cents >= 0
+        ? settings.owner_floor_cents
+        : 0;
   }
 
   const { assertCheckoutMusicRights } = await import(
@@ -225,6 +235,118 @@ export async function POST(request: Request) {
         extensions: JSON.stringify(cart.extensions),
         act_tracks: JSON.stringify(actTracks),
       },
+    });
+  }
+
+  // Cascade V-Final — crédit Fonds Commémoratif (Boucle Virale).
+  // Preview read-only : la consommation est committée à l'export réel
+  // (inline si 0 $ ci-dessous, sinon au webhook après paiement Stripe).
+  // Gated par viral_loop_enabled => flux B2B2C/B2C inchangés si off.
+  let fundAppliedCents = 0;
+  if (viralLoopEnabled && totalCents > 0) {
+    const { data: fundBal } = await admin
+      .from("family_tribute_fund_balances")
+      .select("accrued_cents, consumed_cents")
+      .eq("project_id", projectId)
+      .maybeSingle();
+    const available = Math.max(
+      Number(fundBal?.accrued_cents ?? 0) - Number(fundBal?.consumed_cents ?? 0),
+      0,
+    );
+    fundAppliedCents = Math.min(
+      available,
+      Math.max(totalCents - ownerFloorCents, 0),
+    );
+  }
+  const payableCents = Math.max(totalCents - fundAppliedCents, 0);
+
+  // Paywall entièrement couvert par le Fonds : export gratuit immédiat.
+  // (Le Rider compte + consentement est déjà satisfait : la famille est
+  // authentifiée via requireProjectOwner.)
+  if (viralLoopEnabled && fundAppliedCents > 0 && payableCents <= 0) {
+    if (project.status === "submitted") {
+      return NextResponse.json({
+        ok: true,
+        mode: "fund_free",
+        idempotent: true,
+        url: `${origin}${studioPath}?checkout=fund_success`,
+        totalCents: 0,
+        fundAppliedCents,
+        intendedPackage,
+      });
+    }
+
+    const consume = await admin.rpc("consume_family_fund_credit", {
+      p_project_id: projectId,
+      p_package_price_cents: totalCents,
+      p_owner_floor_cents: ownerFloorCents,
+      p_tribute_checkout_id: null,
+    });
+
+    if (consume.error) {
+      return NextResponse.json(
+        { error: "fund_consume_failed", message: consume.error.message },
+        { status: 400 },
+      );
+    }
+
+    const nextWizardState = {
+      ...wizardState,
+      grantedPackage,
+      intendedPackage,
+      basePackage: intendedPackage,
+      pricing: {
+        basePackage: cart.basePackage,
+        baseCents: cart.baseCents,
+        optionsCents: cart.optionsCents,
+        totalCents,
+        partnerTokenCost: 0,
+      },
+      extensions: cart.extensions,
+    };
+
+    const { error: updateError } = await supabase
+      .from("projects")
+      .update({ wizard_state: nextWizardState, status: "submitted" })
+      .eq("id", projectId)
+      .eq("user_id", user.id);
+
+    if (updateError) {
+      return NextResponse.json(
+        { error: "project_update_failed", message: updateError.message },
+        { status: 400 },
+      );
+    }
+
+    const entitlements = await upsertProjectPaidEntitlements(admin, {
+      projectId,
+      paidPackage: intendedPackage,
+      musicLicense: Boolean(cart.extensions.musicLicense),
+      extensions: cart.extensions,
+    });
+
+    if (!entitlements.ok) {
+      console.error(
+        "[checkout] fund_free entitlements failed:",
+        entitlements.message,
+      );
+    } else {
+      const { enqueueQuietLuxuryFulfillment } = await import(
+        "@/src/lib/wizard/addonFulfillment"
+      );
+      await enqueueQuietLuxuryFulfillment(admin, {
+        projectId,
+        extensions: cart.extensions,
+      });
+    }
+
+    return NextResponse.json({
+      ok: true,
+      mode: "fund_free",
+      url: `${origin}${studioPath}?checkout=fund_success`,
+      totalCents: 0,
+      fundAppliedCents,
+      intendedPackage,
     });
   }
 
@@ -444,16 +566,41 @@ export async function POST(request: Request) {
 
   const normalizedExt = cart.extensions;
 
+  // Cascade V-Final — crédit partiel : coupon Stripe amount_off. La
+  // consommation du crédit est committée au webhook (après paiement),
+  // idempotente par tribute_checkout_id (b2b2c) / event (b2c).
+  const applyFundCoupon =
+    viralLoopEnabled && fundAppliedCents > 0 && payableCents > 0;
+
   try {
+    let discounts: { coupon: string }[] | undefined;
+    if (applyFundCoupon) {
+      const coupon = await stripe.coupons.create({
+        amount_off: fundAppliedCents,
+        currency: "usd",
+        duration: "once",
+        name: locale === "en" ? "Commemorative Fund" : "Fonds Commémoratif",
+      });
+      discounts = [{ coupon: coupon.id }];
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: cart.lineItems
         .filter((line) => line.cents > 0)
         .map(toStripeLineItem),
+      ...(discounts ? { discounts } : {}),
       success_url: `${origin}${studioPath}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}${studioPath}?checkout=cancel`,
       client_reference_id: projectId,
       metadata: {
+        ...(applyFundCoupon
+          ? {
+              fund_credit_applied_cents: String(fundAppliedCents),
+              precredit_total_cents: String(totalCents),
+              owner_floor_cents: String(ownerFloorCents),
+            }
+          : {}),
         ...(tributeCheckoutId
           ? {
               checkout_id: tributeCheckoutId,
@@ -534,6 +681,8 @@ export async function POST(request: Request) {
       sessionId: session.id,
       checkoutId: tributeCheckoutId,
       totalCents,
+      payableCents,
+      fundAppliedCents,
       grantedPackage,
       intendedPackage,
     });

@@ -137,3 +137,35 @@ nouveaux `memorialFund.cascade.test.ts`, `channelProfile.test.ts`.
 | Abus cartes volées page publique | Cap 1000 $/txn + velocity Stripe |
 | Loi 25 / consentement | `consent_records` : marketing séparé du transactionnel |
 | Drift doc canon | MAJ VISION_PHASE_2 §2.2, SANCTUARY §3.3/§4, PROJECT_STATUS |
+
+---
+
+## 7. Phase 2 — Wiring livré (backend/API)
+
+Tout est **gated par `tenants.settings.viral_loop_enabled`** (défaut `false`) ⇒ flux
+B2B2C/B2C actuels strictement inchangés tant que le flag n'est pas activé.
+
+| Surface | Fichier | Rôle |
+|---------|---------|------|
+| Catalogue | `src/lib/wizard/guestSupportPacks.ts` | Support Packs (HD 49 $, Héritage 89 $, Bougie 15 $) + cap 1000 $ |
+| Token | `src/lib/contribute/contributeToken.ts` · `accessToken.ts` | Génération/hash SHA-256 + résolution (bypass RLS admin) |
+| Lien invité | `POST /api/projects/[id]/contribute-link` | Owner génère un `project_access_tokens` (TTL 30 j) |
+| Contexte public | `GET /api/contribute/[token]` | Hommage minimal + catalogue + fonds levé |
+| Achat invité | `POST /api/contribute/[token]/checkout` | Crée `guest_micro_checkouts` + session Stripe `guest_support` + `consent_records` |
+| Webhook | `app/api/stripe/webhook` | Branche `guest_support` → `accrue_guest_micro_checkout` (canal isolé) |
+| Paywall famille | `app/api/checkout` | Preview crédit → **0 $ = consume inline** (`fund_free`) · **partiel = coupon Stripe** + consume au webhook |
+| Tests | `tests/business/guest-waterfall.test.ts` · `memorial-fund-cascade.test.ts` | 19 tests (miroir RPC + cascade P1→P2→P3) |
+
+**Décision — timing de consommation du crédit :** couverture 100 % (0 $) → `consume_family_fund_credit`
+**inline** dans `/api/checkout` (finalisation immédiate, aucune fenêtre d'abandon).
+Crédit **partiel** → remise via **coupon Stripe `amount_off`** et consommation committée au **webhook**
+(paiement confirmé), idempotente par `tribute_checkout_id` (b2b2c) / `webhook_events` (b2c).
+Métadonnées portées : `fund_credit_applied_cents`, `precredit_total_cents`, `owner_floor_cents`.
+
+**Limitations connues (suivi) :**
+- Réversion sur `checkout.session.expired` non branchée (le partiel consomme au webhook,
+  donc pas de fuite ; le 0 $ inline est protégé par le garde `status = submitted`).
+- Si des contributions arrivent **entre** la création du checkout et le paiement, le webhook
+  peut consommer légèrement plus que le montant prévisualisé (borné à `precredit − floor`) —
+  bénin, sans impact cash.
+- Génération d'UI (panneau invitation, page `/[lang]/contribute/[token]`, Rider, thermomètre) = Phase 3.
