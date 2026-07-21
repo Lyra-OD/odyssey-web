@@ -27,6 +27,9 @@ export type CheckoutStepCopy = {
   stayFreeCta?: string;
   stayFreeHint?: string;
   amputationHint?: string;
+  excessMediaNotice?: string;
+  goToMediaLink?: string;
+  removeOption?: string;
 };
 
 type Props = {
@@ -39,8 +42,12 @@ type Props = {
   isPaying: boolean;
   payError: string | null;
   showStayFree?: boolean;
+  /** Nombre de médias au-delà du quota du cadeau (Souvenir). 0 = pas d'excès. */
+  excessMediaCount?: number;
   onPay: () => void;
   onStayFree?: () => void;
+  onGoToMedia?: () => void;
+  onRemoveExtension?: (key: Exclude<ExtensionLineKey, "base">) => void;
 };
 
 export function CheckoutStep({
@@ -53,8 +60,11 @@ export function CheckoutStep({
   isPaying,
   payError,
   showStayFree = false,
+  excessMediaCount = 0,
   onPay,
   onStayFree,
+  onGoToMedia,
+  onRemoveExtension,
 }: Props) {
   const cart = resolveWizardDisplayCart(
     extensions,
@@ -146,8 +156,23 @@ export function CheckoutStep({
                   ]
                 }
               </span>
-              <span className="font-medium text-teal-200/90">
-                +{formatWizardPrice(line.cents, locale)}
+              <span className="flex items-center gap-3">
+                <span className="font-medium text-teal-200/90">
+                  +{formatWizardPrice(line.cents, locale)}
+                </span>
+                {onRemoveExtension && copy.removeOption ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onRemoveExtension(
+                        line.key as Exclude<ExtensionLineKey, "base">,
+                      )
+                    }
+                    className="rounded-md border border-white/10 px-2 py-0.5 text-[11px] font-light text-zinc-400 transition-colors hover:border-rose-400/40 hover:text-rose-200/90"
+                  >
+                    {copy.removeOption}
+                  </button>
+                ) : null}
               </span>
             </li>
           ))}
@@ -167,7 +192,15 @@ export function CheckoutStep({
           className="rounded-xl border border-amber-400/25 bg-amber-950/15 px-4 py-3"
           role="note"
         >
-          <p className="text-sm font-light leading-relaxed text-amber-100/85">
+          {excessMediaCount > 0 && copy.excessMediaNotice ? (
+            <p className="text-sm font-medium leading-relaxed text-amber-100/95">
+              {copy.excessMediaNotice.replace(
+                "{count}",
+                String(excessMediaCount),
+              )}
+            </p>
+          ) : null}
+          <p className="mt-1 text-sm font-light leading-relaxed text-amber-100/85">
             {copy.stayFreeHint}
           </p>
           {copy.amputationHint ? (
@@ -207,6 +240,17 @@ export function CheckoutStep({
           )
         )}
       </button>
+
+      {showStayFree && excessMediaCount > 0 && onGoToMedia && copy.goToMediaLink ? (
+        <button
+          type="button"
+          onClick={onGoToMedia}
+          disabled={isPaying}
+          className="w-full rounded-xl px-4 py-2 text-center text-xs font-light text-white/45 underline decoration-white/20 underline-offset-4 transition hover:text-white/75 disabled:opacity-50"
+        >
+          {copy.goToMediaLink}
+        </button>
+      ) : null}
 
       {showStayFree && onStayFree && copy.stayFreeCta ? (
         <button

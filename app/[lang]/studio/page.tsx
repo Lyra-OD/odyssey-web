@@ -17,10 +17,17 @@ const HALO_DASH_SECONDARY =
 
 type PageProps = {
   params: Promise<{ lang: string }>;
+  searchParams: Promise<{ plan?: string }>;
 };
 
-export default async function StudioPage({ params }: PageProps) {
+export default async function StudioPage({ params, searchParams }: PageProps) {
   const { lang: routeLang } = await params;
+  const { plan: rawPlan } = await searchParams;
+  // Dev-only : `?plan=essential` permet de tester le flux freemium Soft Cap
+  // en local (grantedPackage = Souvenir 0 $) sans passer par une invitation
+  // partenaire. Jamais honoré en production (faille de monétisation).
+  const planOverride =
+    process.env.NODE_ENV !== "production" ? rawPlan : undefined;
   const lang: Locale = routeLang === "en" ? "en" : "fr";
   const dictionary = await getDictionary(lang);
 
@@ -116,6 +123,7 @@ export default async function StudioPage({ params }: PageProps) {
           initialDraft={draftProject ?? null}
           locale={lang}
           isPartner={isPartner}
+          planOverride={planOverride}
         />
       </div>
     </main>

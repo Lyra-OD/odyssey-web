@@ -64,8 +64,10 @@ import {
   canUploadPersonalAudio,
   DEFAULT_B2C_BASE_PACKAGE,
   packageCents,
+  packageTierRank,
   resolveMusicCatalogTier,
   resolveWizardDisplayCart,
+  WIZARD_ALL_PACKAGES,
   WIZARD_B2C_DIRECT_PACKAGES,
   WIZARD_PARTNER_GRANTED_PACKAGES,
 } from "@/src/lib/wizard/wizardPricing";
@@ -85,7 +87,6 @@ import {
 import {
   isSoftCapEligible,
   shouldOfferMagicSoftCap,
-  shouldOfferMediaSoftCap,
   shouldOfferMusicSoftCap,
 } from "@/src/lib/wizard/softCap";
 import { MUSIC_RIGHTS_TOS_VERSION } from "@/src/lib/wizard/exportGate";
@@ -157,15 +158,24 @@ export function TributeWizard({
   initialDraft = null,
   locale = "fr",
   isPartner: isPartnerProp = false,
+  planOverride,
 }: {
   copy: TributeWizardCopy;
   initialDraft?: WizardInitialDraft | null;
   locale?: Locale;
   /** Compte funérarium / partenaire B2B (jetons). */
   isPartner?: boolean;
+  /** Dev-only : force le forfait accordé (ex. `essential`) pour tester le
+   * flux freemium Soft Cap en local. Ignoré en production (voir page studio). */
+  planOverride?: string;
 }) {
   const hydrated = coerceWizardState(initialDraft?.wizard_state);
   const isPartnerInitial = hydrated.isPartner === true || isPartnerProp;
+  const overridePackage: WizardBasePackage | undefined = (
+    WIZARD_ALL_PACKAGES as readonly string[]
+  ).includes(planOverride ?? "")
+    ? (planOverride as WizardBasePackage)
+    : undefined;
 
   const [currentStep, setCurrentStep] = useState<Step>(() =>
     resolveInitialWizardStep(
@@ -209,12 +219,14 @@ export function TributeWizard({
   // doit donc être intentionnel.
   const [basePackage, setBasePackage] = useState<WizardBasePackage>(
     () =>
+      overridePackage ??
       hydrated.intendedPackage ??
       hydrated.basePackage ??
       DEFAULT_B2C_BASE_PACKAGE,
   );
   const [grantedPackage] = useState<WizardBasePackage>(
     () =>
+      overridePackage ??
       hydrated.grantedPackage ??
       hydrated.basePackage ??
       hydrated.intendedPackage ??
@@ -244,6 +256,9 @@ export function TributeWizard({
     useState<SoftCapVariant>("mediaUnlock");
   const softCapMediaDismissedRef = useRef(false);
   const softCapMagicDismissedRef = useRef(false);
+  // Marque un bump intended→signature déclenché par le filet médias (>50), afin
+  // de pouvoir redescendre automatiquement si la famille retire des photos.
+  const mediaAutoBumpedRef = useRef(false);
   const currentPackageId = useMemo(
     () => manifestPackageFromWizardBasePackage(basePackage),
     [basePackage],
@@ -255,6 +270,23 @@ export function TributeWizard({
   const currentMaxSongs = useMemo(
     () => packageMaxSongs(currentPackageId),
     [currentPackageId],
+  );
+  // Freemium Soft Cap : le cadeau accordé est le Souvenir (0 $, rang 0).
+  const isFreemiumGrant = packageTierRank(grantedPackage) === 0;
+  // Plafond doux médias : sur un projet freemium, on laisse déposer jusqu'à la
+  // limite Héritage (125) MÊME tant que l'intention est encore Souvenir — le
+  // vrai blocage se fera à l'export si non payé (décision produit CEO).
+  const SOFT_CAP_MEDIA_CEILING = useMemo(
+    () => packageMaxMediaItems(manifestPackageFromWizardBasePackage("signature")),
+    [],
+  );
+  const effectiveMaxMediaItems = isFreemiumGrant
+    ? Math.max(currentMaxMediaItems, SOFT_CAP_MEDIA_CEILING)
+    : currentMaxMediaItems;
+  // Quota médias inclus dans le cadeau Souvenir (seuil d'excès checkout).
+  const grantedMediaMax = useMemo(
+    () => packageMaxMediaItems(manifestPackageFromWizardBasePackage(grantedPackage)),
+    [grantedPackage],
   );
   // Trampoline de persistance : `useWizardStoryboard` doit être appelé avant
   // que `queueSave`/`wizardFieldsRef` n'existent (voir plus bas), mais son
@@ -942,27 +974,32 @@ export function TributeWizard({
     navigateToStep,
   ]);
 
+  // Soft Cap médias PASSIF (décision produit) : pas de modale bloquante à 50.
+  // Dès qu'un projet freemium dépasse 50 médias, on bascule silencieusement
+  // l'intention sur Héritage (signature) en arrière-plan — ce qui relève le
+  // quota DB à 125 et affiche l'encart Quiet Luxury. Symétriquement, si la
+  // famille retire des photos et repasse sous 50, on redescend vers Souvenir
+  // (uniquement si le bump venait de ce filet, pas d'un upgrade explicite).
   useEffect(() => {
-    if (currentStep !== 3) return;
-    if (softCapOpen) return;
-    if (softCapMediaDismissedRef.current) return;
-    if (
-      !shouldOfferMediaSoftCap(
-        grantedPackage,
-        intendedPackage,
-        projectMediaCount,
-      )
+    if (!isFreemiumGrant) return;
+    const intendedRank = packageTierRank(intendedPackage);
+    if (projectMediaCount > 50 && intendedRank === 0) {
+      mediaAutoBumpedRef.current = true;
+      handleBasePackageChange("signature");
+    } else if (
+      projectMediaCount <= 50 &&
+      mediaAutoBumpedRef.current &&
+      intendedPackage === "signature"
     ) {
-      return;
+      mediaAutoBumpedRef.current = false;
+      handleBasePackageChange(grantedPackage);
     }
-    openSoftCap("mediaUnlock");
   }, [
-    currentStep,
     grantedPackage,
+    handleBasePackageChange,
     intendedPackage,
-    openSoftCap,
+    isFreemiumGrant,
     projectMediaCount,
-    softCapOpen,
   ]);
 
   /** Sync le volume médias pendant l'étape 3 (filet Soft Cap). */
@@ -1593,7 +1630,7 @@ export function TributeWizard({
                   userId={uploadUserId ?? undefined}
                   tenantId={uploadTenantId ?? undefined}
                   autoStart
-                  maxFiles={currentMaxMediaItems}
+                  maxFiles={effectiveMaxMediaItems}
                   maxFileSizeBytes={300 * 1024 * 1024}
                   overflowRejectionMessage={copy.uploadLimitOverflowRejection}
                 >
@@ -1651,7 +1688,7 @@ export function TributeWizard({
                             >
                               {copy.uploadLimitCount
                                 .replace("{count}", String(totalQueued))
-                                .replace("{max}", String(currentMaxMediaItems))}
+                                .replace("{max}", String(effectiveMaxMediaItems))}
                               {dz.totals.uploaded > 0 || dz.totals.uploading > 0 || dz.totals.failed > 0 ? (
                                 <span className="ml-2 text-xs font-light text-zinc-400">
                                   {copy.uploadBreakdown
@@ -1675,6 +1712,26 @@ export function TributeWizard({
                           </button>
                         </div>
 
+                        {isFreemiumGrant &&
+                        totalQueued > 50 &&
+                        dz.remainingSlots > 0 ? (
+                          <div
+                            className="mt-5 overflow-hidden rounded-2xl border border-amber-300/25 bg-gradient-to-br from-amber-200/[0.07] via-white/[0.02] to-transparent p-5 shadow-[0_0_36px_rgba(251,191,36,0.10)] backdrop-blur-md"
+                            role="status"
+                            aria-live="polite"
+                          >
+                            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-amber-200/70">
+                              Odyssey
+                            </p>
+                            <p className="mt-2 font-serif text-lg leading-snug text-amber-50">
+                              {copy.softCapMediaBannerTitle}
+                            </p>
+                            <p className="mt-1.5 text-sm font-light leading-relaxed text-amber-100/75">
+                              {copy.softCapMediaBannerBody}
+                            </p>
+                          </div>
+                        ) : null}
+
                         {dz.remainingSlots <= 0 ? (
                           <div
                             className="mt-5 rounded-xl border border-amber-400/40 bg-amber-950/10 p-4 shadow-[0_0_24px_rgba(251,191,36,0.14)] backdrop-blur-md"
@@ -1691,7 +1748,7 @@ export function TributeWizard({
                                 ? copy.softCapMediaUnlockBody
                                 : copy.uploadLimitReachedHint.replace(
                                     "{max}",
-                                    String(currentMaxMediaItems),
+                                    String(effectiveMaxMediaItems),
                                   )}
                             </p>
                             {softCapEligible ? (
@@ -2073,8 +2130,17 @@ export function TributeWizard({
               isPaying={isPaying}
               payError={payError}
               showStayFree={showCheckoutStayFree}
+              excessMediaCount={
+                isFreemiumGrant && projectMediaCount > grantedMediaMax
+                  ? projectMediaCount - grantedMediaMax
+                  : 0
+              }
               onPay={() => void handlePay()}
               onStayFree={handleStayOnGift}
+              onGoToMedia={() => void navigateToStep(3)}
+              onRemoveExtension={(key) =>
+                handleExtensionsChange({ ...extensions, [key]: false })
+              }
               copy={{
                 title: copy.stepCheckoutTitle,
                 description: copy.stepCheckoutDescription,
@@ -2091,6 +2157,9 @@ export function TributeWizard({
                 stayFreeCta: copy.checkoutStayFreeCta,
                 stayFreeHint: copy.checkoutStayFreeHint,
                 amputationHint: copy.checkoutAmputationHint,
+                excessMediaNotice: copy.checkoutExcessMediaNotice,
+                goToMediaLink: copy.checkoutGoToMediaLink,
+                removeOption: copy.checkoutRemoveOption,
               }}
             />
           ) : null}

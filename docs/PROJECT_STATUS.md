@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: 9 juillet 2026 · Freemium V1 Phases 0–5 ✅ · next = Phase 6 QA + worker Creatomate réel / rails UX mobile**
+**Last revised: 21 juillet 2026 · Freemium V1 Phases 0–5 ✅ · Phase 6 QA ⏳ EN COURS (SQL P9 appliqué · suite Vitest business en place) · next = worker Creatomate réel / rails UX mobile**
 
 Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -17,12 +17,12 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 | **Partner Salon** | 🟢 Prod | RBAC, invitations, gate R6 — QA P5.5 historique ✅ ; solde = **commissions** (jetons purgés P8) |
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Canon + Soft Cap + entitlements + **gate export stub** + MP3/ToS + add-ons Quiet Luxury — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) |
 | **RevShare Bulletproof** | 🟡 Partiel | Spec + SQL P6/P8 ✅ · accrual webhook à durcir / UI Salon commissions ⏳ |
-| **Export vidéo (Creatomate)** | 🟡 Stub | Gate `project_paid_entitlements` + P9 jobs ✅ · **worker réel** ⏳ |
+| **Export vidéo (Creatomate)** | 🟡 Stub | Gate `project_paid_entitlements` + **P9 appliqué** ✅ · **worker réel** ⏳ |
 | **UX mobile / ergonomie** | 🟡 Plan vivant | Canon [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 · **pas annulé** par Freemium |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-J/K/L** ⏳ (audio, focus, copy) |
 | **Scanner Compagnon** | 🟡 | Spec + stubs P6 ✅ · MVP app ⏳ (rail M2) |
 | **Docs hub** | 🟢 | README + [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · anciennes docs filles encore en drift |
-| **Tests & CI** | 🔴 | Aucun framework / `.github/` workflows |
+| **Tests & CI** | 🟡 | **Vitest en place** — 4 suites QA business (Soft Cap médias/musique, MP3/ToS, RevShare) + SQL accrual ⏳ CI `.github/` à venir |
 | **Security** | 🟡 | RLS + gate Salon ✅ · export never-trust via entitlements (stub) |
 
 **Overall ~8.8/10 commerce wizard** — Soft Cap + gate export stub ; **prochain levier = Phase 6 QA + worker Creatomate**.  
@@ -296,7 +296,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 |-----|-----|
 | `B2B2C_COMMERCE.md` | ✅ **v2 Bulletproof** (waterfall 10 % + 30 % Net Distribuable, saga v2) |
 | `SANCTUARY_STRATEGY.md` | ✅ Positionnement Sanctuaire · catalogue monétisation V1 |
-| `FREEMIUM_V1_PIVOT.md` | ✅ Canon · Phases **0–5 ✅** · Phase 6 remaining · onboarding V1 |
+| `FREEMIUM_V1_PIVOT.md` | ✅ Canon · Phases **0–5 ✅** · Phase 6 QA ⏳ en cours · onboarding V1 |
 | `TECHNICAL_ONBOARDING_V1.md` | ✅ Hub Freemium V1 (remplace hub pré-purge archivé) |
 | `NARRATIVE_SOFT_CAP.md` / `MUSIC_RIGHTS_ATTESTATION.md` | ✅ Spec Soft Cap + attestation MP3 |
 | `MOBILE_WIZARD_STRATEGY.md` | ✅ Plan M0–M6 vivant (rail UX parallèle) |
@@ -326,17 +326,31 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | 2 | SQL P8 (purge jetons, Soft Cap quota, entitlements) — **appliqué Supabase** | ✅ |
 | 3 | Checkout Soft Cap + webhook `project_paid_entitlements` + `freemium_free` | ✅ |
 | 4 | Soft Cap UX (filet 50, post-Composition Magique, musique dual, stay 0 $) | ✅ |
-| **5** | Gate export stub + MP3/ToS + add-ons Quiet Luxury · SQL P9 | ✅ **FAIT** |
-| **6** | QA Soft Cap dual · pas de double facturation · RevShare sur 39 $ · worker Creatomate | ⏳ **NEXT** |
+| **5** | Gate export stub + MP3/ToS + add-ons Quiet Luxury · **SQL P9 appliqué** | ✅ **FAIT** |
+| **6** | QA automatisée business · pas de double facturation · RevShare 30 % · worker Creatomate | ⏳ **EN COURS** |
 
-### Priorité A — Phase 6 (QA) + follow-ups export
+### Priorité A — Phase 6 (QA business) — ⏳ EN COURS
 
-| # | Task | Done when |
+**Suite Vitest** (`tests/business/`) — 30 tests verts, déterministes, sans infra :
+
+| # | Scénario | Fichier | Couvre |
+|---|----------|---------|--------|
+| 6.1 | Soft Cap Médias | `softcap-media.test.ts` | quota 50 · nudge dès 50 · refus upsell + >50 → **422 amputation** · musique premium jamais 0 $ · accept → delta 149 $ |
+| 6.2 | Soft Cap Musique | `softcap-music.test.ts` | dual choice · add-on 39 $ vs upgrade 149 $ · **anti double-facturation** dès Héritage |
+| 6.3 | Soupape MP3 / ToS | `music-rights-gate.test.ts` | checkout **422** sans attestation · export never-trust entitlements |
+| 6.4 | RevShare waterfall | `revshare-waterfall.test.ts` | 149 $ → commission **4023 (30 % net)** · conservation · **0 jeton** |
+
+**QA SQL live** (`docs/sql/odyssey_p6_qa_revshare_accrual.sql`) — accrual E2E `partner_commission_balances += 4023`, idempotence event_id, 0 table `partner_token_*` — transactionnel (ROLLBACK).
+
+| # | Reste à faire | Done when |
 |---|------|-----------|
-| 6.1 | QA Soft Cap dual musique · pas de double facturation Licence+Héritage · RevShare 39 $ | Checklist verte |
+| 6.5 | CI GitHub Actions (`npm test` sur PR) | Pipeline vert bloquant |
+| 6.6 | QA SQL accrual jouée sur staging | NOTICE `ALL_PASS` |
 | 5.x | Worker Creatomate réel (consomme `project_export_jobs`) | Master / 4K gated |
 | 5.y | Fulfillment ops : NFC claim · TTS Voix · Gelato Livre | Pipelines hors stub |
 | 5.4 | Salon UI commissions (soldes `partner_commission_*`) | Admin voit ledger |
+
+**Lancer la QA business :** `npm test` (tout) · `npm run test:business` (scénarios) · `npm run test:watch` (dev).
 
 **Exit critère commerce :** tenant freemium invite → famille Soft Cap → paie Héritage **ou** Licence 39 $ **ou** reste 0 $ (amputation) → entitlements corrects → rendu gated.
 
@@ -412,7 +426,7 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 
 **Grand chantier immédiat :** **Phase 6 QA** + worker Creatomate réel. Rails parallèles : mobile M0–M6 · S5-J/K/L · Scanner.
 
-**Pas encore prod-ready :** rendu vidéo réel · UI commissions Salon complète · Scanner MVP · tests auto.
+**Pas encore prod-ready :** rendu vidéo réel · UI commissions Salon complète · Scanner MVP · CI GitHub Actions (suite Vitest en place, pas encore branchée en pipeline).
 
 ---
 
