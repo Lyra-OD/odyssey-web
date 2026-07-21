@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { getSupabaseAdminClient } from "@/utils/supabase/admin";
+import {
+  buildInitialWizardState,
+  resolveChannelProfile,
+} from "@/src/lib/wizard/channelProfile";
 
 /**
  * Creates a `public.projects` draft row for the authenticated user.
@@ -97,6 +102,34 @@ export async function POST(req: Request) {
 
   const tenantId = membership.tenant_id;
 
+  // Cascade V-Final : le forfait de départ est décidé par le BACKEND via le
+  // ChannelProfile (fin du fallback frontend Éternité 299 $). is_freemium est
+  // lu en admin car la famille n'a pas de SELECT RLS sur `tenants`.
+  let isFreemiumTenant = false;
+  try {
+    const admin = getSupabaseAdminClient();
+    const { data: tenant } = await admin
+      .from("tenants")
+      .select("is_freemium")
+      .eq("id", tenantId)
+      .maybeSingle();
+    isFreemiumTenant = tenant?.is_freemium === true;
+  } catch (error) {
+    // Dégradation gracieuse : à défaut, canal direct (jamais Éternité par défaut).
+    console.warn(
+      "[draft] tenant is_freemium lookup failed:",
+      error instanceof Error ? error.message : String(error),
+    );
+  }
+
+  // Création directe = pas d'invitation (les invitations passent par
+  // redeemPartnerInvitation, qui pose déjà grantedPackage = essential).
+  const channelProfile = resolveChannelProfile({
+    isFreemiumTenant,
+    hasInvitation: false,
+  });
+  const initialWizardState = buildInitialWizardState(channelProfile);
+
   let body: DraftBody = {};
   try {
     const parsed = (await req.json()) as unknown;
@@ -110,7 +143,10 @@ export async function POST(req: Request) {
     tenant_id: tenantId,
   };
 
-  const richPayload: Record<string, unknown> = { ...basePayload };
+  const richPayload: Record<string, unknown> = {
+    ...basePayload,
+    wizard_state: initialWizardState,
+  };
   if (body.firstName?.trim()) richPayload.first_name = body.firstName.trim();
   if (body.lastName?.trim()) richPayload.last_name = body.lastName.trim();
   if (body.birthDate) richPayload.birth_date = body.birthDate;
