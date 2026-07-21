@@ -449,6 +449,7 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 | Scanner Compagnon (Killer App) | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | Routes & Salon auth | [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) |
 | Packages & tokens | [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) |
+| Catalogue monétisation complet (livré + à venir + idées) | [`MONETIZATION_CATALOG.md`](MONETIZATION_CATALOG.md) |
 | Wizard | [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) |
 | Onboarding hub | [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) |
 | SQL order | [`sql/README.md`](sql/README.md) |
