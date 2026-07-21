@@ -7,6 +7,8 @@
 >
 > **QA Phase 6 :** [`odyssey_p6_qa_revshare_accrual.sql`](odyssey_p6_qa_revshare_accrual.sql) — accrual RevShare E2E (solde +30 % net, idempotence, 0 jeton) — **transactionnel (ROLLBACK)**, ne persiste rien.
 >
+> **P10 + P10.1 (Cascade V-Final) :** [`odyssey_p10_memorial_fund.sql`](odyssey_p10_memorial_fund.sql) + [`odyssey_p10_1_memorial_fund_rpc.sql`](odyssey_p10_1_memorial_fund_rpc.sql) — ✅ **appliqués sur Supabase** (juillet 2026) — Fonds Commémoratif (crédit), waterfall invité, RPC accrue/consume. Feature flag `tenants.settings.viral_loop_enabled` (défaut `false`).
+>
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
 > **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).  
 > **Migrations P4 wallets** = historique de schéma (rejouées puis droppées par P8) — **ne plus seed « 100 jetons »**.
@@ -42,6 +44,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | 19 | `odyssey_p8_freemium_v1_token_purge.sql` | **Migration** | **Freemium V1** — invitation sans jetons · Soft Cap quota · entitlements · NFC · DROP wallets |
 | 20 | `odyssey_p9_project_export_jobs.sql` | **Migration** | **Phase 5** — `project_export_jobs` (stub Creatomate) · RLS SELECT owner |
 | 21 | `odyssey_p10_memorial_fund.sql` | **Migration** | **Cascade V-Final** — Fonds Commémoratif (crédit), `guest_micro_checkouts` waterfall, `projects.commemoration_date`, config `tenants.settings` — voir [§ P10](#p10--fonds-commémoratif-boucle-virale) et [`IMPLEMENTATION_CASCADE_VFINAL.md`](../IMPLEMENTATION_CASCADE_VFINAL.md) |
+| 22 | `odyssey_p10_1_memorial_fund_rpc.sql` | **Migration** | **Cascade V-Final Phase 2** — RPC `accrue_guest_micro_checkout()` (waterfall invité → commission + crédit) & `consume_family_fund_credit()` (application crédit paywall) — voir [§ P10.1](#p101--rpc-fonds-commémoratif) |
 | — | `odyssey_p6_1_waterfall_qa_assert.sql` | **QA** | Assert waterfall pur S1–S3 + clawback S5 (lecture seule). |
 | — | `odyssey_p6_qa_revshare_accrual.sql` | **QA** | Accrual RevShare E2E (solde +30 % net · idempotence · 0 jeton) — transactionnel ROLLBACK. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
@@ -208,8 +211,7 @@ en **modèle crédit** : les contributions invités financent une remise sur le 
 | **`family_tribute_fund_ledger`** | reasons `credit_applied` / `credit_reversal` |
 | **RLS** | `family_tribute_fund_balances` SELECT owner (thermomètre UI) |
 
-**RPC métier (Phase 2 — hors cette migration schéma) :** `accrue_guest_micro_checkout()`,
-`consume_family_fund_credit()`.
+**RPC métier :** livrés dans **P10.1** (fichier séparé, ci-dessous).
 
 **Seed feature flag (post-migration, par tenant) :**
 
@@ -217,6 +219,28 @@ en **modèle crédit** : les contributions invités financent une remise sur le 
 UPDATE public.tenants
 SET settings = settings || jsonb_build_object('viral_loop_enabled', true)
 WHERE slug = 'partner-qa-demo';
+```
+
+---
+
+## P10.1 — RPC Fonds Commémoratif
+
+**Fichier :** `odyssey_p10_1_memorial_fund_rpc.sql` *(Cascade V-Final Phase 2 — juillet 2026)*
+**Prérequis :** P6.1 (`compute_revenue_waterfall`) + P10 appliqués. **Idempotent** (`CREATE OR REPLACE`).
+**Canon :** [`IMPLEMENTATION_CASCADE_VFINAL.md`](../IMPLEMENTATION_CASCADE_VFINAL.md) §3 & §7.
+
+| RPC (`service_role` only) | Rôle |
+|---------------------------|------|
+| **`accrue_guest_micro_checkout(guest_id, gross, event_id, …)`** | Waterfall d'une contribution invité : réutilise `compute_revenue_waterfall` → Platform Fee 10 % → Net → commission Athos 30 % (`guest_commission_accrual`, **uniquement si tenant `is_freemium`**) → crédit fonds = `Net × fund_conversion_bps`. Idempotent par `stripe_event_id` **et** par `guest_micro_checkout_id`. |
+| **`consume_family_fund_credit(project_id, price, owner_floor, tribute_checkout_id)`** | Applique le crédit au paywall famille à l'export : `applied = min(disponible, prix − owner_floor)`. Idempotent par `tribute_checkout_id`. |
+
+**Appel applicatif :** webhook `guest_support` → `accrue_guest_micro_checkout` ; `/api/checkout` (0 $ inline) + webhook b2b2c/b2c → `consume_family_fund_credit`.
+
+**QA rapide (staging, ROLLBACK) :**
+
+```sql
+SELECT public.compute_revenue_waterfall(4900, 1000, 3000);
+-- net 4410 · commission 1323 · crédit @100 % = 4410
 ```
 
 ---

@@ -13,6 +13,12 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 
 > SKU musique à la carte : **`musicLicense` (39 $)** — successeur de `extendedLicense` (migration TS Phase 1).
 
+> **⚠️ Extension canon — Cascade V-Final (21 juillet 2026) :** le **B2C direct** pivote —
+> entrée en **brouillon gratuit** (comme le B2B2C), paywall **strict à l'export** (min Héritage 149 $),
+> pouvant être financé par la **Boucle Virale / Fonds Commémoratif** (contributions des proches → crédit).
+> Le forfait de départ est décidé par le **backend autoritaire** (`ChannelProfile` dans `/api/projects/draft`).
+> Canon dédié : [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) (prime en cas de conflit sur le B2C).
+
 ---
 
 ## 1. Conditions non négociables

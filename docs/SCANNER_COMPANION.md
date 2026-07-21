@@ -358,6 +358,12 @@ Le Scanner n’enforce pas cette règle lui-même ; il alimente simplement le vo
 | `app/api/scan/sessions/[token]/upload/route.ts` | **Créer** |
 | `app/api/ai/restoration/preview/route.ts` | **Créer** |
 | `src/lib/scanner/scanSessionToken.ts` | **Créer** — sign / hash |
+
+> **Cascade V-Final (✅ livré) :** le volet **contribution invité async** (Support Packs → Fonds
+> Commémoratif) est déjà câblé, distinct du Scanner QR : tokens opaques
+> `src/lib/contribute/contributeToken.ts` + `accessToken.ts`, routes `GET/POST /api/contribute/[token]`
+> et `POST /api/projects/[id]/contribute-link` (voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) §
+> Boucle Virale). Le Scanner QR (upload photo mobile) reste à construire (MVP ci-dessous).
 | `docs/sql/odyssey_p6_freemium_revshare.sql` | **Déjà créé** — `scan_sessions` en Partie B |
 
 ---

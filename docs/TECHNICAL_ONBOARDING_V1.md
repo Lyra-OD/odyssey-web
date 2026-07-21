@@ -101,6 +101,10 @@ Specs : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`DELIVERABLES_AND_P
 | Musique proxy | `app/api/music/*` · `src/lib/music/stingrayClient.ts` |
 | Autosave | `app/api/projects/[id]/autosave/route.ts` |
 | Routes canon | `src/lib/appRoutes.ts` |
+| **Init projet (V-Final)** | `src/lib/wizard/channelProfile.ts` (`resolveChannelProfile` + `buildInitialWizardState`, consommé par `app/api/projects/draft`) |
+| **Cascade Fonds (V-Final)** | `src/lib/wizard/memorialFund.ts` (`computeCascade`, pur) · `guestSupportPacks.ts` (catalogue) |
+| **Contribution invité (V-Final)** | `src/lib/contribute/{contributeToken,accessToken}.ts` · `app/api/contribute/[token]/*` · `app/api/projects/[id]/contribute-link` |
+| **SQL Fonds (V-Final)** | `docs/sql/odyssey_p10_memorial_fund.sql` + `odyssey_p10_1_memorial_fund_rpc.sql` · flag `tenants.settings.viral_loop_enabled` |
 
 Hors périmètre wizard : `app-backend/` (Brain/Engine legacy).
 

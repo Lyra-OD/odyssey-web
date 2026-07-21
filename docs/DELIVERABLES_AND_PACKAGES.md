@@ -74,6 +74,24 @@ Waterfall : Gross session (forfait + add-ons) → Platform 10 % → Net → RevS
 
 ---
 
+## Support Packs invités — Boucle Virale (Cascade V-Final ✅ livré)
+
+Achetés par **les proches** (invités anonymes) sur `/[lang]/contribute/[token]`. Achat personnel
+à bénéfice collectif : le **Net Distribuable** devient un **crédit** qui fait fondre le paywall famille
+(cascade P1→P2→P3). Source : `src/lib/wizard/guestSupportPacks.ts` · canon [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
+
+| Support Pack | Prix | `product_key` | Notes |
+|--------------|------|---------------|-------|
+| **Pack Héritage** (HD + Version Sociale + Page Livre d'or) | **89 $** | `guest_heritage` | Ancre panier (cible ~50 $) |
+| **Pack Soutien Numérique** (Copie HD) | **49 $** | `guest_hd` | Friction moyenne |
+| **Bougie Commémorative Digitale** | **15 $** | `guest_candle` | Friction basse |
+
+**Règles :** cap dur **1000 $/transaction** (anti-abus) · commission Athos `guest_commission_accrual`
+(30 % du Net) **uniquement si tenant `is_freemium`** · crédit fonds = `Net × fund_conversion_bps`
+(défaut 100 %) porté par la marge Odyssey · capture email + `consent_marketing` (Loi 25, LTV Jour-365).
+
+---
+
 ## Soft Cap & entitlements musique
 
 | Déclencheur | Comportement |

@@ -38,6 +38,21 @@ Routes **prévues** pour l’ingestion mobile photos papier via QR Code wizard d
 
 **Pont conversion :** preview IA Avant/Après → upsell forfaits **Éternité (299 $)** ou **Légendaire (499 $)** — voir [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
 
+### Boucle Virale — Fonds Commémoratif (Cascade V-Final ✅ livré)
+
+Contribution invité async : les proches achètent des **Support Packs** dont le Net Distribuable
+devient un **crédit** sur le paywall famille. Gated par `tenants.settings.viral_loop_enabled`.
+Canon : [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
+
+| Route | Auth | Rôle |
+|-------|------|------|
+| **`POST /api/projects/[id]/contribute-link`** | Owner projet | Génère un lien invité opaque (`project_access_tokens`, `purpose=guest_contribute`, TTL 30 j) |
+| **`GET /api/contribute/[token]`** | Token invité (public) | Contexte page contributeur : hommage minimal + catalogue Support Packs + fonds levé |
+| **`POST /api/contribute/[token]/checkout`** | Token invité (public) | Crée `guest_micro_checkouts` + session Stripe `checkout_mode=guest_support` + `consent_records` (Loi 25) |
+| **`/[lang]/contribute/[token]`** | Token invité (public) | Page publique d'achat Support Pack — **UI Phase 3 ⏳** |
+
+**Sécurité :** token opaque SHA-256 (`src/lib/contribute/contributeToken.ts`), résolu via client admin (bypass RLS) ; cap **1000 $/transaction** ; accrual (commission + crédit) fait **au webhook** `guest_support` (jamais au POST).
+
 `lang` = `fr` | `en`.
 
 ---

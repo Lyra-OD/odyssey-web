@@ -99,10 +99,18 @@ Journal **append-only** — source de vérité audit.
 
 | `reason` | `delta_cents` | Déclencheur |
 |----------|---------------|-------------|
-| `commission_accrual` | **+** | Webhook `checkout.session.completed` |
+| `commission_accrual` | **+** | Webhook `checkout.session.completed` (forfait famille) |
 | `commission_clawback` | **−** | `charge.refunded`, dispute lost, session expirée post-paiement |
+| `guest_commission_accrual` | **+** | **(Cascade V-Final)** Webhook `guest_support` → `accrue_guest_micro_checkout` — 30 % du Net d'une contribution invité (uniquement si tenant `is_freemium`) |
+| `guest_commission_clawback` | **−** | **(Cascade V-Final)** Remboursement invité post-paiement |
 | `payout` | **−** | Versement manuel admin Odyssey |
 | `adjustment` | ± | Correction ops (super admin, ticket tracé) |
+
+> **⚠️ Cascade V-Final (21 juillet 2026) :** les micro-transactions invités
+> (`guest_micro_checkouts`) **alimentent désormais** ce ledger via
+> `guest_commission_accrual` (canon [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md),
+> migrations P10/P10.1). C'est l'inversion documentée dans
+> [`VISION_PHASE_2.md`](VISION_PHASE_2.md) §2.2.
 
 ---
 
@@ -161,7 +169,8 @@ odyssey_margin_cents    = net_distributable_cents − commission_cents
 - **Pas** de commission sur checkout `family_total_cents = 0` (Souvenir gratuit)
 - **Pas** de commission B2C direct (`checkout_mode = b2c` ou absence `tenant_id` partenaire éligible)
 - Arrondi **floor** à **chaque étape** du waterfall (centimes entiers)
-- **Family Tribute Fund** : alimenté depuis `odyssey_margin_cents` — RPC séparée — **n’impacte jamais** `commission_cents`
+- **Fonds Commémoratif (Cascade V-Final)** : le **crédit** famille = `Net Distribuable × fund_conversion_bps` (défaut 100 %), **porté par la marge Odyssey** — il **ne réduit jamais** la commission cash d'Athos. En revanche, la contribution invité elle-même **génère** une commission Athos (`guest_commission_accrual`, 30 % du Net) si le tenant est `is_freemium`. Détail : [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
+  - *(Ancienne règle « Family Tribute Fund n'impacte jamais `commission_cents` » : abandonnée — le fonds et la commission puisent tous deux dans le Net Distribuable.)*
 
 ---
 
@@ -421,10 +430,11 @@ WHERE tc.project_id = :project_id;
 |-----------|--------|
 | Doc canonique Bulletproof (ce fichier) | ✅ juillet 2026 |
 | Migration SQL P6 (base brut) | ✅ appliquée |
-| Migration SQL **P6.1** waterfall | ⏳ à créer |
-| `compute_revenue_waterfall()` | ⏳ P6.1 |
-| RPC accrue / clawback / payout | ⏳ P6.1 |
-| Webhook handler `checkout.session.completed` | ⏳ |
+| Migration SQL **P6.1** waterfall | ✅ appliquée |
+| `compute_revenue_waterfall()` | ✅ P6.1 |
+| RPC accrue / clawback / payout | ✅ P6.1 (accrue/clawback) · payout ⏳ |
+| Webhook handler `checkout.session.completed` | ✅ (b2b2c_family + b2c + **guest_support** V-Final) |
+| RPC `accrue_guest_micro_checkout` (contribution invité) | ✅ P10.1 |
 | Webhook handler `charge.refunded` | ⏳ |
 | UI Salon commissions waterfall (`partner_admin`) | ⏳ |
 | Payout admin Odyssey | ⏳ |

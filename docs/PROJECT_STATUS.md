@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: 21 juillet 2026 · Freemium V1 Phases 0–5 ✅ · Phase 6 QA ⏳ · Cascade V-Final (Boucle Virale / Fonds Commémoratif) 🚧 EN COURS — Phase 1 Data Layer (migration P10) — canon [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md)**
+**Last revised: 21 juillet 2026 · Freemium V1 Phases 0–5 ✅ · Phase 6 QA ⏳ · Cascade V-Final (Boucle Virale / Fonds Commémoratif) 🚧 — Phase 1 Data Layer (P10) ✅ · Phase 2 Core+Wiring (P10.1, ChannelProfile, cascade, `/api/contribute`, webhook `guest_support`, crédit `/api/checkout`) ✅ · **Phase 3 Frontend/UI ⏳ prochaine** — canon [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md)**
 
 Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -22,7 +22,7 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-J/K/L** ⏳ (audio, focus, copy) |
 | **Scanner Compagnon** | 🟡 | Spec + stubs P6 ✅ · MVP app ⏳ (rail M2) |
 | **Docs hub** | 🟢 | README + [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · anciennes docs filles encore en drift |
-| **Tests & CI** | 🟡 | **Vitest en place** — 4 suites QA business (Soft Cap médias/musique, MP3/ToS, RevShare) + SQL accrual ⏳ CI `.github/` à venir |
+| **Tests & CI** | 🟡 | **Vitest en place** — **6 suites / 49 tests** QA business (Soft Cap médias/musique, MP3/ToS, RevShare, **waterfall invité + cascade Fonds V-Final**) + SQL accrual ⏳ CI `.github/` à venir |
 | **Security** | 🟡 | RLS + gate Salon ✅ · export never-trust via entitlements (stub) |
 
 **Overall ~8.8/10 commerce wizard** — Soft Cap + gate export stub ; **prochain levier = Phase 6 QA + worker Creatomate**.  
@@ -90,10 +90,11 @@ flowchart LR
 | QA P5.5 Salon (RBAC, wallet, gate R6) | ✅ | ✅ **Validée prod** |
 | `tribute_checkouts` saga **v1** (jetons) | ✅ | ❌ spike **annulé** |
 | `tribute_checkouts` saga **v2** (freemium + RevShare) | ✅ P6 schema | ❌ app + webhook en cours |
-| `tenants.is_freemium` | ✅ P6 | 🟡 Partner UI ✅ ; checkout family saga ⏳ |
-| `partner_commission_ledger` + accrual webhook | ✅ P6 schema | ❌ webhook |
-| Checkout mode `b2b2c_family` | ✅ column | ❌ |
-| Webhook → checkout completed + commission | — | ❌ (catalog sync only) |
+| `tenants.is_freemium` | ✅ P6 | ✅ Partner UI + checkout family + draft `ChannelProfile` |
+| `partner_commission_ledger` + accrual webhook | ✅ P6/P6.1 | ✅ webhook `checkout.session.completed` |
+| Checkout mode `b2b2c_family` | ✅ column | ✅ saga + Stripe |
+| Webhook → checkout completed + commission | — | ✅ b2b2c / b2c / **guest_support** |
+| **Fonds Commémoratif** (`guest_micro_checkouts`, `family_tribute_fund_*`) | ✅ P10/P10.1 | ✅ `/api/contribute` + accrual + crédit `/api/checkout` (gated flag) · **UI Phase 3 ⏳** |
 | Scanner Compagnon sessions | ✅ P6 stub | ❌ app |
 | Real Salon wallet balance | ✅ | ✅ |
 | RBAC Admin vs Director (UI) | ✅ RLS | ✅ |
@@ -151,7 +152,7 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 | Décision | Pourquoi |
 |----------|----------|
 | **Le Dossier** (off-canvas vs dropdown) | Réduire la charge cognitive (stepper 8 cercles → 3 phases) et éviter l'effet « e-commerce cheap » ; le forfait doit être consultable à tout moment sans polluer le corps des étapes |
-| **Ancrage Éternité par défaut** (`DEFAULT_B2C_BASE_PACKAGE = "heritage"`) | Ancrage psychologique sur le vrai milieu de gamme B2C (149/299/499 $) + meilleur rapport qualité-prix ; le client ne clique plus de carte à l'Étape 1 depuis la suppression du picker |
+| **Ancrage Éternité par défaut** (`DEFAULT_B2C_BASE_PACKAGE = "heritage"`) | Ancrage psychologique sur le vrai milieu de gamme B2C (149/299/499 $) + meilleur rapport qualité-prix ; le client ne clique plus de carte à l'Étape 1 depuis la suppression du picker. **⚠️ Supplanté (Cascade V-Final, 21 juil.) :** le forfait de départ d'un nouveau projet est désormais décidé par le **backend autoritaire** (`ChannelProfile` + `buildInitialWizardState` dans `/api/projects/draft`) — B2B2C démarre `essential` (0 $), B2C `signature` (plancher payant). `DEFAULT_B2C_BASE_PACKAGE` reste un fallback défensif, plus l'ancre d'init. |
 | **Inversion Étape 4 ↔ 5** | La capacité média d'un chapitre dépend de `durationSec` — le choix musical doit précéder l'assignation média |
 | **Clean Slate Étape 5** | `SoundSignatureStep` affichait une UI fonctionnelle mais dont les saisies étaient **silencieusement ignorées** par `coerceWizardState()` — bug UX trompeur, pas une simple dette technique |
 | **`useWizardStoryboard`** | Isoler le domaine chapitres de `TributeWizard` (god component ~1780 lignes) avant d'intégrer `dnd-kit` ; le hook reste pur (pas d'autosave) |
@@ -200,18 +201,22 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 
 ---
 
-## 5. API routes (13 + auth callback)
+## 5. API routes (16 + auth callback)
 
 | Route | Maturity | Notes |
 |-------|----------|-------|
-| `/api/projects/draft`, autosave, media, avatar | 🟢 Production | Ownership checks |
+| `/api/projects/draft`, autosave, media, avatar | 🟢 Production | Ownership checks ; **draft pose `wizard_state` via `ChannelProfile` (fin fallback Éternité)** |
 | `/api/music/search`, preview, stream | 🟢 Production | Stingray + mock fallback |
-| `/api/checkout` | 🟡 Partial | B2C Stripe + B2B TS debit; no `tribute_checkouts`, no `b2b2c_family` |
+| `/api/checkout` | 🟢 | B2C + B2B2C freemium + Soft Cap ; **crédit Fonds Commémoratif** (gated `viral_loop_enabled`) : 0 $ inline (`fund_free`) / partiel coupon Stripe |
+| `/api/projects/[id]/export` | 🟢 | Gate entitlements + P9 `project_export_jobs` (stub Creatomate) |
+| `/api/projects/[id]/contribute-link` | 🟢 | **(V-Final)** Owner génère un lien invité (`project_access_tokens`, TTL 30 j) |
+| `/api/contribute/[token]` (GET) | 🟢 | **(V-Final)** Public : hommage minimal + catalogue Support Packs + fonds levé |
+| `/api/contribute/[token]/checkout` (POST) | 🟢 | **(V-Final)** Public : `guest_micro_checkouts` + session Stripe `guest_support` + `consent_records` |
 | `/api/partner/invitations` | 🟢 | P5.5 RPC debit + `canInvite`; `402` on overdraft limit |
 | `/api/partner/tenants` | 🟢 | RPC P5.4 or join fallback; `role` + `capabilities` per tenant |
 | `/api/partner/wallet` | 🟢 | Admin-only snapshot (`canViewBalance`); balance + credit limit |
 | `/[lang]/salon/facturation` | 🟡 Shell | Admin UI ; Payment Link env optional ; ledger list ⏳ |
-| `/api/stripe/webhook` | 🟡 | Robust idempotence; **catalog sync only** — no `checkout.session.completed` → orders |
+| `/api/stripe/webhook` | 🟢 | Idempotence robuste ; catalog sync **+ `checkout.session.completed`** (b2b2c_family / b2c / **guest_support**) → entitlements + accrual + crédit fonds |
 | `/auth/callback` | 🟢 | PKCE, sanitized `?next=` |
 
 ---
@@ -301,7 +306,8 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | `NARRATIVE_SOFT_CAP.md` / `MUSIC_RIGHTS_ATTESTATION.md` | ✅ Spec Soft Cap + attestation MP3 |
 | `MOBILE_WIZARD_STRATEGY.md` | ✅ Plan M0–M6 vivant (rail UX parallèle) |
 | `DELIVERABLES_AND_PACKAGES.md` | ✅ Grille V1 · matrice phases à jour |
-| `PARTNER_REVSHARE.md` | ✅ Bulletproof · jetons DEPRECATED |
+| `PARTNER_REVSHARE.md` | ✅ Bulletproof · jetons DEPRECATED · **maj V-Final** (`guest_commission_accrual`, garde-fou inversé) |
+| `IMPLEMENTATION_CASCADE_VFINAL.md` | ✅ **Canon Cascade V-Final** · §7 wiring Phase 2 livré |
 | `B2B2C_COMMERCE.md` | 🟡 Drift jetons / états ⏳ — croiser FREEMIUM |
 | `WIZARD_ARCHITECTURE.md` / `STINGRAY` / `sql/README` | 🟡 Drift possible — croiser FREEMIUM + onboarding V1 |
 | `STORYBOARD_STEP5_LIVRE_OUVERT.md` | ✅ Canon Étape 5 |
@@ -331,7 +337,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 
 ### Priorité A — Phase 6 (QA business) — ⏳ EN COURS
 
-**Suite Vitest** (`tests/business/`) — 30 tests verts, déterministes, sans infra :
+**Suite Vitest** (`tests/business/`) — **49 tests verts** (6 suites), déterministes, sans infra :
 
 | # | Scénario | Fichier | Couvre |
 |---|----------|---------|--------|
@@ -339,6 +345,8 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | 6.2 | Soft Cap Musique | `softcap-music.test.ts` | dual choice · add-on 39 $ vs upgrade 149 $ · **anti double-facturation** dès Héritage |
 | 6.3 | Soupape MP3 / ToS | `music-rights-gate.test.ts` | checkout **422** sans attestation · export never-trust entitlements |
 | 6.4 | RevShare waterfall | `revshare-waterfall.test.ts` | 149 $ → commission **4023 (30 % net)** · conservation · **0 jeton** |
+| 6.5 | **Waterfall invité (V-Final)** | `guest-waterfall.test.ts` | miroir RPC `accrue_guest_micro_checkout` : HD 49 $ → net 4410 / commission 1323 / crédit 4410 · commission 0 en B2C direct mais crédit conservé · cap 1000 $ · conversion configurable |
+| 6.6 | **Cascade Fonds (V-Final)** | `memorial-fund-cascade.test.ts` | `computeCascade` P1→P2→P3 : 100 $→reste 49 $ · 320 $→Éternité auto-élevé + surplus · 5 invités→0 $ · `owner_floor` |
 
 **QA SQL live** (`docs/sql/odyssey_p6_qa_revshare_accrual.sql`) — accrual E2E `partner_commission_balances += 4023`, idempotence event_id, 0 table `partner_token_*` — transactionnel (ROLLBACK).
 
