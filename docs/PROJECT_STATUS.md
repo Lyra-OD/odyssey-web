@@ -15,7 +15,7 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 |-----------|--------|-------|
 | **Family Studio (wizard)** | 🟢 Mature | 8 étapes, autosave, Stingray, **Livre Ouvert + Composition Magique**, Soft Cap UX, checkout Soft Cap |
 | **Partner Salon** | 🟢 Prod | RBAC, invitations, gate R6 — QA P5.5 historique ✅ ; solde = **commissions** (jetons purgés P8) |
-| **Freemium V1 commerce** | 🟢 Phases 0–5 | Canon + Soft Cap + entitlements + **gate export stub** + MP3/ToS + add-ons Quiet Luxury — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) |
+| **Freemium V1 commerce** | 🟢 Phases 0–5 | Canon + Soft Cap + entitlements + **gate export stub** + MP3/ToS + add-ons Quiet Luxury — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · **Musique gratuit (juil. 2026) : Stingray licencié 100 % payant — Souvenir = preview + MP3 perso ToS** |
 | **RevShare Bulletproof** | 🟡 Partiel | Spec + SQL P6/P8 ✅ · accrual webhook à durcir / UI Salon commissions ⏳ |
 | **Export vidéo (Creatomate)** | 🟡 Stub | Gate `project_paid_entitlements` + **P9 appliqué** ✅ · **worker réel** ⏳ |
 | **UX mobile / ergonomie** | 🟡 Plan vivant | Canon [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 · **pas annulé** par Freemium |

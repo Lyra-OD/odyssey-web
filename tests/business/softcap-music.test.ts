@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 
 import {
+  canUploadPersonalAudio,
   computeWizardCart,
   computeWizardCartWithGrant,
   extensionCents,
@@ -75,5 +76,33 @@ describe("Soft Cap Musique — dual choice & entitlement", () => {
     );
     const sum = cart.lineItems.reduce((s, l) => s + l.cents, 0);
     expect(sum).toBe(cart.totalCents);
+  });
+});
+
+/**
+ * Décision juillet 2026 — Stingray licencié = 100 % payant.
+ *
+ * Le forfait gratuit (Souvenir) n'inclut/exporte AUCUNE piste licenciée :
+ *   - tier `standard` = preview only (hook Soft Cap), pas d'export licencié ;
+ *   - la seule source musicale réellement livrable au gratuit = MP3 perso (ToS).
+ * La protection légale du MP3 reste l'attestation (testée dans
+ * `music-rights-gate.test.ts`), indépendante du forfait.
+ */
+describe("Musique gratuit — Stingray payant, MP3 perso ouvert au Souvenir", () => {
+  it("le gratuit n'a jamais d'entitlement Stingray licencié sans payer", () => {
+    expect(resolveMusicEntitlement("essential", {})).toBe("standard");
+    // Débloqué uniquement par l'add-on Licence…
+    expect(resolveMusicEntitlement("essential", { musicLicense: true })).toBe(
+      "premium",
+    );
+    // …ou par un upgrade forfait payant.
+    expect(resolveMusicEntitlement("signature", {})).toBe("premium");
+  });
+
+  it("l'upload MP3 perso est disponible sur TOUS les forfaits, Souvenir inclus", () => {
+    expect(canUploadPersonalAudio("essential")).toBe(true);
+    expect(canUploadPersonalAudio("signature")).toBe(true);
+    expect(canUploadPersonalAudio("heritage")).toBe(true);
+    expect(canUploadPersonalAudio("legendary")).toBe(true);
   });
 });

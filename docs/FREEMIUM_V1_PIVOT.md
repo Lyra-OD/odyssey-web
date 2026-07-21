@@ -27,7 +27,7 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 2. **Entitlements payés** = snapshot serveur post-webhook Stripe — pas le `wizard_state` navigateur.
 3. **Purge jetons totale** — solde partenaire = uniquement `partner_commission_*`.
 4. **Musique à deux voies** — catalogue Stingray officiel (zéro copyright Odyssey) + soupape MP3/WAV (responsabilité famille via ToS).
-5. **Soft Cap musique Souvenir** — piste officielle **jamais bloquée** ; choix Licence 39 $ **ou** upgrade Héritage 149 $.
+5. **Stingray licencié = 100 % payant** *(décision juillet 2026)*. Le gratuit **n'inclut aucune** piste licenciée dans l'export : seulement (a) **preview** (hook Soft Cap, non exporté) et (b) **MP3 perso via ToS**. La sélection d'une piste officielle sur Souvenir n'est **jamais bloquée en écoute** ; elle déclenche le choix **Licence 39 $** ou **upgrade Héritage 149 $**.
 
 ---
 
@@ -35,7 +35,7 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 
 | Forfait | ID | Prix | Médias | Export | Musique | Inclus |
 |---------|-----|------|--------|--------|---------|--------|
-| **Souvenir** | `essential` | 0 $ | 50 | 1080p | Stingray **standard** (sous-ensemble) | Cadeau salon |
+| **Souvenir** | `essential` | 0 $ | 50 | 1080p | **Preview Stingray** (aperçu, non exporté) + **MP3 perso (ToS)** — aucune piste licenciée incluse | Cadeau salon |
 | **Héritage** | `signature` | 149 $ | 125 | **4K** | **Catalogue Stingray officiel inclus** + soupape MP3/WAV | Chef-d’œuvre numérique |
 | **Éternité** | `heritage` | 299 $ | 175 | 4K | Idem Héritage (officiel inclus) | + IA complète + Coffre 50 ans |
 
@@ -99,7 +99,7 @@ Détail UX / amputation : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md).
 
 - Orchestral / cinématique **Stingray**, licence plateforme — **zéro risque copyright** Odyssey / Athos / salon.
 - **Inclus sans frais** dans Héritage et Éternité.
-- Souvenir : sous-ensemble **standard** en entrée ; catalogue officiel accessible via Soft Cap (Licence 39 $ **ou** Héritage).
+- Souvenir : **aperçu (preview) uniquement** — aucune piste licenciée n'est incluse ni exportée. Le catalogue officiel se débloque via Soft Cap (Licence 39 $ **ou** Héritage). *Stingray licencié = 100 % payant (décision juillet 2026).*
 
 ### Entitlement (contrat code Phase 1)
 
@@ -116,7 +116,7 @@ resolveMusicEntitlement(intendedPackage, extensions, paidEntitlements):
 
 ### Soupape émotionnelle
 
-Import **MP3 / WAV** : **masqué sur Souvenir** ; visible dès Héritage (ou `intended >= signature`). ToS : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
+Import **MP3 / WAV** : **disponible sur tous les forfaits, Souvenir inclus** *(décision juillet 2026 — seule source musicale du gratuit puisque Stingray licencié est 100 % payant)*. Protection : **attestation de droits ToS** exigée à l'upload puis revérifiée au checkout/export (`assertCheckoutMusicRights` / `assertExportAllowed`), indépendante du forfait. ToS : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 
 ```mermaid
 flowchart TD
@@ -132,14 +132,13 @@ flowchart TD
   Render[Creatomate_export]
 
   SongChoice --> CatalogOfficial
-  SongChoice --> Upload
-  CatalogOfficial -->|"Souvenir"| SoftMusic
+  SongChoice -->|"tous_forfaits_Souvenir_inclus"| Upload
+  CatalogOfficial -->|"Souvenir_preview_only"| SoftMusic
   SoftMusic --> Lic39
   SoftMusic --> Up149
   CatalogOfficial -->|"Heritage_Eternite_inclus"| Preview
   Lic39 --> Preview
   Up149 --> Preview
-  Up149 --> Upload
   Upload --> ToS
   ToS --> Preview
   Preview --> Pay
@@ -226,5 +225,5 @@ Mettre à jour ce fichier quand la grille, les SKUs (`musicLicense` / `storyVoic
 
 ---
 
-*Vision CEO figée — juillet 2026 (rév. Licence Stingray 39 $). Phases 0–5 livrées (Creatomate = stub) ; Phase 6 remaining. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
+*Vision CEO figée — juillet 2026 (rév. Licence Stingray 39 $ ; rév. **gratuit sans Stingray licencié** — preview + MP3 perso ToS uniquement). Phases 0–5 livrées (Creatomate = stub) ; Phase 6 remaining. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
 *Appliquer SQL P9 sur Supabase : [`sql/odyssey_p9_project_export_jobs.sql`](sql/odyssey_p9_project_export_jobs.sql).*

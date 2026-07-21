@@ -37,8 +37,8 @@ garantis par trigger DB (`odyssey_p7_media_quota_guard.sql`).
 
 | Forfait | ID technique | Prix | Médias | Export | Inclus | Statut |
 |---------|--------------|------|--------|--------|--------|--------|
-| **Souvenir** | `essential` | **0 $** | 50 | 1080p | Stingray standard (catalogue officiel via Soft Cap) | ✅ |
-| **Héritage** | `signature` | **149 $** | 125 | 4K | Catalogue Stingray inclus + soupape MP3/WAV | ✅ |
+| **Souvenir** | `essential` | **0 $** | 50 | 1080p | **Preview Stingray** (aperçu, non exporté) + **MP3 perso (ToS)** — aucune piste licenciée incluse | ✅ |
+| **Héritage** | `signature` | **149 $** | 125 | 4K | Catalogue Stingray officiel inclus + soupape MP3/WAV | ✅ |
 | **Éternité** | `heritage` | **299 $** | 175 | 4K | + IA complète + Coffre-fort 50 ans | ✅ |
 | **Légendaire** | `legendary` | **499 $** | 250 | 4K | + boîte pré-affranchie (**B2C only**) | ✅ |
 
@@ -50,7 +50,7 @@ Certains sont **inclus** dans les forfaits supérieurs (strip automatique du pan
 | Add-on | ID | Prix | Commission | Inclusion / note | Statut |
 |--------|-----|------|------------|------------------|--------|
 | **Restauration IA** | `aiRetouch` | 49 $ | Oui | Inclus dès Éternité | ✅ |
-| **Licence Musique Premium Stingray** | `musicLicense` | 39 $ | Oui | Inclus dès Héritage | ✅ |
+| **Licence Musique Premium Stingray** | `musicLicense` | 39 $ | Oui | Débloque le catalogue Stingray licencié sur Souvenir (gratuit = preview only). Inclus dès Héritage | ✅ |
 | **Voix de l'Histoire** (narration IA) | `storyVoice` | 39 $ | Oui | — | ✅ |
 | **Jeton du Sanctuaire** (NFC/QR) | `sanctuaryToken` | 79 $ | Oui | Fulfillment ops ⏳ | ✅ |
 | **Coffre-fort 50 ans** | `digitalVault` | 99 $ | Oui | Inclus dès Éternité | ✅ |

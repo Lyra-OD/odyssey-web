@@ -4,22 +4,34 @@
  * RÈGLE : toutes les valeurs monétaires sont des entiers en CENTIMES uniquement.
  * Canon produit : docs/FREEMIUM_V1_PIVOT.md
  *
- * - `essential`  : Souvenir 0 $ (partenaire)
+ * - `essential`  : Souvenir 0 $ (partenaire) — aucune piste Stingray licenciée
+ *   incluse/exportée ; aperçu (preview) seulement + MP3 perso via attestation ToS.
  * - `signature`  : Héritage 149 $ — 4K + catalogue Stingray officiel inclus
  * - `heritage`   : Éternité 299 $ — + IA + coffre inclus
  * - `legendary`  : Légendaire 499 $ (B2C only)
+ *
+ * MUSIQUE (décision juillet 2026) : Stingray licencié = 100 % payant. Le gratuit
+ * n'inclut AUCUNE piste licenciée dans l'export — il peut seulement (a) écouter
+ * les previews (hook Soft Cap) et (b) importer sa propre musique (MP3/WAV) sous
+ * attestation de droits. Débloquer Stingray = Licence 39 $ ou Héritage+.
  */
 
 /** @deprecated Freemium V1 — plus de wholesale jetons. Conservé à 0 pour imports legacy. */
 export const PARTNER_TOKEN_COST_CENTS = 0;
 
-/** Segmentation catalogue musique Stingray (API `tier` reste standard|premium). */
+/**
+ * Segmentation catalogue musique (API `tier` reste standard|premium).
+ * - `standard` = accès **aperçu/preview uniquement** (Souvenir) : aucune piste
+ *   Stingray licenciée n'est incluse ni exportée. Sélectionner une piste
+ *   officielle déclenche le Soft Cap (Licence 39 $ ou Héritage).
+ * - `premium`  = catalogue Stingray **officiel** licencié, inclus et exportable.
+ */
 export type MusicCatalogTier = "standard" | "premium";
 
 /**
- * Catalogue runtime — `musicCatalog: premium` = catalogue **officiel** inclus
- * (Héritage / Éternité / Légendaire). Souvenir = standard.
- * `tokens` = 0 (purge jetons V1).
+ * Catalogue runtime — `musicCatalog: premium` = catalogue **officiel** licencié
+ * inclus (Héritage / Éternité / Légendaire). Souvenir = `standard` (preview
+ * only, zéro piste licenciée exportée). `tokens` = 0 (purge jetons V1).
  */
 export const WIZARD_PRICING = {
   packages: {
@@ -375,11 +387,17 @@ export function hasPremiumMusicCatalogAccess(
   return resolveMusicEntitlement(basePackage, extensions) === "premium";
 }
 
-/** Soupape MP3/WAV — masquée sur Souvenir. */
+/**
+ * Soupape MP3/WAV — disponible sur **tous** les forfaits, Souvenir inclus
+ * (décision juillet 2026 : Stingray licencié étant 100 % payant, la musique
+ * perso est la seule source musicale du gratuit). La protection légale reste
+ * l'**attestation de droits** (ToS) exigée à l'upload puis au checkout/export
+ * (`assertCheckoutMusicRights` / `assertExportAllowed`), indépendante du forfait.
+ */
 export function canUploadPersonalAudio(
-  intendedPackage: WizardBasePackage,
+  _intendedPackage: WizardBasePackage,
 ): boolean {
-  return packageTierRank(intendedPackage) >= 1;
+  return true;
 }
 
 /** Normalise les clés extension legacy → canon V1. */
