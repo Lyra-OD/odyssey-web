@@ -7,7 +7,7 @@ import { resolveContributeToken } from "@/src/lib/contribute/accessToken";
 import {
   getGuestSupportPack,
   guestSupportPackLabel,
-  GUEST_TXN_MAX_CENTS,
+  resolveGuestPackAmountCents,
 } from "@/src/lib/wizard/guestSupportPacks";
 
 export const runtime = "nodejs";
@@ -15,6 +15,8 @@ export const runtime = "nodejs";
 const BodySchema = z
   .object({
     productKey: z.string().min(1),
+    /** Requis pour `guest_patron` (150–1000 $). Ignoré pour les packs à prix fixe. */
+    amountCents: z.number().int().positive().optional(),
     contributorEmail: z.string().email().optional(),
     contributorName: z.string().max(200).optional(),
     consentMarketing: z.boolean().optional(),
@@ -56,6 +58,7 @@ export async function POST(
   }
   const {
     productKey,
+    amountCents,
     contributorEmail,
     contributorName,
     consentMarketing = false,
@@ -68,12 +71,22 @@ export async function POST(
   }
 
   const pack = getGuestSupportPack(productKey);
-  if (!pack) {
+  if (!pack || pack.deprecated) {
     return NextResponse.json({ error: "unknown_product" }, { status: 400 });
   }
-  // Anti-abus : plafond dur par transaction (miroir CHECK SQL).
-  if (pack.priceCents <= 0 || pack.priceCents > GUEST_TXN_MAX_CENTS) {
-    return NextResponse.json({ error: "amount_out_of_range" }, { status: 400 });
+
+  const grossCents = resolveGuestPackAmountCents(pack, amountCents);
+  if (grossCents === null) {
+    return NextResponse.json(
+      {
+        error: "amount_out_of_range",
+        message:
+          pack.key === "guest_patron"
+            ? "Mécène : amountCents requis entre 15000 et 100000"
+            : "invalid_pack_amount",
+      },
+      { status: 400 },
+    );
   }
 
   const admin = getSupabaseAdminClient();
@@ -88,7 +101,7 @@ export async function POST(
       contributor_name: contributorName ?? null,
       consent_marketing: consentMarketing,
       product_key: pack.key,
-      gross_cents: pack.priceCents,
+      gross_cents: grossCents,
       status: "pending",
     })
     .select("id")
@@ -152,7 +165,7 @@ export async function POST(
           quantity: 1,
           price_data: {
             currency: "usd",
-            unit_amount: pack.priceCents,
+            unit_amount: grossCents,
             product_data: {
               name: guestSupportPackLabel(pack, locale),
               metadata: { odyssey_line: pack.key },
@@ -170,7 +183,7 @@ export async function POST(
         project_id: tokenRow.project_id,
         tenant_id: tokenRow.tenant_id ?? "",
         product_key: pack.key,
-        gross_cents: String(pack.priceCents),
+        gross_cents: String(grossCents),
       },
     });
 

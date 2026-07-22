@@ -45,6 +45,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | 20 | `odyssey_p9_project_export_jobs.sql` | **Migration** | **Phase 5** — `project_export_jobs` (stub Creatomate) · RLS SELECT owner |
 | 21 | `odyssey_p10_memorial_fund.sql` | **Migration** | **Cascade V-Final** — Fonds Commémoratif (crédit), `guest_micro_checkouts` waterfall, `projects.commemoration_date`, config `tenants.settings` — voir [§ P10](#p10--fonds-commémoratif-boucle-virale) et [`IMPLEMENTATION_CASCADE_VFINAL.md`](../IMPLEMENTATION_CASCADE_VFINAL.md) |
 | 22 | `odyssey_p10_1_memorial_fund_rpc.sql` | **Migration** | **Cascade V-Final Phase 2** — RPC `accrue_guest_micro_checkout()` (waterfall invité → commission + crédit) & `consume_family_fund_credit()` (application crédit paywall) — voir [§ P10.1](#p101--rpc-fonds-commémoratif) |
+| 23 | `odyssey_p10_2_guest_sanctuary.sql` | **Migration** | **Phase 3a** — `media_assets.contributor_name` + Soft Cap P7 **exclut** `contributor_type=guest` — voir [§ P10.2](#p102--sanctuaire-invité) |
 | — | `odyssey_p6_1_waterfall_qa_assert.sql` | **QA** | Assert waterfall pur S1–S3 + clawback S5 (lecture seule). |
 | — | `odyssey_p6_qa_revshare_accrual.sql` | **QA** | Accrual RevShare E2E (solde +30 % net · idempotence · 0 jeton) — transactionnel ROLLBACK. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
@@ -212,6 +213,20 @@ en **modèle crédit** : les contributions invités financent une remise sur le 
 | **RLS** | `family_tribute_fund_balances` SELECT owner (thermomètre UI) |
 
 **RPC métier :** livrés dans **P10.1** (fichier séparé, ci-dessous).
+
+---
+
+## P10.2 — Sanctuaire invité (Soft Cap + contributor_name)
+
+**Fichier :** `odyssey_p10_2_guest_sanctuary.sql` *(Phase 3a — juillet 2026)*  
+**Prérequis :** P6 (`contributor_type`) + P7 (`enforce_media_asset_quota`). **Idempotent.**
+
+| Objet | Rôle |
+|-------|------|
+| `media_assets.contributor_name` | Nom affiché Cercle des proches |
+| `enforce_media_asset_quota()` | **Skip** si `contributor_type = 'guest'` ; COUNT hors guest |
+
+À appliquer sur Supabase **avant** de tester `POST /api/contribute/[token]/deposit` en conditions réelles.
 
 **Seed feature flag (post-migration, par tenant) :**
 
