@@ -57,7 +57,7 @@ Le **Fonds** est un **crédit produit** (remise sur l'hommage), **jamais** un vi
 | Ordre | `product_key` | Nom | Prix | Note |
 |-------|---------------|-----|------|------|
 | 1 | `guest_voice` | Voix dans le film | **69 $** | Ancre / cœur panier |
-| 2 | `guest_video` | Présence vidéo | **119 $** | Staple cérémonie |
+| 2 | `guest_video` | Témoignage filmé (live) | **119 $** | Staple cérémonie — caméra in-app |
 | 3 | `guest_heritage` | Coproduction (HD + social + générique) | **129 $** | Statut |
 | 4 | `guest_candle` | Geste / Bougie | **15 $** | Secondaire (jamais CTA #1) |
 | 5 | `guest_patron` | Mécène (montant libre) | **150–1000 $** (suggestion **250 $**) | Asymétrie |
@@ -137,17 +137,22 @@ nouveaux `memorialFund.cascade.test.ts`, `channelProfile.test.ts`.
 ```text
 1. SANCTUAIRE D'ABORD (0 $)
    Invité arrive via contributeToken
-   → dépose photo OU mot (+ nom, email, consent)
+   → dépose photo OU mot (+ nom, email, consent)  ← 1 geste rituel
+   → option « aider la famille » : jusqu'à 5 photos / invité (total)
+   → Phase 3b : option mini-clip fichier 15–30 s (max 1) — ≠ témoignage live
    → rôle « Présent » · cercle mis à jour
    → médias invités HORS Soft Cap 50 famille
 
 2. EMPREINTE (payant, optionnel)
    Pont : « Entrez dans le film de la cérémonie »
-   → catalogue ancré : Voix 69 → Vidéo 119 → Coproduction 129
+   → catalogue ancré : Voix 69 → Témoignage filmé 119 → Coproduction 129
    → Bougie 15 (secondaire) · Mécène 150–1000
-   → Voix/Vidéo : « soumis à la famille pour intégration »
+   → guest_video = enregistrement LIVE (tél. / webcam), pas upload galerie
+   → Voix / témoignage / mini-clip : « soumis à la famille pour intégration »
    → crédit fonds → cascade famille (P1→P2→P3, surplus = produit)
 ```
+
+**Plafonds (figés)** — `src/lib/contribute/sanctuaryLimits.ts` : 1 dépôt gratuit photo|mot · **5 photos max / invité** · **1 mini-clip ≤ 30 s** · pas de dump 20 photos sur lien public.
 
 **Cérémonie (Jour J) :** projection — **zéro ask**.  
 **Gamification :** rôles + cercle (pas de jauge $ côté invité).  
@@ -167,7 +172,9 @@ nouveaux `memorialFund.cascade.test.ts`, `channelProfile.test.ts`.
 
 ### Phase 3b+ (différé)
 
-Upload voix/vidéo liés aux packs · upsell in-flow · relance email 24–48 h · End Credits auto · P4 philanthropie.
+- Capture **voix** + **témoignage live** (`getUserMedia`, chrono court) pour packs payants  
+- Upload **mini-clip** fichier 15–30 s (max 1 / invité) — aide montage, distinct du live  
+- Enforce API plafonds photos (5) · upsell in-flow · relance email 24–48 h · End Credits · P4
 
 ---
 
@@ -214,4 +221,5 @@ B2B2C/B2C actuels strictement inchangés tant que le flag n'est pas activé **et
 **Limitations connues (suivi) :**
 - UI Sanctuaire / Inviter / Fonds / Rider = **Phase 3a** (prochaine).
 - Checkout Mécène montant libre = **Phase 3a** (bornes déjà dans `guestSupportPacks.ts`).
-- Upload voix/vidéo = **Phase 3b**.
+- Capture voix + témoignage live + mini-clip 30 s = **Phase 3b**.
+- Enforce multi-photos (plafond 5) = fin **Phase 3a** ou début 3b.

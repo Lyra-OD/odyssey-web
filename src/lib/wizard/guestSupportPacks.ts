@@ -4,8 +4,11 @@
  * Positionnement Quiet Luxury accessible · panier cible ~80–100 $ ARPU payant.
  * Prix figés (CEO Phase 0 — 22/07/2026). Inline Stripe `price_data`.
  *
- * Ordre d'affichage UX (ancre haut) : voix → vidéo → coproduction → bougie (secondaire)
- * → Mécène (montant libre).
+ * Ordre d'affichage UX (ancre haut) : voix → témoignage filmé → coproduction → bougie
+ * (secondaire) → Mécène (montant libre).
+ *
+ * `guest_video` = témoignage **live** caméra (in-app), ≠ mini-clip fichier 15–30 s.
+ * Plafonds dépôt : `src/lib/contribute/sanctuaryLimits.ts`.
  *
  * Canon : docs/IMPLEMENTATION_CASCADE_VFINAL.md · docs/FREEMIUM_V1_PIVOT.md
  */
@@ -56,8 +59,8 @@ export const GUEST_SUPPORT_PACKS: readonly GuestSupportPack[] = [
   },
   {
     key: "guest_video",
-    labelFr: "Présence vidéo",
-    labelEn: "Video presence",
+    labelFr: "Témoignage filmé",
+    labelEn: "Filmed testimony",
     priceCents: 119_00,
     displayOrder: 2,
   },

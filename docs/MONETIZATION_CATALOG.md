@@ -1,6 +1,6 @@
 # Odyssey — Catalogue Monétisation complet (Cascade V-Final)
 
-**Dernière révision : 22 juillet 2026 — Phase 0 grille Quiet Luxury accessible**
+**Dernière révision : 22 juillet 2026 — plafonds dépôt Sanctuaire + témoignage live**
 
 Inventaire **exhaustif** de tout ce que le **client (famille)** peut acheter et de tout ce que
 l'**invité** peut offrir — plus les leviers **documentés à venir** et les **idées à explorer**.
@@ -58,13 +58,22 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 | Empreinte | `product_key` | Prix | Rôle UX | Statut |
 |-----------|---------------|------|---------|--------|
 | **Voix dans le film** | `guest_voice` | **69 $** | Ancre / cœur | ✅ config · 🔜 UI |
-| **Présence vidéo** | `guest_video` | **119 $** | Staple cérémonie | ✅ config · 🔜 UI |
+| **Témoignage filmé** (live caméra) | `guest_video` | **119 $** | Staple cérémonie | ✅ config · 🔜 UI capture |
 | **Coproduction** (HD + social + générique) | `guest_heritage` | **129 $** | Statut | ✅ |
 | **Geste / Bougie** | `guest_candle` | **15 $** | Secondaire (jamais CTA #1) | ✅ |
 | **Mécène** (montant libre) | `guest_patron` | **150–1000 $** (sugg. **250 $**) | Asymétrie | ✅ config · 🔜 checkout amount |
 | Pack HD | `guest_hd` | ~~49 $~~ | — | ⚠️ **DÉPRÉCIÉ** |
 
-**Promesse voix/vidéo V1 :** *soumis à la famille pour intégration dans l'œuvre finale* (pas de garantie absolue).
+**Dépôt gratuit & plafonds (canon) —** `src/lib/contribute/sanctuaryLimits.ts` :
+
+| Geste | Règle | Statut |
+|-------|--------|--------|
+| Photo **ou** mot | **1** slot gratuit rituel (lien public) | ✅ UI 3a |
+| Photos (aide famille) | **Max 5 / invité** (inclut la photo gratuite) | 🔜 enforce API |
+| Mini-clip fichier 15–30 s | **Max 1 / invité** — souvenir uploadé, ≠ live | 🔜 Phase 3b |
+| Témoignage `guest_video` | **Enregistrement live** in-app (tél. / webcam) | 🔜 Phase 3b |
+
+**Promesse voix / témoignage / mini-clip V1 :** *soumis à la famille pour intégration* (pas de garantie absolue).
 
 **Fonds Commémoratif :** Net × 100 % → crédit cascade P1→P2→P3 · **surplus = plus de produit** (pas de cash-out) · pas de mini-% extra sur le fonds · commission Athos 30 % du Net si `is_freemium` · cap 1000 $/txn.
 
@@ -74,8 +83,9 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 
 | Levier / SKU | Prix | Horizon | Statut |
 |--------------|------|---------|--------|
-| UI Sanctuaire + Inviter + Fonds checkout (Phase 3a) | — | **Maintenant** | 🔜 |
-| Capture upload voix/vidéo (Phase 3b) | inclus packs | Après 3a | 🔜 |
+| UI Sanctuaire + Inviter + Fonds checkout (Phase 3a) | — | **Maintenant** | 🔜 (tunnel dépôt ✅) |
+| Enforce plafonds 5 photos + multi-dépôt proche | — | Fin 3a | 🔜 |
+| Capture voix + **témoignage live** + mini-clip 30 s (Phase 3b) | inclus packs / 1 clip | Après 3a | 🔜 |
 | Social Cut | 19 $ | V1.5 | 🔜 |
 | Sanctuaire Numérique (abo) | 49 $/an | Phase 2 MRR | 🔜 |
 | Capsule anniversaire IA Jour-365 | inclus abo | Phase 2 | 🔜 |

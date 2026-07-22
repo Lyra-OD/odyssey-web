@@ -29,7 +29,11 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 3. **Purge jetons totale** — solde partenaire = uniquement `partner_commission_*`.
 4. **Musique à deux voies** — catalogue Stingray officiel (zéro copyright Odyssey) + soupape MP3/WAV (responsabilité famille via ToS).
 5. **Stingray licencié = 100 % payant** *(décision juillet 2026)*. Le gratuit **n'inclut aucune** piste licenciée dans l'export : seulement (a) **preview** (hook Soft Cap, non exporté) et (b) **MP3 perso via ToS**. Soft Cap : **Licence 39 $** ou **upgrade Héritage 179 $**.
-6. **Sanctuaire / Boucle Virale** — médias invités **hors** Soft Cap 50 ; voix/vidéo V1 « soumis à la famille » ; `viral_loop_enabled` off jusqu'à fin Phase 3a ; surplus fonds = **produit** (pas de cash-out).
+6. **Sanctuaire / Boucle Virale** — médias invités **hors** Soft Cap 50 ; voix / témoignage filmé V1 « soumis à la famille » ; `viral_loop_enabled` off jusqu'à fin Phase 3a ; surplus fonds = **produit** (pas de cash-out).
+   - Dépôt gratuit (lien public) : **1 photo OU 1 mot**.
+   - Aide famille : **max 5 photos / invité** (pas 20 — Quiet Luxury, anti-dump).
+   - Mini-clip fichier **15–30 s** : **max 1 / invité** (Phase 3b) ≠ empreinte `guest_video`.
+   - `guest_video` **119 $** = **témoignage live** (caméra téléphone / webcam in-app), pas upload galerie.
 
 ---
 

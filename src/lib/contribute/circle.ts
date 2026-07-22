@@ -22,7 +22,7 @@ const ROLE_LABEL: Record<
 > = {
   present: { fr: "Présent", en: "Present" },
   voice: { fr: "Voix", en: "Voice" },
-  video: { fr: "Présence vidéo", en: "Video presence" },
+  video: { fr: "Témoignage filmé", en: "Filmed testimony" },
   coproducer: { fr: "Coproducteur", en: "Co-producer" },
   candle: { fr: "Geste", en: "Gesture" },
   patron: { fr: "Mécène", en: "Patron" },
