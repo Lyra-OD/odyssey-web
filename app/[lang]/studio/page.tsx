@@ -48,11 +48,6 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
       ? rawName.trim()
       : dictionary.dashboard.guestName;
 
-  const welcomeLine = dictionary.dashboard.welcomeStudio.replace(
-    "{name}",
-    displayName,
-  );
-
   const { data: memberships } = await supabase
     .from("tenant_members")
     .select("role")
@@ -80,7 +75,11 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
 
   const brandWordmark = dictionary.tributeWizard.inviteBrandWordmark;
   const poweredBy = dictionary.tributeWizard.invitePoweredBy;
-  const studioKicker = dictionary.dashboard.title;
+  const studioKicker = dictionary.dashboard.studioKicker;
+  const welcomeSrOnly = dictionary.dashboard.welcomeStudio.replace(
+    "{name}",
+    displayName,
+  );
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100">
@@ -99,27 +98,11 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/25 to-transparent" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-6 pb-10 pt-10 md:px-10 md:pt-12">
-        <div className="mb-8 flex flex-col items-center">
-          <div className="mx-auto flex max-w-[16rem] origin-top scale-[0.82] justify-center sm:max-w-[18rem] sm:scale-[0.88]">
-            <OdysseyConnexionMark
-              wordmark={brandWordmark}
-              animate
-              className="mb-0"
-            />
-          </div>
-          <p className="mt-4 text-center text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
-            {studioKicker}
-          </p>
-        </div>
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-6 pb-10 pt-12 md:px-10 md:pt-16">
+        <header className="relative mb-10">
+          <h1 className="sr-only">{welcomeSrOnly}</h1>
 
-        <header className="mb-2 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0 flex-1 space-y-2 text-center sm:text-left">
-            <h1 className="text-xl font-light leading-snug tracking-[0.02em] text-white md:text-2xl">
-              {welcomeLine}
-            </h1>
-          </div>
-          <div className="flex shrink-0 flex-col items-center gap-3 sm:items-end">
+          <div className="absolute right-0 top-0 z-10 flex flex-col items-end gap-3">
             <LocaleSwitcher
               lang={lang}
               languageLabel={dictionary.header.languageLabel}
@@ -131,6 +114,17 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
               label={dictionary.dashboard.signOut}
             />
           </div>
+
+          <div className="mx-auto flex max-w-[16rem] origin-top scale-[0.82] justify-center sm:max-w-[18rem] sm:scale-[0.88]">
+            <OdysseyConnexionMark
+              wordmark={brandWordmark}
+              animate
+              className="mb-0"
+            />
+          </div>
+          <p className="mt-5 text-center text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
+            {studioKicker}
+          </p>
         </header>
 
         <TributeWizard

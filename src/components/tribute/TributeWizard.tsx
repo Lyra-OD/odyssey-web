@@ -41,6 +41,7 @@ import {
   SanctuaryInviteTrigger,
 } from "@/src/components/tribute/SanctuaryInvitePanel";
 import { ScannerCompanionPlaceholder } from "@/src/components/scanner/ScannerCompanionPlaceholder";
+import { VaultOnlineSourcesSection } from "@/src/components/tribute/VaultOnlineSourcesSection";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
 import type { AppDictionary } from "@/lib/dictionaries";
@@ -223,7 +224,7 @@ export function TributeWizard({
     () => hydrated.essentials?.avatarPath?.trim() || null,
   );
 
-  const [selectedSocial] = useState<SocialId | null>(
+  const [selectedSocial, setSelectedSocial] = useState<SocialId | null>(
     hydrated.socialSources?.selected ?? null,
   );
   // `montage` reste un pont legacy en lecture seule pour Preview/Checkout —
@@ -879,6 +880,16 @@ export function TributeWizard({
       queueSave("text");
     },
     [queueSave],
+  );
+
+  const handleSocialSelect = useCallback(
+    (id: SocialId) => {
+      const next = id === selectedSocial ? null : id;
+      setSelectedSocial(next);
+      wizardFieldsRef.current.selectedSocial = next;
+      queueSave("immediate");
+    },
+    [selectedSocial, queueSave],
   );
 
   const handleBasePackageChange = useCallback(
@@ -1848,6 +1859,21 @@ export function TributeWizard({
                 }}
               </MediaDropzoneAdapter>
               )}
+
+              <VaultOnlineSourcesSection
+                className="mt-12"
+                selected={selectedSocial}
+                onSelect={handleSocialSelect}
+                copy={{
+                  title: copy.vaultOnlineTitle,
+                  description: copy.vaultOnlineDescription,
+                  note: copy.socialQuickLoginNote,
+                  facebook: copy.socialFacebook,
+                  instagram: copy.socialInstagram,
+                  tiktok: copy.socialTikTok,
+                  googlePhotos: copy.socialGooglePhotos,
+                }}
+              />
             </>
           ) : null}
 

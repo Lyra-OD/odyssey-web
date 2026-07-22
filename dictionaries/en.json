@@ -227,6 +227,7 @@
   },
   "dashboard": {
     "title": "Dashboard Odyssey",
+    "studioKicker": "Studio",
     "signOut": "Sign out",
     "welcomeStudio": "Welcome to the Studio, {name}",
     "guestName": "guest"
@@ -261,6 +262,8 @@
     "skipInvite": "Continue without inviting for now",
     "stepSourcesTitle": "Step 2: Sources",
     "stepSourcesDescription": "Would you like to gather memories from social networks or online albums?",
+    "vaultOnlineTitle": "Already online?",
+    "vaultOnlineDescription": "Also gather memories from your social networks or online albums — optional.",
     "socialFacebook": "Facebook",
     "socialInstagram": "Instagram",
     "socialTikTok": "TikTok",
