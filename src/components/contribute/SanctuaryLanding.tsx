@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
 import {
   ImprintCatalog,
   type ImprintPack,
@@ -55,7 +56,9 @@ function tributeDisplayName(
 
 const copy = {
   fr: {
+    brandWordmark: "Odyssey",
     kicker: "Sanctuaire",
+    poweredBy: "Propulsé par",
     welcome: (name: string) => `Bienvenue dans le Sanctuaire de ${name}.`,
     subtitle:
       "La famille rassemble les souvenirs pour en faire une œuvre intemporelle.",
@@ -71,7 +74,9 @@ const copy = {
     contribCancel: "Paiement annulé. Vous pouvez choisir une autre empreinte.",
   },
   en: {
+    brandWordmark: "Odyssey",
     kicker: "Sanctuary",
+    poweredBy: "Powered by",
     welcome: (name: string) => `Welcome to ${name}'s Sanctuary.`,
     subtitle: "The family is gathering memories to weave a timeless work.",
     depositLead: "First, leave a mark — a photo, or a few words.",
@@ -207,8 +212,8 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/25 to-transparent" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-20 pt-14 md:px-8 md:pt-20">
-        <header className="relative mb-12">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-10 pt-12 md:px-8 md:pt-16">
+        <header className="relative mb-10">
           <div className="absolute right-0 top-0 z-10">
             <LocaleSwitcher
               lang={locale}
@@ -217,7 +222,14 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
               langOptionEn="EN"
             />
           </div>
-          <p className="text-center text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
+          <div className="mx-auto flex max-w-[16rem] scale-[0.82] origin-top justify-center sm:max-w-[18rem] sm:scale-[0.88]">
+            <OdysseyConnexionMark
+              wordmark={t.brandWordmark}
+              animate
+              className="mb-0"
+            />
+          </div>
+          <p className="mt-5 text-center text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
             {t.kicker}
           </p>
         </header>
@@ -235,120 +247,131 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
           </p>
         ) : null}
 
-        <AnimatePresence mode="wait">
-          {load.status === "loading" ? (
-            <motion.p
-              key="loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: DURATION_BREATH, ease: EASE_OUT_LUXE }}
-              className="text-center text-sm font-light text-zinc-500"
-            >
-              {t.loading}
-            </motion.p>
-          ) : null}
+        <div className="flex-1">
+          <AnimatePresence mode="wait">
+            {load.status === "loading" ? (
+              <motion.p
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: DURATION_BREATH, ease: EASE_OUT_LUXE }}
+                className="text-center text-sm font-light text-zinc-500"
+              >
+                {t.loading}
+              </motion.p>
+            ) : null}
 
-          {load.status === "error" ? (
-            <motion.div
-              key="error"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
-              className="text-center"
-            >
-              <h1 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
-                {t.errorTitle}
-              </h1>
-              <p className="mt-4 text-sm font-light leading-relaxed text-white/55">
-                {load.message}
-              </p>
-            </motion.div>
-          ) : null}
-
-          {load.status === "ready" && !deposit ? (
-            <motion.div
-              key="deposit"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
-              className="space-y-10"
-            >
-              <div className="text-center">
-                <h1 className="font-editorial text-[1.65rem] font-medium leading-snug tracking-tight text-zinc-50 md:text-3xl">
-                  {t.welcome(tributeDisplayName(load.tribute, locale))}
+            {load.status === "error" ? (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
+                className="text-center"
+              >
+                <h1 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
+                  {t.errorTitle}
                 </h1>
-                <p className="mx-auto mt-5 max-w-md text-sm font-light leading-relaxed text-white/50 md:text-base">
-                  {t.subtitle}
+                <p className="mt-4 text-sm font-light leading-relaxed text-white/55">
+                  {load.message}
                 </p>
-                <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/75">
-                  {t.depositLead}
-                </p>
-              </div>
+              </motion.div>
+            ) : null}
 
-              <div className="rounded-sm border border-white/10 bg-white/[0.03] px-5 py-8 backdrop-blur-sm md:px-8">
-                <SanctuaryDepositForm
+            {load.status === "ready" && !deposit ? (
+              <motion.div
+                key="deposit"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
+                className="space-y-10"
+              >
+                <div className="text-center">
+                  <h1 className="font-editorial text-[1.65rem] font-medium leading-snug tracking-tight text-zinc-50 md:text-3xl">
+                    {t.welcome(tributeDisplayName(load.tribute, locale))}
+                  </h1>
+                  <p className="mx-auto mt-5 max-w-md text-sm font-light leading-relaxed text-white/50 md:text-base">
+                    {t.subtitle}
+                  </p>
+                  <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/75">
+                    {t.depositLead}
+                  </p>
+                </div>
+
+                <div className="rounded-sm border border-white/10 bg-white/[0.03] px-5 py-8 backdrop-blur-sm md:px-8">
+                  <SanctuaryDepositForm
+                    token={token}
+                    locale={locale}
+                    onDeposited={setDeposit}
+                  />
+                </div>
+              </motion.div>
+            ) : null}
+
+            {load.status === "ready" && deposit ? (
+              <motion.div
+                key="bridge"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
+                className="space-y-8"
+              >
+                <div className="space-y-6 text-center">
+                  <div
+                    className="mx-auto h-px w-16 bg-teal-400/35"
+                    aria-hidden
+                  />
+                  <h2 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
+                    {t.bridgeTitle}
+                  </h2>
+                  <p className="mx-auto max-w-md text-sm font-light leading-relaxed text-white/55 md:text-base">
+                    {t.bridgeBody}
+                  </p>
+                </div>
+
+                <ImprintCatalog
+                  locale={locale}
+                  packs={load.packs}
+                  selectedKey={selectedPackKey}
+                  onSelect={handleSelectPack}
+                />
+
+                <PatronAmountField
+                  locale={locale}
+                  open={selectedPackKey === "guest_patron"}
+                  amountCents={patronAmountCents}
+                  onChange={setPatronAmountCents}
+                  amountMinCents={patronPack?.amountMinCents}
+                  amountMaxCents={patronPack?.amountMaxCents}
+                  amountSuggestedCents={patronPack?.amountSuggestedCents}
+                />
+
+                <ImprintCheckoutCta
                   token={token}
                   locale={locale}
-                  onDeposited={setDeposit}
+                  productKey={selectedPackKey}
+                  patronAmountCents={patronAmountCents}
+                  patronMinCents={patronPack?.amountMinCents}
+                  patronMaxCents={patronPack?.amountMaxCents}
+                  contributorName={deposit.contributorName}
+                  contributorEmail={deposit.contributorEmail}
+                  fixedPriceCents={selectedPack?.priceCents}
                 />
-              </div>
-            </motion.div>
-          ) : null}
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </div>
 
-          {load.status === "ready" && deposit ? (
-            <motion.div
-              key="bridge"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
-              className="space-y-8"
-            >
-              <div className="space-y-6 text-center">
-                <div
-                  className="mx-auto h-px w-16 bg-teal-400/35"
-                  aria-hidden
-                />
-                <h2 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
-                  {t.bridgeTitle}
-                </h2>
-                <p className="mx-auto max-w-md text-sm font-light leading-relaxed text-white/55 md:text-base">
-                  {t.bridgeBody}
-                </p>
-              </div>
-
-              <ImprintCatalog
-                locale={locale}
-                packs={load.packs}
-                selectedKey={selectedPackKey}
-                onSelect={handleSelectPack}
-              />
-
-              <PatronAmountField
-                locale={locale}
-                open={selectedPackKey === "guest_patron"}
-                amountCents={patronAmountCents}
-                onChange={setPatronAmountCents}
-                amountMinCents={patronPack?.amountMinCents}
-                amountMaxCents={patronPack?.amountMaxCents}
-                amountSuggestedCents={patronPack?.amountSuggestedCents}
-              />
-
-              <ImprintCheckoutCta
-                token={token}
-                locale={locale}
-                productKey={selectedPackKey}
-                patronAmountCents={patronAmountCents}
-                patronMinCents={patronPack?.amountMinCents}
-                patronMaxCents={patronPack?.amountMaxCents}
-                contributorName={deposit.contributorName}
-                contributorEmail={deposit.contributorEmail}
-                fixedPriceCents={selectedPack?.priceCents}
-              />
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+        <footer className="mt-16 flex flex-col items-center gap-1 pb-2 pt-8 text-center">
+          <p className="text-[8px] font-medium uppercase tracking-[0.44em] text-white/26">
+            {t.poweredBy}
+          </p>
+          <p className="font-brand text-[10px] font-medium uppercase leading-none tracking-[0.28em] text-white/36 md:text-[11px]">
+            {t.brandWordmark}
+          </p>
+        </footer>
       </div>
     </main>
   );
