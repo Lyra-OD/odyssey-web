@@ -257,6 +257,7 @@ export async function POST(
       id: inserted.id as string,
       kind,
       contributorName,
+      contributorEmail: contributorEmail ?? null,
     },
   });
 }

@@ -21,6 +21,7 @@ export type SanctuaryDepositResult = {
   id: string;
   kind: "photo" | "message";
   contributorName: string;
+  contributorEmail?: string | null;
 };
 
 export type SanctuaryDepositFormProps = {
@@ -148,6 +149,7 @@ export function SanctuaryDepositForm({
           id: `preview-${Date.now()}`,
           kind,
           contributorName: trimmedName,
+          ...(email.trim() ? { contributorEmail: email.trim() } : {}),
         });
         return;
       }
@@ -189,7 +191,12 @@ export function SanctuaryDepositForm({
         return;
       }
 
-      onDeposited(body.deposit);
+      onDeposited({
+        ...body.deposit,
+        contributorEmail:
+          body.deposit.contributorEmail ??
+          (email.trim() ? email.trim() : null),
+      });
     } catch {
       setError(t.errorGeneric);
     } finally {
@@ -291,6 +298,7 @@ export function SanctuaryDepositForm({
             <label htmlFor={messageId} className={editorialFieldLabel}>
               {t.messageLabel}
             </label>
+            {/* Phase 3b+ : Aide IA optionnelle — amorces à éditer (voir MONETIZATION_CATALOG §C) */}
             <textarea
               id={messageId}
               value={message}

@@ -86,6 +86,7 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 | UI Sanctuaire + Inviter + Fonds checkout (Phase 3a) | — | **Maintenant** | 🔜 (tunnel dépôt ✅) |
 | Enforce plafonds 5 photos + multi-dépôt proche | — | Fin 3a | 🔜 |
 | Capture voix + **témoignage live** + mini-clip 30 s (Phase 3b) | inclus packs / 1 clip | Après 3a | 🔜 |
+| Aide IA rédaction du **mot** (suggestions optionnelles) | coût API | Phase 3b+ | 💡 → 🔜 |
 | Social Cut | 19 $ | V1.5 | 🔜 |
 | Sanctuaire Numérique (abo) | 49 $/an | Phase 2 MRR | 🔜 |
 | Capsule anniversaire IA Jour-365 | inclus abo | Phase 2 | 🔜 |
@@ -96,6 +97,8 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 ---
 
 ## C. Idées à explorer (extrait)
+
+**Aide IA — rédiger le mot (Sanctuaire) :** bouton optionnel sur le dépôt « Un mot » — 2–3 amorces courtes (ton laïc, prénom honoré, FR/EN), invité édite toujours. Pas de ghostwriter forcé. Slot UI : `SanctuaryDepositForm` (mode message). Horizon Phase 3b+.
 
 End Credits filmiques · témoignage audio spatialisé enrichi · Livre d'Or invités POD · Coffret USB collector · capsule temporelle famille · bijou NFC — voir brainstorm antérieur ; **ne pas charger** le Sanctuaire V1.
 

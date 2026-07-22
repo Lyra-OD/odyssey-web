@@ -174,7 +174,8 @@ nouveaux `memorialFund.cascade.test.ts`, `channelProfile.test.ts`.
 
 - Capture **voix** + **témoignage live** (`getUserMedia`, chrono court) pour packs payants  
 - Upload **mini-clip** fichier 15–30 s (max 1 / invité) — aide montage, distinct du live  
-- Enforce API plafonds photos (5) · upsell in-flow · relance email 24–48 h · End Credits · P4
+- Enforce API plafonds photos (5) · upsell in-flow · relance email 24–48 h · End Credits · P4  
+- **Aide IA rédaction du mot** (optionnelle) : amorces dans `SanctuaryDepositForm` mode message — jamais forcée, invité édite
 
 ---
 
@@ -223,3 +224,5 @@ B2B2C/B2C actuels strictement inchangés tant que le flag n'est pas activé **et
 - Checkout Mécène montant libre = **Phase 3a** (bornes déjà dans `guestSupportPacks.ts`).
 - Capture voix + témoignage live + mini-clip 30 s = **Phase 3b**.
 - Enforce multi-photos (plafond 5) = fin **Phase 3a** ou début 3b.
+- Aide IA rédaction mot (optionnelle) = **Phase 3b+**.
+- UI catalogue empreintes + checkout invité = **Phase 3a** (tunnel dépôt → empreinte).

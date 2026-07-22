@@ -4,18 +4,26 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import {
+  ImprintCatalog,
+  type ImprintPack,
+} from "@/src/components/contribute/ImprintCatalog";
+import { ImprintCheckoutCta } from "@/src/components/contribute/ImprintCheckoutCta";
+import { PatronAmountField } from "@/src/components/contribute/PatronAmountField";
+import {
   SanctuaryDepositForm,
   type SanctuaryDepositResult,
 } from "@/src/components/contribute/SanctuaryDepositForm";
 import {
   isSanctuaryVisualPreview,
   SANCTUARY_PREVIEW_TRIBUTE,
+  sanctuaryPreviewPacks,
 } from "@/src/lib/contribute/sanctuaryPreview";
 import {
   DURATION_BREATH,
   DURATION_RITUAL,
   EASE_OUT_LUXE,
 } from "@/src/lib/motion/easing";
+import { GUEST_PATRON_SUGGESTED_CENTS } from "@/src/lib/wizard/guestSupportPacks";
 
 export type SanctuaryLandingProps = {
   token: string;
@@ -30,7 +38,7 @@ type TributePayload = {
 type LoadState =
   | { status: "loading" }
   | { status: "error"; message: string }
-  | { status: "ready"; tribute: TributePayload };
+  | { status: "ready"; tribute: TributePayload; packs: ImprintPack[] };
 
 function tributeDisplayName(
   tribute: TributePayload,
@@ -47,7 +55,8 @@ const copy = {
   fr: {
     kicker: "Sanctuaire",
     welcome: (name: string) => `Bienvenue dans le Sanctuaire de ${name}.`,
-    subtitle: "La famille rassemble les souvenirs pour en faire une œuvre intemporelle.",
+    subtitle:
+      "La famille rassemble les souvenirs pour en faire une œuvre intemporelle.",
     depositLead: "Laissez d'abord une empreinte — une photo, ou un mot.",
     loading: "Ouverture du Sanctuaire…",
     errorTitle: "Lien indisponible",
@@ -56,7 +65,8 @@ const copy = {
     bridgeTitle: "Votre empreinte a été ajoutée.",
     bridgeBody:
       "Souhaitez-vous rejoindre le cercle des proches qui soutiennent la production de ce film hommage ?",
-    bridgeNote: "Les façons de laisser une empreinte durable arrivent à l'instant…",
+    contribSuccess: "Merci — votre soutien a bien été enregistré.",
+    contribCancel: "Paiement annulé. Vous pouvez choisir une autre empreinte.",
   },
   en: {
     kicker: "Sanctuary",
@@ -70,7 +80,8 @@ const copy = {
     bridgeTitle: "Your mark has been placed.",
     bridgeBody:
       "Would you like to join the circle of those who support the making of this tribute film?",
-    bridgeNote: "Ways to leave a lasting imprint will appear here next…",
+    contribSuccess: "Thank you — your support has been recorded.",
+    contribCancel: "Payment cancelled. You can choose another imprint.",
   },
 } as const;
 
@@ -78,19 +89,61 @@ const HALO =
   "radial-gradient(ellipse 100% 70% at 50% 42%, rgba(139, 92, 246, 0.18) 0%, rgba(91, 33, 182, 0.07) 46%, transparent 72%)";
 
 /**
- * Shell client du Sanctuaire public — Étape 1 (dépôt) → pont émotionnel.
- * Catalogue d'empreintes (Étape 2) branché au prochain lot.
+ * Shell client du Sanctuaire — dépôt → catalogue → checkout Stripe.
  */
 export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
   const t = copy[locale];
   const [load, setLoad] = useState<LoadState>({ status: "loading" });
   const [deposit, setDeposit] = useState<SanctuaryDepositResult | null>(null);
+  const [selectedPackKey, setSelectedPackKey] = useState<string | null>(null);
+  const [patronAmountCents, setPatronAmountCents] = useState(
+    GUEST_PATRON_SUGGESTED_CENTS,
+  );
+  const [contribFlash, setContribFlash] = useState<
+    "success" | "cancel" | null
+  >(null);
+
+  const handleSelectPack = (key: string) => {
+    setSelectedPackKey(key);
+    if (key === "guest_patron" && load.status === "ready") {
+      const patron = load.packs.find((p) => p.key === "guest_patron");
+      const suggested =
+        patron?.amountSuggestedCents ?? GUEST_PATRON_SUGGESTED_CENTS;
+      setPatronAmountCents(suggested);
+    }
+  };
+
+  const patronPack =
+    load.status === "ready"
+      ? load.packs.find((p) => p.key === "guest_patron")
+      : undefined;
+
+  const selectedPack =
+    load.status === "ready" && selectedPackKey
+      ? load.packs.find((p) => p.key === selectedPackKey)
+      : undefined;
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const contrib = params.get("contrib");
+    if (contrib === "success" || contrib === "cancel") {
+      setContribFlash(contrib);
+      params.delete("contrib");
+      params.delete("session_id");
+      const next = `${window.location.pathname}${
+        params.toString() ? `?${params.toString()}` : ""
+      }`;
+      window.history.replaceState({}, "", next);
+    }
+  }, []);
 
   useEffect(() => {
     if (isSanctuaryVisualPreview(token)) {
       setLoad({
         status: "ready",
         tribute: { ...SANCTUARY_PREVIEW_TRIBUTE },
+        packs: sanctuaryPreviewPacks(locale),
       });
       return;
     }
@@ -104,6 +157,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
         const body = (await res.json().catch(() => ({}))) as {
           ok?: boolean;
           tribute?: TributePayload;
+          packs?: ImprintPack[];
           error?: string;
         };
         if (cancelled) return;
@@ -114,7 +168,11 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
           });
           return;
         }
-        setLoad({ status: "ready", tribute: body.tribute });
+        setLoad({
+          status: "ready",
+          tribute: body.tribute,
+          packs: Array.isArray(body.packs) ? body.packs : [],
+        });
       } catch {
         if (!cancelled) {
           setLoad({ status: "error", message: t.errorBody });
@@ -129,12 +187,14 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100 antialiased">
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+      <div
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        aria-hidden
+      >
         <div
           className="absolute left-1/2 top-[36%] h-[min(70vh,680px)] w-[min(150vw,68rem)] -translate-x-1/2 -translate-y-1/2 opacity-60 blur-[180px]"
           style={{ backgroundImage: HALO }}
         />
-        {/* Filet champagne memorial — 5–10 % de surface, jamais concurrent du violet */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#C4B5A0]/35 to-transparent" />
       </div>
 
@@ -144,6 +204,19 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
             {t.kicker}
           </p>
         </header>
+
+        {contribFlash ? (
+          <p
+            className={`mb-8 text-center text-sm font-light ${
+              contribFlash === "success"
+                ? "text-[#C4B5A0]/90"
+                : "text-zinc-400"
+            }`}
+            role="status"
+          >
+            {contribFlash === "success" ? t.contribSuccess : t.contribCancel}
+          </p>
+        ) : null}
 
         <AnimatePresence mode="wait">
           {load.status === "loading" ? (
@@ -213,19 +286,49 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
-              className="space-y-8 text-center"
+              className="space-y-8"
             >
-              <div className="mx-auto h-px w-16 bg-[#C4B5A0]/40" aria-hidden />
-              <h2 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
-                {t.bridgeTitle}
-              </h2>
-              <p className="mx-auto max-w-md text-sm font-light leading-relaxed text-white/55 md:text-base">
-                {t.bridgeBody}
-              </p>
-              <p className="text-[10px] uppercase tracking-[0.32em] text-zinc-600">
-                {t.bridgeNote}
-              </p>
-              {/* Slot : ImprintCatalog + PatronAmountField — lot suivant */}
+              <div className="space-y-6 text-center">
+                <div
+                  className="mx-auto h-px w-16 bg-[#C4B5A0]/40"
+                  aria-hidden
+                />
+                <h2 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
+                  {t.bridgeTitle}
+                </h2>
+                <p className="mx-auto max-w-md text-sm font-light leading-relaxed text-white/55 md:text-base">
+                  {t.bridgeBody}
+                </p>
+              </div>
+
+              <ImprintCatalog
+                locale={locale}
+                packs={load.packs}
+                selectedKey={selectedPackKey}
+                onSelect={handleSelectPack}
+              />
+
+              <PatronAmountField
+                locale={locale}
+                open={selectedPackKey === "guest_patron"}
+                amountCents={patronAmountCents}
+                onChange={setPatronAmountCents}
+                amountMinCents={patronPack?.amountMinCents}
+                amountMaxCents={patronPack?.amountMaxCents}
+                amountSuggestedCents={patronPack?.amountSuggestedCents}
+              />
+
+              <ImprintCheckoutCta
+                token={token}
+                locale={locale}
+                productKey={selectedPackKey}
+                patronAmountCents={patronAmountCents}
+                patronMinCents={patronPack?.amountMinCents}
+                patronMaxCents={patronPack?.amountMaxCents}
+                contributorName={deposit.contributorName}
+                contributorEmail={deposit.contributorEmail}
+                fixedPriceCents={selectedPack?.priceCents}
+              />
             </motion.div>
           ) : null}
         </AnimatePresence>
