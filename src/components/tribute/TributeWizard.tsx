@@ -40,6 +40,7 @@ import {
   SanctuaryInviteStep,
   SanctuaryInviteTrigger,
 } from "@/src/components/tribute/SanctuaryInvitePanel";
+import { ScannerCompanionPlaceholder } from "@/src/components/scanner/ScannerCompanionPlaceholder";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
 import type { AppDictionary } from "@/lib/dictionaries";
@@ -1586,6 +1587,17 @@ export function TributeWizard({
                 {copy.stepMediaDescription}
               </p>
 
+              <ScannerCompanionPlaceholder
+                className="mt-8"
+                copy={{
+                  eyebrow: copy.scannerEyebrow,
+                  title: copy.scannerTitle,
+                  description: copy.scannerDescription,
+                  badge: copy.scannerBadge,
+                  hint: copy.scannerHint,
+                }}
+              />
+
               {projectDraftError ? (
                 <div className="mt-6 rounded-xl border border-fuchsia-500/45 bg-fuchsia-950/10 p-4 shadow-[0_0_24px_rgba(255,0,255,0.22)] backdrop-blur-md">
                   <p className="text-sm font-medium text-fuchsia-200/95">
@@ -1639,7 +1651,7 @@ export function TributeWizard({
                         />
                         <div
                           {...dz.getRootProps({
-                            className: `group relative mt-10 flex w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white/[0.03] px-6 py-16 text-center backdrop-blur-xl shadow-[0_0_24px_rgba(99,102,241,0.08)] transition-[border,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${
+                            className: `group relative mt-10 flex w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white/[0.03] px-6 py-16 text-center backdrop-blur-xl shadow-[0_0_24px_rgba(45,212,191,0.08)] transition-[border,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${
                               dz.isDragReject
                                 ? "border-fuchsia-500/60 shadow-[0_0_32px_rgba(255,0,255,0.24)] focus-visible:ring-fuchsia-500/40"
                                 : dz.isDragAccept || dz.isDragActive

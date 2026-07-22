@@ -52,6 +52,7 @@ Desktop Wizard  ←—— temps réel ——→  Mobile Scanner (PWA web)
 | Étape | Surface | Comportement |
 |-------|---------|--------------|
 | 1 | Wizard **étape médias** (desktop) | Bandeau « Numérisez vos albums avec votre téléphone » |
+| 1bis | **V1 livré** — `ScannerCompanionPlaceholder` | Slot honête « Bientôt / Coming soon » (pas de fausse session live) — branché Étape 3 Coffre |
 | 2 | Composant `ScannerCompanionPanel` | Affiche **QR Code** + code session court (fallback saisie manuelle) |
 | 3 | Instructions | « Scannez avec l’appareil photo · aucune installation requise » |
 | 4 | État live | Indicateur « Téléphone connecté » dès ouverture session mobile |
@@ -351,6 +352,7 @@ Le Scanner n’enforce pas cette règle lui-même ; il alimente simplement le vo
 
 | Fichier | Action |
 |---------|--------|
+| `src/components/scanner/ScannerCompanionPlaceholder.tsx` | **V1** — bandeau placeholder honête (Étape 3) |
 | `src/components/scanner/ScannerCompanionPanel.tsx` | **Créer** — QR + état session |
 | `src/components/scanner/RestorationPreviewModal.tsx` | **Créer** — Avant/Après + upsell |
 | `app/[lang]/scan/[token]/page.tsx` | **Créer** — mobile PWA |
