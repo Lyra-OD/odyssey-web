@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 
 import { isPatronAmountValid } from "@/src/components/contribute/PatronAmountField";
 import { isSanctuaryVisualPreview } from "@/src/lib/contribute/sanctuaryPreview";
-import { editorialSubmitButton } from "@/src/lib/editorialFormClasses";
+import { sanctuarySubmitButton } from "@/src/lib/contribute/sanctuaryChrome";
 import { formatWizardPrice } from "@/src/lib/wizard/wizardPricing";
 
 export type ImprintCheckoutCtaProps = {
@@ -142,7 +142,7 @@ export function ImprintCheckoutCta({
         type="button"
         disabled={!canSubmit}
         onClick={() => void handleCheckout()}
-        className={`${editorialSubmitButton} inline-flex min-h-[52px] w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-40`}
+        className={`${sanctuarySubmitButton} inline-flex min-h-[52px] w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-40`}
       >
         {submitting ? (
           <>

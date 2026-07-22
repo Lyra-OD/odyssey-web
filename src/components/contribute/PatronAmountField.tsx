@@ -3,10 +3,8 @@
 import { useId, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import {
-  editorialFieldInput,
-  editorialFieldLabel,
-} from "@/src/lib/editorialFormClasses";
+import { editorialFieldLabel } from "@/src/lib/editorialFormClasses";
+import { sanctuaryFieldInput } from "@/src/lib/contribute/sanctuaryChrome";
 import {
   DURATION_BREATH,
   EASE_OUT_LUXE,
@@ -103,13 +101,13 @@ export function PatronAmountField({
           transition={{ duration: DURATION_BREATH, ease: EASE_OUT_LUXE }}
           className="overflow-hidden"
         >
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] px-5 py-6">
+          <div className="rounded-xl border border-teal-400/25 bg-teal-400/[0.03] px-5 py-6 shadow-[0_0_32px_rgba(45,212,191,0.08)]">
             <label htmlFor={inputId} className={editorialFieldLabel}>
               {t.label}
             </label>
             <div className="relative mt-1">
               <span
-                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 font-editorial text-lg text-zinc-500"
+                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 font-editorial text-lg text-teal-500/70"
                 aria-hidden
               >
                 $
@@ -128,7 +126,7 @@ export function PatronAmountField({
                   }
                   onChange(cents);
                 }}
-                className={`${editorialFieldInput} pl-5`}
+                className={`${sanctuaryFieldInput} pl-5`}
                 aria-invalid={!valid}
                 aria-describedby={`${inputId}-hint`}
               />
@@ -148,7 +146,7 @@ export function PatronAmountField({
               <button
                 type="button"
                 onClick={() => onChange(suggested)}
-                className="mt-4 font-label text-[10px] uppercase tracking-[0.28em] text-zinc-500 transition-colors hover:text-violet-200/90"
+                className="mt-4 font-label text-[10px] uppercase tracking-[0.28em] text-zinc-500 transition-colors hover:text-teal-300/90"
               >
                 {t.useSuggested}
               </button>

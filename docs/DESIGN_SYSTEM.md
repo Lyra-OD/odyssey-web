@@ -32,7 +32,19 @@ Couleur de marque, énergie, action, glow.
 | `uv-600` | `#7C3AED` | Glow cartes forfaits |
 | `uv-glow` | `rgba(192, 167, 255, 0.62)` | Halos connexion / salon |
 
-**Règle :** le violet ne doit pas concurrencer le logo partenaire sur le Salon. Réserver aux CTA, focus, cartes « Héritage », halos d’ambiance.
+**Règle :** le violet ne doit pas concurrencer le logo partenaire sur le Salon. Réserver aux CTA marketing, halos d’ambiance, cartes « Héritage ».
+
+### 2.1bis Secondaire interactif Studio — Teal (login / wizard / Sanctuaire)
+
+Couleur d’**interaction** (sélection, focus, états actifs, respiration). Alignée login sign-up + wizard (`teal-400` / cyan doux), **distincte** du cyan Salon fluo.
+
+| Token | Valeur | Usage |
+|-------|--------|--------|
+| `teal-400` | Tailwind / `#2DD4BF` famille | Bordures sélection, focus inputs, glow léger |
+| `teal-300` | — | Labels « sélectionné », accents hover |
+| Respiration | `.connexion-submit-breathe` / `.sanctuary-halo-breathe` | CTA + halo d’ambiance |
+
+**Règle :** tout contrôle **sélectionnable ou focusable** en Studio/Sanctuaire privilégie le teal. Le violet reste l’énergie de marque en fond ; le champagne reste tertiaire mémoriel (≤10 %).
 
 ### 2.2 Secondaire — Neutres froids
 

@@ -71,7 +71,7 @@ export function ImprintCatalog({
 
   return (
     <div className="w-full space-y-6 text-left">
-      <h3 className="text-center font-label text-[10px] font-medium uppercase tracking-[0.36em] text-[#C4B5A0]/80">
+      <h3 className="text-center font-label text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/75">
         {t.title}
       </h3>
 
@@ -140,10 +140,10 @@ function PackRow({
         role="option"
         aria-selected={selected}
         onClick={() => onSelect(pack.key)}
-        className={`flex w-full items-center justify-between gap-4 rounded-xl border px-4 py-4 text-left transition-colors duration-300 ${
+        className={`flex w-full items-center justify-between gap-4 rounded-xl border px-4 py-4 text-left transition-[border-color,box-shadow,background-color] duration-300 ${
           selected
-            ? "border-violet-400/40 bg-violet-500/[0.08]"
-            : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
+            ? "border-teal-400/40 bg-teal-400/[0.06] shadow-[0_0_28px_rgba(45,212,191,0.14)]"
+            : "border-white/10 bg-white/[0.02] hover:border-teal-400/25 hover:bg-teal-400/[0.03]"
         }`}
       >
         <span className="min-w-0">
@@ -151,14 +151,14 @@ function PackRow({
             {pack.label}
           </span>
           {selected ? (
-            <span className="mt-1 block text-[10px] uppercase tracking-[0.28em] text-violet-300/80">
+            <span className="mt-1 block text-[10px] uppercase tracking-[0.28em] text-teal-300/90">
               {t.selected}
             </span>
           ) : null}
         </span>
         <span
           className={`shrink-0 font-editorial text-lg tabular-nums tracking-tight ${
-            selected ? "text-zinc-50" : "text-zinc-300"
+            selected ? "text-teal-100" : "text-zinc-300"
           }`}
         >
           {priceLabel(pack, locale)}

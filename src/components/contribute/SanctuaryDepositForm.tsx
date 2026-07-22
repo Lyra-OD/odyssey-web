@@ -6,11 +6,15 @@ import { ImagePlus, Loader2, Type } from "lucide-react";
 
 import { isSanctuaryVisualPreview } from "@/src/lib/contribute/sanctuaryPreview";
 import {
-  editorialFieldInput,
   editorialFieldLabel,
-  editorialFieldTextarea,
-  editorialSubmitButton,
 } from "@/src/lib/editorialFormClasses";
+import {
+  sanctuaryFieldInput,
+  sanctuaryHoverDashed,
+  sanctuarySelectedSurface,
+  sanctuarySubmitButton,
+  sanctuaryFieldTextarea,
+} from "@/src/lib/contribute/sanctuaryChrome";
 import {
   DURATION_BREATH,
   DURATION_RITUAL,
@@ -234,8 +238,8 @@ export function SanctuaryDepositForm({
                 }}
                 className={`flex min-h-[52px] items-center justify-center gap-2 rounded-sm border px-3 py-3 text-left transition-colors duration-300 ${
                   active
-                    ? "border-violet-400/40 bg-violet-500/[0.08] text-zinc-100"
-                    : "border-white/10 bg-white/[0.02] text-zinc-400 hover:border-white/20 hover:text-zinc-200"
+                    ? `${sanctuarySelectedSurface} text-zinc-100`
+                    : "border-white/10 bg-white/[0.02] text-zinc-400 hover:border-teal-400/25 hover:text-zinc-200"
                 }`}
               >
                 <Icon className="h-4 w-4 shrink-0 opacity-80" strokeWidth={1.5} aria-hidden />
@@ -272,7 +276,7 @@ export function SanctuaryDepositForm({
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-sm border border-dashed border-white/15 bg-white/[0.02] px-4 py-8 text-sm font-light text-zinc-300 transition-colors hover:border-violet-400/30 hover:bg-violet-500/[0.04]"
+              className={`mt-4 flex w-full items-center justify-center gap-2 rounded-sm border border-dashed border-white/15 bg-white/[0.02] px-4 py-8 text-sm font-light text-zinc-300 transition-colors ${sanctuaryHoverDashed}`}
             >
               <ImagePlus className="h-5 w-5 text-zinc-500" strokeWidth={1.4} aria-hidden />
               {file ? file.name : t.photoChoose}
@@ -306,7 +310,7 @@ export function SanctuaryDepositForm({
               rows={4}
               maxLength={500}
               placeholder={t.messagePlaceholder}
-              className={editorialFieldTextarea}
+              className={sanctuaryFieldTextarea}
             />
           </motion.div>
         )}
@@ -324,7 +328,7 @@ export function SanctuaryDepositForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder={t.namePlaceholder}
-          className={editorialFieldInput}
+          className={sanctuaryFieldInput}
         />
       </div>
 
@@ -339,7 +343,7 @@ export function SanctuaryDepositForm({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t.emailPlaceholder}
-          className={editorialFieldInput}
+          className={sanctuaryFieldInput}
         />
       </div>
 
@@ -352,7 +356,7 @@ export function SanctuaryDepositForm({
           type="checkbox"
           checked={consentMarketing}
           onChange={(e) => setConsentMarketing(e.target.checked)}
-          className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-transparent accent-violet-500"
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-transparent accent-teal-400"
         />
         <span>{t.consent}</span>
       </label>
@@ -366,7 +370,7 @@ export function SanctuaryDepositForm({
       <button
         type="submit"
         disabled={submitting}
-        className={`${editorialSubmitButton} inline-flex min-h-[48px] w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50`}
+        className={`${sanctuarySubmitButton} inline-flex min-h-[48px] w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50`}
       >
         {submitting ? (
           <>

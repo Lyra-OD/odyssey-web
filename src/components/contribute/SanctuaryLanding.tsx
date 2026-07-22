@@ -13,6 +13,7 @@ import {
   SanctuaryDepositForm,
   type SanctuaryDepositResult,
 } from "@/src/components/contribute/SanctuaryDepositForm";
+import { LocaleSwitcher } from "@/src/components/i18n/LocaleSwitcher";
 import {
   isSanctuaryVisualPreview,
   SANCTUARY_PREVIEW_TRIBUTE,
@@ -24,10 +25,11 @@ import {
   EASE_OUT_LUXE,
 } from "@/src/lib/motion/easing";
 import { GUEST_PATRON_SUGGESTED_CENTS } from "@/src/lib/wizard/guestSupportPacks";
+import type { Locale } from "@/i18n.config";
 
 export type SanctuaryLandingProps = {
   token: string;
-  locale: "fr" | "en";
+  locale: Locale;
 };
 
 type TributePayload = {
@@ -85,8 +87,11 @@ const copy = {
   },
 } as const;
 
-const HALO =
-  "radial-gradient(ellipse 100% 70% at 50% 42%, rgba(139, 92, 246, 0.18) 0%, rgba(91, 33, 182, 0.07) 46%, transparent 72%)";
+const HALO_UV =
+  "radial-gradient(ellipse 100% 70% at 50% 42%, rgba(139, 92, 246, 0.16) 0%, rgba(91, 33, 182, 0.06) 46%, transparent 72%)";
+
+const HALO_TEAL =
+  "radial-gradient(ellipse 90% 60% at 50% 48%, rgba(34, 211, 238, 0.22) 0%, rgba(45, 212, 191, 0.1) 38%, transparent 68%)";
 
 /**
  * Shell client du Sanctuaire — dépôt → catalogue → checkout Stripe.
@@ -192,15 +197,27 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
         aria-hidden
       >
         <div
-          className="absolute left-1/2 top-[36%] h-[min(70vh,680px)] w-[min(150vw,68rem)] -translate-x-1/2 -translate-y-1/2 opacity-60 blur-[180px]"
-          style={{ backgroundImage: HALO }}
+          className="absolute left-1/2 top-[36%] h-[min(70vh,680px)] w-[min(150vw,68rem)] -translate-x-1/2 -translate-y-1/2 opacity-55 blur-[180px]"
+          style={{ backgroundImage: HALO_UV }}
         />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#C4B5A0]/35 to-transparent" />
+        <div
+          className="sanctuary-halo-breathe absolute left-1/2 top-[42%] h-[min(55vh,520px)] w-[min(120vw,52rem)] -translate-x-1/2 -translate-y-1/2 blur-[140px]"
+          style={{ backgroundImage: HALO_TEAL }}
+        />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/25 to-transparent" />
       </div>
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-20 pt-14 md:px-8 md:pt-20">
-        <header className="mb-12 text-center">
-          <p className="text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
+        <header className="relative mb-12">
+          <div className="absolute right-0 top-0 z-10">
+            <LocaleSwitcher
+              lang={locale}
+              languageLabel={locale === "en" ? "Language" : "Langue"}
+              langOptionFr="FR"
+              langOptionEn="EN"
+            />
+          </div>
+          <p className="text-center text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
             {t.kicker}
           </p>
         </header>
@@ -209,7 +226,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
           <p
             className={`mb-8 text-center text-sm font-light ${
               contribFlash === "success"
-                ? "text-[#C4B5A0]/90"
+                ? "text-teal-300/90"
                 : "text-zinc-400"
             }`}
             role="status"
@@ -265,7 +282,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                 <p className="mx-auto mt-5 max-w-md text-sm font-light leading-relaxed text-white/50 md:text-base">
                   {t.subtitle}
                 </p>
-                <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.36em] text-[#C4B5A0]/80">
+                <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/75">
                   {t.depositLead}
                 </p>
               </div>
@@ -290,7 +307,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
             >
               <div className="space-y-6 text-center">
                 <div
-                  className="mx-auto h-px w-16 bg-[#C4B5A0]/40"
+                  className="mx-auto h-px w-16 bg-teal-400/35"
                   aria-hidden
                 />
                 <h2 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
