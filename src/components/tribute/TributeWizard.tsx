@@ -37,6 +37,10 @@ import {
   PackageDossierTrigger,
   type PackageDossierOption,
 } from "@/src/components/tribute/PackageDossierPanel";
+import {
+  SanctuaryInvitePanel,
+  SanctuaryInviteTrigger,
+} from "@/src/components/tribute/SanctuaryInvitePanel";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
 import type { AppDictionary } from "@/lib/dictionaries";
@@ -62,7 +66,6 @@ import {
   bundleSavingsDollarsLabel,
   calculateBundleSavings,
   canUploadPersonalAudio,
-  DEFAULT_B2C_BASE_PACKAGE,
   packageCents,
   packageTierRank,
   resolveMusicCatalogTier,
@@ -71,6 +74,7 @@ import {
   WIZARD_B2C_DIRECT_PACKAGES,
   WIZARD_PARTNER_GRANTED_PACKAGES,
 } from "@/src/lib/wizard/wizardPricing";
+import { resolveChannelProfile } from "@/src/lib/wizard/channelProfile";
 import {
   manifestPackageFromWizardBasePackage,
   packageMaxMediaItems,
@@ -171,11 +175,43 @@ export function TributeWizard({
 }) {
   const hydrated = coerceWizardState(initialDraft?.wizard_state);
   const isPartnerInitial = hydrated.isPartner === true || isPartnerProp;
+  const channelProfile = resolveChannelProfile({
+    isFreemiumTenant: isPartnerInitial,
+    hasInvitation: false,
+  });
   const overridePackage: WizardBasePackage | undefined = (
     WIZARD_ALL_PACKAGES as readonly string[]
   ).includes(planOverride ?? "")
     ? (planOverride as WizardBasePackage)
     : undefined;
+
+  /** Drafts pré-ChannelProfile figés sur Éternité par l'ancien défaut → recalés. */
+  const hasChannelSpine =
+    hydrated.channel === "partner" || hydrated.channel === "direct";
+  const looksLikeLegacyHeritageDefault =
+    !hasChannelSpine &&
+    (hydrated.basePackage === "heritage" || !hydrated.basePackage) &&
+    (hydrated.grantedPackage === "heritage" ||
+      hydrated.grantedPackage === undefined) &&
+    (hydrated.intendedPackage === "heritage" ||
+      hydrated.intendedPackage === undefined);
+
+  const initialBasePackage: WizardBasePackage =
+    overridePackage ??
+    (looksLikeLegacyHeritageDefault
+      ? channelProfile.intendedPackage
+      : (hydrated.intendedPackage ??
+        hydrated.basePackage ??
+        channelProfile.intendedPackage));
+
+  const initialGrantedPackage: WizardBasePackage =
+    overridePackage ??
+    (looksLikeLegacyHeritageDefault
+      ? channelProfile.grantedPackage
+      : (hydrated.grantedPackage ??
+        hydrated.basePackage ??
+        hydrated.intendedPackage ??
+        channelProfile.grantedPackage));
 
   const [currentStep, setCurrentStep] = useState<Step>(() =>
     resolveInitialWizardStep(
@@ -213,25 +249,12 @@ export function TributeWizard({
   );
   const [projectMediaCount, setProjectMediaCount] = useState(0);
   const [isPartner] = useState(isPartnerInitial);
-  // Règle d'or métier : ancrage sur « Éternité » (299 $, milieu de gamme
-  // réel) par défaut pour un nouveau projet — voir DEFAULT_B2C_BASE_PACKAGE.
-  // Le client ne clique plus une carte de forfait à l'Étape 1 ; ce choix
-  // doit donc être intentionnel.
-  const [basePackage, setBasePackage] = useState<WizardBasePackage>(
-    () =>
-      overridePackage ??
-      hydrated.intendedPackage ??
-      hydrated.basePackage ??
-      DEFAULT_B2C_BASE_PACKAGE,
-  );
-  const [grantedPackage] = useState<WizardBasePackage>(
-    () =>
-      overridePackage ??
-      hydrated.grantedPackage ??
-      hydrated.basePackage ??
-      hydrated.intendedPackage ??
-      DEFAULT_B2C_BASE_PACKAGE,
-  );
+  // Cascade V-Final : ChannelProfile décide l'entrée (partner = Souvenir 0 $,
+  // B2C = Héritage 179 $). Plus jamais Éternité 349 $ par défaut.
+  const [basePackage, setBasePackage] =
+    useState<WizardBasePackage>(initialBasePackage);
+  const [grantedPackage] =
+    useState<WizardBasePackage>(initialGrantedPackage);
   const intendedPackage = basePackage;
   const [extensions, setExtensions] = useState<WizardExtensionsState>(
     () => hydrated.extensions ?? {},
@@ -417,6 +440,7 @@ export function TributeWizard({
     [wizardStoryboard.songsLostIfCappedTo],
   );
   const [isPackageDossierOpen, setIsPackageDossierOpen] = useState(false);
+  const [isSanctuaryInviteOpen, setIsSanctuaryInviteOpen] = useState(false);
 
   const openPackageDossier = useCallback(() => {
     setIsPackageDossierOpen(true);
@@ -504,6 +528,7 @@ export function TributeWizard({
     return normalizeWizardStateForSave({
       version: WIZARD_STATE_VERSION,
       ...(s.isPartner ? { isPartner: true } : {}),
+      channel: channelProfile.channel,
       basePackage: pricing.basePackage,
       grantedPackage: s.grantedPackage,
       intendedPackage: s.intendedPackage,
@@ -533,7 +558,7 @@ export function TributeWizard({
           }
         : {}),
     });
-  }, []);
+  }, [channelProfile.channel]);
 
   const { status: autosaveStatus, queueSave, flush, ensureDraft } =
     useWizardAutosave({
@@ -1278,7 +1303,7 @@ export function TributeWizard({
             </div>
           ) : null}
 
-          <div className="sm:w-60 sm:shrink-0">
+          <div className="flex flex-col items-stretch gap-4 sm:w-60 sm:shrink-0 sm:items-end">
             <PackageDossierTrigger
               packageLabel={packageDisplayNameFor(basePackage)}
               onOpen={openPackageDossier}
@@ -1286,9 +1311,20 @@ export function TributeWizard({
                 label: copy.headerPackageLabel,
                 openAria: copy.dossierOpenAria,
               }}
+              className="sm:items-end sm:text-right"
+            />
+            <SanctuaryInviteTrigger
+              onOpen={() => setIsSanctuaryInviteOpen(true)}
+              disabled={!uploadProjectId}
+              copy={{
+                triggerLabel: copy.inviteTriggerLabel,
+                triggerCta: copy.inviteTriggerCta,
+                triggerOpenAria: copy.inviteOpenAria,
+              }}
+              className="sm:items-end sm:text-right"
             />
             {/* Masqué sur mobile — l'en-tête sticky y reste volontairement compact (2 lignes max) ; le détail complet reste consultable dans le Dossier. */}
-            <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-500 sm:block">
+            <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-500 sm:block sm:text-right">
               {copy.headerNarrativeSummary
                 .replace("{minutes}", String(wizardStoryboard.estimatedTotalMinutes))
                 .replace("{mediaMax}", String(currentMaxMediaItems))}
@@ -1322,6 +1358,33 @@ export function TributeWizard({
         }}
       />
 
+      <SanctuaryInvitePanel
+        isOpen={isSanctuaryInviteOpen}
+        onClose={() => setIsSanctuaryInviteOpen(false)}
+        projectId={uploadProjectId}
+        locale={locale}
+        tributeName={deceasedDisplayName}
+        copy={{
+          triggerLabel: copy.inviteTriggerLabel,
+          triggerCta: copy.inviteTriggerCta,
+          triggerOpenAria: copy.inviteOpenAria,
+          title: copy.inviteTitle,
+          description: copy.inviteDescription,
+          generateCta: copy.inviteGenerateCta,
+          generating: copy.inviteGenerating,
+          copyLink: copy.inviteCopyLink,
+          copied: copy.inviteCopied,
+          copyMessage: copy.inviteCopyMessage,
+          messageCopied: copy.inviteMessageCopied,
+          shareHint: copy.inviteShareHint,
+          qrAlt: copy.inviteQrAlt,
+          closeAria: copy.inviteCloseAria,
+          errorGeneric: copy.inviteErrorGeneric,
+          needProject: copy.inviteNeedProject,
+          shareMessage: copy.inviteShareMessage,
+        }}
+      />
+
       <section
         className="flex flex-col"
         aria-labelledby={wizardTitleId}
@@ -1344,9 +1407,11 @@ export function TributeWizard({
           basePackage={basePackage}
           grantedPackage={grantedPackage}
           isPartner={isPartner}
+          draftMode={currentStep < 7}
           copy={{
             consumerTotalLabel: copy.stickyConsumerTotal,
             partnerTokenCostLabel: copy.stickyPartnerTokenCost,
+            draftLabel: copy.stickyDraftLabel,
           }}
         />
 

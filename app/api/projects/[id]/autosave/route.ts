@@ -320,6 +320,7 @@ const WizardStatePartialSchema = z
   .object({
     version: z.union([z.literal(1), z.literal(2)]).optional(),
     isPartner: z.boolean().optional(),
+    channel: z.enum(["partner", "direct"]).optional(),
     basePackage: BasePackageSchema.optional(),
     /** Soft Cap Freemium V1 — forfait offert (immuable) + intention construite. */
     grantedPackage: BasePackageSchema.optional(),

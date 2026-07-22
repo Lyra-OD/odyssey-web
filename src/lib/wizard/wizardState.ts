@@ -23,6 +23,7 @@ import type {
   WizardPricingSnapshot,
 } from "@/src/lib/wizard/wizardPricing";
 import { normalizeBasePackageId } from "@/src/lib/wizard/pricingConfig";
+import type { WizardChannel } from "@/src/lib/wizard/channelProfile";
 
 export type { WizardExtensionsState } from "@/src/lib/wizard/wizardPricing";
 export type {
@@ -186,6 +187,8 @@ export type WizardStateV1 = {
   version: typeof WIZARD_STATE_VERSION;
   /** Mode funérarium / partenaire B2B vs famille B2C. */
   isPartner?: boolean;
+  /** Canal d'entrée (Cascade V-Final / ChannelProfile). */
+  channel?: WizardChannel;
   /**
    * @deprecated Freemium V1 — préférer `intendedPackage`.
    * Conservé = miroir de `intendedPackage` pour compat P7/UI.
@@ -929,6 +932,10 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
     coerceExtensionsState(obj.extensions),
   );
   const isPartner = coerceIsPartner(obj.isPartner);
+  const channel: WizardChannel | undefined =
+    obj.channel === "partner" || obj.channel === "direct"
+      ? obj.channel
+      : undefined;
   const intendedPackage = coerceBasePackage(
     obj.intendedPackage ?? obj.basePackage,
   );
@@ -992,6 +999,7 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
   const state: WizardStateV1 = {
     version: WIZARD_STATE_VERSION,
     ...(isPartner ? { isPartner: true } : {}),
+    ...(channel ? { channel } : {}),
     basePackage,
     grantedPackage,
     intendedPackage,
@@ -1027,6 +1035,7 @@ export function buildPersistedWizardState(
   return {
     version: WIZARD_STATE_VERSION,
     ...(state.isPartner ? { isPartner: true } : {}),
+    ...(state.channel ? { channel: state.channel } : {}),
     ...(state.basePackage ? { basePackage: state.basePackage } : {}),
     // Freemium V1 : le Soft Cap dépend de granted/intended — DOIVENT persister.
     ...(state.grantedPackage ? { grantedPackage: state.grantedPackage } : {}),

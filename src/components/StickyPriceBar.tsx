@@ -16,6 +16,8 @@ export type StickyPriceBarCopy = {
   consumerTotalLabel: string;
   /** B2B — ex. "Coût : {tokens} jeton(s)" — sans symbole $. */
   partnerTokenCostLabel: string;
+  /** Quiet Luxury — étapes craft : pas de prix héros (ex. "Brouillon · export plus tard"). */
+  draftLabel?: string;
 };
 
 type Props = {
@@ -24,6 +26,11 @@ type Props = {
   basePackage: WizardBasePackage;
   grantedPackage?: WizardBasePackage;
   isPartner?: boolean;
+  /**
+   * Avant Recevoir / Checkout : signal brouillon au lieu du total $.
+   * Le forfait plancher reste en arrière-plan (ChannelProfile).
+   */
+  draftMode?: boolean;
 };
 
 /** Affichage B2C uniquement : conversion cents → dollars au dernier moment. */
@@ -41,6 +48,7 @@ export function StickyPriceBar({
   basePackage,
   grantedPackage,
   isPartner = false,
+  draftMode = false,
 }: Props) {
   const reduceMotion = useReducedMotion();
   const cart = useMemo(
@@ -60,18 +68,25 @@ export function StickyPriceBar({
   const tokenCount =
     pricing.partnerTokenCost ?? resolvePartnerTokenCost(basePackage);
 
+  const showDraft = draftMode && Boolean(copy.draftLabel?.trim());
+
   const consumerLine = copy.consumerTotalLabel.replace(
     "{amount}",
     centsToDisplayAmount(cart.totalCents),
   );
 
-  const displayLine =
+  const pricedLine =
     isPartner && tokenCount !== undefined
       ? copy.partnerTokenCostLabel.replace("{tokens}", String(tokenCount))
       : consumerLine;
 
-  const pulseKeySource =
-    isPartner && tokenCount !== undefined ? tokenCount : cart.totalCents;
+  const displayLine = showDraft ? copy.draftLabel!.trim() : pricedLine;
+
+  const pulseKeySource = showDraft
+    ? "draft"
+    : isPartner && tokenCount !== undefined
+      ? tokenCount
+      : cart.totalCents;
 
   const prevPulseRef = useRef(pulseKeySource);
   const pulseKeyRef = useRef(0);

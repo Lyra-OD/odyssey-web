@@ -4,8 +4,8 @@
  * Source unique de vérité, dérivée du BACKEND (tenants.is_freemium + invitation),
  * qui dicte le forfait de départ, les forfaits autorisés, et le comportement
  * d'export/preview par canal. Remplace le fallback frontend historique
- * (DEFAULT_B2C_BASE_PACKAGE = heritage / Éternité 349 $) qui faisait démarrer
- * tout nouveau projet au forfait maximum.
+ * (DEFAULT_B2C_BASE_PACKAGE = signature / Héritage 179 $) — plus jamais
+ * Éternité 349 $ comme entrée par défaut.
  *
  * Canon : docs/IMPLEMENTATION_CASCADE_VFINAL.md
  */

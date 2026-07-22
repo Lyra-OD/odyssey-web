@@ -156,7 +156,7 @@ export const WIZARD_LEGACY_TOKEN_PACKAGES: WizardLegacyTokenPackage[] =
   WIZARD_PARTNER_GRANTED_PACKAGES;
 
 export const DEFAULT_B2C_BASE_PACKAGE: WizardBasePackage =
-  WIZARD_PRICING.packages.HERITAGE.id;
+  WIZARD_PRICING.packages.SIGNATURE.id;
 
 /** @deprecated */
 export const WIZARD_BASE_PACKAGES: WizardPartnerGrantedPackage[] =
