@@ -154,7 +154,7 @@ export function ExtensionsStickyFooter({
           <button
             type="button"
             onClick={onContinue}
-            className="font-[family-name:var(--font-label)] min-h-[52px] flex-[1.4] rounded-2xl border border-teal-400/35 bg-gradient-to-r from-violet-600/25 to-teal-500/20 px-4 text-sm font-medium text-white shadow-[0_0_32px_rgba(45,212,191,0.2)] transition-all hover:shadow-[0_0_40px_rgba(139,92,246,0.25)]"
+            className="font-[family-name:var(--font-label)] min-h-[52px] flex-[1.4] rounded-2xl border border-teal-400/35 bg-gradient-to-r from-teal-600/25 to-cyan-500/20 px-4 text-sm font-medium text-white shadow-[0_0_32px_rgba(45,212,191,0.2)] transition-all hover:shadow-[0_0_40px_rgba(45,212,191,0.28)]"
           >
             {copy.continueCta}
           </button>

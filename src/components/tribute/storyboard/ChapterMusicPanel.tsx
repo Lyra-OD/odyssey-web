@@ -205,7 +205,7 @@ export function ChapterMusicPanel({
         aria-labelledby={`${chapter.id}-selected`}
       >
         <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
-          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-[0_0_20px_rgba(167,139,250,0.08)]">
+          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-[0_0_20px_rgba(45,212,191,0.1)]">
             {song.source === "stingray" && song.coverUrl ? (
               <Image
                 src={song.coverUrl}
@@ -288,7 +288,7 @@ export function ChapterMusicPanel({
             onChange={(e) => setQuery(e.target.value)}
             placeholder={copy.searchPlaceholder}
             autoComplete="off"
-            className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-3.5 pl-11 pr-11 text-sm font-light text-zinc-100 outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-violet-400/30 focus:shadow-[0_0_24px_rgba(139,92,246,0.1)]"
+            className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-3.5 pl-11 pr-11 text-sm font-light text-zinc-100 outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.12)]"
           />
           {isSearching ? (
             <Loader2
@@ -323,7 +323,7 @@ export function ChapterMusicPanel({
               key={track.id}
               className={`rounded-xl border p-4 transition-all duration-200 ${
                 isActivePreview
-                  ? "border-violet-400/25 bg-violet-400/[0.04]"
+                  ? "border-teal-400/25 bg-teal-400/[0.04]"
                   : "border-white/10 bg-white/[0.02] hover:border-white/15"
               }`}
             >
@@ -362,7 +362,7 @@ export function ChapterMusicPanel({
                     disabled={!previewUrl || previewBlocked}
                     className={`inline-flex min-h-[36px] items-center justify-center gap-1.5 rounded-lg border px-3 text-xs font-light transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                       isActivePreview
-                        ? "border-violet-400/30 bg-violet-400/10 text-violet-100"
+                        ? "border-teal-400/30 bg-teal-400/10 text-teal-100"
                         : "border-white/10 bg-white/[0.04] text-zinc-300 hover:border-white/20"
                     }`}
                   >

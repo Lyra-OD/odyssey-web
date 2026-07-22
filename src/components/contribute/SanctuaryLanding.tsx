@@ -21,6 +21,10 @@ import {
   sanctuaryPreviewPacks,
 } from "@/src/lib/contribute/sanctuaryPreview";
 import {
+  SANCTUARY_HALO_TEAL,
+  SANCTUARY_HALO_UV,
+} from "@/src/lib/contribute/sanctuaryChrome";
+import {
   DURATION_BREATH,
   DURATION_RITUAL,
   EASE_OUT_LUXE,
@@ -92,11 +96,6 @@ const copy = {
   },
 } as const;
 
-const HALO_UV =
-  "radial-gradient(ellipse 100% 70% at 50% 42%, rgba(139, 92, 246, 0.16) 0%, rgba(91, 33, 182, 0.06) 46%, transparent 72%)";
-
-const HALO_TEAL =
-  "radial-gradient(ellipse 90% 60% at 50% 48%, rgba(34, 211, 238, 0.22) 0%, rgba(45, 212, 191, 0.1) 38%, transparent 68%)";
 
 /**
  * Shell client du Sanctuaire — dépôt → catalogue → checkout Stripe.
@@ -203,11 +202,11 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
       >
         <div
           className="absolute left-1/2 top-[36%] h-[min(70vh,680px)] w-[min(150vw,68rem)] -translate-x-1/2 -translate-y-1/2 opacity-55 blur-[180px]"
-          style={{ backgroundImage: HALO_UV }}
+          style={{ backgroundImage: SANCTUARY_HALO_UV }}
         />
         <div
           className="sanctuary-halo-breathe absolute left-1/2 top-[42%] h-[min(55vh,520px)] w-[min(120vw,52rem)] -translate-x-1/2 -translate-y-1/2 blur-[140px]"
-          style={{ backgroundImage: HALO_TEAL }}
+          style={{ backgroundImage: SANCTUARY_HALO_TEAL }}
         />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/25 to-transparent" />
       </div>

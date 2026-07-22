@@ -203,7 +203,7 @@ export function PackageDossierPanel({
             transition={{ duration: 0.4, ease: EASE_OUT_LUXE }}
           >
             <div
-              className="h-px w-full shrink-0 bg-gradient-to-r from-teal-400/60 via-violet-400/50 to-transparent"
+              className="h-px w-full shrink-0 bg-gradient-to-r from-teal-400/60 via-cyan-400/40 to-transparent"
               aria-hidden
             />
 
@@ -346,7 +346,7 @@ export function PackageDossierPanel({
                                 className={`rounded-full border px-4 py-2 text-xs font-light transition-colors ${
                                   optionSavingsLabel
                                     ? "border-teal-400/25 bg-teal-400/[0.04] text-zinc-200 hover:border-teal-400/40 hover:bg-teal-400/[0.07]"
-                                    : "border-white/10 text-zinc-300 hover:border-violet-400/30 hover:bg-white/[0.03] hover:text-zinc-100"
+                                    : "border-white/10 text-zinc-300 hover:border-teal-400/30 hover:bg-teal-400/[0.04] hover:text-zinc-100"
                                 }`}
                               >
                                 {option.label}

@@ -4,10 +4,8 @@ import {
   ArrowLeft,
   Calendar,
   Camera,
-  Cloud,
   Image as ImageIcon,
   Music2,
-  Share2,
   User,
 } from "lucide-react";
 import {
@@ -39,6 +37,7 @@ import {
 } from "@/src/components/tribute/PackageDossierPanel";
 import {
   SanctuaryInvitePanel,
+  SanctuaryInviteStep,
   SanctuaryInviteTrigger,
 } from "@/src/components/tribute/SanctuaryInvitePanel";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
@@ -142,21 +141,6 @@ function buildAvatarStoragePath(projectId: string, file: File): string {
   return `projects/${projectId}/avatar/primary-${crypto.randomUUID()}.${ext}`;
 }
 
-/** Halos radial pour boutons réseaux — très doux, effet premium */
-const SOCIAL_HALOS: Record<
-  SocialId,
-  string
-> = {
-  facebook:
-    "radial-gradient(circle at 50% 80%, rgba(99,102,241,0.35) 0%, rgba(139,92,246,0.12) 45%, transparent 70%)",
-  instagram:
-    "radial-gradient(circle at 50% 80%, rgba(236,72,153,0.28) 0%, rgba(168,85,247,0.14) 45%, transparent 70%)",
-  tiktok:
-    "radial-gradient(circle at 50% 80%, rgba(34,211,238,0.32) 0%, rgba(6,182,212,0.14) 45%, transparent 70%)",
-  google:
-    "radial-gradient(circle at 50% 80%, rgba(52,211,153,0.26) 0%, rgba(34,197,94,0.12) 45%, transparent 70%)",
-};
-
 export function TributeWizard({
   copy,
   initialDraft = null,
@@ -238,7 +222,7 @@ export function TributeWizard({
     () => hydrated.essentials?.avatarPath?.trim() || null,
   );
 
-  const [selectedSocial, setSelectedSocial] = useState<SocialId | null>(
+  const [selectedSocial] = useState<SocialId | null>(
     hydrated.socialSources?.selected ?? null,
   );
   // `montage` reste un pont legacy en lecture seule pour Preview/Checkout —
@@ -896,16 +880,6 @@ export function TributeWizard({
     [queueSave],
   );
 
-  const handleSocialSelect = useCallback(
-    (id: SocialId) => {
-      const next = id === selectedSocial ? null : id;
-      setSelectedSocial(next);
-      wizardFieldsRef.current.selectedSocial = next;
-      queueSave("immediate");
-    },
-    [selectedSocial, queueSave],
-  );
-
   const handleBasePackageChange = useCallback(
     (pkg: WizardBasePackage) => {
       setBasePackage(pkg);
@@ -1156,37 +1130,6 @@ export function TributeWizard({
     [uploadProjectId, uploadAvatarToStorage],
   );
 
-  const socialRows = useMemo(
-    () =>
-      [
-        {
-          id: "facebook" as const,
-          label: copy.socialFacebook,
-          Icon: Share2,
-          halo: SOCIAL_HALOS.facebook,
-        },
-        {
-          id: "instagram" as const,
-          label: copy.socialInstagram,
-          Icon: ImageIcon,
-          halo: SOCIAL_HALOS.instagram,
-        },
-        {
-          id: "tiktok" as const,
-          label: copy.socialTikTok,
-          Icon: Music2,
-          halo: SOCIAL_HALOS.tiktok,
-        },
-        {
-          id: "google" as const,
-          label: copy.socialGooglePhotos,
-          Icon: Cloud,
-          halo: SOCIAL_HALOS.google,
-        },
-      ] as const,
-    [copy],
-  );
-
   const extensionRecapLineLabels = useMemo(
     () => ({
       aiRetouch: copy.recapLineAiRetouch,
@@ -1315,13 +1258,13 @@ export function TributeWizard({
             />
             <SanctuaryInviteTrigger
               onOpen={() => setIsSanctuaryInviteOpen(true)}
-              disabled={!uploadProjectId}
+              disabled={!uploadProjectId || currentStep === 2}
               copy={{
                 triggerLabel: copy.inviteTriggerLabel,
                 triggerCta: copy.inviteTriggerCta,
                 triggerOpenAria: copy.inviteOpenAria,
               }}
-              className="sm:items-end sm:text-right"
+              className={`sm:items-end sm:text-right${currentStep === 2 ? " hidden" : ""}`}
             />
             {/* Masqué sur mobile — l'en-tête sticky y reste volontairement compact (2 lignes max) ; le détail complet reste consultable dans le Dossier. */}
             <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-500 sm:block sm:text-right">
@@ -1382,6 +1325,9 @@ export function TributeWizard({
           errorGeneric: copy.inviteErrorGeneric,
           needProject: copy.inviteNeedProject,
           shareMessage: copy.inviteShareMessage,
+          brandWordmark: copy.inviteBrandWordmark,
+          kicker: copy.inviteKicker,
+          poweredBy: copy.invitePoweredBy,
         }}
       />
 
@@ -1459,13 +1405,13 @@ export function TributeWizard({
                 <button
                   type="button"
                   onClick={() => avatarInputRef.current?.click()}
-                  className="group relative flex h-36 w-36 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/[0.04] shadow-[0_0_28px_rgba(139,92,246,0.12)] transition-[box-shadow,border-color] hover:border-white/18 hover:shadow-[0_0_36px_rgba(167,139,250,0.22)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202]"
+                  className="group relative flex h-36 w-36 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/[0.04] shadow-[0_0_28px_rgba(45,212,191,0.12)] transition-[box-shadow,border-color] hover:border-teal-400/30 hover:shadow-[0_0_36px_rgba(45,212,191,0.22)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202]"
                 >
                   <span
                     className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     style={{
                       background:
-                        "radial-gradient(circle at 50% 100%, rgba(167,139,250,0.2) 0%, transparent 65%)",
+                        "radial-gradient(circle at 50% 100%, rgba(45,212,191,0.22) 0%, transparent 65%)",
                     }}
                   />
                   {avatarPreview ? (
@@ -1519,7 +1465,7 @@ export function TributeWizard({
                     value={firstName}
                     onChange={(e) => handleFirstNameChange(e.target.value)}
                     autoComplete="given-name"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-violet-400/25 focus:shadow-[0_0_24px_rgba(139,92,246,0.12)]"
+                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.14)]"
                     placeholder={copy.firstNameLabel}
                   />
                 </div>
@@ -1536,7 +1482,7 @@ export function TributeWizard({
                     value={lastName}
                     onChange={(e) => handleLastNameChange(e.target.value)}
                     autoComplete="family-name"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-violet-400/25 focus:shadow-[0_0_24px_rgba(139,92,246,0.12)]"
+                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.14)]"
                     placeholder={copy.lastNameLabel}
                   />
                 </div>
@@ -1594,57 +1540,38 @@ export function TributeWizard({
           ) : null}
 
           {currentStep === 2 ? (
-            <>
-              <h2
-                id={wizardTitleId}
-                className="font-[family-name:var(--font-label)] text-balance text-2xl font-light tracking-wide text-zinc-100 md:text-[1.65rem]"
-              >
-                {copy.stepSourcesTitle}
-              </h2>
-              <p className="mt-5 text-lg font-light leading-relaxed text-zinc-400 md:text-xl">
-                {copy.stepSourcesDescription}
-              </p>
-              <p className="mt-4 text-sm font-light leading-relaxed text-zinc-500">
-                {copy.socialQuickLoginNote}
-              </p>
-
-              <div className="mt-10 flex flex-col gap-3">
-                {socialRows.map(({ id, label, Icon, halo }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    className={`group relative overflow-hidden rounded-2xl border px-5 py-4 text-left shadow-[0_0_20px_rgba(6,182,212,0.06)] transition-[border,box-shadow] md:py-5 ${
-                      selectedSocial === id
-                        ? "border-white/20 shadow-[0_0_28px_rgba(34,211,238,0.15)]"
-                        : "border-white/10 hover:border-white/16"
-                    }`}
-                    aria-pressed={selectedSocial === id}
-                    onClick={() => handleSocialSelect(id)}
-                  >
-                    <span
-                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                      style={{ background: halo }}
-                    />
-                    <span className="relative flex items-center gap-4">
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-black/30 text-zinc-300">
-                        <Icon className="h-5 w-5" strokeWidth={1.35} />
-                      </span>
-                      <span className="font-[family-name:var(--font-label)] text-base font-normal tracking-wide text-zinc-100 md:text-lg">
-                        {label}
-                      </span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                className="mt-10 w-full rounded-2xl border border-dashed border-white/15 bg-white/[0.02] py-4 text-center text-base font-light text-zinc-400 transition-colors hover:border-white/22 hover:bg-white/[0.05] hover:text-zinc-200"
-                onClick={() => void goNext()}
-              >
-                {copy.skipSources}
-              </button>
-            </>
+            <SanctuaryInviteStep
+              projectId={uploadProjectId}
+              locale={locale}
+              tributeName={deceasedDisplayName}
+              titleId={wizardTitleId}
+              stepTitle={copy.stepInviteTitle}
+              stepDescription={copy.stepInviteDescription}
+              skipLabel={copy.skipInvite}
+              onSkip={() => void goNext()}
+              copy={{
+                triggerLabel: copy.inviteTriggerLabel,
+                triggerCta: copy.inviteTriggerCta,
+                triggerOpenAria: copy.inviteOpenAria,
+                title: copy.inviteTitle,
+                description: copy.inviteDescription,
+                generateCta: copy.inviteGenerateCta,
+                generating: copy.inviteGenerating,
+                copyLink: copy.inviteCopyLink,
+                copied: copy.inviteCopied,
+                copyMessage: copy.inviteCopyMessage,
+                messageCopied: copy.inviteMessageCopied,
+                shareHint: copy.inviteShareHint,
+                qrAlt: copy.inviteQrAlt,
+                closeAria: copy.inviteCloseAria,
+                errorGeneric: copy.inviteErrorGeneric,
+                needProject: copy.inviteNeedProject,
+                shareMessage: copy.inviteShareMessage,
+                brandWordmark: copy.inviteBrandWordmark,
+                kicker: copy.inviteKicker,
+                poweredBy: copy.invitePoweredBy,
+              }}
+            />
           ) : null}
 
           {currentStep === 3 ? (
@@ -1898,7 +1825,7 @@ export function TributeWizard({
                             type="button"
                             onClick={() => void goNext()}
                             disabled={isStep3Locked}
-                            className="font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-white/12 bg-white/[0.08] px-4 text-base font-normal text-zinc-50 shadow-[0_0_24px_rgba(167,139,250,0.12)] transition-colors hover:bg-white/[0.11] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+                            className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
                           >
                             {copy.next}
                           </button>
@@ -2270,7 +2197,7 @@ export function TributeWizard({
               <button
                 type="button"
                 onClick={() => void goNext()}
-                className="font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-white/12 bg-white/[0.08] px-4 text-base font-normal text-zinc-50 shadow-[0_0_24px_rgba(167,139,250,0.12)] transition-colors hover:bg-white/[0.11]"
+                className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50"
               >
                 {copy.next}
               </button>

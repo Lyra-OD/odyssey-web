@@ -176,7 +176,7 @@ export function MontageExtensionsStep({
       priceCents: extensionCents("aiRetouch"),
       accent: "text-teal-300",
       selectedRing:
-        "border-teal-400/40 bg-teal-400/[0.04] shadow-[0_0_40px_rgba(45,212,191,0.18),0_0_24px_rgba(139,92,246,0.08)]",
+        "border-teal-400/40 bg-teal-400/[0.04] shadow-[0_0_40px_rgba(45,212,191,0.18),0_0_24px_rgba(34,211,238,0.08)]",
       iconBg: "bg-teal-400/10 text-teal-300",
     },
     {
@@ -210,7 +210,7 @@ export function MontageExtensionsStep({
       priceCents: extensionCents("sanctuaryToken"),
       accent: "text-zinc-200",
       selectedRing:
-        "border-white/30 bg-white/[0.04] shadow-[0_0_36px_rgba(255,255,255,0.1),0_0_20px_rgba(167,139,250,0.08)]",
+        "border-white/30 bg-white/[0.04] shadow-[0_0_36px_rgba(255,255,255,0.1),0_0_20px_rgba(45,212,191,0.1)]",
       iconBg: "bg-white/[0.08] text-zinc-300",
     },
     {
@@ -230,10 +230,10 @@ export function MontageExtensionsStep({
       title: copy.digitalVaultTitle,
       description: copy.digitalVaultDescription,
       priceCents: extensionCents("digitalVault"),
-      accent: "text-violet-300",
+      accent: "text-teal-200",
       selectedRing:
-        "border-violet-400/40 bg-violet-400/[0.04] shadow-[0_0_40px_rgba(167,139,250,0.2),0_0_24px_rgba(45,212,191,0.08)]",
-      iconBg: "bg-violet-400/10 text-violet-300",
+        "border-teal-400/40 bg-teal-400/[0.04] shadow-[0_0_40px_rgba(45,212,191,0.2),0_0_24px_rgba(34,211,238,0.08)]",
+      iconBg: "bg-teal-400/10 text-teal-200",
     },
   ];
 
@@ -273,7 +273,7 @@ export function MontageExtensionsStep({
           }
           className={`group w-full rounded-2xl border px-5 py-5 text-left transition-all duration-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.35)] ${
             extensions.heritagePack
-              ? "border-amber-400/35 bg-gradient-to-br from-amber-400/[0.08] to-violet-500/[0.06] shadow-[0_0_40px_rgba(251,191,36,0.12)]"
+              ? "border-amber-400/35 bg-gradient-to-br from-amber-400/[0.08] to-teal-500/[0.06] shadow-[0_0_40px_rgba(251,191,36,0.12)]"
               : "border-white/10 bg-white/[0.02] hover:border-amber-400/20"
           }`}
         >

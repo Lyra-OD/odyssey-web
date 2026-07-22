@@ -315,7 +315,7 @@ export function StoryboardChaptersStep({
           }}
         />
         <p
-          className="max-w-2xl rounded-xl border border-violet-400/20 bg-violet-500/[0.05] px-4 py-3 text-sm font-light leading-relaxed text-violet-100/85"
+          className="max-w-2xl rounded-xl border border-teal-400/20 bg-teal-500/[0.05] px-4 py-3 text-sm font-light leading-relaxed text-teal-100/85"
           role="note"
         >
           {copy.educationBanner}

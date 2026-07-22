@@ -1,19 +1,18 @@
 import { redirect } from "next/navigation";
+import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
 import { LocaleSwitcher } from "@/src/components/i18n/LocaleSwitcher";
 import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
 import { TributeWizard } from "@/src/components/tribute/TributeWizard";
 import { appRoutes } from "@/src/lib/appRoutes";
+import {
+  SANCTUARY_HALO_TEAL,
+  SANCTUARY_HALO_UV,
+} from "@/src/lib/contribute/sanctuaryChrome";
 import { getDictionary } from "@/lib/dictionaries";
 import { createClient } from "@/utils/supabase/server";
 import type { Locale } from "@/i18n.config";
 
 export const dynamic = "force-dynamic";
-
-/** Halo léger violet — cohérent avec la page login (atmosphère Studio). */
-const HALO_DASH_PRIMARY =
-  "radial-gradient(ellipse 106% 74% at 50% 42%, rgba(139, 92, 246, 0.2) 0%, rgba(91, 33, 182, 0.09) 44%, transparent 72%)";
-const HALO_DASH_SECONDARY =
-  "radial-gradient(ellipse 112% 78% at 50% 48%, rgba(103, 232, 249, 0.08) 0%, transparent 62%)";
 
 type PageProps = {
   params: Promise<{ lang: string }>;
@@ -79,32 +78,48 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
     .limit(1)
     .maybeSingle();
 
+  const brandWordmark = dictionary.tributeWizard.inviteBrandWordmark;
+  const poweredBy = dictionary.tributeWizard.invitePoweredBy;
+  const studioKicker = dictionary.dashboard.title;
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100">
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        aria-hidden
+      >
         <div
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-[38%] z-0 h-[min(72vh,720px)] w-[min(155vw,72rem)] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.55] blur-[180px]"
-          style={{ backgroundImage: HALO_DASH_PRIMARY }}
+          className="absolute left-1/2 top-[36%] h-[min(70vh,680px)] w-[min(150vw,68rem)] -translate-x-1/2 -translate-y-1/2 opacity-50 blur-[180px]"
+          style={{ backgroundImage: SANCTUARY_HALO_UV }}
         />
         <div
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[min(95vh,940px)] w-[min(185vw,84rem)] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-[0.35] blur-[220px]"
-          style={{ backgroundImage: HALO_DASH_SECONDARY }}
+          className="sanctuary-halo-breathe absolute left-1/2 top-[42%] h-[min(55vh,520px)] w-[min(120vw,52rem)] -translate-x-1/2 -translate-y-1/2 blur-[140px]"
+          style={{ backgroundImage: SANCTUARY_HALO_TEAL }}
         />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/25 to-transparent" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-6 pb-16 pt-10 md:px-10 md:pt-14">
-        <header className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0 flex-1 space-y-2">
-            <p className="text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
-              {dictionary.dashboard.title}
-            </p>
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-6 pb-10 pt-10 md:px-10 md:pt-12">
+        <div className="mb-8 flex flex-col items-center">
+          <div className="mx-auto flex max-w-[16rem] origin-top scale-[0.82] justify-center sm:max-w-[18rem] sm:scale-[0.88]">
+            <OdysseyConnexionMark
+              wordmark={brandWordmark}
+              animate
+              className="mb-0"
+            />
+          </div>
+          <p className="mt-4 text-center text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
+            {studioKicker}
+          </p>
+        </div>
+
+        <header className="mb-2 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1 space-y-2 text-center sm:text-left">
             <h1 className="text-xl font-light leading-snug tracking-[0.02em] text-white md:text-2xl">
               {welcomeLine}
             </h1>
           </div>
-          <div className="flex shrink-0 flex-col items-end gap-3 sm:mt-1">
+          <div className="flex shrink-0 flex-col items-center gap-3 sm:items-end">
             <LocaleSwitcher
               lang={lang}
               languageLabel={dictionary.header.languageLabel}
@@ -125,6 +140,15 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
           isPartner={isPartner}
           planOverride={planOverride}
         />
+
+        <footer className="mt-auto mb-20 flex flex-col items-center gap-1 pb-2 pt-16 text-center">
+          <p className="text-[8px] font-medium uppercase tracking-[0.44em] text-white/26">
+            {poweredBy}
+          </p>
+          <p className="font-brand text-[10px] font-medium uppercase leading-none tracking-[0.28em] text-white/36 md:text-[11px]">
+            {brandWordmark}
+          </p>
+        </footer>
       </div>
     </main>
   );

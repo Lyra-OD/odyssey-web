@@ -74,7 +74,7 @@ export function WizardPhaseProgress({
                 type="button"
                 onClick={() => onPhaseClick(phase.firstStep)}
                 aria-current={isActive ? "step" : undefined}
-                className={`rounded-full px-1 py-1 text-[11px] font-light uppercase tracking-[0.18em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/40 sm:text-xs ${
+                className={`rounded-full px-1 py-1 text-[11px] font-light uppercase tracking-[0.18em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/40 sm:text-xs ${
                   isActive
                     ? "text-teal-200"
                     : isCompleted
@@ -92,7 +92,7 @@ export function WizardPhaseProgress({
 
       <div className="mt-3 h-px w-full overflow-hidden rounded-full bg-white/[0.06]">
         <div
-          className="h-full bg-gradient-to-r from-teal-400/70 to-violet-400/60 transition-[width] duration-500 ease-out"
+          className="h-full bg-gradient-to-r from-teal-400/80 via-teal-300/70 to-cyan-400/50 transition-[width] duration-500 ease-out"
           style={{ width: `${progressPercent}%` }}
         />
       </div>

@@ -314,7 +314,7 @@ export function CinematicTeaser({
               aria-label={copy.play}
             >
               <span
-                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-teal-400 to-violet-400 transition-all duration-150"
+                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 transition-all duration-150"
                 style={{ width: `${Math.min(100, progressRatio * 100)}%` }}
               />
               <span

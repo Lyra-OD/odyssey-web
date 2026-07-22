@@ -155,7 +155,7 @@ export function PreviewStep({
         <button
           type="button"
           onClick={onProceedToPayment}
-          className="font-[family-name:var(--font-label)] min-h-[56px] w-full max-w-md rounded-2xl border border-teal-400/45 bg-gradient-to-r from-violet-600/35 via-teal-500/30 to-teal-400/25 px-6 text-base font-semibold text-white shadow-[0_0_56px_rgba(139,92,246,0.3),0_0_40px_rgba(45,212,191,0.25)] transition-all hover:scale-[1.01] hover:shadow-[0_0_64px_rgba(139,92,246,0.38),0_0_48px_rgba(45,212,191,0.32)]"
+          className="font-[family-name:var(--font-label)] min-h-[56px] w-full max-w-md rounded-2xl border border-teal-400/45 bg-gradient-to-r from-teal-600/35 via-teal-500/30 to-cyan-400/25 px-6 text-base font-semibold text-white shadow-[0_0_56px_rgba(45,212,191,0.3),0_0_40px_rgba(34,211,238,0.2)] transition-all hover:scale-[1.01] hover:shadow-[0_0_64px_rgba(45,212,191,0.38),0_0_48px_rgba(34,211,238,0.28)]"
         >
           {copy.payCta}
         </button>
