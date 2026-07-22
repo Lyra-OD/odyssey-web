@@ -13,11 +13,12 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 
 > SKU musique à la carte : **`musicLicense` (39 $)** — successeur de `extendedLicense` (migration TS Phase 1).
 
-> **⚠️ Extension canon — Cascade V-Final (21 juillet 2026) :** le **B2C direct** pivote —
-> entrée en **brouillon gratuit** (comme le B2B2C), paywall **strict à l'export** (min Héritage 149 $),
-> pouvant être financé par la **Boucle Virale / Fonds Commémoratif** (contributions des proches → crédit).
-> Le forfait de départ est décidé par le **backend autoritaire** (`ChannelProfile` dans `/api/projects/draft`).
-> Canon dédié : [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) (prime en cas de conflit sur le B2C).
+> **⚠️ Extension canon — Cascade V-Final (rév. 22 juillet 2026) :** le **B2C direct** pivote —
+> entrée en **brouillon gratuit**, paywall **strict à l'export** (min Héritage **179 $**),
+> pouvant être financé par la **Boucle Virale / Fonds Commémoratif**. Grille Quiet Luxury accessible :
+> Héritage **179 $** · Éternité **349 $** · Légendaire **499 $**. Empreintes Sanctuaire :
+> Voix **69 $** · Vidéo **119 $** · Coproduction **129 $** · Bougie **15 $** · Mécène **150–1000 $**.
+> Canon dédié : [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
 
 ---
 
@@ -27,7 +28,8 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 2. **Entitlements payés** = snapshot serveur post-webhook Stripe — pas le `wizard_state` navigateur.
 3. **Purge jetons totale** — solde partenaire = uniquement `partner_commission_*`.
 4. **Musique à deux voies** — catalogue Stingray officiel (zéro copyright Odyssey) + soupape MP3/WAV (responsabilité famille via ToS).
-5. **Stingray licencié = 100 % payant** *(décision juillet 2026)*. Le gratuit **n'inclut aucune** piste licenciée dans l'export : seulement (a) **preview** (hook Soft Cap, non exporté) et (b) **MP3 perso via ToS**. La sélection d'une piste officielle sur Souvenir n'est **jamais bloquée en écoute** ; elle déclenche le choix **Licence 39 $** ou **upgrade Héritage 149 $**.
+5. **Stingray licencié = 100 % payant** *(décision juillet 2026)*. Le gratuit **n'inclut aucune** piste licenciée dans l'export : seulement (a) **preview** (hook Soft Cap, non exporté) et (b) **MP3 perso via ToS**. Soft Cap : **Licence 39 $** ou **upgrade Héritage 179 $**.
+6. **Sanctuaire / Boucle Virale** — médias invités **hors** Soft Cap 50 ; voix/vidéo V1 « soumis à la famille » ; `viral_loop_enabled` off jusqu'à fin Phase 3a ; surplus fonds = **produit** (pas de cash-out).
 
 ---
 
@@ -36,10 +38,12 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 | Forfait | ID | Prix | Médias | Export | Musique | Inclus |
 |---------|-----|------|--------|--------|---------|--------|
 | **Souvenir** | `essential` | 0 $ | 50 | 1080p | **Preview Stingray** (aperçu, non exporté) + **MP3 perso (ToS)** — aucune piste licenciée incluse | Cadeau salon |
-| **Héritage** | `signature` | 149 $ | 125 | **4K** | **Catalogue Stingray officiel inclus** + soupape MP3/WAV | Chef-d’œuvre numérique |
-| **Éternité** | `heritage` | 299 $ | 175 | 4K | Idem Héritage (officiel inclus) | + IA complète + Coffre 50 ans |
+| **Héritage** | `signature` | **179 $** | 125 | **4K** | **Catalogue Stingray officiel inclus** + soupape MP3/WAV | Chef-d’œuvre numérique |
+| **Éternité** | `heritage` | **349 $** | 175 | 4K | Idem Héritage (officiel inclus) | + IA complète + Coffre 50 ans |
 
 **Légendaire 499 $** : B2C-only ancre Quiet Luxury (conservé jusqu’à décision contraire).
+
+> Grille **Quiet Luxury accessible** (Phase 0 — 22/07/2026). Source runtime : `pricingConfig.ts`.
 
 ### Add-ons Quiet Luxury (grille V1 officielle)
 
@@ -84,7 +88,7 @@ La famille a déjà « vécu » la piste. L’UI propose :
    - Active `extensions.musicLicense = true` (panier virtuel).  
    - Débloque catalogue officiel + export licence pour ces pistes.
 
-2. **Upgrader vers Héritage — 149 $**  
+2. **Upgrader vers Héritage — 179 $**  
    - `intendedPackage = signature`.  
    - Débloque musique officielle **incluse** + 4K + 125 médias.  
    - **Ne pas** ajouter `musicLicense` en line item (déjà inclus dans le forfait).
@@ -225,5 +229,5 @@ Mettre à jour ce fichier quand la grille, les SKUs (`musicLicense` / `storyVoic
 
 ---
 
-*Vision CEO figée — juillet 2026 (rév. Licence Stingray 39 $ ; rév. **gratuit sans Stingray licencié** — preview + MP3 perso ToS uniquement). Phases 0–5 livrées (Creatomate = stub) ; Phase 6 remaining. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
+*Vision CEO figée — juillet 2026 (rév. **grille 179/349/499** · Sanctuaire empreintes · gratuit sans Stingray licencié). Phases 0–5 livrées (Creatomate = stub) ; Phase 3a Sanctuaire UI ⏳. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
 *Appliquer SQL P9 sur Supabase : [`sql/odyssey_p9_project_export_jobs.sql`](sql/odyssey_p9_project_export_jobs.sql).*

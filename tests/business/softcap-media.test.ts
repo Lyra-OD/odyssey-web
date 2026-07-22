@@ -21,7 +21,7 @@ import {
  *
  * Un projet démarre sur le cadeau `essential` (Souvenir 0 $, 50 médias).
  * Quand la famille dépasse 50 médias, la "Frustration Positive" propose
- * de basculer `intendedPackage` sur `signature` (Héritage 149 $).
+ * de basculer `intendedPackage` sur `signature` (Héritage 179 $).
  *
  * Si la famille REFUSE l'upsell et tente un checkout à 0 $ tout en gardant
  * > 50 médias (ou une Licence Musique payante), le serveur doit AMPUTER
@@ -149,7 +149,7 @@ describe("Soft Cap Médias — quota & Frustration Positive", () => {
     });
   });
 
-  it("ACCEPTE l'upsell → intended bascule sur Héritage, checkout payant du delta 149 $", () => {
+  it("ACCEPTE l'upsell → intended bascule sur Héritage, checkout payant du delta 179 $", () => {
     const outcome = simulatePartnerFreemiumCheckout({
       grantedPackage: "essential",
       intendedPackage: "signature", // accepte le Soft Cap
@@ -157,8 +157,8 @@ describe("Soft Cap Médias — quota & Frustration Positive", () => {
       mediaCount: 120,
     });
 
-    // delta granted(0) → intended(14900) = 14900 cents
-    expect(outcome).toEqual({ status: "paid", totalCents: 14900 });
+    // delta granted(0) → intended(17900) = 17900 cents
+    expect(outcome).toEqual({ status: "paid", totalCents: 17900 });
   });
 
   it("panier d'affichage Souvenir = 0 $ tant que rien de payant n'est ajouté", () => {

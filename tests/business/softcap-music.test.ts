@@ -16,13 +16,13 @@ import { shouldOfferMusicSoftCap } from "@/src/lib/wizard/softCap";
  * Sur `essential`, choisir une piste du catalogue Stingray officiel déclenche
  * la modale duale (jamais bloquante) :
  *   Choix A → add-on `musicLicense` 39 $
- *   Choix B → upgrade total Héritage (`signature`) 149 $
+ *   Choix B → upgrade total Héritage (`signature`) 179 $
  *
  * Règle anti double-facturation : dès Héritage la licence est incluse (0 $ en plus).
  */
 
 const MUSIC_LICENSE_CENTS = 3900;
-const HERITAGE_CENTS = 14900;
+const HERITAGE_CENTS = 17900;
 
 describe("Soft Cap Musique — dual choice & entitlement", () => {
   it("catalogue standard sur Souvenir, premium dès Héritage ou via add-on", () => {
@@ -39,7 +39,7 @@ describe("Soft Cap Musique — dual choice & entitlement", () => {
     expect(shouldOfferMusicSoftCap("essential", "signature", false)).toBe(false);
   });
 
-  it("les deux tarifs proposés sont exactement 39 $ (add-on) et 149 $ (upgrade)", () => {
+  it("les deux tarifs proposés sont exactement 39 $ (add-on) et 179 $ (upgrade)", () => {
     expect(extensionCents("musicLicense")).toBe(MUSIC_LICENSE_CENTS);
     expect(packageCents("signature")).toBe(HERITAGE_CENTS);
   });
@@ -57,7 +57,7 @@ describe("Soft Cap Musique — dual choice & entitlement", () => {
     );
   });
 
-  it("Choix B — upgrade Héritage 149 $ : delta granted→intended = 14900 cents", () => {
+  it("Choix B — upgrade Héritage 179 $ : delta granted→intended = 17900 cents", () => {
     const cart = computeWizardCartWithGrant({}, "signature", "essential");
     expect(cart.totalCents).toBe(HERITAGE_CENTS);
   });

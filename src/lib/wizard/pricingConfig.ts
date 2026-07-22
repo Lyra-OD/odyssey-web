@@ -6,9 +6,12 @@
  *
  * - `essential`  : Souvenir 0 $ (partenaire) — aucune piste Stingray licenciée
  *   incluse/exportée ; aperçu (preview) seulement + MP3 perso via attestation ToS.
- * - `signature`  : Héritage 149 $ — 4K + catalogue Stingray officiel inclus
- * - `heritage`   : Éternité 299 $ — + IA + coffre inclus
+ * - `signature`  : Héritage 179 $ — 4K + catalogue Stingray officiel inclus
+ * - `heritage`   : Éternité 349 $ — + IA + coffre inclus
  * - `legendary`  : Légendaire 499 $ (B2C only)
+ *
+ * Grille Quiet Luxury accessible (Phase 0 — 22/07/2026) : viral en bas,
+ * digne au cœur, ancre haute inchangée.
  *
  * MUSIQUE (décision juillet 2026) : Stingray licencié = 100 % payant. Le gratuit
  * n'inclut AUCUNE piste licenciée dans l'export — il peut seulement (a) écouter
@@ -43,14 +46,14 @@ export const WIZARD_PRICING = {
     },
     SIGNATURE: {
       id: "signature",
-      priceCents: 14_900,
+      priceCents: 17_900,
       tokens: 0,
       /** Catalogue Stingray officiel inclus (Freemium V1). */
       musicCatalog: "premium" as MusicCatalogTier,
     },
     HERITAGE: {
       id: "heritage",
-      priceCents: 29_900,
+      priceCents: 34_900,
       tokens: 0,
       musicCatalog: "premium" as MusicCatalogTier,
     },

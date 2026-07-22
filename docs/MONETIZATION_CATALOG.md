@@ -1,6 +1,6 @@
 # Odyssey — Catalogue Monétisation complet (Cascade V-Final)
 
-**Dernière révision : 21 juillet 2026**
+**Dernière révision : 22 juillet 2026 — Phase 0 grille Quiet Luxury accessible**
 
 Inventaire **exhaustif** de tout ce que le **client (famille)** peut acheter et de tout ce que
 l'**invité** peut offrir — plus les leviers **documentés à venir** et les **idées à explorer**.
@@ -12,7 +12,7 @@ l'**invité** peut offrir — plus les leviers **documentés à venir** et les *
 
 **Règle d'or (SANCTUARY §2) :** chaque SKU s'accroche à un **moment émotionnel** — jamais à un écran « boutique ».
 
-**Légende statut :** ✅ Livré (achetable) · 🔜 Documenté à venir · 💡 Idée à explorer (non tranchée) · ⚠️ Déprécié.
+**Légende statut :** ✅ Livré (config/runtime) · 🔜 UI Phase 3a · 💡 Idée · ⚠️ Déprécié.
 
 ---
 
@@ -20,149 +20,81 @@ l'**invité** peut offrir — plus les leviers **documentés à venir** et les *
 
 | Dimension | Valeur |
 |-----------|--------|
-| SKUs livrés (achetables) | **13** (4 forfaits + 6 add-ons actifs + 3 Support Packs) |
-| Leviers documentés à venir | **9** (V1.5 · Phase 2 · Phase 3) — dont **Mécène / Saisie libre** (cap déjà codé) |
-| Idées à explorer (brainstorm) | **~32** |
-| Amplitude prix forfait famille | **0 $ → 499 $** |
-| Panier moyen invité cible | **~50 $** |
+| Forfaits famille | **0 / 179 / 349 / 499 $** |
+| Empreintes Sanctuaire actives | **5** (voix, vidéo, coproduction, bougie, mécène) |
+| Panier moyen invité cible | **~80–100 $** ARPU payant |
+| Soft Cap médias famille | **50** — médias **invités exclus** |
+| Feature flag | `viral_loop_enabled` = **false** jusqu'à fin Phase 3a |
 
 ---
 
-## A. Livré et achetable aujourd'hui
+## A. Livré (config runtime)
 
 ### A.1 Forfaits — la famille achète
 
-Cœur du panier. Entrée en **brouillon gratuit** (B2B2C & B2C) ; paywall à l'export. Quotas médias
-garantis par trigger DB (`odyssey_p7_media_quota_guard.sql`).
-
 | Forfait | ID technique | Prix | Médias | Export | Inclus | Statut |
 |---------|--------------|------|--------|--------|--------|--------|
-| **Souvenir** | `essential` | **0 $** | 50 | 1080p | **Preview Stingray** (aperçu, non exporté) + **MP3 perso (ToS)** — aucune piste licenciée incluse | ✅ |
-| **Héritage** | `signature` | **149 $** | 125 | 4K | Catalogue Stingray officiel inclus + soupape MP3/WAV | ✅ |
-| **Éternité** | `heritage` | **299 $** | 175 | 4K | + IA complète + Coffre-fort 50 ans | ✅ |
+| **Souvenir** | `essential` | **0 $** | 50 | 1080p | Preview Stingray + MP3 perso (ToS) — 0 piste licenciée | ✅ |
+| **Héritage** | `signature` | **179 $** | 125 | 4K | Catalogue Stingray officiel + soupape MP3/WAV | ✅ |
+| **Éternité** | `heritage` | **349 $** | 175 | 4K | + IA complète + Coffre-fort 50 ans | ✅ |
 | **Légendaire** | `legendary` | **499 $** | 250 | 4K | + boîte pré-affranchie (**B2C only**) | ✅ |
 
 ### A.2 Add-ons Quiet Luxury — la famille achète
 
-Extensions émotionnelles à la carte. **Commissionnables** (RevShare 30 % du Net Distribuable).
-Certains sont **inclus** dans les forfaits supérieurs (strip automatique du panier).
-
 | Add-on | ID | Prix | Commission | Inclusion / note | Statut |
 |--------|-----|------|------------|------------------|--------|
 | **Restauration IA** | `aiRetouch` | 49 $ | Oui | Inclus dès Éternité | ✅ |
-| **Licence Musique Premium Stingray** | `musicLicense` | 39 $ | Oui | Débloque le catalogue Stingray licencié sur Souvenir (gratuit = preview only). Inclus dès Héritage | ✅ |
-| **Voix de l'Histoire** (narration IA) | `storyVoice` | 39 $ | Oui | — | ✅ |
+| **Licence Musique Premium Stingray** | `musicLicense` | 39 $ | Oui | Soft Cap Souvenir ; inclus dès Héritage | ✅ |
+| **Voix de l'Histoire** (narration IA) | `storyVoice` | 39 $ | Oui | ≠ voix invité Sanctuaire | ✅ |
 | **Jeton du Sanctuaire** (NFC/QR) | `sanctuaryToken` | 79 $ | Oui | Fulfillment ops ⏳ | ✅ |
 | **Coffre-fort 50 ans** | `digitalVault` | 99 $ | Oui | Inclus dès Éternité | ✅ |
 | **Livre de Mémoire** (Gelato POD) | `memoryBook` | 149 $ | Oui | Fulfillment ops ⏳ | ✅ |
-| Pack Héritage (bundle marketing) | `heritagePack` | 149 $ | Oui | Conservé pour paniers legacy | ⚠️ |
+| Pack Héritage (bundle marketing) | `heritagePack` | 149 $ | Oui | Conservé paniers legacy | ⚠️ |
 
-### A.3 Support Packs — l'invité offre (Boucle Virale)
+### A.3 Empreintes Sanctuaire — l'invité offre (Boucle Virale)
 
-Achat personnel à **bénéfice collectif** via `/[lang]/contribute/[token]`. Le Net Distribuable
-devient un **crédit** qui fond le paywall famille (cascade P1→P2→P3). Source : `guestSupportPacks.ts`.
+Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX = ancre haut.
 
-| Support Pack | `product_key` | Prix | Friction | Statut |
-|--------------|---------------|------|----------|--------|
-| **Pack Héritage** (HD + Version Sociale + Page Livre d'or) | `guest_heritage` | 89 $ | Ancre panier | ✅ |
-| **Pack Soutien Numérique** (Copie HD) | `guest_hd` | 49 $ | Moyenne | ✅ |
-| **Bougie Commémorative Digitale** | `guest_candle` | 15 $ | Basse | ✅ |
+| Empreinte | `product_key` | Prix | Rôle UX | Statut |
+|-----------|---------------|------|---------|--------|
+| **Voix dans le film** | `guest_voice` | **69 $** | Ancre / cœur | ✅ config · 🔜 UI |
+| **Présence vidéo** | `guest_video` | **119 $** | Staple cérémonie | ✅ config · 🔜 UI |
+| **Coproduction** (HD + social + générique) | `guest_heritage` | **129 $** | Statut | ✅ |
+| **Geste / Bougie** | `guest_candle` | **15 $** | Secondaire (jamais CTA #1) | ✅ |
+| **Mécène** (montant libre) | `guest_patron` | **150–1000 $** (sugg. **250 $**) | Asymétrie | ✅ config · 🔜 checkout amount |
+| Pack HD | `guest_hd` | ~~49 $~~ | — | ⚠️ **DÉPRÉCIÉ** |
 
-**Mécanisme Fonds Commémoratif (levier, pas un SKU) :** cap **1000 $/transaction** · commission Athos
-`guest_commission_accrual` (30 % du Net) **uniquement si tenant `is_freemium`** · crédit fonds =
-`Net × fund_conversion_bps` (défaut 100 %), **porté par la marge Odyssey**. Cascade : P1 couvrir le
-forfait de base → P2 auto-élévation au tier supérieur → P3 surplus vers add-ons.
+**Promesse voix/vidéo V1 :** *soumis à la famille pour intégration dans l'œuvre finale* (pas de garantie absolue).
 
----
-
-## B. Documenté — à venir (V1.5 · Phase 2 · Phase 3)
-
-Leviers déjà écrits dans les canons mais **non implémentés**. Plusieurs sont **récurrents** (MRR / LTV).
-
-| Levier / SKU | Prix | Horizon | Source doc | Statut |
-|--------------|------|---------|------------|--------|
-| Social Cut (format court réseaux) | 19 $ | V1.5 | SANCTUARY §5 | 🔜 |
-| Livre invité / diaspora | à définir | V1.5 | SANCTUARY §5 · VISION | 🔜 |
-| **Sanctuaire Numérique** (abonnement hébergement) | 49 $/an | Phase 2 (MRR) | VISION §3 · Pilier 2 | 🔜 |
-| **Capsule anniversaire IA** (Jour-365 → invités) | inclus abo | Phase 2 | VISION §3 · rétention | 🔜 |
-| **Lead-Gen CPL** (pré-arrangements funéraires) | CPL (funérarium paie) | Phase 2 | VISION §3 · Pilier 1 | 🔜 |
-| Data Graph **LYRA** (insights agrégés, M&A) | licensing B2B | Phase 2+ | VISION §3 · Pilier 3 | 🔜 |
-| Gant Blanc Premium (avance commissions partenaire) | couche B2B | Post-freemium | SANCTUARY §7 | 🔜 |
-| % marge Odyssey → Fonds (checkouts famille) | configurable | Phase 2+ | VISION §2.2 | 🔜 |
-| **Mécène / Saisie libre** (contribution invité montant libre → éponge le forfait famille) | **99 $ → 1000 $** | **V1.5 quick-win** | Cap `1000 $/txn` **déjà codé** (`guestSupportPacks.ts`) · cascade | 🔜 |
+**Fonds Commémoratif :** Net × 100 % → crédit cascade P1→P2→P3 · **surplus = plus de produit** (pas de cash-out) · pas de mini-% extra sur le fonds · commission Athos 30 % du Net si `is_freemium` · cap 1000 $/txn.
 
 ---
 
-## C. Idées à explorer — brainstorm (non documenté, à valider)
+## B. Documenté — à venir
 
-> Prix **indicatifs**. Chaque piste s'accroche à un moment émotionnel existant ; **aucune n'est
-> tranchée ni chiffrée officiellement**. À prioriser (quick-win ROI vs gros chantier) avant décision.
+| Levier / SKU | Prix | Horizon | Statut |
+|--------------|------|---------|--------|
+| UI Sanctuaire + Inviter + Fonds checkout (Phase 3a) | — | **Maintenant** | 🔜 |
+| Capture upload voix/vidéo (Phase 3b) | inclus packs | Après 3a | 🔜 |
+| Social Cut | 19 $ | V1.5 | 🔜 |
+| Sanctuaire Numérique (abo) | 49 $/an | Phase 2 MRR | 🔜 |
+| Capsule anniversaire IA Jour-365 | inclus abo | Phase 2 | 🔜 |
+| Lead-Gen CPL | CPL | Phase 2 | 🔜 |
+| Data Graph LYRA | licensing B2B | Phase 2+ | 🔜 |
+| Fonds Philanthropique / Leg (P4) | % | Différé | 💡 |
 
-### C.1 Support Packs invités (nouveaux)
+---
 
-| Idée | Prix indicatif |
-|------|----------------|
-| Mur d'hommage / fleurs virtuelles | 5–15 $ |
-| Message vidéo invité intégré au montage | ~29 $ |
-| Don caritatif au nom du défunt (Odyssey % traitement) | % du don |
-| Dédicace / page contributeur premium | ~19 $ |
-| **Générique de fin collaboratif (End Credits)** — section cinématique listant contributeurs/signataires (levier viral) | inclus / premium |
-| **Témoignage audio spatialisé** — mémo vocal invité (denoise studio) sur timeline acoustique | ~29 $ |
-| **Fonds Philanthropique / Leg** — surplus du fonds au-delà du forfait max (Éternité) redirigé vers cause / fondation / bourse au nom du défunt | **% traitement** — *cascade « P4 » (à trancher dans `IMPLEMENTATION_CASCADE_VFINAL.md`)* |
-| *Enrichissement Bougie* — + message de condoléances **mis en avant** | inclus `guest_candle` |
-| *Enrichissement Pilier* — + **badge distinctif** sur le livre d'or (reconnaissance) | inclus `guest_heritage` |
-| *Clarif. Soutien HD* — distinguer **copie perso** (actuel `guest_hd`) vs **contribution au mémorial collaboratif** (2 valeurs) | — |
+## C. Idées à explorer (extrait)
 
-### C.2 Add-ons famille (extensions produit)
-
-| Idée | Prix indicatif |
-|------|----------------|
-| Sous-titres / doublage multilingue (diaspora) | ~39 $ |
-| Version longue « Documentaire » | ~99 $ |
-| Musique originale composée par IA | ~59 $ |
-| Narration multi-voix (plusieurs proches) | +29 $/voix |
-| Album audio / podcast mémoriel | ~39 $ |
-| Livre premium cuir gravé | ~299 $ |
-| **Capsule temporelle programmée par la famille** — contenus cachés débloqués à J+1 / 5 / 10 ans (≠ capsule IA auto de la section B) | ~39 $ |
-| **Restauration par lot / VHS-vidéo** — tiering de `aiRetouch` (cassettes abîmées, stabilisation, étalonnage) | par lot |
-| **Livre d'Or invités imprimé** — compilation des messages/photos/poèmes du mémorial (≠ `memoryBook` hommage) | POD |
-
-### C.3 Objets physiques & hardware
-
-| Idée | Prix indicatif |
-|------|----------------|
-| Bijou NFC (réplique portable du Jeton) | ~129 $ |
-| Cadre photo numérique connecté | ~149 $ |
-| Plaque / QR extérieur pierre tombale (NFC durci) | ~99 $ |
-| Vinyle / CD de la bande-son | ~49 $ |
-| **Coffret Collector** — clé USB cryptée, boîtier alu noir mat gravé, film 4K brut **sans cloud** (réintro de l'ex-`collectorUsb`, à arbitrer vs Jeton NFC) | ~129 $ |
-
-### C.4 Récurrent / anniversaire (LTV)
-
-| Idée | Prix indicatif |
-|------|----------------|
-| Sanctuaire Éternel (paiement unique à vie) | ~299 $ |
-| Bougie annuelle automatique | ~9 $/an |
-| Envoi fleurs physiques anniversaire (dropship) | marge |
-| Capsule anniversaire premium (nouveau montage/an) | ~49 $ |
-
-### C.5 B2B / partenaire
-
-| Idée | Prix indicatif |
-|------|----------------|
-| Marque blanche salon (SaaS mensuel) | abo B2B |
-| Palier de commission au volume | % dégressif |
-| Pack « campagne de collecte » (mariages, mémoriaux publics) | événementiel |
+End Credits filmiques · témoignage audio spatialisé enrichi · Livre d'Or invités POD · Coffret USB collector · capsule temporelle famille · bijou NFC — voir brainstorm antérieur ; **ne pas charger** le Sanctuaire V1.
 
 ---
 
 ## Maintenance
 
-Mettre à jour ce fichier quand :
-- Un SKU change de prix / statut (aligner `pricingConfig.ts` + `guestSupportPacks.ts`).
-- Une idée de la section C est tranchée → la promouvoir en B (documenté) puis A (livré).
-- Un canon (SANCTUARY, VISION, DELIVERABLES, CASCADE_VFINAL) évolue.
-
-Cross-références : [`PROJECT_STATUS.md`](PROJECT_STATUS.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
+- Prix livrés = `pricingConfig.ts` + `guestSupportPacks.ts` uniquement.
+- Promouvoir C → B → A quand tranché.
+- Canon Boucle Virale : [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
 
 *Document vivant — catalogue monétisation Odyssey.*

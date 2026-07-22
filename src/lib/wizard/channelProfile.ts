@@ -4,7 +4,7 @@
  * Source unique de vérité, dérivée du BACKEND (tenants.is_freemium + invitation),
  * qui dicte le forfait de départ, les forfaits autorisés, et le comportement
  * d'export/preview par canal. Remplace le fallback frontend historique
- * (DEFAULT_B2C_BASE_PACKAGE = heritage / Éternité 299 $) qui faisait démarrer
+ * (DEFAULT_B2C_BASE_PACKAGE = heritage / Éternité 349 $) qui faisait démarrer
  * tout nouveau projet au forfait maximum.
  *
  * Canon : docs/IMPLEMENTATION_CASCADE_VFINAL.md
@@ -42,7 +42,7 @@ export type ResolveChannelInput = {
 
 /**
  * B2B2C (partenaire / salon) : Souvenir 0 $ offert → Soft Cap → upsell.
- * B2C (direct) : brouillon gratuit, paywall STRICT à l'export (plancher Héritage 149 $),
+ * B2C (direct) : brouillon gratuit, paywall STRICT à l'export (plancher Héritage 179 $),
  * financé par la Boucle Virale (Fonds Commémoratif).
  */
 export function resolveChannelProfile(input: ResolveChannelInput): ChannelProfile {
@@ -63,7 +63,7 @@ export function resolveChannelProfile(input: ResolveChannelInput): ChannelProfil
   return {
     channel: "direct",
     // Pas de forfait offert : le plancher payant EST le point de départ.
-    grantedPackage: "signature", // Héritage 149 $
+    grantedPackage: "signature", // Héritage 179 $
     intendedPackage: "signature",
     allowedPackages: [...WIZARD_B2C_DIRECT_PACKAGES], // signature, heritage, legendary
     anchorPackage: "heritage", // Éternité mis en avant (Légendaire = ancre/leurre)
@@ -74,7 +74,7 @@ export function resolveChannelProfile(input: ResolveChannelInput): ChannelProfil
 
 /**
  * État wizard initial persisté à la création du projet — pilote le forfait de
- * départ côté DB (fin du fallback frontend Éternité 299 $).
+ * départ côté DB (fin du fallback frontend Éternité 349 $).
  */
 export function buildInitialWizardState(
   profile: ChannelProfile,

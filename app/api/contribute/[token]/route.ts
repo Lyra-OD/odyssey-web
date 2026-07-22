@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { resolveContributeToken } from "@/src/lib/contribute/accessToken";
 import {
-  GUEST_SUPPORT_PACKS,
+  listActiveGuestSupportPacks,
   guestSupportPackLabel,
 } from "@/src/lib/wizard/guestSupportPacks";
 
@@ -49,10 +49,14 @@ export async function GET(
       lastName: (project?.last_name as string | null) ?? null,
     },
     fund: { raisedCents },
-    packs: GUEST_SUPPORT_PACKS.map((pack) => ({
+    packs: listActiveGuestSupportPacks().map((pack) => ({
       key: pack.key,
       label: guestSupportPackLabel(pack, locale),
       priceCents: pack.priceCents,
+      secondary: pack.secondary === true,
+      amountMinCents: pack.amountMinCents ?? null,
+      amountMaxCents: pack.amountMaxCents ?? null,
+      amountSuggestedCents: pack.amountSuggestedCents ?? null,
     })),
   });
 }

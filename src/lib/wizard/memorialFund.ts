@@ -38,7 +38,7 @@ export type CascadeResult = {
 export type ComputeCascadeInput = {
   /** Crédit disponible = accrued − consumed (centimes). */
   fundCreditCents: number;
-  /** Plancher payant du canal (ex. `signature` = Héritage 149 $ en B2C). */
+  /** Plancher payant du canal (ex. `signature` = Héritage 179 $ en B2C). */
   basePackage: WizardBasePackage;
   /** Tiers autorisés du canal (ChannelProfile.allowedPackages). */
   allowedPackages: WizardBasePackage[];

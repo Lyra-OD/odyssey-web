@@ -56,44 +56,44 @@ function computeRevenueWaterfall(
 }
 
 describe("RevShare — waterfall Bulletproof (30 % du Net Distribuable)", () => {
-  it("Héritage 149 $ → commission 40,23 $ = 30 % du net 134,10 $", () => {
-    const wf = computeRevenueWaterfall(packageCents("signature")); // 14900
+  it("Héritage 179 $ → commission 48,33 $ = 30 % du net 161,10 $", () => {
+    const wf = computeRevenueWaterfall(packageCents("signature")); // 17900
     expect(wf).toEqual({
-      grossCents: 14900,
-      platformFeeCents: 1490,
-      netDistributableCents: 13410,
-      commissionCents: 4023,
-      odysseyMarginCents: 9387,
+      grossCents: 17900,
+      platformFeeCents: 1790,
+      netDistributableCents: 16110,
+      commissionCents: 4833,
+      odysseyMarginCents: 11277,
     });
-    // Invariant : commission == 30 % exact du net distribuable
-    expect(wf.commissionCents).toBe(Math.round(wf.netDistributableCents * 0.3));
+    expect(wf.commissionCents).toBe(
+      Math.floor((wf.netDistributableCents * 3000) / 10000),
+    );
   });
 
-  it("Éternité 299 $ → commission 80,73 $ = 30 % du net 269,10 $", () => {
-    const wf = computeRevenueWaterfall(packageCents("heritage")); // 29900
-    expect(wf.platformFeeCents).toBe(2990);
-    expect(wf.netDistributableCents).toBe(26910);
-    expect(wf.commissionCents).toBe(8073);
-    expect(wf.odysseyMarginCents).toBe(18837);
+  it("Éternité 349 $ → commission 94,23 $ = 30 % du net 314,10 $", () => {
+    const wf = computeRevenueWaterfall(packageCents("heritage")); // 34900
+    expect(wf.platformFeeCents).toBe(3490);
+    expect(wf.netDistributableCents).toBe(31410);
+    expect(wf.commissionCents).toBe(9423);
+    expect(wf.odysseyMarginCents).toBe(21987);
   });
 
-  it("Héritage + Retouche IA (198 $) → commission 53,46 $", () => {
-    const wf = computeRevenueWaterfall(19800);
-    expect(wf.platformFeeCents).toBe(1980);
-    expect(wf.netDistributableCents).toBe(17820);
-    expect(wf.commissionCents).toBe(5346);
-    expect(wf.odysseyMarginCents).toBe(12474);
+  it("Héritage + Retouche IA (228 $) → commission 61,56 $", () => {
+    const wf = computeRevenueWaterfall(22800);
+    expect(wf.platformFeeCents).toBe(2280);
+    expect(wf.netDistributableCents).toBe(20520);
+    expect(wf.commissionCents).toBe(6156);
+    expect(wf.odysseyMarginCents).toBe(14364);
   });
 
   it("l'assiette est le NET distribuable, jamais le gross (10 % de fee retirés d'abord)", () => {
-    const wf = computeRevenueWaterfall(14900);
-    // 30 % du gross serait 4470 ; on doit voir 4023 (30 % du net)
-    expect(wf.commissionCents).not.toBe(Math.floor(14900 * 0.3));
-    expect(wf.commissionCents).toBe(4023);
+    const wf = computeRevenueWaterfall(17900);
+    expect(wf.commissionCents).not.toBe(Math.floor(17900 * 0.3));
+    expect(wf.commissionCents).toBe(4833);
   });
 
   it("conservation : platform_fee + commission + marge Odyssey = gross", () => {
-    for (const gross of [14900, 29900, 19800, 49900]) {
+    for (const gross of [17900, 34900, 22800, 49900]) {
       const wf = computeRevenueWaterfall(gross);
       expect(
         wf.platformFeeCents + wf.commissionCents + wf.odysseyMarginCents,

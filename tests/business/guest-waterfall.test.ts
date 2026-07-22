@@ -2,37 +2,23 @@ import { describe, it, expect } from "vitest";
 
 /**
  * Cascade V-Final — waterfall d'une contribution invité (Boucle Virale).
- *
- * Miroir EXACT du RPC `public.accrue_guest_micro_checkout`
- * (docs/sql/odyssey_p10_1_memorial_fund_rpc.sql), lui-même bâti sur
- * `public.compute_revenue_waterfall` :
- *
- *   Gross → Platform Fee (10 %) → Net Distribuable → Commission Athos (30 %)
- *         → Crédit Fonds = Net × fund_conversion_bps (défaut 100 %)
- *
- * Règles verrouillées :
- *   - La commission Athos n'est accréditée QUE si le tenant est freemium
- *     (partenaire). En B2C direct : commission 0, MAIS crédit fonds quand même.
- *   - Le crédit fonds est PORTÉ PAR ODYSSEY, il ne réduit jamais la commission
- *     cash d'Athos (le "gâteau grandit").
- *   - Plafond dur par transaction : 1000 $ (100000 centimes).
+ * Grille Phase 0 (22/07/2026) : Voix 69 $ · Vidéo 119 $ · Coproduction 129 $ · Bougie 15 $.
  */
 
-const PLATFORM_FEE_BPS = 1000; // 10 %
-const COMMISSION_RATE_BPS = 3000; // 30 %
-const FUND_CONVERSION_BPS = 10000; // 100 %
+const PLATFORM_FEE_BPS = 1000;
+const COMMISSION_RATE_BPS = 3000;
+const FUND_CONVERSION_BPS = 10000;
 const GUEST_TXN_MAX_CENTS = 100_000;
 
 type GuestAccrual = {
   grossCents: number;
   platformFeeCents: number;
   netDistributableCents: number;
-  commissionCents: number; // effectivement accrédité (0 si non freemium)
+  commissionCents: number;
   fundCreditCents: number;
   odysseyMarginCents: number;
 };
 
-/** Réplique fidèle du RPC (floor() = arrondi bas Postgres). */
 function accrueGuestMicroCheckout(
   grossCents: number,
   opts: {
@@ -71,21 +57,29 @@ function accrueGuestMicroCheckout(
 }
 
 describe("Waterfall invité — tenant freemium (partenaire)", () => {
-  it("Pack HD 49 $ → net 44,10 $, commission 13,23 $, crédit fonds 44,10 $", () => {
-    const a = accrueGuestMicroCheckout(49_00, { isFreemium: true });
-    expect(a.platformFeeCents).toBe(490);
-    expect(a.netDistributableCents).toBe(4_410);
-    expect(a.commissionCents).toBe(1_323);
-    expect(a.fundCreditCents).toBe(4_410);
-    expect(a.odysseyMarginCents).toBe(3_087);
+  it("Voix 69 $ → net 62,10 $, commission 18,63 $, crédit fonds 62,10 $", () => {
+    const a = accrueGuestMicroCheckout(69_00, { isFreemium: true });
+    expect(a.platformFeeCents).toBe(690);
+    expect(a.netDistributableCents).toBe(6_210);
+    expect(a.commissionCents).toBe(1_863);
+    expect(a.fundCreditCents).toBe(6_210);
+    expect(a.odysseyMarginCents).toBe(4_347);
   });
 
-  it("Pack Héritage 89 $ → net 80,10 $, commission 24,03 $, crédit fonds 80,10 $", () => {
-    const a = accrueGuestMicroCheckout(89_00, { isFreemium: true });
-    expect(a.platformFeeCents).toBe(890);
-    expect(a.netDistributableCents).toBe(8_010);
-    expect(a.commissionCents).toBe(2_403);
-    expect(a.fundCreditCents).toBe(8_010);
+  it("Vidéo 119 $ → net 107,10 $, commission 32,13 $, crédit fonds 107,10 $", () => {
+    const a = accrueGuestMicroCheckout(119_00, { isFreemium: true });
+    expect(a.platformFeeCents).toBe(1_190);
+    expect(a.netDistributableCents).toBe(10_710);
+    expect(a.commissionCents).toBe(3_213);
+    expect(a.fundCreditCents).toBe(10_710);
+  });
+
+  it("Coproduction 129 $ → net 116,10 $, commission 34,83 $, crédit fonds 116,10 $", () => {
+    const a = accrueGuestMicroCheckout(129_00, { isFreemium: true });
+    expect(a.platformFeeCents).toBe(1_290);
+    expect(a.netDistributableCents).toBe(11_610);
+    expect(a.commissionCents).toBe(3_483);
+    expect(a.fundCreditCents).toBe(11_610);
   });
 
   it("Bougie 15 $ → net 13,50 $, commission 4,05 $, crédit fonds 13,50 $", () => {
@@ -95,29 +89,36 @@ describe("Waterfall invité — tenant freemium (partenaire)", () => {
     expect(a.commissionCents).toBe(405);
     expect(a.fundCreditCents).toBe(1_350);
   });
+
+  it("Mécène 250 $ → net 225 $, commission 67,50 $, crédit fonds 225 $", () => {
+    const a = accrueGuestMicroCheckout(250_00, { isFreemium: true });
+    expect(a.platformFeeCents).toBe(2_500);
+    expect(a.netDistributableCents).toBe(22_500);
+    expect(a.commissionCents).toBe(6_750);
+    expect(a.fundCreditCents).toBe(22_500);
+  });
 });
 
 describe("Waterfall invité — tenant B2C direct (non freemium)", () => {
-  it("Pack HD 49 $ → commission Athos 0, MAIS crédit fonds 44,10 $ conservé", () => {
-    const a = accrueGuestMicroCheckout(49_00, { isFreemium: false });
+  it("Voix 69 $ → commission Athos 0, MAIS crédit fonds 62,10 $ conservé", () => {
+    const a = accrueGuestMicroCheckout(69_00, { isFreemium: false });
     expect(a.commissionCents).toBe(0);
-    expect(a.netDistributableCents).toBe(4_410);
-    expect(a.fundCreditCents).toBe(4_410);
-    // Odyssey garde toute la marge nette (pas de partenaire à rémunérer).
-    expect(a.odysseyMarginCents).toBe(4_410);
+    expect(a.netDistributableCents).toBe(6_210);
+    expect(a.fundCreditCents).toBe(6_210);
+    expect(a.odysseyMarginCents).toBe(6_210);
   });
 });
 
 describe("Waterfall invité — invariants & garde-fous", () => {
   it("conservation : platform_fee + net == gross", () => {
-    for (const gross of [15_00, 49_00, 89_00, 999_99]) {
+    for (const gross of [15_00, 69_00, 119_00, 129_00, 999_99]) {
       const a = accrueGuestMicroCheckout(gross, { isFreemium: true });
       expect(a.platformFeeCents + a.netDistributableCents).toBe(gross);
     }
   });
 
   it("commission ≤ net et crédit fonds ≤ net (bornes)", () => {
-    for (const gross of [15_00, 49_00, 89_00]) {
+    for (const gross of [15_00, 69_00, 119_00]) {
       const a = accrueGuestMicroCheckout(gross, { isFreemium: true });
       expect(a.commissionCents).toBeLessThanOrEqual(a.netDistributableCents);
       expect(a.fundCreditCents).toBeLessThanOrEqual(a.netDistributableCents);
@@ -125,9 +126,8 @@ describe("Waterfall invité — invariants & garde-fous", () => {
   });
 
   it("le crédit fonds ne réduit jamais la commission cash d'Athos", () => {
-    // Conversion 100 % : le fonds = net entier, la commission reste intacte.
-    const a = accrueGuestMicroCheckout(89_00, { isFreemium: true });
-    expect(a.commissionCents).toBe(2_403);
+    const a = accrueGuestMicroCheckout(129_00, { isFreemium: true });
+    expect(a.commissionCents).toBe(3_483);
     expect(a.fundCreditCents).toBe(a.netDistributableCents);
   });
 
@@ -138,11 +138,11 @@ describe("Waterfall invité — invariants & garde-fous", () => {
   });
 
   it("conversion configurable (Option B) : 50 % → crédit fonds = moitié du net", () => {
-    const a = accrueGuestMicroCheckout(49_00, {
+    const a = accrueGuestMicroCheckout(69_00, {
       isFreemium: true,
       fundConversionBps: 5000,
     });
-    expect(a.netDistributableCents).toBe(4_410);
-    expect(a.fundCreditCents).toBe(2_205);
+    expect(a.netDistributableCents).toBe(6_210);
+    expect(a.fundCreditCents).toBe(3_105);
   });
 });
