@@ -1062,7 +1062,15 @@ export function resolveInitialWizardStep(
   wizardState: WizardStateV1,
   totalSteps: number,
 ): number {
-  let step = clampWizardStep(rawStep ?? 1, totalSteps);
+  // Clamp large enough to read legacy 8-step drafts before remapping to 7.
+  let step = clampWizardStep(rawStep ?? 1, Math.max(totalSteps, 10));
+
+  // Wizard 7 étapes : Preview=6, Checkout=7 (ex-7/8). L'écran boutique 6 disparaît.
+  if (totalSteps === 7) {
+    if (rawStep === 8) step = 7;
+    else if (rawStep === 7) step = 6;
+    else if (rawStep === 6) step = 6; // ex-Extensions → Preview
+  }
 
   if (step === 4 && !wizardState.montage) {
     const hadLaterProgress =
@@ -1075,32 +1083,8 @@ export function resolveInitialWizardStep(
     if (hadLaterProgress) {
       return Math.min(5, totalSteps);
     }
-    return step;
+    return Math.min(step, totalSteps);
   }
 
-  if (totalSteps >= 7) {
-    const hasSelectedTracks = Boolean(
-      wizardState.musicalAmbiance?.tracks &&
-        hasAnyActTrack(wizardState.musicalAmbiance.tracks),
-    );
-    const hasExtensions = Boolean(
-      wizardState.extensions &&
-        Object.values(wizardState.extensions).some(Boolean),
-    );
-
-    if (step === 5 && !hasSelectedTracks && hasExtensions) {
-      return 6;
-    }
-    if (step === 6 && hasSelectedTracks && !hasExtensions) {
-      return 5;
-    }
-    if (step === 5 && hasSelectedTracks && !hasExtensions) {
-      return 5;
-    }
-    if (step === 6 && hasExtensions) {
-      return 6;
-    }
-  }
-
-  return step;
+  return Math.min(step, totalSteps);
 }

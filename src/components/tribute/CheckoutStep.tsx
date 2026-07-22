@@ -3,6 +3,10 @@
 import { Loader2, Lock } from "lucide-react";
 
 import {
+  MontageExtensionsStep,
+  type MontageExtensionsStepCopy,
+} from "@/src/components/tribute/MontageExtensionsStep";
+import {
   formatWizardPrice,
   resolvePartnerTokenCost,
   resolveWizardDisplayCart,
@@ -48,6 +52,8 @@ type Props = {
   onStayFree?: () => void;
   onGoToMedia?: () => void;
   onRemoveExtension?: (key: Exclude<ExtensionLineKey, "base">) => void;
+  onExtensionsChange?: (next: WizardExtensionsState) => void;
+  extensionsCopy?: MontageExtensionsStepCopy;
 };
 
 export function CheckoutStep({
@@ -65,6 +71,8 @@ export function CheckoutStep({
   onStayFree,
   onGoToMedia,
   onRemoveExtension,
+  onExtensionsChange,
+  extensionsCopy,
 }: Props) {
   const cart = resolveWizardDisplayCart(
     extensions,
@@ -132,6 +140,17 @@ export function CheckoutStep({
           {copy.description}
         </p>
       </header>
+
+      {onExtensionsChange && extensionsCopy ? (
+        <MontageExtensionsStep
+          embedded
+          locale={locale}
+          extensions={extensions}
+          basePackage={basePackage}
+          onChange={onExtensionsChange}
+          copy={extensionsCopy}
+        />
+      ) : null}
 
       <section className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
         <h3 className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500">

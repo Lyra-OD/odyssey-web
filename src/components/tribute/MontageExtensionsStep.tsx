@@ -80,6 +80,8 @@ type Props = {
   extensions: WizardExtensionsState;
   basePackage?: WizardBasePackage;
   onChange: (next: WizardExtensionsState) => void;
+  /** Checkout : moins de padding bas, titre plus discret. */
+  embedded?: boolean;
 };
 
 function isCardLocked(
@@ -154,6 +156,7 @@ export function MontageExtensionsStep({
   extensions,
   basePackage = "signature",
   onChange,
+  embedded = false,
 }: Props) {
   const cart = computeWizardCart(extensions, basePackage);
   const recapLines = cart.lineItems.filter((line) => line.key !== "base");
@@ -249,9 +252,15 @@ export function MontageExtensionsStep({
     basePackage === WIZARD_PRICING.packages.HERITAGE.id;
 
   return (
-    <div className="space-y-10 pb-44">
+    <div className={`space-y-10 ${embedded ? "pb-2" : "pb-44"}`}>
       <header className="space-y-3">
-        <h2 className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl">
+        <h2
+          className={
+            embedded
+              ? "font-editorial text-balance text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl"
+              : "font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl"
+          }
+        >
           {copy.title}
         </h2>
         <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
@@ -380,55 +389,57 @@ export function MontageExtensionsStep({
         })}
       </div>
 
-      <section
-        className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent p-5"
-        aria-labelledby="extensions-recap-heading"
-      >
-        <h3
-          id="extensions-recap-heading"
-          className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500"
+      {!embedded ? (
+        <section
+          className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent p-5"
+          aria-labelledby="extensions-recap-heading"
         >
-          {copy.recapTitle}
-        </h3>
-        {recapLines.length ? (
-          <ul className="mt-4 space-y-3">
-            {recapLines.map((line) => {
-              const lineKey = line.key as Exclude<ExtensionLineKey, "base">;
-              const visual = EXTENSION_VISUALS[lineKey];
+          <h3
+            id="extensions-recap-heading"
+            className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500"
+          >
+            {copy.recapTitle}
+          </h3>
+          {recapLines.length ? (
+            <ul className="mt-4 space-y-3">
+              {recapLines.map((line) => {
+                const lineKey = line.key as Exclude<ExtensionLineKey, "base">;
+                const visual = EXTENSION_VISUALS[lineKey];
 
-              return (
-                <li
-                  key={line.key}
-                  className="flex items-center justify-between gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5"
-                >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-white/10">
-                      <Image
-                        src={visual.thumbnail}
-                        alt={visual.alt}
-                        fill
-                        className="object-cover"
-                        sizes="40px"
-                        unoptimized
-                      />
+                return (
+                  <li
+                    key={line.key}
+                    className="flex items-center justify-between gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-white/10">
+                        <Image
+                          src={visual.thumbnail}
+                          alt={visual.alt}
+                          fill
+                          className="object-cover"
+                          sizes="40px"
+                          unoptimized
+                        />
+                      </div>
+                      <span className="truncate font-light text-zinc-300">
+                        {copy.recapLineLabels[lineKey]}
+                      </span>
                     </div>
-                    <span className="truncate font-light text-zinc-300">
-                      {copy.recapLineLabels[lineKey]}
+                    <span className="shrink-0 font-medium text-zinc-200">
+                      {formatWizardPrice(line.cents, locale)}
                     </span>
-                  </div>
-                  <span className="shrink-0 font-medium text-zinc-200">
-                    {formatWizardPrice(line.cents, locale)}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <p className="mt-3 text-sm font-light text-zinc-600">
-            {copy.recapEmpty}
-          </p>
-        )}
-      </section>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="mt-3 text-sm font-light text-zinc-600">
+              {copy.recapEmpty}
+            </p>
+          )}
+        </section>
+      ) : null}
     </div>
   );
 }

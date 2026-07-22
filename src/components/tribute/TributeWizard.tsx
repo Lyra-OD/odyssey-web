@@ -21,13 +21,9 @@ import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
 import { SoftCapModal, SoftCapMediaCountSync, type SoftCapVariant } from "@/src/components/tribute/SoftCapModal";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
 import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
-import { MontageExtensionsStep } from "@/src/components/tribute/MontageExtensionsStep";
 import { StoryboardMontageStep } from "@/src/components/tribute/StoryboardMontageStep";
 import { StoryboardChaptersStep } from "@/src/components/tribute/StoryboardChaptersStep";
-import {
-  ExtensionsStickyFooter,
-  WizardCartSummary,
-} from "@/src/components/tribute/WizardCartSummary";
+import { WizardCartSummary } from "@/src/components/tribute/WizardCartSummary";
 import { StickyPriceBar } from "@/src/components/StickyPriceBar";
 import { WizardPhaseProgress } from "@/src/components/tribute/WizardPhaseProgress";
 import {
@@ -102,9 +98,9 @@ import { SIGNED_URL_TTL_SEC, STORAGE_CACHE_CONTROL } from "@/src/lib/media/stora
 
 export type TributeWizardCopy = AppDictionary["tributeWizard"];
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 7;
 
 type WizardFieldsSnapshot = {
   firstName: string;
@@ -1044,16 +1040,12 @@ export function TributeWizard({
   const showCheckoutStayFree =
     packageCents(grantedPackage) === 0 && displayCart.totalCents > 0;
 
-  const handleContinueToPreview = useCallback(async () => {
+  const handleProceedToPayment = useCallback(async () => {
     await navigateToStep(7);
   }, [navigateToStep]);
 
-  const handleProceedToPayment = useCallback(async () => {
-    await navigateToStep(8);
-  }, [navigateToStep]);
-
   const handlePreviewEdit = useCallback(async () => {
-    await navigateToStep(6);
+    await navigateToStep(5);
   }, [navigateToStep]);
 
   const handlePay = useCallback(async () => {
@@ -1164,9 +1156,8 @@ export function TributeWizard({
       { id: 3, label: copy.stepperVault },
       { id: 4, label: copy.stepperChapters },
       { id: 5, label: copy.stepperMontage },
-      { id: 6, label: copy.stepperExtensions },
-      { id: 7, label: copy.stepperPreview },
-      { id: 8, label: copy.stepperCheckout },
+      { id: 6, label: copy.stepperPreview },
+      { id: 7, label: copy.stepperCheckout },
     ],
     [copy],
   );
@@ -1177,8 +1168,8 @@ export function TributeWizard({
   const wizardPhases = useMemo(
     () => [
       { id: 1, label: copy.phaseGatherLabel, firstStep: 1, lastStep: 3 },
-      { id: 2, label: copy.phaseComposeLabel, firstStep: 4, lastStep: 6 },
-      { id: 3, label: copy.phaseReceiveLabel, firstStep: 7, lastStep: 8 },
+      { id: 2, label: copy.phaseComposeLabel, firstStep: 4, lastStep: 5 },
+      { id: 3, label: copy.phaseReceiveLabel, firstStep: 6, lastStep: 7 },
     ],
     [copy],
   );
@@ -1190,7 +1181,7 @@ export function TributeWizard({
   return (
     <div
       className={`relative mx-auto mt-10 w-full ${
-        currentStep === 7
+        currentStep === 6
           ? "max-w-4xl"
           : currentStep >= 4
             ? "max-w-3xl"
@@ -1365,7 +1356,7 @@ export function TributeWizard({
           basePackage={basePackage}
           grantedPackage={grantedPackage}
           isPartner={isPartner}
-          draftMode={currentStep < 7}
+          draftMode={currentStep < 6}
           copy={{
             consumerTotalLabel: copy.stickyConsumerTotal,
             partnerTokenCostLabel: copy.stickyPartnerTokenCost,
@@ -1373,7 +1364,7 @@ export function TributeWizard({
           }}
         />
 
-        {currentStep >= 5 && currentStep <= 6 && !isPartner ? (
+        {currentStep === 5 && !isPartner ? (
           <div className="mb-8">
             <WizardCartSummary
               locale={locale}
@@ -2089,41 +2080,6 @@ export function TributeWizard({
           ) : null}
 
           {currentStep === 6 ? (
-            <MontageExtensionsStep
-              locale={locale}
-              extensions={extensions}
-              basePackage={basePackage}
-              onChange={handleExtensionsChange}
-              copy={{
-                title: copy.stepExtensionsTitle,
-                description: copy.stepExtensionsDescription,
-                aiRetouchTitle: copy.extensionAiRetouchTitle,
-                aiRetouchDescription: copy.extensionAiRetouchDescription,
-                musicLicenseTitle: copy.extensionMusicLicenseTitle,
-                musicLicenseDescription: copy.extensionMusicLicenseDescription,
-                storyVoiceTitle: copy.extensionStoryVoiceTitle,
-                storyVoiceDescription: copy.extensionStoryVoiceDescription,
-                sanctuaryTokenTitle: copy.extensionSanctuaryTokenTitle,
-                sanctuaryTokenDescription:
-                  copy.extensionSanctuaryTokenDescription,
-                memoryBookTitle: copy.extensionMemoryBookTitle,
-                memoryBookDescription: copy.extensionMemoryBookDescription,
-                digitalVaultTitle: copy.extensionDigitalVaultTitle,
-                digitalVaultDescription: copy.extensionDigitalVaultDescription,
-                heritagePackTitle: copy.extensionHeritagePackTitle,
-                heritagePackDescription: copy.extensionHeritagePackDescription,
-                heritagePackSavings: copy.extensionHeritagePackSavings,
-                heritagePackIncludes: copy.extensionHeritagePackIncludes,
-                includedInHeritageBadge: copy.extensionIncludedInHeritage,
-                selectedBadge: copy.extensionSelectedBadge,
-                recapTitle: copy.extensionsRecapTitle,
-                recapEmpty: copy.extensionsRecapEmpty,
-                recapLineLabels: extensionRecapLineLabels,
-              }}
-            />
-          ) : null}
-
-          {currentStep === 7 ? (
             <PreviewStep
               projectId={uploadProjectId}
               montage={montage}
@@ -2150,7 +2106,7 @@ export function TributeWizard({
             />
           ) : null}
 
-          {currentStep === 8 ? (
+          {currentStep === 7 ? (
             <CheckoutStep
               locale={locale}
               extensions={extensions}
@@ -2168,9 +2124,36 @@ export function TributeWizard({
               onPay={() => void handlePay()}
               onStayFree={handleStayOnGift}
               onGoToMedia={() => void navigateToStep(3)}
+              onExtensionsChange={handleExtensionsChange}
               onRemoveExtension={(key) =>
                 handleExtensionsChange({ ...extensions, [key]: false })
               }
+              extensionsCopy={{
+                title: copy.checkoutAddonsTitle,
+                description: copy.checkoutAddonsDescription,
+                aiRetouchTitle: copy.extensionAiRetouchTitle,
+                aiRetouchDescription: copy.extensionAiRetouchDescription,
+                musicLicenseTitle: copy.extensionMusicLicenseTitle,
+                musicLicenseDescription: copy.extensionMusicLicenseDescription,
+                storyVoiceTitle: copy.extensionStoryVoiceTitle,
+                storyVoiceDescription: copy.extensionStoryVoiceDescription,
+                sanctuaryTokenTitle: copy.extensionSanctuaryTokenTitle,
+                sanctuaryTokenDescription:
+                  copy.extensionSanctuaryTokenDescription,
+                memoryBookTitle: copy.extensionMemoryBookTitle,
+                memoryBookDescription: copy.extensionMemoryBookDescription,
+                digitalVaultTitle: copy.extensionDigitalVaultTitle,
+                digitalVaultDescription: copy.extensionDigitalVaultDescription,
+                heritagePackTitle: copy.extensionHeritagePackTitle,
+                heritagePackDescription: copy.extensionHeritagePackDescription,
+                heritagePackSavings: copy.extensionHeritagePackSavings,
+                heritagePackIncludes: copy.extensionHeritagePackIncludes,
+                includedInHeritageBadge: copy.extensionIncludedInHeritage,
+                selectedBadge: copy.extensionSelectedBadge,
+                recapTitle: copy.extensionsRecapTitle,
+                recapEmpty: copy.extensionsRecapEmpty,
+                recapLineLabels: extensionRecapLineLabels,
+              }}
               copy={{
                 title: copy.stepCheckoutTitle,
                 description: copy.stepCheckoutDescription,
@@ -2196,24 +2179,6 @@ export function TributeWizard({
         </div>
       </section>
 
-      {currentStep === 6 ? (
-        <ExtensionsStickyFooter
-          locale={locale}
-          extensions={extensions}
-          basePackage={basePackage}
-          grantedPackage={grantedPackage}
-          isPartner={isPartner}
-          onSkip={() => void handleContinueToPreview()}
-          onContinue={() => void handleContinueToPreview()}
-          copy={{
-            totalFormula: copy.extensionsFooterTotalFormula,
-            partnerTokenCostLabel: copy.stickyPartnerTokenCost,
-            continueCta: copy.extensionsFooterContinueCta,
-            skipStep: copy.skipStep,
-          }}
-        />
-      ) : null}
-
       <SoftCapModal
         open={softCapOpen}
         variant={softCapVariant}
@@ -2224,7 +2189,7 @@ export function TributeWizard({
         onDismiss={dismissSoftCap}
       />
 
-      {currentStep !== 3 && currentStep !== 6 && currentStep !== 7 && currentStep !== 8 ? (
+      {currentStep !== 3 && currentStep !== 6 && currentStep !== 7 ? (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
           <div
             className={`mx-auto ${
