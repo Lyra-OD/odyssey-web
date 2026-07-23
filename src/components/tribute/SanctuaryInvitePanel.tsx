@@ -30,6 +30,8 @@ export type SanctuaryInvitePanelCopy = {
   description: string;
   generateCta: string;
   generating: string;
+  /** CTA Web Share API (mobile) ; fallback = copyLink. */
+  shareCta: string;
   copyLink: string;
   copied: string;
   copyMessage: string;
@@ -188,6 +190,13 @@ export function SanctuaryInviteContent({
   const [error, setError] = useState<string | null>(null);
   const [linkCopied, setLinkCopied] = useState(false);
   const [messageCopied, setMessageCopied] = useState(false);
+  const [canNativeShare, setCanNativeShare] = useState(false);
+
+  useEffect(() => {
+    setCanNativeShare(
+      typeof navigator !== "undefined" && typeof navigator.share === "function"
+    );
+  }, []);
 
   const generateLink = useCallback(async () => {
     if (!projectId) {
@@ -251,6 +260,24 @@ export function SanctuaryInviteContent({
     }
   };
 
+  const shareNativeOrCopy = async () => {
+    if (!shareUrl) return;
+    if (typeof navigator.share !== "function") {
+      await copyText(shareUrl, "link");
+      return;
+    }
+    try {
+      // Texte avec URL déjà inclus — pas de `url` séparé (évite le doublon WhatsApp).
+      await navigator.share({
+        title: tributeName.trim() || copy.title,
+        text: shareMessage,
+      });
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      await copyText(shareUrl, "link");
+    }
+  };
+
   return (
     <div className={`space-y-6 ${className}`}>
       {!shareUrl ? (
@@ -295,10 +322,24 @@ export function SanctuaryInviteContent({
           </div>
 
           <div className="flex flex-col gap-3">
+            {canNativeShare ? (
+              <button
+                type="button"
+                onClick={() => void shareNativeOrCopy()}
+                className={`${sanctuarySubmitButton} inline-flex min-h-[48px] w-full items-center justify-center gap-2`}
+              >
+                <Share2 className="h-3.5 w-3.5" aria-hidden />
+                {copy.shareCta}
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={() => void copyText(shareUrl, "link")}
-              className={sanctuarySecondaryButton}
+              className={
+                canNativeShare
+                  ? sanctuarySecondaryButton
+                  : `${sanctuarySubmitButton} inline-flex min-h-[48px] w-full items-center justify-center gap-2`
+              }
             >
               {linkCopied ? (
                 <Check className="h-3.5 w-3.5" aria-hidden />
@@ -315,7 +356,7 @@ export function SanctuaryInviteContent({
               {messageCopied ? (
                 <Check className="h-3.5 w-3.5" aria-hidden />
               ) : (
-                <Share2 className="h-3.5 w-3.5" aria-hidden />
+                <Copy className="h-3.5 w-3.5" aria-hidden />
               )}
               {messageCopied ? copy.messageCopied : copy.copyMessage}
             </button>
