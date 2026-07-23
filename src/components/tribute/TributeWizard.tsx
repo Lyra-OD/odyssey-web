@@ -1978,6 +1978,10 @@ export function TributeWizard({
                     uploadUnsupported: copy.musicUploadUnsupported,
                     uploadTooLarge: copy.musicUploadTooLarge,
                     uploadNeedsAttestation: copy.musicUploadNeedsAttestation,
+                    uploadNeedProject: copy.musicUploadNeedProject,
+                    sourceCatalog: copy.musicSourceCatalog,
+                    sourcePersonal: copy.musicSourcePersonal,
+                    sourceHint: copy.musicSourceHint,
                   }}
                 />
               ) : null}

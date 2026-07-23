@@ -1,4 +1,7 @@
 import type { StingrayTrackApiPayload } from "@/src/lib/wizard/stingrayCatalog";
+import { findCatalogTrack } from "@/src/lib/wizard/stingrayCatalog";
+import { buildMusicPreviewProxyUrl } from "@/src/lib/music/stingrayTrackId";
+import type { WizardStoryboardSong } from "@/src/lib/wizard/wizardState";
 
 /**
  * Résout l'URL de lecture d'un extrait, quel que soit le champ renseigné par
@@ -12,6 +15,29 @@ export function resolvePreviewUrl(track: StingrayTrackApiPayload): string {
     track.streamUrl?.trim() ||
     ""
   );
+}
+
+/** Clé stable pour l'état play/pause (catalogue ou fichier perso). */
+export function storyboardSongPreviewKey(song: WizardStoryboardSong): string {
+  return song.source === "stingray"
+    ? song.trackId
+    : `upload:${song.storagePath}`;
+}
+
+/**
+ * URL de préécoute pour une chanson déjà choisie.
+ * - Stingray : proxy preview / catalogue
+ * - Upload : signed URL via `GET /api/projects/{id}/music?path=…` (à résoudre async côté UI)
+ */
+export function resolveStingraySongPreviewUrl(
+  song: Extract<WizardStoryboardSong, { source: "stingray" }>,
+): string {
+  const catalog = findCatalogTrack(song.trackId);
+  if (catalog) {
+    const fromCatalog = resolvePreviewUrl(catalog);
+    if (fromCatalog) return fromCatalog;
+  }
+  return buildMusicPreviewProxyUrl(song.trackId);
 }
 
 export async function waitForAudioReady(audio: HTMLAudioElement): Promise<void> {

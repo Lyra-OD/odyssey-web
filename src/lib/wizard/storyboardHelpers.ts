@@ -87,16 +87,30 @@ export function isPersonalAudioFile(file: File): boolean {
   return name.endsWith(".mp3") || name.endsWith(".wav");
 }
 
-/** Lit la durée via le navigateur (metadata) — best-effort. */
-export function readAudioFileDurationSec(file: File): Promise<number | null> {
+/** Lit la durée via le navigateur (metadata) — best-effort, avec timeout. */
+export function readAudioFileDurationSec(
+  file: File,
+  timeoutMs = 2500,
+): Promise<number | null> {
   return new Promise((resolve) => {
     const url = URL.createObjectURL(file);
     const audio = new Audio();
     audio.preload = "metadata";
+    let settled = false;
     const finish = (value: number | null) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
       URL.revokeObjectURL(url);
+      try {
+        audio.removeAttribute("src");
+        audio.load();
+      } catch {
+        /* ignore */
+      }
       resolve(value);
     };
+    const timer = setTimeout(() => finish(null), timeoutMs);
     audio.onloadedmetadata = () => {
       const d = audio.duration;
       // Entier : l'autosave Zod exige `durationSec.int()`.

@@ -7,7 +7,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChapterMusicPanel } from "@/src/components/tribute/storyboard/ChapterMusicPanel";
 import { StoryboardCapacityBadge } from "@/src/components/tribute/storyboard/StoryboardCapacityBadge";
 import { StoryboardChapterStats } from "@/src/components/tribute/storyboard/StoryboardChapterStats";
-import { resolvePreviewUrl, waitForAudioReady } from "@/src/lib/wizard/musicPreview";
+import {
+  resolvePreviewUrl,
+  resolveStingraySongPreviewUrl,
+  storyboardSongPreviewKey,
+  waitForAudioReady,
+} from "@/src/lib/wizard/musicPreview";
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
 import type { StingrayTrackApiPayload } from "@/src/lib/wizard/stingrayCatalog";
 import {
@@ -74,6 +79,10 @@ export type StoryboardChaptersStepCopy = {
   uploadUnsupported: string;
   uploadTooLarge: string;
   uploadNeedsAttestation: string;
+  uploadNeedProject: string;
+  sourceCatalog: string;
+  sourcePersonal: string;
+  sourceHint: string;
 };
 
 type Props = {
@@ -237,6 +246,66 @@ export function StoryboardChaptersStep({
       }
     },
     [copy.previewUnavailable, isPlaying, previewTrackId],
+  );
+
+  const toggleSelectedSongPreview = useCallback(
+    async (song: WizardStoryboardSong) => {
+      const audio = audioRef.current;
+      if (!audio || !projectId) return;
+
+      const key = storyboardSongPreviewKey(song);
+
+      if (previewTrackId === key && isPlaying) {
+        audio.pause();
+        return;
+      }
+
+      setPlaybackError(null);
+
+      let previewUrl = "";
+      if (song.source === "stingray") {
+        previewUrl = resolveStingraySongPreviewUrl(song);
+      } else {
+        try {
+          const res = await fetch(
+            `/api/projects/${projectId}/music?path=${encodeURIComponent(song.storagePath)}`,
+          );
+          const body = (await res.json().catch(() => ({}))) as {
+            ok?: boolean;
+            signedUrl?: string;
+          };
+          if (!res.ok || !body.signedUrl) {
+            setPlaybackError(copy.previewUnavailable);
+            return;
+          }
+          previewUrl = body.signedUrl;
+        } catch {
+          setPlaybackError(copy.previewUnavailable);
+          return;
+        }
+      }
+
+      if (!previewUrl) {
+        setPlaybackError(copy.previewUnavailable);
+        return;
+      }
+
+      audio.pause();
+      audio.currentTime = 0;
+      audio.src = previewUrl;
+      audio.load();
+      setPreviewTrackId(key);
+      setProgress({ current: 0, duration: 0 });
+
+      try {
+        await waitForAudioReady(audio);
+        await audio.play();
+      } catch {
+        setPlaybackError(copy.previewUnavailable);
+        setIsPlaying(false);
+      }
+    },
+    [copy.previewUnavailable, isPlaying, previewTrackId, projectId],
   );
 
   const handleSeek = useCallback((value: number) => {
@@ -490,6 +559,11 @@ export function StoryboardChaptersStep({
             serviceError={playbackError}
             onChoose={(song) => handleChapterSongChange(activeChapter.id, song)}
             onTogglePreview={togglePreview}
+            onToggleSelectedPreview={() => {
+              if (activeChapter.song) {
+                void toggleSelectedSongPreview(activeChapter.song);
+              }
+            }}
             onSeek={handleSeek}
             canUploadPersonalAudio={canUploadPersonalAudio}
             projectId={projectId}
