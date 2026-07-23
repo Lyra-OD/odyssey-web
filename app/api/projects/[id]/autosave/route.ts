@@ -156,13 +156,14 @@ const MontageSchema = z
   .strict()
   .partial();
 
-const DurationSecondsSchema = z
-  .number()
-  .int()
-  .positive()
-  .max(60 * 60)
-  .nullable()
-  .optional();
+/** Accepte un float navigateur (ex. Audio.duration) et normalise en secondes entières. */
+const DurationSecondsSchema = z.preprocess((value) => {
+  if (value === null || value === undefined) return value;
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.max(1, Math.round(value));
+  }
+  return value;
+}, z.number().int().positive().max(60 * 60).nullable().optional());
 
 const StoryboardChapterIdSchema = z
   .string()

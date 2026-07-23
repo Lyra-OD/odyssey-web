@@ -324,9 +324,10 @@ export async function uploadMediaBatch(
 
         item.status = "uploaded";
         item.storagePath = result.storagePath;
+        // Garder `item.id` stable (UUID local) pour que onItemUpdate merge
+        // correctement dans React ; `assetId` porte l'id DB.
         if (result.assetId) {
           item.assetId = result.assetId;
-          item.id = result.assetId;
         }
         item.attempts += 1;
         item.error = null;

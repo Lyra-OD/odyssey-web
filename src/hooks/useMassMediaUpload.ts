@@ -161,9 +161,21 @@ export function useMassMediaUpload(
           onItemUpdate: (updatedItem) => {
             setItems((prev) =>
               normalizeOrder(
-                prev.map((item) =>
-                  item.id === updatedItem.id ? updatedItem : item,
-                ),
+                prev.map((item) => {
+                  if (item.id === updatedItem.id) return updatedItem;
+                  // Filet si id a été muté en assetId (anciens clients / race)
+                  if (
+                    updatedItem.assetId &&
+                    (item.assetId === updatedItem.assetId ||
+                      (item.assetId == null &&
+                        item.status === "uploading" &&
+                        updatedItem.status === "uploaded" &&
+                        item.orderIndex === updatedItem.orderIndex))
+                  ) {
+                    return updatedItem;
+                  }
+                  return item;
+                }),
               ),
             );
           },

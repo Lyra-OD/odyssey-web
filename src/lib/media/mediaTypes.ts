@@ -24,7 +24,11 @@ export type MediaItemOrigin = "local" | "remote";
 
 /** Single tile in the wizard media grid (queue + persisted assets). */
 export type MediaGridItem = {
-  /** Client queue id while local; equals `assetId` once persisted or hydrated. */
+  /**
+   * Identifiant stable de tuile UI.
+   * - File locale : UUID client (ne pas remplacer par `assetId` à l'upload).
+   * - Hydratation remote : égal à `assetId`.
+   */
   id: string;
   origin: MediaItemOrigin;
   status: MediaUploadStatus;

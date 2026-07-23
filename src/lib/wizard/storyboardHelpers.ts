@@ -53,7 +53,7 @@ export function storyboardSongFromUploadFile(params: {
     fileName: params.fileName,
     ...(params.mimeType ? { mimeType: params.mimeType } : {}),
     ...(params.durationSec != null && Number.isFinite(params.durationSec)
-      ? { durationSec: params.durationSec }
+      ? { durationSec: Math.max(1, Math.round(params.durationSec)) }
       : {}),
   };
 }
@@ -99,7 +99,10 @@ export function readAudioFileDurationSec(file: File): Promise<number | null> {
     };
     audio.onloadedmetadata = () => {
       const d = audio.duration;
-      finish(Number.isFinite(d) && d > 0 ? d : null);
+      // Entier : l'autosave Zod exige `durationSec.int()`.
+      finish(
+        Number.isFinite(d) && d > 0 ? Math.max(1, Math.round(d)) : null,
+      );
     };
     audio.onerror = () => finish(null);
     audio.src = url;
