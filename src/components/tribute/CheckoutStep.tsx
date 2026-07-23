@@ -34,6 +34,14 @@ export type CheckoutStepCopy = {
   excessMediaNotice?: string;
   goToMediaLink?: string;
   removeOption?: string;
+  /** Fonds Commémoratif — crédit cercle. */
+  fundCreditLabel?: string;
+  remainingDueLabel?: string;
+  fundCreditHint?: string;
+  /** Rider 0 $ — consentement export. */
+  riderLabel?: string;
+  riderHint?: string;
+  payCtaFree?: string;
 };
 
 type Props = {
@@ -48,6 +56,12 @@ type Props = {
   showStayFree?: boolean;
   /** Nombre de médias au-delà du quota du cadeau (Souvenir). 0 = pas d'excès. */
   excessMediaCount?: number;
+  /** Crédit Fonds disponible (centimes). */
+  fundCreditCents?: number;
+  ownerFloorCents?: number;
+  viralLoopEnabled?: boolean;
+  riderAccepted?: boolean;
+  onRiderChange?: (accepted: boolean) => void;
   onPay: () => void;
   onStayFree?: () => void;
   onGoToMedia?: () => void;
@@ -67,6 +81,11 @@ export function CheckoutStep({
   payError,
   showStayFree = false,
   excessMediaCount = 0,
+  fundCreditCents = 0,
+  ownerFloorCents = 0,
+  viralLoopEnabled = false,
+  riderAccepted = false,
+  onRiderChange,
   onPay,
   onStayFree,
   onGoToMedia,
@@ -81,6 +100,19 @@ export function CheckoutStep({
   );
   const optionLines = cart.lineItems.filter((line) => line.key !== "base");
   const tokenCost = resolvePartnerTokenCost(basePackage);
+
+  const fundAppliedCents =
+    viralLoopEnabled && cart.totalCents > 0
+      ? Math.min(
+          Math.max(0, fundCreditCents),
+          Math.max(cart.totalCents - Math.max(0, ownerFloorCents), 0),
+        )
+      : 0;
+  const remainingDueCents = Math.max(cart.totalCents - fundAppliedCents, 0);
+  const showFundLines = viralLoopEnabled;
+  const riderRequired = !isPartner;
+  const payDisabled =
+    isPaying || (riderRequired && onRiderChange != null && !riderAccepted);
 
   if (isPartner) {
     return (
@@ -196,13 +228,44 @@ export function CheckoutStep({
             </li>
           ))}
         </ul>
-        <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-          <span className="text-sm font-light text-zinc-400">
-            {copy.totalLabel}
-          </span>
-          <span className="font-[family-name:var(--font-label)] text-2xl font-semibold text-white">
-            {formatWizardPrice(cart.totalCents, locale)}
-          </span>
+        <div className="mt-6 space-y-3 border-t border-white/10 pt-5">
+          {showFundLines ? (
+            <>
+              <div className="flex items-center justify-between gap-4 text-sm">
+                <span className="font-light text-teal-200/80">
+                  {copy.fundCreditLabel ?? "Fonds Commémoratif"}
+                </span>
+                <span className="font-medium text-teal-200/90">
+                  −{formatWizardPrice(fundAppliedCents, locale)}
+                </span>
+              </div>
+              {copy.fundCreditHint && fundCreditCents > 0 ? (
+                <p className="text-[11px] font-light leading-relaxed text-zinc-500">
+                  {copy.fundCreditHint.replace(
+                    "{credit}",
+                    formatWizardPrice(fundCreditCents, locale),
+                  )}
+                </p>
+              ) : null}
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm font-light text-zinc-400">
+                  {copy.remainingDueLabel ?? copy.totalLabel}
+                </span>
+                <span className="font-[family-name:var(--font-label)] text-2xl font-semibold text-white">
+                  {formatWizardPrice(remainingDueCents, locale)}
+                </span>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-light text-zinc-400">
+                {copy.totalLabel}
+              </span>
+              <span className="font-[family-name:var(--font-label)] text-2xl font-semibold text-white">
+                {formatWizardPrice(cart.totalCents, locale)}
+              </span>
+            </div>
+          )}
         </div>
       </section>
 
@@ -230,6 +293,27 @@ export function CheckoutStep({
         </div>
       ) : null}
 
+      {riderRequired && onRiderChange && copy.riderLabel ? (
+        <label className="flex cursor-pointer items-start gap-3 rounded-sm border border-teal-400/20 bg-teal-400/[0.04] px-4 py-4">
+          <input
+            type="checkbox"
+            checked={riderAccepted}
+            onChange={(e) => onRiderChange(e.target.checked)}
+            className="mt-1 h-4 w-4 shrink-0 rounded border-white/20 bg-transparent text-teal-400 focus:ring-teal-400/40"
+          />
+          <span className="min-w-0">
+            <span className="block text-sm font-light leading-relaxed text-zinc-200">
+              {copy.riderLabel}
+            </span>
+            {copy.riderHint ? (
+              <span className="mt-1.5 block text-[11px] font-light leading-relaxed text-zinc-500">
+                {copy.riderHint}
+              </span>
+            ) : null}
+          </span>
+        </label>
+      ) : null}
+
       <p className="flex items-center gap-2 text-xs font-light text-zinc-500">
         <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden />
         {copy.secureNote}
@@ -244,7 +328,7 @@ export function CheckoutStep({
       <button
         type="button"
         onClick={onPay}
-        disabled={isPaying}
+        disabled={payDisabled}
         className="font-[family-name:var(--font-label)] flex min-h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-teal-400/45 bg-gradient-to-r from-teal-600/35 via-teal-500/30 to-cyan-400/25 px-6 text-lg font-semibold text-white shadow-[0_0_56px_rgba(45,212,191,0.3),0_0_40px_rgba(34,211,238,0.2)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_64px_rgba(45,212,191,0.4),0_0_48px_rgba(34,211,238,0.28)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
       >
         {isPaying ? (
@@ -252,10 +336,12 @@ export function CheckoutStep({
             <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
             {copy.paying}
           </>
+        ) : remainingDueCents === 0 && copy.payCtaFree ? (
+          copy.payCtaFree
         ) : (
           copy.payCta.replace(
             "{total}",
-            formatWizardPrice(cart.totalCents, locale),
+            formatWizardPrice(remainingDueCents, locale),
           )
         )}
       </button>

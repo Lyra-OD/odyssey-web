@@ -436,6 +436,10 @@ export function TributeWizard({
   );
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
+  const [fundCreditCents, setFundCreditCents] = useState(0);
+  const [ownerFloorCents, setOwnerFloorCents] = useState(0);
+  const [viralLoopEnabled, setViralLoopEnabled] = useState(false);
+  const [riderAccepted, setRiderAccepted] = useState(false);
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const avatarHydratedPathRef = useRef<string | null>(null);
@@ -1040,6 +1044,34 @@ export function TributeWizard({
   const showCheckoutStayFree =
     packageCents(grantedPackage) === 0 && displayCart.totalCents > 0;
 
+  // Solde Fonds Commémoratif — thermomètre Checkout (owner).
+  useEffect(() => {
+    if (currentStep !== 7 || !uploadProjectId || isPartner) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch(
+          `/api/projects/${uploadProjectId}/fund-balance`,
+        );
+        const body = (await res.json().catch(() => ({}))) as {
+          ok?: boolean;
+          availableCents?: number;
+          ownerFloorCents?: number;
+          viralLoopEnabled?: boolean;
+        };
+        if (cancelled || !res.ok || !body.ok) return;
+        setFundCreditCents(Math.max(0, body.availableCents ?? 0));
+        setOwnerFloorCents(Math.max(0, body.ownerFloorCents ?? 0));
+        setViralLoopEnabled(body.viralLoopEnabled === true);
+      } catch {
+        /* graceful : crédit 0 */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentStep, uploadProjectId, isPartner]);
+
   const handleProceedToPayment = useCallback(async () => {
     await navigateToStep(7);
   }, [navigateToStep]);
@@ -1072,6 +1104,8 @@ export function TributeWizard({
         error?: string;
         maxMedia?: number;
         currentMedia?: number;
+        fundAppliedCents?: number;
+        payableCents?: number;
       };
 
       if (!res.ok) {
@@ -1098,6 +1132,11 @@ export function TributeWizard({
       }
 
       if (data.mode === "freemium_free" && data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      if (data.mode === "fund_free" && data.url) {
         window.location.href = data.url;
         return;
       }
@@ -2116,6 +2155,11 @@ export function TributeWizard({
               isPaying={isPaying}
               payError={payError}
               showStayFree={showCheckoutStayFree}
+              fundCreditCents={fundCreditCents}
+              ownerFloorCents={ownerFloorCents}
+              viralLoopEnabled={viralLoopEnabled}
+              riderAccepted={riderAccepted}
+              onRiderChange={setRiderAccepted}
               excessMediaCount={
                 isFreemiumGrant && projectMediaCount > grantedMediaMax
                   ? projectMediaCount - grantedMediaMax
@@ -2173,6 +2217,12 @@ export function TributeWizard({
                 excessMediaNotice: copy.checkoutExcessMediaNotice,
                 goToMediaLink: copy.checkoutGoToMediaLink,
                 removeOption: copy.checkoutRemoveOption,
+                fundCreditLabel: copy.checkoutFundCreditLabel,
+                fundCreditHint: copy.checkoutFundCreditHint,
+                remainingDueLabel: copy.checkoutRemainingDueLabel,
+                riderLabel: copy.checkoutRiderLabel,
+                riderHint: copy.checkoutRiderHint,
+                payCtaFree: copy.checkoutPayCtaFree,
               }}
             />
           ) : null}
