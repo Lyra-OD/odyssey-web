@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { appRoutes } from "@/src/lib/appRoutes";
 import { getStripe } from "@/lib/stripe";
-import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { requireProjectOwner, rejectEditorForOwnerOnlyRoute } from "@/src/lib/api/projectAccess";
 import { resolveUserIsPartner } from "@/src/lib/partner/resolvePartnerAccess";
 import {
   packageMaxMediaForEntitlement,
@@ -75,6 +75,13 @@ export async function POST(request: Request) {
   }
 
   const { projectId, locale = "fr" } = parsed.data;
+
+  const editorBlocked = await rejectEditorForOwnerOnlyRoute(
+    projectId,
+    "canCheckout",
+  );
+  if (editorBlocked) return editorBlocked;
+
   const access = await requireProjectOwner(projectId);
   if (!access.ok) return access.response;
 

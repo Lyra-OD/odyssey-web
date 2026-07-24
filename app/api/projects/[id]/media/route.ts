@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { hydrateMediaRowsWithSignedUrls } from "@/src/lib/media/hydrateMediaSignedUrls.server";
 import type { HydratedMediaListResponse } from "@/src/lib/media/mediaTypes";
 
@@ -22,10 +22,7 @@ type MediaAssetRow = {
 
 /**
  * GET /api/projects/[id]/media
- *
- * Lists uploaded media_assets for a project owned by the caller.
- * Generates signed Storage URLs server-side (private bucket `user-assets`).
- * Grid `previewUrl` prefers WebP thumb when present; `fullPreviewUrl` is always original.
+ * Liste médias — Titulaire ou Co-Créateur (cookie).
  */
 export async function GET(
   _req: Request,
@@ -37,12 +34,10 @@ export async function GET(
   }
 
   const projectId = projectIdResult.data;
-  const access = await requireProjectOwner(projectId);
+  const access = await resolveWizardCraftAccess(projectId);
   if (!access.ok) return access.response;
 
-  const { supabase } = access;
-
-  const { data: rows, error: fetchError } = await supabase
+  const { data: rows, error: fetchError } = await access.supabase
     .from("media_assets")
     .select(
       "id, project_id, storage_path, mime_type, size_bytes, order_index, upload_status, source, owner_user_id, tenant_id",
@@ -60,7 +55,7 @@ export async function GET(
   }
 
   const assets = (rows ?? []) as MediaAssetRow[];
-  const items = await hydrateMediaRowsWithSignedUrls(supabase, assets);
+  const items = await hydrateMediaRowsWithSignedUrls(access.supabase, assets);
 
   const body: HydratedMediaListResponse = { items };
   return NextResponse.json(body);

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { ensureUserAssetsAllowsPersonalAudio } from "@/src/lib/media/ensureUserAssetsAudioMime";
 import {
   SIGNED_URL_TTL_SEC,
@@ -36,7 +36,7 @@ export async function GET(
   }
 
   const projectId = projectIdResult.data;
-  const access = await requireProjectOwner(projectId);
+  const access = await resolveWizardCraftAccess(projectId);
   if (!access.ok) return access.response;
 
   const storagePath = new URL(req.url).searchParams.get("path")?.trim() ?? "";
@@ -64,6 +64,7 @@ export async function GET(
  *
  * Upload MP3/WAV perso (ToS côté wizard). Assure que le bucket accepte
  * les MIME audio, puis écrit via service role sous `projects/{id}/music/`.
+ * Titulaire ou Co-Créateur.
  */
 export async function POST(
   req: Request,
@@ -75,7 +76,7 @@ export async function POST(
   }
 
   const projectId = projectIdResult.data;
-  const access = await requireProjectOwner(projectId);
+  const access = await resolveWizardCraftAccess(projectId);
   if (!access.ok) return access.response;
 
   let form: FormData;

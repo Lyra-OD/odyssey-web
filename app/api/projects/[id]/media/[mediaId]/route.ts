@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { thumbStoragePathFor, isImageStoragePath } from "@/src/lib/media/thumbnailPath";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
@@ -32,9 +32,7 @@ function isStoragePathOwnedByProject(
 
 /**
  * DELETE /api/projects/[id]/media/[mediaId]
- *
- * Privacy-critical: removes DB row AND physical Storage object.
- * Storage delete uses service_role after session ownership verification.
+ * Titulaire ou Co-Créateur — Storage delete via service_role.
  */
 export async function DELETE(
   _req: Request,
@@ -53,12 +51,10 @@ export async function DELETE(
   const projectId = projectIdResult.data;
   const mediaId = mediaIdResult.data;
 
-  const access = await requireProjectOwner(projectId);
+  const access = await resolveWizardCraftAccess(projectId);
   if (!access.ok) return access.response;
 
-  const { supabase } = access;
-
-  const { data: asset, error: fetchError } = await supabase
+  const { data: asset, error: fetchError } = await access.supabase
     .from("media_assets")
     .select("id, project_id, storage_path, owner_user_id, tenant_id")
     .eq("id", mediaId)

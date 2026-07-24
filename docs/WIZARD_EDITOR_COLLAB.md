@@ -88,9 +88,29 @@ Voir `getWizardCapabilities("editor" | "owner")`.
 
 ---
 
-## 6. Suite — Phase B (rappel)
+## 6. Phase B — Backend (statut)
 
-1. Mint / redeem / cookie signé  
-2. `requireProjectEditor` + brancher media + autosave whitelist  
-3. Mur dur checkout / fund-balance (tests 403)  
-4. Puis shell Wizard mode `editor` (Phase C)
+| Endpoint | Accès |
+|----------|--------|
+| `POST /api/projects/[id]/collab-link` | Owner only (+ 403 si cookie editor) |
+| `POST /api/collab/redeem` | Public token → cookie httpOnly signé + revoke one-shot |
+| `GET/PATCH /api/projects/[id]/autosave` | Owner **ou** editor (whitelist) |
+| `GET/DELETE/PATCH …/media*` | Owner **ou** editor |
+| `GET/POST …/music` | Owner **ou** editor |
+| `POST /api/checkout` | Owner only — editor → **403** `canCheckout` |
+| `GET …/fund-balance` | Owner only — editor → **403** `canViewFundBalance` |
+| `POST …/contribute-link` | Owner only — editor → **403** |
+
+**Cookie :** HMAC-SHA256 (`WIZARD_EDITOR_COOKIE_SECRET` ou fallback `SUPABASE_SERVICE_ROLE_KEY`).  
+**Helpers :** `resolveWizardCraftAccess` · `requireProjectEditor` · `rejectEditorForOwnerOnlyRoute` · `filterAutosavePatchForEditor`.
+
+**Note upload Coffre :** l’upload navigateur→Storage (RLS owner) reste à brancher en Phase C pour l’éditeur (signed upload / route API). Liste + delete + reorder + autosave storyboard sont déjà ouverts.
+
+---
+
+## 7. Suite — Phase C (rappel)
+
+1. Page `/[lang]/collab/[token]` → redeem  
+2. Shell Wizard `accessRole=editor` steps `{3,4,5}`  
+3. CTA mint lien (étapes 2 + 5)  
+4. Upload médias editor via API/signed URL

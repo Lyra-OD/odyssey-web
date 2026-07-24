@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { requireProjectOwner, rejectEditorForOwnerOnlyRoute } from "@/src/lib/api/projectAccess";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
 export const runtime = "nodejs";
@@ -21,6 +21,12 @@ export async function GET(
     return NextResponse.json({ error: "invalid_project_id" }, { status: 400 });
   }
   const projectId = projectIdResult.data;
+
+  const editorBlocked = await rejectEditorForOwnerOnlyRoute(
+    projectId,
+    "canViewFundBalance",
+  );
+  if (editorBlocked) return editorBlocked;
 
   const access = await requireProjectOwner(projectId);
   if (!access.ok) return access.response;

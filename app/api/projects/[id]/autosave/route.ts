@@ -5,7 +5,8 @@ import {
   buildPersistedWizardState,
   coerceWizardState,
 } from "@/src/lib/wizard/wizardState";
-import { createClient } from "@/utils/supabase/server";
+import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
+import { filterAutosavePatchForEditor } from "@/src/lib/wizard/collabAutosave";
 
 /**
  * Tribute Wizard — Autosave API.
@@ -16,11 +17,11 @@ import { createClient } from "@/utils/supabase/server";
  *                                         and/or wizard_step
  *
  * Security model:
- *   1. `auth.getUser()` must return a user (cookie-based session via @supabase/ssr).
- *   2. RLS on `public.projects` already filters by `user_id = auth.uid()` for
- *      the `authenticated` role (P0 policies).
- *   3. We add an explicit `eq("user_id", user.id)` filter on every query for
- *      defense in depth — never trust a single layer.
+ *   1. Titulaire : session Odyssey + `user_id` (RLS + filtre explicite).
+ *   2. Co-Créateur : cookie httpOnly `wizard_editor` (Phase B) + client admin
+ *      après `resolveWizardCraftAccess` — PATCH limité à la whitelist
+ *      (`storyboard`, `musicRightsAttestation`) et steps {3,4,5}.
+ *   3. Never trust UI alone — API = loi.
  *
  * JSONB merge strategy:
  *   - Top-level shallow merge: PATCH bodies replace an entire section
@@ -398,16 +399,6 @@ const mergeWizardState = (
   return base;
 };
 
-async function authenticate() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error || !user) return { supabase, user: null as null };
-  return { supabase, user };
-}
-
 type RouteParams = { params: { id: string } };
 
 // ---------------------------------------------------------------------------
@@ -419,17 +410,19 @@ export async function GET(_req: Request, { params }: RouteParams) {
     return NextResponse.json({ error: "invalid_project_id" }, { status: 400 });
   }
 
-  const { supabase, user } = await authenticate();
-  if (!user) {
-    return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
-  }
+  const projectId = projectIdResult.data;
+  const access = await resolveWizardCraftAccess(projectId);
+  if (!access.ok) return access.response;
 
-  const { data, error } = await supabase
+  const query = access.supabase
     .from("projects")
     .select("id, user_id, wizard_state, wizard_step, last_saved_at, status")
-    .eq("id", projectIdResult.data)
-    .eq("user_id", user.id)
-    .maybeSingle();
+    .eq("id", projectId);
+
+  const { data, error } =
+    access.role === "owner"
+      ? await query.eq("user_id", access.user.id).maybeSingle()
+      : await query.maybeSingle();
 
   if (error) {
     return NextResponse.json(
@@ -448,6 +441,7 @@ export async function GET(_req: Request, { params }: RouteParams) {
     wizard_step: data.wizard_step ?? 1,
     last_saved_at: data.last_saved_at,
     status: data.status,
+    accessRole: access.role,
   });
 }
 
@@ -461,10 +455,8 @@ export async function PATCH(req: Request, { params }: RouteParams) {
   }
   const projectId = projectIdResult.data;
 
-  const { supabase, user } = await authenticate();
-  if (!user) {
-    return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
-  }
+  const access = await resolveWizardCraftAccess(projectId);
+  if (!access.ok) return access.response;
 
   let rawBody: unknown;
   try {
@@ -484,12 +476,47 @@ export async function PATCH(req: Request, { params }: RouteParams) {
     );
   }
 
-  const existing = await supabase
+  let patchState = parsed.data.wizard_state as
+    | Record<string, unknown>
+    | undefined;
+  let patchStep = parsed.data.wizard_step;
+
+  if (access.role === "editor") {
+    const filtered = filterAutosavePatchForEditor({
+      wizard_state: patchState,
+      wizard_step: patchStep,
+    });
+    if (!filtered.ok) {
+      return NextResponse.json(
+        {
+          error: "forbidden",
+          code: filtered.error,
+          message: filtered.message,
+          rejectedKeys: filtered.rejectedKeys,
+          role: "editor",
+        },
+        { status: 403 },
+      );
+    }
+    patchState = filtered.wizard_state;
+    patchStep = filtered.wizard_step;
+    if (patchState === undefined && patchStep === undefined) {
+      return NextResponse.json(
+        { error: "empty_editor_patch", message: "Nothing allowed to save." },
+        { status: 400 },
+      );
+    }
+  }
+
+  const existingQuery = access.supabase
     .from("projects")
     .select("id, user_id, wizard_state, wizard_step")
-    .eq("id", projectId)
-    .eq("user_id", user.id)
-    .maybeSingle();
+    .eq("id", projectId);
+
+  const existing =
+    access.role === "owner"
+      ? await existingQuery.eq("user_id", access.user.id).maybeSingle()
+      : await existingQuery.maybeSingle();
 
   if (existing.error) {
     return NextResponse.json(
@@ -502,14 +529,14 @@ export async function PATCH(req: Request, { params }: RouteParams) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
-  if (existing.data.user_id !== user.id) {
+  if (
+    access.role === "owner" &&
+    existing.data.user_id !== access.user.id
+  ) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
-  const mergedState = mergeWizardState(
-    existing.data.wizard_state,
-    parsed.data.wizard_state,
-  );
+  const mergedState = mergeWizardState(existing.data.wizard_state, patchState);
 
   const runtimeState = coerceWizardState(mergedState);
   const persistedState = buildPersistedWizardState(runtimeState);
@@ -531,15 +558,20 @@ export async function PATCH(req: Request, { params }: RouteParams) {
     wizard_state: persistedState,
     last_saved_at: new Date().toISOString(),
   };
-  if (parsed.data.wizard_step !== undefined) {
-    updatePayload.wizard_step = parsed.data.wizard_step;
+  if (patchStep !== undefined) {
+    updatePayload.wizard_step = patchStep;
   }
 
-  const { data: updated, error: updateError } = await supabase
+  let updateQuery = access.supabase
     .from("projects")
     .update(updatePayload)
-    .eq("id", projectId)
-    .eq("user_id", user.id)
+    .eq("id", projectId);
+
+  if (access.role === "owner") {
+    updateQuery = updateQuery.eq("user_id", access.user.id);
+  }
+
+  const { data: updated, error: updateError } = await updateQuery
     .select("id, wizard_state, wizard_step, last_saved_at, status")
     .single();
 
@@ -559,5 +591,6 @@ export async function PATCH(req: Request, { params }: RouteParams) {
     wizard_step: updated.wizard_step ?? 1,
     last_saved_at: updated.last_saved_at,
     status: updated.status,
+    accessRole: access.role,
   });
 }

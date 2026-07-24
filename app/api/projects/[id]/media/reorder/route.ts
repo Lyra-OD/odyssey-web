@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 
 const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 
@@ -18,9 +18,7 @@ const ReorderBodySchema = z
 
 /**
  * PATCH /api/projects/[id]/media/reorder
- *
- * Updates order_index for media_assets belonging to the caller's project.
- * Each item is updated individually with project_id guard (RLS + explicit filter).
+ * Titulaire ou Co-Créateur.
  */
 export async function PATCH(
   req: Request,
@@ -32,7 +30,7 @@ export async function PATCH(
   }
 
   const projectId = projectIdResult.data;
-  const access = await requireProjectOwner(projectId);
+  const access = await resolveWizardCraftAccess(projectId);
   if (!access.ok) return access.response;
 
   let rawBody: unknown;
