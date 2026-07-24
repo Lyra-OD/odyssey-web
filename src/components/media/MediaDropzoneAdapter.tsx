@@ -116,6 +116,8 @@ export type MediaDropzoneAdapterProps = {
   userId?: string;
   tenantId?: string;
   source?: MediaUploadSource;
+  /** `signed` pour Co-Créateur (cookie) — contourne RLS Storage owner. */
+  uploadStrategy?: "direct" | "signed";
 
   maxFiles?: number;
   maxFileSizeBytes?: number;
@@ -163,6 +165,7 @@ export function MediaDropzoneAdapter({
   userId,
   tenantId,
   source = "local",
+  uploadStrategy = "direct",
   maxFiles = DEFAULT_MAX_FILES,
   maxFileSizeBytes = DEFAULT_MAX_FILE_SIZE,
   maxConcurrency = 4,
@@ -213,13 +216,22 @@ export function MediaDropzoneAdapter({
         userId,
         tenantId,
         source,
+        uploadStrategy,
       });
     } catch (error) {
       onUploadError?.(
         error instanceof Error ? error : new Error("Unknown upload error"),
       );
     }
-  }, [onUploadError, projectId, source, tenantId, upload, userId]);
+  }, [
+    onUploadError,
+    projectId,
+    source,
+    tenantId,
+    upload,
+    uploadStrategy,
+    userId,
+  ]);
 
   const retryFailed = useCallback(async () => {
     try {

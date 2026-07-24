@@ -91,6 +91,10 @@ import {
   shouldOfferMusicSoftCap,
 } from "@/src/lib/wizard/softCap";
 import { MUSIC_RIGHTS_TOS_VERSION } from "@/src/lib/wizard/exportGate";
+import {
+  isWizardStepAllowedForRole,
+  type WizardAccessRole,
+} from "@/src/lib/wizard/collabCapabilities";
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
 import { useWizardStoryboard } from "@/src/hooks/useWizardStoryboard";
 import type { Locale } from "@/i18n.config";
@@ -145,6 +149,7 @@ export function TributeWizard({
   locale = "fr",
   isPartner: isPartnerProp = false,
   planOverride,
+  accessRole = "owner",
 }: {
   copy: TributeWizardCopy;
   initialDraft?: WizardInitialDraft | null;
@@ -154,7 +159,10 @@ export function TributeWizard({
   /** Dev-only : force le forfait accordé (ex. `essential`) pour tester le
    * flux freemium Soft Cap en local. Ignoré en production (voir page studio). */
   planOverride?: string;
+  /** Owner = parcours complet · Editor = étapes {3,4,5} sans commerce. */
+  accessRole?: WizardAccessRole;
 }) {
+  const isEditor = accessRole === "editor";
   const hydrated = coerceWizardState(initialDraft?.wizard_state);
   const isPartnerInitial = hydrated.isPartner === true || isPartnerProp;
   const channelProfile = resolveChannelProfile({
@@ -195,13 +203,19 @@ export function TributeWizard({
         hydrated.intendedPackage ??
         channelProfile.grantedPackage));
 
-  const [currentStep, setCurrentStep] = useState<Step>(() =>
-    resolveInitialWizardStep(
+  const [currentStep, setCurrentStep] = useState<Step>(() => {
+    const resolved = resolveInitialWizardStep(
       initialDraft?.wizard_step,
       hydrated,
       TOTAL_STEPS,
-    ) as Step,
-  );
+    ) as Step;
+    if (accessRole === "editor") {
+      if (!isWizardStepAllowedForRole("editor", resolved)) {
+        return 3;
+      }
+    }
+    return resolved;
+  });
   const [essentialError, setEssentialError] = useState(false);
   const [chaptersStructureError, setChaptersStructureError] = useState(false);
 
@@ -254,8 +268,12 @@ export function TributeWizard({
     intendedPackage,
     Boolean(extensions.musicLicense),
   );
-  const musicBrowseTier = softCapMusicBrowse ? "premium" : musicCatalogTier;
-  const softCapEligible = isSoftCapEligible(grantedPackage, intendedPackage);
+  // Co-Créateur : catalogue premium pour le craft ; Soft Cap UI masquée —
+  // le titulaire paie à l'étape 7.
+  const musicBrowseTier =
+    isEditor || softCapMusicBrowse ? "premium" : musicCatalogTier;
+  const softCapEligible =
+    !isEditor && isSoftCapEligible(grantedPackage, intendedPackage);
   const [softCapOpen, setSoftCapOpen] = useState(false);
   const [softCapVariant, setSoftCapVariant] =
     useState<SoftCapVariant>("mediaUnlock");
@@ -700,6 +718,7 @@ export function TributeWizard({
 
   // Crée le projet draft dès que le prénom atteint 2 caractères (autosave + RLS étape 3).
   useEffect(() => {
+    if (isEditor) return;
     if (uploadProjectId) return;
     if (firstName.trim().length < 2) return;
 
@@ -747,6 +766,7 @@ export function TributeWizard({
     deathDate,
     uploadProjectId,
     ensureDraft,
+    isEditor,
   ]);
 
   // Seed wizard_state en DB après la première création de projet (pas à la reprise).
@@ -796,10 +816,11 @@ export function TributeWizard({
   const navigateToStep = useCallback(
     async (step: Step) => {
       if (step === currentStep) return;
+      if (!isWizardStepAllowedForRole(accessRole, step)) return;
       await flush();
       setCurrentStep(step);
     },
-    [currentStep, flush],
+    [accessRole, currentStep, flush],
   );
 
   const goNext = useCallback(async () => {
@@ -824,8 +845,11 @@ export function TributeWizard({
       }
     }
     if (currentStep >= TOTAL_STEPS) return;
-    await navigateToStep((currentStep + 1) as Step);
+    const next = (currentStep + 1) as Step;
+    if (!isWizardStepAllowedForRole(accessRole, next)) return;
+    await navigateToStep(next);
   }, [
+    accessRole,
     currentStep,
     canProceedEssential,
     navigateToStep,
@@ -836,14 +860,18 @@ export function TributeWizard({
 
   const goBack = useCallback(async () => {
     if (currentStep <= 1) return;
-    await navigateToStep((currentStep - 1) as Step);
-  }, [currentStep, navigateToStep]);
+    const prev = (currentStep - 1) as Step;
+    if (!isWizardStepAllowedForRole(accessRole, prev)) return;
+    await navigateToStep(prev);
+  }, [accessRole, currentStep, navigateToStep]);
 
   const handleStepperClick = useCallback(
     (step: number) => {
-      void navigateToStep(step as Step);
+      // Éditeur : le progress remappe 1/2/3 → Wizard 3/4/5.
+      const wizardStep = (isEditor ? step + 2 : step) as Step;
+      void navigateToStep(wizardStep);
     },
-    [navigateToStep],
+    [isEditor, navigateToStep],
   );
 
   const handleFirstNameChange = useCallback(
@@ -911,9 +939,10 @@ export function TributeWizard({
   );
 
   const openSoftCap = useCallback((variant: SoftCapVariant) => {
+    if (isEditor) return;
     setSoftCapVariant(variant);
     setSoftCapOpen(true);
-  }, []);
+  }, [isEditor]);
 
   const dismissSoftCap = useCallback(() => {
     if (softCapVariant === "mediaUnlock") {
@@ -992,6 +1021,7 @@ export function TributeWizard({
   // famille retire des photos et repasse sous 50, on redescend vers Souvenir
   // (uniquement si le bump venait de ce filet, pas d'un upgrade explicite).
   useEffect(() => {
+    if (isEditor) return;
     if (!isFreemiumGrant) return;
     const intendedRank = packageTierRank(intendedPackage);
     if (projectMediaCount > 50 && intendedRank === 0) {
@@ -1009,6 +1039,7 @@ export function TributeWizard({
     grantedPackage,
     handleBasePackageChange,
     intendedPackage,
+    isEditor,
     isFreemiumGrant,
     projectMediaCount,
   ]);
@@ -1046,6 +1077,7 @@ export function TributeWizard({
 
   // Solde Fonds Commémoratif — thermomètre Checkout (owner).
   useEffect(() => {
+    if (isEditor) return;
     if (currentStep !== 7 || !uploadProjectId || isPartner) return;
     let cancelled = false;
     void (async () => {
@@ -1070,7 +1102,7 @@ export function TributeWizard({
     return () => {
       cancelled = true;
     };
-  }, [currentStep, uploadProjectId, isPartner]);
+  }, [currentStep, uploadProjectId, isPartner, isEditor]);
 
   const handleProceedToPayment = useCallback(async () => {
     await navigateToStep(7);
@@ -1204,18 +1236,30 @@ export function TributeWizard({
   // Stepper en 3 "phases" cinématiques (Déposer / Composer / Recevoir) plutôt
   // que 8 cercles linéaires — réduit la charge cognitive tout en gardant la
   // notion d'avancement (voir refonte en-tête global).
-  const wizardPhases = useMemo(
-    () => [
+  // Co-Créateur : phases craft uniquement (pas de « Recevoir » / checkout).
+  // Les numéros de phase sont locaux (1…N) ; onPhaseClick remap vers étapes Wizard.
+  const wizardPhases = useMemo(() => {
+    if (isEditor) {
+      return [
+        { id: 1, label: copy.phaseGatherLabel, firstStep: 1, lastStep: 1 },
+        { id: 2, label: copy.phaseComposeLabel, firstStep: 2, lastStep: 3 },
+      ];
+    }
+    return [
       { id: 1, label: copy.phaseGatherLabel, firstStep: 1, lastStep: 3 },
       { id: 2, label: copy.phaseComposeLabel, firstStep: 4, lastStep: 5 },
       { id: 3, label: copy.phaseReceiveLabel, firstStep: 6, lastStep: 7 },
-    ],
-    [copy],
-  );
+    ];
+  }, [copy, isEditor]);
   const currentStepLabel = useMemo(
     () => stepperSteps.find((step) => step.id === currentStep)?.label ?? "",
     [stepperSteps, currentStep],
   );
+  const progressTotalSteps = isEditor ? 3 : TOTAL_STEPS;
+  /** Éditeur : remap étapes Wizard 3/4/5 → progression locale 1/2/3. */
+  const progressCurrentStep = isEditor
+    ? (Math.min(5, Math.max(3, currentStep)) - 2)
+    : currentStep;
 
   return (
     <div
@@ -1227,7 +1271,22 @@ export function TributeWizard({
             : "max-w-xl"
       }`}
     >
-      {currentStep > 1 ? (
+      {isEditor ? (
+        <div
+          className="mb-6 border-b border-white/10 pb-4"
+          role="status"
+          aria-live="polite"
+        >
+          <p className="text-center text-[10px] font-medium uppercase tracking-[0.4em] text-teal-400/50">
+            {copy.editorModeBanner}
+          </p>
+          <p className="mt-2 text-center text-sm font-light text-white/45">
+            {copy.editorModeHint}
+          </p>
+        </div>
+      ) : null}
+
+      {currentStep > (isEditor ? 3 : 1) ? (
         <button
           type="button"
           onClick={() => void goBack()}
@@ -1289,6 +1348,8 @@ export function TributeWizard({
           ) : null}
 
           <div className="flex flex-col items-stretch gap-4 sm:w-60 sm:shrink-0 sm:items-end">
+            {!isEditor ? (
+              <>
             <PackageDossierTrigger
               packageLabel={packageDisplayNameFor(basePackage)}
               onOpen={openPackageDossier}
@@ -1308,6 +1369,8 @@ export function TributeWizard({
               }}
               className={`sm:items-end sm:text-right${currentStep === 2 ? " hidden" : ""}`}
             />
+              </>
+            ) : null}
             {/* Masqué sur mobile — l'en-tête sticky y reste volontairement compact (2 lignes max) ; le détail complet reste consultable dans le Dossier. */}
             <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-500 sm:block sm:text-right">
               {copy.headerNarrativeSummary
@@ -1318,6 +1381,8 @@ export function TributeWizard({
         </div>
       </header>
 
+      {!isEditor ? (
+        <>
       <PackageDossierPanel
         isOpen={isPackageDossierOpen}
         onClose={() => setIsPackageDossierOpen(false)}
@@ -1373,6 +1438,8 @@ export function TributeWizard({
           poweredBy: copy.invitePoweredBy,
         }}
       />
+        </>
+      ) : null}
 
       <section
         className="flex flex-col"
@@ -1380,8 +1447,8 @@ export function TributeWizard({
       >
         <WizardPhaseProgress
           phases={wizardPhases}
-          currentStep={currentStep}
-          totalSteps={TOTAL_STEPS}
+          currentStep={progressCurrentStep}
+          totalSteps={progressTotalSteps}
           currentStepLabel={currentStepLabel}
           onPhaseClick={handleStepperClick}
           copy={{
@@ -1391,6 +1458,7 @@ export function TributeWizard({
           }}
         />
 
+        {!isEditor ? (
         <StickyPriceBar
           extensions={extensions}
           basePackage={basePackage}
@@ -1403,8 +1471,9 @@ export function TributeWizard({
             draftLabel: copy.stickyDraftLabel,
           }}
         />
+        ) : null}
 
-        {currentStep === 5 && !isPartner ? (
+        {currentStep === 5 && !isPartner && !isEditor ? (
           <div className="mb-8">
             <WizardCartSummary
               locale={locale}
@@ -1676,6 +1745,7 @@ export function TributeWizard({
                   projectId={uploadProjectId}
                   userId={uploadUserId ?? undefined}
                   tenantId={uploadTenantId ?? undefined}
+                  uploadStrategy={isEditor ? "signed" : "direct"}
                   autoStart
                   maxFiles={effectiveMaxMediaItems}
                   maxFileSizeBytes={300 * 1024 * 1024}
@@ -1760,6 +1830,7 @@ export function TributeWizard({
                         </div>
 
                         {isFreemiumGrant &&
+                        !isEditor &&
                         totalQueued > 50 &&
                         dz.remainingSlots > 0 ? (
                           <div
@@ -1868,6 +1939,7 @@ export function TributeWizard({
 
                         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
                           <div className="mx-auto flex max-w-xl gap-3">
+                            {!isEditor ? (
                             <button
                               type="button"
                               onClick={() => void goBack()}
@@ -1875,6 +1947,7 @@ export function TributeWizard({
                             >
                               {copy.back}
                             </button>
+                            ) : null}
 
                           <button
                             type="button"
@@ -2025,6 +2098,7 @@ export function TributeWizard({
               }}
               onMagicSequenceComplete={() => {
                 queueSave("immediate");
+                if (isEditor) return;
                 if (softCapMagicDismissedRef.current) return;
                 if (
                   !shouldOfferMagicSoftCap(
@@ -2235,6 +2309,7 @@ export function TributeWizard({
         </div>
       </section>
 
+      {!isEditor ? (
       <SoftCapModal
         open={softCapOpen}
         variant={softCapVariant}
@@ -2244,6 +2319,7 @@ export function TributeWizard({
         onAcceptLicense={acceptSoftCapLicense}
         onDismiss={dismissSoftCap}
       />
+      ) : null}
 
       {currentStep !== 3 && currentStep !== 6 && currentStep !== 7 ? (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
@@ -2252,7 +2328,11 @@ export function TributeWizard({
               currentStep >= 5 ? "max-w-3xl" : "max-w-xl"
             }`}
           >
-            {currentStep <= 5 ? (
+            {currentStep === 5 && isEditor ? (
+              <p className="text-center text-sm font-light text-white/55">
+                {copy.editorCraftComplete}
+              </p>
+            ) : currentStep <= 5 ? (
               <button
                 type="button"
                 onClick={() => void goNext()}

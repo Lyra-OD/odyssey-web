@@ -9,6 +9,7 @@ import {
   buildWizardEditorCookiePayload,
 } from "@/src/lib/wizard/collabSessionCookie";
 import { hashWizardEditorToken } from "@/src/lib/wizard/collabToken";
+import { appRoutes } from "@/src/lib/appRoutes";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
 export const runtime = "nodejs";
@@ -97,7 +98,7 @@ export async function POST(req: Request) {
     ok: true,
     projectId: row.project_id,
     role: "editor" as const,
-    redirectPath: `/${locale}/studio`,
+    redirectPath: appRoutes.studio(locale),
     expiresAt: new Date(cookiePayload.exp * 1000).toISOString(),
   });
 

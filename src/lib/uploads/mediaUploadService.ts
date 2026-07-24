@@ -53,6 +53,11 @@ export type UploadBatchParams = UploadCallbacks & {
   maxConcurrency?: number;
   maxRetries?: number;
   signal?: AbortSignal;
+  /**
+   * `signed` = Co-Créateur (cookie) via upload-url + register API.
+   * `direct` = Titulaire (session Auth + RLS).
+   */
+  uploadStrategy?: "direct" | "signed";
   insertRowFactory?: (
     context: {
       projectId: string;
@@ -122,6 +127,147 @@ async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+type SignedUploadUrlResponse = {
+  ok?: boolean;
+  path?: string;
+  token?: string;
+  error?: string;
+};
+
+async function requestSignedUploadUrl(params: {
+  projectId: string;
+  fileName: string;
+  mimeType?: string;
+  sizeBytes: number;
+  orderIndex: number;
+  kind?: "original" | "thumb";
+  baseStoragePath?: string;
+}): Promise<{ path: string; token: string }> {
+  const res = await fetch(`/api/projects/${params.projectId}/media/upload-url`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fileName: params.fileName,
+      mimeType: params.mimeType,
+      sizeBytes: params.sizeBytes,
+      orderIndex: params.orderIndex,
+      kind: params.kind ?? "original",
+      baseStoragePath: params.baseStoragePath,
+    }),
+  });
+  const body = (await res.json().catch(() => ({}))) as SignedUploadUrlResponse;
+  if (!res.ok || !body.path || !body.token) {
+    throw new Error(body.error ?? "signed_url_failed");
+  }
+  return { path: body.path, token: body.token };
+}
+
+async function registerMediaAsset(params: {
+  projectId: string;
+  storagePath: string;
+  mimeType: string | null;
+  sizeBytes: number;
+  orderIndex: number;
+  source: MediaUploadSource;
+}): Promise<string | null> {
+  const res = await fetch(`/api/projects/${params.projectId}/media/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      storagePath: params.storagePath,
+      mimeType: params.mimeType,
+      sizeBytes: params.sizeBytes,
+      orderIndex: params.orderIndex,
+      source: params.source,
+    }),
+  });
+  const body = (await res.json().catch(() => ({}))) as {
+    ok?: boolean;
+    assetId?: string | null;
+    error?: string;
+  };
+  if (!res.ok || !body.ok) {
+    if (body.error === MEDIA_QUOTA_EXCEEDED_ERROR) {
+      throw new Error(MEDIA_QUOTA_EXCEEDED_ERROR);
+    }
+    throw new Error(body.error ?? "media_register_failed");
+  }
+  return body.assetId ?? null;
+}
+
+async function uploadAndInsertSigned(params: {
+  item: UploadQueueItem;
+  projectId: string;
+  source: MediaUploadSource;
+  bucket: string;
+}): Promise<{ storagePath: string; assetId: string | null }> {
+  if (!isLocalMediaItem(params.item)) {
+    throw new Error("Upload requires a local file item");
+  }
+
+  const supabase = createClient();
+  const signed = await requestSignedUploadUrl({
+    projectId: params.projectId,
+    fileName: params.item.file.name,
+    mimeType: params.item.file.type || undefined,
+    sizeBytes: params.item.file.size,
+    orderIndex: params.item.orderIndex ?? 0,
+  });
+
+  const { error: uploadError } = await supabase.storage
+    .from(params.bucket)
+    .uploadToSignedUrl(signed.path, signed.token, params.item.file, {
+      cacheControl: STORAGE_CACHE_CONTROL,
+      contentType: params.item.file.type || undefined,
+    });
+
+  if (uploadError) {
+    throw new Error(`Storage upload failed: ${uploadError.message}`);
+  }
+
+  const thumbBlob = await generateImageThumbnailBlob(params.item.file);
+  if (thumbBlob) {
+    try {
+      const thumbSigned = await requestSignedUploadUrl({
+        projectId: params.projectId,
+        fileName: "thumb.webp",
+        mimeType: "image/webp",
+        sizeBytes: thumbBlob.size,
+        orderIndex: params.item.orderIndex ?? 0,
+        kind: "thumb",
+        baseStoragePath: signed.path,
+      });
+      const { error: thumbError } = await supabase.storage
+        .from(params.bucket)
+        .uploadToSignedUrl(thumbSigned.path, thumbSigned.token, thumbBlob, {
+          cacheControl: STORAGE_CACHE_CONTROL,
+          contentType: "image/webp",
+        });
+      if (thumbError) {
+        console.warn(
+          "[mediaUpload] thumbnail upload skipped:",
+          thumbError.message,
+        );
+      }
+    } catch (thumbErr) {
+      const message =
+        thumbErr instanceof Error ? thumbErr.message : "thumb_failed";
+      console.warn("[mediaUpload] thumbnail upload skipped:", message);
+    }
+  }
+
+  const assetId = await registerMediaAsset({
+    projectId: params.projectId,
+    storagePath: signed.path,
+    mimeType: params.item.file.type || null,
+    sizeBytes: params.item.file.size,
+    orderIndex: params.item.orderIndex ?? 0,
+    source: params.source,
+  });
+
+  return { storagePath: signed.path, assetId };
+}
+
 async function uploadAndInsert(
   params: {
     item: UploadQueueItem;
@@ -130,9 +276,19 @@ async function uploadAndInsert(
     tenantId?: string;
     source: MediaUploadSource;
     bucket: string;
+    uploadStrategy?: "direct" | "signed";
     insertRowFactory?: UploadBatchParams["insertRowFactory"];
   },
 ): Promise<{ storagePath: string; assetId: string | null }> {
+  if (params.uploadStrategy === "signed") {
+    return uploadAndInsertSigned({
+      item: params.item,
+      projectId: params.projectId,
+      source: params.source,
+      bucket: params.bucket,
+    });
+  }
+
   if (!isLocalMediaItem(params.item)) {
     throw new Error("Upload requires a local file item");
   }
@@ -223,6 +379,7 @@ async function uploadWithRetries(
     maxRetries: number;
     signal?: AbortSignal;
     insertRowFactory?: UploadBatchParams["insertRowFactory"];
+    uploadStrategy?: UploadBatchParams["uploadStrategy"];
   },
 ): Promise<{ storagePath: string; assetId: string | null }> {
   let lastError: unknown = null;
@@ -241,6 +398,7 @@ async function uploadWithRetries(
         source: params.source,
         bucket: params.bucket,
         insertRowFactory: params.insertRowFactory,
+        uploadStrategy: params.uploadStrategy,
       });
     } catch (error) {
       lastError = error;
@@ -320,6 +478,7 @@ export async function uploadMediaBatch(
           maxRetries,
           signal: params.signal,
           insertRowFactory: params.insertRowFactory,
+          uploadStrategy: params.uploadStrategy,
         });
 
         item.status = "uploaded";

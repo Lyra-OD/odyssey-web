@@ -33,6 +33,7 @@ export async function ensureUserAssetsAllowsPersonalAudio(): Promise<void> {
   if (missing.length === 0) return;
 
   const { error: updateError } = await admin.storage.updateBucket(BUCKET, {
+    public: bucket.public,
     allowedMimeTypes: [...allowed, ...missing],
   });
   if (updateError) {

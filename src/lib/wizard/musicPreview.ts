@@ -1,4 +1,3 @@
-import type { StingrayTrackApiPayload } from "@/src/lib/wizard/stingrayCatalog";
 import { findCatalogTrack } from "@/src/lib/wizard/stingrayCatalog";
 import { buildMusicPreviewProxyUrl } from "@/src/lib/music/stingrayTrackId";
 import type { WizardStoryboardSong } from "@/src/lib/wizard/wizardState";
@@ -7,8 +6,14 @@ import type { WizardStoryboardSong } from "@/src/lib/wizard/wizardState";
  * Résout l'URL de lecture d'un extrait, quel que soit le champ renseigné par
  * l'API Stingray. Partagé entre le panneau de recherche musicale (Étape 4)
  * et le lecteur audio parent qui pilote l'élément `<audio>`.
+ *
+ * Accepte le payload API complet *ou* une entrée catalogue (previewUrl seul).
  */
-export function resolvePreviewUrl(track: StingrayTrackApiPayload): string {
+export function resolvePreviewUrl(track: {
+  playbackUrl?: string | null;
+  previewUrl?: string | null;
+  streamUrl?: string | null;
+}): string {
   return (
     track.playbackUrl?.trim() ||
     track.previewUrl?.trim() ||

@@ -30,6 +30,9 @@ export const appRoutes = {
   partnersMarketing: (lang: Locale) => `/${lang}/partners`,
   inviteAccept: (lang: Locale) => `/${lang}/invite/accept`,
   tributeWelcome: (lang: Locale) => `/${lang}/tribute/welcome`,
+  /** Redeem lien Co-Créateur → cookie httpOnly → Studio. */
+  collab: (lang: Locale, token: string) =>
+    `/${lang}/collab/${encodeURIComponent(token)}`,
 } as const;
 
 export function defaultPostAuthPath(lang: Locale): string {

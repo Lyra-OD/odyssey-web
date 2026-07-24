@@ -8,8 +8,12 @@ import {
   SANCTUARY_HALO_TEAL,
   SANCTUARY_HALO_UV,
 } from "@/src/lib/contribute/sanctuaryChrome";
+import { readWizardEditorSession } from "@/src/lib/wizard/collabSessionCookie";
+import type { WizardAccessRole } from "@/src/lib/wizard/collabCapabilities";
+import type { WizardInitialDraft } from "@/src/lib/wizard/wizardState";
 import { getDictionary } from "@/lib/dictionaries";
 import { createClient } from "@/utils/supabase/server";
+import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import type { Locale } from "@/i18n.config";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +22,9 @@ type PageProps = {
   params: Promise<{ lang: string }>;
   searchParams: Promise<{ plan?: string }>;
 };
+
+const DRAFT_SELECT =
+  "id, user_id, tenant_id, wizard_state, wizard_step, last_saved_at, status";
 
 export default async function StudioPage({ params, searchParams }: PageProps) {
   const { lang: routeLang } = await params;
@@ -35,51 +42,92 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    const returnPath = appRoutes.studio(lang);
-    redirect(
-      `${appRoutes.studioConnexion(lang)}?next=${encodeURIComponent(returnPath)}`,
-    );
+  const editorSession = await readWizardEditorSession();
+
+  let accessRole: WizardAccessRole = "owner";
+  let draftProject: WizardInitialDraft | null = null;
+  let isPartner = false;
+  let displayName = dictionary.dashboard.guestName;
+
+  // Co-Créateur (cookie) — prioritaire si le user connecté n'est PAS le
+  // titulaire du projet collab (sinon owner gagne, même projet).
+  if (editorSession) {
+    let isOwnerOfCollabProject = false;
+    if (user) {
+      const { data: owned } = await supabase
+        .from("projects")
+        .select("id")
+        .eq("id", editorSession.projectId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      isOwnerOfCollabProject = Boolean(owned);
+    }
+
+    if (!isOwnerOfCollabProject) {
+      const admin = getSupabaseAdminClient();
+      const { data: collabDraft } = await admin
+        .from("projects")
+        .select(DRAFT_SELECT)
+        .eq("id", editorSession.projectId)
+        .maybeSingle();
+
+      if (collabDraft) {
+        accessRole = "editor";
+        draftProject = collabDraft as WizardInitialDraft;
+      }
+    }
   }
 
-  const rawName = user.user_metadata?.display_name;
-  const displayName =
-    typeof rawName === "string" && rawName.trim().length > 0
-      ? rawName.trim()
-      : dictionary.dashboard.guestName;
+  if (accessRole === "owner") {
+    if (!user) {
+      const returnPath = appRoutes.studio(lang);
+      redirect(
+        `${appRoutes.studioConnexion(lang)}?next=${encodeURIComponent(returnPath)}`,
+      );
+    }
 
-  const { data: memberships } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user.id);
+    const rawName = user.user_metadata?.display_name;
+    displayName =
+      typeof rawName === "string" && rawName.trim().length > 0
+        ? rawName.trim()
+        : dictionary.dashboard.guestName;
 
-  const isPartner = Boolean(
-    memberships?.some(
-      (row) =>
-        row.role === "partner" ||
-        row.role === "partner_admin" ||
-        row.role === "admin",
-    ),
-  );
+    const { data: memberships } = await supabase
+      .from("tenant_members")
+      .select("role")
+      .eq("user_id", user.id);
 
-  const { data: draftProject } = await supabase
-    .from("projects")
-    .select(
-      "id, user_id, tenant_id, wizard_state, wizard_step, last_saved_at, status",
-    )
-    .eq("user_id", user.id)
-    .eq("status", "draft")
-    .order("last_saved_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    isPartner = Boolean(
+      memberships?.some(
+        (row) =>
+          row.role === "partner" ||
+          row.role === "partner_admin" ||
+          row.role === "admin",
+      ),
+    );
+
+    const { data: ownDraft } = await supabase
+      .from("projects")
+      .select(DRAFT_SELECT)
+      .eq("user_id", user.id)
+      .eq("status", "draft")
+      .order("last_saved_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    draftProject = (ownDraft as WizardInitialDraft | null) ?? null;
+  }
 
   const brandWordmark = dictionary.tributeWizard.inviteBrandWordmark;
   const poweredBy = dictionary.tributeWizard.invitePoweredBy;
-  const studioKicker = dictionary.dashboard.studioKicker;
-  const welcomeSrOnly = dictionary.dashboard.welcomeStudio.replace(
-    "{name}",
-    displayName,
-  );
+  const studioKicker =
+    accessRole === "editor"
+      ? dictionary.tributeWizard.editorModeBanner
+      : dictionary.dashboard.studioKicker;
+  const welcomeSrOnly =
+    accessRole === "editor"
+      ? dictionary.tributeWizard.editorModeBanner
+      : dictionary.dashboard.welcomeStudio.replace("{name}", displayName);
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100">
@@ -109,10 +157,12 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
               langOptionFr={dictionary.header.langOptionFr}
               langOptionEn={dictionary.header.langOptionEn}
             />
-            <DashboardSignOut
-              lang={lang}
-              label={dictionary.dashboard.signOut}
-            />
+            {accessRole === "owner" ? (
+              <DashboardSignOut
+                lang={lang}
+                label={dictionary.dashboard.signOut}
+              />
+            ) : null}
           </div>
 
           <div className="mx-auto flex max-w-[16rem] origin-top scale-[0.82] justify-center sm:max-w-[18rem] sm:scale-[0.88]">
@@ -122,17 +172,22 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
               className="mb-0"
             />
           </div>
-          <p className="mt-5 text-center text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
+          <p
+            className={`mt-5 text-center text-[10px] font-medium uppercase tracking-[0.55em] ${
+              accessRole === "editor" ? "text-teal-400/50" : "text-white/35"
+            }`}
+          >
             {studioKicker}
           </p>
         </header>
 
         <TributeWizard
           copy={dictionary.tributeWizard}
-          initialDraft={draftProject ?? null}
+          initialDraft={draftProject}
           locale={lang}
           isPartner={isPartner}
-          planOverride={planOverride}
+          planOverride={accessRole === "owner" ? planOverride : undefined}
+          accessRole={accessRole}
         />
 
         <footer className="mt-auto mb-20 flex flex-col items-center gap-1 pb-2 pt-16 text-center">

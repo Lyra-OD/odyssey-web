@@ -1,6 +1,6 @@
-# Wizard Co-Créateur — Contrat & Threat Model (Phase A)
+# Wizard Co-Créateur — Contrat & Threat Model
 
-**Statut :** Phase A figée · UI non commencée · Backend = Phase B  
+**Statut :** Phase A+B livrées · **Phase C (UI + Signed Upload) livrée**  
 **Règle d'or :** UI = confort · **API = loi**  
 **Types :** [`src/lib/wizard/collabCapabilities.ts`](../src/lib/wizard/collabCapabilities.ts)  
 **SQL :** [`docs/sql/odyssey_p11_wizard_editor_collab.sql`](sql/odyssey_p11_wizard_editor_collab.sql)
@@ -15,7 +15,7 @@
 | **Editor** (Co-Créateur) | Cookie httpOnly `wizard_editor` après redeem | **3, 4, 5** | Non |
 | **Guest** | Token Sanctuaire `guest_contribute` | — (hors Wizard) | Support Packs invité |
 
-Le Co-Créateur **peut** choisir la musique (Stingray / MP3 + ToS). Les frais licence / Soft Cap / checkout restent à la charge du Titulaire.
+Le Co-Créateur **peut** choisir la musique (Stingray / MP3 + ToS). Les frais licence / Soft Cap / checkout restent à la charge du Titulaire — **aucune UI tarifaire** côté éditeur.
 
 ---
 
@@ -26,10 +26,11 @@ Owner ──POST collab-link──► mint token_hash (purpose=wizard_editor, TT
                             revoke tout wizard_editor actif du projet (≤1 outstanding)
          ◄── URL /[lang]/collab/[token]
 
-Nièce ──GET/POST redeem──► verify hash · !revoked · !expired
+Nièce ──GET /[lang]/collab/[token]──► CollabRedeemClient
+         POST /api/collab/redeem ──► verify hash · !revoked · !expired
                             pose cookie httpOnly signé { projectId, tokenId, role:editor, exp }
                             revoke token (one-shot URL)
-                            redirect Studio mode editor (step ∈ {3,4,5})
+                            redirect /[lang]/studio (URL propre, sans ?collab_token=)
 ```
 
 - **Jamais** de `?collab_token=` permanent sur `/studio`.
@@ -58,7 +59,7 @@ Voir `getWizardCapabilities("editor" | "owner")`.
 3. Réutiliser un lien collab fuité (historique, Referer, screenshot).  
 4. Écrire dans `wizard_state` des champs finance (`pricing`, `extensions`, `intendedPackage`).
 
-### Contre-mesures (Phase B — obligatoires)
+### Contre-mesures
 
 | Surface | Blocage |
 |---------|---------|
@@ -68,7 +69,7 @@ Voir `getWizardCapabilities("editor" | "owner")`.
 | `PATCH …/autosave` | Si session editor : strip hors whitelist · refuse pricing/extensions/essentials |
 | Navigation Wizard | Clamp steps `{3,4,5}` côté shell **et** refuse `wizard_step` hors scope en autosave editor |
 | Token URL fuité | TTL 14 j · one-shot redeem · revoke owner · unique index 1 actif / projet |
-| Storage / RLS | Pas d'élargissement RLS `authenticated` : uploads editor via **routes API** + vérif cookie (comme Guest = service_role après gate) |
+| Storage / RLS | **Pas d'élargissement RLS `authenticated`** : uploads editor via **Signed Upload URL** (service_role mint) + `register` admin |
 
 ### Hors scope V1
 
@@ -79,16 +80,7 @@ Voir `getWizardCapabilities("editor" | "owner")`.
 
 ---
 
-## 5. Critères Done Phase A
-
-- [x] Types capabilities + allowlist autosave + TTL constants  
-- [x] SQL P11 `wizard_editor` + index 1 actif  
-- [x] Threat model documenté  
-- [ ] **Ops :** exécuter `odyssey_p11_wizard_editor_collab.sql` sur Supabase avant Phase B intégration
-
----
-
-## 6. Phase B — Backend (statut)
+## 5. Phase B — Backend (statut)
 
 | Endpoint | Accès |
 |----------|--------|
@@ -96,6 +88,8 @@ Voir `getWizardCapabilities("editor" | "owner")`.
 | `POST /api/collab/redeem` | Public token → cookie httpOnly signé + revoke one-shot |
 | `GET/PATCH /api/projects/[id]/autosave` | Owner **ou** editor (whitelist) |
 | `GET/DELETE/PATCH …/media*` | Owner **ou** editor |
+| `POST …/media/upload-url` | Owner **ou** editor — `createSignedUploadUrl` (admin) |
+| `POST …/media/register` | Owner **ou** editor — upsert `media_assets` (admin, `owner_user_id` = titulaire) |
 | `GET/POST …/music` | Owner **ou** editor |
 | `POST /api/checkout` | Owner only — editor → **403** `canCheckout` |
 | `GET …/fund-balance` | Owner only — editor → **403** `canViewFundBalance` |
@@ -104,13 +98,38 @@ Voir `getWizardCapabilities("editor" | "owner")`.
 **Cookie :** HMAC-SHA256 (`WIZARD_EDITOR_COOKIE_SECRET` ou fallback `SUPABASE_SERVICE_ROLE_KEY`).  
 **Helpers :** `resolveWizardCraftAccess` · `requireProjectEditor` · `rejectEditorForOwnerOnlyRoute` · `filterAutosavePatchForEditor`.
 
-**Note upload Coffre :** l’upload navigateur→Storage (RLS owner) reste à brancher en Phase C pour l’éditeur (signed upload / route API). Liste + delete + reorder + autosave storyboard sont déjà ouverts.
+---
+
+## 6. Phase C — UI + Signed Upload (livré)
+
+| Item | Implémentation |
+|------|----------------|
+| Entrée | `app/[lang]/collab/[token]` → `CollabRedeemClient` |
+| Studio SSR | Cookie editor → charge projet via **admin** · `accessRole="editor"` · pas de redirect login |
+| Shell | Clamp `{3,4,5}` · bannière Quiet Luxury `text-teal-400/50` · hide StickyPrice / Dossier / Invite / Soft Cap / Cart / Checkout |
+| Upload Coffre | `uploadStrategy: "signed"` → `upload-url` → `uploadToSignedUrl` → `register` |
+| Soft Cap médias (infra) | `register` bump silencieux `intendedPackage→signature` si freemium ≥50 (quota P8) — **pas** d'UI tarifaire éditeur |
+
+### Ops SQL
+
+1. **Obligatoire (si pas déjà fait) :** exécuter [`odyssey_p11_wizard_editor_collab.sql`](sql/odyssey_p11_wizard_editor_collab.sql) sur Supabase (`purpose=wizard_editor` + index 1 actif).  
+2. **Signed Upload :** **aucune migration Storage RLS** supplémentaire. Les URLs sont mintées avec le **service_role** (`createSignedUploadUrl`) ; le client upload avec le token signé, puis `register` écrit via admin. Ne pas ouvrir de policy `authenticated` INSERT sur `user-assets` pour l’éditeur.
+
+### QA manuelle (checklist)
+
+- [ ] Mint lien collab (owner) → ouvrir `/[lang]/collab/[token]` en navigation privée  
+- [ ] Cookie posé · redirect `/studio` · bannière « Mode Co-Créateur »  
+- [ ] Étapes visibles = Coffre / Musique / Montage uniquement  
+- [ ] Upload photo/vidéo OK (signed) · statut vert Coffre  
+- [ ] Choix Stingray OK · **aucune** Soft Cap / prix  
+- [ ] Autosave storyboard OK · F5 conserve l’état  
+- [ ] `POST /api/checkout` avec cookie editor → **403**  
+- [ ] Titulaire (owner) : Soft Cap + checkout inchangés
 
 ---
 
-## 7. Suite — Phase C (rappel)
+## 7. Suite éventuelle (hors Phase C)
 
-1. Page `/[lang]/collab/[token]` → redeem  
-2. Shell Wizard `accessRole=editor` steps `{3,4,5}`  
-3. CTA mint lien (étapes 2 + 5)  
-4. Upload médias editor via API/signed URL
+- CTA mint lien collab visible aux étapes 2 + 5 (owner)  
+- Kill-switch sessionEpoch à la régénération de lien  
+- Multi-éditeurs / présence

@@ -25,6 +25,8 @@ type StartOptions = {
   userId?: string;
   tenantId?: string;
   source?: MediaUploadSource;
+  /** `signed` = upload via Signed URL API (Co-Créateur / hors RLS owner). */
+  uploadStrategy?: "direct" | "signed";
 };
 
 type MoveDirection = "left" | "right";
@@ -153,6 +155,7 @@ export function useMassMediaUpload(
           userId: startOptions.userId,
           tenantId: startOptions.tenantId,
           source: startOptions.source ?? "local",
+          uploadStrategy: startOptions.uploadStrategy ?? "direct",
           bucket: options?.bucket ?? "user-assets",
           maxConcurrency: options?.maxConcurrency ?? 4,
           maxRetries: options?.maxRetries ?? 2,
