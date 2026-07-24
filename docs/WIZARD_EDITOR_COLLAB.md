@@ -128,8 +128,8 @@ Voir `getWizardCapabilities("editor" | "owner")`.
 
 ---
 
-## 7. Suite éventuelle (hors Phase C)
+## 7. Suite éventuelle
 
-- CTA mint lien collab visible aux étapes 2 + 5 (owner)  
+- [x] CTA mint lien collab — `CollabInvitePanel` (header + étapes 2 & 5, owner only)
 - Kill-switch sessionEpoch à la régénération de lien  
 - Multi-éditeurs / présence

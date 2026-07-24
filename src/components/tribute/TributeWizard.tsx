@@ -36,6 +36,12 @@ import {
   SanctuaryInviteStep,
   SanctuaryInviteTrigger,
 } from "@/src/components/tribute/SanctuaryInvitePanel";
+import {
+  CollabInviteInlineCard,
+  CollabInvitePanel,
+  CollabInviteTrigger,
+  collabInviteCopyFromDictionary,
+} from "@/src/components/tribute/CollabInvitePanel";
 import { ScannerCompanionPlaceholder } from "@/src/components/scanner/ScannerCompanionPlaceholder";
 import { VaultOnlineSourcesSection } from "@/src/components/tribute/VaultOnlineSourcesSection";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
@@ -441,6 +447,7 @@ export function TributeWizard({
   );
   const [isPackageDossierOpen, setIsPackageDossierOpen] = useState(false);
   const [isSanctuaryInviteOpen, setIsSanctuaryInviteOpen] = useState(false);
+  const [isCollabInviteOpen, setIsCollabInviteOpen] = useState(false);
 
   const openPackageDossier = useCallback(() => {
     setIsPackageDossierOpen(true);
@@ -1261,6 +1268,11 @@ export function TributeWizard({
     ? (Math.min(5, Math.max(3, currentStep)) - 2)
     : currentStep;
 
+  const collabInviteCopy = useMemo(
+    () => collabInviteCopyFromDictionary(copy),
+    [copy],
+  );
+
   return (
     <div
       className={`relative mx-auto mt-10 w-full ${
@@ -1369,6 +1381,17 @@ export function TributeWizard({
               }}
               className={`sm:items-end sm:text-right${currentStep === 2 ? " hidden" : ""}`}
             />
+            <CollabInviteTrigger
+              accessRole={accessRole}
+              onOpen={() => setIsCollabInviteOpen(true)}
+              disabled={!uploadProjectId}
+              copy={{
+                triggerLabel: copy.collabTriggerLabel,
+                triggerCta: copy.collabTriggerCta,
+                triggerOpenAria: copy.collabOpenAria,
+              }}
+              className="sm:items-end sm:text-right"
+            />
               </>
             ) : null}
             {/* Masqué sur mobile — l'en-tête sticky y reste volontairement compact (2 lignes max) ; le détail complet reste consultable dans le Dossier. */}
@@ -1437,6 +1460,15 @@ export function TributeWizard({
           kicker: copy.inviteKicker,
           poweredBy: copy.invitePoweredBy,
         }}
+      />
+
+      <CollabInvitePanel
+        isOpen={isCollabInviteOpen}
+        onClose={() => setIsCollabInviteOpen(false)}
+        projectId={uploadProjectId}
+        locale={locale}
+        accessRole={accessRole}
+        copy={collabInviteCopy}
       />
         </>
       ) : null}
@@ -1652,6 +1684,7 @@ export function TributeWizard({
           ) : null}
 
           {currentStep === 2 ? (
+            <>
             <SanctuaryInviteStep
               projectId={uploadProjectId}
               locale={locale}
@@ -1685,6 +1718,13 @@ export function TributeWizard({
                 poweredBy: copy.invitePoweredBy,
               }}
             />
+            <CollabInviteInlineCard
+              projectId={uploadProjectId}
+              locale={locale}
+              accessRole={accessRole}
+              copy={collabInviteCopy}
+            />
+            </>
           ) : null}
 
           {currentStep === 3 ? (
@@ -2088,6 +2128,7 @@ export function TributeWizard({
           ) : null}
 
           {currentStep === 5 ? (
+            <>
             <StoryboardMontageStep
               packageId={currentPackageId}
               projectId={uploadProjectId}
@@ -2196,6 +2237,13 @@ export function TributeWizard({
                 },
               }}
             />
+            <CollabInviteInlineCard
+              projectId={uploadProjectId}
+              locale={locale}
+              accessRole={accessRole}
+              copy={collabInviteCopy}
+            />
+            </>
           ) : null}
 
           {currentStep === 6 ? (
