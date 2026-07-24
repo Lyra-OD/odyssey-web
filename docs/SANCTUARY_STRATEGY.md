@@ -107,7 +107,7 @@ Paiement = acte d’amour. Partenaire → RevShare Bulletproof (30 % du **Net Di
 
 - **Brouillon gratuit** (sans carte) : le client construit et voit une **preview basse résolution /
   filigranée**. L'attachement émotionnel se crée avant le prix.
-- **Paywall strict à l'export** : minimum **Héritage 149 $** ; ancre haute **Légendaire 499 $**.
+- **Paywall strict à l'export** : minimum **Héritage 179 $** ; ancre haute **Légendaire 499 $**.
 - **Boucle Virale (Fonds Commémoratif)** : les proches achètent des **Support Packs**, dont le Net
   Distribuable devient un **crédit** qui fait fondre le paywall famille (jusqu'à **0 $**).
 - Landing = **résultats** (avant/après IA, templates, Stingray).
@@ -120,8 +120,8 @@ Paiement = acte d’amour. Partenaire → RevShare Bulletproof (30 % du **Net Di
 | Niveau | Emotion vendue | Qui paie (cible) |
 |--------|----------------|------------------|
 | **Souvenir** | La porte ouverte | Cadeau partenaire (0 $) |
-| **Héritage** | Le récit digne | Famille 149 $ **ou** Gant Blanc (avance commissions) |
-| **Éternité** | La mémoire restaurée | Famille 299 $ **ou** Gant Blanc |
+| **Héritage** | Le récit digne | Famille 179 $ **ou** Gant Blanc (avance commissions) |
+| **Éternité** | La mémoire restaurée | Famille 349 $ **ou** Gant Blanc |
 | **Légendaire** | Le rituel absolu | **B2C only** 499 $ — hors catalogue partenaire V1 |
 
 > **V-Final :** en B2C comme en B2B2C, l'entrée se fait en **brouillon gratuit** ; le paywall arrive
@@ -144,7 +144,7 @@ IDs techniques : `essential` / `signature` / `heritage` / `legendary` — voir [
 | 4 | **Jeton du Sanctuaire** (NFC) | **79 $** | `sanctuaryToken` | Checkout pérennité (remplace USB) |
 | 5 | **Coffre-fort multigénérationnel** | **99 $** | `digitalVault` | Checkout / peur de l’oubli |
 | 6 | **Livre de Mémoire** | **149 $** | `memoryBook` | Checkout / V1.5 ops si besoin |
-| Cœur | **Écrin Héritage / Éternité** | **149 $ / 299 $** | `signature` / `heritage` | Soft Cap médias / Preview → checkout |
+| Cœur | **Écrin Héritage / Éternité** | **179 $ / 349 $** | `signature` / `heritage` | Soft Cap médias / Preview → checkout |
 
 ### V1.5 (après launch Sanctuaire)
 

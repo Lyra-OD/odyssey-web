@@ -163,8 +163,8 @@ UPDATE public.tenants SET is_freemium = true WHERE slug = 'partner-qa-demo';
 **Exemple attendu post-migration :**
 
 ```sql
-SELECT compute_revenue_waterfall(14900, 1000, 3000);
--- net_distributable_cents: 13410, commission_cents: 4023, platform_fee_cents: 1490
+SELECT compute_revenue_waterfall(17900, 1000, 3000);
+-- net_distributable_cents: 16110, commission_cents: 4833, platform_fee_cents: 1790
 ```
 
 ---

@@ -1,6 +1,6 @@
 # Odyssey — Pivot Freemium V1 (canon CEO)
 
-**Dernière révision : juillet 2026 · Statut : vision figée · Phases 0–4 ✅ · Phase 5 Creatomate/add-ons ⏳ · Phase 6 QA ⏳**
+**Dernière révision : 24 juillet 2026 · Statut : vision figée · Phases 0–5 ✅ (Creatomate stub) · Phase 3a Sanctuaire UI ✅ · Collab A–C ✅ · Phase 6 QA ⏳**
 
 Document canonique du **pivot produit majeur** : purge totale des jetons, freemium B2B2C + RevShare only, Soft Cap (Expansion Narrative), grille forfaits 4K, musique à deux voies + add-on Licence Stingray, add-ons Quiet Luxury.
 
@@ -132,7 +132,7 @@ flowchart TD
   CatalogOfficial[Catalogue_Stingray_officiel]
   SoftMusic[SoftCap_musique_Souvenir]
   Lic39[AddOn_musicLicense_39]
-  Up149[Upgrade_Heritage_149]
+  Up179[Upgrade_Heritage_179]
   Upload[Import_MP3_WAV]
   ToS[Attestation_ToS]
   Preview[Preview_proxy]
@@ -143,10 +143,10 @@ flowchart TD
   SongChoice -->|"tous_forfaits_Souvenir_inclus"| Upload
   CatalogOfficial -->|"Souvenir_preview_only"| SoftMusic
   SoftMusic --> Lic39
-  SoftMusic --> Up149
+  SoftMusic --> Up179
   CatalogOfficial -->|"Heritage_Eternite_inclus"| Preview
   Lic39 --> Preview
-  Up149 --> Preview
+  Up179 --> Preview
   Upload --> ToS
   ToS --> Preview
   Preview --> Pay
@@ -207,7 +207,7 @@ flowchart TD
 ### Phase 4 — Soft Cap UX + musique
 
 15. ✅ Soft Cap médias → Héritage (filet étape 3 + post Composition Magique).
-16. ✅ Soft Cap musique Souvenir → **modale 2 choix** (Licence 39 $ | Héritage 149 $) ; piste non bloquée.
+16. ✅ Soft Cap musique Souvenir → **modale 2 choix** (Licence 39 $ | Héritage 179 $) ; piste non bloquée.
 17. ✅ Import MP3 + ToS (Héritage+) — UI Étape 4 + gate checkout.
 18. ✅ Étape 8 : panier Soft Cap (`resolveWizardDisplayCart`) ; CTA rester à 0 $ ; surface amputation 422.
 
@@ -233,5 +233,5 @@ Mettre à jour ce fichier quand la grille, les SKUs (`musicLicense` / `storyVoic
 
 ---
 
-*Vision CEO figée — juillet 2026 (rév. **grille 179/349/499** · Sanctuaire empreintes · gratuit sans Stingray licencié). Phases 0–5 livrées (Creatomate = stub) ; Phase 3a Sanctuaire UI ⏳. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
+*Vision CEO figée — juillet 2026 (rév. **grille 179/349/499** · Sanctuaire empreintes · gratuit sans Stingray licencié). Phases 0–5 livrées (Creatomate = stub) ; Phase 3a Sanctuaire UI ✅ · Collab ✅. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
 *Appliquer SQL P9 sur Supabase : [`sql/odyssey_p9_project_export_jobs.sql`](sql/odyssey_p9_project_export_jobs.sql).*

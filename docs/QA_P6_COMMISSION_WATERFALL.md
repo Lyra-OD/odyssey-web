@@ -35,13 +35,13 @@ clawback_cents = floor(commission_cents_snapshot × refunded_cents / gross_payme
 | Champ | Valeur attendue |
 |-------|-----------------|
 | Contexte | Souvenir offert → famille choisit **Héritage** |
-| **Gross Volume** | **14 900¢** (149,00 $) |
-| Platform Fee (10 %) | **1 490¢** |
-| **Net Distribuable** | **13 410¢** |
-| RevShare (30 % du Net) | **4 023¢** (40,23 $) |
-| Odyssey Margin | **9 387¢** (93,87 $) |
+| **Gross Volume** | **17 900¢** (179,00 $) |
+| Platform Fee (10 %) | **1 790¢** |
+| **Net Distribuable** | **16 110¢** |
+| RevShare (30 % du Net) | **4 833¢** (48,33 $) |
+| Odyssey Margin | **11 277¢** (112,77 $) |
 | `commission_status` | `accrued` après webhook |
-| Ledger | 1 ligne `commission_accrual` · `delta_cents = +4023` |
+| Ledger | 1 ligne `commission_accrual` · `delta_cents = +4833` |
 
 **Vérifications SQL :**
 
@@ -62,11 +62,11 @@ WHERE tribute_checkout_id = :checkout_id AND reason = 'commission_accrual';
 | Champ | Valeur attendue |
 |-------|-----------------|
 | Contexte | Souvenir offert → famille choisit **Éternité** |
-| **Gross Volume** | **29 900¢** (299,00 $) |
-| Platform Fee (10 %) | **2 990¢** |
-| **Net Distribuable** | **26 910¢** |
-| RevShare (30 % du Net) | **8 073¢** (80,73 $) |
-| Odyssey Margin | **18 837¢** (188,37 $) |
+| **Gross Volume** | **34 900¢** (349,00 $) |
+| Platform Fee (10 %) | **3 490¢** |
+| **Net Distribuable** | **31 410¢** |
+| RevShare (30 % du Net) | **9 423¢** (94,23 $) |
+| Odyssey Margin | **21 987¢** (219,87 $) |
 
 ---
 
@@ -75,11 +75,11 @@ WHERE tribute_checkout_id = :checkout_id AND reason = 'commission_accrual';
 | Champ | Valeur attendue |
 |-------|-----------------|
 | Contexte | Upsell Héritage + extension `aiRetouch` |
-| **Gross Volume** | **19 800¢** (149 $ + 49 $) |
-| Platform Fee (10 %) | **1 980¢** |
-| **Net Distribuable** | **17 820¢** |
-| RevShare (30 % du Net) | **5 346¢** (53,46 $) |
-| Odyssey Margin | **12 474¢** (124,74 $) |
+| **Gross Volume** | **22 800¢** (179 $ + 49 $) |
+| Platform Fee (10 %) | **2 280¢** |
+| **Net Distribuable** | **20 520¢** |
+| RevShare (30 % du Net) | **6 156¢** (61,56 $) |
+| Odyssey Margin | **14 364¢** (143,64 $) |
 
 **Note :** le Gross inclut **forfait + extensions** dans la même session Stripe.
 
@@ -104,11 +104,11 @@ WHERE tribute_checkout_id = :checkout_id AND reason = 'commission_accrual';
 
 | Champ | Valeur attendue |
 |-------|-----------------|
-| Prérequis | S1 complété · `commission_cents = 4023` · `gross_payment_cents = 14900` |
-| `refunded_cents` (Stripe) | **7 450¢** (50 % du brut) |
-| **Clawback** | `floor(4023 × 7450 / 14900)` = **2 011¢** (20,11 $) |
-| Ledger | 1 ligne `commission_clawback` · `delta_cents = -2011` |
-| `partner_commission_balances.accrued_cents` | −2011 par rapport à post-S1 |
+| Prérequis | S1 complété · `commission_cents = 4833` · `gross_payment_cents = 17900` |
+| `refunded_cents` (Stripe) | **8 950¢** (50 % du brut) |
+| **Clawback** | `floor(4833 × 8950 / 17900)` = **2 416¢** (24,16 $) |
+| Ledger | 1 ligne `commission_clawback` · `delta_cents = -2416` |
+| `partner_commission_balances.accrued_cents` | −2416 par rapport à post-S1 |
 | `commission_status` | `clawed_back` si remboursement total · sinon partiel (accrued avec solde réduit) |
 
 **Idempotence :** rejouer le même `stripe_event_id` → no-op · HTTP 200.
@@ -119,7 +119,7 @@ WHERE tribute_checkout_id = :checkout_id AND reason = 'commission_accrual';
 
 | ID | Scénario | Gross | Net Distribuable | Commission |
 |----|----------|-------|------------------|------------|
-| S6 | B2C direct Héritage (pas de RevShare) | 14 900¢ | — | **0¢** · `checkout_mode = b2c` |
+| S6 | B2C direct Héritage (pas de RevShare) | 17 900¢ | — | **0¢** · `checkout_mode = b2c` |
 | S7 | ~~Legacy jetons~~ | — | — | **PURGED P8** — ne plus tester |
 | S8 | Double webhook `checkout.session.completed` | S1 | — | **1 seule** accrual · seconde = `already_accrued` |
 
@@ -129,9 +129,9 @@ WHERE tribute_checkout_id = :checkout_id AND reason = 'commission_accrual';
 
 | Scénario | Brut | Ancien (30 % brut) | Bulletproof (10 % + 30 % Net) | Δ partenaire |
 |----------|------|--------------------|-------------------------------|--------------|
-| Héritage seul | 14 900¢ | 4 470¢ | **4 023¢** | −447¢ |
-| Éternité seul | 29 900¢ | 8 970¢ | **8 073¢** | −897¢ |
-| Héritage + Retouche | 19 800¢ | 5 940¢ | **5 346¢** | −594¢ |
+| Héritage seul | 17 900¢ | 5 370¢ | **4 833¢** | −537¢ |
+| Éternité seul | 34 900¢ | 10 470¢ | **9 423¢** | −1 047¢ |
+| Héritage + Retouche | 22 800¢ | 6 840¢ | **6 156¢** | −684¢ |
 
 ---
 

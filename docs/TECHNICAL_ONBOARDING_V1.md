@@ -9,7 +9,7 @@ Ancien hub (pré-purge) : [`_archive/TECHNICAL_ONBOARDING_ODYSSEY_PRE_FREEMIUM.m
 
 ## 1. En 60 secondes
 
-Odyssey = wizard 8 étapes (famille) + Salon partenaire (invitations) + checkout Stripe.
+Odyssey = wizard **7** étapes (famille) + Salon partenaire (invitations) + checkout Stripe + Sanctuaire / Co-Créateur.
 
 | Canal | Flux |
 |-------|------|
@@ -110,20 +110,20 @@ Hors périmètre wizard : `app-backend/` (Brain/Engine legacy).
 
 ---
 
-## 5. Wizard — 8 étapes
+## 5. Wizard — 7 étapes
 
 | # | Étape | Notes V1 |
 |---|--------|----------|
 | 1 | Essentiels | Identité + portrait |
-| 2 | Sources | Réseaux (skip OK) |
-| 3 | Coffre-fort | Upload ; Soft Cap filet à 50 |
-| 4 | Musique | Chapitres Stingray ; Soft Cap dual si piste officielle |
+| 2 | Cercle / Inviter | Lien Sanctuaire + Co-Créateur (owner) |
+| 3 | Coffre-fort | Upload (+ sources sociales) ; Soft Cap filet à 50 |
+| 4 | Musique | Stingray + MP3 perso ToS ; Soft Cap dual si piste officielle |
 | 5 | Montage | **Livre Ouvert** + Composition Magique → Soft Cap principal |
-| 6 | Extensions | Add-ons Quiet Luxury |
-| 7 | Aperçu | Teaser |
-| 8 | Checkout | Panier Soft Cap · rester à 0 $ · Stripe |
+| 6 | Aperçu | Teaser |
+| 7 | Checkout | Panier Soft Cap · **Extensions** Quiet Luxury · rester à 0 $ · Stripe / Rider Fonds |
 
-Canon Étape 5 : [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md).
+Canon Étape 5 : [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md).  
+Co-Créateur (éditeur) : étapes **3–5** seulement — [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md).
 
 ---
 
@@ -150,8 +150,10 @@ Ne plus seed / QA sur `partner_token_wallets` (DROP P8).
 | 2 SQL P8 | ✅ | Appliqué Supabase |
 | 3 Checkout / webhook | ✅ | Soft Cap cart + entitlements |
 | 4 Soft Cap UX | ✅ | Médias · magie · musique dual · stay free |
-| **5** | ⏳ | Creatomate gate entitlements · NFC · Voix · Livre · import MP3+ToS |
+| **5** | ✅ partiel | Gate export stub · MP3+ToS · add-ons Quiet Luxury · **Creatomate worker réel ⏳** |
 | **6** | ⏳ | QA Soft Cap dual · pas de double facturation · RevShare 39 $ |
+| **3a Sanctuaire** | ✅ UI | Contribute · Inviter · Fonds · flag `viral_loop_enabled` OFF |
+| **Collab** | ✅ | Phases A–C — mint/redeem/UI |
 
 ---
 

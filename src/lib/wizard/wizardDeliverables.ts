@@ -127,7 +127,7 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
     },
   },
   HERITAGE: {
-    pricing: { tokens: 0, dollars: 149 },
+    pricing: { tokens: 0, dollars: 179 },
     salon: { enabled: true, aspect: "16:9", audio: "stingray_acts" },
     social: {
       enabled: true,
@@ -147,7 +147,7 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
     },
   },
   ETERNITE: {
-    pricing: { tokens: 0, dollars: 299 },
+    pricing: { tokens: 0, dollars: 349 },
     /** Stingray officiel + soupape MP3 (ToS) — audio primary stingray; upload gated in UI. */
     salon: { enabled: true, aspect: "16:9", audio: "stingray_acts" },
     social: {

@@ -1,6 +1,6 @@
 # Odyssey — Routes applicatives & authentification
 
-**Last updated: June 2026 · B2B2C v2**
+**Last updated: 24 juillet 2026 · Freemium V1 + Cascade + Collab**
 
 Document canonique pour les **URLs**, les **deux pages de connexion** (famille vs partenaire), les **redirects legacy**, et le **branding Salon** (gant blanc). Source de vérité code : `src/lib/appRoutes.ts`.
 
@@ -12,7 +12,7 @@ Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes /
 
 | Zone | URL | Auth | Rôle |
 |------|-----|------|------|
-| **Studio** (famille) | `/[lang]/studio` | Oui | Wizard hommage 8 étapes — B2C direct |
+| **Studio** (famille) | `/[lang]/studio` | Oui (ou cookie editor) | Wizard hommage **7** étapes — B2C / B2B2C / Co-Créateur |
 | **Studio connexion** | `/[lang]/studio/connexion` | Non | Login + **inscription** famille |
 | **Salon** (funérarium) | `/[lang]/salon` | Oui | Console partenaire — invitations, commissions |
 | **Salon facturation** | `/[lang]/salon/facturation` | Oui | Admin (`canRecharge`) — solde, découvert, recharge (Payment Link optionnel) |
@@ -36,22 +36,31 @@ Routes **prévues** pour l’ingestion mobile photos papier via QR Code wizard d
 
 **Sécurité :** pas de login mobile requis — token lié à **un seul** `project_id` · rate limit uploads · pas d’app native (web only).
 
-**Pont conversion :** preview IA Avant/Après → upsell forfaits **Éternité (299 $)** ou **Légendaire (499 $)** — voir [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
+**Pont conversion :** preview IA Avant/Après → upsell forfaits **Éternité (349 $)** ou **Légendaire (499 $)** — voir [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
 
-### Boucle Virale — Fonds Commémoratif (Cascade V-Final ✅ livré)
+### Boucle Virale — Fonds Commémoratif (Cascade V-Final · UI 3a ✅)
 
-Contribution invité async : les proches achètent des **Support Packs** dont le Net Distribuable
-devient un **crédit** sur le paywall famille. Gated par `tenants.settings.viral_loop_enabled`.
-Canon : [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
+Contribution invité async : les proches achètent des **empreintes** dont le Net Distribuable devient un **crédit** sur le paywall famille. Gated par `tenants.settings.viral_loop_enabled` (**false** en prod jusqu’au pilote). Canon : [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
 
 | Route | Auth | Rôle |
 |-------|------|------|
-| **`POST /api/projects/[id]/contribute-link`** | Owner projet | Génère un lien invité opaque (`project_access_tokens`, `purpose=guest_contribute`, TTL 30 j) |
-| **`GET /api/contribute/[token]`** | Token invité (public) | Contexte page contributeur : hommage minimal + catalogue Support Packs + fonds levé |
-| **`POST /api/contribute/[token]/checkout`** | Token invité (public) | Crée `guest_micro_checkouts` + session Stripe `checkout_mode=guest_support` + `consent_records` (Loi 25) |
-| **`/[lang]/contribute/[token]`** | Token invité (public) | Page publique d'achat Support Pack — **UI Phase 3 ⏳** |
+| **`POST /api/projects/[id]/contribute-link`** | Owner projet | Génère un lien invité opaque (`purpose=guest_contribute`, TTL 30 j) |
+| **`GET /api/contribute/[token]`** | Token invité (public) | Contexte page contributeur |
+| **`POST /api/contribute/[token]/checkout`** | Token invité (public) | Session Stripe `guest_support` |
+| **`POST /api/contribute/[token]/deposit`** | Token invité (public) | Dépôt gratuit (1 photo OU 1 mot) |
+| **`/[lang]/contribute/[token]`** | Token invité (public) | **UI Sanctuaire livrée** (Phase 3a) |
 
-**Sécurité :** token opaque SHA-256 (`src/lib/contribute/contributeToken.ts`), résolu via client admin (bypass RLS) ; cap **1000 $/transaction** ; accrual (commission + crédit) fait **au webhook** `guest_support` (jamais au POST).
+### Co-Créateur (Phases A–C ✅)
+
+| Route | Auth | Rôle |
+|-------|------|------|
+| **`/[lang]/collab/[token]`** | Token one-shot | Redeem → cookie httpOnly editor → redirect `/studio` |
+| **`POST /api/collab/redeem`** | Token | Hash SHA-256 · révocation + grâce idempotente |
+| **`POST /api/projects/[id]/collab-link`** | Owner | Mint lien (TTL 14 j) · révoque les précédents |
+
+Canon : [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md).
+
+**Sécurité contribute :** token opaque SHA-256, client admin (bypass RLS) ; cap **1000 $/transaction** ; accrual au webhook.
 
 `lang` = `fr` | `en`.
 

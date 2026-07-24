@@ -61,8 +61,8 @@ The tribute wizard is driven by [`wizardDeliverables.ts`](../src/lib/wizard/wiza
 
 | Canal | Forfaits visibles | Règle |
 |-------|-------------------|-------|
-| **B2B2C freemium** | **Souvenir** 0 $ + Soft Cap / upsell **Héritage 149 $** · **Éternité 299 $** + add-ons (`musicLicense`, etc.) | Lead-magnet · pas de Légendaire · **pas de jetons** |
-| **B2C direct** | **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $** | Pas de Souvenir |
+| **B2B2C freemium** | **Souvenir** 0 $ + Soft Cap / upsell **Héritage 179 $** · **Éternité 349 $** + add-ons (`musicLicense`, etc.) | Lead-magnet · pas de Légendaire · **pas de jetons** |
+| **B2C direct** | **Héritage 179 $** · **Éternité 349 $** · **Légendaire 499 $** | Pas de Souvenir |
 | ~~B2B legacy jetons~~ | — | **PURGED P8** |
 
 Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
@@ -75,7 +75,7 @@ Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans 
 |-------------|--------|
 | ≥ 50 médias (filet) | Propose Héritage → `intended = signature` |
 | Post Composition Magique | Soft Cap principal (si encore Souvenir) |
-| Piste catalogue officiel | Dual Licence 39 $ / Héritage 149 $ — piste non bloquée |
+| Piste catalogue officiel | Dual Licence 39 $ / Héritage 179 $ — piste non bloquée |
 
 `resolveMusicEntitlement(intended, extensions)` → catalogue officiel si `intended >= signature` **OU** `musicLicense`.
 
@@ -95,7 +95,7 @@ Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans 
 | Decision | Why |
 |----------|-----|
 | **Le Dossier** (off-canvas vs dropdown) | Reduce visual cognitive load (8 circles → 3 phases); avoid cheap e-commerce dropdown; package consultable from any step without polluting step body |
-| **DEFAULT_B2C_BASE_PACKAGE = "heritage"** (Éternité, 299 $) | Psychological anchoring on real mid-tier B2C (149/299/499 $) + best savings ratio (67 $ badge); no card picker at Step 1 since `WizardBasePackagePicker` removal |
+| **DEFAULT_B2C_BASE_PACKAGE = "heritage"** (fallback) | Ancien ancrage Éternité ; **supplanté Cascade V-Final** : init via `ChannelProfile` (B2B2C → `essential`, B2C → `signature` / Héritage **179 $**) |
 | **Step 4 ↔ 5 reorder** | Chapter media capacity depends on `durationSec` — music choice must precede media assignment |
 | **Clean Slate Step 5** | `SoundSignatureStep` showed functional UI but inputs were silently ignored by `coerceWizardState()` — misleading UX, not mere tech debt |
 | **`useWizardStoryboard`** | Isolate chapter domain from `TributeWizard` (~1780 lines) before `dnd-kit`; hook stays pure (no autosave) |
@@ -173,9 +173,8 @@ Package selection is no longer step-bound: the Dossier trigger (`PackageDossierP
 | 3 | `stepperVault` | Dropzone + upload queue + **Scanner Compagnon QR** (cible) | `media_assets` rows; reload `GET /api/projects/[id]/media` · voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | 4 | `stepperChapters` | **Chapitres musicaux dynamiques** (`StoryboardChaptersStep`, live — ✅ `S6`) | `storyboard.chapters[].song` (canonique, plus de bridge) |
 | 5 | `stepperSound` | **Livre Ouvert** — `StoryboardMontageStep` (DnD, magie, actions chapitre) | `storyboard` (canonique) |
-| 6 | `stepperExtensions` | Upsell cards + Heritage Pack; **bundle rules** when `basePackage=heritage` | `extensions` |
-| 7 | `stepperPreview` | Copy + `CinematicTeaser` | Reads canonical `storyboard` through the temporary legacy preview bridge |
-| 8 | `stepperCheckout` | Cart recap + pay CTA | `POST /api/checkout` |
+| 6 | `stepperPreview` | Copy + `CinematicTeaser` | Aperçu |
+| 7 | `stepperCheckout` | Cart Soft Cap + **Extensions** Quiet Luxury + pay CTA | `POST /api/checkout` |
 
 ---
 
@@ -213,7 +212,7 @@ sequenceDiagram
   basePackage?: "essential" | "signature" | "heritage" | "legendary",  // legendary = B2C P6
   pricing?: {
     basePackage: "signature",
-    baseCents: 14900,                  // integers only
+    baseCents: 17900,                  // integers only
     optionsCents: 4900,
     totalCents: 19800,
     partnerTokenCost?: 2               // B2B only
@@ -312,8 +311,8 @@ Audio `src` uses `track.previewUrl` (typically `/api/music/preview?trackId=…`)
 | Technical ID | Marketing | B2C | B2B2C famille |
 |--------------|-----------|-----|---------------|
 | `essential` | Souvenir | non vendu | **0 $** (granted) |
-| `signature` | Héritage | 14 900¢ | 14 900¢ Soft Cap delta |
-| `heritage` | Éternité | 29 900¢ | 29 900¢ |
+| `signature` | Héritage | 17 900¢ | Soft Cap delta |
+| `heritage` | Éternité | 34 900¢ | |
 | `legendary` | Légendaire | 49 900¢ | non proposé |
 
 Helpers clés : `packageCents` · `computeWizardCart` · `computeWizardCartWithGrant` · `resolveMusicEntitlement`.  
@@ -334,9 +333,9 @@ Add-ons V1 : `musicLicense`, `sanctuaryToken`, `storyVoice`, `memoryBook`, `aiRe
 
 ---
 
-## Step 8 — Checkout
+## Step 7 — Checkout
 
-- **UI:** `CheckoutStep.tsx` — panier Soft Cap · CTA rester à 0 $ · erreurs amputation
+- **UI:** `CheckoutStep.tsx` — panier Soft Cap · **Extensions** · CTA rester à 0 $ · Rider Fonds · erreurs amputation
 - **API:** `app/api/checkout/route.ts` — Soft Cap grant · `freemium_free` · Stripe
 - **Commerce:** [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)
 
@@ -368,7 +367,7 @@ Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WAT
 ### Mode `b2c` (famille directe — Quiet Luxury)
 
 - Pas d’invitation partenaire ; **pas de Souvenir**.
-- Forfaits : **Héritage 149 $** · **Éternité 299 $** (recommandé) · **Légendaire 499 $** (Gants Blancs).
+- Forfaits : **Héritage 179 $** · **Éternité 349 $** (recommandé) · **Légendaire 499 $** (Gants Blancs).
 - Extensions à la carte · **pas de RevShare**.
 
 ### Mode `b2b_partner` (legacy jetons funérarium)
@@ -393,7 +392,7 @@ Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WAT
 | `PackageDossierPanel` | Global header, Step 1+ (`hidePrices` when partner) | Off-canvas — inclusions exhaustives + **Éternité savings badge** (67 $) + comparaison cross-fade |
 | `WizardCartSummary` | Steps 5–6 (B2C only) | Line recap |
 | `StoryboardMontageStep` | Step 5 | Livre Ouvert — DnD, Composition Magique — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
-| `MontageExtensionsStep` | Step 6 | Extensions + « Déjà inclus » when Heritage |
+| `MontageExtensionsStep` | Checkout (étape 7) | Extensions + « Déjà inclus » when Heritage |
 
 ---
 

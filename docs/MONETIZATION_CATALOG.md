@@ -12,7 +12,7 @@ l'**invité** peut offrir — plus les leviers **documentés à venir** et les *
 
 **Règle d'or (SANCTUARY §2) :** chaque SKU s'accroche à un **moment émotionnel** — jamais à un écran « boutique ».
 
-**Légende statut :** ✅ Livré (config/runtime) · 🔜 UI Phase 3a · 💡 Idée · ⚠️ Déprécié.
+**Légende statut :** ✅ Livré (config/runtime) · 🔜 À venir · 💡 Idée · ⚠️ Déprécié.
 
 ---
 
@@ -83,7 +83,7 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 
 | Levier / SKU | Prix | Horizon | Statut |
 |--------------|------|---------|--------|
-| UI Sanctuaire + Inviter + Fonds checkout (Phase 3a) | — | **Maintenant** | 🔜 (tunnel dépôt ✅) |
+| UI Sanctuaire + Inviter + Fonds checkout (Phase 3a) | — | **Livré** | ✅ (flag viral OFF) |
 | Enforce plafonds 5 photos + multi-dépôt proche | — | Fin 3a | 🔜 |
 | Capture voix + **témoignage live** + mini-clip 30 s (Phase 3b) | inclus packs / 1 clip | Après 3a | 🔜 |
 | Aide IA rédaction du **mot** (suggestions optionnelles) | coût API | Phase 3b+ | 💡 → 🔜 |

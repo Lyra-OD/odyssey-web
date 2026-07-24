@@ -97,7 +97,7 @@ Deux voies commerciales Stingray + soupape MP3 :
 | **officiel** (orchestral / cinématique, zéro copyright Odyssey) | Héritage / Éternité **inclus** · **ou** Souvenir + add-on | `intended >= signature` **OU** `musicLicense` (39 $) |
 | **upload** MP3/WAV | Héritage+ uniquement | ToS user — pas Stingray |
 
-> **Soft Cap Souvenir :** sélection d’une piste **officielle** non bloquée → choix **Licence `musicLicense` 39 $** (reste Souvenir) **ou** upgrade **Héritage 149 $**.  
+> **Soft Cap Souvenir :** sélection d’une piste **officielle** non bloquée → choix **Licence `musicLicense` 39 $** (reste Souvenir) **ou** upgrade **Héritage 179 $**.  
 > Migration TS : `extendedLicense` → **`musicLicense`** ; helper cible `resolveMusicEntitlement` (alias possible de `resolveMusicCatalogTier`).
 
 ### Resolution (contrat Phase 1)
@@ -129,9 +129,9 @@ GET /api/music/search?q=Adele&limit=12&tier=premium
 
 ### Step 4 UX (`ChapterMusicPanel`) — cible Phase 4
 
-- Bannière standard : Soft Cap dual (Licence 39 $ \| Héritage 149 $) — pas de paywall brutal.
+- Bannière standard : Soft Cap dual (Licence 39 $ \| Héritage 179 $) — pas de paywall brutal.
 - Bannière official : catalogue débloqué (forfait ou Licence).
-- Import MP3 : masqué Souvenir ; visible Héritage+ + attestation ToS.
+- Import MP3 : **disponible tous forfaits** (Souvenir inclus) + attestation ToS.
 - `durationSec` pour pacing (`storyboardPacing.ts`).
 
 ### Checkout / export
@@ -289,7 +289,7 @@ Pricing is **not** part of Stingray; see [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PI
 
 ### B2C direct (Quiet Luxury)
 
-- Stripe cents: **Héritage 149 $** · **Éternité 299 $** · **Légendaire 499 $**.
+- Stripe cents: **Héritage 179 $** · **Éternité 349 $** · **Légendaire 499 $**.
 - Catalogue Stingray **officiel (premium)** inclus dès Héritage+.
 
 ### B2B2C freemium

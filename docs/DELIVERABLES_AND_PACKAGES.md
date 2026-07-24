@@ -1,11 +1,11 @@
 # Contrat de Livrables & Packages (Manifeste) — Pivot Freemium V1
 
-**Last updated: July 2026 · Version: Freemium V1 (purge jetons)**
+**Last updated: 24 juillet 2026 · Version: Freemium V1 + Cascade V-Final (grille Quiet Luxury)**
 
 **Canon pivot :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · Musique ToS : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 
 Document canonique **produit** pour forfaits, livrables vidéo, add-ons Quiet Luxury, Soft Cap.  
-**Implémentation TS (Phase 1) :** `wizardDeliverables.ts` · `pricingConfig.ts` — *code encore partiellement legacy jusqu’à Phase 1.*  
+**Implémentation TS :** `pricingConfig.ts` (source de vérité prix) · `wizardDeliverables.ts` (capacités).  
 **Commerce :** [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · **RevShare :** [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
 
 > **V1 = freemium only.** Wholesale jetons 40 $, wallets, et coexistence `is_freemium = false` sont **obsolètes** (purge SQL Phase 2).
@@ -32,25 +32,27 @@ Document canonique **produit** pour forfaits, livrables vidéo, add-ons Quiet Lu
 | `PARTNER_PACKAGE_IDS` | SOUVENIR, HERITAGE, ETERNITE | Invitations Salon |
 | `B2C_DIRECT_PACKAGE_IDS` | HERITAGE, ETERNITE, LEGENDAIRE | Studio B2C |
 
-État wizard V1 : **`grantedPackage`** + **`intendedPackage`** (migration depuis `basePackage` — Phase 1). Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md).
+État wizard V1 : **`grantedPackage`** + **`intendedPackage`**. Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md).
 
 ---
 
-## Grille forfaits V1 (figée)
+## Grille forfaits V1 (figée — Quiet Luxury accessible)
 
 | Forfait | ID | Prix | Médias | Chansons | Export | Musique |
 |---------|-----|------|--------|----------|--------|---------|
-| **Souvenir** | `essential` | **0 $** | 50 | 2 | **1080p** | Stingray **standard** ; catalogue officiel via Soft Cap |
-| **Héritage** | `signature` | **149 $** | 125 | 4–5 | **4K** | **Catalogue Stingray officiel inclus** + soupape MP3/WAV |
-| **Éternité** | `heritage` | **299 $** | 175 | 5–7 | **4K** | Idem + **IA complète** + **Coffre 50 ans** inclus |
+| **Souvenir** | `essential` | **0 $** | 50 | 2 | **1080p** | Preview Stingray + **MP3 perso (ToS)** — 0 piste licenciée exportée |
+| **Héritage** | `signature` | **179 $** | 125 | 4–5 | **4K** | **Catalogue Stingray officiel inclus** + soupape MP3/WAV |
+| **Éternité** | `heritage` | **349 $** | 175 | 5–7 | **4K** | Idem + **IA complète** + **Coffre 50 ans** inclus |
 | **Légendaire** | `legendary` | **499 $** | 250 | 7–10 | **4K** | Idem Éternité + boîte pré-affranchie (B2C) |
+
+> Source runtime : `src/lib/wizard/pricingConfig.ts` (17 900 / 34 900 / 49 900 ¢).
 
 ### Canaux
 
 | Canal | Forfaits | Qui paie | RevShare |
 |-------|----------|----------|----------|
-| **B2B2C freemium** | Souvenir offert · upsell 149 / 299 $ + add-ons | Famille (Stripe) | **30 % Net Distribuable** |
-| **B2C direct** | 149 / 299 / 499 $ + add-ons | Famille | Non |
+| **B2B2C freemium** | Souvenir offert · upsell **179 / 349 $** + add-ons | Famille (Stripe) | **30 % Net Distribuable** |
+| **B2C direct** | **179 / 349 / 499 $** + add-ons | Famille | Non |
 | **Salon partenaire** | Compose invitation (Souvenir typique) | — (0 $ entrée) | Accrual sur paiements famille |
 
 **Mode affichage :** dollars uniquement pour la famille ; Salon = commissions (pas de jetons).
@@ -68,27 +70,26 @@ Document canonique **produit** pour forfaits, livrables vidéo, add-ons Quiet Lu
 | Restauration IA | 49 $ | `aiRetouch` | Oui | Masquer si Éternité+ (inclus) |
 | Coffre-fort 50 ans | 99 $ | `digitalVault` | Oui | Masquer si Éternité+ (inclus) |
 
-**Migration TS Phase 1 :** `extendedLicense` → `musicLicense` · `collectorUsb` → `sanctuaryToken`.
+**Migration TS :** `extendedLicense` → `musicLicense` · `collectorUsb` → `sanctuaryToken`.
 
-Waterfall : Gross session (forfait + add-ons) → Platform 10 % → Net → RevShare 30 %. Ex. Héritage + IA : voir [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md).
+Waterfall : Gross session (forfait + add-ons) → Platform 10 % → Net → RevShare 30 %. Ex. Héritage : voir [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md).
 
 ---
 
-## Support Packs invités — Boucle Virale (Cascade V-Final ✅ livré)
+## Empreintes Sanctuaire — Boucle Virale (Cascade V-Final)
 
-Achetés par **les proches** (invités anonymes) sur `/[lang]/contribute/[token]`. Achat personnel
-à bénéfice collectif : le **Net Distribuable** devient un **crédit** qui fait fondre le paywall famille
-(cascade P1→P2→P3). Source : `src/lib/wizard/guestSupportPacks.ts` · canon [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
+Achetées par **les proches** sur `/[lang]/contribute/[token]`. Achat personnel à bénéfice collectif : le **Net Distribuable** devient un **crédit** qui fait fondre le paywall famille (cascade P1→P2→P3). Source : `src/lib/wizard/guestSupportPacks.ts` · canon [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
 
-| Support Pack | Prix | `product_key` | Notes |
-|--------------|------|---------------|-------|
-| **Pack Héritage** (HD + Version Sociale + Page Livre d'or) | **89 $** | `guest_heritage` | Ancre panier (cible ~50 $) |
-| **Pack Soutien Numérique** (Copie HD) | **49 $** | `guest_hd` | Friction moyenne |
-| **Bougie Commémorative Digitale** | **15 $** | `guest_candle` | Friction basse |
+| Empreinte | Prix | `product_key` | Notes |
+|-----------|------|---------------|-------|
+| **Voix dans le film** | **69 $** | `guest_voice` | Ancre / cœur |
+| **Témoignage filmé** (live) | **119 $** | `guest_video` | Capture live Phase 3b |
+| **Coproduction** | **129 $** | `guest_heritage` | HD + social + générique |
+| **Bougie** | **15 $** | `guest_candle` | Secondaire |
+| **Mécène** | **150–1000 $** | `guest_patron` | Montant libre (sugg. 250 $) |
+| Pack HD | ~~49 $~~ | `guest_hd` | **⚠️ DÉPRÉCIÉ** |
 
-**Règles :** cap dur **1000 $/transaction** (anti-abus) · commission Athos `guest_commission_accrual`
-(30 % du Net) **uniquement si tenant `is_freemium`** · crédit fonds = `Net × fund_conversion_bps`
-(défaut 100 %) porté par la marge Odyssey · capture email + `consent_marketing` (Loi 25, LTV Jour-365).
+**Règles :** cap dur **1000 $/transaction** · commission Athos `guest_commission_accrual` (30 % du Net) **uniquement si tenant `is_freemium`** · crédit fonds = `Net × fund_conversion_bps` (défaut 100 %) · `viral_loop_enabled` **false** en prod jusqu’à pilote.
 
 ---
 
@@ -97,7 +98,7 @@ Achetés par **les proches** (invités anonymes) sur `/[lang]/contribute/[token]
 | Déclencheur | Comportement |
 |-------------|--------------|
 | ≥ 50 médias | Soft Cap → `intendedPackage = signature` |
-| Piste catalogue **officiel** depuis Souvenir | **Non bloquée** → choix **Licence 39 $** (`musicLicense`, reste Souvenir) **ou** **Héritage 149 $** |
+| Piste catalogue **officiel** depuis Souvenir | **Non bloquée** → choix **Licence 39 $** (`musicLicense`) **ou** **Héritage 179 $** |
 
 ```text
 resolveMusicEntitlement(intended, extensions, paid):
@@ -117,21 +118,21 @@ Détail : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`STINGRAY_MUSIC_I
 | Voie | Qui | Licence |
 |------|-----|---------|
 | **Catalogue Stingray officiel** | Héritage / Éternité inclus ; Souvenir via Soft Cap | Plateforme Odyssey |
-| **Stingray standard** | Souvenir (sous-ensemble) | Plateforme |
-| **Import MP3/WAV** | Héritage+ (masqué Souvenir) | User ToS — [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) |
+| **Preview Stingray** | Souvenir (aperçu, non exporté) | Plateforme |
+| **Import MP3/WAV** | **Tous forfaits** (Souvenir inclus) + attestation ToS | User ToS — [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) |
 
 Social 9:16 (Safe Music) : Héritage+ — cible produit ⏳.
 
 ---
 
-## Capacités manifeste (contrat TS cible)
+## Capacités manifeste (contrat TS)
 
 ```typescript
 limits: { maxMediaItems; maxSongs }
 rendering: { exportResolution: '1080p' | '4K' }
 music: {
   catalog: 'standard' | 'official';  // official inclus signature+
-  allowPersonalUpload: boolean;       // signature+
+  allowPersonalUpload: boolean;       // true tous forfaits (ToS)
 }
 features: {
   aiRestoration: boolean;             // heritage+
@@ -140,8 +141,6 @@ features: {
   whiteGloveDigitization: boolean;    // legendary
 }
 ```
-
-Pacing storyboard : `recommendedMediaCapacity = floor(durationSec / targetSecondsPerMedia)` — inchangé S4.
 
 ---
 
@@ -158,8 +157,8 @@ Jamais : jeton, commission, RevShare.
 | Carte | Libellé |
 |-------|---------|
 | Souvenir | **Inclus** |
-| Héritage | **149 $** |
-| Éternité | **299 $** |
+| Héritage | **179 $** |
+| Éternité | **349 $** |
 | Licence Stingray | **+39 $** (si Soft Cap Licence) |
 | Autres add-ons | **+{prix} $** |
 
@@ -170,25 +169,20 @@ Jamais : jeton, commission, RevShare.
 | Action | Message |
 |--------|---------|
 | Invitation Souvenir | **Gratuit** — cadeau Sanctuaire |
-| Upsell famille | 149 $ / 299 $ + add-ons → commission Net Distribuable |
+| Upsell famille | **179 $ / 349 $** + add-ons → commission Net Distribuable |
 | Solde | **Commissions** (`partner_commission_balances`) — plus de wallet jetons |
 
 ---
 
-## Matrice implémentation (Pivot V1)
+## Matrice implémentation (snapshot 24 juil. 2026)
 
 | Capacité | Statut |
 |----------|--------|
-| Canon docs FREEMIUM_V1 + Soft Cap + musique | ✅ Phase 0 |
-| Manifeste TS grille 4K / musicLicense / sanctuaryToken | ✅ Phase 1 |
-| `grantedPackage` / `intendedPackage` | ✅ Phase 1 |
-| Purge SQL jetons + invitation sans débit | ✅ Phase 2 (P8 appliqué) |
-| Soft Cap UI dual musique | ✅ Phase 4 |
-| Creatomate post-webhook | ⏳ Phase 5 |
-| NFC / Voix / Livre fulfillment | ⏳ Phase 5 |
+| Grille prix runtime | ✅ `pricingConfig` |
+| Soft Cap médias / musique | ✅ |
+| Empreintes Sanctuaire config | ✅ |
+| UI Sanctuaire / Inviter / Fonds | ✅ Phase 3a (flag viral OFF) |
+| Co-Créateur Studio | ✅ Phases A–C |
+| Creatomate worker | ⏳ stub |
 
----
-
-## Maintenance
-
-Aligner ce fichier sur [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) à chaque changement de grille. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md). Phases 0–4 livrées ; 5–6 remaining.
+*Document vivant — aligné grille Quiet Luxury 179/349/499 · rapport partenaire : [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md) · business case : [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md).*

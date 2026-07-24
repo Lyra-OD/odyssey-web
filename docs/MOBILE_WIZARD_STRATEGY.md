@@ -2,7 +2,7 @@
 
 **Dernière révision : juillet 2026**
 
-Document canonique pour l’ergonomie mobile du wizard hommage (8 étapes). Croise l’audit code juillet 2026, les bonnes pratiques [Forbes Tech Council (sept. 2023)](https://www.forbes.com/councils/forbestechcouncil/2023/09/05/20-expert-tips-for-building-an-ergonomic-user-friendly-mobile-app/) et [Ferpection (mai 2022)](https://blog.ferpection.com/en/the-ergonomics-of-a-mobile-application-best-practices).
+Document canonique pour l’ergonomie mobile du wizard hommage (**7** étapes). Croise l’audit code juillet 2026, les bonnes pratiques [Forbes Tech Council (sept. 2023)](https://www.forbes.com/councils/forbestechcouncil/2023/09/05/20-expert-tips-for-building-an-ergonomic-user-friendly-mobile-app/) et [Ferpection (mai 2022)](https://blog.ferpection.com/en/the-ergonomics-of-a-mobile-application-best-practices).
 
 **Documents liés :**
 - [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) — architecture wizard

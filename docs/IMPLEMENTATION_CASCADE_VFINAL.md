@@ -1,6 +1,6 @@
 # Odyssey — Plan d'implémentation : Boucle Virale / Fonds Commémoratif (Cascade V-Final)
 
-**Statut : APPROUVÉ CEO · Phase 1–2 ✅ · Phase 0 grille/UX Sanctuaire (22 juil. 2026) ✅ · Phase 3a Frontend ⏳**
+**Statut : APPROUVÉ CEO · Phase 1–2 ✅ · Phase 0 grille/UX Sanctuaire (22 juil. 2026) ✅ · Phase 3a Frontend UI ✅ (flag `viral_loop_enabled` OFF) · Phase 3b capture live ⏳**
 
 Document canonique d'implémentation de la **Boucle Virale (Fonds Commémoratif)** et du pivot
 d'entrée émotionnelle (Brouillon gratuit → paywall à l'export financé par les contributions
@@ -158,17 +158,16 @@ nouveaux `memorialFund.cascade.test.ts`, `channelProfile.test.ts`.
 **Gamification :** rôles + cercle (pas de jauge $ côté invité).  
 **Famille checkout :** reste-à-payer Fonds discret + Rider 0 $.
 
-### Phase 3a — à coder (flag off jusqu'à done)
+### Phase 3a — UI ✅ livrée (flag `viral_loop_enabled` OFF jusqu’au pilote)
 
-| Surface | Action |
+| Surface | Statut |
 |---------|--------|
-| `app/[lang]/contribute/[token]/page.tsx` | **NEW** — Sanctuaire public (tunnel 2 temps) |
-| `POST /api/contribute/[token]/deposit` (ou équivalent) | **NEW** — dépôt gratuit photo/mot (admin, `contributor_type=guest`) |
-| `POST .../checkout` | **ADAPT** — Mécène `amountCents` 150–1000 |
-| `GET .../contribute/[token]` | **ADAPT** — cercle (noms/count), pas $ invité |
-| Panneau Inviter (Wizard) | **NEW** — `contribute-link` + QR + copy Immortaliser |
-| `CheckoutStep.tsx` | **ADAPT** — Fonds + reste-à-payer + Rider 0 $ |
-| i18n fr/en | Copy Sanctuaire / empreintes / cercle / Rider |
+| `app/[lang]/contribute/[token]/page.tsx` | ✅ Sanctuaire public |
+| `POST /api/contribute/[token]/deposit` | ✅ Dépôt gratuit |
+| Checkout Mécène `amountCents` | ✅ |
+| Panneau Inviter (Wizard) | ✅ |
+| `CheckoutStep` Fonds + Rider 0 $ | ✅ |
+| Restes 3a | Enforce 5 photos API · flag prod ON |
 
 ### Phase 3b+ (différé)
 

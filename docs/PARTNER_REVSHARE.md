@@ -21,7 +21,7 @@ Complète [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · schéma P6 : [`sql/odyssey
 
 **Modèle Bulletproof (figé juillet 2026) :**
 
-1. **Gross Volume** = `checkout.session.amount_total` (forfait + extensions, ex. Héritage 149 $ **ou** Souvenir 0 $ + `musicLicense` 39 $)
+1. **Gross Volume** = `checkout.session.amount_total` (forfait + extensions, ex. Héritage **179 $** **ou** Souvenir 0 $ + `musicLicense` 39 $)
 2. **Platform Fee** = 10 % du brut (`platform_fee_bps = 1000`)
 3. **Net Distribuable** = Gross − Platform Fee
 4. **Partner Commission** = 30 % du Net Distribuable (`commission_rate_bps = 3000`)
@@ -158,9 +158,9 @@ odyssey_margin_cents    = net_distributable_cents − commission_cents
 
 | Exemple | Gross Volume | Platform Fee | **Net Distribuable** | Taux | Commission |
 |---------|--------------|--------------|----------------------|------|------------|
-| Upsell Héritage seul | 14 900¢ (149 $) | 1 490¢ | **13 410¢** | 30 % | **4 023¢** (40,23 $) |
-| Upsell Éternité seul | 29 900¢ (299 $) | 2 990¢ | **26 910¢** | 30 % | **8 073¢** (80,73 $) |
-| Héritage + Retouche IA (49 $) | 19 800¢ | 1 980¢ | **17 820¢** | 30 % | **5 346¢** (53,46 $) |
+| Upsell Héritage seul | 17 900¢ (179 $) | 1 790¢ | **16 110¢** | 30 % | **4 833¢** (48,33 $) |
+| Upsell Éternité seul | 34 900¢ (349 $) | 3 490¢ | **31 410¢** | 30 % | **9 423¢** (94,23 $) |
+| Héritage + Retouche IA (49 $) | 22 800¢ | 2 280¢ | **20 520¢** | 30 % | **6 156¢** (61,56 $) |
 
 **Règles :**
 
@@ -306,7 +306,7 @@ accrue_partner_commission_for_checkout(
 clawback_cents = floor(commission_cents_snapshot × refunded_cents / gross_payment_cents_snapshot)
 ```
 
-Exemple : S1 Héritage — commission 4 023¢ sur brut 14 900¢ — remboursement 50 % (7 450¢) → clawback `floor(4023 × 7450 / 14900)` = **2 011¢** (20,11 $).
+Exemple : S1 Héritage — commission 4 833¢ sur brut 17 900¢ — remboursement 50 % (8 950¢) → clawback `floor(4833 × 8950 / 17900)` = **2 416¢** (24,16 $).
 
 > **Pourquoi proportionnel ?** Préserve la cohérence du waterfall Bulletproof sur remboursements partiels, indépendamment des arrondis `floor` intermédiaires.
 
@@ -509,16 +509,16 @@ $$;
 
 ```sql
 -- Héritage seul
-SELECT compute_revenue_waterfall(14900, 1000, 3000);
--- → net_distributable_cents: 13410, commission_cents: 4023, platform_fee_cents: 1490
+SELECT compute_revenue_waterfall(17900, 1000, 3000);
+-- → net_distributable_cents: 16110, commission_cents: 4833, platform_fee_cents: 1790
 
 -- Éternité seul
-SELECT compute_revenue_waterfall(29900, 1000, 3000);
--- → net_distributable_cents: 26910, commission_cents: 8073
+SELECT compute_revenue_waterfall(34900, 1000, 3000);
+-- → net_distributable_cents: 31410, commission_cents: 9423
 
 -- Héritage + Retouche IA
-SELECT compute_revenue_waterfall(19800, 1000, 3000);
--- → net_distributable_cents: 17820, commission_cents: 5346
+SELECT compute_revenue_waterfall(22800, 1000, 3000);
+-- → net_distributable_cents: 20520, commission_cents: 6156
 ```
 
 **Clawback helper (pseudo) :**

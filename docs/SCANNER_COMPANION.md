@@ -2,7 +2,7 @@
 
 **Last updated: July 2026 · Version: B2B2C v2**
 
-Document canonique pour le **Scanner Compagnon Web** : ingestion mobile de photos papier via QR Code, restauration IA en temps réel, et pont de conversion vers les forfaits **Éternité (299 $)** et **Légendaire / Gants Blancs (499 $)**.
+Document canonique pour le **Scanner Compagnon Web** : ingestion mobile de photos papier via QR Code, restauration IA en temps réel, et pont de conversion vers les forfaits **Éternité (349 $)** et **Légendaire / Gants Blancs (499 $)**.
 
 Complète [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 
@@ -27,7 +27,7 @@ Desktop Wizard  ←—— temps réel ——→  Mobile Scanner (PWA web)
        ↓                                    ↓
   Avant/Après IA (upsell gate)      Upload Supabase Storage
        ↓
-  Checkout Éternité 299 $  ou  Légendaire 499 $
+  Checkout Éternité 349 $  ou  Légendaire 499 $
 ```
 
 ---
@@ -82,7 +82,7 @@ Desktop Wizard  ←—— temps réel ——→  Mobile Scanner (PWA web)
 |-------|---------|--------------|
 | 1 | `RestorationPreviewModal` | Slider **Avant / Après** sur la photo scanner |
 | 2 | Gate freemium | Preview **complète** si Éternité/Légendaire · **floutée / watermark** sinon |
-| 3 | CTA | « Débloquer la restauration IA — **Éternité 299 $** » · lien secondaire **Légendaire 499 $** (Gants Blancs) |
+| 3 | CTA | « Débloquer la restauration IA — **Éternité 349 $** » · lien secondaire **Légendaire 499 $** (Gants Blancs) |
 | 4 | Checkout | Pré-sélection `basePackage = heritage` ou `legendary` · scroll étape checkout |
 
 ### Acte 5 — Légendaire Gants Blancs (B2C)
@@ -229,7 +229,7 @@ Alignement egress : [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §4.1 (thumbs WebP,
 **Composant UI :** `RestorationPreviewModal.tsx`
 
 - Props : `mediaId`, `beforeUrl`, `afterUrl`, `canFullPreview`, `upsellPackages`
-- CTA primaire : **Éternité 299 $** (`heritage`)
+- CTA primaire : **Éternité 349 $** (`heritage`)
 - CTA secondaire : **Légendaire 499 $** (`legendary`) — copy Gants Blancs
 
 ---
@@ -252,7 +252,7 @@ Le desktop **ne doit pas** require un refresh manuel après upload mobile.
 
 | Origine | Package pré-sélectionné | Montant |
 |---------|-------------------------|---------|
-| CTA « Éternité » depuis Scanner | `heritage` | 29 900¢ (299 $) + extensions |
+| CTA « Éternité » depuis Scanner | `heritage` | 34 900¢ (349 $) + extensions |
 | CTA « Légendaire » depuis Scanner | `legendary` | 49 900¢ (499 $) + extensions |
 | Canal B2B2C freemium (invitation) | `heritage` ou `signature` | Prix upsell partenaire — voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
 | B2C direct Quiet Luxury | `heritage` recommandé · `legendary` ancre | Pas de Souvenir |

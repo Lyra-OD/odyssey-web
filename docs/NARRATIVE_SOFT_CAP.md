@@ -52,7 +52,7 @@ Sélection d’une piste du **catalogue Stingray officiel** depuis Souvenir :
 | Option | Effet state | Panier virtuel | Ce qui se débloque |
 |--------|-------------|----------------|--------------------|
 | **Licence Musique Premium Stingray — 39 $** | `intended` reste `essential` | `extensions.musicLicense = true` | Catalogue officiel uniquement (reste 50 médias / 1080p) |
-| **Écrin Héritage — 149 $** | `intendedPackage = signature` | Forfait Héritage ; **pas** de line item Licence | Musique officielle **incluse** + 4K + 125 médias |
+| **Écrin Héritage — 179 $** | `intendedPackage = signature` | Forfait Héritage ; **pas** de line item Licence | Musique officielle **incluse** + 4K + 125 médias |
 
 Helper d’accès catalogue (Phase 1) :
 
@@ -63,11 +63,11 @@ officialCatalog =
   OR paidEntitlements.musicLicense
 ```
 
-Import MP3/WAV : **masqué sur Souvenir** ; disponible dès `intended >= signature` (+ ToS).
+Import MP3/WAV : **disponible tous forfaits** (Souvenir inclus) + attestation ToS. Stingray licencié reste payant (Licence 39 $ ou Héritage+).
 
 ---
 
-## Moment de vérité (étape 8)
+## Moment de vérité (étape 7 — Checkout)
 
 Synthèse du chef-d’œuvre + lignes dues (Héritage et/ou Licence 39 $ et/ou autres add-ons).
 

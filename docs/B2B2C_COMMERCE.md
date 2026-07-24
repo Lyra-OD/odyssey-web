@@ -1,6 +1,6 @@
 # Odyssey — Commerce B2B2C Freemium V1
 
-**Last updated: 20 juillet 2026 · Freemium V1 (purge jetons)**
+**Last updated: 24 juillet 2026 · Freemium V1 + grille Quiet Luxury (Phase 0 22/07)**
 
 > **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
 > **Archive pré-purge :** [`_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md`](_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md) — ne plus onboards dessus.
@@ -26,8 +26,8 @@ Modèle **salon → famille** : Souvenir offert, Soft Cap, Stripe upsell, RevSha
 | Forfait | ID | Famille | RevShare (si payant) |
 |---------|-----|---------|----------------------|
 | Souvenir | `essential` | **0 $** (cadeau) | — |
-| Héritage | `signature` | **149 $** | 30 % Net Distribuable |
-| Éternité | `heritage` | **299 $** | idem |
+| Héritage | `signature` | **179 $** | 30 % Net Distribuable |
+| Éternité | `heritage` | **349 $** | idem |
 
 Add-ons commissionnables (dont **`musicLicense` 39 $**). Strip Licence si `intended >= signature`.  
 B2C-only : Légendaire **499 $**. Livrables : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
@@ -45,7 +45,7 @@ B2C-only : Légendaire **499 $**. Livrables : [`DELIVERABLES_AND_PACKAGES.md`](D
 | Déclencheur | Effet panier |
 |-------------|--------------|
 | ≥ 50 médias / post-Composition Magique | `intended → signature` (après acceptation) |
-| Piste catalogue officiel (Souvenir) | Dual : Licence 39 $ **ou** Héritage 149 $ (piste non bloquée) |
+| Piste catalogue officiel (Souvenir) | Dual : Licence 39 $ **ou** Héritage 179 $ (piste non bloquée) |
 | Checkout total > 0 | Stripe + metadata granted/intended · entitlements webhook |
 | Checkout 0 $ freemium | Amputation (médias ≤ granted, clear licence) → `freemium_free` |
 

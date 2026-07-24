@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: 21 juillet 2026 · Freemium V1 Phases 0–5 ✅ · Phase 6 QA ⏳ · Cascade V-Final (Boucle Virale / Fonds Commémoratif) 🚧 — Phase 1 Data Layer (P10) ✅ · Phase 2 Core+Wiring (P10.1, ChannelProfile, cascade, `/api/contribute`, webhook `guest_support`, crédit `/api/checkout`) ✅ · **Phase 3 Frontend/UI ⏳ prochaine** — canon [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md)**
+**Last revised: 24 juillet 2026 · Freemium V1 Phases 0–5 ✅ (Creatomate stub) · Cascade V-Final Phase 1–2 ✅ · Phase 3a Sanctuaire UI ✅ (`viral_loop_enabled` OFF) · Co-Créateur A–C ✅ · Wizard 7 étapes · canon [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) · rapport [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md)**
 
 Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -13,7 +13,7 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 
 | Dimension | Status | Notes |
 |-----------|--------|-------|
-| **Family Studio (wizard)** | 🟢 Mature | 8 étapes, autosave, Stingray, **Livre Ouvert + Composition Magique**, Soft Cap UX, checkout Soft Cap |
+| **Family Studio (wizard)** | 🟢 Mature | **7** étapes (Extensions @ checkout), autosave, Stingray, Livre Ouvert, Soft Cap, Inviter, Co-Créateur |
 | **Partner Salon** | 🟢 Prod | RBAC, invitations, gate R6 — QA P5.5 historique ✅ ; solde = **commissions** (jetons purgés P8) |
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Canon + Soft Cap + entitlements + **gate export stub** + MP3/ToS + add-ons Quiet Luxury — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · **Musique gratuit (juil. 2026) : Stingray licencié 100 % payant — Souvenir = preview + MP3 perso ToS** |
 | **RevShare Bulletproof** | 🟡 Partiel | Spec + SQL P6/P8 ✅ · accrual webhook à durcir / UI Salon commissions ⏳ |
@@ -35,7 +35,7 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 | Surface | Status | Detail |
 |---------|--------|--------|
 | Marketing / landing | 🟢 | Hero, process, pricing, FR/EN i18n |
-| Studio login + 8-step wizard | 🟢 | Core product path ; Étape 5 = **Livre Ouvert** (DnD + Composition Magique) |
+| Studio login + 7-step wizard | 🟢 | Core product path ; Étape 5 = **Livre Ouvert** ; Co-Créateur steps 3–5 |
 | Connexion UX (Studio + Salon) | 🟢 | Halo-Éclipse, `OdysseyConnexionMark`, i18n toggle, CTA cyan — [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon) |
 | **Étape 5 — Livre Ouvert** | 🟡 | Layout + DnD + magie ✅ · audio/focus/copy sensoriel ⏳ — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
 | Media upload / Storage | 🟢 | Client upload + signed URLs + **WebP thumbs** + session cache egress (`39460bd`) — voir §4.1 |
@@ -94,7 +94,7 @@ flowchart LR
 | `partner_commission_ledger` + accrual webhook | ✅ P6/P6.1 | ✅ webhook `checkout.session.completed` |
 | Checkout mode `b2b2c_family` | ✅ column | ✅ saga + Stripe |
 | Webhook → checkout completed + commission | — | ✅ b2b2c / b2c / **guest_support** |
-| **Fonds Commémoratif** (`guest_micro_checkouts`, `family_tribute_fund_*`) | ✅ P10/P10.1 | ✅ `/api/contribute` + accrual + crédit `/api/checkout` (gated flag) · **UI Phase 3 ⏳** |
+| **Fonds Commémoratif** (`guest_micro_checkouts`, `family_tribute_fund_*`) | ✅ P10/P10.1 | ✅ `/api/contribute` + UI 3a + crédit checkout (gated flag) |
 | Scanner Compagnon sessions | ✅ P6 stub | ❌ app |
 | Real Salon wallet balance | ✅ | ✅ |
 | RBAC Admin vs Director (UI) | ✅ RLS | ✅ |
