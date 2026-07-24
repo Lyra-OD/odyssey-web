@@ -425,10 +425,7 @@ export async function GET(_req: Request, { params }: RouteParams) {
       : await query.maybeSingle();
 
   if (error) {
-    return NextResponse.json(
-      { error: "autosave_fetch_failed", message: error.message },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "autosave_fetch_failed" }, { status: 400 });
   }
 
   if (!data) {
@@ -519,10 +516,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
       : await existingQuery.maybeSingle();
 
   if (existing.error) {
-    return NextResponse.json(
-      { error: "autosave_lookup_failed", message: existing.error.message },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "autosave_lookup_failed" }, { status: 400 });
   }
 
   if (!existing.data) {
@@ -576,13 +570,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
     .single();
 
   if (updateError || !updated) {
-    return NextResponse.json(
-      {
-        error: "autosave_update_failed",
-        message: updateError?.message ?? "Unknown error",
-      },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "autosave_update_failed" }, { status: 400 });
   }
 
   return NextResponse.json({

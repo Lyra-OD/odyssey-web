@@ -52,10 +52,7 @@ export async function POST(req: Request) {
     .maybeSingle();
 
   if (lookupError) {
-    return NextResponse.json(
-      { error: "token_lookup_failed", message: lookupError.message },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "token_lookup_failed" }, { status: 400 });
   }
 
   if (!row || row.purpose !== WIZARD_EDITOR_TOKEN_PURPOSE) {
@@ -78,10 +75,7 @@ export async function POST(req: Request) {
     .is("revoked_at", null);
 
   if (revokeError) {
-    return NextResponse.json(
-      { error: "token_revoke_failed", message: revokeError.message },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "token_revoke_failed" }, { status: 400 });
   }
 
   const { data: project } = await admin

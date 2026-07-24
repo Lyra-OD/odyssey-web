@@ -61,10 +61,7 @@ export async function POST(
     .maybeSingle();
 
   if (projectError) {
-    return NextResponse.json(
-      { error: "project_lookup_failed", message: projectError.message },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "project_lookup_failed" }, { status: 400 });
   }
   if (!project) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
@@ -81,10 +78,7 @@ export async function POST(
     .is("revoked_at", null);
 
   if (revokeError) {
-    return NextResponse.json(
-      { error: "token_revoke_failed", message: revokeError.message },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "token_revoke_failed" }, { status: 400 });
   }
 
   const { token, tokenHash } = generateWizardEditorToken();
@@ -107,13 +101,7 @@ export async function POST(
     .single();
 
   if (insertError || !inserted) {
-    return NextResponse.json(
-      {
-        error: "token_insert_failed",
-        message: insertError?.message ?? "insert_failed",
-      },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "token_insert_failed" }, { status: 400 });
   }
 
   const origin = resolveSiteOrigin(req);
