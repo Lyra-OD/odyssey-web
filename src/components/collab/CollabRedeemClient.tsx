@@ -14,6 +14,57 @@ type Props = {
 
 type RedeemState = "loading" | "error";
 
+type RedeemBody = {
+  ok?: boolean;
+  error?: string;
+  redirectPath?: string;
+};
+
+type RedeemResult = {
+  ok: boolean;
+  error: string | null;
+  redirectPath: string;
+};
+
+/**
+ * Déduplication module-scope : React Strict Mode (dev) monte/démonté
+ * l'effet deux fois. Sans cache, le 1er POST révoque le token one-shot,
+ * le cleanup ignore le succès (`cancelled`), et le 2e POST échoue.
+ * Une seule Promise HTTP par token pour toute la durée de vie de la page.
+ */
+const redeemInflight = new Map<string, Promise<RedeemResult>>();
+
+function redeemCollabTokenOnce(
+  token: string,
+  locale: Locale,
+): Promise<RedeemResult> {
+  const existing = redeemInflight.get(token);
+  if (existing) return existing;
+
+  const promise = (async (): Promise<RedeemResult> => {
+    const res = await fetch("/api/collab/redeem", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, locale }),
+    });
+    const body = (await res.json().catch(() => ({}))) as RedeemBody;
+    const redirectPath = body.redirectPath ?? appRoutes.studio(locale);
+
+    if (!res.ok || !body.ok) {
+      return {
+        ok: false,
+        error: body.error ?? "invalid_token",
+        redirectPath,
+      };
+    }
+
+    return { ok: true, error: null, redirectPath };
+  })();
+
+  redeemInflight.set(token, promise);
+  return promise;
+}
+
 /**
  * Consomme le token URL Co-Créateur → cookie httpOnly → redirect Studio.
  */
@@ -23,30 +74,38 @@ export function CollabRedeemClient({ token, locale }: Props) {
   const [errorCode, setErrorCode] = useState<string | null>(null);
 
   useEffect(() => {
+    const trimmed = token.trim();
+    if (trimmed.length < 20) {
+      setErrorCode("invalid_token");
+      setState("error");
+      return;
+    }
+
     let cancelled = false;
 
     void (async () => {
       try {
-        const res = await fetch("/api/collab/redeem", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, locale }),
-        });
-        const body = (await res.json().catch(() => ({}))) as {
-          ok?: boolean;
-          error?: string;
-          redirectPath?: string;
-        };
+        const result = await redeemCollabTokenOnce(trimmed, locale);
 
-        if (cancelled) return;
-
-        if (!res.ok || !body.ok) {
-          setErrorCode(body.error ?? "invalid_token");
-          setState("error");
+        // Succès : toujours rediriger. Le cookie httpOnly est déjà posé par le
+        // POST ; ignorer à cause de `cancelled` (Strict Mode) laisserait l'UI
+        // en erreur alors que la session éditeur est valide.
+        if (result.ok) {
+          router.replace(result.redirectPath);
           return;
         }
 
-        router.replace(body.redirectPath ?? appRoutes.studio(locale));
+        if (cancelled) return;
+
+        // Lien déjà consommé dans la même seconde (course) : tenter Studio —
+        // le 1er POST jumeau a pu poser le cookie.
+        if (result.error === "token_revoked") {
+          router.replace(result.redirectPath);
+          return;
+        }
+
+        setErrorCode(result.error ?? "invalid_token");
+        setState("error");
       } catch {
         if (!cancelled) {
           setErrorCode("network_error");
@@ -86,7 +145,10 @@ export function CollabRedeemClient({ token, locale }: Props) {
             : "Ouverture de l’accès Co-Créateur…"}
         </p>
       ) : (
-        <p className="mt-10 max-w-sm text-center text-sm font-light text-amber-200/90" role="alert">
+        <p
+          className="mt-10 max-w-sm text-center text-sm font-light text-amber-200/90"
+          role="alert"
+        >
           {errorMessage}
         </p>
       )}
