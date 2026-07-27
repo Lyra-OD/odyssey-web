@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { hydrateMediaRowsWithSignedUrls } from "@/src/lib/media/hydrateMediaSignedUrls.server";
 import type { HydratedMediaListResponse } from "@/src/lib/media/mediaTypes";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 
 type MediaAssetRow = {
   id: string;

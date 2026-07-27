@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import QRCode from "qrcode";
 
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
+import { parseApiJson } from "@/src/lib/http/parseApiJson";
 import {
   DURATION_BREATH,
   DURATION_RITUAL,
@@ -211,11 +212,11 @@ export function SanctuaryInviteContent({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ locale }),
       });
-      const body = (await res.json().catch(() => ({}))) as {
+      const body = await parseApiJson<{
         ok?: boolean;
         shareUrl?: string;
         error?: string;
-      };
+      }>(res);
       if (!res.ok || !body.ok || !body.shareUrl) {
         setError(copy.errorGeneric);
         return;

@@ -13,14 +13,7 @@ import {
 } from "@/src/lib/partner/invitationToken";
 import { resolvePartnerMembership } from "@/src/lib/partner/resolvePartnerMembership";
 import { createClient } from "@/utils/supabase/server";
-
-function resolveSiteOrigin(request: Request): string {
-  const envOrigin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (envOrigin) return envOrigin;
-  const host = request.headers.get("host");
-  const proto = request.headers.get("x-forwarded-proto") ?? "http";
-  return host ? `${proto}://${host}` : "http://localhost:3000";
-}
+import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
 
 function invitationExpiresAt(): string {
   const ms = INVITATION_TTL_DAYS * 24 * 60 * 60 * 1000;

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getStripe } from "@/lib/stripe";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { resolveContributeToken } from "@/src/lib/contribute/accessToken";
+import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
 import {
   getGuestSupportPack,
   guestSupportPackLabel,
@@ -23,14 +24,6 @@ const BodySchema = z
     locale: z.enum(["fr", "en"]).optional(),
   })
   .strict();
-
-function resolveSiteOrigin(request: Request): string {
-  const envOrigin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (envOrigin) return envOrigin;
-  const host = request.headers.get("host");
-  const proto = request.headers.get("x-forwarded-proto") ?? "http";
-  return host ? `${proto}://${host}` : "http://localhost:3000";
-}
 
 /**
  * POST /api/contribute/[token]/checkout

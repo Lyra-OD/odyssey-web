@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 
 const ReorderItemSchema = z.object({
   id: z.string().uuid(),

@@ -31,8 +31,8 @@ function serializeError(error: unknown) {
   };
 }
 
-function logWebhook(payload: Record<string, unknown>) {
-  console.log(JSON.stringify(payload));
+function logWebhook(_payload: Record<string, unknown>) {
+  /* Quiet in prod — use logWebhookError for failures. */
 }
 
 function logWebhookError(context: string, error: unknown, extra?: Record<string, unknown>) {

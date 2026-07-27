@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { isPatronAmountValid } from "@/src/components/contribute/PatronAmountField";
 import { isSanctuaryVisualPreview } from "@/src/lib/contribute/sanctuaryPreview";
 import { sanctuarySubmitButton } from "@/src/lib/contribute/sanctuaryChrome";
+import { parseApiJson } from "@/src/lib/http/parseApiJson";
 import { formatWizardPrice } from "@/src/lib/wizard/wizardPricing";
 
 export type ImprintCheckoutCtaProps = {
@@ -119,11 +120,11 @@ export function ImprintCheckoutCta({
           }),
         },
       );
-      const body = (await res.json().catch(() => ({}))) as {
+      const body = await parseApiJson<{
         ok?: boolean;
         url?: string;
         error?: string;
-      };
+      }>(res);
       if (!res.ok || !body.ok || !body.url) {
         setError(t.errorGeneric);
         return;

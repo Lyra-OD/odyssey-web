@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { ensureUserAssetsAllowsPersonalAudio } from "@/src/lib/media/ensureUserAssetsAudioMime";
@@ -12,8 +11,8 @@ import {
   isPersonalAudioFile,
 } from "@/src/lib/wizard/storyboardHelpers";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 const MAX_PERSONAL_AUDIO_BYTES = 40 * 1024 * 1024;
 const BUCKET = "user-assets";
 

@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 import { SIGNED_URL_TTL_SEC } from "@/src/lib/media/storageEgressPolicy";
 
 const DEFAULT_BUCKET = "user-assets";
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 
 /**
  * GET /api/projects/[id]/avatar?path=projects/{id}/avatar/...

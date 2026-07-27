@@ -7,6 +7,7 @@ import {
 } from "@/src/lib/wizard/wizardState";
 import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { filterAutosavePatchForEditor } from "@/src/lib/wizard/collabAutosave";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
 /**
  * Tribute Wizard — Autosave API.
@@ -374,7 +375,6 @@ const PatchBodySchema = z
     { message: "At least one of wizard_state or wizard_step must be provided." },
   );
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 
 type WizardStateJson = Record<string, unknown>;
 

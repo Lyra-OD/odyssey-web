@@ -5,10 +5,10 @@ import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
 import { thumbStoragePathFor } from "@/src/lib/media/thumbnailPath";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
 export const runtime = "nodejs";
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 const BodySchema = z
   .object({
     fileName: z.string().trim().min(1).max(200),

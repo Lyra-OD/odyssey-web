@@ -4,10 +4,10 @@ import { z } from "zod";
 import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { thumbStoragePathFor, isImageStoragePath } from "@/src/lib/media/thumbnailPath";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
 const DEFAULT_BUCKET = "user-assets";
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 const MediaIdSchema = z.string().uuid({ message: "invalid_media_id" });
 
 type MediaAssetRow = {

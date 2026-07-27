@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { requireProjectOwner, rejectEditorForOwnerOnlyRoute } from "@/src/lib/api/projectAccess";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
 export const runtime = "nodejs";
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 
 /**
  * GET /api/projects/[id]/fund-balance

@@ -1,6 +1,9 @@
 import "server-only";
 
-import { createHash, randomBytes } from "crypto";
+import {
+  generateOpaqueToken,
+  hashOpaqueToken,
+} from "@/src/lib/crypto/opaqueToken";
 
 /**
  * Tokens opaques Co-Créateur (`/[lang]/collab/[token]`).
@@ -11,10 +14,10 @@ export function generateWizardEditorToken(): {
   token: string;
   tokenHash: string;
 } {
-  const token = randomBytes(32).toString("base64url");
+  const token = generateOpaqueToken();
   return { token, tokenHash: hashWizardEditorToken(token) };
 }
 
 export function hashWizardEditorToken(token: string): string {
-  return createHash("sha256").update(token.trim()).digest("hex");
+  return hashOpaqueToken(token);
 }

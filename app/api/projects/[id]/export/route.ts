@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { requireProjectOwner } from "@/src/lib/api/projectAccess";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { coerceWizardState } from "@/src/lib/wizard/wizardState";
 import { assertExportAllowed } from "@/src/lib/wizard/exportGate";
@@ -10,7 +10,6 @@ import {
   getProjectPaidEntitlements,
 } from "@/src/lib/wizard/paidEntitlements";
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 
 /**
  * GET /api/projects/[id]/export — dernier job export (owner).

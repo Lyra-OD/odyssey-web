@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { requireProjectOwner, rejectEditorForOwnerOnlyRoute } from "@/src/lib/api/projectAccess";
 import {
@@ -8,18 +7,11 @@ import {
 } from "@/src/lib/wizard/collabCapabilities";
 import { generateWizardEditorToken } from "@/src/lib/wizard/collabToken";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
+import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
 export const runtime = "nodejs";
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
-
-function resolveSiteOrigin(request: Request): string {
-  const envOrigin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (envOrigin) return envOrigin;
-  const host = request.headers.get("host");
-  const proto = request.headers.get("x-forwarded-proto") ?? "http";
-  return host ? `${proto}://${host}` : "http://localhost:3000";
-}
 
 /**
  * POST /api/projects/[id]/collab-link

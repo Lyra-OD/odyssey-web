@@ -21,6 +21,7 @@ import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
 import { normalizeBasePackageId } from "@/src/lib/wizard/pricingConfig";
 import { coerceWizardState } from "@/src/lib/wizard/wizardState";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
+import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
 
 const BodySchema = z
   .object({
@@ -28,14 +29,6 @@ const BodySchema = z
     locale: z.enum(["fr", "en"]).optional(),
   })
   .strict();
-
-function resolveSiteOrigin(request: Request): string {
-  const envOrigin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (envOrigin) return envOrigin;
-  const host = request.headers.get("host");
-  const proto = request.headers.get("x-forwarded-proto") ?? "http";
-  return host ? `${proto}://${host}` : "http://localhost:3000";
-}
 
 function toStripeLineItem(line: ExtensionLineItem) {
   return {

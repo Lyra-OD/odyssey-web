@@ -5,10 +5,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { packageTierRank } from "@/src/lib/wizard/pricingConfig";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
 export const runtime = "nodejs";
 
-const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 const BodySchema = z
   .object({
     storagePath: z.string().trim().min(1).max(500),

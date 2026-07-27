@@ -119,7 +119,6 @@ export function CinematicTeaser({
           console.error("URL audio manquante pour", track.title);
           return;
         }
-        console.log("Lecture de la piste :", track.title, "URL:", url);
         audio.pause();
         audio.currentTime = 0;
         audio.src = url;

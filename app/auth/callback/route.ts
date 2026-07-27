@@ -70,7 +70,6 @@ export async function GET(request: NextRequest) {
       console.error("[auth/callback] exchangeCodeForSession:", error.message);
       return loginErrorRedirect(url, sanitizedNext);
     }
-    console.log("Redirection vers :", sanitizedNext);
     /* Même instance `response` : les cookies de session ont été posés via setAll. */
     return response;
   }
@@ -84,7 +83,6 @@ export async function GET(request: NextRequest) {
       console.error("[auth/callback] verifyOtp:", error.message);
       return loginErrorRedirect(url, sanitizedNext);
     }
-    console.log("Redirection vers :", sanitizedNext);
     return response;
   }
 
