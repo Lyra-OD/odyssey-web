@@ -1,4 +1,5 @@
 import type { HydratedMediaApiItem } from "@/src/lib/media/mediaTypes";
+import { parseApiJson } from "@/src/lib/http/parseApiJson";
 import { PROJECT_MEDIA_CACHE_MAX_AGE_MS } from "@/src/lib/media/storageEgressPolicy";
 
 type CacheEntry = {
@@ -7,9 +8,12 @@ type CacheEntry = {
 };
 
 const cache = new Map<string, CacheEntry>();
+/** In-flight fetches — dedupe concurrent callers (Strict Mode / multi-consumers). */
+const inflight = new Map<string, Promise<HydratedMediaApiItem[]>>();
 
 export function invalidateProjectMediaCache(projectId: string): void {
   cache.delete(projectId);
+  inflight.delete(projectId);
 }
 
 export async function fetchProjectMediaCached(
@@ -28,18 +32,35 @@ export async function fetchProjectMediaCached(
     return cached.items;
   }
 
-  const res = await fetch(`/api/projects/${projectId}/media`);
-  const body = (await res.json().catch(() => null)) as
-    | { items: HydratedMediaApiItem[] }
-    | { error?: string }
-    | null;
-
-  if (!res.ok || !body || !("items" in body)) {
-    throw new Error(
-      body && "error" in body ? body.error : `HTTP ${res.status}`,
-    );
+  if (!force) {
+    const pending = inflight.get(projectId);
+    if (pending) return pending;
   }
 
-  cache.set(projectId, { items: body.items, fetchedAt: now });
-  return body.items;
+  const request = (async () => {
+    const res = await fetch(`/api/projects/${projectId}/media`);
+    const body = await parseApiJson<{
+      items?: HydratedMediaApiItem[];
+      error?: string;
+    }>(res);
+
+    if (!res.ok || !body.items) {
+      throw new Error(body.error ?? `HTTP ${res.status}`);
+    }
+
+    cache.set(projectId, { items: body.items, fetchedAt: Date.now() });
+    return body.items;
+  })();
+
+  if (!force) {
+    inflight.set(projectId, request);
+  }
+
+  try {
+    return await request;
+  } finally {
+    if (inflight.get(projectId) === request) {
+      inflight.delete(projectId);
+    }
+  }
 }

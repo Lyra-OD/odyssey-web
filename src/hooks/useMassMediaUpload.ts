@@ -142,7 +142,7 @@ export function useMassMediaUpload(
       lastStartRef.current = startOptions;
       projectIdRef.current = startOptions.projectId;
 
-      const queued = items.filter((item) => item.status === "queued");
+      const queued = itemsRef.current.filter((item) => item.status === "queued");
       if (!queued.length) return;
 
       const controller = new AbortController();
@@ -189,7 +189,7 @@ export function useMassMediaUpload(
         abortRef.current = null;
       }
     },
-    [isRunning, items, options?.bucket, options?.maxConcurrency, options?.maxRetries],
+    [isRunning, options?.bucket, options?.maxConcurrency, options?.maxRetries],
   );
 
   const persistOrder = useCallback(async () => {
@@ -394,7 +394,7 @@ export function useMassMediaUpload(
   useEffect(() => {
     if (isRunning) return;
     if (!lastStartRef.current) return;
-    const hasQueued = items.some((item) => item.status === "queued");
+    const hasQueued = itemsRef.current.some((item) => item.status === "queued");
     if (!hasQueued) return;
     void start(lastStartRef.current);
   }, [isRunning, items, start]);

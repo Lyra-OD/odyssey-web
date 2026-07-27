@@ -46,6 +46,7 @@ import { ScannerCompanionPlaceholder } from "@/src/components/scanner/ScannerCom
 import { VaultOnlineSourcesSection } from "@/src/components/tribute/VaultOnlineSourcesSection";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
+import { useDebouncedValue } from "@/src/hooks/useDebouncedValue";
 import type { AppDictionary } from "@/lib/dictionaries";
 import { createClient } from "@/utils/supabase/client";
 import {
@@ -724,10 +725,17 @@ export function TributeWizard({
   }, [uploadProjectId, uploadAvatarToStorage]);
 
   // Crée le projet draft dès que le prénom atteint 2 caractères (autosave + RLS étape 3).
+  // Debounce 400 ms — évite churn ensureDraft à chaque frappe ; flush avant fermeture d'onglet via autosave.
+  const draftFields = useMemo(
+    () => ({ firstName, lastName, birthDate, deathDate }),
+    [firstName, lastName, birthDate, deathDate],
+  );
+  const debouncedDraftFields = useDebouncedValue(draftFields, 400);
+
   useEffect(() => {
     if (isEditor) return;
     if (uploadProjectId) return;
-    if (firstName.trim().length < 2) return;
+    if (debouncedDraftFields.firstName.trim().length < 2) return;
 
     let aborted = false;
     setProjectDraftLoading(true);
@@ -736,10 +744,10 @@ export function TributeWizard({
     (async () => {
       try {
         const draft = await ensureDraft({
-          firstName,
-          lastName,
-          birthDate,
-          deathDate,
+          firstName: debouncedDraftFields.firstName,
+          lastName: debouncedDraftFields.lastName,
+          birthDate: debouncedDraftFields.birthDate,
+          deathDate: debouncedDraftFields.deathDate,
         });
 
         if (aborted) return;
@@ -766,27 +774,22 @@ export function TributeWizard({
     return () => {
       aborted = true;
     };
-  }, [
-    firstName,
-    lastName,
-    birthDate,
-    deathDate,
-    uploadProjectId,
-    ensureDraft,
-    isEditor,
-  ]);
+  }, [debouncedDraftFields, uploadProjectId, ensureDraft, isEditor]);
 
   // Seed wizard_state en DB après la première création de projet (pas à la reprise).
+  // Un seul queueSave à la naissance du projet — le step effect ne dépend plus de uploadProjectId.
   useEffect(() => {
     if (!uploadProjectId) return;
     if (skipInitialAutosaveRef.current) {
       skipInitialAutosaveRef.current = false;
       return;
     }
+    // Autorise les saves d'étape suivants (skipStep était true tant que pas de projet).
+    skipStepAutosaveRef.current = false;
     queueSave("immediate");
   }, [uploadProjectId, queueSave]);
 
-  // Persiste wizard_step après navigation (flush couvre les champs ; ceci met à jour l'étape).
+  // Persiste wizard_step après navigation uniquement (pas à l'assignation de projectId).
   useEffect(() => {
     if (!uploadProjectId) return;
     if (skipStepAutosaveRef.current) {
@@ -794,7 +797,9 @@ export function TributeWizard({
       return;
     }
     queueSave("immediate");
-  }, [currentStep, uploadProjectId, queueSave]);
+    // Intentionnel : pas de dep uploadProjectId — évite le double PATCH à la création.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- step navigation only
+  }, [currentStep, queueSave]);
 
   // Volume total de médias (Étape 3) — pilote le nombre minimum de chapitres
   // pré-générés à l'Étape 4 (S4). Refetch à chaque entrée dans l'étape pour
