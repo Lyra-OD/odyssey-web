@@ -7,6 +7,74 @@
 
 ---
 
+## 0. Cadre partenaire — 3 000 familles / an (1 salon)
+
+**Hypothèse volume figée (demandée) :**
+
+| Paramètre | Valeur |
+|-----------|--------|
+| Partenaires | **1** |
+| Familles (projets) / an | **3 000** |
+| Familles / mois | **250** |
+| Canal | **100 % B2B2C** (pas de Légendaire dans le mix) |
+| Commission | **≈ 27 % du GMV** (= 30 % du Net après Platform Fee 10 %) |
+
+Les **3 scénarios** ne changent pas le volume d’entrée : ils varient **taux de conversion payante**, **mix Héritage/Éternité**, **add-ons**, et **Boucle Virale**.
+
+### Hypothèses par scénario
+
+| Levier | Conservateur | Base | Optimiste |
+|--------|--------------|------|-----------|
+| Conversion payante (Soft Cap) | **35 %** | **50 %** | **65 %** |
+| Familles payantes / mois | 87,5 | 125 | 162,5 |
+| Familles payantes / an | 1 050 | 1 500 | 1 950 |
+| Mix H / E (payants) | 75 / 25 | 60 / 40 | 45 / 55 |
+| Add-ons moyens | 12 $ | 28 $ | 45 $ |
+| **AOV famille payante** | **≈ 234 $** | **≈ 275 $** | **≈ 318 $** |
+| Viral (part des 250 projets) | OFF | 30 % | 80 % |
+| ARPU invité / projet viral | 0 | 1,2 × 80 $ = **96 $** | 2,5 × 95 $ = **238 $** |
+| Rider 0 $ (parmi viral) | — | 15 % | 35 % |
+| COGS variables | 12 % GMV | 11 % GMV | 10 % GMV |
+
+AOV = `mix_H×179 + mix_E×349 + addons`.  
+Rider : on soustrait **179 $** de GMV famille par projet Rider (Fonds couvre Héritage).
+
+### Prévisions mensuelles
+
+| Métrique | Conservateur | Base | Optimiste |
+|----------|--------------|------|-----------|
+| GMV famille | ~20 400 $ | ~32 400 $ | ~39 100 $ |
+| GMV invité | **0 $** | ~7 200 $ | ~47 500 $ |
+| **GMV total / mois** | **~20 400 $** | **~39 600 $** | **~86 600 $** |
+| **Commission partenaire / mois** | **~5 500 $** | **~10 700 $** | **~23 400 $** |
+| Odyssey (après com. + COGS) / mois | ~12 500 $ | ~24 500 $ | ~54 500 $ |
+
+### Prévisions annuelles (×12)
+
+| Métrique | Conservateur | Base | Optimiste |
+|----------|--------------|------|-----------|
+| Familles payantes | 1 050 | 1 500 | 1 950 |
+| **GMV total / an** | **~245 000 $** | **~475 000 $** | **~1 039 000 $** |
+| **Commission partenaire / an** | **~66 000 $** | **~128 000 $** | **~280 000 $** |
+| Odyssey (ordre de grandeur) / an | ~150 000 $ | ~294 000 $ | ~654 000 $ |
+
+### Lecture partenaire (1 salon, 3 000 familles)
+
+- **Conservateur** : viral OFF — Soft Cap seul ; **~5,5 k$/mois** de commission (~66 k$/an).
+- **Base** : moitié des familles paient ; pilote viral → **~11 k$/mois** commission (~128 k$/an).
+- **Optimiste** : conversion forte + viral large ; **~23 k$/mois** commission (~280 k$/an).
+
+> Si « 3 000 familles » = **3 000 payantes** (pas le funnel), multiplier Conservateur ≈×2,9 / Base ≈×2 / Optimiste ≈×1,5 sur GMV famille et commissions famille — préciser avant engagement contractuel.
+
+**Pipeline leviers (exécution) :** Creatomate · pilote viral · CRO Soft Cap · Phase 3b · Phase 2 Growth (mix Éternité/add-ons + scale partenaires) — [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §10 (R1–R6) + plan d’attaque semaine.
+
+Canvas : `business-case-3000-families.canvas.tsx`
+
+---
+
+---
+
+
 ## 1. Thèse
 
 Odyssey monétise l’**attachement** (brouillon gratuit → Soft Cap / export) plutôt que l’entrée payante.

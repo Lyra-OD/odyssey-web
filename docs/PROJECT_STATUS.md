@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: 24 juillet 2026 · Freemium V1 Phases 0–5 ✅ (Creatomate stub) · Cascade V-Final Phase 1–2 ✅ · Phase 3a Sanctuaire UI ✅ (`viral_loop_enabled` OFF) · Co-Créateur A–C ✅ · Wizard 7 étapes · canon [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) · rapport [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md)**
+**Last revised: 27 juillet 2026 · Freemium V1 Phases 0–5 ✅ (Creatomate stub) · Cascade 3a ✅ (`viral_loop_enabled` OFF) · Co-Créateur A–C ✅ · **Leviers revenu R1–R6** + plan semaine (Creatomate · CRO Soft Cap · pilote viral) — §10 · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md)**
 
 Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -25,8 +25,8 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 | **Tests & CI** | 🟡 | **Vitest en place** — **6 suites / 49 tests** QA business (Soft Cap médias/musique, MP3/ToS, RevShare, **waterfall invité + cascade Fonds V-Final**) + SQL accrual ⏳ CI `.github/` à venir |
 | **Security** | 🟡 | RLS + gate Salon ✅ · export never-trust via entitlements (stub) |
 
-**Overall ~8.8/10 commerce wizard** — Soft Cap + gate export stub ; **prochain levier = Phase 6 QA + worker Creatomate**.  
-**Rails parallèles (toujours au plan) :** mobile M0–M6 · S5-J/K/L · S7–S10 storyboard · Scanner · Phase 6 QA Soft Cap.
+**Overall ~8.8/10 commerce wizard** — Soft Cap + gate export stub ; **semaine en cours = Creatomate + CRO Soft Cap + pilote viral ready** (§10).  
+**Rails parallèles (après semaine) :** mobile M0–M6 · S5-J/K/L · S7–S10 · Scanner · Phase 2 Growth.
 
 ---
 
@@ -364,7 +364,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 
 ### Priorité B — rails UX (toujours au plan, parallèles)
 
-Ces chantiers **n’ont pas été annulés** par Freemium. Les enchaîner en parallèle ou juste après 5.1 selon capacité.
+Ces chantiers **n’ont pas été annulés** par Freemium. Les enchaîner **après** la semaine Creatomate/CRO/viral, ou en bande passante limitée.
 
 | Rail | Doc | Focus |
 |------|-----|--------|
@@ -372,6 +372,36 @@ Ces chantiers **n’ont pas été annulés** par Freemium. Les enchaîner en par
 | **S5-J/K/L** | [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) §10 | Audio montage, focus organique, copy narrative |
 | **S7–S10** | [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) | Pacing UI · Preview/Checkout storyboard · purge `actTracks` / `montage` |
 | **Scanner** | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) | MVP QR → upload mobile (Phase A) |
+
+### Leviers revenu (pipeline — juil. 2026)
+
+Canon projections : [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) §0 (3 000 familles / 1 partenaire).
+
+| # | Levier | Statut pipeline | Horizon |
+|---|--------|-----------------|--------|
+| R1 | **Export Creatomate réel** | ⏳ worker (5.x) | Semaine en cours |
+| R2 | **Pilote Boucle Virale** (`viral_loop_enabled`) | UI 3a ✅ · flag OFF · enforce 5 photos ⏳ | Semaine + pilote tenant |
+| R3 | **CRO Soft Cap** (35 → 50–65 %) | **À faire** — copy, timing, preview, Co-Créateur | Semaine (jeu) |
+| R4 | **Phase 3b** voix / témoignage live + mini-clip | Spec Cascade ⏳ | Après pilote viral |
+| R5 | **Mix Éternité + attach add-ons** (+20–30 $ AOV) | **Phase 2 Growth** | Post-semaine |
+| R6 | **Scale partenaires** (2e/3e salon) | **Phase 2 Growth** | Post preuve 1 salon |
+
+### Phase 2 Growth (documenté — hors scope semaine)
+
+- **Mix Éternité + add-ons Quiet Luxury** au checkout (nudge 349 $ · NFC / Livre / Voix IA) — sans boutique mid-flow.
+- **Scale partenaires** — playbook acquisition salons · UI commissions Salon lisible · onboarding.
+- Lien Cascade : [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) (3b + pilote viral).
+
+### Plan d’attaque semaine (focus mono-filet)
+
+| Jour | Focus | Done when |
+|------|--------|-----------|
+| **Lun** | Phase 6 QA : tests waterfall / Soft Cap → **179 / 349** | `npm run test:business` vert |
+| **Mar–Mer** | Creatomate : worker / spike `project_export_jobs` staging | 1 export gated (ou mock contrôlé) |
+| **Jeu** | CRO Soft Cap : copy + timing + preview + rappel Co-Créateur | Checklist CRO + 1–2 changements UI |
+| **Ven** | Pilote viral ready : enforce 5 photos + runbook flag 1 tenant | Runbook + flag testable staging |
+
+**Hors scope semaine :** 3b live, mix Éternité/add-ons profond, scale multi-salons, Scanner, Mobile, S5-J/K/L.
 
 ### Backlog storyboard déjà livré (réf. historique)
 
@@ -391,17 +421,17 @@ Ces chantiers **n’ont pas été annulés** par Freemium. Les enchaîner en par
 - Stripe Connect auto-payout
 - Scanner Phase B (crop papier + Avant/Après IA)
 - Légendaire Gants Blancs ops (boîte physique)
-- Suite de tests + GitHub Actions
+- Suite de tests + GitHub Actions (sauf si Lun Phase 6)
 - Verticales pets UI forked
+- Phase 2 Growth (mix Éternité / scale partenaires) — après preuve Creatomate + pilote viral
 
-### Ordre recommandé (prochaines sessions)
+### Ordre recommandé (après cette semaine)
 
-1. **Phase 6** QA Soft Cap + RevShare 39 $
-2. Worker Creatomate réel (consomme P9 `project_export_jobs`)
-3. En parallèle si bande passante : **M0** mobile quick wins **ou** **S5-J** audio
-4. Fulfillment ops NFC / Voix / Livre + Salon commissions
-5. M3–M4 shell mobile · Scanner M2 · S8–S10
-
+1. Activer pilote `viral_loop_enabled` (1 tenant) + monitoring marge
+2. Phase 3b capture live (crédibiliser empreintes 69–119 $)
+3. Phase 2 Growth : mix Éternité + attach add-ons · scale 2e salon
+4. Rails UX : M0 mobile **ou** S5-J · Scanner M2 · S8–S10
+5. Fulfillment ops NFC / Voix / Livre + Salon commissions UI
 ---
 
 ## 11. SQL migration reference (P5.5)

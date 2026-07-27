@@ -1,6 +1,6 @@
 # Odyssey — Plan d'implémentation : Boucle Virale / Fonds Commémoratif (Cascade V-Final)
 
-**Statut : APPROUVÉ CEO · Phase 1–2 ✅ · Phase 0 grille/UX Sanctuaire (22 juil. 2026) ✅ · Phase 3a Frontend UI ✅ (flag `viral_loop_enabled` OFF) · Phase 3b capture live ⏳**
+**Statut : APPROUVÉ CEO · Phase 1–2 ✅ · Phase 0 grille/UX Sanctuaire (22 juil. 2026) ✅ · Phase 3a Frontend UI ✅ (flag `viral_loop_enabled` OFF) · Phase 3b capture live ⏳ · Suite pipeline revenu : pilote viral + CRO Soft Cap + Creatomate — voir [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §10**
 
 Document canonique d'implémentation de la **Boucle Virale (Fonds Commémoratif)** et du pivot
 d'entrée émotionnelle (Brouillon gratuit → paywall à l'export financé par les contributions
@@ -219,9 +219,9 @@ B2B2C/B2C actuels strictement inchangés tant que le flag n'est pas activé **et
 **inline** dans `/api/checkout`. Crédit **partiel** → coupon Stripe + consume au **webhook**.
 
 **Limitations connues (suivi) :**
-- UI Sanctuaire / Inviter / Fonds / Rider = **Phase 3a** (prochaine).
-- Checkout Mécène montant libre = **Phase 3a** (bornes déjà dans `guestSupportPacks.ts`).
+- UI Sanctuaire / Inviter / Fonds / Rider = **Phase 3a ✅** (flag prod OFF jusqu’au pilote).
+- Checkout Mécène montant libre = **Phase 3a ✅**.
 - Capture voix + témoignage live + mini-clip 30 s = **Phase 3b**.
-- Enforce multi-photos (plafond 5) = fin **Phase 3a** ou début 3b.
+- Enforce multi-photos (plafond 5) = fin **Phase 3a** / runbook pilote (semaine).
 - Aide IA rédaction mot (optionnelle) = **Phase 3b+**.
-- UI catalogue empreintes + checkout invité = **Phase 3a** (tunnel dépôt → empreinte).
+- CRO Soft Cap + Phase 2 Growth (mix Éternité / scale partenaires) = [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §10 leviers R3/R5/R6.
