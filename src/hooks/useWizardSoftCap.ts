@@ -30,6 +30,8 @@ export type WizardSoftCapCopySource = {
   softCapCtaDismiss: string;
   softCapPriceHeritage: string;
   softCapPriceLicense: string;
+  softCapCollabHint: string;
+  softCapCollabCta: string;
 };
 
 export type UseWizardSoftCapParams = {
@@ -207,6 +209,8 @@ export function useWizardSoftCap({
       ctaDismiss: copy.softCapCtaDismiss,
       priceHeritage: copy.softCapPriceHeritage,
       priceLicense: copy.softCapPriceLicense,
+      collabHint: copy.softCapCollabHint,
+      ctaCollab: copy.softCapCollabCta,
     }),
     [copy],
   );

@@ -1928,6 +1928,10 @@ export function TributeWizard({
         onAcceptHeritage={acceptSoftCapHeritage}
         onAcceptLicense={acceptSoftCapLicense}
         onDismiss={dismissSoftCap}
+        onInviteCollab={() => {
+          dismissSoftCap();
+          setIsCollabInviteOpen(true);
+        }}
       />
       ) : null}
 

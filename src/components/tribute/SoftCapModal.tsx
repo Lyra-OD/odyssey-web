@@ -18,6 +18,8 @@ export type SoftCapModalCopy = {
   ctaDismiss: string;
   priceHeritage: string;
   priceLicense: string;
+  collabHint?: string;
+  ctaCollab?: string;
 };
 
 type SoftCapModalProps = {
@@ -28,6 +30,8 @@ type SoftCapModalProps = {
   onAcceptHeritage: () => void;
   onAcceptLicense?: () => void;
   onDismiss: () => void;
+  /** Ouvre le panneau Co-Créateur existant (viralité douce). */
+  onInviteCollab?: () => void;
 };
 
 /** Pont léger : sync le volume médias étape 3 → Soft Cap filet. */
@@ -56,6 +60,7 @@ export function SoftCapModal({
   onAcceptHeritage,
   onAcceptLicense,
   onDismiss,
+  onInviteCollab,
 }: SoftCapModalProps) {
   if (!open) return null;
 
@@ -72,6 +77,9 @@ export function SoftCapModal({
       : variant === "mediaMagic"
         ? copy.mediaMagicBody.replace("{count}", String(mediaCount))
         : copy.musicBody;
+
+  const showCollab =
+    Boolean(onInviteCollab) && Boolean(copy.ctaCollab?.trim());
 
   return (
     <div
@@ -146,28 +154,44 @@ export function SoftCapModal({
                 </p>
               </>
             ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={onAcceptHeritage}
-                  className="rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-3 text-left transition hover:brightness-105"
-                >
-                  <span className="block text-sm font-semibold text-[#1a1410]">
-                    {copy.ctaHeritage}
-                  </span>
-                  <span className="mt-0.5 block text-xs text-[#1a1410]/70">
-                    {copy.priceHeritage}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={onDismiss}
-                  className="rounded-xl px-4 py-2.5 text-center text-sm text-white/55 transition hover:text-white/80"
-                >
-                  {copy.ctaDismiss}
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={onAcceptHeritage}
+                className="rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-3 text-left transition hover:brightness-105"
+              >
+                <span className="block text-sm font-semibold text-[#1a1410]">
+                  {copy.ctaHeritage}
+                </span>
+                <span className="mt-0.5 block text-xs text-[#1a1410]/70">
+                  {copy.priceHeritage}
+                </span>
+              </button>
             )}
+
+            {showCollab ? (
+              <div className="space-y-2 border-t border-white/10 pt-3">
+                {copy.collabHint ? (
+                  <p className="text-center text-[11px] leading-relaxed text-white/45">
+                    {copy.collabHint}
+                  </p>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={onInviteCollab}
+                  className="w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-2.5 text-center text-sm font-medium text-white/85 transition hover:border-amber-200/35 hover:bg-amber-200/[0.06] hover:text-white"
+                >
+                  {copy.ctaCollab}
+                </button>
+              </div>
+            ) : null}
+
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="rounded-xl px-4 py-2.5 text-center text-sm text-white/55 transition hover:text-white/80"
+            >
+              {copy.ctaDismiss}
+            </button>
           </div>
         </div>
       </div>
