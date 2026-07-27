@@ -225,7 +225,7 @@ Sortir le sélecteur de forfait et le stepper linéaire de l'Étape 4 pour les r
 - Badge d'économie « Économisez 67 $ » affiché sur le forfait Éternité (prix, pastille de comparaison, vue détaillée) via `calculateBundleSavings()` — déjà existant côté pricing, désormais exposé dans le Dossier.
 - `WizardBasePackagePicker` supprimé des Étapes 1 et 2 (fichier supprimé du repo) — le Dossier est l'unique point de sélection/consultation du forfait.
 - **Stepper** : `WizardPhaseProgress` remplace les 8 cercles par 3 macro-phases (« Déposer » 1-3, « Composer » 4-6, « Recevoir » 7-8), liseré de progression 1px + libellé d'étape discret.
-- **Ancrage produit** : `DEFAULT_B2C_BASE_PACKAGE = "heritage"` (Éternité, 299 $) — milieu de gamme réel des 3 forfaits B2C directs et meilleur rapport qualité-prix ; nouveau projet B2C y est ancré par défaut, nommé et documenté (plus un fallback implicite).
+- **Ancrage produit** : `DEFAULT_B2C_BASE_PACKAGE = "heritage"` (Éternité, 349 $) — milieu de gamme réel des 3 forfaits B2C directs et meilleur rapport qualité-prix ; nouveau projet B2C y est ancré par défaut, nommé et documenté (plus un fallback implicite).
 - Lexique : toutes les occurrences de « photos » dans les badges de capacité remplacées par « médias ».
 
 **Critère d'acceptation**

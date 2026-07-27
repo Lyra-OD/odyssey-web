@@ -20,9 +20,9 @@
 --           "isPartner": true,
 --           "pricing": {
 --             "basePackage": "signature",
---             "baseCents": 14900,
+--             "baseCents": 17900,
 --             "optionsCents": 0,
---             "totalCents": 14900,
+--             "totalCents": 17900,
 --             "partnerTokenCost": 2
 --           },
 --           "extensions": { "aiRetouch": true, ... }

@@ -103,7 +103,7 @@ export async function POST(req: Request) {
   const tenantId = membership.tenant_id;
 
   // Cascade V-Final : le forfait de départ est décidé par le BACKEND via le
-  // ChannelProfile (fin du fallback frontend Éternité 299 $). is_freemium est
+  // ChannelProfile (fin du fallback frontend Éternité 349 $). is_freemium est
   // lu en admin car la famille n'a pas de SELECT RLS sur `tenants`.
   let isFreemiumTenant = false;
   try {

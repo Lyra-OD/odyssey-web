@@ -114,7 +114,7 @@ This structure strictly separates Intelligence (Brain) from Execution (Engine).
 
 ## 8. Tier Logic (The Cash Register)
 
-> **Superseded for checkout implementation** by [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) and [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 (Quiet Luxury 149/299/499 · freemium Souvenir canal partenaire).  
+> **Superseded for checkout implementation** by [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) and [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) v2 (Quiet Luxury 179/349/499 · freemium Souvenir canal partenaire).  
 > Table below = **historical Manifesto intent** (CRM / LYRA data objectives).
 
 | Tier | Tokens | Price | Style | Lyra Data Objective (CRM) |

@@ -463,7 +463,7 @@ export function resolveTransactionMode(
   return "dollars";
 }
 
-/** Libellé prix formaté pour l’UI (ex. « 2 jetons », « 149 $ », « $149 »). */
+/** Libellé prix formaté pour l’UI (ex. « 2 jetons », « 179 $ », « $179 »). */
 export function formatPackagePriceForMode(
   packageId: PackageId,
   mode: TransactionMode,

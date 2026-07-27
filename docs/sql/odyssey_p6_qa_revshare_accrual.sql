@@ -2,9 +2,9 @@
 -- [P6 | QA] — RevShare accrual E2E (balance +30% net, zéro jeton)
 -- =====================================================================
 -- Scénario 4 (Phase 6) — validation VIVANTE de la chaîne d'accrual :
---   webhook checkout.session.completed (149 $) →
+--   webhook checkout.session.completed (179 $) →
 --   accrue_partner_commission_for_checkout →
---   partner_commission_balances += 30 % du Net Distribuable (= 4023 cents).
+--   partner_commission_balances += 30 % du Net Distribuable (= 4833 cents).
 --
 -- Prérequis :
 --   - odyssey_p6_1_bulletproof_waterfall.sql appliqué
@@ -27,10 +27,10 @@ DECLARE
   v_project_id      uuid;
   v_checkout_id     uuid;
   v_event_id        text := 'evt_qa_p6_' || replace(gen_random_uuid()::text, '-', '');
-  v_gross           integer := 14900;   -- 149 $ (Héritage)
-  v_exp_fee         integer := 1490;    -- 10 % platform fee
-  v_exp_net         integer := 13410;   -- net distribuable
-  v_exp_commission  integer := 4023;    -- 30 % du net
+  v_gross           integer := 17900;   -- 179 $ (Héritage)
+  v_exp_fee         integer := 1790;    -- 10 % platform fee
+  v_exp_net         integer := 16110;   -- net distribuable
+  v_exp_commission  integer := 4833;    -- 30 % du net
   v_result          jsonb;
   v_result2         jsonb;
   v_balance_before  integer;
@@ -154,7 +154,7 @@ BEGIN
       v_token_tables;
   END IF;
 
-  RAISE NOTICE 'P6 REVSHARE QA ALL_PASS — 149 $ → commission % cents (30%% du net %), solde +%, idempotent, 0 jeton',
+  RAISE NOTICE 'P6 REVSHARE QA ALL_PASS — 179 $ → commission % cents (30%% du net %), solde +%, idempotent, 0 jeton',
     v_exp_commission, v_exp_net, v_exp_commission;
 END $$;
 

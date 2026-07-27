@@ -155,7 +155,7 @@ Formule : Gross → Platform Fee **10 %** → Net → Partner **30 %** du Net.
 
 | Risque | Mitigation |
 |--------|------------|
-| Docs encore à 149/299 | Audit P0 en cours (même sprint) |
+| Docs encore à 149/299 | Alignés i18n + docs actives (grille 179/349) |
 | Viral flag OFF | Pilote contrôlé post-3a ; ne pas projeter revenue invité comme acquis |
 | Creatomate stub | Phase export = prochain levier « livrable perçu » |
 | Soft Cap trop tôt | Copy Quiet Luxury + dual choice musique |

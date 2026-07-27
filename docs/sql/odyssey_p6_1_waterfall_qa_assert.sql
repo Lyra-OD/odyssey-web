@@ -19,9 +19,9 @@ WITH expected AS (
   SELECT *
   FROM (
     VALUES
-      (14900, 1000, 3000, 1490, 13410, 4023, 9387, 'S1 Heritage seul'),
-      (29900, 1000, 3000, 2990, 26910, 8073, 18837, 'S2 Eternite seul'),
-      (19800, 1000, 3000, 1980, 17820, 5346, 12474, 'S3 Heritage + Retouche IA')
+      (17900, 1000, 3000, 1790, 16110, 4833, 11277, 'S1 Heritage seul'),
+      (34900, 1000, 3000, 3490, 31410, 9423, 21987, 'S2 Eternite seul'),
+      (22800, 1000, 3000, 2280, 20520, 6156, 14364, 'S3 Heritage + Retouche IA')
   ) AS t(
     gross_cents,
     platform_fee_bps,
@@ -80,11 +80,11 @@ ORDER BY scenario;
 -- ---------------------------------------------------------------------
 -- B) Clawback S5 — remboursement partiel 50 % sur S1
 -- ---------------------------------------------------------------------
--- floor(4023 × 7450 / 14900) = 2011
+-- floor(4833 × 7450 / 17900) = 2011
 SELECT
-  floor(4023::numeric * 7450 / 14900)::integer AS clawback_cents,
+  floor(4833::numeric * 7450 / 17900)::integer AS clawback_cents,
   2011 AS expected_clawback_cents,
-  floor(4023::numeric * 7450 / 14900)::integer = 2011 AS s5_clawback_ok;
+  floor(4833::numeric * 7450 / 17900)::integer = 2011 AS s5_clawback_ok;
 
 -- ---------------------------------------------------------------------
 -- C) Verdict global — lève une exception si un scénario échoue
@@ -98,9 +98,9 @@ BEGIN
     SELECT *
     FROM (
       VALUES
-        (14900, 1000, 3000, 1490, 13410, 4023, 9387, 'S1 Heritage seul'),
-        (29900, 1000, 3000, 2990, 26910, 8073, 18837, 'S2 Eternite seul'),
-        (19800, 1000, 3000, 1980, 17820, 5346, 12474, 'S3 Heritage + Retouche IA')
+        (17900, 1000, 3000, 1790, 16110, 4833, 11277, 'S1 Heritage seul'),
+        (34900, 1000, 3000, 3490, 31410, 9423, 21987, 'S2 Eternite seul'),
+        (22800, 1000, 3000, 2280, 20520, 6156, 14364, 'S3 Heritage + Retouche IA')
     ) AS t(
       gross_cents,
       platform_fee_bps,
@@ -139,7 +139,7 @@ BEGIN
   )
   SELECT COUNT(*) INTO v_failure_count FROM failures;
 
-  v_s5_ok := floor(4023::numeric * 7450 / 14900)::integer = 2011;
+  v_s5_ok := floor(4833::numeric * 7450 / 17900)::integer = 2011;
 
   IF v_failure_count > 0 THEN
     RAISE EXCEPTION 'P6.1 QA FAIL — % waterfall scenario(s) mismatch (S1–S3)', v_failure_count;
@@ -164,5 +164,5 @@ SELECT
   AND wf ? 'commission_cents'
   AND wf ? 'odyssey_margin_cents' AS jsonb_contract_ok
 FROM (
-  SELECT public.compute_revenue_waterfall(14900, 1000, 3000) AS wf
+  SELECT public.compute_revenue_waterfall(17900, 1000, 3000) AS wf
 ) smoke;

@@ -7,15 +7,15 @@ Next.js 14 (App Router) — **Studio Odyssey** : hommages vidéo Quiet Luxury en
 | Canal | Modèle |
 |-------|--------|
 | **B2B2C** | Le salon offre **Souvenir 0 $** ; la famille construit via **Soft Cap** (Héritage / Licence musique) ; Odyssey reverse **30 % du Net Distribuable** (Platform Fee 10 %). |
-| **B2C** | Héritage **149 $** · Éternité **299 $** · Légendaire **499 $** (ancre Quiet Luxury). |
+| **B2C** | Héritage **179 $** · Éternité **349 $** · Légendaire **499 $** (ancre Quiet Luxury). |
 
 **Jetons partenaire = purgés.** Solde salon = commissions uniquement (`partner_commission_*`).
 
 | Forfait | ID | Prix | Médias | Export | Musique |
 |---------|-----|------|--------|--------|---------|
 | Souvenir | `essential` | 0 $ | 50 | 1080p | Stingray standard (+ Soft Cap officiel) |
-| Héritage | `signature` | 149 $ | 125 | **4K** | Catalogue officiel **inclus** + MP3 |
-| Éternité | `heritage` | 299 $ | 175 | 4K | Idem + IA + coffre |
+| Héritage | `signature` | 179 $ | 125 | **4K** | Catalogue officiel **inclus** + MP3 |
+| Éternité | `heritage` | 349 $ | 175 | 4K | Idem + IA + coffre |
 
 Add-ons V1 : `sanctuaryToken` 79 $ · `storyVoice` 39 $ · **`musicLicense` 39 $** · `memoryBook` 149 $ · `aiRetouch` 49 $ · `digitalVault` 99 $.
 

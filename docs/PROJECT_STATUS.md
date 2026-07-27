@@ -140,7 +140,7 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 - **Storyboard refactor S4 livré** : moteur de pacing temporel (`storyboardPacing.ts`) — marges intro/outro 10s, coût vidéo fixe 10s, `mood` préparé pour un pacing dynamique futur, estimation de durée totale pour le résumé narratif
 - **Inversion Étape 4 ↔ Étape 5** : le Wizard affiche désormais le choix musical **avant** le montage (la capacité média d'un chapitre dépend de la durée de la chanson) — décision documentée dans [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md)
 - **Storyboard refactor S6 livré** : nouvelle Étape 4 « Chapitres musicaux » (`StoryboardChaptersStep.tsx`) — chapitres dynamiques pré-générés selon le volume média, bandeau éducatif, détection + acquittement obligatoire des doublons de chanson, validation structurelle bloquante (`[minSongsRequired, maxSongs]`)
-- **Storyboard refactor S6bis livré — refonte de l'en-tête global du Wizard** : sélecteur de forfait **« Le Dossier »** (off-canvas, `PackageDossierPanel.tsx`) remplace le dropdown et les cartes `WizardBasePackagePicker` (supprimé) ; stepper 8 cercles remplacé par `WizardPhaseProgress` (3 phases Déposer/Composer/Recevoir) ; ancrage produit `DEFAULT_B2C_BASE_PACKAGE = "heritage"` (Éternité, 299 $) ; badge « Économisez 67 $ » ; lexique « photos » → « médias »
+- **Storyboard refactor S6bis livré — refonte de l'en-tête global du Wizard** : sélecteur de forfait **« Le Dossier »** (off-canvas, `PackageDossierPanel.tsx`) remplace le dropdown et les cartes `WizardBasePackagePicker` (supprimé) ; stepper 8 cercles remplacé par `WizardPhaseProgress` (3 phases Déposer/Composer/Recevoir) ; ancrage produit `DEFAULT_B2C_BASE_PACKAGE = "heritage"` (Éternité, 349 $) ; badge économies dossier ; lexique « photos » → « médias »
 - **Opération Clean Slate (juillet 2026)** : neutralisation de l'Étape 5 (`SoundSignatureStep` supprimé → placeholder temporaire) ; extraction `useWizardStoryboard` ; triage `montage/*` ; résolution EMFILE dev (`ulimit -n 65536`)
 - **S5 PR-1 — Livre Ouvert squelette (`fdeb7da`)** : layout 280px\|1fr, `StoryboardFilmMap`, banque persistante, chapitres empilés, grilles read-only
 - **S5 PR-2 — Interactivité (`cc5f668`)** : DnD `dnd-kit`, multi-select, auto-fill / vider / gérer ; correctifs QA drop target, sélection fantôme, FilmMap
@@ -152,7 +152,7 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 | Décision | Pourquoi |
 |----------|----------|
 | **Le Dossier** (off-canvas vs dropdown) | Réduire la charge cognitive (stepper 8 cercles → 3 phases) et éviter l'effet « e-commerce cheap » ; le forfait doit être consultable à tout moment sans polluer le corps des étapes |
-| **Ancrage Éternité par défaut** (`DEFAULT_B2C_BASE_PACKAGE = "heritage"`) | Ancrage psychologique sur le vrai milieu de gamme B2C (149/299/499 $) + meilleur rapport qualité-prix ; le client ne clique plus de carte à l'Étape 1 depuis la suppression du picker. **⚠️ Supplanté (Cascade V-Final, 21 juil.) :** le forfait de départ d'un nouveau projet est désormais décidé par le **backend autoritaire** (`ChannelProfile` + `buildInitialWizardState` dans `/api/projects/draft`) — B2B2C démarre `essential` (0 $), B2C `signature` (plancher payant). `DEFAULT_B2C_BASE_PACKAGE` reste un fallback défensif, plus l'ancre d'init. |
+| **Ancrage Éternité par défaut** (`DEFAULT_B2C_BASE_PACKAGE = "heritage"`) | Ancrage psychologique sur le vrai milieu de gamme B2C (179/349/499 $) + meilleur rapport qualité-prix ; le client ne clique plus de carte à l'Étape 1 depuis la suppression du picker. **⚠️ Supplanté (Cascade V-Final, 21 juil.) :** le forfait de départ d'un nouveau projet est désormais décidé par le **backend autoritaire** (`ChannelProfile` + `buildInitialWizardState` dans `/api/projects/draft`) — B2B2C démarre `essential` (0 $), B2C `signature` (plancher payant). `DEFAULT_B2C_BASE_PACKAGE` reste un fallback défensif, plus l'ancre d'init. |
 | **Inversion Étape 4 ↔ 5** | La capacité média d'un chapitre dépend de `durationSec` — le choix musical doit précéder l'assignation média |
 | **Clean Slate Étape 5** | `SoundSignatureStep` affichait une UI fonctionnelle mais dont les saisies étaient **silencieusement ignorées** par `coerceWizardState()` — bug UX trompeur, pas une simple dette technique |
 | **`useWizardStoryboard`** | Isoler le domaine chapitres de `TributeWizard` (god component ~1780 lignes) avant d'intégrer `dnd-kit` ; le hook reste pur (pas d'autosave) |
@@ -341,14 +341,14 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 
 | # | Scénario | Fichier | Couvre |
 |---|----------|---------|--------|
-| 6.1 | Soft Cap Médias | `softcap-media.test.ts` | quota 50 · nudge dès 50 · refus upsell + >50 → **422 amputation** · musique premium jamais 0 $ · accept → delta 149 $ |
-| 6.2 | Soft Cap Musique | `softcap-music.test.ts` | dual choice · add-on 39 $ vs upgrade 149 $ · **anti double-facturation** dès Héritage |
+| 6.1 | Soft Cap Médias | `softcap-media.test.ts` | quota 50 · nudge dès 50 · refus upsell + >50 → **422 amputation** · musique premium jamais 0 $ · accept → delta 179 $ |
+| 6.2 | Soft Cap Musique | `softcap-music.test.ts` | dual choice · add-on 39 $ vs upgrade 179 $ · **anti double-facturation** dès Héritage |
 | 6.3 | Soupape MP3 / ToS | `music-rights-gate.test.ts` | checkout **422** sans attestation · export never-trust entitlements |
-| 6.4 | RevShare waterfall | `revshare-waterfall.test.ts` | 149 $ → commission **4023 (30 % net)** · conservation · **0 jeton** |
+| 6.4 | RevShare waterfall | `revshare-waterfall.test.ts` | 179 $ → commission **4833 (30 % net)** · conservation · **0 jeton** |
 | 6.5 | **Waterfall invité (V-Final)** | `guest-waterfall.test.ts` | miroir RPC `accrue_guest_micro_checkout` : HD 49 $ → net 4410 / commission 1323 / crédit 4410 · commission 0 en B2C direct mais crédit conservé · cap 1000 $ · conversion configurable |
 | 6.6 | **Cascade Fonds (V-Final)** | `memorial-fund-cascade.test.ts` | `computeCascade` P1→P2→P3 : 100 $→reste 49 $ · 320 $→Éternité auto-élevé + surplus · 5 invités→0 $ · `owner_floor` |
 
-**QA SQL live** (`docs/sql/odyssey_p6_qa_revshare_accrual.sql`) — accrual E2E `partner_commission_balances += 4023`, idempotence event_id, 0 table `partner_token_*` — transactionnel (ROLLBACK).
+**QA SQL live** (`docs/sql/odyssey_p6_qa_revshare_accrual.sql`) — accrual E2E `partner_commission_balances += 4833`, idempotence event_id, 0 table `partner_token_*` — transactionnel (ROLLBACK).
 
 | # | Reste à faire | Done when |
 |---|------|-----------|

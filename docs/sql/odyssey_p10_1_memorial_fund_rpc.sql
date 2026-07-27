@@ -332,4 +332,4 @@ NOTIFY pgrst, 'reload schema';
 -- ---------------------------------------------------------------------
 -- SELECT public.compute_revenue_waterfall(4900, 1000, 3000);
 --   -> net 4410 · commission 1323 · fund credit @100% = 4410
---   -> famille : Héritage 149 $ (14900) − 4410 = reste 10490 (104,90 $)
+--   -> famille : Héritage 179 $ (17900) − 4410 = reste 13490 (134,90 $)
