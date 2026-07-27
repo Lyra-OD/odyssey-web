@@ -1,23 +1,14 @@
 "use client";
 
-import {
-  DndContext,
-  DragOverlay,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type DragOverEvent,
-  type DragStartEvent,
-} from "@dnd-kit/core";
-import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { AnimatePresence } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { flushSync } from "react-dom";
 
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
-import { useMontageAutoScroll } from "@/src/hooks/useMontageAutoScroll";
+import { useMagicComposition } from "@/src/hooks/useMagicComposition";
+import { useMontageChapterActions } from "@/src/hooks/useMontageChapterActions";
+import { useMontageDnd } from "@/src/hooks/useMontageDnd";
+import { useMontageMediaSelection } from "@/src/hooks/useMontageMediaSelection";
 import {
   MontageDirectorModal,
   type MontageDirectorModalCopy,
@@ -53,45 +44,13 @@ import {
   MontageOnboardingGate,
   type MontageOnboardingGateCopy,
 } from "@/src/components/tribute/storyboard/MontageOnboardingGate";
-import {
-  autoFillChapter,
-  clearChapterMedia,
-  isStoryboardMontageVirgin,
-} from "@/src/lib/wizard/storyboardAutoFill";
-import { buildMagicTimeline } from "@/src/lib/wizard/storyboardMagicTimeline";
-import {
-  playMagicTimeline,
-  type MagicCinematicPhase,
-} from "@/src/lib/wizard/magicTimelinePlayer";
-import {
-  findChapterForMedia,
-  reorderStoryboardChapters,
-  setChapterLabel,
-} from "@/src/lib/wizard/storyboardHelpers";
-import {
-  STORYBOARD_BANK_DROPPABLE_ID,
-  STORYBOARD_CHAPTER_BLOCK_DND_TYPE,
-  STORYBOARD_MEDIA_DND_TYPE,
-  getBankSelectionRangeIds,
-  getChapterSelectionRangeIds,
-  orderBankSelection,
-  orderChapterSelection,
-  parseStoryboardChapterSortableId,
-  parseStoryboardChapterDroppableId,
-  resolveDropTarget,
-  resolveInsertIndex,
-  storyboardCollisionDetection,
-  type MediaSelectionScope,
-  type StoryboardChapterBlockDragData,
-  type StoryboardDragSource,
-  type StoryboardMediaDragData,
-} from "@/src/lib/wizard/storyboardDnd";
+import { findChapterForMedia } from "@/src/lib/wizard/storyboardHelpers";
+import { storyboardCollisionDetection } from "@/src/lib/wizard/storyboardDnd";
 import {
   assignManyMediaToChapter,
   assignMediaToChapter,
   clearStoryboardFocalPoint,
   mergeStoryboardWithMedia,
-  reorderChapterMedia,
   setStoryboardFocalPoint,
   toggleStoryboardMediaExclude,
   unassignManyMediaFromChapters,
@@ -166,55 +125,11 @@ export function StoryboardMontageStep({
   const [mediaItems, setMediaItems] = useState<MontageMediaItem[]>([]);
   const [isLoadingMedia, setIsLoadingMedia] = useState(false);
   const [directorAssetId, setDirectorAssetId] = useState<string | null>(null);
-  const [activeDragIds, setActiveDragIds] = useState<string[]>([]);
-  const [selectedMediaIds, setSelectedMediaIds] = useState<string[]>([]);
-  const [selectionScope, setSelectionScope] =
-    useState<MediaSelectionScope | null>(null);
-  const [selectionAnchorId, setSelectionAnchorId] = useState<string | null>(
-    null,
-  );
-  const [dropTargetChapterId, setDropTargetChapterId] = useState<string | null>(
-    null,
-  );
-  const [dropTargetBank, setDropTargetBank] = useState(false);
-  const [dragOverChapterIndex, setDragOverChapterIndex] = useState<
-    number | null
-  >(null);
   const [refinementChapterId, setRefinementChapterId] = useState<string | null>(
     null,
   );
-  const [gateAcknowledged, setGateAcknowledged] = useState(false);
-  const [isMagicRunning, setIsMagicRunning] = useState(false);
-  const [magicPhase, setMagicPhase] = useState<MagicCinematicPhase>("idle");
-  const [magicHighlightChapterId, setMagicHighlightChapterId] = useState<
-    string | null
-  >(null);
   const storyboardRef = useRef(storyboard);
-  const magicRunIdRef = useRef(0);
-  const isMagicRunningRef = useRef(false);
-  const magicEntranceMediaIdsRef = useRef<Set<string>>(new Set());
-  const magicEntranceStaggerRef = useRef<Map<string, number>>(new Map());
-  const wasVirginRef = useRef(isStoryboardMontageVirgin(storyboard));
-  const dragPayloadRef = useRef<{
-    mediaIds: string[];
-    source: StoryboardDragSource;
-  } | null>(null);
   storyboardRef.current = storyboard;
-
-  useEffect(
-    () => () => {
-      magicRunIdRef.current += 1;
-    },
-    [],
-  );
-
-  const autoScroll = useMontageAutoScroll();
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
 
   useEffect(() => {
     if (!projectId) return;
@@ -243,25 +158,6 @@ export function StoryboardMontageStep({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
-
-  useEffect(() => {
-    const isVirgin = isStoryboardMontageVirgin(storyboard);
-    const wasVirgin = wasVirginRef.current;
-
-    if (!isVirgin) {
-      setGateAcknowledged(false);
-    } else if (!wasVirgin && isVirgin) {
-      setGateAcknowledged(false);
-    }
-
-    wasVirginRef.current = isVirgin;
-  }, [storyboard]);
-
-  const showOnboardingGate =
-    isStoryboardMontageVirgin(storyboard) &&
-    !isLoadingMedia &&
-    !isMagicRunning &&
-    !gateAcknowledged;
 
   const mediaById = useMemo(
     () => new Map(mediaItems.map((item) => [item.assetId, item])),
@@ -371,6 +267,38 @@ export function StoryboardMontageStep({
     ? (mediaById.get(directorAssetId) ?? null)
     : null;
 
+  const {
+    selectedMediaIds,
+    selectionScope,
+    clearMediaSelection,
+    handleToggleMediaSelect,
+    handleShiftMediaSelect,
+    handleSelectAllBank,
+    handleDeselectAll,
+    resolveBankDragMediaIds,
+    resolveChapterDragMediaIds,
+    visibleBankSelection,
+  } = useMontageMediaSelection({ storyboard });
+
+  const {
+    sensors,
+    autoScroll,
+    activeDragIds,
+    dropTargetChapterId,
+    dropTargetBank,
+    dragOverChapterIndex,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnd,
+    handleDragCancel,
+  } = useMontageDnd({
+    storyboard,
+    onStoryboardChange,
+    selectedMediaIds,
+    selectionScope,
+    clearMediaSelection,
+  });
+
   const overlayItems = useMemo(
     () =>
       activeDragIds
@@ -379,487 +307,36 @@ export function StoryboardMontageStep({
     [activeDragIds, mediaById],
   );
 
-  const handleDragStart = useCallback(
-    (event: DragStartEvent) => {
-      const activeData = event.active.data.current as
-        | StoryboardChapterBlockDragData
-        | StoryboardMediaDragData
-        | undefined;
-
-      if (activeData?.type === STORYBOARD_CHAPTER_BLOCK_DND_TYPE) {
-        dragPayloadRef.current = null;
-        setActiveDragIds([]);
-        return;
-      }
-
-      const activeId = String(event.active.id);
-      const source = activeData?.source ?? null;
-      if (!source || activeData?.type !== STORYBOARD_MEDIA_DND_TYPE) {
-        dragPayloadRef.current = null;
-        setActiveDragIds([activeId]);
-        return;
-      }
-
-      let mediaIds: string[] = [activeId];
-      if (source.kind === "bank") {
-        const inBankSelection =
-          selectionScope?.kind === "bank" &&
-          selectedMediaIds.includes(activeId);
-        mediaIds = inBankSelection
-          ? orderBankSelection(storyboard.unassignedIds, selectedMediaIds)
-          : [activeId];
-      } else {
-        const chapter = storyboard.chapters.find(
-          (c) => c.id === source.chapterId,
-        );
-        const inChapterSelection =
-          selectionScope?.kind === "chapter" &&
-          selectionScope.chapterId === source.chapterId &&
-          selectedMediaIds.includes(activeId);
-        mediaIds = inChapterSelection
-          ? orderChapterSelection(chapter?.mediaIds ?? [], selectedMediaIds)
-          : [activeId];
-      }
-
-      dragPayloadRef.current = { mediaIds, source };
-      setActiveDragIds(mediaIds);
-    },
-    [selectedMediaIds, selectionScope, storyboard],
-  );
-
-  const handleDragOver = useCallback(
-    (event: DragOverEvent) => {
-      const { over } = event;
-      if (!over) {
-        setDropTargetChapterId(null);
-        setDropTargetBank(false);
-        setDragOverChapterIndex(null);
-        return;
-      }
-
-      const target = resolveDropTarget(String(over.id), storyboard);
-      if (!target) return;
-
-      if (target.kind === "bank") {
-        setDropTargetBank(true);
-        setDropTargetChapterId(null);
-        setDragOverChapterIndex(null);
-        return;
-      }
-
-      setDropTargetBank(false);
-      setDropTargetChapterId(target.chapterId);
-      const index = storyboard.chapters.findIndex(
-        (chapter) => chapter.id === target.chapterId,
-      );
-      setDragOverChapterIndex(index >= 0 ? index : null);
-    },
-    [storyboard],
-  );
-
-  const clearDropTargets = useCallback(() => {
-    setDropTargetChapterId(null);
-    setDropTargetBank(false);
-    setDragOverChapterIndex(null);
-    dragPayloadRef.current = null;
-  }, []);
-
-  const clearMediaSelection = useCallback(() => {
-    setSelectedMediaIds([]);
-    setSelectionScope(null);
-    setSelectionAnchorId(null);
-  }, []);
-
-  const pruneInvalidSelection = useCallback(() => {
-    setSelectedMediaIds((prev) => {
-      if (prev.length === 0) return prev;
-
-      let validIds: readonly string[];
-      if (selectionScope?.kind === "bank") {
-        validIds = storyboard.unassignedIds;
-      } else if (selectionScope?.kind === "chapter") {
-        const chapter = storyboard.chapters.find(
-          (c) => c.id === selectionScope.chapterId,
-        );
-        validIds = chapter?.mediaIds ?? [];
-      } else {
-        return [];
-      }
-
-      const validSet = new Set(validIds);
-      const pruned = prev.filter((id) => validSet.has(id));
-      return pruned.length === prev.length ? prev : pruned;
-    });
-  }, [selectionScope, storyboard.chapters, storyboard.unassignedIds]);
-
-  useEffect(() => {
-    pruneInvalidSelection();
-  }, [pruneInvalidSelection]);
-
-  const handleDragCancel = useCallback(() => {
-    setActiveDragIds([]);
-    clearDropTargets();
-  }, [clearDropTargets]);
-
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
-      setActiveDragIds([]);
-
-      const chapterBlockData = active.data.current as
-        | StoryboardChapterBlockDragData
-        | undefined;
-      if (chapterBlockData?.type === STORYBOARD_CHAPTER_BLOCK_DND_TYPE) {
-        if (over) {
-          const overChapterId =
-            parseStoryboardChapterSortableId(String(over.id)) ??
-            parseStoryboardChapterDroppableId(String(over.id));
-          if (
-            overChapterId &&
-            overChapterId !== chapterBlockData.chapterId
-          ) {
-            onStoryboardChange(
-              reorderStoryboardChapters(
-                storyboard,
-                chapterBlockData.chapterId,
-                overChapterId,
-              ),
-            );
-          }
-        }
-        clearDropTargets();
-        return;
-      }
-
-      const payload = dragPayloadRef.current;
-      if (!payload || payload.mediaIds.length === 0) {
-        clearDropTargets();
-        return;
-      }
-
-      const { mediaIds, source } = payload;
-
-      const resolvedTarget =
-        dropTargetBank
-          ? ({ kind: "bank" as const })
-          : dropTargetChapterId
-            ? {
-                kind: "chapter" as const,
-                chapterId: dropTargetChapterId,
-                overMediaId:
-                  over &&
-                  !String(over.id).startsWith("storyboard-chapter-") &&
-                  over.id !== STORYBOARD_BANK_DROPPABLE_ID
-                    ? String(over.id)
-                    : null,
-              }
-            : over
-              ? resolveDropTarget(String(over.id), storyboard)
-              : null;
-
-      if (!resolvedTarget) {
-        clearDropTargets();
-        return;
-      }
-
-      if (resolvedTarget.kind === "bank") {
-        if (source.kind === "chapter") {
-          onStoryboardChange(
-            unassignManyMediaFromChapters(storyboard, mediaIds),
-          );
-        }
-        clearMediaSelection();
-        clearDropTargets();
-        return;
-      }
-
-      const targetChapterId = resolvedTarget.chapterId;
-      const targetChapter = storyboard.chapters.find(
-        (c) => c.id === targetChapterId,
-      );
-      if (!targetChapter) {
-        clearDropTargets();
-        return;
-      }
-
-      if (
-        source.kind === "chapter" &&
-        source.chapterId === targetChapterId &&
-        mediaIds.length === 1 &&
-        resolvedTarget.overMediaId &&
-        targetChapter.mediaIds.includes(resolvedTarget.overMediaId) &&
-        resolvedTarget.overMediaId !== mediaIds[0]
-      ) {
-        onStoryboardChange(
-          reorderChapterMedia(
-            storyboard,
-            targetChapterId,
-            mediaIds[0],
-            resolvedTarget.overMediaId,
-          ),
-        );
-        clearMediaSelection();
-        clearDropTargets();
-        return;
-      }
-
-      const movingSet = new Set(mediaIds);
-      const baseIds = targetChapter.mediaIds.filter((id) => !movingSet.has(id));
-      const insertIndex = resolveInsertIndex(
-        baseIds,
-        resolvedTarget.overMediaId &&
-          baseIds.includes(resolvedTarget.overMediaId)
-          ? resolvedTarget.overMediaId
-          : null,
-      );
-
-      onStoryboardChange(
-        assignManyMediaToChapter(
-          storyboard,
-          targetChapterId,
-          mediaIds,
-          insertIndex,
-        ),
-      );
-      clearMediaSelection();
-      clearDropTargets();
-    },
-    [
-      clearDropTargets,
-      clearMediaSelection,
-      dropTargetBank,
-      dropTargetChapterId,
-      onStoryboardChange,
-      storyboard,
-    ],
-  );
-
   const handleMediaClick = useCallback((assetId: string) => {
     setDirectorAssetId(assetId);
   }, []);
 
-  const handleToggleMediaSelect = useCallback(
-    (assetId: string, chapterId?: string) => {
-      const nextScope: MediaSelectionScope = chapterId
-        ? { kind: "chapter", chapterId }
-        : { kind: "bank" };
-
-      setSelectionScope((prevScope) => {
-        const scopeChanged =
-          !prevScope ||
-          prevScope.kind !== nextScope.kind ||
-          (nextScope.kind === "chapter" &&
-            prevScope.kind === "chapter" &&
-            prevScope.chapterId !== nextScope.chapterId);
-
-        if (scopeChanged) {
-          setSelectedMediaIds([assetId]);
-          setSelectionAnchorId(assetId);
-          return nextScope;
-        }
-
-        setSelectedMediaIds((prev) => {
-          const next = new Set(prev);
-          if (next.has(assetId)) next.delete(assetId);
-          else next.add(assetId);
-          return [...next];
-        });
-        setSelectionAnchorId(assetId);
-        return prevScope;
-      });
-    },
-    [],
-  );
-
-  const handleShiftMediaSelect = useCallback(
-    (assetId: string, chapterId?: string) => {
-      const nextScope: MediaSelectionScope = chapterId
-        ? { kind: "chapter", chapterId }
-        : { kind: "bank" };
-
-      setSelectionScope((prevScope) => {
-        const scopeChanged =
-          !prevScope ||
-          prevScope.kind !== nextScope.kind ||
-          (nextScope.kind === "chapter" &&
-            prevScope.kind === "chapter" &&
-            prevScope.chapterId !== nextScope.chapterId);
-
-        const anchor =
-          !scopeChanged && selectionAnchorId ? selectionAnchorId : assetId;
-
-        if (chapterId) {
-          const chapter = storyboard.chapters.find((c) => c.id === chapterId);
-          setSelectedMediaIds(
-            getChapterSelectionRangeIds(
-              chapter?.mediaIds ?? [],
-              anchor,
-              assetId,
-            ),
-          );
-        } else {
-          setSelectedMediaIds(
-            getBankSelectionRangeIds(
-              storyboard.unassignedIds,
-              anchor,
-              assetId,
-            ),
-          );
-        }
-
-        setSelectionAnchorId(anchor);
-        return nextScope;
-      });
-    },
-    [selectionAnchorId, storyboard.chapters, storyboard.unassignedIds],
-  );
-
-  const handleSelectAllBank = useCallback(() => {
-    setSelectionScope({ kind: "bank" });
-    setSelectedMediaIds([...storyboard.unassignedIds]);
-    setSelectionAnchorId(storyboard.unassignedIds[0] ?? null);
-  }, [storyboard.unassignedIds]);
-
-  const handleDeselectAll = useCallback(() => {
-    setSelectedMediaIds([]);
-    setSelectionScope(null);
-    setSelectionAnchorId(null);
-  }, []);
-
-  const resolveBankDragMediaIds = useCallback(
-    (assetId: string) => {
-      if (
-        selectionScope?.kind === "bank" &&
-        selectedMediaIds.includes(assetId)
-      ) {
-        return orderBankSelection(storyboard.unassignedIds, selectedMediaIds);
-      }
-      return [assetId];
-    },
-    [selectedMediaIds, selectionScope, storyboard.unassignedIds],
-  );
-
-  const resolveChapterDragMediaIds = useCallback(
-    (assetId: string, chapterId: string) => {
-      if (
-        selectionScope?.kind === "chapter" &&
-        selectionScope.chapterId === chapterId &&
-        selectedMediaIds.includes(assetId)
-      ) {
-        const chapter = storyboard.chapters.find((c) => c.id === chapterId);
-        return orderChapterSelection(chapter?.mediaIds ?? [], selectedMediaIds);
-      }
-      return [assetId];
-    },
-    [selectedMediaIds, selectionScope, storyboard.chapters],
-  );
-
-  const visibleBankSelection =
-    selectionScope?.kind === "bank" ? selectedMediaIds : [];
-
-  const handleTitleChange = useCallback(
-    (chapterId: string, nextTitle: string) => {
-      onStoryboardChange(setChapterLabel(storyboard, chapterId, nextTitle));
-    },
-    [onStoryboardChange, storyboard],
-  );
-
-  const handleAutoFill = useCallback(
-    (chapterId: string) => {
-      const chapter = storyboard.chapters.find((c) => c.id === chapterId);
-      if (!chapter) return;
-      const capacity = chapterRecommendedCapacity(
-        chapter.song?.durationSec,
-        resolveTargetSecondsPerMedia(packageId, chapter.mood),
-      );
-      const next = autoFillChapter(storyboard, chapterId, capacity);
-      onStoryboardChange(next);
-    },
-    [onStoryboardChange, packageId, storyboard],
-  );
-
-  const handleClear = useCallback(
-    (chapterId: string) => {
-      onStoryboardChange(clearChapterMedia(storyboard, chapterId));
-    },
-    [onStoryboardChange, storyboard],
-  );
-
-  const handleManage = useCallback((chapterId: string) => {
-    setRefinementChapterId(chapterId);
-  }, []);
-
-  const runMagicComposition = useCallback(async () => {
-    if (isMagicRunningRef.current) return;
-    if (storyboardRef.current.unassignedIds.length === 0) return;
-
-    const runId = magicRunIdRef.current + 1;
-    magicRunIdRef.current = runId;
-
-    setGateAcknowledged(true);
-    isMagicRunningRef.current = true;
-    setIsMagicRunning(true);
-    magicEntranceMediaIdsRef.current = new Set();
-    magicEntranceStaggerRef.current = new Map();
-    onMagicPerformingChange?.(true);
-    clearMediaSelection();
-
-    const events = buildMagicTimeline(
-      storyboardRef.current,
-      chapterCapacities,
-    );
-
-    await playMagicTimeline(events, {
-      shouldAbort: () => magicRunIdRef.current !== runId,
-      setPhase: setMagicPhase,
-      setHighlightChapterId: setMagicHighlightChapterId,
-      assignChapterBatch: (chapterId, mediaIds) => {
-        mediaIds.forEach((mediaId, index) => {
-          magicEntranceMediaIdsRef.current.add(mediaId);
-          magicEntranceStaggerRef.current.set(mediaId, index);
-        });
-        const next = assignManyMediaToChapter(
-          storyboardRef.current,
-          chapterId,
-          mediaIds,
-        );
-        storyboardRef.current = next;
-        onStoryboardChange(next);
-      },
-    });
-
-    if (magicRunIdRef.current !== runId) {
-      flushSync(() => {
-        setMagicPhase("idle");
-        isMagicRunningRef.current = false;
-        setIsMagicRunning(false);
-        setMagicHighlightChapterId(null);
-      });
-      return;
-    }
-
-    flushSync(() => {
-      isMagicRunningRef.current = false;
-      setIsMagicRunning(false);
-      setMagicHighlightChapterId(null);
-    });
-    onMagicPerformingChange?.(false);
-    onMagicSequenceComplete?.();
-  }, [
+  const {
+    isMagicRunning,
+    magicPhase,
+    magicHighlightChapterId,
+    magicEntranceMediaIdsRef,
+    magicEntranceStaggerRef,
+    showOnboardingGate,
+    handleChooseMagic,
+    handleChooseManual,
+  } = useMagicComposition({
+    storyboard,
+    onStoryboardChange,
     chapterCapacities,
     clearMediaSelection,
+    isLoadingMedia,
     onMagicPerformingChange,
     onMagicSequenceComplete,
-    onStoryboardChange,
-  ]);
+  });
 
-  const handleChooseMagic = useCallback(() => {
-    void runMagicComposition();
-  }, [runMagicComposition]);
-
-  const handleChooseManual = useCallback(() => {
-    setGateAcknowledged(true);
-  }, []);
+  const { handleTitleChange, handleAutoFill, handleClear, handleManage } =
+    useMontageChapterActions({
+      storyboard,
+      onStoryboardChange,
+      packageId,
+      setRefinementChapterId,
+    });
 
   const handleReturnToBank = useCallback(
     (mediaIds: readonly string[]) => {
