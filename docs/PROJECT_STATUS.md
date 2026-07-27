@@ -355,6 +355,7 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | 6.5 | CI GitHub Actions (`npm test` sur PR) | Pipeline vert bloquant |
 | 6.6 | QA SQL accrual jouée sur staging | NOTICE `ALL_PASS` |
 | 5.x | Worker Creatomate réel (consomme `project_export_jobs`) | Master / 4K gated |
+| 5.x-mock | **Drain mock staging** `POST /api/internal/export/drain` + GET export status | `queued` → `completed` (mock) ✅ semaine |
 | 5.y | Fulfillment ops : NFC claim · TTS Voix · Gelato Livre | Pipelines hors stub |
 | 5.4 | Salon UI commissions (soldes `partner_commission_*`) | Admin voit ledger |
 
@@ -397,7 +398,7 @@ Canon projections : [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) §0 (3 000 fa
 | Jour | Focus | Done when |
 |------|--------|-----------|
 | **Lun** | Phase 6 QA : tests waterfall / Soft Cap → **179 / 349** | `npm run test:business` vert |
-| **Mar–Mer** | Creatomate : worker / spike `project_export_jobs` staging | 1 export gated (ou mock contrôlé) |
+| **Mar–Mer** | Creatomate : worker mock `drain` + GET status · vrai SDK ensuite | `queued`→`completed` mock ✅ · Creatomate API ⏳ |
 | **Jeu** | CRO Soft Cap : copy + timing + preview + rappel Co-Créateur | Checklist CRO + 1–2 changements UI |
 | **Ven** | Pilote viral ready : enforce 5 photos + runbook flag 1 tenant | Runbook + flag testable staging |
 

@@ -13,11 +13,47 @@ import {
 const ProjectIdSchema = z.string().uuid({ message: "invalid_project_id" });
 
 /**
- * POST /api/projects/[id]/export
- *
- * Phase 5 — gate entitlements puis enqueue job Creatomate stub.
- * Ne lance pas encore de rendu externe (provider = creatomate_stub).
+ * GET /api/projects/[id]/export — dernier job export (owner).
+ * POST — gate entitlements puis enqueue stub Creatomate.
+ * Worker mock : POST /api/internal/export/drain (EXPORT_DRAIN_SECRET).
  */
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } },
+) {
+  const projectIdResult = ProjectIdSchema.safeParse(params.id);
+  if (!projectIdResult.success) {
+    return NextResponse.json({ error: "invalid_project_id" }, { status: 400 });
+  }
+
+  const projectId = projectIdResult.data;
+  const access = await requireProjectOwner(projectId);
+  if (!access.ok) return access.response;
+
+  const { data, error } = await access.supabase
+    .from("project_export_jobs")
+    .select(
+      "id, status, provider, allow_4k, allow_stingray_master, denial_code, message, created_at, updated_at",
+    )
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    return NextResponse.json(
+      { error: "export_job_lookup_failed", message: error.message },
+      { status: 500 },
+    );
+  }
+
+  if (!data) {
+    return NextResponse.json({ job: null });
+  }
+
+  return NextResponse.json({ job: data });
+}
+
 export async function POST(
   req: Request,
   { params }: { params: { id: string } },
@@ -91,8 +127,8 @@ export async function POST(
     allowStingrayMaster: gate.allowStingrayMaster,
     message:
       locale === "en"
-        ? "Export queued (Creatomate stub — worker not wired yet)."
-        : "Export mis en file (stub Creatomate — worker à brancher).",
+        ? "Export queued — drain via POST /api/internal/export/drain (mock_staging)."
+        : "Export en file — drain via POST /api/internal/export/drain (mock_staging).",
   });
 
   if (!queued.ok) {
@@ -109,5 +145,6 @@ export async function POST(
     allowStingrayMaster: gate.allowStingrayMaster,
     provider: "creatomate_stub",
     projectStatus: project.status,
+    drainHint: "/api/internal/export/drain",
   });
 }

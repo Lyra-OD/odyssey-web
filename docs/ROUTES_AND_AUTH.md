@@ -60,6 +60,14 @@ Contribution invité async : les proches achètent des **empreintes** dont le Ne
 
 Canon : [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md).
 
+### Export Creatomate (gate ✅ · worker mock ✅ · SDK réel ⏳)
+
+| Route | Auth | Rôle |
+|-------|------|------|
+| **`POST /api/projects/[id]/export`** | Owner | Gate entitlements → enqueue `project_export_jobs` (`creatomate_stub`) |
+| **`GET /api/projects/[id]/export`** | Owner | Dernier job (status / message) |
+| **`POST /api/internal/export/drain`** | Bearer `EXPORT_DRAIN_SECRET` | Mock worker : `queued` → `completed` |
+
 **Sécurité contribute :** token opaque SHA-256, client admin (bypass RLS) ; cap **1000 $/transaction** ; accrual au webhook.
 
 `lang` = `fr` | `en`.
