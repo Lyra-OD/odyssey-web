@@ -23,7 +23,10 @@ import {
 import {
   SANCTUARY_HALO_TEAL,
   SANCTUARY_HALO_UV,
+  sanctuaryGhostButton,
+  sanctuarySecondaryButton,
 } from "@/src/lib/contribute/sanctuaryChrome";
+import { SANCTUARY_GUEST_PHOTO_MAX } from "@/src/lib/contribute/sanctuaryLimits";
 import {
   DURATION_BREATH,
   DURATION_RITUAL,
@@ -40,17 +43,31 @@ export type SanctuaryLandingProps = {
 type TributePayload = {
   firstName: string | null;
   lastName: string | null;
+  displayName?: string;
 };
 
 type LoadState =
   | { status: "loading" }
   | { status: "error"; message: string }
-  | { status: "ready"; tribute: TributePayload; packs: ImprintPack[] };
+  | {
+      status: "ready";
+      tribute: TributePayload;
+      packs: ImprintPack[];
+      guestPhotoCount: number;
+      guestPhotoMax: number;
+    };
+
+/** Dépôt (formulaire / accusé inline) → catalogue empreintes. */
+type Phase = "deposit" | "bridge";
+
+/** Dans la phase dépôt : formulaire actif, ou panneau après succès. */
+type DepositLane = "form" | "ack";
 
 function tributeDisplayName(
   tribute: TributePayload,
   locale: "fr" | "en",
 ): string {
+  if (tribute.displayName?.trim()) return tribute.displayName.trim();
   const parts = [tribute.firstName, tribute.lastName]
     .map((p) => (p ?? "").trim())
     .filter(Boolean);
@@ -71,6 +88,14 @@ const copy = {
     errorTitle: "Lien indisponible",
     errorBody:
       "Ce Sanctuaire est introuvable ou n'est plus accessible. Demandez un nouveau lien à la famille.",
+    ackTitle: "Votre souvenir a été déposé.",
+    ackBody:
+      "Vous pouvez en ajouter d'autres, en toute sérénité — jusqu'à cinq photos.",
+    photoCounter: (n: number, max: number) => `${n} / ${max} souvenirs`,
+    addAnother: "Ajouter un autre souvenir",
+    continueToImprints: "Continuer",
+    photoLimitReached:
+      "Vous avez offert cinq photos — un geste déjà généreux. Poursuivez si vous le souhaitez.",
     bridgeTitle: "Votre empreinte a été ajoutée.",
     bridgeBody:
       "Souhaitez-vous rejoindre le cercle des proches qui soutiennent la production de ce film hommage ?",
@@ -88,6 +113,14 @@ const copy = {
     errorTitle: "Link unavailable",
     errorBody:
       "This Sanctuary could not be found or is no longer available. Ask the family for a new link.",
+    ackTitle: "Your memory has been placed.",
+    ackBody: "You may add more, gently — up to five photos.",
+    photoCounter: (n: number, max: number) =>
+      `${n} / ${max} memor${n === 1 ? "y" : "ies"}`,
+    addAnother: "Add another memory",
+    continueToImprints: "Continue",
+    photoLimitReached:
+      "You have offered five photos — already a generous gift. Continue whenever you wish.",
     bridgeTitle: "Your mark has been placed.",
     bridgeBody:
       "Would you like to join the circle of those who support the making of this tribute film?",
@@ -96,14 +129,18 @@ const copy = {
   },
 } as const;
 
-
 /**
- * Shell client du Sanctuaire — dépôt → catalogue → checkout Stripe.
+ * Shell client du Sanctuaire — dépôt (multi photos) → catalogue → checkout.
  */
 export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
   const t = copy[locale];
   const [load, setLoad] = useState<LoadState>({ status: "loading" });
   const [deposit, setDeposit] = useState<SanctuaryDepositResult | null>(null);
+  const [phase, setPhase] = useState<Phase>("deposit");
+  const [depositLane, setDepositLane] = useState<DepositLane>("form");
+  const [photoCount, setPhotoCount] = useState(0);
+  const [photoMax, setPhotoMax] = useState(SANCTUARY_GUEST_PHOTO_MAX);
+  const [formKey, setFormKey] = useState(0);
   const [selectedPackKey, setSelectedPackKey] = useState<string | null>(null);
   const [patronAmountCents, setPatronAmountCents] = useState(
     GUEST_PATRON_SUGGESTED_CENTS,
@@ -132,6 +169,31 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
       ? load.packs.find((p) => p.key === selectedPackKey)
       : undefined;
 
+  const canAddAnotherPhoto = photoCount < photoMax;
+  const showDepositAck =
+    phase === "deposit" &&
+    (depositLane === "ack" || !canAddAnotherPhoto);
+  const showDepositForm =
+    phase === "deposit" && depositLane === "form" && canAddAnotherPhoto;
+
+  const handleDeposited = (result: SanctuaryDepositResult) => {
+    setDeposit(result);
+    if (result.kind === "photo") {
+      setPhotoCount((n) => Math.min(n + 1, photoMax));
+    }
+  };
+
+  const handleDepositFlowComplete = () => {
+    setDepositLane("ack");
+  };
+
+  const handleAddAnother = () => {
+    setDepositLane("form");
+    setFormKey((k) => k + 1);
+  };
+
+  const remainingPhotoSlots = Math.max(0, photoMax - photoCount);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
@@ -153,7 +215,12 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
         status: "ready",
         tribute: { ...SANCTUARY_PREVIEW_TRIBUTE },
         packs: sanctuaryPreviewPacks(locale),
+        guestPhotoCount: 0,
+        guestPhotoMax: SANCTUARY_GUEST_PHOTO_MAX,
       });
+      setPhotoCount(0);
+      setPhotoMax(SANCTUARY_GUEST_PHOTO_MAX);
+      setDepositLane("form");
       return;
     }
 
@@ -167,6 +234,8 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
           ok?: boolean;
           tribute?: TributePayload;
           packs?: ImprintPack[];
+          guestPhotoCount?: number;
+          guestPhotoMax?: number;
           error?: string;
         };
         if (cancelled) return;
@@ -177,10 +246,17 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
           });
           return;
         }
+        const max = body.guestPhotoMax ?? SANCTUARY_GUEST_PHOTO_MAX;
+        const count = Math.max(0, body.guestPhotoCount ?? 0);
+        setPhotoMax(max);
+        setPhotoCount(count);
+        setDepositLane(count >= max ? "ack" : "form");
         setLoad({
           status: "ready",
           tribute: body.tribute,
           packs: Array.isArray(body.packs) ? body.packs : [],
+          guestPhotoCount: count,
+          guestPhotoMax: max,
         });
       } catch {
         if (!cancelled) {
@@ -278,7 +354,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
               </motion.div>
             ) : null}
 
-            {load.status === "ready" && !deposit ? (
+            {load.status === "ready" && phase === "deposit" ? (
               <motion.div
                 key="deposit"
                 initial={{ opacity: 0, y: 14 }}
@@ -294,22 +370,86 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                   <p className="mx-auto mt-5 max-w-md text-sm font-light leading-relaxed text-white/50 md:text-base">
                     {t.subtitle}
                   </p>
-                  <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/75">
-                    {t.depositLead}
-                  </p>
+                  {showDepositForm ? (
+                    <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/75">
+                      {t.depositLead}
+                    </p>
+                  ) : null}
+                  {photoCount > 0 ? (
+                    <p
+                      className="mt-4 text-[11px] font-medium uppercase tracking-[0.28em] text-teal-400/80"
+                      aria-live="polite"
+                    >
+                      {t.photoCounter(photoCount, photoMax)}
+                    </p>
+                  ) : null}
                 </div>
 
-                <div className="rounded-sm border border-white/10 bg-white/[0.03] px-5 py-8 backdrop-blur-sm md:px-8">
-                  <SanctuaryDepositForm
-                    token={token}
-                    locale={locale}
-                    onDeposited={setDeposit}
-                  />
-                </div>
+                {showDepositAck ? (
+                  <div
+                    className="space-y-6 rounded-sm border border-white/10 bg-white/[0.03] px-5 py-7 backdrop-blur-sm md:px-8"
+                    role="status"
+                  >
+                    <div className="space-y-3 text-center">
+                      <div
+                        className="mx-auto h-px w-12 bg-teal-400/35"
+                        aria-hidden
+                      />
+                      {canAddAnotherPhoto ? (
+                        <>
+                          <p className="font-editorial text-xl font-medium tracking-tight text-zinc-50 md:text-2xl">
+                            {t.ackTitle}
+                          </p>
+                          <p className="text-sm font-light leading-relaxed text-white/55">
+                            {t.ackBody}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm font-light leading-relaxed text-white/55 md:text-base">
+                          {t.photoLimitReached}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      {canAddAnotherPhoto ? (
+                        <button
+                          type="button"
+                          onClick={handleAddAnother}
+                          className={`${sanctuarySecondaryButton} w-full`}
+                        >
+                          {t.addAnother}
+                        </button>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={() => setPhase("bridge")}
+                        className={`${sanctuaryGhostButton} w-full`}
+                      >
+                        {t.continueToImprints}
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
+                {showDepositForm ? (
+                  <div className="rounded-sm border border-white/10 bg-white/[0.03] px-5 py-8 backdrop-blur-sm md:px-8">
+                    <SanctuaryDepositForm
+                      key={formKey}
+                      token={token}
+                      locale={locale}
+                      remainingPhotoSlots={remainingPhotoSlots}
+                      initialName={deposit?.contributorName ?? ""}
+                      initialEmail={deposit?.contributorEmail ?? ""}
+                      onDeposited={handleDeposited}
+                      onFlowComplete={handleDepositFlowComplete}
+                    />
+                  </div>
+                ) : null}
               </motion.div>
             ) : null}
 
-            {load.status === "ready" && deposit ? (
+            {load.status === "ready" && phase === "bridge" ? (
               <motion.div
                 key="bridge"
                 initial={{ opacity: 0, y: 16 }}
@@ -328,6 +468,11 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                   <p className="mx-auto max-w-md text-sm font-light leading-relaxed text-white/55 md:text-base">
                     {t.bridgeBody}
                   </p>
+                  {photoCount > 0 ? (
+                    <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-white/40">
+                      {t.photoCounter(photoCount, photoMax)}
+                    </p>
+                  ) : null}
                 </div>
 
                 <ImprintCatalog
@@ -354,8 +499,8 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                   patronAmountCents={patronAmountCents}
                   patronMinCents={patronPack?.amountMinCents}
                   patronMaxCents={patronPack?.amountMaxCents}
-                  contributorName={deposit.contributorName}
-                  contributorEmail={deposit.contributorEmail}
+                  contributorName={deposit?.contributorName ?? ""}
+                  contributorEmail={deposit?.contributorEmail}
                   fixedPriceCents={selectedPack?.priceCents}
                 />
               </motion.div>

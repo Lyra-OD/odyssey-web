@@ -556,6 +556,12 @@ export async function PATCH(req: Request, { params }: RouteParams) {
     updatePayload.wizard_step = patchStep;
   }
 
+  // Miroir essentials → colonnes SQL (Sanctuaire / contribute lit ces champs).
+  const firstName = runtimeState.essentials?.firstName?.trim();
+  const lastName = runtimeState.essentials?.lastName?.trim();
+  if (firstName) updatePayload.first_name = firstName;
+  if (lastName) updatePayload.last_name = lastName;
+
   let updateQuery = access.supabase
     .from("projects")
     .update(updatePayload)

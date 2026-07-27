@@ -9,6 +9,12 @@ import {
   roleFromProductKey,
   type CircleRole,
 } from "@/src/lib/contribute/circle";
+import { countGuestPhotosForContributeToken } from "@/src/lib/contribute/guestPhotoQuota";
+import {
+  formatTributeDisplayName,
+  resolveTributeNames,
+} from "@/src/lib/contribute/tributeName";
+import { SANCTUARY_GUEST_PHOTO_MAX } from "@/src/lib/contribute/sanctuaryLimits";
 import {
   listActiveGuestSupportPacks,
   guestSupportPackLabel,
@@ -37,26 +43,39 @@ export async function GET(
 
   const { data: project } = await admin
     .from("projects")
-    .select("id, first_name, last_name")
+    .select("id, first_name, last_name, wizard_state")
     .eq("id", tokenRow.project_id)
     .maybeSingle();
 
-  const [{ data: guestMedia }, { data: paidCheckouts }] = await Promise.all([
-    admin
-      .from("media_assets")
-      .select("contributor_name, contributor_email, created_at, source")
-      .eq("project_id", tokenRow.project_id)
-      .eq("contributor_type", "guest")
-      .order("created_at", { ascending: false })
-      .limit(40),
-    admin
-      .from("guest_micro_checkouts")
-      .select("contributor_name, contributor_email, product_key, completed_at, created_at")
-      .eq("project_id", tokenRow.project_id)
-      .eq("status", "completed")
-      .order("completed_at", { ascending: false })
-      .limit(40),
-  ]);
+  const tribute = resolveTributeNames({
+    first_name: (project?.first_name as string | null) ?? null,
+    last_name: (project?.last_name as string | null) ?? null,
+    wizard_state: project?.wizard_state,
+  });
+
+  const [{ data: guestMedia }, { data: paidCheckouts }, guestPhotoCount] =
+    await Promise.all([
+      admin
+        .from("media_assets")
+        .select("contributor_name, contributor_email, created_at, source")
+        .eq("project_id", tokenRow.project_id)
+        .eq("contributor_type", "guest")
+        .order("created_at", { ascending: false })
+        .limit(40),
+      admin
+        .from("guest_micro_checkouts")
+        .select(
+          "contributor_name, contributor_email, product_key, completed_at, created_at",
+        )
+        .eq("project_id", tokenRow.project_id)
+        .eq("status", "completed")
+        .order("completed_at", { ascending: false })
+        .limit(40),
+      countGuestPhotosForContributeToken(admin, {
+        projectId: tokenRow.project_id,
+        accessTokenId: tokenRow.id,
+      }).catch(() => 0),
+    ]);
 
   const rawEntries: {
     displayName: string;
@@ -104,9 +123,12 @@ export async function GET(
   return NextResponse.json({
     ok: true,
     tribute: {
-      firstName: (project?.first_name as string | null) ?? null,
-      lastName: (project?.last_name as string | null) ?? null,
+      firstName: tribute.firstName,
+      lastName: tribute.lastName,
+      displayName: formatTributeDisplayName(tribute, locale),
     },
+    guestPhotoCount,
+    guestPhotoMax: SANCTUARY_GUEST_PHOTO_MAX,
     circle,
     circleCount: circle.length,
     packs: listActiveGuestSupportPacks().map((pack) => ({
