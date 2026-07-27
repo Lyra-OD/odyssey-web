@@ -4,6 +4,12 @@ import { randomUUID } from "crypto";
 
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { resolveContributeToken } from "@/src/lib/contribute/accessToken";
+import {
+  canAcceptGuestPhotoDeposit,
+  GUEST_PHOTO_LIMIT_ERROR,
+  isGuestPhotoLimitDbError,
+} from "@/src/lib/contribute/guestPhotoQuota";
+import { SANCTUARY_GUEST_PHOTO_MAX } from "@/src/lib/contribute/sanctuaryLimits";
 import { STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
 
 export const runtime = "nodejs";
@@ -46,6 +52,7 @@ function extensionForMime(mime: string): string {
  *
  * Insert admin `media_assets` : contributor_type=guest, review_status=pending_review.
  * Hors Soft Cap famille (voir odyssey_p10_2_guest_sanctuary.sql).
+ * Plafond 5 photos / token (P10.3 + guestPhotoQuota).
  */
 export async function POST(
   req: Request,
@@ -152,6 +159,29 @@ export async function POST(
     messageText = parsed.data.messageText.trim();
   }
 
+  // P0 — avant upload Storage (évite orphelins + 403 propre).
+  if (kind === "photo") {
+    try {
+      const quota = await canAcceptGuestPhotoDeposit(admin, {
+        projectId: tokenRow.project_id,
+        accessTokenId: tokenRow.id,
+      });
+      if (!quota.ok) {
+        return NextResponse.json(
+          {
+            error: GUEST_PHOTO_LIMIT_ERROR,
+            max: SANCTUARY_GUEST_PHOTO_MAX,
+            current: quota.count,
+          },
+          { status: 403 },
+        );
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "quota_check_failed";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+  }
+
   const assetId = randomUUID();
   const basePath = `projects/${tokenRow.project_id}/contribute/${tokenRow.id}`;
 
@@ -221,6 +251,12 @@ export async function POST(
 
   if (insertError || !inserted?.id) {
     await admin.storage.from(BUCKET).remove([storagePath]);
+    if (isGuestPhotoLimitDbError(insertError?.message)) {
+      return NextResponse.json(
+        { error: GUEST_PHOTO_LIMIT_ERROR },
+        { status: 403 },
+      );
+    }
     return NextResponse.json(
       { error: "media_insert_failed", message: insertError?.message },
       { status: 400 },
