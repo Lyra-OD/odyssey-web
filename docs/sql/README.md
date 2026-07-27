@@ -5,6 +5,8 @@
 >
 > **P9 (Phase 5) :** [`odyssey_p9_project_export_jobs.sql`](odyssey_p9_project_export_jobs.sql) — ✅ **appliqué sur Supabase** (juillet 2026) — file `project_export_jobs` (stub Creatomate / gate entitlements).
 >
+> **P9.1 (Creatomate spike) :** [`odyssey_p9_1_creatomate_spike.sql`](odyssey_p9_1_creatomate_spike.sql) — ⏳ colonnes `external_render_id` + `output_url` (webhook Creatomate).
+>
 > **QA Phase 6 :** [`odyssey_p6_qa_revshare_accrual.sql`](odyssey_p6_qa_revshare_accrual.sql) — accrual RevShare E2E (solde +30 % net, idempotence, 0 jeton) — **transactionnel (ROLLBACK)**, ne persiste rien.
 >
 > **P10 + P10.1 (Cascade V-Final) :** [`odyssey_p10_memorial_fund.sql`](odyssey_p10_memorial_fund.sql) + [`odyssey_p10_1_memorial_fund_rpc.sql`](odyssey_p10_1_memorial_fund_rpc.sql) — ✅ **appliqués sur Supabase** (juillet 2026) — Fonds Commémoratif (crédit), waterfall invité, RPC accrue/consume. Feature flag `tenants.settings.viral_loop_enabled` (défaut `false`).
@@ -43,6 +45,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | 18 | `odyssey_p7_media_quota_guard.sql` | **Migration** | **Storyboard S3** — trigger `enforce_media_asset_quota()` — voir [§ P7](#p7--garde-fou-quota-de-medias-package-aware) |
 | 19 | `odyssey_p8_freemium_v1_token_purge.sql` | **Migration** | **Freemium V1** — invitation sans jetons · Soft Cap quota · entitlements · NFC · DROP wallets |
 | 20 | `odyssey_p9_project_export_jobs.sql` | **Migration** | **Phase 5** — `project_export_jobs` (stub Creatomate) · RLS SELECT owner |
+| 20b | `odyssey_p9_1_creatomate_spike.sql` | **Migration** | **Creatomate spike** — `external_render_id` + `output_url` |
 | 21 | `odyssey_p10_memorial_fund.sql` | **Migration** | **Cascade V-Final** — Fonds Commémoratif (crédit), `guest_micro_checkouts` waterfall, `projects.commemoration_date`, config `tenants.settings` — voir [§ P10](#p10--fonds-commémoratif-boucle-virale) et [`IMPLEMENTATION_CASCADE_VFINAL.md`](../IMPLEMENTATION_CASCADE_VFINAL.md) |
 | 22 | `odyssey_p10_1_memorial_fund_rpc.sql` | **Migration** | **Cascade V-Final Phase 2** — RPC `accrue_guest_micro_checkout()` (waterfall invité → commission + crédit) & `consume_family_fund_credit()` (application crédit paywall) — voir [§ P10.1](#p101--rpc-fonds-commémoratif) |
 | 23 | `odyssey_p10_2_guest_sanctuary.sql` | **Migration** | **Phase 3a** — `media_assets.contributor_name` + Soft Cap P7 **exclut** `contributor_type=guest` — voir [§ P10.2](#p102--sanctuaire-invité) |

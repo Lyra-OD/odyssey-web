@@ -45,7 +45,6 @@ export async function POST(req: Request) {
     const result = await drainQueuedExportJobs(admin, { limit });
     return NextResponse.json({
       ok: true,
-      mode: "mock_staging",
       ...result,
     });
   } catch (err) {
