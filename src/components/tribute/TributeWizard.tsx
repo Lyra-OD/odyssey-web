@@ -18,7 +18,7 @@ import {
 } from "react";
 import { PreviewStep } from "@/src/components/tribute/PreviewStep";
 import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
-import { SoftCapModal, SoftCapMediaCountSync, type SoftCapVariant } from "@/src/components/tribute/SoftCapModal";
+import { SoftCapModal, SoftCapMediaCountSync } from "@/src/components/tribute/SoftCapModal";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
 import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
 import { StoryboardMontageStep } from "@/src/components/tribute/StoryboardMontageStep";
@@ -46,9 +46,14 @@ import { ScannerCompanionPlaceholder } from "@/src/components/scanner/ScannerCom
 import { VaultOnlineSourcesSection } from "@/src/components/tribute/VaultOnlineSourcesSection";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
-import { useDebouncedValue } from "@/src/hooks/useDebouncedValue";
+import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
+import { useWizardDraftLifecycle } from "@/src/hooks/useWizardDraftLifecycle";
+import {
+  useWizardEssentials,
+  type UseWizardEssentialsParams,
+} from "@/src/hooks/useWizardEssentials";
+import { useWizardSoftCap } from "@/src/hooks/useWizardSoftCap";
 import type { AppDictionary } from "@/lib/dictionaries";
-import { createClient } from "@/utils/supabase/client";
 import {
   coerceWizardState,
   emptyMontageState,
@@ -63,7 +68,6 @@ import {
   type WizardActTracks,
   type WizardStateV1,
   type WizardStoryboardState,
-  type WizardStoryboardSong,
 } from "@/src/lib/wizard/wizardState";
 import {
   buildPricingSnapshot,
@@ -73,7 +77,6 @@ import {
   packageCents,
   packageTierRank,
   resolveMusicCatalogTier,
-  resolveWizardDisplayCart,
   WIZARD_ALL_PACKAGES,
   WIZARD_B2C_DIRECT_PACKAGES,
   WIZARD_PARTNER_GRANTED_PACKAGES,
@@ -89,14 +92,9 @@ import { resolvePackageDossierRows } from "@/src/lib/wizard/packageDossier";
 import {
   emptyActTracks,
   hasAnyActTrack,
-  isOfficialCatalogTrack,
   STINGRAY_CATALOG_PROVIDER,
 } from "@/src/lib/wizard/stingrayCatalog";
-import {
-  isSoftCapEligible,
-  shouldOfferMagicSoftCap,
-  shouldOfferMusicSoftCap,
-} from "@/src/lib/wizard/softCap";
+import { shouldOfferMagicSoftCap } from "@/src/lib/wizard/softCap";
 import { MUSIC_RIGHTS_TOS_VERSION } from "@/src/lib/wizard/exportGate";
 import {
   isWizardStepAllowedForRole,
@@ -105,7 +103,6 @@ import {
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
 import { useWizardStoryboard } from "@/src/hooks/useWizardStoryboard";
 import type { Locale } from "@/i18n.config";
-import { SIGNED_URL_TTL_SEC, STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
 
 export type TributeWizardCopy = AppDictionary["tributeWizard"];
 
@@ -135,19 +132,6 @@ function yearFromDateInput(iso: string): string {
   if (!iso?.trim()) return "";
   const y = Number.parseInt(iso.slice(0, 4), 10);
   return Number.isFinite(y) ? String(y) : "";
-}
-
-function buildAvatarStoragePath(projectId: string, file: File): string {
-  const fromName = file.name.split(".").pop();
-  const ext =
-    fromName && fromName.length <= 10
-      ? fromName.toLowerCase()
-      : file.type === "image/png"
-        ? "png"
-        : file.type === "image/webp"
-          ? "webp"
-          : "jpg";
-  return `projects/${projectId}/avatar/primary-${crypto.randomUUID()}.${ext}`;
 }
 
 export function TributeWizard({
@@ -226,21 +210,6 @@ export function TributeWizard({
   const [essentialError, setEssentialError] = useState(false);
   const [chaptersStructureError, setChaptersStructureError] = useState(false);
 
-  const [firstName, setFirstName] = useState(
-    hydrated.essentials?.firstName ?? "",
-  );
-  const [lastName, setLastName] = useState(hydrated.essentials?.lastName ?? "");
-  const [birthDate, setBirthDate] = useState(
-    hydrated.essentials?.birthDate ?? "",
-  );
-  const [deathDate, setDeathDate] = useState(
-    hydrated.essentials?.deathDate ?? "",
-  );
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [avatarPath, setAvatarPath] = useState<string | null>(
-    () => hydrated.essentials?.avatarPath?.trim() || null,
-  );
-
   const [selectedSocial, setSelectedSocial] = useState<SocialId | null>(
     hydrated.socialSources?.selected ?? null,
   );
@@ -270,25 +239,6 @@ export function TributeWizard({
     () => resolveMusicCatalogTier(basePackage, extensions),
     [basePackage, extensions],
   );
-  const softCapMusicBrowse = shouldOfferMusicSoftCap(
-    grantedPackage,
-    intendedPackage,
-    Boolean(extensions.musicLicense),
-  );
-  // Co-Créateur : catalogue premium pour le craft ; Soft Cap UI masquée —
-  // le titulaire paie à l'étape 7.
-  const musicBrowseTier =
-    isEditor || softCapMusicBrowse ? "premium" : musicCatalogTier;
-  const softCapEligible =
-    !isEditor && isSoftCapEligible(grantedPackage, intendedPackage);
-  const [softCapOpen, setSoftCapOpen] = useState(false);
-  const [softCapVariant, setSoftCapVariant] =
-    useState<SoftCapVariant>("mediaUnlock");
-  const softCapMediaDismissedRef = useRef(false);
-  const softCapMagicDismissedRef = useRef(false);
-  // Marque un bump intended→signature déclenché par le filet médias (>50), afin
-  // de pouvoir redescendre automatiquement si la famille retire des photos.
-  const mediaAutoBumpedRef = useRef(false);
   const currentPackageId = useMemo(
     () => manifestPackageFromWizardBasePackage(basePackage),
     [basePackage],
@@ -300,23 +250,6 @@ export function TributeWizard({
   const currentMaxSongs = useMemo(
     () => packageMaxSongs(currentPackageId),
     [currentPackageId],
-  );
-  // Freemium Soft Cap : le cadeau accordé est le Souvenir (0 $, rang 0).
-  const isFreemiumGrant = packageTierRank(grantedPackage) === 0;
-  // Plafond doux médias : sur un projet freemium, on laisse déposer jusqu'à la
-  // limite Héritage (125) MÊME tant que l'intention est encore Souvenir — le
-  // vrai blocage se fera à l'export si non payé (décision produit CEO).
-  const SOFT_CAP_MEDIA_CEILING = useMemo(
-    () => packageMaxMediaItems(manifestPackageFromWizardBasePackage("signature")),
-    [],
-  );
-  const effectiveMaxMediaItems = isFreemiumGrant
-    ? Math.max(currentMaxMediaItems, SOFT_CAP_MEDIA_CEILING)
-    : currentMaxMediaItems;
-  // Quota médias inclus dans le cadeau Souvenir (seuil d'excès checkout).
-  const grantedMediaMax = useMemo(
-    () => packageMaxMediaItems(manifestPackageFromWizardBasePackage(grantedPackage)),
-    [grantedPackage],
   );
   // Trampoline de persistance : `useWizardStoryboard` doit être appelé avant
   // que `queueSave`/`wizardFieldsRef` n'existent (voir plus bas), mais son
@@ -460,18 +393,6 @@ export function TributeWizard({
   const [actTracks] = useState<WizardActTracks>(
     () => hydrated.musicalAmbiance?.tracks ?? emptyActTracks(),
   );
-  const [isPaying, setIsPaying] = useState(false);
-  const [payError, setPayError] = useState<string | null>(null);
-  const [fundCreditCents, setFundCreditCents] = useState(0);
-  const [ownerFloorCents, setOwnerFloorCents] = useState(0);
-  const [viralLoopEnabled, setViralLoopEnabled] = useState(false);
-  const [riderAccepted, setRiderAccepted] = useState(false);
-
-  const avatarInputRef = useRef<HTMLInputElement>(null);
-  const avatarHydratedPathRef = useRef<string | null>(null);
-  const avatarHydrateInflightRef = useRef<string | null>(null);
-  const pendingAvatarFileRef = useRef<File | null>(null);
-  const avatarUploadingRef = useRef(false);
   const wizardTitleId = useId();
 
   // Identifiants DB nécessaires pour passer RLS Storage + insert media_assets.
@@ -492,12 +413,14 @@ export function TributeWizard({
   );
   const [projectDraftLoading, setProjectDraftLoading] = useState(false);
 
+  // Amorcé avec les valeurs hydratées (pas l'état `firstName` live, qui
+  // n'existe pas encore avant `useWizardEssentials` — voir plus bas).
   const wizardFieldsRef = useRef<WizardFieldsSnapshot>({
-    firstName,
-    lastName,
-    birthDate,
-    deathDate,
-    avatarPath,
+    firstName: hydrated.essentials?.firstName ?? "",
+    lastName: hydrated.essentials?.lastName ?? "",
+    birthDate: hydrated.essentials?.birthDate ?? "",
+    deathDate: hydrated.essentials?.deathDate ?? "",
+    avatarPath: hydrated.essentials?.avatarPath?.trim() || null,
     selectedSocial,
     isPartner,
     basePackage,
@@ -509,26 +432,6 @@ export function TributeWizard({
     actTracks,
     musicRightsAttestation,
   });
-  wizardFieldsRef.current = {
-    firstName,
-    lastName,
-    birthDate,
-    deathDate,
-    avatarPath,
-    selectedSocial,
-    isPartner,
-    basePackage,
-    grantedPackage,
-    intendedPackage,
-    montage,
-    storyboard: wizardStoryboard.storyboard,
-    extensions,
-    actTracks,
-    musicRightsAttestation,
-  };
-
-  const skipInitialAutosaveRef = useRef(Boolean(initialDraft?.id));
-  const skipStepAutosaveRef = useRef(true);
 
   const buildWizardState = useCallback((): WizardStateV1 => {
     const s = wizardFieldsRef.current;
@@ -590,6 +493,67 @@ export function TributeWizard({
     }
   };
 
+  const {
+    firstName,
+    lastName,
+    birthDate,
+    deathDate,
+    avatarPreview,
+    avatarPath,
+    avatarInputRef,
+    handleFirstNameChange,
+    handleLastNameChange,
+    handleBirthDateChange,
+    handleDeathDateChange,
+    handleAvatarChange,
+  } = useWizardEssentials({
+    initial: hydrated.essentials,
+    queueSave,
+    uploadProjectId,
+    wizardFieldsRef:
+      wizardFieldsRef as unknown as UseWizardEssentialsParams["wizardFieldsRef"],
+  });
+
+  // Réaffecté à chaque rendu maintenant que les champs Essentiels vivent dans
+  // `useWizardEssentials` (voir l'amorçage hydraté plus haut).
+  wizardFieldsRef.current = {
+    firstName,
+    lastName,
+    birthDate,
+    deathDate,
+    avatarPath,
+    selectedSocial,
+    isPartner,
+    basePackage,
+    grantedPackage,
+    intendedPackage,
+    montage,
+    storyboard: wizardStoryboard.storyboard,
+    extensions,
+    actTracks,
+    musicRightsAttestation,
+  };
+
+  useWizardDraftLifecycle({
+    isEditor,
+    ensureDraft,
+    queueSave,
+    currentStep,
+    firstName,
+    lastName,
+    birthDate,
+    deathDate,
+    uploadProjectId,
+    setUploadProjectId,
+    setUploadUserId,
+    setUploadTenantId,
+    hasInitialDraft: Boolean(initialDraft?.id),
+    projectDraftError,
+    setProjectDraftError,
+    projectDraftLoading,
+    setProjectDraftLoading,
+  });
+
   const deceasedDisplayName = useMemo(() => {
     const fn = firstName.trim();
     const ln = lastName.trim();
@@ -611,195 +575,6 @@ export function TributeWizard({
       wizardFieldsRef.current.isPartner = true;
     }
   }, [isPartnerProp]);
-
-  useEffect(() => {
-    return () => {
-      if (avatarPreview?.startsWith("blob:")) {
-        URL.revokeObjectURL(avatarPreview);
-      }
-    };
-  }, [avatarPreview]);
-
-  const hydrateAvatarPreview = useCallback(
-    async (storagePath: string, projectId: string) => {
-      if (avatarHydrateInflightRef.current === storagePath) return;
-      avatarHydrateInflightRef.current = storagePath;
-
-      try {
-        const apiRes = await fetch(
-          `/api/projects/${projectId}/avatar?path=${encodeURIComponent(storagePath)}`,
-        );
-
-        if (apiRes.ok) {
-          const body = (await apiRes.json()) as { signedUrl?: string };
-          if (body.signedUrl) {
-            avatarHydratedPathRef.current = storagePath;
-            setAvatarPreview(body.signedUrl);
-            return;
-          }
-        }
-
-        const supabase = createClient();
-        const { data: signed, error: signError } = await supabase.storage
-          .from("user-assets")
-          .createSignedUrl(storagePath, SIGNED_URL_TTL_SEC);
-
-        if (!signError && signed?.signedUrl) {
-          avatarHydratedPathRef.current = storagePath;
-          setAvatarPreview(signed.signedUrl);
-          return;
-        }
-
-        console.warn(
-          "[TributeWizard] avatar hydrate failed:",
-          signError?.message ?? "unknown",
-        );
-      } finally {
-        avatarHydrateInflightRef.current = null;
-      }
-    },
-    [],
-  );
-
-  // Réhydrate l'avatar depuis Storage après F5 (blob local perdu, avatarPath en DB).
-  useEffect(() => {
-    const path =
-      avatarPath?.trim() || hydrated.essentials?.avatarPath?.trim() || "";
-    if (!path) return;
-    if (avatarPreview?.startsWith("blob:")) return;
-    if (avatarHydratedPathRef.current === path && avatarPreview) return;
-    if (!uploadProjectId) return;
-
-    void hydrateAvatarPreview(path, uploadProjectId);
-  }, [
-    avatarPath,
-    avatarPreview,
-    hydrated.essentials?.avatarPath,
-    uploadProjectId,
-    hydrateAvatarPreview,
-  ]);
-
-  useEffect(() => {
-    const fromDraft = hydrated.essentials?.avatarPath?.trim();
-    if (fromDraft && !avatarPath) {
-      setAvatarPath(fromDraft);
-      wizardFieldsRef.current.avatarPath = fromDraft;
-    }
-  }, [avatarPath, hydrated.essentials?.avatarPath]);
-
-  const uploadAvatarToStorage = useCallback(
-    async (file: File, projectId: string) => {
-      if (avatarUploadingRef.current) return;
-      avatarUploadingRef.current = true;
-      try {
-        const supabase = createClient();
-        const storagePath = buildAvatarStoragePath(projectId, file);
-        const { error } = await supabase.storage
-          .from("user-assets")
-          .upload(storagePath, file, {
-            cacheControl: STORAGE_CACHE_CONTROL,
-            upsert: true,
-            contentType: file.type || undefined,
-          });
-
-        if (error) throw error;
-
-        setAvatarPath(storagePath);
-        wizardFieldsRef.current.avatarPath = storagePath;
-        avatarHydratedPathRef.current = null;
-        queueSave("immediate");
-      } catch {
-        // Preview blob reste visible ; path non persisté jusqu'à retry.
-      } finally {
-        avatarUploadingRef.current = false;
-      }
-    },
-    [queueSave],
-  );
-
-  useEffect(() => {
-    if (!uploadProjectId || !pendingAvatarFileRef.current) return;
-    const file = pendingAvatarFileRef.current;
-    pendingAvatarFileRef.current = null;
-    void uploadAvatarToStorage(file, uploadProjectId);
-  }, [uploadProjectId, uploadAvatarToStorage]);
-
-  // Crée le projet draft dès que le prénom atteint 2 caractères (autosave + RLS étape 3).
-  // Debounce 400 ms — évite churn ensureDraft à chaque frappe ; flush avant fermeture d'onglet via autosave.
-  const draftFields = useMemo(
-    () => ({ firstName, lastName, birthDate, deathDate }),
-    [firstName, lastName, birthDate, deathDate],
-  );
-  const debouncedDraftFields = useDebouncedValue(draftFields, 400);
-
-  useEffect(() => {
-    if (isEditor) return;
-    if (uploadProjectId) return;
-    if (debouncedDraftFields.firstName.trim().length < 2) return;
-
-    let aborted = false;
-    setProjectDraftLoading(true);
-    setProjectDraftError(null);
-
-    (async () => {
-      try {
-        const draft = await ensureDraft({
-          firstName: debouncedDraftFields.firstName,
-          lastName: debouncedDraftFields.lastName,
-          birthDate: debouncedDraftFields.birthDate,
-          deathDate: debouncedDraftFields.deathDate,
-        });
-
-        if (aborted) return;
-
-        if (!draft?.id) {
-          setProjectDraftError("project_insert_failed");
-          return;
-        }
-
-        setUploadProjectId(draft.id);
-        setUploadUserId(draft.user_id ?? null);
-        setUploadTenantId(draft.tenant_id ?? null);
-      } catch (err) {
-        if (!aborted) {
-          setProjectDraftError(
-            err instanceof Error ? err.message : "network_error",
-          );
-        }
-      } finally {
-        if (!aborted) setProjectDraftLoading(false);
-      }
-    })();
-
-    return () => {
-      aborted = true;
-    };
-  }, [debouncedDraftFields, uploadProjectId, ensureDraft, isEditor]);
-
-  // Seed wizard_state en DB après la première création de projet (pas à la reprise).
-  // Un seul queueSave à la naissance du projet — le step effect ne dépend plus de uploadProjectId.
-  useEffect(() => {
-    if (!uploadProjectId) return;
-    if (skipInitialAutosaveRef.current) {
-      skipInitialAutosaveRef.current = false;
-      return;
-    }
-    // Autorise les saves d'étape suivants (skipStep était true tant que pas de projet).
-    skipStepAutosaveRef.current = false;
-    queueSave("immediate");
-  }, [uploadProjectId, queueSave]);
-
-  // Persiste wizard_step après navigation uniquement (pas à l'assignation de projectId).
-  useEffect(() => {
-    if (!uploadProjectId) return;
-    if (skipStepAutosaveRef.current) {
-      skipStepAutosaveRef.current = false;
-      return;
-    }
-    queueSave("immediate");
-    // Intentionnel : pas de dep uploadProjectId — évite le double PATCH à la création.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- step navigation only
-  }, [currentStep, queueSave]);
 
   // Volume total de médias (Étape 3) — pilote le nombre minimum de chapitres
   // pré-générés à l'Étape 4 (S4). Refetch à chaque entrée dans l'étape pour
@@ -886,42 +661,6 @@ export function TributeWizard({
     [isEditor, navigateToStep],
   );
 
-  const handleFirstNameChange = useCallback(
-    (value: string) => {
-      setFirstName(value);
-      wizardFieldsRef.current.firstName = value;
-      queueSave("text");
-    },
-    [queueSave],
-  );
-
-  const handleLastNameChange = useCallback(
-    (value: string) => {
-      setLastName(value);
-      wizardFieldsRef.current.lastName = value;
-      queueSave("text");
-    },
-    [queueSave],
-  );
-
-  const handleBirthDateChange = useCallback(
-    (value: string) => {
-      setBirthDate(value);
-      wizardFieldsRef.current.birthDate = value;
-      queueSave("text");
-    },
-    [queueSave],
-  );
-
-  const handleDeathDateChange = useCallback(
-    (value: string) => {
-      setDeathDate(value);
-      wizardFieldsRef.current.deathDate = value;
-      queueSave("text");
-    },
-    [queueSave],
-  );
-
   const handleSocialSelect = useCallback(
     (id: SocialId) => {
       const next = id === selectedSocial ? null : id;
@@ -950,37 +689,6 @@ export function TributeWizard({
     [queueSave],
   );
 
-  const openSoftCap = useCallback((variant: SoftCapVariant) => {
-    if (isEditor) return;
-    setSoftCapVariant(variant);
-    setSoftCapOpen(true);
-  }, [isEditor]);
-
-  const dismissSoftCap = useCallback(() => {
-    if (softCapVariant === "mediaUnlock") {
-      softCapMediaDismissedRef.current = true;
-    }
-    if (softCapVariant === "mediaMagic") {
-      softCapMagicDismissedRef.current = true;
-    }
-    setSoftCapOpen(false);
-  }, [softCapVariant]);
-
-  const acceptSoftCapHeritage = useCallback(() => {
-    softCapMediaDismissedRef.current = true;
-    softCapMagicDismissedRef.current = true;
-    setSoftCapOpen(false);
-    handleBasePackageChange("signature");
-    if (extensions.musicLicense) {
-      handleExtensionsChange({ ...extensions, musicLicense: false });
-    }
-  }, [extensions, handleBasePackageChange, handleExtensionsChange]);
-
-  const acceptSoftCapLicense = useCallback(() => {
-    setSoftCapOpen(false);
-    handleExtensionsChange({ ...extensions, musicLicense: true });
-  }, [extensions, handleExtensionsChange]);
-
   const handleAcceptMusicRights = useCallback(() => {
     const next = {
       acceptedAt: new Date().toISOString(),
@@ -991,131 +699,6 @@ export function TributeWizard({
     queueSave("immediate");
   }, [queueSave]);
 
-  const handleAfterChooseSong = useCallback(
-    (song: WizardStoryboardSong) => {
-      if (song.source !== "stingray") return;
-      if (
-        !shouldOfferMusicSoftCap(
-          grantedPackage,
-          intendedPackage,
-          Boolean(extensions.musicLicense),
-        )
-      ) {
-        return;
-      }
-      if (!isOfficialCatalogTrack(song.trackId)) return;
-      openSoftCap("musicDual");
-    },
-    [extensions.musicLicense, grantedPackage, intendedPackage, openSoftCap],
-  );
-
-  const handleStayOnGift = useCallback(() => {
-    softCapMediaDismissedRef.current = true;
-    softCapMagicDismissedRef.current = true;
-    handleBasePackageChange(grantedPackage);
-    if (extensions.musicLicense) {
-      handleExtensionsChange({ ...extensions, musicLicense: false });
-    }
-    setPayError(null);
-    void navigateToStep(3);
-  }, [
-    extensions,
-    grantedPackage,
-    handleBasePackageChange,
-    handleExtensionsChange,
-    navigateToStep,
-  ]);
-
-  // Soft Cap médias PASSIF (décision produit) : pas de modale bloquante à 50.
-  // Dès qu'un projet freemium dépasse 50 médias, on bascule silencieusement
-  // l'intention sur Héritage (signature) en arrière-plan — ce qui relève le
-  // quota DB à 125 et affiche l'encart Quiet Luxury. Symétriquement, si la
-  // famille retire des photos et repasse sous 50, on redescend vers Souvenir
-  // (uniquement si le bump venait de ce filet, pas d'un upgrade explicite).
-  useEffect(() => {
-    if (isEditor) return;
-    if (!isFreemiumGrant) return;
-    const intendedRank = packageTierRank(intendedPackage);
-    if (projectMediaCount > 50 && intendedRank === 0) {
-      mediaAutoBumpedRef.current = true;
-      handleBasePackageChange("signature");
-    } else if (
-      projectMediaCount <= 50 &&
-      mediaAutoBumpedRef.current &&
-      intendedPackage === "signature"
-    ) {
-      mediaAutoBumpedRef.current = false;
-      handleBasePackageChange(grantedPackage);
-    }
-  }, [
-    grantedPackage,
-    handleBasePackageChange,
-    intendedPackage,
-    isEditor,
-    isFreemiumGrant,
-    projectMediaCount,
-  ]);
-
-  /** Sync le volume médias pendant l'étape 3 (filet Soft Cap). */
-  const syncStep3MediaCount = useCallback((count: number) => {
-    setProjectMediaCount((prev) => (prev === count ? prev : count));
-  }, []);
-
-  const softCapCopy = useMemo(
-    () => ({
-      mediaUnlockTitle: copy.softCapMediaUnlockTitle,
-      mediaUnlockBody: copy.softCapMediaUnlockBody,
-      mediaMagicTitle: copy.softCapMediaMagicTitle,
-      mediaMagicBody: copy.softCapMediaMagicBody,
-      musicTitle: copy.softCapMusicTitle,
-      musicBody: copy.softCapMusicBody,
-      ctaHeritage: copy.softCapCtaHeritage,
-      ctaLicense: copy.softCapCtaLicense,
-      ctaContinue: copy.softCapCtaContinue,
-      ctaDismiss: copy.softCapCtaDismiss,
-      priceHeritage: copy.softCapPriceHeritage,
-      priceLicense: copy.softCapPriceLicense,
-    }),
-    [copy],
-  );
-
-  const displayCart = useMemo(
-    () =>
-      resolveWizardDisplayCart(extensions, intendedPackage, grantedPackage),
-    [extensions, intendedPackage, grantedPackage],
-  );
-  const showCheckoutStayFree =
-    packageCents(grantedPackage) === 0 && displayCart.totalCents > 0;
-
-  // Solde Fonds Commémoratif — thermomètre Checkout (owner).
-  useEffect(() => {
-    if (isEditor) return;
-    if (currentStep !== 7 || !uploadProjectId || isPartner) return;
-    let cancelled = false;
-    void (async () => {
-      try {
-        const res = await fetch(
-          `/api/projects/${uploadProjectId}/fund-balance`,
-        );
-        const body = (await res.json().catch(() => ({}))) as {
-          ok?: boolean;
-          availableCents?: number;
-          ownerFloorCents?: number;
-          viralLoopEnabled?: boolean;
-        };
-        if (cancelled || !res.ok || !body.ok) return;
-        setFundCreditCents(Math.max(0, body.availableCents ?? 0));
-        setOwnerFloorCents(Math.max(0, body.ownerFloorCents ?? 0));
-        setViralLoopEnabled(body.viralLoopEnabled === true);
-      } catch {
-        /* graceful : crédit 0 */
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [currentStep, uploadProjectId, isPartner, isEditor]);
-
   const handleProceedToPayment = useCallback(async () => {
     await navigateToStep(7);
   }, [navigateToStep]);
@@ -1123,99 +706,6 @@ export function TributeWizard({
   const handlePreviewEdit = useCallback(async () => {
     await navigateToStep(5);
   }, [navigateToStep]);
-
-  const handlePay = useCallback(async () => {
-    if (!uploadProjectId) {
-      setPayError(copy.checkoutMissingProject);
-      return;
-    }
-
-    setIsPaying(true);
-    setPayError(null);
-
-    try {
-      await flush();
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId: uploadProjectId, locale }),
-      });
-      const data = (await res.json()) as {
-        url?: string;
-        redirectUrl?: string;
-        mode?: string;
-        message?: string;
-        error?: string;
-        maxMedia?: number;
-        currentMedia?: number;
-        fundAppliedCents?: number;
-        payableCents?: number;
-      };
-
-      if (!res.ok) {
-        if (data.error === "amputation_required" && typeof data.message === "string") {
-          setPayError(data.message);
-          return;
-        }
-        if (
-          data.error === "music_license_requires_payment" &&
-          typeof data.message === "string"
-        ) {
-          setPayError(data.message);
-          return;
-        }
-        setPayError(
-          typeof data.message === "string" ? data.message : copy.checkoutPayError,
-        );
-        return;
-      }
-
-      if (data.mode === "partner" && data.redirectUrl) {
-        window.location.href = data.redirectUrl;
-        return;
-      }
-
-      if (data.mode === "freemium_free" && data.url) {
-        window.location.href = data.url;
-        return;
-      }
-
-      if (data.mode === "fund_free" && data.url) {
-        window.location.href = data.url;
-        return;
-      }
-
-      if (!data.url) {
-        setPayError(copy.checkoutPayError);
-        return;
-      }
-
-      window.location.href = data.url;
-    } catch {
-      setPayError(copy.checkoutPayError);
-    } finally {
-      setIsPaying(false);
-    }
-  }, [uploadProjectId, locale, flush, copy]);
-
-  const handleAvatarChange = useCallback(
-    (list: FileList | null) => {
-      const file = list?.[0];
-      if (!file || !file.type.startsWith("image/")) return;
-      setAvatarPreview((prev) => {
-        if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
-        return URL.createObjectURL(file);
-      });
-      avatarHydratedPathRef.current = null;
-
-      if (uploadProjectId) {
-        void uploadAvatarToStorage(file, uploadProjectId);
-      } else {
-        pendingAvatarFileRef.current = file;
-      }
-    },
-    [uploadProjectId, uploadAvatarToStorage],
-  );
 
   const extensionRecapLineLabels = useMemo(
     () => ({
@@ -1231,6 +721,73 @@ export function TributeWizard({
     }),
     [copy],
   );
+
+  const {
+    isPaying,
+    payError,
+    setPayError,
+    fundCreditCents,
+    ownerFloorCents,
+    viralLoopEnabled,
+    riderAccepted,
+    setRiderAccepted,
+    showCheckoutStayFree,
+    handlePay,
+  } = useWizardCheckout({
+    uploadProjectId,
+    locale,
+    flush,
+    isEditor,
+    isPartner,
+    currentStep,
+    grantedPackage,
+    intendedPackage,
+    extensions,
+    isFreemiumGrant: packageTierRank(grantedPackage) === 0,
+    grantedMediaMax: packageMaxMediaItems(
+      manifestPackageFromWizardBasePackage(grantedPackage),
+    ),
+    projectMediaCount,
+    copy,
+  });
+
+  const {
+    softCapMusicBrowse,
+    softCapEligible,
+    softCapOpen,
+    softCapVariant,
+    softCapMediaDismissedRef,
+    softCapMagicDismissedRef,
+    isFreemiumGrant,
+    effectiveMaxMediaItems,
+    grantedMediaMax,
+    openSoftCap,
+    dismissSoftCap,
+    acceptSoftCapHeritage,
+    acceptSoftCapLicense,
+    handleAfterChooseSong,
+    handleStayOnGift,
+    syncStep3MediaCount,
+    softCapCopy,
+  } = useWizardSoftCap({
+    isEditor,
+    grantedPackage,
+    intendedPackage,
+    extensions,
+    projectMediaCount,
+    setProjectMediaCount,
+    currentMaxMediaItems,
+    handleBasePackageChange,
+    handleExtensionsChange,
+    navigateToStep: (step: number) => navigateToStep(step as Step),
+    setPayError,
+    copy,
+  });
+
+  // Co-Créateur : catalogue premium pour le craft ; Soft Cap UI masquée —
+  // le titulaire paie à l'étape 7.
+  const musicBrowseTier =
+    isEditor || softCapMusicBrowse ? "premium" : musicCatalogTier;
 
   const stepperSteps = useMemo(
     () => [
