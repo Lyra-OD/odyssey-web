@@ -136,8 +136,8 @@ export const PACKAGE_MANIFEST: Record<PackageId, DeliverablesConfig> = {
       audio: "safe_music",
     },
     limits: { maxMediaItems: 125, maxSongs: 5 },
-    /** Freemium V1 : Héritage = 4K + catalogue Stingray officiel. */
-    rendering: { exportResolution: "4K", renderPriority: "high" },
+    /** Export Master 4K réservé Éternité+ — Héritage reste 1080p. */
+    rendering: { exportResolution: "1080p", renderPriority: "high" },
     pacing: { maxMediaItemsPerSong: 25, targetSecondsPerMedia: 7 },
     features: {
       aiRestoration: false,
@@ -538,8 +538,14 @@ export function assertManifestPricingAlignedWithLegacyConfig(): void {
     }
   }
 
-  // Freemium V1 : Héritage = 4K
-  if (PACKAGE_MANIFEST.HERITAGE.rendering.exportResolution !== "4K") {
-    throw new Error("Freemium V1: HERITAGE must export 4K");
+  // Master 4K : Éternité + Légendaire uniquement (Héritage = 1080p).
+  if (PACKAGE_MANIFEST.HERITAGE.rendering.exportResolution !== "1080p") {
+    throw new Error("Creatomate canon: HERITAGE must export 1080p");
+  }
+  if (PACKAGE_MANIFEST.ETERNITE.rendering.exportResolution !== "4K") {
+    throw new Error("Creatomate canon: ETERNITE must export 4K");
+  }
+  if (PACKAGE_MANIFEST.LEGENDAIRE.rendering.exportResolution !== "4K") {
+    throw new Error("Creatomate canon: LEGENDAIRE must export 4K");
   }
 }

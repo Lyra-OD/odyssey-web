@@ -1,11 +1,9 @@
 /**
- * Client Creatomate — spike export (plomberie async uniquement).
- * Payload minimal hardcodé : texte court, pas de mapping storyboard.
+ * Client HTTP Creatomate — rendu Odyssey (storyboard dynamique).
  *
  * Env :
- * - CREATOMATE_API_KEY (requis pour appels réels)
- * - CREATOMATE_WEBHOOK_URL (URL publique du webhook Odyssey)
- * - CREATOMATE_TEMPLATE_ID (optionnel — sinon source JSON minimale)
+ * - CREATOMATE_API_KEY
+ * - CREATOMATE_WEBHOOK_URL (ou NEXT_PUBLIC_SITE_URL)
  */
 
 import "server-only";
@@ -28,15 +26,7 @@ export type CreatomateRender = {
   metadata?: string | null;
 };
 
-export type CreateSpikeRenderParams = {
-  /** Corrélation webhook → job Odyssey (stocké dans metadata Creatomate). */
-  jobId: string;
-  /** URL absolue POST /api/webhooks/creatomate */
-  webhookUrl: string;
-  allow4k?: boolean;
-};
-
-export type CreateSpikeRenderResult =
+export type CreateOdysseyRenderResult =
   | { ok: true; render: CreatomateRender }
   | { ok: false; message: string; status?: number };
 
@@ -49,61 +39,13 @@ export function isCreatomateConfigured(): boolean {
   return Boolean(getApiKey());
 }
 
-/** Source JSON minimale — valide le pipeline sans template métier. */
-function buildSpikeSource(allow4k: boolean): Record<string, unknown> {
-  return {
-    output_format: "mp4",
-    width: allow4k ? 1920 : 1280,
-    height: allow4k ? 1080 : 720,
-    duration: 3,
-    elements: [
-      {
-        type: "text",
-        text: "Odyssey Creatomate spike",
-        font_family: "Aileron",
-        font_weight: "700",
-        font_size: "64 px",
-        fill_color: "#ffffff",
-        x: "50%",
-        y: "50%",
-        width: "90%",
-        height: "100%",
-        x_alignment: "50%",
-        y_alignment: "50%",
-      },
-    ],
-  };
-}
-
-function buildRenderBody(params: CreateSpikeRenderParams): Record<string, unknown> {
-  const templateId = process.env.CREATOMATE_TEMPLATE_ID?.trim();
-  const base: Record<string, unknown> = {
-    webhook_url: params.webhookUrl,
-    metadata: params.jobId,
-  };
-
-  if (templateId) {
-    return {
-      ...base,
-      template_id: templateId,
-      modifications: {
-        Text: "Odyssey Creatomate spike",
-      },
-    };
-  }
-
-  return {
-    ...base,
-    source: buildSpikeSource(Boolean(params.allow4k)),
-  };
-}
-
 /**
- * POST /v1/renders — payload spike (texte ou template_id optionnel).
+ * POST /v1/renders — body déjà assemblé par payloadBuilder
+ * (tableau d’une entrée RenderScript).
  */
-export async function createSpikeRender(
-  params: CreateSpikeRenderParams,
-): Promise<CreateSpikeRenderResult> {
+export async function createOdysseyRender(
+  renderBody: Record<string, unknown>,
+): Promise<CreateOdysseyRenderResult> {
   const apiKey = getApiKey();
   if (!apiKey) {
     return { ok: false, message: "creatomate_api_key_missing" };
@@ -117,7 +59,7 @@ export async function createSpikeRender(
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify([buildRenderBody(params)]),
+      body: JSON.stringify([renderBody]),
     });
   } catch (err) {
     return {

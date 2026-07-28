@@ -1,5 +1,6 @@
 import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
 import { packageTierRank } from "@/src/lib/wizard/pricingConfig";
+import { isMaster4kPackage } from "@/src/lib/creatomate/resolveResolution";
 import type { WizardStoryboardState } from "@/src/lib/wizard/wizardState";
 
 /** Version ToS MP3 — bump si le texte légal change. */
@@ -75,7 +76,7 @@ export function assertExportAllowed(params: {
     };
   }
 
-  const allow4k = ent.export_resolution === "4K";
+  const allow4k = isMaster4kPackage(ent.paid_package);
   const allowStingrayMaster =
     ent.music_license === true || packageTierRank(ent.paid_package) >= 1;
 

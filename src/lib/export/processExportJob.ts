@@ -1,13 +1,27 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
-  createSpikeRender,
+  buildOdysseyRenderPlan,
+  essentialsFromWizard,
+} from "@/src/lib/creatomate/buildPlan";
+import { buildCreatomateRenderBody } from "@/src/lib/creatomate/payloadBuilder";
+import { resolveChapterAudioTracks } from "@/src/lib/creatomate/resolveChapterAudio";
+import { resolveStoryboardMediaAssets } from "@/src/lib/creatomate/resolveMediaAssets";
+import { buildTimelineClips } from "@/src/lib/creatomate/timeline";
+import {
+  createOdysseyRender,
   isCreatomateConfigured,
   resolveCreatomateWebhookUrl,
 } from "@/src/lib/video/creatomate";
+import { getProjectPaidEntitlements } from "@/src/lib/wizard/paidEntitlements";
+import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
+import {
+  coerceWizardState,
+  emptyStoryboardState,
+} from "@/src/lib/wizard/wizardState";
 
 /**
- * Worker export — mock local OU Creatomate réel.
+ * Worker export — mock local OU Creatomate (mapping storyboard dynamique).
  *
  * - Sans `CREATOMATE_API_KEY` : queued → processing → completed (sync mock).
  * - Avec clé : queued → processing + external_render_id ; completed via webhook.
@@ -91,69 +105,123 @@ async function completeMockJob(
   return "completed";
 }
 
+async function failJob(
+  admin: SupabaseClient,
+  jobId: string,
+  message: string,
+): Promise<"failed"> {
+  await admin
+    .from("project_export_jobs")
+    .update({
+      status: "failed",
+      message,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", jobId);
+  return "failed";
+}
+
 async function submitCreatomateJob(
   admin: SupabaseClient,
   job: ExportJobRow,
 ): Promise<"submitted" | "failed"> {
   const webhookUrl = resolveCreatomateWebhookUrl();
   if (!webhookUrl) {
-    await admin
+    return failJob(
+      admin,
+      job.id,
+      "creatomate_webhook_url_missing — set CREATOMATE_WEBHOOK_URL or NEXT_PUBLIC_SITE_URL",
+    );
+  }
+
+  try {
+    const entitlements = await getProjectPaidEntitlements(
+      admin,
+      job.project_id,
+    );
+    const paidPackage: WizardBasePackage =
+      entitlements?.paid_package ?? "essential";
+
+    const { data: project, error: projectError } = await admin
+      .from("projects")
+      .select("wizard_state")
+      .eq("id", job.project_id)
+      .maybeSingle();
+
+    if (projectError || !project) {
+      return failJob(
+        admin,
+        job.id,
+        `creatomate_project_load_failed: ${projectError?.message ?? "missing"}`,
+      );
+    }
+
+    const wizard = coerceWizardState(project.wizard_state);
+    const storyboard = wizard.storyboard ?? emptyStoryboardState();
+    const mediaById = await resolveStoryboardMediaAssets(admin, {
+      projectId: job.project_id,
+      storyboard,
+    });
+
+    const { chapterSpans } = buildTimelineClips({
+      storyboard,
+      mediaById,
+    });
+
+    const chapterAudioRows = await resolveChapterAudioTracks(admin, {
+      storyboard,
+      chapterSpans,
+      allowStingrayMaster: job.allow_stingray_master,
+    });
+
+    const plan = buildOdysseyRenderPlan({
+      jobId: job.id,
+      webhookUrl,
+      paidPackage,
+      storyboard,
+      mediaById,
+      essentials: essentialsFromWizard(wizard),
+      chapterAudio: chapterAudioRows.map((row) => ({
+        chapterId: row.chapterId,
+        url: row.url,
+        contentStartSec: row.contentStartSec,
+        contentDurationSec: row.contentDurationSec,
+      })),
+    });
+
+    const renderBody = buildCreatomateRenderBody(plan);
+    const result = await createOdysseyRender(renderBody);
+
+    if (!result.ok) {
+      return failJob(admin, job.id, result.message);
+    }
+
+    const { error } = await admin
       .from("project_export_jobs")
       .update({
-        status: "failed",
-        message:
-          "creatomate_webhook_url_missing — set CREATOMATE_WEBHOOK_URL or NEXT_PUBLIC_SITE_URL",
+        status: "processing",
+        provider: "creatomate",
+        external_render_id: result.render.id,
+        message: `creatomate submitted (${result.render.status}, ${plan.resolution.label}) — awaiting webhook`,
         updated_at: new Date().toISOString(),
       })
       .eq("id", job.id)
       .eq("status", "processing");
-    return "failed";
+
+    if (error) {
+      return failJob(
+        admin,
+        job.id,
+        `creatomate_persist_failed: ${error.message}`,
+      );
+    }
+
+    return "submitted";
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "creatomate_submit_error";
+    return failJob(admin, job.id, message);
   }
-
-  const result = await createSpikeRender({
-    jobId: job.id,
-    webhookUrl,
-    allow4k: job.allow_4k,
-  });
-
-  if (!result.ok) {
-    await admin
-      .from("project_export_jobs")
-      .update({
-        status: "failed",
-        message: result.message,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", job.id)
-      .eq("status", "processing");
-    return "failed";
-  }
-
-  const { error } = await admin
-    .from("project_export_jobs")
-    .update({
-      status: "processing",
-      provider: "creatomate",
-      external_render_id: result.render.id,
-      message: `creatomate submitted (${result.render.status}) — awaiting webhook`,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", job.id)
-    .eq("status", "processing");
-
-  if (error) {
-    await admin
-      .from("project_export_jobs")
-      .update({
-        status: "failed",
-        message: `creatomate_persist_failed: ${error.message}`,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", job.id);
-    return "failed";
-  }
-
-  return "submitted";
 }
 
 /**

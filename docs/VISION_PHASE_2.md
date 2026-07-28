@@ -5,9 +5,11 @@
 Document canonique pour la **feuille de route stratégique** au-delà du sprint commerce P6.  
 Complète le [`Manifesto-V10.4.md`](Manifesto-V10.4.md) (constitution technique) et les specs d'implémentation courantes ([`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).  
 **Positionnement émotionnel V1** : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md).  
-**Pivot produit V1 (freemium only)** : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
+**Pivot produit V1 (freemium only)** : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).  
+**Moteur cinématographique avancé (vision)** : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md).
 
-> **Hiérarchie doc :** ce fichier = **vision & intention produit**. Le checkout, le pricing et le schéma SQL restent dans les docs techniques dédiées.
+> **Hiérarchie doc :** ce fichier = **vision & intention produit**. Le checkout, le pricing et le schéma SQL restent dans les docs techniques dédiées.  
+> La feuille de route **Creatomate / A24 / Vision IA** (Ghost Track, arc narratif, Smart Ken Burns) vit dans [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md) — distincte du commerce Phase 2 (CPL / MRR / LYRA) ci-dessous.
 
 ---
 
@@ -18,6 +20,7 @@ Complète le [`Manifesto-V10.4.md`](Manifesto-V10.4.md) (constitution technique)
 | [§1](#1-cadrage) | Cadrage — Odyssey ≠ funéraire only |
 | [§2](#2-phase-1--ajustements-immédiats-juin-2026) | Phase 1 — Scanner asynchrone + Family Tribute Fund |
 | [§3](#3-phase-2--vision-licorne-roadmap-future) | Phase 2 — Lead-Gen CPL · Sanctuaire MRR · Data Graph LYRA |
+| [§3bis](ROADMAP_PHASE2.md) | **Moteur Cinématographique Avancé** (Ghost Track · Vision IA · Smart Ken Burns) |
 | [§4](#4-décisions-architecturales-phase-1-pour-faciliter-la-phase-2) | Décisions archi à prendre dès Phase 1 |
 | [§5](#5-risques--garde-fous) | Risques majeurs & garde-fous |
 | [§6](#6-liens-implémentation) | Liens vers docs d'implémentation |
