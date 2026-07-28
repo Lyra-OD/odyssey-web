@@ -10,8 +10,8 @@ export type SanctuaryLueurOrbProps = {
 };
 
 /**
- * Présence Lueur organique — 3 lavis CSS (veil / plume / ember).
- * Pas de SVG, pas de blanc pur. Breathe 4,2 s + morph blob lent, déphasés.
+ * Présence Lueur organique — stage généreux + 3 lavis CSS.
+ * Le blur meurt dans le padding du stage (pas de contain:paint / boîte).
  */
 export function SanctuaryLueurOrb({
   size = "card",
@@ -19,22 +19,28 @@ export function SanctuaryLueurOrb({
   "aria-label": ariaLabel,
 }: SanctuaryLueurOrbProps) {
   const [delaySec] = useState(() => Math.random() * 4.2);
-  const dim = size === "ritual" ? "h-44 w-44 md:h-52 md:w-52" : "h-40 w-40";
+  const dim = size === "ritual" ? "h-36 w-36 md:h-40 md:w-40" : "h-32 w-32";
+  const stageClass =
+    size === "ritual"
+      ? "sanctuary-lueur-stage sanctuary-lueur-stage--ritual"
+      : "sanctuary-lueur-stage";
 
   return (
-    <div
-      className={`sanctuary-lueur-orb relative mx-auto ${dim} ${className}`}
-      style={
-        {
-          ["--lueur-delay"]: `${delaySec.toFixed(2)}s`,
-        } as CSSProperties
-      }
-      role="img"
-      aria-label={ariaLabel}
-    >
-      <div className="sanctuary-lueur-orb__veil" aria-hidden />
-      <div className="sanctuary-lueur-orb__plume" aria-hidden />
-      <div className="sanctuary-lueur-orb__ember" aria-hidden />
+    <div className={`${stageClass} ${className}`.trim()}>
+      <div
+        className={`sanctuary-lueur-orb relative ${dim}`}
+        style={
+          {
+            ["--lueur-delay"]: `${delaySec.toFixed(2)}s`,
+          } as CSSProperties
+        }
+        role="img"
+        aria-label={ariaLabel}
+      >
+        <div className="sanctuary-lueur-orb__veil" aria-hidden />
+        <div className="sanctuary-lueur-orb__plume" aria-hidden />
+        <div className="sanctuary-lueur-orb__ember" aria-hidden />
+      </div>
     </div>
   );
 }
