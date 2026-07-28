@@ -47,7 +47,7 @@ Contribution invité async : les proches achètent des **empreintes** dont le Ne
 | **`POST /api/projects/[id]/contribute-link`** | Owner projet | Génère un lien invité opaque (`purpose=guest_contribute`, TTL 30 j) |
 | **`GET /api/contribute/[token]`** | Token invité (public) | Contexte page contributeur |
 | **`POST /api/contribute/[token]/checkout`** | Token invité (public) | Session Stripe `guest_support` |
-| **`POST /api/contribute/[token]/deposit`** | Token invité (public) | Dépôt gratuit (1 photo OU 1 mot) |
+| **`POST /api/contribute/[token]/deposit`** | Token invité (public) | Dépôt gratuit (1 photo \| 1 mot) · jusqu’à **5 photos** / token (quota) |
 | **`/[lang]/contribute/[token]`** | Token invité (public) | **UI Sanctuaire livrée** (Phase 3a) |
 
 ### Co-Créateur (Phases A–C ✅)
@@ -60,15 +60,16 @@ Contribution invité async : les proches achètent des **empreintes** dont le Ne
 
 Canon : [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md).
 
-### Export Creatomate (gate ✅ · worker mock ✅ · SDK réel ⏳)
+### Export Creatomate (gate ✅ · worker P0 ✅ · master Stingray ⏳)
 
 | Route | Auth | Rôle |
 |-------|------|------|
-| **`POST /api/projects/[id]/export`** | Owner | Gate entitlements → enqueue `project_export_jobs` (`creatomate_stub`) |
-| **`GET /api/projects/[id]/export`** | Owner | Dernier job (status / message) |
-| **`POST /api/internal/export/drain`** | Bearer `EXPORT_DRAIN_SECRET` | Mock worker : `queued` → `completed` |
+| **`POST /api/projects/[id]/export`** | Owner | Gate entitlements → enqueue `project_export_jobs` |
+| **`GET /api/projects/[id]/export`** | Owner | Dernier job (status / message / output) |
+| **`POST /api/internal/export/drain`** | Bearer `EXPORT_DRAIN_SECRET` | Worker : mock **ou** submit Creatomate (`src/lib/creatomate/`) |
+| **`POST /api/webhooks/creatomate`** | HMAC `CREATOMATE_WEBHOOK_SECRET` | Callback render — **fail-closed** si secret absent/invalide |
 
-**Sécurité contribute :** token opaque SHA-256, client admin (bypass RLS) ; cap **1000 $/transaction** ; accrual au webhook.
+**Sécurité contribute :** token opaque SHA-256, client admin (bypass RLS) ; cap **1000 $/transaction** ; plafond **5 photos** / token ; quotas message / checkout pending ; accrual au webhook.
 
 `lang` = `fr` | `en`.
 

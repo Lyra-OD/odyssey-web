@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: 27 juillet 2026 · Freemium V1 Phases 0–5 ✅ (Creatomate stub) · Cascade 3a ✅ (`viral_loop_enabled` OFF) · Co-Créateur A–C ✅ · **Leviers revenu R1–R6** + plan semaine (Creatomate · CRO Soft Cap · pilote viral) — §10 · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md)**
+**Last revised: 28 juillet 2026 · Freemium V1 Phases 0–5 ✅ (Creatomate P0 + Stem Graph) · Cascade 3a ✅ (`viral_loop_enabled` OFF · enforce 5 photos ✅) · Co-Créateur A–C ✅ · **Leviers revenu R1–R6** — §10 · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · Vision cinéma : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md)**
 
 Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -15,18 +15,18 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 |-----------|--------|-------|
 | **Family Studio (wizard)** | 🟢 Mature | **7** étapes (Extensions @ checkout), autosave, Stingray, Livre Ouvert, Soft Cap, Inviter, Co-Créateur |
 | **Partner Salon** | 🟢 Prod | RBAC, invitations, gate R6 — QA P5.5 historique ✅ ; solde = **commissions** (jetons purgés P8) |
-| **Freemium V1 commerce** | 🟢 Phases 0–5 | Canon + Soft Cap + entitlements + **gate export stub** + MP3/ToS + add-ons Quiet Luxury — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · **Musique gratuit (juil. 2026) : Stingray licencié 100 % payant — Souvenir = preview + MP3 perso ToS** |
+| **Freemium V1 commerce** | 🟢 Phases 0–5 | Canon + Soft Cap + entitlements + **gate export** + MP3/ToS + add-ons Quiet Luxury — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · **Musique gratuit (juil. 2026) : Stingray licencié 100 % payant — Souvenir = preview + MP3 perso ToS** · **Héritage = 1080p · Master 4K = Éternité+** |
 | **RevShare Bulletproof** | 🟡 Partiel | Spec + SQL P6/P8 ✅ · accrual webhook à durcir / UI Salon commissions ⏳ |
-| **Export vidéo (Creatomate)** | 🟡 Stub | Gate `project_paid_entitlements` + **P9 appliqué** ✅ · **worker réel** ⏳ |
+| **Export vidéo (Creatomate)** | 🟢 P0 | Gate + P9/P9.1 ✅ · `src/lib/creatomate/` (storyboard, résolution, Stem Graph, One Bed) · drain mock **ou** API · webhook **fail-closed** · master Stingray URL template ⏳ |
 | **UX mobile / ergonomie** | 🟡 Plan vivant | Canon [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 · **pas annulé** par Freemium |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-J/K/L** ⏳ (audio, focus, copy) |
 | **Scanner Compagnon** | 🟡 | Spec + stubs P6 ✅ · MVP app ⏳ (rail M2) |
-| **Docs hub** | 🟢 | README + [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · anciennes docs filles encore en drift |
-| **Tests & CI** | 🟡 | **Vitest en place** — **6 suites / 49 tests** QA business (Soft Cap médias/musique, MP3/ToS, RevShare, **waterfall invité + cascade Fonds V-Final**) + SQL accrual ⏳ CI `.github/` à venir |
-| **Security** | 🟡 | RLS + gate Salon ✅ · export never-trust via entitlements (stub) |
+| **Docs hub** | 🟢 | README + onboarding · canon résolution aligné 28 juil. |
+| **Tests & CI** | 🟡 | Vitest business (+ creatomate payload) · CI `.github/` à venir |
+| **Security** | 🟡 | RLS + gate Salon ✅ · export never-trust entitlements ✅ · webhook Creatomate fail-closed · `sanitizeNextPath` salon · quotas guest message/checkout · P10.3 5 photos |
 
-**Overall ~8.8/10 commerce wizard** — Soft Cap + gate export stub ; **semaine en cours = Creatomate + CRO Soft Cap + pilote viral ready** (§10).  
-**Rails parallèles (après semaine) :** mobile M0–M6 · S5-J/K/L · S7–S10 · Scanner · Phase 2 Growth.
+**Overall ~9/10 commerce wizard** — Soft Cap + export Creatomate P0 ; **suite = master Stingray + CRO Soft Cap + pilote viral** (§10).  
+**Rails parallèles :** mobile M0–M6 · S5-J/K/L · S7–S10 · Scanner · Phase 2 Growth / Breath Engine.
 
 ---
 
@@ -328,12 +328,12 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | Phase | Contenu | Statut |
 |-------|---------|--------|
 | 0 | Docs filles + canon | ✅ |
-| 1 | Manifeste TS (`musicLicense`, granted/intended, Héritage 4K) | ✅ |
+| 1 | Manifeste TS (`musicLicense`, granted/intended, Héritage **1080p**) | ✅ |
 | 2 | SQL P8 (purge jetons, Soft Cap quota, entitlements) — **appliqué Supabase** | ✅ |
 | 3 | Checkout Soft Cap + webhook `project_paid_entitlements` + `freemium_free` | ✅ |
 | 4 | Soft Cap UX (filet 50, post-Composition Magique, musique dual, stay 0 $) | ✅ |
-| **5** | Gate export stub + MP3/ToS + add-ons Quiet Luxury · **SQL P9 appliqué** | ✅ **FAIT** |
-| **6** | QA automatisée business · pas de double facturation · RevShare 30 % · worker Creatomate | ⏳ **EN COURS** |
+| **5** | Gate export + worker Creatomate P0 + MP3/ToS + add-ons Quiet Luxury · **SQL P9/P9.1** | ✅ **FAIT** |
+| **6** | QA automatisée business · pas de double facturation · RevShare 30 % · master Stingray / ops | ⏳ **EN COURS** |
 
 ### Priorité A — Phase 6 (QA business) — ⏳ EN COURS
 
@@ -354,8 +354,9 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 |---|------|-----------|
 | 6.5 | CI GitHub Actions (`npm test` sur PR) | Pipeline vert bloquant |
 | 6.6 | QA SQL accrual jouée sur staging | NOTICE `ALL_PASS` |
-| 5.x | Worker Creatomate réel (consomme `project_export_jobs`) | Master / 4K gated |
-| 5.x-mock | **Drain mock staging** `POST /api/internal/export/drain` + GET export status | `queued` → `completed` (mock) ✅ semaine |
+| 5.x | Master Stingray prod + proof rendu (consomme stems / template URL) | Master gated · Héritage 1080p / Éternité+ 4K |
+| 5.x-mock | **Drain** `POST /api/internal/export/drain` + GET export status | mock **ou** Creatomate API ✅ |
+| 5.x-wh | Webhook Creatomate fail-closed (`CREATOMATE_WEBHOOK_SECRET`) | ✅ |
 | 5.y | Fulfillment ops : NFC claim · TTS Voix · Gelato Livre | Pipelines hors stub |
 | 5.4 | Salon UI commissions (soldes `partner_commission_*`) | Admin voit ledger |
 
@@ -380,8 +381,8 @@ Canon projections : [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) §0 (3 000 fa
 
 | # | Levier | Statut pipeline | Horizon |
 |---|--------|-----------------|--------|
-| R1 | **Export Creatomate réel** | ⏳ worker (5.x) | Semaine en cours |
-| R2 | **Pilote Boucle Virale** (`viral_loop_enabled`) | UI 3a ✅ · flag OFF · enforce 5 photos ⏳ | Semaine + pilote tenant |
+| R1 | **Export Creatomate** | ✅ P0 storyboard/stems · ⏳ master Stingray | Semaine → ops |
+| R2 | **Pilote Boucle Virale** (`viral_loop_enabled`) | UI 3a ✅ · enforce 5 photos ✅ · flag OFF · pilote tenant ⏳ | Pilote staging |
 | R3 | **CRO Soft Cap** (35 → 50–65 %) | **À faire** — copy, timing, preview, Co-Créateur | Semaine (jeu) |
 | R4 | **Phase 3b** voix / témoignage live + mini-clip | Spec Cascade ⏳ | Après pilote viral |
 | R5 | **Mix Éternité + attach add-ons** (+20–30 $ AOV) | **Phase 2 Growth** | Post-semaine |
@@ -398,9 +399,9 @@ Canon projections : [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) §0 (3 000 fa
 | Jour | Focus | Done when |
 |------|--------|-----------|
 | **Lun** | Phase 6 QA : tests waterfall / Soft Cap → **179 / 349** | `npm run test:business` vert |
-| **Mar–Mer** | Creatomate : worker mock `drain` + GET status · vrai SDK ensuite | `queued`→`completed` mock ✅ · Creatomate API ⏳ |
+| **Mar–Mer** | Creatomate P0 : drain + payload dynamique + stems + webhook | ✅ livré · master URL template ⏳ |
 | **Jeu** | CRO Soft Cap : copy + timing + preview + rappel Co-Créateur | Checklist CRO + 1–2 changements UI |
-| **Ven** | Pilote viral ready : enforce 5 photos + runbook flag 1 tenant | Runbook + flag testable staging |
+| **Ven** | Pilote viral ready : enforce 5 photos ✅ + runbook flag 1 tenant | Runbook + flag testable staging |
 
 **Hors scope semaine :** 3b live, mix Éternité/add-ons profond, scale multi-salons, Scanner, Mobile, S5-J/K/L.
 

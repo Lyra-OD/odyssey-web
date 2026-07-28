@@ -41,7 +41,7 @@ Document canonique **produit** pour forfaits, livrables vidéo, add-ons Quiet Lu
 | Forfait | ID | Prix | Médias | Chansons | Export | Musique |
 |---------|-----|------|--------|----------|--------|---------|
 | **Souvenir** | `essential` | **0 $** | 50 | 2 | **1080p** | Preview Stingray + **MP3 perso (ToS)** — 0 piste licenciée exportée |
-| **Héritage** | `signature` | **179 $** | 125 | 4–5 | **4K** | **Catalogue Stingray officiel inclus** + soupape MP3/WAV |
+| **Héritage** | `signature` | **179 $** | 125 | 4–5 | **1080p** | **Catalogue Stingray officiel inclus** + soupape MP3/WAV |
 | **Éternité** | `heritage` | **349 $** | 175 | 5–7 | **4K** | Idem + **IA complète** + **Coffre 50 ans** inclus |
 | **Légendaire** | `legendary` | **499 $** | 250 | 7–10 | **4K** | Idem Éternité + boîte pré-affranchie (B2C) |
 
@@ -183,6 +183,6 @@ Jamais : jeton, commission, RevShare.
 | Empreintes Sanctuaire config | ✅ |
 | UI Sanctuaire / Inviter / Fonds | ✅ Phase 3a (flag viral OFF) |
 | Co-Créateur Studio | ✅ Phases A–C |
-| Creatomate worker | ⏳ stub |
+| Creatomate worker | ✅ P0 (mapping + drain + webhook fail-closed · master Stingray ⏳) |
 
 *Document vivant — aligné grille Quiet Luxury 179/349/499 · rapport partenaire : [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md) · business case : [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md).*

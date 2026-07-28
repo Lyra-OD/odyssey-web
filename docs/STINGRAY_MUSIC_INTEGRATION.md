@@ -138,9 +138,10 @@ GET /api/music/search?q=Adele&limit=12&tier=premium
 
 - Entitlement dérivé de `intended` + `musicLicense` (pas de champ tier séparé).
 - **Master Stingray Creatomate** : uniquement si **payé** (`paid` package ≥ signature **ou** `paid.musicLicense`) — jamais depuis le front.
+- Worker export : `resolveAudioStems` + `mixBus` (One Bed Law : upload famille > master Stingray) · URL master via `STINGRAY_MASTER_URL_TEMPLATE` (ops).
 - Metadata Stripe : `trackId` chapitres pour licensing downstream.
 
-Voir [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
+Voir [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md).
 
 ---
 
@@ -306,7 +307,7 @@ Pricing is **not** part of Stingray; see [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PI
 | **Premium (officiel)** | `intended >= signature` **OR** `extensions.musicLicense` **OR** paid entitlements |
 
 Helper : `resolveMusicEntitlement` (alias legacy `resolveMusicCatalogTier`).  
-Export Creatomate master Stingray : **post-paiement** uniquement (Phase 5).
+Export Creatomate master Stingray : **post-paiement** uniquement · stems résolus serveur (`src/lib/creatomate/resolveAudioStems.ts`).
 
 ---
 

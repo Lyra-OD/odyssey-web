@@ -20,7 +20,8 @@
 | UI | `src/components/` | Présentation, i18n |
 | Orchestration | `src/hooks/`, composants wizard | État, autosave, Soft Cap, navigation |
 | Services / API | `app/api/`, `src/lib/` | I/O serveur, Supabase, Stripe |
-| Livrables & forfaits | `src/lib/wizard/wizardDeliverables.ts` | Quotas, 4K, musique — [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) |
+| Livrables & forfaits | `src/lib/wizard/wizardDeliverables.ts` | Quotas, 1080p/4K, musique — [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) |
+| Export Creatomate | `src/lib/creatomate/` | Storyboard, résolution, Audio Stem Graph — [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md) |
 | Prix catalogue | `src/lib/wizard/pricingConfig.ts` · `wizardPricing.ts` | Cents Stripe, Soft Cap `computeWizardCartWithGrant` |
 | Soft Cap | `softCap.ts` · `SoftCapModal.tsx` | Expansion Narrative — [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) |
 | Commissions | SQL P6/P8 + webhook | Bulletproof 30 % Net Distribuable — [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) |
@@ -30,7 +31,7 @@
 ## Documentation — hiérarchie (vivante)
 
 0. [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) — **hub onboarding** (porte développeur).
-1. [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) — **canon CEO** : purge jetons, Soft Cap dual (`musicLicense` 39 $), grille Héritage 4K. Specs : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) · [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md).
+1. [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) — **canon CEO** : purge jetons, Soft Cap dual (`musicLicense` 39 $), grille Héritage **1080p** / Éternité+ **4K**. Specs : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) · [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md). Vision cinéma Phase 2 : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md).
 2. [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) + `wizardDeliverables.ts` — contrat livrables.
 3. `pricingConfig.ts` / `wizardPricing.ts` — cents + panier Soft Cap.
 4. [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) — waterfall · ledger · clawback. **Jetons DROP P8.**

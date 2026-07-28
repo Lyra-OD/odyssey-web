@@ -35,9 +35,9 @@ l'**invité** peut offrir — plus les leviers **documentés à venir** et les *
 | Forfait | ID technique | Prix | Médias | Export | Inclus | Statut |
 |---------|--------------|------|--------|--------|--------|--------|
 | **Souvenir** | `essential` | **0 $** | 50 | 1080p | Preview Stingray + MP3 perso (ToS) — 0 piste licenciée | ✅ |
-| **Héritage** | `signature` | **179 $** | 125 | 4K | Catalogue Stingray officiel + soupape MP3/WAV | ✅ |
-| **Éternité** | `heritage` | **349 $** | 175 | 4K | + IA complète + Coffre-fort 50 ans | ✅ |
-| **Légendaire** | `legendary` | **499 $** | 250 | 4K | + boîte pré-affranchie (**B2C only**) | ✅ |
+| **Héritage** | `signature` | **179 $** | 125 | **1080p** | Catalogue Stingray officiel + soupape MP3/WAV | ✅ |
+| **Éternité** | `heritage` | **349 $** | 175 | **4K** | + IA complète + Coffre-fort 50 ans | ✅ |
+| **Légendaire** | `legendary` | **499 $** | 250 | **4K** | + boîte pré-affranchie (**B2C only**) | ✅ |
 
 ### A.2 Add-ons Quiet Luxury — la famille achète
 
@@ -69,7 +69,7 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 | Geste | Règle | Statut |
 |-------|--------|--------|
 | Photo **ou** mot | **1** slot gratuit rituel (lien public) | ✅ UI 3a |
-| Photos (aide famille) | **Max 5 / invité** (inclut la photo gratuite) | 🔜 enforce API |
+| Photos (aide famille) | **Max 5 / invité** (inclut la photo gratuite) · multi-select UI | ✅ enforce API + P10.3 |
 | Mini-clip fichier 15–30 s | **Max 1 / invité** — souvenir uploadé, ≠ live | 🔜 Phase 3b |
 | Témoignage `guest_video` | **Enregistrement live** in-app (tél. / webcam) | 🔜 Phase 3b |
 
@@ -84,7 +84,7 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 | Levier / SKU | Prix | Horizon | Statut |
 |--------------|------|---------|--------|
 | UI Sanctuaire + Inviter + Fonds checkout (Phase 3a) | — | **Livré** | ✅ (flag viral OFF) |
-| Enforce plafonds 5 photos + multi-dépôt proche | — | Fin 3a | 🔜 |
+| Enforce plafonds 5 photos + multi-dépôt | — | Fin 3a | ✅ (flag viral OFF · pilote tenant ⏳) |
 | Capture voix + **témoignage live** + mini-clip 30 s (Phase 3b) | inclus packs / 1 clip | Après 3a | 🔜 |
 | Aide IA rédaction du **mot** (suggestions optionnelles) | coût API | Phase 3b+ | 💡 → 🔜 |
 | Social Cut | 19 $ | V1.5 | 🔜 |

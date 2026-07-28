@@ -167,13 +167,13 @@ nouveaux `memorialFund.cascade.test.ts`, `channelProfile.test.ts`.
 | Checkout Mécène `amountCents` | ✅ |
 | Panneau Inviter (Wizard) | ✅ |
 | `CheckoutStep` Fonds + Rider 0 $ | ✅ |
-| Restes 3a | Enforce 5 photos API · flag prod ON |
+| Restes 3a | Flag prod ON (pilote tenant) — enforce 5 photos ✅ |
 
 ### Phase 3b+ (différé)
 
 - Capture **voix** + **témoignage live** (`getUserMedia`, chrono court) pour packs payants  
 - Upload **mini-clip** fichier 15–30 s (max 1 / invité) — aide montage, distinct du live  
-- Enforce API plafonds photos (5) · upsell in-flow · relance email 24–48 h · End Credits · P4  
+- Upsell in-flow · relance email 24–48 h · End Credits · P4  
 - **Aide IA rédaction du mot** (optionnelle) : amorces dans `SanctuaryDepositForm` mode message — jamais forcée, invité édite
 
 ---
@@ -222,6 +222,6 @@ B2B2C/B2C actuels strictement inchangés tant que le flag n'est pas activé **et
 - UI Sanctuaire / Inviter / Fonds / Rider = **Phase 3a ✅** (flag prod OFF jusqu’au pilote).
 - Checkout Mécène montant libre = **Phase 3a ✅**.
 - Capture voix + témoignage live + mini-clip 30 s = **Phase 3b**.
-- Enforce multi-photos (plafond 5) = fin **Phase 3a** / runbook pilote (semaine).
+- Enforce multi-photos (plafond 5) = **✅** (API + UI) · flag viral = runbook pilote.
 - Aide IA rédaction mot (optionnelle) = **Phase 3b+**.
 - CRO Soft Cap + Phase 2 Growth (mix Éternité / scale partenaires) = [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §10 leviers R3/R5/R6.

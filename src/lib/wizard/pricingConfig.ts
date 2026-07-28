@@ -6,9 +6,9 @@
  *
  * - `essential`  : Souvenir 0 $ (partenaire) — aucune piste Stingray licenciée
  *   incluse/exportée ; aperçu (preview) seulement + MP3 perso via attestation ToS.
- * - `signature`  : Héritage 179 $ — 4K + catalogue Stingray officiel inclus
- * - `heritage`   : Éternité 349 $ — + IA + coffre inclus
- * - `legendary`  : Légendaire 499 $ (B2C only)
+ * - `signature`  : Héritage 179 $ — 1080p + catalogue Stingray officiel inclus
+ * - `heritage`   : Éternité 349 $ — Master 4K + IA + coffre inclus
+ * - `legendary`  : Légendaire 499 $ (B2C only) — Master 4K
  *
  * Grille Quiet Luxury accessible (Phase 0 — 22/07/2026) : viral en bas,
  * digne au cœur, ancre haute inchangée.

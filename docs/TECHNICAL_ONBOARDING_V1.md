@@ -93,7 +93,8 @@ Specs : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`DELIVERABLES_AND_P
 | Soft Cap UI | `src/components/tribute/SoftCapModal.tsx` · `src/lib/wizard/softCap.ts` |
 | État / coerce | `src/lib/wizard/wizardState.ts` |
 | Prix / panier Soft Cap | `src/lib/wizard/pricingConfig.ts` · `wizardPricing.ts` (`resolveWizardDisplayCart`) |
-| Livrables (quotas, 4K) | `src/lib/wizard/wizardDeliverables.ts` |
+| Livrables (quotas, 1080p/4K) | `src/lib/wizard/wizardDeliverables.ts` |
+| Export Creatomate | `src/lib/creatomate/` · `src/lib/export/processExportJob.ts` |
 | Étape 4 musique | `StoryboardChaptersStep.tsx` · `ChapterMusicPanel.tsx` |
 | Étape 5 Livre Ouvert | `StoryboardMontageStep.tsx` · `src/components/tribute/storyboard/*` |
 | Checkout API | `app/api/checkout/route.ts` |
@@ -146,13 +147,13 @@ Ne plus seed / QA sur `partner_token_wallets` (DROP P8).
 | Phase | Statut | Contenu |
 |-------|--------|---------|
 | 0 Docs canon | ✅ | FREEMIUM + filles |
-| 1 Manifeste TS | ✅ | `musicLicense`, granted/intended, Héritage 4K |
+| 1 Manifeste TS | ✅ | `musicLicense`, granted/intended, Héritage **1080p** / Éternité+ **4K** |
 | 2 SQL P8 | ✅ | Appliqué Supabase |
 | 3 Checkout / webhook | ✅ | Soft Cap cart + entitlements |
 | 4 Soft Cap UX | ✅ | Médias · magie · musique dual · stay free |
-| **5** | ✅ partiel | Gate export stub · MP3+ToS · add-ons Quiet Luxury · **Creatomate worker réel ⏳** |
+| **5** | ✅ partiel | Gate export · MP3+ToS · add-ons · **Creatomate P0** (`src/lib/creatomate/`) · master Stingray ⏳ |
 | **6** | ⏳ | QA Soft Cap dual · pas de double facturation · RevShare 39 $ |
-| **3a Sanctuaire** | ✅ UI | Contribute · Inviter · Fonds · flag `viral_loop_enabled` OFF |
+| **3a Sanctuaire** | ✅ UI | Contribute multi-photos · enforce 5 · Inviter · Fonds · flag OFF |
 | **Collab** | ✅ | Phases A–C — mint/redeem/UI |
 
 ---
@@ -162,6 +163,7 @@ Ne plus seed / QA sur `partner_token_wallets` (DROP P8).
 | Besoin | Lire |
 |--------|------|
 | Vision CEO | [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) |
+| Vision cinéma Phase 2 | [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md) · [`VISION_PHASE_2.md`](VISION_PHASE_2.md) |
 | Soft Cap UX / amputation | [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) |
 | Livrables / prix | [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) |
 | RevShare | [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) |

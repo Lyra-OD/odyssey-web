@@ -4,6 +4,8 @@
 **Auteur :** équipe produit/tech · **Destinataire :** partenaire stratégique  
 **Canvas interactif :** ouvrir à côté du chat dans Cursor (`partner-report-jul2026.canvas.tsx`)
 
+> **Snapshot historique** — état au **24 juil. 2026**. Pour l’état courant (Héritage **1080p**, Creatomate P0, enforce 5 photos) : [`PROJECT_STATUS.md`](PROJECT_STATUS.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
+
 > **Honnêteté calendaire :** l’activité Git sur `main` est concentrée sur **5 jours** (20–24 juil.). Aucun commit produit entre le 10 et le 19. Ce rapport décrit ce sprint intensif, pas deux semaines vides.
 
 **Sources de vérité runtime :** `src/lib/wizard/pricingConfig.ts`, `guestSupportPacks.ts`, checkouts/RevShare.  

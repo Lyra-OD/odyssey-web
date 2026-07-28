@@ -1,6 +1,6 @@
 # Odyssey — Vision produit : Phase 1 (immédiat) & Phase 2 (Licorne)
 
-**Last updated: June 2026 · Session stratégique partenaires d'affaires**
+**Last updated: July 2026 · Session stratégique partenaires d'affaires**
 
 Document canonique pour la **feuille de route stratégique** au-delà du sprint commerce P6.  
 Complète le [`Manifesto-V10.4.md`](Manifesto-V10.4.md) (constitution technique) et les specs d'implémentation courantes ([`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).  

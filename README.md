@@ -13,9 +13,10 @@ Next.js 14 (App Router) — **Studio Odyssey** : hommages vidéo Quiet Luxury en
 
 | Forfait | ID | Prix | Médias | Export | Musique |
 |---------|-----|------|--------|--------|---------|
-| Souvenir | `essential` | 0 $ | 50 | 1080p | Stingray standard (+ Soft Cap officiel) |
-| Héritage | `signature` | 179 $ | 125 | **4K** | Catalogue officiel **inclus** + MP3 |
-| Éternité | `heritage` | 349 $ | 175 | 4K | Idem + IA + coffre |
+| Souvenir | `essential` | 0 $ | 50 | 1080p | Preview Stingray + MP3 perso (ToS) |
+| Héritage | `signature` | 179 $ | 125 | **1080p** | Catalogue officiel **inclus** + MP3 |
+| Éternité | `heritage` | 349 $ | 175 | **4K** | Idem + IA + coffre |
+| Légendaire | `legendary` | 499 $ | 250 | **4K** | Idem Éternité (B2C) |
 
 Add-ons V1 : `sanctuaryToken` 79 $ · `storyVoice` 39 $ · **`musicLicense` 39 $** · `memoryBook` 149 $ · `aiRetouch` 49 $ · `digitalVault` 99 $.
 
@@ -27,7 +28,7 @@ Add-ons V1 : `sanctuaryToken` 79 $ · `storyVoice` 39 $ · **`musicLicense` 39 $
 | 2 | SQL P8 (purge jetons, Soft Cap quota, entitlements) — **appliqué Supabase** | ✅ |
 | 3 | Checkout Soft Cap + webhook `project_paid_entitlements` | ✅ |
 | 4 | Soft Cap UX (médias, post-Composition Magique, musique dual) | ✅ |
-| **5** | Creatomate (gate entitlements) · NFC · Voix · Livre | ⏳ next |
+| **5** | Gate export + worker Creatomate (mock / API) · NFC · Voix · Livre | ✅ partiel (master Stingray / ops ⏳) |
 | 6 | QA / cutover | ⏳ |
 
 ## Quickstart

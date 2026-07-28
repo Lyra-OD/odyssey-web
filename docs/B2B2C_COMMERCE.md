@@ -85,7 +85,7 @@ Ne jamais hardcoder `if (vertical === 'human') isFreemium = true`.
 | Webhook → `project_paid_entitlements` | ✅ |
 | Soft Cap UX (médias, magie, musique dual) | ✅ Phase 4 |
 | UI Salon commissions | 🟡 partiel |
-| Creatomate gate entitlements | ⏳ Phase 5 |
+| Creatomate gate entitlements | ✅ Phase 5 · worker P0 ✅ · master/ops ⏳ |
 | Accrual RevShare webhook (durcissement) | 🟡 |
 
 ---

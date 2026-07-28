@@ -1,8 +1,8 @@
 # Odyssey — Pivot Freemium V1 (canon CEO)
 
-**Dernière révision : 24 juillet 2026 · Statut : vision figée · Phases 0–5 ✅ (Creatomate stub) · Phase 3a Sanctuaire UI ✅ · Collab A–C ✅ · Phase 6 QA ⏳**
+**Dernière révision : 28 juillet 2026 · Statut : vision figée · Phases 0–5 ✅ (Creatomate P0 + Stem Graph) · Phase 3a Sanctuaire UI ✅ · Collab A–C ✅ · Phase 6 QA ⏳**
 
-Document canonique du **pivot produit majeur** : purge totale des jetons, freemium B2B2C + RevShare only, Soft Cap (Expansion Narrative), grille forfaits 4K, musique à deux voies + add-on Licence Stingray, add-ons Quiet Luxury.
+Document canonique du **pivot produit majeur** : purge totale des jetons, freemium B2B2C + RevShare only, Soft Cap (Expansion Narrative), grille forfaits (Héritage **1080p** · Master **4K** dès Éternité), musique à deux voies + add-on Licence Stingray, add-ons Quiet Luxury.
 
 **Onboarding :** [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · **Porte repo :** [`../README.md`](../README.md).
 
@@ -30,8 +30,8 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 4. **Musique à deux voies** — catalogue Stingray officiel (zéro copyright Odyssey) + soupape MP3/WAV (responsabilité famille via ToS).
 5. **Stingray licencié = 100 % payant** *(décision juillet 2026)*. Le gratuit **n'inclut aucune** piste licenciée dans l'export : seulement (a) **preview** (hook Soft Cap, non exporté) et (b) **MP3 perso via ToS**. Soft Cap : **Licence 39 $** ou **upgrade Héritage 179 $**.
 6. **Sanctuaire / Boucle Virale** — médias invités **hors** Soft Cap 50 ; voix / témoignage filmé V1 « soumis à la famille » ; `viral_loop_enabled` off jusqu'à fin Phase 3a ; surplus fonds = **produit** (pas de cash-out).
-   - Dépôt gratuit (lien public) : **1 photo OU 1 mot**.
-   - Aide famille : **max 5 photos / invité** (pas 20 — Quiet Luxury, anti-dump).
+   - Dépôt gratuit (lien public) : **1 photo OU 1 mot** (premier geste).
+   - Aide famille / multi-dépôt : **max 5 photos / invité** (enforce API + UI multi-select — Quiet Luxury, anti-dump).
    - Mini-clip fichier **15–30 s** : **max 1 / invité** (Phase 3b) ≠ empreinte `guest_video`.
    - `guest_video` **119 $** = **témoignage live** (caméra téléphone / webcam in-app), pas upload galerie.
 
@@ -42,8 +42,8 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 | Forfait | ID | Prix | Médias | Export | Musique | Inclus |
 |---------|-----|------|--------|--------|---------|--------|
 | **Souvenir** | `essential` | 0 $ | 50 | 1080p | **Preview Stingray** (aperçu, non exporté) + **MP3 perso (ToS)** — aucune piste licenciée incluse | Cadeau salon |
-| **Héritage** | `signature` | **179 $** | 125 | **4K** | **Catalogue Stingray officiel inclus** + soupape MP3/WAV | Chef-d’œuvre numérique |
-| **Éternité** | `heritage` | **349 $** | 175 | 4K | Idem Héritage (officiel inclus) | + IA complète + Coffre 50 ans |
+| **Héritage** | `signature` | **179 $** | 125 | **1080p** | **Catalogue Stingray officiel inclus** + soupape MP3/WAV | Chef-d’œuvre numérique |
+| **Éternité** | `heritage` | **349 $** | 175 | **4K** | Idem Héritage (officiel inclus) | + IA complète + Coffre 50 ans |
 
 **Légendaire 499 $** : B2C-only ancre Quiet Luxury (conservé jusqu’à décision contraire).
 
@@ -94,7 +94,7 @@ La famille a déjà « vécu » la piste. L’UI propose :
 
 2. **Upgrader vers Héritage — 179 $**  
    - `intendedPackage = signature`.  
-   - Débloque musique officielle **incluse** + 4K + 125 médias.  
+   - Débloque musique officielle **incluse** + **1080p** + 125 médias (Master **4K** = Éternité+).  
    - **Ne pas** ajouter `musicLicense` en line item (déjà inclus dans le forfait).
 
 Détail UX / amputation : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md).
@@ -179,7 +179,7 @@ flowchart TD
 
 ### Phase 0 — Docs filles (alignement) — ✅ FAIT
 
-1. ✅ DELIVERABLES réécrit (grille 4K, add-ons, Soft Cap, `musicLicense`).
+1. ✅ DELIVERABLES réécrit (grille forfaits, add-ons, Soft Cap, `musicLicense`).
 2. ✅ B2B2C / PARTNER_REVSHARE : freemium only + Soft Cap ; jetons DEPRECATED.
 3. ✅ WIZARD_ARCHITECTURE : cible `granted` / `intended` / Soft Cap.
 4. ✅ STINGRAY : catalogue officiel + Soft Cap dual + entitlement.
@@ -188,7 +188,7 @@ flowchart TD
 ### Phase 1 — Manifeste TS — ✅ FAIT
 
 6. ✅ `pricingConfig` : `musicLicense` + `storyVoice` + `sanctuaryToken` + `memoryBook` ; Héritage `musicCatalog: premium` ; jetons = 0.
-7. ✅ `wizardDeliverables` : Héritage **4K** ; tokens 0.
+7. ✅ `wizardDeliverables` : Héritage **1080p** ; Master **4K** = Éternité+ ; tokens 0.
 8. ✅ `wizardState` : `grantedPackage` + `intendedPackage` + attestation stub ; `basePackage` = miroir intended.
 9. ✅ Helpers : `resolveMusicEntitlement` · `canUploadPersonalAudio` · `computeWizardCartWithGrant` · strip Licence si ≥ Héritage.
 10. ✅ Alias `extendedLicense` / `collectorUsb` pour UI legacy.
@@ -211,13 +211,14 @@ flowchart TD
 17. ✅ Import MP3 + ToS (Héritage+) — UI Étape 4 + gate checkout.
 18. ✅ Étape 8 : panier Soft Cap (`resolveWizardDisplayCart`) ; CTA rester à 0 $ ; surface amputation 422.
 
-### Phase 5 — Export & add-ons — ✅ FAIT (stub Creatomate)
+### Phase 5 — Export & add-ons — ✅ FAIT (Creatomate P0)
 
-19. ✅ Gate export : `assertExportAllowed` + `POST /api/projects/[id]/export` + table P9 `project_export_jobs` (provider `creatomate_stub`).
+19. ✅ Gate export : `assertExportAllowed` + `POST /api/projects/[id]/export` + table P9 `project_export_jobs` (+ P9.1 webhook columns).
+19b. ✅ Worker : `src/lib/creatomate/` (storyboard dynamique, résolution 1080p/4K, Audio Stem Graph, One Bed Law) · drain mock **ou** submit Creatomate · webhook **fail-closed**.
 20. ✅ Checkout : attestation MP3/WAV obligatoire si `source=upload`.
 21. ✅ Webhook / freemium_free : `enqueueQuietLuxuryFulfillment` (NFC · Voix · Livre → `wizard_state.quietLuxuryFulfillment`).
 22. ✅ UI add-ons : `storyVoice` · `sanctuaryToken` (NFC) · `memoryBook` · labels i18n.
-23. ⏳ Worker Creatomate réel + claim NFC claim / Gelato / TTS = follow-ups (hors stub).
+23. ⏳ Master Stingray prod (`STINGRAY_MASTER_URL_TEMPLATE`) + claim NFC / Gelato / TTS = follow-ups.
 
 ### Phase 6 — QA & cutover
 

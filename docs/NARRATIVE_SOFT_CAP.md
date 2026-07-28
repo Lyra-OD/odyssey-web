@@ -32,7 +32,7 @@ Ne pas se contenter d’un toast froid à la 51ᵉ photo. **Le Soft Cap médias 
 2. Ils lancent la **Composition Magique** (Livre Ouvert) — placement automatique des médias.
 3. **Ensuite** : modale Quiet Luxury du type :
 
-> *« Votre histoire compte déjà 110 souvenirs tissés ensemble. Pour ne laisser aucun moment dans l’ombre, débloquez la toile Héritage (jusqu’à 125 médias, master 4K). »*
+> *« Votre histoire compte déjà 110 souvenirs tissés ensemble. Pour ne laisser aucun moment dans l’ombre, débloquez la toile Héritage (jusqu’à 125 médias, export 1080p). »*
 
 Règles :
 
@@ -52,7 +52,7 @@ Sélection d’une piste du **catalogue Stingray officiel** depuis Souvenir :
 | Option | Effet state | Panier virtuel | Ce qui se débloque |
 |--------|-------------|----------------|--------------------|
 | **Licence Musique Premium Stingray — 39 $** | `intended` reste `essential` | `extensions.musicLicense = true` | Catalogue officiel uniquement (reste 50 médias / 1080p) |
-| **Écrin Héritage — 179 $** | `intendedPackage = signature` | Forfait Héritage ; **pas** de line item Licence | Musique officielle **incluse** + 4K + 125 médias |
+| **Écrin Héritage — 179 $** | `intendedPackage = signature` | Forfait Héritage ; **pas** de line item Licence | Musique officielle **incluse** + **1080p** + 125 médias (Master **4K** = Éternité+) |
 
 Helper d’accès catalogue (Phase 1) :
 

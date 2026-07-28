@@ -85,6 +85,7 @@ Le trigger P10.3 peut rester actif (sécurité anti-dump) même si le flag est O
 
 ## 6. Hors scope pilote
 
-- UI multi-photos « aider la famille » (Phase 3b UX)  
 - Mini-clip 15–30 s  
-- Activation prod multi-tenants
+- Activation prod multi-tenants  
+
+> UI multi-photos « aider la famille » : **livrée** (multi-select + dépôt séquentiel · plafond 5).
