@@ -25,6 +25,10 @@ export type PreviewStepCopy = {
   description: string;
   loadingMedia: string;
   payCta: string;
+  /** CTA quand Soft Cap / Héritage déjà engagé (Quiet Luxury). */
+  payCtaSoftCap?: string;
+  /** Note Soft Cap sous le teaser (valeur Héritage avant checkout). */
+  softCapNote?: string;
   editLink: string;
   valueNote: string;
   valueAiRetouch: string;
@@ -43,6 +47,8 @@ type Props = {
   actTracks: WizardActTracks;
   extensions: WizardExtensionsState;
   basePackage?: WizardBasePackage;
+  /** Affiche l’ancre Soft Cap (freemium Souvenir + engagement ou dépassement). */
+  softCapActive?: boolean;
   onProceedToPayment: () => void;
   onEdit: () => void;
 };
@@ -70,6 +76,7 @@ export function PreviewStep({
   actTracks,
   extensions,
   basePackage = "signature",
+  softCapActive = false,
   onProceedToPayment,
   onEdit,
 }: Props) {
@@ -151,13 +158,29 @@ export function PreviewStep({
         {valueNote}
       </p>
 
+      {softCapActive && copy.softCapNote ? (
+        <div
+          className="rounded-2xl border border-amber-300/20 bg-amber-200/[0.05] px-5 py-4 text-center md:text-left"
+          role="status"
+        >
+          <p className="font-serif text-base leading-snug text-amber-50/95">
+            {copy.softCapNote}
+          </p>
+          <p className="mt-1.5 text-xs font-light text-amber-100/55">
+            Odyssey
+          </p>
+        </div>
+      ) : null}
+
       <div className="flex flex-col items-center gap-4 pt-2">
         <button
           type="button"
           onClick={onProceedToPayment}
           className="font-[family-name:var(--font-label)] min-h-[56px] w-full max-w-md rounded-2xl border border-teal-400/45 bg-gradient-to-r from-teal-600/35 via-teal-500/30 to-cyan-400/25 px-6 text-base font-semibold text-white shadow-[0_0_56px_rgba(45,212,191,0.3),0_0_40px_rgba(34,211,238,0.2)] transition-all hover:scale-[1.01] hover:shadow-[0_0_64px_rgba(45,212,191,0.38),0_0_48px_rgba(34,211,238,0.28)]"
         >
-          {copy.payCta}
+          {softCapActive && copy.payCtaSoftCap
+            ? copy.payCtaSoftCap
+            : copy.payCta}
         </button>
         <button
           type="button"

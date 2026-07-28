@@ -383,7 +383,7 @@ Canon projections : [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) §0 (3 000 fa
 |---|--------|-----------------|--------|
 | R1 | **Export Creatomate** | ✅ P0 storyboard/stems · ⏳ master Stingray | Semaine → ops |
 | R2 | **Pilote Boucle Virale** (`viral_loop_enabled`) | UI 3a ✅ · enforce 5 photos ✅ · flag OFF · pilote tenant ⏳ | Pilote staging |
-| R3 | **CRO Soft Cap** (35 → 50–65 %) | **À faire** — copy, timing, preview, Co-Créateur | Semaine (jeu) |
+| R3 | **CRO Soft Cap** (35 → 50–65 %) | ✅ timing consent (plus d’auto-bump) · Preview ancre · Co-Créateur | Mesure conversion |
 | R4 | **Phase 3b** voix / témoignage live + mini-clip | Spec Cascade ⏳ | Après pilote viral |
 | R5 | **Mix Éternité + attach add-ons** (+20–30 $ AOV) | **Phase 2 Growth** | Post-semaine |
 | R6 | **Scale partenaires** (2e/3e salon) | **Phase 2 Growth** | Post preuve 1 salon |

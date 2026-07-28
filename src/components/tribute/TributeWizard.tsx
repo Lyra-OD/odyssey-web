@@ -753,7 +753,7 @@ export function TributeWizard({
 
   const {
     softCapMusicBrowse,
-    softCapEligible,
+    offerMediaSoftCap,
     softCapOpen,
     softCapVariant,
     softCapMediaDismissedRef,
@@ -1431,10 +1431,7 @@ export function TributeWizard({
                           </button>
                         </div>
 
-                        {isFreemiumGrant &&
-                        !isEditor &&
-                        totalQueued > 50 &&
-                        dz.remainingSlots > 0 ? (
+                        {offerMediaSoftCap ? (
                           <div
                             className="mt-5 overflow-hidden rounded-2xl border border-amber-300/25 bg-gradient-to-br from-amber-200/[0.07] via-white/[0.02] to-transparent p-5 shadow-[0_0_36px_rgba(251,191,36,0.10)] backdrop-blur-md"
                             role="status"
@@ -1449,37 +1446,31 @@ export function TributeWizard({
                             <p className="mt-1.5 text-sm font-light leading-relaxed text-amber-100/75">
                               {copy.softCapMediaBannerBody}
                             </p>
+                            <button
+                              type="button"
+                              onClick={() => openSoftCap("mediaUnlock")}
+                              className="mt-4 rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-2 text-sm font-semibold text-[#1a1410] transition hover:brightness-105"
+                            >
+                              {copy.softCapMediaUnlockCta}
+                            </button>
                           </div>
                         ) : null}
 
-                        {dz.remainingSlots <= 0 ? (
+                        {dz.remainingSlots <= 0 && !offerMediaSoftCap ? (
                           <div
                             className="mt-5 rounded-xl border border-amber-400/40 bg-amber-950/10 p-4 shadow-[0_0_24px_rgba(251,191,36,0.14)] backdrop-blur-md"
                             role="status"
                             aria-live="polite"
                           >
                             <p className="text-sm font-medium text-amber-200/95">
-                              {softCapEligible
-                                ? copy.softCapMediaUnlockTitle
-                                : copy.uploadLimitReachedTitle}
+                              {copy.uploadLimitReachedTitle}
                             </p>
                             <p className="mt-1 text-xs text-amber-100/85">
-                              {softCapEligible
-                                ? copy.softCapMediaUnlockBody
-                                : copy.uploadLimitReachedHint.replace(
-                                    "{max}",
-                                    String(effectiveMaxMediaItems),
-                                  )}
+                              {copy.uploadLimitReachedHint.replace(
+                                "{max}",
+                                String(effectiveMaxMediaItems),
+                              )}
                             </p>
-                            {softCapEligible ? (
-                              <button
-                                type="button"
-                                onClick={() => openSoftCap("mediaUnlock")}
-                                className="mt-3 rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-2 text-sm font-semibold text-[#1a1410] transition hover:brightness-105"
-                              >
-                                {copy.softCapMediaUnlockCta}
-                              </button>
-                            ) : null}
                           </div>
                         ) : null}
 
@@ -1815,6 +1806,13 @@ export function TributeWizard({
               actTracks={actTracks}
               extensions={extensions}
               basePackage={basePackage}
+              softCapActive={
+                isFreemiumGrant &&
+                !isEditor &&
+                (packageTierRank(intendedPackage) >= 1 ||
+                  projectMediaCount > grantedMediaMax ||
+                  Boolean(extensions.musicLicense))
+              }
               onProceedToPayment={() => void handleProceedToPayment()}
               onEdit={() => void handlePreviewEdit()}
               copy={{
@@ -1822,6 +1820,8 @@ export function TributeWizard({
                 description: copy.stepPreviewDescription,
                 loadingMedia: copy.previewLoadingMedia,
                 payCta: copy.previewPayCta,
+                payCtaSoftCap: copy.previewPayCtaSoftCap,
+                softCapNote: copy.previewSoftCapNote,
                 editLink: copy.previewEditLink,
                 valueNote: copy.previewValueNote,
                 valueAiRetouch: copy.previewValueAiRetouch,

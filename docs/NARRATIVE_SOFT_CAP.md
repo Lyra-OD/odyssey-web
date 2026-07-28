@@ -22,7 +22,9 @@ Ne **jamais** écraser `grantedPackage` lors d’un Soft Cap.
 
 ## Déclencheur médias → Héritage
 
-Atteinte / dépassement de **50** photos (Souvenir) → Soft Cap Quiet Luxury → `intendedPackage = signature` (après acceptation) + autosave. Upload non bloqué après acceptation.
+Atteinte / dépassement de **50** photos (Souvenir) → Soft Cap Quiet Luxury → `intendedPackage = signature` (après **acceptation UI**) + autosave. Upload non bloqué après le seuil (plafond runtime Héritage tant que freemium).
+
+> **Ne jamais** auto-bumber `intended` en silence : cela désactive le filet 50 et le Soft Cap post-Composition Magique.
 
 ### Moment préféré : après Composition Magique
 
@@ -36,8 +38,9 @@ Ne pas se contenter d’un toast froid à la 51ᵉ photo. **Le Soft Cap médias 
 
 Règles :
 
-- Soft Cap **à 50** reste possible en étape Médias (filet de sécurité) — copy courte, pas de prix froid.
-- Soft Cap **post-Composition Magique** = moment d’aversion à la perte principal (Phase 4 UX).
+- Soft Cap **à 50** : auto-modale filet + bandeau étape Médias avec CTA — copy courte, pas de prix froid.
+- Soft Cap **post-Composition Magique** = moment d’aversion à la perte principal (Phase 4 UX) — exige que `intended` soit encore Souvenir.
+- Soft Cap **Preview** : ancre valeur Héritage avant checkout si engagement Soft Cap ou dépassement quota cadeau.
 - Si `intended` est déjà `signature`+, ne pas re-spammer la modale.
 
 ---

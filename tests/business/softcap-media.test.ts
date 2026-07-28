@@ -84,6 +84,9 @@ describe("Soft Cap Médias — quota & Frustration Positive", () => {
     expect(isSoftCapEligible("essential", "essential")).toBe(true);
     expect(shouldOfferMediaSoftCap("essential", "essential", 50)).toBe(true);
     expect(shouldOfferMagicSoftCap("essential", "essential", 62)).toBe(true);
+    // Au-delà de 50 sans acceptation UI : Soft Cap Magique reste éligible
+    expect(shouldOfferMediaSoftCap("essential", "essential", 80)).toBe(true);
+    expect(shouldOfferMagicSoftCap("essential", "essential", 80)).toBe(true);
     // Sous le seuil : pas de nudge
     expect(shouldOfferMediaSoftCap("essential", "essential", 49)).toBe(false);
   });

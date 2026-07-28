@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SoftCapVariant } from "@/src/components/tribute/SoftCapModal";
 import {
   isSoftCapEligible,
+  shouldOfferMediaSoftCap,
   shouldOfferMusicSoftCap,
 } from "@/src/lib/wizard/softCap";
 import { isOfficialCatalogTrack } from "@/src/lib/wizard/stingrayCatalog";
@@ -75,7 +76,6 @@ export function useWizardSoftCap({
     useState<SoftCapVariant>("mediaUnlock");
   const softCapMediaDismissedRef = useRef(false);
   const softCapMagicDismissedRef = useRef(false);
-  const mediaAutoBumpedRef = useRef(false);
 
   const isFreemiumGrant = packageTierRank(grantedPackage) === 0;
   const SOFT_CAP_MEDIA_CEILING = useMemo(
@@ -164,29 +164,39 @@ export function useWizardSoftCap({
     setPayError,
   ]);
 
+  /**
+   * Filet Soft Cap à ≥50 — consentement UI (pas d’auto-bump silencieux
+   * vers Héritage, qui tuait mediaUnlock + mediaMagic).
+   * Uploads restent ouverts jusqu’au plafond Héritage via `effectiveMaxMediaItems`.
+   */
   useEffect(() => {
     if (isEditor) return;
-    if (!isFreemiumGrant) return;
-    const intendedRank = packageTierRank(intendedPackage);
-    if (projectMediaCount > 50 && intendedRank === 0) {
-      mediaAutoBumpedRef.current = true;
-      handleBasePackageChange("signature");
-    } else if (
-      projectMediaCount <= 50 &&
-      mediaAutoBumpedRef.current &&
-      intendedPackage === "signature"
+    if (softCapOpen) return;
+    if (softCapMediaDismissedRef.current) return;
+    if (
+      !shouldOfferMediaSoftCap(
+        grantedPackage,
+        intendedPackage,
+        projectMediaCount,
+      )
     ) {
-      mediaAutoBumpedRef.current = false;
-      handleBasePackageChange(grantedPackage);
+      return;
     }
+    openSoftCap("mediaUnlock");
   }, [
     grantedPackage,
-    handleBasePackageChange,
     intendedPackage,
     isEditor,
-    isFreemiumGrant,
+    openSoftCap,
     projectMediaCount,
+    softCapOpen,
   ]);
+
+  const offerMediaSoftCap = shouldOfferMediaSoftCap(
+    grantedPackage,
+    intendedPackage,
+    projectMediaCount,
+  );
 
   const syncStep3MediaCount = useCallback(
     (count: number) => {
@@ -218,6 +228,7 @@ export function useWizardSoftCap({
   return {
     softCapMusicBrowse,
     softCapEligible,
+    offerMediaSoftCap,
     softCapOpen,
     softCapVariant,
     softCapMediaDismissedRef,
