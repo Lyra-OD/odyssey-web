@@ -28,26 +28,26 @@
 
 ---
 
-## Les trois organes du moteur
+## Les organes du moteur
 
 ```text
-     ŒIL                         OREILLE                      POUMONS
-     Vision / pellicule          Audio Stem Graph             Breath Engine
-     (quoi / humeur / cadre)     (quoi on entend / mix)       (quand on retient / relâche)
-            \                          |                           /
-             \                         |                          /
-              \________________________|_________________________/
+     ŒIL              OREILLE             POUMONS              CORPS
+     Vision           Stem Graph          Breath Engine        Pulse haptique
+     (quoi/humeur)    (mix / couches)     (hold / release)     (mobile, rare)
+            \              |                    |                   /
+             \_____________|____________________|__________________/
                                        │
                          Direction émotionnelle unifiée
 ```
 
 | Organe | Rôle | Fondation P0 | Phase 2 |
 |--------|------|--------------|---------|
-| **Œil** | Pellicule, Signature intro, Smart Ken Burns, arc Vision | `cinematicTheme` · `payloadBuilder` · résolution forfaits | Relighting · tags humeur · POI |
+| **Œil** | Pellicule, Signature, Smart Ken Burns, arc Vision | `cinematicTheme` · `payloadBuilder` · résolution | Relighting · tags humeur · POI |
 | **Oreille** | Beds, sync, ducking, One Bed Law | Stem Graph (`bed` / `sync` ; `ghost` / `foreground` dormants) | Ghost Track · VO · loudness |
-| **Poumons** | Silence, attente, release | Intro Signature (embryon) | **Breath Engine** (pilier transversal) |
+| **Poumons** | Silence, attente, release | Intro Signature (embryon) | **Breath Engine** |
+| **Corps** | Impulsion haptique sur hold majeur | — | **Pulse** (mobile, opt-in) |
 
-Le Breath Engine n’est **pas** une feature à côté des autres : c’est le **chef d’orchestre** qui fait travailler Œil et Oreille ensemble.
+Le Breath Engine n’est **pas** une feature à côté des autres : c’est le **chef d’orchestre**. Le Pulse en est l’extension **corporelle** — uniquement quand le poumon retient vraiment son souffle.
 
 ---
 
@@ -60,12 +60,14 @@ P0 — Mapping Creatomate + Stem Graph ✅
 Phase 2 — Moteur Cinématographique Avancé
      ┌──────────────────────────────────────────────────┐
      │              BREATH ENGINE (Poumons)               │
-     │         Negative Space · Hold · Release            │
+     │     Negative Space · Hold · Release · Pulse        │
      └──────────────────────────────────────────────────┘
               │              │               │
               ▼              ▼               ▼
         Ghost Track    Moteur Narratif   Smart Ken Burns
         (Oreille+)       (Œil+)          + Relighting
+              │
+              └── Pulse haptique (Corps) — mobile, opt-in, rare
 ```
 
 ---
@@ -103,9 +105,10 @@ L’IA narrative (et / ou les règles Quiet Luxury du theme) ne gère pas seulem
 2. Le **bed** descend doucement (ducking motivé, pas un mute brutal).  
 3. Le **Ghost Track** (ou leitmotiv Souffle) laisse un ambient / respiration très bas.  
 4. Le moteur **retient** l’image **2–3 secondes de plus** que ce que le cerveau attend.  
-5. Au moment exact du **release**, la musique reprend ; le montage bascule vers des plans **festifs / chaotiques**.
+5. *(Mobile, opt-in)* Une **seule** impulsion haptique grave — le Pulse — au début du hold.  
+6. Au moment exact du **release**, la musique reprend ; le montage bascule vers des plans **festifs / chaotiques**.
 
-L’attente crée une tension émotionnelle massive. Le contraste release → joie fait basculer le spectateur.
+L’attente crée une tension émotionnelle massive. Le contraste release → joie fait basculer le spectateur. Sur téléphone, le corps **sent** la retenue.
 
 #### Motivations du Breath (jamais aléatoire)
 
@@ -125,6 +128,37 @@ Un hold n’est légitime que s’il est **motivé**, par exemple :
 - Le cadre **vit** pendant le silence : micro-scale, grain, ghost très bas (pas un « gel bug »).  
 - Mode famille : **Rythme Odyssey** (Breath on) vs **Livre Ouvert** (rythme plus linéaire).
 
+#### Organe Corps — Pulse haptique (*Souffle tactile*)
+
+Quand le Breath Engine déclenche une **pause solennelle** (hold majeur sur portrait), le téléphone ne reste pas inerte : il émet **une seule** impulsion très grave, sourd et lointain — basse fréquence haptique — comme si l’appareil lui-même retenait son souffle.
+
+| Règle | Canon Quiet Luxury |
+|-------|-------------------|
+| **Dose** | **0–2** pulses / visionnage (idéalement **1**) — jamais sur chaque média |
+| **Forme** | Impulsion **unique**, basse, courte — pas un rythme cardiaque littéral, pas un buzz notif |
+| **Consentement** | **Opt-in** (« Ressentir le rythme ») — off par défaut ou soft-ask une fois |
+| **Accessibilité** | Respect `prefers-reduced-motion` / réglages système ; dégradation silencieuse |
+| **Plateformes** | Enrichissement **mobile** ; desktop / TV : film parfait **sans** Pulse |
+| **Technique web** | Vibration API fragile (surtout iOS Safari) — viser player PWA / native ; sinon no-op |
+
+**Architecture :** le Pulse est une **piste du Breath**, pas un gadget UI.
+
+```text
+Breath hold (solennel, major #1)
+  → visual hold + bed duck + ghost
+  → haptic.pulseOnce  (si mobile ∧ opt-in ∧ cue autorisée)
+```
+
+Métadonnée player (cible) — Creatomate reste vidéo pure :
+
+```text
+breathCues: [
+  { t: 42.1, kind: "solemn_hold", haptic: "single_low" }
+]
+```
+
+**Formule :** *Une seule fois. Très bas. Au silence. Opt-in. Invisible si absent.*
+
 #### Tokens theme (cible d’implémentation)
 
 Extensions futures de `cinematicTheme` (noms indicatifs) :
@@ -133,8 +167,9 @@ Extensions futures de `cinematicTheme` (noms indicatifs) :
 - `breath.anticipationBreakSec`  
 - `breath.releaseCue` (bed rebound, cut festif…)  
 - `breath.maxMajorBreathsPerFilm`  
+- `breath.pulse.enabled` / `pulse.maxPerScreening` / `pulse.kind: "single_low"`  
 
-Le `payloadBuilder` **compile** ; le Breath Engine **décide** via theme + tags — jamais de secondes magiques hardcodées dans le builder.
+Le `payloadBuilder` **compile** la timeline ; le Breath Engine **décide** holds + cues ; le **player mobile** exécute le Pulse.
 
 #### Lien avec les trois propositions d’impact émotionnel
 
@@ -149,6 +184,7 @@ Temps     → où ça compte
 Souffle   → ce qui habite le vide
 Chœur     → qui répond après
 Breath    → quand on retient / quand on relâche
+Pulse     → ce que le corps sent (mobile, rare)
 ```
 
 ---
@@ -252,7 +288,7 @@ Un court enregistrement famille (respiration, murmure) comme **épine dorsale** 
 3. **Server-side only** — Vision, extraction audio, entitlements : jamais confiance client pour le master.  
 4. **Theme-driven** — DA dans `cinematicTheme` ; le builder compile.  
 5. **Breath motivé** — pas de `+2s` aléatoire ; hold = signal (Solennel, Temps, fin d’acte).  
-6. **Dose** — 1–3 breathes majeurs / film.  
+6. **Dose** — 1–3 breathes majeurs / film ; Pulse **0–2** / visionnage, opt-in.  
 7. **P0 intact** jusqu’à GO d’implémentation explicite sur un chantier.
 
 ---
@@ -268,4 +304,4 @@ Un court enregistrement famille (respiration, murmure) comme **épine dorsale** 
 
 ---
 
-*Document de vision — Odyssey Frontend · Phase 2 Cinematic Engine · Breath Engine formalisé · juil. 2026*
+*Document de vision — Odyssey Frontend · Phase 2 Cinematic Engine · Breath Engine + Pulse · juil. 2026*
