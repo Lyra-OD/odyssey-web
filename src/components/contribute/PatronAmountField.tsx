@@ -23,8 +23,10 @@ export type PatronAmountFieldProps = {
   amountMinCents?: number | null;
   amountMaxCents?: number | null;
   amountSuggestedCents?: number | null;
-  /** Afficher / masquer avec animation (sélection Mécène). */
+  /** Afficher / masquer avec animation (sélection Mécène). Ignoré si embedded. */
   open: boolean;
+  /** Dans une carte empreinte : pas de double chrome / anim (le parent ouvre déjà). */
+  embedded?: boolean;
 };
 
 const copy = {
@@ -72,6 +74,7 @@ export function PatronAmountField({
   amountMaxCents,
   amountSuggestedCents,
   open,
+  embedded = false,
 }: PatronAmountFieldProps) {
   const t = copy[locale];
   const inputId = useId();
@@ -90,6 +93,70 @@ export function PatronAmountField({
     [amountCents],
   );
 
+  const field = (
+    <div
+      className={
+        embedded
+          ? "space-y-1"
+          : "rounded-xl border border-teal-400/25 bg-teal-400/[0.03] px-5 py-6 shadow-[0_0_32px_rgba(45,212,191,0.08)]"
+      }
+    >
+      <label htmlFor={inputId} className={editorialFieldLabel}>
+        {t.label}
+      </label>
+      <div className="relative mt-1">
+        <span
+          className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 font-editorial text-lg text-teal-500/70"
+          aria-hidden
+        >
+          $
+        </span>
+        <input
+          id={inputId}
+          type="text"
+          inputMode="decimal"
+          autoComplete="off"
+          value={displayValue}
+          onChange={(e) => {
+            const cents = dollarsInputToCents(e.target.value);
+            if (cents === null) {
+              onChange(0);
+              return;
+            }
+            onChange(cents);
+          }}
+          className={`${sanctuaryFieldInput} pl-5`}
+          aria-invalid={!valid}
+          aria-describedby={`${inputId}-hint`}
+        />
+      </div>
+      <p
+        id={`${inputId}-hint`}
+        className="mt-3 text-[11px] font-light leading-relaxed text-zinc-500"
+      >
+        {t.hint(min, max, suggested)}
+      </p>
+      {!valid && amountCents > 0 ? (
+        <p className="mt-2 text-sm font-light text-amber-200/90" role="alert">
+          {t.invalid(min, max)}
+        </p>
+      ) : null}
+      {amountCents !== suggested ? (
+        <button
+          type="button"
+          onClick={() => onChange(suggested)}
+          className="mt-4 font-label text-[10px] uppercase tracking-[0.28em] text-zinc-500 transition-colors hover:text-teal-300/90"
+        >
+          {t.useSuggested}
+        </button>
+      ) : null}
+    </div>
+  );
+
+  if (embedded) {
+    return open ? field : null;
+  }
+
   return (
     <AnimatePresence initial={false}>
       {open ? (
@@ -101,57 +168,7 @@ export function PatronAmountField({
           transition={{ duration: DURATION_BREATH, ease: EASE_OUT_LUXE }}
           className="overflow-hidden"
         >
-          <div className="rounded-xl border border-teal-400/25 bg-teal-400/[0.03] px-5 py-6 shadow-[0_0_32px_rgba(45,212,191,0.08)]">
-            <label htmlFor={inputId} className={editorialFieldLabel}>
-              {t.label}
-            </label>
-            <div className="relative mt-1">
-              <span
-                className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 font-editorial text-lg text-teal-500/70"
-                aria-hidden
-              >
-                $
-              </span>
-              <input
-                id={inputId}
-                type="text"
-                inputMode="decimal"
-                autoComplete="off"
-                value={displayValue}
-                onChange={(e) => {
-                  const cents = dollarsInputToCents(e.target.value);
-                  if (cents === null) {
-                    onChange(0);
-                    return;
-                  }
-                  onChange(cents);
-                }}
-                className={`${sanctuaryFieldInput} pl-5`}
-                aria-invalid={!valid}
-                aria-describedby={`${inputId}-hint`}
-              />
-            </div>
-            <p
-              id={`${inputId}-hint`}
-              className="mt-3 text-[11px] font-light leading-relaxed text-zinc-500"
-            >
-              {t.hint(min, max, suggested)}
-            </p>
-            {!valid && amountCents > 0 ? (
-              <p className="mt-2 text-sm font-light text-amber-200/90" role="alert">
-                {t.invalid(min, max)}
-              </p>
-            ) : null}
-            {amountCents !== suggested ? (
-              <button
-                type="button"
-                onClick={() => onChange(suggested)}
-                className="mt-4 font-label text-[10px] uppercase tracking-[0.28em] text-zinc-500 transition-colors hover:text-teal-300/90"
-              >
-                {t.useSuggested}
-              </button>
-            ) : null}
-          </div>
+          {field}
         </motion.div>
       ) : null}
     </AnimatePresence>

@@ -28,6 +28,8 @@ export type GuestVoiceRecorderProps = {
   /** media_assets.id une fois uploadé. */
   mediaId: string | null;
   onMediaIdChange: (mediaId: string | null) => void;
+  /** Dans une carte empreinte : pas de chrome / titre (copy déjà au-dessus). */
+  embedded?: boolean;
 };
 
 type Phase =
@@ -42,7 +44,6 @@ const copy = {
   fr: {
     title: "Enregistrez votre voix",
     lead: "Quelques mots pour le film — vous pourrez réécouter et recommencer avant de payer.",
-    familyNote: "Soumis à la famille pour intégration.",
     start: "Enregistrer",
     stop: "Arrêter",
     play: "Écouter",
@@ -65,7 +66,6 @@ const copy = {
   en: {
     title: "Record your voice",
     lead: "A few words for the film — you can listen and re-record before paying.",
-    familyNote: "Subject to family approval for inclusion.",
     start: "Record",
     stop: "Stop",
     play: "Listen",
@@ -116,6 +116,7 @@ export function GuestVoiceRecorder({
   contributorEmail,
   mediaId,
   onMediaIdChange,
+  embedded = false,
 }: GuestVoiceRecorderProps) {
   const t = copy[locale];
   const maxSec = SANCTUARY_GUEST_VOICE_MAX_SECONDS;
@@ -418,16 +419,21 @@ export function GuestVoiceRecorder({
     phase === "ready";
 
   return (
-    <div className="space-y-4 rounded-sm border border-teal-400/25 bg-teal-400/[0.04] px-4 py-5 md:px-5">
-      <div className="space-y-2 text-center">
-        <p className="font-editorial text-lg text-zinc-50">{t.title}</p>
-        <p className="text-sm font-light leading-relaxed text-white/55">
-          {t.lead}
-        </p>
-        <p className="text-[10px] uppercase tracking-[0.22em] text-white/35">
-          {t.familyNote}
-        </p>
-      </div>
+    <div
+      className={
+        embedded
+          ? "space-y-4"
+          : "space-y-4 rounded-sm border border-teal-400/25 bg-teal-400/[0.04] px-4 py-5 md:px-5"
+      }
+    >
+      {!embedded ? (
+        <div className="space-y-2 text-center">
+          <p className="font-editorial text-lg text-zinc-50">{t.title}</p>
+          <p className="text-sm font-light leading-relaxed text-white/55">
+            {t.lead}
+          </p>
+        </div>
+      ) : null}
 
       {!contributorName.trim() ? (
         <label className="block space-y-1">

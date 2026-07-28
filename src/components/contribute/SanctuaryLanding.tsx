@@ -99,7 +99,7 @@ const copy = {
       "Vous avez offert cinq photos — un geste déjà généreux. Poursuivez si vous le souhaitez.",
     bridgeTitle: "Votre empreinte a été ajoutée.",
     bridgeBody:
-      "Souhaitez-vous rejoindre le cercle des proches qui soutiennent la production de ce film hommage ?",
+      "Souhaitez-vous soutenir la production de ce film hommage — avec le geste qui vous ressemble ?",
     bridgeBodyAfterGift:
       "Si le cœur vous en dit, vous pouvez offrir un autre geste — sans obligation.",
     contribSuccess: "Merci — votre soutien a bien été enregistré.",
@@ -126,7 +126,7 @@ const copy = {
       "You have offered five photos — already a generous gift. Continue whenever you wish.",
     bridgeTitle: "Your mark has been placed.",
     bridgeBody:
-      "Would you like to join the circle of those who support the making of this tribute film?",
+      "Would you like to support the making of this tribute film — with a gift that feels right?",
     bridgeBodyAfterGift:
       "If you wish, you may offer another gesture — with no obligation.",
     contribSuccess: "Thank you — your support has been recorded.",
@@ -495,28 +495,30 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                   packs={load.packs}
                   selectedKey={selectedPackKey}
                   onSelect={handleSelectPack}
+                  voiceSlot={
+                    <GuestVoiceRecorder
+                      token={token}
+                      locale={locale}
+                      contributorName={deposit?.contributorName ?? ""}
+                      contributorEmail={deposit?.contributorEmail}
+                      mediaId={voiceMediaId}
+                      onMediaIdChange={setVoiceMediaId}
+                      embedded
+                    />
+                  }
+                  patronSlot={
+                    <PatronAmountField
+                      locale={locale}
+                      open
+                      embedded
+                      amountCents={patronAmountCents}
+                      onChange={setPatronAmountCents}
+                      amountMinCents={patronPack?.amountMinCents}
+                      amountMaxCents={patronPack?.amountMaxCents}
+                      amountSuggestedCents={patronPack?.amountSuggestedCents}
+                    />
+                  }
                 />
-
-                <PatronAmountField
-                  locale={locale}
-                  open={selectedPackKey === "guest_patron"}
-                  amountCents={patronAmountCents}
-                  onChange={setPatronAmountCents}
-                  amountMinCents={patronPack?.amountMinCents}
-                  amountMaxCents={patronPack?.amountMaxCents}
-                  amountSuggestedCents={patronPack?.amountSuggestedCents}
-                />
-
-                {selectedPackKey === "guest_voice" ? (
-                  <GuestVoiceRecorder
-                    token={token}
-                    locale={locale}
-                    contributorName={deposit?.contributorName ?? ""}
-                    contributorEmail={deposit?.contributorEmail}
-                    mediaId={voiceMediaId}
-                    onMediaIdChange={setVoiceMediaId}
-                  />
-                ) : null}
 
                 <ImprintCheckoutCta
                   token={token}

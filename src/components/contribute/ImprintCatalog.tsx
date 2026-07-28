@@ -1,10 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
+import type { ReactNode } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { sanctuarySelectBreathe } from "@/src/lib/contribute/sanctuaryChrome";
 import {
   DURATION_BREATH,
+  DURATION_RITUAL,
   EASE_OUT_LUXE,
 } from "@/src/lib/motion/easing";
 import { formatWizardPrice } from "@/src/lib/wizard/wizardPricing";
@@ -26,24 +28,75 @@ export type ImprintCatalogProps = {
   /** Sélection locale uniquement — pas de checkout à cette étape. */
   selectedKey: string | null;
   onSelect: (key: string) => void;
+  /** Interaction voix — rendue dans la carte `guest_voice` ouverte. */
+  voiceSlot?: ReactNode;
+  /** Montant mécène — rendu dans la carte `guest_patron` ouverte. */
+  patronSlot?: ReactNode;
+};
+
+type ExpandCopy = { inspiration: string; body: string };
+
+const EXPAND: Record<"fr" | "en", Record<string, ExpandCopy>> = {
+  fr: {
+    guest_voice: {
+      inspiration: "Une voix qui reste, quand les jours passent.",
+      body: "Enregistrez quelques mots, à votre rythme — pour le film, pour ceux qui restent.",
+    },
+    guest_video: {
+      inspiration: "Un regard. Une histoire.",
+      body: "Enregistrez-vous face caméra — votre présence, vivante, dans le film.",
+    },
+    guest_heritage: {
+      inspiration: "Votre nom, au générique.",
+      body: "Vous soutenez la production : version HD, partage, et votre nom inscrit dans le film.",
+    },
+    guest_candle: {
+      inspiration: "Une lumière discrète.",
+      body: "Un geste simple — votre présence, sans enregistrement.",
+    },
+    guest_patron: {
+      inspiration: "Un geste à la mesure de votre cœur.",
+      body: "Choisissez le montant. Votre soutien aide à porter ce film plus loin.",
+    },
+  },
+  en: {
+    guest_voice: {
+      inspiration: "A voice that remains, as the days go by.",
+      body: "Record a few words, in your own time — for the film, for those who remain.",
+    },
+    guest_video: {
+      inspiration: "A gaze. A story.",
+      body: "Record yourself on camera — your presence, alive, in the film.",
+    },
+    guest_heritage: {
+      inspiration: "Your name, in the credits.",
+      body: "You support the making: HD, share, and your name in the film.",
+    },
+    guest_candle: {
+      inspiration: "A quiet light.",
+      body: "A simple gesture — your presence, with no recording.",
+    },
+    guest_patron: {
+      inspiration: "A gift measured by the heart.",
+      body: "Choose the amount. Your support helps carry this film further.",
+    },
+  },
 };
 
 const copy = {
   fr: {
     title: "Laissez une empreinte durable",
-    promise:
-      "Voix et témoignage filmé : soumis à la famille pour intégration dans l'œuvre.",
+    promise: "Chaque empreinte aide à porter ce film plus loin.",
     patronRange: (min: number, max: number) =>
       `${formatWizardPrice(min, "fr")} – ${formatWizardPrice(max, "fr")}`,
-    selected: "Sélectionné",
+    videoSoon: "L’enregistrement live arrive bientôt.",
   },
   en: {
     title: "Leave a lasting imprint",
-    promise:
-      "Voice and filmed testimony: submitted to the family for inclusion in the work.",
+    promise: "Every imprint helps carry this film further.",
     patronRange: (min: number, max: number) =>
       `${formatWizardPrice(min, "en")} – ${formatWizardPrice(max, "en")}`,
-    selected: "Selected",
+    videoSoon: "Live recording is coming soon.",
   },
 } as const;
 
@@ -57,14 +110,16 @@ function priceLabel(pack: ImprintPack, locale: "fr" | "en"): string {
 }
 
 /**
- * Étape 2 Sanctuaire — catalogue d'empreintes (UI seule).
- * Pas de Stripe / PatronAmountField ici — lots suivants.
+ * Étape 2 Sanctuaire — catalogue d'empreintes en cartes qui s'ouvrent.
+ * Interaction (voix / mécène) vit dans la carte sélectionnée.
  */
 export function ImprintCatalog({
   locale,
   packs,
   selectedKey,
   onSelect,
+  voiceSlot,
+  patronSlot,
 }: ImprintCatalogProps) {
   const t = copy[locale];
   const primary = packs.filter((p) => !p.secondary);
@@ -85,6 +140,8 @@ export function ImprintCatalog({
             selected={selectedKey === pack.key}
             onSelect={onSelect}
             delayIndex={i}
+            voiceSlot={voiceSlot}
+            patronSlot={patronSlot}
           />
         ))}
       </ul>
@@ -99,6 +156,8 @@ export function ImprintCatalog({
               selected={selectedKey === pack.key}
               onSelect={onSelect}
               delayIndex={primary.length + i}
+              voiceSlot={voiceSlot}
+              patronSlot={patronSlot}
             />
           ))}
         </ul>
@@ -117,14 +176,34 @@ function PackRow({
   selected,
   onSelect,
   delayIndex,
+  voiceSlot,
+  patronSlot,
 }: {
   pack: ImprintPack;
   locale: "fr" | "en";
   selected: boolean;
   onSelect: (key: string) => void;
   delayIndex: number;
+  voiceSlot?: ReactNode;
+  patronSlot?: ReactNode;
 }) {
   const t = copy[locale];
+  const expand = EXPAND[locale][pack.key];
+
+  let interaction: ReactNode = null;
+  if (selected) {
+    if (pack.key === "guest_voice" && voiceSlot) {
+      interaction = voiceSlot;
+    } else if (pack.key === "guest_patron" && patronSlot) {
+      interaction = patronSlot;
+    } else if (pack.key === "guest_video") {
+      interaction = (
+        <p className="text-center text-[11px] font-light uppercase tracking-[0.22em] text-teal-400/55">
+          {t.videoSoon}
+        </p>
+      );
+    }
+  }
 
   return (
     <motion.li
@@ -136,35 +215,62 @@ function PackRow({
         delay: delayIndex * 0.04,
       }}
     >
-      <button
-        type="button"
-        role="option"
-        aria-selected={selected}
-        onClick={() => onSelect(pack.key)}
-        className={`flex w-full items-center justify-between gap-4 rounded-xl border px-4 py-4 text-left transition-[border-color,box-shadow,background-color] duration-300 ${
+      <div
+        className={`rounded-xl border transition-[border-color,box-shadow,background-color] duration-300 ${
           selected
             ? `${sanctuarySelectBreathe} border-teal-400/40 bg-teal-400/[0.06]`
             : "border-white/10 bg-white/[0.02] hover:border-teal-400/25 hover:bg-teal-400/[0.03]"
         }`}
       >
-        <span className="min-w-0">
-          <span className="block font-label text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-100">
-            {pack.label}
-          </span>
-          {selected ? (
-            <span className="mt-1 block text-[10px] uppercase tracking-[0.28em] text-teal-300/90">
-              {t.selected}
-            </span>
-          ) : null}
-        </span>
-        <span
-          className={`shrink-0 font-editorial text-lg tabular-nums tracking-tight ${
-            selected ? "text-teal-100" : "text-zinc-300"
-          }`}
+        <button
+          type="button"
+          role="option"
+          aria-selected={selected}
+          aria-expanded={selected}
+          onClick={() => onSelect(pack.key)}
+          className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left"
         >
-          {priceLabel(pack, locale)}
-        </span>
-      </button>
+          <span className="min-w-0">
+            <span className="block font-label text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-100">
+              {pack.label}
+            </span>
+          </span>
+          <span
+            className={`shrink-0 font-editorial text-lg tabular-nums tracking-tight ${
+              selected ? "text-teal-100" : "text-zinc-300"
+            }`}
+          >
+            {priceLabel(pack, locale)}
+          </span>
+        </button>
+
+        <AnimatePresence initial={false}>
+          {selected && expand ? (
+            <motion.div
+              key={`expand-${pack.key}`}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
+              className="overflow-hidden"
+            >
+              <div className="space-y-4 border-t border-teal-400/15 px-4 pb-5 pt-4">
+                <div className="space-y-2 text-center md:text-left">
+                  <p className="font-editorial text-lg leading-snug text-zinc-50 md:text-xl">
+                    {expand.inspiration}
+                  </p>
+                  <p className="text-sm font-light leading-relaxed text-white/55">
+                    {expand.body}
+                  </p>
+                </div>
+                {interaction ? (
+                  <div className="pt-1">{interaction}</div>
+                ) : null}
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </div>
     </motion.li>
   );
 }
