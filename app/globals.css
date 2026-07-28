@@ -323,40 +323,63 @@ body {
   animation: sanctuary-halo-breathe 4.2s ease-in-out infinite;
 }
 
-/* Sanctuaire — Lueur (présence vaporeuse, breathe déphasé via --lueur-delay) */
-@keyframes sanctuary-lueur-mist {
+/* Sanctuaire — Lueur organique (veil / plume / ember, 100 % CSS) */
+@keyframes sanctuary-lueur-veil-breathe {
+  0%,
+  100% {
+    opacity: 0.22;
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  50% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+@keyframes sanctuary-lueur-plume-breathe {
   0%,
   100% {
     opacity: 0.28;
-    transform: translate(-50%, -50%) scale(0.92);
+    transform: translate(-50%, -52%) scale(0.96);
   }
   50% {
     opacity: 0.48;
-    transform: translate(-50%, -50%) scale(1.06);
+    transform: translate(-50%, -48%) scale(1.06);
   }
 }
 
-@keyframes sanctuary-lueur-halo {
+@keyframes sanctuary-lueur-ember-breathe {
   0%,
   100% {
-    opacity: 0.45;
-    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.2;
+    transform: translate(-50%, -50%) scale(0.92);
   }
   50% {
-    opacity: 0.72;
-    transform: translate(-50%, -50%) scale(1.08);
-  }
-}
-
-@keyframes sanctuary-lueur-core {
-  0%,
-  100% {
-    opacity: 0.78;
-    transform: translate(-50%, -50%) scale(0.96);
-  }
-  50% {
-    opacity: 1;
+    opacity: 0.38;
     transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes sanctuary-lueur-plume-morph {
+  0%,
+  100% {
+    border-radius: 42% 58% 52% 48% / 48% 42% 58% 52%;
+  }
+  33% {
+    border-radius: 58% 42% 46% 54% / 52% 58% 42% 48%;
+  }
+  66% {
+    border-radius: 48% 52% 58% 42% / 44% 56% 48% 52%;
+  }
+}
+
+@keyframes sanctuary-lueur-ember-morph {
+  0%,
+  100% {
+    border-radius: 52% 48% 44% 56% / 46% 54% 50% 50%;
+  }
+  50% {
+    border-radius: 44% 56% 58% 42% / 58% 42% 52% 48%;
   }
 }
 
@@ -370,54 +393,77 @@ body {
     transform: translateY(8%) scale(1);
   }
   100% {
-    opacity: 0.35;
-    transform: translateY(-18%) scale(0.88);
+    opacity: 0.45;
+    transform: translateY(-18%) scale(0.9);
   }
 }
 
-.sanctuary-lueur-orb__mist,
-.sanctuary-lueur-orb__halo,
-.sanctuary-lueur-orb__core {
+.sanctuary-lueur-orb {
+  contain: layout paint;
+  isolation: isolate;
+}
+
+.sanctuary-lueur-orb__veil,
+.sanctuary-lueur-orb__plume,
+.sanctuary-lueur-orb__ember {
   position: absolute;
   left: 50%;
   top: 50%;
-  border-radius: 9999px;
   pointer-events: none;
 }
 
-.sanctuary-lueur-orb__mist {
-  width: 140%;
-  height: 140%;
+/* Voile large — aurore diffuse */
+.sanctuary-lueur-orb__veil {
+  width: 155%;
+  height: 145%;
+  border-radius: 48% 52% 50% 50% / 50% 48% 52% 50%;
   background: radial-gradient(
-    circle,
-    rgba(34, 211, 238, 0.22) 0%,
-    rgba(45, 212, 191, 0.1) 42%,
-    transparent 70%
+    ellipse 70% 65% at 48% 52%,
+    rgba(34, 211, 238, 0.14) 0%,
+    rgba(45, 212, 191, 0.08) 38%,
+    rgba(45, 212, 191, 0) 72%
   );
-  filter: blur(22px);
-  animation: sanctuary-lueur-mist 4.2s ease-in-out infinite;
+  filter: blur(48px);
+  animation: sanctuary-lueur-veil-breathe 4.2s ease-in-out infinite;
   animation-delay: var(--lueur-delay, 0s);
 }
 
-.sanctuary-lueur-orb__halo {
-  width: 88%;
-  height: 88%;
+/* Plume — gaz qui se déforme (morph lent ≠ breathe) */
+.sanctuary-lueur-orb__plume {
+  width: 92%;
+  height: 98%;
   background: radial-gradient(
-    circle,
-    rgba(153, 246, 228, 0.45) 0%,
-    rgba(45, 212, 191, 0.18) 48%,
-    transparent 72%
+    ellipse 62% 58% at 46% 48%,
+    rgba(45, 212, 191, 0.18) 0%,
+    rgba(34, 211, 238, 0.1) 42%,
+    rgba(45, 212, 191, 0) 74%
   );
-  filter: blur(10px);
-  animation: sanctuary-lueur-halo 4.2s ease-in-out infinite;
-  animation-delay: var(--lueur-delay, 0s);
+  filter: blur(28px);
+  animation:
+    sanctuary-lueur-plume-breathe 4.2s ease-in-out infinite,
+    sanctuary-lueur-plume-morph 9.5s ease-in-out infinite;
+  animation-delay:
+    calc(var(--lueur-delay, 0s) + 0.9s),
+    calc(var(--lueur-delay, 0s) + 0.9s);
 }
 
-.sanctuary-lueur-orb__core {
-  width: 42%;
-  height: 42%;
-  animation: sanctuary-lueur-core 4.2s ease-in-out infinite;
-  animation-delay: var(--lueur-delay, 0s);
+/* Ember — lavis central soft (jamais blanc) */
+.sanctuary-lueur-orb__ember {
+  width: 46%;
+  height: 50%;
+  background: radial-gradient(
+    ellipse 55% 50% at 50% 46%,
+    rgba(153, 246, 228, 0.22) 0%,
+    rgba(45, 212, 191, 0.12) 40%,
+    rgba(45, 212, 191, 0) 78%
+  );
+  filter: blur(18px);
+  animation:
+    sanctuary-lueur-ember-breathe 4.2s ease-in-out infinite,
+    sanctuary-lueur-ember-morph 11s ease-in-out infinite;
+  animation-delay:
+    calc(var(--lueur-delay, 0s) + 1.7s),
+    calc(var(--lueur-delay, 0s) + 1.7s);
 }
 
 .sanctuary-lueur-settle {
@@ -602,9 +648,9 @@ body {
   .voice-memo-wave-breathe,
   .voice-memo-wave-breathe-live,
   .voice-memo-halo-breathe,
-  .sanctuary-lueur-orb__mist,
-  .sanctuary-lueur-orb__halo,
-  .sanctuary-lueur-orb__core,
+  .sanctuary-lueur-orb__veil,
+  .sanctuary-lueur-orb__plume,
+  .sanctuary-lueur-orb__ember,
   .sanctuary-lueur-settle,
   .odyssey-connexion-mark-reveal {
     animation: none;
@@ -619,6 +665,26 @@ body {
 
   .voice-memo-halo-breathe {
     opacity: 0.48;
+  }
+
+  .sanctuary-lueur-orb__veil {
+    opacity: 0.28;
+    filter: blur(40px);
+    transform: translate(-50%, -50%);
+  }
+
+  .sanctuary-lueur-orb__plume {
+    opacity: 0.34;
+    filter: blur(24px);
+    transform: translate(-50%, -50%);
+    border-radius: 48% 52% 50% 50% / 50% 48% 52% 50%;
+  }
+
+  .sanctuary-lueur-orb__ember {
+    opacity: 0.26;
+    filter: blur(16px);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
   }
 
   .sanctuary-select-breathe,
