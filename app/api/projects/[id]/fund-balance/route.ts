@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { requireProjectOwner, rejectEditorForOwnerOnlyRoute } from "@/src/lib/api/projectAccess";
 import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
+import { parseTenantViralSettings } from "@/src/lib/wizard/tenantViralSettings";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
 export const runtime = "nodejs";
@@ -50,22 +51,23 @@ export async function GET(
   let viralLoopEnabled = false;
   let ownerFloorCents = 0;
 
+  // Settings tenant : client admin (RLS tenants = partenaires seulement —
+  // la famille freemium ne verrait sinon jamais viral_loop_enabled).
+  const admin = getSupabaseAdminClient();
+
   if (project.tenant_id) {
-    const { data: tenant } = await supabase
+    const { data: tenant } = await admin
       .from("tenants")
       .select("settings")
       .eq("id", project.tenant_id)
       .maybeSingle();
-    const settings = (tenant?.settings ?? {}) as Record<string, unknown>;
-    viralLoopEnabled = settings.viral_loop_enabled === true;
-    ownerFloorCents =
-      typeof settings.owner_floor_cents === "number" &&
-      settings.owner_floor_cents >= 0
-        ? settings.owner_floor_cents
-        : 0;
+    const parsed = parseTenantViralSettings(
+      (tenant?.settings ?? {}) as Record<string, unknown>,
+    );
+    viralLoopEnabled = parsed.viralLoopEnabled;
+    ownerFloorCents = parsed.ownerFloorCents;
   }
 
-  const admin = getSupabaseAdminClient();
   const { data: fundBal } = await admin
     .from("family_tribute_fund_balances")
     .select("accrued_cents, consumed_cents")

@@ -18,6 +18,7 @@ import {
   type ExtensionLineItem,
 } from "@/src/lib/wizard/wizardPricing";
 import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
+import { parseTenantViralSettings } from "@/src/lib/wizard/tenantViralSettings";
 import { normalizeBasePackageId } from "@/src/lib/wizard/pricingConfig";
 import { coerceWizardState } from "@/src/lib/wizard/wizardState";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
@@ -137,13 +138,11 @@ export async function POST(request: Request) {
     }
 
     isFreemiumTenant = tenant?.is_freemium === true;
-    const settings = (tenant?.settings ?? {}) as Record<string, unknown>;
-    viralLoopEnabled = settings.viral_loop_enabled === true;
-    ownerFloorCents =
-      typeof settings.owner_floor_cents === "number" &&
-      settings.owner_floor_cents >= 0
-        ? settings.owner_floor_cents
-        : 0;
+    const parsed = parseTenantViralSettings(
+      (tenant?.settings ?? {}) as Record<string, unknown>,
+    );
+    viralLoopEnabled = parsed.viralLoopEnabled;
+    ownerFloorCents = parsed.ownerFloorCents;
   }
 
   const { assertCheckoutMusicRights } = await import(
@@ -352,11 +351,12 @@ export async function POST(request: Request) {
 
   if (totalCents <= 0) {
     if (hasPartnerInvitation && isFreemiumTenant) {
-      // Amputation : quotas = granted (Souvenir), pas de musicLicense payante
+      // Amputation : quotas = granted (Souvenir), hors médias invités Sanctuaire
       const { count, error: countError } = await admin
         .from("media_assets")
         .select("id", { count: "exact", head: true })
-        .eq("project_id", projectId);
+        .eq("project_id", projectId)
+        .or("contributor_type.is.null,contributor_type.neq.guest");
 
       if (countError) {
         return NextResponse.json(
