@@ -35,11 +35,30 @@ export const SANCTUARY_MINI_CLIP_MAX_PER_GUEST = 1;
 
 /**
  * Empreinte `guest_video` (119 $) = témoignage **live** (caméra téléphone / webcam),
- * pas un upload de clip galerie. Capture = Phase 3b+.
+ * pas un upload de clip galerie. Capture = Phase 3b V1.
  */
 export const SANCTUARY_VIDEO_TESTIMONY_IS_LIVE_CAPTURE = true;
 
-/** Voix dans le film — durée max d’enregistrement (secondes). */
+/** Témoignage filmé — durée max d’enregistrement (secondes). */
+export const SANCTUARY_GUEST_VIDEO_MAX_SECONDS = 90;
+
+/** Témoignage — taille max fichier (MediaRecorder webm/mp4). */
+export const SANCTUARY_GUEST_VIDEO_MAX_BYTES = 48 * 1024 * 1024;
+
+/**
+ * Brouillons vidéo max / token (re-takes inclus).
+ * Le checkout n’exige qu’un `mediaId` valide parmi eux.
+ */
+export const SANCTUARY_GUEST_VIDEO_MAX_PER_TOKEN = 5;
+
+/** MIME acceptés pour dépôt `guest_video` (live MediaRecorder). */
+export const SANCTUARY_GUEST_VIDEO_MIME_TYPES = [
+  "video/webm",
+  "video/mp4",
+  "video/quicktime",
+] as const;
+
+/** Voix dans le film. Durée max d’enregistrement (secondes). */
 export const SANCTUARY_GUEST_VOICE_MAX_SECONDS = 90;
 
 /** Voix — taille max fichier (MediaRecorder webm/mp4). */

@@ -11,6 +11,9 @@ import {
 import {
   assertGuestVoiceMediaForToken,
 } from "@/src/lib/contribute/guestVoiceQuota";
+import {
+  assertGuestVideoMediaForToken,
+} from "@/src/lib/contribute/guestVideoQuota";
 import { SANCTUARY_GUEST_PENDING_CHECKOUT_MAX } from "@/src/lib/contribute/sanctuaryLimits";
 import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
 import {
@@ -30,7 +33,7 @@ const BodySchema = z
     productKey: z.string().min(1),
     /** Requis pour `guest_patron` (150–1000 $). Ignoré pour les packs à prix fixe. */
     amountCents: z.number().int().positive().optional(),
-    /** Requis pour `guest_voice` — media_assets.id (source guest_voice). */
+    /** Requis pour `guest_voice` / `guest_video` : media_assets.id. */
     mediaId: z.string().uuid().optional(),
     contributorEmail: z.string().email().optional(),
     contributorName: z.string().max(200).optional(),
@@ -116,7 +119,7 @@ export async function POST(
 
   const admin = getSupabaseAdminClient();
 
-  let voiceMediaId: string | null = null;
+  let captureMediaId: string | null = null;
   if (pack.key === "guest_voice") {
     if (!mediaId) {
       return NextResponse.json(
@@ -135,7 +138,26 @@ export async function POST(
         { status: 400 },
       );
     }
-    voiceMediaId = mediaId;
+    captureMediaId = mediaId;
+  } else if (pack.key === "guest_video") {
+    if (!mediaId) {
+      return NextResponse.json(
+        { error: "video_recording_required" },
+        { status: 400 },
+      );
+    }
+    const videoOk = await assertGuestVideoMediaForToken(admin, {
+      mediaId,
+      projectId: tokenRow.project_id,
+      accessTokenId: tokenRow.id,
+    });
+    if (!videoOk.ok) {
+      return NextResponse.json(
+        { error: "invalid_video_media", reason: videoOk.error },
+        { status: 400 },
+      );
+    }
+    captureMediaId = mediaId;
   }
 
   try {
@@ -170,7 +192,7 @@ export async function POST(
       product_key: pack.key,
       gross_cents: grossCents,
       status: "pending",
-      metadata: voiceMediaId ? { media_id: voiceMediaId } : {},
+      metadata: captureMediaId ? { media_id: captureMediaId } : {},
     })
     .select("id")
     .single();
@@ -252,7 +274,7 @@ export async function POST(
         tenant_id: tokenRow.tenant_id ?? "",
         product_key: pack.key,
         gross_cents: String(grossCents),
-        ...(voiceMediaId ? { media_id: voiceMediaId } : {}),
+        ...(captureMediaId ? { media_id: captureMediaId } : {}),
       },
     });
 

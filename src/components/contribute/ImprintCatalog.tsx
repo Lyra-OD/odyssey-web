@@ -28,9 +28,11 @@ export type ImprintCatalogProps = {
   /** Sélection locale uniquement — pas de checkout à cette étape. */
   selectedKey: string | null;
   onSelect: (key: string) => void;
-  /** Interaction voix — rendue dans la carte `guest_voice` ouverte. */
+  /** Interaction voix. Rendue dans la carte `guest_voice` ouverte. */
   voiceSlot?: ReactNode;
-  /** Montant mécène — rendu dans la carte `guest_patron` ouverte. */
+  /** Interaction témoignage. Rendue dans la carte `guest_video` ouverte. */
+  videoSlot?: ReactNode;
+  /** Montant mécène. Rendu dans la carte `guest_patron` ouverte. */
   patronSlot?: ReactNode;
 };
 
@@ -89,14 +91,12 @@ const copy = {
     promise: "Chaque empreinte aide à porter ce film plus loin.",
     patronRange: (min: number, max: number) =>
       `${formatWizardPrice(min, "fr")} – ${formatWizardPrice(max, "fr")}`,
-    videoSoon: "L’enregistrement live arrive bientôt.",
   },
   en: {
     title: "Leave a lasting imprint",
     promise: "Every imprint helps carry this film further.",
     patronRange: (min: number, max: number) =>
       `${formatWizardPrice(min, "en")} – ${formatWizardPrice(max, "en")}`,
-    videoSoon: "Live recording is coming soon.",
   },
 } as const;
 
@@ -119,6 +119,7 @@ export function ImprintCatalog({
   selectedKey,
   onSelect,
   voiceSlot,
+  videoSlot,
   patronSlot,
 }: ImprintCatalogProps) {
   const t = copy[locale];
@@ -141,6 +142,7 @@ export function ImprintCatalog({
             onSelect={onSelect}
             delayIndex={i}
             voiceSlot={voiceSlot}
+            videoSlot={videoSlot}
             patronSlot={patronSlot}
           />
         ))}
@@ -157,6 +159,7 @@ export function ImprintCatalog({
               onSelect={onSelect}
               delayIndex={primary.length + i}
               voiceSlot={voiceSlot}
+              videoSlot={videoSlot}
               patronSlot={patronSlot}
             />
           ))}
@@ -177,6 +180,7 @@ function PackRow({
   onSelect,
   delayIndex,
   voiceSlot,
+  videoSlot,
   patronSlot,
 }: {
   pack: ImprintPack;
@@ -185,23 +189,19 @@ function PackRow({
   onSelect: (key: string) => void;
   delayIndex: number;
   voiceSlot?: ReactNode;
+  videoSlot?: ReactNode;
   patronSlot?: ReactNode;
 }) {
-  const t = copy[locale];
   const expand = EXPAND[locale][pack.key];
 
   let interaction: ReactNode = null;
   if (selected) {
     if (pack.key === "guest_voice" && voiceSlot) {
       interaction = voiceSlot;
+    } else if (pack.key === "guest_video" && videoSlot) {
+      interaction = videoSlot;
     } else if (pack.key === "guest_patron" && patronSlot) {
       interaction = patronSlot;
-    } else if (pack.key === "guest_video") {
-      interaction = (
-        <p className="text-center text-[11px] font-light uppercase tracking-[0.22em] text-teal-400/55">
-          {t.videoSoon}
-        </p>
-      );
     }
   }
 

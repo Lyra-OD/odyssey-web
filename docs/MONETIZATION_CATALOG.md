@@ -58,7 +58,7 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 | Empreinte | `product_key` | Prix | Rôle UX | Statut |
 |-----------|---------------|------|---------|--------|
 | **Voix dans le film** | `guest_voice` | **69 $** | Ancre / cœur | ✅ config · ✅ capture avant paiement (3b V1) |
-| **Témoignage filmé** (live caméra) | `guest_video` | **119 $** | Staple cérémonie | ✅ config · 🔜 UI capture |
+| **Témoignage filmé** (live caméra) | `guest_video` | **119 $** | Staple cérémonie | ✅ config · ✅ capture avant paiement (3b V1) |
 | **Coproduction** (HD + social + générique) | `guest_heritage` | **129 $** | Statut | ✅ |
 | **Geste / Bougie** | `guest_candle` | **15 $** | Secondaire (jamais CTA #1) | ✅ |
 | **Mécène** (montant libre) | `guest_patron` | **150–1000 $** (sugg. **250 $**) | Asymétrie | ✅ config · 🔜 checkout amount |
@@ -71,7 +71,7 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 | Photo **ou** mot | **1** slot gratuit rituel (lien public) | ✅ UI 3a |
 | Photos (aide famille) | **Max 5 / invité** (inclut la photo gratuite) · multi-select UI | ✅ enforce API + P10.3 |
 | Mini-clip fichier 15–30 s | **Max 1 / invité** — souvenir uploadé, ≠ live | 🔜 Phase 3b |
-| Témoignage `guest_video` | **Enregistrement live** in-app (tél. / webcam) | 🔜 Phase 3b |
+| Témoignage `guest_video` | **Enregistrement live** in-app (tél. / webcam) | ✅ Phase 3b V1 |
 
 **Promesse voix / témoignage / mini-clip V1 :** *soumis à la famille pour intégration* (pas de garantie absolue).
 

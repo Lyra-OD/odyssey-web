@@ -19,12 +19,20 @@ import {
   SANCTUARY_GUEST_VOICE_MAX_BYTES,
   SANCTUARY_GUEST_VOICE_MAX_PER_TOKEN,
   SANCTUARY_GUEST_VOICE_MIME_TYPES,
+  SANCTUARY_GUEST_VIDEO_MAX_BYTES,
+  SANCTUARY_GUEST_VIDEO_MAX_PER_TOKEN,
+  SANCTUARY_GUEST_VIDEO_MIME_TYPES,
 } from "@/src/lib/contribute/sanctuaryLimits";
 import {
   canAcceptGuestVoiceDeposit,
   GUEST_VOICE_LIMIT_ERROR,
 } from "@/src/lib/contribute/guestVoiceQuota";
+import {
+  canAcceptGuestVideoDeposit,
+  GUEST_VIDEO_LIMIT_ERROR,
+} from "@/src/lib/contribute/guestVideoQuota";
 import { ensureUserAssetsAllowsGuestVoiceAudio } from "@/src/lib/media/ensureUserAssetsGuestVoiceMime";
+import { ensureUserAssetsAllowsGuestVideo } from "@/src/lib/media/ensureUserAssetsGuestVideoMime";
 import { STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
 import {
   assertContributeRateLimit,
@@ -56,8 +64,15 @@ const JsonBodySchema = z
   .strict();
 
 const ALLOWED_VOICE_TYPES = new Set<string>(SANCTUARY_GUEST_VOICE_MIME_TYPES);
+const ALLOWED_VIDEO_TYPES = new Set<string>(SANCTUARY_GUEST_VIDEO_MIME_TYPES);
 
 function extensionForMime(mime: string): string {
+  if (mime.startsWith("video/")) {
+    if (mime.includes("webm")) return "webm";
+    if (mime.includes("mp4")) return "mp4";
+    if (mime.includes("quicktime")) return "mov";
+    return "webm";
+  }
   if (mime.includes("png")) return "png";
   if (mime.includes("webp")) return "webp";
   if (mime.includes("heic") || mime.includes("heif")) return "heic";
@@ -76,12 +91,14 @@ function extensionForMime(mime: string): string {
  * - kind=message : JSON { messageText, contributorName, ... }
  * - kind=photo   : multipart form-data (file, contributorName, ...)
  * - kind=voice   : multipart form-data (file audio webm/mp4, contributorName, ...)
+ * - kind=video   : multipart form-data (file video webm/mp4 live, contributorName, ...)
  *
  * Insert admin `media_assets` : contributor_type=guest, review_status=pending_review.
  * Hors Soft Cap famille (voir odyssey_p10_2_guest_sanctuary.sql).
  * Plafond 5 photos / token (P10.3 + guestPhotoQuota).
  * Plafond 10 messages / token (anti-spam).
  * Plafond 5 voix / token (re-takes Phase 3b).
+ * Plafond 5 vidéos / token (re-takes témoignage Phase 3b).
  */
 export async function POST(
   req: Request,
@@ -130,7 +147,7 @@ export async function POST(
     return NextResponse.json({ error: "tenant_missing" }, { status: 400 });
   }
 
-  let kind: "photo" | "message" | "voice";
+  let kind: "photo" | "message" | "voice" | "video";
   let contributorName: string;
   let contributorEmail: string | undefined;
   let consentMarketing = false;
@@ -147,7 +164,12 @@ export async function POST(
     }
 
     const kindRaw = String(form.get("kind") ?? "photo");
-    if (kindRaw !== "photo" && kindRaw !== "message" && kindRaw !== "voice") {
+    if (
+      kindRaw !== "photo" &&
+      kindRaw !== "message" &&
+      kindRaw !== "voice" &&
+      kindRaw !== "video"
+    ) {
       return NextResponse.json({ error: "invalid_kind" }, { status: 400 });
     }
     kind = kindRaw;
@@ -180,6 +202,19 @@ export async function POST(
         return NextResponse.json({ error: "unsupported_media_type" }, { status: 400 });
       }
       if (file.size <= 0 || file.size > SANCTUARY_GUEST_VOICE_MAX_BYTES) {
+        return NextResponse.json({ error: "file_too_large" }, { status: 400 });
+      }
+      fileBytes = await file.arrayBuffer();
+    } else if (kind === "video") {
+      const file = form.get("file");
+      if (!(file instanceof File)) {
+        return NextResponse.json({ error: "file_required" }, { status: 400 });
+      }
+      mimeType = (file.type || "video/webm").split(";")[0].trim().toLowerCase();
+      if (!ALLOWED_VIDEO_TYPES.has(mimeType)) {
+        return NextResponse.json({ error: "unsupported_media_type" }, { status: 400 });
+      }
+      if (file.size <= 0 || file.size > SANCTUARY_GUEST_VIDEO_MAX_BYTES) {
         return NextResponse.json({ error: "file_too_large" }, { status: 400 });
       }
       fileBytes = await file.arrayBuffer();
@@ -266,6 +301,33 @@ export async function POST(
         err instanceof Error ? err.message : "storage_mime_allowlist_failed";
       return NextResponse.json({ error: message }, { status: 503 });
     }
+  } else if (kind === "video") {
+    try {
+      const quota = await canAcceptGuestVideoDeposit(admin, {
+        projectId: tokenRow.project_id,
+        accessTokenId: tokenRow.id,
+      });
+      if (!quota.ok) {
+        return NextResponse.json(
+          {
+            error: GUEST_VIDEO_LIMIT_ERROR,
+            max: SANCTUARY_GUEST_VIDEO_MAX_PER_TOKEN,
+            current: quota.count,
+          },
+          { status: 403 },
+        );
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "quota_check_failed";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+    try {
+      await ensureUserAssetsAllowsGuestVideo();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "storage_mime_allowlist_failed";
+      return NextResponse.json({ error: message }, { status: 503 });
+    }
   } else {
     try {
       const quota = await canAcceptGuestMessageDeposit(admin, {
@@ -312,6 +374,13 @@ export async function POST(
     sizeBytes = uploadBody.byteLength;
     source = "guest_voice";
     contentTypeUpload = mimeType ?? "audio/webm";
+  } else if (kind === "video") {
+    const ext = extensionForMime(mimeType ?? "video/webm");
+    storagePath = `${basePath}/${assetId}.${ext}`;
+    uploadBody = Buffer.from(fileBytes!);
+    sizeBytes = uploadBody.byteLength;
+    source = "guest_video";
+    contentTypeUpload = mimeType ?? "video/webm";
   } else {
     const ext = extensionForMime(mimeType ?? "image/jpeg");
     storagePath = `${basePath}/${assetId}.${ext}`;

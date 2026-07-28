@@ -10,6 +10,7 @@ import {
 } from "@/src/components/contribute/ImprintCatalog";
 import { ImprintCheckoutCta } from "@/src/components/contribute/ImprintCheckoutCta";
 import { GuestVoiceRecorder } from "@/src/components/contribute/GuestVoiceRecorder";
+import { GuestVideoRecorder } from "@/src/components/contribute/GuestVideoRecorder";
 import { PatronAmountField } from "@/src/components/contribute/PatronAmountField";
 import {
   SanctuaryDepositForm,
@@ -148,6 +149,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
   const [formKey, setFormKey] = useState(0);
   const [selectedPackKey, setSelectedPackKey] = useState<string | null>(null);
   const [voiceMediaId, setVoiceMediaId] = useState<string | null>(null);
+  const [videoMediaId, setVideoMediaId] = useState<string | null>(null);
   const [patronAmountCents, setPatronAmountCents] = useState(
     GUEST_PATRON_SUGGESTED_CENTS,
   );
@@ -159,6 +161,9 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
     setSelectedPackKey(key);
     if (key !== "guest_voice") {
       setVoiceMediaId(null);
+    }
+    if (key !== "guest_video") {
+      setVideoMediaId(null);
     }
     if (key === "guest_patron" && load.status === "ready") {
       const patron = load.packs.find((p) => p.key === "guest_patron");
@@ -212,6 +217,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
       setPhase("bridge");
       setSelectedPackKey(null);
       setVoiceMediaId(null);
+      setVideoMediaId(null);
       setContribFlash(contrib);
       params.delete("contrib");
       params.delete("session_id");
@@ -506,6 +512,17 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                       embedded
                     />
                   }
+                  videoSlot={
+                    <GuestVideoRecorder
+                      token={token}
+                      locale={locale}
+                      contributorName={deposit?.contributorName ?? ""}
+                      contributorEmail={deposit?.contributorEmail}
+                      mediaId={videoMediaId}
+                      onMediaIdChange={setVideoMediaId}
+                      embedded
+                    />
+                  }
                   patronSlot={
                     <PatronAmountField
                       locale={locale}
@@ -530,7 +547,11 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                   contributorName={deposit?.contributorName ?? ""}
                   contributorEmail={deposit?.contributorEmail}
                   fixedPriceCents={selectedPack?.priceCents}
-                  mediaId={voiceMediaId}
+                  mediaId={
+                    selectedPackKey === "guest_video"
+                      ? videoMediaId
+                      : voiceMediaId
+                  }
                 />
               </motion.div>
             ) : null}

@@ -13,6 +13,8 @@
 >
 > **Voix Sanctuaire (3b) :** [`odyssey_user_assets_guest_voice_mime.sql`](odyssey_user_assets_guest_voice_mime.sql) — MIME `audio/webm|mp4|ogg` (+ MP3/WAV) sur bucket `user-assets` (si allowlist restreinte). L’API tente aussi `updateBucket` à chaud.
 >
+> **Témoignage Sanctuaire (3b) :** [`odyssey_user_assets_guest_video_mime.sql`](odyssey_user_assets_guest_video_mime.sql) — MIME `video/webm|mp4|quicktime` sur bucket `user-assets`. L’API tente aussi `updateBucket` à chaud.
+>
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
 > **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).  
 > **Migrations P4 wallets** = historique de schéma (rejouées puis droppées par P8) — **ne plus seed « 100 jetons »**.
