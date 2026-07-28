@@ -17,8 +17,8 @@ export async function generateMetadata({
   return {
     title:
       lang === "en"
-        ? "Co-creator access — Odyssey"
-        : "Accès Co-Créateur — Odyssey",
+        ? "Co-creator access · Odyssey"
+        : "Accès Co-Créateur · Odyssey",
     robots: { index: false, follow: false },
   };
 }

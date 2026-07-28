@@ -90,7 +90,7 @@ function isPreviewableImage(item: UploadQueueItem): boolean {
 }
 
 function formatSize(bytes: number): string {
-  if (!Number.isFinite(bytes) || bytes <= 0) return "—";
+  if (!Number.isFinite(bytes) || bytes <= 0) return "·";
   const units = ["o", "ko", "Mo", "Go"];
   let value = bytes;
   let unit = 0;

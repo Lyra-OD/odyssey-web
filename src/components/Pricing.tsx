@@ -90,7 +90,7 @@ export function Pricing({
                     role="button"
                     tabIndex={0}
                     aria-pressed={isSelected}
-                    aria-label={`${t.tierTitles[tier.key as keyof typeof t.tierTitles]} — ${tier.price}`}
+                    aria-label={`${t.tierTitles[tier.key as keyof typeof t.tierTitles]} · ${tier.price}`}
                     initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
                     whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                     viewport={CINEMATIC_VIEWPORT}

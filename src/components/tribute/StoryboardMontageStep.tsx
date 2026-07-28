@@ -237,7 +237,7 @@ export function StoryboardMontageStep({
       beyondCapacity,
       songLine: [chapter.song?.title, chapter.song?.artist]
         .filter(Boolean)
-        .join(" — "),
+        .join(" · "),
     };
   }, [
     refinementChapterId,

@@ -564,10 +564,10 @@ export function TributeWizard({
   const yearsDisplay = useMemo(() => {
     const b = yearFromDateInput(birthDate);
     const d = yearFromDateInput(deathDate);
-    if (!b && !d) return "—";
+    if (!b && !d) return "·";
     return copy.headerYears
-      .replace("{birth}", b || "—")
-      .replace("{death}", d || "—");
+      .replace("{birth}", b || "·")
+      .replace("{death}", d || "·");
   }, [birthDate, deathDate, copy.headerYears]);
 
   useEffect(() => {

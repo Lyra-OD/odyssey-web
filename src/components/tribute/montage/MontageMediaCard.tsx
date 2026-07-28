@@ -121,7 +121,7 @@ function MontageMediaCardSurface({
         <button
           type="button"
           className={`absolute inset-0 z-[1] block h-full w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${theme.focusRing}`}
-          aria-label={`${copy.clickToEdit} — ${item.displayName}`}
+          aria-label={`${copy.clickToEdit} · ${item.displayName}`}
           aria-pressed={isSelected}
           onClick={(event) => onCardClick(item.assetId, event)}
         >

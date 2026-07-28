@@ -45,7 +45,7 @@ export function buildMockCompletedMessage(job: {
   const stingray = job.allow_stingray_master
     ? "stingray_master=yes"
     : "stingray_master=no";
-  return `mock_staging completed (${res}, ${stingray}) — Creatomate worker stub.`;
+  return `mock_staging completed (${res}, ${stingray}). Creatomate worker stub.`;
 }
 
 export type DrainResult = {
@@ -130,7 +130,7 @@ async function submitCreatomateJob(
     return failJob(
       admin,
       job.id,
-      "creatomate_webhook_url_missing — set CREATOMATE_WEBHOOK_URL or NEXT_PUBLIC_SITE_URL",
+      "creatomate_webhook_url_missing. Set CREATOMATE_WEBHOOK_URL or NEXT_PUBLIC_SITE_URL",
     );
   }
 
@@ -197,7 +197,7 @@ async function submitCreatomateJob(
         status: "processing",
         provider: "creatomate",
         external_render_id: result.render.id,
-        message: `creatomate submitted (${result.render.status}, ${plan.resolution.label}) — awaiting webhook`,
+        message: `creatomate submitted (${result.render.status}, ${plan.resolution.label}). Awaiting webhook`,
         updated_at: new Date().toISOString(),
       })
       .eq("id", job.id)

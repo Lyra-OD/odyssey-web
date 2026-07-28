@@ -122,7 +122,7 @@ export async function POST(request: Request) {
           {
             error: "schema_not_ready",
             message:
-              "RPC create_partner_invitation absente — exécuter odyssey_p8_freemium_v1_token_purge.sql",
+              "RPC create_partner_invitation absente. Exécuter odyssey_p8_freemium_v1_token_purge.sql",
           },
           { status: 503 },
         );

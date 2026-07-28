@@ -71,7 +71,7 @@ export const StoryboardFilmMap = memo(function StoryboardFilmMap({
                 .replace("{assigned}", String(assigned))
                 .replace(
                   "{capacity}",
-                  capacity === null ? "—" : String(capacity),
+                  capacity === null ? "·" : String(capacity),
                 )}
             >
               <span

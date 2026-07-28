@@ -40,11 +40,11 @@ const EXPAND: Record<"fr" | "en", Record<string, ExpandCopy>> = {
   fr: {
     guest_voice: {
       inspiration: "Une voix qui reste, quand les jours passent.",
-      body: "Enregistrez quelques mots, à votre rythme — pour le film, pour ceux qui restent.",
+      body: "Enregistrez quelques mots, à votre rythme. Pour le film, pour ceux qui restent.",
     },
     guest_video: {
       inspiration: "Un regard. Une histoire.",
-      body: "Enregistrez-vous face caméra — votre présence, vivante, dans le film.",
+      body: "Enregistrez-vous face caméra. Votre présence, vivante, dans le film.",
     },
     guest_heritage: {
       inspiration: "Votre nom, au générique.",
@@ -52,7 +52,7 @@ const EXPAND: Record<"fr" | "en", Record<string, ExpandCopy>> = {
     },
     guest_candle: {
       inspiration: "Une lumière discrète.",
-      body: "Un geste simple — votre présence, sans enregistrement.",
+      body: "Un geste simple. Votre présence, sans enregistrement.",
     },
     guest_patron: {
       inspiration: "Un geste à la mesure de votre cœur.",
@@ -62,11 +62,11 @@ const EXPAND: Record<"fr" | "en", Record<string, ExpandCopy>> = {
   en: {
     guest_voice: {
       inspiration: "A voice that remains, as the days go by.",
-      body: "Record a few words, in your own time — for the film, for those who remain.",
+      body: "Record a few words, in your own time. For the film, for those who remain.",
     },
     guest_video: {
       inspiration: "A gaze. A story.",
-      body: "Record yourself on camera — your presence, alive, in the film.",
+      body: "Record yourself on camera. Your presence, alive, in the film.",
     },
     guest_heritage: {
       inspiration: "Your name, in the credits.",
@@ -74,7 +74,7 @@ const EXPAND: Record<"fr" | "en", Record<string, ExpandCopy>> = {
     },
     guest_candle: {
       inspiration: "A quiet light.",
-      body: "A simple gesture — your presence, with no recording.",
+      body: "A simple gesture. Your presence, with no recording.",
     },
     guest_patron: {
       inspiration: "A gift measured by the heart.",

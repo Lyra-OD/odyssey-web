@@ -67,7 +67,7 @@ export function MediaInstantTile({
     <button
       type="button"
       onClick={() => onClick(item.assetId)}
-      aria-label={`${copy.clickToEdit} — ${item.displayName}`}
+      aria-label={`${copy.clickToEdit} · ${item.displayName}`}
       className={`group/tile relative aspect-video w-full overflow-hidden rounded-xl ring-1 ring-white/10 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:ring-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${theme.focusRing} ${
         isExcluded ? "opacity-40 grayscale" : ""
       }`}

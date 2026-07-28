@@ -100,7 +100,7 @@ export function ChapterCanvasGrid({
       <div
         className="grid grid-cols-3 gap-3 lg:grid-cols-6"
         role="list"
-        aria-label={`Médias du chapitre — ${assignedCount} placé(s)`}
+        aria-label={`Médias du chapitre · ${assignedCount} placé(s)`}
       >
         {sortableEnabled ? (
           <SortableContext items={sortableIds} strategy={rectSortingStrategy}>

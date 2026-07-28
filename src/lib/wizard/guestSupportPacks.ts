@@ -97,8 +97,8 @@ export const GUEST_SUPPORT_PACKS: readonly GuestSupportPack[] = [
  */
 export const GUEST_HD_DEPRECATED: GuestSupportPack = {
   key: "guest_hd",
-  labelFr: "Pack Soutien Numérique (Copie HD) — déprécié",
-  labelEn: "Digital Support Pack (HD copy) — deprecated",
+  labelFr: "Pack Soutien Numérique (Copie HD) · déprécié",
+  labelEn: "Digital Support Pack (HD copy) · deprecated",
   priceCents: 49_00,
   displayOrder: 99,
   deprecated: true,

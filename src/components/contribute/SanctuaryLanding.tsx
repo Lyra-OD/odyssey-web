@@ -84,25 +84,25 @@ const copy = {
     welcome: (name: string) => `Bienvenue dans le Sanctuaire de ${name}.`,
     subtitle:
       "La famille rassemble les souvenirs pour en faire une œuvre intemporelle.",
-    depositLead: "Laissez d'abord une empreinte — une photo, ou un mot.",
+    depositLead: "Laissez d'abord une empreinte : une photo ou un mot.",
     loading: "Ouverture du Sanctuaire…",
     errorTitle: "Lien indisponible",
     errorBody:
       "Ce Sanctuaire est introuvable ou n'est plus accessible. Demandez un nouveau lien à la famille.",
     ackTitle: "Votre souvenir a été déposé.",
     ackBody:
-      "Vous pouvez en ajouter d'autres, en toute sérénité — jusqu'à cinq photos.",
+      "Vous pouvez en ajouter d'autres, en toute sérénité, jusqu'à cinq photos.",
     photoCounter: (n: number, max: number) => `${n} / ${max} souvenirs`,
     addAnother: "Ajouter un autre souvenir",
     continueToImprints: "Continuer",
     photoLimitReached:
-      "Vous avez offert cinq photos — un geste déjà généreux. Poursuivez si vous le souhaitez.",
+      "Vous avez offert cinq photos. Un geste déjà généreux. Poursuivez si vous le souhaitez.",
     bridgeTitle: "Votre empreinte a été ajoutée.",
     bridgeBody:
-      "Souhaitez-vous soutenir la production de ce film hommage — avec le geste qui vous ressemble ?",
+      "Souhaitez-vous soutenir la production de ce film hommage, avec le geste qui vous ressemble ?",
     bridgeBodyAfterGift:
-      "Si le cœur vous en dit, vous pouvez offrir un autre geste — sans obligation.",
-    contribSuccess: "Merci — votre soutien a bien été enregistré.",
+      "Si le cœur vous en dit, vous pouvez offrir un autre geste, sans obligation.",
+    contribSuccess: "Merci. Votre soutien a bien été enregistré.",
     contribCancel: "Paiement annulé. Vous pouvez choisir une autre empreinte.",
   },
   en: {
@@ -111,25 +111,25 @@ const copy = {
     poweredBy: "Powered by",
     welcome: (name: string) => `Welcome to ${name}'s Sanctuary.`,
     subtitle: "The family is gathering memories to weave a timeless work.",
-    depositLead: "First, leave a mark — a photo, or a few words.",
+    depositLead: "First, leave a mark: a photo or a few words.",
     loading: "Opening the Sanctuary…",
     errorTitle: "Link unavailable",
     errorBody:
       "This Sanctuary could not be found or is no longer available. Ask the family for a new link.",
     ackTitle: "Your memory has been placed.",
-    ackBody: "You may add more, gently — up to five photos.",
+    ackBody: "You may add more, gently, up to five photos.",
     photoCounter: (n: number, max: number) =>
       `${n} / ${max} memor${n === 1 ? "y" : "ies"}`,
     addAnother: "Add another memory",
     continueToImprints: "Continue",
     photoLimitReached:
-      "You have offered five photos — already a generous gift. Continue whenever you wish.",
+      "You have offered five photos. Already a generous gift. Continue whenever you wish.",
     bridgeTitle: "Your mark has been placed.",
     bridgeBody:
-      "Would you like to support the making of this tribute film — with a gift that feels right?",
+      "Would you like to support the making of this tribute film, with a gift that feels right?",
     bridgeBodyAfterGift:
-      "If you wish, you may offer another gesture — with no obligation.",
-    contribSuccess: "Thank you — your support has been recorded.",
+      "If you wish, you may offer another gesture, with no obligation.",
+    contribSuccess: "Thank you. Your support has been recorded.",
     contribCancel: "Payment cancelled. You can choose another imprint.",
   },
 } as const;

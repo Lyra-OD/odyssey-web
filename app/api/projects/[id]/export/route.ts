@@ -126,8 +126,8 @@ export async function POST(
     allowStingrayMaster: gate.allowStingrayMaster,
     message:
       locale === "en"
-        ? "Export queued — drain via POST /api/internal/export/drain (mock_staging)."
-        : "Export en file — drain via POST /api/internal/export/drain (mock_staging).",
+        ? "Export queued. Drain via POST /api/internal/export/drain (mock_staging)."
+        : "Export en file. Drain via POST /api/internal/export/drain (mock_staging).",
   });
 
   if (!queued.ok) {

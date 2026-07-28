@@ -91,9 +91,9 @@ export function PartnerFacturationView({ lang }: PartnerFacturationViewProps) {
   }
 
   const balanceDisplay =
-    isWalletLoading || walletBalance === null ? "—" : String(walletBalance);
+    isWalletLoading || walletBalance === null ? "·" : String(walletBalance);
   const creditDisplay =
-    walletCreditLimitTokens === null ? "—" : String(walletCreditLimitTokens);
+    walletCreditLimitTokens === null ? "·" : String(walletCreditLimitTokens);
 
   return (
     <div className="flex flex-col gap-10">

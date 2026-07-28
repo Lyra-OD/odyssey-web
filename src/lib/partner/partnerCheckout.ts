@@ -61,7 +61,7 @@ export async function debitPartnerTokens(params: {
         ok: false,
         error: "wallet_table_missing",
         message:
-          "Table partner_token_wallets absente — exécuter odyssey_p4_partner_token_wallets.sql",
+          "Table partner_token_wallets absente. Exécuter odyssey_p4_partner_token_wallets.sql",
       };
     }
     return {

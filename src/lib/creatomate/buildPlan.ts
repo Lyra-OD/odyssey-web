@@ -24,7 +24,7 @@ function formatDatesLine(
 ): string | null {
   const b = birthDate?.trim();
   const d = deathDate?.trim();
-  if (b && d) return `${b} — ${d}`;
+  if (b && d) return `${b} · ${d}`;
   if (d) return d;
   if (b) return b;
   return null;

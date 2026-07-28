@@ -152,7 +152,7 @@ export function MontageDirectorModal({
           .replace("{current}", String(currentIndex + 1))
           .replace("{total}", String(navigationOrder.length))
       : copy.counter
-          .replace("{current}", "—")
+          .replace("{current}", "·")
           .replace("{total}", String(navigationOrder.length));
 
   const slideOffset = slideDirection === 0 ? 0 : slideDirection * 20;

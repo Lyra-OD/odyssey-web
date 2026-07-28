@@ -240,7 +240,7 @@ describe("payloadBuilder RenderScript", () => {
       paidPackage: "heritage",
       storyboard,
       mediaById,
-      essentials: { displayName: "Marie Dupont", datesLine: "1948 — 2024" },
+      essentials: { displayName: "Marie Dupont", datesLine: "1948 · 2024" },
       audioStems,
     });
     expect(plan.resolution.label).toBe("4K");

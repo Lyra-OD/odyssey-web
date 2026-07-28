@@ -209,7 +209,7 @@ export function ChapterRefinementDrawer({
                       {copy.capacityDivider.replace(
                         "{count}",
                         recommendedCapacity === null
-                          ? "—"
+                          ? "·"
                           : String(recommendedCapacity),
                       )}
                     </p>

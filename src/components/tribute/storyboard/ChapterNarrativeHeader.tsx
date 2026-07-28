@@ -63,7 +63,7 @@ export function ChapterNarrativeHeader({
     if (trimmed !== title) onTitleChange(trimmed);
   }, [draft, onTitleChange, title]);
 
-  const songLine = [songTitle, songArtist].filter(Boolean).join(" — ");
+  const songLine = [songTitle, songArtist].filter(Boolean).join(" · ");
 
   const handleListeners = chapterDragHandle?.listeners;
   const {

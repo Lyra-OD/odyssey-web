@@ -18,8 +18,8 @@ export async function generateMetadata({
   return {
     title:
       lang === "en"
-        ? "Sanctuary — Odyssey"
-        : "Sanctuaire — Odyssey",
+        ? "Sanctuary · Odyssey"
+        : "Sanctuaire · Odyssey",
     description:
       lang === "en"
         ? "Leave a memory in this tribute sanctuary."

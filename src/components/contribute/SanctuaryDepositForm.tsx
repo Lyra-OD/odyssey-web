@@ -58,13 +58,13 @@ const copy = {
     photoLabel: "Vos photos",
     photoHint: (slots: number) =>
       slots <= 1
-        ? "JPEG, PNG ou WebP — jusqu'à 12 Mo · 1 place restante"
-        : `JPEG, PNG ou WebP — jusqu'à 12 Mo · jusqu'à ${slots} photos`,
+        ? "JPEG, PNG ou WebP, jusqu'à 12 Mo · 1 place restante"
+        : `JPEG, PNG ou WebP, jusqu'à 12 Mo · jusqu'à ${slots} photos`,
     photoChoose: "Choisir des images",
     photoChange: "Modifier la sélection",
     photoRemove: "Retirer",
     photoTruncated: (kept: number) =>
-      `Seules ${kept} photo${kept > 1 ? "s" : ""} ont été retenues — le plafond de cet hommage est atteint.`,
+      `Seules ${kept} photo${kept > 1 ? "s" : ""} ont été retenues : le plafond de cet hommage est atteint.`,
     consent:
       "J'accepte de recevoir occasionnellement des messages d'Odyssey liés à cet hommage.",
     submit: "Déposer dans le Sanctuaire",
@@ -94,13 +94,13 @@ const copy = {
     photoLabel: "Your photos",
     photoHint: (slots: number) =>
       slots <= 1
-        ? "JPEG, PNG or WebP — up to 12 MB · 1 slot left"
-        : `JPEG, PNG or WebP — up to 12 MB · up to ${slots} photos`,
+        ? "JPEG, PNG or WebP, up to 12 MB · 1 slot left"
+        : `JPEG, PNG or WebP, up to 12 MB · up to ${slots} photos`,
     photoChoose: "Choose images",
     photoChange: "Change selection",
     photoRemove: "Remove",
     photoTruncated: (kept: number) =>
-      `Only ${kept} photo${kept > 1 ? "s" : ""} could be kept — this tribute’s limit is reached.`,
+      `Only ${kept} photo${kept > 1 ? "s" : ""} could be kept: this tribute’s limit is reached.`,
     consent:
       "I agree to occasionally receive Odyssey messages related to this tribute.",
     submit: "Place in the Sanctuary",

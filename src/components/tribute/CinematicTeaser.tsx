@@ -283,7 +283,7 @@ export function CinematicTeaser({
       <div className="border-t border-white/10 bg-[#0a0a0a]/95 px-4 py-4 backdrop-blur-xl md:px-6">
         <p className="mb-3 truncate text-xs font-light text-zinc-500">
           {tracks[currentSlide.actKey]
-            ? `${tracks[currentSlide.actKey]?.title} — ${tracks[currentSlide.actKey]?.artist}`
+            ? `${tracks[currentSlide.actKey]?.title} · ${tracks[currentSlide.actKey]?.artist}`
             : copy.nowPlaying}
         </p>
 

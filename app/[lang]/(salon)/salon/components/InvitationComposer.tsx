@@ -452,7 +452,7 @@ export function InvitationComposer({
                       role="button"
                       tabIndex={isSubmitting ? -1 : 0}
                       aria-pressed={isSelected}
-                      aria-label={`${tier.title} — ${priceFormatted}`}
+                      aria-label={`${tier.title} · ${priceFormatted}`}
                       aria-disabled={isSubmitting}
                       initial={false}
                       animate={cardAnimate}

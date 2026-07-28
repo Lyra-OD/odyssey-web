@@ -384,14 +384,14 @@ export function buildPricingSnapshot(
 }
 
 export const CHECKOUT_LINE_LABELS: Record<ExtensionLineKey, string> = {
-  base: "Odyssey — Cinematic Tribute (Base)",
+  base: "Odyssey · Cinematic Tribute (Base)",
   aiRetouch: "Premium AI Retouch",
   musicLicense: "Stingray Premium Music License",
   extendedLicense: "Stingray Premium Music License",
   storyVoice: "Voice of History (AI Narration)",
   sanctuaryToken: "Sanctuary Token (NFC)",
   collectorUsb: "Sanctuary Token (NFC)",
-  digitalVault: "Digital Vault — 50-Year Secure Hosting",
+  digitalVault: "Digital Vault · 50-Year Secure Hosting",
   memoryBook: "Memory Book (Print)",
   heritagePack: "Heritage Pack (AI Retouch + License + Vault)",
 };

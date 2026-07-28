@@ -97,7 +97,7 @@ export function BankDraggableMediaTile({
         <button
           type="button"
           className="absolute inset-0 z-[1] block h-full w-full cursor-grab active:cursor-grabbing"
-          aria-label={`${copy.clickToEdit} — ${item.displayName}`}
+          aria-label={`${copy.clickToEdit} · ${item.displayName}`}
           onClick={(event) => {
             if (event.shiftKey) {
               event.stopPropagation();
