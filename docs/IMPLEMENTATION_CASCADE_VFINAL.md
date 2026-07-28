@@ -176,6 +176,8 @@ nouveaux `memorialFund.cascade.test.ts`, `channelProfile.test.ts`.
 - Upsell in-flow · relance email 24–48 h · End Credits · P4  
 - **Aide IA rédaction du mot** (optionnelle) : amorces dans `SanctuaryDepositForm` mode message — jamais forcée, invité édite
 
+> **Voix V1 (juil. 2026) :** enregistrement **avant** Stripe (`GuestVoiceRecorder` + `kind=voice` deposit + `mediaId` checkout). Témoignage filmé live = encore 3b+.
+
 ---
 
 ## 5. Ce qu'on ne touche PAS

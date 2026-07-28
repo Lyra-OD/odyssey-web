@@ -9,6 +9,7 @@ import {
   type ImprintPack,
 } from "@/src/components/contribute/ImprintCatalog";
 import { ImprintCheckoutCta } from "@/src/components/contribute/ImprintCheckoutCta";
+import { GuestVoiceRecorder } from "@/src/components/contribute/GuestVoiceRecorder";
 import { PatronAmountField } from "@/src/components/contribute/PatronAmountField";
 import {
   SanctuaryDepositForm,
@@ -146,6 +147,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
   const [photoMax, setPhotoMax] = useState(SANCTUARY_GUEST_PHOTO_MAX);
   const [formKey, setFormKey] = useState(0);
   const [selectedPackKey, setSelectedPackKey] = useState<string | null>(null);
+  const [voiceMediaId, setVoiceMediaId] = useState<string | null>(null);
   const [patronAmountCents, setPatronAmountCents] = useState(
     GUEST_PATRON_SUGGESTED_CENTS,
   );
@@ -155,6 +157,9 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
 
   const handleSelectPack = (key: string) => {
     setSelectedPackKey(key);
+    if (key !== "guest_voice") {
+      setVoiceMediaId(null);
+    }
     if (key === "guest_patron" && load.status === "ready") {
       const patron = load.packs.find((p) => p.key === "guest_patron");
       const suggested =
@@ -206,6 +211,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
       // Relancer le catalogue (pas le dépôt) pour empiler un autre geste.
       setPhase("bridge");
       setSelectedPackKey(null);
+      setVoiceMediaId(null);
       setContribFlash(contrib);
       params.delete("contrib");
       params.delete("session_id");
@@ -501,6 +507,17 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                   amountSuggestedCents={patronPack?.amountSuggestedCents}
                 />
 
+                {selectedPackKey === "guest_voice" ? (
+                  <GuestVoiceRecorder
+                    token={token}
+                    locale={locale}
+                    contributorName={deposit?.contributorName ?? ""}
+                    contributorEmail={deposit?.contributorEmail}
+                    mediaId={voiceMediaId}
+                    onMediaIdChange={setVoiceMediaId}
+                  />
+                ) : null}
+
                 <ImprintCheckoutCta
                   token={token}
                   locale={locale}
@@ -511,6 +528,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                   contributorName={deposit?.contributorName ?? ""}
                   contributorEmail={deposit?.contributorEmail}
                   fixedPriceCents={selectedPack?.priceCents}
+                  mediaId={voiceMediaId}
                 />
               </motion.div>
             ) : null}

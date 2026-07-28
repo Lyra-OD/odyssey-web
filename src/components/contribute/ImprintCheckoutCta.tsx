@@ -21,6 +21,8 @@ export type ImprintCheckoutCtaProps = {
   contributorEmail?: string | null;
   /** Prix affiché sur le CTA (packs fixes). Ignoré pour Mécène. */
   fixedPriceCents?: number | null;
+  /** Requis si productKey === guest_voice */
+  mediaId?: string | null;
 };
 
 const copy = {
@@ -28,6 +30,7 @@ const copy = {
     cta: (price: string) => `Continuer · ${price}`,
     ctaPatron: (price: string) => `Devenir Mécène · ${price}`,
     selectFirst: "Choisissez une empreinte pour continuer.",
+    voiceRequired: "Enregistrez et validez votre voix avant de continuer.",
     paying: "Redirection sécurisée…",
     previewBlocked:
       "Aperçu local : le paiement Stripe nécessite un vrai lien Sanctuaire.",
@@ -38,6 +41,7 @@ const copy = {
     cta: (price: string) => `Continue · ${price}`,
     ctaPatron: (price: string) => `Become a Patron · ${price}`,
     selectFirst: "Choose an imprint to continue.",
+    voiceRequired: "Record and keep your voice before continuing.",
     paying: "Secure redirect…",
     previewBlocked:
       "Local preview: Stripe checkout needs a real Sanctuary link.",
@@ -59,20 +63,26 @@ export function ImprintCheckoutCta({
   contributorName,
   contributorEmail,
   fixedPriceCents,
+  mediaId,
 }: ImprintCheckoutCtaProps) {
   const t = copy[locale];
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isPatron = productKey === "guest_patron";
+  const isVoice = productKey === "guest_voice";
   const patronOk = isPatronAmountValid(
     patronAmountCents,
     patronMinCents,
     patronMaxCents,
   );
+  const voiceOk = !isVoice || Boolean(mediaId);
 
   const canSubmit =
-    Boolean(productKey) && (!isPatron || patronOk) && !submitting;
+    Boolean(productKey) &&
+    (!isPatron || patronOk) &&
+    voiceOk &&
+    !submitting;
 
   const priceLabel = isPatron
     ? formatWizardPrice(patronAmountCents, locale)
@@ -81,9 +91,11 @@ export function ImprintCheckoutCta({
   const label =
     !productKey
       ? t.selectFirst
-      : isPatron
-        ? t.ctaPatron(priceLabel)
-        : t.cta(priceLabel);
+      : isVoice && !voiceOk
+        ? t.voiceRequired
+        : isPatron
+          ? t.ctaPatron(priceLabel)
+          : t.cta(priceLabel);
 
   const handleCheckout = async () => {
     setError(null);
@@ -93,6 +105,10 @@ export function ImprintCheckoutCta({
     }
     if (isPatron && !patronOk) {
       setError(t.amountInvalid);
+      return;
+    }
+    if (isVoice && !mediaId) {
+      setError(t.voiceRequired);
       return;
     }
     if (isSanctuaryVisualPreview(token)) {
@@ -111,6 +127,7 @@ export function ImprintCheckoutCta({
             productKey,
             locale,
             ...(isPatron ? { amountCents: patronAmountCents } : {}),
+            ...(isVoice && mediaId ? { mediaId } : {}),
             ...(contributorName?.trim()
               ? { contributorName: contributorName.trim() }
               : {}),
@@ -126,7 +143,11 @@ export function ImprintCheckoutCta({
         error?: string;
       }>(res);
       if (!res.ok || !body.ok || !body.url) {
-        setError(t.errorGeneric);
+        setError(
+          body.error === "voice_recording_required"
+            ? t.voiceRequired
+            : t.errorGeneric,
+        );
         return;
       }
       window.location.assign(body.url);

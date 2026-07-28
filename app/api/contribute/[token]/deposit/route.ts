@@ -16,7 +16,15 @@ import {
 import {
   SANCTUARY_GUEST_MESSAGE_MAX,
   SANCTUARY_GUEST_PHOTO_MAX,
+  SANCTUARY_GUEST_VOICE_MAX_BYTES,
+  SANCTUARY_GUEST_VOICE_MAX_PER_TOKEN,
+  SANCTUARY_GUEST_VOICE_MIME_TYPES,
 } from "@/src/lib/contribute/sanctuaryLimits";
+import {
+  canAcceptGuestVoiceDeposit,
+  GUEST_VOICE_LIMIT_ERROR,
+} from "@/src/lib/contribute/guestVoiceQuota";
+import { ensureUserAssetsAllowsGuestVoiceAudio } from "@/src/lib/media/ensureUserAssetsGuestVoiceMime";
 import { STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
 import {
   assertContributeRateLimit,
@@ -47,10 +55,17 @@ const JsonBodySchema = z
   })
   .strict();
 
+const ALLOWED_VOICE_TYPES = new Set<string>(SANCTUARY_GUEST_VOICE_MIME_TYPES);
+
 function extensionForMime(mime: string): string {
   if (mime.includes("png")) return "png";
   if (mime.includes("webp")) return "webp";
   if (mime.includes("heic") || mime.includes("heif")) return "heic";
+  if (mime.includes("webm")) return "webm";
+  if (mime.includes("ogg")) return "ogg";
+  if (mime.includes("mp4") || mime.includes("m4a")) return "m4a";
+  if (mime.includes("wav")) return "wav";
+  if (mime.includes("mpeg") || mime.includes("mp3")) return "mp3";
   return "jpg";
 }
 
@@ -60,11 +75,13 @@ function extensionForMime(mime: string): string {
  * Dépôt gratuit Sanctuaire (Étape 1) — public anonymé via token.
  * - kind=message : JSON { messageText, contributorName, ... }
  * - kind=photo   : multipart form-data (file, contributorName, ...)
+ * - kind=voice   : multipart form-data (file audio webm/mp4, contributorName, ...)
  *
  * Insert admin `media_assets` : contributor_type=guest, review_status=pending_review.
  * Hors Soft Cap famille (voir odyssey_p10_2_guest_sanctuary.sql).
  * Plafond 5 photos / token (P10.3 + guestPhotoQuota).
  * Plafond 10 messages / token (anti-spam).
+ * Plafond 5 voix / token (re-takes Phase 3b).
  */
 export async function POST(
   req: Request,
@@ -113,7 +130,7 @@ export async function POST(
     return NextResponse.json({ error: "tenant_missing" }, { status: 400 });
   }
 
-  let kind: "photo" | "message";
+  let kind: "photo" | "message" | "voice";
   let contributorName: string;
   let contributorEmail: string | undefined;
   let consentMarketing = false;
@@ -130,7 +147,7 @@ export async function POST(
     }
 
     const kindRaw = String(form.get("kind") ?? "photo");
-    if (kindRaw !== "photo" && kindRaw !== "message") {
+    if (kindRaw !== "photo" && kindRaw !== "message" && kindRaw !== "voice") {
       return NextResponse.json({ error: "invalid_kind" }, { status: 400 });
     }
     kind = kindRaw;
@@ -153,6 +170,19 @@ export async function POST(
       if (!messageText || messageText.length > MAX_MESSAGE_CHARS) {
         return NextResponse.json({ error: "invalid_message" }, { status: 400 });
       }
+    } else if (kind === "voice") {
+      const file = form.get("file");
+      if (!(file instanceof File)) {
+        return NextResponse.json({ error: "file_required" }, { status: 400 });
+      }
+      mimeType = (file.type || "audio/webm").split(";")[0].trim().toLowerCase();
+      if (!ALLOWED_VOICE_TYPES.has(mimeType)) {
+        return NextResponse.json({ error: "unsupported_media_type" }, { status: 400 });
+      }
+      if (file.size <= 0 || file.size > SANCTUARY_GUEST_VOICE_MAX_BYTES) {
+        return NextResponse.json({ error: "file_too_large" }, { status: 400 });
+      }
+      fileBytes = await file.arrayBuffer();
     } else {
       const file = form.get("file");
       if (!(file instanceof File)) {
@@ -209,6 +239,33 @@ export async function POST(
       const message = err instanceof Error ? err.message : "quota_check_failed";
       return NextResponse.json({ error: message }, { status: 500 });
     }
+  } else if (kind === "voice") {
+    try {
+      const quota = await canAcceptGuestVoiceDeposit(admin, {
+        projectId: tokenRow.project_id,
+        accessTokenId: tokenRow.id,
+      });
+      if (!quota.ok) {
+        return NextResponse.json(
+          {
+            error: GUEST_VOICE_LIMIT_ERROR,
+            max: SANCTUARY_GUEST_VOICE_MAX_PER_TOKEN,
+            current: quota.count,
+          },
+          { status: 403 },
+        );
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "quota_check_failed";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+    try {
+      await ensureUserAssetsAllowsGuestVoiceAudio();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "storage_mime_allowlist_failed";
+      return NextResponse.json({ error: message }, { status: 503 });
+    }
   } else {
     try {
       const quota = await canAcceptGuestMessageDeposit(admin, {
@@ -248,6 +305,13 @@ export async function POST(
     mimeType = "text/plain";
     source = "guest_message";
     contentTypeUpload = "text/plain; charset=utf-8";
+  } else if (kind === "voice") {
+    const ext = extensionForMime(mimeType ?? "audio/webm");
+    storagePath = `${basePath}/${assetId}.${ext}`;
+    uploadBody = Buffer.from(fileBytes!);
+    sizeBytes = uploadBody.byteLength;
+    source = "guest_voice";
+    contentTypeUpload = mimeType ?? "audio/webm";
   } else {
     const ext = extensionForMime(mimeType ?? "image/jpeg");
     storagePath = `${basePath}/${assetId}.${ext}`;

@@ -8,6 +8,9 @@ import {
   canAcceptGuestPendingCheckout,
   GUEST_CHECKOUT_PENDING_LIMIT_ERROR,
 } from "@/src/lib/contribute/guestCheckoutQuota";
+import {
+  assertGuestVoiceMediaForToken,
+} from "@/src/lib/contribute/guestVoiceQuota";
 import { SANCTUARY_GUEST_PENDING_CHECKOUT_MAX } from "@/src/lib/contribute/sanctuaryLimits";
 import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
 import {
@@ -27,6 +30,8 @@ const BodySchema = z
     productKey: z.string().min(1),
     /** Requis pour `guest_patron` (150–1000 $). Ignoré pour les packs à prix fixe. */
     amountCents: z.number().int().positive().optional(),
+    /** Requis pour `guest_voice` — media_assets.id (source guest_voice). */
+    mediaId: z.string().uuid().optional(),
     contributorEmail: z.string().email().optional(),
     contributorName: z.string().max(200).optional(),
     consentMarketing: z.boolean().optional(),
@@ -61,6 +66,7 @@ export async function POST(
   const {
     productKey,
     amountCents,
+    mediaId,
     contributorEmail,
     contributorName,
     consentMarketing = false,
@@ -110,6 +116,28 @@ export async function POST(
 
   const admin = getSupabaseAdminClient();
 
+  let voiceMediaId: string | null = null;
+  if (pack.key === "guest_voice") {
+    if (!mediaId) {
+      return NextResponse.json(
+        { error: "voice_recording_required" },
+        { status: 400 },
+      );
+    }
+    const voiceOk = await assertGuestVoiceMediaForToken(admin, {
+      mediaId,
+      projectId: tokenRow.project_id,
+      accessTokenId: tokenRow.id,
+    });
+    if (!voiceOk.ok) {
+      return NextResponse.json(
+        { error: "invalid_voice_media", reason: voiceOk.error },
+        { status: 400 },
+      );
+    }
+    voiceMediaId = mediaId;
+  }
+
   try {
     const pendingQuota = await canAcceptGuestPendingCheckout(admin, {
       accessTokenId: tokenRow.id,
@@ -142,6 +170,7 @@ export async function POST(
       product_key: pack.key,
       gross_cents: grossCents,
       status: "pending",
+      metadata: voiceMediaId ? { media_id: voiceMediaId } : {},
     })
     .select("id")
     .single();
@@ -223,6 +252,7 @@ export async function POST(
         tenant_id: tokenRow.tenant_id ?? "",
         product_key: pack.key,
         gross_cents: String(grossCents),
+        ...(voiceMediaId ? { media_id: voiceMediaId } : {}),
       },
     });
 

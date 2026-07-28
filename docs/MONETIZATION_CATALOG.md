@@ -57,7 +57,7 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 
 | Empreinte | `product_key` | Prix | Rôle UX | Statut |
 |-----------|---------------|------|---------|--------|
-| **Voix dans le film** | `guest_voice` | **69 $** | Ancre / cœur | ✅ config · 🔜 UI |
+| **Voix dans le film** | `guest_voice` | **69 $** | Ancre / cœur | ✅ config · ✅ capture avant paiement (3b V1) |
 | **Témoignage filmé** (live caméra) | `guest_video` | **119 $** | Staple cérémonie | ✅ config · 🔜 UI capture |
 | **Coproduction** (HD + social + générique) | `guest_heritage` | **129 $** | Statut | ✅ |
 | **Geste / Bougie** | `guest_candle` | **15 $** | Secondaire (jamais CTA #1) | ✅ |

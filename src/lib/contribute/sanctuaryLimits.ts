@@ -38,3 +38,25 @@ export const SANCTUARY_MINI_CLIP_MAX_PER_GUEST = 1;
  * pas un upload de clip galerie. Capture = Phase 3b+.
  */
 export const SANCTUARY_VIDEO_TESTIMONY_IS_LIVE_CAPTURE = true;
+
+/** Voix dans le film — durée max d’enregistrement (secondes). */
+export const SANCTUARY_GUEST_VOICE_MAX_SECONDS = 90;
+
+/** Voix — taille max fichier (MediaRecorder webm/mp4). */
+export const SANCTUARY_GUEST_VOICE_MAX_BYTES = 8 * 1024 * 1024;
+
+/**
+ * Brouillons voix max / token (re-takes inclus).
+ * Le checkout n’exige qu’un `mediaId` valide parmi eux.
+ */
+export const SANCTUARY_GUEST_VOICE_MAX_PER_TOKEN = 5;
+
+/** MIME acceptés pour dépôt `guest_voice`. */
+export const SANCTUARY_GUEST_VOICE_MIME_TYPES = [
+  "audio/webm",
+  "audio/mp4",
+  "audio/mpeg",
+  "audio/ogg",
+  "audio/wav",
+  "audio/x-wav",
+] as const;

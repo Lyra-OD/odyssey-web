@@ -11,6 +11,8 @@
 >
 > **P10 + P10.1 (Cascade V-Final) :** [`odyssey_p10_memorial_fund.sql`](odyssey_p10_memorial_fund.sql) + [`odyssey_p10_1_memorial_fund_rpc.sql`](odyssey_p10_1_memorial_fund_rpc.sql) — ✅ **appliqués sur Supabase** (juillet 2026) — Fonds Commémoratif (crédit), waterfall invité, RPC accrue/consume. Feature flag `tenants.settings.viral_loop_enabled` (défaut `false`).
 >
+> **Voix Sanctuaire (3b) :** [`odyssey_user_assets_guest_voice_mime.sql`](odyssey_user_assets_guest_voice_mime.sql) — MIME `audio/webm|mp4|ogg` (+ MP3/WAV) sur bucket `user-assets` (si allowlist restreinte). L’API tente aussi `updateBucket` à chaud.
+>
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
 > **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).  
 > **Migrations P4 wallets** = historique de schéma (rejouées puis droppées par P8) — **ne plus seed « 100 jetons »**.
