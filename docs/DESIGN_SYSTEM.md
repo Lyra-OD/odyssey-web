@@ -42,7 +42,7 @@ Couleur d’**interaction** (sélection, focus, états actifs, respiration). Ali
 |-------|--------|--------|
 | `teal-400` | Tailwind / `#2DD4BF` famille | Bordures sélection, focus inputs, glow léger |
 | `teal-300` | — | Labels « sélectionné », accents hover |
-| Respiration | `.connexion-submit-breathe` / `.sanctuary-halo-breathe` | CTA + halo d’ambiance |
+| Respiration | `.connexion-submit-breathe` / `.sanctuary-halo-breathe` / `.sanctuary-select-breathe` | CTA · halo d’ambiance · **élément sélectionné** (1 / zone) |
 
 **Règle :** tout contrôle **sélectionnable ou focusable** en Studio/Sanctuaire privilégie le teal. Le violet reste l’énergie de marque en fond ; le champagne reste tertiaire mémoriel (≤10 %).
 

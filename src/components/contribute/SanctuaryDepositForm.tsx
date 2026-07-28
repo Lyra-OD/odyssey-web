@@ -11,7 +11,7 @@ import {
 import {
   sanctuaryFieldInput,
   sanctuaryHoverDashed,
-  sanctuarySelectedSurface,
+  sanctuarySelectBreathe,
   sanctuarySubmitButton,
   sanctuaryFieldTextarea,
 } from "@/src/lib/contribute/sanctuaryChrome";
@@ -397,7 +397,7 @@ export function SanctuaryDepositForm({
                 }}
                 className={`flex min-h-[52px] items-center justify-center gap-2 rounded-sm border px-3 py-3 text-left transition-colors duration-300 ${
                   active
-                    ? `${sanctuarySelectedSurface} text-zinc-100`
+                    ? `${sanctuarySelectBreathe} border-teal-400/40 bg-teal-400/[0.06] text-zinc-100`
                     : "border-white/10 bg-white/[0.02] text-zinc-400 hover:border-teal-400/25 hover:text-zinc-200"
                 }`}
               >

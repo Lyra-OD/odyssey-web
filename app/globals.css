@@ -264,8 +264,12 @@ body {
   box-shadow: none;
 }
 
-/* Sanctuaire — waveform voix : respiration douce (même nb de shadows, deltas faibles) */
-@keyframes voice-memo-wave-breathe {
+/*
+ * Sanctuaire — respiration de sélection (ADN Quiet Luxury).
+ * 1 breathe / zone : uniquement l’élément actif (empreinte, toggle, waveform).
+ * Même nb de shadows aux 2 clés → interpolation fluide (pas de strobe).
+ */
+@keyframes sanctuary-select-breathe {
   0%,
   100% {
     box-shadow:
@@ -281,9 +285,10 @@ body {
   }
 }
 
+.sanctuary-select-breathe,
 .voice-memo-wave-breathe,
 .voice-memo-wave-breathe-live {
-  animation: voice-memo-wave-breathe 4.2s ease-in-out infinite;
+  animation: sanctuary-select-breathe 4.2s ease-in-out infinite;
 }
 
 /* Halo interne : opacity seule (pas de scale → pas de strobe) */
@@ -492,6 +497,7 @@ body {
   .salon-dashboard-wordmark,
   .connexion-submit-breathe,
   .sanctuary-halo-breathe,
+  .sanctuary-select-breathe,
   .voice-memo-wave-breathe,
   .voice-memo-wave-breathe-live,
   .voice-memo-halo-breathe,
@@ -510,6 +516,7 @@ body {
     opacity: 0.48;
   }
 
+  .sanctuary-select-breathe,
   .voice-memo-wave-breathe,
   .voice-memo-wave-breathe-live {
     box-shadow:

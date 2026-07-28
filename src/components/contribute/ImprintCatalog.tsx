@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 
+import { sanctuarySelectBreathe } from "@/src/lib/contribute/sanctuaryChrome";
 import {
   DURATION_BREATH,
   EASE_OUT_LUXE,
@@ -142,7 +143,7 @@ function PackRow({
         onClick={() => onSelect(pack.key)}
         className={`flex w-full items-center justify-between gap-4 rounded-xl border px-4 py-4 text-left transition-[border-color,box-shadow,background-color] duration-300 ${
           selected
-            ? "border-teal-400/40 bg-teal-400/[0.06] shadow-[0_0_28px_rgba(45,212,191,0.14)]"
+            ? `${sanctuarySelectBreathe} border-teal-400/40 bg-teal-400/[0.06]`
             : "border-white/10 bg-white/[0.02] hover:border-teal-400/25 hover:bg-teal-400/[0.03]"
         }`}
       >
