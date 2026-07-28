@@ -1,3 +1,5 @@
+import "server-only";
+
 import { createHmac, timingSafeEqual } from "crypto";
 
 import { WIZARD_EDITOR_COOKIE_TTL_DAYS } from "@/src/lib/wizard/collabCapabilities";

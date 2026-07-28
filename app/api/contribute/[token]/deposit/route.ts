@@ -9,8 +9,19 @@ import {
   GUEST_PHOTO_LIMIT_ERROR,
   isGuestPhotoLimitDbError,
 } from "@/src/lib/contribute/guestPhotoQuota";
-import { SANCTUARY_GUEST_PHOTO_MAX } from "@/src/lib/contribute/sanctuaryLimits";
+import {
+  canAcceptGuestMessageDeposit,
+  GUEST_MESSAGE_LIMIT_ERROR,
+} from "@/src/lib/contribute/guestMessageQuota";
+import {
+  SANCTUARY_GUEST_MESSAGE_MAX,
+  SANCTUARY_GUEST_PHOTO_MAX,
+} from "@/src/lib/contribute/sanctuaryLimits";
 import { STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
+import {
+  assertContributeRateLimit,
+  clientIpFromRequest,
+} from "@/src/lib/security/contributeRateLimit";
 
 export const runtime = "nodejs";
 
@@ -53,6 +64,7 @@ function extensionForMime(mime: string): string {
  * Insert admin `media_assets` : contributor_type=guest, review_status=pending_review.
  * Hors Soft Cap famille (voir odyssey_p10_2_guest_sanctuary.sql).
  * Plafond 5 photos / token (P10.3 + guestPhotoQuota).
+ * Plafond 10 messages / token (anti-spam).
  */
 export async function POST(
   req: Request,
@@ -61,6 +73,23 @@ export async function POST(
   const tokenRow = await resolveContributeToken(params.token);
   if (!tokenRow) {
     return NextResponse.json({ error: "invalid_or_expired_link" }, { status: 404 });
+  }
+
+  const rate = await assertContributeRateLimit({
+    action: "contribute_deposit",
+    tokenHash: tokenRow.id,
+    clientIp: clientIpFromRequest(req),
+  });
+  if (!rate.ok) {
+    return NextResponse.json(
+      { error: "rate_limited" },
+      {
+        status: 429,
+        headers: rate.retryAfterSec
+          ? { "Retry-After": String(rate.retryAfterSec) }
+          : undefined,
+      },
+    );
   }
 
   const contentType = req.headers.get("content-type") ?? "";
@@ -171,6 +200,26 @@ export async function POST(
           {
             error: GUEST_PHOTO_LIMIT_ERROR,
             max: SANCTUARY_GUEST_PHOTO_MAX,
+            current: quota.count,
+          },
+          { status: 403 },
+        );
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "quota_check_failed";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+  } else {
+    try {
+      const quota = await canAcceptGuestMessageDeposit(admin, {
+        projectId: tokenRow.project_id,
+        accessTokenId: tokenRow.id,
+      });
+      if (!quota.ok) {
+        return NextResponse.json(
+          {
+            error: GUEST_MESSAGE_LIMIT_ERROR,
+            max: SANCTUARY_GUEST_MESSAGE_MAX,
             current: quota.count,
           },
           { status: 403 },

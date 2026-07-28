@@ -24,5 +24,8 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+.env
+.env.*
+!.env.example
 .env*.local
 backups/

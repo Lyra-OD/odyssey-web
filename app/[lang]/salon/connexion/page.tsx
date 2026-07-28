@@ -6,6 +6,7 @@ import type { Locale } from "@/i18n.config";
 import { AuthConnexionPage } from "@/src/components/auth/AuthConnexionPage";
 import { SalonConnexionBrand } from "@/src/components/auth/SalonConnexionBrand";
 import { SalonConnexionSlugSync } from "@/src/components/auth/SalonConnexionSlugSync";
+import { sanitizeSalonNextPath } from "@/src/lib/auth/sanitizeNextPath";
 import { fetchPartnerBrandingBySlug } from "@/src/lib/partner/fetchPartnerBrandingBySlug";
 import { fetchPartnerTenantsForUser } from "@/src/lib/partner/fetchPartnerTenantsForUser";
 import { readPartnerConnexionSlugFromCookie } from "@/src/lib/partner/partnerConnexionSlug.server";
@@ -54,9 +55,10 @@ export default async function SalonConnexionPage({
     const tenants = await fetchPartnerTenantsForUser(supabase, user.id);
     if (tenants.length > 0) {
       const rawNext = Array.isArray(sp.next) ? sp.next[0] : sp.next;
-      const nextPath =
-        typeof rawNext === "string" && rawNext.startsWith("/") ? rawNext : null;
-      if (nextPath?.includes("/salon") && !nextPath.includes("/connexion")) {
+      const nextPath = sanitizeSalonNextPath(
+        typeof rawNext === "string" ? rawNext : null,
+      );
+      if (nextPath) {
         redirect(nextPath);
       }
     }

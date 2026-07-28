@@ -10,7 +10,17 @@ const rootDir = path.resolve(__dirname);
 
 export default defineConfig({
   resolve: {
-    alias: [{ find: /^@\//, replacement: `${rootDir}/` }],
+    alias: [
+      { find: /^@\//, replacement: `${rootDir}/` },
+      // Next compile-time guard — no-op in Node tests
+      {
+        find: "server-only",
+        replacement: path.resolve(
+          rootDir,
+          "node_modules/next/dist/compiled/server-only/empty.js",
+        ),
+      },
+    ],
   },
   test: {
     environment: "node",

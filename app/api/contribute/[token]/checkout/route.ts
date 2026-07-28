@@ -4,7 +4,16 @@ import { z } from "zod";
 import { getStripe } from "@/lib/stripe";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { resolveContributeToken } from "@/src/lib/contribute/accessToken";
+import {
+  canAcceptGuestPendingCheckout,
+  GUEST_CHECKOUT_PENDING_LIMIT_ERROR,
+} from "@/src/lib/contribute/guestCheckoutQuota";
+import { SANCTUARY_GUEST_PENDING_CHECKOUT_MAX } from "@/src/lib/contribute/sanctuaryLimits";
 import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
+import {
+  assertContributeRateLimit,
+  clientIpFromRequest,
+} from "@/src/lib/security/contributeRateLimit";
 import {
   getGuestSupportPack,
   guestSupportPackLabel,
@@ -63,6 +72,23 @@ export async function POST(
     return NextResponse.json({ error: "invalid_or_expired_link" }, { status: 404 });
   }
 
+  const rate = await assertContributeRateLimit({
+    action: "contribute_checkout",
+    tokenHash: tokenRow.id,
+    clientIp: clientIpFromRequest(req),
+  });
+  if (!rate.ok) {
+    return NextResponse.json(
+      { error: "rate_limited" },
+      {
+        status: 429,
+        headers: rate.retryAfterSec
+          ? { "Retry-After": String(rate.retryAfterSec) }
+          : undefined,
+      },
+    );
+  }
+
   const pack = getGuestSupportPack(productKey);
   if (!pack || pack.deprecated) {
     return NextResponse.json({ error: "unknown_product" }, { status: 400 });
@@ -83,6 +109,26 @@ export async function POST(
   }
 
   const admin = getSupabaseAdminClient();
+
+  try {
+    const pendingQuota = await canAcceptGuestPendingCheckout(admin, {
+      accessTokenId: tokenRow.id,
+    });
+    if (!pendingQuota.ok) {
+      return NextResponse.json(
+        {
+          error: GUEST_CHECKOUT_PENDING_LIMIT_ERROR,
+          max: SANCTUARY_GUEST_PENDING_CHECKOUT_MAX,
+          current: pendingQuota.count,
+        },
+        { status: 429 },
+      );
+    }
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "checkout_quota_check_failed";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 
   const { data: guestCheckout, error: insertError } = await admin
     .from("guest_micro_checkouts")

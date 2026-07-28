@@ -10,7 +10,7 @@ export const runtime = "nodejs";
  * POST /api/webhooks/creatomate
  *
  * Retour async Creatomate (render succeeded | failed).
- * Auth optionnelle : Bearer CREATOMATE_WEBHOOK_SECRET si défini.
+ * Auth obligatoire : Bearer ou header CREATOMATE_WEBHOOK_SECRET (fail-closed).
  * Corrélation : external_render_id (= render.id) ou metadata (= job.id).
  */
 
@@ -21,9 +21,12 @@ function safeEqualString(a: string, b: string): boolean {
   return timingSafeEqual(left, right);
 }
 
+/**
+ * Fail-closed : secret absent ou signature invalide → unauthorized.
+ */
 function authorizeWebhook(req: Request): boolean {
   const secret = process.env.CREATOMATE_WEBHOOK_SECRET?.trim();
-  if (!secret) return true;
+  if (!secret) return false;
 
   const auth = req.headers.get("authorization") ?? "";
   const bearer = auth.startsWith("Bearer ") ? auth.slice(7).trim() : "";

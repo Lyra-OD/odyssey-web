@@ -8,6 +8,8 @@
  * - CREATOMATE_TEMPLATE_ID (optionnel — sinon source JSON minimale)
  */
 
+import "server-only";
+
 const CREATOMATE_RENDERS_URL = "https://api.creatomate.com/v1/renders";
 
 export type CreatomateRenderStatus =

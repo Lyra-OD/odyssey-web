@@ -1,18 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-import { appRoutes, defaultPostAuthPath } from "@/src/lib/appRoutes";
+import { appRoutes } from "@/src/lib/appRoutes";
+import { sanitizeNextPath } from "@/src/lib/auth/sanitizeNextPath";
 import type { Locale } from "@/i18n.config";
-
-function sanitizeNextPath(raw: string | null): string {
-  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) {
-    return defaultPostAuthPath("fr");
-  }
-  if (!/^\/(fr|en)(\/|$)/.test(raw)) {
-    return defaultPostAuthPath("fr");
-  }
-  return raw;
-}
 
 function connexionErrorPath(nextPath: string): string {
   const seg = nextPath.match(/^\/(fr|en)\//);

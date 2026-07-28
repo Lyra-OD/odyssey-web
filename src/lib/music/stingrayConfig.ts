@@ -1,5 +1,7 @@
 /** Configuration serveur Stingray Music API (MAPI). */
 
+import "server-only";
+
 export type StingrayMode = "mock" | "live";
 
 export type StingrayConfig = {

@@ -15,6 +15,18 @@ export const SANCTUARY_FREE_DEPOSIT_SLOTS = 1;
  */
 export const SANCTUARY_GUEST_PHOTO_MAX = 5;
 
+/**
+ * Messages texte max par token contribute (anti-spam storage).
+ * Distinct du plafond photos.
+ */
+export const SANCTUARY_GUEST_MESSAGE_MAX = 10;
+
+/**
+ * Sessions Stripe checkout `pending` max simultanées par token contribute.
+ * Limite le spam de sessions / coût API Stripe.
+ */
+export const SANCTUARY_GUEST_PENDING_CHECKOUT_MAX = 5;
+
 /** Mini-clip fichier (souvenir) — durée max secondes. */
 export const SANCTUARY_MINI_CLIP_MAX_SECONDS = 30;
 
