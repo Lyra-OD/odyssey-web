@@ -99,6 +99,8 @@ const copy = {
     bridgeTitle: "Votre empreinte a été ajoutée.",
     bridgeBody:
       "Souhaitez-vous rejoindre le cercle des proches qui soutiennent la production de ce film hommage ?",
+    bridgeBodyAfterGift:
+      "Si le cœur vous en dit, vous pouvez offrir un autre geste — sans obligation.",
     contribSuccess: "Merci — votre soutien a bien été enregistré.",
     contribCancel: "Paiement annulé. Vous pouvez choisir une autre empreinte.",
   },
@@ -124,6 +126,8 @@ const copy = {
     bridgeTitle: "Your mark has been placed.",
     bridgeBody:
       "Would you like to join the circle of those who support the making of this tribute film?",
+    bridgeBodyAfterGift:
+      "If you wish, you may offer another gesture — with no obligation.",
     contribSuccess: "Thank you — your support has been recorded.",
     contribCancel: "Payment cancelled. You can choose another imprint.",
   },
@@ -199,6 +203,9 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
     const params = new URLSearchParams(window.location.search);
     const contrib = params.get("contrib");
     if (contrib === "success" || contrib === "cancel") {
+      // Relancer le catalogue (pas le dépôt) pour empiler un autre geste.
+      setPhase("bridge");
+      setSelectedPackKey(null);
       setContribFlash(contrib);
       params.delete("contrib");
       params.delete("session_id");
@@ -466,7 +473,9 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                     {t.bridgeTitle}
                   </h2>
                   <p className="mx-auto max-w-md text-sm font-light leading-relaxed text-white/55 md:text-base">
-                    {t.bridgeBody}
+                    {contribFlash === "success"
+                      ? t.bridgeBodyAfterGift
+                      : t.bridgeBody}
                   </p>
                   {photoCount > 0 ? (
                     <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-white/40">

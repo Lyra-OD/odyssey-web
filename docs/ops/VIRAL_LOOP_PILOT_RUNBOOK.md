@@ -89,8 +89,10 @@ WHERE id = '<pilote_tenant_id>';
 
 ### C. Empreinte payante → fonds
 1. Invité paie une empreinte légère (ex. **Bougie 15 $** ou **Voix 69 $**) — Stripe test.  
-2. Webhook `checkout.session.completed` → RPC `accrue_guest_micro_checkout`.  
-3. SQL : solde `family_tribute_fund_balances` pour le `project_id` > 0.
+2. Retour Sanctuaire → phase **catalogue** (pas dépôt) + merci + invitation à un autre geste (optionnel).  
+3. Webhook `checkout.session.completed` → RPC `accrue_guest_micro_checkout`.  
+4. SQL : solde `family_tribute_fund_balances` pour le `project_id` > 0.  
+5. (Optionnel) 2ᵉ empreinte séquentielle (ex. Mécène) — même token, nouveau checkout.
 
 ### D. Famille voit le crédit (flag ON)
 1. Owner ouvre Checkout (étape 7).  
