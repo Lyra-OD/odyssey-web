@@ -1,9 +1,9 @@
 # Odyssey — Roadmap Phase 2  
 ## Vision : Le Moteur Cinématographique Avancé
 
-**Statut :** Vision produit · **non implémenté**  
+**Statut :** Vision produit · **non implémenté** (sauf fondations P0)  
 **Last updated :** 28 juillet 2026  
-**Fondation livrée (P0) :** mapping dynamique Storyboard → Creatomate — `src/lib/creatomate/`  
+**Fondation livrée (P0) :** mapping Storyboard → Creatomate · Audio Stem Graph · One Bed Law — `src/lib/creatomate/`  
 **Documents liés :** [`VISION_PHASE_2.md`](VISION_PHASE_2.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) · [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md)
 
 ---
@@ -20,34 +20,136 @@
 | Un MP4 jetable | Une **pellicule Odyssey** + Sanctuaire vivant (reflets : extrait, Livre, jeton NFC) |
 | Dashboard froid | **Rituel** : souffle d’intro, présence, geste après le film |
 | Famille dépossédée par l’algo | Famille **souveraine** — l’arc Odyssey propose, elle scelle |
+| Enchaînement mécanique des médias | **Respiration** dirigée — le rythme fait pleurer, pas seulement l’image |
 
-**P0** livre le moteur de film crédible.  
-**Phase 2** (ci-dessous) le rend **cognitif et sensoriel**.  
+**P0** livre le moteur de film crédible (œil + oreille de base).  
+**Phase 2** le rend **cognitif, sensoriel, et respirant**.  
 **Au-delà** : le même moteur irrigue l’écosystème (Sanctuaire, salons, transmission) — une œuvre, plusieurs vies.
-
-**Ordre d’exécution recommandé :** Stingray master → pellicule / Smart Ken Burns → Ghost Track → arc narratif IA (override famille) → écosystème autour du master.
 
 ---
 
-> **Principe Phase 2.** Le Moteur Cinématographique Avancé positionne Odyssey comme un **Moteur Cognitif et Sensoriel** — niveau chef-d’œuvre — où chaque hommage devient une œuvre cohérente, émotionnelle et unifiée, au-delà du collage chronologique.
+## Les trois organes du moteur
 
 ```text
-P0 — Mapping Creatomate ✅
-     cinematicTheme · résolution forfaits · intro Signature · ducking
+     ŒIL                         OREILLE                      POUMONS
+     Vision / pellicule          Audio Stem Graph             Breath Engine
+     (quoi / humeur / cadre)     (quoi on entend / mix)       (quand on retient / relâche)
+            \                          |                           /
+             \                         |                          /
+              \________________________|_________________________/
+                                       │
+                         Direction émotionnelle unifiée
+```
+
+| Organe | Rôle | Fondation P0 | Phase 2 |
+|--------|------|--------------|---------|
+| **Œil** | Pellicule, Signature intro, Smart Ken Burns, arc Vision | `cinematicTheme` · `payloadBuilder` · résolution forfaits | Relighting · tags humeur · POI |
+| **Oreille** | Beds, sync, ducking, One Bed Law | Stem Graph (`bed` / `sync` ; `ghost` / `foreground` dormants) | Ghost Track · VO · loudness |
+| **Poumons** | Silence, attente, release | Intro Signature (embryon) | **Breath Engine** (pilier transversal) |
+
+Le Breath Engine n’est **pas** une feature à côté des autres : c’est le **chef d’orchestre** qui fait travailler Œil et Oreille ensemble.
+
+---
+
+> **Principe Phase 2.** Le Moteur Cinématographique Avancé positionne Odyssey comme un **Moteur Cognitif et Sensoriel** — niveau chef-d’œuvre — où chaque hommage devient une œuvre cohérente, émotionnelle et **respirante**, au-delà du collage chronologique.
+
+```text
+P0 — Mapping Creatomate + Stem Graph ✅
             │
             ▼
-Phase 2 — Moteur Cinématographique Avancé (vision)
-     ┌─────────────────┬──────────────────┬────────────────────┐
-     │  Ghost Track    │  Moteur Narratif │  Smart Ken Burns   │
-     │  (sensoriel)    │  (cognitif)      │  + Relighting      │
-     └─────────────────┴──────────────────┴────────────────────┘
+Phase 2 — Moteur Cinématographique Avancé
+     ┌──────────────────────────────────────────────────┐
+     │              BREATH ENGINE (Poumons)               │
+     │         Negative Space · Hold · Release            │
+     └──────────────────────────────────────────────────┘
+              │              │               │
+              ▼              ▼               ▼
+        Ghost Track    Moteur Narratif   Smart Ken Burns
+        (Oreille+)       (Œil+)          + Relighting
 ```
 
 ---
 
-## Vision Phase 2 : Le Moteur Cinématographique Avancé
+## Vision Phase 2 : piliers
 
-Trois piliers. Aucun ne modifie aujourd’hui l’architecture P0 (`payloadBuilder`, `cinematicTheme`, etc.) : ils s’y **branchent** en amont (analyse) et en aval (enrichissement du plan de rendu).
+Les piliers ci-dessous **ne modifient pas** l’architecture P0 tant qu’un chantier d’implémentation n’est pas ouvert. Ils s’y branchent en amont (analyse) et en aval (enrichissement du plan de rendu + theme).
+
+---
+
+### 0. Le Breath Engine — *L’ingénierie du silence et de l’attente* ★ transversal
+
+| | |
+|---|---|
+| **Essence** | L’émotion pure naît souvent du **vide**. Le moteur contrôle la **respiration** du montage, pas seulement l’ordre des médias. |
+| **Ambition** | Negative Space temporel — le rythme fait pleurer, pas seulement l’image. |
+
+#### Problème industrie
+
+Tous les générateurs vidéo enchaînent mécaniquement :
+
+```text
+image A (N s) → transition → image B (N s) → …
+```
+
+Le cerveau s’habitue. Aucune tension. Aucune direction.
+
+#### Concept — Negative Space
+
+L’IA narrative (et / ou les règles Quiet Luxury du theme) ne gère pas seulement **quoi** montrer : elle décide **combien de temps retenir** et **quand relâcher**.
+
+**Exemple canon (Signature Odyssey) :**
+
+1. Le film s’arrête sur un **portrait solennel** magnifique.  
+2. Le **bed** descend doucement (ducking motivé, pas un mute brutal).  
+3. Le **Ghost Track** (ou leitmotiv Souffle) laisse un ambient / respiration très bas.  
+4. Le moteur **retient** l’image **2–3 secondes de plus** que ce que le cerveau attend.  
+5. Au moment exact du **release**, la musique reprend ; le montage bascule vers des plans **festifs / chaotiques**.
+
+L’attente crée une tension émotionnelle massive. Le contraste release → joie fait basculer le spectateur.
+
+#### Motivations du Breath (jamais aléatoire)
+
+Un hold n’est légitime que s’il est **motivé**, par exemple :
+
+| Signal | Effet typique |
+|--------|----------------|
+| Tag Vision **Solennel** / portrait serré | Hold 2–3,5 s + bed duck |
+| **Fil du Temps** (écart d’années entre deux clichés) | Pont + silence + typo discrète (*« Douze hivers »*) |
+| Fin de chapitre / fin de Setup | Respiration avant Climax |
+| Avant **Chœur des Vivants** | Silence, puis entrée des voix |
+
+#### Dose Quiet Luxury
+
+- **1 à 3 breathes majeurs** par film — pas un hold sur chaque photo.  
+- Hold borné (cible **2–4 s** de surplus) — jamais 8 s de noir mort.  
+- Le cadre **vit** pendant le silence : micro-scale, grain, ghost très bas (pas un « gel bug »).  
+- Mode famille : **Rythme Odyssey** (Breath on) vs **Livre Ouvert** (rythme plus linéaire).
+
+#### Tokens theme (cible d’implémentation)
+
+Extensions futures de `cinematicTheme` (noms indicatifs) :
+
+- `breath.holdSecMin` / `holdSecMax`  
+- `breath.anticipationBreakSec`  
+- `breath.releaseCue` (bed rebound, cut festif…)  
+- `breath.maxMajorBreathsPerFilm`  
+
+Le `payloadBuilder` **compile** ; le Breath Engine **décide** via theme + tags — jamais de secondes magiques hardcodées dans le builder.
+
+#### Lien avec les trois propositions d’impact émotionnel
+
+| Proposition | Rôle | Lien Breath |
+|-------------|------|-------------|
+| **Fil du Temps vivant** (*Temporal Empathy*) | *Où* respirer (ponts d’années) | Le Breath fixe *combien* de silence |
+| **Chœur des Vivants** (*Living Chorus*) | *Qui* entre après la retenue | Voix **après** le hold, jamais pendant |
+| **Souffle / leitmotiv** | *Quelle* matière remplit le vide | Ghost / breath motif dans le Negative Space |
+
+```text
+Temps     → où ça compte
+Souffle   → ce qui habite le vide
+Chœur     → qui répond après
+Breath    → quand on retient / quand on relâche
+```
 
 ---
 
@@ -56,30 +158,22 @@ Trois piliers. Aucun ne modifie aujourd’hui l’architecture P0 (`payloadBuild
 | | |
 |---|---|
 | **Essence** | Une nappe sonore discrète, tissée à partir de la vie réelle capturée dans les vidéos. |
-| **Ambition** | Écho nostalgique **découplé de l’image** — comme au cinéma indépendant, où un rire ou une voix traverse une photo silencieuse. |
+| **Ambition** | Écho nostalgique **découplé de l’image** — comme au cinéma indépendant. |
 
 #### Concept
 
 Le backend (pipeline **FastAPI** / worker média) **extrait l’audio** des vidéos uploadées : rires, fragments de discours, bruits d’ambiance, souffles de salle.
 
-Ces extraits ne restent plus prisonniers de leur clip d’origine. Le moteur compose une **tapisserie** — une couche audio secondaire, basse et continue — jouée **sous les séquences de photos silencieuses**, en parallèle de la musique Stingray (avec ducking / mixage Quiet Luxury).
-
-#### But produit
-
-- Transformer le silence des photos en **présence**.
-- Créer une mémoire sonore **transversale** au montage (pas un simple « son de la vidéo en cours »).
-- Renforcer le sentiment : *« ils sont encore là »,* sans narration forcée.
+Ces extraits ne restent plus prisonniers de leur clip d’origine. Le moteur compose une **tapisserie** — couche `ghost` du Stem Graph — jouée surtout **sous les photos silencieuses** et dans les **Negative Spaces** du Breath Engine, en parallèle du bed (One Bed Law + ducking hiérarchique).
 
 #### Implications techniques (cible)
 
 | Couche | Intention |
 |--------|-----------|
-| Extraction | Job asynchrone post-upload ; stems normalisés, bruit résiduel contrôlé |
-| Stockage | Artefacts audio dérivés (chemins Storage), métadonnées énergie / durée |
-| Mix Creatomate | Piste `ghost` à volume très bas + segmentation / ducking déjà prévu dans le theme |
-| Consentement | Aligné droits musique / contributions invitées — pas d’exfiltration hors projet |
-
-> **Hors P0.** Le ducking Stingray actuel reste la base ; le Ghost Track s’ajoute comme **troisième couche** (bed musique · ghost · son clip).
+| Extraction | Job asynchrone post-upload ; stems normalisés |
+| Stem Graph | Layer `ghost` (déjà typé, dormant au P0) |
+| Mix | Volume très bas ; mute / −∞ sous `sync` ; présence sous photos + holds |
+| Consentement | Droits / contributions — pas d’exfiltration hors projet |
 
 ---
 
@@ -87,46 +181,22 @@ Ces extraits ne restent plus prisonniers de leur clip d’origine. Le moteur com
 
 | | |
 |---|---|
-| **Essence** | L’ordre du film n’est plus seulement chronologique : il suit un **arc émotionnel**. |
-| **Ambition** | Un montage autonome digne d’une salle obscure — Setup → Climax → Résolution. |
+| **Essence** | L’ordre du film suit un **arc émotionnel**, pas seulement la chronologie. |
+| **Ambition** | Setup → Climax → Résolution — digne d’une salle obscure. |
 
 #### Concept
 
-**Avant** la construction du JSON Creatomate, les médias passent par un modèle de **Vision IA**.
+**Avant** Creatomate, les médias passent par une Vision IA qui **n’écrit pas de légendes** : elle tague l’**humeur** (vocabulaire fermé) :
 
-L’IA **ne décrit pas** le contenu (pas de légendes verbeuses, pas de « femme souriante sur une plage »). Elle **évalue l’humeur et l’énergie** de chaque plan, selon un vocabulaire fermé, par exemple :
-
-| Tag | Intention narrative |
-|-----|---------------------|
+| Tag | Intention |
+|-----|-----------|
 | **Intime** | Proximité, regard, douceur |
-| **Solennel** | Gravité, silence, rituel |
-| **Chaotique** | Mouvement, foule, intensité |
-| **Festif** | Joie collective, éclat |
+| **Solennel** | Gravité, rituel — candidat Breath hold |
+| **Chaotique** | Mouvement, intensité — candidat release |
+| **Festif** | Joie collective — candidat release |
 
-Ces métadonnées alimentent le `payloadBuilder` (ou un préprocesseur `narrativeArc.ts`) pour réordonner / pondérer le rythme :
-
-```text
-Setup        →  plans intimes, lenteur, respiration
-Climax       →  plans chaotiques / festifs, coupe plus vive
-Résolution   →  portraits serrés, solennel, retour au calme
-```
-
-Le storyboard famille reste la **matière première** ; l’arc IA propose une **lecture émotionnelle** (avec garde-fou : la famille peut conserver l’ordre Livre Ouvert).
-
-#### But produit
-
-- Passer d’un diaporama ordonné à un **film qui respire**.
-- Différencier Odyssey des outils « slideshow SaaS ».
-- Préparer le terrain Soft Cap / upsell : la qualité perçue du master justifie Éternité / Légendaire.
-
-#### Implications techniques (cible)
-
-| Couche | Intention |
-|--------|-----------|
-| Inférence | Batch Vision post-ingest ; tags stockés sur `media_assets` (ou table dérivée) |
-| Contrat | Schéma Zod strict — pas de prose libre dans le chemin de rendu |
-| Builder | Consomme les tags ; `cinematicTheme` reste la DA (durées, transitions) |
-| Transparence | Mode « Ordre famille » vs « Arc Odyssey » — Quiet Luxury, jamais opaque |
+L’arc propose ; le **Breath Engine** rythme les bascules (hold solennel → release festif).  
+La famille peut conserver l’ordre **Livre Ouvert**.
 
 ---
 
@@ -135,32 +205,30 @@ Le storyboard famille reste la **matière première** ; l’arc IA propose une *
 | | |
 |---|---|
 | **Essence** | Une seule « pellicule Odyssey » pour des sources disparates. |
-| **Ambition** | Cadrage intelligent + lumière unifiée — texture haut de gamme, sans look filtre Instagram. |
+| **Ambition** | Cadrage intelligent + lumière unifiée — texture haut de gamme. |
 
-#### Concept — deux volets
+**A. Cadrage IA** — visages / POI → `transform_origin` / focal ; Ken Burns qui **ne coupe jamais un regard**.  
+**B. Relighting** — luma mattes, light leaks subtils (accents DA), LUT Odyssey.
 
-**A. Cadrage IA (Smart Ken Burns)**  
-Détection des **visages** et points d’intérêt pour piloter `transform_origin` / focal / panoramiques. Les mouvements lents (Ken Burns Quiet Luxury) **ne coupent jamais un regard**. Enrichit et dépasse les `focalPoints` manuels de l’Étape 5.
+Pendant un Breath hold : micro-mouvement + grain + éventuellement soft light — le portrait **respire** sans bouger comme un slide figé.
 
-**B. Traitement & unification**  
-- **Luma mattes** dynamiques (révélation / masquage éthéré, dans la lignée de l’intro Signature).  
-- **Light leaks** subtils — accents contrastés (néons / fluorescents) selon la DA Odyssey, jamais agressifs.  
-- Objectif : unifier smartphone, scan, VHS et portraits studio sous une **texture visuelle cohérente**.
+---
 
-#### But produit
+### Annexes émotionnelles (sous le Breath)
 
-- Qualité « chef-d’œuvre » perceptible dès les premières secondes.
-- Réduire l’écart entre médias « beaux » et médias « bruts ».
-- Ancrer la Signature Odyssey au-delà de la typo d’intro.
+#### Fil du Temps vivant (*Temporal Empathy*)
 
-#### Implications techniques (cible)
+Mesurer les **écarts** entre souvenirs (années, saisons). Insérer des ponts : typo discrète (*« Douze hivers »*), silence, ghost.  
+Le Breath décide la durée du pont.
 
-| Couche | Intention |
-|--------|-----------|
-| Vision spatiale | Boxes visage / POI → focal automatique + validation famille |
-| Relight / LUT | Pipeline pré-Creatomate ou overlays RenderScript pilotés par `cinematicTheme` |
-| Accents DA | Tokens de couleur déjà isolés dans le theme — extension « leaks / mattes » sans hardcode builder |
-| Perf | Traitement async ; le drain Creatomate ne recalcule pas la Vision à chaque retry |
+#### Chœur des Vivants (*Living Chorus*)
+
+Dépôts Sanctuaire (mots / voix, dose rare) en **Résolution** seulement — après un hold, avant l’outro Odyssey.  
+Jamais un mur de commentaires sociaux.
+
+#### Souffle / leitmotiv humain
+
+Un court enregistrement famille (respiration, murmure) comme **épine dorsale** sonore des Negative Spaces — plus intime qu’une piste catalogue.
 
 ---
 
@@ -168,32 +236,36 @@ Détection des **visages** et points d’intérêt pour piloter `transform_origi
 
 | Livré (P0) | Phase 2 (vision) |
 |------------|------------------|
-| `cinematicTheme` + unités `vmin` / `%` | Enrichir le theme (ghost volume, arc pacing, leak opacities) **sans** casser le contrat |
-| Intro Signature A24 (3 actes) | Relighting + luma mattes sur toute la timeline |
-| Ducking musique / vidéo | Ghost Track comme couche supplémentaire |
-| Ordre storyboard Livre Ouvert | Arc émotionnel IA (optionnel / premium) |
-| Focal manuel Étape 5 | Smart Ken Burns (suggestion + override famille) |
-| Résolution 1080p / 4K par forfait | Inchangé — le moteur avancé **sert** Éternité / Légendaire |
+| `cinematicTheme` + `vmin` / `%` | Tokens `breath.*`, ghost volumes, leaks |
+| Intro Signature (embryon de respiration) | Breath Engine sur toute la timeline |
+| Stem Graph · One Bed Law · sync → duck bed | Ghost · foreground · Chœur |
+| Ordre Livre Ouvert | Arc Vision + holds motivés |
+| Focal manuel Étape 5 | Smart Ken Burns |
+| 1080p / 4K par forfait | Inchangé — le moteur avancé **sert** Éternité / Légendaire |
 
 ---
 
 ## Principes non négociables
 
-1. **Quiet Luxury** — pas de motion template criarde ; toute IA sert la dignité du souvenir.  
-2. **Famille souveraine** — suggestions narratives et cadrages, jamais confiscation du récit.  
-3. **Server-side only** — Vision, extraction audio, entitlements : jamais de confiance client pour le master.  
-4. **Theme-driven** — la DA reste dans `cinematicTheme` (et extensions futures) ; le builder compile, il ne décide pas du goût.  
-5. **P0 intact** — cette roadmap **ne modifie pas** `src/lib/creatomate/*.ts` tant qu’un chantier d’implémentation n’est pas ouvert explicitement.
+1. **Quiet Luxury** — pas de motion template criarde ; le silence est digne, jamais gimmick.  
+2. **Famille souveraine** — Rythme Odyssey vs Livre Ouvert ; jamais confiscation du récit.  
+3. **Server-side only** — Vision, extraction audio, entitlements : jamais confiance client pour le master.  
+4. **Theme-driven** — DA dans `cinematicTheme` ; le builder compile.  
+5. **Breath motivé** — pas de `+2s` aléatoire ; hold = signal (Solennel, Temps, fin d’acte).  
+6. **Dose** — 1–3 breathes majeurs / film.  
+7. **P0 intact** jusqu’à GO d’implémentation explicite sur un chantier.
 
 ---
 
-## Prochaine étape d’exécution (hors vision)
+## Ordre d’exécution recommandé
 
-Avant d’ouvrir les piliers 1–3 ci-dessus :
-
-1. **Branchement URL master Stingray** (hook déjà prévu dans `resolveChapterAudio`).  
-2. Puis, selon priorité produit : Ghost Track **ou** tags Vision (le Relighting peut suivre une fois le master audio stable).
+1. Stabiliser **master Stingray** (`STINGRAY_MASTER_URL_TEMPLATE` / provider réel).  
+2. **Pellicule / Smart Ken Burns** (wow immédiat).  
+3. **Ghost Track** (oreille Phase 2).  
+4. **Breath Engine** + tags Vision (poumons + œil narratif) — dès que bed + ghost sont stables.  
+5. Fil du Temps · Chœur · leitmotiv Souffle (enrichissements sous le Breath).  
+6. Écosystème (Sanctuaire / NFC / extrait salon) autour du même master.
 
 ---
 
-*Document de vision — Odyssey Frontend · Phase 2 Cinematic Engine · juil. 2026*
+*Document de vision — Odyssey Frontend · Phase 2 Cinematic Engine · Breath Engine formalisé · juil. 2026*
