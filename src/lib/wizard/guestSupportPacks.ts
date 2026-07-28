@@ -4,7 +4,7 @@
  * Positionnement Quiet Luxury accessible · panier cible ~80–100 $ ARPU payant.
  * Prix figés (CEO Phase 0 — 22/07/2026). Inline Stripe `price_data`.
  *
- * Ordre d'affichage UX (ancre haut) : voix → témoignage filmé → coproduction → bougie
+ * Ordre d'affichage UX (ancre haut) : voix → témoignage filmé → coproduction → lueur
  * (secondaire) → Mécène (montant libre).
  *
  * `guest_video` = témoignage **live** caméra (in-app), ≠ mini-clip fichier 15–30 s.
@@ -22,7 +22,7 @@ export type GuestSupportPack = {
   priceCents: number;
   /**
    * Ordre d'affichage Sanctuaire (1 = ancre). Plus petit = plus haut.
-   * Bougie volontairement en dernier parmi les packs fixes.
+   * Lueur volontairement en dernier parmi les packs fixes.
    */
   displayOrder: number;
   /** Si true : ne pas proposer comme CTA principal (filet bas). */
@@ -73,9 +73,9 @@ export const GUEST_SUPPORT_PACKS: readonly GuestSupportPack[] = [
   },
   {
     key: "guest_candle",
-    labelFr: "Geste / Bougie Commémorative",
-    labelEn: "Gesture / Memorial Candle",
-    priceCents: 15_00,
+    labelFr: "Lueur",
+    labelEn: "Glow",
+    priceCents: 19_00,
     displayOrder: 4,
     secondary: true,
   },

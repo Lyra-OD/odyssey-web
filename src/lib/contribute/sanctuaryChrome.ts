@@ -28,6 +28,9 @@ export const sanctuarySelectedSurface =
  */
 export const sanctuarySelectBreathe = "sanctuary-select-breathe";
 
+/** sessionStorage : dernière empreinte avant redirect Stripe (rituel Lueur). */
+export const SANCTUARY_LAST_IMPRINT_KEY = "odyssey_sanctuary_last_imprint";
+
 export const sanctuarySelectedLabel = "text-teal-300/90";
 
 export const sanctuaryHoverDashed =

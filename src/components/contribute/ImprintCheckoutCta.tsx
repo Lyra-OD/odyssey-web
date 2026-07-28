@@ -5,7 +5,10 @@ import { Loader2 } from "lucide-react";
 
 import { isPatronAmountValid } from "@/src/components/contribute/PatronAmountField";
 import { isSanctuaryVisualPreview } from "@/src/lib/contribute/sanctuaryPreview";
-import { sanctuarySubmitButton } from "@/src/lib/contribute/sanctuaryChrome";
+import {
+  SANCTUARY_LAST_IMPRINT_KEY,
+  sanctuarySubmitButton,
+} from "@/src/lib/contribute/sanctuaryChrome";
 import { parseApiJson } from "@/src/lib/http/parseApiJson";
 import { formatWizardPrice } from "@/src/lib/wizard/wizardPricing";
 
@@ -160,6 +163,11 @@ export function ImprintCheckoutCta({
               : t.errorGeneric,
         );
         return;
+      }
+      try {
+        sessionStorage.setItem(SANCTUARY_LAST_IMPRINT_KEY, productKey);
+      } catch {
+        /* private mode / quota — rituel Lueur soft-fail */
       }
       window.location.assign(body.url);
     } catch {

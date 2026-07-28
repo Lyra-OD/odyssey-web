@@ -11,6 +11,8 @@ import {
 import { ImprintCheckoutCta } from "@/src/components/contribute/ImprintCheckoutCta";
 import { GuestVoiceRecorder } from "@/src/components/contribute/GuestVoiceRecorder";
 import { GuestVideoRecorder } from "@/src/components/contribute/GuestVideoRecorder";
+import { SanctuaryLueurOrb } from "@/src/components/contribute/SanctuaryLueurOrb";
+import { SanctuaryLueurPanel } from "@/src/components/contribute/SanctuaryLueurPanel";
 import { PatronAmountField } from "@/src/components/contribute/PatronAmountField";
 import {
   SanctuaryDepositForm,
@@ -25,6 +27,7 @@ import {
 import {
   SANCTUARY_HALO_TEAL,
   SANCTUARY_HALO_UV,
+  SANCTUARY_LAST_IMPRINT_KEY,
   sanctuaryGhostButton,
   sanctuarySecondaryButton,
 } from "@/src/lib/contribute/sanctuaryChrome";
@@ -105,6 +108,7 @@ const copy = {
       "Si le cœur vous en dit, vous pouvez offrir un autre geste, sans obligation.",
     contribSuccess: "Merci. Votre soutien a bien été enregistré.",
     contribCancel: "Paiement annulé. Vous pouvez choisir une autre empreinte.",
+    lueurSettle: "Votre lueur rejoint le Sanctuaire…",
   },
   en: {
     brandWordmark: "Odyssey",
@@ -132,6 +136,7 @@ const copy = {
       "If you wish, you may offer another gesture, with no obligation.",
     contribSuccess: "Thank you. Your support has been recorded.",
     contribCancel: "Payment cancelled. You can choose another imprint.",
+    lueurSettle: "Your glow joins the Sanctuary…",
   },
 } as const;
 
@@ -156,6 +161,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
   const [contribFlash, setContribFlash] = useState<
     "success" | "cancel" | null
   >(null);
+  const [lueurSettling, setLueurSettling] = useState(false);
 
   const handleSelectPack = (key: string) => {
     setSelectedPackKey(key);
@@ -218,6 +224,30 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
       setSelectedPackKey(null);
       setVoiceMediaId(null);
       setVideoMediaId(null);
+
+      let lastImprint: string | null = null;
+      try {
+        lastImprint = sessionStorage.getItem(SANCTUARY_LAST_IMPRINT_KEY);
+        sessionStorage.removeItem(SANCTUARY_LAST_IMPRINT_KEY);
+      } catch {
+        lastImprint = null;
+      }
+
+      if (contrib === "success" && lastImprint === "guest_candle") {
+        setLueurSettling(true);
+        const timer = window.setTimeout(() => {
+          setLueurSettling(false);
+          setContribFlash("success");
+        }, 2600);
+        params.delete("contrib");
+        params.delete("session_id");
+        const next = `${window.location.pathname}${
+          params.toString() ? `?${params.toString()}` : ""
+        }`;
+        window.history.replaceState({}, "", next);
+        return () => window.clearTimeout(timer);
+      }
+
       setContribFlash(contrib);
       params.delete("contrib");
       params.delete("session_id");
@@ -328,7 +358,25 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
           </p>
         </header>
 
-        {contribFlash ? (
+        {lueurSettling ? (
+          <div
+            className="mb-10 flex flex-col items-center gap-5"
+            role="status"
+            aria-live="polite"
+          >
+            <div className="sanctuary-lueur-settle">
+              <SanctuaryLueurOrb
+                size="ritual"
+                aria-label={locale === "fr" ? "Lueur" : "Glow"}
+              />
+            </div>
+            <p className="text-center font-editorial text-lg text-teal-100/90">
+              {t.lueurSettle}
+            </p>
+          </div>
+        ) : null}
+
+        {contribFlash && !lueurSettling ? (
           <p
             className={`mb-8 text-center text-sm font-light ${
               contribFlash === "success"
@@ -523,6 +571,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                       embedded
                     />
                   }
+                  lueurSlot={<SanctuaryLueurPanel locale={locale} />}
                   patronSlot={
                     <PatronAmountField
                       locale={locale}

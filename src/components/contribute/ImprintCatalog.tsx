@@ -32,6 +32,8 @@ export type ImprintCatalogProps = {
   voiceSlot?: ReactNode;
   /** Interaction témoignage. Rendue dans la carte `guest_video` ouverte. */
   videoSlot?: ReactNode;
+  /** Présence Lueur. Rendue dans la carte `guest_candle` ouverte. */
+  lueurSlot?: ReactNode;
   /** Montant mécène. Rendu dans la carte `guest_patron` ouverte. */
   patronSlot?: ReactNode;
 };
@@ -54,7 +56,7 @@ const EXPAND: Record<"fr" | "en", Record<string, ExpandCopy>> = {
     },
     guest_candle: {
       inspiration: "Une lumière discrète.",
-      body: "Un geste simple. Votre présence, sans enregistrement.",
+      body: "Votre présence, sans enregistrement. Une lueur qui rejoint le Sanctuaire.",
     },
     guest_patron: {
       inspiration: "Un geste à la mesure de votre cœur.",
@@ -76,7 +78,7 @@ const EXPAND: Record<"fr" | "en", Record<string, ExpandCopy>> = {
     },
     guest_candle: {
       inspiration: "A quiet light.",
-      body: "A simple gesture. Your presence, with no recording.",
+      body: "Your presence, with no recording. A glow that joins the Sanctuary.",
     },
     guest_patron: {
       inspiration: "A gift measured by the heart.",
@@ -120,6 +122,7 @@ export function ImprintCatalog({
   onSelect,
   voiceSlot,
   videoSlot,
+  lueurSlot,
   patronSlot,
 }: ImprintCatalogProps) {
   const t = copy[locale];
@@ -143,6 +146,7 @@ export function ImprintCatalog({
             delayIndex={i}
             voiceSlot={voiceSlot}
             videoSlot={videoSlot}
+            lueurSlot={lueurSlot}
             patronSlot={patronSlot}
           />
         ))}
@@ -160,6 +164,7 @@ export function ImprintCatalog({
               delayIndex={primary.length + i}
               voiceSlot={voiceSlot}
               videoSlot={videoSlot}
+              lueurSlot={lueurSlot}
               patronSlot={patronSlot}
             />
           ))}
@@ -181,6 +186,7 @@ function PackRow({
   delayIndex,
   voiceSlot,
   videoSlot,
+  lueurSlot,
   patronSlot,
 }: {
   pack: ImprintPack;
@@ -190,6 +196,7 @@ function PackRow({
   delayIndex: number;
   voiceSlot?: ReactNode;
   videoSlot?: ReactNode;
+  lueurSlot?: ReactNode;
   patronSlot?: ReactNode;
 }) {
   const expand = EXPAND[locale][pack.key];
@@ -200,6 +207,8 @@ function PackRow({
       interaction = voiceSlot;
     } else if (pack.key === "guest_video" && videoSlot) {
       interaction = videoSlot;
+    } else if (pack.key === "guest_candle" && lueurSlot) {
+      interaction = lueurSlot;
     } else if (pack.key === "guest_patron" && patronSlot) {
       interaction = patronSlot;
     }

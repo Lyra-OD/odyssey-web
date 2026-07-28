@@ -24,7 +24,7 @@ const ROLE_LABEL: Record<
   voice: { fr: "Voix", en: "Voice" },
   video: { fr: "Témoignage filmé", en: "Filmed testimony" },
   coproducer: { fr: "Coproducteur", en: "Co-producer" },
-  candle: { fr: "Geste", en: "Gesture" },
+  candle: { fr: "Lueur", en: "Glow" },
   patron: { fr: "Mécène", en: "Patron" },
 };
 

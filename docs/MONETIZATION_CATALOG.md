@@ -21,7 +21,7 @@ l'**invité** peut offrir — plus les leviers **documentés à venir** et les *
 | Dimension | Valeur |
 |-----------|--------|
 | Forfaits famille | **0 / 179 / 349 / 499 $** |
-| Empreintes Sanctuaire actives | **5** (voix, vidéo, coproduction, bougie, mécène) |
+| Empreintes Sanctuaire actives | **5** (voix, vidéo, coproduction, lueur, mécène) |
 | Panier moyen invité cible | **~80–100 $** ARPU payant |
 | Soft Cap médias famille | **50** — médias **invités exclus** |
 | Feature flag | `viral_loop_enabled` = **false** jusqu'à fin Phase 3a |
@@ -60,7 +60,7 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 | **Voix dans le film** | `guest_voice` | **69 $** | Ancre / cœur | ✅ config · ✅ capture avant paiement (3b V1) |
 | **Témoignage filmé** (live caméra) | `guest_video` | **119 $** | Staple cérémonie | ✅ config · ✅ capture avant paiement (3b V1) |
 | **Coproduction** (HD + social + générique) | `guest_heritage` | **129 $** | Statut | ✅ |
-| **Geste / Bougie** | `guest_candle` | **15 $** | Secondaire (jamais CTA #1) | ✅ |
+| **Lueur** | **19 $** | `guest_candle` | Secondaire (jamais CTA #1) | ✅ présence V1 |
 | **Mécène** (montant libre) | `guest_patron` | **150–1000 $** (sugg. **250 $**) | Asymétrie | ✅ config · 🔜 checkout amount |
 | Pack HD | `guest_hd` | ~~49 $~~ | — | ⚠️ **DÉPRÉCIÉ** |
 

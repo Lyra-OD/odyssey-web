@@ -85,7 +85,7 @@ Achetées par **les proches** sur `/[lang]/contribute/[token]`. Achat personnel 
 | **Voix dans le film** | **69 $** | `guest_voice` | Ancre / cœur |
 | **Témoignage filmé** (live) | **119 $** | `guest_video` | Capture live Phase 3b |
 | **Coproduction** | **129 $** | `guest_heritage` | HD + social + générique |
-| **Bougie** | **15 $** | `guest_candle` | Secondaire |
+| **Lueur** | **19 $** | `guest_candle` | Secondaire |
 | **Mécène** | **150–1000 $** | `guest_patron` | Montant libre (sugg. 250 $) |
 | Pack HD | ~~49 $~~ | `guest_hd` | **⚠️ DÉPRÉCIÉ** |
 

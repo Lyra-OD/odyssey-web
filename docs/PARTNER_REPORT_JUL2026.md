@@ -56,7 +56,7 @@ En cinq jours, Odyssey a basculé d’un modèle « jetons + paywall précoce »
 |-----|-------|-----------------|
 | Entrée | Friction / jetons | Brouillon gratuit tous canaux |
 | Forfaits | 149 / 299 (+ 0 Souvenir) | **0 / 179 / 349 / 499** |
-| Invité | Packs legacy / absent | Voix **69** · Vidéo **119** · Copro **129** · Bougie **15** · Mécène **150–1000** |
+| Invité | Packs legacy / absent | Voix **69** · Vidéo **119** · Copro **129** · Lueur **19** · Mécène **150–1000** |
 | Soft Cap | — | ≥50 médias → Héritage ; musique officielle → Licence 39 $ ou Héritage |
 | Partenaire | Wallets jetons | **RevShare only** (10 % platform → 30 % Net) |
 | Studio | Owner seul | **Editor** steps 3–5, prix masqué |

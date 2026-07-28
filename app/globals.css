@@ -323,6 +323,107 @@ body {
   animation: sanctuary-halo-breathe 4.2s ease-in-out infinite;
 }
 
+/* Sanctuaire — Lueur (présence vaporeuse, breathe déphasé via --lueur-delay) */
+@keyframes sanctuary-lueur-mist {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+  50% {
+    opacity: 0.48;
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+}
+
+@keyframes sanctuary-lueur-halo {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.72;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+@keyframes sanctuary-lueur-core {
+  0%,
+  100% {
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes sanctuary-lueur-settle {
+  0% {
+    opacity: 0;
+    transform: translateY(28%) scale(0.72);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(8%) scale(1);
+  }
+  100% {
+    opacity: 0.35;
+    transform: translateY(-18%) scale(0.88);
+  }
+}
+
+.sanctuary-lueur-orb__mist,
+.sanctuary-lueur-orb__halo,
+.sanctuary-lueur-orb__core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.sanctuary-lueur-orb__mist {
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(
+    circle,
+    rgba(34, 211, 238, 0.22) 0%,
+    rgba(45, 212, 191, 0.1) 42%,
+    transparent 70%
+  );
+  filter: blur(22px);
+  animation: sanctuary-lueur-mist 4.2s ease-in-out infinite;
+  animation-delay: var(--lueur-delay, 0s);
+}
+
+.sanctuary-lueur-orb__halo {
+  width: 88%;
+  height: 88%;
+  background: radial-gradient(
+    circle,
+    rgba(153, 246, 228, 0.45) 0%,
+    rgba(45, 212, 191, 0.18) 48%,
+    transparent 72%
+  );
+  filter: blur(10px);
+  animation: sanctuary-lueur-halo 4.2s ease-in-out infinite;
+  animation-delay: var(--lueur-delay, 0s);
+}
+
+.sanctuary-lueur-orb__core {
+  width: 42%;
+  height: 42%;
+  animation: sanctuary-lueur-core 4.2s ease-in-out infinite;
+  animation-delay: var(--lueur-delay, 0s);
+}
+
+.sanctuary-lueur-settle {
+  animation: sanctuary-lueur-settle 2.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 .magic-depth-scrim {
   position: fixed;
   inset: 0;
@@ -501,6 +602,10 @@ body {
   .voice-memo-wave-breathe,
   .voice-memo-wave-breathe-live,
   .voice-memo-halo-breathe,
+  .sanctuary-lueur-orb__mist,
+  .sanctuary-lueur-orb__halo,
+  .sanctuary-lueur-orb__core,
+  .sanctuary-lueur-settle,
   .odyssey-connexion-mark-reveal {
     animation: none;
     filter: none;

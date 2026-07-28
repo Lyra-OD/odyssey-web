@@ -88,7 +88,7 @@ WHERE id = '<pilote_tenant_id>';
 3. **6ᵉ** photo → **403** `{ "error": "guest_photo_limit_reached" }`.
 
 ### C. Empreinte payante → fonds
-1. Invité paie une empreinte légère (ex. **Bougie 15 $** ou **Voix 69 $**) — Stripe test.  
+1. Invité paie une empreinte légère (ex. **Lueur 19 $** ou **Voix 69 $**) — Stripe test.  
 2. Retour Sanctuaire → phase **catalogue** (pas dépôt) + merci + invitation à un autre geste (optionnel).  
 3. Webhook `checkout.session.completed` → RPC `accrue_guest_micro_checkout`.  
 4. SQL : solde `family_tribute_fund_balances` pour le `project_id` > 0.  

@@ -17,7 +17,7 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 > entrée en **brouillon gratuit**, paywall **strict à l'export** (min Héritage **179 $**),
 > pouvant être financé par la **Boucle Virale / Fonds Commémoratif**. Grille Quiet Luxury accessible :
 > Héritage **179 $** · Éternité **349 $** · Légendaire **499 $**. Empreintes Sanctuaire :
-> Voix **69 $** · Vidéo **119 $** · Coproduction **129 $** · Bougie **15 $** · Mécène **150–1000 $**.
+> Voix **69 $** · Vidéo **119 $** · Coproduction **129 $** · Lueur **19 $** · Mécène **150–1000 $**.
 > Canon dédié : [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md).
 
 ---

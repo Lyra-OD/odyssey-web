@@ -59,7 +59,7 @@ Le **Fonds** est un **crédit produit** (remise sur l'hommage), **jamais** un vi
 | 1 | `guest_voice` | Voix dans le film | **69 $** | Ancre / cœur panier |
 | 2 | `guest_video` | Témoignage filmé (live) | **119 $** | Staple cérémonie — caméra in-app |
 | 3 | `guest_heritage` | Coproduction (HD + social + générique) | **129 $** | Statut |
-| 4 | `guest_candle` | Geste / Bougie | **15 $** | Secondaire (jamais CTA #1) |
+| 4 | `guest_candle` | Lueur / Glow | **19 $** | Secondaire (jamais CTA #1) |
 | 5 | `guest_patron` | Mécène (montant libre) | **150–1000 $** (suggestion **250 $**) | Asymétrie |
 | — | `guest_hd` | Pack HD | ~~49 $~~ | **⚠️ DÉPRÉCIÉ** (cannibalise la voix) |
 
@@ -146,7 +146,7 @@ nouveaux `memorialFund.cascade.test.ts`, `channelProfile.test.ts`.
 2. EMPREINTE (payant, optionnel)
    Pont : « Entrez dans le film de la cérémonie »
    → catalogue ancré : Voix 69 → Témoignage filmé 119 → Coproduction 129
-   → Bougie 15 (secondaire) · Mécène 150–1000
+   → Lueur 19 (secondaire) · Mécène 150–1000
    → guest_video = enregistrement LIVE (tél. / webcam), pas upload galerie
    → Voix / témoignage / mini-clip : « soumis à la famille pour intégration »
    → crédit fonds → cascade famille (P1→P2→P3, surplus = produit)

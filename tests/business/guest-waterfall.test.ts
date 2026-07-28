@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 
 /**
  * Cascade V-Final — waterfall d'une contribution invité (Boucle Virale).
- * Grille Phase 0 (22/07/2026) : Voix 69 $ · Vidéo 119 $ · Coproduction 129 $ · Bougie 15 $.
+ * Grille Phase 0 (22/07/2026) : Voix 69 $ · Vidéo 119 $ · Coproduction 129 $ · Lueur 19 $.
  */
 
 const PLATFORM_FEE_BPS = 1000;
@@ -82,12 +82,12 @@ describe("Waterfall invité — tenant freemium (partenaire)", () => {
     expect(a.fundCreditCents).toBe(11_610);
   });
 
-  it("Bougie 15 $ → net 13,50 $, commission 4,05 $, crédit fonds 13,50 $", () => {
-    const a = accrueGuestMicroCheckout(15_00, { isFreemium: true });
-    expect(a.platformFeeCents).toBe(150);
-    expect(a.netDistributableCents).toBe(1_350);
-    expect(a.commissionCents).toBe(405);
-    expect(a.fundCreditCents).toBe(1_350);
+  it("Lueur 19 $ → net 17,10 $, commission 5,13 $, crédit fonds 17,10 $", () => {
+    const a = accrueGuestMicroCheckout(19_00, { isFreemium: true });
+    expect(a.platformFeeCents).toBe(190);
+    expect(a.netDistributableCents).toBe(1_710);
+    expect(a.commissionCents).toBe(513);
+    expect(a.fundCreditCents).toBe(1_710);
   });
 
   it("Mécène 250 $ → net 225 $, commission 67,50 $, crédit fonds 225 $", () => {
@@ -111,14 +111,14 @@ describe("Waterfall invité — tenant B2C direct (non freemium)", () => {
 
 describe("Waterfall invité — invariants & garde-fous", () => {
   it("conservation : platform_fee + net == gross", () => {
-    for (const gross of [15_00, 69_00, 119_00, 129_00, 999_99]) {
+    for (const gross of [19_00, 69_00, 119_00, 129_00, 999_99]) {
       const a = accrueGuestMicroCheckout(gross, { isFreemium: true });
       expect(a.platformFeeCents + a.netDistributableCents).toBe(gross);
     }
   });
 
   it("commission ≤ net et crédit fonds ≤ net (bornes)", () => {
-    for (const gross of [15_00, 69_00, 119_00]) {
+    for (const gross of [19_00, 69_00, 119_00]) {
       const a = accrueGuestMicroCheckout(gross, { isFreemium: true });
       expect(a.commissionCents).toBeLessThanOrEqual(a.netDistributableCents);
       expect(a.fundCreditCents).toBeLessThanOrEqual(a.netDistributableCents);
