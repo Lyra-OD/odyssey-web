@@ -267,33 +267,32 @@ function buildMediaElements(
 function buildMusicElements(
   plan: OdysseyRenderPlan,
   introDur: number,
-  chapterAudio: OdysseyRenderPlan["chapterAudio"],
 ): CreatomateElement[] {
   const music = cinematicTheme.music;
+  const bedStems = plan.audioStems.filter((s) => s.layer === "bed");
   const elements: CreatomateElement[] = [];
   let segIndex = 0;
 
-  for (const track of chapterAudio) {
+  for (const bed of bedStems) {
     const segments: MusicSegment[] = buildDuckedMusicSegments({
       contentOffsetSec: introDur,
-      chapterContentStartSec: track.timeSec,
-      chapterContentDurationSec: track.durationSec,
+      chapterContentStartSec: bed.timeSec,
+      chapterContentDurationSec: bed.durationSec,
       duckIntervals: plan.duckIntervals,
       bedVolume: music.bedVolume,
-      duckVolume: music.duckVolume,
       attackSec: music.duckAttackSec,
       releaseSec: music.duckReleaseSec,
     });
 
     for (const seg of segments) {
       elements.push({
-        id: `music-${track.chapterId}-${segIndex++}`,
+        id: `bed-${bed.chapterId ?? "global"}-${segIndex++}`,
         type: "audio",
-        track: 5,
+        track: music.creatomateTracks.bed,
         time: seg.timeSec,
         duration: seg.durationSec,
-        source: track.url,
-        trim_start: seg.trimStartSec,
+        source: bed.url,
+        trim_start: bed.trimStartSec + seg.trimStartSec,
         volume: seg.volume,
         audio_fade_in: seg.fadeInSec,
         audio_fade_out: seg.fadeOutSec,
@@ -301,6 +300,7 @@ function buildMusicElements(
     }
   }
 
+  // Phase 2 : émettre ghost (track 6) / foreground (track 7) ici.
   return elements;
 }
 
@@ -322,7 +322,7 @@ export function buildCreatomateSource(
   const elements: CreatomateElement[] = [
     ...buildSignatureIntro(plan),
     ...buildMediaElements(plan, introDur),
-    ...buildMusicElements(plan, introDur, plan.chapterAudio),
+    ...buildMusicElements(plan, introDur),
     ...buildSignatureOutro(outroStart),
   ];
 

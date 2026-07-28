@@ -1,30 +1,16 @@
 /**
- * Construction timeline + intervalles de ducking (fonctions pures).
+ * Construction timeline visuelle (fonctions pures).
+ * Ducking bed ← sync : voir mixBus.compileDuckEnvelopes.
  */
 
 import { cinematicTheme } from "@/src/lib/creatomate/cinematicTheme";
+import { bedVolumeForDuckCause } from "@/src/lib/creatomate/mixBus";
 import type {
   DuckInterval,
   ResolvedMediaAsset,
   TimelineMediaClip,
 } from "@/src/lib/creatomate/types";
 import type { WizardStoryboardState } from "@/src/lib/wizard/wizardState";
-
-function mergeDuckIntervals(intervals: DuckInterval[]): DuckInterval[] {
-  if (intervals.length === 0) return [];
-  const sorted = [...intervals].sort((a, b) => a.startSec - b.startSec);
-  const out: DuckInterval[] = [{ ...sorted[0]! }];
-  for (let i = 1; i < sorted.length; i++) {
-    const cur = sorted[i]!;
-    const last = out[out.length - 1]!;
-    if (cur.startSec <= last.endSec + 0.05) {
-      last.endSec = Math.max(last.endSec, cur.endSec);
-    } else {
-      out.push({ ...cur });
-    }
-  }
-  return out;
-}
 
 /**
  * Ordonne les clips selon storyboard.chapters[].mediaIds.
@@ -35,7 +21,6 @@ export function buildTimelineClips(params: {
   mediaById: Map<string, ResolvedMediaAsset>;
 }): {
   clips: TimelineMediaClip[];
-  duckIntervals: DuckInterval[];
   contentDurationSec: number;
   chapterSpans: Array<{
     chapterId: string;
@@ -45,7 +30,6 @@ export function buildTimelineClips(params: {
 } {
   const photoDur = cinematicTheme.media.photoDurationSec;
   const clips: TimelineMediaClip[] = [];
-  const duckRaw: DuckInterval[] = [];
   const chapterSpans: Array<{
     chapterId: string;
     contentStartSec: number;
@@ -75,13 +59,6 @@ export function buildTimelineClips(params: {
         hasAudio: asset.hasAudio,
       });
 
-      if (asset.kind === "video" && asset.hasAudio) {
-        duckRaw.push({
-          startSec: cursor,
-          endSec: cursor + durationSec,
-        });
-      }
-
       cursor += durationSec;
     }
     chapterSpans.push({
@@ -93,7 +70,6 @@ export function buildTimelineClips(params: {
 
   return {
     clips,
-    duckIntervals: mergeDuckIntervals(duckRaw),
     contentDurationSec: cursor,
     chapterSpans,
   };
@@ -109,8 +85,7 @@ export type MusicSegment = {
 };
 
 /**
- * Segmente la musique d'un chapitre : bed vs duck selon les vidéos sonores.
- * duckIntervals / chapter spans sont en temps **contenu** (hors intro).
+ * Segmente un stem **bed** selon les enveloppes de ducking (sync → bed).
  */
 export function buildDuckedMusicSegments(params: {
   contentOffsetSec: number;
@@ -118,7 +93,6 @@ export function buildDuckedMusicSegments(params: {
   chapterContentDurationSec: number;
   duckIntervals: DuckInterval[];
   bedVolume: string;
-  duckVolume: string;
   attackSec: number;
   releaseSec: number;
 }): MusicSegment[] {
@@ -128,7 +102,6 @@ export function buildDuckedMusicSegments(params: {
     chapterContentDurationSec,
     duckIntervals,
     bedVolume,
-    duckVolume,
     attackSec,
     releaseSec,
   } = params;
@@ -140,6 +113,7 @@ export function buildDuckedMusicSegments(params: {
     .map((d) => ({
       startSec: Math.max(d.startSec, chapterContentStartSec),
       endSec: Math.min(d.endSec, chapterEnd),
+      causedBy: d.causedBy,
     }))
     .filter((d) => d.endSec - d.startSec > 0.05);
 
@@ -160,12 +134,16 @@ export function buildDuckedMusicSegments(params: {
     if (dur < 0.05) continue;
 
     const mid = a + dur / 2;
-    const isDuck = ducks.some((d) => mid >= d.startSec && mid < d.endSec);
+    const active = ducks.find((d) => mid >= d.startSec && mid < d.endSec);
+    const isDuck = Boolean(active);
+    const volume = isDuck
+      ? bedVolumeForDuckCause(active?.causedBy ?? "sync")
+      : bedVolume;
 
     segments.push({
       timeSec: contentOffsetSec + a,
       durationSec: dur,
-      volume: isDuck ? duckVolume : bedVolume,
+      volume,
       fadeInSec: Math.min(isDuck ? attackSec : 0.3, dur / 2),
       fadeOutSec: Math.min(isDuck ? releaseSec : 0.3, dur / 2),
       trimStartSec: trimCursor,

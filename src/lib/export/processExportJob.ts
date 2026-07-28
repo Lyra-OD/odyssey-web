@@ -5,7 +5,7 @@ import {
   essentialsFromWizard,
 } from "@/src/lib/creatomate/buildPlan";
 import { buildCreatomateRenderBody } from "@/src/lib/creatomate/payloadBuilder";
-import { resolveChapterAudioTracks } from "@/src/lib/creatomate/resolveChapterAudio";
+import { resolveAudioStems } from "@/src/lib/creatomate/resolveAudioStems";
 import { resolveStoryboardMediaAssets } from "@/src/lib/creatomate/resolveMediaAssets";
 import { buildTimelineClips } from "@/src/lib/creatomate/timeline";
 import {
@@ -163,14 +163,15 @@ async function submitCreatomateJob(
       storyboard,
     });
 
-    const { chapterSpans } = buildTimelineClips({
+    const { clips, chapterSpans } = buildTimelineClips({
       storyboard,
       mediaById,
     });
 
-    const chapterAudioRows = await resolveChapterAudioTracks(admin, {
+    const audioStems = await resolveAudioStems(admin, {
       storyboard,
       chapterSpans,
+      clips,
       allowStingrayMaster: job.allow_stingray_master,
     });
 
@@ -181,14 +182,8 @@ async function submitCreatomateJob(
       storyboard,
       mediaById,
       essentials: essentialsFromWizard(wizard),
-      chapterAudio: chapterAudioRows.map((row) => ({
-        chapterId: row.chapterId,
-        url: row.url,
-        contentStartSec: row.contentStartSec,
-        contentDurationSec: row.contentDurationSec,
-      })),
+      audioStems,
     });
-
     const renderBody = buildCreatomateRenderBody(plan);
     const result = await createOdysseyRender(renderBody);
 

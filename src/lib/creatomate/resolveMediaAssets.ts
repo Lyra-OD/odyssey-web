@@ -62,7 +62,7 @@ export async function resolveStoryboardMediaAssets(
     paths.push(path);
   }
 
-  // Songs upload — signed later in resolveChapterAudio
+  // Songs upload / bed — signés dans resolveAudioStems
   const signedByPath = new Map<string, string>();
   if (paths.length > 0) {
     const { data: signed, error: signError } = await admin.storage

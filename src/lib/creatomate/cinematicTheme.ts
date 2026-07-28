@@ -77,11 +77,22 @@ export const cinematicTheme = {
 
   music: {
     bedVolume: "55%",
+    /** Duck bed sous vidéo sync (layer sync). */
+    duckFromSync: "22%",
+    /** Duck bed sous VO / mémo (layer foreground) — Phase 2. */
+    duckFromVoice: "18%",
+    /** @deprecated alias → duckFromSync */
     duckVolume: "22%",
     duckAttackSec: 0.55,
     duckReleaseSec: 0.7,
     chapterFadeInSec: 1.8,
     chapterFadeOutSec: 1.2,
+    /** Tracks Creatomate par layer (debug / mute). */
+    creatomateTracks: {
+      bed: 5,
+      ghost: 6,
+      foreground: 7,
+    },
   },
 
   frameRate: "25 fps",

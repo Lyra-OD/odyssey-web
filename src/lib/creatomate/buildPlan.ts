@@ -1,13 +1,14 @@
 /**
- * Assemble un OdysseyRenderPlan à partir du wizard + médias hydratés.
+ * Assemble un OdysseyRenderPlan à partir du wizard + médias + stems audio.
  */
 
-import { cinematicTheme } from "@/src/lib/creatomate/cinematicTheme";
 import { resolveCreatomateResolution } from "@/src/lib/creatomate/resolveResolution";
+import { compileDuckEnvelopes } from "@/src/lib/creatomate/mixBus";
 import { buildTimelineClips } from "@/src/lib/creatomate/timeline";
 import type {
   OdysseyRenderPlan,
   RenderEssentials,
+  ResolvedAudioStem,
   ResolvedMediaAsset,
 } from "@/src/lib/creatomate/types";
 import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
@@ -15,6 +16,7 @@ import type {
   WizardStateV1,
   WizardStoryboardState,
 } from "@/src/lib/wizard/wizardState";
+import { cinematicTheme } from "@/src/lib/creatomate/cinematicTheme";
 
 function formatDatesLine(
   birthDate?: string,
@@ -49,34 +51,15 @@ export function buildOdysseyRenderPlan(params: {
   storyboard: WizardStoryboardState;
   mediaById: Map<string, ResolvedMediaAsset>;
   essentials: RenderEssentials;
-  chapterAudio: Array<{
-    chapterId: string;
-    url: string;
-    contentStartSec: number;
-    contentDurationSec: number;
-  }>;
+  /** Graphe audio déjà résolu (One Bed Law + sync). */
+  audioStems: ResolvedAudioStem[];
 }): OdysseyRenderPlan {
-  const { clips, duckIntervals, chapterSpans } = buildTimelineClips({
+  const { clips } = buildTimelineClips({
     storyboard: params.storyboard,
     mediaById: params.mediaById,
   });
 
-  const audioByChapter = new Map(
-    params.chapterAudio.map((a) => [a.chapterId, a] as const),
-  );
-
-  const chapterAudio = chapterSpans
-    .map((span) => {
-      const track = audioByChapter.get(span.chapterId);
-      if (!track || span.contentDurationSec <= 0) return null;
-      return {
-        chapterId: span.chapterId,
-        url: track.url,
-        timeSec: span.contentStartSec,
-        durationSec: span.contentDurationSec,
-      };
-    })
-    .filter((x): x is NonNullable<typeof x> => Boolean(x));
+  const duckIntervals = compileDuckEnvelopes(params.audioStems);
 
   return {
     jobId: params.jobId,
@@ -85,8 +68,8 @@ export function buildOdysseyRenderPlan(params: {
     resolution: resolveCreatomateResolution(params.paidPackage),
     essentials: params.essentials,
     clips,
+    audioStems: params.audioStems,
     duckIntervals,
-    chapterAudio,
   };
 }
 
