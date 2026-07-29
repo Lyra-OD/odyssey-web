@@ -363,7 +363,7 @@ body {
 .sanctuary-lueur-frame {
   position: relative;
   width: 100%;
-  max-width: 21rem;
+  max-width: 17.5rem;
   aspect-ratio: 1;
   height: auto;
   flex-shrink: 0;
@@ -375,7 +375,7 @@ body {
 }
 
 .sanctuary-lueur-frame--ritual {
-  max-width: 25rem;
+  max-width: 21rem;
 }
 
 .sanctuary-lueur-video {
@@ -385,16 +385,16 @@ body {
   object-fit: contain;
   mix-blend-mode: screen;
   pointer-events: none;
-  transform: scale(1.45);
+  transform: scale(1.18);
   transform-origin: center;
 
-  filter: contrast(1.5) brightness(0.7);
+  filter: contrast(1.25) brightness(0.85);
   -webkit-mask-image: radial-gradient(
     circle at center,
-    black 45%,
-    transparent 70%
+    black 52%,
+    transparent 78%
   );
-  mask-image: radial-gradient(circle at center, black 45%, transparent 70%);
+  mask-image: radial-gradient(circle at center, black 52%, transparent 78%);
 }
 
 .sanctuary-lueur-settle {
