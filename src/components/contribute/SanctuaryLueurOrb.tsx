@@ -1,147 +1,137 @@
 "use client";
 
-import { useId, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+
+export const LUEUR_VIDEO_SRC = "/lueur.mp4";
 
 export type SanctuaryLueurOrbProps = {
+  /** single = carte/rituel hero ; sky = Ciel Famille organique */
+  variant?: "single" | "sky";
   size?: "card" | "ritual";
   className?: string;
   "aria-label"?: string;
 };
 
+type OrganicVariant = {
+  rotateDeg: number;
+  mirror: boolean;
+  hueDeg: number;
+  rate: number;
+  startRatio: number;
+};
+
+const HERO: OrganicVariant = {
+  rotateDeg: 0,
+  mirror: false,
+  hueDeg: 0,
+  rate: 1,
+  startRatio: 0,
+};
+
+function rollOrganicVariant(): OrganicVariant {
+  return {
+    rotateDeg: Math.random() * 360,
+    mirror: Math.random() < 0.5,
+    hueDeg: -20 + Math.random() * 40,
+    rate: 0.8 + Math.random() * 0.4,
+    startRatio: Math.random(),
+  };
+}
+
+function frameStyle(v: OrganicVariant): CSSProperties {
+  return {
+    ["--lueur-rotate" as string]: `${v.rotateDeg}deg`,
+    ["--lueur-scale-x" as string]: v.mirror ? "-1" : "1",
+    ["--lueur-hue" as string]: `${v.hueDeg}deg`,
+  };
+}
+
 /**
- * Lueur vivante :
- * 1) enveloppe CSS blob SANS gros blur (la morph reste lisible)
- * 2) SVG : turbulence → displacement de l’ellipse + couche bruit screen
- * 3) ember teal dense
- *
- * Ne jamais animer baseFrequency (perf mobile).
+ * Lueur MP4 (fond noir) + mix-blend-mode: screen.
+ * - variant="single" : présentation hero, zéro random
+ * - variant="sky" : random client-only (Ciel Famille), hydratation-safe
  */
 export function SanctuaryLueurOrb({
+  variant = "single",
   size = "card",
   className = "",
   "aria-label": ariaLabel,
 }: SanctuaryLueurOrbProps) {
-  const uid = useId().replace(/:/g, "");
-  const [delaySec] = useState(() => Math.random() * 4.2);
-  const warpId = `lueurWarp-${uid}`;
-  const grainId = `lueurGrain-${uid}`;
-  const veilGradId = `lueurVeil-${uid}`;
-  const dim = size === "ritual" ? "h-40 w-40 md:h-44 md:w-44" : "h-36 w-36";
+  const videoRef = useRef<HTMLVideoElement>(null);
+  /** null = pas encore tiré (sky) → identité = match SSR */
+  const [organic, setOrganic] = useState<OrganicVariant | null>(null);
+
+  const isSky = variant === "sky";
+  const look = isSky ? (organic ?? HERO) : HERO;
+
+  useEffect(() => {
+    if (!isSky) {
+      setOrganic(null);
+      return;
+    }
+    setOrganic(rollOrganicVariant());
+  }, [isSky]);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    if (isSky && organic === null) return;
+
+    const applied = isSky && organic ? organic : HERO;
+    el.playbackRate = applied.rate;
+
+    const seek = () => {
+      if (!Number.isFinite(el.duration) || el.duration <= 0) return;
+      try {
+        el.currentTime = applied.startRatio * el.duration;
+      } catch {
+        /* ignore seek race */
+      }
+    };
+
+    if (el.readyState >= 1) seek();
+    else el.addEventListener("loadedmetadata", seek, { once: true });
+
+    void el.play().catch(() => {});
+
+    return () => {
+      el.removeEventListener("loadedmetadata", seek);
+    };
+  }, [isSky, organic]);
+
   const stageClass =
     size === "ritual"
       ? "sanctuary-lueur-stage sanctuary-lueur-stage--ritual"
       : "sanctuary-lueur-stage";
+  const frameClass =
+    size === "ritual"
+      ? "sanctuary-lueur-frame sanctuary-lueur-frame--ritual"
+      : "sanctuary-lueur-frame";
 
   return (
     <div className={`${stageClass} ${className}`.trim()}>
       <div
-        className={`sanctuary-lueur-orb relative ${dim}`}
-        style={
-          {
-            ["--lueur-delay"]: `${delaySec.toFixed(2)}s`,
-          } as CSSProperties
-        }
+        className={frameClass}
+        style={frameStyle(look)}
         role="img"
         aria-label={ariaLabel}
       >
-        {/* Halo ambiant très soft — flou OK ici (loin, pas la silhouette) */}
-        <div className="sanctuary-lueur-orb__aura" aria-hidden />
-
-        {/* Enveloppe morph — blur minimal pour garder l’asymétrie */}
-        <div className="sanctuary-lueur-orb__envelope" aria-hidden />
-        <div
-          className="sanctuary-lueur-orb__envelope sanctuary-lueur-orb__envelope--drift"
+        <video
+          ref={videoRef}
+          className="sanctuary-lueur-video"
+          src={LUEUR_VIDEO_SRC}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload={isSky ? "metadata" : "auto"}
           aria-hidden
         />
-
-        <svg
-          className="sanctuary-lueur-orb__matter"
-          viewBox="0 0 120 120"
-          width="100%"
-          height="100%"
-          aria-hidden
-          focusable="false"
-        >
-          <defs>
-            <radialGradient id={veilGradId} cx="46%" cy="44%" r="55%">
-              <stop offset="0%" stopColor="#5eead4" stopOpacity="0.75" />
-              <stop offset="35%" stopColor="#2dd4bf" stopOpacity="0.55" />
-              <stop offset="70%" stopColor="#22d3ee" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
-            </radialGradient>
-
-            {/* Déforme l’enveloppe — c’est ça qui casse le cercle parfait */}
-            <filter
-              id={warpId}
-              x="-40%"
-              y="-40%"
-              width="180%"
-              height="180%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.035 0.045"
-                numOctaves="3"
-                seed="11"
-                result="warpNoise"
-              />
-              <feDisplacementMap
-                in="SourceGraphic"
-                in2="warpNoise"
-                scale="18"
-                xChannelSelector="R"
-                yChannelSelector="G"
-              />
-            </filter>
-
-            {/* Grain gazeux visible (haute fréquence) */}
-            <filter
-              id={grainId}
-              x="-30%"
-              y="-30%"
-              width="160%"
-              height="160%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feTurbulence
-                type="fractalNoise"
-                baseFrequency="0.08 0.1"
-                numOctaves="4"
-                seed="3"
-                result="grain"
-              />
-              <feColorMatrix
-                in="grain"
-                type="matrix"
-                values="0 0 0 0 0.12
-                        0 0 0 0 0.9
-                        0 0 0 0 0.85
-                        0 0 0 0.85 0"
-                result="tealGrain"
-              />
-              <feGaussianBlur in="tealGrain" stdDeviation="0.35" />
-            </filter>
-          </defs>
-
-          {/* Corps déformé */}
-          <g className="sanctuary-lueur-orb__body" filter={`url(#${warpId})`}>
-            <ellipse
-              cx="60"
-              cy="60"
-              rx="32"
-              ry="36"
-              fill={`url(#${veilGradId})`}
-            />
-          </g>
-
-          {/* Texture vaporeuse par-dessus — dérive lente */}
-          <g className="sanctuary-lueur-orb__grain" filter={`url(#${grainId})`}>
-            <ellipse cx="60" cy="60" rx="30" ry="34" fill="#fff" opacity="0.55" />
-          </g>
-        </svg>
-
-        <div className="sanctuary-lueur-orb__ember" aria-hidden />
       </div>
     </div>
   );

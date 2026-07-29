@@ -324,121 +324,6 @@ body {
 }
 
 /* Sanctuaire — Lueur : blob lisible + SVG displacement + grain */
-@keyframes sanctuary-lueur-aura-breathe {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: translate(-50%, -50%) scale(0.95);
-  }
-  50% {
-    opacity: 0.55;
-    transform: translate(-50%, -50%) scale(1.08);
-  }
-}
-
-@keyframes sanctuary-lueur-envelope-breathe {
-  0%,
-  100% {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) scale(0.94);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.06);
-  }
-}
-
-@keyframes sanctuary-lueur-envelope-morph {
-  0%,
-  100% {
-    border-radius: 38% 62% 48% 52% / 52% 38% 62% 48%;
-  }
-  20% {
-    border-radius: 62% 38% 55% 45% / 42% 60% 40% 58%;
-  }
-  40% {
-    border-radius: 45% 55% 38% 62% / 60% 45% 55% 40%;
-  }
-  60% {
-    border-radius: 55% 45% 62% 38% / 40% 58% 42% 60%;
-  }
-  80% {
-    border-radius: 42% 58% 50% 50% / 55% 42% 58% 45%;
-  }
-}
-
-@keyframes sanctuary-lueur-envelope-drift-breathe {
-  0%,
-  100% {
-    opacity: 0.4;
-    transform: translate(-52%, -48%) scale(0.9) rotate(-8deg);
-  }
-  50% {
-    opacity: 0.72;
-    transform: translate(-48%, -52%) scale(1.12) rotate(10deg);
-  }
-}
-
-@keyframes sanctuary-lueur-envelope-drift-morph {
-  0%,
-  100% {
-    border-radius: 58% 42% 40% 60% / 48% 55% 45% 52%;
-  }
-  50% {
-    border-radius: 40% 60% 58% 42% / 60% 40% 55% 45%;
-  }
-}
-
-@keyframes sanctuary-lueur-body-drift {
-  0%,
-  100% {
-    opacity: 0.85;
-    transform: rotate(0deg) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: rotate(8deg) scale(1.04);
-  }
-}
-
-@keyframes sanctuary-lueur-grain-drift {
-  0%,
-  100% {
-    opacity: 0.45;
-    transform: rotate(0deg) scale(1.02);
-  }
-  33% {
-    opacity: 0.8;
-    transform: rotate(-14deg) scale(1.08);
-  }
-  66% {
-    opacity: 0.55;
-    transform: rotate(16deg) scale(0.96);
-  }
-}
-
-@keyframes sanctuary-lueur-ember-breathe {
-  0%,
-  100% {
-    opacity: 0.6;
-    transform: translate(-50%, -50%) scale(0.92);
-  }
-  50% {
-    opacity: 0.95;
-    transform: translate(-50%, -50%) scale(1.08);
-  }
-}
-
-@keyframes sanctuary-lueur-ember-morph {
-  0%,
-  100% {
-    border-radius: 52% 48% 44% 56% / 46% 54% 50% 50%;
-  }
-  50% {
-    border-radius: 44% 56% 58% 42% / 58% 42% 52% 48%;
-  }
-}
-
 @keyframes sanctuary-lueur-settle {
   0% {
     opacity: 0;
@@ -457,124 +342,59 @@ body {
 .sanctuary-lueur-stage {
   display: flex;
   width: 100%;
-  min-height: 15.5rem;
+  min-height: 18rem;
   align-items: center;
   justify-content: center;
-  padding: 3.75rem 2.75rem;
+  padding: 0.5rem 0;
   overflow: visible;
+  /* L'ABYSSE : Crucial pour que le mix-blend-mode éclate sur un fond clair */
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0) 65%
+  );
 }
 
 .sanctuary-lueur-stage--ritual {
-  min-height: 17.5rem;
-  padding: 4.25rem 3rem;
+  min-height: 22rem;
+  padding: 0.75rem 0;
 }
 
-.sanctuary-lueur-orb {
+.sanctuary-lueur-frame {
   position: relative;
+  width: 100%;
+  max-width: 21rem;
+  aspect-ratio: 1;
+  height: auto;
   flex-shrink: 0;
-}
-
-.sanctuary-lueur-orb__aura,
-.sanctuary-lueur-orb__envelope,
-.sanctuary-lueur-orb__ember,
-.sanctuary-lueur-orb__matter {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  pointer-events: none;
-}
-
-.sanctuary-lueur-orb__aura {
-  width: 165%;
-  height: 155%;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse 70% 65% at 50% 50%,
-    rgba(34, 211, 238, 0.22) 0%,
-    rgba(45, 212, 191, 0.08) 45%,
-    transparent 72%
-  );
-  filter: blur(22px);
-  animation: sanctuary-lueur-aura-breathe 4.2s ease-in-out infinite;
-  animation-delay: var(--lueur-delay, 0s);
-}
-
-/* Silhouette méduse — blur FAIBLE pour garder l’asymétrie */
-.sanctuary-lueur-orb__envelope {
-  width: 112%;
-  height: 118%;
-  background: radial-gradient(
-    ellipse 58% 54% at 44% 46%,
-    rgba(45, 212, 191, 0.55) 0%,
-    rgba(34, 211, 238, 0.28) 48%,
-    rgba(45, 212, 191, 0) 78%
-  );
-  filter: blur(5px);
-  mix-blend-mode: screen;
-  animation:
-    sanctuary-lueur-envelope-breathe 4.2s ease-in-out infinite,
-    sanctuary-lueur-envelope-morph 9s ease-in-out infinite;
-  animation-delay:
-    var(--lueur-delay, 0s),
-    var(--lueur-delay, 0s);
-}
-
-.sanctuary-lueur-orb__envelope--drift {
-  width: 128%;
-  height: 120%;
-  background: radial-gradient(
-    ellipse 55% 60% at 58% 54%,
-    rgba(34, 211, 238, 0.4) 0%,
-    rgba(45, 212, 191, 0.18) 50%,
-    transparent 76%
-  );
-  filter: blur(6px);
-  animation:
-    sanctuary-lueur-envelope-drift-breathe 4.2s ease-in-out infinite,
-    sanctuary-lueur-envelope-drift-morph 11s ease-in-out infinite;
-  animation-delay:
-    calc(var(--lueur-delay, 0s) + 1.15s),
-    calc(var(--lueur-delay, 0s) + 1.15s);
-}
-
-.sanctuary-lueur-orb__matter {
-  width: 120%;
-  height: 120%;
+  /* overflow: visible ! Ne jamais mettre de hidden sur un glow effect */
   overflow: visible;
+  transform: rotate(var(--lueur-rotate, 0deg))
+    scaleX(var(--lueur-scale-x, 1));
+  filter: hue-rotate(var(--lueur-hue, 0deg));
+}
+
+.sanctuary-lueur-frame--ritual {
+  max-width: 25rem;
+}
+
+.sanctuary-lueur-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   mix-blend-mode: screen;
-  transform: translate(-50%, -50%);
-}
+  pointer-events: none;
+  transform: scale(1.45);
+  transform-origin: center;
 
-.sanctuary-lueur-orb__body {
-  transform-origin: 60px 60px;
-  animation: sanctuary-lueur-body-drift 4.2s ease-in-out infinite;
-  animation-delay: calc(var(--lueur-delay, 0s) + 0.4s);
-}
-
-.sanctuary-lueur-orb__grain {
-  transform-origin: 60px 60px;
-  mix-blend-mode: screen;
-  animation: sanctuary-lueur-grain-drift 4.2s ease-in-out infinite;
-  animation-delay: calc(var(--lueur-delay, 0s) + 0.9s);
-}
-
-.sanctuary-lueur-orb__ember {
-  width: 34%;
-  height: 38%;
-  background: radial-gradient(
-    ellipse 55% 50% at 50% 46%,
-    rgba(94, 234, 212, 0.7) 0%,
-    rgba(45, 212, 191, 0.35) 45%,
-    transparent 78%
+  filter: contrast(1.5) brightness(0.7);
+  -webkit-mask-image: radial-gradient(
+    circle at center,
+    black 45%,
+    transparent 70%
   );
-  filter: blur(7px);
-  mix-blend-mode: screen;
-  animation:
-    sanctuary-lueur-ember-breathe 4.2s ease-in-out infinite,
-    sanctuary-lueur-ember-morph 10s ease-in-out infinite;
-  animation-delay:
-    calc(var(--lueur-delay, 0s) + 1.7s),
-    calc(var(--lueur-delay, 0s) + 1.7s);
+  mask-image: radial-gradient(circle at center, black 45%, transparent 70%);
 }
 
 .sanctuary-lueur-settle {
@@ -759,16 +579,9 @@ body {
   .voice-memo-wave-breathe,
   .voice-memo-wave-breathe-live,
   .voice-memo-halo-breathe,
-  .sanctuary-lueur-orb__aura,
-  .sanctuary-lueur-orb__envelope,
-  .sanctuary-lueur-orb__envelope--drift,
-  .sanctuary-lueur-orb__body,
-  .sanctuary-lueur-orb__grain,
-  .sanctuary-lueur-orb__ember,
   .sanctuary-lueur-settle,
   .odyssey-connexion-mark-reveal {
     animation: none;
-    filter: none;
     transform: none;
     opacity: 1;
   }
@@ -781,35 +594,8 @@ body {
     opacity: 0.48;
   }
 
-  .sanctuary-lueur-orb__aura {
-    opacity: 0.4;
-    filter: blur(18px);
-    transform: translate(-50%, -50%);
-  }
-
-  .sanctuary-lueur-orb__envelope {
-    opacity: 0.85;
-    filter: blur(4px);
-    transform: translate(-50%, -50%);
-    border-radius: 42% 58% 50% 50% / 55% 42% 58% 45%;
-  }
-
-  .sanctuary-lueur-orb__envelope--drift {
-    opacity: 0.5;
-    filter: blur(5px);
-    transform: translate(-50%, -50%);
-  }
-
-  .sanctuary-lueur-orb__body,
-  .sanctuary-lueur-orb__grain {
-    opacity: 0.75;
-  }
-
-  .sanctuary-lueur-orb__ember {
-    opacity: 0.75;
-    filter: blur(6px);
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
+  .sanctuary-lueur-video {
+    animation: none;
   }
 
   .sanctuary-select-breathe,

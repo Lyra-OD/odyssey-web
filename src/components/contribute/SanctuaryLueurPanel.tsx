@@ -21,9 +21,14 @@ const copy = {
 export function SanctuaryLueurPanel({ locale }: SanctuaryLueurPanelProps) {
   const t = copy[locale];
   return (
-    <div className="flex flex-col items-center gap-1">
-      <SanctuaryLueurOrb size="card" aria-label={t.aria} />
-      <p className="-mt-2 text-center text-[11px] font-light tracking-wide text-teal-200/55">
+    <div className="flex w-full flex-col items-center gap-2">
+      <SanctuaryLueurOrb
+        variant="single"
+        size="card"
+        aria-label={t.aria}
+        className="w-full"
+      />
+      <p className="text-center text-[11px] font-light tracking-wide text-teal-200/55">
         {t.whisper}
       </p>
     </div>

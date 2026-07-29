@@ -263,7 +263,13 @@ function PackRow({
               transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
               className="overflow-hidden"
             >
-              <div className="space-y-4 border-t border-teal-400/15 px-4 pb-5 pt-4">
+              <div
+                className={`space-y-4 border-t border-teal-400/15 px-4 pb-5 pt-4 ${
+                  pack.key === "guest_candle"
+                    ? "rounded-b-[0.7rem] bg-black"
+                    : ""
+                }`}
+              >
                 <div className="space-y-2 text-center md:text-left">
                   <p className="font-editorial text-lg leading-snug text-zinc-50 md:text-xl">
                     {expand.inspiration}

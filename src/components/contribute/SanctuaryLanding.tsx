@@ -366,6 +366,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
           >
             <div className="sanctuary-lueur-settle">
               <SanctuaryLueurOrb
+                variant="single"
                 size="ritual"
                 aria-label={locale === "fr" ? "Lueur" : "Glow"}
               />
