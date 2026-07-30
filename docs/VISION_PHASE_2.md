@@ -66,6 +66,8 @@ P6 checkout + RevShare     Data Graph LYRA (faces + arbre)
 4. **Modération famille** — uploads invités en statut `pending_review` jusqu'à approbation (Smart Pacing, pas delete — aligné Manifesto).
 5. **Badge provenance** — « Via Scanner · Invité · [prénom ou anonyme] » sur chaque média.
 
+**Ciel du Sanctuaire (juil. 2026) :** les souvenirs invités deviennent des **étoiles-mémoire** autour d’une Lueur pure centrale ; la famille les accueille dans le film via **Mettre dans le film** / **Garder seulement ici** / **Retirer du ciel**. Canon : [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
+
 **Impact doc technique :** mettre à jour [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) Phase A → **Phase A+** (async guests). Voir [§4](#4-décisions-architecturales-phase-1-pour-faciliter-la-phase-2).
 
 ---

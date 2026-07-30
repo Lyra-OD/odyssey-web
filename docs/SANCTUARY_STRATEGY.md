@@ -6,6 +6,7 @@ Document canonique de **positionnement produit / vente émotionnelle** et de **m
 
 **Documents liés :**
 - [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) — **pivot CEO V1** (grille, Soft Cap, musique, purge jetons) — **prime** sur ce fichier si conflit
+- [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) — **ciel WebGL / étoiles-mémoire** + pont famille → film (vision figée 29 juil. 2026)
 - [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md)
 - [`VISION_PHASE_2.md`](VISION_PHASE_2.md) — Family Fund, diaspora, CPL
 - [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — hook Scanner
