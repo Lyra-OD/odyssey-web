@@ -360,6 +360,13 @@ body {
   padding: 0.75rem 0;
 }
 
+.sanctuary-lueur-stage--sky {
+  min-height: 0;
+  width: auto;
+  padding: 0;
+  background: none;
+}
+
 .sanctuary-lueur-frame {
   position: relative;
   width: 100%;
@@ -376,6 +383,29 @@ body {
 
 .sanctuary-lueur-frame--ritual {
   max-width: 21rem;
+}
+
+.sanctuary-lueur-frame--webgl {
+  width: 100%;
+  max-width: 17.5rem;
+  aspect-ratio: 1;
+  height: auto;
+  overflow: visible;
+}
+
+.sanctuary-lueur-frame--webgl canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.sanctuary-lueur-stage--ritual .sanctuary-lueur-frame--webgl {
+  max-width: 21rem;
+}
+
+.sanctuary-lueur-frame--sky {
+  width: 5rem;
+  max-width: none;
 }
 
 .sanctuary-lueur-video {
@@ -399,6 +429,40 @@ body {
 
 .sanctuary-lueur-settle {
   animation: sanctuary-lueur-settle 2.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* —— Ciel de lueurs (maquette) —— */
+
+.sanctuary-lueur-sky {
+  display: flex;
+  min-height: min(78vh, 40rem);
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.sanctuary-lueur-sky__field {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.sanctuary-lueur-sky__slot {
+  position: absolute;
+  will-change: transform;
+}
+
+.sanctuary-lueur-sky__whisper {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto 1.5rem;
+  max-width: 16rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(153, 246, 228, 0.45);
 }
 
 .magic-depth-scrim {

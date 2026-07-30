@@ -1,138 +1,96 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-} from "react";
+import { Canvas } from "@react-three/fiber";
+import { Suspense } from "react";
+import { WebGLRenderer } from "three";
 
-export const LUEUR_VIDEO_SRC = "/lueur.mp4";
+import { LueurNode } from "@/src/components/contribute/LueurNode";
+import {
+  tierDpr,
+  useVisualTier,
+} from "@/src/components/contribute/constellation/useVisualTier";
+import { ClientWebGLGate } from "@/src/components/contribute/constellation/webglGate";
 
 export type SanctuaryLueurOrbProps = {
-  /** single = carte/rituel hero ; sky = Ciel Famille organique */
   variant?: "single" | "sky";
-  size?: "card" | "ritual";
+  size?: "card" | "ritual" | "sky";
   className?: string;
   "aria-label"?: string;
 };
 
-type OrganicVariant = {
-  rotateDeg: number;
-  mirror: boolean;
-  hueDeg: number;
-  rate: number;
-  startRatio: number;
-};
-
-const HERO: OrganicVariant = {
-  rotateDeg: 0,
-  mirror: false,
-  hueDeg: 0,
-  rate: 1,
-  startRatio: 0,
-};
-
-function rollOrganicVariant(): OrganicVariant {
-  return {
-    rotateDeg: Math.random() * 360,
-    mirror: Math.random() < 0.5,
-    hueDeg: -20 + Math.random() * 40,
-    rate: 0.8 + Math.random() * 0.4,
-    startRatio: Math.random(),
+function createRenderer(canvas: HTMLCanvasElement | OffscreenCanvas) {
+  const opts: WebGLContextAttributes = {
+    alpha: true,
+    antialias: false,
+    depth: true,
+    stencil: false,
+    powerPreference: "low-power",
+    failIfMajorPerformanceCaveat: false,
   };
-}
+  const context =
+    canvas.getContext("webgl2", opts) ||
+    canvas.getContext("webgl", opts) ||
+    (canvas as HTMLCanvasElement).getContext?.("experimental-webgl", opts);
 
-function frameStyle(v: OrganicVariant): CSSProperties {
-  return {
-    ["--lueur-rotate" as string]: `${v.rotateDeg}deg`,
-    ["--lueur-scale-x" as string]: v.mirror ? "-1" : "1",
-    ["--lueur-hue" as string]: `${v.hueDeg}deg`,
-  };
+  if (!context) {
+    throw new Error("Aucun contexte WebGL pour la carte Lueur.");
+  }
+
+  return new WebGLRenderer({
+    canvas,
+    context: context as WebGLRenderingContext,
+    alpha: true,
+    antialias: false,
+    powerPreference: "low-power",
+    failIfMajorPerformanceCaveat: false,
+  });
 }
 
 /**
- * Lueur MP4 (fond noir) + mix-blend-mode: screen.
- * - variant="single" : présentation hero, zéro random
- * - variant="sky" : random client-only (Ciel Famille), hydratation-safe
+ * Lueur produit — atome WebGL (plus de vidéo MP4).
  */
 export function SanctuaryLueurOrb({
-  variant = "single",
   size = "card",
   className = "",
   "aria-label": ariaLabel,
 }: SanctuaryLueurOrbProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  /** null = pas encore tiré (sky) → identité = match SSR */
-  const [organic, setOrganic] = useState<OrganicVariant | null>(null);
-
-  const isSky = variant === "sky";
-  const look = isSky ? (organic ?? HERO) : HERO;
-
-  useEffect(() => {
-    if (!isSky) {
-      setOrganic(null);
-      return;
-    }
-    setOrganic(rollOrganicVariant());
-  }, [isSky]);
-
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el) return;
-    if (isSky && organic === null) return;
-
-    const applied = isSky && organic ? organic : HERO;
-    el.playbackRate = applied.rate;
-
-    const seek = () => {
-      if (!Number.isFinite(el.duration) || el.duration <= 0) return;
-      try {
-        el.currentTime = applied.startRatio * el.duration;
-      } catch {
-        /* ignore seek race */
-      }
-    };
-
-    if (el.readyState >= 1) seek();
-    else el.addEventListener("loadedmetadata", seek, { once: true });
-
-    void el.play().catch(() => {});
-
-    return () => {
-      el.removeEventListener("loadedmetadata", seek);
-    };
-  }, [isSky, organic]);
-
+  const tier = useVisualTier();
+  const nodeVariant = size === "ritual" ? "hero" : "premium";
   const stageClass =
     size === "ritual"
       ? "sanctuary-lueur-stage sanctuary-lueur-stage--ritual"
       : "sanctuary-lueur-stage";
-  const frameClass =
-    size === "ritual"
-      ? "sanctuary-lueur-frame sanctuary-lueur-frame--ritual"
-      : "sanctuary-lueur-frame";
 
   return (
-    <div className={`${stageClass} ${className}`.trim()}>
-      <div
-        className={frameClass}
-        style={frameStyle(look)}
-        role="img"
-        aria-label={ariaLabel}
-      >
-        <video
-          ref={videoRef}
-          className="sanctuary-lueur-video"
-          src={LUEUR_VIDEO_SRC}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload={isSky ? "metadata" : "auto"}
-          aria-hidden
-        />
+    <div
+      className={`${stageClass} ${className}`.trim()}
+      role="img"
+      aria-label={ariaLabel}
+    >
+      <div className="sanctuary-lueur-frame sanctuary-lueur-frame--webgl">
+        <ClientWebGLGate
+          fallback={() => (
+            <div className="flex h-full min-h-[12rem] w-full items-center justify-center">
+              <div className="h-24 w-24 rounded-full bg-teal-400/25 blur-2xl" />
+            </div>
+          )}
+        >
+          <Canvas
+            dpr={tierDpr(tier)}
+            camera={{ position: [0, 0, 2.2], fov: 40 }}
+            gl={createRenderer}
+            style={{ background: "transparent" }}
+          >
+            <Suspense fallback={null}>
+              <ambientLight intensity={0.25} />
+              <LueurNode variant={nodeVariant} floating={false} phase={0.4} />
+            </Suspense>
+          </Canvas>
+        </ClientWebGLGate>
       </div>
     </div>
   );
 }
+
+/** @deprecated plus de source vidéo */
+export const LUEUR_VIDEO_SRC = "/lueur.mp4";

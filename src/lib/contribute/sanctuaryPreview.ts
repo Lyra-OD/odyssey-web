@@ -9,9 +9,17 @@ import {
  */
 const PREVIEW_TOKENS = new Set(["test-visuel", "preview"]);
 
+const SKY_PREVIEW_TOKENS = new Set(["test-ciel"]);
+
 export function isSanctuaryVisualPreview(token: string): boolean {
   if (process.env.NODE_ENV === "production") return false;
   return PREVIEW_TOKENS.has(token.trim().toLowerCase());
+}
+
+/** Maquette Ciel de lueurs — hors flow empreintes. */
+export function isSanctuarySkyPreview(token: string): boolean {
+  if (process.env.NODE_ENV === "production") return false;
+  return SKY_PREVIEW_TOKENS.has(token.trim().toLowerCase());
 }
 
 export const SANCTUARY_PREVIEW_TRIBUTE = {

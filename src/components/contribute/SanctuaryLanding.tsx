@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -20,6 +21,7 @@ import {
 } from "@/src/components/contribute/SanctuaryDepositForm";
 import { LocaleSwitcher } from "@/src/components/i18n/LocaleSwitcher";
 import {
+  isSanctuarySkyPreview,
   isSanctuaryVisualPreview,
   SANCTUARY_PREVIEW_TRIBUTE,
   sanctuaryPreviewPacks,
@@ -39,6 +41,17 @@ import {
 } from "@/src/lib/motion/easing";
 import { GUEST_PATRON_SUGGESTED_CENTS } from "@/src/lib/wizard/guestSupportPacks";
 import type { Locale } from "@/i18n.config";
+
+const SanctuaryUniverse = dynamic(
+  () =>
+    import("@/src/components/contribute/SanctuaryUniverse").then(
+      (m) => m.SanctuaryUniverse,
+    ),
+  {
+    ssr: false,
+    loading: () => <div className="h-screen w-full bg-black" />,
+  },
+);
 
 export type SanctuaryLandingProps = {
   token: string;
@@ -259,6 +272,10 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
   }, []);
 
   useEffect(() => {
+    if (isSanctuarySkyPreview(token)) {
+      return;
+    }
+
     if (isSanctuaryVisualPreview(token)) {
       setLoad({
         status: "ready",
@@ -318,6 +335,22 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
       cancelled = true;
     };
   }, [token, locale, t.errorBody]);
+
+  if (isSanctuarySkyPreview(token)) {
+    return (
+      <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
+        <div className="absolute right-4 top-4 z-20 md:right-8 md:top-8">
+          <LocaleSwitcher
+            lang={locale}
+            languageLabel={locale === "en" ? "Language" : "Langue"}
+            langOptionFr="FR"
+            langOptionEn="EN"
+          />
+        </div>
+        <SanctuaryUniverse />
+      </main>
+    );
+  }
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100 antialiased">
