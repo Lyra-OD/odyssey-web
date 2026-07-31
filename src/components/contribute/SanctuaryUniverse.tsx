@@ -11,6 +11,7 @@ import {
 } from "@/src/components/contribute/LueurNode";
 import { CameraRig } from "@/src/components/contribute/constellation/CameraRig";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
+import { NebulaGas } from "@/src/components/contribute/constellation/NebulaGas";
 import { StarDust } from "@/src/components/contribute/constellation/StarDust";
 import { MOCK_SOULS } from "@/src/components/contribute/constellation/mockSouls";
 import {
@@ -133,6 +134,7 @@ function UniverseScene({ tier }: { tier: ReturnType<typeof useVisualTier> }) {
       <fog attach="fog" args={["#03050c", 8, 22]} />
       <ambientLight intensity={0.05} />
       <CameraRig>
+        <NebulaGas tier={tier} />
         <StarDust tier={tier} />
         <Constellation />
       </CameraRig>
