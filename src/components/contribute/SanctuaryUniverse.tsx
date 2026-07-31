@@ -1,8 +1,8 @@
 "use client";
 
-import { Canvas, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
-import { Suspense, useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { WebGLRenderer } from "three";
 
 import {
@@ -24,6 +24,21 @@ function initialPositions() {
   return Object.fromEntries(
     MOCK_SOULS.map((s) => [s.id, [...s.position] as [number, number, number]]),
   );
+}
+
+/** Garantit des frames même sans interaction souris (WebGL low-power / demand). */
+function ForceRenderLoop() {
+  const invalidate = useThree((s) => s.invalidate);
+  useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      invalidate();
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [invalidate]);
+  return null;
 }
 
 function Constellation() {
@@ -130,6 +145,7 @@ function Constellation() {
 function UniverseScene({ tier }: { tier: ReturnType<typeof useVisualTier> }) {
   return (
     <>
+      <ForceRenderLoop />
       <color attach="background" args={["#02040a"]} />
       <fog attach="fog" args={["#03050c", 12, 28]} />
       <ambientLight intensity={0.05} />
@@ -169,7 +185,7 @@ function createRenderer(canvas: HTMLCanvasElement | OffscreenCanvas) {
     context: context as WebGLRenderingContext,
     alpha: false,
     antialias: false,
-    powerPreference: "low-power",
+    powerPreference: "high-performance",
     failIfMajorPerformanceCaveat: false,
   });
 }
@@ -199,6 +215,7 @@ export function SanctuaryUniverse({ className = "" }: SanctuaryUniverseProps) {
         )}
       >
         <Canvas
+          frameloop="demand"
           dpr={tierDpr(tier)}
           camera={{ position: [0, 0, 7.5], fov: 42, near: 0.1, far: 40 }}
           gl={createRenderer}
