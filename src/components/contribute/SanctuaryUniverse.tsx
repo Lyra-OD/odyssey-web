@@ -131,12 +131,13 @@ function UniverseScene({ tier }: { tier: ReturnType<typeof useVisualTier> }) {
   return (
     <>
       <color attach="background" args={["#02040a"]} />
-      <fog attach="fog" args={["#03050c", 8, 22]} />
+      <fog attach="fog" args={["#03050c", 12, 28]} />
       <ambientLight intensity={0.05} />
       <CameraRig>
         <NebulaGas tier={tier} />
         <StarDust tier={tier} />
-        <Constellation />
+        {/* Constellation masquée le temps du polish ciel — à réactiver ensuite */}
+        {false && <Constellation />}
       </CameraRig>
     </>
   );
