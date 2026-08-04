@@ -12,6 +12,7 @@ import {
 import { CameraRig } from "@/src/components/contribute/constellation/CameraRig";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
 import { NebulaGas } from "@/src/components/contribute/constellation/NebulaGas";
+import { ShootingStars } from "@/src/components/contribute/constellation/ShootingStars";
 import { StarDust } from "@/src/components/contribute/constellation/StarDust";
 import { MOCK_SOULS } from "@/src/components/contribute/constellation/mockSouls";
 import {
@@ -152,6 +153,7 @@ function UniverseScene({ tier }: { tier: ReturnType<typeof useVisualTier> }) {
       <CameraRig>
         <NebulaGas tier={tier} />
         <StarDust tier={tier} />
+        <ShootingStars tier={tier} />
         {/* Constellation masquée le temps du polish ciel — à réactiver ensuite */}
         {false && <Constellation />}
       </CameraRig>
