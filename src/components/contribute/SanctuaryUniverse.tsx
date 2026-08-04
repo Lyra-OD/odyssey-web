@@ -10,6 +10,7 @@ import {
   LueurNode,
 } from "@/src/components/contribute/LueurNode";
 import { CameraRig } from "@/src/components/contribute/constellation/CameraRig";
+import { CosmicDust } from "@/src/components/contribute/constellation/CosmicDust";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
 import { NebulaGas } from "@/src/components/contribute/constellation/NebulaGas";
 import { ParallaxLayer, ParallaxProvider } from "@/src/components/contribute/constellation/ParallaxLayer";
@@ -161,6 +162,10 @@ function UniverseScene({
         {/* Gaz : micro-parallaxe inverse + inertie lente = volume */}
         <ParallaxLayer factor={-0.06} lerp={0.02}>
           <NebulaGas tier={tier} />
+        </ParallaxLayer>
+        {/* Voile poussière : entre gaz et étoiles, parallaxe proche de la bande */}
+        <ParallaxLayer factor={0.16} lerp={0.026}>
+          <CosmicDust tier={tier} />
         </ParallaxLayer>
         <StarDust tier={tier} />
         <ParallaxLayer factor={0.85} lerp={0.07}>
