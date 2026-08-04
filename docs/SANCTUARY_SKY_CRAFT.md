@@ -101,14 +101,14 @@ Quand on fera **Voir le ciel**, brancher `mode` / `intensity` seulement — la m
 
 ---
 
-## 6. Filantes (V1)
+## 6. Filantes (mix Kubrick × Premium · plan C)
 
-- Pool 5, spawn ~3,8–9,5 s  
-- Directions **3D aléatoires** (sphère), pas alignées voie lactée  
-- Queue courte (0,28–0,65), segments + vertex colors  
-- `tier === "reduced"` → off  
-
-Polish prévu (**plan C**) : tête plus ponctuelle, variante « grande » rare.
+- Grâce froide **sans** gros `Points` additif (pas de boule blanche)  
+- Lisibilité au-dessus du Kubrick pur (opacité / longueur / fréquence)  
+- Pool 5 · petites (~4,5–10,5 s) + grandes rares (~36–62 s)  
+- Grandes = plus longues / un peu plus lentes, tip = extrémité de ligne  
+- Archives : `_archive/ShootingStarsPremiumV1.tsx` (version flashy)  
+- `tier === "reduced"` → off
 
 ---
 
@@ -118,7 +118,7 @@ Polish prévu (**plan C**) : tête plus ponctuelle, variante « grande » rare.
 |--|--|--|
 | **A** | Parallaxe ciné + stub intensité | ✅ |
 | **B** | Poussière / voile (`CosmicDust`) | ✅ |
-| **C** | Filantes premium | ⏳ suivant |
+| **C** | Filantes premium | ✅ |
 | **D** | Mode fond + « Voir le ciel » (UI) | ⏳ stub prêt |
 | **E** | Focus étoile → révèle média | ⏳ après D |
 | **F** | Pont famille | ⏳ après E |
@@ -189,4 +189,4 @@ src/components/contribute/
 2. Noter l’anti-pattern si on s’est brûlé  
 3. Commit doc du type : `docs(sanctuary): update sky craft bible`
 
-*Prochaine entrée attendue : plan C (filantes premium).*
+*Prochaine entrée attendue : plan D (UI Voir le ciel — brancher stub `mode`).*

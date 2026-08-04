@@ -3,30 +3,27 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import {
+  AdditiveBlending,
   BufferAttribute,
   BufferGeometry,
   Color,
   DynamicDrawUsage,
   Line,
   LineBasicMaterial,
+  Points,
+  PointsMaterial,
   Vector3,
 } from "three";
 
 import type { VisualTier } from "./useVisualTier";
 
-/**
- * Mix Kubrick × Premium :
- * - grâce / froid / pas de gros Points additif (évite la boule blanche)
- * - lisibilité au-dessus du Kubrick pur (opacité, longueur, fréquence)
- * Archive flashy : `_archive/ShootingStarsPremiumV1.tsx`
- */
-
-const POOL = 5;
-const SEGMENTS = 12;
-const SPAWN_GAP_MIN = 4.5;
-const SPAWN_GAP_MAX = 10.5;
-const LARGE_GAP_MIN = 36;
-const LARGE_GAP_MAX = 62;
+const POOL = 6;
+const SEGMENTS = 10;
+const SPAWN_GAP_MIN = 4.2;
+const SPAWN_GAP_MAX = 10;
+/** Grandes filantes — rares */
+const LARGE_GAP_MIN = 32;
+const LARGE_GAP_MAX = 58;
 
 type StreakKind = "small" | "large";
 
@@ -43,7 +40,13 @@ type StreakState = {
   dz: number;
   speed: number;
   length: number;
+  headSize: number;
   brightness: number;
+};
+
+type StreakVisual = {
+  line: Line;
+  head: Points;
 };
 
 function emptyStreak(): StreakState {
@@ -60,6 +63,7 @@ function emptyStreak(): StreakState {
     dz: 0,
     speed: 8,
     length: 1,
+    headSize: 0.06,
     brightness: 1,
   };
 }
@@ -87,26 +91,29 @@ function spawnStreak(s: StreakState, dir: Vector3, kind: StreakKind) {
   s.oz = -2 + Math.random() * 3 - dir.z * 2;
 
   if (kind === "large") {
-    s.life = 0.95 + Math.random() * 0.4;
-    s.speed = 8.5 + Math.random() * 4;
-    s.length = 0.75 + Math.random() * 0.5;
-    s.brightness = 0.88;
+    s.life = 0.85 + Math.random() * 0.5;
+    s.speed = 11 + Math.random() * 6;
+    s.length = 0.55 + Math.random() * 0.5;
+    s.headSize = 0.16;
+    s.brightness = 1;
   } else {
-    s.life = 0.48 + Math.random() * 0.38;
-    s.speed = 9.5 + Math.random() * 4.5;
-    s.length = 0.38 + Math.random() * 0.32;
-    s.brightness = 0.7 + Math.random() * 0.18;
+    s.life = 0.4 + Math.random() * 0.4;
+    s.speed = 10 + Math.random() * 5;
+    s.length = 0.22 + Math.random() * 0.32;
+    s.headSize = 0.05 + Math.random() * 0.025;
+    s.brightness = 0.75 + Math.random() * 0.2;
   }
 }
 
+/** Fade ciné : entrée nette, sortie douce. */
 function cinematicFade(u: number): number {
   if (u < 0.12) {
     const t = u / 0.12;
     return t * t * (3 - 2 * t);
   }
-  if (u > 0.4) {
-    const t = Math.max(0, (1 - u) / 0.6);
-    return Math.pow(t, 1.3);
+  if (u > 0.42) {
+    const t = Math.max(0, (1 - u) / 0.58);
+    return Math.pow(t, 1.25);
   }
   return 1;
 }
@@ -116,22 +123,22 @@ type ShootingStarsProps = {
 };
 
 /**
- * Filantes mix — lisibles, élégantes, sans flash de tête.
+ * Filantes premium : tête ponctuelle + queue courte dégradée.
+ * Petites (fréquentes) + grandes (rares). Directions 3D aléatoires.
  */
 export function ShootingStars({ tier }: ShootingStarsProps) {
   const statesRef = useRef<StreakState[]>(
     Array.from({ length: POOL }, emptyStreak),
   );
-  const nextSmallRef = useRef(2.5 + Math.random() * 3);
-  const nextLargeRef = useRef(20 + Math.random() * 22);
+  const nextSmallRef = useRef(2 + Math.random() * 3);
+  const nextLargeRef = useRef(18 + Math.random() * 20);
   const dirTmp = useMemo(() => new Vector3(), []);
 
-  const lines = useMemo(() => {
-    const list: Line[] = [];
-    // Tip un peu plus présent que Kubrick pur, toujours glacial
-    const tip = new Color("#e8f0fa");
-    const mid = new Color("#9aacc0");
-    const tail = new Color("#2e3848");
+  const visuals = useMemo(() => {
+    const list: StreakVisual[] = [];
+    const headCol = new Color("#f5f8ff");
+    const mid = new Color("#c8d4f0");
+    const tail = new Color("#5a6a88");
 
     for (let i = 0; i < POOL; i += 1) {
       const positions = new Float32Array(SEGMENTS * 3);
@@ -143,20 +150,21 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
 
       for (let s = 0; s < SEGMENTS; s += 1) {
         const t = s / (SEGMENTS - 1);
+        // Queue très sombre → tête claire (plus de contraste = filante)
         const c = tail
           .clone()
-          .lerp(mid, Math.min(1, Math.pow(t, 1.15) * 1.35))
-          .lerp(tip, Math.max(0, t - 0.65) / 0.35);
+          .lerp(mid, Math.min(1, t * 1.6))
+          .lerp(headCol, Math.max(0, t - 0.55) / 0.45);
         const i3 = s * 3;
         colors[i3] = c.r;
         colors[i3 + 1] = c.g;
         colors[i3 + 2] = c.b;
       }
 
-      const geo = new BufferGeometry();
-      geo.setAttribute("position", posAttr);
-      geo.setAttribute("color", colAttr);
-      const mat = new LineBasicMaterial({
+      const lineGeo = new BufferGeometry();
+      lineGeo.setAttribute("position", posAttr);
+      lineGeo.setAttribute("color", colAttr);
+      const lineMat = new LineBasicMaterial({
         vertexColors: true,
         transparent: true,
         opacity: 0,
@@ -164,11 +172,33 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
         depthTest: false,
         toneMapped: false,
       });
-      const line = new Line(geo, mat);
+      const line = new Line(lineGeo, lineMat);
       line.frustumCulled = false;
       line.renderOrder = 4;
       line.visible = false;
-      list.push(line);
+
+      const headPos = new Float32Array(3);
+      const headAttr = new BufferAttribute(headPos, 3);
+      headAttr.setUsage(DynamicDrawUsage);
+      const headGeo = new BufferGeometry();
+      headGeo.setAttribute("position", headAttr);
+      const headMat = new PointsMaterial({
+        color: headCol,
+        size: 0.06,
+        sizeAttenuation: true,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+        depthTest: false,
+        toneMapped: false,
+        blending: AdditiveBlending,
+      });
+      const head = new Points(headGeo, headMat);
+      head.frustumCulled = false;
+      head.renderOrder = 5;
+      head.visible = false;
+
+      list.push({ line, head });
     }
     return list;
   }, []);
@@ -191,7 +221,7 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
         nextLargeRef.current =
           LARGE_GAP_MIN + Math.random() * (LARGE_GAP_MAX - LARGE_GAP_MIN);
       } else {
-        nextLargeRef.current = 2.5;
+        nextLargeRef.current = 2;
       }
     }
 
@@ -200,27 +230,33 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
         nextSmallRef.current =
           SPAWN_GAP_MIN + Math.random() * (SPAWN_GAP_MAX - SPAWN_GAP_MIN);
       } else {
-        nextSmallRef.current = 1;
+        nextSmallRef.current = 0.9;
       }
     }
 
     for (let i = 0; i < POOL; i += 1) {
       const s = states[i];
-      const line = lines[i];
-      if (!s || !line) continue;
-      const mat = line.material as LineBasicMaterial;
+      const vis = visuals[i];
+      if (!s || !vis) continue;
+
+      const lineMat = vis.line.material as LineBasicMaterial;
+      const headMat = vis.head.material as PointsMaterial;
 
       if (!s.active) {
-        mat.opacity = 0;
-        line.visible = false;
+        lineMat.opacity = 0;
+        headMat.opacity = 0;
+        vis.line.visible = false;
+        vis.head.visible = false;
         continue;
       }
 
       s.age += dt;
       if (s.age >= s.life) {
         s.active = false;
-        mat.opacity = 0;
-        line.visible = false;
+        lineMat.opacity = 0;
+        headMat.opacity = 0;
+        vis.line.visible = false;
+        vis.head.visible = false;
         continue;
       }
 
@@ -229,11 +265,12 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
       const headY = s.oy + s.dy * s.speed * s.age;
       const headZ = s.oz + s.dz * s.speed * s.age;
 
-      const pos = line.geometry.attributes.position as BufferAttribute;
+      const pos = vis.line.geometry.attributes.position as BufferAttribute;
       const arr = pos.array as Float32Array;
       for (let p = 0; p < SEGMENTS; p += 1) {
         const t = p / (SEGMENTS - 1);
-        const along = Math.pow(1 - t, 1.6) * s.length;
+        // Plus de matière près de la tête
+        const along = Math.pow(1 - t, 1.55) * s.length;
         const i3 = p * 3;
         arr[i3] = headX - s.dx * along;
         arr[i3 + 1] = headY - s.dy * along;
@@ -241,10 +278,24 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
       }
       pos.needsUpdate = true;
 
-      // Entre Kubrick (trop fade) et Premium (trop flash)
-      const base = s.kind === "large" ? 0.48 : 0.4;
-      mat.opacity = (base + 0.5 * fade) * s.brightness;
-      line.visible = fade > 0.025;
+      const hPos = vis.head.geometry.attributes.position as BufferAttribute;
+      const hArr = hPos.array as Float32Array;
+      hArr[0] = headX;
+      hArr[1] = headY;
+      hArr[2] = headZ;
+      hPos.needsUpdate = true;
+
+      lineMat.opacity = (0.25 + 0.7 * fade) * s.brightness;
+      headMat.size = s.headSize * (0.85 + 0.35 * fade);
+      headMat.opacity = (0.35 + 0.55 * fade) * s.brightness;
+      // Grandes : tête un peu plus présente
+      if (s.kind === "large") {
+        headMat.opacity = Math.min(1, headMat.opacity * 1.15);
+      }
+
+      const show = fade > 0.02;
+      vis.line.visible = show;
+      vis.head.visible = show;
     }
   });
 
@@ -252,8 +303,11 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
 
   return (
     <group>
-      {lines.map((line, i) => (
-        <primitive key={i} object={line} />
+      {visuals.map((v, i) => (
+        <group key={i}>
+          <primitive object={v.line} />
+          <primitive object={v.head} />
+        </group>
       ))}
     </group>
   );
