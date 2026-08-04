@@ -85,7 +85,7 @@ Du plus loin au plus près :
 />
 ```
 
-- **background** : `pointer-events: none`, parallaxe ×0.4, derrière l’UI  
+- **background** : `pointer-events: none` sur le canvas, parallaxe ×0.55, **pointeur fenêtre + dérive idle** (reste vivant derrière l’UI)  
 - **immersive** : plein écran, parallaxe ×1, **Fermer** + **Esc**  
 - Lexique : **Voir le ciel** / **See the sky**  
 - `test-ciel` : démarre immersif ; Fermer → fond + CTA Voir le ciel  

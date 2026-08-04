@@ -29,17 +29,22 @@ function initialPositions() {
   );
 }
 
-/** Garantit des frames même sans interaction souris (WebGL low-power / demand). */
+/** Garantit des frames même sans interaction souris (WebGL demand). */
 function ForceRenderLoop() {
   const invalidate = useThree((s) => s.invalidate);
   useEffect(() => {
     let raf = 0;
+    let running = true;
     const tick = () => {
+      if (!running) return;
       invalidate();
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
   }, [invalidate]);
   return null;
 }
@@ -234,7 +239,7 @@ export function SanctuaryUniverse({
 }: SanctuaryUniverseProps) {
   const tier = useVisualTier();
   const intensity =
-    parallaxIntensity ?? (mode === "background" ? 0.4 : 1);
+    parallaxIntensity ?? (mode === "background" ? 0.55 : 1);
   const immersive = mode === "immersive";
 
   useEffect(() => {

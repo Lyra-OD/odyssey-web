@@ -1,18 +1,22 @@
 "use client";
 
 import { useRef } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import type { Group } from "three";
 
-import { shapePointer, useParallaxIntensity } from "./ParallaxLayer";
+import {
+  shapePointer,
+  useParallaxIntensity,
+  useParallaxPointerRef,
+} from "./ParallaxLayer";
 
-/** Rotation douce — amplitudes × intensity (stub mode fond / immersif). */
+/** Rotation douce — pointeur fenêtre + dérive idle (vivant en mode fond). */
 export function CameraRig({ children }: { children: React.ReactNode }) {
   const group = useRef<Group>(null);
-  const { pointer } = useThree();
   const intensity = useParallaxIntensity();
+  const pointerRef = useParallaxPointerRef();
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     if (
       typeof document !== "undefined" &&
       document.body.dataset.soulDrag === "1"
@@ -21,8 +25,15 @@ export function CameraRig({ children }: { children: React.ReactNode }) {
     }
     const g = group.current;
     if (!g) return;
-    const px = shapePointer(pointer.x);
-    const py = shapePointer(pointer.y);
+
+    const t = clock.elapsedTime;
+    const idleX = Math.sin(t * 0.07) * 0.12;
+    const idleY = Math.cos(t * 0.055) * 0.1;
+    const rawX = pointerRef?.current.x ?? 0;
+    const rawY = pointerRef?.current.y ?? 0;
+    const px = shapePointer(rawX) + idleX;
+    const py = shapePointer(rawY) + idleY;
+
     const targetX = py * 0.055 * intensity;
     const targetY = px * 0.075 * intensity;
     g.rotation.x += (targetX - g.rotation.x) * 0.032;
