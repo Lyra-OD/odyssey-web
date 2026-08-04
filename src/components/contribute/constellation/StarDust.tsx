@@ -11,6 +11,7 @@ import {
 } from "three";
 
 import { tierDustCount, type VisualTier } from "./useVisualTier";
+import { ParallaxLayer } from "./ParallaxLayer";
 
 const vertexShader = /* glsl */ `
 uniform float uTime;
@@ -265,6 +266,7 @@ type StarDustProps = {
 
 /**
  * 2 layers clairs : bande (voie lactée) + champ (étoiles partout).
+ * Parallaxe ciné : bande ancrée, field plus proche / plus vif.
  */
 export function StarDust({ tier }: StarDustProps) {
   const total = tierDustCount(tier);
@@ -274,8 +276,14 @@ export function StarDust({ tier }: StarDustProps) {
 
   return (
     <group>
-      <StarField kind="band" count={bandCount} />
-      {fieldCount > 0 ? <StarField kind="field" count={fieldCount} /> : null}
+      <ParallaxLayer factor={0.22} lerp={0.032}>
+        <StarField kind="band" count={bandCount} />
+      </ParallaxLayer>
+      {fieldCount > 0 ? (
+        <ParallaxLayer factor={0.65} lerp={0.055}>
+          <StarField kind="field" count={fieldCount} />
+        </ParallaxLayer>
+      ) : null}
     </group>
   );
 }

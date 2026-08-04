@@ -12,6 +12,7 @@ import {
 import { CameraRig } from "@/src/components/contribute/constellation/CameraRig";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
 import { NebulaGas } from "@/src/components/contribute/constellation/NebulaGas";
+import { ParallaxLayer, ParallaxProvider } from "@/src/components/contribute/constellation/ParallaxLayer";
 import { ShootingStars } from "@/src/components/contribute/constellation/ShootingStars";
 import { StarDust } from "@/src/components/contribute/constellation/StarDust";
 import { MOCK_SOULS } from "@/src/components/contribute/constellation/mockSouls";
@@ -143,21 +144,32 @@ function Constellation() {
   );
 }
 
-function UniverseScene({ tier }: { tier: ReturnType<typeof useVisualTier> }) {
+function UniverseScene({
+  tier,
+  parallaxIntensity,
+}: {
+  tier: ReturnType<typeof useVisualTier>;
+  parallaxIntensity: number;
+}) {
   return (
-    <>
+    <ParallaxProvider intensity={parallaxIntensity}>
       <ForceRenderLoop />
       <color attach="background" args={["#02040a"]} />
       <fog attach="fog" args={["#03050c", 12, 28]} />
       <ambientLight intensity={0.05} />
       <CameraRig>
-        <NebulaGas tier={tier} />
+        {/* Gaz : micro-parallaxe inverse + inertie lente = volume */}
+        <ParallaxLayer factor={-0.06} lerp={0.02}>
+          <NebulaGas tier={tier} />
+        </ParallaxLayer>
         <StarDust tier={tier} />
-        <ShootingStars tier={tier} />
+        <ParallaxLayer factor={0.85} lerp={0.07}>
+          <ShootingStars tier={tier} />
+        </ParallaxLayer>
         {/* Constellation masquée le temps du polish ciel — à réactiver ensuite */}
         {false && <Constellation />}
       </CameraRig>
-    </>
+    </ParallaxProvider>
   );
 }
 
@@ -192,12 +204,28 @@ function createRenderer(canvas: HTMLCanvasElement | OffscreenCanvas) {
   });
 }
 
+export type SanctuaryUniverseMode = "background" | "immersive";
+
 export type SanctuaryUniverseProps = {
   className?: string;
+  /**
+   * Stub plan D — sans UI encore :
+   * - immersive (défaut) → parallaxe ×1
+   * - background → parallaxe ×0.4 (ciel derrière l’UI)
+   */
+  mode?: SanctuaryUniverseMode;
+  /** Override manuel de l’intensité (prioritaire sur mode). */
+  parallaxIntensity?: number;
 };
 
-export function SanctuaryUniverse({ className = "" }: SanctuaryUniverseProps) {
+export function SanctuaryUniverse({
+  className = "",
+  mode = "immersive",
+  parallaxIntensity,
+}: SanctuaryUniverseProps) {
   const tier = useVisualTier();
+  const intensity =
+    parallaxIntensity ?? (mode === "background" ? 0.4 : 1);
 
   return (
     <section
@@ -226,7 +254,7 @@ export function SanctuaryUniverse({ className = "" }: SanctuaryUniverseProps) {
           }}
         >
           <Suspense fallback={null}>
-            <UniverseScene tier={tier} />
+            <UniverseScene tier={tier} parallaxIntensity={intensity} />
           </Suspense>
         </Canvas>
       </ClientWebGLGate>
