@@ -1,0 +1,192 @@
+# Odyssey — Ciel du Sanctuaire · **Craft Bible**
+
+**Statut : vivant · mis à jour 4 août 2026**  
+**Complète :** [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) (vision produit / UX / lexique)  
+**Ce doc =** *comment* on construit le ciel WebGL — layers, règles, anti-patterns, plan polish.
+
+> Vision produit → `SANCTUARY_SKY.md`  
+> Craft technique / visuel → **ce fichier**
+
+**Preview :** `/fr/contribute/test-ciel` (token `test-ciel`)  
+**Entrée scène :** `SanctuaryUniverse.tsx`
+
+---
+
+## 1. Promesse craft
+
+Un ciel **vivant, digne, immersif** — pas un wallpaper néon.
+
+- Gaz teal/mauve + voie lactée lisible + profondeur (parallaxe)  
+- Filantes rares (directions aléatoires)  
+- Plus tard : étoiles = **souvenirs** (pas dans ce polish décoratif)
+
+Test craft :
+
+> Sans toucher l’UI, on sent l’espace.  
+> En bougeant la souris, on sent la profondeur.  
+> Rien ne crie « WebGL demo 2018 ».
+
+---
+
+## 2. Stack des layers (ordre de rendu)
+
+Du plus loin au plus près :
+
+| # | Layer | Fichier | Rôle | Parallaxe `factor` / `lerp` |
+|--|--|--|--|--|
+| 0 | **NebulaGas** | `constellation/NebulaGas.tsx` | Gaz teal + mauve, boucle ~38 s | `−0.06` / `0.02` (inverse, lent) |
+| 1 | **CosmicDust** | `constellation/CosmicDust.tsx` | Voile poussière sur l’axe voie lactée | `0.16` / `0.026` |
+| 2 | **StarDust band** | `constellation/StarDust.tsx` | Voie lactée (~96 % du budget étoiles) | `0.22` / `0.032` |
+| 3 | **StarDust field** | idem | Peu d’étoiles proches (~4 %) | `0.65` / `0.055` |
+| 4 | **ShootingStars** | `constellation/ShootingStars.tsx` | Filantes sporadiques | `0.85` / `0.07` |
+| — | **Constellation** | `SanctuaryUniverse` | Lueurs-mémoire | **masquée** (`false &&`) le temps du polish |
+
+**Infra :**
+- `ForceRenderLoop` — frames idle (sans souris)  
+- `ParallaxLayer` + `ParallaxProvider` — profondeur + stub intensité  
+- `CameraRig` — légère rotation, × `intensity`  
+- Seeds PRNG stables (`mulberry32`) — retoucher la bande **ne re-shuffle pas** le field
+
+---
+
+## 3. StarDust — règles figées
+
+### Split
+- **band** : 100 % sur l’axe voie lactée (falloff centre → bords)  
+- **field** : étoiles dispersées, plus grosses / plus proches  
+- Budget desktop : `tierDustCount` → band **96 %**, field **4 %**  
+- `reduced` : band seule
+
+### Seeds
+- `band` seed `0xba12d001` · `field` seed `0xf1e1d002`  
+- Ne pas repasser à `Math.random()` non seedé pour la géométrie
+
+### Respiration
+- Continue, centrée sur **1.0** (GLSL `breath`) — OK, stable  
+- **Scintillement sporadique bande = abandonné** (GLSL et JS : disparition ou effet invisible)
+
+---
+
+## 4. Parallaxe (état « ciné » + stub)
+
+### Comportement
+- Courbe non-linéaire : `shapePointer` → `pow(|p|, 1.4)` (petit geste = peu)  
+- XY + **léger Z**  
+- Inertie par layer (`lerp`)  
+- Gaz en **micro-parallaxe inverse** (volume)
+
+### Stub mode D (pas d’UI encore)
+
+```tsx
+<SanctuaryUniverse mode="immersive" />   // intensité ×1 (défaut, test-ciel)
+<SanctuaryUniverse mode="background" /> // intensité ×0.4 (ciel derrière UI)
+// ou parallaxIntensity={number} override
+```
+
+Quand on fera **Voir le ciel**, brancher `mode` / `intensity` seulement — la maths est prête.
+
+---
+
+## 5. Recette visuelle (ne pas dériver)
+
+| À faire | À éviter |
+|--|--|
+| Teal `#3d9a94` + mauve `#7a628e` soft | Neon, bloom agressif, cœur blanc additif |
+| Voile poussière sombre, opacity basse | Voile qui noie les étoiles |
+| Filantes courtes, tête→queue en dégradé | Barres longues type « slash UI » |
+| Fond (gaz/bande) stable, digne | Tout le ciel qui « nage » |
+| Field rare mais lisible (profondeur) | Field trop nombreux = distrait la bande |
+
+**Référence rejetée :** cœur néon additif type « Non non non » (juillet 2026).
+
+---
+
+## 6. Filantes (V1)
+
+- Pool 5, spawn ~3,8–9,5 s  
+- Directions **3D aléatoires** (sphère), pas alignées voie lactée  
+- Queue courte (0,28–0,65), segments + vertex colors  
+- `tier === "reduced"` → off  
+
+Polish prévu (**plan C**) : tête plus ponctuelle, variante « grande » rare.
+
+---
+
+## 7. Plan polish A→E (statut)
+
+| | Chantier | Statut |
+|--|--|--|
+| **A** | Parallaxe ciné + stub intensité | ✅ |
+| **B** | Poussière / voile (`CosmicDust`) | ✅ |
+| **C** | Filantes premium | ⏳ suivant |
+| **D** | Mode fond + « Voir le ciel » (UI) | ⏳ stub prêt |
+| **E** | Focus étoile → révèle média | ⏳ après D |
+| **F** | Pont famille | ⏳ après E |
+| **G** | Naissance d’étoile post-dépôt | ⏳ |
+| **H** | Audio immersif (mute default) | ⏳ optionnel |
+
+Règle de session : **une lettre à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
+
+---
+
+## 8. Commits repères (craft)
+
+| Commit | Sujet |
+|--|--|
+| `6ded642` | Base WebGL galaxy / `test-ciel` |
+| `48643c9` | Gaz teal/mauve vivant |
+| `99a2543` | Dual layers band + field |
+| `a5a0639` | Filantes sporadiques |
+| `2b2b44a` | Parallaxe ciné + stub mode |
+| `cccf6bd` | Voile CosmicDust |
+| `_archive/` | Prototypes canvas/DOM pré-WebGL |
+
+---
+
+## 9. Anti-patterns (leçons dures)
+
+1. **Ne pas inventer du scintillement GLSL complexe** sur le champ (`floor(time)`, `if`, attributs custom) → étoiles invisibles (shader HMR / attribut à 0).  
+2. **`useMemo(() => new ShaderMaterial, [])`** garde l’ancien programme au HMR → forcer `needsUpdate` ou hard refresh.  
+3. **Attribut custom non lié = 0** chez Three.js → alpha 0 = tout disparait.  
+4. **Ne pas toucher la bande** quand on ajuste le field (et inversement) — seeds séparées + go ciblé.  
+5. **Sans `ForceRenderLoop` + `frameloop="demand"`**, l’idle ne vit que si la souris bouge.  
+6. Un layer isolé (filantes, dust) > patch global risqué.
+
+---
+
+## 10. Comment tester
+
+1. Dev server + `/fr/contribute/test-ciel`  
+2. **Hard refresh** après changement shader / material  
+3. Idle 5–10 s : gaz + dust + respiration + filante éventuelle  
+4. Souris douce vs grand geste : courbe non-linéaire  
+5. Optionnel : `<SanctuaryUniverse mode="background" />` pour stub ×0.4  
+
+---
+
+## 11. Fichiers clés
+
+```
+src/components/contribute/
+  SanctuaryUniverse.tsx          # scène + mode stub
+  constellation/
+    NebulaGas.tsx
+    CosmicDust.tsx
+    StarDust.tsx
+    ShootingStars.tsx
+    ParallaxLayer.tsx            # provider + shapePointer + layers
+    CameraRig.tsx
+    useVisualTier.ts
+  _archive/                      # vieux ciels canvas / LueurSky
+```
+
+---
+
+## 12. Mise à jour de cette bible
+
+À chaque jalon craft (nouveau layer, règle figée, abandon d’effet) :
+1. Mettre à jour le **tableau layers** et le **plan A→E**  
+2. Noter l’anti-pattern si on s’est brûlé  
+3. Commit doc du type : `docs(sanctuary): update sky craft bible`
+
+*Prochaine entrée attendue : plan C (filantes premium).*

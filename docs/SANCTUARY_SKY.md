@@ -4,6 +4,7 @@
 **Base technique sécurisée :** commit `6ded642` (WebGL galaxy / `LueurNode` / `test-ciel`)
 
 Document canonique de l’expérience **ciel** du Sanctuaire invité et du **pont** vers le film famille.  
+**Craft technique / layers / polish WebGL :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md).  
 Complète [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) (positionnement / monétisation) et [`VISION_PHASE_2.md`](VISION_PHASE_2.md) §2.1 (modération invité). Ne remplace pas le wizard film ([`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)).
 
 ---
