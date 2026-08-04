@@ -214,34 +214,83 @@ export type SanctuaryUniverseMode = "background" | "immersive";
 export type SanctuaryUniverseProps = {
   className?: string;
   /**
-   * Stub plan D — sans UI encore :
-   * - immersive (défaut) → parallaxe ×1
-   * - background → parallaxe ×0.4 (ciel derrière l’UI)
+   * - immersive → parallaxe ×1, interactif
+   * - background → parallaxe ×0.4, pointer-events none (ciel derrière l’UI)
    */
   mode?: SanctuaryUniverseMode;
   /** Override manuel de l’intensité (prioritaire sur mode). */
   parallaxIntensity?: number;
+  /** Immersif : Fermer + Esc */
+  onClose?: () => void;
+  locale?: "fr" | "en";
 };
 
 export function SanctuaryUniverse({
   className = "",
   mode = "immersive",
   parallaxIntensity,
+  onClose,
+  locale = "fr",
 }: SanctuaryUniverseProps) {
   const tier = useVisualTier();
   const intensity =
     parallaxIntensity ?? (mode === "background" ? 0.4 : 1);
+  const immersive = mode === "immersive";
+
+  useEffect(() => {
+    if (!immersive || !onClose) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [immersive, onClose]);
+
+  const closeLabel = locale === "en" ? "Close" : "Fermer";
+  const fillLabel =
+    locale === "en" ? "The sky is filling" : "Le ciel se remplit";
+  const hintLabel =
+    locale === "en"
+      ? "Drag a star to move it"
+      : "Glisse une étoile pour la déplacer";
 
   return (
     <section
-      className={`relative h-screen w-full overflow-hidden bg-black ${className}`.trim()}
-      aria-label="Ciel de lueurs du Sanctuaire"
+      className={[
+        "overflow-hidden bg-black",
+        immersive
+          ? "relative h-screen w-full"
+          : "pointer-events-none absolute inset-0 h-full w-full",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .trim()}
+      aria-label={
+        locale === "en"
+          ? "Sanctuary sky of glows"
+          : "Ciel de lueurs du Sanctuaire"
+      }
+      aria-hidden={!immersive}
     >
+      {immersive && onClose ? (
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute left-4 top-4 z-20 rounded-sm border border-white/15 bg-black/40 px-3 py-1.5 text-[10px] font-light uppercase tracking-[0.22em] text-teal-50/70 backdrop-blur-sm transition-colors hover:border-teal-400/30 hover:text-teal-50 md:left-8 md:top-8"
+        >
+          {closeLabel}
+          <span className="ml-2 hidden text-white/30 sm:inline">Esc</span>
+        </button>
+      ) : null}
+
       <ClientWebGLGate
         fallback={(message) => (
-          <div className="flex h-screen w-full flex-col items-center justify-center gap-3 bg-black px-6 text-center">
+          <div className="flex h-full min-h-[50vh] w-full flex-col items-center justify-center gap-3 bg-black px-6 text-center">
             <p className="text-sm font-light tracking-wide text-teal-100/50">
-              Impossible d’ouvrir la scène 3D.
+              {locale === "en"
+                ? "Couldn’t open the 3D scene."
+                : "Impossible d’ouvrir la scène 3D."}
             </p>
             <p className="max-w-md text-xs leading-relaxed text-white/40">
               {message}
@@ -250,6 +299,8 @@ export function SanctuaryUniverse({
         )}
       >
         <Canvas
+          className={immersive ? undefined : "!pointer-events-none"}
+          style={{ pointerEvents: immersive ? "auto" : "none" }}
           frameloop="demand"
           dpr={tierDpr(tier)}
           camera={{ position: [0, 0, 7.5], fov: 42, near: 0.1, far: 40 }}
@@ -264,14 +315,16 @@ export function SanctuaryUniverse({
         </Canvas>
       </ClientWebGLGate>
 
-      <div className="pointer-events-none absolute bottom-8 left-0 right-0 text-center">
-        <p className="text-sm font-light uppercase tracking-widest text-teal-50/30">
-          Le ciel se remplit
-        </p>
-        <p className="mt-2 text-[10px] font-light tracking-wide text-white/25">
-          Glisse une étoile pour la déplacer
-        </p>
-      </div>
+      {immersive ? (
+        <div className="pointer-events-none absolute bottom-8 left-0 right-0 text-center">
+          <p className="text-sm font-light uppercase tracking-widest text-teal-50/30">
+            {fillLabel}
+          </p>
+          <p className="mt-2 text-[10px] font-light tracking-wide text-white/25">
+            {hintLabel}
+          </p>
+        </div>
+      ) : null}
     </section>
   );
 }

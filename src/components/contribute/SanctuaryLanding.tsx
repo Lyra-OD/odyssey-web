@@ -122,6 +122,7 @@ const copy = {
     contribSuccess: "Merci. Votre soutien a bien été enregistré.",
     contribCancel: "Paiement annulé. Vous pouvez choisir une autre empreinte.",
     lueurSettle: "Votre lueur rejoint le Sanctuaire…",
+    seeSky: "Voir le ciel",
   },
   en: {
     brandWordmark: "Odyssey",
@@ -150,8 +151,50 @@ const copy = {
     contribSuccess: "Thank you. Your support has been recorded.",
     contribCancel: "Payment cancelled. You can choose another imprint.",
     lueurSettle: "Your glow joins the Sanctuary…",
+    seeSky: "See the sky",
   },
 } as const;
+
+/** Preview `test-ciel` — double mode fond / Voir le ciel (plan D). */
+function SkyPreviewExperience({ locale }: { locale: Locale }) {
+  const [skyOpen, setSkyOpen] = useState(true);
+  const seeSky = locale === "en" ? "See the sky" : "Voir le ciel";
+  const whisper =
+    locale === "en" ? "The sky is filling" : "Le ciel se remplit";
+
+  return (
+    <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
+      <SanctuaryUniverse
+        mode={skyOpen ? "immersive" : "background"}
+        className={skyOpen ? "fixed inset-0 z-40" : "absolute inset-0 z-0"}
+        onClose={skyOpen ? () => setSkyOpen(false) : undefined}
+        locale={locale}
+      />
+      <div className="absolute right-4 top-4 z-50 md:right-8 md:top-8">
+        <LocaleSwitcher
+          lang={locale}
+          languageLabel={locale === "en" ? "Language" : "Langue"}
+          langOptionFr="FR"
+          langOptionEn="EN"
+        />
+      </div>
+      {!skyOpen ? (
+        <div className="relative z-10 flex min-h-screen flex-col items-center justify-center gap-8 px-6">
+          <p className="text-sm font-light uppercase tracking-[0.35em] text-teal-50/35">
+            {whisper}
+          </p>
+          <button
+            type="button"
+            onClick={() => setSkyOpen(true)}
+            className={`${sanctuaryGhostButton} px-6 py-3 text-[11px] uppercase tracking-[0.28em]`}
+          >
+            {seeSky}
+          </button>
+        </div>
+      ) : null}
+    </main>
+  );
+}
 
 /**
  * Shell client du Sanctuaire — dépôt (multi photos) → catalogue → checkout.
@@ -175,6 +218,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
     "success" | "cancel" | null
   >(null);
   const [lueurSettling, setLueurSettling] = useState(false);
+  const [skyOpen, setSkyOpen] = useState(false);
 
   const handleSelectPack = (key: string) => {
     setSelectedPackKey(key);
@@ -338,40 +382,50 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
 
   if (isSanctuarySkyPreview(token)) {
     return (
-      <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
-        <div className="absolute right-4 top-4 z-20 md:right-8 md:top-8">
-          <LocaleSwitcher
-            lang={locale}
-            languageLabel={locale === "en" ? "Language" : "Langue"}
-            langOptionFr="FR"
-            langOptionEn="EN"
-          />
-        </div>
-        <SanctuaryUniverse />
-      </main>
+      <SkyPreviewExperience locale={locale} />
     );
   }
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100 antialiased">
+      <SanctuaryUniverse
+        mode={skyOpen ? "immersive" : "background"}
+        className={
+          skyOpen ? "fixed inset-0 z-50" : "absolute inset-0 z-0"
+        }
+        onClose={skyOpen ? () => setSkyOpen(false) : undefined}
+        locale={locale}
+      />
+
       <div
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        className="pointer-events-none absolute inset-0 z-[1] overflow-hidden"
         aria-hidden
       >
         <div
-          className="absolute left-1/2 top-[36%] h-[min(70vh,680px)] w-[min(150vw,68rem)] -translate-x-1/2 -translate-y-1/2 opacity-55 blur-[180px]"
+          className="absolute left-1/2 top-[36%] h-[min(70vh,680px)] w-[min(150vw,68rem)] -translate-x-1/2 -translate-y-1/2 opacity-25 blur-[180px]"
           style={{ backgroundImage: SANCTUARY_HALO_UV }}
         />
         <div
-          className="sanctuary-halo-breathe absolute left-1/2 top-[42%] h-[min(55vh,520px)] w-[min(120vw,52rem)] -translate-x-1/2 -translate-y-1/2 blur-[140px]"
+          className="sanctuary-halo-breathe absolute left-1/2 top-[42%] h-[min(55vh,520px)] w-[min(120vw,52rem)] -translate-x-1/2 -translate-y-1/2 opacity-40 blur-[140px]"
           style={{ backgroundImage: SANCTUARY_HALO_TEAL }}
         />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/25 to-transparent" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-10 pt-12 md:px-8 md:pt-16">
+      <div
+        className={`relative z-10 mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-10 pt-12 md:px-8 md:pt-16 ${
+          skyOpen ? "pointer-events-none invisible" : ""
+        }`}
+      >
         <header className="relative mb-10">
-          <div className="absolute right-0 top-0 z-10">
+          <div className="absolute right-0 top-0 z-10 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setSkyOpen(true)}
+              className={`${sanctuaryGhostButton} px-3 py-1.5 text-[10px] uppercase tracking-[0.22em]`}
+            >
+              {t.seeSky}
+            </button>
             <LocaleSwitcher
               lang={locale}
               languageLabel={locale === "en" ? "Language" : "Langue"}

@@ -75,15 +75,21 @@ Du plus loin au plus près :
 - Inertie par layer (`lerp`)  
 - Gaz en **micro-parallaxe inverse** (volume)
 
-### Stub mode D (pas d’UI encore)
+### Mode D (UI branchée)
 
 ```tsx
-<SanctuaryUniverse mode="immersive" />   // intensité ×1 (défaut, test-ciel)
-<SanctuaryUniverse mode="background" /> // intensité ×0.4 (ciel derrière UI)
-// ou parallaxIntensity={number} override
+<SanctuaryUniverse
+  mode={skyOpen ? "immersive" : "background"}
+  onClose={() => setSkyOpen(false)}
+  locale={locale}
+/>
 ```
 
-Quand on fera **Voir le ciel**, brancher `mode` / `intensity` seulement — la maths est prête.
+- **background** : `pointer-events: none`, parallaxe ×0.4, derrière l’UI  
+- **immersive** : plein écran, parallaxe ×1, **Fermer** + **Esc**  
+- Lexique : **Voir le ciel** / **See the sky**  
+- `test-ciel` : démarre immersif ; Fermer → fond + CTA Voir le ciel  
+- Sanctuaire réel : ciel en fond + bouton header  
 
 ---
 
@@ -119,7 +125,7 @@ Quand on fera **Voir le ciel**, brancher `mode` / `intensity` seulement — la m
 | **A** | Parallaxe ciné + stub intensité | ✅ |
 | **B** | Poussière / voile (`CosmicDust`) | ✅ |
 | **C** | Filantes premium | ✅ |
-| **D** | Mode fond + « Voir le ciel » (UI) | ⏳ stub prêt |
+| **D** | Mode fond + « Voir le ciel » (UI) | ✅ stub + UI |
 | **E** | Focus étoile → révèle média | ⏳ après D |
 | **F** | Pont famille | ⏳ après E |
 | **G** | Naissance d’étoile post-dépôt | ⏳ |
@@ -189,4 +195,4 @@ src/components/contribute/
 2. Noter l’anti-pattern si on s’est brûlé  
 3. Commit doc du type : `docs(sanctuary): update sky craft bible`
 
-*Prochaine entrée attendue : plan D (UI Voir le ciel — brancher stub `mode`).*
+*Prochaine entrée attendue : plan E (focus étoile → révèle média).*
