@@ -51,13 +51,18 @@ Tout se règle dans `defaultSkyTheme.scene.idle` (ou un merge preset).
 | `moveAmp` | Amplitude déplacement XY | `0.16` |
 | `lookAmp` | Amplitude look-at | `0.1` |
 | `breathBoost` | Amplifie la parallaxe autonome des layers | `0.45` |
+| `fogBreathAmp` | Micro-dérive fog (vide qui respire) | `1.1` |
 | `rareEnabled` | Moments rares on/off | `true` |
 | `rareTargets` | Pool de cibles : `"rose"` \| `"mauve"` \| `"teal"` \| `"band"` | les 4 |
 | `rareGasPulse` | Force du pulse opacité (gaz) | `0.14` |
 | `rareBandPulse` | Force du pulse alpha (voie lactée) | `0.22` |
+| `rareDustPulse` | Pulse voile poussière si rare = gaz | `0.1` |
+| `rareLueurPulse` | Pulse Lueur hero si rare = `band` | `0.38` |
 | `rareGapMinSec` / `rareGapMaxSec` | Intervalle entre rares (pendant idle) | `140`–`260` |
 | `rareDurationSec` | Durée d’un pulse | `9` |
 | `rareSpecialStreak` | Filante un cran plus belle avec le pulse | `true` |
+
+**Filantes teintées :** `shootingStars.rareTints.rose|mauve|teal|band` — palette tip/mid/tail de la filante spéciale selon la cible rare.
 
 **Comportement rare :** une cible du pool est choisie au hasard (sans répéter d’affilée). Seul ce layer pulse ; optionnellement une filante spéciale part en même temps.
 

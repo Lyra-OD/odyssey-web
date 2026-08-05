@@ -73,6 +73,8 @@ export type ShootingStarsTheme = {
   tip: string;
   mid: string;
   tail: string;
+  /** Teintes filante spéciale selon cible rare. */
+  rareTints: Record<RareSkyTarget, { tip: string; mid: string; tail: string }>;
   parallax: ParallaxKnobs;
 };
 
@@ -98,6 +100,11 @@ export type SceneTheme = {
     lookAmp: number;
     /** Boost dérive parallaxe des layers pendant idle (0 = off). */
     breathBoost: number;
+    /**
+     * Micro-dérive fog pendant idle (unités near/far).
+     * Le vide s’ouvre / se resserre avec la respiration caméra.
+     */
+    fogBreathAmp: number;
     /** Moments rares (pulse layer + filante). */
     rareEnabled: boolean;
     /** Pool de cibles — une choisie au hasard (sans répéter d’affilée). */
@@ -106,6 +113,10 @@ export type SceneTheme = {
     rareGasPulse: number;
     /** Amplitude pulse alpha voie lactée (cible `band`). */
     rareBandPulse: number;
+    /** Pulse voile poussière quand rare = gaz (plus faible que le gaz). */
+    rareDustPulse: number;
+    /** Pulse Lueur hero quand rare = `band`. */
+    rareLueurPulse: number;
     /** Fenêtre (s) entre moments rares pendant idle. */
     rareGapMinSec: number;
     rareGapMaxSec: number;
@@ -160,10 +171,13 @@ export const defaultSkyTheme: SkyTheme = {
       moveAmp: 0.16,
       lookAmp: 0.1,
       breathBoost: 0.45,
+      fogBreathAmp: 1.1,
       rareEnabled: true,
       rareTargets: ["rose", "mauve", "teal", "band"],
       rareGasPulse: 0.14,
       rareBandPulse: 0.22,
+      rareDustPulse: 0.1,
+      rareLueurPulse: 0.38,
       rareGapMinSec: 140,
       rareGapMaxSec: 260,
       rareDurationSec: 9,
@@ -252,6 +266,12 @@ export const defaultSkyTheme: SkyTheme = {
     tip: "#e8f0fa",
     mid: "#9aacc0",
     tail: "#2e3848",
+    rareTints: {
+      rose: { tip: "#ffd4e6", mid: "#c4789a", tail: "#3a1828" },
+      mauve: { tip: "#edd8fa", mid: "#9a78b8", tail: "#241830" },
+      teal: { tip: "#d4f5f0", mid: "#5a9a94", tail: "#142428" },
+      band: { tip: "#e8f0fa", mid: "#9aacc0", tail: "#2e3848" },
+    },
     parallax: { factor: 0.85, lerp: 0.07 },
   },
   constellation: {

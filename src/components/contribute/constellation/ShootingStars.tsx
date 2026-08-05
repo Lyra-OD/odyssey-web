@@ -13,7 +13,7 @@ import {
 } from "three";
 
 import type { VisualTier } from "./useVisualTier";
-import { useSkyTheme } from "./skyTheme";
+import { useSkyTheme, type RareSkyTarget } from "./skyTheme";
 import { idleCameraRef } from "./IdleCameraDrift";
 
 /**
@@ -74,6 +74,31 @@ function randomUnitDirection(out: Vector3) {
   if (out.lengthSq() < 1e-6) out.set(1, 0, 0);
   else out.normalize();
   return out;
+}
+
+function paintLineColors(
+  line: Line,
+  tipHex: string,
+  midHex: string,
+  tailHex: string,
+) {
+  const tip = new Color(tipHex);
+  const mid = new Color(midHex);
+  const tail = new Color(tailHex);
+  const colAttr = line.geometry.getAttribute("color") as BufferAttribute;
+  const colors = colAttr.array as Float32Array;
+  for (let s = 0; s < SEGMENTS; s += 1) {
+    const t = s / (SEGMENTS - 1);
+    const c = tail
+      .clone()
+      .lerp(mid, Math.min(1, Math.pow(t, 1.15) * 1.35))
+      .lerp(tip, Math.max(0, t - 0.65) / 0.35);
+    const i3 = s * 3;
+    colors[i3] = c.r;
+    colors[i3 + 1] = c.g;
+    colors[i3 + 2] = c.b;
+  }
+  colAttr.needsUpdate = true;
 }
 
 function spawnStreak(
@@ -188,9 +213,24 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
     nextLargeRef.current -= dt;
 
     const trySpawn = (kind: StreakKind, special = false) => {
-      const slot = states.find((s) => !s.active);
-      if (!slot) return false;
+      const idx = states.findIndex((s) => !s.active);
+      if (idx < 0) return false;
+      const slot = states[idx]!;
+      const line = lines[idx];
+      if (!line) return false;
       spawnStreak(slot, dirTmp, kind, special);
+      if (special) {
+        const target = idleCameraRef.rareTarget as RareSkyTarget;
+        const tint =
+          streak.rareTints[target] ?? {
+            tip: streak.tip,
+            mid: streak.mid,
+            tail: streak.tail,
+          };
+        paintLineColors(line, tint.tip, tint.mid, tint.tail);
+      } else {
+        paintLineColors(line, streak.tip, streak.mid, streak.tail);
+      }
       return true;
     };
 

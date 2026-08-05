@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { Fog, Vector3 } from "three";
 
 import { idleCameraRef } from "./IdleCameraDrift";
+import { useSkyTheme } from "./skyTheme";
 import { cameraZoomRef, ZOOM_DEFAULT, ZOOM_MAX, ZOOM_MIN } from "./WheelZoom";
 
 const FOCUS_FOG = { near: 5.5, far: 15 } as const;
@@ -24,13 +25,14 @@ type FocusCameraProps = {
 };
 
 /**
- * E1 — Approche ciné ; hors focus, zoom molette + dérive idle + fog.
+ * E1 — Approche ciné ; hors focus, zoom molette + dérive idle + fog vivant.
  */
 export function FocusCamera({ target, active }: FocusCameraProps) {
   const look = useRef(new Vector3(0, 0, 0));
   const desired = useMemo(() => new Vector3(), []);
   const lookTarget = useMemo(() => new Vector3(), []);
   const home = useMemo(() => new Vector3(0, 0, ZOOM_DEFAULT), []);
+  const fogBreathAmp = useSkyTheme().scene.idle?.fogBreathAmp ?? 0;
 
   useFrame((state) => {
     const cam = state.camera;
@@ -61,8 +63,12 @@ export function FocusCamera({ target, active }: FocusCameraProps) {
       cam.lookAt(look.current);
       if (fog) {
         const f = fogForZoom(z);
-        fog.near += (f.near - fog.near) * 0.08;
-        fog.far += (f.far - fog.far) * 0.08;
+        // Respiration du vide : fog suit zoom idle + breath
+        const breath = idle.breath * fogBreathAmp;
+        const nearOff = -breath * 0.75 + idle.zoomOffset * 0.22;
+        const farOff = breath * 2.2 + idle.zoomOffset * 0.85;
+        fog.near += (f.near + nearOff - fog.near) * 0.07;
+        fog.far += (f.far + farOff - fog.far) * 0.07;
       }
     }
   });
