@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useThree } from "@react-three/fiber";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { EclipseDisc } from "@/src/components/contribute/constellation/EclipseDisc";
 import {
@@ -33,86 +33,111 @@ function ForceRenderLoop() {
   return null;
 }
 
+function smoothstep(a: number, b: number, x: number) {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+}
+
 type Locale = "fr" | "en";
 
 /**
- * Lab craft — éclipse seule, fond noir.
- * Pas d’intro Sanctuaire ici : on cherche la forme digne (logo + future intro).
+ * Lab craft — éclipse seule.
+ * Anim clé : soleil brillant → totalité (le soleil devient noir + corona).
  */
 export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
-  const [opacity, setOpacity] = useState(1);
-  const [corona, setCorona] = useState(1.15);
+  const [eclipse, setEclipse] = useState(0);
+  const [corona, setCorona] = useState(0.2);
   const [scale, setScale] = useState(1);
-  const [breath, setBreath] = useState(true);
+  const [playing, setPlaying] = useState(true);
+  const [loopBreath, setLoopBreath] = useState(false);
+  const playRef = useRef({ t0: 0, active: true });
 
   const craft = useMemo(
     () => ({
-      opacity,
+      opacity: 1,
       coronaAmp: corona,
       scaleMul: scale,
+      eclipse,
     }),
-    [opacity, corona, scale],
+    [corona, scale, eclipse],
   );
 
+  // Lecture soleil → totalité (~3.2s) puis respiration corona
   useEffect(() => {
-    if (!breath) return;
+    if (!playing) return;
+    playRef.current = { t0: performance.now(), active: true };
+    setLoopBreath(false);
+    let raf = 0;
+    const DUR = 3200;
+    const tick = (now: number) => {
+      const age = now - playRef.current.t0;
+      const u = Math.min(1, age / DUR);
+      // Soleil tient un instant, puis noircit ; corona monte avec
+      const e = smoothstep(0.12, 0.82, u);
+      setEclipse(e);
+      setCorona(0.15 + e * 1.15);
+      setScale(1 + e * 0.04);
+      if (u < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        setEclipse(1);
+        setCorona(1.25);
+        setPlaying(false);
+        setLoopBreath(true);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [playing]);
+
+  // Respiration corona en totalité
+  useEffect(() => {
+    if (!loopBreath || playing) return;
     let raf = 0;
     const t0 = performance.now();
     const tick = (now: number) => {
       const t = (now - t0) / 1000;
-      const w = 0.5 + 0.5 * Math.sin(t * 0.55);
-      setOpacity(0.88 + w * 0.12);
-      setCorona(0.95 + w * 0.35);
-      setScale(0.96 + w * 0.08);
+      const w = 0.5 + 0.5 * Math.sin(t * 0.45);
+      setCorona(1.05 + w * 0.35);
+      setScale(1.02 + w * 0.03);
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [breath]);
+  }, [loopBreath, playing]);
 
-  const pulseOnce = useCallback(() => {
-    setBreath(false);
-    setOpacity(0.35);
-    setCorona(0.5);
-    setScale(0.92);
-    window.setTimeout(() => {
-      setOpacity(1);
-      setCorona(1.55);
-      setScale(1.12);
-    }, 140);
-    window.setTimeout(() => {
-      setOpacity(1);
-      setCorona(1.15);
-      setScale(1);
-    }, 850);
+  const replay = useCallback(() => {
+    setLoopBreath(false);
+    setEclipse(0);
+    setCorona(0.2);
+    setScale(1);
+    setPlaying(true);
   }, []);
 
   const copy =
     locale === "en"
       ? {
           title: "Eclipse craft",
-          sub: "Mark only — sanctuary intro comes later",
-          breath: "Breath",
-          pulse: "Pulse",
-          opacity: "Opacity",
+          sub: "Sun becomes black — mark for intro / logo",
+          play: "Replay sun → black",
+          breath: "Corona breath",
+          eclipse: "Eclipse",
           corona: "Corona",
-          scale: "Scale",
-          hint: "Dev only · shape the eclipse before wiring intro / logo",
+          hint: "Dev only · match totality photo, then wire sanctuary intro",
         }
       : {
           title: "Craft Éclipse",
-          sub: "Marque seule — intro Sanctuaire plus tard",
-          breath: "Respiration",
-          pulse: "Pulse",
-          opacity: "Opacité",
+          sub: "Le soleil devient noir — marque intro / logo",
+          play: "Rejouer soleil → noir",
+          breath: "Respiration corona",
+          eclipse: "Éclipse",
           corona: "Corona",
-          scale: "Échelle",
-          hint: "Dev only · forme l’éclipse avant intro / logo",
+          hint: "Dev only · viser la photo de totalité, puis brancher l’intro",
         };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#07080f] text-zinc-100 antialiased">
+    <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
       <ClientWebGLGate
         fallback={(message) => (
           <div className="flex min-h-screen items-center justify-center px-6 text-center text-sm text-white/50">
@@ -134,13 +159,13 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
               preserveDrawingBuffer: true,
             }}
             onCreated={({ gl }) => {
-              gl.setClearColor("#07080f", 1);
+              gl.setClearColor("#000000", 1);
             }}
           >
             <Suspense fallback={null}>
               <SkyThemeProvider theme={defaultSkyTheme}>
                 <ForceRenderLoop />
-                <color attach="background" args={["#07080f"]} />
+                <color attach="background" args={["#000000"]} />
                 <EclipseDisc tier="desktop" craft={craft} />
               </SkyThemeProvider>
             </Suspense>
@@ -155,37 +180,45 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
         <p className="text-xs font-light text-white/45">{copy.sub}</p>
       </div>
 
-      <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-black/55 px-5 py-4 backdrop-blur-md md:px-10">
+      <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-black/60 px-5 py-4 backdrop-blur-md md:px-10">
         <div className="mx-auto flex max-w-3xl flex-col gap-4">
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={() => setBreath((b) => !b)}
-              aria-pressed={breath}
+              onClick={replay}
               className="rounded-sm border border-white/20 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-white/70 hover:border-white/40"
             >
-              {copy.breath}
-              {breath ? " · on" : " · off"}
+              {copy.play}
             </button>
             <button
               type="button"
-              onClick={pulseOnce}
+              onClick={() => {
+                setPlaying(false);
+                setLoopBreath((b) => !b);
+                setEclipse(1);
+              }}
+              aria-pressed={loopBreath}
               className="rounded-sm border border-white/20 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-white/70 hover:border-white/40"
             >
-              {copy.pulse}
+              {copy.breath}
+              {loopBreath ? " · on" : " · off"}
             </button>
           </div>
-          {!breath ? (
-            <div className="grid gap-3 sm:grid-cols-3">
+          {!playing ? (
+            <div className="grid gap-3 sm:grid-cols-2">
               <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.opacity}
+                {copy.eclipse}
                 <input
                   type="range"
-                  min={0.05}
+                  min={0}
                   max={1}
                   step={0.01}
-                  value={opacity}
-                  onChange={(e) => setOpacity(Number(e.target.value))}
+                  value={eclipse}
+                  onChange={(e) => {
+                    setLoopBreath(false);
+                    setEclipse(Number(e.target.value));
+                    setCorona(0.15 + Number(e.target.value) * 1.15);
+                  }}
                 />
               </label>
               <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
@@ -193,21 +226,10 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
                 <input
                   type="range"
                   min={0.2}
-                  max={2.5}
+                  max={2.2}
                   step={0.01}
                   value={corona}
                   onChange={(e) => setCorona(Number(e.target.value))}
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.scale}
-                <input
-                  type="range"
-                  min={0.5}
-                  max={2.2}
-                  step={0.01}
-                  value={scale}
-                  onChange={(e) => setScale(Number(e.target.value))}
                 />
               </label>
             </div>
