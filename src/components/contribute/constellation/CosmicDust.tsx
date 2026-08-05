@@ -7,6 +7,7 @@ import { Color, ShaderMaterial } from "three";
 import type { VisualTier } from "./useVisualTier";
 import { opacityForTier, useSkyTheme } from "./skyTheme";
 import { idleCameraRef } from "./IdleCameraDrift";
+import { skyIntroMul } from "./SkyIntroEclipse";
 
 /**
  * Voile de poussière — soft, lent, aligné voie lactée.
@@ -127,7 +128,8 @@ export function CosmicDust({ tier }: CosmicDustProps) {
       target === "rose" || target === "mauve" || target === "teal";
     const pulse = gasRare ? idleCameraRef.rarePulse : 0;
     const amp = theme.scene.idle?.rareDustPulse ?? 0;
-    mat.uniforms.uOpacity.value = opacity * (1 + pulse * amp);
+    mat.uniforms.uOpacity.value =
+      opacity * (1 + pulse * amp) * skyIntroMul(1);
   });
 
   return (

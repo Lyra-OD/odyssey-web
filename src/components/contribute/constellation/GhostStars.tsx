@@ -11,6 +11,7 @@ import {
 
 import type { VisualTier } from "./useVisualTier";
 import { opacityForTier, useSkyTheme } from "./skyTheme";
+import { skyIntroMul } from "./SkyIntroEclipse";
 
 /**
  * Ghost stars — gros bokeh soft, parallaxe inverse (optique / profondeur).
@@ -110,7 +111,9 @@ export function GhostStars({ tier }: Props) {
   );
 
   useFrame(({ clock }) => {
-    (matRef.current ?? material).uniforms.uTime.value = clock.elapsedTime;
+    const mat = matRef.current ?? material;
+    mat.uniforms.uTime.value = clock.elapsedTime;
+    mat.uniforms.uOpacity.value = opacity * skyIntroMul(1);
   });
 
   if (opacity < 0.001 || cfg.count <= 0) return null;

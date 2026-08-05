@@ -7,6 +7,7 @@ import { Color, ShaderMaterial } from "three";
 import type { VisualTier } from "./useVisualTier";
 import { opacityForTier, useSkyTheme } from "./skyTheme";
 import { idleCameraRef } from "./IdleCameraDrift";
+import { skyIntroMul } from "./SkyIntroEclipse";
 
 /**
  * Lumière zodiacale — bande soft le long de la voie lactée (screensaver Phase 2).
@@ -118,7 +119,7 @@ export function ZodiacalLight({ tier }: Props) {
     mat.uniforms.uTime.value = clock.elapsedTime;
     // Respire un peu plus pendant idle caméra
     const breath = 1 + idleCameraRef.breath * (cfg.idleBoost ?? 0.25);
-    mat.uniforms.uOpacity.value = baseOpacity * breath;
+    mat.uniforms.uOpacity.value = baseOpacity * breath * skyIntroMul(1);
   });
 
   if (baseOpacity < 0.001) return null;

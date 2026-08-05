@@ -131,6 +131,16 @@ export type SceneTheme = {
   fogNear: number;
   fogFar: number;
   ambientIntensity: number;
+  /** Intro Éclipse immersif 1×/session. */
+  intro: {
+    enabled: boolean;
+    /** Durée totale (s). */
+    durationSec: number;
+    /** Amplification corona pendant l’intro. */
+    coronaAmp: number;
+    /** Scale max du disc à l’ouverture (× scale theme). */
+    openScale: number;
+  };
   /** Dérive caméra quand on ne touche à rien. */
   idle: {
     enabled: boolean;
@@ -230,6 +240,12 @@ export const defaultSkyTheme: SkyTheme = {
     fogNear: 12,
     fogFar: 28,
     ambientIntensity: 0.05,
+    intro: {
+      enabled: true,
+      durationSec: 3.2,
+      coronaAmp: 1.25,
+      openScale: 1.65,
+    },
     idle: {
       enabled: true,
       delaySec: 3.5,

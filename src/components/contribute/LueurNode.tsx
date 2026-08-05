@@ -12,6 +12,7 @@ import {
 } from "three";
 
 import { idleCameraRef } from "@/src/components/contribute/constellation/IdleCameraDrift";
+import { skyIntroMul } from "@/src/components/contribute/constellation/SkyIntroEclipse";
 import { useSkyTheme } from "@/src/components/contribute/constellation/skyTheme";
 export type LueurNodeVariant = "standard" | "premium" | "hero";
 
@@ -139,7 +140,7 @@ export function LueurNode({
     mat.uniforms.uSize.value =
       cfg.size * (0.88 + 0.22 * breath) * sizeMul;
     mat.uniforms.uGlow.value =
-      (0.65 + 0.45 * breath * (1 + cfg.pulse)) * glowMul;
+      (0.65 + 0.45 * breath * (1 + cfg.pulse)) * glowMul * skyIntroMul(1);
     mat.uniforms.uSpike.value =
       cfg.spike * (1 + boost * 0.55 + skyPulse * 0.4);
   });

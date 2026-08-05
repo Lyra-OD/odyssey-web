@@ -44,7 +44,7 @@ Du plus loin au plus près :
 | 1 | **CosmicDust** | `constellation/CosmicDust.tsx` | Voile poussière sur l’axe voie lactée | `cosmicDust` |
 | 1b | **ZodiacalLight** | `ZodiacalLight.tsx` | Lumière solaire soft (axe bande) | `zodiacal` — skip `reduced` |
 | 1c | **AuroraVeil** | `AuroraVeil.tsx` | Rideau aurore (dormant → pulse rare `aurora`) | `aurora` — skip `reduced` |
-| 1d | **EclipseDisc** | `EclipseDisc.tsx` | Disque + corona (rare `eclipse`, graine logo) | `eclipse` — desktop only |
+| 1d | **EclipseDisc** | `EclipseDisc.tsx` | Disque + corona (rare `eclipse` + **intro**) | `eclipse` / `scene.intro` — desktop |
 | 2 | **StarDust band** | `constellation/StarDust.tsx` | Voie lactée (~96 % du budget étoiles) | `starsBand` (+ zoom-out compensate) |
 | 3 | **StarDust field** | idem | Peu d’étoiles proches (~4 %) | `starsField` (+ zoom-out compensate) |
 | 4 | **ShootingStars** | `constellation/ShootingStars.tsx` | Filantes + **StreakEcho** (fantôme post-rare) | `shootingStars` |
@@ -55,6 +55,8 @@ Du plus loin au plus près :
 - `ParallaxLayer` + `ParallaxProvider` — profondeur + stub intensité  
 - `WheelZoom` + `FocusCamera` — zoom molette / focus étoile  
 - `IdleCameraDrift` — dérive + breath + rares (knobs : `scene.idle` → [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md))  
+- `SkyIntroEclipse` — intro 1×/session (knobs : `scene.intro`)  
+- `SkyWander` — promenade opt-in (toggle UI)  
 - `CameraRig` — légère rotation, × `intensity`  
 - Seeds PRNG stables (`mulberry32`) — retoucher la bande **ne re-shuffle pas** le field
 - `skyTheme.ts` — source de vérité couleurs / opacités / parallaxe / idle
@@ -143,7 +145,7 @@ Du plus loin au plus près :
 | **F** | Pont famille | ⏳ après E |
 | **G** | Naissance d’étoile post-dépôt | ⏳ |
 | **H** | Audio immersif (mute default) | ⏳ optionnel |
-| **S** | Ciel screensaver (profondeur → moments WTF → intro Éclipse → veille) | 🚧 Phase 3 (WTF) |
+| **S** | Ciel screensaver (profondeur → moments WTF → intro Éclipse → veille) | 🚧 Phase 4 (intro) |
 
 ### Roadmap screensaver (S)
 
@@ -153,11 +155,13 @@ Objectif : *« WTF I WANT THIS AS A SCREENSAVER »* — digne, léger GPU.
 |-------|---------|------|
 | **1** | `NebulaGasFar` + `GhostStars` | ✅ — skip `reduced` ; Ghost aussi skip `mobile` |
 | **2** | `ZodiacalLight` | ✅ — 1 plane, skip `reduced` |
-| **3** | Moments WTF — `AuroraVeil` + `EclipseDisc` + `StreakEcho` | ✅ — eclipse desktop only ; intro = Phase 4 |
-| **4** | Intro immersif 1×/session (`SkyIntroEclipse`, réutilise `EclipseDisc`) | logo-ready — **plus tard** |
+| **3** | Moments WTF — `AuroraVeil` + `EclipseDisc` + `StreakEcho` | ✅ — eclipse desktop only |
+| **4** | Intro immersif 1×/session (`SkyIntroEclipse`, réutilise `EclipseDisc`) | ✅ — desktop ; skip Esc/clic/reduced-motion ; `?skyIntro=1` pour rejouer |
 | **5** | Mode veille (UI fade + idle plus lent) | comportement — **plus tard** |
 
 **Sky Eclipse :** disque procédural + corona neutre (rhime Halo-Éclipse §4.1). Pas de `eclipse.mp4` dans le WebGL. Si assez belle → chantier design system pour remplacer la vidéo. ≠ « Éclipse Résonnante » constellation (E′).
+
+**Intro (Phase 4) :** ~3,2 s — ciel éteint → disc centré → ouverture / révélation → idle. Knobs `scene.intro`. Même `EclipseDisc` que le rare.
 
 Règle de session : **une lettre / phase à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
 

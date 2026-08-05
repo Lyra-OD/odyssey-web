@@ -7,6 +7,7 @@ import { Color, ShaderMaterial } from "three";
 import type { VisualTier } from "./useVisualTier";
 import { useSkyTheme } from "./skyTheme";
 import { idleCameraRef } from "./IdleCameraDrift";
+import { skyIntroMul } from "./SkyIntroEclipse";
 
 /**
  * Aurore lointaine — rideau vertical soft, visible surtout sur rare `aurora`.
@@ -118,7 +119,8 @@ export function AuroraVeil({ tier }: Props) {
       idleCameraRef.rareTarget === "aurora" ? idleCameraRef.rarePulse : 0;
     const amp = idle?.rareAuroraPulse ?? 0.55;
     // Dormant ~base, rare monte clairement puis redescend
-    mat.uniforms.uOpacity.value = base + pulse * amp * (cfg.opacity.desktop || 0.12);
+    mat.uniforms.uOpacity.value =
+      (base + pulse * amp * (cfg.opacity.desktop || 0.12)) * skyIntroMul(1);
   });
 
   if (tier === "reduced" || base <= 0) return null;

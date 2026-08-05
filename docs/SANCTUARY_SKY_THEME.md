@@ -14,6 +14,7 @@
 |------|---------|
 | Types + `defaultSkyTheme` + `mergeSkyTheme` + Provider | `src/components/contribute/constellation/skyTheme.ts` |
 | Idle (dérive / rare) | `IdleCameraDrift.tsx` — lit `scene.idle` |
+| Intro Éclipse | `SkyIntroEclipse.tsx` — lit `scene.intro` |
 | Injection | `SanctuaryUniverse` prop `skyTheme` (défaut = `defaultSkyTheme`) |
 
 Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas hardcoder les couleurs / amplitudes dans les layers.
@@ -34,7 +35,9 @@ Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas har
 | `starsBand` | Voie lactée |
 | `starsField` | Étoiles proches |
 | `shootingStars` | Filantes (couleurs + parallaxe) |
-| `scene` | Background / fog / ambient / **idle** |
+| `scene` | Background / fog / ambient / **idle** / **intro** |
+| `eclipse` | Disque + corona (rare + intro) |
+| `aurora` | Rideau aurore |
 | `constellation` | Parallaxe constellation |
 
 Chaque gaz : `color`, `deep`, `opacity` (desktop/mobile/reduced), `parallax`, `position`, `scale`, …
@@ -73,7 +76,20 @@ Tout se règle dans `defaultSkyTheme.scene.idle` (ou un merge preset).
 
 **Aurore :** knobs `aurora` — dormant hors rare ; pulse via `rareAuroraPulse`.
 
-**Éclipse :** knobs `eclipse` (body/corona/rim/coronaAmp) — desktop only ; pulse via `rareEclipsePulse`. Intro immersif = Phase 4 (réutilise le même disc).
+**Éclipse :** knobs `eclipse` (body/corona/rim/coronaAmp) — desktop ; rare via `rareEclipsePulse` + intro via `scene.intro`.
+
+---
+
+## 3b. `scene.intro` — intro Éclipse 1×/session
+
+| Knob | Rôle | Défaut |
+|------|------|--------|
+| `enabled` | Active l’intro immersif | `true` |
+| `durationSec` | Durée totale | `3.2` |
+| `coronaAmp` | Boost corona pendant l’intro | `1.25` |
+| `openScale` | Ouverture du disc (× scale) | `1.65` |
+
+Skip : Esc, clic, non-desktop, `prefers-reduced-motion`, déjà vu (`sessionStorage`). Rejouer : `?skyIntro=1`.
 
 **Comportement rare :** une cible du pool est choisie au hasard (sans répéter d’affilée). Seul ce layer pulse ; optionnellement une filante spéciale part en même temps.
 

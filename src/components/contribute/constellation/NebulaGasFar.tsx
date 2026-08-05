@@ -11,6 +11,7 @@ import {
   nebulaVertexShader,
 } from "./nebulaCommon";
 import { opacityForTier, useSkyTheme } from "./skyTheme";
+import { skyIntroMul } from "./SkyIntroEclipse";
 
 /**
  * Nébuleuse lointaine — quasi noire, très lente (profondeur screensaver).
@@ -105,7 +106,9 @@ export function NebulaGasFar({ tier }: Props) {
   );
 
   useFrame(({ clock }) => {
-    (matRef.current ?? material).uniforms.uTime.value = clock.elapsedTime;
+    const mat = matRef.current ?? material;
+    mat.uniforms.uTime.value = clock.elapsedTime;
+    mat.uniforms.uOpacity.value = opacity * skyIntroMul(1);
   });
 
   if (opacity < 0.001) return null;

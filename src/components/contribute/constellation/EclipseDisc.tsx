@@ -7,12 +7,12 @@ import { Color, Mesh, ShaderMaterial } from "three";
 import type { VisualTier } from "./useVisualTier";
 import { useSkyTheme } from "./skyTheme";
 import { idleCameraRef } from "./IdleCameraDrift";
+import { skyIntroRef } from "./SkyIntroEclipse";
 
 /**
  * Sky Eclipse — disque sombre + corona neutre (graine logo Halo-Éclipse).
- * Invisible hors rare `eclipse` (un rim dormant = « rond » parasite).
- * Intro immersif = réutilise ce composant plus tard.
- * Knobs : `skyTheme.eclipse`
+ * Modes : rare idle `eclipse` | intro immersif (`skyIntroRef`).
+ * Knobs : `skyTheme.eclipse` + `scene.intro`
  */
 const vertexShader = /* glsl */ `
 varying vec2 vUv;
@@ -96,6 +96,7 @@ export function EclipseDisc({ tier }: Props) {
   const theme = useSkyTheme();
   const cfg = theme.eclipse;
   const idle = theme.scene.idle;
+  const intro = theme.scene.intro;
 
   const material = useMemo(
     () =>
@@ -123,15 +124,41 @@ export function EclipseDisc({ tier }: Props) {
     const mat = matRef.current ?? material;
     const mesh = meshRef.current;
     mat.uniforms.uTime.value = clock.elapsedTime;
-    const pulse =
-      idleCameraRef.rareTarget === "eclipse" ? idleCameraRef.rarePulse : 0;
-    const amp = idle?.rareEclipsePulse ?? 0.92;
-    const bloom = pulse * amp;
+
+    const introOn = skyIntroRef.active && skyIntroRef.disc > 0.01;
+    let bloom = 0;
+    let corona = cfg.coronaAmp;
+    let scaleMul = 1;
+    let pos: [number, number, number] = cfg.position;
+
+    if (introOn) {
+      bloom = skyIntroRef.disc * 0.95;
+      corona = cfg.coronaAmp * (intro?.coronaAmp ?? 1.25) * (0.7 + skyIntroRef.disc * 0.5);
+      scaleMul = skyIntroRef.discScale;
+      // Intro centrée — logo-ready
+      pos = [0, 0.05, -4.2];
+    } else if (tier === "desktop") {
+      const pulse =
+        idleCameraRef.rareTarget === "eclipse" ? idleCameraRef.rarePulse : 0;
+      const amp = idle?.rareEclipsePulse ?? 0.92;
+      bloom = pulse * amp;
+      corona = cfg.coronaAmp * (0.35 + pulse * 1.1);
+    }
+
     mat.uniforms.uOpacity.value = bloom;
-    mat.uniforms.uCoronaAmp.value = cfg.coronaAmp * (0.35 + pulse * 1.1);
-    if (mesh) mesh.visible = bloom > 0.01;
+    mat.uniforms.uCoronaAmp.value = corona;
+    if (mesh) {
+      mesh.visible = bloom > 0.01;
+      mesh.position.set(pos[0], pos[1], pos[2]);
+      mesh.scale.set(
+        cfg.scale[0] * scaleMul,
+        cfg.scale[1] * scaleMul,
+        cfg.scale[2],
+      );
+    }
   });
 
+  // Mount on desktop (rare + intro) ; intro-only would need mobile — V1 desktop
   if (tier !== "desktop") return null;
 
   return (

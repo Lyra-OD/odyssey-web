@@ -15,6 +15,7 @@ import { ParallaxLayer } from "./ParallaxLayer";
 import { cameraZoomRef, ZOOM_DEFAULT } from "./WheelZoom";
 import { type StarFieldTheme, useSkyTheme } from "./skyTheme";
 import { idleCameraRef } from "./IdleCameraDrift";
+import { skyIntroMul } from "./SkyIntroEclipse";
 
 const vertexShader = /* glsl */ `
 uniform float uTime;
@@ -211,7 +212,8 @@ function StarField({ kind, count, cfg }: StarFieldProps) {
       kind === "band" && idleCameraRef.rareTarget === "band"
         ? idleCameraRef.rarePulse * rareBandPulse
         : 0;
-    mat.uniforms.uAlphaMul.value = cfg.alphaMul * (1 + bandPulse);
+    mat.uniforms.uAlphaMul.value =
+      cfg.alphaMul * (1 + bandPulse) * skyIntroMul(1);
   });
 
   return (

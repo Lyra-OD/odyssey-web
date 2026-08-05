@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 
 import { useSkyTheme, type RareSkyTarget } from "./skyTheme";
+import { skyIntroRef } from "./SkyIntroEclipse";
 
 export type { RareSkyTarget };
 
@@ -36,6 +37,10 @@ function skyFocusActive() {
   return (
     typeof document !== "undefined" && document.body.dataset.skyFocus === "1"
   );
+}
+
+function skyIntroActive() {
+  return skyIntroRef.active;
 }
 
 function smoothstep01(x: number) {
@@ -77,7 +82,7 @@ export function IdleCameraDrift() {
     const now =
       typeof performance !== "undefined" ? performance.now() : Date.now();
     const quiet = (now - lastSkyActivityRef.current) / 1000 >= cfg.delaySec;
-    const allow = quiet && !skyFocusActive();
+    const allow = quiet && !skyFocusActive() && !skyIntroActive();
 
     if (!allow) {
       driftingRef.current = false;

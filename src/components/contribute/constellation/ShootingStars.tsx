@@ -15,6 +15,7 @@ import {
 import type { VisualTier } from "./useVisualTier";
 import { useSkyTheme, type RareSkyTarget } from "./skyTheme";
 import { idleCameraRef } from "./IdleCameraDrift";
+import { skyIntroRef } from "./SkyIntroEclipse";
 
 /**
  * Mix Kubrick × Premium :
@@ -242,6 +243,24 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
     const states = statesRef.current;
+
+    if (skyIntroRef.active) {
+      for (let i = 0; i < POOL; i += 1) {
+        const s = states[i];
+        const line = lines[i];
+        if (s) s.active = false;
+        if (line) {
+          (line.material as LineBasicMaterial).opacity = 0;
+          line.visible = false;
+        }
+      }
+      echoStateRef.current.active = false;
+      (echoLine.material as LineBasicMaterial).opacity = 0;
+      echoLine.visible = false;
+      echoPendingRef.current = null;
+      return;
+    }
+
     nextSmallRef.current -= dt;
     nextLargeRef.current -= dt;
 
