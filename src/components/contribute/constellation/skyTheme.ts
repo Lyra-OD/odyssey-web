@@ -23,7 +23,13 @@ export type ParallaxKnobs = {
 };
 
 /** Cible d’un moment rare idle (pulse sur ce layer). */
-export type RareSkyTarget = "rose" | "mauve" | "teal" | "band" | "aurora";
+export type RareSkyTarget =
+  | "rose"
+  | "mauve"
+  | "teal"
+  | "band"
+  | "aurora"
+  | "eclipse";
 
 export type GasLayerTheme = {
   color: string;
@@ -92,6 +98,20 @@ export type AuroraTheme = {
   parallax: ParallaxKnobs;
 };
 
+/** Sky Eclipse — disque + corona (logo-ready). Intro réutilisera ce layer. */
+export type EclipseTheme = {
+  body: string;
+  corona: string;
+  rim: string;
+  /** Opacité dormante (whisper) ; rare monte fort. */
+  opacity: TierOpacity;
+  coronaAmp: number;
+  position: [number, number, number];
+  scale: [number, number, number];
+  renderOrder: number;
+  parallax: ParallaxKnobs;
+};
+
 export type ShootingStarsTheme = {
   tip: string;
   mid: string;
@@ -145,6 +165,8 @@ export type SceneTheme = {
     rareLueurPulse: number;
     /** Amplitude pulse aurore quand rare = `aurora`. */
     rareAuroraPulse: number;
+    /** Amplitude bloom éclipse quand rare = `eclipse`. */
+    rareEclipsePulse: number;
     /** Fenêtre (s) entre moments rares pendant idle. */
     rareGapMinSec: number;
     rareGapMaxSec: number;
@@ -182,6 +204,7 @@ export type SkyTheme = {
   cosmicDust: DustLayerTheme;
   zodiacal: ZodiacalTheme;
   aurora: AuroraTheme;
+  eclipse: EclipseTheme;
   ghostStars: GhostStarsTheme;
   starsBand: StarFieldTheme;
   starsField: StarFieldTheme;
@@ -217,12 +240,13 @@ export const defaultSkyTheme: SkyTheme = {
       breathBoost: 0.45,
       fogBreathAmp: 1.1,
       rareEnabled: true,
-      rareTargets: ["rose", "mauve", "teal", "band", "aurora"],
+      rareTargets: ["rose", "mauve", "teal", "band", "aurora", "eclipse"],
       rareGasPulse: 0.14,
       rareBandPulse: 0.22,
       rareDustPulse: 0.1,
       rareLueurPulse: 0.38,
       rareAuroraPulse: 0.7,
+      rareEclipsePulse: 0.92,
       rareGapMinSec: 140,
       rareGapMaxSec: 260,
       rareDurationSec: 9,
@@ -298,6 +322,17 @@ export const defaultSkyTheme: SkyTheme = {
     renderOrder: 0,
     parallax: { factor: -0.07, lerp: 0.018 },
   },
+  eclipse: {
+    body: "#05060a",
+    corona: "#c8d0dc",
+    rim: "#e8eef6",
+    opacity: { desktop: 0.014, mobile: 0, reduced: 0 },
+    coronaAmp: 1,
+    position: [0.55, 0.35, -5.2],
+    scale: [7.5, 7.5, 1],
+    renderOrder: 2,
+    parallax: { factor: 0.12, lerp: 0.022 },
+  },
   ghostStars: {
     tint: "#c8d4f0",
     count: 22,
@@ -356,6 +391,7 @@ export const defaultSkyTheme: SkyTheme = {
       teal: { tip: "#d4f5f0", mid: "#5a9a94", tail: "#142428" },
       band: { tip: "#e8f0fa", mid: "#9aacc0", tail: "#2e3848" },
       aurora: { tip: "#d8fff4", mid: "#4a9a88", tail: "#0e2420" },
+      eclipse: { tip: "#f0f4fa", mid: "#a8b4c4", tail: "#1a1e28" },
     },
     echoDelaySec: 0.4,
     echoOpacity: 0.35,

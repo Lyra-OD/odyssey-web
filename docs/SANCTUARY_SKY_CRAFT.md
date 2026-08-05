@@ -44,6 +44,7 @@ Du plus loin au plus près :
 | 1 | **CosmicDust** | `constellation/CosmicDust.tsx` | Voile poussière sur l’axe voie lactée | `cosmicDust` |
 | 1b | **ZodiacalLight** | `ZodiacalLight.tsx` | Lumière solaire soft (axe bande) | `zodiacal` — skip `reduced` |
 | 1c | **AuroraVeil** | `AuroraVeil.tsx` | Rideau aurore (dormant → pulse rare `aurora`) | `aurora` — skip `reduced` |
+| 1d | **EclipseDisc** | `EclipseDisc.tsx` | Disque + corona (rare `eclipse`, graine logo) | `eclipse` — desktop only |
 | 2 | **StarDust band** | `constellation/StarDust.tsx` | Voie lactée (~96 % du budget étoiles) | `starsBand` (+ zoom-out compensate) |
 | 3 | **StarDust field** | idem | Peu d’étoiles proches (~4 %) | `starsField` (+ zoom-out compensate) |
 | 4 | **ShootingStars** | `constellation/ShootingStars.tsx` | Filantes + **StreakEcho** (fantôme post-rare) | `shootingStars` |
@@ -152,11 +153,11 @@ Objectif : *« WTF I WANT THIS AS A SCREENSAVER »* — digne, léger GPU.
 |-------|---------|------|
 | **1** | `NebulaGasFar` + `GhostStars` | ✅ — skip `reduced` ; Ghost aussi skip `mobile` |
 | **2** | `ZodiacalLight` | ✅ — 1 plane, skip `reduced` |
-| **3** | Moments WTF — `AuroraVeil` + `StreakEcho` (pas d’Éclipse) | ✅ — skip `reduced` ; rare `aurora` |
-| **4** | `EclipseDisc` + intro immersif 1×/session | logo-ready — **plus tard** |
+| **3** | Moments WTF — `AuroraVeil` + `EclipseDisc` + `StreakEcho` | ✅ — eclipse desktop only ; intro = Phase 4 |
+| **4** | Intro immersif 1×/session (`SkyIntroEclipse`, réutilise `EclipseDisc`) | logo-ready — **plus tard** |
 | **5** | Mode veille (UI fade + idle plus lent) | comportement — **plus tard** |
 
-**Éclipse (Phase 4, pas maintenant) :** l’Éclipse procédurale est une **graine de marque** séparée — si elle convainc, elle pourra remplacer `eclipse.mp4` / `eclipse_login.mp4` (chantier design system). Corps neutre + corona ; couleur d’état = halo autour (comme [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) §4.1). Ne pas confondre avec « Éclipse Résonnante » constellation (E′). **Phase 3 = uniquement aurore + echo de filante.**
+**Sky Eclipse :** disque procédural + corona neutre (rhime Halo-Éclipse §4.1). Pas de `eclipse.mp4` dans le WebGL. Si assez belle → chantier design system pour remplacer la vidéo. ≠ « Éclipse Résonnante » constellation (E′).
 
 Règle de session : **une lettre / phase à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
 

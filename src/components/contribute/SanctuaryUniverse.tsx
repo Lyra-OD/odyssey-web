@@ -13,6 +13,7 @@ import { CameraRig } from "@/src/components/contribute/constellation/CameraRig";
 import { CosmicDust } from "@/src/components/contribute/constellation/CosmicDust";
 import { ZodiacalLight } from "@/src/components/contribute/constellation/ZodiacalLight";
 import { AuroraVeil } from "@/src/components/contribute/constellation/AuroraVeil";
+import { EclipseDisc } from "@/src/components/contribute/constellation/EclipseDisc";
 import { FocusCamera } from "@/src/components/contribute/constellation/FocusCamera";
 import { IdleCameraDrift } from "@/src/components/contribute/constellation/IdleCameraDrift";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
@@ -289,6 +290,14 @@ function UniverseScene({
             lerp={theme.aurora.parallax.lerp}
           >
             <AuroraVeil tier={tier} />
+          </ParallaxLayer>
+        ) : null}
+        {tier === "desktop" ? (
+          <ParallaxLayer
+            factor={theme.eclipse.parallax.factor}
+            lerp={theme.eclipse.parallax.lerp}
+          >
+            <EclipseDisc tier={tier} />
           </ParallaxLayer>
         ) : null}
         <StarDust tier={tier} />
