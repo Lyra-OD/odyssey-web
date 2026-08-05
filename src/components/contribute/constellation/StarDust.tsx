@@ -13,6 +13,7 @@ import {
 import { tierDustCount, type VisualTier } from "./useVisualTier";
 import { ParallaxLayer } from "./ParallaxLayer";
 import { cameraZoomRef, ZOOM_DEFAULT } from "./WheelZoom";
+import { type StarFieldTheme, useSkyTheme } from "./skyTheme";
 
 const vertexShader = /* glsl */ `
 uniform float uTime;
@@ -51,11 +52,9 @@ void main() {
   float beat = s1 * s2;
   float breath = 1.0 + uBreathAmp * (0.55 * s1 + 0.30 * s2 + 0.35 * beat);
 
-  // Perspective + compensation zoom out (sinon la bande disparaît)
   float sizeAtten = 58.0 / depth;
   gl_PointSize = aScale * uSizeMul * breath * sizeAtten * uZoomComp;
 
-  // Falloff profondeur plus doux + boost léger en zoom out
   float depthFade = smoothstep(32.0, 5.0, depth);
   float zoomBoost = mix(1.0, 1.35, clamp(uZoomComp - 1.0, 0.0, 1.5));
   vAlpha = aBrightness * uAlphaMul * breath * depthFade * zoomBoost;
@@ -86,64 +85,6 @@ void main() {
 
 type FieldKind = "band" | "field";
 
-type FieldConfig = {
-  /** z plus négatif = plus loin */
-  zSpread: number;
-  zBias: number;
-  scaleMin: number;
-  scaleRange: number;
-  brightMin: number;
-  brightRange: number;
-  drift: number;
-  breathSpeedA: number;
-  breathSpeedB: number;
-  breathAmp: number;
-  sizeMul: number;
-  alphaMul: number;
-  repulsion: number;
-  repelStrength: number;
-  renderOrder: number;
-};
-
-const FIELD: Record<FieldKind, FieldConfig> = {
-  // Voie lactée — dense, marquée, large
-  band: {
-    zSpread: 9,
-    zBias: -4.5,
-    scaleMin: 0.28,
-    scaleRange: 1.0,
-    brightMin: 0.5,
-    brightRange: 0.5,
-    drift: 0.028,
-    breathSpeedA: 0.42,
-    breathSpeedB: 0.26,
-    breathAmp: 0.1,
-    sizeMul: 1.12,
-    alphaMul: 1.18,
-    repulsion: 0.9,
-    repelStrength: 0.05,
-    renderOrder: 1,
-  },
-  // Avant-plan — rare
-  field: {
-    zSpread: 3.2,
-    zBias: 1.2,
-    scaleMin: 0.55,
-    scaleRange: 1.45,
-    brightMin: 0.62,
-    brightRange: 0.38,
-    drift: 0.06,
-    breathSpeedA: 1.05,
-    breathSpeedB: 0.62,
-    breathAmp: 0.14,
-    sizeMul: 1.2,
-    alphaMul: 1.08,
-    repulsion: 1.5,
-    repelStrength: 0.22,
-    renderOrder: 3,
-  },
-};
-
 /** PRNG déterministe — chaque layer a sa seed → toucher la bande ne re-shuffle pas le field. */
 function mulberry32(seed: number) {
   return () => {
@@ -159,8 +100,11 @@ const LAYER_SEED: Record<FieldKind, number> = {
   field: 0xf1e1d002,
 };
 
-function buildGeometry(count: number, kind: FieldKind): BufferGeometry {
-  const cfg = FIELD[kind];
+function buildGeometry(
+  count: number,
+  kind: FieldKind,
+  cfg: StarFieldTheme,
+): BufferGeometry {
   const rand = mulberry32(LAYER_SEED[kind]);
   const geo = new BufferGeometry();
   const positions = new Float32Array(count * 3);
@@ -175,14 +119,12 @@ function buildGeometry(count: number, kind: FieldKind): BufferGeometry {
 
     if (kind === "band") {
       const t = (rand() - 0.5) * 24;
-      // Falloff centre→bords, bande plus étroite
       const u = rand() + rand() + rand() - 1.5;
       const thickness = u * 1.05;
       x = t * 0.85 + thickness * 0.4;
       y = t * 0.22 + thickness * 0.95;
       z = (rand() - 0.5) * cfg.zSpread + cfg.zBias;
     } else {
-      // Étoiles partout — plus rares / discrètes
       x = (rand() - 0.5) * 24;
       y = (rand() - 0.5) * 15;
       z = (rand() - 0.5) * cfg.zSpread + cfg.zBias;
@@ -203,7 +145,7 @@ function buildGeometry(count: number, kind: FieldKind): BufferGeometry {
   return geo;
 }
 
-function createMaterial(cfg: FieldConfig): ShaderMaterial {
+function createMaterial(cfg: StarFieldTheme): ShaderMaterial {
   return new ShaderMaterial({
     vertexShader,
     fragmentShader,
@@ -224,7 +166,7 @@ function createMaterial(cfg: FieldConfig): ShaderMaterial {
       uSizeMul: { value: cfg.sizeMul },
       uAlphaMul: { value: cfg.alphaMul },
       uZoomComp: { value: 1 },
-      uTint: { value: new Color("#c8d4f0") },
+      uTint: { value: new Color(cfg.tint) },
     },
   });
 }
@@ -232,14 +174,17 @@ function createMaterial(cfg: FieldConfig): ShaderMaterial {
 type StarFieldProps = {
   kind: FieldKind;
   count: number;
+  cfg: StarFieldTheme;
 };
 
-function StarField({ kind, count }: StarFieldProps) {
+function StarField({ kind, count, cfg }: StarFieldProps) {
   const materialRef = useRef<ShaderMaterial>(null);
   const { viewport, pointer } = useThree();
-  const cfg = FIELD[kind];
 
-  const geometry = useMemo(() => buildGeometry(count, kind), [count, kind]);
+  const geometry = useMemo(
+    () => buildGeometry(count, kind, cfg),
+    [count, kind, cfg],
+  );
   const material = useMemo(() => createMaterial(cfg), [cfg]);
 
   useEffect(() => {
@@ -257,7 +202,6 @@ function StarField({ kind, count }: StarFieldProps) {
     );
     const zoomRatio = cameraZoomRef.current / ZOOM_DEFAULT;
     mat.uniforms.uZoomComp.value = Math.max(0.85, zoomRatio);
-    // Amplifie la répulsion seulement en zoom out — défaut / zoom in inchangés
     const outScale = Math.max(1, zoomRatio);
     mat.uniforms.uRepulsion.value = cfg.repulsion * outScale;
     mat.uniforms.uRepelStrength.value = cfg.repelStrength * outScale;
@@ -279,23 +223,32 @@ type StarDustProps = {
 };
 
 /**
- * 2 layers clairs : bande (voie lactée) + champ (étoiles partout).
- * Parallaxe ciné : bande ancrée, field plus proche / plus vif.
+ * 2 layers : bande + field. Knobs : `skyTheme.starsBand` / `starsField`.
  */
 export function StarDust({ tier }: StarDustProps) {
+  const theme = useSkyTheme();
   const total = tierDustCount(tier);
-  // Field ~4 % ; bande ~96 %
   const bandCount = tier === "reduced" ? total : Math.floor(total * 0.96);
   const fieldCount = total - bandCount;
+  const band = theme.starsBand;
+  const field = theme.starsField;
 
   return (
     <group>
-      <ParallaxLayer factor={0.22} lerp={0.032} zoomOutCompensate>
-        <StarField kind="band" count={bandCount} />
+      <ParallaxLayer
+        factor={band.parallax.factor}
+        lerp={band.parallax.lerp}
+        zoomOutCompensate
+      >
+        <StarField kind="band" count={bandCount} cfg={band} />
       </ParallaxLayer>
       {fieldCount > 0 ? (
-        <ParallaxLayer factor={0.65} lerp={0.055} zoomOutCompensate>
-          <StarField kind="field" count={fieldCount} />
+        <ParallaxLayer
+          factor={field.parallax.factor}
+          lerp={field.parallax.lerp}
+          zoomOutCompensate
+        >
+          <StarField kind="field" count={fieldCount} cfg={field} />
         </ParallaxLayer>
       ) : null}
     </group>

@@ -26,6 +26,12 @@ import {
 } from "@/src/components/contribute/constellation/StarScreenReporter";
 import { WheelZoom } from "@/src/components/contribute/constellation/WheelZoom";
 import {
+  defaultSkyTheme,
+  SkyThemeProvider,
+  useSkyTheme,
+  type SkyTheme,
+} from "@/src/components/contribute/constellation/skyTheme";
+import {
   MOCK_SOULS,
   getMockSoul,
 } from "@/src/components/contribute/constellation/mockSouls";
@@ -192,6 +198,7 @@ function UniverseScene({
   focus: FocusSession | null;
   onStarScreen: (anchor: ScreenAnchor | null) => void;
 }) {
+  const theme = useSkyTheme();
   // Pendant closing, on garde le tracking pour suivre l’étoile au retour
   const focusing = focus !== null && focus.phase !== "closing";
   const focusBoost =
@@ -207,32 +214,57 @@ function UniverseScene({
     <ParallaxProvider intensity={parallaxIntensity}>
       <ForceRenderLoop />
       <WheelZoom enabled />
-      <color attach="background" args={["#02040a"]} />
-      <fog attach="fog" args={["#03050c", 12, 28]} />
-      <ambientLight intensity={0.05} />
+      <color attach="background" args={[theme.scene.background]} />
+      <fog
+        attach="fog"
+        args={[
+          theme.scene.fogColor,
+          theme.scene.fogNear,
+          theme.scene.fogFar,
+        ]}
+      />
+      <ambientLight intensity={theme.scene.ambientIntensity} />
       <FocusCamera
         target={focus ? focus.pos : null}
         active={focusing}
       />
       <CameraRig>
-        <ParallaxLayer factor={-0.12} lerp={0.014}>
+        <ParallaxLayer
+          factor={theme.gasRose.parallax.factor}
+          lerp={theme.gasRose.parallax.lerp}
+        >
           <NebulaGasRose tier={tier} />
         </ParallaxLayer>
-        <ParallaxLayer factor={-0.09} lerp={0.016}>
+        <ParallaxLayer
+          factor={theme.gasMauve.parallax.factor}
+          lerp={theme.gasMauve.parallax.lerp}
+        >
           <NebulaGasMauve tier={tier} />
         </ParallaxLayer>
-        <ParallaxLayer factor={-0.04} lerp={0.022}>
+        <ParallaxLayer
+          factor={theme.gasTeal.parallax.factor}
+          lerp={theme.gasTeal.parallax.lerp}
+        >
           <NebulaGasTeal tier={tier} />
         </ParallaxLayer>
-        <ParallaxLayer factor={0.16} lerp={0.026}>
+        <ParallaxLayer
+          factor={theme.cosmicDust.parallax.factor}
+          lerp={theme.cosmicDust.parallax.lerp}
+        >
           <CosmicDust tier={tier} />
         </ParallaxLayer>
         <StarDust tier={tier} />
-        <ParallaxLayer factor={0.85} lerp={0.07}>
+        <ParallaxLayer
+          factor={theme.shootingStars.parallax.factor}
+          lerp={theme.shootingStars.parallax.lerp}
+        >
           <ShootingStars tier={tier} />
         </ParallaxLayer>
         {showConstellation ? (
-          <ParallaxLayer factor={0.4} lerp={0.04}>
+          <ParallaxLayer
+            factor={theme.constellation.parallax.factor}
+            lerp={theme.constellation.parallax.lerp}
+          >
             <Constellation
               key={CONSTELLATION_LAYOUT_ID}
               onSelectMemory={onSelectMemory}
@@ -289,6 +321,11 @@ export type SanctuaryUniverseProps = {
   mode?: SanctuaryUniverseMode;
   /** Override manuel de l’intensité (prioritaire sur mode). */
   parallaxIntensity?: number;
+  /**
+   * Thème ciel résolu (couleurs, opacités, parallaxe…).
+   * Plus tard : mergeSkyTheme(defaultSkyTheme, partialFamille).
+   */
+  skyTheme?: SkyTheme;
   /** Immersif : Fermer + Esc */
   onClose?: () => void;
   locale?: "fr" | "en";
@@ -298,6 +335,7 @@ export function SanctuaryUniverse({
   className = "",
   mode = "immersive",
   parallaxIntensity,
+  skyTheme = defaultSkyTheme,
   onClose,
   locale = "fr",
 }: SanctuaryUniverseProps) {
@@ -482,18 +520,20 @@ export function SanctuaryUniverse({
           camera={{ position: [0, 0, 7.5], fov: 42, near: 0.1, far: 40 }}
           gl={createRenderer}
           onCreated={({ gl }) => {
-            gl.setClearColor("#02040a", 1);
+            gl.setClearColor(skyTheme.scene.background, 1);
           }}
         >
           <Suspense fallback={null}>
-            <UniverseScene
-              tier={tier}
-              parallaxIntensity={intensity}
-              showConstellation={immersive && constellationOn}
-              onSelectMemory={beginFocus}
-              focus={focus}
-              onStarScreen={onStarScreen}
-            />
+            <SkyThemeProvider theme={skyTheme}>
+              <UniverseScene
+                tier={tier}
+                parallaxIntensity={intensity}
+                showConstellation={immersive && constellationOn}
+                onSelectMemory={beginFocus}
+                focus={focus}
+                onStarScreen={onStarScreen}
+              />
+            </SkyThemeProvider>
           </Suspense>
         </Canvas>
       </ClientWebGLGate>

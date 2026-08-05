@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { Color, ShaderMaterial } from "three";
 
 import type { VisualTier } from "./useVisualTier";
+import { opacityForTier, useSkyTheme } from "./skyTheme";
 
 /**
  * Voile de poussière — soft, lent, aligné voie lactée.
@@ -87,9 +88,9 @@ type CosmicDustProps = {
 
 export function CosmicDust({ tier }: CosmicDustProps) {
   const matRef = useRef<ShaderMaterial>(null);
-
-  const opacity =
-    tier === "reduced" ? 0.1 : tier === "mobile" ? 0.14 : 0.18;
+  const theme = useSkyTheme();
+  const cfg = theme.cosmicDust;
+  const opacity = opacityForTier(cfg.opacity, tier);
 
   const material = useMemo(
     () =>
@@ -104,11 +105,11 @@ export function CosmicDust({ tier }: CosmicDustProps) {
         uniforms: {
           uTime: { value: 0 },
           uOpacity: { value: opacity },
-          uDust: { value: new Color("#1c1828") },
-          uTint: { value: new Color("#3a4a5c") },
+          uDust: { value: new Color(cfg.dust) },
+          uTint: { value: new Color(cfg.tint) },
         },
       }),
-    [opacity],
+    [opacity, cfg.dust, cfg.tint],
   );
 
   useEffect(() => {
@@ -124,10 +125,10 @@ export function CosmicDust({ tier }: CosmicDustProps) {
 
   return (
     <mesh
-      position={[0, 0, -5.2]}
-      scale={[30, 17, 1]}
+      position={cfg.position}
+      scale={cfg.scale}
       frustumCulled={false}
-      renderOrder={1}
+      renderOrder={cfg.renderOrder}
     >
       <planeGeometry args={[1, 1, 1, 1]} />
       <primitive object={material} ref={matRef} attach="material" />

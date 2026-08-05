@@ -65,7 +65,7 @@ float softBlob(vec2 p, vec2 center, float radius, float stretch) {
 }
 `;
 
-export const GAS_LOOP_PERIOD = 38;
+export const GAS_LOOP_PERIOD = 38; // legacy — préférer skyTheme.baseLoopPeriod
 
 /** Texture soft value-noise (détail « photo » pour les 3 gaz). */
 export function makeSoftNoiseTexture(size = 128): DataTexture {

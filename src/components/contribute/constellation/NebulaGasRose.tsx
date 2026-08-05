@@ -6,14 +6,15 @@ import { Color, ShaderMaterial } from "three";
 
 import type { VisualTier } from "./useVisualTier";
 import {
-  GAS_LOOP_PERIOD,
   makeSoftNoiseTexture,
   nebulaNoiseGlsl,
   nebulaVertexShader,
 } from "./nebulaCommon";
+import { opacityForTier, useSkyTheme } from "./skyTheme";
 
 /**
  * Rose / magenta 2001 — domain warp + texture soft + grain léger.
+ * Knobs : `skyTheme.gasRose`
  */
 const fragmentShader = /* glsl */ `
 uniform float uTime;
@@ -55,7 +56,6 @@ void main() {
   float breath = 0.82 + 0.18 * sin(phaseR2);
   float billow = 0.9 + 0.1 * sin(phaseR3);
 
-  // —— Domain warp : le bruit déforme le bruit (matière plus réelle) ——
   vec2 warpBase = world * 0.11 + live * 0.15;
   float w1 = fbm(warpBase + 1.7);
   float w2 = fbm(warpBase * 1.35 + live2 * 0.2 + 4.2);
@@ -68,13 +68,11 @@ void main() {
   float n1 = fbm(warped * 0.14 + 7.2);
   float n2 = fbm(warped * 0.31 - live2 * 0.9 + 13.0);
   float n3 = fbm(warped * 0.09 + vec2(live.y, -live.x) * 0.55 + 2.7);
-  // Filaments fins
   float nFine = fbm(warped * 0.72 + liveUv * 2.0 + 9.5);
 
   vec2 uvWarp = pUv + vec2(w1, w2) * 0.12 + liveUv * 0.08;
   float nUv = fbm(uvWarp * 2.5 + 6.1);
 
-  // Texture soft (noise map) — détail « photo »
   vec2 texUv =
     vUv * 3.4 +
     liveUv * 0.04 +
@@ -105,19 +103,16 @@ void main() {
   float dens = islands * sculpt * (0.3 + 0.7 * n3) * breath;
   dens *= mix(0.15, 1.0, rightBias);
   dens *= mix(0.55, 1.05, cornerBias);
-  // Texture module la densité (voile / poussière)
   dens *= 0.72 + 0.55 * texDetail;
 
   float hot = smoothstep(0.32, 0.88, n2 * 0.7 + nFine * 0.3);
   vec3 col = mix(uDeep, uRose, 0.4 + 0.6 * n1);
   col = mix(col, uRoseHot, hot * 0.5);
-  // Micro-variation teinte via texture
   col = mix(col, uRoseHot * 0.85 + uDeep * 0.15, (texDetail - 0.5) * 0.18);
 
   float alpha = clamp(dens * uOpacity, 0.0, 0.44);
   if (alpha < 0.01) discard;
 
-  // Grain film léger (stable dans le temps + dérive lente)
   float grain = hash(gl_FragCoord.xy * 0.7 + vec2(uTime * 0.15, uTime * 0.11));
   col += (grain - 0.5) * 0.045;
   alpha *= 0.92 + 0.08 * grain;
@@ -130,16 +125,12 @@ type Props = { tier: VisualTier };
 
 export function NebulaGasRose({ tier }: Props) {
   const matRef = useRef<ShaderMaterial>(null);
-  const opacity =
-    tier === "reduced" ? 0.26 : tier === "mobile" ? 0.34 : 0.4;
+  const theme = useSkyTheme();
+  const cfg = theme.gasRose;
+  const opacity = opacityForTier(cfg.opacity, tier);
 
   const noiseTex = useMemo(() => makeSoftNoiseTexture(128), []);
-
-  useEffect(() => {
-    return () => {
-      noiseTex.dispose();
-    };
-  }, [noiseTex]);
+  useEffect(() => () => noiseTex.dispose(), [noiseTex]);
 
   const material = useMemo(
     () =>
@@ -153,14 +144,16 @@ export function NebulaGasRose({ tier }: Props) {
         uniforms: {
           uTime: { value: 0 },
           uOpacity: { value: opacity },
-          uLoopPeriod: { value: GAS_LOOP_PERIOD * 1.35 },
-          uRose: { value: new Color("#c2186e") },
-          uRoseHot: { value: new Color("#ff3d9a") },
-          uDeep: { value: new Color("#1a0514") },
+          uLoopPeriod: {
+            value: theme.baseLoopPeriod * cfg.loopPeriodMul,
+          },
+          uRose: { value: new Color(cfg.color) },
+          uRoseHot: { value: new Color(cfg.colorHot ?? cfg.color) },
+          uDeep: { value: new Color(cfg.deep) },
           uTex: { value: noiseTex },
         },
       }),
-    [opacity, noiseTex],
+    [opacity, noiseTex, theme.baseLoopPeriod, cfg],
   );
 
   useFrame(({ clock }) => {
@@ -169,10 +162,10 @@ export function NebulaGasRose({ tier }: Props) {
 
   return (
     <mesh
-      position={[1.2, 0.1, -8.4]}
-      scale={[32, 18, 1]}
+      position={cfg.position}
+      scale={cfg.scale}
       frustumCulled={false}
-      renderOrder={-1}
+      renderOrder={cfg.renderOrder}
     >
       <planeGeometry args={[1, 1, 1, 1]} />
       <primitive object={material} ref={matRef} attach="material" />

@@ -302,6 +302,8 @@ Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_W
 | `B2B2C_COMMERCE.md` | ✅ **v2 Bulletproof** (waterfall 10 % + 30 % Net Distribuable, saga v2) |
 | `SANCTUARY_STRATEGY.md` | ✅ Positionnement Sanctuaire · catalogue monétisation V1 |
 | `SANCTUARY_SKY.md` | ✅ Vision figée ciel WebGL / étoiles-mémoire + pont film · plan exécution 30 juil. |
+| `SANCTUARY_SKY_CRAFT.md` | ✅ Craft bible layers WebGL (gaz / bande / filantes) |
+| `SANCTUARY_SKY_THEME.md` | ✅ Knobs / thème ciel (`skyTheme.ts`) — presets runtime-ready |
 | `PARTNER_BRIEF_JON_JUL2026.md` | ✅ Brief partenaire EN (Freemium journey · AOV · B2B2C/B2C · mobile · Scanner · multi-vertical) |
 | `FREEMIUM_V1_PIVOT.md` | ✅ Canon · Phases **0–5 ✅** · Phase 6 QA ⏳ en cours · onboarding V1 |
 | `TECHNICAL_ONBOARDING_V1.md` | ✅ Hub Freemium V1 (remplace hub pré-purge archivé) |
@@ -479,6 +481,8 @@ See [`sql/README.md`](sql/README.md) for full P0–P5.5 order.
 | Commerce rules & saga v2 | [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
 | Stratégie Sanctuaire / monétisation émotionnelle | [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) |
 | Ciel Sanctuaire / étoiles-mémoire + pont film | [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) |
+| Ciel craft / layers WebGL | [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) |
+| Ciel knobs / thème / presets | [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md) |
 | Partner brief Jon (EN · AOV · B2B2C/B2C · mobile) | [`PARTNER_BRIEF_JON_JUL2026.md`](PARTNER_BRIEF_JON_JUL2026.md) |
 | Pivot Freemium V1 (CEO) | [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) |
 | RevShare & commission ledger (Bulletproof) | [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · QA [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) |

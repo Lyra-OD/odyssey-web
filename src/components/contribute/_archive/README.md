@@ -19,3 +19,7 @@ Prototypes / versions non actives. Ciel courant : `SanctuaryUniverse` + layers c
 ## Constellation
 - `constellation-orb-cloud-v1/` — nuage d’orbes + drag (avant Éclipse Résonnante Acte I)  
   Voir README du dossier pour restaurer.
+- `constellation-orbit-experiments/` — essais anneaux / orbites GPS (Acte I abandonné)  
+  `OrbitalRings`, `ConstellationOrbit` (`StarOnOrbit`), `GravityBridges` — non branchés.  
+  Actif = reset orb-cloud (sans drag) dans `SanctuaryUniverse`.
+

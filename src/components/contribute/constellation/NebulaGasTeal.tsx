@@ -6,14 +6,15 @@ import { Color, ShaderMaterial } from "three";
 
 import type { VisualTier } from "./useVisualTier";
 import {
-  GAS_LOOP_PERIOD,
   makeSoftNoiseTexture,
   nebulaNoiseGlsl,
   nebulaVertexShader,
 } from "./nebulaCommon";
+import { opacityForTier, useSkyTheme } from "./skyTheme";
 
 /**
  * Layer gaz teal — domain warp + texture soft + grain.
+ * Knobs : `skyTheme.gasTeal`
  */
 const fragmentShader = /* glsl */ `
 uniform float uTime;
@@ -56,7 +57,6 @@ void main() {
   float breath = 0.78 + 0.22 * sin(phase);
   float billow = 0.88 + 0.12 * sin(phase3);
 
-  // Domain warp
   vec2 warpBase = world * 0.12 + liveW * 0.12;
   float w1 = fbm(warpBase + 2.1);
   float w2 = fbm(warpBase * 1.3 + liveW2 * 0.18 + 5.0);
@@ -154,8 +154,9 @@ type Props = { tier: VisualTier };
 
 export function NebulaGasTeal({ tier }: Props) {
   const matRef = useRef<ShaderMaterial>(null);
-  const opacity =
-    tier === "reduced" ? 0.26 : tier === "mobile" ? 0.36 : 0.44;
+  const theme = useSkyTheme();
+  const cfg = theme.gasTeal;
+  const opacity = opacityForTier(cfg.opacity, tier);
 
   const noiseTex = useMemo(() => makeSoftNoiseTexture(128), []);
   useEffect(() => () => noiseTex.dispose(), [noiseTex]);
@@ -172,13 +173,15 @@ export function NebulaGasTeal({ tier }: Props) {
         uniforms: {
           uTime: { value: 0 },
           uOpacity: { value: opacity },
-          uLoopPeriod: { value: GAS_LOOP_PERIOD },
-          uTeal: { value: new Color("#3d9a94") },
-          uDeep: { value: new Color("#0f1a22") },
+          uLoopPeriod: {
+            value: theme.baseLoopPeriod * cfg.loopPeriodMul,
+          },
+          uTeal: { value: new Color(cfg.color) },
+          uDeep: { value: new Color(cfg.deep) },
           uTex: { value: noiseTex },
         },
       }),
-    [opacity, noiseTex],
+    [opacity, noiseTex, theme.baseLoopPeriod, cfg],
   );
 
   useFrame(({ clock }) => {
@@ -187,10 +190,10 @@ export function NebulaGasTeal({ tier }: Props) {
 
   return (
     <mesh
-      position={[0, 0, -5.5]}
-      scale={[28, 16, 1]}
+      position={cfg.position}
+      scale={cfg.scale}
       frustumCulled={false}
-      renderOrder={1}
+      renderOrder={cfg.renderOrder}
     >
       <planeGeometry args={[1, 1, 1, 1]} />
       <primitive object={material} ref={matRef} attach="material" />

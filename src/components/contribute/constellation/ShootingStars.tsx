@@ -13,6 +13,7 @@ import {
 } from "three";
 
 import type { VisualTier } from "./useVisualTier";
+import { useSkyTheme } from "./skyTheme";
 
 /**
  * Mix Kubrick × Premium :
@@ -119,6 +120,8 @@ type ShootingStarsProps = {
  * Filantes mix — lisibles, élégantes, sans flash de tête.
  */
 export function ShootingStars({ tier }: ShootingStarsProps) {
+  const theme = useSkyTheme();
+  const streak = theme.shootingStars;
   const statesRef = useRef<StreakState[]>(
     Array.from({ length: POOL }, emptyStreak),
   );
@@ -128,10 +131,9 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
 
   const lines = useMemo(() => {
     const list: Line[] = [];
-    // Tip un peu plus présent que Kubrick pur, toujours glacial
-    const tip = new Color("#e8f0fa");
-    const mid = new Color("#9aacc0");
-    const tail = new Color("#2e3848");
+    const tip = new Color(streak.tip);
+    const mid = new Color(streak.mid);
+    const tail = new Color(streak.tail);
 
     for (let i = 0; i < POOL; i += 1) {
       const positions = new Float32Array(SEGMENTS * 3);
@@ -171,7 +173,7 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
       list.push(line);
     }
     return list;
-  }, []);
+  }, [streak.tip, streak.mid, streak.tail]);
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);

@@ -1,14 +1,16 @@
 # Odyssey — Ciel du Sanctuaire · **Craft Bible**
 
-**Statut : vivant · mis à jour 4 août 2026**  
+**Statut : vivant · mis à jour 5 août 2026**  
 **Complète :** [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) (vision produit / UX / lexique)  
 **Ce doc =** *comment* on construit le ciel WebGL — layers, règles, anti-patterns, plan polish.
 
 > Vision produit → `SANCTUARY_SKY.md`  
-> Craft technique / visuel → **ce fichier**
+> Craft technique / visuel → **ce fichier**  
+> Knobs / thème / presets → [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md)
 
 **Preview :** `/fr/contribute/test-ciel` (token `test-ciel`)  
-**Entrée scène :** `SanctuaryUniverse.tsx`
+**Entrée scène :** `SanctuaryUniverse.tsx`  
+**Thème (couleurs, opacités, parallaxe) :** `constellation/skyTheme.ts` — **source de vérité des knobs** ; ne pas hardcoder dans les layers.
 
 ---
 
@@ -32,16 +34,16 @@ Test craft :
 
 Du plus loin au plus près :
 
-| # | Layer | Fichier | Rôle | Parallaxe `factor` / `lerp` |
+| # | Layer | Fichier | Rôle | Thème / parallaxe |
 |--|--|--|--|--|
-| 0a | **NebulaGasRose** | `NebulaGasRose.tsx` | Magenta 2001, biais droite, plus loin | `−0.12` / `0.014` |
-| 0b | **NebulaGasMauve** | `NebulaGasMauve.tsx` | Gaz mauve, plus loin / lent | `−0.09` / `0.016` |
-| 0c | **NebulaGasTeal** | `NebulaGasTeal.tsx` | Gaz teal + bande soft | `−0.04` / `0.022` |
-| 1 | **CosmicDust** | `constellation/CosmicDust.tsx` | Voile poussière sur l’axe voie lactée | `0.16` / `0.026` |
-| 2 | **StarDust band** | `constellation/StarDust.tsx` | Voie lactée (~96 % du budget étoiles) | `0.22` / `0.032` |
-| 3 | **StarDust field** | idem | Peu d’étoiles proches (~4 %) | `0.65` / `0.055` |
-| 4 | **ShootingStars** | `constellation/ShootingStars.tsx` | Filantes sporadiques | `0.85` / `0.07` |
-| — | **Constellation** | `SanctuaryUniverse` | Lueurs-mémoire | **masquée** (`false &&`) le temps du polish |
+| 0a | **NebulaGasRose** | `NebulaGasRose.tsx` | Magenta 2001, biais droite, plus loin | `gasRose` |
+| 0b | **NebulaGasMauve** | `NebulaGasMauve.tsx` | Gaz mauve, plus loin / lent | `gasMauve` |
+| 0c | **NebulaGasTeal** | `NebulaGasTeal.tsx` | Gaz teal + bande soft | `gasTeal` |
+| 1 | **CosmicDust** | `constellation/CosmicDust.tsx` | Voile poussière sur l’axe voie lactée | `cosmicDust` |
+| 2 | **StarDust band** | `constellation/StarDust.tsx` | Voie lactée (~96 % du budget étoiles) | `starsBand` (+ zoom-out compensate) |
+| 3 | **StarDust field** | idem | Peu d’étoiles proches (~4 %) | `starsField` (+ zoom-out compensate) |
+| 4 | **ShootingStars** | `constellation/ShootingStars.tsx` | Filantes sporadiques | `shootingStars` |
+| — | **Constellation** | `SanctuaryUniverse` | Lueurs-mémoire | `constellation` |
 
 **Infra :**
 - `ForceRenderLoop` — frames idle (sans souris)  
