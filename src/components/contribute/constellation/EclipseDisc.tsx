@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Color, Mesh, NormalBlending, ShaderMaterial } from "three";
 
@@ -22,7 +22,7 @@ void main() {
 }
 `;
 
-/** Craft étapes 1–2 */
+/** Craft étapes 1–2 — corona seamless (pas de couture atan). */
 const craftFragment = /* glsl */ `
 uniform float uOpacity;
 uniform float uGuide;
@@ -53,9 +53,9 @@ float noise(vec2 p) {
 float fbm(vec2 p) {
   float v = 0.0;
   float a = 0.5;
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 5; i++) {
     v += a * noise(p);
-    p = p * 2.05 + vec2(1.4, 7.9);
+    p = p * 2.02 + vec2(1.1, 6.3);
     a *= 0.5;
   }
   return v;
@@ -64,41 +64,55 @@ float fbm(vec2 p) {
 void main() {
   vec2 p = vUv * 2.0 - 1.0;
   float r = length(p);
-  float ang = (r < 1e-4) ? 0.0 : atan(p.y, p.x);
-  float t = uTime * 0.04;
+  float t = uTime * 0.035;
   float R = 0.38;
 
-  // —— Étape 1 : disque noir ——
-  float body = 1.0 - smoothstep(R - 0.002, R + 0.001, r);
+  // —— Étape 1 : disque noir net ——
+  float body = 1.0 - smoothstep(R - 0.0015, R + 0.0008, r);
   float guide =
-    smoothstep(R - 0.006, R, r) * (1.0 - smoothstep(R, R + 0.01, r));
+    smoothstep(R - 0.005, R, r) * (1.0 - smoothstep(R, R + 0.008, r));
 
-  // —— Étape 2 : corona blanche soyeuse (hors du disque) ——
-  float outside = smoothstep(R - 0.001, R + 0.016, r);
-  float fall = exp(-pow((r - R) * 1.9, 1.1));
-  float fallFar = exp(-pow((r - R) * 1.0, 1.45)) * 0.48;
-  float n1 = fbm(vec2(ang * 1.5 + t * 0.2, r * 2.4));
-  float n2 = fbm(vec2(ang * 3.1 - t * 0.15, r * 3.2 + 2.5));
-  float silk = 0.55 + 0.45 * n1;
-  float wisps = pow(max(0.0, n2), 1.7) * 0.5;
-  float longRays =
-    pow(max(0.0, sin(ang * 5.0 + n1 * 2.2)), 20.0) * 0.18 * fall;
+  // —— Étape 2 : corona soyeuse, noise en XY (seamless) ——
+  // Pas de noise(ang) → évite la couture horizontale (wrap atan ±π)
+  vec2 dir = (r > 1e-4) ? p / r : vec2(1.0, 0.0);
+  float outside = smoothstep(R, R + 0.02, r);
+  float dist = max(0.0, r - R);
+
+  // Halo proche : très blanc, soft, type GIF
+  float nearHalo = exp(-pow(dist * 5.5, 1.35));
+  // Voile lointain : plume / soie
+  float farVeil = exp(-pow(dist * 1.55, 1.15)) * 0.55;
+
+  // Grain seamless sur le cercle (cos/sin), pas sur l'angle brut
+  float n1 = fbm(dir * 2.2 + vec2(t * 0.15, dist * 3.0));
+  float n2 = fbm(dir * 4.0 - vec2(t * 0.1, 1.7) + dist * 2.5);
+  float silk = 0.62 + 0.38 * n1;
+  float feathers = pow(max(0.0, n2), 2.2) * 0.55;
+
+  // Quelques rayons longs, aussi seamless
+  float spokes =
+    pow(max(0.0, n1 * 0.7 + n2 * 0.3), 3.5) * exp(-dist * 2.8) * 0.4;
+
   float coronaShape =
-    outside * (fall * silk + fallFar * (0.35 + wisps) + longRays);
+    outside * (
+      nearHalo * silk * 1.15 +
+      farVeil * (0.4 + feathers) +
+      spokes
+    );
   float corona = coronaShape * uCoronaAmp;
 
-  // Liseré blanc fin (bord disque → corona)
+  // Rim blanc fin — collé au disque (pas de trait gris)
   float rim =
-    smoothstep(R - 0.01, R, r) * (1.0 - smoothstep(R, R + 0.024, r));
-  rim *= step(0.01, uCoronaAmp);
+    smoothstep(R - 0.006, R, r) * (1.0 - smoothstep(R, R + 0.018, r));
+  rim *= step(0.02, uCoronaAmp);
 
   vec3 col = uBody * body;
-  col += uGuideCol * guide * uGuide;
-  col += uRim * rim * 1.9;
-  col += mix(uRim, uCorona, clamp((r - R) * 1.7, 0.0, 1.0)) * corona;
+  col += uGuideCol * guide * uGuide * 0.5;
+  col += uRim * rim * 2.2;
+  col += mix(uRim, uCorona, clamp(dist * 2.0, 0.0, 1.0)) * corona;
 
-  float alpha = max(body, guide * uGuide);
-  alpha = max(alpha, max(rim * 0.9, corona * 0.85));
+  float alpha = max(body, guide * uGuide * 0.5);
+  alpha = max(alpha, max(rim * 0.95, corona * 0.9));
   alpha *= uOpacity;
   if (alpha < 0.004) discard;
 
@@ -219,6 +233,12 @@ export function EclipseDisc({ tier, craft }: Props) {
       },
     });
   }, [isCraft, cfg.body, cfg.corona, cfg.rim, cfg.coronaAmp]);
+
+  useEffect(() => {
+    material.vertexShader = vertexShader;
+    material.fragmentShader = isCraft ? craftFragment : skyFragment;
+    material.needsUpdate = true;
+  }, [material, isCraft]);
 
   useFrame(({ clock }) => {
     const mat = matRef.current ?? material;
