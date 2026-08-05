@@ -46,6 +46,23 @@ type StreakState = {
   speed: number;
   length: number;
   brightness: number;
+  /** Filante rare — programme un echo à la fin. */
+  special: boolean;
+};
+
+type EchoPending = {
+  wait: number;
+  ox: number;
+  oy: number;
+  oz: number;
+  dx: number;
+  dy: number;
+  dz: number;
+  speed: number;
+  length: number;
+  tip: string;
+  mid: string;
+  tail: string;
 };
 
 function emptyStreak(): StreakState {
@@ -63,6 +80,7 @@ function emptyStreak(): StreakState {
     speed: 8,
     length: 1,
     brightness: 1,
+    special: false,
   };
 }
 
@@ -111,6 +129,7 @@ function spawnStreak(
   s.active = true;
   s.kind = kind;
   s.age = 0;
+  s.special = special;
   s.dx = dir.x;
   s.dy = dir.y;
   s.dz = dir.z;
@@ -149,6 +168,7 @@ type ShootingStarsProps = {
 
 /**
  * Filantes mix — lisibles, élégantes, sans flash de tête.
+ * StreakEcho : fantôme soft ~0.4s après une filante spéciale (rare).
  */
 export function ShootingStars({ tier }: ShootingStarsProps) {
   const theme = useSkyTheme();
@@ -156,17 +176,24 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
   const statesRef = useRef<StreakState[]>(
     Array.from({ length: POOL }, emptyStreak),
   );
+  const echoPendingRef = useRef<EchoPending | null>(null);
+  const echoStateRef = useRef(emptyStreak());
   const nextSmallRef = useRef(2.5 + Math.random() * 3);
   const nextLargeRef = useRef(20 + Math.random() * 22);
   const dirTmp = useMemo(() => new Vector3(), []);
+  const lastSpecialTintRef = useRef({
+    tip: streak.tip,
+    mid: streak.mid,
+    tail: streak.tail,
+  });
 
-  const lines = useMemo(() => {
+  const { lines, echoLine } = useMemo(() => {
     const list: Line[] = [];
     const tip = new Color(streak.tip);
     const mid = new Color(streak.mid);
     const tail = new Color(streak.tail);
 
-    for (let i = 0; i < POOL; i += 1) {
+    const makeLine = () => {
       const positions = new Float32Array(SEGMENTS * 3);
       const colors = new Float32Array(SEGMENTS * 3);
       const posAttr = new BufferAttribute(positions, 3);
@@ -201,9 +228,15 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
       line.frustumCulled = false;
       line.renderOrder = 4;
       line.visible = false;
-      list.push(line);
+      return line;
+    };
+
+    for (let i = 0; i < POOL; i += 1) {
+      list.push(makeLine());
     }
-    return list;
+    const echo = makeLine();
+    echo.renderOrder = 3;
+    return { lines: list, echoLine: echo };
   }, [streak.tip, streak.mid, streak.tail]);
 
   useFrame((_, delta) => {
@@ -227,6 +260,7 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
             mid: streak.mid,
             tail: streak.tail,
           };
+        lastSpecialTintRef.current = tint;
         paintLineColors(line, tint.tip, tint.mid, tint.tail);
       } else {
         paintLineColors(line, streak.tip, streak.mid, streak.tail);
@@ -260,24 +294,42 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
       }
     }
 
-    for (let i = 0; i < POOL; i += 1) {
-      const s = states[i];
-      const line = lines[i];
-      if (!s || !line) continue;
+    const updateLine = (
+      s: StreakState,
+      line: Line,
+      opacityMul: number,
+    ) => {
       const mat = line.material as LineBasicMaterial;
-
       if (!s.active) {
         mat.opacity = 0;
         line.visible = false;
-        continue;
+        return;
       }
 
       s.age += dt;
       if (s.age >= s.life) {
+        if (s.special) {
+          const tint = lastSpecialTintRef.current;
+          echoPendingRef.current = {
+            wait: streak.echoDelaySec,
+            ox: s.ox,
+            oy: s.oy,
+            oz: s.oz,
+            dx: s.dx,
+            dy: s.dy,
+            dz: s.dz,
+            speed: s.speed * 0.92,
+            length: s.length * 1.05,
+            tip: tint.tip,
+            mid: tint.mid,
+            tail: tint.tail,
+          };
+        }
         s.active = false;
+        s.special = false;
         mat.opacity = 0;
         line.visible = false;
-        continue;
+        return;
       }
 
       const fade = cinematicFade(s.age / s.life);
@@ -297,11 +349,43 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
       }
       pos.needsUpdate = true;
 
-      // Entre Kubrick (trop fade) et Premium (trop flash)
       const base = s.kind === "large" ? 0.48 : 0.4;
-      mat.opacity = (base + 0.5 * fade) * s.brightness;
+      mat.opacity = (base + 0.5 * fade) * s.brightness * opacityMul;
       line.visible = fade > 0.025;
+    };
+
+    for (let i = 0; i < POOL; i += 1) {
+      const s = states[i];
+      const line = lines[i];
+      if (!s || !line) continue;
+      updateLine(s, line, 1);
     }
+
+    // StreakEcho — fantôme après filante spéciale
+    const pending = echoPendingRef.current;
+    if (pending) {
+      pending.wait -= dt;
+      if (pending.wait <= 0) {
+        const echo = echoStateRef.current;
+        echo.active = true;
+        echo.kind = "large";
+        echo.age = 0;
+        echo.life = 0.55 + Math.random() * 0.2;
+        echo.ox = pending.ox;
+        echo.oy = pending.oy;
+        echo.oz = pending.oz;
+        echo.dx = pending.dx;
+        echo.dy = pending.dy;
+        echo.dz = pending.dz;
+        echo.speed = pending.speed;
+        echo.length = pending.length;
+        echo.brightness = 0.55;
+        echo.special = false;
+        paintLineColors(echoLine, pending.tip, pending.mid, pending.tail);
+        echoPendingRef.current = null;
+      }
+    }
+    updateLine(echoStateRef.current, echoLine, streak.echoOpacity);
   });
 
   if (tier === "reduced") return null;
@@ -311,6 +395,7 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
       {lines.map((line, i) => (
         <primitive key={i} object={line} />
       ))}
+      <primitive object={echoLine} />
     </group>
   );
 }

@@ -56,16 +56,21 @@ Tout se règle dans `defaultSkyTheme.scene.idle` (ou un merge preset).
 | `breathBoost` | Amplifie la parallaxe autonome des layers | `0.45` |
 | `fogBreathAmp` | Micro-dérive fog (vide qui respire) | `1.1` |
 | `rareEnabled` | Moments rares on/off | `true` |
-| `rareTargets` | Pool de cibles : `"rose"` \| `"mauve"` \| `"teal"` \| `"band"` | les 4 |
+| `rareTargets` | Pool : `"rose"` \| `"mauve"` \| `"teal"` \| `"band"` \| `"aurora"` | les 5 |
 | `rareGasPulse` | Force du pulse opacité (gaz) | `0.14` |
 | `rareBandPulse` | Force du pulse alpha (voie lactée) | `0.22` |
 | `rareDustPulse` | Pulse voile poussière si rare = gaz | `0.1` |
 | `rareLueurPulse` | Pulse Lueur hero si rare = `band` | `0.38` |
+| `rareAuroraPulse` | Pulse aurore si rare = `aurora` | `0.7` |
 | `rareGapMinSec` / `rareGapMaxSec` | Intervalle entre rares (pendant idle) | `140`–`260` |
 | `rareDurationSec` | Durée d’un pulse | `9` |
 | `rareSpecialStreak` | Filante un cran plus belle avec le pulse | `true` |
 
-**Filantes teintées :** `shootingStars.rareTints.rose|mauve|teal|band` — palette tip/mid/tail de la filante spéciale selon la cible rare.
+**Filantes teintées :** `shootingStars.rareTints.rose|mauve|teal|band|aurora` — palette tip/mid/tail de la filante spéciale selon la cible rare.
+
+**StreakEcho :** `shootingStars.echoDelaySec` (`0.4`) + `echoOpacity` (`0.35`) — fantôme soft ~0.4s après une filante spéciale.
+
+**Aurore :** knobs `aurora` (cool/edge/opacity/parallax) — dormant hors rare ; pulse via `rareAuroraPulse`.
 
 **Comportement rare :** une cible du pool est choisie au hasard (sans répéter d’affilée). Seul ce layer pulse ; optionnellement une filante spéciale part en même temps.
 
