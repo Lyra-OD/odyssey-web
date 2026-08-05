@@ -44,12 +44,13 @@ function ForceRenderLoop() {
 }
 
 const LOOK_IDLE: CraftChronoState = {
-  alignment: 1,
+  alignment: 0,
   coronaMul: 1,
   diamondMul: 0,
   bodyFade: 1,
   skyMul: 0,
   bloom: 0,
+  progress: 0,
   offsetX: 0,
   offsetY: 0,
 };
@@ -72,10 +73,13 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
 
   useEffect(() => {
     skyIntroRef.active = true;
-    const skyFromBurn =
-      mode === "look" ? Math.max(0, (progress - 0.72) / 0.28) : chrono.skyMul;
-    skyIntroRef.skyMul = skyFromBurn;
-    skyIntroRef.disc = chrono.bodyFade;
+    const skyFromPhase =
+      mode === "look"
+        ? Math.max(0, (progress - 0.88) / 0.12)
+        : chrono.skyMul;
+    skyIntroRef.skyMul = skyFromPhase;
+    skyIntroRef.disc =
+      mode === "look" ? 1 - skyFromPhase : chrono.bodyFade;
     return () => {
       skyIntroRef.active = false;
       skyIntroRef.skyMul = 1;
@@ -111,52 +115,65 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   };
 
   const playChrono = () => {
+    setPlaying(false);
     setMode("chrono");
     setProgress(0);
     setChrono(CRAFT_CHRONO_SILENCE);
-    setPlaying(true);
+    // Relance au prochain tick (évite race playing déjà true)
+    requestAnimationFrame(() => setPlaying(true));
   };
 
   const craft = useMemo(
-    () =>
-      ({
+    () => {
+      const phase = mode === "look" ? progress : chrono.alignment;
+      const skyOut =
+        mode === "look"
+          ? Math.max(0, (progress - 0.9) / 0.1)
+          : chrono.progress;
+      return {
         step: 3 as const,
         showGuide: false,
         scaleMul,
         coronaAmp: coronaAmp * chrono.coronaMul,
         diamondAmp: chrono.diamondMul,
-        alignment: chrono.alignment,
-        bodyFade: chrono.bodyFade,
-        progress: mode === "look" ? progress : 0,
+        alignment: phase,
+        bodyFade: mode === "look" ? 1 - skyOut * 0.85 : chrono.bodyFade,
+        progress: skyOut,
         offsetX: 0,
         offsetY: 0,
-      }),
+      };
+    },
     [scaleMul, coronaAmp, chrono, mode, progress],
   );
 
-  const bloomIntensity = 0.7 + progress * 1.4;
+  // Bloom très doux — le diamond ne doit plus flasher
+  const bloomIntensity =
+    0.42 +
+    (mode === "look"
+      ? 0.25 + Math.exp(-Math.pow((progress - 0.5) * 5, 2)) * 0.15
+      : 0.2 + chrono.bloom * 0.35);
 
   const copy =
     locale === "en"
       ? {
-          title: "Eclipse craft · black hole",
-          sub: "Event horizon + photon ring + accretion FBM",
+          title: "Eclipse craft · full transit",
+          sub: "Black hole fixed · sun passes behind · soft contacts",
           look: "Look",
           play: "Play chrono",
-          corona: "Accretion",
-          progress: "Progress (burn)",
-          scale: "Singularity size",
-          hint: "Progress 0 = singularity. Drag to burn-away.",
+          corona: "Corona",
+          progress: "Eclipse phase",
+          scale: "Disc size",
+          hint: "0 start · 0.5 totality · 1 exit + sky. Chrono = same path.",
         }
       : {
-          title: "Craft Éclipse · trou noir",
-          sub: "Horizon + photon ring + disque d’accrétion FBM",
+          title: "Craft Éclipse · transit complet",
+          sub: "Trou noir fixe · soleil passe derrière · contacts doux",
           look: "Look",
           play: "Lecture chrono",
-          corona: "Accrétion",
-          progress: "Progress (burn)",
-          scale: "Taille singularité",
-          hint: "Progress 0 = singularité. Tire pour le burn-away.",
+          corona: "Corona",
+          progress: "Phase éclipse",
+          scale: "Taille disques",
+          hint: "0 départ · 0.5 totalité · 1 sortie + ciel. La chrono = même trajet.",
         };
 
   return (
@@ -194,8 +211,8 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
                 <EclipseDisc tier="desktop" craft={craft} />
                 <EffectComposer multisampling={0}>
                   <Bloom
-                    luminanceThreshold={0.75}
-                    luminanceSmoothing={0.25}
+                    luminanceThreshold={0.7}
+                    luminanceSmoothing={0.35}
                     intensity={bloomIntensity}
                     mipmapBlur
                   />

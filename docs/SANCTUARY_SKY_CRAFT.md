@@ -161,6 +161,8 @@ Objectif : *« WTF I WANT THIS AS A SCREENSAVER »* — digne, léger GPU.
 
 **Sky Eclipse :** craft isolé sur **`/fr/contribute/test-eclipse`** (dev). Intro Sanctuaire + logo = brancher seulement quand la forme est digne. `scene.intro.enabled` = **false** pour l’instant. ≠ « Éclipse Résonnante » constellation (E′).
 
+**Journal essais (5 août 2026) :** [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md) — pistes KEEP/REJECT, anti-patterns, point de reprise.
+
 **Preview craft :** `/fr/contribute/test-ciel` (ciel) · `/fr/contribute/test-eclipse` (marque éclipse seule)
 
 Règle de session : **une lettre / phase à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
