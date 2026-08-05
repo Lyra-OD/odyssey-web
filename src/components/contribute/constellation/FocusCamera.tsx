@@ -6,6 +6,7 @@ import { Fog, Vector3 } from "three";
 
 import { idleCameraRef } from "./IdleCameraDrift";
 import { useSkyTheme } from "./skyTheme";
+import { skyWanderRef } from "./SkyWander";
 import { cameraZoomRef, ZOOM_DEFAULT, ZOOM_MAX, ZOOM_MIN } from "./WheelZoom";
 
 const FOCUS_FOG = { near: 5.5, far: 15 } as const;
@@ -25,7 +26,7 @@ type FocusCameraProps = {
 };
 
 /**
- * E1 — Approche ciné ; hors focus, zoom molette + dérive idle + fog vivant.
+ * E1 — Approche ciné ; hors focus, zoom + dérive idle + promenade (SkyWander) + fog.
  */
 export function FocusCamera({ target, active }: FocusCameraProps) {
   const look = useRef(new Vector3(0, 0, 0));
@@ -37,10 +38,20 @@ export function FocusCamera({ target, active }: FocusCameraProps) {
   useFrame((state) => {
     const cam = state.camera;
     const fog = state.scene.fog instanceof Fog ? state.scene.fog : null;
+    const wx = skyWanderRef.x;
+    const wy = skyWanderRef.y;
 
     if (active && target) {
-      desired.set(target[0] * 0.68, target[1] * 0.68, 4.05);
-      lookTarget.set(target[0] * 0.22, target[1] * 0.22, target[2] * 0.4);
+      desired.set(
+        wx + target[0] * 0.68,
+        wy + target[1] * 0.68,
+        4.05,
+      );
+      lookTarget.set(
+        wx + target[0] * 0.22,
+        wy + target[1] * 0.22,
+        target[2] * 0.4,
+      );
       cam.position.lerp(desired, 0.042);
       look.current.lerp(lookTarget, 0.048);
       cam.lookAt(look.current);
@@ -54,16 +65,15 @@ export function FocusCamera({ target, active }: FocusCameraProps) {
         ZOOM_MAX,
         Math.max(ZOOM_MIN, cameraZoomRef.current + idle.zoomOffset),
       );
-      home.set(idle.x, idle.y, z);
+      home.set(wx + idle.x, wy + idle.y, z);
       cam.position.lerp(home, 0.045);
       look.current.lerp(
-        lookTarget.set(idle.lookX, idle.lookY, 0),
+        lookTarget.set(wx + idle.lookX, wy + idle.lookY, 0),
         0.04,
       );
       cam.lookAt(look.current);
       if (fog) {
         const f = fogForZoom(z);
-        // Respiration du vide : fog suit zoom idle + breath
         const breath = idle.breath * fogBreathAmp;
         const nearOff = -breath * 0.75 + idle.zoomOffset * 0.22;
         const farOff = breath * 2.2 + idle.zoomOffset * 0.85;

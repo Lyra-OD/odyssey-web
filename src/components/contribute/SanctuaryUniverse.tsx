@@ -32,6 +32,11 @@ import {
 } from "@/src/components/contribute/constellation/StarScreenReporter";
 import { WheelZoom } from "@/src/components/contribute/constellation/WheelZoom";
 import {
+  ConstellationLeash,
+  SkyWander,
+  skyWanderWasDrag,
+} from "@/src/components/contribute/constellation/SkyWander";
+import {
   defaultSkyTheme,
   SkyThemeProvider,
   useSkyTheme,
@@ -115,6 +120,7 @@ function Constellation({
   const onTap = (id: string, e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     if (locked) return;
+    if (skyWanderWasDrag()) return;
     const soul = getMockSoul(id);
     if (soul?.memory) {
       onSelectMemory(id, positions[id] ?? soul.position);
@@ -190,6 +196,7 @@ function UniverseScene({
   tier,
   parallaxIntensity,
   showConstellation,
+  wanderEnabled,
   onSelectMemory,
   focus,
   onStarScreen,
@@ -197,6 +204,7 @@ function UniverseScene({
   tier: ReturnType<typeof useVisualTier>;
   parallaxIntensity: number;
   showConstellation: boolean;
+  wanderEnabled: boolean;
   onSelectMemory: (
     soulId: string,
     position: [number, number, number],
@@ -220,6 +228,7 @@ function UniverseScene({
     <ParallaxProvider intensity={parallaxIntensity}>
       <ForceRenderLoop />
       <WheelZoom enabled />
+      <SkyWander enabled={wanderEnabled} />
       <IdleCameraDrift />
       <color attach="background" args={[theme.scene.background]} />
       <fog
@@ -312,13 +321,15 @@ function UniverseScene({
             factor={theme.constellation.parallax.factor}
             lerp={theme.constellation.parallax.lerp}
           >
-            <Constellation
-              key={CONSTELLATION_LAYOUT_ID}
-              onSelectMemory={onSelectMemory}
-              focusedSoulId={focus?.soulId ?? null}
-              focusBoost={focusBoost}
-              onStarScreen={onStarScreen}
-            />
+            <ConstellationLeash>
+              <Constellation
+                key={CONSTELLATION_LAYOUT_ID}
+                onSelectMemory={onSelectMemory}
+                focusedSoulId={focus?.soulId ?? null}
+                focusBoost={focusBoost}
+                onStarScreen={onStarScreen}
+              />
+            </ConstellationLeash>
           </ParallaxLayer>
         ) : null}
       </CameraRig>
@@ -392,6 +403,7 @@ export function SanctuaryUniverse({
   const immersive = mode === "immersive";
   const [focus, setFocus] = useState<FocusSession | null>(null);
   const [constellationOn, setConstellationOn] = useState(true);
+  const [wanderOn, setWanderOn] = useState(false);
   const [starAnchor, setStarAnchor] = useState<ScreenAnchor | null>(null);
 
   const onStarScreen = useCallback((anchor: ScreenAnchor | null) => {
@@ -425,6 +437,10 @@ export function SanctuaryUniverse({
       }
       return !on;
     });
+  }, []);
+
+  const toggleWander = useCallback(() => {
+    setWanderOn((on) => !on);
   }, []);
 
   // approach → open
@@ -487,6 +503,13 @@ export function SanctuaryUniverse({
     : locale === "en"
       ? "Show constellation"
       : "Afficher la constellation";
+  const wanderLabel = wanderOn
+    ? locale === "en"
+      ? "Anchored"
+      : "Ancré"
+    : locale === "en"
+      ? "Wander"
+      : "Se promener";
   const hintLabel = focus
     ? locale === "en"
       ? "A memory in the light"
@@ -495,9 +518,13 @@ export function SanctuaryUniverse({
       ? locale === "en"
         ? "Sky only · show constellation · scroll to zoom"
         : "Ciel seul · affiche la constellation · molette pour zoomer"
-      : locale === "en"
-        ? "Tap a star · scroll to zoom"
-        : "Touche une étoile · molette pour zoomer";
+      : wanderOn
+        ? locale === "en"
+          ? "Drag to wander · tap a star · scroll to zoom"
+          : "Glisse pour te promener · touche une étoile · molette"
+        : locale === "en"
+          ? "Tap a star · scroll to zoom"
+          : "Touche une étoile · molette pour zoomer";
 
   const showChrome = immersive && !focus;
   const portalOpen = focus?.phase === "open";
@@ -542,6 +569,14 @@ export function SanctuaryUniverse({
           >
             {constellationLabel}
           </button>
+          <button
+            type="button"
+            onClick={toggleWander}
+            aria-pressed={wanderOn}
+            className="rounded-sm border border-white/15 bg-black/40 px-3 py-1.5 text-[10px] font-light uppercase tracking-[0.18em] text-teal-50/70 backdrop-blur-sm transition-colors hover:border-teal-400/30 hover:text-teal-50"
+          >
+            {wanderLabel}
+          </button>
         </div>
       ) : null}
 
@@ -576,6 +611,7 @@ export function SanctuaryUniverse({
                 tier={tier}
                 parallaxIntensity={intensity}
                 showConstellation={immersive && constellationOn}
+                wanderEnabled={immersive && wanderOn}
                 onSelectMemory={beginFocus}
                 focus={focus}
                 onStarScreen={onStarScreen}
