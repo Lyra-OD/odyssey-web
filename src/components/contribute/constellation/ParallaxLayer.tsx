@@ -11,6 +11,7 @@ import { useFrame } from "@react-three/fiber";
 import type { Group } from "three";
 
 import { cameraZoomRef, ZOOM_DEFAULT } from "./WheelZoom";
+import { markSkyActivity } from "./IdleCameraDrift";
 
 type PointerSample = { x: number; y: number };
 
@@ -36,13 +37,19 @@ export function ParallaxProvider({
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
+      markSkyActivity();
       const w = window.innerWidth || 1;
       const h = window.innerHeight || 1;
       pointerRef.current.x = (e.clientX / w) * 2 - 1;
       pointerRef.current.y = -((e.clientY / h) * 2 - 1);
     };
+    const onDown = () => markSkyActivity();
     window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
+    window.addEventListener("pointerdown", onDown, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerdown", onDown);
+    };
   }, []);
 
   const value = useRef<ParallaxContextValue>({ intensity, pointerRef });

@@ -4,7 +4,8 @@ import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Fog, Vector3 } from "three";
 
-import { cameraZoomRef, ZOOM_DEFAULT } from "./WheelZoom";
+import { idleCameraRef } from "./IdleCameraDrift";
+import { cameraZoomRef, ZOOM_DEFAULT, ZOOM_MAX, ZOOM_MIN } from "./WheelZoom";
 
 const FOCUS_FOG = { near: 5.5, far: 15 } as const;
 
@@ -23,7 +24,7 @@ type FocusCameraProps = {
 };
 
 /**
- * E1 — Approche ciné ; hors focus, respecte le zoom molette + fog adapté.
+ * E1 — Approche ciné ; hors focus, zoom molette + dérive idle + fog.
  */
 export function FocusCamera({ target, active }: FocusCameraProps) {
   const look = useRef(new Vector3(0, 0, 0));
@@ -46,10 +47,17 @@ export function FocusCamera({ target, active }: FocusCameraProps) {
         fog.far += (FOCUS_FOG.far - fog.far) * 0.045;
       }
     } else {
-      const z = cameraZoomRef.current;
-      home.set(0, 0, z);
-      cam.position.lerp(home, 0.06);
-      look.current.lerp(lookTarget.set(0, 0, 0), 0.05);
+      const idle = idleCameraRef;
+      const z = Math.min(
+        ZOOM_MAX,
+        Math.max(ZOOM_MIN, cameraZoomRef.current + idle.zoomOffset),
+      );
+      home.set(idle.x, idle.y, z);
+      cam.position.lerp(home, 0.045);
+      look.current.lerp(
+        lookTarget.set(idle.lookX, idle.lookY, 0),
+        0.04,
+      );
       cam.lookAt(look.current);
       if (fog) {
         const f = fogForZoom(z);

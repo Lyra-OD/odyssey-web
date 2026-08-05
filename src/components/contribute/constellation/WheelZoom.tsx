@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 
+import { markSkyActivity } from "./IdleCameraDrift";
+
 /** Distance caméra (axe Z) — lue par FocusCamera. */
 export const cameraZoomRef = { current: 7.5 };
 
@@ -23,7 +25,6 @@ export function WheelZoom({ enabled }: WheelZoomProps) {
   const gl = useThree((s) => s.gl);
 
   useEffect(() => {
-    // Clamp si une vieille session avait un zoom hors bornes
     cameraZoomRef.current = Math.min(
       ZOOM_MAX,
       Math.max(ZOOM_MIN, cameraZoomRef.current),
@@ -39,6 +40,7 @@ export function WheelZoom({ enabled }: WheelZoomProps) {
         return;
       }
       e.preventDefault();
+      markSkyActivity();
       cameraZoomRef.current = Math.min(
         ZOOM_MAX,
         Math.max(ZOOM_MIN, cameraZoomRef.current + e.deltaY * 0.012),

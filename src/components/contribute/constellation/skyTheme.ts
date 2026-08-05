@@ -80,6 +80,20 @@ export type SceneTheme = {
   fogNear: number;
   fogFar: number;
   ambientIntensity: number;
+  /** Dérive caméra quand on ne touche à rien. */
+  idle: {
+    enabled: boolean;
+    /** Secondes sans interaction avant dérive. */
+    delaySec: number;
+    /** Période principale (s) — plus long = plus contemplatif. */
+    periodSec: number;
+    /** Amplitude zoom (unités monde, autour du zoom user). */
+    zoomAmp: number;
+    /** Amplitude déplacement XY caméra. */
+    moveAmp: number;
+    /** Amplitude look-at (légère dérive du regard). */
+    lookAmp: number;
+  };
 };
 
 /**
@@ -118,6 +132,14 @@ export const defaultSkyTheme: SkyTheme = {
     fogNear: 12,
     fogFar: 28,
     ambientIntensity: 0.05,
+    idle: {
+      enabled: true,
+      delaySec: 3.5,
+      periodSec: 72,
+      zoomAmp: 0.55,
+      moveAmp: 0.16,
+      lookAmp: 0.1,
+    },
   },
   gasRose: {
     color: "#c2186e",

@@ -30,8 +30,10 @@ Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas har
 | `starsBand` | Voie lactée |
 | `starsField` | Étoiles proches |
 | `shootingStars` | Filantes (couleurs + parallaxe) |
-| `scene` | Background / fog / ambient |
+| `scene` | Background / fog / ambient / **idle** caméra |
 | `constellation` | Parallaxe constellation |
+
+`scene.idle` : dérive zoom + micro-move après `delaySec` sans interaction (`IdleCameraDrift.tsx`).
 
 Chaque gaz : `color`, `deep`, `opacity` (desktop/mobile/reduced), `parallax`, `position`, `scale`, …
 

@@ -12,6 +12,7 @@ import {
 import { CameraRig } from "@/src/components/contribute/constellation/CameraRig";
 import { CosmicDust } from "@/src/components/contribute/constellation/CosmicDust";
 import { FocusCamera } from "@/src/components/contribute/constellation/FocusCamera";
+import { IdleCameraDrift } from "@/src/components/contribute/constellation/IdleCameraDrift";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
 import { MemoryReveal } from "@/src/components/contribute/constellation/MemoryReveal";
 import { NebulaGasMauve } from "@/src/components/contribute/constellation/NebulaGasMauve";
@@ -214,6 +215,7 @@ function UniverseScene({
     <ParallaxProvider intensity={parallaxIntensity}>
       <ForceRenderLoop />
       <WheelZoom enabled />
+      <IdleCameraDrift />
       <color attach="background" args={[theme.scene.background]} />
       <fog
         attach="fog"
