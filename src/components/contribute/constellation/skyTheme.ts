@@ -69,6 +69,18 @@ export type DustLayerTheme = {
   parallax: ParallaxKnobs;
 };
 
+export type ZodiacalTheme = {
+  warm: string;
+  core: string;
+  opacity: TierOpacity;
+  position: [number, number, number];
+  scale: [number, number, number];
+  renderOrder: number;
+  parallax: ParallaxKnobs;
+  /** Boost opacité × breath idle. */
+  idleBoost: number;
+};
+
 export type ShootingStarsTheme = {
   tip: string;
   mid: string;
@@ -152,6 +164,7 @@ export type SkyTheme = {
   gasMauve: GasLayerTheme;
   gasTeal: GasLayerTheme;
   cosmicDust: DustLayerTheme;
+  zodiacal: ZodiacalTheme;
   ghostStars: GhostStarsTheme;
   starsBand: StarFieldTheme;
   starsField: StarFieldTheme;
@@ -247,6 +260,16 @@ export const defaultSkyTheme: SkyTheme = {
     scale: [30, 17, 1],
     renderOrder: 1,
     parallax: { factor: 0.16, lerp: 0.026 },
+  },
+  zodiacal: {
+    warm: "#1a1510",
+    core: "#6a5640",
+    opacity: { desktop: 0.085, mobile: 0.06, reduced: 0 },
+    position: [0, 0, -4.8],
+    scale: [30, 15, 1],
+    renderOrder: 0,
+    parallax: { factor: 0.1, lerp: 0.02 },
+    idleBoost: 0.22,
   },
   ghostStars: {
     tint: "#c8d4f0",

@@ -42,6 +42,7 @@ Du plus loin au plus près :
 | 0b | **NebulaGasMauve** | `NebulaGasMauve.tsx` | Gaz mauve, plus loin / lent | `gasMauve` |
 | 0c | **NebulaGasTeal** | `NebulaGasTeal.tsx` | Gaz teal + bande soft | `gasTeal` |
 | 1 | **CosmicDust** | `constellation/CosmicDust.tsx` | Voile poussière sur l’axe voie lactée | `cosmicDust` |
+| 1b | **ZodiacalLight** | `ZodiacalLight.tsx` | Lumière solaire soft (axe bande) | `zodiacal` — skip `reduced` |
 | 2 | **StarDust band** | `constellation/StarDust.tsx` | Voie lactée (~96 % du budget étoiles) | `starsBand` (+ zoom-out compensate) |
 | 3 | **StarDust field** | idem | Peu d’étoiles proches (~4 %) | `starsField` (+ zoom-out compensate) |
 | 4 | **ShootingStars** | `constellation/ShootingStars.tsx` | Filantes sporadiques | `shootingStars` |
@@ -149,7 +150,7 @@ Objectif : *« WTF I WANT THIS AS A SCREENSAVER »* — digne, léger GPU.
 | Phase | Contenu | Perf |
 |-------|---------|------|
 | **1** | `NebulaGasFar` + `GhostStars` | ✅ — skip `reduced` ; Ghost aussi skip `mobile` |
-| **2** | `ZodiacalLight` | 1 plane |
+| **2** | `ZodiacalLight` | ✅ — 1 plane, skip `reduced` |
 | **3** | `EclipseDisc` + intro immersif 1×/session | logo-ready |
 | **4** | Eclipse rare + Aurora + StreakEcho | rares longs |
 | **5** | Mode veille (UI fade + idle plus lent) | comportement |

@@ -11,6 +11,7 @@ import {
 } from "@/src/components/contribute/LueurNode";
 import { CameraRig } from "@/src/components/contribute/constellation/CameraRig";
 import { CosmicDust } from "@/src/components/contribute/constellation/CosmicDust";
+import { ZodiacalLight } from "@/src/components/contribute/constellation/ZodiacalLight";
 import { FocusCamera } from "@/src/components/contribute/constellation/FocusCamera";
 import { IdleCameraDrift } from "@/src/components/contribute/constellation/IdleCameraDrift";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
@@ -273,6 +274,14 @@ function UniverseScene({
         >
           <CosmicDust tier={tier} />
         </ParallaxLayer>
+        {tier !== "reduced" ? (
+          <ParallaxLayer
+            factor={theme.zodiacal.parallax.factor}
+            lerp={theme.zodiacal.parallax.lerp}
+          >
+            <ZodiacalLight tier={tier} />
+          </ParallaxLayer>
+        ) : null}
         <StarDust tier={tier} />
         <ParallaxLayer
           factor={theme.shootingStars.parallax.factor}

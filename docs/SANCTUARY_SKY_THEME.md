@@ -30,6 +30,7 @@ Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas har
 | `gasFar` | Nébuleuse lointaine (Phase S1) |
 | `ghostStars` | Bokeh optique (Phase S1) |
 | `cosmicDust` | Voile poussière |
+| `zodiacal` | Lumière zodiacale (Phase S2) |
 | `starsBand` | Voie lactée |
 | `starsField` | Étoiles proches |
 | `shootingStars` | Filantes (couleurs + parallaxe) |
