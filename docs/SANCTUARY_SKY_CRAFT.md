@@ -34,7 +34,9 @@ Du plus loin au plus près :
 
 | # | Layer | Fichier | Rôle | Parallaxe `factor` / `lerp` |
 |--|--|--|--|--|
-| 0 | **NebulaGas** | `constellation/NebulaGas.tsx` | Gaz teal + mauve, boucle ~38 s | `−0.06` / `0.02` (inverse, lent) |
+| 0a | **NebulaGasRose** | `NebulaGasRose.tsx` | Magenta 2001, biais droite, plus loin | `−0.12` / `0.014` |
+| 0b | **NebulaGasMauve** | `NebulaGasMauve.tsx` | Gaz mauve, plus loin / lent | `−0.09` / `0.016` |
+| 0c | **NebulaGasTeal** | `NebulaGasTeal.tsx` | Gaz teal + bande soft | `−0.04` / `0.022` |
 | 1 | **CosmicDust** | `constellation/CosmicDust.tsx` | Voile poussière sur l’axe voie lactée | `0.16` / `0.026` |
 | 2 | **StarDust band** | `constellation/StarDust.tsx` | Voie lactée (~96 % du budget étoiles) | `0.22` / `0.032` |
 | 3 | **StarDust field** | idem | Peu d’étoiles proches (~4 %) | `0.65` / `0.055` |
@@ -126,7 +128,8 @@ Du plus loin au plus près :
 | **B** | Poussière / voile (`CosmicDust`) | ✅ |
 | **C** | Filantes premium | ✅ |
 | **D** | Mode fond + « Voir le ciel » (UI) | ✅ stub + UI |
-| **E** | Focus étoile → révèle média | ⏳ après D |
+| **E** | Focus étoile → révèle média | ⏸ pause (polish après constellation) |
+| **E′** | Éclipse Résonnante — constellation | 🚧 Acte I (anneaux + orbit) |
 | **F** | Pont famille | ⏳ après E |
 | **G** | Naissance d’étoile post-dépôt | ⏳ |
 | **H** | Audio immersif (mute default) | ⏳ optionnel |
@@ -195,4 +198,14 @@ src/components/contribute/
 2. Noter l’anti-pattern si on s’est brûlé  
 3. Commit doc du type : `docs(sanctuary): update sky craft bible`
 
-*Prochaine entrée attendue : plan E (focus étoile → révèle média).*
+*Prochaine entrée attendue : plan F (pont famille) ou G (naissance post-dépôt).*
+
+---
+
+## 13. Révélation E (mock)
+
+- Constellation **réactivée en immersif seulement**
+- Centre = **Lueur / hero** — pas de photo (canon)
+- Tap (sans drag) sur satellite **avec** `memory` → `MemoryReveal` (1 photo)
+- Esc ferme d’abord le souvenir, puis le ciel
+- Médias = picsum mock (`mockSouls.ts`) — brancher dépôts réels plus tard

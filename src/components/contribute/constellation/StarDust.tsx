@@ -12,6 +12,7 @@ import {
 
 import { tierDustCount, type VisualTier } from "./useVisualTier";
 import { ParallaxLayer } from "./ParallaxLayer";
+import { cameraZoomRef, ZOOM_DEFAULT } from "./WheelZoom";
 
 const vertexShader = /* glsl */ `
 uniform float uTime;
@@ -24,6 +25,7 @@ uniform float uBreathSpeedB;
 uniform float uBreathAmp;
 uniform float uSizeMul;
 uniform float uAlphaMul;
+uniform float uZoomComp;
 attribute float aScale;
 attribute float aBrightness;
 varying float vAlpha;
@@ -44,14 +46,19 @@ void main() {
   float depth = max(-mv.z, 0.6);
   gl_Position = projectionMatrix * mv;
 
-  // Respiration centree sur 1.0 — rythmes par layer via uniforms
   float s1 = sin(uTime * uBreathSpeedA + position.x * 2.4 + position.z * 1.1);
   float s2 = sin(uTime * uBreathSpeedB + position.y * 3.1 + 2.0);
   float beat = s1 * s2;
   float breath = 1.0 + uBreathAmp * (0.55 * s1 + 0.30 * s2 + 0.35 * beat);
 
-  gl_PointSize = aScale * uSizeMul * breath * (58.0 / depth);
-  vAlpha = aBrightness * uAlphaMul * breath * smoothstep(20.0, 3.0, depth);
+  // Perspective + compensation zoom out (sinon la bande disparaît)
+  float sizeAtten = 58.0 / depth;
+  gl_PointSize = aScale * uSizeMul * breath * sizeAtten * uZoomComp;
+
+  // Falloff profondeur plus doux + boost léger en zoom out
+  float depthFade = smoothstep(32.0, 5.0, depth);
+  float zoomBoost = mix(1.0, 1.35, clamp(uZoomComp - 1.0, 0.0, 1.5));
+  vAlpha = aBrightness * uAlphaMul * breath * depthFade * zoomBoost;
   vBright = aBrightness;
 }
 `;
@@ -216,6 +223,7 @@ function createMaterial(cfg: FieldConfig): ShaderMaterial {
       uBreathAmp: { value: cfg.breathAmp },
       uSizeMul: { value: cfg.sizeMul },
       uAlphaMul: { value: cfg.alphaMul },
+      uZoomComp: { value: 1 },
       uTint: { value: new Color("#c8d4f0") },
     },
   });
@@ -247,6 +255,12 @@ function StarField({ kind, count }: StarFieldProps) {
       pointer.x * viewport.width * 0.45,
       pointer.y * viewport.height * 0.45,
     );
+    const zoomRatio = cameraZoomRef.current / ZOOM_DEFAULT;
+    mat.uniforms.uZoomComp.value = Math.max(0.85, zoomRatio);
+    // Amplifie la répulsion seulement en zoom out — défaut / zoom in inchangés
+    const outScale = Math.max(1, zoomRatio);
+    mat.uniforms.uRepulsion.value = cfg.repulsion * outScale;
+    mat.uniforms.uRepelStrength.value = cfg.repelStrength * outScale;
   });
 
   return (
@@ -276,11 +290,11 @@ export function StarDust({ tier }: StarDustProps) {
 
   return (
     <group>
-      <ParallaxLayer factor={0.22} lerp={0.032}>
+      <ParallaxLayer factor={0.22} lerp={0.032} zoomOutCompensate>
         <StarField kind="band" count={bandCount} />
       </ParallaxLayer>
       {fieldCount > 0 ? (
-        <ParallaxLayer factor={0.65} lerp={0.055}>
+        <ParallaxLayer factor={0.65} lerp={0.055} zoomOutCompensate>
           <StarField kind="field" count={fieldCount} />
         </ParallaxLayer>
       ) : null}

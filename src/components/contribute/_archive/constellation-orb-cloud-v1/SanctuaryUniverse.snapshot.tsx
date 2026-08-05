@@ -14,9 +14,7 @@ import { CosmicDust } from "@/src/components/contribute/constellation/CosmicDust
 import { FocusCamera } from "@/src/components/contribute/constellation/FocusCamera";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
 import { MemoryReveal } from "@/src/components/contribute/constellation/MemoryReveal";
-import { NebulaGasMauve } from "@/src/components/contribute/constellation/NebulaGasMauve";
-import { NebulaGasRose } from "@/src/components/contribute/constellation/NebulaGasRose";
-import { NebulaGasTeal } from "@/src/components/contribute/constellation/NebulaGasTeal";
+import { NebulaGas } from "@/src/components/contribute/constellation/NebulaGas";
 import { ParallaxLayer, ParallaxProvider } from "@/src/components/contribute/constellation/ParallaxLayer";
 import { ShootingStars } from "@/src/components/contribute/constellation/ShootingStars";
 import { StarDust } from "@/src/components/contribute/constellation/StarDust";
@@ -24,7 +22,6 @@ import {
   StarScreenReporter,
   type ScreenAnchor,
 } from "@/src/components/contribute/constellation/StarScreenReporter";
-import { WheelZoom } from "@/src/components/contribute/constellation/WheelZoom";
 import {
   MOCK_SOULS,
   getMockSoul,
@@ -45,16 +42,11 @@ type FocusSession = {
   phase: "approach" | "open" | "closing";
 };
 
-
-
 function initialPositions() {
   return Object.fromEntries(
     MOCK_SOULS.map((s) => [s.id, [...s.position] as [number, number, number]]),
   );
 }
-
-/** Reset constellation — orb cloud V1 + zoom (sans orbites). */
-const CONSTELLATION_LAYOUT_ID = "orb-cloud-reset-v1";
 
 /** Garantit des frames même sans interaction souris (WebGL demand). */
 function ForceRenderLoop() {
@@ -90,8 +82,11 @@ function Constellation({
   focusBoost: number;
   onStarScreen: (anchor: ScreenAnchor | null) => void;
 }) {
-  const positions = useMemo(() => initialPositions(), []);
+  const [positions, setPositions] = useState(initialPositions);
   const [hovered, setHovered] = useState<string | null>(null);
+  const [dragging, setDragging] = useState<string | null>(null);
+  const dragOrigin = useRef<{ x: number; y: number } | null>(null);
+  const didDrag = useRef(false);
 
   const heroId = useMemo(
     () => MOCK_SOULS.find((s) => s.tier === "hero")?.id ?? "hero",
@@ -100,12 +95,54 @@ function Constellation({
   const soulIds = useMemo(() => MOCK_SOULS.map((s) => s.id), []);
   const locked = focusedSoulId !== null;
 
-  const onTap = (id: string, e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation();
+  const setSoulDragFlag = useCallback((on: boolean) => {
+    if (typeof document === "undefined") return;
+    if (on) document.body.dataset.soulDrag = "1";
+    else delete document.body.dataset.soulDrag;
+  }, []);
+
+  const onPointerDown = (id: string, e: ThreeEvent<PointerEvent>) => {
     if (locked) return;
-    const soul = getMockSoul(id);
-    if (soul?.memory) {
-      onSelectMemory(id, positions[id] ?? soul.position);
+    e.stopPropagation();
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    setDragging(id);
+    setSoulDragFlag(true);
+    didDrag.current = false;
+    dragOrigin.current = { x: e.point.x, y: e.point.y };
+    document.body.style.cursor = "grabbing";
+  };
+
+  const onPointerMove = (id: string, e: ThreeEvent<PointerEvent>) => {
+    if (locked || dragging !== id) return;
+    e.stopPropagation();
+    const origin = dragOrigin.current;
+    if (origin) {
+      const dx = e.point.x - origin.x;
+      const dy = e.point.y - origin.y;
+      if (dx * dx + dy * dy > 0.01) didDrag.current = true;
+    }
+    const z = positions[id]?.[2] ?? 0;
+    setPositions((prev) => ({
+      ...prev,
+      [id]: [e.point.x, e.point.y, z],
+    }));
+  };
+
+  const onPointerUp = (id: string, e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    const wasDrag = didDrag.current;
+    setDragging(null);
+    setSoulDragFlag(false);
+    document.body.style.cursor = hovered ? "grab" : "auto";
+    dragOrigin.current = null;
+    if (locked) return;
+    // Tap (pas drag) sur un souvenir → révélation
+    if (!wasDrag) {
+      const soul = getMockSoul(id);
+      if (soul?.memory) {
+        const pos = positions[id] ?? soul.position;
+        onSelectMemory(id, pos);
+      }
     }
   };
 
@@ -122,7 +159,7 @@ function Constellation({
             <LueurNode
               variant={soul.tier}
               phase={i * 1.7}
-              floating={!isFocus}
+              floating={dragging !== soul.id && !isFocus}
               focusBoost={isFocus ? focusBoost : 0}
             />
             {isFocus ? (
@@ -130,21 +167,25 @@ function Constellation({
             ) : null}
             <LueurHitTarget
               radius={hitRadius}
-              onPointerUp={(e) => onTap(soul.id, e)}
+              onPointerDown={(e) => onPointerDown(soul.id, e)}
+              onPointerMove={(e) => onPointerMove(soul.id, e)}
+              onPointerUp={(e) => onPointerUp(soul.id, e)}
               onPointerOver={(e) => {
                 if (locked) return;
                 e.stopPropagation();
                 setHovered(soul.id);
-                document.body.style.cursor = soul.memory
-                  ? "pointer"
-                  : "default";
+                if (!dragging) {
+                  document.body.style.cursor = soul.memory
+                    ? "pointer"
+                    : "grab";
+                }
               }}
               onPointerOut={() => {
                 setHovered(null);
-                document.body.style.cursor = "auto";
+                if (!dragging) document.body.style.cursor = "auto";
               }}
             />
-            {hovered === soul.id ? (
+            {hovered === soul.id || dragging === soul.id ? (
               <Html
                 distanceFactor={6}
                 style={{
@@ -172,7 +213,6 @@ function Constellation({
     </group>
   );
 }
-
 
 function UniverseScene({
   tier,
@@ -206,7 +246,6 @@ function UniverseScene({
   return (
     <ParallaxProvider intensity={parallaxIntensity}>
       <ForceRenderLoop />
-      <WheelZoom enabled />
       <color attach="background" args={["#02040a"]} />
       <fog attach="fog" args={["#03050c", 12, 28]} />
       <ambientLight intensity={0.05} />
@@ -215,14 +254,8 @@ function UniverseScene({
         active={focusing}
       />
       <CameraRig>
-        <ParallaxLayer factor={-0.12} lerp={0.014}>
-          <NebulaGasRose tier={tier} />
-        </ParallaxLayer>
-        <ParallaxLayer factor={-0.09} lerp={0.016}>
-          <NebulaGasMauve tier={tier} />
-        </ParallaxLayer>
-        <ParallaxLayer factor={-0.04} lerp={0.022}>
-          <NebulaGasTeal tier={tier} />
+        <ParallaxLayer factor={-0.06} lerp={0.02}>
+          <NebulaGas tier={tier} />
         </ParallaxLayer>
         <ParallaxLayer factor={0.16} lerp={0.026}>
           <CosmicDust tier={tier} />
@@ -234,7 +267,6 @@ function UniverseScene({
         {showConstellation ? (
           <ParallaxLayer factor={0.4} lerp={0.04}>
             <Constellation
-              key={CONSTELLATION_LAYOUT_ID}
               onSelectMemory={onSelectMemory}
               focusedSoulId={focus?.soulId ?? null}
               focusBoost={focusBoost}
@@ -408,11 +440,11 @@ export function SanctuaryUniverse({
       : "Un souvenir dans la lumière"
     : !constellationOn
       ? locale === "en"
-        ? "Sky only · show constellation · scroll to zoom"
-        : "Ciel seul · affiche la constellation · molette pour zoomer"
+        ? "Sky only · show constellation to touch memories"
+        : "Ciel seul · affiche la constellation pour toucher"
       : locale === "en"
-        ? "Tap a star · scroll to zoom"
-        : "Touche une étoile · molette pour zoomer";
+        ? "Tap a star to see a memory · drag to move"
+        : "Touche une étoile pour voir · glisse pour déplacer";
 
   const showChrome = immersive && !focus;
   const portalOpen = focus?.phase === "open";

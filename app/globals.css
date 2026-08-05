@@ -323,6 +323,145 @@ body {
   animation: sanctuary-halo-breathe 4.2s ease-in-out infinite;
 }
 
+@keyframes sanctuaryReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* E2 — Portail souvenir (émergence / retour dans la lueur) */
+@keyframes sanctuaryPortalIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.12);
+    filter: brightness(2.4) blur(8px);
+  }
+  35% {
+    opacity: 1;
+    filter: brightness(1.35) blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1) blur(0);
+  }
+}
+
+@keyframes sanctuaryPortalOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1) blur(0);
+  }
+  45% {
+    opacity: 1;
+    filter: brightness(1.45) blur(2px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.06);
+    filter: brightness(2.8) blur(12px);
+  }
+}
+
+.sanctuary-memory-portal__scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 55% 58% at 50% 46%,
+    rgba(2, 8, 14, 0.05) 0%,
+    rgba(2, 6, 12, 0.28) 52%,
+    rgba(0, 0, 0, 0.62) 100%
+  );
+}
+
+.sanctuary-memory-portal__figure {
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+}
+
+.sanctuary-memory-portal__figure.is-returning {
+  transition:
+    left 0.85s cubic-bezier(0.4, 0, 0.2, 1),
+    top 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sanctuary-memory-portal__halo {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: min(96vw, 40rem);
+  height: min(78vh, 32rem);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(45, 212, 191, 0.18) 0%,
+    rgba(94, 234, 212, 0.06) 38%,
+    transparent 70%
+  );
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+.sanctuary-memory-portal__media {
+  position: relative;
+  margin: 0 auto;
+  max-height: min(72vh, 620px);
+  max-width: min(92vw, 32rem);
+  overflow: hidden;
+  /* Soft edges — centre bien lisible */
+  -webkit-mask-image: radial-gradient(
+    ellipse 88% 90% at 50% 48%,
+    #000 55%,
+    rgba(0, 0, 0, 0.75) 78%,
+    transparent 98%
+  );
+  mask-image: radial-gradient(
+    ellipse 88% 90% at 50% 48%,
+    #000 55%,
+    rgba(0, 0, 0, 0.75) 78%,
+    transparent 98%
+  );
+}
+
+.sanctuary-memory-portal__media img {
+  display: block;
+  width: 100%;
+  max-height: min(72vh, 620px);
+  object-fit: cover;
+  filter: saturate(0.95) contrast(1.03);
+}
+
+/* Vignette légère — coins seulement */
+.sanctuary-memory-portal__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 78% 80% at 50% 48%,
+    transparent 48%,
+    rgba(0, 0, 0, 0.22) 78%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+.sanctuary-memory-portal__media.is-entering {
+  animation: sanctuaryPortalIn 1.05s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: center center;
+}
+
+.sanctuary-memory-portal__media.is-exiting {
+  animation: sanctuaryPortalOut 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform-origin: center center;
+}
+
 /* Sanctuaire — Lueur : blob lisible + SVG displacement + grain */
 @keyframes sanctuary-lueur-settle {
   0% {

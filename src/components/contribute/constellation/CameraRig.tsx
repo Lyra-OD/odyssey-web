@@ -19,7 +19,7 @@ export function CameraRig({ children }: { children: React.ReactNode }) {
   useFrame(({ clock }) => {
     if (
       typeof document !== "undefined" &&
-      document.body.dataset.soulDrag === "1"
+      document.body.dataset.skyFocus === "1"
     ) {
       return;
     }

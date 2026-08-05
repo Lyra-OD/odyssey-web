@@ -10,6 +10,8 @@ import {
 import { useFrame } from "@react-three/fiber";
 import type { Group } from "three";
 
+import { cameraZoomRef, ZOOM_DEFAULT } from "./WheelZoom";
+
 type PointerSample = { x: number; y: number };
 
 type ParallaxContextValue = {
@@ -76,6 +78,11 @@ type ParallaxLayerProps = {
   factor: number;
   /** Vitesse de poursuite (plus bas = plus d’inertie / plus loin). */
   lerp?: number;
+  /**
+   * Si true : amplifie seulement en zoom out (feeling écran constant),
+   * sans toucher au zoom défaut / zoom in.
+   */
+  zoomOutCompensate?: boolean;
   children: React.ReactNode;
 };
 
@@ -85,6 +92,7 @@ type ParallaxLayerProps = {
 export function ParallaxLayer({
   factor,
   lerp = 0.045,
+  zoomOutCompensate = false,
   children,
 }: ParallaxLayerProps) {
   const group = useRef<Group>(null);
@@ -111,7 +119,10 @@ export function ParallaxLayer({
     const rawY = pointerRef?.current.y ?? 0;
     const px = shapePointer(rawX) + idleX;
     const py = shapePointer(rawY) + idleY;
-    const k = factor * intensity;
+    const zoomScale = zoomOutCompensate
+      ? Math.max(1, cameraZoomRef.current / ZOOM_DEFAULT)
+      : 1;
+    const k = factor * intensity * zoomScale;
 
     const targetX = px * k * 0.48;
     const targetY = py * k * 0.32;

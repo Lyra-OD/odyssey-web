@@ -1,0 +1,63 @@
+"use client";
+
+import { useMemo, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import { Fog, Vector3 } from "three";
+
+import { cameraZoomRef, ZOOM_DEFAULT } from "./WheelZoom";
+
+const FOCUS_FOG = { near: 5.5, far: 15 } as const;
+
+/** Fog qui suit le zoom — la bande reste lisible en zoom out. */
+function fogForZoom(camZ: number) {
+  return {
+    near: camZ + 3.5,
+    far: camZ + 18,
+  };
+}
+
+type FocusCameraProps = {
+  /** Position locale de l’étoile (constellation). */
+  target: [number, number, number] | null;
+  active: boolean;
+};
+
+/**
+ * E1 — Approche ciné ; hors focus, respecte le zoom molette + fog adapté.
+ */
+export function FocusCamera({ target, active }: FocusCameraProps) {
+  const look = useRef(new Vector3(0, 0, 0));
+  const desired = useMemo(() => new Vector3(), []);
+  const lookTarget = useMemo(() => new Vector3(), []);
+  const home = useMemo(() => new Vector3(0, 0, ZOOM_DEFAULT), []);
+
+  useFrame((state) => {
+    const cam = state.camera;
+    const fog = state.scene.fog instanceof Fog ? state.scene.fog : null;
+
+    if (active && target) {
+      desired.set(target[0] * 0.68, target[1] * 0.68, 4.05);
+      lookTarget.set(target[0] * 0.22, target[1] * 0.22, target[2] * 0.4);
+      cam.position.lerp(desired, 0.042);
+      look.current.lerp(lookTarget, 0.048);
+      cam.lookAt(look.current);
+      if (fog) {
+        fog.near += (FOCUS_FOG.near - fog.near) * 0.045;
+        fog.far += (FOCUS_FOG.far - fog.far) * 0.045;
+      }
+    } else {
+      const z = cameraZoomRef.current;
+      home.set(0, 0, z);
+      cam.position.lerp(home, 0.06);
+      look.current.lerp(lookTarget.set(0, 0, 0), 0.05);
+      cam.lookAt(look.current);
+      if (fog) {
+        const f = fogForZoom(z);
+        fog.near += (f.near - fog.near) * 0.08;
+        fog.far += (f.far - fog.far) * 0.08;
+      }
+    }
+  });
+
+  return null;
+}
