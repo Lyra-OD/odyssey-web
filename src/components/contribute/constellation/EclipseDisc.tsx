@@ -78,8 +78,8 @@ void main() {
   float outside = smoothstep(R, R + 0.02, r);
   float dist = max(0.0, r - R);
 
-  // Halo proche : très blanc, soft, type GIF
-  float nearHalo = exp(-pow(dist * 5.5, 1.35));
+  // Halo proche : blanc soft qui commence juste hors du bord (pas de trait)
+  float nearHalo = exp(-pow(dist * 4.2, 1.25)) * smoothstep(0.0, 0.025, dist);
   // Voile lointain : plume / soie
   float farVeil = exp(-pow(dist * 1.55, 1.15)) * 0.55;
 
@@ -101,18 +101,13 @@ void main() {
     );
   float corona = coronaShape * uCoronaAmp;
 
-  // Rim blanc fin — collé au disque (pas de trait gris)
-  float rim =
-    smoothstep(R - 0.006, R, r) * (1.0 - smoothstep(R, R + 0.018, r));
-  rim *= step(0.02, uCoronaAmp);
-
   vec3 col = uBody * body;
   col += uGuideCol * guide * uGuide * 0.5;
-  col += uRim * rim * 2.2;
+  // Pas de rim blanc — la corona fond sur le disque (look GIF)
   col += mix(uRim, uCorona, clamp(dist * 2.0, 0.0, 1.0)) * corona;
 
   float alpha = max(body, guide * uGuide * 0.5);
-  alpha = max(alpha, max(rim * 0.95, corona * 0.9));
+  alpha = max(alpha, corona * 0.9);
   alpha *= uOpacity;
   if (alpha < 0.004) discard;
 
