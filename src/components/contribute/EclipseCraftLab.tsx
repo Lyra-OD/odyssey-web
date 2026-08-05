@@ -36,39 +36,42 @@ function ForceRenderLoop() {
 type Locale = "fr" | "en";
 
 /**
- * Craft éclipse — redémarrage étape par étape.
- * Étape 1 : fond noir + disque noir (guide de contour optionnel).
+ * Craft éclipse — étape 2 : corona blanche soyeuse.
  */
 export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
-  const [showGuide, setShowGuide] = useState(true);
+  const [showGuide, setShowGuide] = useState(false);
   const [scaleMul, setScaleMul] = useState(1);
+  const [coronaAmp, setCoronaAmp] = useState(1.15);
 
   const craft = useMemo(
     () =>
       ({
-        step: 1 as const,
+        step: 2 as const,
         showGuide,
         scaleMul,
+        coronaAmp,
       }),
-    [showGuide, scaleMul],
+    [showGuide, scaleMul, coronaAmp],
   );
 
   const copy =
     locale === "en"
       ? {
-          title: "Eclipse craft · step 1",
-          sub: "Black disc + black ground — nothing else",
+          title: "Eclipse craft · step 2",
+          sub: "Black disc + soft white corona",
           guide: "Contour guide",
           scale: "Size",
-          hint: "Validate the circle. Next: soft white corona.",
+          corona: "Corona",
+          hint: "Validate the silk halo. Next: sun becomes black.",
         }
       : {
-          title: "Craft Éclipse · étape 1",
-          sub: "Disque noir + fond noir — rien d’autre",
+          title: "Craft Éclipse · étape 2",
+          sub: "Disque noir + corona blanche soyeuse",
           guide: "Guide de contour",
           scale: "Taille",
-          hint: "Valide le cercle. Ensuite : corona blanche soyeuse.",
+          corona: "Corona",
+          hint: "Valide le halo soyeux. Ensuite : le soleil devient noir.",
         };
 
   return (
@@ -128,6 +131,17 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
               {showGuide ? " · on" : " · off"}
             </button>
           </div>
+          <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
+            {copy.corona}
+            <input
+              type="range"
+              min={0.2}
+              max={2}
+              step={0.01}
+              value={coronaAmp}
+              onChange={(e) => setCoronaAmp(Number(e.target.value))}
+            />
+          </label>
           <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
             {copy.scale}
             <input

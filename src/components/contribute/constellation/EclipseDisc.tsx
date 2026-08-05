@@ -11,8 +11,8 @@ import { skyIntroRef } from "./SkyIntroEclipse";
 
 /**
  * Sky Eclipse — craft étape par étape.
- * Étape 1 (craft) : disque noir + fond. Rien d’autre.
- * Rare idle / intro : chemins existants (hors craft).
+ * Étape 1 : disque noir + fond
+ * Étape 2 : + corona blanche soyeuse
  */
 const vertexShader = /* glsl */ `
 varying vec2 vUv;
@@ -22,36 +22,91 @@ void main() {
 }
 `;
 
-/** Étape 1 — cercle noir parfait. Guide très léger pour le voir sur fond noir. */
-const craftStep1Fragment = /* glsl */ `
+/** Craft étapes 1–2 */
+const craftFragment = /* glsl */ `
 uniform float uOpacity;
 uniform float uGuide;
+uniform float uCoronaAmp;
+uniform float uTime;
 uniform vec3 uBody;
 uniform vec3 uGuideCol;
+uniform vec3 uCorona;
+uniform vec3 uRim;
 
 varying vec2 vUv;
+
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+float noise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  float a = hash(i);
+  float b = hash(i + vec2(1.0, 0.0));
+  float c = hash(i + vec2(0.0, 1.0));
+  float d = hash(i + vec2(1.0, 1.0));
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+
+float fbm(vec2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 4; i++) {
+    v += a * noise(p);
+    p = p * 2.05 + vec2(1.4, 7.9);
+    a *= 0.5;
+  }
+  return v;
+}
 
 void main() {
   vec2 p = vUv * 2.0 - 1.0;
   float r = length(p);
+  float ang = (r < 1e-4) ? 0.0 : atan(p.y, p.x);
+  float t = uTime * 0.04;
   float R = 0.38;
 
-  // Disque noir net
+  // —— Étape 1 : disque noir ——
   float body = 1.0 - smoothstep(R - 0.002, R + 0.001, r);
-
-  // Guide craft (temporaire étape 1) — trait fin pour lire la forme
   float guide =
     smoothstep(R - 0.006, R, r) * (1.0 - smoothstep(R, R + 0.01, r));
 
-  vec3 col = uBody * body + uGuideCol * guide * uGuide;
-  float alpha = max(body, guide * uGuide) * uOpacity;
+  // —— Étape 2 : corona blanche soyeuse (hors du disque) ——
+  float outside = smoothstep(R - 0.001, R + 0.016, r);
+  float fall = exp(-pow((r - R) * 1.9, 1.1));
+  float fallFar = exp(-pow((r - R) * 1.0, 1.45)) * 0.48;
+  float n1 = fbm(vec2(ang * 1.5 + t * 0.2, r * 2.4));
+  float n2 = fbm(vec2(ang * 3.1 - t * 0.15, r * 3.2 + 2.5));
+  float silk = 0.55 + 0.45 * n1;
+  float wisps = pow(max(0.0, n2), 1.7) * 0.5;
+  float longRays =
+    pow(max(0.0, sin(ang * 5.0 + n1 * 2.2)), 20.0) * 0.18 * fall;
+  float coronaShape =
+    outside * (fall * silk + fallFar * (0.35 + wisps) + longRays);
+  float corona = coronaShape * uCoronaAmp;
+
+  // Liseré blanc fin (bord disque → corona)
+  float rim =
+    smoothstep(R - 0.01, R, r) * (1.0 - smoothstep(R, R + 0.024, r));
+  rim *= step(0.01, uCoronaAmp);
+
+  vec3 col = uBody * body;
+  col += uGuideCol * guide * uGuide;
+  col += uRim * rim * 1.9;
+  col += mix(uRim, uCorona, clamp((r - R) * 1.7, 0.0, 1.0)) * corona;
+
+  float alpha = max(body, guide * uGuide);
+  alpha = max(alpha, max(rim * 0.9, corona * 0.85));
+  alpha *= uOpacity;
   if (alpha < 0.004) discard;
 
   gl_FragColor = vec4(col, clamp(alpha, 0.0, 1.0));
 }
 `;
 
-/** Rare / intro — silhouette simple (hors chantier craft). */
+/** Rare / intro — hors craft. */
 const skyFragment = /* glsl */ `
 uniform float uTime;
 uniform float uOpacity;
@@ -100,11 +155,11 @@ void main() {
 `;
 
 export type EclipseCraftDrive = {
-  /** 1 = étape 1 (disque seul). */
-  step: 1;
-  /** Affiche le guide de contour (craft). */
+  step: 1 | 2;
   showGuide: boolean;
   scaleMul: number;
+  /** Intensité corona (étape 2). */
+  coronaAmp: number;
 };
 
 type Props = {
@@ -126,7 +181,7 @@ export function EclipseDisc({ tier, craft }: Props) {
     if (isCraft) {
       return new ShaderMaterial({
         vertexShader,
-        fragmentShader: craftStep1Fragment,
+        fragmentShader: craftFragment,
         transparent: true,
         depthWrite: false,
         depthTest: false,
@@ -135,9 +190,13 @@ export function EclipseDisc({ tier, craft }: Props) {
         blending: NormalBlending,
         uniforms: {
           uOpacity: { value: 1 },
-          uGuide: { value: 1 },
+          uGuide: { value: 0 },
+          uCoronaAmp: { value: 0 },
+          uTime: { value: 0 },
           uBody: { value: new Color("#000000") },
           uGuideCol: { value: new Color("#3a3a42") },
+          uCorona: { value: new Color("#dce4f2") },
+          uRim: { value: new Color("#ffffff") },
         },
       });
     }
@@ -166,8 +225,12 @@ export function EclipseDisc({ tier, craft }: Props) {
     const mesh = meshRef.current;
 
     if (craft) {
+      mat.uniforms.uTime.value = clock.elapsedTime;
       mat.uniforms.uOpacity.value = 1;
       mat.uniforms.uGuide.value = craft.showGuide ? 1 : 0;
+      // Étape 1 : corona à 0 ; étape 2+ : slider
+      mat.uniforms.uCoronaAmp.value =
+        craft.step >= 2 ? craft.coronaAmp : 0;
       if (mesh) {
         mesh.visible = true;
         mesh.position.set(0, 0.05, 0);
