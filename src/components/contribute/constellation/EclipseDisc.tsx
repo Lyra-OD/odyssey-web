@@ -103,8 +103,8 @@ void main() {
   float coronaVis = smoothstep(0.15, 0.7, e) * uCoronaAmp;
   float corona = coronaShape * coronaVis;
 
-  vec3 coronaWarm = mix(uRim, uCorona, clamp((r - R) * 2.2, 0.0, 1.0));
-  vec3 coronaCol = coronaWarm * corona * 1.25;
+  vec3 coronaCool = mix(uRim, uCorona, clamp((r - R) * 1.8, 0.0, 1.0));
+  vec3 coronaCol = coronaCool * corona * 1.15;
 
   vec3 col = sunCol + darkCol + uRim * rim * 2.4 + coronaCol;
 
@@ -158,9 +158,9 @@ export function EclipseDisc({ tier, craft }: Props) {
         uCoronaAmp: { value: 1.2 },
         uEclipse: { value: isCraft ? 1 : 1 },
         uBody: { value: new Color("#000000") },
-        uCorona: { value: new Color(isCraft ? "#c4a882" : cfg.corona) },
-        uRim: { value: new Color("#fff8ee") },
-        uSun: { value: new Color("#ffe7b0") },
+        uCorona: { value: new Color(isCraft ? "#e8eef8" : cfg.corona) },
+        uRim: { value: new Color("#ffffff") },
+        uSun: { value: new Color("#f5f7fc") },
       },
     });
   }, [cfg.corona, isCraft]);
