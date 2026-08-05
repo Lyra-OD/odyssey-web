@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useThree } from "@react-three/fiber";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
 import { EclipseDisc } from "@/src/components/contribute/constellation/EclipseDisc";
 import {
@@ -33,132 +33,42 @@ function ForceRenderLoop() {
   return null;
 }
 
-function smoothstep(a: number, b: number, x: number) {
-  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-}
-
-/** Pic diamond ring autour de u∈[peak-w, peak+w]. */
-function diamondEnvelope(u: number, peak: number, width: number) {
-  const d = Math.abs(u - peak) / width;
-  if (d >= 1) return 0;
-  return Math.pow(1 - d, 2) * (1 + 0.15 * Math.sin(u * 40));
-}
-
 type Locale = "fr" | "en";
 
 /**
- * Lab — animation majestueuse inspirée du GIF :
- * soleil → diamond ring → totalité → respiration corona.
+ * Craft éclipse — redémarrage étape par étape.
+ * Étape 1 : fond noir + disque noir (guide de contour optionnel).
  */
 export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
-  const [eclipse, setEclipse] = useState(0);
-  const [diamond, setDiamond] = useState(0);
-  const [corona, setCorona] = useState(0.15);
-  const [scale, setScale] = useState(1);
-  const [playing, setPlaying] = useState(true);
-  const [loopBreath, setLoopBreath] = useState(false);
-
-  // Angle type GIF (~10h30)
-  const diamondAng = 2.45;
+  const [showGuide, setShowGuide] = useState(true);
+  const [scaleMul, setScaleMul] = useState(1);
 
   const craft = useMemo(
-    () => ({
-      opacity: 1,
-      coronaAmp: corona,
-      scaleMul: scale,
-      eclipse,
-      diamond,
-      diamondAng,
-    }),
-    [corona, scale, eclipse, diamond, diamondAng],
+    () =>
+      ({
+        step: 1 as const,
+        showGuide,
+        scaleMul,
+      }),
+    [showGuide, scaleMul],
   );
-
-  /**
-   * Timeline ~5.5s (lent = majestueux)
-   * 0.00–0.15  soleil
-   * 0.15–0.55  noircit + corona monte
-   * 0.48–0.62  DIAMOND RING (pic)
-   * 0.62–0.85  totalité pure
-   * 0.85–1.00  hold → breath
-   */
-  useEffect(() => {
-    if (!playing) return;
-    setLoopBreath(false);
-    const t0 = performance.now();
-    const DUR = 5500;
-    let raf = 0;
-    const tick = (now: number) => {
-      const u = Math.min(1, (now - t0) / DUR);
-
-      const e = smoothstep(0.12, 0.72, u);
-      setEclipse(e);
-
-      // Diamond ring juste avant la totalité complète
-      const d =
-        diamondEnvelope(u, 0.55, 0.09) * 1.0 +
-        diamondEnvelope(u, 0.58, 0.05) * 0.35;
-      setDiamond(Math.min(1, d));
-
-      setCorona(0.12 + smoothstep(0.2, 0.75, u) * 1.2);
-      setScale(1 + e * 0.03 + d * 0.04);
-
-      if (u < 1) {
-        raf = requestAnimationFrame(tick);
-      } else {
-        setEclipse(1);
-        setDiamond(0);
-        setCorona(1.2);
-        setScale(1.03);
-        setPlaying(false);
-        setLoopBreath(true);
-      }
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [playing]);
-
-  useEffect(() => {
-    if (!loopBreath || playing) return;
-    let raf = 0;
-    const t0 = performance.now();
-    const tick = (now: number) => {
-      const t = (now - t0) / 1000;
-      const w = 0.5 + 0.5 * Math.sin(t * 0.35);
-      setCorona(1.05 + w * 0.28);
-      setScale(1.02 + w * 0.025);
-      setDiamond(0);
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [loopBreath, playing]);
-
-  const replay = useCallback(() => {
-    setLoopBreath(false);
-    setEclipse(0);
-    setDiamond(0);
-    setCorona(0.15);
-    setScale(1);
-    setPlaying(true);
-  }, []);
 
   const copy =
     locale === "en"
       ? {
-          title: "Eclipse craft",
-          sub: "Majestic · sun → diamond ring → totality",
-          play: "Replay",
-          breath: "Corona breath",
-          hint: "Dev only · GIF rhythm, Odyssey white corona",
+          title: "Eclipse craft · step 1",
+          sub: "Black disc + black ground — nothing else",
+          guide: "Contour guide",
+          scale: "Size",
+          hint: "Validate the circle. Next: soft white corona.",
         }
       : {
-          title: "Craft Éclipse",
-          sub: "Majestueux · soleil → diamond ring → totalité",
-          play: "Rejouer",
-          breath: "Respiration corona",
-          hint: "Dev only · rythme du GIF, corona blanc Odyssey",
+          title: "Craft Éclipse · étape 1",
+          sub: "Disque noir + fond noir — rien d’autre",
+          guide: "Guide de contour",
+          scale: "Taille",
+          hint: "Valide le cercle. Ensuite : corona blanche soyeuse.",
         };
 
   return (
@@ -206,30 +116,29 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
       </div>
 
       <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-black/60 px-5 py-4 backdrop-blur-md md:px-10">
-        <div className="mx-auto flex max-w-3xl flex-col gap-3">
+        <div className="mx-auto flex max-w-md flex-col gap-3">
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={replay}
+              onClick={() => setShowGuide((g) => !g)}
+              aria-pressed={showGuide}
               className="rounded-sm border border-white/20 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-white/70 hover:border-white/40"
             >
-              {copy.play}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setPlaying(false);
-                setEclipse(1);
-                setDiamond(0);
-                setLoopBreath((b) => !b);
-              }}
-              aria-pressed={loopBreath}
-              className="rounded-sm border border-white/20 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-white/70 hover:border-white/40"
-            >
-              {copy.breath}
-              {loopBreath ? " · on" : " · off"}
+              {copy.guide}
+              {showGuide ? " · on" : " · off"}
             </button>
           </div>
+          <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
+            {copy.scale}
+            <input
+              type="range"
+              min={0.6}
+              max={1.6}
+              step={0.01}
+              value={scaleMul}
+              onChange={(e) => setScaleMul(Number(e.target.value))}
+            />
+          </label>
           <p className="text-[10px] font-light tracking-wide text-white/30">
             {copy.hint}
           </p>
