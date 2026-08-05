@@ -241,7 +241,7 @@ export const defaultSkyTheme: SkyTheme = {
     fogFar: 28,
     ambientIntensity: 0.05,
     intro: {
-      enabled: true,
+      enabled: false,
       durationSec: 3.2,
       coronaAmp: 1.25,
       openScale: 1.65,

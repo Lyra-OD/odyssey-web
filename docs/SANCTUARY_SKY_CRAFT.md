@@ -55,7 +55,7 @@ Du plus loin au plus près :
 - `ParallaxLayer` + `ParallaxProvider` — profondeur + stub intensité  
 - `WheelZoom` + `FocusCamera` — zoom molette / focus étoile  
 - `IdleCameraDrift` — dérive + breath + rares (knobs : `scene.idle` → [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md))  
-- `SkyIntroEclipse` — intro 1×/session (knobs : `scene.intro`)  
+- `SkyIntroEclipse` — intro 1×/session (**OFF** — craft sur `test-eclipse` d’abord)  
 - `SkyWander` — promenade opt-in (toggle UI)  
 - `CameraRig` — légère rotation, × `intensity`  
 - Seeds PRNG stables (`mulberry32`) — retoucher la bande **ne re-shuffle pas** le field
@@ -145,7 +145,7 @@ Du plus loin au plus près :
 | **F** | Pont famille | ⏳ après E |
 | **G** | Naissance d’étoile post-dépôt | ⏳ |
 | **H** | Audio immersif (mute default) | ⏳ optionnel |
-| **S** | Ciel screensaver (profondeur → moments WTF → intro Éclipse → veille) | 🚧 Phase 4 (intro) |
+| **S** | Ciel screensaver (profondeur → moments WTF → intro → veille) | 🚧 craft éclipse (`test-eclipse`) |
 
 ### Roadmap screensaver (S)
 
@@ -156,12 +156,12 @@ Objectif : *« WTF I WANT THIS AS A SCREENSAVER »* — digne, léger GPU.
 | **1** | `NebulaGasFar` + `GhostStars` | ✅ — skip `reduced` ; Ghost aussi skip `mobile` |
 | **2** | `ZodiacalLight` | ✅ — 1 plane, skip `reduced` |
 | **3** | Moments WTF — `AuroraVeil` + `EclipseDisc` + `StreakEcho` | ✅ — eclipse desktop only |
-| **4** | Intro immersif 1×/session (`SkyIntroEclipse`, réutilise `EclipseDisc`) | ✅ — desktop ; skip Esc/clic/reduced-motion ; `?skyIntro=1` pour rejouer |
+| **4** | Intro cinéma (flash → voyage → Sanctuaire) | ⏸ pause — craft éclipse d’abord sur `/fr/contribute/test-eclipse` |
 | **5** | Mode veille (UI fade + idle plus lent) | comportement — **plus tard** |
 
-**Sky Eclipse :** disque procédural + corona neutre (rhime Halo-Éclipse §4.1). Pas de `eclipse.mp4` dans le WebGL. Si assez belle → chantier design system pour remplacer la vidéo. ≠ « Éclipse Résonnante » constellation (E′).
+**Sky Eclipse :** craft isolé sur **`/fr/contribute/test-eclipse`** (dev). Intro Sanctuaire + logo = brancher seulement quand la forme est digne. `scene.intro.enabled` = **false** pour l’instant. ≠ « Éclipse Résonnante » constellation (E′).
 
-**Intro (Phase 4) :** ~3,2 s — ciel éteint → disc centré → ouverture / révélation → idle. Knobs `scene.intro`. Même `EclipseDisc` que le rare.
+**Preview craft :** `/fr/contribute/test-ciel` (ciel) · `/fr/contribute/test-eclipse` (marque éclipse seule)
 
 Règle de session : **une lettre / phase à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
 

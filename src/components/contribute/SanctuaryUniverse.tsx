@@ -14,7 +14,6 @@ import { CosmicDust } from "@/src/components/contribute/constellation/CosmicDust
 import { ZodiacalLight } from "@/src/components/contribute/constellation/ZodiacalLight";
 import { AuroraVeil } from "@/src/components/contribute/constellation/AuroraVeil";
 import { EclipseDisc } from "@/src/components/contribute/constellation/EclipseDisc";
-import { SkyIntroEclipse } from "@/src/components/contribute/constellation/SkyIntroEclipse";
 import { FocusCamera } from "@/src/components/contribute/constellation/FocusCamera";
 import { IdleCameraDrift } from "@/src/components/contribute/constellation/IdleCameraDrift";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
@@ -198,7 +197,6 @@ function UniverseScene({
   parallaxIntensity,
   showConstellation,
   wanderEnabled,
-  introEnabled,
   onSelectMemory,
   focus,
   onStarScreen,
@@ -207,7 +205,6 @@ function UniverseScene({
   parallaxIntensity: number;
   showConstellation: boolean;
   wanderEnabled: boolean;
-  introEnabled: boolean;
   onSelectMemory: (
     soulId: string,
     position: [number, number, number],
@@ -232,7 +229,6 @@ function UniverseScene({
       <ForceRenderLoop />
       <WheelZoom enabled />
       <SkyWander enabled={wanderEnabled} />
-      <SkyIntroEclipse enabled={introEnabled} tier={tier} />
       <IdleCameraDrift />
       <color attach="background" args={[theme.scene.background]} />
       <fog
@@ -616,7 +612,6 @@ export function SanctuaryUniverse({
                 parallaxIntensity={intensity}
                 showConstellation={immersive && constellationOn}
                 wanderEnabled={immersive && wanderOn}
-                introEnabled={immersive}
                 onSelectMemory={beginFocus}
                 focus={focus}
                 onStarScreen={onStarScreen}

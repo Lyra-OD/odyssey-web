@@ -84,12 +84,13 @@ Tout se règle dans `defaultSkyTheme.scene.idle` (ou un merge preset).
 
 | Knob | Rôle | Défaut |
 |------|------|--------|
-| `enabled` | Active l’intro immersif | `true` |
+| `enabled` | Active l’intro immersif | `false` (craft isolé d’abord) |
 | `durationSec` | Durée totale | `3.2` |
 | `coronaAmp` | Boost corona pendant l’intro | `1.25` |
 | `openScale` | Ouverture du disc (× scale) | `1.65` |
 
-Skip : Esc, clic, non-desktop, `prefers-reduced-motion`, déjà vu (`sessionStorage`). Rejouer : `?skyIntro=1`.
+Skip : Esc, clic, non-desktop, `prefers-reduced-motion`, déjà vu (`sessionStorage`).  
+**Statut :** intro Sanctuaire **coupée** — forme à valider sur `/fr/contribute/test-eclipse` avant rebranchement.
 
 **Comportement rare :** une cible du pool est choisie au hasard (sans répéter d’affilée). Seul ce layer pulse ; optionnellement une filante spéciale part en même temps.
 

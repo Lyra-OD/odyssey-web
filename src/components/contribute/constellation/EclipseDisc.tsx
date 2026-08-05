@@ -11,8 +11,8 @@ import { skyIntroRef } from "./SkyIntroEclipse";
 
 /**
  * Sky Eclipse — disque sombre + corona neutre (graine logo Halo-Éclipse).
- * Modes : rare idle `eclipse` | intro immersif (`skyIntroRef`).
- * Knobs : `skyTheme.eclipse` + `scene.intro`
+ * Modes : `craft` (lab) | rare idle | intro (désactivée — craft d’abord).
+ * Knobs : `skyTheme.eclipse`
  */
 const vertexShader = /* glsl */ `
 varying vec2 vUv;
@@ -88,9 +88,20 @@ void main() {
 }
 `;
 
-type Props = { tier: VisualTier };
+/** Pilotage lab craft — prioritaire sur rare / intro. */
+export type EclipseCraftDrive = {
+  opacity: number;
+  coronaAmp: number;
+  scaleMul: number;
+};
 
-export function EclipseDisc({ tier }: Props) {
+type Props = {
+  tier: VisualTier;
+  /** Lab `/test-eclipse` — force le disc visible et centré. */
+  craft?: EclipseCraftDrive;
+};
+
+export function EclipseDisc({ tier, craft }: Props) {
   const meshRef = useRef<Mesh>(null);
   const matRef = useRef<ShaderMaterial>(null);
   const theme = useSkyTheme();
@@ -125,17 +136,23 @@ export function EclipseDisc({ tier }: Props) {
     const mesh = meshRef.current;
     mat.uniforms.uTime.value = clock.elapsedTime;
 
-    const introOn = skyIntroRef.active && skyIntroRef.disc > 0.01;
     let bloom = 0;
     let corona = cfg.coronaAmp;
     let scaleMul = 1;
     let pos: [number, number, number] = cfg.position;
 
-    if (introOn) {
+    if (craft) {
+      bloom = craft.opacity;
+      corona = craft.coronaAmp;
+      scaleMul = craft.scaleMul;
+      pos = [0, 0, -3.6];
+    } else if (skyIntroRef.active && skyIntroRef.disc > 0.01) {
       bloom = skyIntroRef.disc * 0.95;
-      corona = cfg.coronaAmp * (intro?.coronaAmp ?? 1.25) * (0.7 + skyIntroRef.disc * 0.5);
+      corona =
+        cfg.coronaAmp *
+        (intro?.coronaAmp ?? 1.25) *
+        (0.7 + skyIntroRef.disc * 0.5);
       scaleMul = skyIntroRef.discScale;
-      // Intro centrée — logo-ready
       pos = [0, 0.05, -4.2];
     } else if (tier === "desktop") {
       const pulse =
@@ -158,8 +175,7 @@ export function EclipseDisc({ tier }: Props) {
     }
   });
 
-  // Mount on desktop (rare + intro) ; intro-only would need mobile — V1 desktop
-  if (tier !== "desktop") return null;
+  if (!craft && tier !== "desktop") return null;
 
   return (
     <mesh
