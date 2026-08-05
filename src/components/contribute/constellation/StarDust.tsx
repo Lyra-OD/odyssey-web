@@ -14,6 +14,7 @@ import { tierDustCount, type VisualTier } from "./useVisualTier";
 import { ParallaxLayer } from "./ParallaxLayer";
 import { cameraZoomRef, ZOOM_DEFAULT } from "./WheelZoom";
 import { type StarFieldTheme, useSkyTheme } from "./skyTheme";
+import { idleCameraRef } from "./IdleCameraDrift";
 
 const vertexShader = /* glsl */ `
 uniform float uTime;
@@ -180,6 +181,7 @@ type StarFieldProps = {
 function StarField({ kind, count, cfg }: StarFieldProps) {
   const materialRef = useRef<ShaderMaterial>(null);
   const { viewport, pointer } = useThree();
+  const rareBandPulse = useSkyTheme().scene.idle?.rareBandPulse ?? 0;
 
   const geometry = useMemo(
     () => buildGeometry(count, kind, cfg),
@@ -205,6 +207,11 @@ function StarField({ kind, count, cfg }: StarFieldProps) {
     const outScale = Math.max(1, zoomRatio);
     mat.uniforms.uRepulsion.value = cfg.repulsion * outScale;
     mat.uniforms.uRepelStrength.value = cfg.repelStrength * outScale;
+    const bandPulse =
+      kind === "band" && idleCameraRef.rareTarget === "band"
+        ? idleCameraRef.rarePulse * rareBandPulse
+        : 0;
+    mat.uniforms.uAlphaMul.value = cfg.alphaMul * (1 + bandPulse);
   });
 
   return (

@@ -48,8 +48,11 @@ Du plus loin au plus près :
 **Infra :**
 - `ForceRenderLoop` — frames idle (sans souris)  
 - `ParallaxLayer` + `ParallaxProvider` — profondeur + stub intensité  
+- `WheelZoom` + `FocusCamera` — zoom molette / focus étoile  
+- `IdleCameraDrift` — dérive + breath + rares (knobs : `scene.idle` → [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md))  
 - `CameraRig` — légère rotation, × `intensity`  
 - Seeds PRNG stables (`mulberry32`) — retoucher la bande **ne re-shuffle pas** le field
+- `skyTheme.ts` — source de vérité couleurs / opacités / parallaxe / idle
 
 ---
 

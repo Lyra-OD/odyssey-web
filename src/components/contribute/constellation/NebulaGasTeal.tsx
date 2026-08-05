@@ -11,6 +11,7 @@ import {
   nebulaVertexShader,
 } from "./nebulaCommon";
 import { opacityForTier, useSkyTheme } from "./skyTheme";
+import { idleCameraRef } from "./IdleCameraDrift";
 
 /**
  * Layer gaz teal — domain warp + texture soft + grain.
@@ -185,7 +186,12 @@ export function NebulaGasTeal({ tier }: Props) {
   );
 
   useFrame(({ clock }) => {
-    (matRef.current ?? material).uniforms.uTime.value = clock.elapsedTime;
+    const mat = matRef.current ?? material;
+    mat.uniforms.uTime.value = clock.elapsedTime;
+    const pulse =
+      idleCameraRef.rareTarget === "teal" ? idleCameraRef.rarePulse : 0;
+    const amp = theme.scene.idle?.rareGasPulse ?? 0;
+    mat.uniforms.uOpacity.value = opacity * (1 + pulse * amp);
   });
 
   return (

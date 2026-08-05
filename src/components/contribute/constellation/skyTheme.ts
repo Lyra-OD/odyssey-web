@@ -22,6 +22,9 @@ export type ParallaxKnobs = {
   lerp: number;
 };
 
+/** Cible d’un moment rare idle (pulse sur ce layer). */
+export type RareSkyTarget = "rose" | "mauve" | "teal" | "band";
+
 export type GasLayerTheme = {
   color: string;
   /** Accent chaud (rose seulement pour l’instant). */
@@ -95,13 +98,21 @@ export type SceneTheme = {
     lookAmp: number;
     /** Boost dérive parallaxe des layers pendant idle (0 = off). */
     breathBoost: number;
-    /** Amplitude pulse opacité gaz rose sur moment rare. */
+    /** Moments rares (pulse layer + filante). */
+    rareEnabled: boolean;
+    /** Pool de cibles — une choisie au hasard (sans répéter d’affilée). */
+    rareTargets: RareSkyTarget[];
+    /** Amplitude pulse opacité gaz (rose/mauve/teal). */
     rareGasPulse: number;
+    /** Amplitude pulse alpha voie lactée (cible `band`). */
+    rareBandPulse: number;
     /** Fenêtre (s) entre moments rares pendant idle. */
     rareGapMinSec: number;
     rareGapMaxSec: number;
     /** Durée du pulse rare (s). */
     rareDurationSec: number;
+    /** Déclenche une filante un cran plus belle avec le pulse. */
+    rareSpecialStreak: boolean;
   };
 };
 
@@ -149,10 +160,14 @@ export const defaultSkyTheme: SkyTheme = {
       moveAmp: 0.16,
       lookAmp: 0.1,
       breathBoost: 0.45,
+      rareEnabled: true,
+      rareTargets: ["rose", "mauve", "teal", "band"],
       rareGasPulse: 0.14,
+      rareBandPulse: 0.22,
       rareGapMinSec: 140,
       rareGapMaxSec: 260,
       rareDurationSec: 9,
+      rareSpecialStreak: true,
     },
   },
   gasRose: {

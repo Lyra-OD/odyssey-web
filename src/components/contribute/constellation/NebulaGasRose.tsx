@@ -160,7 +160,8 @@ export function NebulaGasRose({ tier }: Props) {
   useFrame(({ clock }) => {
     const mat = matRef.current ?? material;
     mat.uniforms.uTime.value = clock.elapsedTime;
-    const pulse = idleCameraRef.rarePulse;
+    const pulse =
+      idleCameraRef.rareTarget === "rose" ? idleCameraRef.rarePulse : 0;
     const amp = theme.scene.idle?.rareGasPulse ?? 0;
     mat.uniforms.uOpacity.value = opacity * (1 + pulse * amp);
   });

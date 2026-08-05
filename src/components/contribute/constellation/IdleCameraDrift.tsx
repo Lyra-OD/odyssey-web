@@ -3,9 +3,11 @@
 import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 
-import { useSkyTheme } from "./skyTheme";
+import { useSkyTheme, type RareSkyTarget } from "./skyTheme";
 
-/** Offsets idle — lus par FocusCamera / Parallax / gaz / filantes. */
+export type { RareSkyTarget };
+
+/** Offsets idle — lus par FocusCamera / Parallax / gaz / filantes / bande. */
 export const idleCameraRef = {
   zoomOffset: 0,
   x: 0,
@@ -14,8 +16,10 @@ export const idleCameraRef = {
   lookY: 0,
   /** 0 = actif, 1 = pleine dérive — boost parallaxe idle. */
   breath: 0,
-  /** 0→1→0 pulse rare (gaz rose). */
+  /** 0→1→0 pulse rare (cible = rareTarget). */
   rarePulse: 0,
+  /** Quel layer « répond » ce moment-là. */
+  rareTarget: "rose" as RareSkyTarget,
   /** Cue one-shot pour une filante « spéciale ». */
   requestSpecialStreak: false,
 };
@@ -50,6 +54,7 @@ export function IdleCameraDrift() {
   const driftingRef = useRef(false);
   const nextRareAtRef = useRef(0);
   const rareStartRef = useRef(-1);
+  const lastRareTargetRef = useRef<RareSkyTarget | null>(null);
 
   useEffect(() => {
     markSkyActivity();
@@ -124,24 +129,45 @@ export function IdleCameraDrift() {
     idleCameraRef.lookY += (lookY * k - idleCameraRef.lookY) * 0.02;
     idleCameraRef.breath += (k - idleCameraRef.breath) * 0.04;
 
-    // —— Moment rare : pulse gaz + cue filante ——
-    if (rareStartRef.current < 0 && clock.elapsedTime >= nextRareAtRef.current) {
+    // —— Moment rare : cible depuis thème + cue filante ——
+    if (
+      cfg.rareEnabled &&
+      cfg.rareTargets.length > 0 &&
+      rareStartRef.current < 0 &&
+      clock.elapsedTime >= nextRareAtRef.current
+    ) {
       rareStartRef.current = clock.elapsedTime;
-      idleCameraRef.requestSpecialStreak = true;
+      const pool = cfg.rareTargets.filter(
+        (t) => t !== lastRareTargetRef.current,
+      );
+      const pick =
+        (pool.length > 0 ? pool : cfg.rareTargets)[
+          Math.floor(
+            Math.random() *
+              (pool.length > 0 ? pool.length : cfg.rareTargets.length),
+          )
+        ] ?? cfg.rareTargets[0]!;
+      lastRareTargetRef.current = pick;
+      idleCameraRef.rareTarget = pick;
+      if (cfg.rareSpecialStreak) {
+        idleCameraRef.requestSpecialStreak = true;
+      }
       const gapMin = cfg.rareGapMinSec;
       const gapMax = cfg.rareGapMaxSec;
       nextRareAtRef.current =
         clock.elapsedTime + gapMin + Math.random() * (gapMax - gapMin);
     }
 
-    if (rareStartRef.current >= 0) {
+    if (!cfg.rareEnabled) {
+      rareStartRef.current = -1;
+      idleCameraRef.rarePulse += (0 - idleCameraRef.rarePulse) * ease;
+    } else if (rareStartRef.current >= 0) {
       const age = clock.elapsedTime - rareStartRef.current;
       const dur = cfg.rareDurationSec;
       if (age >= dur) {
         rareStartRef.current = -1;
         idleCameraRef.rarePulse += (0 - idleCameraRef.rarePulse) * ease;
       } else {
-        // Cloche douce 0→1→0
         const u = age / dur;
         const pulse = Math.sin(u * Math.PI);
         idleCameraRef.rarePulse += (pulse - idleCameraRef.rarePulse) * 0.08;

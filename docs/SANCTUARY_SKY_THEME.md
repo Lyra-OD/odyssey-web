@@ -13,9 +13,10 @@
 | Quoi | Fichier |
 |------|---------|
 | Types + `defaultSkyTheme` + `mergeSkyTheme` + Provider | `src/components/contribute/constellation/skyTheme.ts` |
+| Idle (dérive / rare) | `IdleCameraDrift.tsx` — lit `scene.idle` |
 | Injection | `SanctuaryUniverse` prop `skyTheme` (défaut = `defaultSkyTheme`) |
 
-Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas hardcoder les couleurs dans les layers.
+Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas hardcoder les couleurs / amplitudes dans les layers.
 
 ---
 
@@ -30,26 +31,65 @@ Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas har
 | `starsBand` | Voie lactée |
 | `starsField` | Étoiles proches |
 | `shootingStars` | Filantes (couleurs + parallaxe) |
-| `scene` | Background / fog / ambient / **idle** caméra |
+| `scene` | Background / fog / ambient / **idle** |
 | `constellation` | Parallaxe constellation |
-
-`scene.idle` : dérive zoom + micro-move après `delaySec` (`IdleCameraDrift`).  
-Aussi : `breathBoost` (parallaxe), `rareGasPulse` + filante spéciale toutes les ~2–4 min d’idle.
 
 Chaque gaz : `color`, `deep`, `opacity` (desktop/mobile/reduced), `parallax`, `position`, `scale`, …
 
 ---
 
-## 3. Comment changer un look
+## 3. `scene.idle` — knobs complets
 
-**Craft (aujourd’hui)** — éditer `defaultSkyTheme` dans `skyTheme.ts` :
+Tout se règle dans `defaultSkyTheme.scene.idle` (ou un merge preset).
+
+| Knob | Rôle | Défaut craft |
+|------|------|--------------|
+| `enabled` | Active la dérive caméra idle | `true` |
+| `delaySec` | Secondes sans interaction avant dérive | `3.5` |
+| `periodSec` | Période du va-et-vient (plus long = plus lent) | `72` |
+| `zoomAmp` | Amplitude zoom autour du zoom user | `0.55` |
+| `moveAmp` | Amplitude déplacement XY | `0.16` |
+| `lookAmp` | Amplitude look-at | `0.1` |
+| `breathBoost` | Amplifie la parallaxe autonome des layers | `0.45` |
+| `rareEnabled` | Moments rares on/off | `true` |
+| `rareTargets` | Pool de cibles : `"rose"` \| `"mauve"` \| `"teal"` \| `"band"` | les 4 |
+| `rareGasPulse` | Force du pulse opacité (gaz) | `0.14` |
+| `rareBandPulse` | Force du pulse alpha (voie lactée) | `0.22` |
+| `rareGapMinSec` / `rareGapMaxSec` | Intervalle entre rares (pendant idle) | `140`–`260` |
+| `rareDurationSec` | Durée d’un pulse | `9` |
+| `rareSpecialStreak` | Filante un cran plus belle avec le pulse | `true` |
+
+**Comportement rare :** une cible du pool est choisie au hasard (sans répéter d’affilée). Seul ce layer pulse ; optionnellement une filante spéciale part en même temps.
+
+### Exemples
+
+Que le teal + la bande, plus souvent :
 
 ```ts
-gasMauve: {
-  color: "#9a6fad", // ← ici
-  ...
-}
+mergeSkyTheme(defaultSkyTheme, {
+  scene: {
+    idle: {
+      rareTargets: ["teal", "band"],
+      rareGapMinSec: 90,
+      rareGapMaxSec: 150,
+    },
+  },
+});
 ```
+
+Couper les rares, garder la dérive :
+
+```ts
+mergeSkyTheme(defaultSkyTheme, {
+  scene: { idle: { rareEnabled: false } },
+});
+```
+
+---
+
+## 4. Comment changer un look
+
+**Craft (aujourd’hui)** — éditer `defaultSkyTheme` dans `skyTheme.ts`.
 
 **Preset / runtime (plus tard)** — même shape, merge partiel :
 
@@ -59,7 +99,7 @@ import { defaultSkyTheme, mergeSkyTheme } from ".../skyTheme";
 const winter = mergeSkyTheme(defaultSkyTheme, {
   id: "season.winter",
   gasTeal: { color: "#2a7a8a" },
-  gasRose: { opacity: { desktop: 0.28 } },
+  scene: { idle: { rareTargets: ["teal", "mauve"] } },
 });
 
 <SanctuaryUniverse skyTheme={winter} />
@@ -67,15 +107,16 @@ const winter = mergeSkyTheme(defaultSkyTheme, {
 
 ---
 
-## 4. Ce qui n’est PAS un knob
+## 5. Ce qui n’est PAS un knob
 
 Forme du nuage, domain warp, seeds PRNG, logique reveal — restent dans le code layer / craft bible.  
-Les knobs = **présence, couleur, rythme, parallaxe, placement**.
+Les knobs = **présence, couleur, rythme, parallaxe, placement, idle / rare**.
 
 ---
 
-## 5. Règle
+## 6. Règle
 
 1. Toucher un layer → une clé thème.  
-2. Nouveau look vivant → preset (pas `_archive/`).  
-3. Essai mort → `_archive/`.
+2. Idle / rare → `scene.idle` uniquement.  
+3. Nouveau look vivant → preset (pas `_archive/`).  
+4. Essai mort → `_archive/`.
