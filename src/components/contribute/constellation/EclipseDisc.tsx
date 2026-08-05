@@ -2,7 +2,7 @@
 
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Color, ShaderMaterial } from "three";
+import { Color, Mesh, ShaderMaterial } from "three";
 
 import type { VisualTier } from "./useVisualTier";
 import { useSkyTheme } from "./skyTheme";
@@ -10,7 +10,8 @@ import { idleCameraRef } from "./IdleCameraDrift";
 
 /**
  * Sky Eclipse — disque sombre + corona neutre (graine logo Halo-Éclipse).
- * Mode actuel : rare idle `eclipse`. Intro immersif = réutilise ce composant plus tard.
+ * Invisible hors rare `eclipse` (un rim dormant = « rond » parasite).
+ * Intro immersif = réutilise ce composant plus tard.
  * Knobs : `skyTheme.eclipse`
  */
 const vertexShader = /* glsl */ `
@@ -58,6 +59,8 @@ float fbm(vec2 p) {
 }
 
 void main() {
+  if (uOpacity < 0.01) discard;
+
   vec2 p = vUv * 2.0 - 1.0;
   float r = length(p);
   float ang = atan(p.y, p.x);
@@ -65,11 +68,8 @@ void main() {
   float t = uTime * 0.07;
   float grain = fbm(vec2(ang * 1.2 + t * 0.35, r * 3.2 - t));
 
-  // Corps sombre lisible (logo-ready)
   float body = 1.0 - smoothstep(0.38, 0.46, r);
-  // Liseré fin
   float rim = exp(-pow((r - 0.44) * 28.0, 2.0));
-  // Corona organique autour
   float coronaCore = exp(-pow((r - 0.52) * 7.5, 2.0));
   float coronaOuter = exp(-pow((r - 0.68) * 4.2, 2.0)) * (0.55 + 0.45 * grain);
   float spikes = pow(max(0.0, sin(ang * 3.0 + t + grain * 2.0)), 8.0) * 0.12;
@@ -91,14 +91,11 @@ void main() {
 type Props = { tier: VisualTier };
 
 export function EclipseDisc({ tier }: Props) {
+  const meshRef = useRef<Mesh>(null);
   const matRef = useRef<ShaderMaterial>(null);
   const theme = useSkyTheme();
   const cfg = theme.eclipse;
   const idle = theme.scene.idle;
-
-  // Desktop only for rare (plan screensaver) — mobile/reduced skip
-  const base =
-    tier === "desktop" ? cfg.opacity.desktop : 0;
 
   const material = useMemo(
     () =>
@@ -112,34 +109,35 @@ export function EclipseDisc({ tier }: Props) {
         fog: false,
         uniforms: {
           uTime: { value: 0 },
-          uOpacity: { value: base },
+          uOpacity: { value: 0 },
           uCoronaAmp: { value: cfg.coronaAmp },
           uBody: { value: new Color(cfg.body) },
           uCorona: { value: new Color(cfg.corona) },
           uRim: { value: new Color(cfg.rim) },
         },
       }),
-    [base, cfg.body, cfg.corona, cfg.rim, cfg.coronaAmp],
+    [cfg.body, cfg.corona, cfg.rim, cfg.coronaAmp],
   );
 
   useFrame(({ clock }) => {
     const mat = matRef.current ?? material;
+    const mesh = meshRef.current;
     mat.uniforms.uTime.value = clock.elapsedTime;
     const pulse =
       idleCameraRef.rareTarget === "eclipse" ? idleCameraRef.rarePulse : 0;
     const amp = idle?.rareEclipsePulse ?? 0.92;
-    // Strictement invisible hors rare — un rim à faible alpha = « rond » parasite
     const bloom = pulse * amp;
     mat.uniforms.uOpacity.value = bloom;
-    mat.uniforms.uCoronaAmp.value =
-      cfg.coronaAmp * (0.35 + pulse * 1.1);
-    mat.visible = bloom > 0.01;
+    mat.uniforms.uCoronaAmp.value = cfg.coronaAmp * (0.35 + pulse * 1.1);
+    if (mesh) mesh.visible = bloom > 0.01;
   });
 
   if (tier !== "desktop") return null;
 
   return (
     <mesh
+      ref={meshRef}
+      visible={false}
       position={cfg.position}
       scale={cfg.scale}
       frustumCulled={false}
