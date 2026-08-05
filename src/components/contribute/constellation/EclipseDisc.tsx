@@ -10,7 +10,7 @@ import { idleCameraRef } from "./IdleCameraDrift";
 import { skyIntroRef } from "./SkyIntroEclipse";
 
 /**
- * Sky Eclipse — soleil → totalité (graine logo).
+ * Sky Eclipse — soleil → diamond ring → totalité (graine logo).
  * Modes : `craft` | rare idle | intro (OFF).
  */
 const vertexShader = /* glsl */ `
@@ -22,18 +22,23 @@ void main() {
 `;
 
 /**
- * uEclipse 0 = soleil brillant, 1 = totalité (disque noir + corona).
- * Look cible : photo éclipse totale (rim blanc, corona crème / ambre).
+ * Dramaturgie type GIF majestueux :
+ * uEclipse 0→1 (soleil → noir)
+ * uDiamond  flash « diamond ring » sur le bord
+ * Corona soyeuse blanche + micro prominence
  */
 const fragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uOpacity;
 uniform float uCoronaAmp;
 uniform float uEclipse;
+uniform float uDiamond;
+uniform float uDiamondAng;
 uniform vec3 uBody;
 uniform vec3 uCorona;
 uniform vec3 uRim;
 uniform vec3 uSun;
+uniform vec3 uProminence;
 
 varying vec2 vUv;
 
@@ -55,62 +60,94 @@ float noise(vec2 p) {
 float fbm(vec2 p) {
   float v = 0.0;
   float a = 0.5;
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 5; i++) {
     v += a * noise(p);
-    p = p * 2.07 + vec2(1.7, 9.2);
+    p = p * 2.03 + vec2(1.3, 8.1);
     a *= 0.5;
   }
   return v;
+}
+
+float wrapAng(float a) {
+  const float PI = 3.14159265;
+  return abs(mod(a + PI, PI * 2.0) - PI);
 }
 
 void main() {
   vec2 p = vUv * 2.0 - 1.0;
   float r = length(p);
   float ang = (r < 1e-4) ? 0.0 : atan(p.y, p.x);
-  float t = uTime * 0.06;
+  float t = uTime * 0.05;
   float e = clamp(uEclipse, 0.0, 1.0);
+  float dmd = clamp(uDiamond, 0.0, 1.0);
 
-  float R = 0.38;
+  float R = 0.37;
+  float body = 1.0 - smoothstep(R - 0.003, R + 0.0015, r);
 
-  // Disque net
-  float body = 1.0 - smoothstep(R - 0.004, R + 0.001, r);
+  // —— Soleil (s'éteint) ——
+  float sunHalo = exp(-pow(max(0.0, r - R) * 7.5, 2.0));
+  vec3 sunCol = uSun * (body * 1.2 + sunHalo * 0.9) * (1.0 - e);
 
-  // Soleil (avant totalité) — disque chaud + halo photosphère
-  float sunBody = body;
-  float sunHalo = exp(-pow(max(0.0, r - R) * 8.0, 2.0)) * (1.0 - e);
-  vec3 sunCol = uSun * (sunBody * 1.15 + sunHalo * 0.85);
-  sunCol *= (1.0 - e * 0.98);
-
-  // Corps noir en totalité
+  // —— Disque noir (totalité) ——
   vec3 darkCol = uBody * body * e;
 
-  // Liseré blanc très fin (diamond ring / edge)
-  float rim =
-    smoothstep(R - 0.01, R, r) * (1.0 - smoothstep(R, R + 0.022, r));
-  rim *= smoothstep(0.2, 0.75, e);
-
-  // Corona uniquement hors disque — crème → ambre
-  float outside = smoothstep(R - 0.001, R + 0.012, r);
-  float fall = exp(-pow((r - R) * 2.1, 1.15));
-  float fallFar = exp(-pow((r - R) * 1.15, 1.5)) * 0.45;
-  float n1 = fbm(vec2(ang * 1.8 + t * 0.35, r * 2.8));
-  float n2 = fbm(vec2(ang * 4.2 - t * 0.25, r * 3.5 + 2.0));
-  float streamers =
-    pow(max(0.0, sin(ang * 7.0 + n1 * 4.0 + t * 0.5)), 14.0) * 0.55 +
-    pow(max(0.0, sin(ang * 3.0 - n2 * 3.0)), 8.0) * 0.25;
+  // —— Corona soyeuse (blanc Odyssey) ——
+  float outside = smoothstep(R - 0.001, R + 0.018, r);
+  float fall = exp(-pow((r - R) * 1.85, 1.05));
+  float fallFar = exp(-pow((r - R) * 0.95, 1.4)) * 0.5;
+  // Shimmer lent — gazeux, pas « pic »
+  float n1 = fbm(vec2(ang * 1.4 + t * 0.25, r * 2.2));
+  float n2 = fbm(vec2(ang * 3.2 - t * 0.18, r * 3.0 + 3.1));
+  float silk = 0.55 + 0.45 * n1;
+  float wisps = pow(max(0.0, n2), 1.8) * 0.55;
+  float longRays =
+    pow(max(0.0, sin(ang * 5.0 + n1 * 2.5)), 18.0) * 0.22 * fall;
   float coronaShape =
-    outside * (fall * (0.55 + 0.45 * n1) + fallFar * (0.4 + 0.6 * n2) + streamers * fall);
-  float coronaVis = smoothstep(0.15, 0.7, e) * uCoronaAmp;
+    outside * (fall * silk + fallFar * (0.35 + wisps) + longRays);
+  float coronaVis = smoothstep(0.2, 0.78, e) * uCoronaAmp;
   float corona = coronaShape * coronaVis;
+  vec3 coronaCol = mix(uRim, uCorona, clamp((r - R) * 1.6, 0.0, 1.0)) * corona;
 
-  vec3 coronaCool = mix(uRim, uCorona, clamp((r - R) * 1.8, 0.0, 1.0));
-  vec3 coronaCol = coronaCool * corona * 1.15;
+  // —— Rim fin ——
+  float rim =
+    smoothstep(R - 0.008, R, r) * (1.0 - smoothstep(R, R + 0.02, r));
+  rim *= smoothstep(0.25, 0.8, e) * (1.0 - dmd * 0.35);
 
-  vec3 col = sunCol + darkCol + uRim * rim * 2.4 + coronaCol;
+  // —— Diamond ring (bead + bloom + croix) ——
+  float onEdge = exp(-pow((r - R) * 26.0, 2.0));
+  float beadAng = wrapAng(ang - uDiamondAng);
+  float bead = exp(-pow(beadAng * 7.5, 2.0)) * onEdge;
+  // Bloom large
+  float bloom = exp(-pow((r - R) * 6.0, 2.0)) * exp(-pow(beadAng * 3.2, 2.0));
+  // Spikes diffraction
+  vec2 q = p;
+  float cA = cos(uDiamondAng);
+  float sA = sin(uDiamondAng);
+  vec2 qr = vec2(cA * q.x + sA * q.y, -sA * q.x + cA * q.y);
+  float spike =
+    (exp(-abs(qr.x) * 55.0) * exp(-abs(qr.y) * 2.2) +
+     exp(-abs(qr.y) * 55.0) * exp(-abs(qr.x) * 2.2)) *
+    exp(-pow(max(0.0, r - R) * 2.8, 2.0));
+  float diamond = (bead * 1.8 + bloom * 1.1 + spike * 0.85) * dmd;
+  // Teinte magenta très légère au cœur du bead (comme le GIF)
+  vec3 diamondCol =
+    mix(uRim, uProminence, bead * 0.25) * diamond * 2.4;
 
-  float alpha = max(sunBody * (1.0 - e * 0.15), body * e);
-  alpha = max(alpha, max(rim * 0.95, corona * 0.8));
-  alpha = max(alpha, sunHalo * 0.7);
+  // —— Micro prominence (totalité) ——
+  float promAng = wrapAng(ang - 1.45);
+  float prom =
+    exp(-pow(promAng * 18.0, 2.0)) *
+    exp(-pow((r - R) * 35.0, 2.0)) *
+    smoothstep(0.85, 1.0, e) *
+    (1.0 - dmd);
+  vec3 promCol = uProminence * prom * 1.4;
+
+  vec3 col = sunCol + darkCol + uRim * rim * 1.8 + coronaCol + diamondCol + promCol;
+
+  float alpha = max(body * max(1.0 - e * 0.2, e), sunHalo * (1.0 - e));
+  alpha = max(alpha, max(rim * 0.9, corona * 0.85));
+  alpha = max(alpha, diamond * 0.95);
+  alpha = max(alpha, prom * 0.8);
   alpha *= uOpacity;
   if (alpha < 0.008) discard;
 
@@ -122,8 +159,12 @@ export type EclipseCraftDrive = {
   opacity: number;
   coronaAmp: number;
   scaleMul: number;
-  /** 0 = soleil, 1 = totalité (soleil devenu noir). */
+  /** 0 = soleil, 1 = totalité. */
   eclipse: number;
+  /** Intensité diamond ring (0–1). */
+  diamond: number;
+  /** Angle du bead (radians). */
+  diamondAng: number;
 };
 
 type Props = {
@@ -131,7 +172,7 @@ type Props = {
   craft?: EclipseCraftDrive;
 };
 
-const CRAFT_BASE_SCALE = 5.4;
+const CRAFT_BASE_SCALE = 5.5;
 
 export function EclipseDisc({ tier, craft }: Props) {
   const meshRef = useRef<Mesh>(null);
@@ -155,15 +196,18 @@ export function EclipseDisc({ tier, craft }: Props) {
       uniforms: {
         uTime: { value: 0 },
         uOpacity: { value: isCraft ? 1 : 0 },
-        uCoronaAmp: { value: 1.2 },
-        uEclipse: { value: isCraft ? 1 : 1 },
+        uCoronaAmp: { value: 1.15 },
+        uEclipse: { value: 1 },
+        uDiamond: { value: 0 },
+        uDiamondAng: { value: 2.4 },
         uBody: { value: new Color("#000000") },
-        uCorona: { value: new Color(isCraft ? "#e8eef8" : cfg.corona) },
+        uCorona: { value: new Color("#dce4f2") },
         uRim: { value: new Color("#ffffff") },
-        uSun: { value: new Color("#f5f7fc") },
+        uSun: { value: new Color("#f4f6fb") },
+        uProminence: { value: new Color("#ff6a9a") },
       },
     });
-  }, [cfg.corona, isCraft]);
+  }, [isCraft]);
 
   useEffect(() => {
     material.vertexShader = vertexShader;
@@ -180,6 +224,8 @@ export function EclipseDisc({ tier, craft }: Props) {
     let corona = cfg.coronaAmp;
     let scaleMul = 1;
     let eclipse = 1;
+    let diamond = 0;
+    let diamondAng = 2.4;
     let pos: [number, number, number] = cfg.position;
 
     if (craft) {
@@ -187,7 +233,9 @@ export function EclipseDisc({ tier, craft }: Props) {
       corona = craft.coronaAmp;
       scaleMul = craft.scaleMul;
       eclipse = craft.eclipse;
-      pos = [0, 0.08, 0];
+      diamond = craft.diamond;
+      diamondAng = craft.diamondAng;
+      pos = [0, 0.06, 0];
     } else if (skyIntroRef.active && skyIntroRef.disc > 0.01) {
       bloom = skyIntroRef.disc * 0.95;
       corona =
@@ -209,6 +257,8 @@ export function EclipseDisc({ tier, craft }: Props) {
     mat.uniforms.uOpacity.value = bloom;
     mat.uniforms.uCoronaAmp.value = corona;
     mat.uniforms.uEclipse.value = eclipse;
+    mat.uniforms.uDiamond.value = diamond;
+    mat.uniforms.uDiamondAng.value = diamondAng;
     if (mesh) {
       mesh.visible = bloom > 0.01;
       mesh.position.set(pos[0], pos[1], pos[2]);
@@ -223,7 +273,7 @@ export function EclipseDisc({ tier, craft }: Props) {
     <mesh
       ref={meshRef}
       visible={isCraft}
-      position={craft ? [0, 0.08, 0] : cfg.position}
+      position={craft ? [0, 0.06, 0] : cfg.position}
       scale={
         craft ? [CRAFT_BASE_SCALE, CRAFT_BASE_SCALE, 1] : cfg.scale
       }
