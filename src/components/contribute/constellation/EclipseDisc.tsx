@@ -127,15 +127,16 @@ export function EclipseDisc({ tier }: Props) {
     mat.uniforms.uTime.value = clock.elapsedTime;
     const pulse =
       idleCameraRef.rareTarget === "eclipse" ? idleCameraRef.rarePulse : 0;
-    const amp = idle?.rareEclipsePulse ?? 0.85;
-    // Dormant quasi invisible ; rare = bloom corona + disque
-    const bloom = base + pulse * amp * Math.max(cfg.opacity.desktop, 0.35);
+    const amp = idle?.rareEclipsePulse ?? 0.92;
+    // Strictement invisible hors rare — un rim à faible alpha = « rond » parasite
+    const bloom = pulse * amp;
     mat.uniforms.uOpacity.value = bloom;
     mat.uniforms.uCoronaAmp.value =
-      cfg.coronaAmp * (0.55 + pulse * 0.9 + idleCameraRef.breath * 0.12);
+      cfg.coronaAmp * (0.35 + pulse * 1.1);
+    mat.visible = bloom > 0.01;
   });
 
-  if (tier !== "desktop" || base < 0) return null;
+  if (tier !== "desktop") return null;
 
   return (
     <mesh

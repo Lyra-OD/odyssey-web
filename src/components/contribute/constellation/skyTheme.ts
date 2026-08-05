@@ -326,7 +326,8 @@ export const defaultSkyTheme: SkyTheme = {
     body: "#05060a",
     corona: "#c8d0dc",
     rim: "#e8eef6",
-    opacity: { desktop: 0.014, mobile: 0, reduced: 0 },
+    /** 0 = invisible hors rare (un rim même à 0.01 lit comme un « rond »). */
+    opacity: { desktop: 0, mobile: 0, reduced: 0 },
     coronaAmp: 1,
     position: [0.55, 0.35, -5.2],
     scale: [7.5, 7.5, 1],
