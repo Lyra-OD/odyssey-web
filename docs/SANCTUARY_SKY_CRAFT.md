@@ -36,6 +36,8 @@ Du plus loin au plus près :
 
 | # | Layer | Fichier | Rôle | Thème / parallaxe |
 |--|--|--|--|--|
+| −1 | **NebulaGasFar** | `NebulaGasFar.tsx` | Nébuleuse quasi noire (profondeur) | `gasFar` — skip `reduced` |
+| −0.5 | **GhostStars** | `GhostStars.tsx` | Bokeh / optique soft | `ghostStars` — skip `reduced`/`mobile` |
 | 0a | **NebulaGasRose** | `NebulaGasRose.tsx` | Magenta 2001, biais droite, plus loin | `gasRose` |
 | 0b | **NebulaGasMauve** | `NebulaGasMauve.tsx` | Gaz mauve, plus loin / lent | `gasMauve` |
 | 0c | **NebulaGasTeal** | `NebulaGasTeal.tsx` | Gaz teal + bande soft | `gasTeal` |
@@ -138,8 +140,23 @@ Du plus loin au plus près :
 | **F** | Pont famille | ⏳ après E |
 | **G** | Naissance d’étoile post-dépôt | ⏳ |
 | **H** | Audio immersif (mute default) | ⏳ optionnel |
+| **S** | Ciel screensaver (profondeur → intro Éclipse → veille) | 🚧 Phase 1 (Far + Ghost) |
 
-Règle de session : **une lettre à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
+### Roadmap screensaver (S)
+
+Objectif : *« WTF I WANT THIS AS A SCREENSAVER »* — digne, léger GPU.
+
+| Phase | Contenu | Perf |
+|-------|---------|------|
+| **1** | `NebulaGasFar` + `GhostStars` | ✅ — skip `reduced` ; Ghost aussi skip `mobile` |
+| **2** | `ZodiacalLight` | 1 plane |
+| **3** | `EclipseDisc` + intro immersif 1×/session | logo-ready |
+| **4** | Eclipse rare + Aurora + StreakEcho | rares longs |
+| **5** | Mode veille (UI fade + idle plus lent) | comportement |
+
+**Sky Eclipse / logo :** l’Éclipse procédurale (Phase 3) est conçue comme **graine de marque** — si elle convainc, elle pourra remplacer `eclipse.mp4` / `eclipse_login.mp4` (chantier design system séparé). Corps neutre + corona ; couleur d’état = halo autour (comme [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) §4.1). Ne pas confondre avec « Éclipse Résonnante » constellation (E′).
+
+Règle de session : **une lettre / phase à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
 
 ---
 

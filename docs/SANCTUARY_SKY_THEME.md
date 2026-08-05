@@ -27,6 +27,8 @@ Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas har
 | `gasRose` | Gaz magenta 2001 |
 | `gasMauve` | Gaz mauve |
 | `gasTeal` | Gaz teal |
+| `gasFar` | Nébuleuse lointaine (Phase S1) |
+| `ghostStars` | Bokeh optique (Phase S1) |
 | `cosmicDust` | Voile poussière |
 | `starsBand` | Voie lactée |
 | `starsField` | Étoiles proches |

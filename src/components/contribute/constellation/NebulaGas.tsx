@@ -5,3 +5,5 @@
 export { NebulaGasTeal } from "./NebulaGasTeal";
 export { NebulaGasMauve } from "./NebulaGasMauve";
 export { NebulaGasRose } from "./NebulaGasRose";
+export { NebulaGasFar } from "./NebulaGasFar";
+export { GhostStars } from "./GhostStars";

@@ -15,9 +15,11 @@ import { FocusCamera } from "@/src/components/contribute/constellation/FocusCame
 import { IdleCameraDrift } from "@/src/components/contribute/constellation/IdleCameraDrift";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
 import { MemoryReveal } from "@/src/components/contribute/constellation/MemoryReveal";
+import { NebulaGasFar } from "@/src/components/contribute/constellation/NebulaGasFar";
 import { NebulaGasMauve } from "@/src/components/contribute/constellation/NebulaGasMauve";
 import { NebulaGasRose } from "@/src/components/contribute/constellation/NebulaGasRose";
 import { NebulaGasTeal } from "@/src/components/contribute/constellation/NebulaGasTeal";
+import { GhostStars } from "@/src/components/contribute/constellation/GhostStars";
 import { ParallaxLayer, ParallaxProvider } from "@/src/components/contribute/constellation/ParallaxLayer";
 import { ShootingStars } from "@/src/components/contribute/constellation/ShootingStars";
 import { StarDust } from "@/src/components/contribute/constellation/StarDust";
@@ -231,6 +233,22 @@ function UniverseScene({
         active={focusing}
       />
       <CameraRig>
+        {tier !== "reduced" ? (
+          <ParallaxLayer
+            factor={theme.gasFar.parallax.factor}
+            lerp={theme.gasFar.parallax.lerp}
+          >
+            <NebulaGasFar tier={tier} />
+          </ParallaxLayer>
+        ) : null}
+        {tier === "desktop" ? (
+          <ParallaxLayer
+            factor={theme.ghostStars.parallax.factor}
+            lerp={theme.ghostStars.parallax.lerp}
+          >
+            <GhostStars tier={tier} />
+          </ParallaxLayer>
+        ) : null}
         <ParallaxLayer
           factor={theme.gasRose.parallax.factor}
           lerp={theme.gasRose.parallax.lerp}

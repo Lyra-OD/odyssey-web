@@ -127,6 +127,18 @@ export type SceneTheme = {
   };
 };
 
+export type GhostStarsTheme = {
+  tint: string;
+  count: number;
+  opacity: TierOpacity;
+  sizeMul: number;
+  /** zSpread / zBias — plus loin = plus soft. */
+  zSpread: number;
+  zBias: number;
+  renderOrder: number;
+  parallax: ParallaxKnobs;
+};
+
 /**
  * Thème ciel — knobs par layer.
  * Shape stable pour presets / API / designer plus tard.
@@ -135,10 +147,12 @@ export type SkyTheme = {
   id: string;
   baseLoopPeriod: number;
   scene: SceneTheme;
+  gasFar: GasLayerTheme;
   gasRose: GasLayerTheme;
   gasMauve: GasLayerTheme;
   gasTeal: GasLayerTheme;
   cosmicDust: DustLayerTheme;
+  ghostStars: GhostStarsTheme;
   starsBand: StarFieldTheme;
   starsField: StarFieldTheme;
   shootingStars: ShootingStarsTheme;
@@ -184,6 +198,16 @@ export const defaultSkyTheme: SkyTheme = {
       rareSpecialStreak: true,
     },
   },
+  gasFar: {
+    color: "#1a1520",
+    deep: "#05060c",
+    opacity: { desktop: 0.22, mobile: 0.16, reduced: 0 },
+    loopPeriodMul: 1.8,
+    position: [0.4, -0.2, -11.5],
+    scale: [38, 22, 1],
+    renderOrder: -3,
+    parallax: { factor: -0.16, lerp: 0.01 },
+  },
   gasRose: {
     color: "#c2186e",
     colorHot: "#ff3d9a",
@@ -223,6 +247,16 @@ export const defaultSkyTheme: SkyTheme = {
     scale: [30, 17, 1],
     renderOrder: 1,
     parallax: { factor: 0.16, lerp: 0.026 },
+  },
+  ghostStars: {
+    tint: "#c8d4f0",
+    count: 22,
+    opacity: { desktop: 0.14, mobile: 0, reduced: 0 },
+    sizeMul: 2.8,
+    zSpread: 4,
+    zBias: -8.5,
+    renderOrder: -2,
+    parallax: { factor: -0.2, lerp: 0.012 },
   },
   starsBand: {
     tint: "#c8d4f0",
