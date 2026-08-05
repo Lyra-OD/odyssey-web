@@ -2,7 +2,6 @@
 
 import { Canvas, useThree } from "@react-three/fiber";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
-import { WebGLRenderer } from "three";
 
 import { EclipseDisc } from "@/src/components/contribute/constellation/EclipseDisc";
 import {
@@ -34,35 +33,6 @@ function ForceRenderLoop() {
   return null;
 }
 
-function createRenderer(canvas: HTMLCanvasElement | OffscreenCanvas) {
-  const opts: WebGLContextAttributes = {
-    alpha: false,
-    antialias: true,
-    depth: true,
-    stencil: false,
-    powerPreference: "low-power",
-    failIfMajorPerformanceCaveat: false,
-    preserveDrawingBuffer: false,
-  };
-  const context =
-    canvas.getContext("webgl2", opts) ||
-    canvas.getContext("webgl", opts) ||
-    (canvas as HTMLCanvasElement).getContext?.("experimental-webgl", opts);
-
-  if (!context) {
-    throw new Error("Aucun contexte WebGL");
-  }
-
-  return new WebGLRenderer({
-    canvas,
-    context: context as WebGLRenderingContext,
-    alpha: false,
-    antialias: true,
-    powerPreference: "high-performance",
-    failIfMajorPerformanceCaveat: false,
-  });
-}
-
 type Locale = "fr" | "en";
 
 /**
@@ -71,22 +41,20 @@ type Locale = "fr" | "en";
  */
 export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
-  const [opacity, setOpacity] = useState(0.88);
-  const [corona, setCorona] = useState(1.35);
-  const [scale, setScale] = useState(1.15);
+  const [opacity, setOpacity] = useState(1);
+  const [corona, setCorona] = useState(1.15);
+  const [scale, setScale] = useState(1);
   const [breath, setBreath] = useState(true);
 
-  const craft = useMemo(() => {
-    // Breath léger si activé — le useFrame du disc lit des valeurs stables ;
-    // on anime via state rafraîchi.
-    return {
+  const craft = useMemo(
+    () => ({
       opacity,
       coronaAmp: corona,
       scaleMul: scale,
-    };
-  }, [opacity, corona, scale]);
+    }),
+    [opacity, corona, scale],
+  );
 
-  // Micro-respiration optionnelle (lab)
   useEffect(() => {
     if (!breath) return;
     let raf = 0;
@@ -94,9 +62,9 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
     const tick = (now: number) => {
       const t = (now - t0) / 1000;
       const w = 0.5 + 0.5 * Math.sin(t * 0.55);
-      setOpacity(0.72 + w * 0.22);
-      setCorona(1.15 + w * 0.45);
-      setScale(1.05 + w * 0.18);
+      setOpacity(0.88 + w * 0.12);
+      setCorona(0.95 + w * 0.35);
+      setScale(0.96 + w * 0.08);
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -105,19 +73,19 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
 
   const pulseOnce = useCallback(() => {
     setBreath(false);
-    setOpacity(0.15);
-    setCorona(0.6);
-    setScale(0.85);
+    setOpacity(0.35);
+    setCorona(0.5);
+    setScale(0.92);
     window.setTimeout(() => {
       setOpacity(1);
-      setCorona(1.8);
-      setScale(1.45);
-    }, 120);
+      setCorona(1.55);
+      setScale(1.12);
+    }, 140);
     window.setTimeout(() => {
-      setOpacity(0.88);
-      setCorona(1.35);
-      setScale(1.15);
-    }, 900);
+      setOpacity(1);
+      setCorona(1.15);
+      setScale(1);
+    }, 850);
   }, []);
 
   const copy =
@@ -144,7 +112,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
         };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
+    <main className="relative min-h-screen overflow-hidden bg-[#07080f] text-zinc-100 antialiased">
       <ClientWebGLGate
         fallback={(message) => (
           <div className="flex min-h-screen items-center justify-center px-6 text-center text-sm text-white/50">
@@ -152,25 +120,32 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
           </div>
         )}
       >
-        <Canvas
-          className="!fixed inset-0"
-          frameloop="demand"
-          dpr={tierDpr(tier)}
-          camera={{ position: [0, 0, 7.5], fov: 42, near: 0.1, far: 40 }}
-          gl={createRenderer}
-          onCreated={({ gl }) => {
-            gl.setClearColor("#000000", 1);
-          }}
-        >
-          <Suspense fallback={null}>
-            <SkyThemeProvider theme={defaultSkyTheme}>
-              <ForceRenderLoop />
-              <color attach="background" args={["#000000"]} />
-              <ambientLight intensity={0.02} />
-              <EclipseDisc tier={tier} craft={craft} />
-            </SkyThemeProvider>
-          </Suspense>
-        </Canvas>
+        <div className="fixed inset-0 z-0">
+          <Canvas
+            className="h-full w-full"
+            style={{ width: "100%", height: "100%" }}
+            frameloop="demand"
+            dpr={tierDpr(tier)}
+            camera={{ position: [0, 0, 8], fov: 42, near: 0.1, far: 40 }}
+            gl={{
+              antialias: true,
+              alpha: false,
+              powerPreference: "high-performance",
+              preserveDrawingBuffer: true,
+            }}
+            onCreated={({ gl }) => {
+              gl.setClearColor("#07080f", 1);
+            }}
+          >
+            <Suspense fallback={null}>
+              <SkyThemeProvider theme={defaultSkyTheme}>
+                <ForceRenderLoop />
+                <color attach="background" args={["#07080f"]} />
+                <EclipseDisc tier="desktop" craft={craft} />
+              </SkyThemeProvider>
+            </Suspense>
+          </Canvas>
+        </div>
       </ClientWebGLGate>
 
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-1 px-5 pt-6 md:px-10 md:pt-10">

@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Color, Mesh, ShaderMaterial } from "three";
+import { Color, Mesh, NormalBlending, ShaderMaterial } from "three";
 
 import type { VisualTier } from "./useVisualTier";
 import { useSkyTheme } from "./skyTheme";
@@ -10,9 +10,8 @@ import { idleCameraRef } from "./IdleCameraDrift";
 import { skyIntroRef } from "./SkyIntroEclipse";
 
 /**
- * Sky Eclipse — disque sombre + corona neutre (graine logo Halo-Éclipse).
- * Modes : `craft` (lab) | rare idle | intro (désactivée — craft d’abord).
- * Knobs : `skyTheme.eclipse`
+ * Sky Eclipse — disque sombre + corona (graine logo).
+ * Modes : `craft` (lab) | rare idle | intro (OFF).
  */
 const vertexShader = /* glsl */ `
 varying vec2 vUv;
@@ -47,48 +46,39 @@ float noise(vec2 p) {
   return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
 }
 
-float fbm(vec2 p) {
-  float v = 0.0;
-  float a = 0.5;
-  for (int i = 0; i < 4; i++) {
-    v += a * noise(p);
-    p *= 2.08;
-    a *= 0.5;
-  }
-  return v;
-}
-
 void main() {
-  if (uOpacity < 0.01) discard;
-
   vec2 p = vUv * 2.0 - 1.0;
   float r = length(p);
-  float ang = atan(p.y, p.x);
+  // Évite NaN au centre (atan(0,0))
+  float ang = (r < 1e-4) ? 0.0 : atan(p.y, p.x);
+  float t = uTime * 0.08;
 
-  float t = uTime * 0.07;
-  float grain = fbm(vec2(ang * 1.2 + t * 0.35, r * 3.2 - t));
+  float R = 0.40;
+  float body = 1.0 - smoothstep(R - 0.01, R + 0.002, r);
 
-  float body = 1.0 - smoothstep(0.38, 0.46, r);
-  float rim = exp(-pow((r - 0.44) * 28.0, 2.0));
-  float coronaCore = exp(-pow((r - 0.52) * 7.5, 2.0));
-  float coronaOuter = exp(-pow((r - 0.68) * 4.2, 2.0)) * (0.55 + 0.45 * grain);
-  float spikes = pow(max(0.0, sin(ang * 3.0 + t + grain * 2.0)), 8.0) * 0.12;
-  float corona = (coronaCore * 0.85 + coronaOuter * 0.65 + spikes) * uCoronaAmp;
+  float rim =
+    smoothstep(R - 0.018, R, r) * (1.0 - smoothstep(R, R + 0.035, r));
+
+  float outside = smoothstep(R, R + 0.03, r);
+  float fall = exp(-pow((r - R) * 2.4, 1.35));
+  float grain = noise(vec2(ang * 3.0 + t * 0.6, r * 4.0));
+  float streamers =
+    pow(max(0.0, sin(ang * 6.0 + t + grain * 2.5)), 12.0) * 0.4;
+  float corona =
+    outside * fall * (0.65 + 0.35 * grain + streamers) * uCoronaAmp;
 
   vec3 col = uBody * body;
-  col += uRim * rim * 1.15;
-  col += mix(uCorona, uRim, grain * 0.35) * corona;
+  col += uRim * rim * 2.2;
+  col += mix(uCorona, uRim, 0.35 + grain * 0.2) * corona * 1.35;
 
-  float alpha = body * 0.92 + rim * 0.55 + corona * 0.5;
+  float alpha = max(body, max(rim * 0.95, corona * 0.75));
   alpha *= uOpacity;
-  alpha = clamp(alpha, 0.0, 0.85);
-  if (alpha < 0.008) discard;
+  if (alpha < 0.01) discard;
 
-  gl_FragColor = vec4(col, alpha);
+  gl_FragColor = vec4(col, clamp(alpha, 0.0, 1.0));
 }
 `;
 
-/** Pilotage lab craft — prioritaire sur rare / intro. */
 export type EclipseCraftDrive = {
   opacity: number;
   coronaAmp: number;
@@ -97,9 +87,10 @@ export type EclipseCraftDrive = {
 
 type Props = {
   tier: VisualTier;
-  /** Lab `/test-eclipse` — force le disc visible et centré. */
   craft?: EclipseCraftDrive;
 };
+
+const CRAFT_BASE_SCALE = 5.2;
 
 export function EclipseDisc({ tier, craft }: Props) {
   const meshRef = useRef<Mesh>(null);
@@ -108,28 +99,35 @@ export function EclipseDisc({ tier, craft }: Props) {
   const cfg = theme.eclipse;
   const idle = theme.scene.idle;
   const intro = theme.scene.intro;
+  const isCraft = Boolean(craft);
 
-  const material = useMemo(
-    () =>
-      new ShaderMaterial({
-        vertexShader,
-        fragmentShader,
-        transparent: true,
-        depthWrite: false,
-        depthTest: false,
-        toneMapped: false,
-        fog: false,
-        uniforms: {
-          uTime: { value: 0 },
-          uOpacity: { value: 0 },
-          uCoronaAmp: { value: cfg.coronaAmp },
-          uBody: { value: new Color(cfg.body) },
-          uCorona: { value: new Color(cfg.corona) },
-          uRim: { value: new Color(cfg.rim) },
-        },
-      }),
-    [cfg.body, cfg.corona, cfg.rim, cfg.coronaAmp],
-  );
+  const material = useMemo(() => {
+    const mat = new ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      transparent: true,
+      depthWrite: false,
+      depthTest: false,
+      toneMapped: false,
+      fog: false,
+      blending: NormalBlending,
+      uniforms: {
+        uTime: { value: 0 },
+        uOpacity: { value: isCraft ? 1 : 0 },
+        uCoronaAmp: { value: 1.2 },
+        uBody: { value: new Color(isCraft ? "#000000" : cfg.body) },
+        uCorona: { value: new Color(isCraft ? "#c5d0e4" : cfg.corona) },
+        uRim: { value: new Color(isCraft ? "#ffffff" : cfg.rim) },
+      },
+    });
+    return mat;
+  }, [cfg.body, cfg.corona, cfg.rim, isCraft]);
+
+  useEffect(() => {
+    material.vertexShader = vertexShader;
+    material.fragmentShader = fragmentShader;
+    material.needsUpdate = true;
+  }, [material]);
 
   useFrame(({ clock }) => {
     const mat = matRef.current ?? material;
@@ -142,10 +140,10 @@ export function EclipseDisc({ tier, craft }: Props) {
     let pos: [number, number, number] = cfg.position;
 
     if (craft) {
-      bloom = craft.opacity;
-      corona = craft.coronaAmp;
+      bloom = Math.max(0.85, craft.opacity);
+      corona = Math.max(1.05, craft.coronaAmp);
       scaleMul = craft.scaleMul;
-      pos = [0, 0, -3.6];
+      pos = [0, 0.1, 0];
     } else if (skyIntroRef.active && skyIntroRef.disc > 0.01) {
       bloom = skyIntroRef.disc * 0.95;
       corona =
@@ -167,11 +165,8 @@ export function EclipseDisc({ tier, craft }: Props) {
     if (mesh) {
       mesh.visible = bloom > 0.01;
       mesh.position.set(pos[0], pos[1], pos[2]);
-      mesh.scale.set(
-        cfg.scale[0] * scaleMul,
-        cfg.scale[1] * scaleMul,
-        cfg.scale[2],
-      );
+      const base = craft ? CRAFT_BASE_SCALE : cfg.scale[0];
+      mesh.scale.set(base * scaleMul, base * scaleMul, 1);
     }
   });
 
@@ -180,9 +175,11 @@ export function EclipseDisc({ tier, craft }: Props) {
   return (
     <mesh
       ref={meshRef}
-      visible={false}
-      position={cfg.position}
-      scale={cfg.scale}
+      visible={isCraft}
+      position={craft ? [0, 0.1, 0] : cfg.position}
+      scale={
+        craft ? [CRAFT_BASE_SCALE, CRAFT_BASE_SCALE, 1] : cfg.scale
+      }
       frustumCulled={false}
       renderOrder={cfg.renderOrder}
     >
