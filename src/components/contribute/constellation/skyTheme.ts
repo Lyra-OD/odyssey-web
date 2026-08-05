@@ -93,6 +93,15 @@ export type SceneTheme = {
     moveAmp: number;
     /** Amplitude look-at (légère dérive du regard). */
     lookAmp: number;
+    /** Boost dérive parallaxe des layers pendant idle (0 = off). */
+    breathBoost: number;
+    /** Amplitude pulse opacité gaz rose sur moment rare. */
+    rareGasPulse: number;
+    /** Fenêtre (s) entre moments rares pendant idle. */
+    rareGapMinSec: number;
+    rareGapMaxSec: number;
+    /** Durée du pulse rare (s). */
+    rareDurationSec: number;
   };
 };
 
@@ -139,6 +148,11 @@ export const defaultSkyTheme: SkyTheme = {
       zoomAmp: 0.55,
       moveAmp: 0.16,
       lookAmp: 0.1,
+      breathBoost: 0.45,
+      rareGasPulse: 0.14,
+      rareGapMinSec: 140,
+      rareGapMaxSec: 260,
+      rareDurationSec: 9,
     },
   },
   gasRose: {

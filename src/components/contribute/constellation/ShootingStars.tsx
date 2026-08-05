@@ -14,6 +14,7 @@ import {
 
 import type { VisualTier } from "./useVisualTier";
 import { useSkyTheme } from "./skyTheme";
+import { idleCameraRef } from "./IdleCameraDrift";
 
 /**
  * Mix Kubrick × Premium :
@@ -75,7 +76,12 @@ function randomUnitDirection(out: Vector3) {
   return out;
 }
 
-function spawnStreak(s: StreakState, dir: Vector3, kind: StreakKind) {
+function spawnStreak(
+  s: StreakState,
+  dir: Vector3,
+  kind: StreakKind,
+  special = false,
+) {
   randomUnitDirection(dir);
   s.active = true;
   s.kind = kind;
@@ -88,10 +94,10 @@ function spawnStreak(s: StreakState, dir: Vector3, kind: StreakKind) {
   s.oz = -2 + Math.random() * 3 - dir.z * 2;
 
   if (kind === "large") {
-    s.life = 0.95 + Math.random() * 0.4;
+    s.life = 0.95 + Math.random() * 0.4 + (special ? 0.25 : 0);
     s.speed = 8.5 + Math.random() * 4;
-    s.length = 0.75 + Math.random() * 0.5;
-    s.brightness = 0.88;
+    s.length = 0.75 + Math.random() * 0.5 + (special ? 0.35 : 0);
+    s.brightness = special ? 1.05 : 0.88;
   } else {
     s.life = 0.48 + Math.random() * 0.38;
     s.speed = 9.5 + Math.random() * 4.5;
@@ -181,12 +187,20 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
     nextSmallRef.current -= dt;
     nextLargeRef.current -= dt;
 
-    const trySpawn = (kind: StreakKind) => {
+    const trySpawn = (kind: StreakKind, special = false) => {
       const slot = states.find((s) => !s.active);
       if (!slot) return false;
-      spawnStreak(slot, dirTmp, kind);
+      spawnStreak(slot, dirTmp, kind, special);
       return true;
     };
+
+    if (idleCameraRef.requestSpecialStreak) {
+      idleCameraRef.requestSpecialStreak = false;
+      if (trySpawn("large", true)) {
+        nextLargeRef.current =
+          LARGE_GAP_MIN + Math.random() * (LARGE_GAP_MAX - LARGE_GAP_MIN);
+      }
+    }
 
     if (nextLargeRef.current <= 0) {
       if (trySpawn("large")) {

@@ -11,7 +11,8 @@ import { useFrame } from "@react-three/fiber";
 import type { Group } from "three";
 
 import { cameraZoomRef, ZOOM_DEFAULT } from "./WheelZoom";
-import { markSkyActivity } from "./IdleCameraDrift";
+import { idleCameraRef, markSkyActivity } from "./IdleCameraDrift";
+import { useSkyTheme } from "./skyTheme";
 
 type PointerSample = { x: number; y: number };
 
@@ -106,6 +107,7 @@ export function ParallaxLayer({
   const ctx = useContext(ParallaxContext);
   const intensity = ctx?.intensity ?? 1;
   const pointerRef = ctx?.pointerRef;
+  const breathBoost = useSkyTheme().scene.idle?.breathBoost ?? 0;
 
   useFrame(({ clock }) => {
     if (
@@ -118,9 +120,10 @@ export function ParallaxLayer({
     if (!g) return;
 
     const t = clock.elapsedTime;
-    // Dérive autonome — le ciel ne fige jamais en fond
-    const idleX = Math.sin(t * 0.08) * 0.22;
-    const idleY = Math.cos(t * 0.06) * 0.16;
+    // Respiration : idle caméra amplifie la dérive autonome du volume
+    const breath = 1 + idleCameraRef.breath * breathBoost;
+    const idleX = Math.sin(t * 0.08) * 0.22 * breath;
+    const idleY = Math.cos(t * 0.06) * 0.16 * breath;
 
     const rawX = pointerRef?.current.x ?? 0;
     const rawY = pointerRef?.current.y ?? 0;

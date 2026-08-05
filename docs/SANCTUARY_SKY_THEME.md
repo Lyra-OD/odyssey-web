@@ -33,7 +33,8 @@ Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas har
 | `scene` | Background / fog / ambient / **idle** caméra |
 | `constellation` | Parallaxe constellation |
 
-`scene.idle` : dérive zoom + micro-move après `delaySec` sans interaction (`IdleCameraDrift.tsx`).
+`scene.idle` : dérive zoom + micro-move après `delaySec` (`IdleCameraDrift`).  
+Aussi : `breathBoost` (parallaxe), `rareGasPulse` + filante spéciale toutes les ~2–4 min d’idle.
 
 Chaque gaz : `color`, `deep`, `opacity` (desktop/mobile/reduced), `parallax`, `position`, `scale`, …
 

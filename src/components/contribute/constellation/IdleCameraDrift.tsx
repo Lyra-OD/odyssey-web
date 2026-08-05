@@ -5,13 +5,19 @@ import { useFrame } from "@react-three/fiber";
 
 import { useSkyTheme } from "./skyTheme";
 
-/** Offsets idle — lus par FocusCamera (hors focus). */
+/** Offsets idle — lus par FocusCamera / Parallax / gaz / filantes. */
 export const idleCameraRef = {
   zoomOffset: 0,
   x: 0,
   y: 0,
   lookX: 0,
   lookY: 0,
+  /** 0 = actif, 1 = pleine dérive — boost parallaxe idle. */
+  breath: 0,
+  /** 0→1→0 pulse rare (gaz rose). */
+  rarePulse: 0,
+  /** Cue one-shot pour une filante « spéciale ». */
+  requestSpecialStreak: false,
 };
 
 const lastSkyActivityRef = { current: 0 };
@@ -28,8 +34,13 @@ function skyFocusActive() {
   );
 }
 
+function smoothstep01(x: number) {
+  const t = Math.min(1, Math.max(0, x));
+  return t * t * (3 - 2 * t);
+}
+
 /**
- * Dérive caméra idle — zoom + micro-déplacement très lents.
+ * Dérive caméra idle + respiration ciel + moment rare.
  * Après `delaySec` sans interaction ; s’efface dès qu’on touche.
  */
 export function IdleCameraDrift() {
@@ -37,6 +48,8 @@ export function IdleCameraDrift() {
   const idle = theme.scene.idle;
   const phaseRef = useRef(0);
   const driftingRef = useRef(false);
+  const nextRareAtRef = useRef(0);
+  const rareStartRef = useRef(-1);
 
   useEffect(() => {
     markSkyActivity();
@@ -50,6 +63,8 @@ export function IdleCameraDrift() {
       idleCameraRef.y = 0;
       idleCameraRef.lookX = 0;
       idleCameraRef.lookY = 0;
+      idleCameraRef.breath = 0;
+      idleCameraRef.rarePulse = 0;
       return;
     }
 
@@ -61,23 +76,30 @@ export function IdleCameraDrift() {
 
     if (!allow) {
       driftingRef.current = false;
+      rareStartRef.current = -1;
       idleCameraRef.zoomOffset += (0 - idleCameraRef.zoomOffset) * ease;
       idleCameraRef.x += (0 - idleCameraRef.x) * ease;
       idleCameraRef.y += (0 - idleCameraRef.y) * ease;
       idleCameraRef.lookX += (0 - idleCameraRef.lookX) * ease;
       idleCameraRef.lookY += (0 - idleCameraRef.lookY) * ease;
+      idleCameraRef.breath += (0 - idleCameraRef.breath) * ease;
+      idleCameraRef.rarePulse += (0 - idleCameraRef.rarePulse) * ease;
       return;
     }
 
     if (!driftingRef.current) {
       driftingRef.current = true;
       phaseRef.current = clock.elapsedTime;
+      const gapMin = cfg.rareGapMinSec;
+      const gapMax = cfg.rareGapMaxSec;
+      nextRareAtRef.current =
+        clock.elapsedTime + gapMin + Math.random() * (gapMax - gapMin);
+      rareStartRef.current = -1;
     }
 
     const t = clock.elapsedTime - phaseRef.current;
     const twopi = Math.PI * 2;
     const p = cfg.periodSec;
-    // Plusieurs sinus lents, hors phase → pas un loop évident
     const z =
       Math.sin((t / p) * twopi) * cfg.zoomAmp +
       Math.sin((t / (p * 1.37)) * twopi) * cfg.zoomAmp * 0.35;
@@ -92,15 +114,41 @@ export function IdleCameraDrift() {
     const lookY =
       Math.cos((t / (p * 1.05)) * twopi + 0.9) * cfg.lookAmp * 0.75;
 
-    // Ease-in doux au démarrage de l’idle
-    const ramp = Math.min(1, t / 4);
-    const k = ramp * ramp * (3 - 2 * ramp);
+    const ramp = smoothstep01(t / 4);
+    const k = ramp;
 
     idleCameraRef.zoomOffset += (z * k - idleCameraRef.zoomOffset) * 0.02;
     idleCameraRef.x += (x * k - idleCameraRef.x) * 0.02;
     idleCameraRef.y += (y * k - idleCameraRef.y) * 0.02;
     idleCameraRef.lookX += (lookX * k - idleCameraRef.lookX) * 0.02;
     idleCameraRef.lookY += (lookY * k - idleCameraRef.lookY) * 0.02;
+    idleCameraRef.breath += (k - idleCameraRef.breath) * 0.04;
+
+    // —— Moment rare : pulse gaz + cue filante ——
+    if (rareStartRef.current < 0 && clock.elapsedTime >= nextRareAtRef.current) {
+      rareStartRef.current = clock.elapsedTime;
+      idleCameraRef.requestSpecialStreak = true;
+      const gapMin = cfg.rareGapMinSec;
+      const gapMax = cfg.rareGapMaxSec;
+      nextRareAtRef.current =
+        clock.elapsedTime + gapMin + Math.random() * (gapMax - gapMin);
+    }
+
+    if (rareStartRef.current >= 0) {
+      const age = clock.elapsedTime - rareStartRef.current;
+      const dur = cfg.rareDurationSec;
+      if (age >= dur) {
+        rareStartRef.current = -1;
+        idleCameraRef.rarePulse += (0 - idleCameraRef.rarePulse) * ease;
+      } else {
+        // Cloche douce 0→1→0
+        const u = age / dur;
+        const pulse = Math.sin(u * Math.PI);
+        idleCameraRef.rarePulse += (pulse - idleCameraRef.rarePulse) * 0.08;
+      }
+    } else {
+      idleCameraRef.rarePulse += (0 - idleCameraRef.rarePulse) * ease;
+    }
   });
 
   return null;
