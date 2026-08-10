@@ -159,7 +159,9 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   );
 
   const bloomIntensity =
-    0.38 + drive.bloom * 0.55 + Math.max(flashAmp, drive.diamondMul) * 0.4;
+    0.38 +
+    drive.bloom * 0.55 +
+    Math.max(flashAmp, drive.diamondMul) * 0.55;
 
   const copy =
     locale === "en"
@@ -383,7 +385,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
                     key: "flash",
                     label: copy.flash,
                     min: 0,
-                    max: 2,
+                    max: 3.5,
                     step: 0.01,
                     value: flashAmp,
                     onChange: setFlashAmp,

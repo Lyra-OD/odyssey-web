@@ -272,8 +272,9 @@ void main() {
   float bnB = fbm(dirMoon * (6.8 + irregF * 1.2) - vec2(1.6, tLive * 0.045));
   float bnC = fbm(dirMoon * 11.0 + vec2(tLive * 0.22, -3.1));
   float breakUp = mix(0.72, 0.22 + 0.9 * bnA, clamp(irregF * 0.55, 0.0, 1.0));
-  float angPow = mix(24.0, 11.0, clamp(irregF * 0.42, 0.0, 1.0));
-  float beadGate = pow(along, angPow) * breakUp * (0.7 + 0.45 * bnB);
+  // Un peu plus large / présent que le bead ultra-pincé
+  float angPow = mix(20.0, 9.0, clamp(irregF * 0.42, 0.0, 1.0));
+  float beadGate = pow(along, angPow) * breakUp * (0.75 + 0.5 * bnB);
 
   float limbFlash =
     exp(-pow(sdfMoon * 72.0, 2.0)) *
@@ -291,14 +292,15 @@ void main() {
   float core = exp(-pow(sdfMoon * 95.0, 2.0));
   float midG = exp(-pow(sdfMoon * 42.0, 2.0)) * 0.55;
   float softG = exp(-pow(sdfMoon * 16.0, 2.0)) * 0.22;
-  float glowStack = core * 1.35 + midG + softG;
+  float wideG = exp(-pow(sdfMoon * 8.5, 2.0)) * 0.14;
+  float glowStack = core * 1.55 + midG * 1.1 + softG + wideG;
   float flicker = mix(1.0, 0.9 + 0.1 * sin(tLive * 1.85 + bnA * 6.2831), life);
 
   float diamond =
     (1.0 - moonMask) *
     (
       beadGate * glowStack +
-      limbFlash * baily * (core * 0.95 + midG * 0.55)
+      limbFlash * baily * (core * 1.1 + midG * 0.65)
     ) *
     flashAmt *
     flicker *
@@ -308,7 +310,7 @@ void main() {
     photosphere * 1.05 +
     corona * 1.4 +
     photon * 0.75 +
-    diamond * 1.6
+    diamond * 2.05
   );
   col *= 1.0 - moonMask;
   col *= uBodyFade;
