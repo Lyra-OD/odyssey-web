@@ -180,7 +180,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
           life: "Life / drift",
           moon: "Hole size",
           sun: "Sun size",
-          hint: "Life drives silk shimmer, envelope breath, ray emerge, plume drift, photon & Baily.",
+          hint: "Vie alone = soft living silk. Irregularity = fibrous plumes / Baily.",
         }
       : {
           title: "Craft Éclipse · pose soleil",
@@ -199,7 +199,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
           life: "Vie / drift",
           moon: "Trou noir",
           sun: "Soleil",
-          hint: "Vie = soie, enveloppe, rayons, plumes, photon & Baily. 0 = figé.",
+          hint: "Vie seule = soie vivante. Irrégularité = plumes / Baily.",
         };
 
   return (

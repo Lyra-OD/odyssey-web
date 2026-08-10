@@ -130,46 +130,72 @@ void main() {
   float rays = clamp(uCoronaRays, 0.0, 2.5);
   float soft = max(uCoronaSoft, 0.25);
 
-  // Respiration d’enveloppe (diffusion / douceur) — très légère
+  // Vie seule → breath / soie / enveloppe (même si irreg = 0)
   float envPulse = sin(tLive * 0.42) * 0.5 + 0.5;
-  float softLive = soft * (1.0 + life * 0.06 * (envPulse - 0.5));
-  float spreadLive = spread * (1.0 + life * 0.05 * sin(tLive * 0.31 + 1.1));
+  float softLive = soft * (1.0 + life * 0.09 * (envPulse - 0.5));
+  float spreadLive = spread * (1.0 + life * 0.07 * sin(tLive * 0.31 + 1.1));
+  float lifePulse = mix(1.0, 0.93 + 0.12 * sin(tLive * 0.55 + 0.8), life);
 
   vec2 dirC = dirSun;
   float distN = distSun / max(Rsun * spreadLive, 0.04);
 
-  // Drift plumes (vent solaire) — Vie × irrégularité
+  // Crawl doux (Vie) + drift plumes fort (Irrégularité)
+  float softSpinT = tLive * 0.02;
+  float caS = cos(softSpinT * 0.45);
+  float saS = sin(softSpinT * 0.45);
+  vec2 dirSoft = vec2(dirC.x * caS - dirC.y * saS, dirC.x * saS + dirC.y * caS);
+  dirSoft = mix(dirC, dirSoft, life * 0.55);
+
   float drift = tLive * (0.028 + irreg * 0.045);
   float ca = cos(drift * 0.55);
   float sa = sin(drift * 0.55);
   vec2 dirSpin = vec2(dirC.x * ca - dirC.y * sa, dirC.x * sa + dirC.y * ca);
-  vec2 dirDrift = mix(dirC, dirSpin, life * clamp(irreg * 0.65, 0.0, 1.0));
+  vec2 dirPlume = mix(dirSoft, dirSpin, life * clamp(irreg * 0.7, 0.0, 1.0));
+  vec2 dirDrift = dirPlume;
 
-  float t = tLive * 0.018;
+  float t = tLive * (0.018 + 0.012 * life);
   float angA = fbm(dirDrift * (2.2 + irreg * 1.4) + vec2(t * 0.12, 1.9));
   float angB = fbm(dirDrift * (4.0 + irreg * 2.2) - vec2(2.4, t * 0.08));
-  float plumeGate = mix(0.55, 0.2 + 0.8 * pow(clamp(angA, 0.0, 1.0), 1.35), clamp(irreg, 0.0, 1.0));
-  float plumeLen = mix(1.0, mix(0.55, 1.9, pow(clamp(angB, 0.0, 1.0), 1.15)), clamp(irreg * 0.85, 0.0, 1.0));
+  // irreg = caractère cassé ; Vie seule garde une soie animée douce
+  float plumeGate = mix(
+    mix(0.7, 0.55 + 0.35 * angA, life),
+    0.2 + 0.8 * pow(clamp(angA, 0.0, 1.0), 1.35),
+    clamp(irreg, 0.0, 1.0)
+  );
+  float plumeLen = mix(
+    1.0,
+    mix(0.55, 1.9, pow(clamp(angB, 0.0, 1.0), 1.15)),
+    clamp(irreg * 0.85, 0.0, 1.0)
+  );
 
-  // Émergence asymétrique des rayons — un côté s’allume / s’éteint (pas d’atan)
+  // Émergence rayons — Vie (même sans irreg) ; irreg accentue
   float rayEmerge = fbm(dirDrift * 1.6 + vec2(tLive * 0.09, 4.2));
   float raySide =
     0.55 + 0.45 * sin(dirDrift.x * 3.1 + dirDrift.y * 2.4 + tLive * 0.35);
   float rayLive =
     rays *
-    mix(1.0, 0.55 + 0.7 * rayEmerge * raySide, life * clamp(rays * 0.5, 0.0, 1.0));
+    mix(
+      1.0,
+      0.6 + 0.55 * rayEmerge * raySide,
+      life * clamp(0.35 + rays * 0.4, 0.0, 1.0)
+    );
 
   vec2 fiberUV =
-    dirDrift * (2.5 + angA * (0.6 + irreg * 0.9)) +
-    vec2(distN * (1.0 / max(plumeLen, 0.45)), t * 0.35);
+    dirDrift * (2.5 + angA * (0.45 + irreg * 0.9)) +
+    vec2(distN * (1.0 / max(plumeLen, 0.45)), t * (0.4 + 0.55 * life));
   float fiber = fbm(fiberUV);
-  float fiber2 = fbm(fiberUV * (1.7 + irreg * 0.5) + vec2(3.2, -1.4));
+  float fiber2 = fbm(fiberUV * (1.7 + irreg * 0.5) + vec2(3.2, -1.4 + tLive * 0.08));
   float silk = 0.4 + 0.6 * fiber;
-  float wisps = pow(max(0.0, fiber * 0.5 + fiber2 * 0.5), mix(2.2, 1.35, clamp(irreg * 0.5, 0.0, 1.0)));
+  // Soie vivante même à irreg 0
+  float silkLive = mix(silk, 0.35 + 0.65 * fiber * (0.75 + 0.4 * fiber2), life);
+  float wisps = pow(
+    max(0.0, fiber * 0.5 + fiber2 * 0.5),
+    mix(2.0, mix(2.2, 1.35, clamp(irreg * 0.5, 0.0, 1.0)), life)
+  );
 
-  // Scintillement soie (intensité) — micro-grain, pas strobe
+  // Scintillement soie — plus lisible sans irreg
   float silkShimmer =
-    mix(1.0, 0.92 + 0.12 * fbm(dirDrift * 5.5 + vec2(tLive * 0.55, distN * 2.0)), life);
+    mix(1.0, 0.88 + 0.18 * fbm(dirDrift * 5.5 + vec2(tLive * 0.55, distN * 2.0)), life);
 
   float fallInner = 1.55 / softLive;
   float fallMid = (0.52 / softLive) / max(plumeLen, 0.45);
@@ -177,16 +203,16 @@ void main() {
 
   float inner =
     exp(-pow(distN * fallInner, 1.1)) *
-    (0.7 + 0.55 * silk) *
+    (0.7 + 0.55 * silkLive) *
     (0.85 + 0.35 * plumeGate);
   float mid =
     exp(-pow(distN * fallMid, 1.0)) *
-    wisps *
+    mix(silkLive * 0.85, wisps, clamp(irreg * 0.6 + 0.25 * life, 0.0, 1.0)) *
     plumeGate *
     (0.7 + 0.55 * rayLive);
   float far =
     exp(-pow(distN * fallFar, 0.9)) *
-    pow(wisps, 1.2) *
+    pow(mix(silkLive, wisps, clamp(irreg + 0.2 * life, 0.0, 1.0)), 1.15) *
     plumeGate *
     (0.45 + 0.7 * rayLive);
 
@@ -199,7 +225,7 @@ void main() {
   float coronaField = polarBias * (inner * 1.15 + mid + far);
   float coronaMask = 1.0 - moonMask;
   float corona =
-    coronaField * coronaMask * uCoronaAmp * breath * silkShimmer * uBodyFade;
+    coronaField * coronaMask * uCoronaAmp * breath * silkShimmer * lifePulse * uBodyFade;
 
   float edgeW = max(Rsun * 0.035, 0.004);
   float softDisc = 1.0 - smoothstep(-edgeW, edgeW, sdfSun);
@@ -213,14 +239,24 @@ void main() {
     (0.95 + 0.08 * breath) *
     uBodyFade;
 
-  // Anneau photon — chatoyement local du limbe
+  // Anneau photon — breath + mini diffusion + chatoyement
+  float photonBreath = mix(1.0, 0.88 + 0.18 * sin(tLive * 0.72 + 0.4), life);
+  float photonDiff = mix(1.0, 1.0 + 0.14 * (0.5 + 0.5 * sin(tLive * 0.48)), life);
+  float photonSharp = 78.0 / photonDiff;
   float photonShimmer =
     mix(1.0, 0.82 + 0.28 * fbm(dirMoon * 8.0 + vec2(tLive * 0.7, 0.5)), life);
+  float limbCore =
+    exp(-pow(sdfMoon * photonSharp, 2.0)) *
+    smoothstep(-0.01 * photonDiff, 0.005 * photonDiff, sdfMoon);
+  float limbVeil =
+    exp(-pow(sdfMoon * (26.0 / max(photonDiff, 0.8)), 2.0)) *
+    smoothstep(-0.025, 0.03, sdfMoon) *
+    0.32 * life;
   float limb =
-    exp(-pow(sdfMoon * 78.0, 2.0)) *
-    smoothstep(-0.01, 0.005, sdfMoon) *
+    (limbCore * 1.0 + limbVeil) *
     totality *
-    (1.8 + 0.4 * breath) *
+    (1.8 + 0.35 * breath) *
+    photonBreath *
     photonShimmer *
     uBodyFade *
     max(uPhoton, 0.0);
