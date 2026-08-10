@@ -2,6 +2,7 @@
 
 import { Canvas, useThree } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import Link from "next/link";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 
 import { EclipseDisc } from "@/src/components/contribute/constellation/EclipseDisc";
@@ -61,6 +62,8 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [coronaSoft, setCoronaSoft] = useState(1);
   /** Anneau photon limbe — off par défaut pour craft pose. */
   const [photonAmp, setPhotonAmp] = useState(0);
+  /** Flash / diamond vivant — pose Look (0 = off). */
+  const [flashAmp, setFlashAmp] = useState(0);
   /** Look : 0 = soleil à droite, 1 = derrière le trou noir. */
   const [scrub, setScrub] = useState(0);
   const [mode, setMode] = useState<"look" | "chrono">("look");
@@ -130,7 +133,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
       coronaRays,
       coronaSoft,
       photonAmp,
-      diamondAmp: drive.diamondMul,
+      diamondAmp: Math.max(flashAmp, drive.diamondMul),
       alignment: drive.alignment,
       bodyFade: drive.bodyFade,
       progress: drive.progress,
@@ -146,11 +149,13 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
       coronaRays,
       coronaSoft,
       photonAmp,
+      flashAmp,
       drive,
     ],
   );
 
-  const bloomIntensity = 0.38 + drive.bloom * 0.55 + drive.diamondMul * 0.25;
+  const bloomIntensity =
+    0.38 + drive.bloom * 0.55 + Math.max(flashAmp, drive.diamondMul) * 0.4;
 
   const copy =
     locale === "en"
@@ -159,6 +164,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
           sub: "Scrub moves the sun. Ending rebuilt plan by plan from your frames.",
           look: "Look",
           play: "Play approach",
+          cinema: "Cinema play →",
           corona: "Corona intensity",
           coronaSpread: "Corona spread",
           coronaIrregular: "Corona irregularity",
@@ -166,15 +172,17 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
           coronaSoft: "Corona softness",
           progress: "Sun pos.",
           photon: "Photon ring",
+          flash: "Flash / diamond",
           moon: "Hole size",
           sun: "Sun size",
-          hint: "Photon ring off by default. Horizontal knobs — more room for the frame.",
+          hint: "Readouts = exact specs. Quote values per plan when briefing.",
         }
       : {
           title: "Craft Éclipse · pose soleil",
           sub: "Le scrub bouge le soleil. Fin à reconstruire plan par plan.",
           look: "Look",
           play: "Lecture approche",
+          cinema: "Lecture cinéma →",
           corona: "Intensité corona",
           coronaSpread: "Diffusion corona",
           coronaIrregular: "Irrégularité corona",
@@ -182,9 +190,10 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
           coronaSoft: "Douceur corona",
           progress: "Pos. soleil",
           photon: "Anneau photon",
+          flash: "Flash / diamond",
           moon: "Trou noir",
           sun: "Soleil",
-          hint: "Anneau photon off par défaut. Knobs horizontaux pour voir le cadre.",
+          hint: "Valeurs = specs exactes. Donne-les plan par plan pour briefer.",
         };
 
   return (
@@ -278,12 +287,18 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
             >
               {playing ? "…" : copy.play}
             </button>
+            <Link
+              href={`/${locale}/contribute/test-eclipse-play`}
+              className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45"
+            >
+              {copy.cinema}
+            </Link>
             <p className="ml-auto hidden text-[11px] font-light tracking-wide text-white/30 sm:block">
               {copy.hint}
             </p>
           </div>
           {mode === "look" && (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-10">
               {(
                 [
                   {
@@ -350,6 +365,15 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
                     onChange: setPhotonAmp,
                   },
                   {
+                    key: "flash",
+                    label: copy.flash,
+                    min: 0,
+                    max: 2,
+                    step: 0.01,
+                    value: flashAmp,
+                    onChange: setFlashAmp,
+                  },
+                  {
                     key: "moon",
                     label: copy.moon,
                     min: 0.4,
@@ -368,25 +392,34 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
                     onChange: setSunScale,
                   },
                 ] as const
-              ).map((knob) => (
-                <label
-                  key={knob.key}
-                  className="flex min-w-0 flex-col gap-1 text-[11px] uppercase tracking-[0.12em] text-white/55"
-                >
-                  <span className="truncate font-medium text-white/70">
-                    {knob.label}
-                  </span>
-                  <input
-                    type="range"
-                    className="h-2 w-full accent-white"
-                    min={knob.min}
-                    max={knob.max}
-                    step={knob.step}
-                    value={knob.value}
-                    onChange={(e) => knob.onChange(Number(e.target.value))}
-                  />
-                </label>
-              ))}
+              ).map((knob) => {
+                const decimals = knob.step < 0.01 ? 3 : 2;
+                const readout = knob.value.toFixed(decimals);
+                return (
+                  <label
+                    key={knob.key}
+                    className="flex min-w-0 flex-col gap-1 text-[11px] uppercase tracking-[0.12em] text-white/55"
+                  >
+                    <span className="flex items-baseline justify-between gap-1">
+                      <span className="truncate font-medium text-white/70">
+                        {knob.label}
+                      </span>
+                      <span className="shrink-0 font-mono text-[12px] normal-case tracking-normal text-white/90">
+                        {readout}
+                      </span>
+                    </span>
+                    <input
+                      type="range"
+                      className="h-2 w-full accent-white"
+                      min={knob.min}
+                      max={knob.max}
+                      step={knob.step}
+                      value={knob.value}
+                      onChange={(e) => knob.onChange(Number(e.target.value))}
+                    />
+                  </label>
+                );
+              })}
             </div>
           )}
         </div>

@@ -195,18 +195,42 @@ void main() {
     max(uPhoton, 0.0);
   float photon = limb;
 
-  // Diamond ring BAS — recette glow logo Odyssey (noyau + 2–3 falloffs blancs)
-  // ~4–5h : un peu à droite du bas
+  // Flash / diamond vivant — ADN irrégularité (Baily beads), pas un bead géométrique
+  // ~4–5h ; breakup FBM + micro-flicker doux (évite starburst comic)
+  float flashAmt = max(uDiamond, 0.0);
+  float irregF = clamp(uCoronaIrregular, 0.0, 2.5);
   vec2 beadDir = normalize(vec2(0.28, -0.96));
-  float beadAng = pow(max(0.0, dot(dirMoon, beadDir)), 26.0);
+  float along = max(0.0, dot(dirMoon, beadDir));
+
+  float bnA = fbm(dirMoon * (3.4 + irregF * 1.8) + vec2(uTime * 0.07, 2.2));
+  float bnB = fbm(dirMoon * (6.8 + irregF * 1.2) - vec2(1.6, uTime * 0.045));
+  float breakUp = mix(0.72, 0.22 + 0.9 * bnA, clamp(irregF * 0.55, 0.0, 1.0));
+  float angPow = mix(24.0, 11.0, clamp(irregF * 0.42, 0.0, 1.0));
+  float beadGate = pow(along, angPow) * breakUp * (0.7 + 0.45 * bnB);
+
+  float limbFlash =
+    exp(-pow(sdfMoon * 72.0, 2.0)) *
+    smoothstep(-0.008, 0.012, sdfMoon);
+  float bailyThresh = mix(0.58, 0.38, clamp(irregF * 0.5, 0.0, 1.0));
+  float baily =
+    pow(max(bnB - bailyThresh, 0.0), 1.35) *
+    clamp(irregF, 0.0, 1.6) *
+    0.5;
+
   float core = exp(-pow(sdfMoon * 95.0, 2.0));
   float midG = exp(-pow(sdfMoon * 42.0, 2.0)) * 0.55;
   float softG = exp(-pow(sdfMoon * 16.0, 2.0)) * 0.22;
+  float glowStack = core * 1.35 + midG + softG;
+  float flicker = 0.9 + 0.1 * sin(uTime * 1.85 + bnA * 6.2831);
+
   float diamond =
     (1.0 - moonMask) *
-    beadAng *
-    (core * 1.35 + midG + softG) *
-    uDiamond *
+    (
+      beadGate * glowStack +
+      limbFlash * baily * (core * 0.95 + midG * 0.55)
+    ) *
+    flashAmt *
+    flicker *
     uBodyFade;
 
   vec3 col = vec3(1.0) * (
