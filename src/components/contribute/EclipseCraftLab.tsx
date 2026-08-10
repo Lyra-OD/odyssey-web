@@ -11,6 +11,7 @@ import {
   CRAFT_CHRONO_DURATION,
   CRAFT_CHRONO_IDLE,
   CRAFT_CHRONO_SILENCE,
+  poseFromSunPosition,
   sampleCraftChrono,
   type CraftChronoState,
 } from "@/src/components/contribute/constellation/eclipseCraftTimeline";
@@ -47,7 +48,7 @@ function ForceRenderLoop() {
 type Locale = "fr" | "en";
 
 /**
- * Craft lab — occultation → totalité → diamond bas → wash → ciel.
+ * Craft lab — approche + pose soleil libre. Fin à reconstruire plan par plan.
  */
 export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
@@ -58,7 +59,9 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [coronaIrregular, setCoronaIrregular] = useState(1);
   const [coronaRays, setCoronaRays] = useState(1);
   const [coronaSoft, setCoronaSoft] = useState(1);
-  /** Look scrub 0–1 = timeline entière. */
+  /** Anneau photon limbe — off par défaut pour craft pose. */
+  const [photonAmp, setPhotonAmp] = useState(0);
+  /** Look : 0 = soleil à droite, 1 = derrière le trou noir. */
   const [scrub, setScrub] = useState(0);
   const [mode, setMode] = useState<"look" | "chrono">("look");
   const [playing, setPlaying] = useState(false);
@@ -67,9 +70,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const rafRef = useRef(0);
 
   const drive: CraftChronoState =
-    mode === "look"
-      ? sampleCraftChrono(scrub * CRAFT_CHRONO_DURATION)
-      : chrono;
+    mode === "look" ? poseFromSunPosition(scrub) : chrono;
 
   useEffect(() => {
     skyIntroRef.active = true;
@@ -128,6 +129,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
       coronaIrregular,
       coronaRays,
       coronaSoft,
+      photonAmp,
       diamondAmp: drive.diamondMul,
       alignment: drive.alignment,
       bodyFade: drive.bodyFade,
@@ -143,6 +145,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
       coronaIrregular,
       coronaRays,
       coronaSoft,
+      photonAmp,
       drive,
     ],
   );
@@ -152,34 +155,36 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const copy =
     locale === "en"
       ? {
-          title: "Eclipse craft · diamond → wash → sky",
-          sub: "Totality hold · bottom diamond (logo glow) · white flood · sanctuary",
+          title: "Eclipse craft · sun pose",
+          sub: "Scrub moves the sun. Ending rebuilt plan by plan from your frames.",
           look: "Look",
-          play: "Play chrono",
+          play: "Play approach",
           corona: "Corona intensity",
           coronaSpread: "Corona spread",
           coronaIrregular: "Corona irregularity",
           coronaRays: "Corona rays",
           coronaSoft: "Corona softness",
-          progress: "Timeline scrub",
-          moon: "Black hole size",
+          progress: "Sun pos.",
+          photon: "Photon ring",
+          moon: "Hole size",
           sun: "Sun size",
-          hint: "Discs & corona knobs are independent. Moon only occludes.",
+          hint: "Photon ring off by default. Horizontal knobs — more room for the frame.",
         }
       : {
-          title: "Craft Éclipse · diamond → wash → ciel",
-          sub: "Totalité · diamond bas (glow logo) · blanc · Sanctuaire",
+          title: "Craft Éclipse · pose soleil",
+          sub: "Le scrub bouge le soleil. Fin à reconstruire plan par plan.",
           look: "Look",
-          play: "Lecture chrono",
+          play: "Lecture approche",
           corona: "Intensité corona",
           coronaSpread: "Diffusion corona",
           coronaIrregular: "Irrégularité corona",
           coronaRays: "Rayons / streamers",
           coronaSoft: "Douceur corona",
-          progress: "Scrub timeline",
-          moon: "Taille trou noir",
-          sun: "Taille soleil",
-          hint: "Disques & corona indépendants. La lune occulte seulement.",
+          progress: "Pos. soleil",
+          photon: "Anneau photon",
+          moon: "Trou noir",
+          sun: "Soleil",
+          hint: "Anneau photon off par défaut. Knobs horizontaux pour voir le cadre.",
         };
 
   return (
@@ -249,19 +254,19 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
       />
 
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-1 px-5 pt-6 md:px-10 md:pt-10">
-        <p className="text-[10px] font-light uppercase tracking-[0.32em] text-white/35">
+        <p className="text-xs font-light uppercase tracking-[0.28em] text-white/45 md:text-sm">
           {copy.title}
         </p>
-        <p className="text-xs font-light text-white/45">{copy.sub}</p>
+        <p className="text-sm font-light text-white/50 md:text-base">{copy.sub}</p>
       </div>
 
-      <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-black/60 px-5 py-4 backdrop-blur-md md:px-10">
-        <div className="mx-auto flex max-w-md flex-col gap-3">
+      <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-black/55 px-4 py-3 backdrop-blur-md md:px-6">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2.5">
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={enterLook}
-              className="rounded-sm border border-white/20 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-white/70 hover:border-white/40"
+              className="rounded-sm border border-white/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/75 hover:border-white/40"
             >
               {copy.look}
             </button>
@@ -269,106 +274,121 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
               type="button"
               onClick={playChrono}
               disabled={playing}
-              className="rounded-sm border border-white/15 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-white/50 hover:border-white/30 disabled:opacity-40"
+              className="rounded-sm border border-white/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/55 hover:border-white/30 disabled:opacity-40"
             >
               {playing ? "…" : copy.play}
             </button>
+            <p className="ml-auto hidden text-[11px] font-light tracking-wide text-white/30 sm:block">
+              {copy.hint}
+            </p>
           </div>
           {mode === "look" && (
-            <>
-              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.progress}
-                <input
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.005}
-                  value={scrub}
-                  onChange={(e) => setScrub(Number(e.target.value))}
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.corona}
-                <input
-                  type="range"
-                  min={0.3}
-                  max={2}
-                  step={0.01}
-                  value={coronaAmp}
-                  onChange={(e) => setCoronaAmp(Number(e.target.value))}
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.coronaSpread}
-                <input
-                  type="range"
-                  min={0.4}
-                  max={2.2}
-                  step={0.01}
-                  value={coronaSpread}
-                  onChange={(e) => setCoronaSpread(Number(e.target.value))}
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.coronaIrregular}
-                <input
-                  type="range"
-                  min={0}
-                  max={2}
-                  step={0.01}
-                  value={coronaIrregular}
-                  onChange={(e) => setCoronaIrregular(Number(e.target.value))}
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.coronaRays}
-                <input
-                  type="range"
-                  min={0}
-                  max={2}
-                  step={0.01}
-                  value={coronaRays}
-                  onChange={(e) => setCoronaRays(Number(e.target.value))}
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.coronaSoft}
-                <input
-                  type="range"
-                  min={0.4}
-                  max={2.2}
-                  step={0.01}
-                  value={coronaSoft}
-                  onChange={(e) => setCoronaSoft(Number(e.target.value))}
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.moon}
-                <input
-                  type="range"
-                  min={0.4}
-                  max={2}
-                  step={0.01}
-                  value={moonScale}
-                  onChange={(e) => setMoonScale(Number(e.target.value))}
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.sun}
-                <input
-                  type="range"
-                  min={0.4}
-                  max={2}
-                  step={0.01}
-                  value={sunScale}
-                  onChange={(e) => setSunScale(Number(e.target.value))}
-                />
-              </label>
-            </>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9">
+              {(
+                [
+                  {
+                    key: "progress",
+                    label: copy.progress,
+                    min: 0,
+                    max: 1,
+                    step: 0.005,
+                    value: scrub,
+                    onChange: setScrub,
+                  },
+                  {
+                    key: "corona",
+                    label: copy.corona,
+                    min: 0.3,
+                    max: 2,
+                    step: 0.01,
+                    value: coronaAmp,
+                    onChange: setCoronaAmp,
+                  },
+                  {
+                    key: "spread",
+                    label: copy.coronaSpread,
+                    min: 0.4,
+                    max: 2.2,
+                    step: 0.01,
+                    value: coronaSpread,
+                    onChange: setCoronaSpread,
+                  },
+                  {
+                    key: "irreg",
+                    label: copy.coronaIrregular,
+                    min: 0,
+                    max: 2,
+                    step: 0.01,
+                    value: coronaIrregular,
+                    onChange: setCoronaIrregular,
+                  },
+                  {
+                    key: "rays",
+                    label: copy.coronaRays,
+                    min: 0,
+                    max: 2,
+                    step: 0.01,
+                    value: coronaRays,
+                    onChange: setCoronaRays,
+                  },
+                  {
+                    key: "soft",
+                    label: copy.coronaSoft,
+                    min: 0.4,
+                    max: 2.2,
+                    step: 0.01,
+                    value: coronaSoft,
+                    onChange: setCoronaSoft,
+                  },
+                  {
+                    key: "photon",
+                    label: copy.photon,
+                    min: 0,
+                    max: 2,
+                    step: 0.01,
+                    value: photonAmp,
+                    onChange: setPhotonAmp,
+                  },
+                  {
+                    key: "moon",
+                    label: copy.moon,
+                    min: 0.4,
+                    max: 2,
+                    step: 0.01,
+                    value: moonScale,
+                    onChange: setMoonScale,
+                  },
+                  {
+                    key: "sun",
+                    label: copy.sun,
+                    min: 0.4,
+                    max: 2,
+                    step: 0.01,
+                    value: sunScale,
+                    onChange: setSunScale,
+                  },
+                ] as const
+              ).map((knob) => (
+                <label
+                  key={knob.key}
+                  className="flex min-w-0 flex-col gap-1 text-[11px] uppercase tracking-[0.12em] text-white/55"
+                >
+                  <span className="truncate font-medium text-white/70">
+                    {knob.label}
+                  </span>
+                  <input
+                    type="range"
+                    className="h-2 w-full accent-white"
+                    min={knob.min}
+                    max={knob.max}
+                    step={knob.step}
+                    value={knob.value}
+                    onChange={(e) => knob.onChange(Number(e.target.value))}
+                  />
+                </label>
+              ))}
+            </div>
           )}
-          <p className="text-[10px] font-light tracking-wide text-white/30">
-            {copy.hint}
-          </p>
         </div>
       </div>
     </main>

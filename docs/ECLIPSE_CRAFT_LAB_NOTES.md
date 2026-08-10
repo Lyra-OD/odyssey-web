@@ -4,8 +4,8 @@
 **Preview :** `/fr/contribute/test-eclipse`  
 **Fichiers actifs :**
 - [`EclipseDisc.tsx`](../src/components/contribute/constellation/EclipseDisc.tsx) — shader craft
-- [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts) — chrono ~5.2 s
-- [`EclipseCraftLab.tsx`](../src/components/contribute/EclipseCraftLab.tsx) — UI Look / Lecture chrono
+- [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts) — approche ~2.4 s + pose soleil
+- [`EclipseCraftLab.tsx`](../src/components/contribute/EclipseCraftLab.tsx) — UI Look / Lecture approche
 
 **Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) (bible ciel) · intro sanctuary encore **OFF** jusqu’à validation look.
 
@@ -13,18 +13,17 @@
 
 ## 1. Où on s’arrête ce soir
 
-**Paradigme actuel (session 10 août 2026) :**
+**Paradigme actuel (session 10 août 2026 — rebuild fin) :**
 
 | Élément | Comportement |
 |---------|----------------|
 | Trou noir / lune | **Fixe** au centre, disque opaque |
-| Soleil | Arrive de la droite et **s’arrête derrière** (pas de croissant de sortie) |
-| Totalité | Hold ~**1 s** + corona soie |
-| Diamond | **Bas** (~4–5h), glow blanc façon logo Odyssey (noyau + falloffs) |
-| Fin | Wash blanc depuis le bas → noir → **ciel Sanctuaire** |
-| Look scrub | = même timeline que Lecture chrono |
+| Soleil | Scrub Look = **position libre** (0 droite → 1 derrière) |
+| Chrono | Approche seule (~2.4 s), soleil se gare — **pas de fin auto** |
+| Diamond / wash / ciel | **Coupés** — à reconstruire plan par plan depuis captures |
+| Knobs | Tailles lune/soleil + corona indépendants |
 
-Voir aussi timeline dans `eclipseCraftTimeline.ts` (~5.8 s).
+Direction validée (à re-ship plus tard) : totalité hold → diamond bas glow logo → wash blanc bas → noir → ciel.
 
 ---
 

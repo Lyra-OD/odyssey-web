@@ -41,6 +41,7 @@ uniform float uCoronaIrregular;
 uniform float uCoronaRays;
 uniform float uCoronaSoft;
 uniform float uDiamond;
+uniform float uPhoton;
 uniform float uAlignment;
 uniform float uBodyFade;
 uniform float uProgress;
@@ -184,13 +185,14 @@ void main() {
     (0.95 + 0.08 * breath) *
     uBodyFade;
 
-  // Anneau de totalité (photon) — fin, sous les streamers
+  // Anneau de totalité (photon) — knob lab ; 0 = off
   float limb =
     exp(-pow(sdfMoon * 78.0, 2.0)) *
     smoothstep(-0.01, 0.005, sdfMoon) *
     totality *
     (1.8 + 0.4 * breath) *
-    uBodyFade;
+    uBodyFade *
+    max(uPhoton, 0.0);
   float photon = limb;
 
   // Diamond ring BAS — recette glow logo Odyssey (noyau + 2–3 falloffs blancs)
@@ -288,6 +290,8 @@ export type EclipseCraftDrive = {
   coronaRays: number;
   /** Softness du falloff (plus haut = plus diffus). */
   coronaSoft: number;
+  /** Anneau photon / halo limbe (0 = off). */
+  photonAmp: number;
   diamondAmp: number;
   alignment: number;
   bodyFade: number;
@@ -331,6 +335,7 @@ export function EclipseDisc({ tier, craft }: Props) {
           uCoronaRays: { value: 1 },
           uCoronaSoft: { value: 1 },
           uDiamond: { value: 0 },
+          uPhoton: { value: 0 },
           uAlignment: { value: 1 },
           uBodyFade: { value: 1 },
           uProgress: { value: 0 },
@@ -385,6 +390,9 @@ export function EclipseDisc({ tier, craft }: Props) {
       if (!material.uniforms.uCoronaSoft) {
         material.uniforms.uCoronaSoft = { value: 1 };
       }
+      if (!material.uniforms.uPhoton) {
+        material.uniforms.uPhoton = { value: 0 };
+      }
       if (!material.uniforms.uOffset) {
         material.uniforms.uOffset = { value: new Vector2(0, 0) };
       }
@@ -408,6 +416,7 @@ export function EclipseDisc({ tier, craft }: Props) {
         mat.uniforms.uCoronaIrregular = { value: 1 };
       if (!mat.uniforms.uCoronaRays) mat.uniforms.uCoronaRays = { value: 1 };
       if (!mat.uniforms.uCoronaSoft) mat.uniforms.uCoronaSoft = { value: 1 };
+      if (!mat.uniforms.uPhoton) mat.uniforms.uPhoton = { value: 0 };
       mat.uniforms.uTime.value = clock.elapsedTime;
       mat.uniforms.uOpacity.value = 1;
       mat.uniforms.uCoronaAmp.value =
@@ -416,6 +425,7 @@ export function EclipseDisc({ tier, craft }: Props) {
       mat.uniforms.uCoronaIrregular.value = craft.coronaIrregular;
       mat.uniforms.uCoronaRays.value = craft.coronaRays;
       mat.uniforms.uCoronaSoft.value = craft.coronaSoft;
+      mat.uniforms.uPhoton.value = craft.photonAmp;
       mat.uniforms.uDiamond.value =
         craft.step >= 2 ? craft.diamondAmp : 0;
       mat.uniforms.uAlignment.value = craft.alignment;
