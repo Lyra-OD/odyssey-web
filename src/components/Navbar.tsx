@@ -18,9 +18,12 @@ const MOBILE_PANEL_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 export function Navbar({
   lang,
   dictionary,
+  /** Accueil seulement : wordmark glow login (éclipse derrière = classique). */
+  craftHomeBrand = false,
 }: {
   lang: Locale;
   dictionary: AppDictionary["header"];
+  craftHomeBrand?: boolean;
 }) {
   const t = dictionary;
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -126,9 +129,20 @@ export function Navbar({
               playsInline
               className="absolute top-1/2 left-[60%] -translate-x-1/2 -translate-y-1/2 min-w-[250%] h-[300%] max-w-none object-cover mix-blend-screen opacity-20 pointer-events-none transition-all duration-1000 ease-out group-hover/odyssey:opacity-40 group-hover/odyssey:scale-110"
             />
-            <span className="relative z-[1] font-brand truncate text-[clamp(0.8125rem,3.2vw,1.4375rem)] font-light uppercase leading-none tracking-[0.48em] text-zinc-300 transition-colors duration-300 group-hover:text-violet-200 sm:tracking-[0.55em] md:text-[23px] md:tracking-[0.62em]">
-              {t.logoFallback}
-            </span>
+            {craftHomeBrand ? (
+              <span
+                className="odyssey-connexion-mark odyssey-connexion-mark-reveal relative z-[1] inline-block font-brand truncate text-[clamp(0.8125rem,3.2vw,1.4375rem)] font-light uppercase leading-none tracking-[0.48em] text-white sm:tracking-[0.55em] md:text-[23px] md:tracking-[0.62em]"
+              >
+                <span aria-hidden className="odyssey-connexion-mark-glow select-none">
+                  {t.logoFallback}
+                </span>
+                <span className="relative">{t.logoFallback}</span>
+              </span>
+            ) : (
+              <span className="relative z-[1] font-brand truncate text-[clamp(0.8125rem,3.2vw,1.4375rem)] font-light uppercase leading-none tracking-[0.48em] text-zinc-300 transition-colors duration-300 group-hover:text-violet-200 sm:tracking-[0.55em] md:text-[23px] md:tracking-[0.62em]">
+                {t.logoFallback}
+              </span>
+            )}
           </span>
         </MotionLink>
 

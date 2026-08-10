@@ -41,7 +41,7 @@ export default async function HomePage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-[#030303] text-zinc-100 antialiased">
-      <Navbar lang={lang} dictionary={dictionary.header} />
+      <Navbar lang={lang} dictionary={dictionary.header} craftHomeBrand />
       <Hero lang={lang} dictionary={dictionary.hero} headerNav={dictionary.header.nav} />
       <Manifesto lang={lang} dictionary={dictionary.manifesto} />
       <Process lang={lang} dictionary={dictionary.process} />
