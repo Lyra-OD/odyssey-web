@@ -29,3 +29,7 @@ dist-ssr
 !.env.example
 .env*.local
 backups/
+
+# Logo capture intermediates (keep final gif/apng/mp4/still)
+docs/brand/odyssey-eclipse/frames/
+docs/brand/odyssey-eclipse/palette.png

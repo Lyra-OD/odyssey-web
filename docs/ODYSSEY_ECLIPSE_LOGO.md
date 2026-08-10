@@ -91,22 +91,34 @@ import { OdysseyEclipseMark } from "@/src/components/contribute/OdysseyEclipseMa
 - `animate={false}` → Vie coupée (image figée).
 - `fill` + parent `aspect-square` → taille responsive.
 
-### B. Modifier la recette
+### B. Exports pour DA (GIF / PNG animé)
+
+Dossier : [`docs/brand/odyssey-eclipse/`](brand/odyssey-eclipse/)
+
+| Fichier | Format |
+|---------|--------|
+| `odyssey-eclipse-logo.gif` | GIF animé |
+| `odyssey-eclipse-logo.apng.png` | PNG animé (APNG) |
+| `odyssey-eclipse-logo-still.png` | PNG fixe |
+| `odyssey-eclipse-logo.mp4` | Boucle MP4 |
+
+Page capture propre : `/fr/contribute/test-eclipse-mark-export`.
+
+### C. Modifier la recette
 
 1. Itérer dans le **lab** jusqu’à validation visuelle.
 2. Copier les readouts numériques dans `ECLIPSE_LOGO_RECIPE`.
 3. Mettre à jour **ce document** (§2) dans le même commit.
 4. Vérifier `/test-eclipse-mark`.
 
-### C. Envoyer ailleurs / handoff externe
+### D. Envoyer ailleurs / handoff externe
 
 Donner ce fichier + pointer :
 
 - Preview : `…/fr/contribute/test-eclipse-mark` (dev)
 - Recette tableau §2
 - Code : `eclipseLogoRecipe.ts` + `OdysseyEclipseMark.tsx`
-
-**Export** (hors scope produit pour l’instant) : capture PNG avec `animate={false}`, ou enregistrement écran / WebM depuis la preview. Pas encore de pipeline Lottie/SVG officiel.
+- Exports DA : `docs/brand/odyssey-eclipse/`
 
 ---
 
