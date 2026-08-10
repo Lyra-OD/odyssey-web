@@ -13,18 +13,18 @@
 
 ## 1. Où on s’arrête ce soir
 
-**Paradigme actuel (à garder comme base demain) :**
+**Paradigme actuel (session 10 août 2026) :**
 
 | Élément | Comportement |
 |---------|----------------|
 | Trou noir / lune | **Fixe** au centre, disque opaque |
-| Soleil | **Glisse** droite → gauche **derrière** le trou noir |
-| Phase slider / chrono | `uAlignment` 0 → 0.5 (totalité) → 1 (sortie + ciel) |
-| Corona | Soie FBM blanche Odyssey, chevauche le limbe (pas de couture noire) |
-| Diamond | Contacts C2/C3 doux, côté = direction vers le soleil |
-| Bloom | Sélectif, pas un flash violent |
+| Soleil | Arrive de la droite et **s’arrête derrière** (pas de croissant de sortie) |
+| Totalité | Hold ~**1 s** + corona soie |
+| Diamond | **Bas** (~4–5h), glow blanc façon logo Odyssey (noyau + falloffs) |
+| Fin | Wash blanc depuis le bas → noir → **ciel Sanctuaire** |
+| Look scrub | = même timeline que Lecture chrono |
 
-**Non retenu ce soir :** resize dynamique du soleil + corona/rayons qui changent avec la proximité (essayé, **rejeté** — revenir en arrière demandé).
+Voir aussi timeline dans `eclipseCraftTimeline.ts` (~5.8 s).
 
 ---
 

@@ -9,6 +9,7 @@ import { GhostStars } from "@/src/components/contribute/constellation/GhostStars
 import { NebulaGasFar } from "@/src/components/contribute/constellation/NebulaGasFar";
 import {
   CRAFT_CHRONO_DURATION,
+  CRAFT_CHRONO_IDLE,
   CRAFT_CHRONO_SILENCE,
   sampleCraftChrono,
   type CraftChronoState,
@@ -43,49 +44,43 @@ function ForceRenderLoop() {
   return null;
 }
 
-const LOOK_IDLE: CraftChronoState = {
-  alignment: 0,
-  coronaMul: 1,
-  diamondMul: 0,
-  bodyFade: 1,
-  skyMul: 0,
-  bloom: 0,
-  progress: 0,
-  offsetX: 0,
-  offsetY: 0,
-};
-
 type Locale = "fr" | "en";
 
 /**
- * Craft — trou noir / lentille + burn-away (avant look-dev plein écran).
+ * Craft lab — occultation → totalité → diamond bas → wash → ciel.
  */
 export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
-  const [scaleMul, setScaleMul] = useState(1);
+  const [moonScale, setMoonScale] = useState(1);
+  const [sunScale, setSunScale] = useState(1);
   const [coronaAmp, setCoronaAmp] = useState(1.2);
-  const [progress, setProgress] = useState(0);
+  const [coronaSpread, setCoronaSpread] = useState(1);
+  const [coronaIrregular, setCoronaIrregular] = useState(1);
+  const [coronaRays, setCoronaRays] = useState(1);
+  const [coronaSoft, setCoronaSoft] = useState(1);
+  /** Look scrub 0–1 = timeline entière. */
+  const [scrub, setScrub] = useState(0);
   const [mode, setMode] = useState<"look" | "chrono">("look");
   const [playing, setPlaying] = useState(false);
-  const [chrono, setChrono] = useState<CraftChronoState>(LOOK_IDLE);
+  const [chrono, setChrono] = useState<CraftChronoState>(CRAFT_CHRONO_IDLE);
   const startRef = useRef<number | null>(null);
   const rafRef = useRef(0);
 
+  const drive: CraftChronoState =
+    mode === "look"
+      ? sampleCraftChrono(scrub * CRAFT_CHRONO_DURATION)
+      : chrono;
+
   useEffect(() => {
     skyIntroRef.active = true;
-    const skyFromPhase =
-      mode === "look"
-        ? Math.max(0, (progress - 0.88) / 0.12)
-        : chrono.skyMul;
-    skyIntroRef.skyMul = skyFromPhase;
-    skyIntroRef.disc =
-      mode === "look" ? 1 - skyFromPhase : chrono.bodyFade;
+    skyIntroRef.skyMul = drive.skyMul;
+    skyIntroRef.disc = drive.bodyFade;
     return () => {
       skyIntroRef.active = false;
       skyIntroRef.skyMul = 1;
       skyIntroRef.disc = 0;
     };
-  }, [chrono.skyMul, chrono.bodyFade, progress, mode]);
+  }, [drive.skyMul, drive.bodyFade]);
 
   useEffect(() => {
     if (!playing || mode !== "chrono") return;
@@ -109,71 +104,82 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const enterLook = () => {
     setPlaying(false);
     setMode("look");
-    setChrono(LOOK_IDLE);
-    setProgress(0);
+    setChrono(CRAFT_CHRONO_IDLE);
+    setScrub(0);
     skyIntroRef.skyMul = 0;
   };
 
   const playChrono = () => {
     setPlaying(false);
     setMode("chrono");
-    setProgress(0);
+    setScrub(0);
     setChrono(CRAFT_CHRONO_SILENCE);
-    // Relance au prochain tick (évite race playing déjà true)
     requestAnimationFrame(() => setPlaying(true));
   };
 
   const craft = useMemo(
-    () => {
-      const phase = mode === "look" ? progress : chrono.alignment;
-      const skyOut =
-        mode === "look"
-          ? Math.max(0, (progress - 0.9) / 0.1)
-          : chrono.progress;
-      return {
-        step: 3 as const,
-        showGuide: false,
-        scaleMul,
-        coronaAmp: coronaAmp * chrono.coronaMul,
-        diamondAmp: chrono.diamondMul,
-        alignment: phase,
-        bodyFade: mode === "look" ? 1 - skyOut * 0.85 : chrono.bodyFade,
-        progress: skyOut,
-        offsetX: 0,
-        offsetY: 0,
-      };
-    },
-    [scaleMul, coronaAmp, chrono, mode, progress],
+    () => ({
+      step: 3 as const,
+      showGuide: false,
+      moonScale,
+      sunScale,
+      coronaAmp: coronaAmp * drive.coronaMul,
+      coronaSpread,
+      coronaIrregular,
+      coronaRays,
+      coronaSoft,
+      diamondAmp: drive.diamondMul,
+      alignment: drive.alignment,
+      bodyFade: drive.bodyFade,
+      progress: drive.progress,
+      offsetX: 0,
+      offsetY: 0,
+    }),
+    [
+      moonScale,
+      sunScale,
+      coronaAmp,
+      coronaSpread,
+      coronaIrregular,
+      coronaRays,
+      coronaSoft,
+      drive,
+    ],
   );
 
-  // Bloom très doux — le diamond ne doit plus flasher
-  const bloomIntensity =
-    0.42 +
-    (mode === "look"
-      ? 0.25 + Math.exp(-Math.pow((progress - 0.5) * 5, 2)) * 0.15
-      : 0.2 + chrono.bloom * 0.35);
+  const bloomIntensity = 0.38 + drive.bloom * 0.55 + drive.diamondMul * 0.25;
 
   const copy =
     locale === "en"
       ? {
-          title: "Eclipse craft · full transit",
-          sub: "Black hole fixed · sun passes behind · soft contacts",
+          title: "Eclipse craft · diamond → wash → sky",
+          sub: "Totality hold · bottom diamond (logo glow) · white flood · sanctuary",
           look: "Look",
           play: "Play chrono",
-          corona: "Corona",
-          progress: "Eclipse phase",
-          scale: "Disc size",
-          hint: "0 start · 0.5 totality · 1 exit + sky. Chrono = same path.",
+          corona: "Corona intensity",
+          coronaSpread: "Corona spread",
+          coronaIrregular: "Corona irregularity",
+          coronaRays: "Corona rays",
+          coronaSoft: "Corona softness",
+          progress: "Timeline scrub",
+          moon: "Black hole size",
+          sun: "Sun size",
+          hint: "Discs & corona knobs are independent. Moon only occludes.",
         }
       : {
-          title: "Craft Éclipse · transit complet",
-          sub: "Trou noir fixe · soleil passe derrière · contacts doux",
+          title: "Craft Éclipse · diamond → wash → ciel",
+          sub: "Totalité · diamond bas (glow logo) · blanc · Sanctuaire",
           look: "Look",
           play: "Lecture chrono",
-          corona: "Corona",
-          progress: "Phase éclipse",
-          scale: "Taille disques",
-          hint: "0 départ · 0.5 totalité · 1 sortie + ciel. La chrono = même trajet.",
+          corona: "Intensité corona",
+          coronaSpread: "Diffusion corona",
+          coronaIrregular: "Irrégularité corona",
+          coronaRays: "Rayons / streamers",
+          coronaSoft: "Douceur corona",
+          progress: "Scrub timeline",
+          moon: "Taille trou noir",
+          sun: "Taille soleil",
+          hint: "Disques & corona indépendants. La lune occulte seulement.",
         };
 
   return (
@@ -211,7 +217,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
                 <EclipseDisc tier="desktop" craft={craft} />
                 <EffectComposer multisampling={0}>
                   <Bloom
-                    luminanceThreshold={0.7}
+                    luminanceThreshold={0.75}
                     luminanceSmoothing={0.35}
                     intensity={bloomIntensity}
                     mipmapBlur
@@ -223,13 +229,22 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
         </div>
       </ClientWebGLGate>
 
+      {/* Wash blanc depuis le bas — ADN glow logo, pas bloom Three */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 z-10"
         style={{
-          opacity: chrono.bloom * 0.5,
-          background:
-            "radial-gradient(ellipse at 32% 48%, rgba(255,255,255,0.8) 0%, transparent 55%)",
+          opacity: Math.min(1, drive.wash * 1.05),
+          background: `
+            radial-gradient(
+              ellipse 120% 90% at 50% 92%,
+              rgba(255,255,255,1) 0%,
+              rgba(255,255,255,0.92) 28%,
+              rgba(255,255,255,0.45) 55%,
+              rgba(255,255,255,0) 78%
+            ),
+            rgba(255,255,255,${Math.min(1, Math.max(0, drive.wash - 0.35) * 1.4)})
+          `,
         }}
       />
 
@@ -268,8 +283,8 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
                   min={0}
                   max={1}
                   step={0.005}
-                  value={progress}
-                  onChange={(e) => setProgress(Number(e.target.value))}
+                  value={scrub}
+                  onChange={(e) => setScrub(Number(e.target.value))}
                 />
               </label>
               <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
@@ -284,14 +299,69 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
                 />
               </label>
               <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
-                {copy.scale}
+                {copy.coronaSpread}
                 <input
                   type="range"
-                  min={0.6}
-                  max={1.6}
+                  min={0.4}
+                  max={2.2}
                   step={0.01}
-                  value={scaleMul}
-                  onChange={(e) => setScaleMul(Number(e.target.value))}
+                  value={coronaSpread}
+                  onChange={(e) => setCoronaSpread(Number(e.target.value))}
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
+                {copy.coronaIrregular}
+                <input
+                  type="range"
+                  min={0}
+                  max={2}
+                  step={0.01}
+                  value={coronaIrregular}
+                  onChange={(e) => setCoronaIrregular(Number(e.target.value))}
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
+                {copy.coronaRays}
+                <input
+                  type="range"
+                  min={0}
+                  max={2}
+                  step={0.01}
+                  value={coronaRays}
+                  onChange={(e) => setCoronaRays(Number(e.target.value))}
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
+                {copy.coronaSoft}
+                <input
+                  type="range"
+                  min={0.4}
+                  max={2.2}
+                  step={0.01}
+                  value={coronaSoft}
+                  onChange={(e) => setCoronaSoft(Number(e.target.value))}
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
+                {copy.moon}
+                <input
+                  type="range"
+                  min={0.4}
+                  max={2}
+                  step={0.01}
+                  value={moonScale}
+                  onChange={(e) => setMoonScale(Number(e.target.value))}
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-[10px] uppercase tracking-[0.18em] text-white/40">
+                {copy.sun}
+                <input
+                  type="range"
+                  min={0.4}
+                  max={2}
+                  step={0.01}
+                  value={sunScale}
+                  onChange={(e) => setSunScale(Number(e.target.value))}
                 />
               </label>
             </>

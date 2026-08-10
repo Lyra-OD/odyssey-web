@@ -29,17 +29,23 @@ void main() {
 `;
 
 /**
- * Craft — transit : trou noir fixe, soleil passe derrière (droite → gauche).
- * uAlignment = phase 0→1 (0.5 = totalité). uProgress = révélation ciel.
+ * Craft — occultation → totalité → diamond bas (glow logo) → fin cinéma hors shader.
+ * uAlignment 0→1 = soleil se gare derrière (pas de sortie).
+ * uDiamond = diamond ring bas. uProgress / uBodyFade = sortie vers ciel.
  */
 const craftFragment = /* glsl */ `
 uniform float uOpacity;
 uniform float uCoronaAmp;
+uniform float uCoronaSpread;
+uniform float uCoronaIrregular;
+uniform float uCoronaRays;
+uniform float uCoronaSoft;
 uniform float uDiamond;
 uniform float uAlignment;
 uniform float uBodyFade;
 uniform float uProgress;
-uniform float uSingularityScale;
+uniform float uMoonScale;
+uniform float uSunScale;
 uniform float uAspect;
 uniform float uTime;
 uniform vec2 uOffset;
@@ -74,22 +80,19 @@ void main() {
   vec2 p = vUv * 2.0 - 1.0;
   p.x *= uAspect;
 
-  // Phase unique : 0 départ · 0.5 totalité · 1 fin
   float phase = clamp(uAlignment, 0.0, 1.0);
   float skyOut = clamp(uProgress, 0.0, 1.0);
   float breath = 1.0 + 0.018 * sin(uTime * 0.65);
 
-  float S = 0.37 * max(uSingularityScale, 0.5);
-  float Rsun = S * 0.90;
-  float Rmoon = S * 1.04;
+  // Bases identiques → slider égal = même rayon disque (contrôle 1:1)
+  float Rmoon = 0.36 * max(uMoonScale, 0.35);
+  float Rsun = 0.36 * max(uSunScale, 0.35);
 
-  // Trou noir fixe
+  // Trou noir fixe — soleil arrive de la droite et S'ARRÊTE derrière
   vec2 moon = vec2(0.0, 0.0);
-  // Soleil : arc droite → gauche (passe derrière)
   float travel = 0.78 * max(uAspect, 1.0);
-  float sunX = mix(travel, -travel, phase) + uOffset.x * 0.2;
-  float sunY = -0.025 + 0.035 * sin(phase * 3.14159265) + uOffset.y * 0.2;
-  vec2 sun = vec2(sunX, sunY);
+  vec2 sunStart = vec2(travel, -0.02) + uOffset * 0.2;
+  vec2 sun = mix(sunStart, moon, phase);
 
   vec2 qSun = p - sun;
   float rSun = length(qSun);
@@ -103,60 +106,77 @@ void main() {
   float sdfSun = rSun - Rsun;
 
   float moonMask = 1.0 - smoothstep(-0.0025, 0.0025, sdfMoon);
-  float sunMask = 1.0 - smoothstep(-0.003, 0.003, sdfSun);
-  float sunVisible = sunMask * (1.0 - moonMask);
 
-  // Séparation centres → couverture / totalité
   float d = length(sun - moon);
-  float cTot = max(Rmoon - Rsun, 0.001);
+  float cTot = max(abs(Rmoon - Rsun), 0.001);
   float cExt = Rmoon + Rsun;
   float overlap = 1.0 - smoothstep(cTot, cExt, d);
-  float totality = 1.0 - smoothstep(0.0, cTot * 1.15, d);
+  float totality = phase > 0.92
+    ? (1.0 - smoothstep(0.0, max(Rmoon - Rsun, 0.001) * 1.2, d))
+    : 0.0;
 
-  // Limb darkening léger (pas de collier noir au bord)
   float limbDark = mix(0.78, 1.0, pow(clamp(1.0 - rSun / max(Rsun, 1e-3), 0.0, 1.0), 0.7));
 
-  // Corona soie — chevauche le limbe (pas de trou noir entre disque et glow)
   float distSun = max(0.0, sdfSun);
-  float t = uTime * 0.028;
-  vec2 boil =
-    dirSun * 2.35 +
-    vec2(distSun * 2.5, t * 0.5) +
-    vec2(
-      fbm(dirSun * 1.55 + vec2(t * 1.0, distSun)) * 0.4,
-      fbm(dirSun * 1.85 - vec2(t * 0.75, 2.2)) * 0.4
-    );
-  float n1 = fbm(boil + vec2(t * 0.35, 0.0));
-  float n2 = fbm(boil * 1.8 + vec2(-t * 0.22, 3.3));
-  float silk = 0.52 + 0.48 * n1;
-  float feathers = pow(max(0.0, n2), 2.25) * 0.62;
-  float spokes =
-    pow(max(0.0, n1 * 0.65 + n2 * 0.35), 3.3) * exp(-distSun * 2.4) * 0.45;
 
-  // nearHalo commence un peu AVANT le bord (chevauchement)
-  float nearHalo = exp(-pow(max(distSun - 0.008, 0.0) * 3.2, 1.15));
-  float midVeil = exp(-pow(distSun * 1.85, 1.1)) * 0.55;
-  float farVeil = exp(-pow(distSun * 1.2, 1.05)) * 0.42;
-  float asym = 0.86 + 0.14 * clamp(0.5 + 0.4 * dirSun.y, 0.0, 1.0);
+  // —— Corona 100% soleil (taille lune n’influence que le masque d’occlusion) ——
+  float spread = max(uCoronaSpread, 0.25);
+  float irreg = clamp(uCoronaIrregular, 0.0, 2.5);
+  float rays = clamp(uCoronaRays, 0.0, 2.5);
+  float soft = max(uCoronaSoft, 0.25);
 
-  float coronaField =
-    asym * (
-      nearHalo * silk * 1.2 +
-      midVeil * (0.4 + feathers) +
-      farVeil * (0.3 + feathers * 0.55) +
-      spokes * 0.55
-    );
-  float coronaGate = mix(0.9, 1.3, pow(overlap, 1.1));
-  // Corona aussi un peu sous le limbe (évite le ring noir)
-  float coronaMask = 1.0 - moonMask * 0.92;
+  vec2 dirC = dirSun;
+  float distN = distSun / max(Rsun * spread, 0.04);
+
+  float t = uTime * 0.018;
+  float angA = fbm(dirC * (2.2 + irreg * 1.4) + vec2(t * 0.12, 1.9));
+  float angB = fbm(dirC * (4.0 + irreg * 2.2) - vec2(2.4, t * 0.08));
+  float plumeGate = mix(0.55, 0.2 + 0.8 * pow(clamp(angA, 0.0, 1.0), 1.35), clamp(irreg, 0.0, 1.0));
+  float plumeLen = mix(1.0, mix(0.55, 1.9, pow(clamp(angB, 0.0, 1.0), 1.15)), clamp(irreg * 0.85, 0.0, 1.0));
+
+  vec2 fiberUV =
+    dirC * (2.5 + angA * (0.6 + irreg * 0.9)) +
+    vec2(distN * (1.0 / max(plumeLen, 0.45)), t * 0.35);
+  float fiber = fbm(fiberUV);
+  float fiber2 = fbm(fiberUV * (1.7 + irreg * 0.5) + vec2(3.2, -1.4));
+  float silk = 0.4 + 0.6 * fiber;
+  float wisps = pow(max(0.0, fiber * 0.5 + fiber2 * 0.5), mix(2.2, 1.35, clamp(irreg * 0.5, 0.0, 1.0)));
+
+  float fallInner = 1.55 / soft;
+  float fallMid = (0.52 / soft) / max(plumeLen, 0.45);
+  float fallFar = (0.26 / soft) / max(plumeLen, 0.45);
+
+  float inner =
+    exp(-pow(distN * fallInner, 1.1)) *
+    (0.7 + 0.55 * silk) *
+    (0.85 + 0.35 * plumeGate);
+  float mid =
+    exp(-pow(distN * fallMid, 1.0)) *
+    wisps *
+    plumeGate *
+    (0.7 + 0.55 * rays);
+  float far =
+    exp(-pow(distN * fallFar, 0.9)) *
+    pow(wisps, 1.2) *
+    plumeGate *
+    (0.45 + 0.7 * rays);
+
+  float polarBias =
+    0.8 +
+    0.28 * abs(dirC.y) * irreg +
+    0.08 * dirC.x -
+    0.1 * max(-dirC.y, 0.0) * irreg;
+
+  float coronaField = polarBias * (inner * 1.15 + mid + far);
+  float coronaMask = 1.0 - moonMask;
   float corona =
-    coronaField * coronaMask * coronaGate * uCoronaAmp * breath * uBodyFade;
+    coronaField * coronaMask * uCoronaAmp * breath * uBodyFade;
 
-  // Photosphère soft + rim blanc (jamais un trait noir)
-  float softDisc = 1.0 - smoothstep(-0.012, 0.01, sdfSun);
+  float edgeW = max(Rsun * 0.035, 0.004);
+  float softDisc = 1.0 - smoothstep(-edgeW, edgeW, sdfSun);
   float rimSun =
     (1.0 - moonMask) *
-    exp(-pow(sdfSun * 48.0, 2.0)) *
+    exp(-pow((sdfSun / max(Rsun, 1e-3)) * 17.0, 2.0)) *
     0.7;
   float photosphere =
     (1.0 - moonMask) *
@@ -164,36 +184,40 @@ void main() {
     (0.95 + 0.08 * breath) *
     uBodyFade;
 
-  // Photon ring : uniquement en totalité
+  // Anneau de totalité (photon) — fin, sous les streamers
   float limb =
     exp(-pow(sdfMoon * 78.0, 2.0)) *
     smoothstep(-0.01, 0.005, sdfMoon) *
     totality *
-    (2.4 + 0.6 * breath) *
+    (1.8 + 0.4 * breath) *
     uBodyFade;
   float photon = limb;
 
-  // Diamond C2/C3 : côté = direction vers le soleil (bon bord auto)
-  vec2 toSun = (d > 1e-4) ? (sun - moon) / d : vec2(1.0, 0.0);
-  float nearContact = exp(-pow((d - cTot) * 36.0, 2.0));
-  float diamondGate = nearContact * (1.0 - totality * 0.9);
-  float beadAng = pow(max(0.0, dot(dirMoon, toSun)), 36.0);
-  float beadRad = exp(-pow(sdfMoon * 32.0, 2.0));
+  // Diamond ring BAS — recette glow logo Odyssey (noyau + 2–3 falloffs blancs)
+  // ~4–5h : un peu à droite du bas
+  vec2 beadDir = normalize(vec2(0.28, -0.96));
+  float beadAng = pow(max(0.0, dot(dirMoon, beadDir)), 26.0);
+  float core = exp(-pow(sdfMoon * 95.0, 2.0));
+  float midG = exp(-pow(sdfMoon * 42.0, 2.0)) * 0.55;
+  float softG = exp(-pow(sdfMoon * 16.0, 2.0)) * 0.22;
   float diamond =
-    (1.0 - moonMask) * diamondGate * beadAng * beadRad *
-    (0.35 + 0.9 * uDiamond) * uBodyFade;
+    (1.0 - moonMask) *
+    beadAng *
+    (core * 1.35 + midG + softG) *
+    uDiamond *
+    uBodyFade;
 
   vec3 col = vec3(1.0) * (
-    photosphere * 1.1 +
-    corona * 1.25 +
-    photon * 0.85 +
-    diamond * 1.35
+    photosphere * 1.05 +
+    corona * 1.4 +
+    photon * 0.75 +
+    diamond * 1.6
   );
   col *= 1.0 - moonMask;
   col *= uBodyFade;
   col *= 1.0 - skyOut;
 
-  float matter = max(photosphere, max(corona * 0.85, max(photon * 0.4, diamond * 0.7)));
+  float matter = max(photosphere, max(corona * 0.85, max(photon * 0.4, diamond * 0.85)));
   float alpha = matter * uBodyFade * (1.0 - skyOut) * uOpacity;
   alpha = max(alpha, moonMask * 0.98 * uBodyFade * (1.0 - skyOut) * uOpacity);
 
@@ -253,12 +277,20 @@ void main() {
 export type EclipseCraftDrive = {
   step: 1 | 2 | 3;
   showGuide: boolean;
-  scaleMul: number;
+  moonScale: number;
+  sunScale: number;
   coronaAmp: number;
+  /** Étendue du glow (1 = défaut). */
+  coronaSpread: number;
+  /** Asymétrie / plumes (0 = lisse, 1 = défaut, 2 = très irrégulier). */
+  coronaIrregular: number;
+  /** Force des streamers / rayons. */
+  coronaRays: number;
+  /** Softness du falloff (plus haut = plus diffus). */
+  coronaSoft: number;
   diamondAmp: number;
   alignment: number;
   bodyFade: number;
-  /** 0 = début, ~1 = sortie / ciel (après totalité). */
   progress: number;
   offsetX: number;
   offsetY: number;
@@ -294,11 +326,16 @@ export function EclipseDisc({ tier, craft }: Props) {
         uniforms: {
           uOpacity: { value: 1 },
           uCoronaAmp: { value: 1 },
+          uCoronaSpread: { value: 1 },
+          uCoronaIrregular: { value: 1 },
+          uCoronaRays: { value: 1 },
+          uCoronaSoft: { value: 1 },
           uDiamond: { value: 0 },
           uAlignment: { value: 1 },
           uBodyFade: { value: 1 },
           uProgress: { value: 0 },
-          uSingularityScale: { value: 1 },
+          uMoonScale: { value: 1 },
+          uSunScale: { value: 1 },
           uAspect: { value: 1 },
           uTime: { value: 0 },
           uOffset: { value: new Vector2(0, 0) },
@@ -325,27 +362,67 @@ export function EclipseDisc({ tier, craft }: Props) {
     });
   }, [isCraft, cfg.body, cfg.corona, cfg.rim, cfg.coronaAmp]);
 
+  // Recompile + uniforms si le fragment craft change (évite HMR qui garde uSingularityScale partagé)
   useEffect(() => {
     material.vertexShader = vertexShader;
     material.fragmentShader = isCraft ? craftFragment : skyFragment;
+    if (isCraft) {
+      if (!material.uniforms.uMoonScale) {
+        material.uniforms.uMoonScale = { value: 1 };
+      }
+      if (!material.uniforms.uSunScale) {
+        material.uniforms.uSunScale = { value: 1 };
+      }
+      if (!material.uniforms.uCoronaSpread) {
+        material.uniforms.uCoronaSpread = { value: 1 };
+      }
+      if (!material.uniforms.uCoronaIrregular) {
+        material.uniforms.uCoronaIrregular = { value: 1 };
+      }
+      if (!material.uniforms.uCoronaRays) {
+        material.uniforms.uCoronaRays = { value: 1 };
+      }
+      if (!material.uniforms.uCoronaSoft) {
+        material.uniforms.uCoronaSoft = { value: 1 };
+      }
+      if (!material.uniforms.uOffset) {
+        material.uniforms.uOffset = { value: new Vector2(0, 0) };
+      }
+      // Ancien uniform partagé — ne plus l’utiliser
+      if (material.uniforms.uSingularityScale) {
+        delete material.uniforms.uSingularityScale;
+      }
+    }
     material.needsUpdate = true;
-  }, [material, isCraft]);
+  }, [material, isCraft, craftFragment]);
 
   useFrame(({ clock }) => {
     const mat = matRef.current ?? material;
     const mesh = meshRef.current;
 
     if (craft) {
+      if (!mat.uniforms.uMoonScale) mat.uniforms.uMoonScale = { value: 1 };
+      if (!mat.uniforms.uSunScale) mat.uniforms.uSunScale = { value: 1 };
+      if (!mat.uniforms.uCoronaSpread) mat.uniforms.uCoronaSpread = { value: 1 };
+      if (!mat.uniforms.uCoronaIrregular)
+        mat.uniforms.uCoronaIrregular = { value: 1 };
+      if (!mat.uniforms.uCoronaRays) mat.uniforms.uCoronaRays = { value: 1 };
+      if (!mat.uniforms.uCoronaSoft) mat.uniforms.uCoronaSoft = { value: 1 };
       mat.uniforms.uTime.value = clock.elapsedTime;
       mat.uniforms.uOpacity.value = 1;
       mat.uniforms.uCoronaAmp.value =
         craft.step >= 2 ? craft.coronaAmp : 0;
+      mat.uniforms.uCoronaSpread.value = craft.coronaSpread;
+      mat.uniforms.uCoronaIrregular.value = craft.coronaIrregular;
+      mat.uniforms.uCoronaRays.value = craft.coronaRays;
+      mat.uniforms.uCoronaSoft.value = craft.coronaSoft;
       mat.uniforms.uDiamond.value =
         craft.step >= 2 ? craft.diamondAmp : 0;
       mat.uniforms.uAlignment.value = craft.alignment;
       mat.uniforms.uBodyFade.value = craft.bodyFade;
       mat.uniforms.uProgress.value = craft.progress;
-      mat.uniforms.uSingularityScale.value = Math.max(craft.scaleMul, 0.5);
+      mat.uniforms.uMoonScale.value = craft.moonScale;
+      mat.uniforms.uSunScale.value = craft.sunScale;
       mat.uniforms.uAspect.value = Math.max(size.width / size.height, 0.01);
       if (!mat.uniforms.uOffset) {
         mat.uniforms.uOffset = { value: new Vector2(0, 0) };
@@ -398,6 +475,7 @@ export function EclipseDisc({ tier, craft }: Props) {
 
   return (
     <mesh
+      key="eclipse-craft-disc-v2"
       ref={meshRef}
       visible={isCraft}
       position={craft ? [0, 0, 0] : cfg.position}
