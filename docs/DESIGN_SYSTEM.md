@@ -1,6 +1,6 @@
 # Odyssey — Design System
 
-**Dernière mise à jour : juillet 2026**
+**Dernière mise à jour : 10 août 2026** (marque Éclipse vivante §4.1)
 
 Guide visuel et produit pour l’ensemble du site Next.js (Studio B2C, Salon B2B2C, pages marketing). Complète [`CONVENTIONS.md`](CONVENTIONS.md) et [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).
 
@@ -193,6 +193,23 @@ L’éclipse est le **corps** ; le halo est l’**âme**. En `mix-blend-screen` 
 ```
 
 **Règle d’or :** ne jamais teinter l’éclipse selon l’état. Seul le **halo** change. Ne jamais ajouter une 2ᵉ vidéo éclipse derrière le wordmark (cf. `OdysseyConnexionMark`).
+
+#### Marque Éclipse vivante (craft → produit)
+
+> **Bible :** [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) — recette, handoff, reproduction.
+
+Composant **`OdysseyEclipseMark`** — disque noir + corona soie + diamond bas, **animé** via `Vie = 1` (shader craft). Distinct de :
+
+| Asset | Rôle |
+|-------|------|
+| `eclipse_login.mp4` | Fond connexion plein écran (cette section §4.1) |
+| `OdysseyConnexionMark` | Wordmark typo « Odyssey » |
+| `OdysseyEclipseMark` | **Marque disque** vivante (logo craft validé 10 août 2026) |
+
+- Recette figée : `eclipseLogoRecipe.ts`
+- Lab craft **permanent** : `/fr/contribute/test-eclipse` (ne pas supprimer)
+- Preview : `/fr/contribute/test-eclipse-mark`
+- Brancher dans l’UI produit = ticket séparé (hors scope validation logo)
 
 #### États canoniques (couleur du halo)
 
@@ -418,6 +435,7 @@ Voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) pour les chemins canoniques.
 | Sujet | Fichier |
 |-------|---------|
 | **Signature Halo-Éclipse** | `ConnexionEclipseLayer.tsx`, `LoginForm.tsx` (`HALO_*`), `public/eclipse_login.mp4` |
+| **Marque Éclipse vivante** | `OdysseyEclipseMark.tsx`, `eclipseLogoRecipe.ts` — bible [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · lab `/fr/contribute/test-eclipse` |
 | Wordmark connexion | `OdysseyConnexionMark.tsx`, `StudioConnexionBrand.tsx`, `SalonConnexionBrand.tsx` |
 | Atmosphère dashboard | `src/components/partner/SalonAtmosphere.tsx` |
 | Co-branding | `src/components/partner/PartnerBrandLockup.tsx` |

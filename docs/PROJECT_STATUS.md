@@ -1,11 +1,21 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: 28 juillet 2026 · Freemium V1 Phases 0–5 ✅ (Creatomate P0 + Stem Graph) · Cascade 3a ✅ (`viral_loop_enabled` OFF · enforce 5 photos ✅) · Co-Créateur A–C ✅ · **Leviers revenu R1–R6** — §10 · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · Vision cinéma : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md)**
+**Last revised: 10 août 2026 · Milestone marque Éclipse vivante ✅ · Freemium V1 Phases 0–5 ✅ · Cascade 3a ✅ · Co-Créateur A–C ✅ · Leviers R1–R6 — §10 · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · Vision cinéma : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md)**
 
 Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).
 
 **Update this file** after chaque phase Freemium / milestone UX (mobile, S5-J) ou checkpoint mensuel.
+
+### Milestone — Marque Éclipse (10 août 2026)
+
+| Item | Status |
+|------|--------|
+| Craft lab éclipse (permanent) | 🟢 `/fr/contribute/test-eclipse` (+ play + mark) |
+| Logo vivant validé (Vie=1, diamond, soie) | 🟢 [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) |
+| Composant `OdysseyEclipseMark` + recette | 🟢 code figé |
+| Brancher mark dans connexion / Sanctuaire / favicon | ⚪ hors scope pour l’instant |
+| Intro ciel Sanctuaire (`scene.intro`) | ⏸ craft / branchement plus tard |
 
 ---
 
@@ -37,6 +47,8 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 | Marketing / landing | 🟢 | Hero, process, pricing, FR/EN i18n |
 | Studio login + 7-step wizard | 🟢 | Core product path ; Étape 5 = **Livre Ouvert** ; Co-Créateur steps 3–5 |
 | Connexion UX (Studio + Salon) | 🟢 | Halo-Éclipse, `OdysseyConnexionMark`, i18n toggle, CTA cyan — [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon) |
+| **Marque Éclipse vivante** | 🟢 | `OdysseyEclipseMark` + lab craft permanent — [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · brancher UI ⚪ |
+| Sanctuary sky / intro | 🟡 | Craft ciel + lab éclipse ✅ · intro `scene.intro` OFF · mark ≠ intro |
 | **Étape 5 — Livre Ouvert** | 🟡 | Layout + DnD + magie ✅ · audio/focus/copy sensoriel ⏳ — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
 | Media upload / Storage | 🟢 | Client upload + signed URLs + **WebP thumbs** + session cache egress (`39460bd`) — voir §4.1 |
 | Licensed music (Stingray) | 🟢 | Live MAPI + auto-mock without credentials |

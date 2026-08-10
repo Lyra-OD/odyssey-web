@@ -1,29 +1,49 @@
-# Eclipse Craft Lab — notes de session (5 août 2026)
+# Eclipse Craft Lab — notes de session
 
-**Statut :** journal de craft · à reprendre demain  
-**Preview :** `/fr/contribute/test-eclipse`  
+**Statut :** lab craft **permanent** · milestone logo ✅ (10 août 2026)  
+**Previews (dev) :**
+- Lab : `/fr/contribute/test-eclipse` — **toujours disponible, ne pas supprimer**
+- Lecture : `/fr/contribute/test-eclipse-play`
+- Marque : `/fr/contribute/test-eclipse-mark`
+
 **Fichiers actifs :**
 - [`EclipseDisc.tsx`](../src/components/contribute/constellation/EclipseDisc.tsx) — shader craft
-- [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts) — approche ~2.4 s + pose soleil
-- [`EclipseCraftLab.tsx`](../src/components/contribute/EclipseCraftLab.tsx) — UI Look / Lecture approche
+- [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts) — approche + play
+- [`EclipseCraftLab.tsx`](../src/components/contribute/EclipseCraftLab.tsx) — UI Look / knobs
+- [`eclipseLogoRecipe.ts`](../src/components/contribute/constellation/eclipseLogoRecipe.ts) — recette logo figée
+- [`OdysseyEclipseMark.tsx`](../src/components/contribute/OdysseyEclipseMark.tsx) — composant marque
 
-**Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) (bible ciel) · intro sanctuary encore **OFF** jusqu’à validation look.
+**Bible logo :** [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md)  
+**Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · intro sanctuary encore **OFF** jusqu’à branchement voulu.
 
 ---
 
-## 1. Où on s’arrête ce soir
+## 0. Milestone — logo animé validé (10 août 2026)
 
-**Paradigme actuel (session 10 août 2026 — rebuild fin) :**
+| Élément | Décision |
+|---------|----------|
+| Forme | Trou noir + corona soie + diamond bas = **marque Odyssey** |
+| Animation | **Vie = 1** (soie, breath, diamond) — pas un export mort |
+| Recette | Figée dans `ECLIPSE_LOGO_RECIPE` + doc logo |
+| Lab | Reste l’atelier d’itération ; la marque en est un extrait |
+
+Suite intro cinéma (wash → ciel) : à reconstruire plan par plan **sans** casser la recette logo.
+
+---
+
+## 1. Où on s’arrête
+
+**Paradigme actuel (session 10 août 2026) :**
 
 | Élément | Comportement |
 |---------|----------------|
 | Trou noir / lune | **Fixe** au centre, disque opaque |
-| Soleil | Scrub Look = **position libre** (0 droite → 1 derrière) |
-| Chrono | Approche seule (~2.4 s), soleil se gare — **pas de fin auto** |
-| Diamond / wash / ciel | **Coupés** — à reconstruire plan par plan depuis captures |
-| Knobs | Tailles lune/soleil + corona indépendants |
+| Soleil | Scrub Look = **position libre** (0 droite → 1 derrière) ; logo = `1` |
+| Chrono play | Ouverture + approche + flash (essai) |
+| Marque | `OdysseyEclipseMark` + preview mark |
+| Knobs | Tailles, corona, Vie, flash, photon — readouts numériques |
 
-Direction validée (à re-ship plus tard) : totalité hold → diamond bas glow logo → wash blanc bas → noir → ciel.
+Direction validée plus tard : dévoilement noir → logo vivant → (wash / ciel Sanctuaire).
 
 ---
 

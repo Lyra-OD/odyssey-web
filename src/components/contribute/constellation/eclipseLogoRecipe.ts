@@ -1,6 +1,10 @@
 /**
  * Recette logo Eclipse Odyssey — figée depuis le craft lab (10 août 2026).
  * Vie = 1 → soie / breath / diamond vivants (c’est ça qui anime le mark).
+ *
+ * Bible + handoff : docs/ODYSSEY_ECLIPSE_LOGO.md
+ * Lab craft (permanent) : /fr/contribute/test-eclipse
+ * Preview marque : /fr/contribute/test-eclipse-mark
  */
 export const ECLIPSE_LOGO_RECIPE = {
   alignment: 1,
