@@ -227,16 +227,25 @@ void main() {
   float corona =
     coronaField * coronaMask * uCoronaAmp * breath * silkShimmer * lifePulse * uBodyFade;
 
-  float edgeW = max(Rsun * 0.035, 0.004);
+  // Micro-breath soleil (intensité + limbe soft) — Vie only ; trou noir fixe
+  float sunWave = sin(tLive * 0.58 + 1.2);
+  float sunBreath = mix(1.0, 0.985 + 0.028 * sunWave, life);
+  float rimBreath = mix(1.0, 0.96 + 0.07 * sunWave, life);
+  float edgeW = max(
+    Rsun * 0.035 * mix(1.0, 0.94 + 0.12 * (0.5 + 0.5 * sunWave), life),
+    0.004
+  );
   float softDisc = 1.0 - smoothstep(-edgeW, edgeW, sdfSun);
   float rimSun =
     (1.0 - moonMask) *
     exp(-pow((sdfSun / max(Rsun, 1e-3)) * 17.0, 2.0)) *
-    0.7;
+    0.7 *
+    rimBreath;
   float photosphere =
     (1.0 - moonMask) *
     (softDisc * limbDark * 1.1 + rimSun) *
     (0.95 + 0.08 * breath) *
+    sunBreath *
     uBodyFade;
 
   // Anneau photon — breath + mini diffusion + chatoyement

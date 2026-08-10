@@ -171,6 +171,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
           look: "Look",
           play: "Play approach",
           cinema: "Cinema play →",
+          mark: "Logo mark →",
           corona: "Corona intensity",
           coronaSpread: "Corona spread",
           coronaIrregular: "Corona irregularity",
@@ -190,6 +191,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
           look: "Look",
           play: "Lecture approche",
           cinema: "Lecture cinéma →",
+          mark: "Marque logo →",
           corona: "Intensité corona",
           coronaSpread: "Diffusion corona",
           coronaIrregular: "Irrégularité corona",
@@ -300,6 +302,12 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
               className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45"
             >
               {copy.cinema}
+            </Link>
+            <Link
+              href={`/${locale}/contribute/test-eclipse-mark`}
+              className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45"
+            >
+              {copy.mark}
             </Link>
             <p className="ml-auto hidden text-[11px] font-light tracking-wide text-white/30 sm:block">
               {copy.hint}
