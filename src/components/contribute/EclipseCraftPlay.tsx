@@ -68,6 +68,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
   const coronaRays = 0.4;
   const coronaSoft = 0.85;
   const photonAmp = 0;
+  const lifeAmp = 1;
 
   useEffect(() => {
     skyIntroRef.active = true;
@@ -117,6 +118,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
       coronaRays,
       coronaSoft,
       photonAmp,
+      lifeAmp,
       diamondAmp: chrono.diamondMul,
       alignment: chrono.alignment,
       bodyFade: chrono.bodyFade,

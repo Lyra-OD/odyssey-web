@@ -42,6 +42,7 @@ uniform float uCoronaRays;
 uniform float uCoronaSoft;
 uniform float uDiamond;
 uniform float uPhoton;
+uniform float uLife;
 uniform float uAlignment;
 uniform float uBodyFade;
 uniform float uProgress;
@@ -83,7 +84,10 @@ void main() {
 
   float phase = clamp(uAlignment, 0.0, 1.0);
   float skyOut = clamp(uProgress, 0.0, 1.0);
-  float breath = 1.0 + 0.018 * sin(uTime * 0.65);
+  // Vie 0 = figé (captures) · 1 = matière vivante
+  float life = clamp(uLife, 0.0, 1.0);
+  float tLive = uTime * life;
+  float breath = 1.0 + 0.018 * sin(tLive * 0.65) * life;
 
   // Bases identiques → slider égal = même rayon disque (contrôle 1:1)
   float Rmoon = 0.36 * max(uMoonScale, 0.35);
@@ -126,26 +130,50 @@ void main() {
   float rays = clamp(uCoronaRays, 0.0, 2.5);
   float soft = max(uCoronaSoft, 0.25);
 
-  vec2 dirC = dirSun;
-  float distN = distSun / max(Rsun * spread, 0.04);
+  // Respiration d’enveloppe (diffusion / douceur) — très légère
+  float envPulse = sin(tLive * 0.42) * 0.5 + 0.5;
+  float softLive = soft * (1.0 + life * 0.06 * (envPulse - 0.5));
+  float spreadLive = spread * (1.0 + life * 0.05 * sin(tLive * 0.31 + 1.1));
 
-  float t = uTime * 0.018;
-  float angA = fbm(dirC * (2.2 + irreg * 1.4) + vec2(t * 0.12, 1.9));
-  float angB = fbm(dirC * (4.0 + irreg * 2.2) - vec2(2.4, t * 0.08));
+  vec2 dirC = dirSun;
+  float distN = distSun / max(Rsun * spreadLive, 0.04);
+
+  // Drift plumes (vent solaire) — Vie × irrégularité
+  float drift = tLive * (0.028 + irreg * 0.045);
+  float ca = cos(drift * 0.55);
+  float sa = sin(drift * 0.55);
+  vec2 dirSpin = vec2(dirC.x * ca - dirC.y * sa, dirC.x * sa + dirC.y * ca);
+  vec2 dirDrift = mix(dirC, dirSpin, life * clamp(irreg * 0.65, 0.0, 1.0));
+
+  float t = tLive * 0.018;
+  float angA = fbm(dirDrift * (2.2 + irreg * 1.4) + vec2(t * 0.12, 1.9));
+  float angB = fbm(dirDrift * (4.0 + irreg * 2.2) - vec2(2.4, t * 0.08));
   float plumeGate = mix(0.55, 0.2 + 0.8 * pow(clamp(angA, 0.0, 1.0), 1.35), clamp(irreg, 0.0, 1.0));
   float plumeLen = mix(1.0, mix(0.55, 1.9, pow(clamp(angB, 0.0, 1.0), 1.15)), clamp(irreg * 0.85, 0.0, 1.0));
 
+  // Émergence asymétrique des rayons — un côté s’allume / s’éteint (pas d’atan)
+  float rayEmerge = fbm(dirDrift * 1.6 + vec2(tLive * 0.09, 4.2));
+  float raySide =
+    0.55 + 0.45 * sin(dirDrift.x * 3.1 + dirDrift.y * 2.4 + tLive * 0.35);
+  float rayLive =
+    rays *
+    mix(1.0, 0.55 + 0.7 * rayEmerge * raySide, life * clamp(rays * 0.5, 0.0, 1.0));
+
   vec2 fiberUV =
-    dirC * (2.5 + angA * (0.6 + irreg * 0.9)) +
+    dirDrift * (2.5 + angA * (0.6 + irreg * 0.9)) +
     vec2(distN * (1.0 / max(plumeLen, 0.45)), t * 0.35);
   float fiber = fbm(fiberUV);
   float fiber2 = fbm(fiberUV * (1.7 + irreg * 0.5) + vec2(3.2, -1.4));
   float silk = 0.4 + 0.6 * fiber;
   float wisps = pow(max(0.0, fiber * 0.5 + fiber2 * 0.5), mix(2.2, 1.35, clamp(irreg * 0.5, 0.0, 1.0)));
 
-  float fallInner = 1.55 / soft;
-  float fallMid = (0.52 / soft) / max(plumeLen, 0.45);
-  float fallFar = (0.26 / soft) / max(plumeLen, 0.45);
+  // Scintillement soie (intensité) — micro-grain, pas strobe
+  float silkShimmer =
+    mix(1.0, 0.92 + 0.12 * fbm(dirDrift * 5.5 + vec2(tLive * 0.55, distN * 2.0)), life);
+
+  float fallInner = 1.55 / softLive;
+  float fallMid = (0.52 / softLive) / max(plumeLen, 0.45);
+  float fallFar = (0.26 / softLive) / max(plumeLen, 0.45);
 
   float inner =
     exp(-pow(distN * fallInner, 1.1)) *
@@ -155,23 +183,23 @@ void main() {
     exp(-pow(distN * fallMid, 1.0)) *
     wisps *
     plumeGate *
-    (0.7 + 0.55 * rays);
+    (0.7 + 0.55 * rayLive);
   float far =
     exp(-pow(distN * fallFar, 0.9)) *
     pow(wisps, 1.2) *
     plumeGate *
-    (0.45 + 0.7 * rays);
+    (0.45 + 0.7 * rayLive);
 
   float polarBias =
     0.8 +
-    0.28 * abs(dirC.y) * irreg +
-    0.08 * dirC.x -
-    0.1 * max(-dirC.y, 0.0) * irreg;
+    0.28 * abs(dirDrift.y) * irreg +
+    0.08 * dirDrift.x -
+    0.1 * max(-dirDrift.y, 0.0) * irreg;
 
   float coronaField = polarBias * (inner * 1.15 + mid + far);
   float coronaMask = 1.0 - moonMask;
   float corona =
-    coronaField * coronaMask * uCoronaAmp * breath * uBodyFade;
+    coronaField * coronaMask * uCoronaAmp * breath * silkShimmer * uBodyFade;
 
   float edgeW = max(Rsun * 0.035, 0.004);
   float softDisc = 1.0 - smoothstep(-edgeW, edgeW, sdfSun);
@@ -185,25 +213,28 @@ void main() {
     (0.95 + 0.08 * breath) *
     uBodyFade;
 
-  // Anneau de totalité (photon) — knob lab ; 0 = off
+  // Anneau photon — chatoyement local du limbe
+  float photonShimmer =
+    mix(1.0, 0.82 + 0.28 * fbm(dirMoon * 8.0 + vec2(tLive * 0.7, 0.5)), life);
   float limb =
     exp(-pow(sdfMoon * 78.0, 2.0)) *
     smoothstep(-0.01, 0.005, sdfMoon) *
     totality *
     (1.8 + 0.4 * breath) *
+    photonShimmer *
     uBodyFade *
     max(uPhoton, 0.0);
   float photon = limb;
 
-  // Flash / diamond vivant — ADN irrégularité (Baily beads), pas un bead géométrique
-  // ~4–5h ; breakup FBM + micro-flicker doux (évite starburst comic)
+  // Flash / diamond — Baily breakup vivant (Vie × irrégularité)
   float flashAmt = max(uDiamond, 0.0);
   float irregF = clamp(uCoronaIrregular, 0.0, 2.5);
   vec2 beadDir = normalize(vec2(0.28, -0.96));
   float along = max(0.0, dot(dirMoon, beadDir));
 
-  float bnA = fbm(dirMoon * (3.4 + irregF * 1.8) + vec2(uTime * 0.07, 2.2));
-  float bnB = fbm(dirMoon * (6.8 + irregF * 1.2) - vec2(1.6, uTime * 0.045));
+  float bnA = fbm(dirMoon * (3.4 + irregF * 1.8) + vec2(tLive * 0.07, 2.2));
+  float bnB = fbm(dirMoon * (6.8 + irregF * 1.2) - vec2(1.6, tLive * 0.045));
+  float bnC = fbm(dirMoon * 11.0 + vec2(tLive * 0.22, -3.1));
   float breakUp = mix(0.72, 0.22 + 0.9 * bnA, clamp(irregF * 0.55, 0.0, 1.0));
   float angPow = mix(24.0, 11.0, clamp(irregF * 0.42, 0.0, 1.0));
   float beadGate = pow(along, angPow) * breakUp * (0.7 + 0.45 * bnB);
@@ -211,17 +242,21 @@ void main() {
   float limbFlash =
     exp(-pow(sdfMoon * 72.0, 2.0)) *
     smoothstep(-0.008, 0.012, sdfMoon);
-  float bailyThresh = mix(0.58, 0.38, clamp(irregF * 0.5, 0.0, 1.0));
+  float bailyThresh = mix(
+    0.58,
+    mix(0.38, 0.28 + 0.18 * bnC, life),
+    clamp(irregF * 0.5, 0.0, 1.0)
+  );
   float baily =
     pow(max(bnB - bailyThresh, 0.0), 1.35) *
     clamp(irregF, 0.0, 1.6) *
-    0.5;
+    (0.5 + 0.35 * life * bnC);
 
   float core = exp(-pow(sdfMoon * 95.0, 2.0));
   float midG = exp(-pow(sdfMoon * 42.0, 2.0)) * 0.55;
   float softG = exp(-pow(sdfMoon * 16.0, 2.0)) * 0.22;
   float glowStack = core * 1.35 + midG + softG;
-  float flicker = 0.9 + 0.1 * sin(uTime * 1.85 + bnA * 6.2831);
+  float flicker = mix(1.0, 0.9 + 0.1 * sin(tLive * 1.85 + bnA * 6.2831), life);
 
   float diamond =
     (1.0 - moonMask) *
@@ -316,6 +351,8 @@ export type EclipseCraftDrive = {
   coronaSoft: number;
   /** Anneau photon / halo limbe (0 = off). */
   photonAmp: number;
+  /** Vie matière 0 = figé · 1 = drift plumes + breath flash. */
+  lifeAmp: number;
   diamondAmp: number;
   alignment: number;
   bodyFade: number;
@@ -360,6 +397,7 @@ export function EclipseDisc({ tier, craft }: Props) {
           uCoronaSoft: { value: 1 },
           uDiamond: { value: 0 },
           uPhoton: { value: 0 },
+          uLife: { value: 0.7 },
           uAlignment: { value: 1 },
           uBodyFade: { value: 1 },
           uProgress: { value: 0 },
@@ -417,6 +455,9 @@ export function EclipseDisc({ tier, craft }: Props) {
       if (!material.uniforms.uPhoton) {
         material.uniforms.uPhoton = { value: 0 };
       }
+      if (!material.uniforms.uLife) {
+        material.uniforms.uLife = { value: 0.7 };
+      }
       if (!material.uniforms.uOffset) {
         material.uniforms.uOffset = { value: new Vector2(0, 0) };
       }
@@ -441,6 +482,7 @@ export function EclipseDisc({ tier, craft }: Props) {
       if (!mat.uniforms.uCoronaRays) mat.uniforms.uCoronaRays = { value: 1 };
       if (!mat.uniforms.uCoronaSoft) mat.uniforms.uCoronaSoft = { value: 1 };
       if (!mat.uniforms.uPhoton) mat.uniforms.uPhoton = { value: 0 };
+      if (!mat.uniforms.uLife) mat.uniforms.uLife = { value: 0.7 };
       mat.uniforms.uTime.value = clock.elapsedTime;
       mat.uniforms.uOpacity.value = 1;
       mat.uniforms.uCoronaAmp.value =
@@ -450,6 +492,7 @@ export function EclipseDisc({ tier, craft }: Props) {
       mat.uniforms.uCoronaRays.value = craft.coronaRays;
       mat.uniforms.uCoronaSoft.value = craft.coronaSoft;
       mat.uniforms.uPhoton.value = craft.photonAmp;
+      mat.uniforms.uLife.value = craft.lifeAmp;
       mat.uniforms.uDiamond.value =
         craft.step >= 2 ? craft.diamondAmp : 0;
       mat.uniforms.uAlignment.value = craft.alignment;

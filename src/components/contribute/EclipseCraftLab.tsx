@@ -64,6 +64,8 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [photonAmp, setPhotonAmp] = useState(0);
   /** Flash / diamond vivant — pose Look (0 = off). */
   const [flashAmp, setFlashAmp] = useState(0);
+  /** Vie matière — 0 figé (capture) · 1 drift plumes. */
+  const [lifeAmp, setLifeAmp] = useState(0.7);
   /** Look : 0 = soleil à droite, 1 = derrière le trou noir. */
   const [scrub, setScrub] = useState(0);
   const [mode, setMode] = useState<"look" | "chrono">("look");
@@ -133,6 +135,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
       coronaRays,
       coronaSoft,
       photonAmp,
+      lifeAmp,
       diamondAmp: Math.max(flashAmp, drive.diamondMul),
       alignment: drive.alignment,
       bodyFade: drive.bodyFade,
@@ -149,6 +152,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
       coronaRays,
       coronaSoft,
       photonAmp,
+      lifeAmp,
       flashAmp,
       drive,
     ],
@@ -173,9 +177,10 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
           progress: "Sun pos.",
           photon: "Photon ring",
           flash: "Flash / diamond",
+          life: "Life / drift",
           moon: "Hole size",
           sun: "Sun size",
-          hint: "Readouts = exact specs. Quote values per plan when briefing.",
+          hint: "Life drives silk shimmer, envelope breath, ray emerge, plume drift, photon & Baily.",
         }
       : {
           title: "Craft Éclipse · pose soleil",
@@ -191,9 +196,10 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
           progress: "Pos. soleil",
           photon: "Anneau photon",
           flash: "Flash / diamond",
+          life: "Vie / drift",
           moon: "Trou noir",
           sun: "Soleil",
-          hint: "Valeurs = specs exactes. Donne-les plan par plan pour briefer.",
+          hint: "Vie = soie, enveloppe, rayons, plumes, photon & Baily. 0 = figé.",
         };
 
   return (
@@ -298,7 +304,7 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
             </p>
           </div>
           {mode === "look" && (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-10">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-11">
               {(
                 [
                   {
@@ -309,6 +315,15 @@ export function EclipseCraftLab({ locale = "fr" }: { locale?: Locale }) {
                     step: 0.005,
                     value: scrub,
                     onChange: setScrub,
+                  },
+                  {
+                    key: "life",
+                    label: copy.life,
+                    min: 0,
+                    max: 1,
+                    step: 0.01,
+                    value: lifeAmp,
+                    onChange: setLifeAmp,
                   },
                   {
                     key: "corona",
