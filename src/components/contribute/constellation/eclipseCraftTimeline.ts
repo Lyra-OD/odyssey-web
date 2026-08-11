@@ -7,11 +7,11 @@
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Phase 1 cinéma (~16 s) — actes :
- * naissance grandeur → ODYSSEY solar etch → dolly sync → menace.
+ * Phase 1 cinéma (~17.8 s) — actes :
+ * naissance grandeur → die-cut ODYSSEY + pause → dolly sync → menace.
  * Flash / wrap / ciel = phases suivantes (pas encore).
  */
-export const CRAFT_PLAY_DURATION = 16;
+export const CRAFT_PLAY_DURATION = 17.8;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -142,7 +142,7 @@ const LOGO_SUN = 0.97;
 const SUN_START = 0.78;
 
 /**
- * Phase 1 — (~16 s). Géométrie fixe : alignment = 1.
+ * Phase 1 — (~17.8 s). Géométrie fixe : alignment = 1.
  *
  * Acte 1 — naissance à GRANDEUR, caméra LOCK
  *   T0–0.45    noir court
@@ -151,14 +151,15 @@ const SUN_START = 0.78;
  *   T2.45–4.15 irrégularité
  *   T4.15–4.4  hold objet sacré
  *
- * Acte 1b — die-cut ODYSSEY (reste ensuite — pas de fade pour l’instant)
- *   T4.35–5.45 ouverture découpe
+ * Acte 1b — die-cut ODYSSEY + pause branding
+ *   T4.35–5.5  ouverture découpe
+ *   T5.5–7.8   pause (mot complet, caméra fixe)
  *
  * Acte 2 — dolly aspiration continue (Z + aim sync)
- *   T6.5–14.8  même courbe pour push et aim
+ *   T7.8–16.1  même courbe pour push et aim
  *
  * Acte 3 — menace (lumière — peaufinage séparé)
- *   T14.4–16   hold seuil
+ *   T15.7–17.8 hold seuil
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
@@ -173,15 +174,14 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const sunIn = softRiseVelvet(2.15, 3.55, time, 0.78);
   const irregIn = softRiseVelvet(2.45, 4.15, time, 1.05);
 
-  // Acte 1b — die-cut ODYSSEY (reste pendant dolly — étape 1)
+  // Acte 1b — die-cut puis pause avant dolly
   const logoReady = smootherstep(4.05, 4.35, time);
-  const etchIn = softRiseVelvet(4.35, 5.45, time, 0.9);
+  const etchIn = softRiseVelvet(4.35, 5.5, time, 0.9);
   const wordmarkMul = logoReady * etchIn;
-  // Pas de boost bloom sur le mot — garde les traits Light fins (étape typo)
   const wordmarkSolar = 0;
 
-  // Acte 2 — un seul geste : Z et aim sur la même courbe (après le mot)
-  const cameraPush = gravityDolly(6.5, 14.8, time);
+  // Acte 2 — dolly seulement après la pause branding (~2.3 s)
+  const cameraPush = gravityDolly(7.8, 16.1, time);
   const cameraAim = cameraPush;
 
   // Acte 3 — (inchangé — peaufinage lumière plus tard)

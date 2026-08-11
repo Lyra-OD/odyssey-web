@@ -331,7 +331,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "Act 1 birth → 1b ODYSSEY die-cut → Act 2 dolly → Act 3 threat.",
+          sub: "Act 1 birth → 1b ODYSSEY die-cut + hold → Act 2 dolly → Act 3 threat.",
           play: "Play",
           replay: "Replay",
           lab: "← Craft lab",
@@ -340,7 +340,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
         }
       : {
           title: "Éclipse · naissance",
-          sub: "Acte 1 naissance → 1b ODYSSEY die-cut → Acte 2 dolly → Acte 3 menace.",
+          sub: "Acte 1 naissance → 1b ODYSSEY die-cut + pause → Acte 2 dolly → Acte 3 menace.",
           play: "Lancer",
           replay: "Rejouer",
           lab: "← Lab craft",
