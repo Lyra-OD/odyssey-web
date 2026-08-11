@@ -16,6 +16,11 @@ import type { VisualTier } from "./useVisualTier";
 import { useSkyTheme } from "./skyTheme";
 import { idleCameraRef } from "./IdleCameraDrift";
 import { skyIntroRef } from "./SkyIntroEclipse";
+import {
+  createOdysseyWordmarkTexture,
+  refreshOdysseyWordmarkTexture,
+  WM_ASPECT,
+} from "./odysseyWordmarkTexture";
 
 /**
  * EclipseDisc — craft : occultation (trou noir fixe, soleil derrière) · sky rare.
@@ -51,6 +56,10 @@ uniform float uSunScale;
 uniform float uAspect;
 uniform float uTime;
 uniform vec2 uOffset;
+/** Die-cut ODYSSEY dans le trou noir (0 = off, 1 = découpe pleine). */
+uniform float uWordmark;
+uniform sampler2D uWordmarkMap;
+uniform float uWordmarkAspect;
 
 varying vec2 vUv;
 
@@ -111,6 +120,22 @@ void main() {
   float sdfSun = rSun - Rsun;
 
   float moonMask = 1.0 - smoothstep(-0.0025, 0.0025, sdfMoon);
+
+  // Die-cut ODYSSEY — mapping à l’aspect texture (pas d’étirement X/Y)
+  float wmAmt = clamp(uWordmark, 0.0, 1.0);
+  float wmAspect = max(uWordmarkAspect, 1.0);
+  // Presque bord à bord du disque (O gauche / Y droite)
+  float wmHalfX = Rmoon * 0.94;
+  float wmHalfY = wmHalfX / wmAspect;
+  vec2 wmHalf = vec2(wmHalfX, wmHalfY);
+  vec2 wmUv = qMoon / max(wmHalf, vec2(1e-4)) * 0.5 + 0.5;
+  float inBox =
+    step(0.0, wmUv.x) * step(wmUv.x, 1.0) *
+    step(0.0, wmUv.y) * step(wmUv.y, 1.0);
+  float letter = texture2D(uWordmarkMap, clamp(wmUv, 0.0, 1.0)).r * inBox;
+  // Seuil haut = traits Light fins
+  float cut = smoothstep(0.72, 0.94, letter) * wmAmt;
+  moonMask *= (1.0 - cut);
 
   float d = length(sun - moon);
   float cTot = max(abs(Rmoon - Rsun), 0.001);
@@ -406,6 +431,8 @@ export type EclipseCraftDrive = {
   progress: number;
   offsetX: number;
   offsetY: number;
+  /** Die-cut ODYSSEY dans le trou noir (0–1). */
+  wordmarkMul?: number;
   /**
    * Dolly perspective (craft play) : taille du plane calée sur la caméra *finale*.
    * La caméra avance vraiment → sensation d’avancer, pas un scale 2D.
@@ -432,6 +459,28 @@ export function EclipseDisc({ tier, craft }: Props) {
   const idle = theme.scene.idle;
   const isCraft = Boolean(craft);
   const { camera, viewport, size } = useThree();
+
+  const wordmarkMap = useMemo(() => {
+    if (typeof document === "undefined") return null;
+    return createOdysseyWordmarkTexture();
+  }, []);
+
+  useEffect(() => {
+    if (!wordmarkMap) return;
+    let cancelled = false;
+    const refresh = () => {
+      if (cancelled) return;
+      void refreshOdysseyWordmarkTexture(wordmarkMap);
+    };
+    refresh();
+    if (document.fonts?.ready) {
+      void document.fonts.ready.then(refresh);
+    }
+    return () => {
+      cancelled = true;
+      wordmarkMap.dispose();
+    };
+  }, [wordmarkMap]);
 
   const material = useMemo(() => {
     if (isCraft) {
@@ -462,6 +511,9 @@ export function EclipseDisc({ tier, craft }: Props) {
           uAspect: { value: 1 },
           uTime: { value: 0 },
           uOffset: { value: new Vector2(0, 0) },
+          uWordmark: { value: 0 },
+          uWordmarkMap: { value: wordmarkMap },
+          uWordmarkAspect: { value: WM_ASPECT },
         },
       });
     }
@@ -483,7 +535,7 @@ export function EclipseDisc({ tier, craft }: Props) {
         uRim: { value: new Color(cfg.rim) },
       },
     });
-  }, [isCraft, cfg.body, cfg.corona, cfg.rim, cfg.coronaAmp]);
+  }, [isCraft, cfg.body, cfg.corona, cfg.rim, cfg.coronaAmp, wordmarkMap]);
 
   // Recompile + uniforms si le fragment craft change (évite HMR qui garde uSingularityScale partagé)
   useEffect(() => {
@@ -517,13 +569,26 @@ export function EclipseDisc({ tier, craft }: Props) {
       if (!material.uniforms.uOffset) {
         material.uniforms.uOffset = { value: new Vector2(0, 0) };
       }
+      if (!material.uniforms.uWordmark) {
+        material.uniforms.uWordmark = { value: 0 };
+      }
+      if (!material.uniforms.uWordmarkMap) {
+        material.uniforms.uWordmarkMap = { value: wordmarkMap };
+      } else if (wordmarkMap) {
+        material.uniforms.uWordmarkMap.value = wordmarkMap;
+      }
+      if (!material.uniforms.uWordmarkAspect) {
+        material.uniforms.uWordmarkAspect = { value: WM_ASPECT };
+      } else {
+        material.uniforms.uWordmarkAspect.value = WM_ASPECT;
+      }
       // Ancien uniform partagé — ne plus l’utiliser
       if (material.uniforms.uSingularityScale) {
         delete material.uniforms.uSingularityScale;
       }
     }
     material.needsUpdate = true;
-  }, [material, isCraft, craftFragment]);
+  }, [material, isCraft, craftFragment, wordmarkMap]);
 
   useFrame(({ clock }) => {
     const mat = matRef.current ?? material;
@@ -560,6 +625,20 @@ export function EclipseDisc({ tier, craft }: Props) {
       if (!mat.uniforms.uOffset) {
         mat.uniforms.uOffset = { value: new Vector2(0, 0) };
       }
+      if (!mat.uniforms.uWordmark) mat.uniforms.uWordmark = { value: 0 };
+      if (!mat.uniforms.uWordmarkAspect) {
+        mat.uniforms.uWordmarkAspect = { value: WM_ASPECT };
+      } else {
+        mat.uniforms.uWordmarkAspect.value = WM_ASPECT;
+      }
+      if (!mat.uniforms.uWordmarkMap) {
+        mat.uniforms.uWordmarkMap = { value: wordmarkMap };
+      } else if (wordmarkMap && mat.uniforms.uWordmarkMap.value !== wordmarkMap) {
+        mat.uniforms.uWordmarkMap.value = wordmarkMap;
+      }
+      mat.uniforms.uWordmark.value = Number.isFinite(craft.wordmarkMul)
+        ? Math.max(0, Math.min(1, craft.wordmarkMul as number))
+        : 0;
       const ox = Number.isFinite(craft.offsetX) ? craft.offsetX : 0;
       const oy = Number.isFinite(craft.offsetY) ? craft.offsetY : 0;
       (mat.uniforms.uOffset.value as Vector2).set(

@@ -7,11 +7,11 @@
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Phase 1 cinéma (~14.2 s) — 3 actes :
- * naissance grandeur → dolly continu (Z+aim sync) → menace.
+ * Phase 1 cinéma (~16 s) — actes :
+ * naissance grandeur → ODYSSEY solar etch → dolly sync → menace.
  * Flash / wrap / ciel = phases suivantes (pas encore).
  */
-export const CRAFT_PLAY_DURATION = 14.2;
+export const CRAFT_PLAY_DURATION = 16;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -28,6 +28,10 @@ export type CraftChronoState = {
   cameraPush: number;
   /** 0→1 aim vers diamond — sync avec cameraPush (geste unique). */
   cameraAim: number;
+  /** 0→1 wordmark ODYSSEY (acte 1b — solar etch). */
+  wordmarkMul: number;
+  /** 0→1 flash solaire du etch (pic puis settle). */
+  wordmarkSolar: number;
   bodyFade: number;
   skyMul: number;
   bloom: number;
@@ -100,6 +104,8 @@ const BASE: CraftChronoState = {
   lifeMul: 1,
   cameraPush: 0,
   cameraAim: 0,
+  wordmarkMul: 0,
+  wordmarkSolar: 0,
   bodyFade: 1,
   skyMul: 0,
   bloom: 0,
@@ -136,20 +142,23 @@ const LOGO_SUN = 0.97;
 const SUN_START = 0.78;
 
 /**
- * Phase 1 — 3 actes (~14.2 s). Géométrie fixe : alignment = 1.
+ * Phase 1 — (~16 s). Géométrie fixe : alignment = 1.
  *
  * Acte 1 — naissance à GRANDEUR, caméra LOCK
  *   T0–0.45    noir court
  *   T0.35–2.75 diamond
  *   T2.15–3.55 soleil
  *   T2.45–4.15 irrégularité
- *   T4.15–4.95 hold objet sacré
+ *   T4.15–4.4  hold objet sacré
+ *
+ * Acte 1b — die-cut ODYSSEY (reste ensuite — pas de fade pour l’instant)
+ *   T4.35–5.45 ouverture découpe
  *
  * Acte 2 — dolly aspiration continue (Z + aim sync)
- *   T4.9–13.2  même courbe pour push et aim
+ *   T6.5–14.8  même courbe pour push et aim
  *
  * Acte 3 — menace (lumière — peaufinage séparé)
- *   T12.4–14.2 hold seuil
+ *   T14.4–16   hold seuil
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
@@ -164,11 +173,18 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const sunIn = softRiseVelvet(2.15, 3.55, time, 0.78);
   const irregIn = softRiseVelvet(2.45, 4.15, time, 1.05);
 
-  // Acte 2 — un seul geste : Z et aim sur la même courbe
-  const cameraPush = gravityDolly(4.9, 13.2, time);
+  // Acte 1b — die-cut ODYSSEY (reste pendant dolly — étape 1)
+  const logoReady = smootherstep(4.05, 4.35, time);
+  const etchIn = softRiseVelvet(4.35, 5.45, time, 0.9);
+  const wordmarkMul = logoReady * etchIn;
+  // Pas de boost bloom sur le mot — garde les traits Light fins (étape typo)
+  const wordmarkSolar = 0;
+
+  // Acte 2 — un seul geste : Z et aim sur la même courbe (après le mot)
+  const cameraPush = gravityDolly(6.5, 14.8, time);
   const cameraAim = cameraPush;
 
-  // Acte 3 — (inchangé pour l’instant : on valide d’abord le rail)
+  // Acte 3 — (inchangé — peaufinage lumière plus tard)
   const threat = cameraPush * cameraPush;
   const diamondMul = LOGO_DIAMOND * diamondIn * (1 + 1.2 * threat);
   const coronaMul = sunIn * (1 - 0.58 * cameraPush);
@@ -186,6 +202,8 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
     lifeMul,
     cameraPush,
     cameraAim,
+    wordmarkMul,
+    wordmarkSolar,
     bodyFade,
     skyMul: 0,
     bloom,

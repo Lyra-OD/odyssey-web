@@ -76,6 +76,7 @@ type CraftBag = {
   perspectiveDolly: true;
   dollyEndZ: number;
   dollyEndFov: number;
+  wordmarkMul: number;
 };
 
 /** Exp damp — lisse toute micro-saccade de courbe / frame. */
@@ -120,6 +121,7 @@ function applyChronoToCraft(
   craft.progress = 0;
   craft.offsetX = recipe.offsetX;
   craft.offsetY = recipe.offsetY;
+  craft.wordmarkMul = mix(craft.wordmarkMul, chrono.wordmarkMul, mid);
   craft.perspectiveDolly = true;
   craft.dollyEndZ = PLANE_REF_Z;
   craft.dollyEndFov = PLANE_REF_FOV;
@@ -259,7 +261,7 @@ function BloomDriver({
 type Locale = "fr" | "en";
 
 /**
- * Lecture cinéma — naissance grandeur → dolly diamond → menace.
+ * Lecture cinéma — naissance → die-cut ODYSSEY → dolly → menace.
  * always-on render + damp craft + bloom muté = fluidité.
  */
 export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
@@ -291,6 +293,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     perspectiveDolly: true,
     dollyEndZ: PLANE_REF_Z,
     dollyEndFov: PLANE_REF_FOV,
+    wordmarkMul: 0,
   });
 
   useEffect(() => {
@@ -328,7 +331,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "Act 1 birth → Act 2 continuous dolly (Z+aim sync) → Act 3 threat.",
+          sub: "Act 1 birth → 1b ODYSSEY die-cut → Act 2 dolly → Act 3 threat.",
           play: "Play",
           replay: "Replay",
           lab: "← Craft lab",
@@ -337,7 +340,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
         }
       : {
           title: "Éclipse · naissance",
-          sub: "Acte 1 naissance → Acte 2 dolly continu (Z+aim sync) → Acte 3 menace.",
+          sub: "Acte 1 naissance → 1b ODYSSEY die-cut → Acte 2 dolly → Acte 3 menace.",
           play: "Lancer",
           replay: "Rejouer",
           lab: "← Lab craft",

@@ -149,6 +149,47 @@ body {
   animation: odyssey-connexion-mark-in 1.85s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
 }
 
+/** Acte 1b — lumière solaire dans le trou noir + mot gravé. */
+.odyssey-solar-bleed {
+  width: min(46vh, 42vw);
+  height: min(46vh, 42vw);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 78%,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.18) 32%,
+    transparent 68%
+  );
+  filter: blur(18px);
+  mix-blend-mode: screen;
+  transform: translateY(4%);
+}
+
+.odyssey-solar-etch {
+  --solar: 0;
+  color: #fff;
+  mix-blend-mode: screen;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, calc(0.55 + var(--solar) * 0.45)),
+    0 0 22px rgba(255, 255, 255, calc(0.28 + var(--solar) * 0.5)),
+    0 0 48px rgba(255, 255, 255, calc(0.12 + var(--solar) * 0.4));
+}
+
+.odyssey-solar-etch-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  color: #fff;
+  opacity: calc(0.45 + var(--solar) * 0.5);
+  filter: blur(calc(4px + var(--solar) * 12px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .odyssey-solar-bleed {
+    filter: blur(8px);
+  }
+}
+
 @keyframes salon-title-reveal-in {
   from {
     opacity: 0;
