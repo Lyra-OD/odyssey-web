@@ -1,9 +1,10 @@
 /**
- * Recette logo Eclipse Odyssey — figée depuis le craft lab (10 août 2026).
- * Vie = 1 → soie / breath / diamond vivants (c’est ça qui anime le mark).
+ * Recette matière logo Eclipse Odyssey — figée craft lab (10 août 2026).
+ * Vie = 1 → soie / breath / diamond vivants.
+ * Lockup complet = matière + die-cut ODYSSEY (voir play / odysseyWordmarkTexture).
  *
  * Bible + handoff : docs/ODYSSEY_ECLIPSE_LOGO.md
- * Lab craft (permanent) : /fr/contribute/test-eclipse
+ * Lab : /fr/contribute/test-eclipse · Play : /fr/contribute/test-eclipse-play
  * Preview marque : /fr/contribute/test-eclipse-mark
  */
 export const ECLIPSE_LOGO_RECIPE = {

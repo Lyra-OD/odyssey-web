@@ -1,49 +1,64 @@
 # Eclipse Craft Lab — notes de session
 
-**Statut :** lab craft **permanent** · milestone logo ✅ (10 août 2026)  
+**Statut :** lab craft **permanent** · matière ✅ (10 août) · **lockup ODYSSEY** ✅ craft play (11 août)  
 **Previews (dev) :**
 - Lab : `/fr/contribute/test-eclipse` — **toujours disponible, ne pas supprimer**
-- Lecture : `/fr/contribute/test-eclipse-play`
+- Lecture : `/fr/contribute/test-eclipse-play` — naissance + die-cut + dolly
 - Marque : `/fr/contribute/test-eclipse-mark`
 
 **Fichiers actifs :**
-- [`EclipseDisc.tsx`](../src/components/contribute/constellation/EclipseDisc.tsx) — shader craft
+- [`EclipseDisc.tsx`](../src/components/contribute/constellation/EclipseDisc.tsx) — shader craft (+ die-cut)
+- [`odysseyWordmarkTexture.ts`](../src/components/contribute/constellation/odysseyWordmarkTexture.ts) — masque Montserrat Light
 - [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts) — approche + play
 - [`EclipseCraftLab.tsx`](../src/components/contribute/EclipseCraftLab.tsx) — UI Look / knobs
-- [`eclipseLogoRecipe.ts`](../src/components/contribute/constellation/eclipseLogoRecipe.ts) — recette logo figée
+- [`EclipseCraftPlay.tsx`](../src/components/contribute/EclipseCraftPlay.tsx) — lecture cinéma
+- [`eclipseLogoRecipe.ts`](../src/components/contribute/constellation/eclipseLogoRecipe.ts) — recette matière figée
 - [`OdysseyEclipseMark.tsx`](../src/components/contribute/OdysseyEclipseMark.tsx) — composant marque
 
 **Bible logo :** [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md)  
+**Audio play (partition) :** [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md)  
 **Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · intro sanctuary encore **OFF** jusqu’à branchement voulu.
 
 ---
 
-## 0. Milestone — logo animé validé (10 août 2026)
+## 0. Milestone — logo (matière + nom)
+
+### 0a. Matière validée (10 août 2026)
 
 | Élément | Décision |
 |---------|----------|
-| Forme | Trou noir + corona soie + diamond bas = **marque Odyssey** |
+| Forme | Trou noir + corona soie + diamond bas |
 | Animation | **Vie = 1** (soie, breath, diamond) — pas un export mort |
 | Recette | Figée dans `ECLIPSE_LOGO_RECIPE` + doc logo |
-| Lab | Reste l’atelier d’itération ; la marque en est un extrait |
+| Lab | Reste l’atelier ; la marque en est un extrait |
 
-Suite intro cinéma (wash → ciel) : à reconstruire plan par plan **sans** casser la recette logo.
+### 0b. Lockup ODYSSEY (11 août 2026)
+
+| Élément | Décision |
+|---------|----------|
+| Nom | **Die-cut** dans le trou noir → photosphère à travers les lettres |
+| Typo | Montserrat Light, lettres larges bord à bord, **pas** d’UV stretch |
+| Sync play | Soleil d’abord (`sunIn` 2.15→3.55) ; ODYSSEY lag (`wordmarkMul` 2.62→4.55) |
+| Hold → dolly | Hold branding puis `gravityDolly` 7.8→16.1 (die-cut reste) |
+| Mark produit | `showWordmark` ✅ · exports **disc** + **lockup** |
+
+Suite intro cinéma (wash → ciel) : à reconstruire plan par plan **sans** casser la recette logo + die-cut.
 
 ---
 
 ## 1. Où on s’arrête
 
-**Paradigme actuel (session 10 août 2026) :**
+**Paradigme actuel (11 août 2026) :**
 
 | Élément | Comportement |
 |---------|----------------|
-| Trou noir / lune | **Fixe** au centre, disque opaque |
+| Trou noir / lune | **Fixe** au centre ; die-cut ODYSSEY en play |
 | Soleil | Scrub Look = **position libre** (0 droite → 1 derrière) ; logo = `1` |
-| Chrono play | Ouverture + approche + flash (essai) |
-| Marque | `OdysseyEclipseMark` + preview mark |
+| Chrono play | Naissance grandeur → die-cut → hold → dolly → menace (~17,8 s) |
+| Marque | `OdysseyEclipseMark` = lockup complet (`wordmarkMul: 1`) |
 | Knobs | Tailles, corona, Vie, flash, photon — readouts numériques |
 
-Direction validée plus tard : dévoilement noir → logo vivant → (wash / ciel Sanctuaire).
+Direction : dévoilement noir → lockup vivant (éclipse + ODYSSEY) → (wash / ciel Sanctuaire).
 
 ---
 
@@ -113,13 +128,12 @@ Légende : **KEEP** = utile · **REJECT** = ne pas refaire tel quel · **PARTIAL
 
 ---
 
-## 4. À reprendre demain (ordre suggéré)
+## 4. Suite (ordre suggéré)
 
-1. **Valider le look départ** (phase 0) : soleil diffus + rayons **sans** changer la taille en course (ou avec un knob dédié, pas un hack `prox`).
-2. **Totality** : un vrai instant où la photosphère disparaît, corona autour du trou noir (déjà partiel).
-3. **Contacts** C2/C3 : diamond encore plus discret si besoin.
-4. **Fin** : ressenti « ressortie » vs révélation ciel Sanctuaire (`skyIntroRef`).
-5. Quand le look est bon → rebrancher intro `SkyIntroEclipse` (1×/session).
+1. Silence UI pendant hold play (lab chrome) — demandé, pas urgent.
+2. Brancher audio selon [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md).
+3. Peaufiner menace / flash diamond → wrap / ciel.
+4. Quand le récit play est gelé → rebrancher intro `SkyIntroEclipse` (1×/session).
 
 ---
 
@@ -135,10 +149,11 @@ Légende : **KEEP** = utile · **REJECT** = ne pas refaire tel quel · **PARTIAL
 
 ---
 
-## 6. Décisions produit figées ce soir
+## 6. Décisions produit figées
 
 - Récit = **vraie occultation** (soleil derrière trou noir fixe), pas burn-away comme moteur.
+- Lockup = matière + **die-cut ODYSSEY** (pas typo blanche connexion).
 - Blanc Odyssey, plane + GLSL, mobile-friendly (pas de raymarch lourd).
-- Documenter les essais **avant** de recommencer à tâtonner demain.
+- Documenter les essais **avant** de recommencer à tâtonner.
 
-*Dernière mise à jour : 5 août 2026 (fin de session craft).*
+*Dernière mise à jour : 11 août 2026 (lockup ODYSSEY + docs).*

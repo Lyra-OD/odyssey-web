@@ -160,12 +160,12 @@ Objectif : *« WTF I WANT THIS AS A SCREENSAVER »* — digne, léger GPU.
 | **5** | Mode veille (UI fade + idle plus lent) | comportement — **plus tard** |
 
 **Sky Eclipse :** craft isolé sur **`/fr/contribute/test-eclipse`** (dev, **lab permanent**).  
-**Marque logo vivante validée (10 août 2026) :** [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · composant `OdysseyEclipseMark` · preview `/fr/contribute/test-eclipse-mark`.  
+**Marque logo (11 août 2026) :** matière + die-cut **ODYSSEY** — [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · play `/fr/contribute/test-eclipse-play` · mark `OdysseyEclipseMark` · preview `/fr/contribute/test-eclipse-mark`.  
 Intro Sanctuaire (`scene.intro`) = **encore OFF** — brancher le voyage ciel plus tard ; ≠ remplacer la marque. ≠ « Éclipse Résonnante » constellation (E′).
 
 **Journal essais :** [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md) — pistes KEEP/REJECT, anti-patterns, milestone logo.
 
-**Preview craft :** `/fr/contribute/test-ciel` (ciel) · `/fr/contribute/test-eclipse` (lab) · `/fr/contribute/test-eclipse-mark` (marque)
+**Preview craft :** `/fr/contribute/test-ciel` (ciel) · `/fr/contribute/test-eclipse` (lab) · `/fr/contribute/test-eclipse-play` (lockup) · `/fr/contribute/test-eclipse-mark` (marque)
 
 Règle de session : **une lettre / phase à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
 

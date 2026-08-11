@@ -1,19 +1,22 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: 10 août 2026 · Milestone marque Éclipse vivante ✅ · Freemium V1 Phases 0–5 ✅ · Cascade 3a ✅ · Co-Créateur A–C ✅ · Leviers R1–R6 — §10 · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · Vision cinéma : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md)**
+**Last revised: 11 août 2026 · Milestone marque Éclipse + die-cut ODYSSEY ✅ craft · Freemium V1 Phases 0–5 ✅ · Cascade 3a ✅ · Co-Créateur A–C ✅ · Leviers R1–R6 — §10 · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · Vision cinéma : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md)**
 
 Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).
 
 **Update this file** after chaque phase Freemium / milestone UX (mobile, S5-J) ou checkpoint mensuel.
 
-### Milestone — Marque Éclipse (10 août 2026)
+### Milestone — Marque Éclipse + ODYSSEY (11 août 2026)
 
 | Item | Status |
 |------|--------|
 | Craft lab éclipse (permanent) | 🟢 `/fr/contribute/test-eclipse` (+ play + mark) |
-| Logo vivant validé (Vie=1, diamond, soie) | 🟢 [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) |
-| Composant `OdysseyEclipseMark` + recette | 🟢 code figé |
+| Matière vivante (Vie=1, diamond, soie) | 🟢 [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) |
+| Die-cut **ODYSSEY** (shader, lag soleil→nom) | 🟢 validé en play · [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md) |
+| Composant `OdysseyEclipseMark` + recette matière | 🟢 code figé |
+| Die-cut sur mark produit (`showWordmark`) | 🟢 |
+| Exports DA disc (`logo.*`) + lockup (`lockup.*`) | 🟢 |
 | Brancher mark dans connexion / Sanctuaire / favicon | ⚪ hors scope pour l’instant |
 | Intro ciel Sanctuaire (`scene.intro`) | ⏸ craft / branchement plus tard |
 
@@ -47,7 +50,7 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 | Marketing / landing | 🟢 | Hero, process, pricing, FR/EN i18n |
 | Studio login + 7-step wizard | 🟢 | Core product path ; Étape 5 = **Livre Ouvert** ; Co-Créateur steps 3–5 |
 | Connexion UX (Studio + Salon) | 🟢 | Halo-Éclipse, `OdysseyConnexionMark`, i18n toggle, CTA cyan — [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon) |
-| **Marque Éclipse vivante** | 🟢 | `OdysseyEclipseMark` + lab craft permanent — [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · brancher UI ⚪ |
+| **Marque Éclipse + ODYSSEY** | 🟢 | Mark + play + exports disc/lockup — [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · brancher UI ⚪ |
 | Sanctuary sky / intro | 🟡 | Craft ciel + lab éclipse ✅ · intro `scene.intro` OFF · mark ≠ intro |
 | **Étape 5 — Livre Ouvert** | 🟡 | Layout + DnD + magie ✅ · audio/focus/copy sensoriel ⏳ — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
 | Media upload / Storage | 🟢 | Client upload + signed URLs + **WebP thumbs** + session cache egress (`39460bd`) — voir §4.1 |
@@ -138,6 +141,7 @@ Doc canon v2 : [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`DELIVERABLES_AND_PA
 - **Branding connexion persist:** slug `?partenaire=` via URL + cookie + localStorage ; hotfix RSC cookie (`3475421`, `7433457`)
 - **Salon header:** déconnexion → connexion salon avec slug ; toggle FR/EN (`fb5dff7`, `c653542`)
 - **Connexion — signature Halo-Éclipse (juin 2026):** vidéo `eclipse_login.mp4` (corona constante) + halos CSS d’état (violet / cyan / vert / magenta) ; `OdysseyConnexionMark` (Montserrat blanc lumineux) ; CTA cyan respirant ; séquence cinéma Actes I–V — voir [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)
+- **Marque Éclipse + die-cut ODYSSEY (août 2026) :** matière + lockup nom (play + mark) · exports DA `logo.*` (disc) + `lockup.*` — bible [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · ≠ `OdysseyConnexionMark`
 - **P5.5 Phase 2 (RBAC foundation):** `partnerRoles.ts`, `partnerCapabilities.ts`, `resolvePartnerMembership.ts`, `createPartnerInvitationWithDebit.ts`; `GET /api/partner/tenants` returns `role` + `capabilities`; `PartnerContext` exposes active tenant capabilities; invitation route uses P5.5 RPC + maps `overdraft_limit_exceeded` → HTTP 402
 - **P5.5 Phase 3 (Salon UI):** `PartnerSalonPageIntro` gates wallet/recharge on `capabilities.canViewBalance` (Directors see no balance); removed dead `PartnerWalletSection.tsx`
 - **Storage egress (wizard médias):** thumbs WebP + cache session + `cacheControl` long sur nouveaux uploads — §4.1 (`39460bd`)

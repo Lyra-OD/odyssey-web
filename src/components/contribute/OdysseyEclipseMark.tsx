@@ -43,18 +43,24 @@ type Props = {
   className?: string;
   /** false = fige la matière (Vie 0) pour capture / print. */
   animate?: boolean;
+  /**
+   * Die-cut ODYSSEY (défaut true = lockup complet).
+   * false = matière seule (export DA « disc »).
+   */
+  showWordmark?: boolean;
   "aria-label"?: string;
 };
 
 /**
- * Marque Odyssey Eclipse — recette craft figée, matière vivante (Vie).
- * Pas de knobs : le lab reste pour itérer ; ici = produit.
+ * Marque Odyssey Eclipse — lockup (matière + die-cut ODYSSEY) ou disc seul.
+ * Pas de knobs : le lab / play restent pour itérer ; ici = produit.
  */
 export function OdysseyEclipseMark({
   size = 160,
   fill = false,
   className = "",
   animate = true,
+  showWordmark = true,
   "aria-label": ariaLabel = "Odyssey",
 }: Props) {
   const tier = useVisualTier();
@@ -79,8 +85,10 @@ export function OdysseyEclipseMark({
       progress: recipe.progress,
       offsetX: recipe.offsetX,
       offsetY: recipe.offsetY,
+      /** Pose figée — récit d’apparition = play. */
+      wordmarkMul: showWordmark ? 1 : 0,
     }),
-    [animate, recipe],
+    [animate, recipe, showWordmark],
   );
 
   const bloomIntensity = 0.38 + recipe.diamondAmp * 0.55;
