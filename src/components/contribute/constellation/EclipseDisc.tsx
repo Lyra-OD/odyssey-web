@@ -133,8 +133,11 @@ void main() {
     step(0.0, wmUv.x) * step(wmUv.x, 1.0) *
     step(0.0, wmUv.y) * step(wmUv.y, 1.0);
   float letter = texture2D(uWordmarkMap, clamp(wmUv, 0.0, 1.0)).r * inBox;
-  // Seuil haut = traits Light fins
-  float cut = smoothstep(0.72, 0.94, letter) * wmAmt;
+  // Extinction magique : la lune reprend le masque (seuils qui se resserrent)
+  float wmDie = 1.0 - wmAmt;
+  float lo = mix(0.72, 0.90, wmDie);
+  float hi = mix(0.94, 0.995, wmDie);
+  float cut = smoothstep(lo, hi, letter) * pow(wmAmt, 0.82);
   moonMask *= (1.0 - cut);
 
   float d = length(sun - moon);

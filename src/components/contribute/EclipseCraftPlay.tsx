@@ -121,7 +121,9 @@ function applyChronoToCraft(
   craft.progress = 0;
   craft.offsetX = recipe.offsetX;
   craft.offsetY = recipe.offsetY;
-  craft.wordmarkMul = mix(craft.wordmarkMul, chrono.wordmarkMul, mid);
+  // Extinction : un peu plus réactif à la baisse (évite die-cut qui traîne)
+  const wmLambda = chrono.wordmarkMul < craft.wordmarkMul ? mid * 1.55 : mid;
+  craft.wordmarkMul = mix(craft.wordmarkMul, chrono.wordmarkMul, wmLambda);
   craft.perspectiveDolly = true;
   craft.dollyEndZ = PLANE_REF_Z;
   craft.dollyEndFov = PLANE_REF_FOV;
@@ -261,7 +263,7 @@ function BloomDriver({
 type Locale = "fr" | "en";
 
 /**
- * Lecture cinéma — naissance → die-cut ODYSSEY → dolly → menace.
+ * Lecture cinéma — naissance → ODYSSEY (breath) → dolly + extinction → menace.
  * always-on render + damp craft + bloom muté = fluidité.
  */
 export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
@@ -331,21 +333,21 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "Act 1 diamond → sun+ODYSSEY together → hold → Act 2 dolly → Act 3 threat.",
+          sub: "Act 1 birth + one class breath → hold → Act 2 dolly + light-transfer extinguish → Act 3 threat.",
           play: "Play",
           replay: "Replay",
           lab: "← Craft lab",
           idle: "Black — press Play",
-          ended: "Threat hold — flash comes next",
+          ended: "Name gone — light in the diamond; flash comes next",
         }
       : {
           title: "Éclipse · naissance",
-          sub: "Acte 1 diamond → soleil+ODYSSEY ensemble → pause → Acte 2 dolly → Acte 3 menace.",
+          sub: "Acte 1 naissance + un breath → pause → Acte 2 dolly + extinction (transfert diamond) → Acte 3 menace.",
           play: "Lancer",
           replay: "Rejouer",
           lab: "← Lab craft",
           idle: "Noir — appuie sur Lancer",
-          ended: "Hold menace — le flash vient ensuite",
+          ended: "Nom éteint — lumière au diamond ; le flash vient ensuite",
         };
 
   const labHref = `/${locale}/contribute/test-eclipse`;

@@ -7,11 +7,11 @@
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Phase 1 cinéma (~17.8 s) — actes :
- * naissance (diamond → soleil+ODYSSEY sync) → hold → dolly → menace.
+ * Phase 1 cinéma (~16.9 s) — actes :
+ * naissance → ODYSSEY (breath) → hold court → dolly + extinction longue → menace.
  * Flash / wrap / ciel = phases suivantes (pas encore).
  */
-export const CRAFT_PLAY_DURATION = 17.8;
+export const CRAFT_PLAY_DURATION = 16.9;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -141,25 +141,42 @@ const LOGO_DIAMOND = 2.6;
 const LOGO_SUN = 0.97;
 const SUN_START = 0.78;
 
+/** Dolly / hold branding (hold un poil plus court qu’avant 7.8). */
+const DOLLY_START = 6.9;
+const DOLLY_END = 15.2;
+
 /**
- * Phase 1 — (~17.8 s). Géométrie fixe : alignment = 1.
+ * Un breath « classe » — même tempo (~0.52 Hz), un peu plus fort, une seule fois.
+ * Puis nom plein jusqu’à l’extinction.
+ */
+const WM_BREATH_HZ = 0.52;
+const WM_BREATH_A = 4.65;
+const WM_BREATH_PERIOD = 1 / WM_BREATH_HZ;
+const WM_BREATH_AMP = 0.2;
+
+/** Extinction : un peu après dolly → 0 juste avant fin (plateau puis chute). */
+const WM_FADE_START = DOLLY_START + 0.6;
+const WM_FADE_END = CRAFT_PLAY_DURATION - 0.3;
+
+/**
+ * Extinction magique : reste affirmé longtemps, puis chute velvet (étoile qui cède).
+ * `commit` = portion initiale quasi-plateau (0–1).
+ */
+function wordmarkExtinguish(a: number, b: number, x: number, commit = 0.32) {
+  const u = clamp01((x - a) / Math.max(b - a, 1e-4));
+  if (u <= 0) return 0;
+  if (u >= 1) return 1;
+  const late = clamp01((u - commit) / Math.max(1 - commit, 1e-4));
+  return softRiseVelvet(0, 1, late, 1.42);
+}
+
+/**
+ * Phase 1 — (~16.9 s). Géométrie fixe : alignment = 1.
  *
  * Acte 1 — naissance à GRANDEUR, caméra LOCK
- *   T0–0.45    noir court
- *   T0.35–2.75 diamond
- *   T2.15–3.55 soleil
- *   T2.45–4.15 irrégularité
- *   T4.15–4.4  hold objet sacré
- *
- * Acte 1b — die-cut ODYSSEY (lag 2.62, montée plus lente → 4.55)
- *   T2.62–4.55 softRiseVelvet (tau feutré)
- *   T4.55–7.8  hold branding
- *
- * Acte 2 — dolly aspiration continue (Z + aim sync)
- *   T7.8–16.1  même courbe pour push et aim
- *
- * Acte 3 — menace (lumière — peaufinage séparé)
- *   T15.7–17.8 hold seuil
+ * Acte 1b — ODYSSEY + un breath classe (4.65, ~1.9 s)
+ * Acte 2 — dolly ; extinction magique (seuil se referme + transfert diamond)
+ * Acte 3 — menace (nom déjà éteint)
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
@@ -174,21 +191,33 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const sunIn = softRiseVelvet(2.15, 3.55, time, 0.78);
   const irregIn = softRiseVelvet(2.45, 4.15, time, 1.05);
 
-  // ODYSSEY : lag inchangé (2.62) ; montée un mini plus lente / feutrée
-  const wordmarkMul = softRiseVelvet(2.62, 4.55, time, 1.28);
+  // ODYSSEY : apparition → un breath classe → extinction magique
+  const wordmarkIn = softRiseVelvet(2.62, 4.55, time, 1.28);
+  let breathMul = 1;
+  const breathEnd = WM_BREATH_A + WM_BREATH_PERIOD;
+  if (time > WM_BREATH_A && time < breathEnd && wordmarkIn > 0.02) {
+    const u = (time - WM_BREATH_A) / WM_BREATH_PERIOD;
+    // Même famille que le breath continu « classe » ; revient à 1 sans saut
+    breathMul =
+      1 - WM_BREATH_AMP * 0.5 * (1 - Math.cos(u * Math.PI * 2));
+  }
+  const wordmarkOut = wordmarkExtinguish(WM_FADE_START, WM_FADE_END, time);
+  const wordmarkMul = clamp01(wordmarkIn * breathMul * (1 - wordmarkOut));
   const wordmarkSolar = 0;
 
   // Acte 2 — dolly après hold branding
-  const cameraPush = gravityDolly(7.8, 16.1, time);
+  const cameraPush = gravityDolly(DOLLY_START, DOLLY_END, time);
   const cameraAim = cameraPush;
 
-  // Acte 3 — (inchangé — peaufinage lumière plus tard)
+  // Transfert de lumière : le nom cède → diamond / bloom
   const threat = cameraPush * cameraPush;
-  const diamondMul = LOGO_DIAMOND * diamondIn * (1 + 1.2 * threat);
+  const diamondMul =
+    LOGO_DIAMOND * diamondIn * (1 + 1.2 * threat + 0.95 * wordmarkOut);
   const coronaMul = sunIn * (1 - 0.58 * cameraPush);
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
   const irregularMul = Math.pow(irregIn, 0.82);
-  const bloom = 0.18 * diamondIn + 0.1 * sunIn + 1.05 * threat;
+  const bloom =
+    0.18 * diamondIn + 0.1 * sunIn + 1.05 * threat + 0.62 * wordmarkOut;
 
   return {
     ...BASE,

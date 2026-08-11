@@ -2,7 +2,7 @@
 
 **Statut :** partition verrouillée (intention) — **pas encore branchée au code**  
 **Play :** `/fr/contribute/test-eclipse-play`  
-**Chrono image source :** [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts) (`CRAFT_PLAY_DURATION` ≈ **17,8 s**)  
+**Chrono image source :** [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts) (`CRAFT_PLAY_DURATION` ≈ **16,9 s**)  
 **Direction :** peu de sons, très justes — espace + rituel (pas trailer EDM)
 
 Quand on brancherá l’audio, piloter les volumes / fades sur les **mêmes courbes** que l’image (`diamondIn`, `sunIn`, `wordmarkMul`, `cameraPush`, `threat`) — pas une timeline audio parallèle inventée.
@@ -15,7 +15,7 @@ Quand on brancherá l’audio, piloter les volumes / fades sur les **mêmes cour
 |----|--------|--------|
 | **A** | Air / void | Quasi silence, micro souffle très bas |
 | **D** | Drone | Grave organique (glass / cello sub) — couche principale |
-| **S** | Shimmer | Harmonic aigu / lumière — couche branding |
+| **S** | Shimmer | Harmonic aigu / lumière — couche branding (suit breath + extinction) |
 | **M** | Motion | Whoosh interne très soft — couche dolly |
 | **X** | Hit (plus tard) | Flash / seuil — **pas encore** |
 
@@ -28,14 +28,13 @@ Pas de mélodie au début. Stéréo large, volumes bas.
 | Temps (s) | Image (chrono actuel) | Courbe code | Son | Intention |
 |-----------|------------------------|-------------|-----|-----------|
 | **0 → 0,45** | Noir | — | **A** quasi 0 | Le vide a du poids |
-| **0,35 → 2,15** | Diamond seul (révélation) | `diamondIn` 0,35→2,75 | **A** + **D** à peine audible (très bas) | Présence avant la lumière |
-| **2,15 → 3,55** | Soleil naît | `sunIn` 2,15→3,55 | **D** monte 0 → moyen | La lumière *arrive* |
-| **2,62 → 4,55** | Die-cut **ODYSSEY** (lag après soleil, montée lente) | `wordmarkMul` 2,62→4,55 | **S** entre *après* **D**, fade-in feutré | Causalité : soleil → nom |
-| **2,45 → 4,15** | Irrégularité corona | `irregIn` | **D** stable / léger grain | Matière vivante, pas nouveau hit |
-| **4,55 → 7,8** | Hold branding (mot complet, caméra fixe) | `wordmarkMul` ≈ 1, `cameraPush` = 0 | **D** plat bas ; **S** settle / quasi hold | On *lit* ODYSSEY (silence UI plus tard) |
-| **7,8 → 16,1** | Dolly vers diamond | `cameraPush` 7,8→16,1 | **M** très soft + **D** qui se resserre un peu | Aspiration, pas vent Hollywood |
-| **15,7 → 17,8** | Hold menace (image encore soft) | `threat` ↑ en fin de push | **D** + grave léger (préparer seuil) | Tension — peaufinage image TBD |
-| **Plus tard** | Flash depuis diamond → wrap / ciel | TBD | **X** un hit + reverb longue | Climax net |
+| **0,35 → 2,15** | Diamond seul | `diamondIn` | **A** + **D** à peine | Présence avant la lumière |
+| **2,15 → 3,55** | Soleil naît | `sunIn` | **D** monte | La lumière *arrive* |
+| **2,62 → 4,55** | Die-cut **ODYSSEY** | `wordmarkIn` | **S** après **D** | Causalité : soleil → nom |
+| **4,55 → 6,9** | Hold + **breath** | `wordmarkMul` pulse | **S** respire avec le die-cut ; **D** plat | On *lit* / *sent* ODYSSEY |
+| **6,9 → ~16,4** | Dolly + extinction longue | `cameraPush` ; `wordmarkOut` | **M** soft ; **S** suit le fade jusqu’à 0 | Étoile qui s’éteint |
+| **~16,4 → 16,9** | Nom éteint, seuil menace | `threat` | **D** + grave léger | Battement avant futur flash |
+| **Plus tard** | Flash diamond → wrap / ciel | TBD | **X** hit + reverb | Climax net |
 
 ---
 
@@ -44,28 +43,25 @@ Pas de mélodie au début. Stéréo large, volumes bas.
 | Signal image | Usage audio suggéré |
 |--------------|---------------------|
 | `sunIn` | gain du **drone D** |
-| `wordmarkMul` | gain du **shimmer S** (déjà en retard sur le soleil) |
-| `cameraPush` | gain / filtre de **motion M** + légère compression du drone |
-| `threat` (`cameraPush²`) | couche grave menace (phase suivante) |
+| `wordmarkMul` | gain du **shimmer S** (inclut breath + extinction) |
+| `cameraPush` | gain / filtre de **motion M** |
+| `threat` (`cameraPush²`) | couche grave menace |
 | Play start / replay | hard reset toutes les pistes à 0 |
-
-Règle : **un Play = une lecture sync chrono**, mute si onglet caché / reduced-motion si besoin produit.
 
 ---
 
 ## 4. Hors scope pour l’instant
 
-- Fichiers `.mp3` / `.wav` / Web Audio / spatialize  
-- Silence UI (lab chrome) — prévu, pas maintenant  
+- Fichiers audio / Web Audio  
+- Silence UI (lab chrome) — **fin seulement**  
 - Flash / wrap / ciel audio  
-- Musique mélodique
 
 ---
 
 ## 5. Prochaine étape audio (plus tard)
 
-1. Choisir ou générer assets **D / S / M** (boucles clean, seamless).  
-2. Brancher un `PlayAudioDriver` sur `elapsed` + courbes ci-dessus.  
-3. Mix pass avec toi (niveaux Webby = bas et précis).
+1. Assets **D / S / M**.  
+2. `PlayAudioDriver` sur `elapsed` + courbes.  
+3. Mix pass.
 
-*Dernière sync image : août 2026 — lag ODYSSEY 2,62→4,55 ; dolly 7,8→16,1 ; durée 17,8 s.*
+*Dernière sync image : août 2026 — hold → dolly 6,9 ; extinction ~7,45→16,4 ; durée 16,9 s.*

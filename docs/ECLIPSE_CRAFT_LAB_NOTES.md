@@ -38,8 +38,8 @@
 |---------|----------|
 | Nom | **Die-cut** dans le trou noir → photosphère à travers les lettres |
 | Typo | Montserrat Light, lettres larges bord à bord, **pas** d’UV stretch |
-| Sync play | Soleil d’abord (`sunIn` 2.15→3.55) ; ODYSSEY lag (`wordmarkMul` 2.62→4.55) |
-| Hold → dolly | Hold branding puis `gravityDolly` 7.8→16.1 (die-cut reste) |
+| Sync play | Soleil d’abord ; ODYSSEY lag 2.62→4.55 ; **breath** perceptible ; hold → dolly **6.9** |
+| Hold → dolly | Hold plus court ; dolly 6.9→15.2 ; die-cut **s’éteint** (fade ~7.45→16.4) |
 | Mark produit | `showWordmark` ✅ · exports **disc** + **lockup** |
 
 Suite intro cinéma (wash → ciel) : à reconstruire plan par plan **sans** casser la recette logo + die-cut.
@@ -54,7 +54,7 @@ Suite intro cinéma (wash → ciel) : à reconstruire plan par plan **sans** cas
 |---------|----------------|
 | Trou noir / lune | **Fixe** au centre ; die-cut ODYSSEY en play |
 | Soleil | Scrub Look = **position libre** (0 droite → 1 derrière) ; logo = `1` |
-| Chrono play | Naissance grandeur → die-cut → hold → dolly → menace (~17,8 s) |
+| Chrono play | Naissance → ODYSSEY breath → hold court → dolly + extinction → menace (~16,9 s) |
 | Marque | `OdysseyEclipseMark` = lockup complet (`wordmarkMul: 1`) |
 | Knobs | Tailles, corona, Vie, flash, photon — readouts numériques |
 
