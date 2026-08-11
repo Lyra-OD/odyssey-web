@@ -152,26 +152,23 @@ function PlayChronoDriver({
     elapsed: number,
   ) => {
     const cam = camera as PerspectiveCamera;
-    const nextPush = hard ? push : damp(pushRef.current, push, 2.4, dt);
-    pushRef.current = nextPush;
+    // Un seul damp — Z et aim = même valeur (geste unique)
+    const next = hard ? push : damp(pushRef.current, push, 2.6, dt);
+    pushRef.current = next;
 
     const breath =
       CAM_BREATH_AMP *
-      nextPush *
+      next *
+      (1 - next * 0.7) *
       Math.sin(elapsed * Math.PI * 2 * CAM_BREATH_HZ);
 
-    // Rail : avance + léger décalage vers le diamond (pas le centre noir)
-    cam.position.x = diamond.x * 0.22 * nextPush + breath * 0.4;
-    cam.position.y = diamond.y * 0.18 * nextPush + breath * 0.25;
-    cam.position.z =
-      CAM_Z_START + (CAM_Z_END - CAM_Z_START) * nextPush + breath;
+    // Avance + vise le diamond ensemble (pas de pan en avance)
+    cam.position.x = diamond.x * 0.34 * next + breath * 0.3;
+    cam.position.y = diamond.y * 0.3 * next + breath * 0.18;
+    cam.position.z = CAM_Z_START + (CAM_Z_END - CAM_Z_START) * next + breath;
+    cam.lookAt(diamond.x * next, diamond.y * next, 0);
 
-    // Vise le diamond — il remonte vers le centre optique
-    const aimX = diamond.x * nextPush;
-    const aimY = diamond.y * nextPush;
-    cam.lookAt(aimX, aimY, 0);
-
-    cam.fov = CAM_FOV_START + (CAM_FOV_END - CAM_FOV_START) * nextPush;
+    cam.fov = CAM_FOV_START + (CAM_FOV_END - CAM_FOV_START) * next;
     cam.updateProjectionMatrix();
   };
 
@@ -331,7 +328,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "Act 1 monumental birth → Act 2 dolly into the diamond → Act 3 threat.",
+          sub: "Act 1 birth → Act 2 continuous dolly (Z+aim sync) → Act 3 threat.",
           play: "Play",
           replay: "Replay",
           lab: "← Craft lab",
@@ -340,7 +337,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
         }
       : {
           title: "Éclipse · naissance",
-          sub: "Acte 1 naissance grandeur → Acte 2 dolly vers le diamond → Acte 3 menace.",
+          sub: "Acte 1 naissance → Acte 2 dolly continu (Z+aim sync) → Acte 3 menace.",
           play: "Lancer",
           replay: "Rejouer",
           lab: "← Lab craft",

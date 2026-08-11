@@ -7,11 +7,11 @@
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Phase 1 cinéma (~10.2 s) — 3 actes :
- * naissance à grandeur (caméra fixe) → dolly vers diamond → menace.
+ * Phase 1 cinéma (~14.2 s) — 3 actes :
+ * naissance grandeur → dolly continu (Z+aim sync) → menace.
  * Flash / wrap / ciel = phases suivantes (pas encore).
  */
-export const CRAFT_PLAY_DURATION = 10.2;
+export const CRAFT_PLAY_DURATION = 14.2;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -24,8 +24,10 @@ export type CraftChronoState = {
   sunScale: number;
   /** Vie shader — monte avec la matière (évite scintillement au noir). */
   lifeMul: number;
-  /** 0→1 push caméra cinéma (révélation). */
+  /** 0→1 push caméra (Z / FOV) — courbe gravité. */
   cameraPush: number;
+  /** 0→1 aim vers diamond — sync avec cameraPush (geste unique). */
+  cameraAim: number;
   bodyFade: number;
   skyMul: number;
   bloom: number;
@@ -80,9 +82,13 @@ function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-/** Dolly cinéma : long, pads doux — pas de rush mid. */
-function cinemaDolly(a: number, b: number, x: number) {
-  return smootherstep(a, b, x);
+/** Aspiration continue : toujours un micro-mouvement, légère gravité (pas de plateau). */
+function gravityDolly(a: number, b: number, x: number) {
+  const u = clamp01((x - a) / (b - a));
+  if (u <= 0) return 0;
+  if (u >= 1) return 1;
+  // 50 % linéaire (lisible dès le début) + 50 % ease-in doux (tiré en fin)
+  return u * 0.5 + Math.pow(u, 1.5) * 0.5;
 }
 
 const BASE: CraftChronoState = {
@@ -93,6 +99,7 @@ const BASE: CraftChronoState = {
   sunScale: 0.97,
   lifeMul: 1,
   cameraPush: 0,
+  cameraAim: 0,
   bodyFade: 1,
   skyMul: 0,
   bloom: 0,
@@ -129,20 +136,20 @@ const LOGO_SUN = 0.97;
 const SUN_START = 0.78;
 
 /**
- * Phase 1 — 3 actes (~10.2 s). Géométrie fixe : alignment = 1.
+ * Phase 1 — 3 actes (~14.2 s). Géométrie fixe : alignment = 1.
  *
  * Acte 1 — naissance à GRANDEUR, caméra LOCK
  *   T0–0.45    noir court
- *   T0.35–2.75 diamond (déjà monumental)
+ *   T0.35–2.75 diamond
  *   T2.15–3.55 soleil
  *   T2.45–4.15 irrégularité
  *   T4.15–4.95 hold objet sacré
  *
- * Acte 2 — dolly vers le DIAMOND (déborde le cadre)
- *   T4.85–9.1  push caméra
+ * Acte 2 — dolly aspiration continue (Z + aim sync)
+ *   T4.9–13.2  même courbe pour push et aim
  *
- * Acte 3 — menace (seuil avant flash)
- *   T8.4–10.2  diamond + bloom liés à la proximité
+ * Acte 3 — menace (lumière — peaufinage séparé)
+ *   T12.4–14.2 hold seuil
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
@@ -157,16 +164,17 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const sunIn = softRiseVelvet(2.15, 3.55, time, 0.78);
   const irregIn = softRiseVelvet(2.45, 4.15, time, 1.05);
 
-  // Acte 2 — caméra après hold
-  const cameraPush = cinemaDolly(4.85, 9.1, time);
+  // Acte 2 — un seul geste : Z et aim sur la même courbe
+  const cameraPush = gravityDolly(4.9, 13.2, time);
+  const cameraAim = cameraPush;
 
-  // Acte 3 — menace : on vise le diamond
+  // Acte 3 — (inchangé pour l’instant : on valide d’abord le rail)
   const threat = cameraPush * cameraPush;
-  const diamondMul = LOGO_DIAMOND * diamondIn * (1 + 0.62 * threat);
-  const coronaMul = sunIn;
+  const diamondMul = LOGO_DIAMOND * diamondIn * (1 + 1.2 * threat);
+  const coronaMul = sunIn * (1 - 0.58 * cameraPush);
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
   const irregularMul = Math.pow(irregIn, 0.82);
-  const bloom = 0.2 * diamondIn + 0.16 * sunIn + 0.85 * threat;
+  const bloom = 0.18 * diamondIn + 0.1 * sunIn + 1.05 * threat;
 
   return {
     ...BASE,
@@ -177,6 +185,7 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
     sunScale,
     lifeMul,
     cameraPush,
+    cameraAim,
     bodyFade,
     skyMul: 0,
     bloom,
