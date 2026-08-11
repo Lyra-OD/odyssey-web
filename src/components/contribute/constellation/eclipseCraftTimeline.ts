@@ -7,10 +7,10 @@
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Naissance du logo — plus rapide, encore plus doux.
+ * Naissance du logo — fluide, organique.
  * Flash / wrap / ciel = phases suivantes (pas encore).
  */
-export const CRAFT_PLAY_DURATION = 3.5;
+export const CRAFT_PLAY_DURATION = 5.8;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -21,6 +21,8 @@ export type CraftChronoState = {
   irregularMul: number;
   /** Scale soleil (animé vers la recette). */
   sunScale: number;
+  /** Vie shader — monte avec la matière (évite scintillement au noir). */
+  lifeMul: number;
   bodyFade: number;
   skyMul: number;
   bloom: number;
@@ -46,7 +48,7 @@ function smootherstep(a: number, b: number, x: number) {
 }
 
 /**
- * Apparition organique : soft au début, puis approche expo (pas de plateau brutal).
+ * Apparition organique : soft au début, puis approche expo.
  * `tau` plus grand = plus feutré.
  */
 function softRise(a: number, b: number, x: number, tau = 0.42) {
@@ -62,7 +64,6 @@ function softRise(a: number, b: number, x: number, tau = 0.42) {
 /** Encore plus feutré — double S-curve sur [0,1] + expo. */
 function softRiseVelvet(a: number, b: number, x: number, tau = 0.72) {
   const u0 = smootherstep(a, b, x);
-  // 2ᵉ passe sur l’unité (pas sur le temps absolu — sinon tout reste à 0)
   const u = smootherstep(0, 1, u0);
   if (u <= 0) return 0;
   if (u >= 1) return 1;
@@ -82,6 +83,7 @@ const BASE: CraftChronoState = {
   diamondMul: 0,
   irregularMul: 1,
   sunScale: 0.97,
+  lifeMul: 1,
   bodyFade: 1,
   skyMul: 0,
   bloom: 0,
@@ -118,34 +120,35 @@ const LOGO_SUN = 0.97;
 const SUN_START = 0.78;
 
 /**
- * Phase 1 — naissance du logo (~3.5 s).
+ * Phase 1 — naissance du logo (~5.8 s).
  *
  * Géométrie fixe : alignment = 1.
  *
- * T0–0.2     noir
- * T0.15–1.3  diamond d’abord
- * T0.95–2.05 soleil
- * T1.1–2.95  irrégularité (ralentie)
- * T2.95–3.5  hold logo vivant
+ * T0–0.55     noir
+ * T0.4–2.85   diamond seul — révélation lente
+ * T2.55–4.0   soleil (après la révélation)
+ * T2.85–5.0   irrégularité (juste après le soleil)
+ * T5.0–5.8    hold logo vivant
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
 
   const alignment = 1;
 
-  const diamondIn = softRise(0.15, 1.3, time, 0.48);
-  const sunIn = softRiseVelvet(0.95, 2.05, time, 0.7);
-  // Irrég plus lente / feutrée
-  const irregIn = softRiseVelvet(1.1, 2.95, time, 1.05);
-  const bodyFade = softRise(0.12, 1.45, time, 0.6);
+  // Début : révélation diamond plus longue / plus lente
+  const diamondIn = softRiseVelvet(0.4, 2.85, time, 1.15);
+  const bodyFade = softRiseVelvet(0.55, 3.1, time, 1.2);
+  const lifeMul = softRiseVelvet(0.5, 2.95, time, 1.1);
+
+  // Soleil + irrég décalés — on sent d’abord le diamond, ensuite la suite
+  const sunIn = softRiseVelvet(2.55, 4.0, time, 0.78);
+  const irregIn = softRiseVelvet(2.85, 5.0, time, 1.15);
 
   const diamondMul = LOGO_DIAMOND * diamondIn;
   const coronaMul = sunIn;
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
-  // Irrég : plateau anticipé (évite le « boom » de plumes en fin de courbe)
   const irregularMul = Math.pow(irregIn, 0.82);
-  // Bloom calme — ne plus multiplier par diamondMul brut (c’était le boom)
-  const bloom = 0.35 * diamondIn + 0.25 * sunIn;
+  const bloom = 0.28 * diamondIn + 0.2 * sunIn;
 
   return {
     ...BASE,
@@ -154,6 +157,7 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
     diamondMul,
     irregularMul,
     sunScale,
+    lifeMul,
     bodyFade,
     skyMul: 0,
     bloom,

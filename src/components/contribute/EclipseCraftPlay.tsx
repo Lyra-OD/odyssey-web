@@ -1,6 +1,6 @@
 "use client";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import Link from "next/link";
 import {
@@ -49,157 +49,126 @@ type CraftBag = {
   offsetY: number;
 };
 
-function applyChronoToCraft(craft: CraftBag, chrono: CraftChronoState) {
+/** Exp damp — lisse toute micro-saccade de courbe / frame. */
+function damp(current: number, target: number, lambda: number, dt: number) {
+  return current + (target - current) * (1 - Math.exp(-lambda * dt));
+}
+
+function applyChronoToCraft(
+  craft: CraftBag,
+  chrono: CraftChronoState,
+  dt: number,
+  hard = false,
+) {
   const recipe = ECLIPSE_LOGO_RECIPE;
+  const mix = (cur: number, target: number, lambda: number) =>
+    hard ? target : damp(cur, target, lambda, dt);
+
+  // Amortissement un peu plus feutré pour coller au tempo ralenti
+  const soft = 3.4;
+  const mid = 5.2;
+
   craft.moonScale = recipe.moonScale;
-  craft.sunScale = chrono.sunScale;
-  craft.coronaAmp = recipe.coronaAmp * chrono.coronaMul;
+  craft.sunScale = mix(craft.sunScale, chrono.sunScale, mid);
+  craft.coronaAmp = mix(
+    craft.coronaAmp,
+    recipe.coronaAmp * chrono.coronaMul,
+    mid,
+  );
   craft.coronaSpread = recipe.coronaSpread;
-  craft.coronaIrregular = recipe.coronaIrregular * chrono.irregularMul;
+  craft.coronaIrregular = mix(
+    craft.coronaIrregular,
+    recipe.coronaIrregular * chrono.irregularMul,
+    soft,
+  );
   craft.coronaRays = recipe.coronaRays;
   craft.coronaSoft = recipe.coronaSoft;
   craft.photonAmp = recipe.photonAmp;
-  craft.lifeAmp = recipe.lifeAmp;
-  craft.diamondAmp = chrono.diamondMul;
+  craft.lifeAmp = mix(craft.lifeAmp, recipe.lifeAmp * chrono.lifeMul, soft);
+  craft.diamondAmp = mix(craft.diamondAmp, chrono.diamondMul, soft);
   craft.alignment = chrono.alignment;
-  craft.bodyFade = chrono.bodyFade;
+  craft.bodyFade = mix(craft.bodyFade, chrono.bodyFade, soft);
   craft.progress = 0;
   craft.offsetX = recipe.offsetX;
   craft.offsetY = recipe.offsetY;
 }
 
-function ForceRenderLoop() {
-  const invalidate = useThree((s) => s.invalidate);
-  useEffect(() => {
-    let raf = 0;
-    let running = true;
-    const tick = () => {
-      if (!running) return;
-      invalidate();
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => {
-      running = false;
-      cancelAnimationFrame(raf);
-    };
-  }, [invalidate]);
-  return null;
-}
-
 /**
- * Chrono dans le render loop R3F — pas de setState 60 fps (source du saccadé).
+ * Chrono + amortissement — zéro setState pendant le play (anti-saccade).
  */
 function PlayChronoDriver({
   playingRef,
   craft,
-  bloomRef,
   onEnded,
-  onUiSample,
 }: {
   playingRef: MutableRefObject<boolean>;
   craft: CraftBag;
-  bloomRef: MutableRefObject<number>;
   onEnded: () => void;
-  onUiSample: (chrono: CraftChronoState) => void;
 }) {
   const elapsedRef = useRef(0);
   const wasPlayingRef = useRef(false);
-  const uiAccRef = useRef(0);
 
   useFrame((_, delta) => {
+    const dt = Math.min(Math.max(delta, 0), 1 / 30);
     const playing = playingRef.current;
 
     if (playing && !wasPlayingRef.current) {
       elapsedRef.current = 0;
-      const chrono = sampleCraftPlayChrono(0);
-      applyChronoToCraft(craft, chrono);
-      bloomRef.current = 0.26 + chrono.bloom * 0.35;
-      onUiSample(chrono);
+      applyChronoToCraft(craft, sampleCraftPlayChrono(0), dt, true);
     }
     wasPlayingRef.current = playing;
 
-    if (!playing) return;
+    if (!playing) {
+      skyIntroRef.active = true;
+      skyIntroRef.skyMul = 0;
+      skyIntroRef.disc = craft.bodyFade;
+      skyIntroRef.discScale = 1;
+      return;
+    }
 
-    elapsedRef.current += Math.min(delta, 0.05);
+    elapsedRef.current += dt;
     const t = elapsedRef.current;
 
     if (t >= CRAFT_PLAY_DURATION) {
-      const chrono = sampleCraftPlayChrono(CRAFT_PLAY_DURATION);
-      applyChronoToCraft(craft, chrono);
-      bloomRef.current = 0.26 + chrono.bloom * 0.35;
+      applyChronoToCraft(
+        craft,
+        sampleCraftPlayChrono(CRAFT_PLAY_DURATION),
+        dt,
+        true,
+      );
       playingRef.current = false;
       wasPlayingRef.current = false;
-      onUiSample(chrono);
+      skyIntroRef.active = true;
+      skyIntroRef.skyMul = 0;
+      skyIntroRef.disc = craft.bodyFade;
+      skyIntroRef.discScale = 1;
       onEnded();
       return;
     }
 
-    const chrono = sampleCraftPlayChrono(t);
-    applyChronoToCraft(craft, chrono);
-    bloomRef.current = 0.26 + chrono.bloom * 0.35;
+    applyChronoToCraft(craft, sampleCraftPlayChrono(t), dt, false);
 
     skyIntroRef.active = true;
     skyIntroRef.skyMul = 0;
-    skyIntroRef.disc = chrono.bodyFade;
+    skyIntroRef.disc = craft.bodyFade;
     skyIntroRef.discScale = 1;
-
-    uiAccRef.current += delta;
-    if (uiAccRef.current >= 0.2) {
-      uiAccRef.current = 0;
-      onUiSample(chrono);
-    }
   });
 
   return null;
-}
-
-function BloomDriver({
-  bloomRef,
-}: {
-  bloomRef: MutableRefObject<number>;
-}) {
-  const [intensity, setIntensity] = useState(0.32);
-  const acc = useRef(0);
-
-  useFrame((_, delta) => {
-    acc.current += delta;
-    if (acc.current < 1 / 24) return;
-    acc.current = 0;
-    const next = bloomRef.current;
-    // Lerp — pas de saut d’intensité bloom
-    setIntensity((prev) => {
-      const blended = prev + (next - prev) * 0.22;
-      return Math.abs(prev - blended) > 0.004 ? blended : prev;
-    });
-  });
-
-  return (
-    <EffectComposer multisampling={0}>
-      <Bloom
-        luminanceThreshold={0.78}
-        luminanceSmoothing={0.55}
-        intensity={intensity}
-        mipmapBlur
-      />
-    </EffectComposer>
-  );
 }
 
 type Locale = "fr" | "en";
 
 /**
  * Lecture cinéma — Phase 1 : naissance du logo.
- * Chrono fluide (useFrame) + courbes smootherstep.
+ * always-on render + damp craft + bloom fixe = fluidité.
  */
 export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
   const recipe = ECLIPSE_LOGO_RECIPE;
   const playingRef = useRef(false);
   const [playing, setPlaying] = useState(false);
-  const [chrono, setChrono] = useState<CraftChronoState>(() =>
-    sampleCraftPlayChrono(0),
-  );
+  const [phase, setPhase] = useState<"idle" | "playing" | "done">("idle");
 
   const craftRef = useRef<CraftBag>({
     step: 3,
@@ -212,7 +181,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     coronaRays: recipe.coronaRays,
     coronaSoft: recipe.coronaSoft,
     photonAmp: recipe.photonAmp,
-    lifeAmp: recipe.lifeAmp,
+    lifeAmp: 0,
     diamondAmp: 0,
     alignment: 1,
     bodyFade: 0,
@@ -220,14 +189,18 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     offsetX: recipe.offsetX,
     offsetY: recipe.offsetY,
   });
-  const bloomRef = useRef(0.32);
 
   useEffect(() => {
     skyIntroRef.active = true;
     skyIntroRef.skyMul = 0;
     skyIntroRef.disc = 0;
     skyIntroRef.discScale = 1;
-    applyChronoToCraft(craftRef.current, sampleCraftPlayChrono(0));
+    applyChronoToCraft(
+      craftRef.current,
+      sampleCraftPlayChrono(0),
+      1 / 60,
+      true,
+    );
     return () => {
       skyIntroRef.active = false;
       skyIntroRef.skyMul = 1;
@@ -237,25 +210,22 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
   }, []);
 
   const replay = () => {
-    const zero = sampleCraftPlayChrono(0);
-    applyChronoToCraft(craftRef.current, zero);
-    bloomRef.current = 0.32;
-    setChrono(zero);
+    applyChronoToCraft(
+      craftRef.current,
+      sampleCraftPlayChrono(0),
+      1 / 60,
+      true,
+    );
     playingRef.current = true;
     setPlaying(true);
+    setPhase("playing");
   };
-
-  const atLogo =
-    chrono.bodyFade > 0.92 &&
-    chrono.diamondMul > LOGO_DIAMOND_ALMOST &&
-    chrono.sunScale > 0.95;
-  const atStart = chrono.bodyFade < 0.02;
 
   const copy =
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "Black → diamond first → sun + irregularity together → logo.",
+          sub: "Black → diamond first → sun + irregularity → logo.",
           play: "Play",
           replay: "Replay",
           lab: "← Craft lab",
@@ -264,7 +234,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
         }
       : {
           title: "Éclipse · naissance",
-          sub: "Noir → diamond d’abord → soleil + irrégularité ensemble → logo.",
+          sub: "Noir → diamond d’abord → soleil + irrégularité → logo.",
           play: "Lancer",
           replay: "Rejouer",
           lab: "← Lab craft",
@@ -287,7 +257,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
           <Canvas
             className="h-full w-full"
             style={{ width: "100%", height: "100%" }}
-            frameloop="demand"
+            frameloop="always"
             dpr={tierDpr(tier)}
             camera={{ position: [0, 0, 8], fov: 42, near: 0.1, far: 40 }}
             gl={{
@@ -302,17 +272,24 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
           >
             <Suspense fallback={null}>
               <SkyThemeProvider theme={defaultSkyTheme}>
-                <ForceRenderLoop />
                 <PlayChronoDriver
                   playingRef={playingRef}
                   craft={craftRef.current}
-                  bloomRef={bloomRef}
-                  onEnded={() => setPlaying(false)}
-                  onUiSample={setChrono}
+                  onEnded={() => {
+                    setPlaying(false);
+                    setPhase("done");
+                  }}
                 />
                 <color attach="background" args={["#000000"]} />
                 <EclipseDisc tier="desktop" craft={craftRef.current} />
-                <BloomDriver bloomRef={bloomRef} />
+                <EffectComposer multisampling={0}>
+                  <Bloom
+                    luminanceThreshold={0.8}
+                    luminanceSmoothing={0.6}
+                    intensity={0.4}
+                    mipmapBlur
+                  />
+                </EffectComposer>
               </SkyThemeProvider>
             </Suspense>
           </Canvas>
@@ -342,11 +319,11 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
             disabled={playing}
             className="rounded-sm border border-white/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/75 hover:border-white/40 disabled:opacity-40"
           >
-            {playing ? "…" : atLogo || !atStart ? copy.replay : copy.play}
+            {playing ? "…" : phase === "done" ? copy.replay : copy.play}
           </button>
           {!playing && (
             <p className="text-[11px] font-light tracking-wide text-white/35">
-              {atLogo ? copy.ended : copy.idle}
+              {phase === "done" ? copy.ended : copy.idle}
             </p>
           )}
         </div>
@@ -354,5 +331,3 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     </main>
   );
 }
-
-const LOGO_DIAMOND_ALMOST = 2.4;
