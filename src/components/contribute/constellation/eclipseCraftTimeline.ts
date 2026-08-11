@@ -8,7 +8,7 @@
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
  * Phase 1 cinéma (~17.8 s) — actes :
- * naissance grandeur → die-cut ODYSSEY + pause → dolly sync → menace.
+ * naissance (diamond → soleil+ODYSSEY sync) → hold → dolly → menace.
  * Flash / wrap / ciel = phases suivantes (pas encore).
  */
 export const CRAFT_PLAY_DURATION = 17.8;
@@ -151,9 +151,9 @@ const SUN_START = 0.78;
  *   T2.45–4.15 irrégularité
  *   T4.15–4.4  hold objet sacré
  *
- * Acte 1b — die-cut ODYSSEY + pause branding
- *   T4.35–5.5  ouverture découpe
- *   T5.5–7.8   pause (mot complet, caméra fixe)
+ * Acte 1b — die-cut ODYSSEY (lag 2.62, montée plus lente → 4.55)
+ *   T2.62–4.55 softRiseVelvet (tau feutré)
+ *   T4.55–7.8  hold branding
  *
  * Acte 2 — dolly aspiration continue (Z + aim sync)
  *   T7.8–16.1  même courbe pour push et aim
@@ -174,13 +174,11 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const sunIn = softRiseVelvet(2.15, 3.55, time, 0.78);
   const irregIn = softRiseVelvet(2.45, 4.15, time, 1.05);
 
-  // Acte 1b — die-cut puis pause avant dolly
-  const logoReady = smootherstep(4.05, 4.35, time);
-  const etchIn = softRiseVelvet(4.35, 5.5, time, 0.9);
-  const wordmarkMul = logoReady * etchIn;
+  // ODYSSEY : lag inchangé (2.62) ; montée un mini plus lente / feutrée
+  const wordmarkMul = softRiseVelvet(2.62, 4.55, time, 1.28);
   const wordmarkSolar = 0;
 
-  // Acte 2 — dolly seulement après la pause branding (~2.3 s)
+  // Acte 2 — dolly après hold branding
   const cameraPush = gravityDolly(7.8, 16.1, time);
   const cameraAim = cameraPush;
 
