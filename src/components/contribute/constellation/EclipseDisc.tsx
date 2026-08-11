@@ -60,6 +60,8 @@ uniform vec2 uOffset;
 uniform float uWordmark;
 uniform sampler2D uWordmarkMap;
 uniform float uWordmarkAspect;
+/** Menace limbe soleil (0–1) — tension du bord, pas flood disque. */
+uniform float uLimbThreat;
 
 varying vec2 vUv;
 
@@ -269,12 +271,23 @@ void main() {
     exp(-pow((sdfSun / max(Rsun, 1e-3)) * 17.0, 2.0)) *
     0.7 *
     rimBreath;
+  // Menace limbe : fil serré ; amp monte fort seulement quand limbThreat est haut
+  float limbThreat = clamp(uLimbThreat, 0.0, 1.0);
+  float limbAmp = pow(limbThreat, 1.35);
+  float rimTight = mix(24.0, 42.0, limbAmp);
+  float sunLimbThreat =
+    (1.0 - moonMask) *
+    exp(-pow((sdfSun / max(Rsun, 1e-3)) * rimTight, 2.0)) *
+    (0.15 + 1.85 * limbAmp) *
+    rimBreath *
+    uBodyFade;
   float photosphere =
     (1.0 - moonMask) *
     (softDisc * limbDark * 1.1 + rimSun) *
     (0.95 + 0.08 * breath) *
     sunBreath *
-    uBodyFade;
+    uBodyFade +
+    sunLimbThreat;
 
   // Anneau photon — breath + mini diffusion + chatoyement
   float photonBreath = mix(1.0, 0.88 + 0.18 * sin(tLive * 0.72 + 0.4), life);
@@ -436,6 +449,8 @@ export type EclipseCraftDrive = {
   offsetY: number;
   /** Die-cut ODYSSEY dans le trou noir (0–1). */
   wordmarkMul?: number;
+  /** Menace limbe soleil (0–1) — fin de play. */
+  limbThreat?: number;
   /**
    * Dolly perspective (craft play) : taille du plane calée sur la caméra *finale*.
    * La caméra avance vraiment → sensation d’avancer, pas un scale 2D.
@@ -517,6 +532,7 @@ export function EclipseDisc({ tier, craft }: Props) {
           uWordmark: { value: 0 },
           uWordmarkMap: { value: wordmarkMap },
           uWordmarkAspect: { value: WM_ASPECT },
+          uLimbThreat: { value: 0 },
         },
       });
     }
@@ -585,6 +601,9 @@ export function EclipseDisc({ tier, craft }: Props) {
       } else {
         material.uniforms.uWordmarkAspect.value = WM_ASPECT;
       }
+      if (!material.uniforms.uLimbThreat) {
+        material.uniforms.uLimbThreat = { value: 0 };
+      }
       // Ancien uniform partagé — ne plus l’utiliser
       if (material.uniforms.uSingularityScale) {
         delete material.uniforms.uSingularityScale;
@@ -641,6 +660,10 @@ export function EclipseDisc({ tier, craft }: Props) {
       }
       mat.uniforms.uWordmark.value = Number.isFinite(craft.wordmarkMul)
         ? Math.max(0, Math.min(1, craft.wordmarkMul as number))
+        : 0;
+      if (!mat.uniforms.uLimbThreat) mat.uniforms.uLimbThreat = { value: 0 };
+      mat.uniforms.uLimbThreat.value = Number.isFinite(craft.limbThreat)
+        ? Math.max(0, Math.min(1, craft.limbThreat as number))
         : 0;
       const ox = Number.isFinite(craft.offsetX) ? craft.offsetX : 0;
       const oy = Number.isFinite(craft.offsetY) ? craft.offsetY : 0;

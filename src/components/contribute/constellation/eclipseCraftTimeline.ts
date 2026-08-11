@@ -32,6 +32,8 @@ export type CraftChronoState = {
   wordmarkMul: number;
   /** 0→1 flash solaire du etch (pic puis settle). */
   wordmarkSolar: number;
+  /** 0→1 menace limbe soleil (fin — tension, pas flood). */
+  limbThreat: number;
   bodyFade: number;
   skyMul: number;
   bloom: number;
@@ -106,6 +108,7 @@ const BASE: CraftChronoState = {
   cameraAim: 0,
   wordmarkMul: 0,
   wordmarkSolar: 0,
+  limbThreat: 0,
   bodyFade: 1,
   skyMul: 0,
   bloom: 0,
@@ -209,15 +212,38 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const cameraPush = gravityDolly(DOLLY_START, DOLLY_END, time);
   const cameraAim = cameraPush;
 
-  // Transfert de lumière : le nom cède → diamond / bloom
+  // Acte 3 — menace limbe : fil serré, intensité qui commit surtout en toute fin
+  const limbRaw = wordmarkExtinguish(
+    13.35,
+    CRAFT_PLAY_DURATION - 0.08,
+    time,
+    0.52,
+  );
+  const limbThreat = limbRaw * softRiseVelvet(
+    WM_FADE_START + 2.4,
+    WM_FADE_END + 0.2,
+    time,
+    1.05,
+  );
+
+  // Transfert de lumière : le nom cède → diamond ; limbe fort seulement en fin
   const threat = cameraPush * cameraPush;
+  const limbPunch = limbThreat * limbThreat; // bloom / diamond : micro jusqu’au bout
   const diamondMul =
-    LOGO_DIAMOND * diamondIn * (1 + 1.2 * threat + 0.95 * wordmarkOut);
-  const coronaMul = sunIn * (1 - 0.58 * cameraPush);
+    LOGO_DIAMOND *
+    diamondIn *
+    (1 + 1.2 * threat + 0.95 * wordmarkOut + 0.18 * limbPunch);
+  const coronaMul =
+    sunIn * (1 - 0.58 * cameraPush) * (1 + 0.06 * limbPunch);
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
   const irregularMul = Math.pow(irregIn, 0.82);
   const bloom =
-    0.18 * diamondIn + 0.1 * sunIn + 1.05 * threat + 0.62 * wordmarkOut;
+    0.18 * diamondIn +
+    0.1 * sunIn +
+    1.05 * threat +
+    0.62 * wordmarkOut +
+    0.08 * limbThreat +
+    0.32 * limbPunch;
 
   return {
     ...BASE,
@@ -231,6 +257,7 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
     cameraAim,
     wordmarkMul,
     wordmarkSolar,
+    limbThreat,
     bodyFade,
     skyMul: 0,
     bloom,

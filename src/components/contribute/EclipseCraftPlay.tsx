@@ -77,6 +77,7 @@ type CraftBag = {
   dollyEndZ: number;
   dollyEndFov: number;
   wordmarkMul: number;
+  limbThreat: number;
 };
 
 /** Exp damp — lisse toute micro-saccade de courbe / frame. */
@@ -124,6 +125,11 @@ function applyChronoToCraft(
   // Extinction : un peu plus réactif à la baisse (évite die-cut qui traîne)
   const wmLambda = chrono.wordmarkMul < craft.wordmarkMul ? mid * 1.55 : mid;
   craft.wordmarkMul = mix(craft.wordmarkMul, chrono.wordmarkMul, wmLambda);
+  craft.limbThreat = mix(
+    craft.limbThreat,
+    chrono.limbThreat,
+    chrono.limbThreat > craft.limbThreat ? mid * 1.25 : mid,
+  );
   craft.perspectiveDolly = true;
   craft.dollyEndZ = PLANE_REF_Z;
   craft.dollyEndFov = PLANE_REF_FOV;
@@ -296,6 +302,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     dollyEndZ: PLANE_REF_Z,
     dollyEndFov: PLANE_REF_FOV,
     wordmarkMul: 0,
+    limbThreat: 0,
   });
 
   useEffect(() => {
@@ -338,16 +345,16 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
           replay: "Replay",
           lab: "← Craft lab",
           idle: "Black — press Play",
-          ended: "Name gone — light in the diamond; flash comes next",
+          ended: "Limb threat — diamond holds the promise; flash next",
         }
       : {
           title: "Éclipse · naissance",
-          sub: "Acte 1 naissance + un breath → pause → Acte 2 dolly + extinction (transfert diamond) → Acte 3 menace.",
+          sub: "Acte 1 naissance + un breath → pause → Acte 2 dolly + extinction → Acte 3 menace limbe.",
           play: "Lancer",
           replay: "Rejouer",
           lab: "← Lab craft",
           idle: "Noir — appuie sur Lancer",
-          ended: "Nom éteint — lumière au diamond ; le flash vient ensuite",
+          ended: "Menace limbe — le diamond porte la promesse ; flash ensuite",
         };
 
   const labHref = `/${locale}/contribute/test-eclipse`;
