@@ -406,6 +406,15 @@ export type EclipseCraftDrive = {
   progress: number;
   offsetX: number;
   offsetY: number;
+  /**
+   * Dolly perspective (craft play) : taille du plane calée sur la caméra *finale*.
+   * La caméra avance vraiment → sensation d’avancer, pas un scale 2D.
+   */
+  perspectiveDolly?: boolean;
+  dollyEndZ?: number;
+  dollyEndFov?: number;
+  /** @deprecated Préférer perspectiveDolly — scale 2D faux zoom. */
+  frameScale?: number;
 };
 
 type Props = {
@@ -560,12 +569,32 @@ export function EclipseDisc({ tier, craft }: Props) {
 
       if (mesh) {
         mesh.visible = true;
-        // Plane = 100% du viewport (overscan léger anti-clip)
-        const cam = camera as PerspectiveCamera;
-        _vpTarget.set(0, 0, 0);
-        const vp = viewport.getCurrentViewport(cam, _vpTarget);
         mesh.position.set(0, 0, 0);
-        mesh.scale.set(vp.width * 1.06, vp.height * 1.06, 1);
+        const aspect = Math.max(size.width / size.height, 0.01);
+
+        if (
+          craft.perspectiveDolly &&
+          typeof craft.dollyEndZ === "number" &&
+          typeof craft.dollyEndFov === "number"
+        ) {
+          // Taille monde fixe = plein cadre à la pose finale.
+          // La caméra avance → vrai dolly (pas un zoom scale).
+          const dist = Math.max(0.5, craft.dollyEndZ);
+          const vFov = (craft.dollyEndFov * Math.PI) / 180;
+          const height = 2 * Math.tan(vFov / 2) * dist;
+          const width = height * aspect;
+          mesh.scale.set(width * 1.06, height * 1.06, 1);
+        } else {
+          const cam = camera as PerspectiveCamera;
+          _vpTarget.set(0, 0, 0);
+          const vp = viewport.getCurrentViewport(cam, _vpTarget);
+          const frame =
+            typeof craft.frameScale === "number" &&
+            Number.isFinite(craft.frameScale)
+              ? Math.max(0.35, Math.min(1.15, craft.frameScale))
+              : 1;
+          mesh.scale.set(vp.width * 1.06 * frame, vp.height * 1.06 * frame, 1);
+        }
       }
       return;
     }

@@ -30,11 +30,30 @@ import {
   useVisualTier,
 } from "@/src/components/contribute/constellation/useVisualTier";
 
-/** Caméra play — plan large → push-in une fois le diamond visible. */
-const CAM_Z_START = 8.7;
-const CAM_Z_END = 7.45;
-const CAM_FOV_START = 44;
-const CAM_FOV_END = 40.4;
+/** Caméra : naissance = grandeur (plein cadre) → dolly plus près vers diamond. */
+const CAM_Z_START = 6.55;
+const CAM_Z_END = 4.15;
+const CAM_FOV_START = 37.2;
+const CAM_FOV_END = 30.5;
+const CAM_BREATH_AMP = 0.018;
+const CAM_BREATH_HZ = 0.38;
+/** Plane plein cadre à la naissance (déborde ensuite). */
+const PLANE_REF_Z = CAM_Z_START;
+const PLANE_REF_FOV = CAM_FOV_START;
+const PLANE_BLEED = 1.06;
+/** Direction diamond dans le shader (bas, légèrement droite). */
+const DIAMOND_BEAD = { x: 0.28, y: -0.96 };
+const R_MOON_UV = 0.36 * ECLIPSE_LOGO_RECIPE.moonScale;
+
+function diamondWorldAtBirth() {
+  const birthH =
+    2 * Math.tan(((PLANE_REF_FOV * Math.PI) / 180) / 2) * PLANE_REF_Z;
+  const half = (birthH * PLANE_BLEED) / 2;
+  return {
+    x: DIAMOND_BEAD.x * R_MOON_UV * half,
+    y: DIAMOND_BEAD.y * R_MOON_UV * half,
+  };
+}
 
 type CraftBag = {
   step: 3;
@@ -54,6 +73,9 @@ type CraftBag = {
   progress: number;
   offsetX: number;
   offsetY: number;
+  perspectiveDolly: true;
+  dollyEndZ: number;
+  dollyEndFov: number;
 };
 
 /** Exp damp — lisse toute micro-saccade de courbe / frame. */
@@ -71,9 +93,9 @@ function applyChronoToCraft(
   const mix = (cur: number, target: number, lambda: number) =>
     hard ? target : damp(cur, target, lambda, dt);
 
-  // Amortissement un peu plus feutré pour coller au tempo ralenti
-  const soft = 3.4;
-  const mid = 5.2;
+  // Amortissement matière — caméra suit sa propre courbe (pas trop de lag)
+  const soft = 3.2;
+  const mid = 4.6;
 
   craft.moonScale = recipe.moonScale;
   craft.sunScale = mix(craft.sunScale, chrono.sunScale, mid);
@@ -98,33 +120,66 @@ function applyChronoToCraft(
   craft.progress = 0;
   craft.offsetX = recipe.offsetX;
   craft.offsetY = recipe.offsetY;
+  craft.perspectiveDolly = true;
+  craft.dollyEndZ = PLANE_REF_Z;
+  craft.dollyEndFov = PLANE_REF_FOV;
 }
 
 /**
- * Chrono + amortissement + micro push caméra — zéro setState pendant le play.
+ * Chrono + dolly vers diamond après naissance grandeur — zéro setState pendant le play.
  */
 function PlayChronoDriver({
   playingRef,
   craft,
+  bloomIntensityRef,
   onEnded,
 }: {
   playingRef: MutableRefObject<boolean>;
   craft: CraftBag;
+  bloomIntensityRef: MutableRefObject<number>;
   onEnded: () => void;
 }) {
   const elapsedRef = useRef(0);
   const wasPlayingRef = useRef(false);
   const pushRef = useRef(0);
   const { camera } = useThree();
+  const diamond = diamondWorldAtBirth();
 
-  const applyCamera = (push: number, hard: boolean, dt: number) => {
+  const applyCamera = (
+    push: number,
+    hard: boolean,
+    dt: number,
+    elapsed: number,
+  ) => {
     const cam = camera as PerspectiveCamera;
     const nextPush = hard ? push : damp(pushRef.current, push, 2.4, dt);
     pushRef.current = nextPush;
-    cam.position.z = CAM_Z_START + (CAM_Z_END - CAM_Z_START) * nextPush;
+
+    const breath =
+      CAM_BREATH_AMP *
+      nextPush *
+      Math.sin(elapsed * Math.PI * 2 * CAM_BREATH_HZ);
+
+    // Rail : avance + léger décalage vers le diamond (pas le centre noir)
+    cam.position.x = diamond.x * 0.22 * nextPush + breath * 0.4;
+    cam.position.y = diamond.y * 0.18 * nextPush + breath * 0.25;
+    cam.position.z =
+      CAM_Z_START + (CAM_Z_END - CAM_Z_START) * nextPush + breath;
+
+    // Vise le diamond — il remonte vers le centre optique
+    const aimX = diamond.x * nextPush;
+    const aimY = diamond.y * nextPush;
+    cam.lookAt(aimX, aimY, 0);
+
     cam.fov = CAM_FOV_START + (CAM_FOV_END - CAM_FOV_START) * nextPush;
     cam.updateProjectionMatrix();
   };
+
+  // Pose caméra grandeur dès le mount
+  useEffect(() => {
+    applyCamera(0, true, 1 / 60, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- init once
+  }, [camera]);
 
   useFrame((_, delta) => {
     const dt = Math.min(Math.max(delta, 0), 1 / 30);
@@ -134,7 +189,8 @@ function PlayChronoDriver({
       elapsedRef.current = 0;
       pushRef.current = 0;
       applyChronoToCraft(craft, sampleCraftPlayChrono(0), dt, true);
-      applyCamera(0, true, dt);
+      applyCamera(0, true, dt, 0);
+      bloomIntensityRef.current = 0.28;
     }
     wasPlayingRef.current = playing;
 
@@ -143,7 +199,6 @@ function PlayChronoDriver({
       skyIntroRef.skyMul = 0;
       skyIntroRef.disc = craft.bodyFade;
       skyIntroRef.discScale = 1;
-      // Idle / done : reste sur la pose caméra actuelle (pas de reset brutal)
       return;
     }
 
@@ -153,20 +208,24 @@ function PlayChronoDriver({
     if (t >= CRAFT_PLAY_DURATION) {
       const end = sampleCraftPlayChrono(CRAFT_PLAY_DURATION);
       applyChronoToCraft(craft, end, dt, true);
-      applyCamera(end.cameraPush, true, dt);
-      playingRef.current = false;
-      wasPlayingRef.current = false;
+      applyCamera(1, false, dt, t);
+      bloomIntensityRef.current = 0.28 + 0.95 * end.bloom;
       skyIntroRef.active = true;
       skyIntroRef.skyMul = 0;
       skyIntroRef.disc = craft.bodyFade;
       skyIntroRef.discScale = 1;
+      if (pushRef.current < 0.997) return;
+      applyCamera(1, true, dt, t);
+      playingRef.current = false;
+      wasPlayingRef.current = false;
       onEnded();
       return;
     }
 
     const chrono = sampleCraftPlayChrono(t);
     applyChronoToCraft(craft, chrono, dt, false);
-    applyCamera(chrono.cameraPush, false, dt);
+    applyCamera(chrono.cameraPush, false, dt, t);
+    bloomIntensityRef.current = 0.28 + 0.95 * chrono.bloom;
 
     skyIntroRef.active = true;
     skyIntroRef.skyMul = 0;
@@ -177,16 +236,40 @@ function PlayChronoDriver({
   return null;
 }
 
+/** Bloom muté en useFrame — pas de re-render React pendant le play. */
+function BloomDriver({
+  intensityRef,
+}: {
+  intensityRef: MutableRefObject<number>;
+}) {
+  const bloomRef = useRef<{ intensity: number } | null>(null);
+  useFrame(() => {
+    if (bloomRef.current) {
+      bloomRef.current.intensity = intensityRef.current;
+    }
+  });
+  return (
+    <Bloom
+      ref={bloomRef as never}
+      luminanceThreshold={0.8}
+      luminanceSmoothing={0.6}
+      intensity={0.28}
+      mipmapBlur
+    />
+  );
+}
+
 type Locale = "fr" | "en";
 
 /**
- * Lecture cinéma — Phase 1 : naissance du logo.
- * always-on render + damp craft + bloom fixe = fluidité.
+ * Lecture cinéma — naissance grandeur → dolly diamond → menace.
+ * always-on render + damp craft + bloom muté = fluidité.
  */
 export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
   const recipe = ECLIPSE_LOGO_RECIPE;
   const playingRef = useRef(false);
+  const bloomIntensityRef = useRef(0.28);
   const [playing, setPlaying] = useState(false);
   const [phase, setPhase] = useState<"idle" | "playing" | "done">("idle");
 
@@ -208,6 +291,9 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     progress: 0,
     offsetX: recipe.offsetX,
     offsetY: recipe.offsetY,
+    perspectiveDolly: true,
+    dollyEndZ: PLANE_REF_Z,
+    dollyEndFov: PLANE_REF_FOV,
   });
 
   useEffect(() => {
@@ -245,21 +331,21 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "Black → diamond reveal + slow push-in → sun + irregularity → logo.",
+          sub: "Act 1 monumental birth → Act 2 dolly into the diamond → Act 3 threat.",
           play: "Play",
           replay: "Replay",
           lab: "← Craft lab",
           idle: "Black — press Play",
-          ended: "Living logo — replay when ready",
+          ended: "Threat hold — flash comes next",
         }
       : {
           title: "Éclipse · naissance",
-          sub: "Noir → révélation diamond + push caméra → soleil + irrég → logo.",
+          sub: "Acte 1 naissance grandeur → Acte 2 dolly vers le diamond → Acte 3 menace.",
           play: "Lancer",
           replay: "Rejouer",
           lab: "← Lab craft",
           idle: "Noir — appuie sur Lancer",
-          ended: "Logo vivant — rejoue quand tu veux",
+          ended: "Hold menace — le flash vient ensuite",
         };
 
   const labHref = `/${locale}/contribute/test-eclipse`;
@@ -300,6 +386,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
                 <PlayChronoDriver
                   playingRef={playingRef}
                   craft={craftRef.current}
+                  bloomIntensityRef={bloomIntensityRef}
                   onEnded={() => {
                     setPlaying(false);
                     setPhase("done");
@@ -308,12 +395,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
                 <color attach="background" args={["#000000"]} />
                 <EclipseDisc tier="desktop" craft={craftRef.current} />
                 <EffectComposer multisampling={0}>
-                  <Bloom
-                    luminanceThreshold={0.8}
-                    luminanceSmoothing={0.6}
-                    intensity={0.4}
-                    mipmapBlur
-                  />
+                  <BloomDriver intensityRef={bloomIntensityRef} />
                 </EffectComposer>
               </SkyThemeProvider>
             </Suspense>

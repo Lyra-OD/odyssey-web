@@ -2,15 +2,16 @@
  * Craft — Look = pose soleil. Play = lecture cinéma (autre page).
  *
  * Look : scrub = position soleil (0 droite → 1 derrière).
- * Play (phase 1) : noir → diamond → soleil + irrégularité → pose logo.
+ * Play (phase 1) : naissance grandeur → dolly vers diamond → menace.
  */
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Naissance du logo — fluide, organique.
+ * Phase 1 cinéma (~10.2 s) — 3 actes :
+ * naissance à grandeur (caméra fixe) → dolly vers diamond → menace.
  * Flash / wrap / ciel = phases suivantes (pas encore).
  */
-export const CRAFT_PLAY_DURATION = 5.8;
+export const CRAFT_PLAY_DURATION = 10.2;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -79,6 +80,11 @@ function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
+/** Dolly cinéma : long, pads doux — pas de rush mid. */
+function cinemaDolly(a: number, b: number, x: number) {
+  return smootherstep(a, b, x);
+}
+
 const BASE: CraftChronoState = {
   alignment: 0,
   coronaMul: 1,
@@ -123,37 +129,44 @@ const LOGO_SUN = 0.97;
 const SUN_START = 0.78;
 
 /**
- * Phase 1 — naissance du logo (~5.8 s).
+ * Phase 1 — 3 actes (~10.2 s). Géométrie fixe : alignment = 1.
  *
- * Géométrie fixe : alignment = 1.
+ * Acte 1 — naissance à GRANDEUR, caméra LOCK
+ *   T0–0.45    noir court
+ *   T0.35–2.75 diamond (déjà monumental)
+ *   T2.15–3.55 soleil
+ *   T2.45–4.15 irrégularité
+ *   T4.15–4.95 hold objet sacré
  *
- * T0–0.55     noir
- * T0.4–2.85   diamond seul — révélation lente
- * T2.55–4.0   soleil (après la révélation)
- * T2.85–5.0   irrégularité (juste après le soleil)
- * T5.0–5.8    hold logo vivant
+ * Acte 2 — dolly vers le DIAMOND (déborde le cadre)
+ *   T4.85–9.1  push caméra
+ *
+ * Acte 3 — menace (seuil avant flash)
+ *   T8.4–10.2  diamond + bloom liés à la proximité
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
 
   const alignment = 1;
 
-  // Début : révélation diamond plus longue / plus lente
-  const diamondIn = softRiseVelvet(0.4, 2.85, time, 1.15);
-  const bodyFade = softRiseVelvet(0.55, 3.1, time, 1.2);
-  const lifeMul = softRiseVelvet(0.5, 2.95, time, 1.1);
+  // Acte 1 — matière à grandeur (caméra fixe)
+  const diamondIn = softRiseVelvet(0.35, 2.75, time, 1.05);
+  const bodyFade = softRiseVelvet(0.45, 2.95, time, 1.1);
+  const lifeMul = softRiseVelvet(0.4, 2.85, time, 1.0);
 
-  // Soleil + irrég décalés — on sent d’abord le diamond, ensuite la suite
-  const sunIn = softRiseVelvet(2.55, 4.0, time, 0.78);
-  const irregIn = softRiseVelvet(2.85, 5.0, time, 1.15);
+  const sunIn = softRiseVelvet(2.15, 3.55, time, 0.78);
+  const irregIn = softRiseVelvet(2.45, 4.15, time, 1.05);
 
-  const diamondMul = LOGO_DIAMOND * diamondIn;
+  // Acte 2 — caméra après hold
+  const cameraPush = cinemaDolly(4.85, 9.1, time);
+
+  // Acte 3 — menace : on vise le diamond
+  const threat = cameraPush * cameraPush;
+  const diamondMul = LOGO_DIAMOND * diamondIn * (1 + 0.62 * threat);
   const coronaMul = sunIn;
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
   const irregularMul = Math.pow(irregIn, 0.82);
-  // Push seulement quand le diamond est déjà là (sinon invisible sur noir)
-  const cameraPush = softRiseVelvet(1.15, 4.9, time, 1.2);
-  const bloom = 0.28 * diamondIn + 0.2 * sunIn;
+  const bloom = 0.2 * diamondIn + 0.16 * sunIn + 0.85 * threat;
 
   return {
     ...BASE,
