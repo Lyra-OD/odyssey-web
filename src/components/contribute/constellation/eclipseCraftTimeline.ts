@@ -23,6 +23,8 @@ export type CraftChronoState = {
   sunScale: number;
   /** Vie shader — monte avec la matière (évite scintillement au noir). */
   lifeMul: number;
+  /** 0→1 push caméra cinéma (révélation). */
+  cameraPush: number;
   bodyFade: number;
   skyMul: number;
   bloom: number;
@@ -84,6 +86,7 @@ const BASE: CraftChronoState = {
   irregularMul: 1,
   sunScale: 0.97,
   lifeMul: 1,
+  cameraPush: 0,
   bodyFade: 1,
   skyMul: 0,
   bloom: 0,
@@ -148,6 +151,8 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const coronaMul = sunIn;
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
   const irregularMul = Math.pow(irregIn, 0.82);
+  // Push seulement quand le diamond est déjà là (sinon invisible sur noir)
+  const cameraPush = softRiseVelvet(1.15, 4.9, time, 1.2);
   const bloom = 0.28 * diamondIn + 0.2 * sunIn;
 
   return {
@@ -158,6 +163,7 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
     irregularMul,
     sunScale,
     lifeMul,
+    cameraPush,
     bodyFade,
     skyMul: 0,
     bloom,

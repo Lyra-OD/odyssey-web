@@ -1,6 +1,6 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import Link from "next/link";
 import {
@@ -10,6 +10,7 @@ import {
   useState,
   type MutableRefObject,
 } from "react";
+import type { PerspectiveCamera } from "three";
 
 import { EclipseDisc } from "@/src/components/contribute/constellation/EclipseDisc";
 import {
@@ -28,6 +29,12 @@ import {
   tierDpr,
   useVisualTier,
 } from "@/src/components/contribute/constellation/useVisualTier";
+
+/** Caméra play — plan large → push-in une fois le diamond visible. */
+const CAM_Z_START = 8.7;
+const CAM_Z_END = 7.45;
+const CAM_FOV_START = 44;
+const CAM_FOV_END = 40.4;
 
 type CraftBag = {
   step: 3;
@@ -94,7 +101,7 @@ function applyChronoToCraft(
 }
 
 /**
- * Chrono + amortissement — zéro setState pendant le play (anti-saccade).
+ * Chrono + amortissement + micro push caméra — zéro setState pendant le play.
  */
 function PlayChronoDriver({
   playingRef,
@@ -107,6 +114,17 @@ function PlayChronoDriver({
 }) {
   const elapsedRef = useRef(0);
   const wasPlayingRef = useRef(false);
+  const pushRef = useRef(0);
+  const { camera } = useThree();
+
+  const applyCamera = (push: number, hard: boolean, dt: number) => {
+    const cam = camera as PerspectiveCamera;
+    const nextPush = hard ? push : damp(pushRef.current, push, 2.4, dt);
+    pushRef.current = nextPush;
+    cam.position.z = CAM_Z_START + (CAM_Z_END - CAM_Z_START) * nextPush;
+    cam.fov = CAM_FOV_START + (CAM_FOV_END - CAM_FOV_START) * nextPush;
+    cam.updateProjectionMatrix();
+  };
 
   useFrame((_, delta) => {
     const dt = Math.min(Math.max(delta, 0), 1 / 30);
@@ -114,7 +132,9 @@ function PlayChronoDriver({
 
     if (playing && !wasPlayingRef.current) {
       elapsedRef.current = 0;
+      pushRef.current = 0;
       applyChronoToCraft(craft, sampleCraftPlayChrono(0), dt, true);
+      applyCamera(0, true, dt);
     }
     wasPlayingRef.current = playing;
 
@@ -123,6 +143,7 @@ function PlayChronoDriver({
       skyIntroRef.skyMul = 0;
       skyIntroRef.disc = craft.bodyFade;
       skyIntroRef.discScale = 1;
+      // Idle / done : reste sur la pose caméra actuelle (pas de reset brutal)
       return;
     }
 
@@ -130,12 +151,9 @@ function PlayChronoDriver({
     const t = elapsedRef.current;
 
     if (t >= CRAFT_PLAY_DURATION) {
-      applyChronoToCraft(
-        craft,
-        sampleCraftPlayChrono(CRAFT_PLAY_DURATION),
-        dt,
-        true,
-      );
+      const end = sampleCraftPlayChrono(CRAFT_PLAY_DURATION);
+      applyChronoToCraft(craft, end, dt, true);
+      applyCamera(end.cameraPush, true, dt);
       playingRef.current = false;
       wasPlayingRef.current = false;
       skyIntroRef.active = true;
@@ -146,7 +164,9 @@ function PlayChronoDriver({
       return;
     }
 
-    applyChronoToCraft(craft, sampleCraftPlayChrono(t), dt, false);
+    const chrono = sampleCraftPlayChrono(t);
+    applyChronoToCraft(craft, chrono, dt, false);
+    applyCamera(chrono.cameraPush, false, dt);
 
     skyIntroRef.active = true;
     skyIntroRef.skyMul = 0;
@@ -225,7 +245,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "Black → diamond first → sun + irregularity → logo.",
+          sub: "Black → diamond reveal + slow push-in → sun + irregularity → logo.",
           play: "Play",
           replay: "Replay",
           lab: "← Craft lab",
@@ -234,7 +254,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
         }
       : {
           title: "Éclipse · naissance",
-          sub: "Noir → diamond d’abord → soleil + irrégularité → logo.",
+          sub: "Noir → révélation diamond + push caméra → soleil + irrég → logo.",
           play: "Lancer",
           replay: "Rejouer",
           lab: "← Lab craft",
@@ -259,7 +279,12 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
             style={{ width: "100%", height: "100%" }}
             frameloop="always"
             dpr={tierDpr(tier)}
-            camera={{ position: [0, 0, 8], fov: 42, near: 0.1, far: 40 }}
+            camera={{
+              position: [0, 0, CAM_Z_START],
+              fov: CAM_FOV_START,
+              near: 0.1,
+              far: 40,
+            }}
             gl={{
               antialias: true,
               alpha: false,
