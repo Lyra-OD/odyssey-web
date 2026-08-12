@@ -161,7 +161,7 @@ Donner ce fichier + pointer :
 |-------|------------|
 | `eclipse_login.mp4` | Vidéo fond connexion (Halo-Éclipse) — neutre, plein écran |
 | `OdysseyConnexionMark` | Typo Montserrat **blanc lumineux** (connexion) — pas le die-cut solaire |
-| Intro Sanctuaire ciel | Chrono flash→ciel — **pas encore** branchée ; craft séparé |
+| Intro Sanctuaire ciel | Finale play A–E (plongée → voyage → ciel) — [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md) ; pas encore codée au-delà du flash |
 | Favicon / App Store | À dériver plus tard (matière ± monogramme) |
 
 ---
@@ -177,7 +177,7 @@ Donner ce fichier + pointer :
 - Pas de flash aveuglant / starburst comic / damier cell4 (REJECT lab).
 - Vie découplée d’Irrégularité : soie vivante même à irreg basse.
 
-Journal craft : [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md) · Audio play : [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md) · Design system : [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) §4.2 · Ciel : [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md).
+Journal craft : [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md) · Audio play : [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md) · Finale play : [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md) · Design system : [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) §4.2 · Ciel : [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md).
 
 ---
 

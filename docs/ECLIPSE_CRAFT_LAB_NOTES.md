@@ -17,6 +17,7 @@
 
 **Bible logo :** [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md)  
 **Audio play (partition) :** [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md)  
+**Finale play (A–E) :** [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md)  
 **Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · intro sanctuary encore **OFF** jusqu’à branchement voulu.
 
 ---
@@ -42,7 +43,7 @@
 | Hold → dolly | Dolly ~**5,1 s** ; die-cut s’éteint pendant l’approche ; menace limbe en fin |
 | Mark produit | `showWordmark` ✅ · exports **disc** + **lockup** |
 
-Suite intro cinéma (wash → ciel) : à reconstruire plan par plan **sans** casser la recette logo + die-cut.
+Suite intro cinéma : **plongée/flash → blanc → wormhole nuages → ciel → titre** — bible [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md). **REJECT** wash plat DOM (12 août).
 
 ### 0c. « Glitch » de naissance = `softRiseVelvet` (12 août 2026) — **KEEP**
 
@@ -75,11 +76,11 @@ Ne pas « corriger » en lissant aveuglément : ce pop est ce qui donne l’impr
 |---------|----------------|
 | Trou noir / lune | **Fixe** au centre ; die-cut ODYSSEY en play |
 | Soleil | Scrub Look = **position libre** (0 droite → 1 derrière) ; logo = `1` |
-| Chrono play | Naissance (velvet pop) → ODYSSEY breath ×1 → hold → dolly ~5,1 s + extinction → menace limbe (~**13,7 s**) |
+| Chrono play | Naissance → ODYSSEY breath ×1 → hold → dolly ~5,1 s + extinction → menace → **flash** (~**14,7 s**, `e20a36e`) ; A–E voyage = PLAY_FINALE |
 | Marque | `OdysseyEclipseMark` = lockup complet (`showWordmark`) |
 | Knobs | Tailles, corona, Vie, flash, photon — readouts numériques |
 
-Direction : dévoilement noir → lockup vivant (éclipse + ODYSSEY) → (wash / ciel Sanctuaire).
+Direction : dévoilement noir → lockup vivant → **plongée dans la lumière** → nuages Odyssey → ciel Sanctuaire (pas wash plat).
 
 ---
 
@@ -153,9 +154,11 @@ Légende : **KEEP** = utile · **REJECT** = ne pas refaire tel quel · **PARTIAL
 ## 4. Suite (ordre suggéré)
 
 1. Silence UI pendant hold play (lab chrome) — demandé, pas urgent.
-2. Brancher audio selon [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md).
-3. Peaufiner menace / flash diamond → wrap / ciel.
+2. **Finale play A–E** — chirurgical, go par go : [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md) (base flash `e20a36e`).
+3. Brancher audio selon [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md) (piste **X** avec plongée).
 4. Quand le récit play est gelé → rebrancher intro `SkyIntroEclipse` (1×/session).
+
+**REJECT (12 août) :** wash couleur plat (overlay dégradé) comme transition flash→ciel.
 
 ---
 
