@@ -382,7 +382,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "A bis curve 3 — slightly faster dolly (~6.2s). Scrub for captures.",
+          sub: "A bis ~9.5s — diamond door then dolly (no freeze hold). Scrub for captures.",
           play: "Play",
           pause: "Pause",
           restart: "Restart",
@@ -390,7 +390,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
         }
       : {
           title: "Éclipse · naissance",
-          sub: "A bis courbe 3 — dolly un cran plus vive (~6,2 s). Timeline pour captures.",
+          sub: "A bis ~9,5 s — porte diamond puis dolly (pas de hold figé). Timeline pour captures.",
           play: "Lecture",
           pause: "Pause",
           restart: "Reprise",

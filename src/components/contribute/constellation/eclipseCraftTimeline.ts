@@ -2,16 +2,16 @@
  * Craft — Look = pose soleil. Play = lecture cinéma (autre page).
  *
  * Look : scrub = position soleil (0 droite → 1 derrière).
- * Play : naissance → ODYSSEY → hold → **dolly continu accéléré** dans le diamond (go A bis).
+ * Play : naissance → ODYSSEY → **dolly continu accéléré** dans le diamond (go A bis).
  */
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Phase 1 cinéma (~13,4 s) — actes :
- * naissance → ODYSSEY → hold → **dolly gravité jusqu’au bead** (go A bis, courbe 3).
+ * Phase 1 cinéma (~9,5 s) — actes :
+ * diamond → soleil / ODYSSEY → dolly gravité vers le bead (pas de hold figé).
  * Blanc / wormhole / ciel / titre = go B–E (voir ODYSSEY_ECLIPSE_PLAY_FINALE.md).
  */
-export const CRAFT_PLAY_DURATION = 13.4;
+export const CRAFT_PLAY_DURATION = 9.5;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -97,15 +97,14 @@ function easeInOutCubic(t: number) {
 }
 
 /**
- * Aspiration continue (A bis courbe 3) :
- * départ franc + un cran plus vite (fenêtre plus courte),
- * sans le crunch blanc du pow 2.65.
+ * Aspiration unique — un cran plus tendue (porte diamond → bead).
+ * Continuité : pas de breakpoint.
  */
 function gravityDolly(a: number, b: number, x: number) {
   const u = clamp01((x - a) / (b - a));
   if (u <= 0) return 0;
   if (u >= 1) return 1;
-  return u * 0.36 + Math.pow(u, 2.05) * 0.64;
+  return u * 0.28 + Math.pow(u, 2.3) * 0.72;
 }
 
 const BASE: CraftChronoState = {
@@ -157,28 +156,27 @@ const LOGO_SUN = 0.97;
 const SUN_START = 0.78;
 
 /**
- * Dolly continu (go A bis) : hold branding → bead.
- * Fenêtre ~6,2 s (courbe 3 — un cran plus vive).
+ * Dolly après naissance / ODYSSEY (pas de hold figé).
+ * Fenêtre ~3,0 s — courbe unique un cran plus vive.
  */
-const DOLLY_START = 6.9;
-const DOLLY_END = 13.1;
+const DOLLY_START = 6.55;
+const DOLLY_END = 9.45;
 
 /**
- * Un breath « classe » — même tempo (~0.52 Hz), un peu plus fort, une seule fois.
- * Puis nom plein jusqu’à l’extinction.
+ * Un breath « classe » — une seule fois, avant / en bordure de dolly.
  */
 const WM_BREATH_HZ = 0.52;
-const WM_BREATH_A = 4.65;
+const WM_BREATH_A = 4.55;
 const WM_BREATH_PERIOD = 1 / WM_BREATH_HZ;
 const WM_BREATH_AMP = 0.2;
 
 /** Extinction pendant la dolly (nom cède pendant l’approche). */
-const WM_FADE_START = DOLLY_START + 0.4;
-const WM_FADE_END = 11.05;
+const WM_FADE_START = DOLLY_START + 0.25;
+const WM_FADE_END = 8.2;
 
 /** Menace limbe — monte dans la 2ᵉ moitié de dolly. */
-const LIMB_START = 9.55;
-const LIMB_END = 12.55;
+const LIMB_START = 7.35;
+const LIMB_END = 9.2;
 
 /**
  * Extinction magique : reste affirmé longtemps, puis chute velvet (étoile qui cède).
@@ -193,28 +191,27 @@ function wordmarkExtinguish(a: number, b: number, x: number, commit = 0.32) {
 }
 
 /**
- * Phase 1 — (~14,9 s). Géométrie fixe : alignment = 1.
+ * Phase 1 — (~9,5 s). Géométrie fixe : alignment = 1.
  *
- * Acte 1 — naissance à GRANDEUR, caméra LOCK
- * Acte 1b — ODYSSEY + un breath classe
- * Acte 2 / go A bis — dolly continu accéléré → diamond (menace + chaleur bead)
- * (pas de plongée séparée ; blanc = go B)
+ * Acte 1 — diamond solo → soleil / corona
+ * Acte 1b — ODYSSEY + breath (lockup = porte, **sans hold figé**)
+ * Acte 2 / A bis — dolly gravité → bead
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
 
   const alignment = 1;
 
-  // Acte 1 — matière à grandeur (caméra fixe)
-  const diamondIn = softRiseVelvet(0.35, 2.75, time, 1.05);
-  const bodyFade = softRiseVelvet(0.45, 2.95, time, 1.1);
-  const lifeMul = softRiseVelvet(0.4, 2.85, time, 1.0);
+  // Acte 1 — diamond d’abord (signature), soleil en lag
+  const diamondIn = softRiseVelvet(0.3, 2.55, time, 0.95);
+  const bodyFade = softRiseVelvet(0.55, 3.05, time, 1.1);
+  const lifeMul = softRiseVelvet(0.35, 2.7, time, 1.0);
 
-  const sunIn = softRiseVelvet(2.15, 3.45, time, 0.52); // pop naissance plus marqué (KEEP §0c)
-  const irregIn = softRiseVelvet(2.45, 4.15, time, 1.05);
+  const sunIn = softRiseVelvet(2.55, 3.75, time, 0.52);
+  const irregIn = softRiseVelvet(2.75, 4.25, time, 1.05);
 
-  // ODYSSEY : apparition → un breath classe → extinction magique
-  const wordmarkIn = softRiseVelvet(2.62, 4.55, time, 1.28);
+  // ODYSSEY + breath
+  const wordmarkIn = softRiseVelvet(2.85, 4.55, time, 1.28);
   let breathMul = 1;
   const breathEnd = WM_BREATH_A + WM_BREATH_PERIOD;
   if (time > WM_BREATH_A && time < breathEnd && wordmarkIn > 0.02) {
@@ -226,33 +223,34 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const wordmarkMul = clamp01(wordmarkIn * breathMul * (1 - wordmarkOut));
   const wordmarkSolar = 0;
 
-  // Acte 2 / A bis — une seule aspiration jusqu’au bead
   const cameraPush = gravityDolly(DOLLY_START, DOLLY_END, time);
   const cameraAim = cameraPush;
 
-  // Menace limbe : suit la 2ᵉ moitié d’approche
-  const limbRaw = wordmarkExtinguish(LIMB_START, LIMB_END, time, 0.42);
-  const limbThreat = limbRaw * softRiseVelvet(10.0, 12.2, time, 1.0);
+  // Diamond affirmé tant que caméra pas encore partie (pas une pause)
+  const doorHold =
+    softRiseVelvet(2.4, 4.2, time, 1.1) * (1 - cameraPush);
 
-  // Chaleur diamond = fin de courbe (pas un 2ᵉ hit)
-  const late = clamp01((cameraPush - 0.48) / 0.52);
-  const flashMul = Math.pow(late, 1.55);
+  const limbRaw = wordmarkExtinguish(LIMB_START, LIMB_END, time, 0.42);
+  const limbThreat = limbRaw * softRiseVelvet(7.55, 9.1, time, 1.0);
+
+  const late = clamp01((cameraPush - 0.45) / 0.55);
+  const flashMul = Math.pow(late, 1.5);
 
   const threat = cameraPush * cameraPush;
   const limbPunch = limbThreat * limbThreat;
   const diamondSolar =
-    wordmarkOut * softRiseVelvet(WM_FADE_START + 0.9, WM_FADE_END, time, 1.15);
+    wordmarkOut * softRiseVelvet(WM_FADE_START + 0.8, WM_FADE_END, time, 1.15);
   const diamondMul =
     LOGO_DIAMOND *
     diamondIn *
     (1 +
+      0.55 * doorHold +
       0.95 * threat +
-      1.2 * wordmarkOut +
+      1.15 * wordmarkOut +
       0.5 * diamondSolar +
       0.35 * limbPunch +
       2.8 * flashMul +
       1.4 * flashMul * flashMul);
-  // Corona s’efface avec l’approche — disc reste (évite trou noir / écran noir)
   const coronaMul =
     sunIn * (1 - 0.72 * cameraPush) * (1 + 0.08 * limbPunch);
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
