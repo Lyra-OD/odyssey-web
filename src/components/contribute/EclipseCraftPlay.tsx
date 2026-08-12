@@ -258,7 +258,7 @@ function BloomDriver({
   return (
     <Bloom
       ref={bloomRef as never}
-      luminanceThreshold={0.8}
+      luminanceThreshold={0.86}
       luminanceSmoothing={0.6}
       intensity={0.28}
       mipmapBlur

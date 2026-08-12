@@ -7,11 +7,11 @@
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Phase 1 cinéma (~16.9 s) — actes :
- * naissance → ODYSSEY (breath) → hold court → dolly + extinction longue → menace.
+ * Phase 1 cinéma (~14.6 s) — actes :
+ * naissance → ODYSSEY (breath) → hold court → dolly resserré + extinction → menace.
  * Flash / wrap / ciel = phases suivantes (pas encore).
  */
-export const CRAFT_PLAY_DURATION = 16.9;
+export const CRAFT_PLAY_DURATION = 14.6;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -88,13 +88,12 @@ function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-/** Aspiration continue : toujours un micro-mouvement, légère gravité (pas de plateau). */
+/** Aspiration : lisible dès le début, tirée en fin (fenêtre plus courte = plus d’urgence). */
 function gravityDolly(a: number, b: number, x: number) {
   const u = clamp01((x - a) / (b - a));
   if (u <= 0) return 0;
   if (u >= 1) return 1;
-  // 50 % linéaire (lisible dès le début) + 50 % ease-in doux (tiré en fin)
-  return u * 0.5 + Math.pow(u, 1.5) * 0.5;
+  return u * 0.42 + Math.pow(u, 1.45) * 0.58;
 }
 
 const BASE: CraftChronoState = {
@@ -144,9 +143,9 @@ const LOGO_DIAMOND = 2.6;
 const LOGO_SUN = 0.97;
 const SUN_START = 0.78;
 
-/** Dolly / hold branding (hold un poil plus court qu’avant 7.8). */
+/** Dolly : ~6 s d’aspiration (avant ~8,3 s — trop cérémonieux). */
 const DOLLY_START = 6.9;
-const DOLLY_END = 15.2;
+const DOLLY_END = 12.9;
 
 /**
  * Un breath « classe » — même tempo (~0.52 Hz), un peu plus fort, une seule fois.
@@ -157,9 +156,13 @@ const WM_BREATH_A = 4.65;
 const WM_BREATH_PERIOD = 1 / WM_BREATH_HZ;
 const WM_BREATH_AMP = 0.2;
 
-/** Extinction : un peu après dolly → 0 juste avant fin (plateau puis chute). */
-const WM_FADE_START = DOLLY_START + 0.6;
-const WM_FADE_END = CRAFT_PLAY_DURATION - 0.3;
+/** Extinction : un peu après dolly → 0 juste avant fin. */
+const WM_FADE_START = DOLLY_START + 0.55;
+const WM_FADE_END = CRAFT_PLAY_DURATION - 0.28;
+
+/** Menace limbe — commit en fin de dolly / après extinction. */
+const LIMB_START = 11.4;
+const LIMB_END = CRAFT_PLAY_DURATION - 0.08;
 
 /**
  * Extinction magique : reste affirmé longtemps, puis chute velvet (étoile qui cède).
@@ -174,12 +177,12 @@ function wordmarkExtinguish(a: number, b: number, x: number, commit = 0.32) {
 }
 
 /**
- * Phase 1 — (~16.9 s). Géométrie fixe : alignment = 1.
+ * Phase 1 — (~14.6 s). Géométrie fixe : alignment = 1.
  *
  * Acte 1 — naissance à GRANDEUR, caméra LOCK
- * Acte 1b — ODYSSEY + un breath classe (4.65, ~1.9 s)
- * Acte 2 — dolly ; extinction magique (seuil se referme + transfert diamond)
- * Acte 3 — menace (nom déjà éteint)
+ * Acte 1b — ODYSSEY + un breath classe
+ * Acte 2 — dolly ~6 s ; extinction + transfert diamond
+ * Acte 3 — menace limbe (nom éteint)
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
@@ -200,7 +203,6 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const breathEnd = WM_BREATH_A + WM_BREATH_PERIOD;
   if (time > WM_BREATH_A && time < breathEnd && wordmarkIn > 0.02) {
     const u = (time - WM_BREATH_A) / WM_BREATH_PERIOD;
-    // Même famille que le breath continu « classe » ; revient à 1 sans saut
     breathMul =
       1 - WM_BREATH_AMP * 0.5 * (1 - Math.cos(u * Math.PI * 2));
   }
@@ -212,27 +214,28 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const cameraPush = gravityDolly(DOLLY_START, DOLLY_END, time);
   const cameraAim = cameraPush;
 
-  // Acte 3 — menace limbe : fil serré, intensité qui commit surtout en toute fin
-  const limbRaw = wordmarkExtinguish(
-    13.35,
-    CRAFT_PLAY_DURATION - 0.08,
-    time,
-    0.52,
-  );
+  // Acte 3 — menace limbe : fil serré, intensité en toute fin
+  const limbRaw = wordmarkExtinguish(LIMB_START, LIMB_END, time, 0.48);
   const limbThreat = limbRaw * softRiseVelvet(
-    WM_FADE_START + 2.4,
-    WM_FADE_END + 0.2,
+    WM_FADE_START + 1.6,
+    WM_FADE_END + 0.15,
     time,
     1.05,
   );
 
-  // Transfert de lumière : le nom cède → diamond ; limbe fort seulement en fin
+  // Transfert → diamond solaire pincé ; limbe fort seulement en fin ; bloom sélectif
   const threat = cameraPush * cameraPush;
-  const limbPunch = limbThreat * limbThreat; // bloom / diamond : micro jusqu’au bout
+  const limbPunch = limbThreat * limbThreat;
+  const diamondSolar =
+    wordmarkOut * softRiseVelvet(WM_FADE_START + 1.0, WM_FADE_END, time, 1.15);
   const diamondMul =
     LOGO_DIAMOND *
     diamondIn *
-    (1 + 1.2 * threat + 0.95 * wordmarkOut + 0.18 * limbPunch);
+    (1 +
+      0.85 * threat +
+      1.35 * wordmarkOut +
+      0.55 * diamondSolar +
+      0.2 * limbPunch);
   const coronaMul =
     sunIn * (1 - 0.58 * cameraPush) * (1 + 0.06 * limbPunch);
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
@@ -240,10 +243,11 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const bloom =
     0.18 * diamondIn +
     0.1 * sunIn +
-    1.05 * threat +
-    0.62 * wordmarkOut +
+    0.72 * threat +
+    0.85 * wordmarkOut +
+    0.4 * diamondSolar +
     0.08 * limbThreat +
-    0.32 * limbPunch;
+    0.28 * limbPunch;
 
   return {
     ...BASE,

@@ -312,45 +312,48 @@ void main() {
     max(uPhoton, 0.0);
   float photon = limb;
 
-  // Flash / diamond — Baily breakup vivant (Vie × irrégularité)
+  // Diamond — bead solaire pincé (noyau HDR + Baily vivant, pas de nappe)
   float flashAmt = max(uDiamond, 0.0);
   float irregF = clamp(uCoronaIrregular, 0.0, 2.5);
-  vec2 beadDir = normalize(vec2(0.28, -0.96));
+  vec2 beadDir = normalize(vec2(0.22, -0.975));
   float along = max(0.0, dot(dirMoon, beadDir));
 
   float bnA = fbm(dirMoon * (3.4 + irregF * 1.8) + vec2(tLive * 0.07, 2.2));
   float bnB = fbm(dirMoon * (6.8 + irregF * 1.2) - vec2(1.6, tLive * 0.045));
   float bnC = fbm(dirMoon * 11.0 + vec2(tLive * 0.22, -3.1));
-  float breakUp = mix(0.72, 0.22 + 0.9 * bnA, clamp(irregF * 0.55, 0.0, 1.0));
-  // Un peu plus large / présent que le bead ultra-pincé
-  float angPow = mix(20.0, 9.0, clamp(irregF * 0.42, 0.0, 1.0));
-  float beadGate = pow(along, angPow) * breakUp * (0.75 + 0.5 * bnB);
+  float breakUp = mix(0.78, 0.28 + 0.85 * bnA, clamp(irregF * 0.55, 0.0, 1.0));
+  // Plus pincé angulairement = étoile / soleil, pas arc large
+  float angPow = mix(32.0, 16.0, clamp(irregF * 0.4, 0.0, 1.0));
+  float beadGate = pow(along, angPow) * breakUp * (0.8 + 0.45 * bnB);
 
   float limbFlash =
-    exp(-pow(sdfMoon * 72.0, 2.0)) *
-    smoothstep(-0.008, 0.012, sdfMoon);
+    exp(-pow(sdfMoon * 88.0, 2.0)) *
+    smoothstep(-0.006, 0.01, sdfMoon);
   float bailyThresh = mix(
-    0.58,
-    mix(0.38, 0.28 + 0.18 * bnC, life),
+    0.52,
+    mix(0.34, 0.24 + 0.16 * bnC, life),
     clamp(irregF * 0.5, 0.0, 1.0)
   );
   float baily =
-    pow(max(bnB - bailyThresh, 0.0), 1.35) *
+    pow(max(bnB - bailyThresh, 0.0), 1.2) *
     clamp(irregF, 0.0, 1.6) *
-    (0.5 + 0.35 * life * bnC);
+    (0.55 + 0.45 * life * bnC);
 
-  float core = exp(-pow(sdfMoon * 95.0, 2.0));
-  float midG = exp(-pow(sdfMoon * 42.0, 2.0)) * 0.55;
-  float softG = exp(-pow(sdfMoon * 16.0, 2.0)) * 0.22;
-  float wideG = exp(-pow(sdfMoon * 8.5, 2.0)) * 0.14;
-  float glowStack = core * 1.55 + midG * 1.1 + softG + wideG;
-  float flicker = mix(1.0, 0.9 + 0.1 * sin(tLive * 1.85 + bnA * 6.2831), life);
+  // Noyau brûlant + halo serrée (wideG quasi mort)
+  float core = exp(-pow(sdfMoon * 118.0, 2.0));
+  float midG = exp(-pow(sdfMoon * 52.0, 2.0)) * 0.48;
+  float softG = exp(-pow(sdfMoon * 22.0, 2.0)) * 0.12;
+  float wideG = exp(-pow(sdfMoon * 11.0, 2.0)) * 0.04;
+  float glowStack = core * 2.35 + midG * 0.95 + softG + wideG;
+  float solarPulse =
+    mix(1.0, 0.88 + 0.14 * sin(tLive * 2.15 + bnA * 6.2831), life);
+  float flicker = mix(1.0, 0.92 + 0.1 * sin(tLive * 1.85 + bnA * 6.2831), life);
 
   float diamond =
     (1.0 - moonMask) *
     (
-      beadGate * glowStack +
-      limbFlash * baily * (core * 1.1 + midG * 0.65)
+      beadGate * glowStack * solarPulse +
+      limbFlash * baily * (core * 1.45 + midG * 0.45)
     ) *
     flashAmt *
     flicker *
@@ -360,7 +363,7 @@ void main() {
     photosphere * 1.05 +
     corona * 1.4 +
     photon * 0.75 +
-    diamond * 2.05
+    diamond * 2.55
   );
   col *= 1.0 - moonMask;
   col *= uBodyFade;
