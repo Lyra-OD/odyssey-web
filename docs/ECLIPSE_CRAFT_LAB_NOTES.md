@@ -3,7 +3,8 @@
 **Statut :** lab craft **permanent** · matière ✅ (10 août) · **lockup ODYSSEY** ✅ craft play (11 août)  
 **Previews (dev) :**
 - Lab : `/fr/contribute/test-eclipse` — **toujours disponible, ne pas supprimer**
-- Lecture : `/fr/contribute/test-eclipse-play` — naissance + die-cut + dolly
+- Lecture : `/fr/contribute/test-eclipse-play` — A bis + B (~9,5 s) KEEP
+- Wormhole : `/fr/contribute/test-wormhole` — craft C (Quiet Luxury warp)
 - Marque : `/fr/contribute/test-eclipse-mark`
 
 **Fichiers actifs :**
@@ -12,12 +13,15 @@
 - [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts) — approche + play
 - [`EclipseCraftLab.tsx`](../src/components/contribute/EclipseCraftLab.tsx) — UI Look / knobs
 - [`EclipseCraftPlay.tsx`](../src/components/contribute/EclipseCraftPlay.tsx) — lecture cinéma
+- [`WormholeCraftLab.tsx`](../src/components/contribute/WormholeCraftLab.tsx) — lab warp C
+- [`WormholeCraftShader.tsx`](../src/components/contribute/constellation/WormholeCraftShader.tsx) — shader polar / stretch
 - [`eclipseLogoRecipe.ts`](../src/components/contribute/constellation/eclipseLogoRecipe.ts) — recette matière figée
 - [`OdysseyEclipseMark.tsx`](../src/components/contribute/OdysseyEclipseMark.tsx) — composant marque
 
 **Bible logo :** [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md)  
 **Audio play (partition) :** [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md)  
 **Finale play (A–E) :** [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md)  
+**Wormhole craft :** [`ODYSSEY_WORMHOLE_CRAFT.md`](ODYSSEY_WORMHOLE_CRAFT.md)  
 **Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · intro sanctuary encore **OFF** jusqu’à branchement voulu.
 
 ---
@@ -43,7 +47,8 @@
 | Hold → dolly | Dolly ~**5,1 s** ; die-cut s’éteint pendant l’approche ; menace limbe en fin |
 | Mark produit | `showWordmark` ✅ · exports **disc** + **lockup** |
 
-Suite intro cinéma : **plongée/flash → blanc → wormhole nuages → ciel → titre** — bible [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md). **REJECT** wash plat DOM (12 août).
+Suite intro cinéma : **A bis → B blanc → warp Quiet Luxury (lab `/test-wormhole`) → ciel → titre** — bible [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md).  
+**REJECT** wash plat DOM + mush couleur / « nuages soft » plein cadre (12 août). C se craft **hors** play.
 
 ### 0c. « Glitch » de naissance = `softRiseVelvet` (12 août 2026) — **KEEP**
 

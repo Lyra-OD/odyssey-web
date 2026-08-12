@@ -1,6 +1,6 @@
 # Odyssey Frontend — Project Status
 
-**Last revised: 11 août 2026 · Milestone marque Éclipse + die-cut ODYSSEY ✅ craft · Freemium V1 Phases 0–5 ✅ · Cascade 3a ✅ · Co-Créateur A–C ✅ · Leviers R1–R6 — §10 · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · Vision cinéma : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md)**
+**Last revised: 12 août 2026 · Play A–B KEEP · Wormhole lab C · Milestone marque Éclipse ✅ · Freemium V1 Phases 0–5 ✅ · Cascade 3a ✅ · Co-Créateur A–C ✅ · Leviers R1–R6 — §10 · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · Vision cinéma : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md)**
 
 Living snapshot: **où on en est**, dette acceptée, **prochain sprint**.  
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Hiérarchie : [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -12,6 +12,8 @@ Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon
 | Item | Status |
 |------|--------|
 | Craft lab éclipse (permanent) | 🟢 `/fr/contribute/test-eclipse` (+ play + mark) |
+| Play A bis + B (~9,5 s) | 🟢 KEEP · [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md) |
+| Wormhole craft C (hors play) | 🟡 `/fr/contribute/test-wormhole` · [`ODYSSEY_WORMHOLE_CRAFT.md`](ODYSSEY_WORMHOLE_CRAFT.md) |
 | Matière vivante (Vie=1, diamond, soie) | 🟢 [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) |
 | Die-cut **ODYSSEY** (shader, lag soleil→nom) | 🟢 validé en play · [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md) |
 | Composant `OdysseyEclipseMark` + recette matière | 🟢 code figé |

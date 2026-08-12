@@ -156,7 +156,7 @@ Objectif : *« WTF I WANT THIS AS A SCREENSAVER »* — digne, léger GPU.
 | **1** | `NebulaGasFar` + `GhostStars` | ✅ — skip `reduced` ; Ghost aussi skip `mobile` |
 | **2** | `ZodiacalLight` | ✅ — 1 plane, skip `reduced` |
 | **3** | Moments WTF — `AuroraVeil` + `EclipseDisc` + `StreakEcho` | ✅ — eclipse desktop only |
-| **4** | Intro cinéma (flash → voyage → Sanctuaire) | ⏸ pause — craft éclipse d’abord sur `/fr/contribute/test-eclipse` |
+| **4** | Intro cinéma (A–B KEEP · C craft wormhole · D–E plus tard) | 🟡 play `/test-eclipse-play` · lab `/test-wormhole` |
 | **5** | Mode veille (UI fade + idle plus lent) | comportement — **plus tard** |
 
 **Sky Eclipse :** craft isolé sur **`/fr/contribute/test-eclipse`** (dev, **lab permanent**).  
@@ -165,7 +165,7 @@ Intro Sanctuaire (`scene.intro`) = **encore OFF** — brancher le voyage ciel pl
 
 **Journal essais :** [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md) — pistes KEEP/REJECT, anti-patterns, milestone logo.
 
-**Preview craft :** `/fr/contribute/test-ciel` (ciel) · `/fr/contribute/test-eclipse` (lab) · `/fr/contribute/test-eclipse-play` (lockup) · `/fr/contribute/test-eclipse-mark` (marque)
+**Preview craft :** `/fr/contribute/test-ciel` (ciel) · `/fr/contribute/test-eclipse` (lab) · `/fr/contribute/test-eclipse-play` (A–B) · `/fr/contribute/test-wormhole` (warp C) · `/fr/contribute/test-eclipse-mark` (marque)
 
 Règle de session : **une lettre / phase à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
 

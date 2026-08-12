@@ -162,26 +162,32 @@ function PlayChronoDriver({
   transportRef,
   craft,
   bloomIntensityRef,
+  washRef,
+  tunnelRef,
+  bloomThresholdRef,
   onEnded,
 }: {
   transportRef: MutableRefObject<PlayTransport>;
   craft: CraftBag;
   bloomIntensityRef: MutableRefObject<number>;
+  washRef: MutableRefObject<number>;
+  tunnelRef: MutableRefObject<number>;
+  bloomThresholdRef: MutableRefObject<number>;
   onEnded: () => void;
 }) {
   const pushRef = useRef(0);
   const lastSeekGenRef = useRef(-1);
-  const { camera } = useThree();
+  const { camera, gl } = useThree();
   const diamond = diamondWorldAtBirth();
 
   const applyCamera = (
     push: number,
+    tunnel: number,
     hard: boolean,
     dt: number,
     elapsed: number,
   ) => {
     const cam = camera as PerspectiveCamera;
-    // Suit la courbe : un peu plus réactif en 2ᵉ moitié, sans overshoot fin
     const lambda = push > pushRef.current && push > 0.45 ? 4.2 : 3.0;
     const next = hard ? push : damp(pushRef.current, push, lambda, dt);
     pushRef.current = next;
@@ -195,15 +201,24 @@ function PlayChronoDriver({
     const aim = 0.22 + 0.78 * next;
     cam.position.x = diamond.x * aim + breath * 0.28;
     cam.position.y = diamond.y * aim + breath * 0.16;
-    cam.position.z = CAM_Z_START + (CAM_Z_END - CAM_Z_START) * next + breath;
-    cam.lookAt(diamond.x * next, diamond.y * next, 0);
+    cam.position.z =
+      CAM_Z_START +
+      (CAM_Z_END - CAM_Z_START) * next +
+      breath -
+      0.28 * tunnel;
+    cam.lookAt(
+      diamond.x * next * (1 - tunnel),
+      diamond.y * next * (1 - tunnel),
+      0,
+    );
 
-    cam.fov = CAM_FOV_START + (CAM_FOV_END - CAM_FOV_START) * next;
+    cam.fov =
+      CAM_FOV_START + (CAM_FOV_END - CAM_FOV_START) * next + 5.2 * tunnel;
     cam.updateProjectionMatrix();
   };
 
   useEffect(() => {
-    applyCamera(0, true, 1 / 60, 0);
+    applyCamera(0, 0, true, 1 / 60, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- init once
   }, [camera]);
 
@@ -224,17 +239,38 @@ function PlayChronoDriver({
     const chrono = sampleCraftPlayChrono(t);
     const hard = seeked || !tr.playing;
     applyChronoToCraft(craft, chrono, dt, hard);
-    applyCamera(chrono.cameraPush, hard, dt, t);
-    bloomIntensityRef.current = 0.28 + 0.95 * chrono.bloom;
+    applyCamera(chrono.cameraPush, chrono.tunnelMul, hard, dt, t);
+    bloomIntensityRef.current =
+      0.28 + 0.55 * chrono.bloom * (1 - chrono.tunnelMul * 0.65) + 0.1 * chrono.tunnelMul;
+    bloomThresholdRef.current = 0.88 - 0.04 * chrono.tunnelMul;
+    washRef.current = hard
+      ? chrono.wash
+      : damp(washRef.current, chrono.wash, chrono.wash > washRef.current ? 8 : 5, dt);
+    tunnelRef.current = hard
+      ? chrono.tunnelMul
+      : damp(
+          tunnelRef.current,
+          chrono.tunnelMul,
+          chrono.tunnelMul > tunnelRef.current ? 4.5 : 3.2,
+          dt,
+        );
 
     skyIntroRef.active = true;
     skyIntroRef.skyMul = 0;
     skyIntroRef.disc = craft.bodyFade;
     skyIntroRef.discScale = 1;
 
+    if (chrono.tunnelMul > 0.08) {
+      gl.setClearColor(defaultSkyTheme.scene.background, 1);
+    } else {
+      gl.setClearColor("#000000", 1);
+    }
+
     if (tr.playing && t >= CRAFT_PLAY_DURATION - 1e-4) {
-      if (pushRef.current < 0.992 && !seeked) return;
-      applyCamera(1, true, dt, t);
+      if (pushRef.current < 0.992 && chrono.tunnelMul < 0.5 && !seeked) return;
+      applyCamera(1, chrono.tunnelMul, true, dt, t);
+      washRef.current = chrono.wash;
+      tunnelRef.current = chrono.tunnelMul;
       tr.playing = false;
       tr.time = CRAFT_PLAY_DURATION;
       onEnded();
@@ -244,22 +280,75 @@ function PlayChronoDriver({
   return null;
 }
 
+/** B — blanc ADN lab (radial bas + fill) ; opacity via RAF, zéro setState. */
+function WhiteWashOverlay({
+  washRef,
+}: {
+  washRef: MutableRefObject<number>;
+}) {
+  const elRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      const el = elRef.current;
+      if (el) {
+        const w = washRef.current;
+        el.style.opacity = String(Math.min(1, w * 1.05));
+        el.style.setProperty(
+          "--wash-fill",
+          String(Math.min(1, Math.max(0, w - 0.35) * 1.4)),
+        );
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [washRef]);
+
+  return (
+    <div
+      ref={elRef}
+      aria-hidden
+      className="pointer-events-none fixed inset-0 z-10"
+      style={{
+        opacity: 0,
+        background: `
+          radial-gradient(
+            ellipse 120% 90% at 50% 92%,
+            rgba(255,255,255,1) 0%,
+            rgba(255,255,255,0.92) 28%,
+            rgba(255,255,255,0.45) 55%,
+            rgba(255,255,255,0) 78%
+          ),
+          rgba(255,255,255,var(--wash-fill, 0))
+        `,
+      }}
+    />
+  );
+}
+
 function BloomDriver({
   intensityRef,
+  thresholdRef,
 }: {
   intensityRef: MutableRefObject<number>;
+  thresholdRef: MutableRefObject<number>;
 }) {
-  const bloomRef = useRef<{ intensity: number } | null>(null);
+  const bloomRef = useRef<{ intensity: number; luminanceThreshold: number } | null>(
+    null,
+  );
   useFrame(() => {
     if (bloomRef.current) {
       bloomRef.current.intensity = intensityRef.current;
+      bloomRef.current.luminanceThreshold = thresholdRef.current;
     }
   });
   return (
     <Bloom
       ref={bloomRef as never}
       luminanceThreshold={0.86}
-      luminanceSmoothing={0.6}
+      luminanceSmoothing={0.62}
       intensity={0.28}
       mipmapBlur
     />
@@ -269,7 +358,7 @@ function BloomDriver({
 type Locale = "fr" | "en";
 
 /**
- * Lecture cinéma — A bis + transport timeline (play / pause / scrub).
+ * Lecture cinéma — A bis → B blanc → C tunnel + timeline.
  */
 export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
@@ -280,6 +369,9 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     seekGen: 0,
   });
   const bloomIntensityRef = useRef(0.28);
+  const bloomThresholdRef = useRef(0.86);
+  const washRef = useRef(0);
+  const tunnelRef = useRef(0);
   const sliderRef = useRef<HTMLInputElement>(null);
   const timeLabelRef = useRef<HTMLSpanElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -382,22 +474,25 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "A bis — soft portal murmur ~5.73s, opens further on approach. Scrub 5.5–7s.",
+          sub: "A→B locked. Wormhole C crafts on /test-wormhole (Quiet Luxury warp).",
           play: "Play",
           pause: "Pause",
           restart: "Restart",
           lab: "← Craft lab",
+          wormhole: "Wormhole craft →",
         }
       : {
           title: "Éclipse · naissance",
-          sub: "A bis — murmure porte ~5,73 s, s’ouvre encore à l’approche. Scrub 5,5–7 s.",
+          sub: "A→B figés. Wormhole C se craft sur /test-wormhole (warp Quiet Luxury).",
           play: "Lecture",
           pause: "Pause",
           restart: "Reprise",
           lab: "← Lab craft",
+          wormhole: "Craft wormhole →",
         };
 
   const labHref = `/${locale}/contribute/test-eclipse`;
+  const wormholeHref = `/${locale}/contribute/test-wormhole`;
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
@@ -436,6 +531,9 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
                   transportRef={transportRef}
                   craft={craftRef.current}
                   bloomIntensityRef={bloomIntensityRef}
+                  washRef={washRef}
+                  tunnelRef={tunnelRef}
+                  bloomThresholdRef={bloomThresholdRef}
                   onEnded={() => {
                     setPlaying(false);
                   }}
@@ -443,13 +541,18 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
                 <color attach="background" args={["#000000"]} />
                 <EclipseDisc tier="desktop" craft={craftRef.current} />
                 <EffectComposer multisampling={0}>
-                  <BloomDriver intensityRef={bloomIntensityRef} />
+                  <BloomDriver
+                    intensityRef={bloomIntensityRef}
+                    thresholdRef={bloomThresholdRef}
+                  />
                 </EffectComposer>
               </SkyThemeProvider>
             </Suspense>
           </Canvas>
         </div>
       </ClientWebGLGate>
+
+      <WhiteWashOverlay washRef={washRef} />
 
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-1 px-5 pt-6 md:px-10 md:pt-10">
         <p className="text-xs font-light uppercase tracking-[0.28em] text-white/45 md:text-sm">
@@ -468,6 +571,12 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
               className="rounded-sm border border-white/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/70 hover:border-white/40"
             >
               {copy.lab}
+            </Link>
+            <Link
+              href={wormholeHref}
+              className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45"
+            >
+              {copy.wormhole}
             </Link>
             <button
               type="button"

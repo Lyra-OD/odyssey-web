@@ -7,11 +7,11 @@
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Phase 1 cinéma (~9 s) — actes :
- * diamond → soleil / ODYSSEY → murmure porte → dolly gravité vers le bead.
- * Blanc / wormhole / ciel / titre = go B–E (voir ODYSSEY_ECLIPSE_PLAY_FINALE.md).
+ * Phase 1 cinéma (~9,5 s) — actes :
+ * diamond → ODYSSEY → murmure → dolly → **blanc court (B)**.
+ * Wormhole C = craft `/test-wormhole` (pas branché au play).
  */
-export const CRAFT_PLAY_DURATION = 9;
+export const CRAFT_PLAY_DURATION = 9.5;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -42,7 +42,10 @@ export type CraftChronoState = {
   bodyFade: number;
   skyMul: number;
   bloom: number;
+  /** B — blanc seuil (0→1), overlay DOM. */
   wash: number;
+  /** C — voyage nuages soft skyTheme (0→1). */
+  tunnelMul: number;
   progress: number;
   offsetX: number;
   offsetY: number;
@@ -124,6 +127,7 @@ const BASE: CraftChronoState = {
   skyMul: 0,
   bloom: 0,
   wash: 0,
+  tunnelMul: 0,
   progress: 0,
   offsetX: 0,
   offsetY: 0,
@@ -157,10 +161,17 @@ const SUN_START = 0.78;
 
 /**
  * Dolly chevauche la fin d’ouverture (~6,1) — un geste, pas deux.
- * Fenêtre ~2,85 s — départ feutré puis gravité (total phase ~9 s).
+ * Fenêtre ~2,85 s — départ feutré puis gravité ; blanc B juste après.
  */
 const DOLLY_START = 6.1;
 const DOLLY_END = 8.95;
+
+/**
+ * B — blanc court (« on est dedans ») : rise fin de dolly, tient jusqu’à fin play.
+ * C = craft séparé (`/test-wormhole`) — pas de mush ici.
+ */
+const WHITE_A = 8.7;
+const WHITE_B = 9.0;
 
 /**
  * Un breath « classe » — une seule fois, avant / en bordure de dolly.
@@ -198,11 +209,13 @@ function wordmarkExtinguish(a: number, b: number, x: number, commit = 0.32) {
 }
 
 /**
- * Phase 1 — (~9 s). Géométrie fixe : alignment = 1.
+ * Phase 1 — (~13,2 s). Géométrie fixe : alignment = 1.
  *
  * Acte 1 — diamond solo → soleil / corona
  * Acte 1b — ODYSSEY + breath → murmure porte (~5,73)
  * Acte 2 / A bis — dolly qui chevauche ; porte s’ouvre encore à l’approche
+ * Acte 3 / B — blanc court (seuil voyage)
+ * Acte 4 / C — craft séparé → `/test-wormhole`
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
@@ -256,10 +269,15 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const limbPunch = limbThreat * limbThreat;
   const diamondSolar =
     wordmarkOut * softRiseVelvet(WM_FADE_START + 0.8, WM_FADE_END, time, 1.15);
-  // Murmure feutré + ouverture croissante à l’approche + pic final
+  // B — blanc court (tient) ; C pas sur cette page
+  const wash = softRiseVelvet(WHITE_A, WHITE_B, time, 0.4);
+  const tunnelMul = 0;
+
+  const eclipseFade = 1 - tunnelMul * 0.98;
   const diamondMul =
     LOGO_DIAMOND *
     diamondIn *
+    eclipseFade *
     (1 +
       0.28 * doorHold +
       0.72 * portalMurmur +
@@ -272,9 +290,15 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
       3.25 * flashMul +
       1.75 * flashMul * flashMul);
   const coronaMul =
-    sunIn * (1 - 0.72 * cameraPush) * (1 + 0.08 * limbPunch);
+    sunIn *
+    (1 - 0.72 * cameraPush) *
+    (1 + 0.08 * limbPunch) *
+    eclipseFade;
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
-  const irregularMul = Math.pow(irregIn, 0.82);
+  const irregularMul = Math.pow(irregIn, 0.82) * (1 - tunnelMul * 0.85);
+  const lifeOut = lifeMul * (1 - tunnelMul * 0.75);
+  const bodyOut = bodyFade * eclipseFade;
+
   const bloom =
     0.18 * diamondIn +
     0.1 * sunIn +
@@ -286,7 +310,10 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
     0.12 * limbThreat +
     0.35 * limbPunch +
     1.45 * flashMul +
-    1.25 * flashMul * flashMul;
+    1.25 * flashMul * flashMul +
+    1.1 * wash +
+    0.85 * wash * wash +
+    0.2 * tunnelMul;
 
   return {
     ...BASE,
@@ -295,17 +322,18 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
     diamondMul,
     irregularMul,
     sunScale,
-    lifeMul,
+    lifeMul: lifeOut,
     cameraPush,
     cameraAim,
     wordmarkMul,
     wordmarkSolar,
     limbThreat,
     flashMul,
-    bodyFade,
+    bodyFade: bodyOut,
     skyMul: 0,
     bloom,
-    wash: 0,
+    wash,
+    tunnelMul,
     progress: 0,
   };
 }

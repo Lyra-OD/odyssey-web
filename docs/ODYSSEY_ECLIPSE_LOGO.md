@@ -33,7 +33,8 @@ Ce n’est **pas** un GIF magique. L’animation vient de la matière shader pil
 | Surface | Rôle |
 |---------|------|
 | `/fr/contribute/test-eclipse` | Craft permanent — knobs, poses, captures |
-| `/fr/contribute/test-eclipse-play` | Lecture cinéma : naissance → die-cut → hold → dolly → menace |
+| `/fr/contribute/test-eclipse-play` | Lecture cinéma : A bis + B (~9,5 s) KEEP |
+| `/fr/contribute/test-wormhole` | Craft warp C (Quiet Luxury) — pas encore branché |
 | `/fr/contribute/test-eclipse-mark` | Preview produit de la marque (pose logo) |
 | `OdysseyEclipseMark` | Composant à brancher dans l’UI |
 

@@ -1,56 +1,53 @@
 # Odyssey Éclipse Play — Finale (plongée → voyage → Sanctuaire)
 
-**Statut :** intention **figée** (12 août 2026) · code base = flash seul · étapes A–E **pending**  
-**Play :** `/fr/contribute/test-eclipse-play`  
+**Statut :** A bis + B **KEEP** sur play · C = **lab wormhole** (pas branché) · D–E pending  
+**Play :** `/fr/contribute/test-eclipse-play` (`CRAFT_PLAY_DURATION` ≈ **9,5 s**)  
+**Wormhole craft :** `/fr/contribute/test-wormhole` — [`ODYSSEY_WORMHOLE_CRAFT.md`](ODYSSEY_WORMHOLE_CRAFT.md)  
 **Chrono image :** [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts)  
 **UI play :** [`EclipseCraftPlay.tsx`](../src/components/contribute/EclipseCraftPlay.tsx)  
-**Ciel / couleurs :** [`skyTheme.ts`](../src/components/contribute/constellation/skyTheme.ts) · craft ciel [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md)  
+**Ciel / couleurs :** [`skyTheme.ts`](../src/components/contribute/constellation/skyTheme.ts) · [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md)  
 **Audio (partition) :** [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md)  
 **Journal lab :** [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md)
 
-> **Règle d’attaque :** une étape à la fois. Dire **go A** / **go B** / … → coder → valider → commit si demandé → étape suivante.  
-> Ne pas enchaîner A–E sans go explicite.
+> **Règle d’attaque :** une étape à la fois. **go** explicite → coder → valider → commit si demandé.  
+> **C se craft hors play** — ne pas rebrancher tant que le lab wormhole n’est pas KEEP.
 
 ---
 
-## 0. Pourquoi ce doc existe
-
-Trace des décisions de **fin de play** (après le lockup logo), pour pouvoir changer plus tard sans rejouer les erreurs.
+## 0. Décisions (trace)
 
 | Décision | Date | Verdict |
 |----------|------|---------|
-| Flash diamond blanc (bead + bloom) | 12 août | **KEEP** intention — devenu chaleur de fin de dolly |
-| Wash couleur plat (overlay DOM teal/mauve/rose) | 12 août | **REJECT** — filtre wallpaper, pas un voyage |
-| Plongée séparée après plateau dolly (`plungeMul`) | 12 août | **REJECT** — pause + 2ᵉ gear → écran noir |
-| Dolly continu accéléré dans le diamond | 12 août | **INTENTION A bis** — une seule courbe gravité |
-| Tunnel nuages soft (couleurs skyTheme) | 12 août | **INTENTION** — étape C |
-| Ouverture ciel + titre + constellation | 12 août | **INTENTION** — étapes D–E |
+| Flash diamond → chaleur fin de dolly | 12 août | **KEEP** (via `flashMul` = f(push)) |
+| Wash couleur plat DOM teal/mauve/rose | 12 août | **REJECT** |
+| Plongée séparée (`plungeMul`) après plateau | 12 août | **REJECT** |
+| Dolly continu + murmure porte (~5,73) | 12 août | **KEEP** A bis (`b275029`) |
+| Blanc court seuil voyage | 12 août | **KEEP** B (œil) |
+| « Nuages soft » plein cadre / mush couleur | 12 août | **REJECT** — pas un voyage |
+| Warp Quiet Luxury (blanc/argent, stretch ∝ vel) | 12 août | **INTENTION C** — craft `/test-wormhole` |
+| Ouverture ciel + titre + constellation | 12 août | **INTENTION** D–E |
 
 ---
 
 ## 1. Arc figé (récit)
 
-Un seul voyage spatial : **on entre dans la lumière**, on traverse des **nuages Odyssey**, on **arrive** dans le Sanctuaire.
-
 ```text
-[Actes 1–1b — logo]
-naissance → ODYSSEY (breath ×1) → hold
-        ↓
-[A bis] Dolly continu accéléré → dans le diamond (pas de pause / 2ᵉ plongée)
-[B] Blanc court (« on est dedans »)
-[C] Tunnel nuages soft (teal / mauve / rose)
-[D] Ouverture : ciel de loin
-[E] Titre murmuré + constellation
+[1 / 1b] Naissance → ODYSSEY (breath ×1)
+[A bis]  Murmure porte → dolly gravité → bead
+[B]      Blanc court (« on est dedans »)
+[C]      Warp Quiet Luxury → décélère vers le ciel   ← craft séparé
+[D]      Ciel Sanctuaire de loin
+[E]      Titre murmuré + constellation
 ```
 
-### Actes déjà livrés (ne pas casser naissance / ODYSSEY)
+### Sur le play aujourd’hui
 
 | Acte | Contenu | Base |
 |------|---------|------|
 | 1 / 1b | Naissance velvet + ODYSSEY die-cut + breath ×1 | KEEP |
-| 2 / **A bis** | Murmure porte ~**5,73 s** → dolly dès ~**6,1 s** (chevauche) ; ouverture ↑ avec l’approche ; total ~**9 s** | ⏳ essai |
-
-`CRAFT_PLAY_DURATION` actuel ≈ **9 s**. B–E allongeront.
+| 2 / **A bis** | Murmure ~5,73 → dolly ~6,1→8,95 | ✅ `b275029` |
+| 3 / **B** | `wash` ~8,7→9,0 · fin play ~9,5 s | ✅ œil |
+| 4 / **C** | *hors play* | ⏳ `/test-wormhole` |
 
 ---
 
@@ -58,92 +55,62 @@ naissance → ODYSSEY (breath ×1) → hold
 
 | Pattern | Pourquoi REJECT |
 |---------|-----------------|
-| Wash plat DOM (dégradé fixe teal→mauve→rose) | Plus de caméra / profondeur — anti-climatique |
-| Flash « sur place » sans accélération | Bloom spike, pas « on rentre dedans » |
-| Plateau dolly puis 2ᵉ plongée (`plungeMul`) | Pause / reboot ; fin dans le noir |
-| Visée centre du trou noir en fin de Z | Écran noir — viser le **bead** |
-| Wormhole CGI comic / starburst / tunnel néon | Clash Quiet Luxury / deuil |
-| Titre boom / jeu / UI marketing | Sanctuaire = murmure, pas trailer |
-| Empiler A–E sans validation | Trop de variables ; craft impossible à juger |
+| Wash plat DOM (teal→mauve→rose) | Wallpaper, pas un voyage |
+| Mush couleur / voile soft plein cadre | « On voit de la couleur, on ne sent rien » |
+| Flash sur place sans accélération | Bloom spike, pas « on rentre dedans » |
+| Plateau dolly + 2ᵉ plongée (`plungeMul`) | Pause / reboot → noir |
+| Visée centre trou noir en fin de Z | Écran noir — viser le **bead** |
+| Wormhole CGI comic / starburst / néon | Clash Quiet Luxury / deuil |
+| Titre boom / UI marketing | Sanctuaire = murmure |
+| Empiler A–E sans validation | Craft impossible à juger |
+| Coder C directement dans le play | Pollue A–B ; craft d’abord |
 
 ---
 
 ## 3. Checklist chirurgicale
 
-Cocher au fil des go. Mettre à jour **statut** + **commit** dans §5.
-
-### A bis — Dolly continu accéléré → diamond
+### A bis — Dolly + murmure porte
 
 | | |
 |--|--|
-| **Statut** | ⏳ essai — murmure + dolly chevauchée ; total ~9 s |
-| **Go** | `go` cinéma : open lent + croît à l’approche |
-| **But** | Sentir la porte sans spike ; un geste jusqu’au bead |
-| **Fichiers** | `eclipseCraftTimeline.ts` (`portalMurmur` / `portalYield`, `DOLLY_START` 6,1) |
-| **Done quand** | Pas de pop ; pas de plateau ; aspiration continue |
-| **Commit** | — (après validation) |
+| **Statut** | ✅ KEEP |
+| **Commit** | `b275029` |
 | **REJECT lié** | hold figé ; ouverture spike ; plongée séparée |
 
 ### B — Blanc court
 
 | | |
 |--|--|
-| **Statut** | ☐ pending (après A validé) |
-| **Go** | `go B` |
-| **But** | Instant de **plein blanc** en fin de dolly (~0,3–0,6 s) = seuil du voyage |
-| **Fichiers** | `EclipseCraftPlay.tsx` (overlay / clear) ± timeline |
-| **Done quand** | « On est dans la lumière » — pas un hold blanc qui traîne |
-| **Commit** | — |
+| **Statut** | ✅ KEEP (œil) |
+| **Fichiers** | `wash` + `WhiteWashOverlay` |
+| **Commit** | avec pack wormhole lab (ce commit) |
 
-### C — Wormhole nuages
+### C — Wormhole (lab)
 
 | | |
 |--|--|
-| **Statut** | ☐ pending (après B validé) |
-| **Go** | `go C` |
-| **But** | Voyage soft dans gaz **skyTheme** (teal / mauve / rose) — soie, pas comic |
-| **Fichiers** | Play + layers / shader tunnel (réutiliser palette `defaultSkyTheme`) |
-| **Done quand** | On voyage dans les couleurs Odyssey, sans look sci-fi cheap |
-| **Commit** | — |
+| **Statut** | ⏳ lab ouvert |
+| **URL** | `/fr/contribute/test-wormhole` |
+| **Doc** | [`ODYSSEY_WORMHOLE_CRAFT.md`](ODYSSEY_WORMHOLE_CRAFT.md) |
+| **But** | Warp blanc/argent · stretch ∝ velocity · décel → ciel |
+| **Done quand** | KEEP knobs + demo décélération → **puis** brancher après B |
+| **REJECT lié** | mush ; fluo ; particules CPU |
 
-### D — Ouverture ciel de loin
+### D — Ciel de loin · E — Titre
 
-| | |
-|--|--|
-| **Statut** | ☐ pending (après C validé) |
-| **Go** | `go D` |
-| **But** | Sortie tunnel → **ciel Sanctuaire** lu de loin (caméra / FOV qui s’ouvre) |
-| **Fichiers** | Play + layers ciel ([`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md)) |
-| **Done quand** | « Ah, c’est un ciel » — pas encore l’UI produit |
-| **Commit** | — |
-
-### E — Titre + constellation
-
-| | |
-|--|--|
-| **Statut** | ☐ pending (après D validé) |
-| **Go** | `go E` |
-| **But** | Arrivée produit : titre murmuré + constellation qui s’allume |
-| **Copy placeholder** | FR : *Bienvenue* / *Sanctuaire de [Prénom]* · EN : *Welcome* / *Sanctuary of [Name]* (à peaufiner) |
-| **Fichiers** | Play overlay typo + constellation existante / idle |
-| **Done quand** | On arrive émotionnellement dans le Sanctuaire |
-| **Commit** | — |
+Pending après C branché. Voir intention inchangée ci-dessus.
 
 ---
 
-## 4. Signaux chrono (cible — à remplir en codant)
+## 4. Signaux chrono
 
-Courbes existantes utiles : `flashMul`, `cameraPush`, `diamondMul`, `bloom`, `limbThreat`, `wash` (réserver pour matière voyage, **pas** overlay plat).
-
-| Étape | Signaux envisagés | Notes |
-|-------|-------------------|--------|
-| A bis | `cameraPush` (gravité) ; `flashMul` = f(push late) | Une courbe |
-| B | `whiteIn` ou pic blanc très court | Domaine DOM ou clear Three |
-| C | `tunnelMul` / motion streaks + gaz | Couleurs = `gasTeal` / `gasMauve` / `gasRose` |
-| D | `skyMul` ↑, tunnel ↓, FOV open | Lier intro ciel plus tard si voulu |
-| E | `titleMul`, constellation reveal | Quiet Luxury breath |
-
-Audio : piste **X** (hit seuil) + whoosh soft — voir PLAY_AUDIO § flash→voyage.
+| Étape | Signaux | Notes |
+|-------|---------|--------|
+| A bis | `cameraPush`, `flashMul`, `portalMurmur` / `portalYield` | Une aspiration |
+| B | `wash` (DOM) + bloom | Seuil ; tient fin play tant que C pas branché |
+| C | knobs lab → puis `velocity` / opacity play | Voir WORMHOLE_CRAFT |
+| D | `skyMul` ↑, warp α ↓, FOV open | |
+| E | `titleMul`, constellation | |
 
 ---
 
@@ -151,22 +118,20 @@ Audio : piste **X** (hit seuil) + whoosh soft — voir PLAY_AUDIO § flash→voy
 
 | Commit | Sujet |
 |--------|--------|
-| `e20a36e` | Flash diamond blanc (acte 4) — base historique |
-| `342d558` | A bis — dolly continu + timeline scrub |
-| — | B — blanc court |
-| — | C — wormhole nuages |
-| — | D — ciel de loin |
-| — | E — titre + constellation |
-
-Wash plat : **jamais commité** (WIP jeté ; working tree revenu à `e20a36e`).
+| `e20a36e` | Flash diamond historique |
+| `b275029` | A bis — murmure + dolly ~9 s |
+| *(ce push)* | B blanc + lab wormhole + C débranché du play |
+| — | C branché play (après KEEP lab) |
+| — | D / E |
 
 ---
 
 ## 6. Liens
 
-- Logo / matière : [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md)  
+- Wormhole craft : [`ODYSSEY_WORMHOLE_CRAFT.md`](ODYSSEY_WORMHOLE_CRAFT.md)  
+- Logo : [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md)  
 - Lab notes : [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md)  
 - Audio : [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md)  
-- Ciel : [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md)
+- Ciel : [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md)
 
-*Dernière révision : 12 août 2026 — intention A–E figée ; code gelé sur flash jusqu’à go A.*
+*Dernière révision : 12 août 2026 — A–B KEEP ; C = lab `/test-wormhole` ; mush REJECT.*
