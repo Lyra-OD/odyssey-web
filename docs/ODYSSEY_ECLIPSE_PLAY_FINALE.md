@@ -82,7 +82,7 @@ Cocher au fil des go. Mettre à jour **statut** + **commit** dans §5.
 | **But** | Une seule courbe caméra ; départ franc ; tempo ~6,2 s ; sans crunch blanc |
 | **Fichiers** | `eclipseCraftTimeline.ts` (`gravityDolly` ≈ 0.36·u + 0.64·u^2.05), `EclipseCraftPlay.tsx` |
 | **Done quand** | Départ lisible, continuum jusqu’au bead |
-| **Commit** | (ce commit) |
+| **Commit** | `342d558` |
 | **REJECT lié** | go A plongée séparée ; tweak fin `pow 2.65` trop crunch |
 
 ### B — Blanc court
@@ -153,7 +153,7 @@ Audio : piste **X** (hit seuil) + whoosh soft — voir PLAY_AUDIO § flash→voy
 | Commit | Sujet |
 |--------|--------|
 | `e20a36e` | Flash diamond blanc (acte 4) — base historique |
-| — | A bis — dolly continu accéléré dans le bead |
+| `342d558` | A bis — dolly continu + timeline scrub |
 | — | B — blanc court |
 | — | C — wormhole nuages |
 | — | D — ciel de loin |
