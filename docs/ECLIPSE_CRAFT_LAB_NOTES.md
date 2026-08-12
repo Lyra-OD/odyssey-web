@@ -38,24 +38,45 @@
 |---------|----------|
 | Nom | **Die-cut** dans le trou noir → photosphère à travers les lettres |
 | Typo | Montserrat Light, lettres larges bord à bord, **pas** d’UV stretch |
-| Sync play | Soleil d’abord ; ODYSSEY lag 2.62→4.55 ; **breath** perceptible ; hold → dolly **6.9** |
-| Hold → dolly | Hold plus court ; dolly 6.9→15.2 ; die-cut **s’éteint** (fade ~7.45→16.4) |
+| Sync play | Soleil d’abord ; ODYSSEY lag 2.62→4.55 ; **breath** ×1 classe ; hold → dolly **6.9→12.0** |
+| Hold → dolly | Dolly ~**5,1 s** ; die-cut s’éteint pendant l’approche ; menace limbe en fin |
 | Mark produit | `showWordmark` ✅ · exports **disc** + **lockup** |
 
 Suite intro cinéma (wash → ciel) : à reconstruire plan par plan **sans** casser la recette logo + die-cut.
+
+### 0c. « Glitch » de naissance = `softRiseVelvet` (12 août 2026) — **KEEP**
+
+> **Ce n’est pas un bug.** Sensation de pop / micro-glitch à l’apparition du **diamond** et du **soleil** = caractère de la courbe `softRiseVelvet` dans [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts).
+
+| Mécanisme | Effet |
+|-----------|--------|
+| Courbe | Quasi 0 longtemps, puis **commit expo** (tau bas = pop plus net) |
+| Ex. diamond | `softRiseVelvet(0.35, 2.75, …)` — saute fort ~1,2→1,8 s |
+| Ex. soleil | `softRiseVelvet(2.15, 3.45, tau **0.52**)` — pop **accentué** (12 août) |
+| Vie | `lifeMul` monte en parallèle → FBM / soie / Baily / flicker s’allument *avec* l’intensité → bord plus « électrique » |
+
+**Décision craft**
+
+| Surface | Verdict |
+|---------|---------|
+| **Soleil** | **KEEP** — signature de naissance ; pop **accentué** (tau 0.52) |
+| **Diamond** | Même moteur ; **utilisable** tel quel ; si un jour trop fort → adoucir *seulement* `diamondIn` (tau / fenêtre), **pas** le soleil |
+| Bloom | Suit la courbe (secondaire) — ne pas confondre avec un flash REJECT |
+
+Ne pas « corriger » en lissant aveuglément : ce pop est ce qui donne l’impression d’étoile / photosphère qui *s’allume*.
 
 ---
 
 ## 1. Où on s’arrête
 
-**Paradigme actuel (11 août 2026) :**
+**Paradigme actuel (12 août 2026) :**
 
 | Élément | Comportement |
 |---------|----------------|
 | Trou noir / lune | **Fixe** au centre ; die-cut ODYSSEY en play |
 | Soleil | Scrub Look = **position libre** (0 droite → 1 derrière) ; logo = `1` |
-| Chrono play | Naissance → ODYSSEY breath → hold court → dolly + extinction → menace (~16,9 s) |
-| Marque | `OdysseyEclipseMark` = lockup complet (`wordmarkMul: 1`) |
+| Chrono play | Naissance (velvet pop) → ODYSSEY breath ×1 → hold → dolly ~5,1 s + extinction → menace limbe (~**13,7 s**) |
+| Marque | `OdysseyEclipseMark` = lockup complet (`showWordmark`) |
 | Knobs | Tailles, corona, Vie, flash, photon — readouts numériques |
 
 Direction : dévoilement noir → lockup vivant (éclipse + ODYSSEY) → (wash / ciel Sanctuaire).
@@ -103,6 +124,7 @@ Légende : **KEEP** = utile · **REJECT** = ne pas refaire tel quel · **PARTIAL
 | B13 | `coronaGate` ≈ 0.06 hors totalité | **REJECT** | Soleil = pièce de monnaie plate |
 | B14 | Couture photosphère / corona (rond noir si corona ↓) | **FIXÉ** | Chevaucher nearHalo + limbe soft |
 | B15 | Soleil qui grossit/rétrécit + rayons selon `prox` | **REJECT** | Essayé en fin de session ; **revenir** demandé — ne pas re-ship sans nouveau brief |
+| B16 | Pop naissance `softRiseVelvet` (diamond + soleil) | **KEEP** | Pas un glitch — commit expo + Vie ; soleil signature ; diamond OK (§0c) |
 
 ---
 
@@ -154,6 +176,7 @@ Légende : **KEEP** = utile · **REJECT** = ne pas refaire tel quel · **PARTIAL
 - Récit = **vraie occultation** (soleil derrière trou noir fixe), pas burn-away comme moteur.
 - Lockup = matière + **die-cut ODYSSEY** (pas typo blanche connexion).
 - Blanc Odyssey, plane + GLSL, mobile-friendly (pas de raymarch lourd).
+- Naissance diamond / soleil : pop `softRiseVelvet` = **intention** (§0c) — soleil KEEP ; diamond OK à garder.
 - Documenter les essais **avant** de recommencer à tâtonner.
 
-*Dernière mise à jour : 11 août 2026 (lockup ODYSSEY + docs).*
+*Dernière mise à jour : 12 août 2026 (dolly resserré · pop velvet documenté).*

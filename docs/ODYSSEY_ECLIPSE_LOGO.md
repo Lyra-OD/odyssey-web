@@ -173,6 +173,7 @@ Donner ce fichier + pointer :
 - ODYSSEY = **découpe** dans le noir (soleil à travers), pas label flottant / DOM.
 - Pas d’UV stretch sur le wordmark ; lettres larges, espacées bord à bord.
 - Causalité play : soleil d’abord, nom en lag, hold, puis dolly.
+- Naissance diamond / soleil : pop `softRiseVelvet` = **intention** (étoile qui s’allume) — détail [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md) §0c ; soleil KEEP.
 - Pas de flash aveuglant / starburst comic / damier cell4 (REJECT lab).
 - Vie découplée d’Irrégularité : soie vivante même à irreg basse.
 

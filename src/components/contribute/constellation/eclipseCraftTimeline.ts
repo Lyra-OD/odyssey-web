@@ -7,11 +7,11 @@
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Phase 1 cinéma (~14.6 s) — actes :
- * naissance → ODYSSEY (breath) → hold court → dolly resserré + extinction → menace.
+ * Phase 1 cinéma (~13.7 s) — actes :
+ * naissance → ODYSSEY (breath) → hold court → dolly ~5 s + extinction → menace.
  * Flash / wrap / ciel = phases suivantes (pas encore).
  */
-export const CRAFT_PLAY_DURATION = 14.6;
+export const CRAFT_PLAY_DURATION = 13.7;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -72,7 +72,10 @@ function softRise(a: number, b: number, x: number, tau = 0.42) {
   return u * 0.35 + expN * 0.65;
 }
 
-/** Encore plus feutré — double S-curve sur [0,1] + expo. */
+/** Encore plus feutré — double S-curve + expo.
+ * Naissance play : quasi 0 puis commit fort = « pop » intentionnel
+ * (soleil KEEP ; diamond = même famille — voir docs/ECLIPSE_CRAFT_LAB_NOTES.md §0c).
+ */
 function softRiseVelvet(a: number, b: number, x: number, tau = 0.72) {
   const u0 = smootherstep(a, b, x);
   const u = smootherstep(0, 1, u0);
@@ -143,9 +146,9 @@ const LOGO_DIAMOND = 2.6;
 const LOGO_SUN = 0.97;
 const SUN_START = 0.78;
 
-/** Dolly : ~6 s d’aspiration (avant ~8,3 s — trop cérémonieux). */
+/** Dolly : ~5,1 s d’aspiration (resserré encore — majestueux sans traîner). */
 const DOLLY_START = 6.9;
-const DOLLY_END = 12.9;
+const DOLLY_END = 12.0;
 
 /**
  * Un breath « classe » — même tempo (~0.52 Hz), un peu plus fort, une seule fois.
@@ -157,11 +160,11 @@ const WM_BREATH_PERIOD = 1 / WM_BREATH_HZ;
 const WM_BREATH_AMP = 0.2;
 
 /** Extinction : un peu après dolly → 0 juste avant fin. */
-const WM_FADE_START = DOLLY_START + 0.55;
-const WM_FADE_END = CRAFT_PLAY_DURATION - 0.28;
+const WM_FADE_START = DOLLY_START + 0.5;
+const WM_FADE_END = CRAFT_PLAY_DURATION - 0.25;
 
 /** Menace limbe — commit en fin de dolly / après extinction. */
-const LIMB_START = 11.4;
+const LIMB_START = 10.55;
 const LIMB_END = CRAFT_PLAY_DURATION - 0.08;
 
 /**
@@ -177,11 +180,11 @@ function wordmarkExtinguish(a: number, b: number, x: number, commit = 0.32) {
 }
 
 /**
- * Phase 1 — (~14.6 s). Géométrie fixe : alignment = 1.
+ * Phase 1 — (~13.7 s). Géométrie fixe : alignment = 1.
  *
  * Acte 1 — naissance à GRANDEUR, caméra LOCK
  * Acte 1b — ODYSSEY + un breath classe
- * Acte 2 — dolly ~6 s ; extinction + transfert diamond
+ * Acte 2 — dolly ~5,1 s ; extinction + transfert diamond
  * Acte 3 — menace limbe (nom éteint)
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
@@ -194,7 +197,7 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const bodyFade = softRiseVelvet(0.45, 2.95, time, 1.1);
   const lifeMul = softRiseVelvet(0.4, 2.85, time, 1.0);
 
-  const sunIn = softRiseVelvet(2.15, 3.55, time, 0.78);
+  const sunIn = softRiseVelvet(2.15, 3.45, time, 0.52); // pop naissance plus marqué (KEEP §0c)
   const irregIn = softRiseVelvet(2.45, 4.15, time, 1.05);
 
   // ODYSSEY : apparition → un breath classe → extinction magique

@@ -2,7 +2,7 @@
 
 **Statut :** partition verrouillée (intention) — **pas encore branchée au code**  
 **Play :** `/fr/contribute/test-eclipse-play`  
-**Chrono image source :** [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts) (`CRAFT_PLAY_DURATION` ≈ **14,6 s**)  
+**Chrono image source :** [`eclipseCraftTimeline.ts`](../src/components/contribute/constellation/eclipseCraftTimeline.ts) (`CRAFT_PLAY_DURATION` ≈ **13,7 s**)  
 **Direction :** peu de sons, très justes — espace + rituel (pas trailer EDM)
 
 Quand on brancherá l’audio, piloter les volumes / fades sur les **mêmes courbes** que l’image (`diamondIn`, `sunIn`, `wordmarkMul`, `cameraPush`, `threat`) — pas une timeline audio parallèle inventée.
@@ -32,8 +32,8 @@ Pas de mélodie au début. Stéréo large, volumes bas.
 | **2,15 → 3,55** | Soleil naît | `sunIn` | **D** monte | La lumière *arrive* |
 | **2,62 → 4,55** | Die-cut **ODYSSEY** | `wordmarkIn` | **S** après **D** | Causalité : soleil → nom |
 | **4,55 → 6,9** | Hold + **breath** | `wordmarkMul` pulse | **S** respire avec le die-cut ; **D** plat | On *lit* / *sent* ODYSSEY |
-| **6,9 → 12,9** | Dolly resserré + extinction | `cameraPush` ; `wordmarkOut` | **M** soft ; **S** suit le fade | Aspiration + étoile qui s’éteint |
-| **~12,9 → 14,6** | Menace limbe / diamond | `limbThreat` ; `threat` | **D** + grave léger | Battement avant futur flash |
+| **6,9 → 12,0** | Dolly ~5,1 s + extinction | `cameraPush` ; `wordmarkOut` | **M** soft ; **S** suit le fade | Aspiration + étoile qui s’éteint |
+| **~12,0 → 13,7** | Menace limbe / diamond | `limbThreat` ; `threat` | **D** + grave léger | Battement avant futur flash |
 | **Plus tard** | Flash diamond → wrap / ciel | TBD | **X** hit + reverb | Climax net |
 
 ---
@@ -64,4 +64,4 @@ Pas de mélodie au début. Stéréo large, volumes bas.
 2. `PlayAudioDriver` sur `elapsed` + courbes.  
 3. Mix pass.
 
-*Dernière sync image : août 2026 — dolly 6,9→12,9 (~6 s) ; durée 14,6 s.*
+*Dernière sync image : août 2026 — dolly 6,9→12,0 (~5,1 s) ; durée 13,7 s.*
