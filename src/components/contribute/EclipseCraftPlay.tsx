@@ -30,11 +30,12 @@ import {
   useVisualTier,
 } from "@/src/components/contribute/constellation/useVisualTier";
 
-/** Caméra : naissance = grandeur (plein cadre) → dolly plus près vers diamond. */
+/** Caméra : naissance = grandeur → dolly continu accéléré dans le diamond (A bis). */
 const CAM_Z_START = 6.55;
-const CAM_Z_END = 4.15;
+/** Fin de dolly : dans le bead lumineux (pas le centre noir du disque). */
+const CAM_Z_END = 1.95;
 const CAM_FOV_START = 37.2;
-const CAM_FOV_END = 30.5;
+const CAM_FOV_END = 17.8;
 const CAM_BREATH_AMP = 0.018;
 const CAM_BREATH_HZ = 0.38;
 /** Plane plein cadre à la naissance (déborde ensuite). */
@@ -53,6 +54,10 @@ function diamondWorldAtBirth() {
     x: DIAMOND_BEAD.x * R_MOON_UV * half,
     y: DIAMOND_BEAD.y * R_MOON_UV * half,
   };
+}
+
+function formatPlayTime(t: number) {
+  return `${t.toFixed(2)}s`;
 }
 
 type CraftBag = {
@@ -96,7 +101,6 @@ function applyChronoToCraft(
   const mix = (cur: number, target: number, lambda: number) =>
     hard ? target : damp(cur, target, lambda, dt);
 
-  // Amortissement matière — caméra suit sa propre courbe (pas trop de lag)
   const soft = 3.2;
   const mid = 4.6;
 
@@ -117,10 +121,9 @@ function applyChronoToCraft(
   craft.coronaSoft = recipe.coronaSoft;
   craft.photonAmp = recipe.photonAmp;
   craft.lifeAmp = mix(craft.lifeAmp, recipe.lifeAmp * chrono.lifeMul, soft);
-  // Flash : attaque diamond plus réactive (hit lisible), release reste soft
   const diamondLambda =
-    chrono.flashMul > 0.02 && chrono.diamondMul > craft.diamondAmp
-      ? mid * 2.4
+    chrono.flashMul > 0.08 && chrono.diamondMul > craft.diamondAmp
+      ? mid * 2.5
       : soft;
   craft.diamondAmp = mix(craft.diamondAmp, chrono.diamondMul, diamondLambda);
   craft.alignment = chrono.alignment;
@@ -128,7 +131,6 @@ function applyChronoToCraft(
   craft.progress = 0;
   craft.offsetX = recipe.offsetX;
   craft.offsetY = recipe.offsetY;
-  // Extinction : un peu plus réactif à la baisse (évite die-cut qui traîne)
   const wmLambda = chrono.wordmarkMul < craft.wordmarkMul ? mid * 1.55 : mid;
   craft.wordmarkMul = mix(craft.wordmarkMul, chrono.wordmarkMul, wmLambda);
   craft.limbThreat = mix(
@@ -139,30 +141,36 @@ function applyChronoToCraft(
   craft.flashMul = mix(
     craft.flashMul,
     chrono.flashMul,
-    chrono.flashMul > craft.flashMul ? mid * 2.1 : mid,
+    chrono.flashMul > craft.flashMul ? mid * 2.0 : mid,
   );
   craft.perspectiveDolly = true;
   craft.dollyEndZ = PLANE_REF_Z;
   craft.dollyEndFov = PLANE_REF_FOV;
 }
 
+type PlayTransport = {
+  time: number;
+  playing: boolean;
+  /** Incrémenté à chaque seek / scrub → hard snap caméra + craft. */
+  seekGen: number;
+};
+
 /**
- * Chrono + dolly vers diamond après naissance grandeur — zéro setState pendant le play.
+ * Transport play/pause/scrub — zéro setState React pendant le play.
  */
 function PlayChronoDriver({
-  playingRef,
+  transportRef,
   craft,
   bloomIntensityRef,
   onEnded,
 }: {
-  playingRef: MutableRefObject<boolean>;
+  transportRef: MutableRefObject<PlayTransport>;
   craft: CraftBag;
   bloomIntensityRef: MutableRefObject<number>;
   onEnded: () => void;
 }) {
-  const elapsedRef = useRef(0);
-  const wasPlayingRef = useRef(false);
   const pushRef = useRef(0);
+  const lastSeekGenRef = useRef(-1);
   const { camera } = useThree();
   const diamond = diamondWorldAtBirth();
 
@@ -173,19 +181,20 @@ function PlayChronoDriver({
     elapsed: number,
   ) => {
     const cam = camera as PerspectiveCamera;
-    // Un seul damp — Z et aim = même valeur (geste unique)
-    const next = hard ? push : damp(pushRef.current, push, 2.6, dt);
+    // Suit la courbe : un peu plus réactif en 2ᵉ moitié, sans overshoot fin
+    const lambda = push > pushRef.current && push > 0.45 ? 4.2 : 3.0;
+    const next = hard ? push : damp(pushRef.current, push, lambda, dt);
     pushRef.current = next;
 
     const breath =
       CAM_BREATH_AMP *
       next *
-      (1 - next * 0.7) *
+      (1 - next * 0.85) *
       Math.sin(elapsed * Math.PI * 2 * CAM_BREATH_HZ);
 
-    // Avance + vise le diamond ensemble (pas de pan en avance)
-    cam.position.x = diamond.x * 0.34 * next + breath * 0.3;
-    cam.position.y = diamond.y * 0.3 * next + breath * 0.18;
+    const aim = 0.22 + 0.78 * next;
+    cam.position.x = diamond.x * aim + breath * 0.28;
+    cam.position.y = diamond.y * aim + breath * 0.16;
     cam.position.z = CAM_Z_START + (CAM_Z_END - CAM_Z_START) * next + breath;
     cam.lookAt(diamond.x * next, diamond.y * next, 0);
 
@@ -193,7 +202,6 @@ function PlayChronoDriver({
     cam.updateProjectionMatrix();
   };
 
-  // Pose caméra grandeur dès le mount
   useEffect(() => {
     applyCamera(0, true, 1 / 60, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- init once
@@ -201,60 +209,41 @@ function PlayChronoDriver({
 
   useFrame((_, delta) => {
     const dt = Math.min(Math.max(delta, 0), 1 / 30);
-    const playing = playingRef.current;
-
-    if (playing && !wasPlayingRef.current) {
-      elapsedRef.current = 0;
+    const tr = transportRef.current;
+    const seeked = tr.seekGen !== lastSeekGenRef.current;
+    if (seeked) {
+      lastSeekGenRef.current = tr.seekGen;
       pushRef.current = 0;
-      applyChronoToCraft(craft, sampleCraftPlayChrono(0), dt, true);
-      applyCamera(0, true, dt, 0);
-      bloomIntensityRef.current = 0.28;
-    }
-    wasPlayingRef.current = playing;
-
-    if (!playing) {
-      skyIntroRef.active = true;
-      skyIntroRef.skyMul = 0;
-      skyIntroRef.disc = craft.bodyFade;
-      skyIntroRef.discScale = 1;
-      return;
     }
 
-    elapsedRef.current += dt;
-    const t = elapsedRef.current;
-
-    if (t >= CRAFT_PLAY_DURATION) {
-      const end = sampleCraftPlayChrono(CRAFT_PLAY_DURATION);
-      applyChronoToCraft(craft, end, dt, true);
-      applyCamera(1, false, dt, t);
-      bloomIntensityRef.current = 0.28 + 0.95 * end.bloom;
-      skyIntroRef.active = true;
-      skyIntroRef.skyMul = 0;
-      skyIntroRef.disc = craft.bodyFade;
-      skyIntroRef.discScale = 1;
-      if (pushRef.current < 0.997) return;
-      applyCamera(1, true, dt, t);
-      playingRef.current = false;
-      wasPlayingRef.current = false;
-      onEnded();
-      return;
+    if (tr.playing) {
+      tr.time = Math.min(tr.time + dt, CRAFT_PLAY_DURATION);
     }
 
+    const t = Math.max(0, Math.min(tr.time, CRAFT_PLAY_DURATION));
     const chrono = sampleCraftPlayChrono(t);
-    applyChronoToCraft(craft, chrono, dt, false);
-    applyCamera(chrono.cameraPush, false, dt, t);
+    const hard = seeked || !tr.playing;
+    applyChronoToCraft(craft, chrono, dt, hard);
+    applyCamera(chrono.cameraPush, hard, dt, t);
     bloomIntensityRef.current = 0.28 + 0.95 * chrono.bloom;
 
     skyIntroRef.active = true;
     skyIntroRef.skyMul = 0;
     skyIntroRef.disc = craft.bodyFade;
     skyIntroRef.discScale = 1;
+
+    if (tr.playing && t >= CRAFT_PLAY_DURATION - 1e-4) {
+      if (pushRef.current < 0.992 && !seeked) return;
+      applyCamera(1, true, dt, t);
+      tr.playing = false;
+      tr.time = CRAFT_PLAY_DURATION;
+      onEnded();
+    }
   });
 
   return null;
 }
 
-/** Bloom muté en useFrame — pas de re-render React pendant le play. */
 function BloomDriver({
   intensityRef,
 }: {
@@ -280,16 +269,20 @@ function BloomDriver({
 type Locale = "fr" | "en";
 
 /**
- * Lecture cinéma — naissance → ODYSSEY (breath) → dolly + extinction → menace.
- * always-on render + damp craft + bloom muté = fluidité.
+ * Lecture cinéma — A bis + transport timeline (play / pause / scrub).
  */
 export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
   const recipe = ECLIPSE_LOGO_RECIPE;
-  const playingRef = useRef(false);
+  const transportRef = useRef<PlayTransport>({
+    time: 0,
+    playing: false,
+    seekGen: 0,
+  });
   const bloomIntensityRef = useRef(0.28);
+  const sliderRef = useRef<HTMLInputElement>(null);
+  const timeLabelRef = useRef<HTMLSpanElement>(null);
   const [playing, setPlaying] = useState(false);
-  const [phase, setPhase] = useState<"idle" | "playing" | "done">("idle");
 
   const craftRef = useRef<CraftBag>({
     step: 3,
@@ -336,37 +329,72 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     };
   }, []);
 
-  const replay = () => {
-    applyChronoToCraft(
-      craftRef.current,
-      sampleCraftPlayChrono(0),
-      1 / 60,
-      true,
-    );
-    playingRef.current = true;
+  // Sync DOM timeline sans setState (évite jank pendant le play)
+  useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      const t = transportRef.current.time;
+      const slider = sliderRef.current;
+      if (slider && document.activeElement !== slider) {
+        slider.value = String(t);
+      }
+      if (timeLabelRef.current) {
+        timeLabelRef.current.textContent = `${formatPlayTime(t)} / ${formatPlayTime(CRAFT_PLAY_DURATION)}`;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const seekTo = (t: number, pause = true) => {
+    const next = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
+    transportRef.current.time = next;
+    transportRef.current.seekGen += 1;
+    if (pause) {
+      transportRef.current.playing = false;
+      setPlaying(false);
+    }
+  };
+
+  const togglePlay = () => {
+    const tr = transportRef.current;
+    if (tr.playing) {
+      tr.playing = false;
+      setPlaying(false);
+      return;
+    }
+    if (tr.time >= CRAFT_PLAY_DURATION - 1e-3) {
+      tr.time = 0;
+      tr.seekGen += 1;
+    }
+    tr.playing = true;
     setPlaying(true);
-    setPhase("playing");
+  };
+
+  const restart = () => {
+    seekTo(0, false);
+    transportRef.current.playing = true;
+    setPlaying(true);
   };
 
   const copy =
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "Act 1 birth + one breath → hold → Act 2 dolly + extinguish → Act 3 limb → Act 4 diamond flash.",
+          sub: "A bis curve 3 — slightly faster dolly (~6.2s). Scrub for captures.",
           play: "Play",
-          replay: "Replay",
+          pause: "Pause",
+          restart: "Restart",
           lab: "← Craft lab",
-          idle: "Black — press Play",
-          ended: "Diamond flash held — wash next (not yet)",
         }
       : {
           title: "Éclipse · naissance",
-          sub: "Acte 1 naissance + un breath → pause → Acte 2 dolly + extinction → Acte 3 limbe → Acte 4 flash diamond.",
-          play: "Lancer",
-          replay: "Rejouer",
+          sub: "A bis courbe 3 — dolly un cran plus vive (~6,2 s). Timeline pour captures.",
+          play: "Lecture",
+          pause: "Pause",
+          restart: "Reprise",
           lab: "← Lab craft",
-          idle: "Noir — appuie sur Lancer",
-          ended: "Flash diamond tenu — wash ensuite (pas encore)",
         };
 
   const labHref = `/${locale}/contribute/test-eclipse`;
@@ -405,12 +433,11 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
             <Suspense fallback={null}>
               <SkyThemeProvider theme={defaultSkyTheme}>
                 <PlayChronoDriver
-                  playingRef={playingRef}
+                  transportRef={transportRef}
                   craft={craftRef.current}
                   bloomIntensityRef={bloomIntensityRef}
                   onEnded={() => {
                     setPlaying(false);
-                    setPhase("done");
                   }}
                 />
                 <color attach="background" args={["#000000"]} />
@@ -433,27 +460,55 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
         </p>
       </div>
 
-      <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-black/50 px-4 py-3 backdrop-blur-md md:px-6">
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-3">
-          <Link
-            href={labHref}
-            className="rounded-sm border border-white/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/70 hover:border-white/40"
-          >
-            {copy.lab}
-          </Link>
-          <button
-            type="button"
-            onClick={replay}
-            disabled={playing}
-            className="rounded-sm border border-white/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/75 hover:border-white/40 disabled:opacity-40"
-          >
-            {playing ? "…" : phase === "done" ? copy.replay : copy.play}
-          </button>
-          {!playing && (
-            <p className="text-[11px] font-light tracking-wide text-white/35">
-              {phase === "done" ? copy.ended : copy.idle}
-            </p>
-          )}
+      <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-black/55 px-4 py-3 backdrop-blur-md md:px-6">
+        <div className="mx-auto flex max-w-3xl flex-col gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={labHref}
+              className="rounded-sm border border-white/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/70 hover:border-white/40"
+            >
+              {copy.lab}
+            </Link>
+            <button
+              type="button"
+              onClick={togglePlay}
+              className="rounded-sm border border-white/20 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/75 hover:border-white/40"
+            >
+              {playing ? copy.pause : copy.play}
+            </button>
+            <button
+              type="button"
+              onClick={restart}
+              className="rounded-sm border border-white/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/55 hover:border-white/30"
+            >
+              {copy.restart}
+            </button>
+            <span
+              ref={timeLabelRef}
+              className="ml-auto font-mono text-[11px] tracking-wide text-white/40"
+            >
+              {formatPlayTime(0)} / {formatPlayTime(CRAFT_PLAY_DURATION)}
+            </span>
+          </div>
+          <label className="flex items-center gap-3">
+            <span className="sr-only">Timeline</span>
+            <input
+              ref={sliderRef}
+              type="range"
+              min={0}
+              max={CRAFT_PLAY_DURATION}
+              step={0.01}
+              defaultValue={0}
+              onPointerDown={() => {
+                transportRef.current.playing = false;
+                setPlaying(false);
+              }}
+              onInput={(e) => {
+                seekTo(Number((e.target as HTMLInputElement).value), true);
+              }}
+              className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-white"
+            />
+          </label>
         </div>
       </div>
     </main>

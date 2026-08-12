@@ -19,9 +19,10 @@ Trace des décisions de **fin de play** (après le lockup logo), pour pouvoir ch
 
 | Décision | Date | Verdict |
 |----------|------|---------|
-| Flash diamond blanc (bead + bloom) | 12 août | **KEEP** — `e20a36e` |
+| Flash diamond blanc (bead + bloom) | 12 août | **KEEP** intention — devenu chaleur de fin de dolly |
 | Wash couleur plat (overlay DOM teal/mauve/rose) | 12 août | **REJECT** — filtre wallpaper, pas un voyage |
-| Plongée dans le diamond = même geste que le flash | 12 août | **INTENTION** — étapes A–B |
+| Plongée séparée après plateau dolly (`plungeMul`) | 12 août | **REJECT** — pause + 2ᵉ gear → écran noir |
+| Dolly continu accéléré dans le diamond | 12 août | **INTENTION A bis** — une seule courbe gravité |
 | Tunnel nuages soft (couleurs skyTheme) | 12 août | **INTENTION** — étape C |
 | Ouverture ciel + titre + constellation | 12 août | **INTENTION** — étapes D–E |
 
@@ -32,26 +33,25 @@ Trace des décisions de **fin de play** (après le lockup logo), pour pouvoir ch
 Un seul voyage spatial : **on entre dans la lumière**, on traverse des **nuages Odyssey**, on **arrive** dans le Sanctuaire.
 
 ```text
-[Actes 1–3 — logo, déjà en code]
-naissance → ODYSSEY (breath ×1) → hold → dolly → extinction → menace limbe
+[Actes 1–1b — logo]
+naissance → ODYSSEY (breath ×1) → hold
         ↓
-[A] Plongée = flash (même geste)
+[A bis] Dolly continu accéléré → dans le diamond (pas de pause / 2ᵉ plongée)
 [B] Blanc court (« on est dedans »)
 [C] Tunnel nuages soft (teal / mauve / rose)
 [D] Ouverture : ciel de loin
 [E] Titre murmuré + constellation
 ```
 
-### Actes 1–4 déjà livrés (ne pas casser)
+### Actes déjà livrés (ne pas casser naissance / ODYSSEY)
 
 | Acte | Contenu | Base |
 |------|---------|------|
 | 1 / 1b | Naissance velvet + ODYSSEY die-cut + breath ×1 | KEEP |
-| 2 | Dolly 6,9→12,0 (~5,1 s) + extinction magique | KEEP |
-| 3 | Menace limbe (fil serré, punch fin) | KEEP |
-| 4 | Flash diamond (`flashMul` ~13,78→14,58) bead + bloom | `e20a36e` — à **fusionner** avec A (plongée) |
+| 2 / **A bis** | Dolly **continu** 6,9→13,1 (~6,2 s, courbe 3) → bead ; menace + chaleur `flashMul` | checkpoint |
+| ~~Plongée séparée `plungeMul`~~ | 2ᵉ geste après plateau → écran noir | **REJECT** (12 août) |
 
-`CRAFT_PLAY_DURATION` actuel ≈ **14,7 s** (fin flash). A–E **allongeront** la durée.
+`CRAFT_PLAY_DURATION` actuel ≈ **13,4 s**. B–E allongeront.
 
 ---
 
@@ -60,7 +60,9 @@ naissance → ODYSSEY (breath ×1) → hold → dolly → extinction → menace 
 | Pattern | Pourquoi REJECT |
 |---------|-----------------|
 | Wash plat DOM (dégradé fixe teal→mauve→rose) | Plus de caméra / profondeur — anti-climatique |
-| Flash « sur place » sans plongée | Bloom spike, pas « on rentre dedans » |
+| Flash « sur place » sans accélération | Bloom spike, pas « on rentre dedans » |
+| Plateau dolly puis 2ᵉ plongée (`plungeMul`) | Pause / reboot ; fin dans le noir |
+| Visée centre du trou noir en fin de Z | Écran noir — viser le **bead** |
 | Wormhole CGI comic / starburst / tunnel néon | Clash Quiet Luxury / deuil |
 | Titre boom / jeu / UI marketing | Sanctuaire = murmure, pas trailer |
 | Empiler A–E sans validation | Trop de variables ; craft impossible à juger |
@@ -71,16 +73,17 @@ naissance → ODYSSEY (breath ×1) → hold → dolly → extinction → menace 
 
 Cocher au fil des go. Mettre à jour **statut** + **commit** dans §5.
 
-### A — Plongée = flash
+### A bis — Dolly continu accéléré → diamond
 
 | | |
 |--|--|
-| **Statut** | ☐ pending |
-| **Go** | `go A` |
-| **But** | Flash n’est plus un bloom sur place : caméra **fonce dans le diamond** en sync avec `flashMul` |
-| **Fichiers** | `eclipseCraftTimeline.ts`, `EclipseCraftPlay.tsx` (`PlayChronoDriver` Z/FOV) |
-| **Done quand** | On lit « on rentre dedans », pas « ça a flashé » |
-| **Commit** | — |
+| **Statut** | ✅ checkpoint (courbe 3 + timeline) — peaufinage possible avant go B |
+| **Go** | `go A bis` / courbe 3 |
+| **But** | Une seule courbe caméra ; départ franc ; tempo ~6,2 s ; sans crunch blanc |
+| **Fichiers** | `eclipseCraftTimeline.ts` (`gravityDolly` ≈ 0.36·u + 0.64·u^2.05), `EclipseCraftPlay.tsx` |
+| **Done quand** | Départ lisible, continuum jusqu’au bead |
+| **Commit** | (ce commit) |
+| **REJECT lié** | go A plongée séparée ; tweak fin `pow 2.65` trop crunch |
 
 ### B — Blanc court
 
@@ -88,7 +91,7 @@ Cocher au fil des go. Mettre à jour **statut** + **commit** dans §5.
 |--|--|
 | **Statut** | ☐ pending (après A validé) |
 | **Go** | `go B` |
-| **But** | Instant de **plein blanc** au pic de plongée (~0,3–0,6 s) = seuil du voyage |
+| **But** | Instant de **plein blanc** en fin de dolly (~0,3–0,6 s) = seuil du voyage |
 | **Fichiers** | `EclipseCraftPlay.tsx` (overlay / clear) ± timeline |
 | **Done quand** | « On est dans la lumière » — pas un hold blanc qui traîne |
 | **Commit** | — |
@@ -135,8 +138,8 @@ Courbes existantes utiles : `flashMul`, `cameraPush`, `diamondMul`, `bloom`, `li
 
 | Étape | Signaux envisagés | Notes |
 |-------|-------------------|--------|
-| A | `flashMul` + push caméra accéléré vers bead | Fusionner flash + plongée |
-| B | `whiteIn` ou pic `wash` blanc très court | Domaine DOM ou clear Three |
+| A bis | `cameraPush` (gravité) ; `flashMul` = f(push late) | Une courbe |
+| B | `whiteIn` ou pic blanc très court | Domaine DOM ou clear Three |
 | C | `tunnelMul` / motion streaks + gaz | Couleurs = `gasTeal` / `gasMauve` / `gasRose` |
 | D | `skyMul` ↑, tunnel ↓, FOV open | Lier intro ciel plus tard si voulu |
 | E | `titleMul`, constellation reveal | Quiet Luxury breath |
@@ -149,8 +152,8 @@ Audio : piste **X** (hit seuil) + whoosh soft — voir PLAY_AUDIO § flash→voy
 
 | Commit | Sujet |
 |--------|--------|
-| `e20a36e` | Flash diamond blanc (acte 4) — base avant plongée |
-| — | A — plongée = flash |
+| `e20a36e` | Flash diamond blanc (acte 4) — base historique |
+| — | A bis — dolly continu accéléré dans le bead |
 | — | B — blanc court |
 | — | C — wormhole nuages |
 | — | D — ciel de loin |
