@@ -2,16 +2,16 @@
  * Craft — Look = pose soleil. Play = lecture cinéma (autre page).
  *
  * Look : scrub = position soleil (0 droite → 1 derrière).
- * Play (phase 1) : naissance grandeur → dolly vers diamond → menace.
+ * Play (phase 1) : naissance → ODYSSEY → dolly → menace → flash diamond.
  */
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Phase 1 cinéma (~13.7 s) — actes :
- * naissance → ODYSSEY (breath) → hold court → dolly ~5 s + extinction → menace.
- * Flash / wrap / ciel = phases suivantes (pas encore).
+ * Phase 1 cinéma (~14.7 s) — actes :
+ * naissance → ODYSSEY → hold → dolly → menace → **flash diamond** (étape 1).
+ * Wash couleur / wormhole / ciel = étapes suivantes (pas encore).
  */
-export const CRAFT_PLAY_DURATION = 13.7;
+export const CRAFT_PLAY_DURATION = 14.7;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -34,6 +34,8 @@ export type CraftChronoState = {
   wordmarkSolar: number;
   /** 0→1 menace limbe soleil (fin — tension, pas flood). */
   limbThreat: number;
+  /** 0→1 flash diamond blanc (acte 4 — hit court). */
+  flashMul: number;
   bodyFade: number;
   skyMul: number;
   bloom: number;
@@ -111,6 +113,7 @@ const BASE: CraftChronoState = {
   wordmarkMul: 0,
   wordmarkSolar: 0,
   limbThreat: 0,
+  flashMul: 0,
   bodyFade: 1,
   skyMul: 0,
   bloom: 0,
@@ -159,13 +162,18 @@ const WM_BREATH_A = 4.65;
 const WM_BREATH_PERIOD = 1 / WM_BREATH_HZ;
 const WM_BREATH_AMP = 0.2;
 
-/** Extinction : un peu après dolly → 0 juste avant fin. */
+/** Extinction : un peu après dolly → 0 juste avant fin d’acte 3 (figé). */
 const WM_FADE_START = DOLLY_START + 0.5;
-const WM_FADE_END = CRAFT_PLAY_DURATION - 0.25;
+const WM_FADE_END = 13.45;
 
-/** Menace limbe — commit en fin de dolly / après extinction. */
+/** Menace limbe — commit en fin de dolly / avant flash. */
 const LIMB_START = 10.55;
-const LIMB_END = CRAFT_PLAY_DURATION - 0.08;
+const LIMB_END = 13.62;
+
+/** Acte 4 — flash diamond blanc (étape 1 validable seule). */
+const FLASH_START = 13.78;
+const FLASH_PEAK = 14.05;
+const FLASH_END = 14.58;
 
 /**
  * Extinction magique : reste affirmé longtemps, puis chute velvet (étoile qui cède).
@@ -180,12 +188,13 @@ function wordmarkExtinguish(a: number, b: number, x: number, commit = 0.32) {
 }
 
 /**
- * Phase 1 — (~13.7 s). Géométrie fixe : alignment = 1.
+ * Phase 1 — (~14.7 s). Géométrie fixe : alignment = 1.
  *
  * Acte 1 — naissance à GRANDEUR, caméra LOCK
  * Acte 1b — ODYSSEY + un breath classe
  * Acte 2 — dolly ~5,1 s ; extinction + transfert diamond
  * Acte 3 — menace limbe (nom éteint)
+ * Acte 4 — flash diamond blanc (étape 1 — pas de wash / wormhole encore)
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
@@ -226,7 +235,12 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
     1.05,
   );
 
-  // Transfert → diamond solaire pincé ; limbe fort seulement en fin ; bloom sélectif
+  // Acte 4 — flash blanc depuis le diamond (attaque nette, release feutrée)
+  const flashAttack = softRiseVelvet(FLASH_START, FLASH_PEAK, time, 0.36);
+  const flashRelease = softRiseVelvet(FLASH_PEAK, FLASH_END, time, 0.82);
+  const flashMul = clamp01(flashAttack * (1 - flashRelease));
+
+  // Transfert → diamond ; limbe ; puis hit flash (bead pincé, amp ↑)
   const threat = cameraPush * cameraPush;
   const limbPunch = limbThreat * limbThreat;
   const diamondSolar =
@@ -238,7 +252,8 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
       0.85 * threat +
       1.35 * wordmarkOut +
       0.55 * diamondSolar +
-      0.2 * limbPunch);
+      0.2 * limbPunch +
+      3.2 * flashMul);
   const coronaMul =
     sunIn * (1 - 0.58 * cameraPush) * (1 + 0.06 * limbPunch);
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
@@ -250,7 +265,9 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
     0.85 * wordmarkOut +
     0.4 * diamondSolar +
     0.08 * limbThreat +
-    0.28 * limbPunch;
+    0.28 * limbPunch +
+    1.55 * flashMul +
+    0.9 * flashMul * flashMul;
 
   return {
     ...BASE,
@@ -265,6 +282,7 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
     wordmarkMul,
     wordmarkSolar,
     limbThreat,
+    flashMul,
     bodyFade,
     skyMul: 0,
     bloom,

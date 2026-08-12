@@ -78,6 +78,7 @@ type CraftBag = {
   dollyEndFov: number;
   wordmarkMul: number;
   limbThreat: number;
+  flashMul: number;
 };
 
 /** Exp damp — lisse toute micro-saccade de courbe / frame. */
@@ -116,7 +117,12 @@ function applyChronoToCraft(
   craft.coronaSoft = recipe.coronaSoft;
   craft.photonAmp = recipe.photonAmp;
   craft.lifeAmp = mix(craft.lifeAmp, recipe.lifeAmp * chrono.lifeMul, soft);
-  craft.diamondAmp = mix(craft.diamondAmp, chrono.diamondMul, soft);
+  // Flash : attaque diamond plus réactive (hit lisible), release reste soft
+  const diamondLambda =
+    chrono.flashMul > 0.02 && chrono.diamondMul > craft.diamondAmp
+      ? mid * 2.4
+      : soft;
+  craft.diamondAmp = mix(craft.diamondAmp, chrono.diamondMul, diamondLambda);
   craft.alignment = chrono.alignment;
   craft.bodyFade = mix(craft.bodyFade, chrono.bodyFade, soft);
   craft.progress = 0;
@@ -129,6 +135,11 @@ function applyChronoToCraft(
     craft.limbThreat,
     chrono.limbThreat,
     chrono.limbThreat > craft.limbThreat ? mid * 1.25 : mid,
+  );
+  craft.flashMul = mix(
+    craft.flashMul,
+    chrono.flashMul,
+    chrono.flashMul > craft.flashMul ? mid * 2.1 : mid,
   );
   craft.perspectiveDolly = true;
   craft.dollyEndZ = PLANE_REF_Z;
@@ -303,6 +314,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     dollyEndFov: PLANE_REF_FOV,
     wordmarkMul: 0,
     limbThreat: 0,
+    flashMul: 0,
   });
 
   useEffect(() => {
@@ -340,21 +352,21 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "Act 1 birth + one class breath → hold → Act 2 dolly + light-transfer extinguish → Act 3 threat.",
+          sub: "Act 1 birth + one breath → hold → Act 2 dolly + extinguish → Act 3 limb → Act 4 diamond flash.",
           play: "Play",
           replay: "Replay",
           lab: "← Craft lab",
           idle: "Black — press Play",
-          ended: "Limb threat — diamond holds the promise; flash next",
+          ended: "Diamond flash held — wash next (not yet)",
         }
       : {
           title: "Éclipse · naissance",
-          sub: "Acte 1 naissance + un breath → pause → Acte 2 dolly + extinction → Acte 3 menace limbe.",
+          sub: "Acte 1 naissance + un breath → pause → Acte 2 dolly + extinction → Acte 3 limbe → Acte 4 flash diamond.",
           play: "Lancer",
           replay: "Rejouer",
           lab: "← Lab craft",
           idle: "Noir — appuie sur Lancer",
-          ended: "Menace limbe — le diamond porte la promesse ; flash ensuite",
+          ended: "Flash diamond tenu — wash ensuite (pas encore)",
         };
 
   const labHref = `/${locale}/contribute/test-eclipse`;
