@@ -200,6 +200,7 @@ function UniverseScene({
   onSelectMemory,
   focus,
   onStarScreen,
+  craftLite = false,
 }: {
   tier: ReturnType<typeof useVisualTier>;
   parallaxIntensity: number;
@@ -211,6 +212,7 @@ function UniverseScene({
   ) => void;
   focus: FocusSession | null;
   onStarScreen: (anchor: ScreenAnchor | null) => void;
+  craftLite?: boolean;
 }) {
   const theme = useSkyTheme();
   // Pendant closing, on garde le tracking pour suivre l’étoile au retour
@@ -227,7 +229,8 @@ function UniverseScene({
   return (
     <ParallaxProvider intensity={parallaxIntensity}>
       <ForceRenderLoop />
-      <WheelZoom enabled />
+      {/* Craft : zoom fixe (pas de molette qui recentre) */}
+      <WheelZoom enabled={!craftLite} />
       <SkyWander enabled={wanderEnabled} />
       <IdleCameraDrift />
       <color attach="background" args={[theme.scene.background]} />
@@ -236,7 +239,7 @@ function UniverseScene({
         args={[
           theme.scene.fogColor,
           theme.scene.fogNear,
-          theme.scene.fogFar,
+          craftLite ? theme.scene.fogFar * 3.2 : theme.scene.fogFar,
         ]}
       />
       <ambientLight intensity={theme.scene.ambientIntensity} />
@@ -285,7 +288,7 @@ function UniverseScene({
         >
           <CosmicDust tier={tier} />
         </ParallaxLayer>
-        {tier !== "reduced" ? (
+        {tier !== "reduced" && !craftLite ? (
           <ParallaxLayer
             factor={theme.zodiacal.parallax.factor}
             lerp={theme.zodiacal.parallax.lerp}
@@ -293,7 +296,7 @@ function UniverseScene({
             <ZodiacalLight tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {tier !== "reduced" ? (
+        {tier !== "reduced" && !craftLite ? (
           <ParallaxLayer
             factor={theme.aurora.parallax.factor}
             lerp={theme.aurora.parallax.lerp}
@@ -310,12 +313,14 @@ function UniverseScene({
           </ParallaxLayer>
         ) : null}
         <StarDust tier={tier} />
-        <ParallaxLayer
-          factor={theme.shootingStars.parallax.factor}
-          lerp={theme.shootingStars.parallax.lerp}
-        >
-          <ShootingStars tier={tier} />
-        </ParallaxLayer>
+        {!craftLite ? (
+          <ParallaxLayer
+            factor={theme.shootingStars.parallax.factor}
+            lerp={theme.shootingStars.parallax.lerp}
+          >
+            <ShootingStars tier={tier} />
+          </ParallaxLayer>
+        ) : null}
         {showConstellation ? (
           <ParallaxLayer
             factor={theme.constellation.parallax.factor}
@@ -387,6 +392,11 @@ export type SanctuaryUniverseProps = {
   /** Immersif : Fermer + Esc */
   onClose?: () => void;
   locale?: "fr" | "en";
+  /**
+   * Lab craft wormhole : ciel allégé + camera très reculée.
+   * Pas de molette zoom, dpr 1, tier mobile (moins de layers).
+   */
+  craftLite?: boolean;
 };
 
 export function SanctuaryUniverse({
@@ -396,11 +406,19 @@ export function SanctuaryUniverse({
   skyTheme = defaultSkyTheme,
   onClose,
   locale = "fr",
+  craftLite = false,
 }: SanctuaryUniverseProps) {
-  const tier = useVisualTier();
+  const detectedTier = useVisualTier();
+  /** Craft : force mobile = moins de layers (cheat perf). */
+  const tier = craftLite
+    ? detectedTier === "reduced"
+      ? "reduced"
+      : "mobile"
+    : detectedTier;
   const intensity =
-    parallaxIntensity ?? (mode === "background" ? 0.55 : 1);
-  const immersive = mode === "immersive";
+    parallaxIntensity ??
+    (craftLite ? 0.25 : mode === "background" ? 0.55 : 1);
+  const immersive = mode === "immersive" && !craftLite;
   const [focus, setFocus] = useState<FocusSession | null>(null);
   const [constellationOn, setConstellationOn] = useState(true);
   const [wanderOn, setWanderOn] = useState(false);
@@ -598,8 +616,13 @@ export function SanctuaryUniverse({
           className={immersive ? undefined : "!pointer-events-none"}
           style={{ pointerEvents: immersive ? "auto" : "none" }}
           frameloop="demand"
-          dpr={tierDpr(tier)}
-          camera={{ position: [0, 0, 7.5], fov: 42, near: 0.1, far: 40 }}
+          dpr={craftLite ? 1 : tierDpr(tier)}
+          camera={{
+            position: [0, 0, craftLite ? 58 : 7.5],
+            fov: craftLite ? 68 : 42,
+            near: 0.1,
+            far: craftLite ? 120 : 40,
+          }}
           gl={createRenderer}
           onCreated={({ gl }) => {
             gl.setClearColor(skyTheme.scene.background, 1);
@@ -615,6 +638,7 @@ export function SanctuaryUniverse({
                 onSelectMemory={beginFocus}
                 focus={focus}
                 onStarScreen={onStarScreen}
+                craftLite={craftLite}
               />
             </SkyThemeProvider>
           </Suspense>

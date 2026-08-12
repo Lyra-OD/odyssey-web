@@ -1,107 +1,32 @@
 "use client";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import * as THREE from "three";
+import { useEffect, useRef, useState } from "react";
 
-import { ClientWebGLGate } from "@/src/components/contribute/constellation/webglGate";
-import {
-  tierDpr,
-  useVisualTier,
-} from "@/src/components/contribute/constellation/useVisualTier";
 import {
   WORMHOLE_CRAFT_DEFAULTS,
-  WormholeCraftPlane,
   type WormholeCraftKnobs,
 } from "@/src/components/contribute/constellation/WormholeCraftShader";
 
 type Locale = "fr" | "en";
 
-function ForceRenderLoop() {
-  const invalidate = useThree((s) => s.invalidate);
-  useEffect(() => {
-    let raf = 0;
-    let running = true;
-    const tick = () => {
-      if (!running) return;
-      invalidate();
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => {
-      running = false;
-      cancelAnimationFrame(raf);
-    };
-  }, [invalidate]);
-  return null;
-}
-
-/** Fond étoiles fixes — révélés quand le warp décélère / fade. */
-function StaticStarField({ reveal }: { reveal: number }) {
-  const pointsRef = useRef<THREE.Points>(null);
-  const matRef = useRef<THREE.PointsMaterial>(null);
-
-  const geometry = useMemo(() => {
-    const n = 280;
-    const arr = new Float32Array(n * 3);
-    for (let i = 0; i < n; i++) {
-      const a = Math.random() * Math.PI * 2;
-      const r = 0.2 + Math.random() * 3.2;
-      arr[i * 3] = Math.cos(a) * r;
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 2.4;
-      arr[i * 3 + 2] = -4 - Math.random() * 6;
-    }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.BufferAttribute(arr, 3));
-    return geo;
-  }, []);
-
-  useFrame(() => {
-    if (matRef.current) {
-      matRef.current.opacity = Math.min(1, Math.max(0, reveal)) * 0.85;
-    }
-  });
-
-  return (
-    <points ref={pointsRef} geometry={geometry} frustumCulled={false} renderOrder={1}>
-      <pointsMaterial
-        ref={matRef}
-        color="#d8dee6"
-        size={0.028}
-        sizeAttenuation
-        transparent
-        opacity={0}
-        depthWrite={false}
-        toneMapped={false}
-      />
-    </points>
-  );
-}
-
-function BloomHook({ intensity }: { intensity: number }) {
-  const ref = useRef<{ intensity: number } | null>(null);
-  useFrame(() => {
-    if (ref.current) ref.current.intensity = intensity;
-  });
-  return (
-    <Bloom
-      ref={ref as never}
-      luminanceThreshold={0.78}
-      luminanceSmoothing={0.62}
-      intensity={intensity}
-      mipmapBlur
-    />
-  );
-}
+const SanctuaryUniverse = dynamic(
+  () =>
+    import("@/src/components/contribute/SanctuaryUniverse").then(
+      (m) => m.SanctuaryUniverse,
+    ),
+  {
+    ssr: false,
+    loading: () => <div className="h-full w-full bg-black" />,
+  },
+);
 
 /**
- * Lab craft wormhole — tunnel volumétrique (palette Sanctuaire).
- * Demo : velocity ↓ + alpha ↓ → ciel fixe.
+ * Lab craft wormhole — construction etape par etape.
+ * Etape 1 : ciel Sanctuaire seul (craftLite, zoom loin, pas de core).
  */
 export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
-  const tier = useVisualTier();
   const [knobs, setKnobs] = useState<WormholeCraftKnobs>({
     ...WORMHOLE_CRAFT_DEFAULTS,
   });
@@ -139,20 +64,17 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
     return () => cancelAnimationFrame(raf);
   }, [demo]);
 
-  const skyReveal = 1 - Math.min(1, knobs.alpha * 1.05);
-  const bloomIntensity = 0.22 + 0.28 * Math.min(1, knobs.velocity) * knobs.density * 0.35;
-
   const copy =
     locale === "en"
       ? {
           title: "Wormhole · craft",
-          sub: "Volumetric cylindrical tunnel — Sanctuary teal / amber. Scrub density, then Decel → sky.",
+          sub: "Step 1 — Sanctuary sky only (zoomed out, lite). No core yet.",
           reset: "Reset",
           demo: "Decel → sky",
           demoRun: "…",
           play: "← Eclipse play",
           eclipse: "Eclipse lab",
-          hint: "Craft only — not wired to play yet.",
+          hint: "Step 1 — sky foundation.",
           velocity: "Velocity",
           density: "Density",
           alpha: "Alpha",
@@ -160,13 +82,13 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
         }
       : {
           title: "Wormhole · craft",
-          sub: "Tunnel volumétrique cylindrique — teal / ambre Sanctuaire. Densité, puis Décel → ciel.",
+          sub: "Étape 1 — ciel Sanctuaire seul (reculé, lite). Pas de core.",
           reset: "Reset",
           demo: "Décel → ciel",
           demoRun: "…",
           play: "← Lecture éclipse",
           eclipse: "Lab éclipse",
-          hint: "Craft seul — pas encore branché au play.",
+          hint: "Étape 1 — fondation ciel.",
           velocity: "Vélocité",
           density: "Densité",
           alpha: "Alpha",
@@ -188,40 +110,13 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
-      <ClientWebGLGate
-        fallback={(message) => (
-          <div className="flex min-h-screen items-center justify-center px-6 text-center text-sm text-white/50">
-            {message}
-          </div>
-        )}
-      >
-        <div className="fixed inset-0 z-0">
-          <Canvas
-            className="h-full w-full"
-            frameloop="always"
-            dpr={tierDpr(tier)}
-            camera={{ position: [0, 0, 4], fov: 48, near: 0.1, far: 40 }}
-            gl={{
-              antialias: true,
-              alpha: false,
-              powerPreference: "high-performance",
-            }}
-            onCreated={({ gl }) => {
-              gl.setClearColor("#02040a", 1);
-            }}
-          >
-            <Suspense fallback={null}>
-              <ForceRenderLoop />
-              <color attach="background" args={["#02040a"]} />
-              <StaticStarField reveal={skyReveal} />
-              <WormholeCraftPlane knobs={knobs} />
-              <EffectComposer multisampling={0}>
-                <BloomHook intensity={bloomIntensity} />
-              </EffectComposer>
-            </Suspense>
-          </Canvas>
-        </div>
-      </ClientWebGLGate>
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <SanctuaryUniverse
+          mode="background"
+          locale={locale}
+          craftLite
+        />
+      </div>
 
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-1 px-5 pt-6 md:px-10 md:pt-10">
         <p className="text-xs font-light uppercase tracking-[0.28em] text-white/45 md:text-sm">
