@@ -1,39 +1,39 @@
-# Odyssey Wormhole — Craft (Quiet Luxury)
+# Odyssey Wormhole — Craft (tunnel volumétrique)
 
 **Statut :** lab ouvert (12 août 2026) · **pas branché** au play éclipse  
 **URL :** `/fr/contribute/test-wormhole` (dev only)  
 **Shader :** [`WormholeCraftShader.tsx`](../src/components/contribute/constellation/WormholeCraftShader.tsx)  
 **UI :** [`WormholeCraftLab.tsx`](../src/components/contribute/WormholeCraftLab.tsx)  
-**Finale play :** [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md) § C
+**Finale play :** [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md) § C  
+**Palette :** [`skyTheme.ts`](../src/components/contribute/constellation/skyTheme.ts) uniquement (`gasTeal`, `zodiacal`, `cosmicDust`, `aurora.edge`, `starsField.tint`, `scene.background`)
 
-> **Règle :** craft ici → valider → seulement ensuite brancher après le blanc B du play.  
-> Ne pas rejouer le mush couleur / nuages soft plein cadre (REJECT août 2026).
+> **Règle :** craft ici → valider → seulement ensuite brancher après le blanc B.  
+> **REJECT :** mush couleur plein cadre · warp blanc/argent aveuglant · fluo / comic CGI · couleurs hors skyTheme.
 
 ---
 
 ## 1. Intention
 
-Après le flash blanc (seuil), **warp Quiet Luxury** : lignes de lumière blanc / argent qui foncent vers la caméra, puis **décélèrent** pour redevenir des points et laisser le ciel.
+Après le flash blanc (seuil), **plongée dans un tube de nébuleuse Sanctuaire** : gaz teal / deep / poussière ambrée qui fonce vers la caméra, puis **alpha → 0** pour révéler le ciel.
 
 | KEEP | REJECT |
 |------|--------|
-| Blanc / argent / transparent | Fluo, néon, violet stock |
-| Stretch radial ∝ velocity | Tunnel CGI comic / starburst |
-| 1 plane GPU (pas de particules CPU) | Mush couleur plein cadre |
-| Décel → points → alpha 0 → ciel | Hold warp infini |
+| UV cylindrique **sans seam** (cos/sin) | `atan` brut → couture |
+| **3 couches** FBM parallax | Une seule plaque FBM |
+| Ridges / filaments clairsemés | Mush softstep global |
+| Soft core ambré destination | Flash blanc / trou noir |
+| Rush stars (`starsField.tint`) | Aucune particule |
+| Alpha → ciel | Hold opaque infini |
 
 ---
 
-## 2. Logique shader (validée)
+## 2. Math (1 plane)
 
-1. **Polar** — UV → `(angle, radius)`  
-2. **Bruit angulaire** — hash par secteur → étoiles sur 360°  
-3. **Travel** — `fract` radial animé par `uVelocity`  
-4. **Stretch** — `pow(uVelocity, stretchPow)` allonge le bruit → streaks  
-5. **Décel** — velocity ↓ → streaks → points ; opacity ↓ → ciel derrière  
-6. **HDR head** — pic court pour bloom ; queue soft  
-
-Astuce soyeuse : `stretchPow ≈ 1.6–2.0`.
+```glsl
+vec2 cylUV(ang, depth, rScale) = vec2(cos(ang), sin(ang)) * rScale + depth;
+// 3× gasLayer (speedMul 0.55 / 1.0 / 1.65) → ridge4 filaments
+// + soft core + rushStars hash cellulaire
+```
 
 ---
 
@@ -41,26 +41,21 @@ Astuce soyeuse : `stretchPow ≈ 1.6–2.0`.
 
 | Knob | Rôle |
 |------|------|
-| Velocity | 0 = points · ~2 = warp |
-| Stretch pow | Courbe d’étirement |
-| Density | Secteurs angulaires |
-| Opacity | Voile global |
-| Head HDR | Pic tête (bloom) |
-| Tail | Longueur queue |
-| Core soft | Anti-singularité centre |
+| Velocity | Vitesse du vol dans le tube |
+| Density | Épaisseur / contraste du gaz |
+| Alpha | Opacité globale (sortie vers ciel) |
+| Core soft | Noyau ambré central |
 
-**Demo** : `Décel → ciel` anime velocity 2→0 + opacity→0 (~4,2 s).
+**Demo** : `Décel → ciel` — velocity ↓ + alpha ↓ (~4,8 s).
 
 ---
 
-## 4. Suite (plan)
+## 4. Suite
 
 | Étape | Action |
 |-------|--------|
-| **Maintenant** | Dialer knobs + demo `Décel → ciel` jusqu’à KEEP |
-| **Puis** | Brancher après B sur play (`wash` ↓, warp ↑) |
-| **Ensuite** | D ciel de loin · E titre ([`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md)) |
+| **Maintenant** | Valider ressenti volumétrique œil |
+| **Puis** | KEEP knobs → brancher après B sur play |
+| **Ensuite** | D ciel · E titre |
 
-Parallax / knobs nuages-étoiles en plus : seulement si le warp QL seul ne suffit pas — **ne pas** revenir au mush couleur.
-
-*Dernière révision : 12 août 2026 — lab créé ; play C débranché ; docs alignées.*
+*Dernière révision : 12 août 2026 — plan volumétrique (seam / parallax / ridges / core / stars).*

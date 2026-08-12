@@ -88,8 +88,8 @@ function BloomHook({ intensity }: { intensity: number }) {
   return (
     <Bloom
       ref={ref as never}
-      luminanceThreshold={0.82}
-      luminanceSmoothing={0.55}
+      luminanceThreshold={0.78}
+      luminanceSmoothing={0.62}
       intensity={intensity}
       mipmapBlur
     />
@@ -97,8 +97,8 @@ function BloomHook({ intensity }: { intensity: number }) {
 }
 
 /**
- * Lab craft wormhole — Quiet Luxury (blanc / argent).
- * Décélération demo : velocity → 0 + opacity → 0 → ciel fixe.
+ * Lab craft wormhole — tunnel volumétrique (palette Sanctuaire).
+ * Demo : velocity ↓ + alpha ↓ → ciel fixe.
  */
 export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
@@ -120,15 +120,14 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
     let raf = 0;
     const tick = (now: number) => {
       if (!demoRef.current) return;
-      const u = Math.min(1, (now - startRef.current) / 4200);
-      // Ease soft : warp → points → fade
+      const u = Math.min(1, (now - startRef.current) / 4800);
       const ease = u * u * (3 - 2 * u);
-      const vel = 2.0 * (1 - ease);
-      const opacity = 0.95 * (1 - Math.pow(ease, 1.35));
+      const velocity = 1.4 * (1 - ease);
+      const alpha = 0.92 * (1 - Math.pow(ease, 1.25));
       setKnobs((prev) => ({
         ...prev,
-        velocity: vel,
-        opacity,
+        velocity,
+        alpha,
       }));
       if (u >= 1) {
         setDemo(false);
@@ -140,17 +139,14 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
     return () => cancelAnimationFrame(raf);
   }, [demo]);
 
-  const skyReveal =
-    (1 - Math.min(1, knobs.opacity * 1.05)) *
-    (1 - Math.min(1, knobs.velocity / 2));
-
-  const bloomIntensity = 0.35 + 0.55 * Math.min(1, knobs.velocity / 2) * knobs.headGain * 0.45;
+  const skyReveal = 1 - Math.min(1, knobs.alpha * 1.05);
+  const bloomIntensity = 0.22 + 0.28 * Math.min(1, knobs.velocity) * knobs.density * 0.35;
 
   const copy =
     locale === "en"
       ? {
           title: "Wormhole · craft",
-          sub: "Quiet Luxury warp — white / silver. Polar stretch ∝ velocity. Scrub knobs, then Decel demo.",
+          sub: "Volumetric cylindrical tunnel — Sanctuary teal / amber. Scrub density, then Decel → sky.",
           reset: "Reset",
           demo: "Decel → sky",
           demoRun: "…",
@@ -158,16 +154,13 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
           eclipse: "Eclipse lab",
           hint: "Craft only — not wired to play yet.",
           velocity: "Velocity",
-          stretch: "Stretch pow",
           density: "Density",
-          opacity: "Opacity",
-          head: "Head HDR",
-          tail: "Tail",
+          alpha: "Alpha",
           core: "Core soft",
         }
       : {
           title: "Wormhole · craft",
-          sub: "Warp Quiet Luxury — blanc / argent. Stretch polar ∝ velocity. Knobs, puis démo décélération.",
+          sub: "Tunnel volumétrique cylindrique — teal / ambre Sanctuaire. Densité, puis Décel → ciel.",
           reset: "Reset",
           demo: "Décel → ciel",
           demoRun: "…",
@@ -175,11 +168,8 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
           eclipse: "Lab éclipse",
           hint: "Craft seul — pas encore branché au play.",
           velocity: "Vélocité",
-          stretch: "Stretch pow",
           density: "Densité",
-          opacity: "Opacité",
-          head: "Tête HDR",
-          tail: "Queue",
+          alpha: "Alpha",
           core: "Core soft",
         };
 
@@ -191,12 +181,9 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
     step: number;
   }[] = [
     { key: "velocity", label: copy.velocity, min: 0, max: 2, step: 0.01 },
-    { key: "stretchPow", label: copy.stretch, min: 1.1, max: 2.6, step: 0.01 },
-    { key: "density", label: copy.density, min: 16, max: 96, step: 1 },
-    { key: "opacity", label: copy.opacity, min: 0, max: 1, step: 0.01 },
-    { key: "headGain", label: copy.head, min: 0.4, max: 2.2, step: 0.01 },
-    { key: "tail", label: copy.tail, min: 0.2, max: 1, step: 0.01 },
-    { key: "coreSoft", label: copy.core, min: 0.02, max: 0.2, step: 0.005 },
+    { key: "density", label: copy.density, min: 0.4, max: 2, step: 0.01 },
+    { key: "alpha", label: copy.alpha, min: 0, max: 1, step: 0.01 },
+    { key: "coreSoft", label: copy.core, min: 0.03, max: 0.16, step: 0.005 },
   ];
 
   return (
@@ -220,12 +207,12 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
               powerPreference: "high-performance",
             }}
             onCreated={({ gl }) => {
-              gl.setClearColor("#03050a", 1);
+              gl.setClearColor("#02040a", 1);
             }}
           >
             <Suspense fallback={null}>
               <ForceRenderLoop />
-              <color attach="background" args={["#03050a"]} />
+              <color attach="background" args={["#02040a"]} />
               <StaticStarField reveal={skyReveal} />
               <WormholeCraftPlane knobs={knobs} />
               <EffectComposer multisampling={0}>
@@ -246,7 +233,7 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
       </div>
 
       <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-black/55 px-4 py-3 backdrop-blur-md md:px-6">
-        <div className="mx-auto flex max-w-5xl flex-col gap-2.5">
+        <div className="mx-auto flex max-w-4xl flex-col gap-2.5">
           <div className="flex flex-wrap items-center gap-2">
             <Link
               href={`/${locale}/contribute/test-eclipse-play`}
@@ -273,8 +260,8 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
               onClick={() => {
                 setKnobs((prev) => ({
                   ...prev,
-                  velocity: 2,
-                  opacity: 0.95,
+                  velocity: 1.4,
+                  alpha: 0.92,
                 }));
                 setDemo(true);
               }}
@@ -286,7 +273,7 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
               {copy.hint}
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-4">
             {sliders.map((s) => (
               <label key={s.key} className="flex flex-col gap-1">
                 <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">

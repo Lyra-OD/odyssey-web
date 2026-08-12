@@ -24,7 +24,8 @@
 | Dolly continu + murmure porte (~5,73) | 12 août | **KEEP** A bis (`b275029`) |
 | Blanc court seuil voyage | 12 août | **KEEP** B (œil) |
 | « Nuages soft » plein cadre / mush couleur | 12 août | **REJECT** — pas un voyage |
-| Warp Quiet Luxury (blanc/argent, stretch ∝ vel) | 12 août | **INTENTION C** — craft `/test-wormhole` |
+| Warp Quiet Luxury blanc/argent | 12 août | **SUPERSEDED** — tunnel volumétrique palette marque |
+| Tunnel volumétrique cylindrique (teal/ambre skyTheme) | 12 août | **INTENTION C** — craft `/test-wormhole` |
 | Ouverture ciel + titre + constellation | 12 août | **INTENTION** D–E |
 
 ---
@@ -92,9 +93,9 @@
 | **Statut** | ⏳ lab ouvert |
 | **URL** | `/fr/contribute/test-wormhole` |
 | **Doc** | [`ODYSSEY_WORMHOLE_CRAFT.md`](ODYSSEY_WORMHOLE_CRAFT.md) |
-| **But** | Warp blanc/argent · stretch ∝ velocity · décel → ciel |
-| **Done quand** | KEEP knobs + demo décélération → **puis** brancher après B |
-| **REJECT lié** | mush ; fluo ; particules CPU |
+| **But** | Tunnel volumétrique cylindrique — teal / ambre Sanctuaire |
+| **Done quand** | KEEP volume + couleurs ; demo alpha → ciel ; puis brancher après B |
+| **REJECT lié** | mush ; warp blanc aveuglant ; fluo ; particules CPU |
 
 ### D — Ciel de loin · E — Titre
 

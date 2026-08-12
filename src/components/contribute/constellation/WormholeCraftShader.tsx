@@ -5,117 +5,197 @@ import { useMemo, useRef } from "react";
 import type { PerspectiveCamera } from "three";
 import { Color, ShaderMaterial, type Mesh } from "three";
 
-import { nebulaVertexShader } from "./nebulaCommon";
+import { nebulaNoiseGlsl, nebulaVertexShader } from "./nebulaCommon";
+import { defaultSkyTheme } from "./skyTheme";
 
-/** Knobs craft wormhole — Quiet Luxury (blanc / argent). */
+/**
+ * Knobs craft — tunnel volumétrique cylindrique (palette Sanctuaire).
+ */
 export type WormholeCraftKnobs = {
-  /** 0 = points figés · ~2 = warp plein. */
+  /** Vitesse du vol dans le tube (0 = quasi figé). */
   velocity: number;
-  /** Courbe d’étirement radial (A24 : ~1.6–2). */
-  stretchPow: number;
-  /** Densité angulaire (secteur étoiles). */
+  /** Épaisseur / contraste du gaz FBM (0.4–2). */
   density: number;
-  /** Opacité globale du voile. */
-  opacity: number;
-  /** Pic HDR tête de traînée (accroche bloom). */
-  headGain: number;
-  /** Longueur relative de la queue (0–1). */
-  tail: number;
-  /** Soft du centre (évite singularité). */
+  /** Opacité globale — 0 = révèle le ciel derrière. */
+  alpha: number;
+  /** Soft du noyau ambré central. */
   coreSoft: number;
 };
 
 export const WORMHOLE_CRAFT_DEFAULTS: WormholeCraftKnobs = {
-  velocity: 1.15,
-  stretchPow: 1.75,
-  density: 48,
-  opacity: 0.92,
-  headGain: 1.35,
-  tail: 0.72,
-  coreSoft: 0.08,
+  velocity: 0.85,
+  density: 1.15,
+  alpha: 0.92,
+  coreSoft: 0.07,
 };
 
 /**
- * Warp Quiet Luxury — plane plein écran.
- * Polar + stretch ∝ velocity → streaks ; velocity→0 → points → alpha craft.
+ * Tunnel volumétrique — 1 plane.
+ * 1) Seam-free (cos/sin, pas atan brut)
+ * 2) 3 couches FBM parallax
+ * 3) Ridges / filaments
+ * 4) Soft core destination
+ * 5) Rush stars
+ * Palette : defaultSkyTheme uniquement.
  */
 const fragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uVelocity;
-uniform float uStretchPow;
 uniform float uDensity;
-uniform float uOpacity;
-uniform float uHeadGain;
-uniform float uTail;
+uniform float uAlpha;
 uniform float uCoreSoft;
 uniform float uAspect;
-uniform vec3 uSilver;
-uniform vec3 uWhite;
+uniform vec3 uDeep;
+uniform vec3 uTeal;
+uniform vec3 uTealDeep;
+uniform vec3 uAmber;
+uniform vec3 uDust;
+uniform vec3 uAurora;
+uniform vec3 uStar;
 
 varying vec2 vUv;
 
-float hash11(float n) {
-  return fract(sin(n * 127.1) * 43758.5453);
+${nebulaNoiseGlsl}
+
+const float TAU = 6.28318530718;
+
+float fbm4(vec2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+  for (int i = 0; i < 4; i++) {
+    v += a * noise(p);
+    p = m * p;
+    a *= 0.5;
+  }
+  return v;
 }
 
-float hash21(vec2 p) {
-  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+/** Ridge — sculpte des soies (casse le mush). */
+float ridge4(vec2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+  for (int i = 0; i < 4; i++) {
+    float n = noise(p);
+    v += a * (1.0 - abs(n * 2.0 - 1.0));
+    p = m * p;
+    a *= 0.5;
+  }
+  return v;
+}
+
+/**
+ * UV cylindrique sans couture :
+ * l’angle est embarqué sur un cercle (cos/sin) — continuité C0 autour de ±π.
+ */
+vec2 cylUV(float ang, float depth, float radiusScale, vec2 drift) {
+  return vec2(cos(ang), sin(ang)) * radiusScale + vec2(depth, depth * 0.37) + drift;
+}
+
+/** Couche gaz : FBM + ridges, vitesse / echelle propres (parallax).
+ *  Retour : x = veil, y = tealAmt, z = amberAmt (WebGL1-safe, pas de out). */
+vec3 gasLayer(
+  float ang,
+  float r,
+  float vel,
+  float densMul,
+  float speedMul,
+  float radiusScale,
+  float zBias,
+  vec2 drift,
+  float ridgeW
+) {
+  float tunnelZ = 0.52 / r + uTime * (0.08 + vel * 0.55) * speedMul + zBias;
+  vec2 tuv = cylUV(ang, tunnelZ, radiusScale * densMul, drift);
+
+  float soft = fbm4(tuv * vec2(1.15, 0.95));
+  float silk = ridge4(tuv * vec2(2.4, 1.35) + 1.7);
+  float detail = ridge4(tuv * vec2(4.8, 2.6) + soft * 0.55);
+
+  // Filaments clairsemés — fort contraste, vides noirs entre les soies
+  float gas = soft * 0.28 + silk * 0.48 + detail * 0.42;
+  gas = mix(gas, silk * detail, ridgeW);
+  gas = pow(clamp(gas, 0.0, 1.0), mix(1.55, 1.15, densMul * 0.35));
+  gas = smoothstep(0.34 - densMul * 0.05, 0.78 + densMul * 0.04, gas);
+
+  // Parois : plus présentes hors centre ; centre ouvert vers la destination
+  float walls = smoothstep(0.035, 0.48, r) * (1.0 - smoothstep(0.92, 1.55, r));
+  float veil = gas * walls;
+
+  float tealAmt = smoothstep(0.3, 0.75, soft);
+  float amberAmt = smoothstep(0.5, 0.95, silk) * smoothstep(0.35, 0.8, detail);
+  return vec3(veil, tealAmt, amberAmt);
+}
+
+/** Étoiles warp — points qui fusent du centre (hash cellulaire seamless). */
+float rushStars(float ang, float r, float vel, float densMul) {
+  float speed = 0.14 + vel * 0.72;
+  float tunnelZ = 0.45 / max(r, 1e-4) + uTime * speed;
+
+  // Cellules sur cercle × profondeur — pas de seam angulaire
+  float radialCells = 14.0 + densMul * 6.0;
+  float depthCells = 22.0;
+  vec2 coord = vec2(
+    cos(ang) * radialCells + tunnelZ * 0.15,
+    sin(ang) * radialCells + tunnelZ * depthCells
+  );
+  vec2 cell = floor(coord);
+  float h = hash(cell);
+  // Sparse : gate sans early-return (branch-safe)
+  float gate = step(0.88, h);
+
+  vec2 f = fract(coord);
+  // Streak radial léger (warp)
+  vec2 q = f - 0.5;
+  q.y *= 0.35 + vel * 0.25;
+  float d = length(q);
+  float spark = smoothstep(0.09, 0.0, d);
+  spark *= smoothstep(0.02, 0.12, r) * (1.0 - smoothstep(1.1, 1.6, r));
+  return spark * gate * (0.55 + 0.45 * hash(cell + 19.0));
 }
 
 void main() {
-  vec2 p = vUv * 2.0 - 1.0;
-  p.x *= uAspect;
+  vec2 uv = vUv * 2.0 - 1.0;
+  uv.x *= uAspect;
 
-  float r = length(p);
-  float ang = atan(p.y, p.x);
-
-  // Soft core — pas de singularité
-  float core = smoothstep(0.0, uCoreSoft, r);
+  float r = max(length(uv), 1e-4);
+  float ang = atan(uv.y, uv.x);
 
   float vel = max(uVelocity, 0.0);
-  float stretch = pow(vel, uStretchPow);
+  float densMul = clamp(uDensity, 0.35, 2.2);
 
-  // Secteurs angulaires → étoiles aléatoires sur 360°
-  float sectors = max(uDensity, 8.0);
-  float aId = floor((ang + 3.14159265) / 6.2831853 * sectors);
-  float aFrac = fract((ang + 3.14159265) / 6.2831853 * sectors);
-  float starGate = smoothstep(0.0, 0.12, aFrac) * smoothstep(1.0, 0.88, aFrac);
+  // —— 3 couches parallax (vitesses / échelles distinctes) ——
+  vec3 L0 = gasLayer(ang, r, vel, densMul, 0.55, 0.95, 0.0, vec2(0.0), 0.55);
+  vec3 L1 = gasLayer(ang, r, vel, densMul, 1.0, 1.35, 1.7, vec2(2.1, -0.8), 0.7);
+  vec3 L2 = gasLayer(ang, r, vel, densMul, 1.65, 1.85, 3.4, vec2(-1.4, 2.6), 0.82);
 
-  float h0 = hash11(aId * 19.17 + 2.3);
-  float h1 = hash11(aId * 7.91 + 11.4);
-  float h2 = hash11(aId * 3.3 + 5.7);
+  float veil = clamp(L0.x * 0.45 + L1.x * 0.75 + L2.x * 0.95, 0.0, 1.0);
+  float mixTeal = clamp(L0.y * 0.35 + L1.y * 0.45 + L2.y * 0.55, 0.0, 1.0);
+  float mixAmber = clamp(L0.z * 0.25 + L1.z * 0.4 + L2.z * 0.55, 0.0, 1.0) * 0.7;
 
-  // Avance radiale (loop) — matière vers la caméra
-  float travel = uTime * (0.15 + vel * 0.85) + h0;
-  // Étirement warp : le bruit radial s’allonge avec vel
-  float radialScale = 1.0 + stretch * 5.5;
-  float z = fract(r * radialScale * (0.55 + h1 * 0.9) - travel);
+  // Colorimétrie Sanctuaire — deep / teal / poussière / ambre / aurora edge
+  vec3 col = mix(uDeep, uTealDeep, 0.62);
+  col = mix(col, uTeal, mixTeal * 0.8);
+  col = mix(col, uAurora, mixTeal * 0.22);
+  col = mix(col, uDust, (1.0 - mixTeal) * 0.35);
+  col = mix(col, uAmber, mixAmber);
 
-  // Tête = pic net ; queue soft proportionnelle à stretch
-  float headW = mix(0.035, 0.012, clamp(stretch * 0.35, 0.0, 1.0));
-  float tailW = mix(0.08, 0.55, clamp(stretch * uTail, 0.0, 1.0));
-  float head = exp(-z * z / max(headW * headW, 1e-5));
-  float body = exp(-z / max(tailW, 1e-4));
-  float streak = mix(head, body, 0.55) * head + body * 0.35;
-  streak *= starGate;
+  // —— Soft core destination (cache singularité, pas flash blanc) ——
+  float coreR = max(uCoreSoft, 0.02);
+  float core = exp(-(r * r) / (coreR * coreR * 2.6));
+  core *= 0.5 + 0.5 * (1.0 - smoothstep(0.0, 0.55, vel * 0.3));
+  col = mix(col, uAmber, core * 0.72);
+  col = mix(col, uTeal, core * 0.28);
 
-  // 2ᵉ octave angulaire très faible — grain argenté
-  float grain = hash21(vec2(aId, floor(z * 40.0 + h2 * 10.0)));
-  streak *= 0.82 + 0.18 * grain;
+  // —— Rush particles (starsField tint) ——
+  float stars = rushStars(ang, r, vel, densMul);
+  col = mix(col, uStar, stars * 0.95);
+  col = mix(col, uTeal, stars * 0.15);
 
-  // Falloff bord + centre
-  float vignette = 1.0 - smoothstep(0.75, 1.45, r);
-  float lum = streak * core * vignette;
-
-  // Tête HDR pour bloom ; queue plus argent
-  float headMask = pow(head * starGate * core, 1.4);
-  vec3 col = mix(uSilver, uWhite, headMask);
-  col *= (0.55 + uHeadGain * headMask);
-
-  // Quand vel tombe : streaks → points (déjà via stretch) + fade craft
-  float alive = smoothstep(0.0, 0.08, vel) * 0.35 + smoothstep(0.0, 0.55, vel) * 0.65;
-  float alpha = lum * uOpacity * alive;
-  alpha = clamp(alpha, 0.0, 1.0);
+  float alpha = (veil * (0.5 + 0.5 * densMul * 0.45) + core * 0.48 + stars * 0.85) * uAlpha;
+  alpha = clamp(alpha, 0.0, 0.96);
+  alpha *= 1.0 - smoothstep(1.15, 1.65, r);
 
   gl_FragColor = vec4(col, alpha);
 }
@@ -130,23 +210,25 @@ export function WormholeCraftPlane({
   const matRef = useRef<ShaderMaterial>(null);
   const { viewport } = useThree();
 
-  const uniforms = useMemo(
-    () => ({
+  const uniforms = useMemo(() => {
+    const theme = defaultSkyTheme;
+    return {
       uTime: { value: 0 },
       uVelocity: { value: knobs.velocity },
-      uStretchPow: { value: knobs.stretchPow },
       uDensity: { value: knobs.density },
-      uOpacity: { value: knobs.opacity },
-      uHeadGain: { value: knobs.headGain },
-      uTail: { value: knobs.tail },
+      uAlpha: { value: knobs.alpha },
       uCoreSoft: { value: knobs.coreSoft },
       uAspect: { value: 1 },
-      uSilver: { value: new Color("#c8d0d8") },
-      uWhite: { value: new Color("#f5f7fa") },
-    }),
+      uDeep: { value: new Color(theme.scene.background) },
+      uTeal: { value: new Color(theme.gasTeal.color) },
+      uTealDeep: { value: new Color(theme.gasTeal.deep) },
+      uAmber: { value: new Color(theme.zodiacal.core) },
+      uDust: { value: new Color(theme.cosmicDust.tint) },
+      uAurora: { value: new Color(theme.aurora.edge) },
+      uStar: { value: new Color(theme.starsField.tint) },
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- synced in useFrame
-    [],
-  );
+  }, []);
 
   useFrame(({ clock, camera }) => {
     const mesh = meshRef.current;
@@ -155,11 +237,8 @@ export function WormholeCraftPlane({
 
     mat.uniforms.uTime.value = clock.elapsedTime;
     mat.uniforms.uVelocity.value = knobs.velocity;
-    mat.uniforms.uStretchPow.value = knobs.stretchPow;
     mat.uniforms.uDensity.value = knobs.density;
-    mat.uniforms.uOpacity.value = knobs.opacity;
-    mat.uniforms.uHeadGain.value = knobs.headGain;
-    mat.uniforms.uTail.value = knobs.tail;
+    mat.uniforms.uAlpha.value = knobs.alpha;
     mat.uniforms.uCoreSoft.value = knobs.coreSoft;
     mat.uniforms.uAspect.value = viewport.aspect || 1;
 
