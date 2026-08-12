@@ -382,7 +382,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
     locale === "en"
       ? {
           title: "Eclipse · birth",
-          sub: "A bis ~9.5s — diamond door then dolly (no freeze hold). Scrub for captures.",
+          sub: "A bis — soft portal murmur ~5.73s, opens further on approach. Scrub 5.5–7s.",
           play: "Play",
           pause: "Pause",
           restart: "Restart",
@@ -390,7 +390,7 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
         }
       : {
           title: "Éclipse · naissance",
-          sub: "A bis ~9,5 s — porte diamond puis dolly (pas de hold figé). Timeline pour captures.",
+          sub: "A bis — murmure porte ~5,73 s, s’ouvre encore à l’approche. Scrub 5,5–7 s.",
           play: "Lecture",
           pause: "Pause",
           restart: "Reprise",

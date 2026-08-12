@@ -7,11 +7,11 @@
 
 export const CRAFT_CHRONO_DURATION = 2.4;
 /**
- * Phase 1 cinéma (~9,5 s) — actes :
- * diamond → soleil / ODYSSEY → dolly gravité vers le bead (pas de hold figé).
+ * Phase 1 cinéma (~9 s) — actes :
+ * diamond → soleil / ODYSSEY → murmure porte → dolly gravité vers le bead.
  * Blanc / wormhole / ciel / titre = go B–E (voir ODYSSEY_ECLIPSE_PLAY_FINALE.md).
  */
-export const CRAFT_PLAY_DURATION = 9.5;
+export const CRAFT_PLAY_DURATION = 9;
 
 export type CraftChronoState = {
   /** 0 = soleil à droite, 1 = totalité (soleil derrière). */
@@ -97,14 +97,14 @@ function easeInOutCubic(t: number) {
 }
 
 /**
- * Aspiration unique — un cran plus tendue (porte diamond → bead).
- * Continuité : pas de breakpoint.
+ * Aspiration unique — départ feutré (chevauche l’ouverture),
+ * puis accélération continue. Pas de breakpoint.
  */
 function gravityDolly(a: number, b: number, x: number) {
   const u = clamp01((x - a) / (b - a));
   if (u <= 0) return 0;
   if (u >= 1) return 1;
-  return u * 0.28 + Math.pow(u, 2.3) * 0.72;
+  return u * 0.24 + Math.pow(u, 2.4) * 0.76;
 }
 
 const BASE: CraftChronoState = {
@@ -156,11 +156,11 @@ const LOGO_SUN = 0.97;
 const SUN_START = 0.78;
 
 /**
- * Dolly après naissance / ODYSSEY (pas de hold figé).
- * Fenêtre ~3,0 s — courbe unique un cran plus vive.
+ * Dolly chevauche la fin d’ouverture (~6,1) — un geste, pas deux.
+ * Fenêtre ~2,85 s — départ feutré puis gravité (total phase ~9 s).
  */
-const DOLLY_START = 6.55;
-const DOLLY_END = 9.45;
+const DOLLY_START = 6.1;
+const DOLLY_END = 8.95;
 
 /**
  * Un breath « classe » — une seule fois, avant / en bordure de dolly.
@@ -170,13 +170,20 @@ const WM_BREATH_A = 4.55;
 const WM_BREATH_PERIOD = 1 / WM_BREATH_HZ;
 const WM_BREATH_AMP = 0.2;
 
+/**
+ * Murmure d’ouverture — cue lisible ~5,73, rise ~1,25 s (softRise, pas spike).
+ * Amplitude basse ; la vraie ouverture continue avec l’approche.
+ */
+const PORTAL_MURMUR_A = 5.25;
+const PORTAL_MURMUR_B = 6.5;
+
 /** Extinction pendant la dolly (nom cède pendant l’approche). */
 const WM_FADE_START = DOLLY_START + 0.25;
-const WM_FADE_END = 8.2;
+const WM_FADE_END = 7.85;
 
 /** Menace limbe — monte dans la 2ᵉ moitié de dolly. */
-const LIMB_START = 7.35;
-const LIMB_END = 9.2;
+const LIMB_START = 6.85;
+const LIMB_END = 8.7;
 
 /**
  * Extinction magique : reste affirmé longtemps, puis chute velvet (étoile qui cède).
@@ -191,11 +198,11 @@ function wordmarkExtinguish(a: number, b: number, x: number, commit = 0.32) {
 }
 
 /**
- * Phase 1 — (~9,5 s). Géométrie fixe : alignment = 1.
+ * Phase 1 — (~9 s). Géométrie fixe : alignment = 1.
  *
  * Acte 1 — diamond solo → soleil / corona
- * Acte 1b — ODYSSEY + breath (lockup = porte, **sans hold figé**)
- * Acte 2 / A bis — dolly gravité → bead
+ * Acte 1b — ODYSSEY + breath → murmure porte (~5,73)
+ * Acte 2 / A bis — dolly qui chevauche ; porte s’ouvre encore à l’approche
  */
 export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const time = Math.max(0, Math.min(t, CRAFT_PLAY_DURATION));
@@ -226,12 +233,21 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const cameraPush = gravityDolly(DOLLY_START, DOLLY_END, time);
   const cameraAim = cameraPush;
 
-  // Diamond affirmé tant que caméra pas encore partie (pas une pause)
+  // Présence douce avant le murmure (pas une pause)
   const doorHold =
     softRiseVelvet(2.4, 4.2, time, 1.1) * (1 - cameraPush);
 
+  // Murmure ~5,73 — lent, pas un spike ; continue avec l’approche
+  const portalMurmur = softRise(
+    PORTAL_MURMUR_A,
+    PORTAL_MURMUR_B,
+    time,
+    0.62,
+  );
+  const portalYield = portalMurmur * cameraPush;
+
   const limbRaw = wordmarkExtinguish(LIMB_START, LIMB_END, time, 0.42);
-  const limbThreat = limbRaw * softRiseVelvet(7.55, 9.1, time, 1.0);
+  const limbThreat = limbRaw * softRiseVelvet(7.05, 8.6, time, 1.0);
 
   const late = clamp01((cameraPush - 0.45) / 0.55);
   const flashMul = Math.pow(late, 1.5);
@@ -240,17 +256,21 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const limbPunch = limbThreat * limbThreat;
   const diamondSolar =
     wordmarkOut * softRiseVelvet(WM_FADE_START + 0.8, WM_FADE_END, time, 1.15);
+  // Murmure feutré + ouverture croissante à l’approche + pic final
   const diamondMul =
     LOGO_DIAMOND *
     diamondIn *
     (1 +
-      0.55 * doorHold +
-      0.95 * threat +
+      0.28 * doorHold +
+      0.72 * portalMurmur +
+      1.85 * portalYield +
+      0.95 * Math.pow(cameraPush, 1.05) +
+      0.85 * threat +
       1.15 * wordmarkOut +
       0.5 * diamondSolar +
       0.35 * limbPunch +
-      2.8 * flashMul +
-      1.4 * flashMul * flashMul);
+      3.25 * flashMul +
+      1.75 * flashMul * flashMul);
   const coronaMul =
     sunIn * (1 - 0.72 * cameraPush) * (1 + 0.08 * limbPunch);
   const sunScale = SUN_START + (LOGO_SUN - SUN_START) * sunIn;
@@ -258,13 +278,15 @@ export function sampleCraftPlayChrono(t: number): CraftChronoState {
   const bloom =
     0.18 * diamondIn +
     0.1 * sunIn +
+    0.22 * portalMurmur +
+    0.5 * portalYield +
     0.85 * threat +
     0.7 * wordmarkOut +
     0.35 * diamondSolar +
     0.12 * limbThreat +
     0.35 * limbPunch +
-    1.35 * flashMul +
-    1.1 * flashMul * flashMul;
+    1.45 * flashMul +
+    1.25 * flashMul * flashMul;
 
   return {
     ...BASE,

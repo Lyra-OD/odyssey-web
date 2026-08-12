@@ -48,9 +48,9 @@ naissance → ODYSSEY (breath ×1) → hold
 | Acte | Contenu | Base |
 |------|---------|------|
 | 1 / 1b | Naissance velvet + ODYSSEY die-cut + breath ×1 | KEEP |
-| 2 / **A bis** | Diamond porte → ODYSSEY hold → dolly 6,55→9,45 (~3 s, `u^2.3`) ; total ~**9,5 s** | ⏳ essai |
+| 2 / **A bis** | Murmure porte ~**5,73 s** → dolly dès ~**6,1 s** (chevauche) ; ouverture ↑ avec l’approche ; total ~**9 s** | ⏳ essai |
 
-`CRAFT_PLAY_DURATION` actuel ≈ **9,5 s**. B–E allongeront.
+`CRAFT_PLAY_DURATION` actuel ≈ **9 s**. B–E allongeront.
 
 ---
 
@@ -76,13 +76,13 @@ Cocher au fil des go. Mettre à jour **statut** + **commit** dans §5.
 
 | | |
 |--|--|
-| **Statut** | ⏳ essai ~9 s — courbe unique (plus de cran 8→10) |
-| **Go** | `go` courbe unique + dolly courte |
-| **But** | Une aspiration ; vitesse ↑ tout le long ; total ~9 s |
-| **Fichiers** | `eclipseCraftTimeline.ts` (`0.32·u + 0.68·u^2.1`, dolly 5,4→8,8) |
-| **Done quand** | Pas de gap à 8 s ; tempo juste |
+| **Statut** | ⏳ essai — murmure + dolly chevauchée ; total ~9 s |
+| **Go** | `go` cinéma : open lent + croît à l’approche |
+| **But** | Sentir la porte sans spike ; un geste jusqu’au bead |
+| **Fichiers** | `eclipseCraftTimeline.ts` (`portalMurmur` / `portalYield`, `DOLLY_START` 6,1) |
+| **Done quand** | Pas de pop ; pas de plateau ; aspiration continue |
 | **Commit** | — (après validation) |
-| **REJECT lié** | plongée séparée ; breakpoint 40 %/rush 8→10 |
+| **REJECT lié** | hold figé ; ouverture spike ; plongée séparée |
 
 ### B — Blanc court
 
