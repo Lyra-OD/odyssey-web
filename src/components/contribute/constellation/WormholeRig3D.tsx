@@ -36,22 +36,29 @@ export type WormholeRigKnobs = {
   beamAlpha:         number;
 };
 
+// Defaults calibrés sur le GIF BBC (jet cosmique, base large, pointe fine).
+// Ajuste ces valeurs dans le lab, puis colle ici tes WORMHOLE_RIG_DEFAULTS finaux.
 export const WORMHOLE_RIG_DEFAULTS: WormholeRigKnobs = {
-  cloudRadiusBottom: 4.8,
-  beamRadiusBottom:  0.45,
-  beamRadiusTop:     0.0,
-  waveFreq:          0.45,
-  waveAmp:           0.05,
-  waveSpeed:         0.6,
-  cameraZ:           9.0,
-  cameraY:           -3.0,
-  density:           1.2,
-  contrast:          0.7,
-  lightOffset:       0.35,
-  boilSpeed:         0.10,
-  scrollSpeed:       0.18,
-  cloudAlpha:        0.88,
-  beamAlpha:         0.92,
+  // ── Géométrie ───
+  cloudRadiusBottom: 5.5,   // lobes roses larges de chaque côté (GIF)
+  beamRadiusBottom:  0.35,  // cône fin — le godray n'est pas large
+  beamRadiusTop:     0.0,   // pointe pure au sommet
+  // ── Onde ───
+  waveFreq:          0.4,   // une demi-onde sur la hauteur = légère courbure
+  waveAmp:           0.06,  // quasi-droit (le GIF n'est pas un serpent)
+  waveSpeed:         0.5,   // respiration lente
+  // ── Caméra ───
+  cameraZ:           10.0,  // assez reculé pour voir base + pointe
+  cameraY:           -4.0,  // en-dessous → on regarde le pilier monter
+  // ── Matériau cloud ───
+  density:           2.0,   // nuages épais, pas transparents
+  contrast:          0.65,  // bords légèrement sculptés mais pas trop durs
+  lightOffset:       0.42,  // auto-ombre prononcée → profondeur volumétrique
+  boilSpeed:         0.10,  // bouillonnement lent (cosmique, pas agité)
+  scrollSpeed:       0.20,  // vol vers le haut perceptible
+  cloudAlpha:        0.92,
+  // ── Beam ───
+  beamAlpha:         0.95,
 };
 
 // ── Vertex shader partagé (ondulation serpent) ───────────────────────────────
@@ -204,10 +211,8 @@ void main() {
   // Blanc rosé aux pics extrêmes
   col = mix(col, vec3(1.0, 0.78, 0.9), smoothstep(0.82, 1.0, hotVal) * 0.28 * (1.0 - h));
 
-  // Adoucissement bords du cylindre (visible/invisible selon angle)
-  float edgeFade = smoothstep(0.0, 0.06, vUv.x) * smoothstep(0.0, 0.06, 1.0 - vUv.x);
-
-  float a = clamp(shaped * uAlpha * edgeFade, 0.0, 0.92);
+  // Pas de edgeFade : le bruit utilise vWorldPos.xz → pas de seam UV.
+  float a = clamp(shaped * uAlpha, 0.0, 0.92);
   gl_FragColor = vec4(col, a);
 }
 `;
