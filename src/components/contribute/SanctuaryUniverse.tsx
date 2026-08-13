@@ -248,6 +248,8 @@ function UniverseScene({
         active={focusing}
       />
       <CameraRig>
+        {/* Craft : remonte le ciel pour que la bande d etoiles soit en haut d ecran */}
+        <group position={craftLite ? [0, 5.5, 0] : [0, 0, 0]}>
         {tier !== "reduced" ? (
           <ParallaxLayer
             factor={theme.gasFar.parallax.factor}
@@ -337,6 +339,7 @@ function UniverseScene({
             </ConstellationLeash>
           </ParallaxLayer>
         ) : null}
+        </group>
       </CameraRig>
     </ParallaxProvider>
   );
