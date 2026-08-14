@@ -1,39 +1,122 @@
 # Odyssey Wormhole — Craft (construction étape par étape)
 
 **URL :** `/fr/contribute/test-wormhole`  
-**Shader :** [`WormholeCraftShader.tsx`](../src/components/contribute/constellation/WormholeCraftShader.tsx)
+**Lab :** [`WormholeCraftLab.tsx`](../src/components/contribute/WormholeCraftLab.tsx)  
+**Shaders 3D :** [`WormholeRig3D.tsx`](../src/components/contribute/constellation/WormholeRig3D.tsx)
 
-## Référence GIF (effet cible)
+---
 
-Décomposé en couches — pas un shader monolithique :
+## Référence visuelle cible
 
-1. **Faisceau central** : cône lumineux blanc→cyan, se resserre en pointe (perspective).
-2. **Amas de nuages roses** : localisé à mi-hauteur, autour du faisceau (pas toute la hauteur).
-3. **Nappe de base** : nuages bruns/teal larges en bas (sol de nébuleuse).
-4. **Particules** : montent le long du faisceau.
-5. **Bloom** : glow fort sur le cyan + le rose.
+GIF BBC — pilier d'énergie cosmique vu de l'extérieur :
+- Faisceau central blanc → cyan très lumineux (surexposé)
+- Nuages volumétriques rose → mauve → teal autour du faisceau
+- Forme en V / cône inversé : large en bas, pointe en haut
+- Mouvement vivant : bouillonnement des nuages, légère ondulation du pilier
+- Bloom fort sur tous les éléments lumineux
 
-Chaque couche existe déjà quelque part dans le projet (gaz Sanctuaire, `ShootingStars`, `Bloom` de `@react-three/postprocessing` dans `EclipseCraftPlay`) — on assemble, on n'invente pas un nouveau shader "nuage".
+---
 
-## Étape 1/5 — Faisceau seul (actuel)
+## Architecture actuelle (Phase 1 + Phase 2)
 
-- Cône godray blanc → cyan (`shootingStars.rareTints.teal` : tip/mid/tail), additive blending
-- Scintillement vertical léger (streaks), pas de FBM nuage
-- Knobs : vitesse/contraste scintillement, intensité, hauteur apex
-- Palette `defaultSkyTheme` uniquement
+### Phase 1 — Piliers wireframe (calibration géométrique)
+Deux `CylinderGeometry` en wireframe, vue extérieure (DoubleSide).  
+Sert à sculpter la forme parfaite **avant** d'appliquer les shaders.
 
-## Suite
+**Composant :** `Phase1WaveMesh` dans `WormholeCraftLab.tsx`  
+**Vertex shader :** coude unique ancré aux extrémités via enveloppe `sin(nY × π)`, direction boussole XZ (`uBendAngle`).
 
-| Étape | Contenu |
-|-------|---------|
-| **2** | Amas de nuages roses (`gasRose`/`gasMauve`) localisé à mi-hauteur du faisceau |
-| **3** | Nappe de base large (bas d'écran) |
-| **4** | Particules montantes (adapter `ShootingStars.tsx` en vertical) |
-| **5** | `<Bloom>` (`@react-three/postprocessing`) sur faisceau + amas rose |
+#### Specs calibrées — 14 août 2026
+
+**Pilier Rose (tunnel cloud) — `P1_ROSE_DEFAULTS` :**
+
+| Contrôle | Valeur |
+|---|---|
+| Rayon bas | `7.20` |
+| Rayon haut | `0.00` |
+| Coude (force) | `4.00` |
+| Coude (direction) | `4.70` |
+| Coude (0=figé) | `0.00` |
+| Position X | `0.00` |
+| Position Y (haut/bas) | `4.70` |
+| Position Z | `0.40` |
+| Longueur du pilier | `15.50` |
+
+**Pilier Cyan (cône beam) — `P1_CYAN_DEFAULTS` :**
+
+| Contrôle | Valeur |
+|---|---|
+| Rayon bas | `2.20` |
+| Rayon haut | `0.00` |
+| Coude (force) | `4.00` |
+| Coude (direction) | `4.70` |
+| Coude (0=figé) | `0.00` |
+| Position X | `0.00` |
+| Position Y (haut/bas) | `3.90` |
+| Position Z | `1.30` |
+| Longueur du pilier | `14.00` |
+
+**Caméra — `P1_CAM_DEFAULTS` :**
+
+| Contrôle | Valeur |
+|---|---|
+| Cam Z (recul) | `9.50` |
+| Cam Y (hauteur) | `−2.90` |
+
+---
+
+### Phase 2 — Shaders 3D (rendu final)
+
+Mêmes géométries qu'en Phase 1, avec shaders Worley+FBM+nDotV et Bloom.
+
+**Composants :** `WormholeCloud3D` + `WormholeBeam3D` dans `WormholeRig3D.tsx`  
+**Post-processing :** `EffectComposer` + `Bloom` (`@react-three/postprocessing`)  
+  - `luminanceThreshold: 0.15` · `intensity: 1.8` · `mipmapBlur: true`
+
+#### Contrôles Phase 2 (boutons 1-4)
+
+| Bouton | Groupe | Contenu |
+|---|---|---|
+| **1 — Rose géo** | `CloudKnobs` | Rayon bas/haut · Coude · Position · Longueur |
+| **2 — Rose mat** | `CloudKnobs` | Densité · Contraste · Auto-ombre · Bouillon · Scroll · Opacité |
+| **3 — Cyan** | `BeamKnobs` | Rayon bas/haut · Coude · Position · Longueur · Intensité |
+| **4 — Cam** | `CameraKnobs` | Cam Z · Cam Y |
+
+> **Note :** les defaults Phase 2 (géométrie) seront calibrés séparément une fois les shaders finalisés.
+
+#### Ordre des sliders (identique Phase 1 et Phase 2)
+1. Rayon bas
+2. Rayon haut
+3. Coude (force)
+4. Coude (direction)
+5. Coude (0=figé)
+6. Position X
+7. Position Y (haut/bas)
+8. Position Z
+9. Longueur du pilier
+10. *(Intensité — beam uniquement)*
+
+---
+
+## Roadmap shaders (étapes C à F)
+
+| # | Action | Statut |
+|---|---|---|
+| **A** | Porter géométrie Phase 1 → Phase 2 (bend + height + position) | ✅ fait |
+| **B** | Bloom post-processing (`@react-three/postprocessing`) | ✅ fait |
+| **C** | Booster beam : cœur blanc surexposé + halo cyan large | 🔜 |
+| **D** | Cloud multi-couches : 3 cylindres concentriques pour vraie profondeur | 🔜 |
+| **E** | Affiner couleurs cloud (rose chaud → mauve → teal aux tips) | 🔜 |
+| **F** | Peaufinage final : timings, opacités, coude animé | 🔜 |
+
+---
 
 ## Historique
 
-- Étape 2.1/2.2 (masque V + parois FBM) — **abandonné** : rendu "pixel/Mode-7", pas organique. Remplacé par l'approche en couches ci-dessus.
-- Étape 1 (ciel `craftLite`) — KEEP, inchangé.
-
-*Dernière révision : 13 août 2026 — reset étape 1, approche en couches (faisceau).*
+| Date | Action |
+|---|---|
+| 13 août 2026 | Pivot 3D : `CylinderGeometry` vue extérieure, vertex displacement (snake wave) |
+| 13 août 2026 | Shaders Phase 2 : `WormholeCloud3D` (Worley+FBM) + `WormholeBeam3D` (nDotV) |
+| 14 août 2026 | Refactor UI : boutons 1/2/3 Phase 1, knobs indépendants, bend ancré aux extrémités |
+| 14 août 2026 | Bloom ajouté, vertex shader Phase 2 migré vers bend (abandon snake wave) |
+| 14 août 2026 | Specs Phase 1 calibrées et figées comme defaults (voir tableaux ci-dessus) |

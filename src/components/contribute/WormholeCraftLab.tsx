@@ -58,17 +58,18 @@ type P1Pillar = {
 /** Caméra globale partagée par les deux piliers. */
 type P1Cam = { z: number; y: number };
 
+// ── Specs calibrées le 2026-08-14 — à ne modifier que sur validation visuelle ──
 const P1_ROSE_DEFAULTS: P1Pillar = {
-  radiusBottom: 4.8, radiusTop: 0.05,
-  bendAmp: 0.0, bendAngle: 0.0, bendSpeed: 0.0,
-  posX: 0.0, posY: 0.0, posZ: 0.0, height: 14,
+  radiusBottom: 7.20, radiusTop: 0.00,
+  bendAmp: 4.00, bendAngle: 4.70, bendSpeed: 0.00,
+  posX: 0.00, posY: 4.70, posZ: 0.40, height: 15.50,
 };
 const P1_CYAN_DEFAULTS: P1Pillar = {
-  radiusBottom: 0.45, radiusTop: 0.0,
-  bendAmp: 0.0, bendAngle: 0.0, bendSpeed: 0.0,
-  posX: 0.0, posY: 0.0, posZ: 0.0, height: 14,
+  radiusBottom: 2.20, radiusTop: 0.00,
+  bendAmp: 4.00, bendAngle: 4.70, bendSpeed: 0.00,
+  posX: 0.00, posY: 3.90, posZ: 1.30, height: 14.00,
 };
-const P1_CAM_DEFAULTS: P1Cam = { z: 9.0, y: -3.0 };
+const P1_CAM_DEFAULTS: P1Cam = { z: 9.50, y: -2.90 };
 
 // Alias de compatibilité pour les signatures restantes
 type Phase1Knobs = P1Pillar;
@@ -220,7 +221,7 @@ function SliderGroup<T extends Record<string, number>>({
           <label key={String(s.key)} className="flex flex-col gap-1">
             <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">
               {s.label}
-              <span className="ml-1 font-mono text-white/25">
+              <span className="ml-1 font-mono text-teal-400/80">
                 {(knobs[s.key] as number).toFixed(s.step < 0.01 ? 3 : 2)}
               </span>
             </span>
@@ -311,17 +312,17 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
     { key: "y", label: isFr ? "Cam Y (hauteur)" : "Camera Y", min: -10.0, max: 5.0, step: 0.1 },
   ];
 
-  // Phase 2 — sliders cloud (géo + coude + position)
+  // Phase 2 — sliders cloud (même ordre que Phase 1)
   const cloudGeoDefs: { key: keyof CloudKnobs; label: string; min: number; max: number; step: number }[] = [
-    { key: "radiusBottom", label: isFr ? "Rayon bas"          : "Radius bot",      min: 0.5,  max: 14.0, step: 0.1  },
-    { key: "radiusTop",    label: isFr ? "Rayon haut"         : "Radius top",      min: 0.0,  max: 4.0,  step: 0.05 },
-    { key: "height",       label: isFr ? "Longueur"           : "Height",          min: 2.0,  max: 40.0, step: 0.5  },
-    { key: "bendAmp",      label: isFr ? "Coude (force)"      : "Bend strength",   min: 0.0,  max: 4.0,  step: 0.02 },
-    { key: "bendAngle",    label: isFr ? "Coude (direction)"  : "Bend direction",  min: 0.0,  max: 6.28, step: 0.02 },
-    { key: "bendSpeed",    label: isFr ? "Coude (0=figé)"     : "Bend rot speed",  min: 0.0,  max: 2.0,  step: 0.02 },
-    { key: "posX",         label: isFr ? "Position X"         : "Position X",      min: -8.0, max: 8.0,  step: 0.1  },
-    { key: "posY",         label: isFr ? "Position Y"         : "Position Y",      min: -8.0, max: 8.0,  step: 0.1  },
-    { key: "posZ",         label: isFr ? "Position Z"         : "Position Z",      min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "radiusBottom", label: isFr ? "Rayon bas"            : "Radius bot",     min: 0.0,  max: 14.0, step: 0.1  },
+    { key: "radiusTop",    label: isFr ? "Rayon haut"           : "Radius top",     min: 0.0,  max: 4.0,  step: 0.05 },
+    { key: "bendAmp",      label: isFr ? "Coude (force)"        : "Bend strength",  min: 0.0,  max: 4.0,  step: 0.02 },
+    { key: "bendAngle",    label: isFr ? "Coude (direction)"    : "Bend direction", min: 0.0,  max: 6.28, step: 0.02 },
+    { key: "bendSpeed",    label: isFr ? "Coude (0=figé)"       : "Bend speed",     min: 0.0,  max: 2.0,  step: 0.02 },
+    { key: "posX",         label: isFr ? "Position X"           : "Position X",     min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "posY",         label: isFr ? "Position Y (haut/bas)": "Position Y",     min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "posZ",         label: isFr ? "Position Z"           : "Position Z",     min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "height",       label: isFr ? "Longueur du pilier"   : "Height",         min: 2.0,  max: 40.0, step: 0.5  },
   ];
 
   // Phase 2 — sliders cloud (matériau)
@@ -334,18 +335,18 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
     { key: "alpha",       label: isFr ? "Opacité"     : "Opacity",     min: 0.0, max: 1.0,  step: 0.01  },
   ];
 
-  // Phase 2 — sliders beam (géo + coude + position + alpha)
+  // Phase 2 — sliders beam (même ordre que Phase 1 + alpha en dernier)
   const beamDefs: { key: keyof BeamKnobs; label: string; min: number; max: number; step: number }[] = [
-    { key: "radiusBottom", label: isFr ? "Rayon bas"         : "Radius bot",     min: 0.0,  max: 6.0,  step: 0.05 },
-    { key: "radiusTop",    label: isFr ? "Rayon haut"        : "Radius top",     min: 0.0,  max: 3.0,  step: 0.05 },
-    { key: "height",       label: isFr ? "Longueur"          : "Height",         min: 2.0,  max: 40.0, step: 0.5  },
-    { key: "bendAmp",      label: isFr ? "Coude (force)"     : "Bend strength",  min: 0.0,  max: 4.0,  step: 0.02 },
-    { key: "bendAngle",    label: isFr ? "Coude (direction)" : "Bend direction", min: 0.0,  max: 6.28, step: 0.02 },
-    { key: "bendSpeed",    label: isFr ? "Coude (0=figé)"    : "Bend rot speed", min: 0.0,  max: 2.0,  step: 0.02 },
-    { key: "posX",         label: isFr ? "Position X"        : "Position X",     min: -8.0, max: 8.0,  step: 0.1  },
-    { key: "posY",         label: isFr ? "Position Y"        : "Position Y",     min: -8.0, max: 8.0,  step: 0.1  },
-    { key: "posZ",         label: isFr ? "Position Z"        : "Position Z",     min: -8.0, max: 8.0,  step: 0.1  },
-    { key: "alpha",        label: isFr ? "Intensité"         : "Intensity",      min: 0.0,  max: 1.0,  step: 0.01 },
+    { key: "radiusBottom", label: isFr ? "Rayon bas"            : "Radius bot",     min: 0.0,  max: 6.0,  step: 0.05 },
+    { key: "radiusTop",    label: isFr ? "Rayon haut"           : "Radius top",     min: 0.0,  max: 3.0,  step: 0.05 },
+    { key: "bendAmp",      label: isFr ? "Coude (force)"        : "Bend strength",  min: 0.0,  max: 4.0,  step: 0.02 },
+    { key: "bendAngle",    label: isFr ? "Coude (direction)"    : "Bend direction", min: 0.0,  max: 6.28, step: 0.02 },
+    { key: "bendSpeed",    label: isFr ? "Coude (0=figé)"       : "Bend speed",     min: 0.0,  max: 2.0,  step: 0.02 },
+    { key: "posX",         label: isFr ? "Position X"           : "Position X",     min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "posY",         label: isFr ? "Position Y (haut/bas)": "Position Y",     min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "posZ",         label: isFr ? "Position Z"           : "Position Z",     min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "height",       label: isFr ? "Longueur du pilier"   : "Height",         min: 2.0,  max: 40.0, step: 0.5  },
+    { key: "alpha",        label: isFr ? "Intensité"            : "Intensity",      min: 0.0,  max: 1.0,  step: 0.01 },
   ];
 
   return (
