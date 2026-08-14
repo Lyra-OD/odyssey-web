@@ -1,6 +1,5 @@
 "use client";
 
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -11,12 +10,16 @@ import { ClientWebGLGate } from "@/src/components/contribute/constellation/webgl
 import {
   BEAM_DEFAULTS,
   CAMERA_DEFAULTS,
-  CLOUD_DEFAULTS,
+  PUFF_A_DEFAULTS,
+  PUFF_B_DEFAULTS,
+  PUFF_C_DEFAULTS,
+  PUFF_DUST_DEFAULTS,
+  PUFF_VOILES_DEFAULTS,
   WormholeBeam3D,
-  WormholeCloud3D,
+  WormholeCloudPuffs,
   type BeamKnobs,
   type CameraKnobs,
-  type CloudKnobs,
+  type PuffKnobs,
 } from "@/src/components/contribute/constellation/WormholeRig3D";
 
 type Locale = "fr" | "en";
@@ -196,7 +199,7 @@ function ForceRenderLoop() {
   return null;
 }
 
-function SliderGroup<T extends Record<string, number>>({
+function SliderGroup<T extends object>({
   label,
   knobs,
   set,
@@ -222,7 +225,7 @@ function SliderGroup<T extends Record<string, number>>({
             <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">
               {s.label}
               <span className="ml-1 font-mono text-teal-400/80">
-                {(knobs[s.key] as number).toFixed(s.step < 0.01 ? 3 : 2)}
+                {Number(knobs[s.key]).toFixed(s.step < 0.01 ? 3 : 2)}
               </span>
             </span>
             <input
@@ -230,7 +233,7 @@ function SliderGroup<T extends Record<string, number>>({
               min={s.min}
               max={s.max}
               step={s.step}
-              value={knobs[s.key] as number}
+              value={Number(knobs[s.key])}
               onChange={(e) => set(s.key, Number(e.target.value))}
               className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-white"
             />
@@ -246,21 +249,36 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
   // Phase 1 — piliers indépendants + caméra globale partagée
   const [p1Active, setP1Active] = useState<1 | 2 | 3>(1); // 1=rose 2=cyan 3=cam
   // Phase 2 — même logique de sélection
-  const [p2Active, setP2Active] = useState<1 | 2 | 3 | 4>(1); // 1=cloud géo 2=cloud mat 3=beam 4=cam
+  const [p2Active, setP2Active] = useState<1 | 2 | 3>(1);
   const [p1Rose,   setP1Rose]   = useState<P1Pillar>({ ...P1_ROSE_DEFAULTS });
   const [p1Cyan,   setP1Cyan]   = useState<P1Pillar>({ ...P1_CYAN_DEFAULTS });
   const [p1Cam,    setP1CamSt]  = useState<P1Cam>({ ...P1_CAM_DEFAULTS });
-  // Phase 2 — shaders 3D
   const [cam,   setCamState]   = useState<CameraKnobs>({ ...CAMERA_DEFAULTS });
-  const [cloud, setCloudState] = useState<CloudKnobs>({ ...CLOUD_DEFAULTS });
+  const [puffLayer, setPuffLayer] = useState<0 | 1 | 2 | 3 | 4>(0);
+  const [puffA,      setPuffA]      = useState<PuffKnobs>({ ...PUFF_A_DEFAULTS });
+  const [puffB,      setPuffB]      = useState<PuffKnobs>({ ...PUFF_B_DEFAULTS });
+  const [puffC,      setPuffC]      = useState<PuffKnobs>({ ...PUFF_C_DEFAULTS });
+  const [puffVoiles, setPuffVoiles] = useState<PuffKnobs>({ ...PUFF_VOILES_DEFAULTS });
+  const [puffDust,   setPuffDust]   = useState<PuffKnobs>({ ...PUFF_DUST_DEFAULTS });
   const [beam,  setBeamState]  = useState<BeamKnobs>({ ...BEAM_DEFAULTS });
 
   const setRose  = <K extends keyof P1Pillar>(k: K, v: number) => setP1Rose(p => ({ ...p, [k]: v }));
   const setCyan  = <K extends keyof P1Pillar>(k: K, v: number) => setP1Cyan(p => ({ ...p, [k]: v }));
   const setP1Cam = <K extends keyof P1Cam>(k: K, v: number)    => setP1CamSt(p => ({ ...p, [k]: v }));
   const setCam   = <K extends keyof CameraKnobs>(k: K, v: number) => setCamState(p => ({ ...p, [k]: v }));
-  const setCloud = <K extends keyof CloudKnobs>(k: K, v: number) => setCloudState(p => ({ ...p, [k]: v }));
   const setBeam  = <K extends keyof BeamKnobs>(k: K, v: number) => setBeamState(p => ({ ...p, [k]: v }));
+
+  const puffPack = [puffA, puffB, puffC, puffVoiles, puffDust] as const;
+  const puffActive = puffPack[puffLayer];
+  const setPuffActive = (patch: Partial<PuffKnobs>) => {
+    const apply = (p: PuffKnobs) => ({ ...p, ...patch });
+    if (puffLayer === 0) setPuffA(apply);
+    else if (puffLayer === 1) setPuffB(apply);
+    else if (puffLayer === 2) setPuffC(apply);
+    else if (puffLayer === 3) setPuffVoiles(apply);
+    else setPuffDust(apply);
+  };
+  const setPuffNum = <K extends keyof PuffKnobs>(k: K, v: number) => setPuffActive({ [k]: v } as Partial<PuffKnobs>);
 
   const [demo, setDemo] = useState(false);
   const demoRef  = useRef(false);
@@ -276,7 +294,11 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
       const u    = Math.min(1, (now - startRef.current) / 4800);
       const ease = u * u * (3 - 2 * u);
       const a    = 0.92 * (1 - Math.pow(ease, 1.25));
-      setCloudState(p => ({ ...p, alpha: a }));
+      setPuffA(p => ({ ...p, alpha: a * PUFF_A_DEFAULTS.alpha }));
+      setPuffB(p => ({ ...p, alpha: a * PUFF_B_DEFAULTS.alpha }));
+      setPuffC(p => ({ ...p, alpha: a * PUFF_C_DEFAULTS.alpha }));
+      setPuffVoiles(p => ({ ...p, alpha: a * PUFF_VOILES_DEFAULTS.alpha }));
+      setPuffDust(p => ({ ...p, alpha: a * PUFF_DUST_DEFAULTS.alpha }));
       setBeamState(p => ({ ...p, alpha: a }));
       if (u >= 1) { setDemo(false); return; }
       raf = requestAnimationFrame(tick);
@@ -312,27 +334,17 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
     { key: "y", label: isFr ? "Cam Y (hauteur)" : "Camera Y", min: -10.0, max: 5.0, step: 0.1 },
   ];
 
-  // Phase 2 — sliders cloud (même ordre que Phase 1)
-  const cloudGeoDefs: { key: keyof CloudKnobs; label: string; min: number; max: number; step: number }[] = [
-    { key: "radiusBottom", label: isFr ? "Rayon bas"            : "Radius bot",     min: 0.0,  max: 14.0, step: 0.1  },
-    { key: "radiusTop",    label: isFr ? "Rayon haut"           : "Radius top",     min: 0.0,  max: 4.0,  step: 0.05 },
-    { key: "bendAmp",      label: isFr ? "Coude (force)"        : "Bend strength",  min: 0.0,  max: 4.0,  step: 0.02 },
-    { key: "bendAngle",    label: isFr ? "Coude (direction)"    : "Bend direction", min: 0.0,  max: 6.28, step: 0.02 },
-    { key: "bendSpeed",    label: isFr ? "Coude (0=figé)"       : "Bend speed",     min: 0.0,  max: 2.0,  step: 0.02 },
-    { key: "posX",         label: isFr ? "Position X"           : "Position X",     min: -8.0, max: 8.0,  step: 0.1  },
-    { key: "posY",         label: isFr ? "Position Y (haut/bas)": "Position Y",     min: -8.0, max: 8.0,  step: 0.1  },
-    { key: "posZ",         label: isFr ? "Position Z"           : "Position Z",     min: -8.0, max: 8.0,  step: 0.1  },
-    { key: "height",       label: isFr ? "Longueur du pilier"   : "Height",         min: 2.0,  max: 40.0, step: 0.5  },
-  ];
-
-  // Phase 2 — sliders cloud (matériau)
-  const cloudMatDefs: { key: keyof CloudKnobs; label: string; min: number; max: number; step: number }[] = [
-    { key: "density",     label: isFr ? "Densité"     : "Density",     min: 0.5, max: 3.0,  step: 0.05  },
-    { key: "contrast",    label: isFr ? "Contraste"   : "Contrast",    min: 0.0, max: 1.0,  step: 0.01  },
-    { key: "lightOffset", label: isFr ? "Auto-ombre"  : "Self-shadow", min: 0.0, max: 1.5,  step: 0.01  },
-    { key: "boilSpeed",   label: isFr ? "Bouillon"    : "Boil",        min: 0.0, max: 0.6,  step: 0.005 },
-    { key: "scrollSpeed", label: isFr ? "Scroll"      : "Scroll",      min: 0.0, max: 1.2,  step: 0.01  },
-    { key: "alpha",       label: isFr ? "Opacité"     : "Opacity",     min: 0.0, max: 1.0,  step: 0.01  },
+  const puffDefs: { key: keyof PuffKnobs; label: string; min: number; max: number; step: number }[] = [
+    { key: "posX",     label: isFr ? "Position X"     : "Position X", min: -8.0, max: 8.0, step: 0.1  },
+    { key: "posY",     label: isFr ? "Position Y"     : "Position Y", min: -8.0, max: 8.0, step: 0.1  },
+    { key: "posZ",     label: isFr ? "Position Z"     : "Position Z", min: -8.0, max: 8.0, step: 0.1  },
+    { key: "spreadY",  label: isFr ? "Étendue Y"      : "Spread Y",   min: 0.5,  max: 14,  step: 0.1  },
+    { key: "count",    label: isFr ? "Nombre d'amas"  : "Count",      min: 4,    max: 40,  step: 1    },
+    { key: "size",     label: isFr ? "Taille"         : "Size",       min: 0.4,  max: 6.0, step: 0.05 },
+    { key: "scatter",  label: isFr ? "Dispersion"     : "Scatter",    min: 0.0,  max: 6.0, step: 0.05 },
+    { key: "density",  label: isFr ? "Densité"        : "Density",    min: 0.4,  max: 2.5, step: 0.05 },
+    { key: "boilSpeed",label: isFr ? "Bouillon"       : "Boil",       min: 0.0,  max: 0.6, step: 0.005},
+    { key: "alpha",    label: isFr ? "Opacité"        : "Opacity",    min: 0.0,  max: 1.0, step: 0.01 },
   ];
 
   // Phase 2 — sliders beam (même ordre que Phase 1 + alpha en dernier)
@@ -389,16 +401,12 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
               ) : (
                 <>
                   <CameraRig z={cam.z} y={cam.y} />
-                  <WormholeCloud3D knobs={cloud} />
-                  <WormholeBeam3D  knobs={beam} />
-                  <EffectComposer>
-                    <Bloom
-                      luminanceThreshold={0.15}
-                      luminanceSmoothing={0.9}
-                      intensity={1.8}
-                      mipmapBlur
-                    />
-                  </EffectComposer>
+                  <WormholeCloudPuffs knobs={puffA} lightPos={beam} />
+                  <WormholeCloudPuffs knobs={puffB} lightPos={beam} />
+                  <WormholeCloudPuffs knobs={puffC} lightPos={beam} />
+                  <WormholeCloudPuffs knobs={puffVoiles} lightPos={beam} />
+                  <WormholeCloudPuffs knobs={puffDust} lightPos={beam} />
+                  <WormholeBeam3D knobs={beam} />
                 </>
               )}
             </Suspense>
@@ -411,14 +419,14 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
           Wormhole · craft ·{" "}
           {phase === 1
             ? (isFr ? "Phase 1 — Pilier 3D" : "Phase 1 — 3D Pillar")
-            : (isFr ? "Phase 2 — Shaders 2D" : "Phase 2 — 2D Shaders")}
+            : (isFr ? "Phase 2 — Volume 3D" : "Phase 2 — 3D Volume")}
         </p>
         <p className="max-w-xl text-sm font-light text-white/50 md:text-base">
           {phase === 1
             ? (isFr
                 ? "Vue extérieure — rose = tunnel cloud, cyan = cône beam. Sculpt les cônes + ajoute l'ondulation avant Phase 2."
                 : "External view — pink = cloud tunnel, cyan = beam cone. Sculpt cones + add wave before Phase 2.")
-            : (isFr ? "Phase 2 : shaders Worley/FBM (ancienne architecture 2D)." : "Phase 2: Worley/FBM shaders (legacy 2D arch).")}
+            : (isFr ? "Phase 2 — beam cyan + 5 couches de nuages (éclairés par le cyan)." : "Phase 2 — cyan beam + 5 cloud layers (lit by the beam).")}
         </p>
       </div>
 
@@ -454,7 +462,7 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
               <>
                 <button
                   type="button"
-                  onClick={() => { setCamState({ ...CAMERA_DEFAULTS }); setCloudState({ ...CLOUD_DEFAULTS }); setBeamState({ ...BEAM_DEFAULTS }); }}
+                  onClick={() => { setCamState({ ...CAMERA_DEFAULTS }); setPuffA({ ...PUFF_A_DEFAULTS }); setPuffB({ ...PUFF_B_DEFAULTS }); setPuffC({ ...PUFF_C_DEFAULTS }); setPuffVoiles({ ...PUFF_VOILES_DEFAULTS }); setPuffDust({ ...PUFF_DUST_DEFAULTS }); setBeamState({ ...BEAM_DEFAULTS }); }}
                   className="rounded-sm border border-white/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/55 hover:border-white/30"
                 >
                   Reset
@@ -463,8 +471,12 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
                   type="button"
                   disabled={demo}
                   onClick={() => {
-                    setCloudState(p => ({ ...p, alpha: 0.92 }));
-                    setBeamState(p => ({ ...p, alpha: 0.95 }));
+                    setPuffA({ ...PUFF_A_DEFAULTS });
+                    setPuffB({ ...PUFF_B_DEFAULTS });
+                    setPuffC({ ...PUFF_C_DEFAULTS });
+                    setPuffVoiles({ ...PUFF_VOILES_DEFAULTS });
+                    setPuffDust({ ...PUFF_DUST_DEFAULTS });
+                    setBeamState({ ...BEAM_DEFAULTS });
                     setDemo(true);
                   }}
                   className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45 disabled:opacity-40"
@@ -558,97 +570,119 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
             />
           )}
 
-          {/* ── Sélecteur Phase 2 ─────────────────────────────────────────────── */}
           {phase === 2 && (
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setP2Active(1)}
-                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] ${
                   p2Active === 1
                     ? "border-pink-400 bg-pink-400/15 text-pink-300"
-                    : "border-white/15 text-white/45 hover:border-pink-400/40 hover:text-pink-300/70"
+                    : "border-white/15 text-white/45 hover:border-pink-400/40"
                 }`}
               >
-                1 — Rose géo
+                1 — Nuages
               </button>
-
               <button
                 type="button"
                 onClick={() => setP2Active(2)}
-                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] ${
                   p2Active === 2
-                    ? "border-pink-300 bg-pink-300/10 text-pink-200"
-                    : "border-white/15 text-white/45 hover:border-pink-300/40 hover:text-pink-200/70"
+                    ? "border-cyan-400 bg-cyan-400/15 text-cyan-300"
+                    : "border-white/15 text-white/45 hover:border-cyan-400/40"
                 }`}
               >
-                2 — Rose mat
+                2 — Cyan
               </button>
-
               <button
                 type="button"
                 onClick={() => setP2Active(3)}
-                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] ${
                   p2Active === 3
-                    ? "border-cyan-400 bg-cyan-400/15 text-cyan-300"
-                    : "border-white/15 text-white/45 hover:border-cyan-400/40 hover:text-cyan-300/70"
-                }`}
-              >
-                3 — Cyan
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setP2Active(4)}
-                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
-                  p2Active === 4
                     ? "border-white/60 bg-white/10 text-white/90"
                     : "border-white/15 text-white/45 hover:border-white/35"
                 }`}
               >
-                4 — Cam
+                3 — Cam
               </button>
-
               <button
                 type="button"
                 onClick={() => {
-                  if (p2Active === 1 || p2Active === 2) setCloudState({ ...CLOUD_DEFAULTS });
-                  else if (p2Active === 3) setBeamState({ ...BEAM_DEFAULTS });
+                  if (p2Active === 1) {
+                    const defs = [PUFF_A_DEFAULTS, PUFF_B_DEFAULTS, PUFF_C_DEFAULTS, PUFF_VOILES_DEFAULTS, PUFF_DUST_DEFAULTS];
+                    setPuffActive({ ...defs[puffLayer] });
+                  } else if (p2Active === 2) setBeamState({ ...BEAM_DEFAULTS });
                   else setCamState({ ...CAMERA_DEFAULTS });
                 }}
-                className="ml-1 rounded-sm border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/40 hover:border-white/25 hover:text-white/65"
+                className="ml-1 rounded-sm border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/40 hover:border-white/25"
               >
                 Reset
               </button>
             </div>
           )}
 
-          {/* Sliders Phase 2 — cloud géométrie */}
           {phase === 2 && p2Active === 1 && (
-            <SliderGroup
-              label="◈ Rose — géométrie · coude · position"
-              knobs={cloud} set={setCloud} defs={cloudGeoDefs}
-            />
+            <>
+              <div className="flex flex-wrap items-center gap-2">
+                {([
+                  [0, "A", puffA.color],
+                  [1, "B", puffB.color],
+                  [2, "C", puffC.color],
+                  [3, "Voiles", puffVoiles.color],
+                  [4, "Poussière", puffDust.color],
+                ] as const).map(([id, name, col]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setPuffLayer(id)}
+                    className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] ${
+                      puffLayer === id ? "bg-white/10 text-white/90" : "border-white/15 text-white/45"
+                    }`}
+                    style={puffLayer === id ? { borderColor: col, color: col } : undefined}
+                  >
+                    {name}
+                  </button>
+                ))}
+                <label className="ml-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-white/45">
+                  Couleur
+                  <input
+                    type="color"
+                    value={puffActive.color}
+                    onChange={(e) => setPuffActive({ color: e.target.value })}
+                    className="h-7 w-10 cursor-pointer rounded-sm border border-white/20 bg-transparent p-0"
+                  />
+                  <span className="font-mono text-teal-400/80">{puffActive.color}</span>
+                </label>
+              </div>
+              <SliderGroup
+                label={`◈ ${["Nuage A", "Nuage B", "Nuage C", "Voiles", "Poussière"][puffLayer]} — indépendant du cyan`}
+                knobs={puffActive}
+                set={setPuffNum}
+                defs={puffDefs}
+              />
+            </>
           )}
 
-          {/* Sliders Phase 2 — cloud matériau */}
           {phase === 2 && p2Active === 2 && (
-            <SliderGroup
-              label="◈ Rose — matériau (densité · ombre · animation)"
-              knobs={cloud} set={setCloud} defs={cloudMatDefs}
-            />
+            <>
+              <label className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-white/45">
+                Couleur beam
+                <input
+                  type="color"
+                  value={beam.color}
+                  onChange={(e) => setBeamState(p => ({ ...p, color: e.target.value }))}
+                  className="h-7 w-10 cursor-pointer rounded-sm border border-white/20 bg-transparent p-0"
+                />
+                <span className="font-mono text-teal-400/80">{beam.color}</span>
+              </label>
+              <SliderGroup
+                label="◈ Cyan — faisceau (éclaire les nuages)"
+                knobs={beam} set={setBeam} defs={beamDefs}
+              />
+            </>
           )}
 
-          {/* Sliders Phase 2 — beam */}
           {phase === 2 && p2Active === 3 && (
-            <SliderGroup
-              label="◈ Cyan — géométrie · coude · position · intensité"
-              knobs={beam} set={setBeam} defs={beamDefs}
-            />
-          )}
-
-          {/* Sliders Phase 2 — caméra */}
-          {phase === 2 && p2Active === 4 && (
             <SliderGroup
               label="◈ Caméra"
               knobs={cam} set={setCam} defs={camDefs}
