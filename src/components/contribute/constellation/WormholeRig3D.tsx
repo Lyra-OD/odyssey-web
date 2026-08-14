@@ -18,7 +18,7 @@ export type CameraKnobs = {
   z: number;
   y: number;
 };
-export const CAMERA_DEFAULTS: CameraKnobs = { z: 10.0, y: -4.0 };
+export const CAMERA_DEFAULTS: CameraKnobs = { z: 9.50, y: -2.90 };
 
 export type CloudKnobs = {
   // Géométrie
@@ -42,13 +42,15 @@ export type CloudKnobs = {
   alpha:       number;
 };
 export const CLOUD_DEFAULTS: CloudKnobs = {
-  radiusBottom: 4.8,
-  radiusTop:    0.05,
-  height:       14,
-  posX: 0, posY: 0, posZ: 0,
-  bendAmp:   0.0,
-  bendAngle: 0.0,
-  bendSpeed: 0.0,
+  // Géométrie — specs calibrées 14 août 2026 (identiques Phase 1 Rose)
+  radiusBottom: 7.20,
+  radiusTop:    0.00,
+  height:       15.50,
+  posX: 0.00, posY: 4.70, posZ: 0.40,
+  bendAmp:   4.00,
+  bendAngle: 4.70,
+  bendSpeed: 0.00,
+  // Matériau (inchangé)
   density:      2.0,
   contrast:     0.65,
   lightOffset:  0.42,
@@ -74,13 +76,15 @@ export type BeamKnobs = {
   alpha: number;
 };
 export const BEAM_DEFAULTS: BeamKnobs = {
-  radiusBottom: 0.45,
-  radiusTop:    0.0,
-  height:       14,
-  posX: 0, posY: 0, posZ: 0,
-  bendAmp:   0.0,
-  bendAngle: 0.0,
-  bendSpeed: 0.0,
+  // Géométrie — specs calibrées 14 août 2026 (identiques Phase 1 Cyan)
+  radiusBottom: 2.20,
+  radiusTop:    0.00,
+  height:       14.00,
+  posX: 0.00, posY: 3.90, posZ: 1.30,
+  bendAmp:   4.00,
+  bendAngle: 4.70,
+  bendSpeed: 0.00,
+  // Matériau (inchangé)
   alpha:        0.95,
 };
 
