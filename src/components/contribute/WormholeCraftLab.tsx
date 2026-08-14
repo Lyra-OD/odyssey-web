@@ -7,14 +7,15 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Color, DoubleSide, ShaderMaterial } from "three";
 
 import { ClientWebGLGate } from "@/src/components/contribute/constellation/webglGate";
-// Anciens composants 2D conservés en archive — non utilisés en Phase 2
-// import { WormholeCraftPlane } from "@/src/components/contribute/constellation/WormholeCraftShader";
-// import { WormholeCloudLayer } from "@/src/components/contribute/constellation/WormholeCloudLayer";
 import {
-  WORMHOLE_RIG_DEFAULTS,
+  BEAM_DEFAULTS,
+  CAMERA_DEFAULTS,
+  CLOUD_DEFAULTS,
   WormholeBeam3D,
   WormholeCloud3D,
-  type WormholeRigKnobs,
+  type BeamKnobs,
+  type CameraKnobs,
+  type CloudKnobs,
 } from "@/src/components/contribute/constellation/WormholeRig3D";
 
 type Locale = "fr" | "en";
@@ -32,52 +33,63 @@ const SanctuaryUniverse = dynamic(
 
 // ── Phase 1 — Types + defaults ───────────────────────────────────────────────
 
-type Phase1Knobs = {
-  /** Rayon d'ouverture du cylindre cloud à la base (bas d'écran). */
-  cloudRadiusBottom: number;
-  /** Rayon du cône beam à la base. */
-  beamRadiusBottom: number;
-  /** Rayon du cône beam au sommet (0 = pointe pure). */
-  beamRadiusTop: number;
-  /** Distance Z de la caméra (reculer pour voir l'entièreté). */
-  cameraZ: number;
-  /** Hauteur Y de la caméra (en-dessous = angle dramatique). */
-  cameraY: number;
-  /** Fréquence de l'ondulation (nœuds de la vague par unité de hauteur). */
-  waveFreq: number;
-  /** Amplitude de l'ondulation (déplacement max en X/Z). */
-  waveAmp: number;
-  /** Vitesse d'animation de l'ondulation. */
-  waveSpeed: number;
+/** Knobs d'un pilier — indépendant de l'autre. */
+type P1Pillar = {
+  radiusBottom: number;
+  radiusTop:    number;
+  /** Force du coude (0 = droit). */
+  bendAmp:   number;
+  /** Direction du coude dans le plan XZ — 0 à 6.28 rad (tourne le penchement).
+   *  0 = penche vers +X, PI/2 = vers +Z, PI = vers -X, etc. */
+  bendAngle: number;
+  /** Vitesse de rotation du coude (0 = figé sur bendAngle). */
+  bendSpeed: number;
+  /** Position X dans la scène (décaler le pilier gauche/droite). */
+  posX: number;
+  /** Position Z dans la scène (décaler avant/arrière). */
+  posZ: number;
 };
 
-const PHASE1_DEFAULTS: Phase1Knobs = {
-  cloudRadiusBottom: 4.8,
-  beamRadiusBottom:  0.45,
-  beamRadiusTop:     0.0,
-  cameraZ:           9.0,
-  cameraY:           -3.0,
-  waveFreq:          0.45,
-  waveAmp:           0.0,
-  waveSpeed:         0.7,
+/** Caméra globale partagée par les deux piliers. */
+type P1Cam = { z: number; y: number };
+
+const P1_ROSE_DEFAULTS: P1Pillar = {
+  radiusBottom: 4.8, radiusTop: 0.05,
+  bendAmp: 0.0, bendAngle: 0.0, bendSpeed: 0.0,
+  posX: 0.0, posZ: 0.0,
 };
+const P1_CYAN_DEFAULTS: P1Pillar = {
+  radiusBottom: 0.45, radiusTop: 0.0,
+  bendAmp: 0.0, bendAngle: 0.0, bendSpeed: 0.0,
+  posX: 0.0, posZ: 0.0,
+};
+const P1_CAM_DEFAULTS: P1Cam = { z: 9.0, y: -3.0 };
+
+// Alias de compatibilité pour les signatures restantes
+type Phase1Knobs = P1Pillar;
+const PHASE1_DEFAULTS = P1_ROSE_DEFAULTS;
 
 // ── Shaders communs pour la validation Phase 1 ──────────────────────────────
 
 const p1VertexShader = /* glsl */ `
 uniform float uTime;
-uniform float uWaveFreq;
-uniform float uWaveAmp;
-uniform float uWaveSpeed;
+uniform float uBendAmp;
+uniform float uBendAngle; // direction du coude dans XZ (0–2PI)
+uniform float uBendSpeed; // vitesse de rotation du coude (0 = figé)
+
+const float HALF_H = 7.0; // demi-hauteur du cylindre
 
 void main() {
   vec3 pos = position;
 
-  // Ondulation serpent : sin sur X, cos déphasé sur Z → mouvement 3D
-  float t   = uTime * uWaveSpeed;
-  float y   = pos.y;
-  pos.x += sin(y * uWaveFreq + t)            * uWaveAmp;
-  pos.z += cos(y * uWaveFreq * 0.83 + t * 0.91) * uWaveAmp * 0.60;
+  // Enveloppe : 0 aux extrémités, 1 au centre — coude ancré à chaque bout
+  float nY  = clamp((pos.y + HALF_H) / (2.0 * HALF_H), 0.0, 1.0);
+  float env = sin(nY * 3.14159);
+
+  // Direction du coude dans le plan XZ
+  float angle = uBendAngle + uTime * uBendSpeed;
+  pos.x += cos(angle) * uBendAmp * env;
+  pos.z += sin(angle) * uBendAmp * env;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 }
@@ -94,25 +106,22 @@ void main() {
 
 function Phase1WaveMesh({
   color,
-  geoArgs,
-  knobs,
-  segments = 48,
+  pillar,
+  dim = false,
 }: {
   color: number;
-  /** [radiusTop, radiusBottom, height, radialSeg, heightSeg, openEnded] */
-  geoArgs: [number, number, number, number, number, boolean];
-  knobs: Phase1Knobs;
-  segments?: number;
+  pillar: P1Pillar;
+  dim?: boolean;
 }) {
   const matRef = useRef<ShaderMaterial>(null);
 
   const uniforms = useMemo(
     () => ({
-      uTime:      { value: 0 },
-      uWaveFreq:  { value: knobs.waveFreq },
-      uWaveAmp:   { value: knobs.waveAmp },
-      uWaveSpeed: { value: knobs.waveSpeed },
-      uColor:     { value: new Color(color) },
+      uTime:       { value: 0 },
+      uBendAmp:    { value: pillar.bendAmp },
+      uBendAngle:  { value: pillar.bendAngle },
+      uBendSpeed:  { value: pillar.bendSpeed },
+      uColor:      { value: new Color(color) },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -122,16 +131,17 @@ function Phase1WaveMesh({
     const mat = matRef.current;
     if (!mat) return;
     mat.uniforms.uTime.value      = clock.elapsedTime;
-    mat.uniforms.uWaveFreq.value  = knobs.waveFreq;
-    mat.uniforms.uWaveAmp.value   = knobs.waveAmp;
-    mat.uniforms.uWaveSpeed.value = knobs.waveSpeed;
+    mat.uniforms.uBendAmp.value   = pillar.bendAmp;
+    mat.uniforms.uBendAngle.value = pillar.bendAngle;
+    mat.uniforms.uBendSpeed.value = pillar.bendSpeed;
   });
 
-  const [rTop, rBot] = geoArgs;
   return (
-    // key force le remontage quand la géométrie change (CylinderGeometry est immuable)
-    <mesh key={`${rTop}-${rBot}`}>
-      <cylinderGeometry args={[geoArgs[0], geoArgs[1], geoArgs[2], geoArgs[3], segments, geoArgs[5]]} />
+    <mesh
+      key={`${pillar.radiusBottom}-${pillar.radiusTop}`}
+      position={[pillar.posX, 0, pillar.posZ]}
+    >
+      <cylinderGeometry args={[pillar.radiusTop, pillar.radiusBottom, 14, 64, 48, true]} />
       <shaderMaterial
         ref={matRef}
         vertexShader={p1VertexShader}
@@ -141,6 +151,8 @@ function Phase1WaveMesh({
         side={DoubleSide}
         depthWrite={false}
         toneMapped={false}
+        transparent
+        opacity={dim ? 0.25 : 1.0}
       />
     </mesh>
   );
@@ -223,14 +235,23 @@ function SliderGroup<T extends Record<string, number>>({
 }
 
 export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
-  const [phase, setPhase] = useState<1 | 2>(1);
-  const [p1, setP1State]  = useState<Phase1Knobs>({ ...PHASE1_DEFAULTS });
-  const [rig, setRigState] = useState<WormholeRigKnobs>({ ...WORMHOLE_RIG_DEFAULTS });
+  const [phase,    setPhase]    = useState<1 | 2>(1);
+  // Phase 1 — piliers indépendants + caméra globale partagée
+  const [p1Active, setP1Active] = useState<1 | 2 | 3>(1); // 1=rose 2=cyan 3=cam
+  const [p1Rose,   setP1Rose]   = useState<P1Pillar>({ ...P1_ROSE_DEFAULTS });
+  const [p1Cyan,   setP1Cyan]   = useState<P1Pillar>({ ...P1_CYAN_DEFAULTS });
+  const [p1Cam,    setP1CamSt]  = useState<P1Cam>({ ...P1_CAM_DEFAULTS });
+  // Phase 2 — shaders 3D
+  const [cam,   setCamState]   = useState<CameraKnobs>({ ...CAMERA_DEFAULTS });
+  const [cloud, setCloudState] = useState<CloudKnobs>({ ...CLOUD_DEFAULTS });
+  const [beam,  setBeamState]  = useState<BeamKnobs>({ ...BEAM_DEFAULTS });
 
-  const setP1  = <K extends keyof Phase1Knobs>(key: K, v: number) =>
-    setP1State((prev) => ({ ...prev, [key]: v }));
-  const setRig = <K extends keyof WormholeRigKnobs>(key: K, v: number) =>
-    setRigState((prev) => ({ ...prev, [key]: v }));
+  const setRose  = <K extends keyof P1Pillar>(k: K, v: number) => setP1Rose(p => ({ ...p, [k]: v }));
+  const setCyan  = <K extends keyof P1Pillar>(k: K, v: number) => setP1Cyan(p => ({ ...p, [k]: v }));
+  const setP1Cam = <K extends keyof P1Cam>(k: K, v: number)    => setP1CamSt(p => ({ ...p, [k]: v }));
+  const setCam   = <K extends keyof CameraKnobs>(k: K, v: number) => setCamState(p => ({ ...p, [k]: v }));
+  const setCloud = <K extends keyof CloudKnobs>(k: K, v: number) => setCloudState(p => ({ ...p, [k]: v }));
+  const setBeam  = <K extends keyof BeamKnobs>(k: K, v: number) => setBeamState(p => ({ ...p, [k]: v }));
 
   const [demo, setDemo] = useState(false);
   const demoRef  = useRef(false);
@@ -246,7 +267,8 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
       const u    = Math.min(1, (now - startRef.current) / 4800);
       const ease = u * u * (3 - 2 * u);
       const a    = 0.92 * (1 - Math.pow(ease, 1.25));
-      setRigState((prev) => ({ ...prev, cloudAlpha: a, beamAlpha: a }));
+      setCloudState(p => ({ ...p, alpha: a }));
+      setBeamState(p => ({ ...p, alpha: a }));
       if (u >= 1) { setDemo(false); return; }
       raf = requestAnimationFrame(tick);
     };
@@ -256,38 +278,58 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
 
   const isFr = locale !== "en";
 
-  const phase1Defs: { key: keyof Phase1Knobs; label: string; min: number; max: number; step: number }[] = [
-    { key: "cloudRadiusBottom", label: isFr ? "Rayon tunnel"    : "Tunnel radius", min: 0.5,  max: 12.0, step: 0.1  },
-    { key: "beamRadiusBottom",  label: isFr ? "Rayon beam"      : "Beam radius",   min: 0.05, max: 4.0,  step: 0.05 },
-    { key: "beamRadiusTop",     label: isFr ? "Pointe beam"     : "Beam tip",      min: 0.0,  max: 1.5,  step: 0.01 },
-    { key: "cameraZ",           label: isFr ? "Cam Z (recul)"   : "Camera Z",      min: 3.0,  max: 25.0, step: 0.1  },
-    { key: "cameraY",           label: isFr ? "Cam Y (hauteur)" : "Camera Y",      min: -8.0, max: 4.0,  step: 0.1  },
-    { key: "waveFreq",          label: isFr ? "Fréquence onde"  : "Wave freq",     min: 0.05, max: 3.0,  step: 0.05 },
-    { key: "waveAmp",           label: isFr ? "Amplitude onde"  : "Wave amp",      min: 0.0,  max: 2.0,  step: 0.02 },
-    { key: "waveSpeed",         label: isFr ? "Vitesse onde"    : "Wave speed",    min: 0.0,  max: 3.0,  step: 0.05 },
+  // Phase 1 — sliders d'un pilier (géométrie + coude + position)
+  const p1PillarDefs: { key: keyof P1Pillar; label: string; min: number; max: number; step: number }[] = [
+    { key: "radiusBottom", label: isFr ? "Rayon bas"          : "Radius bot",       min: 0.0,  max: 12.0, step: 0.05 },
+    { key: "radiusTop",    label: isFr ? "Rayon haut"         : "Radius top",       min: 0.0,  max: 4.0,  step: 0.01 },
+    { key: "bendAmp",      label: isFr ? "Coude (force)"      : "Bend strength",    min: 0.0,  max: 4.0,  step: 0.02 },
+    { key: "bendAngle",    label: isFr ? "Coude (direction)"  : "Bend direction",   min: 0.0,  max: 6.28, step: 0.02 },
+    { key: "bendSpeed",    label: isFr ? "Coude (0=figé)"     : "Bend rot speed",   min: 0.0,  max: 2.0,  step: 0.02 },
+    { key: "posX",         label: isFr ? "Position X"         : "Position X",       min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "posZ",         label: isFr ? "Position Z"         : "Position Z",       min: -8.0, max: 8.0,  step: 0.1  },
   ];
 
-  // Phase 2 — sliders géométrie + caméra partagés
-  const rigGeoDefs: { key: keyof WormholeRigKnobs; label: string; min: number; max: number; step: number }[] = [
-    { key: "cloudRadiusBottom", label: isFr ? "Rayon tunnel"    : "Tunnel radius", min: 0.5,  max: 12.0, step: 0.1  },
-    { key: "beamRadiusBottom",  label: isFr ? "Rayon beam"      : "Beam radius",   min: 0.05, max: 4.0,  step: 0.05 },
-    { key: "beamRadiusTop",     label: isFr ? "Pointe beam"     : "Beam tip",      min: 0.0,  max: 1.5,  step: 0.01 },
-    { key: "cameraZ",           label: isFr ? "Cam Z (recul)"   : "Camera Z",      min: 3.0,  max: 25.0, step: 0.1  },
-    { key: "cameraY",           label: isFr ? "Cam Y (hauteur)" : "Camera Y",      min: -8.0, max: 4.0,  step: 0.1  },
-    { key: "waveFreq",          label: isFr ? "Fréq. onde"      : "Wave freq",     min: 0.05, max: 3.0,  step: 0.05 },
-    { key: "waveAmp",           label: isFr ? "Amp. onde"       : "Wave amp",      min: 0.0,  max: 1.5,  step: 0.02 },
-    { key: "waveSpeed",         label: isFr ? "Vit. onde"       : "Wave speed",    min: 0.0,  max: 3.0,  step: 0.05 },
+  // Phase 1 — sliders caméra (globaux, bougent les 2 piliers ensemble)
+  const p1CamDefs: { key: keyof P1Cam; label: string; min: number; max: number; step: number }[] = [
+    { key: "z", label: isFr ? "Cam Z (recul)"   : "Camera Z", min: 3.0,  max: 25.0, step: 0.1 },
+    { key: "y", label: isFr ? "Cam Y (hauteur)" : "Camera Y", min: -8.0, max: 4.0,  step: 0.1 },
   ];
 
-  // Phase 2 — sliders matériau cloud
-  const rigCloudDefs: { key: keyof WormholeRigKnobs; label: string; min: number; max: number; step: number }[] = [
-    { key: "density",     label: isFr ? "Densité"       : "Density",      min: 0.5, max: 3.0,  step: 0.05  },
-    { key: "contrast",    label: isFr ? "Contraste"     : "Contrast",     min: 0.0, max: 1.0,  step: 0.01  },
-    { key: "lightOffset", label: isFr ? "Auto-ombre"    : "Self-shadow",  min: 0.0, max: 1.2,  step: 0.01  },
-    { key: "boilSpeed",   label: isFr ? "Bouillon"      : "Boil",         min: 0.0, max: 0.5,  step: 0.005 },
-    { key: "scrollSpeed", label: isFr ? "Vol (scroll)"  : "Scroll",       min: 0.0, max: 1.0,  step: 0.01  },
-    { key: "cloudAlpha",  label: isFr ? "Opacité nuage" : "Cloud alpha",  min: 0.0, max: 1.0,  step: 0.01  },
-    { key: "beamAlpha",   label: isFr ? "Intensité beam": "Beam alpha",   min: 0.0, max: 1.0,  step: 0.01  },
+  // Phase 2 — sliders caméra
+  const camDefs: { key: keyof CameraKnobs; label: string; min: number; max: number; step: number }[] = [
+    { key: "z", label: isFr ? "Cam Z (recul)"   : "Camera Z", min: 3.0,  max: 30.0, step: 0.1 },
+    { key: "y", label: isFr ? "Cam Y (hauteur)" : "Camera Y", min: -10.0, max: 5.0, step: 0.1 },
+  ];
+
+  // Phase 2 — sliders cloud (géo + onde)
+  const cloudGeoDefs: { key: keyof CloudKnobs; label: string; min: number; max: number; step: number }[] = [
+    { key: "radiusBottom", label: isFr ? "Rayon bas"     : "Radius bot",   min: 0.5,  max: 14.0, step: 0.1  },
+    { key: "radiusTop",    label: isFr ? "Rayon haut"    : "Radius top",   min: 0.0,  max: 4.0,  step: 0.05 },
+    { key: "waveAmp",      label: isFr ? "Amplitude"     : "Wave amp",     min: 0.0,  max: 2.0,  step: 0.02 },
+    { key: "waveFreq",     label: isFr ? "Fréquence"     : "Wave freq",    min: 0.05, max: 4.0,  step: 0.05 },
+    { key: "waveSpeed",    label: isFr ? "Vitesse"       : "Wave speed",   min: 0.0,  max: 4.0,  step: 0.05 },
+    { key: "waveMode",     label: isFr ? "Mode (0=lat 1=rad)" : "Mode (0=lat 1=rad)", min: 0, max: 1, step: 0.01 },
+  ];
+
+  // Phase 2 — sliders cloud (matériau)
+  const cloudMatDefs: { key: keyof CloudKnobs; label: string; min: number; max: number; step: number }[] = [
+    { key: "density",     label: isFr ? "Densité"     : "Density",     min: 0.5, max: 3.0,  step: 0.05  },
+    { key: "contrast",    label: isFr ? "Contraste"   : "Contrast",    min: 0.0, max: 1.0,  step: 0.01  },
+    { key: "lightOffset", label: isFr ? "Auto-ombre"  : "Self-shadow", min: 0.0, max: 1.5,  step: 0.01  },
+    { key: "boilSpeed",   label: isFr ? "Bouillon"    : "Boil",        min: 0.0, max: 0.6,  step: 0.005 },
+    { key: "scrollSpeed", label: isFr ? "Scroll"      : "Scroll",      min: 0.0, max: 1.2,  step: 0.01  },
+    { key: "alpha",       label: isFr ? "Opacité"     : "Opacity",     min: 0.0, max: 1.0,  step: 0.01  },
+  ];
+
+  // Phase 2 — sliders beam (géo + onde + alpha)
+  const beamDefs: { key: keyof BeamKnobs; label: string; min: number; max: number; step: number }[] = [
+    { key: "radiusBottom", label: isFr ? "Rayon bas"     : "Radius bot",  min: 0.0,  max: 6.0,  step: 0.05 },
+    { key: "radiusTop",    label: isFr ? "Rayon haut"    : "Radius top",  min: 0.0,  max: 3.0,  step: 0.05 },
+    { key: "waveAmp",      label: isFr ? "Amplitude"     : "Wave amp",    min: 0.0,  max: 2.0,  step: 0.02 },
+    { key: "waveFreq",     label: isFr ? "Fréquence"     : "Wave freq",   min: 0.05, max: 4.0,  step: 0.05 },
+    { key: "waveSpeed",    label: isFr ? "Vitesse"       : "Wave speed",  min: 0.0,  max: 4.0,  step: 0.05 },
+    { key: "waveMode",     label: isFr ? "Mode (0=lat 1=rad)" : "Mode (0=lat 1=rad)", min: 0, max: 1, step: 0.01 },
+    { key: "alpha",        label: isFr ? "Intensité"     : "Intensity",   min: 0.0,  max: 1.0,  step: 0.01 },
   ];
 
   return (
@@ -323,25 +365,15 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
               <ForceRenderLoop />
               {phase === 1 ? (
                 <>
-                  <CameraRig z={p1.cameraZ} y={p1.cameraY} />
-                  <Phase1WaveMesh
-                    color={0xff69b4}
-                    geoArgs={[0.05, p1.cloudRadiusBottom, 14, 64, 48, true]}
-                    knobs={p1}
-                    segments={48}
-                  />
-                  <Phase1WaveMesh
-                    color={0x00e5ff}
-                    geoArgs={[p1.beamRadiusTop, p1.beamRadiusBottom, 14, 32, 32, true]}
-                    knobs={p1}
-                    segments={32}
-                  />
+                  <CameraRig z={p1Cam.z} y={p1Cam.y} />
+                  <Phase1WaveMesh color={0xff69b4} pillar={p1Rose} dim={p1Active !== 1} />
+                  <Phase1WaveMesh color={0x00e5ff} pillar={p1Cyan} dim={p1Active !== 2} />
                 </>
               ) : (
                 <>
-                  <CameraRig z={rig.cameraZ} y={rig.cameraY} />
-                  <WormholeCloud3D knobs={rig} />
-                  <WormholeBeam3D  knobs={rig} />
+                  <CameraRig z={cam.z} y={cam.y} />
+                  <WormholeCloud3D knobs={cloud} />
+                  <WormholeBeam3D  knobs={beam} />
                 </>
               )}
             </Suspense>
@@ -368,7 +400,7 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
       <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 border-t border-white/10 bg-black/60 px-4 py-3 backdrop-blur-md md:px-6">
         <div className="mx-auto flex max-w-5xl flex-col gap-3">
 
-          {/* Boutons */}
+          {/* Boutons navigation */}
           <div className="flex flex-wrap items-center gap-2">
             <Link
               href={`/${locale}/contribute/test-eclipse-play`}
@@ -393,21 +425,11 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
                 : (isFr ? "Phase 1 → pilier" : "Phase 1 → pillar")}
             </button>
 
-            {phase === 1 && (
-              <button
-                type="button"
-                onClick={() => setP1State({ ...PHASE1_DEFAULTS })}
-                className="rounded-sm border border-white/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/55 hover:border-white/30"
-              >
-                Reset
-              </button>
-            )}
-
             {phase === 2 && (
               <>
                 <button
                   type="button"
-                  onClick={() => setRigState({ ...WORMHOLE_RIG_DEFAULTS })}
+                  onClick={() => { setCamState({ ...CAMERA_DEFAULTS }); setCloudState({ ...CLOUD_DEFAULTS }); setBeamState({ ...BEAM_DEFAULTS }); }}
                   className="rounded-sm border border-white/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/55 hover:border-white/30"
                 >
                   Reset
@@ -416,7 +438,8 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
                   type="button"
                   disabled={demo}
                   onClick={() => {
-                    setRigState((p) => ({ ...p, cloudAlpha: 0.88, beamAlpha: 0.92 }));
+                    setCloudState(p => ({ ...p, alpha: 0.92 }));
+                    setBeamState(p => ({ ...p, alpha: 0.95 }));
                     setDemo(true);
                   }}
                   className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45 disabled:opacity-40"
@@ -427,13 +450,86 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
             )}
           </div>
 
-          {/* Sliders Phase 1 */}
+          {/* ── Sélecteur Phase 1 ─────────────────────────────────────────────── */}
           {phase === 1 && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setP1Active(1)}
+                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                  p1Active === 1
+                    ? "border-pink-400 bg-pink-400/15 text-pink-300"
+                    : "border-white/15 text-white/45 hover:border-pink-400/40 hover:text-pink-300/70"
+                }`}
+              >
+                1 — Rose
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setP1Active(2)}
+                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                  p1Active === 2
+                    ? "border-cyan-400 bg-cyan-400/15 text-cyan-300"
+                    : "border-white/15 text-white/45 hover:border-cyan-400/40 hover:text-cyan-300/70"
+                }`}
+              >
+                2 — Cyan
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setP1Active(3)}
+                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                  p1Active === 3
+                    ? "border-white/60 bg-white/10 text-white/90"
+                    : "border-white/15 text-white/45 hover:border-white/35"
+                }`}
+              >
+                3 — Cam
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (p1Active === 1) setP1Rose({ ...P1_ROSE_DEFAULTS });
+                  else if (p1Active === 2) setP1Cyan({ ...P1_CYAN_DEFAULTS });
+                  else setP1CamSt({ ...P1_CAM_DEFAULTS });
+                }}
+                className="ml-1 rounded-sm border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/40 hover:border-white/25 hover:text-white/65"
+              >
+                Reset
+              </button>
+            </div>
+          )}
+
+          {/* Sliders pilier rose */}
+          {phase === 1 && p1Active === 1 && (
             <SliderGroup
-              label={isFr ? "◈ Phase 1 — Pilier + ondulation serpent" : "◈ Phase 1 — Pillar + snake wave"}
-              knobs={p1}
-              set={setP1}
-              defs={phase1Defs}
+              label="◈ Pilier 1 — Rose · géométrie · coude · position"
+              knobs={p1Rose}
+              set={setRose}
+              defs={p1PillarDefs}
+            />
+          )}
+
+          {/* Sliders pilier cyan */}
+          {phase === 1 && p1Active === 2 && (
+            <SliderGroup
+              label="◈ Pilier 2 — Cyan · géométrie · coude · position"
+              knobs={p1Cyan}
+              set={setCyan}
+              defs={p1PillarDefs}
+            />
+          )}
+
+          {/* Sliders caméra globale (les 2 piliers ensemble) */}
+          {phase === 1 && p1Active === 3 && (
+            <SliderGroup
+              label="◈ Caméra — globale (les 2 piliers)"
+              knobs={p1Cam}
+              set={setP1Cam}
+              defs={p1CamDefs}
             />
           )}
 
@@ -441,16 +537,20 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
           {phase === 2 && (
             <>
               <SliderGroup
-                label={isFr ? "◈ Géométrie + Onde + Caméra" : "◈ Geometry + Wave + Camera"}
-                knobs={rig}
-                set={setRig}
-                defs={rigGeoDefs}
+                label={isFr ? "◈ Caméra" : "◈ Camera"}
+                knobs={cam} set={setCam} defs={camDefs}
               />
               <SliderGroup
-                label={isFr ? "◈ Matériau — Cloud (rose) + Beam (cyan)" : "◈ Material — Cloud (rose) + Beam (cyan)"}
-                knobs={rig}
-                set={setRig}
-                defs={rigCloudDefs}
+                label={isFr ? "◈ Cloud (rose) — Géométrie + Onde" : "◈ Cloud (rose) — Geometry + Wave"}
+                knobs={cloud} set={setCloud} defs={cloudGeoDefs}
+              />
+              <SliderGroup
+                label={isFr ? "◈ Cloud (rose) — Matériau" : "◈ Cloud (rose) — Material"}
+                knobs={cloud} set={setCloud} defs={cloudMatDefs}
+              />
+              <SliderGroup
+                label={isFr ? "◈ Beam (cyan) — Géométrie + Onde + Intensité" : "◈ Beam (cyan) — Geometry + Wave + Intensity"}
+                knobs={beam} set={setBeam} defs={beamDefs}
               />
             </>
           )}
