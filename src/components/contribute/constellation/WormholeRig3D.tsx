@@ -21,14 +21,18 @@ export type CameraKnobs = {
 export const CAMERA_DEFAULTS: CameraKnobs = { z: 10.0, y: -4.0 };
 
 export type CloudKnobs = {
+  // Géométrie
   radiusBottom: number;
   radiusTop:    number;
-  // Onde
-  waveAmp:   number;
-  waveFreq:  number;
-  waveSpeed: number;
-  /** 0 = latéral (gauche-droite), 1 = radial (gonfle/rétrécit), mix possible */
-  waveMode:  number;
+  height:       number;
+  // Position dans la scène
+  posX: number;
+  posY: number;
+  posZ: number;
+  // Coude (même logique que Phase 1)
+  bendAmp:   number;
+  bendAngle: number;
+  bendSpeed: number;
   // Matériau
   density:     number;
   contrast:    number;
@@ -38,12 +42,13 @@ export type CloudKnobs = {
   alpha:       number;
 };
 export const CLOUD_DEFAULTS: CloudKnobs = {
-  radiusBottom: 5.5,
+  radiusBottom: 4.8,
   radiusTop:    0.05,
-  waveAmp:      0.06,
-  waveFreq:     0.40,
-  waveSpeed:    0.50,
-  waveMode:     0,      // latéral par défaut
+  height:       14,
+  posX: 0, posY: 0, posZ: 0,
+  bendAmp:   0.0,
+  bendAngle: 0.0,
+  bendSpeed: 0.0,
   density:      2.0,
   contrast:     0.65,
   lightOffset:  0.42,
@@ -53,42 +58,45 @@ export const CLOUD_DEFAULTS: CloudKnobs = {
 };
 
 export type BeamKnobs = {
+  // Géométrie
   radiusBottom: number;
   radiusTop:    number;
-  // Onde
-  waveAmp:   number;
-  waveFreq:  number;
-  waveSpeed: number;
-  /** 0 = latéral, 1 = radial */
-  waveMode:  number;
+  height:       number;
+  // Position dans la scène
+  posX: number;
+  posY: number;
+  posZ: number;
+  // Coude
+  bendAmp:   number;
+  bendAngle: number;
+  bendSpeed: number;
   // Matériau
   alpha: number;
 };
 export const BEAM_DEFAULTS: BeamKnobs = {
-  radiusBottom: 0.35,
+  radiusBottom: 0.45,
   radiusTop:    0.0,
-  waveAmp:      0.06,
-  waveFreq:     0.40,
-  waveSpeed:    0.50,
-  waveMode:     0,
+  height:       14,
+  posX: 0, posY: 0, posZ: 0,
+  bendAmp:   0.0,
+  bendAngle: 0.0,
+  bendSpeed: 0.0,
   alpha:        0.95,
 };
 
 // ── Vertex shader partagé ────────────────────────────────────────────────────
 //
-// uWaveMode contrôle le type d'ondulation :
-//   0   = latéral   : le pilier se plie gauche-droite, la vague monte
-//   1   = radial    : chaque section gonfle / rétrécit, la bosse monte
-//   0.5 = mix 50/50 : les deux en même temps
-//
-// Le mix() permet toutes les valeurs intermédiaires sans if/else GLSL.
+// Coude unique ancré aux extrémités (même logique que Phase 1 p1VertexShader).
+// uBendAngle tourne la direction du coude dans le plan XZ (boussole 0–2PI).
+// uBendSpeed = 0 → coude figé sur uBendAngle.
+// uHalfH     = height / 2 → l'enveloppe s'adapte à la hauteur du pilier.
 
-const waveVertexShader = /* glsl */ `
+const bendVertexShader = /* glsl */ `
 uniform float uTime;
-uniform float uWaveFreq;
-uniform float uWaveAmp;
-uniform float uWaveSpeed;
-uniform float uWaveMode;
+uniform float uBendAmp;
+uniform float uBendAngle;
+uniform float uBendSpeed;
+uniform float uHalfH;
 
 varying vec2 vUv;
 varying vec3 vViewPos;
@@ -98,23 +106,14 @@ varying vec3 vWorldPos;
 void main() {
   vec3 pos = position;
 
-  float t     = uTime * uWaveSpeed;
-  float wave  = sin(pos.y * uWaveFreq - t);
-  float waveZ = cos(pos.y * uWaveFreq * 0.83 - t * 0.91);
+  // Enveloppe : 0 aux extrémités, 1 au centre — coude ancré à chaque bout
+  float nY  = clamp((pos.y + uHalfH) / (2.0 * uHalfH), 0.0, 1.0);
+  float env = sin(nY * 3.14159);
 
-  // Mode latéral : déplacement X/Z (serpent gauche-droite qui monte)
-  vec3 posLat = pos;
-  posLat.x += wave  * uWaveAmp;
-  posLat.z += waveZ * uWaveAmp * 0.60;
-
-  // Mode radial : chaque section gonfle / rétrécit en montant
-  float pulse  = 1.0 + wave * uWaveAmp;
-  vec3 posRad  = pos;
-  posRad.x    *= pulse;
-  posRad.z    *= pulse;
-
-  // Fusion douce entre les deux modes
-  pos = mix(posLat, posRad, clamp(uWaveMode, 0.0, 1.0));
+  // Direction du coude (boussole XZ)
+  float angle = uBendAngle + uTime * uBendSpeed;
+  pos.x += cos(angle) * uBendAmp * env;
+  pos.z += sin(angle) * uBendAmp * env;
 
   vUv         = uv;
   vViewPos    = (modelViewMatrix * vec4(pos, 1.0)).xyz;
@@ -277,10 +276,10 @@ export function WormholeCloud3D({ knobs }: { knobs: CloudKnobs }) {
 
   const uniforms = useMemo(() => ({
     uTime:        { value: 0 },
-    uWaveFreq:    { value: knobs.waveFreq },
-    uWaveAmp:     { value: knobs.waveAmp },
-    uWaveSpeed:   { value: knobs.waveSpeed },
-    uWaveMode:    { value: knobs.waveMode },
+    uBendAmp:     { value: knobs.bendAmp },
+    uBendAngle:   { value: knobs.bendAngle },
+    uBendSpeed:   { value: knobs.bendSpeed },
+    uHalfH:       { value: knobs.height / 2 },
     uDensity:     { value: knobs.density },
     uContrast:    { value: knobs.contrast },
     uLightOffset: { value: knobs.lightOffset },
@@ -298,10 +297,10 @@ export function WormholeCloud3D({ knobs }: { knobs: CloudKnobs }) {
     const mat = matRef.current;
     if (!mat) return;
     mat.uniforms.uTime.value        = clock.elapsedTime;
-    mat.uniforms.uWaveFreq.value    = knobs.waveFreq;
-    mat.uniforms.uWaveAmp.value     = knobs.waveAmp;
-    mat.uniforms.uWaveSpeed.value   = knobs.waveSpeed;
-    mat.uniforms.uWaveMode.value    = knobs.waveMode;
+    mat.uniforms.uBendAmp.value     = knobs.bendAmp;
+    mat.uniforms.uBendAngle.value   = knobs.bendAngle;
+    mat.uniforms.uBendSpeed.value   = knobs.bendSpeed;
+    mat.uniforms.uHalfH.value       = knobs.height / 2;
     mat.uniforms.uDensity.value     = knobs.density;
     mat.uniforms.uContrast.value    = knobs.contrast;
     mat.uniforms.uLightOffset.value = knobs.lightOffset;
@@ -311,11 +310,15 @@ export function WormholeCloud3D({ knobs }: { knobs: CloudKnobs }) {
   });
 
   return (
-    <mesh key={`c-${knobs.radiusBottom}-${knobs.radiusTop}`} renderOrder={50}>
-      <cylinderGeometry args={[knobs.radiusTop, knobs.radiusBottom, 14, 64, 48, true]} />
+    <mesh
+      key={`c-${knobs.radiusBottom}-${knobs.radiusTop}-${knobs.height}`}
+      position={[knobs.posX, knobs.posY, knobs.posZ]}
+      renderOrder={50}
+    >
+      <cylinderGeometry args={[knobs.radiusTop, knobs.radiusBottom, knobs.height, 64, 48, true]} />
       <shaderMaterial
         ref={matRef}
-        vertexShader={waveVertexShader}
+        vertexShader={bendVertexShader}
         fragmentShader={cloudFragmentShader}
         uniforms={uniforms}
         transparent
@@ -335,10 +338,10 @@ export function WormholeBeam3D({ knobs }: { knobs: BeamKnobs }) {
 
   const uniforms = useMemo(() => ({
     uTime:      { value: 0 },
-    uWaveFreq:  { value: knobs.waveFreq },
-    uWaveAmp:   { value: knobs.waveAmp },
-    uWaveSpeed: { value: knobs.waveSpeed },
-    uWaveMode:  { value: knobs.waveMode },
+    uBendAmp:   { value: knobs.bendAmp },
+    uBendAngle: { value: knobs.bendAngle },
+    uBendSpeed: { value: knobs.bendSpeed },
+    uHalfH:     { value: knobs.height / 2 },
     uAlpha:     { value: knobs.alpha },
     uTip:       { value: C_WHITE.clone() },
     uMid:       { value: C_CYAN.clone() },
@@ -350,19 +353,23 @@ export function WormholeBeam3D({ knobs }: { knobs: BeamKnobs }) {
     const mat = matRef.current;
     if (!mat) return;
     mat.uniforms.uTime.value      = clock.elapsedTime;
-    mat.uniforms.uWaveFreq.value  = knobs.waveFreq;
-    mat.uniforms.uWaveAmp.value   = knobs.waveAmp;
-    mat.uniforms.uWaveSpeed.value = knobs.waveSpeed;
-    mat.uniforms.uWaveMode.value  = knobs.waveMode;
+    mat.uniforms.uBendAmp.value   = knobs.bendAmp;
+    mat.uniforms.uBendAngle.value = knobs.bendAngle;
+    mat.uniforms.uBendSpeed.value = knobs.bendSpeed;
+    mat.uniforms.uHalfH.value     = knobs.height / 2;
     mat.uniforms.uAlpha.value     = knobs.alpha;
   });
 
   return (
-    <mesh key={`b-${knobs.radiusBottom}-${knobs.radiusTop}`} renderOrder={51}>
-      <cylinderGeometry args={[knobs.radiusTop, knobs.radiusBottom, 14, 32, 32, true]} />
+    <mesh
+      key={`b-${knobs.radiusBottom}-${knobs.radiusTop}-${knobs.height}`}
+      position={[knobs.posX, knobs.posY, knobs.posZ]}
+      renderOrder={51}
+    >
+      <cylinderGeometry args={[knobs.radiusTop, knobs.radiusBottom, knobs.height, 32, 32, true]} />
       <shaderMaterial
         ref={matRef}
-        vertexShader={waveVertexShader}
+        vertexShader={bendVertexShader}
         fragmentShader={beamFragmentShader}
         uniforms={uniforms}
         transparent

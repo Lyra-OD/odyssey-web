@@ -1,5 +1,6 @@
 "use client";
 
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -243,6 +244,8 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [phase,    setPhase]    = useState<1 | 2>(1);
   // Phase 1 — piliers indépendants + caméra globale partagée
   const [p1Active, setP1Active] = useState<1 | 2 | 3>(1); // 1=rose 2=cyan 3=cam
+  // Phase 2 — même logique de sélection
+  const [p2Active, setP2Active] = useState<1 | 2 | 3 | 4>(1); // 1=cloud géo 2=cloud mat 3=beam 4=cam
   const [p1Rose,   setP1Rose]   = useState<P1Pillar>({ ...P1_ROSE_DEFAULTS });
   const [p1Cyan,   setP1Cyan]   = useState<P1Pillar>({ ...P1_CYAN_DEFAULTS });
   const [p1Cam,    setP1CamSt]  = useState<P1Cam>({ ...P1_CAM_DEFAULTS });
@@ -308,14 +311,17 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
     { key: "y", label: isFr ? "Cam Y (hauteur)" : "Camera Y", min: -10.0, max: 5.0, step: 0.1 },
   ];
 
-  // Phase 2 — sliders cloud (géo + onde)
+  // Phase 2 — sliders cloud (géo + coude + position)
   const cloudGeoDefs: { key: keyof CloudKnobs; label: string; min: number; max: number; step: number }[] = [
-    { key: "radiusBottom", label: isFr ? "Rayon bas"     : "Radius bot",   min: 0.5,  max: 14.0, step: 0.1  },
-    { key: "radiusTop",    label: isFr ? "Rayon haut"    : "Radius top",   min: 0.0,  max: 4.0,  step: 0.05 },
-    { key: "waveAmp",      label: isFr ? "Amplitude"     : "Wave amp",     min: 0.0,  max: 2.0,  step: 0.02 },
-    { key: "waveFreq",     label: isFr ? "Fréquence"     : "Wave freq",    min: 0.05, max: 4.0,  step: 0.05 },
-    { key: "waveSpeed",    label: isFr ? "Vitesse"       : "Wave speed",   min: 0.0,  max: 4.0,  step: 0.05 },
-    { key: "waveMode",     label: isFr ? "Mode (0=lat 1=rad)" : "Mode (0=lat 1=rad)", min: 0, max: 1, step: 0.01 },
+    { key: "radiusBottom", label: isFr ? "Rayon bas"          : "Radius bot",      min: 0.5,  max: 14.0, step: 0.1  },
+    { key: "radiusTop",    label: isFr ? "Rayon haut"         : "Radius top",      min: 0.0,  max: 4.0,  step: 0.05 },
+    { key: "height",       label: isFr ? "Longueur"           : "Height",          min: 2.0,  max: 40.0, step: 0.5  },
+    { key: "bendAmp",      label: isFr ? "Coude (force)"      : "Bend strength",   min: 0.0,  max: 4.0,  step: 0.02 },
+    { key: "bendAngle",    label: isFr ? "Coude (direction)"  : "Bend direction",  min: 0.0,  max: 6.28, step: 0.02 },
+    { key: "bendSpeed",    label: isFr ? "Coude (0=figé)"     : "Bend rot speed",  min: 0.0,  max: 2.0,  step: 0.02 },
+    { key: "posX",         label: isFr ? "Position X"         : "Position X",      min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "posY",         label: isFr ? "Position Y"         : "Position Y",      min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "posZ",         label: isFr ? "Position Z"         : "Position Z",      min: -8.0, max: 8.0,  step: 0.1  },
   ];
 
   // Phase 2 — sliders cloud (matériau)
@@ -328,15 +334,18 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
     { key: "alpha",       label: isFr ? "Opacité"     : "Opacity",     min: 0.0, max: 1.0,  step: 0.01  },
   ];
 
-  // Phase 2 — sliders beam (géo + onde + alpha)
+  // Phase 2 — sliders beam (géo + coude + position + alpha)
   const beamDefs: { key: keyof BeamKnobs; label: string; min: number; max: number; step: number }[] = [
-    { key: "radiusBottom", label: isFr ? "Rayon bas"     : "Radius bot",  min: 0.0,  max: 6.0,  step: 0.05 },
-    { key: "radiusTop",    label: isFr ? "Rayon haut"    : "Radius top",  min: 0.0,  max: 3.0,  step: 0.05 },
-    { key: "waveAmp",      label: isFr ? "Amplitude"     : "Wave amp",    min: 0.0,  max: 2.0,  step: 0.02 },
-    { key: "waveFreq",     label: isFr ? "Fréquence"     : "Wave freq",   min: 0.05, max: 4.0,  step: 0.05 },
-    { key: "waveSpeed",    label: isFr ? "Vitesse"       : "Wave speed",  min: 0.0,  max: 4.0,  step: 0.05 },
-    { key: "waveMode",     label: isFr ? "Mode (0=lat 1=rad)" : "Mode (0=lat 1=rad)", min: 0, max: 1, step: 0.01 },
-    { key: "alpha",        label: isFr ? "Intensité"     : "Intensity",   min: 0.0,  max: 1.0,  step: 0.01 },
+    { key: "radiusBottom", label: isFr ? "Rayon bas"         : "Radius bot",     min: 0.0,  max: 6.0,  step: 0.05 },
+    { key: "radiusTop",    label: isFr ? "Rayon haut"        : "Radius top",     min: 0.0,  max: 3.0,  step: 0.05 },
+    { key: "height",       label: isFr ? "Longueur"          : "Height",         min: 2.0,  max: 40.0, step: 0.5  },
+    { key: "bendAmp",      label: isFr ? "Coude (force)"     : "Bend strength",  min: 0.0,  max: 4.0,  step: 0.02 },
+    { key: "bendAngle",    label: isFr ? "Coude (direction)" : "Bend direction", min: 0.0,  max: 6.28, step: 0.02 },
+    { key: "bendSpeed",    label: isFr ? "Coude (0=figé)"    : "Bend rot speed", min: 0.0,  max: 2.0,  step: 0.02 },
+    { key: "posX",         label: isFr ? "Position X"        : "Position X",     min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "posY",         label: isFr ? "Position Y"        : "Position Y",     min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "posZ",         label: isFr ? "Position Z"        : "Position Z",     min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "alpha",        label: isFr ? "Intensité"         : "Intensity",      min: 0.0,  max: 1.0,  step: 0.01 },
   ];
 
   return (
@@ -381,6 +390,14 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
                   <CameraRig z={cam.z} y={cam.y} />
                   <WormholeCloud3D knobs={cloud} />
                   <WormholeBeam3D  knobs={beam} />
+                  <EffectComposer>
+                    <Bloom
+                      luminanceThreshold={0.15}
+                      luminanceSmoothing={0.9}
+                      intensity={1.8}
+                      mipmapBlur
+                    />
+                  </EffectComposer>
                 </>
               )}
             </Suspense>
@@ -540,26 +557,101 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
             />
           )}
 
-          {/* Sliders Phase 2 */}
+          {/* ── Sélecteur Phase 2 ─────────────────────────────────────────────── */}
           {phase === 2 && (
-            <>
-              <SliderGroup
-                label={isFr ? "◈ Caméra" : "◈ Camera"}
-                knobs={cam} set={setCam} defs={camDefs}
-              />
-              <SliderGroup
-                label={isFr ? "◈ Cloud (rose) — Géométrie + Onde" : "◈ Cloud (rose) — Geometry + Wave"}
-                knobs={cloud} set={setCloud} defs={cloudGeoDefs}
-              />
-              <SliderGroup
-                label={isFr ? "◈ Cloud (rose) — Matériau" : "◈ Cloud (rose) — Material"}
-                knobs={cloud} set={setCloud} defs={cloudMatDefs}
-              />
-              <SliderGroup
-                label={isFr ? "◈ Beam (cyan) — Géométrie + Onde + Intensité" : "◈ Beam (cyan) — Geometry + Wave + Intensity"}
-                knobs={beam} set={setBeam} defs={beamDefs}
-              />
-            </>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setP2Active(1)}
+                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                  p2Active === 1
+                    ? "border-pink-400 bg-pink-400/15 text-pink-300"
+                    : "border-white/15 text-white/45 hover:border-pink-400/40 hover:text-pink-300/70"
+                }`}
+              >
+                1 — Rose géo
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setP2Active(2)}
+                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                  p2Active === 2
+                    ? "border-pink-300 bg-pink-300/10 text-pink-200"
+                    : "border-white/15 text-white/45 hover:border-pink-300/40 hover:text-pink-200/70"
+                }`}
+              >
+                2 — Rose mat
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setP2Active(3)}
+                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                  p2Active === 3
+                    ? "border-cyan-400 bg-cyan-400/15 text-cyan-300"
+                    : "border-white/15 text-white/45 hover:border-cyan-400/40 hover:text-cyan-300/70"
+                }`}
+              >
+                3 — Cyan
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setP2Active(4)}
+                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+                  p2Active === 4
+                    ? "border-white/60 bg-white/10 text-white/90"
+                    : "border-white/15 text-white/45 hover:border-white/35"
+                }`}
+              >
+                4 — Cam
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (p2Active === 1 || p2Active === 2) setCloudState({ ...CLOUD_DEFAULTS });
+                  else if (p2Active === 3) setBeamState({ ...BEAM_DEFAULTS });
+                  else setCamState({ ...CAMERA_DEFAULTS });
+                }}
+                className="ml-1 rounded-sm border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/40 hover:border-white/25 hover:text-white/65"
+              >
+                Reset
+              </button>
+            </div>
+          )}
+
+          {/* Sliders Phase 2 — cloud géométrie */}
+          {phase === 2 && p2Active === 1 && (
+            <SliderGroup
+              label="◈ Rose — géométrie · coude · position"
+              knobs={cloud} set={setCloud} defs={cloudGeoDefs}
+            />
+          )}
+
+          {/* Sliders Phase 2 — cloud matériau */}
+          {phase === 2 && p2Active === 2 && (
+            <SliderGroup
+              label="◈ Rose — matériau (densité · ombre · animation)"
+              knobs={cloud} set={setCloud} defs={cloudMatDefs}
+            />
+          )}
+
+          {/* Sliders Phase 2 — beam */}
+          {phase === 2 && p2Active === 3 && (
+            <SliderGroup
+              label="◈ Cyan — géométrie · coude · position · intensité"
+              knobs={beam} set={setBeam} defs={beamDefs}
+            />
+          )}
+
+          {/* Sliders Phase 2 — caméra */}
+          {phase === 2 && p2Active === 4 && (
+            <SliderGroup
+              label="◈ Caméra"
+              knobs={cam} set={setCam} defs={camDefs}
+            />
           )}
 
         </div>
