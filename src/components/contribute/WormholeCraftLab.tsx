@@ -46,8 +46,12 @@ type P1Pillar = {
   bendSpeed: number;
   /** Position X dans la scène (décaler le pilier gauche/droite). */
   posX: number;
+  /** Position Y dans la scène (monter/descendre le pilier). */
+  posY: number;
   /** Position Z dans la scène (décaler avant/arrière). */
   posZ: number;
+  /** Hauteur du pilier en unités world. */
+  height: number;
 };
 
 /** Caméra globale partagée par les deux piliers. */
@@ -56,12 +60,12 @@ type P1Cam = { z: number; y: number };
 const P1_ROSE_DEFAULTS: P1Pillar = {
   radiusBottom: 4.8, radiusTop: 0.05,
   bendAmp: 0.0, bendAngle: 0.0, bendSpeed: 0.0,
-  posX: 0.0, posZ: 0.0,
+  posX: 0.0, posY: 0.0, posZ: 0.0, height: 14,
 };
 const P1_CYAN_DEFAULTS: P1Pillar = {
   radiusBottom: 0.45, radiusTop: 0.0,
   bendAmp: 0.0, bendAngle: 0.0, bendSpeed: 0.0,
-  posX: 0.0, posZ: 0.0,
+  posX: 0.0, posY: 0.0, posZ: 0.0, height: 14,
 };
 const P1_CAM_DEFAULTS: P1Cam = { z: 9.0, y: -3.0 };
 
@@ -76,14 +80,13 @@ uniform float uTime;
 uniform float uBendAmp;
 uniform float uBendAngle; // direction du coude dans XZ (0–2PI)
 uniform float uBendSpeed; // vitesse de rotation du coude (0 = figé)
-
-const float HALF_H = 7.0; // demi-hauteur du cylindre
+uniform float uHalfH;     // demi-hauteur du cylindre (height / 2)
 
 void main() {
   vec3 pos = position;
 
   // Enveloppe : 0 aux extrémités, 1 au centre — coude ancré à chaque bout
-  float nY  = clamp((pos.y + HALF_H) / (2.0 * HALF_H), 0.0, 1.0);
+  float nY  = clamp((pos.y + uHalfH) / (2.0 * uHalfH), 0.0, 1.0);
   float env = sin(nY * 3.14159);
 
   // Direction du coude dans le plan XZ
@@ -121,6 +124,7 @@ function Phase1WaveMesh({
       uBendAmp:    { value: pillar.bendAmp },
       uBendAngle:  { value: pillar.bendAngle },
       uBendSpeed:  { value: pillar.bendSpeed },
+      uHalfH:      { value: pillar.height / 2 },
       uColor:      { value: new Color(color) },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,14 +138,15 @@ function Phase1WaveMesh({
     mat.uniforms.uBendAmp.value   = pillar.bendAmp;
     mat.uniforms.uBendAngle.value = pillar.bendAngle;
     mat.uniforms.uBendSpeed.value = pillar.bendSpeed;
+    mat.uniforms.uHalfH.value     = pillar.height / 2;
   });
 
   return (
     <mesh
-      key={`${pillar.radiusBottom}-${pillar.radiusTop}`}
-      position={[pillar.posX, 0, pillar.posZ]}
+      key={`${pillar.radiusBottom}-${pillar.radiusTop}-${pillar.height}`}
+      position={[pillar.posX, pillar.posY, pillar.posZ]}
     >
-      <cylinderGeometry args={[pillar.radiusTop, pillar.radiusBottom, 14, 64, 48, true]} />
+      <cylinderGeometry args={[pillar.radiusTop, pillar.radiusBottom, pillar.height, 64, 48, true]} />
       <shaderMaterial
         ref={matRef}
         vertexShader={p1VertexShader}
@@ -286,7 +291,9 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
     { key: "bendAngle",    label: isFr ? "Coude (direction)"  : "Bend direction",   min: 0.0,  max: 6.28, step: 0.02 },
     { key: "bendSpeed",    label: isFr ? "Coude (0=figé)"     : "Bend rot speed",   min: 0.0,  max: 2.0,  step: 0.02 },
     { key: "posX",         label: isFr ? "Position X"         : "Position X",       min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "posY",         label: isFr ? "Position Y (haut/bas)" : "Position Y",    min: -8.0, max: 8.0,  step: 0.1  },
     { key: "posZ",         label: isFr ? "Position Z"         : "Position Z",       min: -8.0, max: 8.0,  step: 0.1  },
+    { key: "height",       label: isFr ? "Longueur du pilier" : "Pillar length",    min: 2.0,  max: 40.0, step: 0.5  },
   ];
 
   // Phase 1 — sliders caméra (globaux, bougent les 2 piliers ensemble)
