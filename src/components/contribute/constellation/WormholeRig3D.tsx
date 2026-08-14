@@ -329,8 +329,8 @@ void main() {
   vec3 pos = position;
   float nY  = clamp((pos.y + uHalfH) / (2.0 * uHalfH), 0.0, 1.0);
   float env = sin(nY * 3.14159);
-  float rad = mix(uRadiusBottom, uRadiusTop, nY);
-  pos.x *= max(rad, 0.08) * 2.15;
+  // Largeur du plan = constante (le V visuel est dans le fragment, pas le mesh).
+  pos.x *= max(uRadiusBottom, 0.4) * 2.4;
 
   float angle = uBendAngle + uTime * uBendSpeed;
   pos.x += cos(angle) * uBendAmp * env;
@@ -346,6 +346,8 @@ precision highp float;
 
 uniform float uTime;
 uniform float uAlpha;
+uniform float uRadiusBottom;
+uniform float uRadiusTop;
 uniform vec3  uTip;
 uniform vec3  uMid;
 uniform vec3  uTail;
@@ -361,28 +363,34 @@ float noiseB(vec2 p){
 }
 
 void main() {
-  float nx = vUv.x * 2.0 - 1.0;
-  if (abs(nx) > 1.55) discard;
-
-  float core    = exp(-nx * nx * 14.0);
-  float midGlow = exp(-nx * nx * 2.8);
-  float haze    = exp(-nx * nx * 0.45);
-  float bloom   = exp(-nx * nx * 0.12);
-
+  float x = vUv.x * 2.0 - 1.0;
   float t = vUv.y;
+  float bot = max(uRadiusBottom, 0.05);
+  float top = max(uRadiusTop, 0.08);
+  // Le faisceau n'occupe que le centre du quad — les bords du mesh restent noirs.
+  float vis = 0.28 * mix(1.0, top / bot, t);
+  float nx = x / max(vis, 0.05);
+  if (abs(nx) > 2.1) discard;
+
+  float core    = exp(-nx * nx * 18.0);
+  float midGlow = exp(-nx * nx * 3.4);
+  float haze    = exp(-nx * nx * 1.05);
+
   float flow = uTime * 1.6;
   float flicker = 0.68
     + 0.27 * noiseB(vec2(nx * 2.0, t * 9.0 - flow * 3.5))
     + 0.15 * noiseB(vec2(nx * 5.0 + 3.7, t * 14.0 - flow * 5.2));
 
-  float beam = (core * 1.15 + midGlow * 0.55 + haze * 0.32 + bloom * 0.16) * flicker;
+  float beam = (core * 1.15 + midGlow * 0.50 + haze * 0.22) * flicker;
+  beam *= smoothstep(0.0, 0.04, t) * smoothstep(1.0, 0.92, t);
+  beam *= 1.0 - smoothstep(0.70, 0.94, abs(x));
 
   vec3 col = mix(uMid, uTip, smoothstep(0.0, 0.55, t));
   col = mix(col, vec3(1.0), core * 0.92);
-  col = mix(col, uTail, haze * (1.0 - core) * 0.35);
+  col = mix(col, uTail, haze * (1.0 - core) * 0.28);
 
   float a = clamp(beam * uAlpha, 0.0, 1.0);
-  if (a < 0.004) discard;
+  if (a < 0.008) discard;
   gl_FragColor = vec4(col, a);
 }
 `;
