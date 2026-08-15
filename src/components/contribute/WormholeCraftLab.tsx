@@ -351,6 +351,7 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const beamDefs: { key: keyof BeamKnobs; label: string; min: number; max: number; step: number }[] = [
     { key: "radiusBottom", label: isFr ? "Rayon bas"            : "Radius bot",     min: 0.0,  max: 6.0,  step: 0.05 },
     { key: "radiusTop",    label: isFr ? "Rayon haut"           : "Radius top",     min: 0.0,  max: 3.0,  step: 0.05 },
+    { key: "widthScale",   label: isFr ? "Échelle (tout)"       : "Width scale",    min: 0.3,  max: 2.5,  step: 0.02 },
     { key: "bendAmp",      label: isFr ? "Coude (force)"        : "Bend strength",  min: 0.0,  max: 4.0,  step: 0.02 },
     { key: "bendAngle",    label: isFr ? "Coude (direction)"    : "Bend direction", min: 0.0,  max: 6.28, step: 0.02 },
     { key: "bendSpeed",    label: isFr ? "Coude (0=figé)"       : "Bend speed",     min: 0.0,  max: 2.0,  step: 0.02 },
@@ -665,16 +666,28 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
 
           {phase === 2 && p2Active === 2 && (
             <>
-              <label className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-white/45">
-                Couleur beam
-                <input
-                  type="color"
-                  value={beam.color}
-                  onChange={(e) => setBeamState(p => ({ ...p, color: e.target.value }))}
-                  className="h-7 w-10 cursor-pointer rounded-sm border border-white/20 bg-transparent p-0"
-                />
-                <span className="font-mono text-teal-400/80">{beam.color}</span>
-              </label>
+              <div className="flex flex-wrap items-center gap-4">
+                <label className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-white/45">
+                  Halo
+                  <input
+                    type="color"
+                    value={beam.color}
+                    onChange={(e) => setBeamState(p => ({ ...p, color: e.target.value }))}
+                    className="h-7 w-10 cursor-pointer rounded-sm border border-white/20 bg-transparent p-0"
+                  />
+                  <span className="font-mono text-teal-400/80">{beam.color}</span>
+                </label>
+                <label className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-white/45">
+                  Noyau
+                  <input
+                    type="color"
+                    value={beam.coreColor}
+                    onChange={(e) => setBeamState(p => ({ ...p, coreColor: e.target.value }))}
+                    className="h-7 w-10 cursor-pointer rounded-sm border border-white/20 bg-transparent p-0"
+                  />
+                  <span className="font-mono text-teal-400/80">{beam.coreColor}</span>
+                </label>
+              </div>
               <SliderGroup
                 label="◈ Cyan — faisceau (éclaire les nuages)"
                 knobs={beam} set={setBeam} defs={beamDefs}

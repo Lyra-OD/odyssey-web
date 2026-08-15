@@ -77,7 +77,12 @@ export type BeamKnobs = {
   bendSpeed: number;
   // Matériau
   alpha: number;
+  /** Halo / contour (bas + bords). */
   color: string;
+  /** Noyau (cœur du faisceau). */
+  coreColor: string;
+  /** Multiplie rayon bas et haut sans changer le rapport (1 = taille actuelle). */
+  widthScale: number;
 };
 export const BEAM_DEFAULTS: BeamKnobs = {
   // Géométrie — specs calibrées 14 août 2026 (identiques Phase 1 Cyan)
@@ -90,6 +95,8 @@ export const BEAM_DEFAULTS: BeamKnobs = {
   bendSpeed: 0.00,
   alpha:        0.95,
   color:        "#00e5ff",
+  coreColor:    "#ffffff",
+  widthScale:   1.00,
 };
 
 // ── Vertex shader partagé ────────────────────────────────────────────────────
@@ -322,6 +329,7 @@ uniform float uBendSpeed;
 uniform float uHalfH;
 uniform float uRadiusBottom;
 uniform float uRadiusTop;
+uniform float uWidthScale;
 
 varying vec2 vUv;
 
@@ -330,7 +338,7 @@ void main() {
   float nY  = clamp((pos.y + uHalfH) / (2.0 * uHalfH), 0.0, 1.0);
   float env = sin(nY * 3.14159);
   // Largeur du plan = constante (le V visuel est dans le fragment, pas le mesh).
-  pos.x *= max(uRadiusBottom, 0.4) * 2.4;
+  pos.x *= max(uRadiusBottom, 0.4) * 2.4 * max(uWidthScale, 0.05);
 
   float angle = uBendAngle + uTime * uBendSpeed;
   pos.x += cos(angle) * uBendAmp * env;
@@ -348,7 +356,7 @@ uniform float uTime;
 uniform float uAlpha;
 uniform float uRadiusBottom;
 uniform float uRadiusTop;
-uniform vec3  uTip;
+uniform vec3  uCore;
 uniform vec3  uMid;
 uniform vec3  uTail;
 
@@ -385,9 +393,8 @@ void main() {
   beam *= smoothstep(0.0, 0.04, t) * smoothstep(1.0, 0.92, t);
   beam *= 1.0 - smoothstep(0.70, 0.94, abs(x));
 
-  vec3 col = mix(uMid, uTip, smoothstep(0.0, 0.55, t));
-  col = mix(col, vec3(1.0), core * 0.92);
-  col = mix(col, uTail, haze * (1.0 - core) * 0.28);
+  vec3 col = mix(uMid, uCore, core * 0.95);
+  col = mix(col, uMid * 0.55, haze * (1.0 - core) * 0.28);
 
   float a = clamp(beam * uAlpha, 0.0, 1.0);
   if (a < 0.008) discard;
@@ -488,9 +495,10 @@ export function WormholeBeam3D({ knobs }: { knobs: BeamKnobs }) {
     uHalfH:         { value: knobs.height / 2 },
     uRadiusBottom:  { value: knobs.radiusBottom },
     uRadiusTop:     { value: knobs.radiusTop },
+    uWidthScale:    { value: knobs.widthScale },
     uAlpha:         { value: knobs.alpha },
-    uTip:           { value: C_WHITE.clone() },
-    uMid:           { value: C_CYAN.clone() },
+    uCore:          { value: new Color(knobs.coreColor) },
+    uMid:           { value: new Color(knobs.color) },
     uTail:          { value: C_TEAL.clone() },
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), []);
@@ -506,8 +514,10 @@ export function WormholeBeam3D({ knobs }: { knobs: BeamKnobs }) {
       mat.uniforms.uHalfH.value        = knobs.height / 2;
       mat.uniforms.uRadiusBottom.value = knobs.radiusBottom;
       mat.uniforms.uRadiusTop.value    = knobs.radiusTop;
+      mat.uniforms.uWidthScale.value   = knobs.widthScale;
       mat.uniforms.uAlpha.value        = knobs.alpha;
       (mat.uniforms.uMid.value as Color).set(knobs.color);
+      (mat.uniforms.uCore.value as Color).set(knobs.coreColor);
     }
     if (mesh) {
       mesh.lookAt(camera.position.x, knobs.posY, camera.position.z);
