@@ -8,7 +8,9 @@ import { Color, DoubleSide, ShaderMaterial } from "three";
 
 import { ClientWebGLGate } from "@/src/components/contribute/constellation/webglGate";
 import {
-  BEAM_DEFAULTS,
+  BEAM_A_DEFAULTS,
+  BEAM_B_DEFAULTS,
+  BEAM_C_DEFAULTS,
   CAMERA_DEFAULTS,
   PUFF_A_DEFAULTS,
   PUFF_B_DEFAULTS,
@@ -260,13 +262,30 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [puffC,      setPuffC]      = useState<PuffKnobs>({ ...PUFF_C_DEFAULTS });
   const [puffVoiles, setPuffVoiles] = useState<PuffKnobs>({ ...PUFF_VOILES_DEFAULTS });
   const [puffDust,   setPuffDust]   = useState<PuffKnobs>({ ...PUFF_DUST_DEFAULTS });
-  const [beam,  setBeamState]  = useState<BeamKnobs>({ ...BEAM_DEFAULTS });
+  const [beamLayer, setBeamLayer] = useState<0 | 1 | 2>(0);
+  const [beamA, setBeamA] = useState<BeamKnobs>({ ...BEAM_A_DEFAULTS });
+  const [beamB, setBeamB] = useState<BeamKnobs>({ ...BEAM_B_DEFAULTS });
+  const [beamC, setBeamC] = useState<BeamKnobs>({ ...BEAM_C_DEFAULTS });
 
   const setRose  = <K extends keyof P1Pillar>(k: K, v: number) => setP1Rose(p => ({ ...p, [k]: v }));
   const setCyan  = <K extends keyof P1Pillar>(k: K, v: number) => setP1Cyan(p => ({ ...p, [k]: v }));
   const setP1Cam = <K extends keyof P1Cam>(k: K, v: number)    => setP1CamSt(p => ({ ...p, [k]: v }));
   const setCam   = <K extends keyof CameraKnobs>(k: K, v: number) => setCamState(p => ({ ...p, [k]: v }));
-  const setBeam  = <K extends keyof BeamKnobs>(k: K, v: number) => setBeamState(p => ({ ...p, [k]: v }));
+
+  const beamPack = [beamA, beamB, beamC] as const;
+  const beamActive = beamPack[beamLayer];
+  const setBeamActive = (patch: Partial<BeamKnobs>) => {
+    const apply = (p: BeamKnobs) => ({ ...p, ...patch });
+    if (beamLayer === 0) setBeamA(apply);
+    else if (beamLayer === 1) setBeamB(apply);
+    else setBeamC(apply);
+  };
+  const setBeam = <K extends keyof BeamKnobs>(k: K, v: number) => setBeamActive({ [k]: v } as Partial<BeamKnobs>);
+  const resetBeams = () => {
+    setBeamA({ ...BEAM_A_DEFAULTS });
+    setBeamB({ ...BEAM_B_DEFAULTS });
+    setBeamC({ ...BEAM_C_DEFAULTS });
+  };
 
   const puffPack = [puffA, puffB, puffC, puffVoiles, puffDust] as const;
   const puffActive = puffPack[puffLayer];
@@ -299,7 +318,9 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
       setPuffC(p => ({ ...p, alpha: a * PUFF_C_DEFAULTS.alpha }));
       setPuffVoiles(p => ({ ...p, alpha: a * PUFF_VOILES_DEFAULTS.alpha }));
       setPuffDust(p => ({ ...p, alpha: a * PUFF_DUST_DEFAULTS.alpha }));
-      setBeamState(p => ({ ...p, alpha: a }));
+      setBeamA(p => ({ ...p, alpha: a * BEAM_A_DEFAULTS.alpha }));
+      setBeamB(p => ({ ...p, alpha: a * BEAM_B_DEFAULTS.alpha }));
+      setBeamC(p => ({ ...p, alpha: a * BEAM_C_DEFAULTS.alpha }));
       if (u >= 1) { setDemo(false); return; }
       raf = requestAnimationFrame(tick);
     };
@@ -402,12 +423,14 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
               ) : (
                 <>
                   <CameraRig z={cam.z} y={cam.y} />
-                  <WormholeCloudPuffs knobs={puffA} lightPos={beam} />
-                  <WormholeCloudPuffs knobs={puffB} lightPos={beam} />
-                  <WormholeCloudPuffs knobs={puffC} lightPos={beam} />
-                  <WormholeCloudPuffs knobs={puffVoiles} lightPos={beam} />
-                  <WormholeCloudPuffs knobs={puffDust} lightPos={beam} />
-                  <WormholeBeam3D knobs={beam} />
+                  <WormholeCloudPuffs knobs={puffA} lightPos={{ x: beamA.posX, y: beamA.posY, z: beamA.posZ }} />
+                  <WormholeCloudPuffs knobs={puffB} lightPos={{ x: beamA.posX, y: beamA.posY, z: beamA.posZ }} />
+                  <WormholeCloudPuffs knobs={puffC} lightPos={{ x: beamA.posX, y: beamA.posY, z: beamA.posZ }} />
+                  <WormholeCloudPuffs knobs={puffVoiles} lightPos={{ x: beamA.posX, y: beamA.posY, z: beamA.posZ }} />
+                  <WormholeCloudPuffs knobs={puffDust} lightPos={{ x: beamA.posX, y: beamA.posY, z: beamA.posZ }} />
+                  <WormholeBeam3D knobs={beamA} />
+                  <WormholeBeam3D knobs={beamB} />
+                  <WormholeBeam3D knobs={beamC} />
                 </>
               )}
             </Suspense>
@@ -427,7 +450,7 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
             ? (isFr
                 ? "Vue extérieure — rose = tunnel cloud, cyan = cône beam. Sculpt les cônes + ajoute l'ondulation avant Phase 2."
                 : "External view — pink = cloud tunnel, cyan = beam cone. Sculpt cones + add wave before Phase 2.")
-            : (isFr ? "Phase 2 — beam cyan + 5 couches de nuages (éclairés par le cyan)." : "Phase 2 — cyan beam + 5 cloud layers (lit by the beam).")}
+            : (isFr ? "Phase 2 — 3 rayons + 5 couches de nuages." : "Phase 2 — 3 light rays + 5 cloud layers.")}
         </p>
       </div>
 
@@ -463,7 +486,7 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
               <>
                 <button
                   type="button"
-                  onClick={() => { setCamState({ ...CAMERA_DEFAULTS }); setPuffA({ ...PUFF_A_DEFAULTS }); setPuffB({ ...PUFF_B_DEFAULTS }); setPuffC({ ...PUFF_C_DEFAULTS }); setPuffVoiles({ ...PUFF_VOILES_DEFAULTS }); setPuffDust({ ...PUFF_DUST_DEFAULTS }); setBeamState({ ...BEAM_DEFAULTS }); }}
+                  onClick={() => { setCamState({ ...CAMERA_DEFAULTS }); setPuffA({ ...PUFF_A_DEFAULTS }); setPuffB({ ...PUFF_B_DEFAULTS }); setPuffC({ ...PUFF_C_DEFAULTS }); setPuffVoiles({ ...PUFF_VOILES_DEFAULTS }); setPuffDust({ ...PUFF_DUST_DEFAULTS }); resetBeams(); }}
                   className="rounded-sm border border-white/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/55 hover:border-white/30"
                 >
                   Reset
@@ -477,7 +500,7 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
                     setPuffC({ ...PUFF_C_DEFAULTS });
                     setPuffVoiles({ ...PUFF_VOILES_DEFAULTS });
                     setPuffDust({ ...PUFF_DUST_DEFAULTS });
-                    setBeamState({ ...BEAM_DEFAULTS });
+                    resetBeams();
                     setDemo(true);
                   }}
                   className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45 disabled:opacity-40"
@@ -593,7 +616,7 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
                     : "border-white/15 text-white/45 hover:border-cyan-400/40"
                 }`}
               >
-                2 — Cyan
+                2 — Ray of lights
               </button>
               <button
                 type="button"
@@ -612,7 +635,10 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
                   if (p2Active === 1) {
                     const defs = [PUFF_A_DEFAULTS, PUFF_B_DEFAULTS, PUFF_C_DEFAULTS, PUFF_VOILES_DEFAULTS, PUFF_DUST_DEFAULTS];
                     setPuffActive({ ...defs[puffLayer] });
-                  } else if (p2Active === 2) setBeamState({ ...BEAM_DEFAULTS });
+                  } else if (p2Active === 2) {
+                    const defs = [BEAM_A_DEFAULTS, BEAM_B_DEFAULTS, BEAM_C_DEFAULTS];
+                    setBeamActive({ ...defs[beamLayer] });
+                  }
                   else setCamState({ ...CAMERA_DEFAULTS });
                 }}
                 className="ml-1 rounded-sm border border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/40 hover:border-white/25"
@@ -666,31 +692,54 @@ export function WormholeCraftLab({ locale = "fr" }: { locale?: Locale }) {
 
           {phase === 2 && p2Active === 2 && (
             <>
+              <div className="flex flex-wrap items-center gap-2">
+                {([
+                  [0, "A", beamA.color],
+                  [1, "B", beamB.color],
+                  [2, "C", beamC.color],
+                ] as const).map(([id, name, col]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setBeamLayer(id)}
+                    className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] ${
+                      beamLayer === id
+                        ? "text-white/90"
+                        : "border-white/15 text-white/40 hover:border-white/30"
+                    }`}
+                    style={beamLayer === id ? { borderColor: col, background: `${col}22`, color: col } : undefined}
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
               <div className="flex flex-wrap items-center gap-4">
                 <label className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-white/45">
                   Halo
                   <input
                     type="color"
-                    value={beam.color}
-                    onChange={(e) => setBeamState(p => ({ ...p, color: e.target.value }))}
+                    value={beamActive.color}
+                    onChange={(e) => setBeamActive({ color: e.target.value })}
                     className="h-7 w-10 cursor-pointer rounded-sm border border-white/20 bg-transparent p-0"
                   />
-                  <span className="font-mono text-teal-400/80">{beam.color}</span>
+                  <span className="font-mono text-teal-400/80">{beamActive.color}</span>
                 </label>
                 <label className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-white/45">
                   Noyau
                   <input
                     type="color"
-                    value={beam.coreColor}
-                    onChange={(e) => setBeamState(p => ({ ...p, coreColor: e.target.value }))}
+                    value={beamActive.coreColor}
+                    onChange={(e) => setBeamActive({ coreColor: e.target.value })}
                     className="h-7 w-10 cursor-pointer rounded-sm border border-white/20 bg-transparent p-0"
                   />
-                  <span className="font-mono text-teal-400/80">{beam.coreColor}</span>
+                  <span className="font-mono text-teal-400/80">{beamActive.coreColor}</span>
                 </label>
               </div>
               <SliderGroup
-                label="◈ Cyan — faisceau (éclaire les nuages)"
-                knobs={beam} set={setBeam} defs={beamDefs}
+                label={`◈ Ray ${["A", "B", "C"][beamLayer]} — indépendant`}
+                knobs={beamActive}
+                set={setBeam}
+                defs={beamDefs}
               />
             </>
           )}

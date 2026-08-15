@@ -98,6 +98,9 @@ export const BEAM_DEFAULTS: BeamKnobs = {
   coreColor:    "#ffffff",
   widthScale:   1.00,
 };
+export const BEAM_A_DEFAULTS: BeamKnobs = { ...BEAM_DEFAULTS };
+export const BEAM_B_DEFAULTS: BeamKnobs = { ...BEAM_DEFAULTS };
+export const BEAM_C_DEFAULTS: BeamKnobs = { ...BEAM_DEFAULTS };
 
 // ── Vertex shader partagé ────────────────────────────────────────────────────
 //
