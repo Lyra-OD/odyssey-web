@@ -4,7 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 17 août 2026 — relance conseiller in-app (`pending` ≥ 3 j) — pas de mail famille.
+- 17 août 2026 — relance conseiller : 1 courriel famille (Resend), au clic, max 1 par invitation.
 - 17 août 2026 — scoreboard conseiller : engagement + conversion perso.
 - 17 août 2026 — dashboard admin : GMV + ouverture + conversion salon (`GET /api/partner/commissions`).
 - 17 août 2026 — scoreboard conseiller `/salon/mes-performances` (attribution invitation, pas le ledger salon).
@@ -111,6 +111,7 @@ Ne jamais hardcoder `if (vertical === 'human') isFreemium = true`.
 | Soft Cap UX (médias, magie, musique dual) | ✅ Phase 4 |
 | UI Salon commissions | ✅ `/salon/commissions` + API (caisse + GMV / ouverture / conversion tenant) |
 | Scoreboard conseiller | ✅ `/salon/mes-performances` + `GET /api/partner/my-performance` |
+| Relance famille | ✅ 1 e-mail au clic directeur (`POST …/invitations/[id]/follow-up`) — pas de cron |
 | Creatomate gate entitlements | ✅ Phase 5 · worker P0 ✅ · master/ops ⏳ |
 | Accrual RevShare webhook (durcissement) | 🟡 |
 

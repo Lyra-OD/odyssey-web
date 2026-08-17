@@ -147,7 +147,19 @@ export function PartnerMyPerformanceView({
       ) : (
         <>
           <PerformanceKpiCards lang={lang} kpis={kpis} />
-          <PerformanceFollowUpList lang={lang} rows={followUp} />
+          <PerformanceFollowUpList
+            lang={lang}
+            rows={followUp}
+            onSent={(invitationId) => {
+              setFollowUp((current) =>
+                current.filter((row) => row.invitationId !== invitationId),
+              );
+              setKpis((current) => ({
+                ...current,
+                followUpCount: Math.max(0, current.followUpCount - 1),
+              }));
+            }}
+          />
           <PerformanceInvitationTable lang={lang} rows={rows} />
         </>
       )}

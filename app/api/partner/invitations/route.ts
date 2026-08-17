@@ -12,6 +12,7 @@ import {
   generateInvitationSecret,
   hashInvitationToken,
 } from "@/src/lib/partner/invitationToken";
+import { buildInvitationMagicLinkUrl } from "@/src/lib/partner/invitationMagicLink";
 import { resolvePartnerMembership } from "@/src/lib/partner/resolvePartnerMembership";
 import { createClient } from "@/utils/supabase/server";
 import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
@@ -19,14 +20,6 @@ import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
 function invitationExpiresAt(): string {
   const ms = INVITATION_TTL_DAYS * 24 * 60 * 60 * 1000;
   return new Date(Date.now() + ms).toISOString();
-}
-
-function buildMagicLinkUrl(
-  origin: string,
-  locale: InvitationLocale,
-  secret: string,
-): string {
-  return `${origin}/${locale}/invite/accept?token=${encodeURIComponent(secret)}`;
 }
 
 function invitationAlreadyPendingMessage(locale: InvitationLocale): string {
@@ -155,7 +148,7 @@ export async function POST(request: Request) {
   }
 
   const origin = resolveSiteOrigin(request);
-  const magicLinkUrl = buildMagicLinkUrl(origin, locale, secret);
+  const magicLinkUrl = buildInvitationMagicLinkUrl(origin, locale, secret);
 
   return NextResponse.json({
     invitationId: rpcResult.invitationId,

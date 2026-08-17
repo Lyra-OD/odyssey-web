@@ -20,7 +20,7 @@ function kpiCopy(lang: Locale) {
         conversion: "Your conversion",
         conversionHint: "Families who paid / invitations you sent",
         followUp: "Follow up",
-        followUpHint: "Pending links older than 3 days",
+        followUpHint: "Pending links older than 3 days, not yet emailed",
       }
     : {
         sent: "Invitations envoyées",
@@ -34,7 +34,8 @@ function kpiCopy(lang: Locale) {
         conversion: "Votre conversion",
         conversionHint: "Familles ayant payé / vos invitations",
         followUp: "À relancer",
-        followUpHint: "Liens en attente depuis plus de 3 jours",
+        followUpHint:
+          "Liens en attente depuis plus de 3 jours, pas encore relancés par courriel",
       };
 }
 
@@ -129,7 +130,13 @@ export function PerformanceKpiCards({ lang, kpis }: PerformanceKpiCardsProps) {
             <p className="mt-1 font-label text-[8px] font-semibold uppercase tracking-[0.28em] text-zinc-600">
               {card.hint}
             </p>
-            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-white/95 md:text-5xl">
+            <p
+              className={`mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight md:text-5xl ${
+                card.key === "followUp"
+                  ? "text-[var(--salon-cyan)]"
+                  : "text-white/95"
+              }`}
+            >
               {card.value}
             </p>
           </article>

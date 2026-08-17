@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { hasInvitationFollowUpBeenSent } from "@/src/lib/partner/invitationMagicLink";
 import { percentRate } from "@/src/lib/partner/partnerCommissionTypes";
 
 /** Raisons ledger qui comptent comme commission confirmée (pas payout). */
@@ -80,6 +81,7 @@ export type PartnerPerformanceInvitationInput = {
   invited_email: string;
   status: string;
   created_at: string;
+  metadata?: unknown;
 };
 
 export type PartnerPerformanceLedgerInput = {
@@ -195,6 +197,7 @@ export function isPendingDueForFollowUp(
   nowMs: number,
 ): boolean {
   if (coerceInvitationStatus(invitation.status) !== "pending") return false;
+  if (hasInvitationFollowUpBeenSent(invitation.metadata)) return false;
   const createdMs = Date.parse(invitation.created_at);
   if (!Number.isFinite(createdMs)) return false;
   return nowMs - createdMs >= FOLLOW_UP_AFTER_MS;

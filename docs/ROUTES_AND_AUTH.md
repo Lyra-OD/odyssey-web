@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — `POST /api/partner/invitations/[id]/follow-up` (relance e-mail conseiller).
 - 17 août 2026 — `/salon/mes-performances` + `GET /api/partner/my-performance` (scoreboard conseiller).
 - 17 août 2026 — invitation Salon Souvenir-only (plus de picker).
 - 17 août 2026 — `/salon/commissions` + API ; `next` login conserve le chemin Salon ; `/facturation` redirige.
 - 17 août 2026 — Scanner Phase A : `/scan/[token]` + API sessions (plus « cible »).
-- 17 août 2026 — en-tête type + carte.
 
 Document canonique pour les **URLs**, les **deux pages de connexion** (famille vs partenaire), les **redirects legacy**, et le **branding Salon** (gant blanc). Source de vérité code : `src/lib/appRoutes.ts`.
 
@@ -184,7 +184,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 - Studio (défaut) → `/studio/connexion`
 - Salon (`PartnerHeader` passe `signInHref`) → `/salon/connexion?partenaire=<slug mémorisé>`
 
-**API partenaire (session) :** `GET /api/partner/tenants` · `GET /api/partner/my-performance` (`canInvite`) · `GET /api/partner/commissions` (`canViewLedger`) · `POST /api/partner/invitations` · `GET /api/partner/wallet` (deprecated).
+**API partenaire (session) :** `GET /api/partner/tenants` · `GET /api/partner/my-performance` (`canInvite`) · `GET /api/partner/commissions` (`canViewLedger`) · `POST /api/partner/invitations` · `POST /api/partner/invitations/[id]/follow-up` (`canInvite`, auteur de l’invitation) · `GET /api/partner/wallet` (deprecated).
 
 ---
 
@@ -227,6 +227,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | `app/api/partner/commissions/route.ts` | Soldes + ledger RevShare (`canViewLedger`) |
 | `app/api/partner/my-performance/route.ts` | Scoreboard conseiller (`invited_by_user_id`) |
 | `app/api/partner/invitations/route.ts` | Création invitation + magic link |
+| `app/api/partner/invitations/[id]/follow-up/route.ts` | Relance e-mail (1×, régénère le magic link) |
 | `docs/DESIGN_SYSTEM.md` | Palette, hiérarchie, co-branding, **signature Halo-Éclipse** (§4.1), animations |
 
 ---

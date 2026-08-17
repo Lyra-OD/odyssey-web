@@ -159,4 +159,29 @@ describe("listFollowUpInvitations", () => {
       "11111111-1111-4111-8111-111111111111",
     ]);
   });
+
+  it("exclut une invitation déjà relancée par courriel", () => {
+    const followUp = listFollowUpInvitations(
+      [
+        {
+          id: "11111111-1111-4111-8111-111111111111",
+          invited_email: "deja@famille.com",
+          status: "pending",
+          created_at: "2026-08-01T00:00:00.000Z",
+          metadata: { follow_up_sent_at: "2026-08-05T00:00:00.000Z" },
+        },
+        {
+          id: "22222222-2222-4222-8222-222222222222",
+          invited_email: "encore@famille.com",
+          status: "pending",
+          created_at: "2026-08-01T00:00:00.000Z",
+        },
+      ],
+      nowMs,
+    );
+
+    expect(followUp.map((row) => row.id)).toEqual([
+      "22222222-2222-4222-8222-222222222222",
+    ]);
+  });
 });

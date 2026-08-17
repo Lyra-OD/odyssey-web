@@ -4,7 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 17 août 2026 — Mes performances : à relancer (`pending` ≥ 3 j, in-app).
+- 17 août 2026 — relance Mes performances : courriel famille au clic du directeur (1×, Resend).
 - 17 août 2026 — `/salon/mes-performances` : taux engagement + conversion du conseiller.
 - 17 août 2026 — `/salon/commissions` : GMV + ouverture + conversion salon (admin).
 - 17 août 2026 — `/salon/mes-performances` : scoreboard conseiller (pas le solde salon).
@@ -53,7 +53,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Checkout jetons B2B | — | **N/A** — purgé P8. Ne plus planifier |
 | Salon invitations | 🟢 | Souvenir 0 $ — **un geste**, pas de picker forfait |
 | Salon commissions | 🟢 | `/salon/commissions` + API caisse + pilotage GMV/ouverture/conversion · `/facturation` → redirect |
-| Salon mes performances | 🟢 | taux perso + relance `pending` ≥ 3 j (pas d’e-mail famille) |
+| Salon mes performances | 🟢 | taux perso + relance `pending` ≥ 3 j (1 e-mail au clic, pas de drip) |
 | Fonds / packs invité | 🟢 gated | Code 3a livré · visible si `viral_loop_enabled` sur le tenant |
 | Scanner Compagnon | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Export / render** | 🟡 | P0 🟢 · master / cinéma ⏳ — **pas** 🔴 |

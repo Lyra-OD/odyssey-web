@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — env Relance salon : `RESEND_API_KEY` · `RESEND_FROM_EMAIL`.
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — hub post-purge jetons.
 
@@ -50,6 +51,8 @@ npm run build    # gate avant merge
 | `STRIPE_SECRET_KEY` | Checkout |
 | `STRIPE_WEBHOOK_SECRET` | Signature webhook |
 | `STINGRAY_*` / `STINGRAY_MODE` | Musique live ou `mock` |
+| `RESEND_API_KEY` | Relance invitation salon (serveur) |
+| `RESEND_FROM_EMAIL` | Expéditeur Relance (`Nom <email@domaine>`) |
 
 Détail routes : [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).
 

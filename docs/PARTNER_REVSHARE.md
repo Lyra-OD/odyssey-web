@@ -4,7 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 17 août 2026 — Mes performances : relance in-app des `pending` ≥ 3 j (pas d’e-mail famille).
+- 17 août 2026 — relance Mes performances : 1 courriel famille (Resend), déclenché par le directeur.
 - 17 août 2026 — scoreboard conseiller : taux engagement + conversion perso (0/0 → 0 %).
 - 17 août 2026 — `/salon/commissions` : GMV familles + ouverture + conversion salon (pilotage admin).
 - 17 août 2026 — `/salon/mes-performances` : scoreboard conseiller (`invited_by_user_id`) ; pas de versement Odyssey.
@@ -375,7 +375,7 @@ record_partner_commission_payout(
 
 Route : `/{lang}/salon/commissions` · `/{lang}/salon/facturation` redirige. Directeur sans accès → `/salon`. KPIs + ledger SQL même à 0 $ (pas de mur « RevShare inactif » si `is_freemium` null / SELECT échoue).
 
-Scoreboard conseiller : `/{lang}/salon/mes-performances` · **GET `/api/partner/my-performance`**. Filtre `partner_invitations.invited_by_user_id = auth.uid()` + ledger `invitation_id`. **Pas** le solde `partner_commission_balances`. **Pas** de CTA versement. Taux : engagement = `accepted / sent` · conversion = `upsells / sent` (0 envoi → 0 %). Relance : `pending` ≥ 3 jours, in-app seulement — **pas** d’e-mail Odyssey à la famille.
+Scoreboard conseiller : `/{lang}/salon/mes-performances` · **GET `/api/partner/my-performance`**. Filtre `partner_invitations.invited_by_user_id = auth.uid()` + ledger `invitation_id`. **Pas** le solde `partner_commission_balances`. **Pas** de CTA versement. Taux : engagement = `accepted / sent` · conversion = `upsells / sent` (0 envoi → 0 %). Relance : `pending` ≥ 3 jours **et** `metadata.follow_up_sent_at` absent. Le directeur déclenche **un** courriel (`POST /api/partner/invitations/[id]/follow-up`) — pas de drip J+1/J+3. Copie gant blanc (pas de prix). Création d’invitation = copie du lien, **pas** d’e-mail auto.
 
 Pilotage admin (même API commissions, **tenant**) :
 

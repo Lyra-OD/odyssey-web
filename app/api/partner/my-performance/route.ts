@@ -29,6 +29,7 @@ type InvitationRowRaw = {
   invited_email: string;
   status: string;
   created_at: string;
+  metadata: unknown;
 };
 
 type LedgerRowRaw = {
@@ -114,7 +115,7 @@ export async function GET(request: Request) {
 
   const { data: invitationRaw } = await admin
     .from("partner_invitations")
-    .select("id, invited_email, status, created_at")
+    .select("id, invited_email, status, created_at, metadata")
     .eq("tenant_id", tenantId)
     .eq("invited_by_user_id", user.id)
     .order("created_at", { ascending: false })
@@ -127,6 +128,7 @@ export async function GET(request: Request) {
     invited_email: row.invited_email,
     status: row.status,
     created_at: row.created_at,
+    metadata: row.metadata,
   }));
 
   const invitationIds = invitations.map((row) => row.id);
