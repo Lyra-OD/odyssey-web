@@ -183,6 +183,8 @@
     "studioAccess": "Studio access",
     "salonAccess": "PARTNER SPACE",
     "salonSubtitle": "Sign in for partner teams.",
+    "hqAccess": "ODYSSEY HQ",
+    "hqSubtitle": "Reserved for Odyssey operators.",
     "poweredByOdyssey": "Powered by",
     "createAccess": "Create Access",
     "tabSignIn": "Sign in",
@@ -231,6 +233,11 @@
     "signOut": "Sign out",
     "welcomeStudio": "Welcome to the Studio, {name}",
     "guestName": "guest"
+  },
+  "hq": {
+    "title": "Odyssey HQ",
+    "kicker": "Control tower",
+    "empty": "Network figures arrive in the next slice. This door is locked."
   },
   "tributeWizard": {
     "progressAria": "Creation journey progress",

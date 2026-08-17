@@ -15,7 +15,7 @@
 >
 > **Témoignage Sanctuaire (3b) :** [`odyssey_user_assets_guest_video_mime.sql`](odyssey_user_assets_guest_video_mime.sql) — MIME `video/webm|mp4|quicktime` sur bucket `user-assets`. L’API tente aussi `updateBucket` à chaud.
 >
-> **P12 (Scanner Phase A) :** [`odyssey_p12_scan_sessions_ensure.sql`](odyssey_p12_scan_sessions_ensure.sql) — filet `scan_sessions` (déjà dans P6 B5). À jouer seulement si la table manque.
+> **P13 (HQ allowlist) :** [`odyssey_p13_hq_allowlist.sql`](odyssey_p13_hq_allowlist.sql) — opérateurs `/hq`. **À jouer** (SQL Editor). Ajouter un admin = `INSERT`, pas de redeploy.
 >
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
 > **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).  
@@ -58,6 +58,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | 23b | `odyssey_p10_3_guest_photo_quota.sql` | **Migration** | **Pilote viral** — max **5** `guest_photo` / access_token · advisory lock — Soft Cap famille inchangé |
 | 24 | `odyssey_p11_wizard_editor_collab.sql` | **Migration** | **Co-Créateur Wizard** — purpose `wizard_editor` + 1 lien actif / projet — voir [`WIZARD_EDITOR_COLLAB.md`](../WIZARD_EDITOR_COLLAB.md) |
 | 25 | `odyssey_p12_scan_sessions_ensure.sql` | **Filet** | **Scanner Phase A** — `CREATE TABLE IF NOT EXISTS scan_sessions` si P6 B5 absent |
+| 26 | `odyssey_p13_hq_allowlist.sql` | **Migration** | **HQ** — `hq_allowlist` opérateurs plateforme (RLS own-row) |
 | — | `odyssey_p6_1_waterfall_qa_assert.sql` | **QA** | Assert waterfall pur S1–S3 + clawback S5 (lecture seule). |
 | — | `odyssey_p6_qa_revshare_accrual.sql` | **QA** | Accrual RevShare E2E (solde +30 % net · idempotence · 0 jeton) — transactionnel ROLLBACK. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |

@@ -8,6 +8,9 @@ import type { Locale } from "@/i18n.config";
 function connexionErrorPath(nextPath: string): string {
   const seg = nextPath.match(/^\/(fr|en)\//);
   const lang: Locale = seg?.[1] === "en" ? "en" : "fr";
+  if (/^\/(fr|en)\/hq(\/|$)/.test(nextPath)) {
+    return `${appRoutes.hqConnexion(lang)}?error=callback`;
+  }
   const isSalon = /^\/(fr|en)\/salon(\/|$)/.test(nextPath);
   const base = isSalon
     ? appRoutes.salonConnexion(lang)

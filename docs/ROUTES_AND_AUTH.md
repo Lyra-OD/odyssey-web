@@ -4,13 +4,13 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — `/hq` : table `hq_allowlist` (P13), middleware + layout.
 - 17 août 2026 — `POST /api/partner/invitations/[id]/follow-up` (relance e-mail conseiller).
 - 17 août 2026 — `/salon/mes-performances` + `GET /api/partner/my-performance` (scoreboard conseiller).
 - 17 août 2026 — invitation Salon Souvenir-only (plus de picker).
 - 17 août 2026 — `/salon/commissions` + API ; `next` login conserve le chemin Salon ; `/facturation` redirige.
-- 17 août 2026 — Scanner Phase A : `/scan/[token]` + API sessions (plus « cible »).
 
-Document canonique pour les **URLs**, les **deux pages de connexion** (famille vs partenaire), les **redirects legacy**, et le **branding Salon** (gant blanc). Source de vérité code : `src/lib/appRoutes.ts`.
+Document canonique pour les **URLs**, les **trois pages de connexion** (famille, partenaire, HQ Odyssey), les **redirects legacy**, et le **branding Salon** (gant blanc). Source de vérité code : `src/lib/appRoutes.ts`.
 
 Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes / env et [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
 
@@ -27,6 +27,8 @@ Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes /
 | **Salon commissions** | `/[lang]/salon/commissions` | Oui | Admin (`canViewLedger`) — KPIs RevShare + ledger SQL |
 | **Salon facturation** | `/[lang]/salon/facturation` | Oui | **Redirect** → `/salon/commissions` (jetons morts) |
 | **Salon connexion** | `/[lang]/salon/connexion` | Non | Login partenaire **sans** inscription |
+| **HQ Odyssey** | `/[lang]/hq` | Oui + allowlist | Tour de contrôle opérateurs (Slice A : shell) |
+| **HQ connexion** | `/[lang]/hq/connexion` | Non | Login opérateurs **sans** inscription |
 | **Marketing partenaires** | `/[lang]/partners` ou `/partenaires` | Non | Formulaire « devenir partenaire » (≠ Salon) |
 | **Acceptation invitation** | `/[lang]/invite/accept?token=…` | Oui (redir. studio connexion) | Magic link famille → projet B2B2C |
 | **Bienvenue hommage** | `/[lang]/tribute/welcome?projectId=…` | Oui | Wizard seedé après invitation |
@@ -177,12 +179,14 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | `/[lang]/salon/commissions` | Même gate auth/partenaire ; si **sans** `canViewLedger` → redirect `/salon` (client) |
 | `/[lang]/salon/mes-performances` | Même gate auth/partenaire ; scoreboard du user connecté seulement |
 | `/[lang]/salon/facturation` | Redirect serveur → `/salon/commissions` |
+| `/[lang]/hq` (+ layout) | Middleware + layout : hors session → `/hq/connexion` ; hors `hq_allowlist` → `/{lang}` ; layout partenaire → `/salon` |
 | `/[lang]/invite/accept` | → `/studio/connexion?next=…` (famille invitée) |
 | `/[lang]/tribute/welcome` | → `/studio/connexion?next=…` |
 
 **Déconnexion** (`DashboardSignOut`) :
 - Studio (défaut) → `/studio/connexion`
 - Salon (`PartnerHeader` passe `signInHref`) → `/salon/connexion?partenaire=<slug mémorisé>`
+- HQ → `/hq/connexion`
 
 **API partenaire (session) :** `GET /api/partner/tenants` · `GET /api/partner/my-performance` (`canInvite`) · `GET /api/partner/commissions` (`canViewLedger`) · `POST /api/partner/invitations` · `POST /api/partner/invitations/[id]/follow-up` (`canInvite`, auteur de l’invitation) · `GET /api/partner/wallet` (deprecated).
 
@@ -192,7 +196,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 
 - Échange `code` ou `token_hash` Supabase → session cookies.
 - Redirige vers `next` (sanitisé).
-- En cas d’erreur : redirect vers la page connexion adaptée au chemin `next` (salon → `salon/connexion`, sinon `studio/connexion`) avec `?error=callback`.
+- En cas d’erreur : redirect vers la page connexion adaptée au chemin `next` (hq → `hq/connexion`, salon → `salon/connexion`, sinon `studio/connexion`) avec `?error=callback`.
 
 ---
 
@@ -218,6 +222,10 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | `src/lib/wizard/wizardDeliverables.utils.ts` | Présentation tiers (features structurées) |
 | `app/[lang]/studio/connexion/page.tsx` | Page connexion famille |
 | `app/[lang]/salon/connexion/page.tsx` | Page connexion partenaire (+ `searchParams`) |
+| `app/[lang]/hq/connexion/page.tsx` | Page connexion HQ (sans inscription) |
+| `middleware.ts` | Session cookies + gate `/hq` (`hq_allowlist`) |
+| `src/lib/hq/isOdysseyOperator.ts` | Allowlist `hq_allowlist` (SQL P13) |
+| `docs/HQ_ODYSSEY.md` | Canon tour de contrôle |
 | `app/[lang]/(salon)/salon/layout.tsx` | Garde auth + branding serveur initial |
 | `app/[lang]/(salon)/salon/components/PartnerHeader.tsx` | Header co-brandé |
 | `app/[lang]/(salon)/salon/components/PartnerSalonPageIntro.tsx` | Hiérarchie workspace + commissions |
@@ -244,3 +252,5 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 8. Toggle FR/EN — conserve query `?partenaire=` ; « Retour au site » apparaît en dernier (Acte V).
 9. Invitation magic link → accept → tribute welcome (voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)).
 10. Compte famille sans rôle partenaire → `/fr/salon` redirect `/fr/studio`.
+11. `/fr/hq/connexion` — pas d’inscription ; hors `hq_allowlist` → accueil (middleware) ou `/salon` (layout partenaire).
+12. `/fr/hq` déconnecté → login HQ avec `next`.

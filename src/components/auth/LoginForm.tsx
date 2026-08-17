@@ -20,6 +20,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import type { AppDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
 import {
+  defaultHqPostAuthPath,
   defaultPartnerPostAuthPath,
   defaultPostAuthPath,
 } from "@/src/lib/appRoutes";
@@ -36,7 +37,7 @@ import {
 import { createClient } from "@/utils/supabase/client";
 
 type AuthCopy = AppDictionary["auth"];
-export type LoginAudience = "salon" | "studio";
+export type LoginAudience = "salon" | "studio" | "hq";
 
 /** Halos atmosphériques (pur UI) — centrés au foyer ; ellipse légèrement resserrée pour éviter la “bave” sur la carte. */
 const HALO_SIGN_IN =
@@ -87,9 +88,9 @@ function mapAuthError(
 }
 
 function defaultPathForAudience(lang: Locale, audience: LoginAudience): string {
-  return audience === "salon"
-    ? defaultPartnerPostAuthPath(lang)
-    : defaultPostAuthPath(lang);
+  if (audience === "salon") return defaultPartnerPostAuthPath(lang);
+  if (audience === "hq") return defaultHqPostAuthPath(lang);
+  return defaultPostAuthPath(lang);
 }
 
 function sanitizeClientNextPath(
@@ -101,6 +102,12 @@ function sanitizeClientNextPath(
     return defaultPathForAudience(lang, audience);
   }
   if (!/^\/(fr|en)(\/|$)/.test(raw)) {
+    return defaultPathForAudience(lang, audience);
+  }
+  if (audience === "hq" && !/^\/(fr|en)\/hq(\/|$)/.test(raw)) {
+    return defaultPathForAudience(lang, audience);
+  }
+  if (raw.includes("/connexion")) {
     return defaultPathForAudience(lang, audience);
   }
   return raw;
@@ -358,9 +365,15 @@ export function LoginForm({
     ? t.createAccess
     : audience === "salon"
       ? t.salonAccess
-      : t.studioAccess;
+      : audience === "hq"
+        ? t.hqAccess
+        : t.studioAccess;
   const subtitle =
-    audience === "salon" && !isSignUp ? t.salonSubtitle : null;
+    audience === "salon" && !isSignUp
+      ? t.salonSubtitle
+      : audience === "hq" && !isSignUp
+        ? t.hqSubtitle
+        : null;
 
   const tabActiveRingSignIn =
     "bg-white/[0.08] text-zinc-100 shadow-[0_0_24px_-8px_rgba(139,92,246,0.45)]";
@@ -458,7 +471,7 @@ export function LoginForm({
 
         <h1
           className={`mb-2 text-center text-zinc-200 transition-colors duration-300 ${
-            audience === "salon"
+            audience === "salon" || audience === "hq"
               ? `font-brand text-lg font-medium uppercase tracking-[0.22em] md:text-xl md:tracking-[0.26em] ${animateConnexion ? "salon-title-reveal" : ""}`
               : `text-xl font-light tracking-[0.08em] md:text-2xl ${animateConnexion ? "salon-title-reveal" : ""}`
           }`}

@@ -7,26 +7,36 @@ import {
 } from "@/src/lib/partner/invitationMagicLink";
 
 describe("buildFollowUpEmailCopy", () => {
-  const copy = buildFollowUpEmailCopy({
+  const fr = buildFollowUpEmailCopy({
     locale: "fr",
     salonName: "Salon Urgel",
     magicLinkUrl: "https://odyssey.test/fr/invite/accept?token=abc",
   });
+  const en = buildFollowUpEmailCopy({
+    locale: "en",
+    salonName: "Salon Urgel",
+    magicLinkUrl: "https://odyssey.test/en/invite/accept?token=abc",
+  });
 
-  it("n’inclut ni prix ni montant", () => {
-    const haystack = `${copy.subject}\n${copy.text}`;
+  it("n’inclut ni prix ni urgence (FR et EN)", () => {
+    const haystack = `${fr.subject}\n${fr.text}\n${en.subject}\n${en.text}`;
     expect(haystack).not.toMatch(/\$/);
     expect(haystack).not.toMatch(/179/);
     expect(haystack).not.toMatch(/CAD/i);
     expect(haystack).not.toMatch(/last chance/i);
+    expect(haystack).not.toMatch(/relance/i);
     expect(haystack).not.toMatch(/n’enverra pas/i);
     expect(haystack).not.toMatch(/will not send another/i);
   });
 
-  it("porte le nom du salon et le lien", () => {
-    expect(copy.subject).toContain("Salon Urgel");
-    expect(copy.text).toContain(
+  it("porte le nom du salon et le lien (FR et EN)", () => {
+    expect(fr.subject).toContain("Salon Urgel");
+    expect(fr.text).toContain(
       "https://odyssey.test/fr/invite/accept?token=abc",
+    );
+    expect(en.subject).toContain("Salon Urgel");
+    expect(en.text).toContain(
+      "https://odyssey.test/en/invite/accept?token=abc",
     );
   });
 });

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   isSafeAppRelativePath,
+  sanitizeHqNextPath,
   sanitizeNextPath,
   sanitizeSalonNextPath,
 } from "@/src/lib/auth/sanitizeNextPath";
@@ -42,6 +43,13 @@ describe("sanitizeNextPath (anti open-redirect)", () => {
     expect(sanitizeSalonNextPath("/fr/studio")).toBeNull();
     expect(sanitizeSalonNextPath("/fr/salon/connexion")).toBeNull();
     expect(sanitizeSalonNextPath("/fr/salon/foo/connexion")).toBeNull();
+  });
+
+  it("sanitizeHqNextPath n’accepte que /…/hq hors connexion", () => {
+    expect(sanitizeHqNextPath("/fr/hq")).toBe("/fr/hq");
+    expect(sanitizeHqNextPath("/fr/hq/salons/x")).toBe("/fr/hq/salons/x");
+    expect(sanitizeHqNextPath("/fr/salon")).toBeNull();
+    expect(sanitizeHqNextPath("/fr/hq/connexion")).toBeNull();
   });
 });
 

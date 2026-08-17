@@ -16,6 +16,17 @@ export const appRoutes = {
   studioConnexion: (lang: Locale) => `/${lang}/studio/connexion`,
   /** Connexion partenaire — provisionnement admin uniquement. */
   salonConnexion: (lang: Locale) => `/${lang}/salon/connexion`,
+  /** Tour de contrôle Odyssey — opérateurs plateforme (allowlist). */
+  hq: (lang: Locale) => `/${lang}/hq`,
+  /** Connexion HQ — sans inscription. */
+  hqConnexion: (lang: Locale) => `/${lang}/hq/connexion`,
+  hqConnexionWithParams: (lang: Locale, params?: { next?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.next) search.set("next", params.next);
+    const qs = search.toString();
+    const base = `/${lang}/hq/connexion`;
+    return qs ? `${base}?${qs}` : base;
+  },
   /** Connexion Salon avec query (`next`, `partenaire`). */
   salonConnexionWithParams: (
     lang: Locale,
@@ -50,11 +61,15 @@ export function defaultPartnerPostAuthPath(lang: Locale): string {
   return appRoutes.salon(lang);
 }
 
+export function defaultHqPostAuthPath(lang: Locale): string {
+  return appRoutes.hq(lang);
+}
+
 export function connexionPathForAudience(
   lang: Locale,
-  audience: "salon" | "studio",
+  audience: "salon" | "studio" | "hq",
 ): string {
-  return audience === "salon"
-    ? appRoutes.salonConnexion(lang)
-    : appRoutes.studioConnexion(lang);
+  if (audience === "salon") return appRoutes.salonConnexion(lang);
+  if (audience === "hq") return appRoutes.hqConnexion(lang);
+  return appRoutes.studioConnexion(lang);
 }

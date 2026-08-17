@@ -42,3 +42,16 @@ export function sanitizeSalonNextPath(
   if (raw.includes("/connexion")) return null;
   return raw;
 }
+
+/**
+ * Destination HQ post-connexion : chemin `/…/hq…` hors `/connexion`.
+ * `null` si absente ou dangereuse (pas de redirect).
+ */
+export function sanitizeHqNextPath(
+  raw: string | null | undefined,
+): string | null {
+  if (!isSafeAppRelativePath(raw)) return null;
+  if (!/^\/(fr|en)\/hq(\/|$)/.test(raw)) return null;
+  if (raw.includes("/connexion")) return null;
+  return raw;
+}

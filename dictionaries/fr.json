@@ -183,6 +183,8 @@
     "studioAccess": "Accéder au studio",
     "salonAccess": "ESPACE PARTENAIRES",
     "salonSubtitle": "Connexion réservée aux équipes partenaires.",
+    "hqAccess": "ODYSSEY HQ",
+    "hqSubtitle": "Accès réservé aux opérateurs Odyssey.",
     "poweredByOdyssey": "Propulsé par",
     "createAccess": "Créer un accès",
     "tabSignIn": "Connexion",
@@ -231,6 +233,11 @@
     "signOut": "Déconnexion",
     "welcomeStudio": "Bienvenue dans le Studio, {name}",
     "guestName": "invité"
+  },
+  "hq": {
+    "title": "Odyssey HQ",
+    "kicker": "Tour de contrôle",
+    "empty": "Les chiffres réseau arrivent à la prochaine étape. Cette porte est verrouillée."
   },
   "tributeWizard": {
     "progressAria": "Progression du parcours de création",

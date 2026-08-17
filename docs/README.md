@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 17 août 2026 — index HQ + communications MVP.
 - 17 août 2026 — étape 6 : règle Cursor code+doc même commit. Étape 5 (dossiers) **sautée**.
 - 17 août 2026 — étape 4 : snapshots figés ; grilles hors FREEMIUM/DELIVERABLES → lien canon.
 - 17 août 2026 — étape 3 : STATUS vivant / log archive ; 4 contradictions corrigées dans le vivant.
 - 17 août 2026 — étape 2 : modèle d’en-tête sur les docs utiles (pas le Manifesto).
-- 17 août 2026 — étape 1 : carte créée. Aucun chemin déplacé.
 
 Hiérarchie développeur (ordre de lecture code) : [`CONVENTIONS.md`](CONVENTIONS.md).  
 Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
@@ -101,6 +101,8 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 | [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) | canon | Modèle chapitres / chansons |
 | [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) | canon | Proxy musique |
 | [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) | canon | Studio / Salon / auth |
+| [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) | canon | Tour de contrôle `/hq` (allowlist, macro/micro, payout) |
+| [`COMMUNICATIONS_MVP.md`](COMMUNICATIONS_MVP.md) | canon | Copy + courriels pilote (Relance, Stripe, Auth, lead) |
 | [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) | canon | Palette, Halo-Éclipse |
 | [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md) | canon | Collab éditeur |
 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) | canon | UX mobile M0–M6 |

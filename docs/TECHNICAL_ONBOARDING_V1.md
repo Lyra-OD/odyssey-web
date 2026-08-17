@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — HQ : table `hq_allowlist` (P13), plus d’env opérateurs.
 - 17 août 2026 — env Relance salon : `RESEND_API_KEY` · `RESEND_FROM_EMAIL`.
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — hub post-purge jetons.
@@ -15,7 +16,7 @@ Ancien hub (pré-purge) : [`_archive/TECHNICAL_ONBOARDING_ODYSSEY_PRE_FREEMIUM.m
 
 ## 1. En 60 secondes
 
-Odyssey = wizard **7** étapes (famille) + Salon partenaire (invitations) + checkout Stripe + Sanctuaire / Co-Créateur.
+Odyssey = wizard **7** étapes (famille) + Salon partenaire (invitations) + checkout Stripe + Sanctuaire / Co-Créateur. HQ : [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) — allowlist SQL `hq_allowlist` (P13).
 
 | Canal | Flux |
 |-------|------|
