@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { percentRate } from "@/src/lib/partner/partnerCommissionTypes";
+
 /** Raisons ledger qui comptent comme commission confirmée (pas payout). */
 export const PERFORMANCE_ACCRUAL_REASONS = [
   "commission_accrual",
@@ -38,6 +40,8 @@ export const PartnerMyPerformanceKpisSchema = z
     invitationsAccepted: z.number().int().nonnegative(),
     upsells: z.number().int().nonnegative(),
     attributedCents: z.number().int().nonnegative(),
+    engagementRatePercent: z.number().int().min(0).max(100),
+    conversionRatePercent: z.number().int().min(0).max(100),
   })
   .strict();
 
@@ -64,6 +68,8 @@ export const EMPTY_PERFORMANCE_KPIS: PartnerMyPerformanceKpis = {
   invitationsAccepted: 0,
   upsells: 0,
   attributedCents: 0,
+  engagementRatePercent: 0,
+  conversionRatePercent: 0,
 };
 
 export type PartnerPerformanceInvitationInput = {
@@ -157,13 +163,19 @@ export function aggregateMyPerformance(
     }
   }
 
+  const invitationsSent = invitations.length;
+  const invitationsAccepted = invitations.filter(
+    (row) => coerceInvitationStatus(row.status) === "accepted",
+  ).length;
+  const upsells = upsellIds.size;
+
   return {
-    invitationsSent: invitations.length,
-    invitationsAccepted: invitations.filter(
-      (row) => coerceInvitationStatus(row.status) === "accepted",
-    ).length,
-    upsells: upsellIds.size,
+    invitationsSent,
+    invitationsAccepted,
+    upsells,
     attributedCents,
+    engagementRatePercent: percentRate(invitationsAccepted, invitationsSent),
+    conversionRatePercent: percentRate(upsells, invitationsSent),
   };
 }
 

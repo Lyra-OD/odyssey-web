@@ -15,6 +15,10 @@ function kpiCopy(lang: Locale) {
         upsells: "Family upsells",
         attributed: "Attributed commission",
         attributedHint: "Salon commission on your links — not an Odyssey payout.",
+        engagement: "Engagement",
+        engagementHint: "Sanctuaries you opened / invitations you sent",
+        conversion: "Your conversion",
+        conversionHint: "Families who paid / invitations you sent",
       }
     : {
         sent: "Invitations envoyées",
@@ -23,7 +27,15 @@ function kpiCopy(lang: Locale) {
         attributed: "Commission attribuée",
         attributedHint:
           "Commission salon sur vos liens — pas un versement Odyssey.",
+        engagement: "Engagement",
+        engagementHint: "Sanctuaires ouverts / vos invitations",
+        conversion: "Votre conversion",
+        conversionHint: "Familles ayant payé / vos invitations",
       };
+}
+
+function formatPercent(value: number): string {
+  return `${value} %`;
 }
 
 export function PerformanceKpiCards({ lang, kpis }: PerformanceKpiCardsProps) {
@@ -52,31 +64,67 @@ export function PerformanceKpiCards({ lang, kpis }: PerformanceKpiCardsProps) {
     },
   ] as const;
 
+  const rateCards = [
+    {
+      key: "engagement",
+      label: copy.engagement,
+      hint: copy.engagementHint,
+      value: formatPercent(kpis.engagementRatePercent),
+    },
+    {
+      key: "conversion",
+      label: copy.conversion,
+      hint: copy.conversionHint,
+      value: formatPercent(kpis.conversionRatePercent),
+    },
+  ] as const;
+
   return (
     <section
       aria-label={
         lang === "en" ? "Your performance totals" : "Vos totaux de performance"
       }
-      className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+      className="flex flex-col gap-6"
     >
-      {cards.map((card) => (
-        <article
-          key={card.key}
-          className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8"
-        >
-          <p className="font-label text-[9px] font-bold uppercase tracking-[0.45em] text-zinc-500">
-            {card.label}
-          </p>
-          <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-white/95 md:text-5xl">
-            {card.value}
-          </p>
-          {"hint" in card && card.hint ? (
-            <p className="mt-3 text-xs font-light leading-relaxed text-zinc-500">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((card) => (
+          <article
+            key={card.key}
+            className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8"
+          >
+            <p className="font-label text-[9px] font-bold uppercase tracking-[0.45em] text-zinc-500">
+              {card.label}
+            </p>
+            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-white/95 md:text-5xl">
+              {card.value}
+            </p>
+            {"hint" in card && card.hint ? (
+              <p className="mt-3 text-xs font-light leading-relaxed text-zinc-500">
+                {card.hint}
+              </p>
+            ) : null}
+          </article>
+        ))}
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {rateCards.map((card) => (
+          <article
+            key={card.key}
+            className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8"
+          >
+            <p className="font-label text-[9px] font-bold uppercase tracking-[0.45em] text-zinc-500">
+              {card.label}
+            </p>
+            <p className="mt-1 font-label text-[8px] font-semibold uppercase tracking-[0.28em] text-zinc-600">
               {card.hint}
             </p>
-          ) : null}
-        </article>
-      ))}
+            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-white/95 md:text-5xl">
+              {card.value}
+            </p>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }

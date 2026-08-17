@@ -78,6 +78,14 @@ describe("aggregateMyPerformance", () => {
     expect(kpis.invitationsAccepted).toBe(2);
     expect(kpis.upsells).toBe(1);
     expect(kpis.attributedCents).toBe(5019);
+    expect(kpis.engagementRatePercent).toBe(67);
+    expect(kpis.conversionRatePercent).toBe(33);
+  });
+
+  it("taux à 0 % s’il n’a envoyé aucune invitation", () => {
+    const kpis = aggregateMyPerformance([], []);
+    expect(kpis.engagementRatePercent).toBe(0);
+    expect(kpis.conversionRatePercent).toBe(0);
   });
 
   it("ne compte pas une contribution invité seule comme upsell famille", () => {
@@ -102,6 +110,8 @@ describe("aggregateMyPerformance", () => {
         invitationsAccepted: 8,
         upsells: 4,
         attributedCents: 19332,
+        engagementRatePercent: 67,
+        conversionRatePercent: 33,
       },
       rows: [],
     });
