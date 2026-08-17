@@ -13,6 +13,7 @@ import {
 } from "@/src/lib/partner/partnerPerformance";
 import { usePartner } from "@/src/lib/partner/PartnerContext";
 
+import { PerformanceFollowUpList } from "./PerformanceFollowUpList";
 import { PerformanceInvitationTable } from "./PerformanceInvitationTable";
 import { PerformanceKpiCards } from "./PerformanceKpiCards";
 
@@ -51,6 +52,7 @@ export function PartnerMyPerformanceView({
     EMPTY_PERFORMANCE_KPIS,
   );
   const [rows, setRows] = useState<PartnerMyPerformanceRow[]>([]);
+  const [followUp, setFollowUp] = useState<PartnerMyPerformanceRow[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const [loadError, setLoadError] = useState(false);
 
@@ -58,6 +60,7 @@ export function PartnerMyPerformanceView({
     if (isLoading || !canInvite || !activeTenantId) {
       setKpis(EMPTY_PERFORMANCE_KPIS);
       setRows([]);
+      setFollowUp([]);
       setLoadError(false);
       setIsFetching(false);
       return;
@@ -79,6 +82,7 @@ export function PartnerMyPerformanceView({
         if (!response.ok) {
           setKpis(EMPTY_PERFORMANCE_KPIS);
           setRows([]);
+          setFollowUp([]);
           setLoadError(true);
           return;
         }
@@ -87,17 +91,20 @@ export function PartnerMyPerformanceView({
         if (!parsed.success) {
           setKpis(EMPTY_PERFORMANCE_KPIS);
           setRows([]);
+          setFollowUp([]);
           setLoadError(true);
           return;
         }
 
         setKpis(parsed.data.kpis);
         setRows(parsed.data.rows);
+        setFollowUp(parsed.data.followUp);
         setLoadError(false);
       } catch {
         if (!cancelled) {
           setKpis(EMPTY_PERFORMANCE_KPIS);
           setRows([]);
+          setFollowUp([]);
           setLoadError(true);
         }
       } finally {
@@ -140,6 +147,7 @@ export function PartnerMyPerformanceView({
       ) : (
         <>
           <PerformanceKpiCards lang={lang} kpis={kpis} />
+          <PerformanceFollowUpList lang={lang} rows={followUp} />
           <PerformanceInvitationTable lang={lang} rows={rows} />
         </>
       )}

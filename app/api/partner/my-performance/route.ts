@@ -12,6 +12,7 @@ import {
   aggregateMyPerformance,
   attributedCentsByInvitation,
   coerceInvitationStatus,
+  listFollowUpInvitations,
   maskFamilyEmail,
   type PartnerMyPerformanceRow,
   type PartnerPerformanceInvitationInput,
@@ -137,19 +138,29 @@ export async function GET(request: Request) {
   const kpis = aggregateMyPerformance(invitations, ledgerRows);
   const attributed = attributedCentsByInvitation(ledgerRows);
 
+  const toRow = (
+    invitation: PartnerPerformanceInvitationInput,
+  ): PartnerMyPerformanceRow => ({
+    invitationId: invitation.id,
+    createdAt: invitation.created_at,
+    familyEmailMasked: maskFamilyEmail(invitation.invited_email),
+    status: coerceInvitationStatus(invitation.status),
+    attributedCents: attributed.get(invitation.id) ?? 0,
+  });
+
   const rows: PartnerMyPerformanceRow[] = invitations
     .slice(0, PERFORMANCE_LIST_LIMIT)
-    .map((invitation) => ({
-      invitationId: invitation.id,
-      createdAt: invitation.created_at,
-      familyEmailMasked: maskFamilyEmail(invitation.invited_email),
-      status: coerceInvitationStatus(invitation.status),
-      attributedCents: attributed.get(invitation.id) ?? 0,
-    }));
+    .map(toRow);
+
+  const followUp: PartnerMyPerformanceRow[] = listFollowUpInvitations(
+    invitations,
+    Date.now(),
+  ).map(toRow);
 
   return NextResponse.json({
     tenantId,
     kpis,
     rows,
+    followUp,
   });
 }

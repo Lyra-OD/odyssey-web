@@ -42,6 +42,7 @@ export const PartnerMyPerformanceKpisSchema = z
     attributedCents: z.number().int().nonnegative(),
     engagementRatePercent: z.number().int().min(0).max(100),
     conversionRatePercent: z.number().int().min(0).max(100),
+    followUpCount: z.number().int().nonnegative(),
   })
   .strict();
 
@@ -50,6 +51,7 @@ export const PartnerMyPerformanceResponseSchema = z
     tenantId: z.string().uuid(),
     kpis: PartnerMyPerformanceKpisSchema,
     rows: z.array(PartnerMyPerformanceRowSchema),
+    followUp: z.array(PartnerMyPerformanceRowSchema),
   })
   .strict();
 
@@ -70,6 +72,7 @@ export const EMPTY_PERFORMANCE_KPIS: PartnerMyPerformanceKpis = {
   attributedCents: 0,
   engagementRatePercent: 0,
   conversionRatePercent: 0,
+  followUpCount: 0,
 };
 
 export type PartnerPerformanceInvitationInput = {
@@ -138,6 +141,7 @@ export function attributedCentsByInvitation(
 export function aggregateMyPerformance(
   invitations: PartnerPerformanceInvitationInput[],
   ledgerRows: PartnerPerformanceLedgerInput[],
+  nowMs: number = Date.now(),
 ): PartnerMyPerformanceKpis {
   const attributed = attributedCentsByInvitation(ledgerRows);
   const invitationIds = new Set(invitations.map((row) => row.id));
@@ -176,8 +180,35 @@ export function aggregateMyPerformance(
     attributedCents,
     engagementRatePercent: percentRate(invitationsAccepted, invitationsSent),
     conversionRatePercent: percentRate(upsells, invitationsSent),
+    followUpCount: listFollowUpInvitations(invitations, nowMs).length,
   };
 }
 
 export const PERFORMANCE_LIST_LIMIT = 50;
 export const PERFORMANCE_INVITATION_CAP = 500;
+export const FOLLOW_UP_AFTER_DAYS = 3;
+export const FOLLOW_UP_LIST_LIMIT = 20;
+const FOLLOW_UP_AFTER_MS = FOLLOW_UP_AFTER_DAYS * 24 * 60 * 60 * 1000;
+
+export function isPendingDueForFollowUp(
+  invitation: PartnerPerformanceInvitationInput,
+  nowMs: number,
+): boolean {
+  if (coerceInvitationStatus(invitation.status) !== "pending") return false;
+  const createdMs = Date.parse(invitation.created_at);
+  if (!Number.isFinite(createdMs)) return false;
+  return nowMs - createdMs >= FOLLOW_UP_AFTER_MS;
+}
+
+export function listFollowUpInvitations(
+  invitations: PartnerPerformanceInvitationInput[],
+  nowMs: number,
+): PartnerPerformanceInvitationInput[] {
+  return invitations
+    .filter((invitation) => isPendingDueForFollowUp(invitation, nowMs))
+    .sort(
+      (left, right) =>
+        Date.parse(left.created_at) - Date.parse(right.created_at),
+    )
+    .slice(0, FOLLOW_UP_LIST_LIMIT);
+}

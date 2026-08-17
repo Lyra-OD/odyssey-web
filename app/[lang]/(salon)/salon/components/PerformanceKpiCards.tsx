@@ -19,6 +19,8 @@ function kpiCopy(lang: Locale) {
         engagementHint: "Sanctuaries you opened / invitations you sent",
         conversion: "Your conversion",
         conversionHint: "Families who paid / invitations you sent",
+        followUp: "Follow up",
+        followUpHint: "Pending links older than 3 days",
       }
     : {
         sent: "Invitations envoyées",
@@ -31,6 +33,8 @@ function kpiCopy(lang: Locale) {
         engagementHint: "Sanctuaires ouverts / vos invitations",
         conversion: "Votre conversion",
         conversionHint: "Familles ayant payé / vos invitations",
+        followUp: "À relancer",
+        followUpHint: "Liens en attente depuis plus de 3 jours",
       };
 }
 
@@ -77,6 +81,12 @@ export function PerformanceKpiCards({ lang, kpis }: PerformanceKpiCardsProps) {
       hint: copy.conversionHint,
       value: formatPercent(kpis.conversionRatePercent),
     },
+    {
+      key: "followUp",
+      label: copy.followUp,
+      hint: copy.followUpHint,
+      value: String(kpis.followUpCount),
+    },
   ] as const;
 
   return (
@@ -107,7 +117,7 @@ export function PerformanceKpiCards({ lang, kpis }: PerformanceKpiCardsProps) {
         ))}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-3">
         {rateCards.map((card) => (
           <article
             key={card.key}

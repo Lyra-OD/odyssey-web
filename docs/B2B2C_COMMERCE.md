@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — relance conseiller in-app (`pending` ≥ 3 j) — pas de mail famille.
 - 17 août 2026 — scoreboard conseiller : engagement + conversion perso.
 - 17 août 2026 — dashboard admin : GMV + ouverture + conversion salon (`GET /api/partner/commissions`).
 - 17 août 2026 — scoreboard conseiller `/salon/mes-performances` (attribution invitation, pas le ledger salon).
 - 17 août 2026 — invitation Salon = toujours Souvenir (`essential`) ; picker forfait retiré ; `grantedPackage` client ignoré.
-- 17 août 2026 — UI Salon commissions + API `GET /api/partner/commissions`.
 
 > **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
 > **Archive pré-purge :** [`_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md`](_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md) — ne plus onboards dessus.

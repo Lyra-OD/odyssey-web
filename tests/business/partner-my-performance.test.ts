@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   aggregateMyPerformance,
+  listFollowUpInvitations,
   maskFamilyEmail,
   PartnerMyPerformanceResponseSchema,
 } from "@/src/lib/partner/partnerPerformance";
@@ -19,6 +20,7 @@ describe("maskFamilyEmail", () => {
 });
 
 describe("aggregateMyPerformance", () => {
+  const nowMs = Date.parse("2026-08-03T12:00:00.000Z");
   const jeanInvites = [
     {
       id: "11111111-1111-4111-8111-111111111111",
@@ -72,7 +74,7 @@ describe("aggregateMyPerformance", () => {
         status: "confirmed",
         commission_cents: 2000,
       },
-    ]);
+    ], nowMs);
 
     expect(kpis.invitationsSent).toBe(3);
     expect(kpis.invitationsAccepted).toBe(2);
@@ -80,12 +82,14 @@ describe("aggregateMyPerformance", () => {
     expect(kpis.attributedCents).toBe(5019);
     expect(kpis.engagementRatePercent).toBe(67);
     expect(kpis.conversionRatePercent).toBe(33);
+    expect(kpis.followUpCount).toBe(0);
   });
 
   it("taux à 0 % s’il n’a envoyé aucune invitation", () => {
-    const kpis = aggregateMyPerformance([], []);
+    const kpis = aggregateMyPerformance([], [], nowMs);
     expect(kpis.engagementRatePercent).toBe(0);
     expect(kpis.conversionRatePercent).toBe(0);
+    expect(kpis.followUpCount).toBe(0);
   });
 
   it("ne compte pas une contribution invité seule comme upsell famille", () => {
@@ -96,7 +100,7 @@ describe("aggregateMyPerformance", () => {
         status: "confirmed",
         commission_cents: 186,
       },
-    ]);
+    ], nowMs);
 
     expect(kpis.upsells).toBe(0);
     expect(kpis.attributedCents).toBe(186);
@@ -112,11 +116,47 @@ describe("aggregateMyPerformance", () => {
         attributedCents: 19332,
         engagementRatePercent: 67,
         conversionRatePercent: 33,
+        followUpCount: 2,
       },
       rows: [],
+      followUp: [],
     });
 
     expect("balance" in parsed).toBe(false);
     expect("accrued_cents" in parsed.kpis).toBe(false);
+  });
+});
+
+describe("listFollowUpInvitations", () => {
+  const nowMs = Date.parse("2026-08-10T00:00:00.000Z");
+
+  it("ne retient que les pending de 3 jours ou plus", () => {
+    const followUp = listFollowUpInvitations(
+      [
+        {
+          id: "11111111-1111-4111-8111-111111111111",
+          invited_email: "vieux@famille.com",
+          status: "pending",
+          created_at: "2026-08-01T00:00:00.000Z",
+        },
+        {
+          id: "22222222-2222-4222-8222-222222222222",
+          invited_email: "recent@famille.com",
+          status: "pending",
+          created_at: "2026-08-09T00:00:00.000Z",
+        },
+        {
+          id: "33333333-3333-4333-8333-333333333333",
+          invited_email: "ouvert@famille.com",
+          status: "accepted",
+          created_at: "2026-08-01T00:00:00.000Z",
+        },
+      ],
+      nowMs,
+    );
+
+    expect(followUp.map((row) => row.id)).toEqual([
+      "11111111-1111-4111-8111-111111111111",
+    ]);
   });
 });
