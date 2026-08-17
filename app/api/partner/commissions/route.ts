@@ -114,26 +114,13 @@ export async function GET(request: Request) {
     return partnerApiErrorResponse(PARTNER_API_ERROR.INTERNAL, 500);
   }
 
-  const { data: tenant, error: tenantError } = await admin
+  const { data: tenant } = await admin
     .from("tenants")
     .select("is_freemium")
     .eq("id", tenantId)
     .maybeSingle();
 
-  if (tenantError) {
-    return partnerApiErrorResponse(PARTNER_API_ERROR.INTERNAL, 500);
-  }
-
-  const isFreemium = tenant?.is_freemium === true;
-
-  if (!isFreemium) {
-    return NextResponse.json({
-      tenantId,
-      isFreemium: false,
-      balance: EMPTY_COMMISSION_BALANCE,
-      ledger: [] satisfies PartnerCommissionLedgerRow[],
-    });
-  }
+  const isFreemium = tenant?.is_freemium !== false;
 
   const { data: balanceRow } = await admin
     .from("partner_commission_balances")
@@ -198,7 +185,7 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     tenantId,
-    isFreemium: true,
+    isFreemium,
     balance: {
       accrued_cents: balanceRow?.accrued_cents ?? 0,
       pending_cents: balanceRow?.pending_cents ?? 0,

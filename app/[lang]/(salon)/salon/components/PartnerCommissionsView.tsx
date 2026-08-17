@@ -30,9 +30,6 @@ function commissionsCopy(lang: Locale) {
         loading: "Loading…",
         redirecting: "Redirecting…",
         loadError: "Unable to load commissions right now.",
-        notFreemiumTitle: "RevShare is not active on this workspace",
-        notFreemiumBody:
-          "Commission reporting applies only to Freemium partner spaces.",
       }
     : {
         back: "Retour à l'espace partenaire",
@@ -42,25 +39,20 @@ function commissionsCopy(lang: Locale) {
         loading: "Chargement…",
         redirecting: "Redirection…",
         loadError: "Impossible de charger les commissions pour le moment.",
-        notFreemiumTitle: "RevShare inactif sur cet espace",
-        notFreemiumBody:
-          "Le tableau des commissions s'applique uniquement aux espaces partenaires Freemium.",
       };
 }
 
 export function PartnerCommissionsView({ lang }: PartnerCommissionsViewProps) {
   const router = useRouter();
   const copy = commissionsCopy(lang);
-  const { capabilities, activeTenant, activeTenantId, isLoading } = usePartner();
+  const { capabilities, activeTenantId, isLoading } = usePartner();
   const canViewLedger = capabilities?.canViewLedger === true;
-  const isFreemium = activeTenant?.isFreemium === true;
 
   const [dashboard, setDashboard] = useState<PartnerCommissionDashboard | null>(
     null,
   );
   const [isFetching, setIsFetching] = useState(false);
   const [loadError, setLoadError] = useState(false);
-  const [apiFreemium, setApiFreemium] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (isLoading) return;
@@ -70,9 +62,8 @@ export function PartnerCommissionsView({ lang }: PartnerCommissionsViewProps) {
   }, [canViewLedger, isLoading, lang, router]);
 
   useEffect(() => {
-    if (isLoading || !canViewLedger || !activeTenantId || !isFreemium) {
+    if (isLoading || !canViewLedger || !activeTenantId) {
       setDashboard(null);
-      setApiFreemium(null);
       setLoadError(false);
       setIsFetching(false);
       return;
@@ -105,7 +96,6 @@ export function PartnerCommissionsView({ lang }: PartnerCommissionsViewProps) {
           return;
         }
 
-        setApiFreemium(parsed.data.isFreemium);
         setDashboard({
           balance: parsed.data.balance,
           ledger: parsed.data.ledger,
@@ -124,7 +114,7 @@ export function PartnerCommissionsView({ lang }: PartnerCommissionsViewProps) {
     return () => {
       cancelled = true;
     };
-  }, [activeTenantId, canViewLedger, isFreemium, isLoading, lang]);
+  }, [activeTenantId, canViewLedger, isLoading, lang]);
 
   if (isLoading || !canViewLedger) {
     return (
@@ -133,8 +123,6 @@ export function PartnerCommissionsView({ lang }: PartnerCommissionsViewProps) {
       </p>
     );
   }
-
-  const showFreemiumDashboard = isFreemium && apiFreemium !== false;
 
   return (
     <div className="flex flex-col gap-10">
@@ -153,16 +141,7 @@ export function PartnerCommissionsView({ lang }: PartnerCommissionsViewProps) {
         </p>
       </div>
 
-      {!showFreemiumDashboard ? (
-        <section className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-6 md:p-8">
-          <h2 className="font-[family-name:var(--font-label)] text-lg font-semibold text-white">
-            {copy.notFreemiumTitle}
-          </h2>
-          <p className="mt-3 max-w-xl text-sm font-light leading-relaxed text-zinc-500">
-            {copy.notFreemiumBody}
-          </p>
-        </section>
-      ) : isFetching && !dashboard ? (
+      {isFetching && !dashboard ? (
         <p className="text-sm font-light text-zinc-500">{copy.loading}</p>
       ) : loadError ? (
         <p className="text-sm font-light text-zinc-500">{copy.loadError}</p>

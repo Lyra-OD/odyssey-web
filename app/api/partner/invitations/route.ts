@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createPartnerInvitation } from "@/src/lib/partner/createPartnerInvitation";
 import {
   CreatePartnerInvitationBodySchema,
+  FREEMIUM_INVITATION_GRANTED_PACKAGE,
   INVITATION_TTL_DAYS,
   type InvitationAlreadyPendingError,
   type InvitationLocale,
@@ -54,7 +55,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { familyEmail, grantedPackage, tenantId, locale } = parsed.data;
+  const { familyEmail, tenantId, locale } = parsed.data;
 
   const supabase = await createClient();
   const {
@@ -92,7 +93,7 @@ export async function POST(request: Request) {
     tenantId,
     actorUserId: user.id,
     familyEmail,
-    grantedPackage,
+    grantedPackage: FREEMIUM_INVITATION_GRANTED_PACKAGE,
     magicLinkTokenHash,
     expiresAt,
     locale,

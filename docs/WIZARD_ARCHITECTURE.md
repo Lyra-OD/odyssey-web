@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · 20 juillet 2026 (revue code) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — invitation Salon Souvenir-only (plus de cartes forfait).
 - 17 août 2026 — Scanner Phase B : aperçu restauration → add-on `aiRetouch`.
 - 17 août 2026 — Scanner Phase A (QR étape 3, pas une 8ᵉ étape).
 - 17 août 2026 — étape 4 : canaux / cents → FREEMIUM §2 (plus de grille recopiée).
 - 17 août 2026 — en-tête type ; « 8-step » → **7** étapes (Extensions au checkout).
-- 20 juillet 2026 — Soft Cap UX livré · Freemium Phases 0–5 (plus « 0–4 » dans ce bandeau).
 
 > **Canon V1 :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · Commerce [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).  
 > **État :** `grantedPackage` + `intendedPackage` + `extensions.musicLicense` (aliases UI legacy OK).
@@ -30,7 +30,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 | `src/hooks/useWizardAutosave.ts` | Debounced + immediate PATCH to `/api/projects/[id]/autosave` |
 | `src/components/tribute/AutosaveIndicator.tsx` | “Saving / Saved / Error” UX |
 | `src/lib/wizard/wizardDeliverables.ts` | **Deliverables manifest** — `PACKAGE_MANIFEST`, lists by channel, limits, rendering, pacing |
-| `src/lib/wizard/wizardDeliverables.utils.ts` | Présentation partenaire (cartes invitation, copy dérivée du manifeste) |
+| `src/lib/wizard/wizardDeliverables.utils.ts` | Copy manifeste (présentation forfaits) — plus de cartes invitation Salon |
 | `src/lib/wizard/pricingConfig.ts` | **Checkout cents** — `WIZARD_PRICING`, extensions, bundle 67 $ (aligné manifeste via `assertManifestPricingAlignedWithLegacyConfig`) |
 | `src/lib/wizard/wizardPricing.ts` | Cart math (`computeWizardCart`, integer cents only) |
 | `src/lib/wizard/wizardState.ts` | Canonical `storyboard` V2 + coercion/migration from legacy payloads + runtime bridge vers l'UI actuelle |
@@ -53,7 +53,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 | `src/lib/partner/resolvePartnerAccess.ts` | Partner role detection (`tenant_members`) |
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
 | `app/api/checkout/route.ts` | Checkout (**cible** 3 modes — voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)) |
-| `app/[lang]/(salon)/salon/` | Console partenaire Salon (header, portefeuille, `InvitationComposer` sur manifeste) — auth via layout |
+| `app/[lang]/(salon)/salon/` | Console partenaire Salon (intro + `InvitationComposer` Souvenir-only) — auth via layout |
 | `src/components/scanner/ScannerCompanionPanel.tsx` | **Phase A+B** — QR + aperçu restauration (`aiRetouch`) — [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 
 `TOTAL_STEPS = 7` in `TributeWizard.tsx` (Extensions au checkout — pas une 8ᵉ étape wizard).
@@ -98,7 +98,7 @@ Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans 
 | `limits.maxMediaItems` | Soft Cap filet à 50 ✅ · quotas `intended` |
 | `resolveTransactionMode()` | Famille : **dollars Soft Cap** ; Salon : commissions |
 
-**Today:** `InvitationComposer` (Salon `/[lang]/salon`) reads the manifest + `packages.names` from dictionaries. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is now `storyboard`; Step 4 reads/writes `storyboard.chapters[].song` via `useWizardStoryboard`. **Step 5** is the live **Livre Ouvert** montage UI (`StoryboardMontageStep`) — DnD, actions chapitre, onboarding gate, and **Composition Magique** (see [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)). `SoundSignatureStep` was removed during Clean Slate. Steps 7–8 still use a temporary legacy bridge (`actTracks`) for Preview/Checkout until `S8`/`S9`.
+**Today:** `InvitationComposer` (Salon `/[lang]/salon`) offers **Keepsake only** — email + CTA, no package cards. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is now `storyboard`; Step 4 reads/writes `storyboard.chapters[].song` via `useWizardStoryboard`. **Step 5** is the live **Livre Ouvert** montage UI (`StoryboardMontageStep`) — DnD, actions chapitre, onboarding gate, and **Composition Magique** (see [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)). `SoundSignatureStep` was removed during Clean Slate. Steps 7–8 still use a temporary legacy bridge (`actTracks`) for Preview/Checkout until `S8`/`S9`.
 
 ### Design decisions — why (juillet 2026)
 

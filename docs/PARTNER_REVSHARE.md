@@ -4,7 +4,8 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 17 août 2026 — UI Salon `/commissions` + `GET /api/partner/commissions` (`partner_admin`, `is_freemium`) ; payout CTA inactif.
+- 17 août 2026 — KPIs `/salon/commissions` toujours affichés (fail-open `is_freemium`) ; invitation Souvenir-only.
+- 17 août 2026 — UI Salon `/commissions` + `GET /api/partner/commissions` (`partner_admin`) ; payout CTA inactif.
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — Freemium V1 · modèle Bulletproof · jetons DROP P8.
 
@@ -371,7 +372,7 @@ record_partner_commission_payout(
 
 ### RBAC UI (cible)
 
-Route : `/{lang}/salon/commissions` · `/{lang}/salon/facturation` redirige. Directeur sans accès → `/salon`. Tenant `is_freemium = false` : état vide, pas de chiffres.
+Route : `/{lang}/salon/commissions` · `/{lang}/salon/facturation` redirige. Directeur sans accès → `/salon`. KPIs + ledger SQL même à 0 $ (pas de mur « RevShare inactif » si `is_freemium` null / SELECT échoue).
 
 | Rôle | Accès |
 |------|-------|

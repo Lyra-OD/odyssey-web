@@ -20,12 +20,12 @@ export function PartnerSalonPageIntro({ lang }: PartnerSalonPageIntroProps) {
     lang === "en"
       ? {
           workspace: "Partner space",
-          subtitle: "Invite families and manage tribute packages.",
+          subtitle: "Invite a family — Keepsake is the gift.",
           commissions: "Commissions",
         }
       : {
           workspace: "Espace partenaires",
-          subtitle: "Invitez des familles et gérez les forfaits hommage.",
+          subtitle: "Invitez une famille — Souvenir offert.",
           commissions: "Commissions",
         };
 

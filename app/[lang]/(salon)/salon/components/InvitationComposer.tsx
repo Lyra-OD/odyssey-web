@@ -1,47 +1,22 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { useCallback, useRef, useState } from "react";
 
 import type { Locale } from "@/i18n.config";
-import { SalonTierFeatureRow } from "@/src/components/partner/SalonTierFeatureRow";
 import { usePartner } from "@/src/lib/partner/PartnerContext";
 import {
   CreatePartnerInvitationResponseSchema,
   InvitationAlreadyPendingErrorSchema,
 } from "@/src/lib/partner/invitationSchemas";
 import {
-  getSalonTierCardMotionState,
-  SALON_INVITE_CARD_VARIANTS,
   SALON_INVITE_STAGGER_CONTAINER,
   SALON_INVITE_STAGGER_ITEM,
-  SALON_UV_RADIAL,
   salonInviteEmailBoxClass,
   salonInviteEmailInputClass,
   salonInviteEmailLabelClass,
   salonInviteSubmitCtaClass,
-  salonRecommendedBadgeClass,
-  salonTierCardCtaClass,
-  salonTierFeatureDividerClass,
-  salonTierCardPriceAmountClass,
-  salonTierCardPriceSuffixClass,
-  salonTierCardStyleClass,
-  salonTierCardSurfaceClass,
-  salonTierCardTitleClass,
-  salonTierTokenDebitClass,
 } from "@/src/lib/salonTierCardSkin";
-import type { PackageLabelsI18n } from "@/src/lib/wizard/packageI18n";
-import {
-  formatPackagePriceForMode,
-  legacyGrantedFromManifest,
-  resolveTransactionMode,
-  type PackageId,
-} from "@/src/lib/wizard/wizardDeliverables";
-import {
-  listPartnerInvitationTiers,
-  packagePricePartsForMode,
-  RECOMMENDED_PACKAGE_ID,
-} from "@/src/lib/wizard/wizardDeliverables.utils";
 import { editorialAccentRule, editorialColumn } from "@/src/lib/editorialSkin";
 
 type InvitationSuccessData = {
@@ -53,10 +28,6 @@ type InvitationSuccessData = {
 
 type InvitationComposerProps = {
   lang: Locale;
-  /** Noms et styles forfaits (`dictionaries/*.json` → `packages`). */
-  packageLabels: PackageLabelsI18n;
-  /** Compte salon — Freemium = dollars famille ; sinon axe jetons legacy. */
-  isPartnerAccount?: boolean;
 };
 
 function formatExpiresAt(iso: string, locale: Locale): string {
@@ -64,22 +35,14 @@ function formatExpiresAt(iso: string, locale: Locale): string {
   if (Number.isNaN(date.getTime())) return iso;
   return new Intl.DateTimeFormat(locale === "en" ? "en-CA" : "fr-CA", {
     dateStyle: "long",
-    timeStyle: undefined,
   }).format(date);
 }
 
-export function InvitationComposer({
-  lang,
-  packageLabels,
-  isPartnerAccount = true,
-}: InvitationComposerProps) {
+export function InvitationComposer({ lang }: InvitationComposerProps) {
   const prefersReducedMotion = useReducedMotion();
   const submitLockRef = useRef(false);
-  const { activeTenant, activeTenantId, isLoading: isPartnerLoading } = usePartner();
+  const { activeTenantId, isLoading: isPartnerLoading } = usePartner();
 
-  const [selectedPackageId, setSelectedPackageId] = useState<PackageId | null>(
-    null,
-  );
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -90,29 +53,16 @@ export function InvitationComposer({
 
   const locale = lang === "en" ? "en" : "fr";
   const reducedMotion = prefersReducedMotion === true;
-  const isFreemiumTenant = activeTenant?.isFreemium === true;
-
-  const transactionMode = isFreemiumTenant
-    ? "dollars"
-    : resolveTransactionMode({
-        isPartnerAccount,
-      });
-
-  const tiers = useMemo(
-    () => listPartnerInvitationTiers(locale, packageLabels),
-    [locale, packageLabels],
-  );
 
   const copy =
     lang === "en"
       ? {
           kicker: "Invitation",
-          title: "Invite a family to start their tribute",
+          title: "Offer Keepsake to a family",
+          hint: "The salon gifts the digital sanctuary. The family may elevate the story later.",
           emailLabel: "Family email",
           emailPlaceholder: "name@family.com",
-          cta: "Select",
-          recommended: "Recommended",
-          send: "Send invitation",
+          send: "Offer Keepsake",
           sending: "Preparing the link…",
           errorGeneric:
             "An error occurred while creating the invitation. Please try again.",
@@ -129,12 +79,11 @@ export function InvitationComposer({
         }
       : {
           kicker: "Invitation",
-          title: "Invitez une famille à démarrer son hommage",
+          title: "Offrir le Souvenir à une famille",
+          hint: "Le salon offre l’écrin numérique. La famille pourra élever l’histoire plus tard.",
           emailLabel: "Courriel de la famille",
           emailPlaceholder: "nom@famille.com",
-          cta: "Sélectionner",
-          recommended: "Recommandé",
-          send: "Envoyer l’invitation",
+          send: "Offrir le Souvenir",
           sending: "Préparation du lien…",
           errorGeneric:
             "Une erreur est survenue lors de la création de l’invitation. Veuillez réessayer.",
@@ -150,26 +99,18 @@ export function InvitationComposer({
             "Aucun espace partenaire rattaché à ce compte. Reconnectez-vous via le lien partenaire.",
         };
 
-  const hasSelection = selectedPackageId !== null;
   const formLocked = isSubmitting || Boolean(successData);
   const canSubmit =
-    Boolean(selectedPackageId) &&
     Boolean(email.trim()) &&
     Boolean(activeTenantId) &&
     !isPartnerLoading &&
     !formLocked;
-
-  const selectPackage = useCallback((packageId: PackageId) => {
-    if (formLocked) return;
-    setSelectedPackageId(packageId);
-  }, [formLocked]);
 
   const resetForm = useCallback(() => {
     setSuccessData(null);
     setError(null);
     setCopied(false);
     setEmail("");
-    setSelectedPackageId(null);
     submitLockRef.current = false;
   }, []);
 
@@ -185,14 +126,12 @@ export function InvitationComposer({
   }, [successData?.magicLinkUrl]);
 
   const handleSubmit = useCallback(async () => {
-    if (!canSubmit || !selectedPackageId || !activeTenantId) return;
+    if (!canSubmit || !activeTenantId) return;
     if (submitLockRef.current) return;
     submitLockRef.current = true;
 
     setIsSubmitting(true);
     setError(null);
-
-    const grantedPackage = legacyGrantedFromManifest(selectedPackageId);
 
     try {
       const response = await fetch("/api/partner/invitations", {
@@ -200,7 +139,6 @@ export function InvitationComposer({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           familyEmail: email.trim(),
-          grantedPackage,
           tenantId: activeTenantId,
           locale: lang,
         }),
@@ -253,7 +191,6 @@ export function InvitationComposer({
     email,
     lang,
     activeTenantId,
-    selectedPackageId,
   ]);
 
   if (successData) {
@@ -346,239 +283,34 @@ export function InvitationComposer({
           <h2 className="font-editorial mt-5 text-3xl tracking-tight text-white md:text-4xl">
             {copy.title}
           </h2>
+          <p className="mt-4 text-sm font-light leading-relaxed text-zinc-500">
+            {copy.hint}
+          </p>
         </motion.div>
 
-        <div
-          className={
-            formLocked
-              ? "pointer-events-none w-full opacity-60"
-              : "w-full"
-          }
-          aria-busy={isSubmitting}
+        <motion.div
+          variants={SALON_INVITE_STAGGER_ITEM}
+          className="mb-10 flex w-full max-w-xl flex-col items-center"
         >
-          <motion.div
-            variants={SALON_INVITE_STAGGER_ITEM}
-            className="mb-12 flex w-full flex-col items-center"
+          <label
+            htmlFor="partner-invite-email"
+            className={salonInviteEmailLabelClass()}
           >
-            <label
-              htmlFor="partner-invite-email"
-              className={salonInviteEmailLabelClass()}
-            >
-              {copy.emailLabel}
-            </label>
-            <div className={`mt-3 ${salonInviteEmailBoxClass()}`}>
-              <input
-                id="partner-invite-email"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={copy.emailPlaceholder}
-                disabled={isSubmitting}
-                className={salonInviteEmailInputClass()}
-              />
-            </div>
-          </motion.div>
-
-          <motion.div
-            variants={SALON_INVITE_STAGGER_ITEM}
-            className="relative w-full py-3 md:py-6"
-          >
-            <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 overflow-visible md:grid-cols-3 md:gap-8">
-              {tiers.map((tier, index) => {
-                const packageId = tier.packageId;
-                const isFreemiumSouvenir =
-                  isFreemiumTenant && packageId === "SOUVENIR";
-                const isPopular = tier.recommended;
-                const isSelected = selectedPackageId === packageId;
-                const isDefaultPopularGlow = isPopular && !hasSelection;
-                const showRecommendedBadge =
-                  isPopular &&
-                  (!hasSelection || selectedPackageId === RECOMMENDED_PACKAGE_ID);
-                const {
-                  isAccent,
-                  showRadialBlur,
-                  cardAnimate,
-                  cardTransition,
-                  neonAnimate,
-                  neonTransition,
-                  radialAnimate,
-                  radialTransition,
-                  secondaryTextAnimate,
-                  secondaryTextTransition,
-                  hoverScale,
-                  hoverTransition,
-                } = getSalonTierCardMotionState(
-                  isSelected,
-                  isDefaultPopularGlow,
-                  prefersReducedMotion,
-                  hasSelection,
-                );
-
-                const priceFormatted = isFreemiumSouvenir
-                  ? locale === "en"
-                    ? "Free"
-                    : "Gratuit"
-                  : formatPackagePriceForMode(
-                      packageId,
-                      transactionMode,
-                      locale,
-                    );
-                const priceParts = isFreemiumSouvenir
-                  ? {
-                      amount: priceFormatted,
-                      suffix: "",
-                      formatted: priceFormatted,
-                    }
-                  : packagePricePartsForMode(
-                      packageId,
-                      transactionMode,
-                      priceFormatted,
-                    );
-                const tokenDebitLabel = tier.tokenDebitLabel;
-
-                return (
-                  <motion.div
-                    key={packageId}
-                    custom={index}
-                    variants={SALON_INVITE_CARD_VARIANTS}
-                    initial={reducedMotion ? "visible" : "hidden"}
-                    animate="visible"
-                    className="flex w-full"
-                  >
-                    <motion.article
-                      role="button"
-                      tabIndex={isSubmitting ? -1 : 0}
-                      aria-pressed={isSelected}
-                      aria-label={`${tier.title} · ${priceFormatted}`}
-                      aria-disabled={isSubmitting}
-                      initial={false}
-                      animate={cardAnimate}
-                      transition={cardTransition}
-                      whileHover={
-                        !reducedMotion && !isAccent
-                          ? { scale: hoverScale, transition: hoverTransition }
-                          : undefined
-                      }
-                      style={{ transformOrigin: "center center" }}
-                      className={`flex w-full flex-col ${salonTierCardSurfaceClass(isSelected)}`}
-                      onClick={() => selectPackage(packageId)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          selectPackage(packageId);
-                        }
-                      }}
-                    >
-                      {showRadialBlur ? (
-                        <motion.div
-                          aria-hidden
-                          className="pointer-events-none absolute inset-0 overflow-hidden blur-2xl"
-                          initial={false}
-                          animate={radialAnimate}
-                          transition={radialTransition}
-                          style={{ background: SALON_UV_RADIAL }}
-                        />
-                      ) : null}
-
-                      <motion.div
-                        aria-hidden
-                        className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-[var(--salon-cyan)]"
-                        initial={false}
-                        animate={neonAnimate}
-                        transition={neonTransition}
-                      />
-
-                      <AnimatePresence>
-                        {showRecommendedBadge ? (
-                          <motion.div
-                            key="recommended-badge"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{
-                              type: "tween",
-                              duration: 0.5,
-                              ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className={salonRecommendedBadgeClass()}
-                          >
-                            {copy.recommended}
-                          </motion.div>
-                        ) : null}
-                      </AnimatePresence>
-
-                      <header className="relative text-left">
-                        <p className={salonTierCardTitleClass(isSelected)}>
-                          {tier.title}
-                        </p>
-                        <motion.p
-                          initial={false}
-                          animate={secondaryTextAnimate}
-                          transition={secondaryTextTransition}
-                          className={`mt-3 ${salonTierCardStyleClass()}`}
-                        >
-                          {tier.style}
-                        </motion.p>
-                        <div className="mt-5 flex items-baseline gap-3">
-                          <div
-                            className={salonTierCardPriceAmountClass(isAccent)}
-                          >
-                            {transactionMode === "tokens"
-                              ? priceParts.amount
-                              : priceFormatted}
-                          </div>
-                          {transactionMode === "tokens" && priceParts.suffix ? (
-                            <motion.div
-                              initial={false}
-                              animate={secondaryTextAnimate}
-                              transition={secondaryTextTransition}
-                              className={salonTierCardPriceSuffixClass()}
-                            >
-                              {priceParts.suffix}
-                            </motion.div>
-                          ) : null}
-                        </div>
-                      </header>
-
-                      {transactionMode === "tokens" ? (
-                        <div className="relative mt-8 text-left">
-                          <p className={salonTierTokenDebitClass()}>
-                            {tokenDebitLabel}
-                          </p>
-                          <div
-                            aria-hidden
-                            className={salonTierFeatureDividerClass()}
-                          />
-                        </div>
-                      ) : null}
-
-                      <ul
-                        className={`relative space-y-2.5 ${transactionMode === "tokens" ? "" : "mt-8"}`}
-                      >
-                        {tier.features.map((feature) => (
-                          <SalonTierFeatureRow
-                            key={feature.id}
-                            feature={feature}
-                            isAccent={isAccent}
-                            isSelected={isSelected}
-                            reducedMotion={reducedMotion}
-                          />
-                        ))}
-                      </ul>
-
-                      <div className="relative mt-10">
-                        <span className={salonTierCardCtaClass(isSelected)}>
-                          {copy.cta}
-                        </span>
-                      </div>
-                    </motion.article>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </motion.div>
-        </div>
+            {copy.emailLabel}
+          </label>
+          <div className={`mt-3 w-full ${salonInviteEmailBoxClass()}`}>
+            <input
+              id="partner-invite-email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={copy.emailPlaceholder}
+              disabled={isSubmitting}
+              className={salonInviteEmailInputClass()}
+            />
+          </div>
+        </motion.div>
 
         {!activeTenantId && !isPartnerLoading && !isSubmitting ? (
           <motion.p
@@ -601,7 +333,7 @@ export function InvitationComposer({
 
         <motion.div
           variants={SALON_INVITE_STAGGER_ITEM}
-          className="mt-10 flex w-full justify-center px-4"
+          className="mt-4 flex w-full justify-center px-4"
         >
           <button
             type="button"

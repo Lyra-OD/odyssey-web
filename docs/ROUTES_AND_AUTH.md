@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — invitation Salon Souvenir-only (plus de picker).
 - 17 août 2026 — `/salon/commissions` + API ; `next` login conserve le chemin Salon ; `/facturation` redirige.
 - 17 août 2026 — Scanner Phase A : `/scan/[token]` + API sessions (plus « cible »).
 - 17 août 2026 — en-tête type + carte.
@@ -144,9 +145,9 @@ Alias anglais : `?partner=<slug>` (même comportement).
 - Layout : `resolvePartnerInitialBrand()` enrichit le branding serveur via RPC publique si le tenant n’a pas encore de logo en settings.
 - Header : `PartnerBrandLockup` + `PartnerLogoBand` variant `dashboard` + animation courte (~1,8 s).
 - Fallback logo client : si le tenant n’a pas `logoUrl`, RPC `get_partner_public_branding` via slug tenant, slug connexion (`localStorage`) ou premier tenant disponible.
-- Header `z-30` pour rester au-dessus des halos des cartes forfaits.
+- Header `z-30` pour rester au-dessus des halos d’ambiance.
 - Atmosphère : `SalonAtmosphere` (halos violet atténués), alignée sur la connexion.
-- Hiérarchie page : `PartnerSalonPageIntro` (contexte + soldes commissions) → `InvitationComposer` (centré, skin cyan).
+- Hiérarchie page : `PartnerSalonPageIntro` → `InvitationComposer` (email + CTA Souvenir).
 
 **SQL requis (Supabase) :**
 
@@ -211,7 +212,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | `src/lib/partner/fetchPartnerBrandingBySlug.ts` | Branding public par slug (P5.2) |
 | `src/lib/partner/fetchPartnerTenantsForUser.ts` | Tenants + branding membre ; `resolvePartnerInitialBrand()` |
 | `src/lib/partner/partnerBrandingFromSettings.ts` | Parse settings ; `parsePartnerLogoUrl()` |
-| `src/lib/salonTierCardSkin.ts` | Motion + classes cartes invitation Salon (cyan) |
+| `src/lib/salonTierCardSkin.ts` | Motion + classes champ / CTA invitation Salon (cyan) |
 | `src/lib/wizard/wizardDeliverables.utils.ts` | Présentation tiers (features structurées) |
 | `app/[lang]/studio/connexion/page.tsx` | Page connexion famille |
 | `app/[lang]/salon/connexion/page.tsx` | Page connexion partenaire (+ `searchParams`) |

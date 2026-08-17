@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · 11 août 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — invitation Salon : email + CTA Souvenir (plus de cartes forfait).
 - 17 août 2026 — en-tête type + carte.
 - 11 août 2026 — marque Éclipse + die-cut ODYSSEY §4.2.
 
@@ -370,22 +371,15 @@ backdrop-filter: blur(24px);
 
 Champs : `bg-black/40`, `rounded-lg`, focus `border-purple-400/45`.
 
-### 6.2 Cartes forfaits (InvitationComposer)
+### 6.2 Invitation Salon (Souvenir-only)
 
-Skin Salon dédié : `src/lib/salonTierCardSkin.ts` (isolé de `pricingTierCardSkin.ts` marketing).
+Un geste : courriel + CTA cyan « Offrir le Souvenir ». Pas de cartes forfait.
 
-| État | Visuel |
-|------|--------|
-| Repos | Bordure `white/10`, fond glass |
-| Héritage (aucune sélection) | Halo mauve discret + scale 1.02 + ligne cyan |
-| Sélection explicite | Scale **1.04**, ligne cyan 2 px, bordure renforcée |
-| CTA carte | Outline ; CTA principal « Envoyer l’invitation » en cyan plein |
-
-Features : matrice structurée (`SalonTierFeatureRow`) ; soldes commissions hors liste features.
+Skin : `src/lib/salonTierCardSkin.ts` (stagger, champ email, CTA). Upsell = wizard famille.
 
 ### 6.3 Header salon
 
-`bg-[#020202]/40`, `backdrop-blur-md`, `border-b white/6`, **`z-30`** (au-dessus des halos cartes).
+`bg-[#020202]/40`, `backdrop-blur-md`, `border-b white/6`, **`z-30`** (au-dessus des halos d’ambiance).
 
 ---
 
@@ -396,7 +390,7 @@ Features : matrice structurée (`SalonTierFeatureRow`) ; soldes commissions hors
 | Connexion salon | Séquence ~3,3 s (`salon-cinema-*`) | `prefers-reduced-motion: reduce` |
 | Connexion studio | Même reveal titre / formulaire | idem |
 | Header dashboard salon | Séquence ~1,8 s (`salon-dashboard-*`) à chaque reload / changement tenant | idem |
-| Contenu salon (invitation) | Stagger entrée (`SALON_INVITE_STAGGER_*`), dolly carte 0,8 s | `useReducedMotion` |
+| Contenu salon (invitation) | Stagger entrée (`SALON_INVITE_STAGGER_*`) | `useReducedMotion` |
 | Cartes forfaits | Framer Motion (sélection + halo repos) | idem |
 
 Courbe signature : `cubic-bezier(0.16, 1, 0.3, 1)` (locomotive / Apple-like).

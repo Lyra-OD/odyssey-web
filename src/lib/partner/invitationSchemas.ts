@@ -12,6 +12,8 @@ export const InvitationLocaleSchema = z.enum(["fr", "en"]);
 
 export type InvitationLocale = z.infer<typeof InvitationLocaleSchema>;
 
+export const FREEMIUM_INVITATION_GRANTED_PACKAGE = "essential" as const;
+
 export const CreatePartnerInvitationBodySchema = z
   .object({
     familyEmail: z
@@ -21,11 +23,13 @@ export const CreatePartnerInvitationBodySchema = z
       .max(320)
       .email({ message: "invalid_email" })
       .transform((value) => value.toLowerCase()),
-    grantedPackage: LegacyGrantedPackageSchema,
+    /** Ignoré — le serveur force toujours Souvenir (`essential`). */
+    grantedPackage: z.unknown().optional(),
     tenantId: z.string().uuid({ message: "invalid_tenant_id" }),
     locale: InvitationLocaleSchema.default("fr"),
   })
-  .strict();
+  .strict()
+  .transform(({ grantedPackage: _ignored, ...rest }) => rest);
 
 export type CreatePartnerInvitationBody = z.infer<
   typeof CreatePartnerInvitationBodySchema

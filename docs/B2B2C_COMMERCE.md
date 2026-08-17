@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — invitation Salon = toujours Souvenir (`essential`) ; picker forfait retiré ; `grantedPackage` client ignoré.
 - 17 août 2026 — UI Salon commissions + API `GET /api/partner/commissions`.
 - 17 août 2026 — étape 4 : grille forfaits → FREEMIUM §2 (plus de copie).
 - 17 août 2026 — en-tête type + carte.
@@ -45,7 +46,7 @@ Strip Licence si `intended >= signature`.
 
 | Champ | Rôle |
 |-------|------|
-| `grantedPackage` | Cadeau salon — immuable côté client |
+| `grantedPackage` | Cadeau salon — **toujours Souvenir** (`essential`) V1 ; immuable côté client |
 | `intendedPackage` | Forfait construit Soft Cap |
 | `extensions.musicLicense` | 39 $ — catalogue officiel sans monter le forfait |
 
@@ -57,6 +58,21 @@ Strip Licence si `intended >= signature`.
 | Checkout 0 $ freemium | Amputation (médias ≤ granted, clear licence) → `freemium_free` |
 
 Cart UI/API : `computeWizardCartWithGrant` / `resolveWizardDisplayCart`.
+
+---
+
+## 3.1 Invitation Salon (V1)
+
+Un geste. Zéro carte. Le conseiller saisit l’email et offre le Souvenir.
+
+| Couche | Règle |
+|--------|-------|
+| UI `/salon` | Email + CTA « Offrir le Souvenir » / « Offer Keepsake ». Pas de picker Héritage / Éternité. |
+| `POST /api/partner/invitations` | `grantedPackage` client **ignoré** ; serveur force `essential`. |
+| RPC | `p_granted_package = 'essential'`, metadata `packageId: SOUVENIR`. |
+| CHECK SQL | `essential` / `signature` / `heritage` **inchangé** (lignes historiques). |
+
+L’upsell (Héritage, Éternité, add-ons) se fait dans le wizard famille (Soft Cap / Dossier), pas au salon.
 
 ---
 
@@ -91,7 +107,7 @@ Ne jamais hardcoder `if (vertical === 'human') isFreemium = true`.
 | Checkout Soft Cap + amputation 422 + `freemium_free` | ✅ |
 | Webhook → `project_paid_entitlements` | ✅ |
 | Soft Cap UX (médias, magie, musique dual) | ✅ Phase 4 |
-| UI Salon commissions | ✅ `/salon/commissions` + API |
+| UI Salon commissions | ✅ `/salon/commissions` + API (KPIs même à 0 $ ; fail-open `is_freemium`) |
 | Creatomate gate entitlements | ✅ Phase 5 · worker P0 ✅ · master/ops ⏳ |
 | Accrual RevShare webhook (durcissement) | 🟡 |
 

@@ -51,7 +51,7 @@ function normalizeTenantJoin(
       name: "Partenaire",
       slug: null,
       settings: {},
-      is_freemium: false,
+      is_freemium: true,
     };
   }
   return row;
@@ -68,11 +68,18 @@ async function fetchFreemiumFlagsByTenantId(
     .select("id, is_freemium")
     .in("id", tenantIds);
 
-  if (error) return new Map();
+  if (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[fetchPartnerTenantsForUser] is_freemium lookup", error.message);
+    }
+    const failOpen = new Map<string, boolean>();
+    for (const id of tenantIds) failOpen.set(id, true);
+    return failOpen;
+  }
 
   const flagByTenantId = new Map<string, boolean>();
   for (const row of data ?? []) {
-    flagByTenantId.set(String(row.id), row.is_freemium === true);
+    flagByTenantId.set(String(row.id), row.is_freemium !== false);
   }
   return flagByTenantId;
 }
@@ -166,7 +173,7 @@ async function fetchPartnerTenantsViaRpc(
     const tenant = buildPartnerTenant(
       {
         ...rpcItemToBrandingFields(item),
-        isFreemium: freemiumByTenantId.get(item.id) === true,
+        isFreemium: freemiumByTenantId.get(item.id) !== false,
       },
       role,
     );
@@ -209,7 +216,7 @@ async function fetchPartnerTenantsViaJoin(
         ...(tenant.slug ? { slug: tenant.slug } : {}),
         brandLabel,
         logoUrl,
-        isFreemium: tenant.is_freemium === true,
+        isFreemium: tenant.is_freemium !== false,
       },
       role,
     );

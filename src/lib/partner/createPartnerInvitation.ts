@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 
 import {
+  FREEMIUM_INVITATION_GRANTED_PACKAGE,
   LegacyGrantedPackageSchema,
   type InvitationLocale,
   type LegacyGrantedPackage,
@@ -46,7 +47,8 @@ export type CreatePartnerInvitationParams = {
   tenantId: string;
   actorUserId: string;
   familyEmail: string;
-  grantedPackage: LegacyGrantedPackage;
+  /** Ignoré — toujours `essential` (Souvenir). Conservé pour compat appelants. */
+  grantedPackage?: LegacyGrantedPackage;
   magicLinkTokenHash: string;
   expiresAt: string;
   locale: InvitationLocale;
@@ -81,15 +83,18 @@ export async function createPartnerInvitation(
 ): Promise<CreatePartnerInvitationResult> {
   const admin = getSupabaseAdminClient();
 
+  // V1 : invitation = Souvenir only. Le payload client / params.grantedPackage est ignoré.
+  const grantedPackage = FREEMIUM_INVITATION_GRANTED_PACKAGE;
+
   const rpcArgs = {
     p_tenant_id: params.tenantId,
     p_actor_user_id: params.actorUserId,
     p_invited_email: params.familyEmail,
-    p_granted_package: params.grantedPackage,
+    p_granted_package: grantedPackage,
     p_magic_link_token_hash: params.magicLinkTokenHash,
     p_expires_at: params.expiresAt,
     p_metadata: {
-      packageId: PACKAGE_ID_MAP[params.grantedPackage],
+      packageId: PACKAGE_ID_MAP[grantedPackage],
       createdBy: params.actorUserId,
       locale: params.locale,
     },
