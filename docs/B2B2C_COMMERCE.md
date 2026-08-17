@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — scoreboard conseiller `/salon/mes-performances` (attribution invitation, pas le ledger salon).
 - 17 août 2026 — invitation Salon = toujours Souvenir (`essential`) ; picker forfait retiré ; `grantedPackage` client ignoré.
 - 17 août 2026 — UI Salon commissions + API `GET /api/partner/commissions`.
 - 17 août 2026 — étape 4 : grille forfaits → FREEMIUM §2 (plus de copie).
 - 17 août 2026 — en-tête type + carte.
-- 24 juillet 2026 — Freemium V1 + grille Quiet Luxury.
 
 > **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
 > **Archive pré-purge :** [`_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md`](_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md) — ne plus onboards dessus.
@@ -74,6 +74,8 @@ Un geste. Zéro carte. Le conseiller saisit l’email et offre le Souvenir.
 
 L’upsell (Héritage, Éternité, add-ons) se fait dans le wizard famille (Soft Cap / Dossier), pas au salon.
 
+Attribution conseiller : `invited_by_user_id` + ledger `invitation_id` → `/salon/mes-performances`. Commission Odyssey = **tenant** (`/salon/commissions`, admin). Pas de `?director_id=`. Pas de virement Odyssey au conseiller.
+
 ---
 
 ## 4. Waterfall Bulletproof (rappel)
@@ -108,6 +110,7 @@ Ne jamais hardcoder `if (vertical === 'human') isFreemium = true`.
 | Webhook → `project_paid_entitlements` | ✅ |
 | Soft Cap UX (médias, magie, musique dual) | ✅ Phase 4 |
 | UI Salon commissions | ✅ `/salon/commissions` + API (KPIs même à 0 $ ; fail-open `is_freemium`) |
+| Scoreboard conseiller | ✅ `/salon/mes-performances` + `GET /api/partner/my-performance` |
 | Creatomate gate entitlements | ✅ Phase 5 · worker P0 ✅ · master/ops ⏳ |
 | Accrual RevShare webhook (durcissement) | 🟡 |
 

@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — `/salon/mes-performances` : scoreboard conseiller (`invited_by_user_id`) ; pas de versement Odyssey.
 - 17 août 2026 — KPIs `/salon/commissions` toujours affichés (fail-open `is_freemium`) ; invitation Souvenir-only.
 - 17 août 2026 — UI Salon `/commissions` + `GET /api/partner/commissions` (`partner_admin`) ; payout CTA inactif.
 - 17 août 2026 — en-tête type + carte.
@@ -374,10 +375,12 @@ record_partner_commission_payout(
 
 Route : `/{lang}/salon/commissions` · `/{lang}/salon/facturation` redirige. Directeur sans accès → `/salon`. KPIs + ledger SQL même à 0 $ (pas de mur « RevShare inactif » si `is_freemium` null / SELECT échoue).
 
+Scoreboard conseiller : `/{lang}/salon/mes-performances` · **GET `/api/partner/my-performance`**. Filtre `partner_invitations.invited_by_user_id = auth.uid()` + ledger `invitation_id`. **Pas** le solde `partner_commission_balances`. **Pas** de CTA versement.
+
 | Rôle | Accès |
 |------|-------|
-| `partner_admin` | Lecture solde + historique ledger (son tenant) — **GET `/api/partner/commissions`** |
-| `partner` (Directeur) | **Aucun** accès commissions |
+| `partner_admin` | Lecture solde + historique ledger (son tenant) — **GET `/api/partner/commissions`**. Scoreboard perso = **GET `/api/partner/my-performance`**. |
+| `partner` (Directeur) | **Aucun** accès commissions salon. **Oui** mes performances (ses invitations). |
 | Super Admin Odyssey | Payout + adjustments — CTA « Demander un versement » **disabled** (ops mensuel, pas Stripe Connect) |
 
 ---
@@ -430,6 +433,7 @@ WHERE tc.project_id = :project_id;
 | Family Fund depuis poche partenaire | RPC séparée sur `odyssey_margin_cents` |
 | Payout sans ligne ledger | Toujours `INSERT payout` + `actor_user_id` |
 | Mélanger jetons et centimes | Ledgers séparés |
+| Montrer `accrued_cents` salon au directeur | Scoreboard `invited_by_user_id` uniquement |
 
 ---
 
@@ -446,6 +450,7 @@ WHERE tc.project_id = :project_id;
 | RPC `accrue_guest_micro_checkout` (contribution invité) | ✅ P10.1 |
 | Webhook handler `charge.refunded` | ⏳ |
 | UI Salon commissions waterfall (`partner_admin`) | 🟢 `/salon/commissions` + API |
+| Scoreboard conseiller (`partner`) | 🟢 `/salon/mes-performances` + `GET /api/partner/my-performance` |
 | Payout admin Odyssey | ⏳ |
 | QA checklist | ✅ [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) |
 | Stripe Connect auto-payout | 🔮 Phase 2 |

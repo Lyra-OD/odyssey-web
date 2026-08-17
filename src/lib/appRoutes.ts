@@ -8,6 +8,8 @@ export const appRoutes = {
   salon: (lang: Locale) => `/${lang}/salon`,
   /** Dashboard RevShare partenaire (admin). */
   salonCommissions: (lang: Locale) => `/${lang}/salon/commissions`,
+  /** Scoreboard conseiller — ses invitations, pas le solde salon. */
+  salonMyPerformance: (lang: Locale) => `/${lang}/salon/mes-performances`,
   /** @deprecated Alias URL — redirige vers salonCommissions. */
   salonFacturation: (lang: Locale) => `/${lang}/salon/facturation`,
   /** Connexion famille — inscription autorisée. */

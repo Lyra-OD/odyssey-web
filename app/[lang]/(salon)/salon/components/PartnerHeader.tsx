@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
@@ -50,6 +51,7 @@ export function PartnerHeader({
           tenantLoading: "Loading…",
           tenantEmpty: "No partner workspace",
           navHome: "Invitations",
+          navPerformance: "My performance",
           navBilling: "Commissions",
         }
       : {
@@ -57,6 +59,7 @@ export function PartnerHeader({
           tenantLoading: "Chargement…",
           tenantEmpty: "Aucun espace partenaire",
           navHome: "Invitations",
+          navPerformance: "Mes performances",
           navBilling: "Commissions",
         };
 
@@ -120,6 +123,26 @@ export function PartnerHeader({
     };
   }, [needsSlugBranding, brandingSlug]);
 
+  const pathname = usePathname();
+  const invitationsHref = appRoutes.salon(lang);
+  const performanceHref = appRoutes.salonMyPerformance(lang);
+  const commissionsHref = appRoutes.salonCommissions(lang);
+  const isInvitations =
+    pathname === invitationsHref || pathname === `${invitationsHref}/`;
+  const isPerformance = pathname === performanceHref;
+  const isCommissions = pathname === commissionsHref;
+
+  const navLinkClass = (active: boolean, accent: "zinc" | "violet" = "zinc") => {
+    if (active) {
+      return accent === "violet"
+        ? "font-label text-[10px] font-bold uppercase tracking-[0.36em] text-violet-200"
+        : "font-label text-[10px] font-bold uppercase tracking-[0.36em] text-white";
+    }
+    return accent === "violet"
+      ? "font-label text-[10px] font-bold uppercase tracking-[0.36em] text-violet-300/80 transition-colors hover:text-violet-200"
+      : "font-label text-[10px] font-bold uppercase tracking-[0.36em] text-zinc-500 transition-colors hover:text-white";
+  };
+
   const signInHref = useMemo(
     () =>
       appRoutes.salonConnexionWithParams(lang, {
@@ -142,25 +165,30 @@ export function PartnerHeader({
             animationPreset="dashboard"
           />
 
-          {capabilities?.canViewLedger ? (
+          {capabilities ? (
             <nav
               aria-label={
                 lang === "en" ? "Partner console" : "Console partenaire"
               }
               className="mt-4 flex flex-wrap gap-5 md:mt-5"
             >
-              <Link
-                href={appRoutes.salon(lang)}
-                className="font-label text-[10px] font-bold uppercase tracking-[0.36em] text-zinc-500 transition-colors hover:text-white"
-              >
+              <Link href={invitationsHref} className={navLinkClass(isInvitations)}>
                 {copy.navHome}
               </Link>
               <Link
-                href={appRoutes.salonCommissions(lang)}
-                className="font-label text-[10px] font-bold uppercase tracking-[0.36em] text-violet-300/80 transition-colors hover:text-violet-200"
+                href={performanceHref}
+                className={navLinkClass(isPerformance)}
               >
-                {copy.navBilling}
+                {copy.navPerformance}
               </Link>
+              {capabilities.canViewLedger ? (
+                <Link
+                  href={commissionsHref}
+                  className={navLinkClass(isCommissions, "violet")}
+                >
+                  {copy.navBilling}
+                </Link>
+              ) : null}
             </nav>
           ) : null}
         </div>

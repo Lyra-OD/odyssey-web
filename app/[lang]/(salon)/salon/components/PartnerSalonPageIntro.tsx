@@ -22,11 +22,13 @@ export function PartnerSalonPageIntro({ lang }: PartnerSalonPageIntroProps) {
           workspace: "Partner space",
           subtitle: "Invite a family — Keepsake is the gift.",
           commissions: "Commissions",
+          performance: "My performance",
         }
       : {
           workspace: "Espace partenaires",
           subtitle: "Invitez une famille — Souvenir offert.",
           commissions: "Commissions",
+          performance: "Mes performances",
         };
 
   return (
@@ -53,6 +55,15 @@ export function PartnerSalonPageIntro({ lang }: PartnerSalonPageIntroProps) {
             className="font-label text-[10px] font-bold uppercase tracking-[0.38em] text-violet-300/75 transition-colors hover:text-violet-200"
           >
             {copy.commissions} →
+          </Link>
+        </div>
+      ) : capabilities?.canInvite ? (
+        <div className="shrink-0 md:text-right">
+          <Link
+            href={appRoutes.salonMyPerformance(lang)}
+            className="font-label text-[10px] font-bold uppercase tracking-[0.38em] text-zinc-400 transition-colors hover:text-white"
+          >
+            {copy.performance} →
           </Link>
         </div>
       ) : null}

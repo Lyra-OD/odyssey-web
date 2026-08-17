@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — `/salon/mes-performances` : scoreboard conseiller (pas le solde salon).
 - 17 août 2026 — invitation Salon Souvenir-only (plus de picker) ; KPIs commissions fail-open.
 - 17 août 2026 — `/salon/commissions` lit SQL (`GET /api/partner/commissions`) ; invitations Freemium en dollars ; `next` post-login conservé.
 - 17 août 2026 — Scanner Phase B : aperçu IA → add-on `aiRetouch` (pas de job serveur).
 - 17 août 2026 — Scanner Phase A (QR + galerie) dans l’étape Coffre.
-- 17 août 2026 — split vivant / log ; 4 contradictions corrigées (wizard 7, Creatomate, checkout, viral, plus de wallets dans le schéma).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -22,7 +22,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Dimension | Status | Notes |
 |-----------|--------|-------|
 | **Family Studio (wizard)** | 🟢 | **7** étapes (`TOTAL_STEPS = 7`, Extensions au checkout). Autosave, Stingray, Livre Ouvert, Soft Cap, Inviter, Co-Créateur |
-| **Partner Salon** | 🟢 | Invitation Souvenir-only · solde = **commissions** (jetons **DROP P8**) |
+| **Partner Salon** | 🟢 | Invitation Souvenir-only · mes perfs conseiller · solde = **commissions** admin |
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Soft Cap + entitlements + gate export + MP3/ToS — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Héritage **1080p** · 4K dès Éternité · Phase 6 QA ⏳ |
 | **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual. **Pas** ⏳. |
 | **RevShare** | 🟢 UI | Spec + SQL P6/P8 + webhook ✅ · UI Salon + `GET /api/partner/commissions` 🟢 · payout ops ⏳ |
@@ -53,6 +53,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Checkout jetons B2B | — | **N/A** — purgé P8. Ne plus planifier |
 | Salon invitations | 🟢 | Souvenir 0 $ — **un geste**, pas de picker forfait |
 | Salon commissions | 🟢 | `/salon/commissions` + API `partner_commission_*` · `/facturation` → redirect |
+| Salon mes performances | 🟢 | `/salon/mes-performances` + `GET /api/partner/my-performance` (attribution invitation) |
 | Fonds / packs invité | 🟢 gated | Code 3a livré · visible si `viral_loop_enabled` sur le tenant |
 | Scanner Compagnon | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Export / render** | 🟡 | P0 🟢 · master / cinéma ⏳ — **pas** 🔴 |
