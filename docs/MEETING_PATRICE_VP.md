@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — étape 4 : grille live = FREEMIUM §2 (chiffres ici = modèle V2).
 - 17 août 2026 — en-tête type ; lien Manifesto (ampleur, pas à l’oral).
 - août 2026 — playbook prêt · courriel envoyé.
 
@@ -13,7 +14,7 @@
 **Statut :** prêt à jouer · courriel déjà envoyé (août 2026)  
 **Complète :** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`VISION_PHASE_2.md`](VISION_PHASE_2.md)
 
-> Les montants ci-dessous sont des **hypothèses de modèle** (Business Case V2, 1 salon × 3 000 familles / an), pas du revenu encaissé. Les dire comme ça.
+> Les montants ci-dessous sont des **hypothèses de modèle** (Business Case V2, 1 salon × 3 000 familles / an), pas du revenu encaissé. Les dire comme ça. Grille famille live : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 — pas ce playbook.
 >
 > **Boucle virale :** le produit (Sanctuaire, dépôts, Fonds famille, share invité) est **allumé**. Le « viral OFF » du conservateur dans le Business Case V2 (juillet) était un *what-if* : « et si aucun proche ne paie ». Ce n’est **pas** l’état produit. En rencontre, conservateur = cercle **timide**, pas fonction éteinte.
 

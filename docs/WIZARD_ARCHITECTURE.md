@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · 20 juillet 2026 (revue code) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — étape 4 : canaux / cents → FREEMIUM §2 (plus de grille recopiée).
 - 17 août 2026 — en-tête type ; « 8-step » → **7** étapes (Extensions au checkout).
 - 20 juillet 2026 — Soft Cap UX livré · Freemium Phases 0–5 (plus « 0–4 » dans ce bandeau).
 
@@ -64,10 +65,12 @@ The tribute wizard is driven by [`wizardDeliverables.ts`](../src/lib/wizard/wiza
 
 ### Pricing Freemium V1 — canaux (Phases 1–4 ✅)
 
+Prix : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2. Ne pas recopier la grille ici.
+
 | Canal | Forfaits visibles | Règle |
 |-------|-------------------|-------|
-| **B2B2C freemium** | **Souvenir** 0 $ + Soft Cap / upsell **Héritage 179 $** · **Éternité 349 $** + add-ons (`musicLicense`, etc.) | Lead-magnet · pas de Légendaire · **pas de jetons** |
-| **B2C direct** | **Héritage 179 $** · **Éternité 349 $** · **Légendaire 499 $** | Pas de Souvenir |
+| **B2B2C freemium** | Souvenir (granted) · Soft Cap Héritage / Éternité + add-ons | Lead-magnet · pas de Légendaire · **pas de jetons** |
+| **B2C direct** | Héritage · Éternité · Légendaire | Pas de Souvenir |
 | ~~B2B legacy jetons~~ | — | **PURGED P8** |
 
 Voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
@@ -311,14 +314,7 @@ Audio `src` uses `track.previewUrl` (typically `/api/music/preview?trackId=…`)
 
 **Rule:** integer USD cents only. Soft Cap cart = `computeWizardCartWithGrant` / `resolveWizardDisplayCart`.
 
-**Source of truth:** [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · `pricingConfig.ts`.
-
-| Technical ID | Marketing | B2C | B2B2C famille |
-|--------------|-----------|-----|---------------|
-| `essential` | Souvenir | non vendu | **0 $** (granted) |
-| `signature` | Héritage | 17 900¢ | Soft Cap delta |
-| `heritage` | Éternité | 34 900¢ | |
-| `legendary` | Légendaire | 49 900¢ | non proposé |
+**Source of truth:** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · `pricingConfig.ts`. Ne pas recopier 0 / 179 / 349 / 499 ni les cents ici.
 
 Helpers clés : `packageCents` · `computeWizardCart` · `computeWizardCartWithGrant` · `resolveMusicEntitlement`.  
 ~~`PARTNER_TOKEN_COST_CENTS` / `packagePartnerTokens` / wholesale~~ — **purgés** (ne plus documenter comme API vivante).

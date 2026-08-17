@@ -1,9 +1,14 @@
 # Odyssey — Business Case V2 (juillet 2026)
 
+**Type :** snapshot · **Figé :** 24 juillet 2026. **Pas** la grille live.  
+**Canon prix :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 · livrables [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · cents `pricingConfig.ts`.
+
 **Confidentiel partenaire · Snapshot 24 juillet 2026**  
 **Complète :** [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md) · runtime [`pricingConfig.ts`](../src/lib/wizard/pricingConfig.ts)
 
-> **Règle de lecture :** tout montant hors waterfall unitaire est une **hypothèse** (H1…Hn). Aucune projection n’est une prévision comptable. La Boucle Virale (`viral_loop_enabled`) est **OFF en prod** — les scénarios « viral » sont des *what-if*, pas du revenu acquis.
+> **Règle de lecture :** tout montant hors waterfall unitaire est une **hypothèse** (H1…Hn). Aucune projection n’est une prévision comptable.
+>
+> **Boucle virale dans ce snapshot :** le scénario « viral OFF » = *what-if* (aucun proche ne paie), pas l’état produit. Produit = Sanctuaire / Fonds **livrés** ; flag tenant = opt-in. Voir [`PROJECT_STATUS.md`](PROJECT_STATUS.md) · [`MEETING_PATRICE_VP.md`](MEETING_PATRICE_VP.md).
 
 ---
 

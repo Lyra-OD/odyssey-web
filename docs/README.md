@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 17 août 2026 — étape 4 : snapshots figés ; grilles hors FREEMIUM/DELIVERABLES → lien canon.
 - 17 août 2026 — étape 3 : STATUS vivant / log archive ; 4 contradictions corrigées dans le vivant.
 - 17 août 2026 — étape 2 : modèle d’en-tête sur les docs utiles (pas le Manifesto).
 - 17 août 2026 — étape 1 : carte créée. Aucun chemin déplacé.
@@ -28,7 +29,8 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 ```
 
 **Pas d’en-tête à réécrire :** [`Manifesto-V10.4.md`](Manifesto-V10.4.md) = bible, lecture seule.  
-**Plus tard :** snapshots partenaires (étape 4, bandeau figé) · craft labs (déjà un `Statut`) · `_archive/` · stubs.
+**Snapshots (étape 4) :** bandeau figé · grille live = FREEMIUM §2. Texte long conservé.  
+**Plus tard :** craft labs (déjà un `Statut`) · `_archive/` · stubs · dossiers (étape 5).
 
 ---
 
@@ -116,9 +118,9 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 | Fichier | Type | Vérité pour |
 |---------|------|-------------|
 | [`MEETING_PATRICE_VP.md`](MEETING_PATRICE_VP.md) | playbook | Rencontre VP 60 min. Chiffres = modèle V2. Lyra orale ≠ Manifesto |
-| [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) | snapshot | Projections juil. 2026 (1 salon). Pas la grille live |
-| [`PARTNER_BRIEF_JON_JUL2026.md`](PARTNER_BRIEF_JON_JUL2026.md) | snapshot | Brief Jon, figé |
-| [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md) | snapshot | Rapport partenaire, figé |
+| [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) | snapshot | Projections juil. 2026 (1 salon). **Figé** — grille live = FREEMIUM §2 |
+| [`PARTNER_BRIEF_JON_JUL2026.md`](PARTNER_BRIEF_JON_JUL2026.md) | snapshot | Brief Jon, figé 31 juil. — ne pas copier la grille |
+| [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md) | snapshot | Rapport partenaire, figé 24 juil. |
 
 ### Craft (labs internes)
 

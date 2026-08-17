@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · 24 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — étape 4 : grille forfaits → FREEMIUM §2 (plus de copie).
 - 17 août 2026 — en-tête type + carte.
 - 24 juillet 2026 — Freemium V1 + grille Quiet Luxury.
 
@@ -28,14 +29,14 @@ Modèle **salon → famille** : Souvenir offert, Soft Cap, Stripe upsell, RevSha
 
 ## 2. Grille partenaire (freemium)
 
-| Forfait | ID | Famille | RevShare (si payant) |
-|---------|-----|---------|----------------------|
-| Souvenir | `essential` | **0 $** (cadeau) | — |
-| Héritage | `signature` | **179 $** | 30 % Net Distribuable |
-| Éternité | `heritage` | **349 $** | idem |
+Prix / livrables : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md). Ne pas recopier la grille ici.
 
-Add-ons commissionnables (dont **`musicLicense` 39 $**). Strip Licence si `intended >= signature`.  
-B2C-only : Légendaire **499 $**. Livrables : [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md).
+| Canal | RevShare (si payant) |
+|-------|----------------------|
+| B2B2C — Souvenir offert, upsell Héritage / Éternité + add-ons (`musicLicense`, etc.) | **30 % Net Distribuable** |
+| B2C — Légendaire (hors catalogue partenaire) | Non |
+
+Strip Licence si `intended >= signature`.
 
 ---
 

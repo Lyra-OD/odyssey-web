@@ -1,10 +1,14 @@
 # Odyssey — Rapport partenaire (juillet 2026)
 
+**Type :** snapshot · **Figé :** 24 juillet 2026. **Pas** la grille live.  
+**Canon prix :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 · état courant [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
+
 **Confidentiel · Période couverte : 20–24 juillet 2026**  
 **Auteur :** équipe produit/tech · **Destinataire :** partenaire stratégique  
 **Canvas interactif :** ouvrir à côté du chat dans Cursor (`partner-report-jul2026.canvas.tsx`)
 
-> **Snapshot historique** — état au **24 juil. 2026**. Pour l’état courant (Héritage **1080p**, Creatomate P0, enforce 5 photos) : [`PROJECT_STATUS.md`](PROJECT_STATUS.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
+> **Snapshot historique** — état au **24 juil. 2026**. Ne pas recopier 0/179/349/499 d’ici.  
+> **Boucle virale :** `viral_loop_enabled = false` dans ce sprint = flag pas encore flippé sur un tenant. Le code Sanctuaire / Fonds est livré (voir STATUS vivant).
 
 > **Honnêteté calendaire :** l’activité Git sur `main` est concentrée sur **5 jours** (20–24 juil.). Aucun commit produit entre le 10 et le 19. Ce rapport décrit ce sprint intensif, pas deux semaines vides.
 

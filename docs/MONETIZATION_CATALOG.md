@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · 22 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — étape 4 : A.1 forfaits → FREEMIUM §2 (add-ons / empreintes restent ici).
 - 17 août 2026 — en-tête type + carte.
 - 22 juillet 2026 — plafonds dépôt Sanctuaire + témoignage live.
 
@@ -25,7 +26,7 @@ l'**invité** peut offrir — plus les leviers **documentés à venir** et les *
 
 | Dimension | Valeur |
 |-----------|--------|
-| Forfaits famille | **0 / 179 / 349 / 499 $** |
+| Forfaits famille | Voir [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 |
 | Empreintes Sanctuaire actives | **5** (voix, vidéo, coproduction, lueur, mécène) |
 | Panier moyen invité cible | **~80–100 $** ARPU payant |
 | Soft Cap médias famille | **50** — médias **invités exclus** |
@@ -37,12 +38,7 @@ l'**invité** peut offrir — plus les leviers **documentés à venir** et les *
 
 ### A.1 Forfaits — la famille achète
 
-| Forfait | ID technique | Prix | Médias | Export | Inclus | Statut |
-|---------|--------------|------|--------|--------|--------|--------|
-| **Souvenir** | `essential` | **0 $** | 50 | 1080p | Preview Stingray + MP3 perso (ToS) — 0 piste licenciée | ✅ |
-| **Héritage** | `signature` | **179 $** | 125 | **1080p** | Catalogue Stingray officiel + soupape MP3/WAV | ✅ |
-| **Éternité** | `heritage` | **349 $** | 175 | **4K** | + IA complète + Coffre-fort 50 ans | ✅ |
-| **Légendaire** | `legendary` | **499 $** | 250 | **4K** | + boîte pré-affranchie (**B2C only**) | ✅ |
+Grille : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 · contrat [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · cents `pricingConfig.ts`. Ne pas recopier 0 / 179 / 349 / 499 ici.
 
 ### A.2 Add-ons Quiet Luxury — la famille achète
 

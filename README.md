@@ -7,18 +7,11 @@ Next.js 14 (App Router) — **Studio Odyssey** : hommages vidéo Quiet Luxury en
 | Canal | Modèle |
 |-------|--------|
 | **B2B2C** | Le salon offre **Souvenir 0 $** ; la famille construit via **Soft Cap** (Héritage / Licence musique) ; Odyssey reverse **30 % du Net Distribuable** (Platform Fee 10 %). |
-| **B2C** | Héritage **179 $** · Éternité **349 $** · Légendaire **499 $** (ancre Quiet Luxury). |
+| **B2C** | Héritage · Éternité · Légendaire (ancre Quiet Luxury) — montants : [`docs/FREEMIUM_V1_PIVOT.md`](docs/FREEMIUM_V1_PIVOT.md) §2. |
 
 **Jetons partenaire = purgés.** Solde salon = commissions uniquement (`partner_commission_*`).
 
-| Forfait | ID | Prix | Médias | Export | Musique |
-|---------|-----|------|--------|--------|---------|
-| Souvenir | `essential` | 0 $ | 50 | 1080p | Preview Stingray + MP3 perso (ToS) |
-| Héritage | `signature` | 179 $ | 125 | **1080p** | Catalogue officiel **inclus** + MP3 |
-| Éternité | `heritage` | 349 $ | 175 | **4K** | Idem + IA + coffre |
-| Légendaire | `legendary` | 499 $ | 250 | **4K** | Idem Éternité (B2C) |
-
-Add-ons V1 : `sanctuaryToken` 79 $ · `storyVoice` 39 $ · **`musicLicense` 39 $** · `memoryBook` 149 $ · `aiRetouch` 49 $ · `digitalVault` 99 $.
+**Grille famille / add-ons :** [`docs/FREEMIUM_V1_PIVOT.md`](docs/FREEMIUM_V1_PIVOT.md) §2 · [`docs/DELIVERABLES_AND_PACKAGES.md`](docs/DELIVERABLES_AND_PACKAGES.md) · cents `src/lib/wizard/pricingConfig.ts`. Ne pas recopier les montants ici.
 
 ## État (juillet 2026)
 

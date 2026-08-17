@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · 22 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — étape 4 : grille famille → FREEMIUM §2 (empreintes invité restent ici).
 - 17 août 2026 — en-tête type + carte.
 - juil. 2026 — Phase 1–2 ✅ · 3a UI ✅ (flag OFF défaut) · 3b live ⏳.
 
@@ -52,12 +53,7 @@ Le **Fonds** est un **crédit produit** (remise sur l'hommage), **jamais** un vi
 
 ### Grille famille (Quiet Luxury accessible — Phase 0)
 
-| Forfait | ID | Prix |
-|---------|-----|------|
-| Souvenir | `essential` | **0 $** |
-| Héritage | `signature` | **179 $** |
-| Éternité | `heritage` | **349 $** |
-| Légendaire | `legendary` | **499 $** |
+Prix : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md). Ne pas recopier la grille ici.
 
 ### Catalogue empreintes invitées (Sanctuaire — ordre UX)
 
@@ -216,7 +212,7 @@ B2B2C/B2C actuels strictement inchangés tant que le flag n'est pas activé **et
 | Surface | Fichier | Rôle |
 |---------|---------|------|
 | Catalogue | `src/lib/wizard/guestSupportPacks.ts` | Empreintes 15/69/119/129 + Mécène 150–1000 · `guest_hd` déprécié |
-| Prix famille | `src/lib/wizard/pricingConfig.ts` | 0 / **179** / **349** / 499 |
+| Prix famille | `src/lib/wizard/pricingConfig.ts` | Voir [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 |
 | Token | `src/lib/contribute/*` | Génération/hash + résolution |
 | Lien invité | `POST /api/projects/[id]/contribute-link` | TTL 30 j |
 | Contexte public | `GET /api/contribute/[token]` | Hommage + catalogue actif |

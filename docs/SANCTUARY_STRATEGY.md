@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — étape 4 : montants forfaits → FREEMIUM §2 (échelle émotionnelle reste).
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — canon positionnement V1.
 
@@ -123,12 +124,14 @@ Paiement = acte d’amour. Partenaire → RevShare Bulletproof (30 % du **Net Di
 
 ## 4. Échelle des forfaits (présence, pas features)
 
+Montants : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 — ne pas recopier la grille ici.
+
 | Niveau | Emotion vendue | Qui paie (cible) |
 |--------|----------------|------------------|
-| **Souvenir** | La porte ouverte | Cadeau partenaire (0 $) |
-| **Héritage** | Le récit digne | Famille 179 $ **ou** Gant Blanc (avance commissions) |
-| **Éternité** | La mémoire restaurée | Famille 349 $ **ou** Gant Blanc |
-| **Légendaire** | Le rituel absolu | **B2C only** 499 $ — hors catalogue partenaire V1 |
+| **Souvenir** | La porte ouverte | Cadeau partenaire |
+| **Héritage** | Le récit digne | Famille **ou** Gant Blanc (avance commissions) |
+| **Éternité** | La mémoire restaurée | Famille **ou** Gant Blanc |
+| **Légendaire** | Le rituel absolu | **B2C only** — hors catalogue partenaire V1 |
 
 > **V-Final :** en B2C comme en B2B2C, l'entrée se fait en **brouillon gratuit** ; le paywall arrive
 > à l'export et peut être financé par le **Fonds Commémoratif** (contributions des proches). Détail :

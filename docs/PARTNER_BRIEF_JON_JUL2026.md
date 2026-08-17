@@ -1,10 +1,13 @@
 # Odyssey — Partner Brief for Jon (July 2026)
 
+**Type :** snapshot · **Frozen :** 31 July 2026. **Do not copy the grid** as live truth.  
+**Live prices :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md). Tables below = what was briefed that day.
+
 **Confidential partner deep dive · Snapshot 31 July 2026**  
 **Audience:** Jon · **Author:** Erik  
 **Complements:** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) · [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) · [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)
 
-> **Note on numbers:** Family AOV and partner commission figures are **modeled hypotheses** from Business Case V2 (24 July snapshot), not booked revenue. The viral loop flag is still **OFF in production** until the pilot.
+> **Note on numbers:** Family AOV and partner commission figures are **modeled hypotheses** from Business Case V2 (24 July snapshot), not booked revenue. Viral « OFF » in that model is a *what-if*, not product-off. See [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 
 ---
 
@@ -50,7 +53,9 @@ We did **not** build two apps — we built one engine with channel-aware billing
 
 ---
 
-## 3. Price grid (locked)
+## 3. Price grid (locked *as briefed* — 31 July)
+
+Live grid: [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2. Do not treat the table below as the place to edit prices.
 
 ### Family packages
 
