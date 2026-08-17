@@ -1,6 +1,11 @@
 # Attestation droits musique (soupape MP3/WAV)
 
-**Dernière révision : juillet 2026 · Statut : implémenté Phase 5 (UI + gates checkout/export) — textes légaux ToS à finaliser avec conseil**
+**Type :** canon · **Vérité pour :** MP3 perso / ToS (textes légaux à finaliser conseil).  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — Phase 5 UI + gates checkout/export.
 
 Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Technique Stingray : [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md).
 

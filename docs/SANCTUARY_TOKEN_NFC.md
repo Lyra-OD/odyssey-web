@@ -1,6 +1,11 @@
 # Jeton du Sanctuaire (NFC / QR)
 
-**Dernière révision : juillet 2026 · Statut : spec produit — implémentation Phase 5**
+**Type :** canon · **Vérité pour :** add-on NFC `sanctuaryToken` 79 $.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — spec Phase 5.
 
 Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Prix : **79 $** · ID : `sanctuaryToken` (remplace `collectorUsb`).
 

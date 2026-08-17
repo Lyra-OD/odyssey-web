@@ -1,6 +1,11 @@
 # Odyssey — Vision produit : Phase 1 (immédiat) & Phase 2 (Licorne)
 
-**Last updated: July 2026 · Session stratégique partenaires d'affaires**
+**Type :** vision · **Vérité pour :** stratégie CPL / MRR / Lyra produit. **Pas** le checkout V1. ≠ [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md) (cinéma).  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — session stratégique partenaires.
 
 Document canonique pour la **feuille de route stratégique** au-delà du sprint commerce P6.  
 Complète le [`Manifesto-V10.4.md`](Manifesto-V10.4.md) (constitution technique) et les specs d'implémentation courantes ([`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).  

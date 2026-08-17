@@ -1,6 +1,11 @@
 # Odyssey — Pivot Freemium V1 (canon CEO)
 
-**Dernière révision : 28 juillet 2026 · Statut : vision figée · Phases 0–5 ✅ (Creatomate P0 + Stem Graph) · Phase 3a Sanctuaire UI ✅ · Collab A–C ✅ · Phase 6 QA ⏳**
+**Type :** canon · **Vérité pour :** grille, Soft Cap, musique, phases Freemium. Corriger ici, pas dans les snapshots.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · 28 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- 28 juillet 2026 — vision figée · Phases 0–5 ✅ (Creatomate P0) · 3a UI ✅ · Collab A–C ✅ · Phase 6 QA ⏳.
 
 Document canonique du **pivot produit majeur** : purge totale des jetons, freemium B2B2C + RevShare only, Soft Cap (Expansion Narrative), grille forfaits (Héritage **1080p** · Master **4K** dès Éternité), musique à deux voies + add-on Licence Stingray, add-ons Quiet Luxury.
 

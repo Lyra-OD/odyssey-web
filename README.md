@@ -48,6 +48,8 @@ Variables d’environnement : voir [`docs/TECHNICAL_ONBOARDING_V1.md`](docs/TECH
 
 ## Documentation — par où commencer
 
+Carte complète (types, canon vs snapshot) : [`docs/README.md`](docs/README.md).
+
 | Priorité | Document | Rôle |
 |----------|----------|------|
 | **1** | [`docs/FREEMIUM_V1_PIVOT.md`](docs/FREEMIUM_V1_PIVOT.md) | **Canon CEO** — grille, Soft Cap, musique, phases |

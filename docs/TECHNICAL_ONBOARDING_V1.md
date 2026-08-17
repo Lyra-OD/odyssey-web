@@ -1,6 +1,11 @@
 # Odyssey — Technical Onboarding V1
 
-**Dernière révision : juillet 2026 · Freemium V1 (post-purge jetons)**
+**Type :** canon · **Vérité pour :** hub onboarding (stack, env, chemins code).  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — hub post-purge jetons.
 
 Hub d’entrée pour développeurs. Canon produit : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).  
 Ancien hub (pré-purge) : [`_archive/TECHNICAL_ONBOARDING_ODYSSEY_PRE_FREEMIUM.md`](_archive/TECHNICAL_ONBOARDING_ODYSSEY_PRE_FREEMIUM.md) — **ne plus onboards dessus**.

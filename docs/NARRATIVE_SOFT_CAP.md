@@ -1,6 +1,11 @@
 # Soft Cap — Expansion Narrative
 
-**Dernière révision : juillet 2026**
+**Type :** canon · **Vérité pour :** granted / intended, dual musique, amputation.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — spec Soft Cap Freemium V1.
 
 Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Émotion : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · Musique : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 

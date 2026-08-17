@@ -1,6 +1,11 @@
 # Odyssey — Stratégie Sanctuaire
 
-**Dernière révision : juillet 2026**
+**Type :** canon · **Vérité pour :** positionnement Quiet Luxury / vente émotionnelle. Prix = FREEMIUM.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — canon positionnement V1.
 
 Document canonique de **positionnement produit / vente émotionnelle** et de **monétisation V1**. Complète le commerce technique ([`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md), [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md), [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md)) sans les remplacer.
 

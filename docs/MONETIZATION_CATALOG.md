@@ -1,6 +1,11 @@
 # Odyssey — Catalogue Monétisation complet (Cascade V-Final)
 
-**Dernière révision : 22 juillet 2026 — plafonds dépôt Sanctuaire + témoignage live**
+**Type :** canon · **Vérité pour :** inventaire leviers. Prix live = `pricingConfig.ts`, pas ce fichier seul.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · 22 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- 22 juillet 2026 — plafonds dépôt Sanctuaire + témoignage live.
 
 Inventaire **exhaustif** de tout ce que le **client (famille)** peut acheter et de tout ce que
 l'**invité** peut offrir — plus les leviers **documentés à venir** et les **idées à explorer**.

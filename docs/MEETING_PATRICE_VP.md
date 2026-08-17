@@ -1,5 +1,12 @@
 # Odyssey — Rencontre Patrice (VP groupe funéraire)
 
+**Type :** playbook · **Vérité pour :** script 60 min. Chiffres = modèle V2. Lyra orale ≠ Manifesto.  
+**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type ; lien Manifesto (ampleur, pas à l’oral).
+- août 2026 — playbook prêt · courriel envoyé.
+
 **Audience :** Patrice (ami, VP)  
 **Durée :** 60 minutes  
 **Auteur :** Erik  
@@ -174,6 +181,8 @@ Aujourd’hui : **l’IA est déjà dans Odyssey** (restauration, visages, réci
 - graphe (qui est qui, qui a contribué) → **prédiction des ventes suivantes et des préarrangements**
 
 Un hommage n’est plus un dossier fermé. C’est le début d’une relation.
+
+**Ampleur (pas à l’oral) :** Brain, graphe, Attention→Data→Hub = [`Manifesto-V10.4.md`](Manifesto-V10.4.md) — constitution, **lecture seule**. Ici on ne raconte que le salon. Ne pas coller le Manifesto dans le pitch.
 
 Ne pas : M&A, « licorne », biométrie vendue, Loi 25 en détail. Si privacy : *Vault vs insights, consentement. On le cadrera au pilote.*
 

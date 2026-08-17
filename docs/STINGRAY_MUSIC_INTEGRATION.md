@@ -1,6 +1,11 @@
 # Stingray Music Integration (MAPI)
 
-**Last code review: July 2026 · Freemium V1 Pivot**
+**Type :** canon · **Vérité pour :** proxy musique, step 4, preview vs export.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (revue code) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — Freemium V1 Pivot (Stingray 100 % payant à l’export).
 
 > **Produit V1 :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap musique [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · ToS MP3 [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 

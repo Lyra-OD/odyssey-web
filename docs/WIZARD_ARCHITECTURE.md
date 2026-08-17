@@ -1,11 +1,16 @@
 # Tribute Wizard — Architecture
 
-**Last code review: 20 juillet 2026 · Freemium V1 Phases 0–4 ✅ · Soft Cap UX livré**
+**Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
+**Dernière MAJ :** 17 août 2026 (en-tête) · 20 juillet 2026 (revue code) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type ; « 8-step » → **7** étapes (Extensions au checkout).
+- 20 juillet 2026 — Soft Cap UX livré · Freemium Phases 0–5 (plus « 0–4 » dans ce bandeau).
 
 > **Canon V1 :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · Commerce [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).  
 > **État :** `grantedPackage` + `intendedPackage` + `extensions.musicLicense` (aliases UI legacy OK).
 
-This document describes the 8-step tribute wizard: navigation, state, autosave, **song-based storyboard**, pricing Freemium V1, and checkout. Parent overview: [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Wizard.
+This document describes the **7-step** tribute wizard: navigation, state, autosave, **song-based storyboard**, pricing Freemium V1, and checkout. Parent overview: [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Wizard.
 
 ---
 
@@ -48,7 +53,7 @@ This document describes the 8-step tribute wizard: navigation, state, autosave, 
 | `app/[lang]/(salon)/salon/` | Console partenaire Salon (header, portefeuille, `InvitationComposer` sur manifeste) — auth via layout |
 | `src/components/scanner/ScannerCompanionPanel.tsx` | **Cible P6** — QR Scanner Compagnon (étape médias) — [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 
-`TOTAL_STEPS = 8` in `TributeWizard.tsx`.
+`TOTAL_STEPS = 7` in `TributeWizard.tsx` (Extensions au checkout — pas une 8ᵉ étape wizard).
 
 ---
 

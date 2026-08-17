@@ -1,6 +1,11 @@
 # Étape 5 — Le Livre Ouvert (Table de Montage)
 
-**Dernière révision : juillet 2026 · PR-1/2/3 livrés sur `main` (`fdeb7da` → `41235e8`)**
+**Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. Polish S5-J/K/L ⏳.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — PR-1/2/3 livrés (`fdeb7da` → `41235e8`).
 
 Document canonique de l'Étape 5 du wizard hommage. Complète [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (ticket S5) et [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) (§ Step 5).
 

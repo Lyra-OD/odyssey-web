@@ -1,6 +1,11 @@
 # Stratégie mobile — Wizard Odyssey
 
-**Dernière révision : juillet 2026**
+**Type :** canon · **Vérité pour :** UX mobile wizard **7** étapes, rails M0–M6.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — canon M0–M6.
 
 Document canonique pour l’ergonomie mobile du wizard hommage (**7** étapes). Croise l’audit code juillet 2026, les bonnes pratiques [Forbes Tech Council (sept. 2023)](https://www.forbes.com/councils/forbestechcouncil/2023/09/05/20-expert-tips-for-building-an-ergonomic-user-friendly-mobile-app/) et [Ferpection (mai 2022)](https://blog.ferpection.com/en/the-ergonomics-of-a-mobile-application-best-practices).
 

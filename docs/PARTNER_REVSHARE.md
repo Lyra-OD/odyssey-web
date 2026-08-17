@@ -1,6 +1,11 @@
 # Odyssey — RevShare partenaire (Partner Commission)
 
-**Last updated: July 2026 · Version: Freemium V1 · Modèle Bulletproof**
+**Type :** canon · **Vérité pour :** waterfall 30 % Net, ledger, clawback.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — Freemium V1 · modèle Bulletproof · jetons DROP P8.
 
 > **V1 Pivot :** le ledger `partner_commission_*` est le **seul** solde partenaire. Wallets jetons = **DROP P8 ✅**. Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
 

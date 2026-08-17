@@ -1,6 +1,11 @@
 # Odyssey — Routes applicatives & authentification
 
-**Last updated: 24 juillet 2026 · Freemium V1 + Cascade + Collab**
+**Type :** canon · **Vérité pour :** URLs, connexions Studio/Salon, `appRoutes.ts`.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · 24 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- 24 juillet 2026 — Freemium V1 + Cascade + Collab.
 
 Document canonique pour les **URLs**, les **deux pages de connexion** (famille vs partenaire), les **redirects legacy**, et le **branding Salon** (gant blanc). Source de vérité code : `src/lib/appRoutes.ts`.
 

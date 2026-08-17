@@ -1,6 +1,12 @@
 # Odyssey Frontend — Conventions
 
-**Last updated: July 2026 · Freemium V1 (purge jetons · Soft Cap · Phases 0–4 ✅)**
+**Type :** canon · **Vérité pour :** règles repo, hiérarchie docs, langue code.  
+**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — STATUS vivant vs [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
+- 17 août 2026 — en-tête type ; Freemium **Phases 0–5 ✅**, Phase 6 QA ⏳ (plus « 0–4 »).
+- juillet 2026 — Freemium V1 (purge jetons, Soft Cap).
 
 ## Langue du code
 
@@ -30,6 +36,8 @@
 
 ## Documentation — hiérarchie (vivante)
 
+Carte (types, « ne pas copier ») : [`README.md`](README.md). Chemins inchangés.
+
 0. [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) — **hub onboarding** (porte développeur).
 1. [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) — **canon CEO** : purge jetons, Soft Cap dual (`musicLicense` 39 $), grille Héritage **1080p** / Éternité+ **4K**. Specs : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) · [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md). Vision cinéma Phase 2 : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md).
 2. [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) + `wizardDeliverables.ts` — contrat livrables.
@@ -42,18 +50,18 @@
 7. [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) — positionnement Quiet Luxury.
 8. [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) · [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) · [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md).
 9. [`sql/README.md`](sql/README.md) — migrations **P0→P11**.
-10. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) — living status.
+10. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) — living status. Journal : [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 11. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce Soft Cap / RevShare.
 12. [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — Killer App mobile.
 13. [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) · [`MONETIZATION_CATALOG.md`](MONETIZATION_CATALOG.md).
 14. [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md) · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) — rapport partenaire + projections.
 
-**Archive :** [`_archive/`](_archive/) — onboarding pré-Freemium · B2B2C pré-purge · `QA_P5_5` jetons. **Ne plus exécuter.**
+**Archive :** [`_archive/`](_archive/) — onboarding pré-Freemium · B2B2C pré-purge · `QA_P5_5` jetons · **STATUS log**. **Ne plus exécuter / onboarder.**
 
 Après modification wizard, Soft Cap, Étape 5 / Composition Magique, pricing, checkout, RevShare, musique : mettre à jour **FREEMIUM** + **TECHNICAL_ONBOARDING_V1** + annexes touchées.
 
 ## Vision produit (hors implémentation commerce)
 
-- [`Manifesto-V10.4.md`](Manifesto-V10.4.md) = constitution Brain/Engine — **pas** référence checkout V1.
+- [`Manifesto-V10.4.md`](Manifesto-V10.4.md) = constitution Brain/Engine — **bible, ne pas éditer** ; **pas** référence checkout V1.
 - [`VISION_PHASE_2.md`](VISION_PHASE_2.md) = roadmap stratégique longue (Scanner async, CPL, MRR…).
 - Implémentation commerce V1 : **FREEMIUM_V1_PIVOT** → phases 5–6.

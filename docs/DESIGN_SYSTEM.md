@@ -1,6 +1,11 @@
 # Odyssey — Design System
 
-**Dernière mise à jour : 11 août 2026** (marque Éclipse + die-cut ODYSSEY §4.2)
+**Type :** canon · **Vérité pour :** palette, Halo-Éclipse, tokens UI.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · 11 août 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- 11 août 2026 — marque Éclipse + die-cut ODYSSEY §4.2.
 
 Guide visuel et produit pour l’ensemble du site Next.js (Studio B2C, Salon B2B2C, pages marketing). Complète [`CONVENTIONS.md`](CONVENTIONS.md) et [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).
 

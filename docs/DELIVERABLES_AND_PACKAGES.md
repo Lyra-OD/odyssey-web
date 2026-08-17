@@ -1,6 +1,11 @@
 # Contrat de Livrables & Packages (Manifeste) — Pivot Freemium V1
 
-**Last updated: 24 juillet 2026 · Version: Freemium V1 + Cascade V-Final (grille Quiet Luxury)**
+**Type :** canon · **Vérité pour :** contrat livrables (code : `wizardDeliverables.ts`). Prix live = `pricingConfig.ts`.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · 24 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- 24 juillet 2026 — Freemium V1 + Cascade V-Final (grille Quiet Luxury).
 
 **Canon pivot :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · Musique ToS : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 

@@ -1,6 +1,11 @@
 # Odyssey — Commerce B2B2C Freemium V1
 
-**Last updated: 24 juillet 2026 · Freemium V1 + grille Quiet Luxury (Phase 0 22/07)**
+**Type :** canon · **Vérité pour :** flux salon → famille, Soft Cap, RevShare (post-purge).  
+**Dernière MAJ :** 17 août 2026 (en-tête) · 24 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- 24 juillet 2026 — Freemium V1 + grille Quiet Luxury.
 
 > **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
 > **Archive pré-purge :** [`_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md`](_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md) — ne plus onboards dessus.

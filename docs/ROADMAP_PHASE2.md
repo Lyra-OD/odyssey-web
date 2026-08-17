@@ -1,8 +1,14 @@
 # Odyssey — Roadmap Phase 2  
 ## Vision : Le Moteur Cinématographique Avancé
 
-**Statut :** Vision produit · **non implémenté** (sauf fondations P0)  
-**Last updated :** 28 juillet 2026  
+**Type :** vision · **Vérité pour :** moteur cinéma (Creatomate / A24). **Autre** « Phase 2 » que [`VISION_PHASE_2.md`](VISION_PHASE_2.md).  
+**Dernière MAJ :** 17 août 2026 (en-tête) · 28 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- 28 juillet 2026 — fondations P0 (storyboard → Creatomate, Stem Graph, One Bed).
+
+**Statut :** vision produit · **non implémenté** (sauf fondations P0)  
 **Fondation livrée (P0) :** mapping Storyboard → Creatomate · Audio Stem Graph · One Bed Law — `src/lib/creatomate/`  
 **Documents liés :** [`VISION_PHASE_2.md`](VISION_PHASE_2.md) · [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) · [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md)
 

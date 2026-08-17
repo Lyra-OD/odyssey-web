@@ -1,6 +1,13 @@
 # Odyssey — Plan d'implémentation : Boucle Virale / Fonds Commémoratif (Cascade V-Final)
 
-**Statut : APPROUVÉ CEO · Phase 1–2 ✅ · Phase 0 grille/UX Sanctuaire (22 juil. 2026) ✅ · Phase 3a Frontend UI ✅ (flag `viral_loop_enabled` OFF) · Phase 3b capture live ⏳ · Suite pipeline revenu : pilote viral + CRO Soft Cap + Creatomate — voir [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §10**
+**Type :** canon · **Vérité pour :** cascade 3a / boucle / fonds. Flag `viral_loop_enabled`.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · 22 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juil. 2026 — Phase 1–2 ✅ · 3a UI ✅ (flag OFF défaut) · 3b live ⏳.
+
+**Statut :** APPROUVÉ CEO · suite pipeline : [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §10.
 
 Document canonique d'implémentation de la **Boucle Virale (Fonds Commémoratif)** et du pivot
 d'entrée émotionnelle (Brouillon gratuit → paywall à l'export financé par les contributions

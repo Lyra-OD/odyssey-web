@@ -1,6 +1,11 @@
 # Odyssey — Scanner Compagnon (Killer App)
 
-**Last updated: July 2026 · Version: B2B2C v2**
+**Type :** canon · **Vérité pour :** spec scanner. MVP app ⏳ — ne pas montrer comme livré.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- juillet 2026 — spec B2B2C v2 + stubs P6.
 
 Document canonique pour le **Scanner Compagnon Web** : ingestion mobile de photos papier via QR Code, restauration IA en temps réel, et pont de conversion vers les forfaits **Éternité (349 $)** et **Légendaire / Gants Blancs (499 $)**.
 

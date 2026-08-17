@@ -1,6 +1,12 @@
 # Wizard Co-Créateur — Contrat & Threat Model
 
-**Statut :** Phase A+B livrées · **Phase C (UI + Signed Upload) livrée**  
+**Type :** canon · **Vérité pour :** collab éditeur. UI = confort · API = loi.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · **Carte :** [`README.md`](README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type + carte.
+- 2026 — Phases A+B+C livrées (UI + signed upload).
+
 **Règle d'or :** UI = confort · **API = loi**  
 **Types :** [`src/lib/wizard/collabCapabilities.ts`](../src/lib/wizard/collabCapabilities.ts)  
 **SQL :** [`docs/sql/odyssey_p11_wizard_editor_collab.sql`](sql/odyssey_p11_wizard_editor_collab.sql)
