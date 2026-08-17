@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — `GET /api/hq/overview` : KPI réseau macro (allowlist + service_role).
 - 17 août 2026 — `/hq` : table `hq_allowlist` (P13), middleware + layout.
 - 17 août 2026 — `POST /api/partner/invitations/[id]/follow-up` (relance e-mail conseiller).
 - 17 août 2026 — `/salon/mes-performances` + `GET /api/partner/my-performance` (scoreboard conseiller).
@@ -27,7 +28,7 @@ Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes /
 | **Salon commissions** | `/[lang]/salon/commissions` | Oui | Admin (`canViewLedger`) — KPIs RevShare + ledger SQL |
 | **Salon facturation** | `/[lang]/salon/facturation` | Oui | **Redirect** → `/salon/commissions` (jetons morts) |
 | **Salon connexion** | `/[lang]/salon/connexion` | Non | Login partenaire **sans** inscription |
-| **HQ Odyssey** | `/[lang]/hq` | Oui + allowlist | Tour de contrôle opérateurs (Slice A : shell) |
+| **HQ Odyssey** | `/[lang]/hq` | Oui + allowlist | Tour de contrôle opérateurs (Slice B : KPI réseau macro) |
 | **HQ connexion** | `/[lang]/hq/connexion` | Non | Login opérateurs **sans** inscription |
 | **Marketing partenaires** | `/[lang]/partners` ou `/partenaires` | Non | Formulaire « devenir partenaire » (≠ Salon) |
 | **Acceptation invitation** | `/[lang]/invite/accept?token=…` | Oui (redir. studio connexion) | Magic link famille → projet B2B2C |
@@ -190,6 +191,8 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 
 **API partenaire (session) :** `GET /api/partner/tenants` · `GET /api/partner/my-performance` (`canInvite`) · `GET /api/partner/commissions` (`canViewLedger`) · `POST /api/partner/invitations` · `POST /api/partner/invitations/[id]/follow-up` (`canInvite`, auteur de l’invitation) · `GET /api/partner/wallet` (deprecated).
 
+**API HQ (session + allowlist) :** `GET /api/hq/overview` — KPI réseau macro (service_role, tenants freemium).
+
 ---
 
 ## Auth callback (`/auth/callback`)
@@ -225,6 +228,8 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | `app/[lang]/hq/connexion/page.tsx` | Page connexion HQ (sans inscription) |
 | `middleware.ts` | Session cookies + gate `/hq` (`hq_allowlist`) |
 | `src/lib/hq/isOdysseyOperator.ts` | Allowlist `hq_allowlist` (SQL P13) |
+| `src/lib/hq/hqNetworkOverview.ts` | Agrégation KPI réseau macro |
+| `app/api/hq/overview/route.ts` | KPI réseau HQ (`hq_allowlist`) |
 | `docs/HQ_ODYSSEY.md` | Canon tour de contrôle |
 | `app/[lang]/(salon)/salon/layout.tsx` | Garde auth + branding serveur initial |
 | `app/[lang]/(salon)/salon/components/PartnerHeader.tsx` | Header co-brandé |

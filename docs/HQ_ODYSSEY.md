@@ -174,9 +174,11 @@ Ordre strict. Pas de Slice N+1 tant que N n’est pas mergé. Docs de ce fichier
 
 Hors slice : aucun chiffre, aucun payout.
 
-### Slice B — Dashboard macro
+### Slice B — Dashboard macro ✅
 
 **Done when :** `/hq` affiche GMV, part salon 30 %, revenus Odyssey 70 % du Net, Platform Fee, conversion globale. Chiffres = agrégats SQL des mêmes raisons ledger que le Salon. Tests : 0 tenant → 0 % ; un accrual Héritage 179 $ → GMV 17 900 ¢, commission 4 833 ¢, marge Odyssey 11 277 ¢, fee 1 790 ¢.
+
+**Livré :** `GET /api/hq/overview` · `src/lib/hq/hqNetworkOverview.ts` · cartes KPI sur `/hq` · `tests/business/hq-network-overview.test.ts`.
 
 Hors slice : liste salons, payout.
 
@@ -204,7 +206,9 @@ Hors slice : CRM, onboarding Salon automatique.
 |---------|-------|
 | `app/[lang]/hq/connexion/page.tsx` | A |
 | `app/[lang]/(hq)/hq/layout.tsx` | A |
-| `app/[lang]/(hq)/hq/page.tsx` | A (shell) · B (chiffres) |
+| `app/[lang]/(hq)/hq/page.tsx` | A (shell) · B (KPI réseau) |
+| `app/[lang]/(hq)/hq/components/HqOverviewDashboard.tsx` | B |
+| `src/lib/hq/hqNetworkOverview.ts` | B |
 | `middleware.ts` | A (gate `/hq`) |
 | `src/lib/hq/isOdysseyOperator.ts` | A |
 | `docs/sql/odyssey_p13_hq_allowlist.sql` | A |

@@ -1,6 +1,8 @@
 import type { Locale } from "@/i18n.config";
 import { getDictionary } from "@/lib/dictionaries";
 
+import { HqOverviewDashboard } from "./components/HqOverviewDashboard";
+
 export const dynamic = "force-dynamic";
 
 type PageProps = {
@@ -11,6 +13,7 @@ export default async function HqHomePage({ params }: PageProps) {
   const { lang: routeLang } = await params;
   const lang: Locale = routeLang === "en" ? "en" : "fr";
   const dictionary = await getDictionary(lang);
+  const overview = dictionary.hq.overview;
 
   return (
     <div>
@@ -21,8 +24,9 @@ export default async function HqHomePage({ params }: PageProps) {
         {dictionary.hq.title}
       </h1>
       <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-zinc-400">
-        {dictionary.hq.empty}
+        {overview.subtitle}
       </p>
+      <HqOverviewDashboard lang={lang} labels={overview} />
     </div>
   );
 }

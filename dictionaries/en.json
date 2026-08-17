@@ -237,7 +237,18 @@
   "hq": {
     "title": "Odyssey HQ",
     "kicker": "Control tower",
-    "empty": "Network figures arrive in the next slice. This door is locked."
+    "overview": {
+      "subtitle": "Macro view — network figures, confirmed ledger.",
+      "loading": "Loading network metrics…",
+      "error": "Unable to load network metrics.",
+      "sectionMacro": "Macro view — network figures",
+      "gmv": "Global gross volume (GMV)",
+      "gmvHint": "Sum of family payments (Soft Cap)",
+      "odysseyNet": "Odyssey net revenue",
+      "odysseyNetHint": "70% RevShare of net — excl. Platform Fee",
+      "conversion": "Global conversion rate",
+      "conversionHint": "Network upsells / invitations sent"
+    }
   },
   "tributeWizard": {
     "progressAria": "Creation journey progress",

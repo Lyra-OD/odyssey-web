@@ -237,7 +237,18 @@
   "hq": {
     "title": "Odyssey HQ",
     "kicker": "Tour de contrôle",
-    "empty": "Les chiffres réseau arrivent à la prochaine étape. Cette porte est verrouillée."
+    "overview": {
+      "subtitle": "Vue macro — chiffres réseau, ledger confirmé.",
+      "loading": "Chargement des indicateurs réseau…",
+      "error": "Impossible de charger les indicateurs réseau.",
+      "sectionMacro": "Vue macro — chiffres réseau",
+      "gmv": "Volume brut global (GMV)",
+      "gmvHint": "Somme des paiements familles (Soft Cap)",
+      "odysseyNet": "Revenus nets Odyssey",
+      "odysseyNetHint": "70 % RevShare du net — hors Platform Fee",
+      "conversion": "Taux de conversion global",
+      "conversionHint": "Upsells réseau / invitations envoyées"
+    }
   },
   "tributeWizard": {
     "progressAria": "Progression du parcours de création",

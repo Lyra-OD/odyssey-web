@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — HQ Slice B : KPI réseau macro sur `/hq` (`GET /api/hq/overview`).
 - 17 août 2026 — HQ Slice A : `/hq` + table `hq_allowlist` (P13).
 - 17 août 2026 — relance Mes performances : courriel famille au clic du directeur (1×, Resend).
 - 17 août 2026 — `/salon/mes-performances` : taux engagement + conversion du conseiller.
@@ -54,7 +55,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Salon invitations | 🟢 | Souvenir 0 $ — **un geste**, pas de picker forfait |
 | Salon commissions | 🟢 | `/salon/commissions` + API caisse + pilotage GMV/ouverture/conversion · `/facturation` → redirect |
 | Salon mes performances | 🟢 | taux perso + relance `pending` ≥ 3 j (1 e-mail au clic, pas de drip) |
-| Odyssey HQ | 🟡 | Slice A : `/hq` + `hq_allowlist` · macro/payout ⏳ — [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) |
+| Odyssey HQ | 🟡 | Slice B : KPI réseau macro `/hq` · liste/payout ⏳ — [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) |
 | Fonds / packs invité | 🟢 gated | Code 3a livré · visible si `viral_loop_enabled` sur le tenant |
 | Scanner Compagnon | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Export / render** | 🟡 | P0 🟢 · master / cinéma ⏳ — **pas** 🔴 |
