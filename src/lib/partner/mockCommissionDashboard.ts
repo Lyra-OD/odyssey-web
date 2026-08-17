@@ -1,4 +1,7 @@
-import type { PartnerCommissionDashboard } from "@/src/lib/partner/partnerCommissionTypes";
+import {
+  EMPTY_COMMISSION_PILOTAGE,
+  type PartnerCommissionDashboard,
+} from "@/src/lib/partner/partnerCommissionTypes";
 
 /**
  * Snapshot démo — chiffres canon PARTNER_REVSHARE (waterfall Bulletproof).
@@ -10,6 +13,7 @@ export const MOCK_COMMISSION_DASHBOARD: PartnerCommissionDashboard = {
     pending_cents: 1_053,
     paid_cents: 10_000,
   },
+  pilotage: EMPTY_COMMISSION_PILOTAGE,
   ledger: [
     {
       id: "8f3c1a2e-4b9d-4e71-9c08-1d2a3b4c5d6e",

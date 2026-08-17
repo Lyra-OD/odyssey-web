@@ -9,10 +9,10 @@ import {
   partnerApiErrorResponse,
 } from "@/src/lib/partner/partnerApiErrors";
 import {
-  EMPTY_COMMISSION_BALANCE,
   isCommissionLedgerReason,
   isCommissionLedgerStatus,
   PartnerCommissionQuerySchema,
+  buildSalonPilotage,
   type CommissionLedgerReason,
   type PartnerCommissionLedgerRow,
 } from "@/src/lib/partner/partnerCommissionTypes";
@@ -69,9 +69,51 @@ function projectLabel(
   return `Hommage ${name}`;
 }
 
+type AccrualPilotageRow = {
+  gross_payment_cents: number | null;
+  invitation_id: string | null;
+};
+
+async function loadSalonPilotage(
+  admin: ReturnType<typeof getSupabaseAdminClient>,
+  tenantId: string,
+) {
+  const [sentResult, acceptedResult, accrualResult] = await Promise.all([
+    admin
+      .from("partner_invitations")
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", tenantId),
+    admin
+      .from("partner_invitations")
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
+      .eq("status", "accepted"),
+    admin
+      .from("partner_commission_ledger")
+      .select("gross_payment_cents, invitation_id")
+      .eq("tenant_id", tenantId)
+      .eq("reason", "commission_accrual")
+      .eq("status", "confirmed"),
+  ]);
+
+  let grossVolumeCents = 0;
+  const upsellIds = new Set<string>();
+  for (const row of (accrualResult.data ?? []) as AccrualPilotageRow[]) {
+    grossVolumeCents += Math.max(0, row.gross_payment_cents ?? 0);
+    if (row.invitation_id) upsellIds.add(row.invitation_id);
+  }
+
+  return buildSalonPilotage({
+    invitationsSent: sentResult.count ?? 0,
+    invitationsAccepted: acceptedResult.count ?? 0,
+    upsells: upsellIds.size,
+    grossVolumeCents,
+  });
+}
+
 /**
  * GET /api/partner/commissions?tenantId=<uuid>
- * Soldes + ledger RevShare. `partner_admin` only (`canViewLedger`).
+ * Soldes + ledger RevShare + pilotage salon. `partner_admin` only (`canViewLedger`).
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -183,6 +225,8 @@ export async function GET(request: Request) {
     });
   }
 
+  const pilotage = await loadSalonPilotage(admin, tenantId);
+
   return NextResponse.json({
     tenantId,
     isFreemium,
@@ -192,5 +236,6 @@ export async function GET(request: Request) {
       paid_cents: balanceRow?.paid_cents ?? 0,
     },
     ledger,
+    pilotage,
   });
 }

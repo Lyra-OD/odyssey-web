@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — dashboard admin : GMV + ouverture + conversion salon (`GET /api/partner/commissions`).
 - 17 août 2026 — scoreboard conseiller `/salon/mes-performances` (attribution invitation, pas le ledger salon).
 - 17 août 2026 — invitation Salon = toujours Souvenir (`essential`) ; picker forfait retiré ; `grantedPackage` client ignoré.
 - 17 août 2026 — UI Salon commissions + API `GET /api/partner/commissions`.
 - 17 août 2026 — étape 4 : grille forfaits → FREEMIUM §2 (plus de copie).
-- 17 août 2026 — en-tête type + carte.
 
 > **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
 > **Archive pré-purge :** [`_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md`](_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md) — ne plus onboards dessus.
@@ -109,7 +109,7 @@ Ne jamais hardcoder `if (vertical === 'human') isFreemium = true`.
 | Checkout Soft Cap + amputation 422 + `freemium_free` | ✅ |
 | Webhook → `project_paid_entitlements` | ✅ |
 | Soft Cap UX (médias, magie, musique dual) | ✅ Phase 4 |
-| UI Salon commissions | ✅ `/salon/commissions` + API (KPIs même à 0 $ ; fail-open `is_freemium`) |
+| UI Salon commissions | ✅ `/salon/commissions` + API (caisse + GMV / ouverture / conversion tenant) |
 | Scoreboard conseiller | ✅ `/salon/mes-performances` + `GET /api/partner/my-performance` |
 | Creatomate gate entitlements | ✅ Phase 5 · worker P0 ✅ · master/ops ⏳ |
 | Accrual RevShare webhook (durcissement) | 🟡 |

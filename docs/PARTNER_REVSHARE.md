@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — `/salon/commissions` : GMV familles + ouverture + conversion salon (pilotage admin).
 - 17 août 2026 — `/salon/mes-performances` : scoreboard conseiller (`invited_by_user_id`) ; pas de versement Odyssey.
 - 17 août 2026 — KPIs `/salon/commissions` toujours affichés (fail-open `is_freemium`) ; invitation Souvenir-only.
 - 17 août 2026 — UI Salon `/commissions` + `GET /api/partner/commissions` (`partner_admin`) ; payout CTA inactif.
 - 17 août 2026 — en-tête type + carte.
-- juillet 2026 — Freemium V1 · modèle Bulletproof · jetons DROP P8.
 
 > **V1 Pivot :** le ledger `partner_commission_*` est le **seul** solde partenaire. Wallets jetons = **DROP P8 ✅**. Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
 
@@ -377,6 +377,14 @@ Route : `/{lang}/salon/commissions` · `/{lang}/salon/facturation` redirige. Dir
 
 Scoreboard conseiller : `/{lang}/salon/mes-performances` · **GET `/api/partner/my-performance`**. Filtre `partner_invitations.invited_by_user_id = auth.uid()` + ledger `invitation_id`. **Pas** le solde `partner_commission_balances`. **Pas** de CTA versement.
 
+Pilotage admin (même API commissions, **tenant**) :
+
+| KPI | Source | Note |
+|-----|--------|------|
+| Volume brut familles | `SUM(gross_payment_cents)` des `commission_accrual` confirmés | GMV Soft Cap — **pas** la commission 30 % Net |
+| Ouverture | `accepted / sent` sur `partner_invitations` du tenant | 0 envoi → 0 % |
+| Conversion | invitations distinctes avec `commission_accrual` confirmé / sent | Pas les contributions invité |
+
 | Rôle | Accès |
 |------|-------|
 | `partner_admin` | Lecture solde + historique ledger (son tenant) — **GET `/api/partner/commissions`**. Scoreboard perso = **GET `/api/partner/my-performance`**. |
@@ -434,6 +442,7 @@ WHERE tc.project_id = :project_id;
 | Payout sans ligne ledger | Toujours `INSERT payout` + `actor_user_id` |
 | Mélanger jetons et centimes | Ledgers séparés |
 | Montrer `accrued_cents` salon au directeur | Scoreboard `invited_by_user_id` uniquement |
+| Afficher le GMV comme « commission » | Brut familles ≠ 30 % du Net |
 
 ---
 

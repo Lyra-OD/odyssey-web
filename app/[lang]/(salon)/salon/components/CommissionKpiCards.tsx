@@ -3,11 +3,13 @@ import {
   formatUsdFromCents,
   payableCents,
   type PartnerCommissionBalance,
+  type PartnerCommissionPilotage,
 } from "@/src/lib/partner/partnerCommissionTypes";
 
 type CommissionKpiCardsProps = {
   lang: Locale;
   balance: PartnerCommissionBalance;
+  pilotage: PartnerCommissionPilotage;
 };
 
 function kpiCopy(lang: Locale) {
@@ -22,6 +24,12 @@ function kpiCopy(lang: Locale) {
         payoutCta: "Request a payout",
         payoutTitle: "Monthly payout handled by Odyssey",
         payable: "Payable",
+        gross: "Family gross volume",
+        grossHint: "Soft Cap GMV — not the salon commission",
+        opening: "Sanctuaries opened",
+        openingHint: "Accepted invitations / sent",
+        conversion: "Upsell conversion",
+        conversionHint: "Families who paid / invitations sent",
       }
     : {
         accrued: "Commissions générées",
@@ -33,10 +41,24 @@ function kpiCopy(lang: Locale) {
         payoutCta: "Demander un versement",
         payoutTitle: "Versement mensuel géré par Odyssey",
         payable: "Payable",
+        gross: "Volume brut familles",
+        grossHint: "GMV Soft Cap — ce n’est pas la commission",
+        opening: "Sanctuaires ouverts",
+        openingHint: "Invitations acceptées / envoyées",
+        conversion: "Conversion upsell",
+        conversionHint: "Familles ayant payé / invitations envoyées",
       };
 }
 
-export function CommissionKpiCards({ lang, balance }: CommissionKpiCardsProps) {
+function formatPercent(value: number): string {
+  return `${value} %`;
+}
+
+export function CommissionKpiCards({
+  lang,
+  balance,
+  pilotage,
+}: CommissionKpiCardsProps) {
   const copy = kpiCopy(lang);
   const cards = [
     {
@@ -56,6 +78,27 @@ export function CommissionKpiCards({ lang, balance }: CommissionKpiCardsProps) {
       label: copy.paid,
       hint: copy.paidHint,
       cents: balance.paid_cents,
+    },
+  ] as const;
+
+  const pilotageCards = [
+    {
+      key: "gross",
+      label: copy.gross,
+      hint: copy.grossHint,
+      value: formatUsdFromCents(pilotage.grossVolumeCents, lang),
+    },
+    {
+      key: "opening",
+      label: copy.opening,
+      hint: copy.openingHint,
+      value: formatPercent(pilotage.openingRatePercent),
+    },
+    {
+      key: "conversion",
+      label: copy.conversion,
+      hint: copy.conversionHint,
+      value: formatPercent(pilotage.conversionRatePercent),
     },
   ] as const;
 
@@ -96,6 +139,28 @@ export function CommissionKpiCards({ lang, balance }: CommissionKpiCardsProps) {
         >
           {copy.payoutCta}
         </button>
+      </div>
+
+      <div
+        aria-label={lang === "en" ? "Salon steering" : "Pilotage salon"}
+        className="grid gap-6 md:grid-cols-3"
+      >
+        {pilotageCards.map((card) => (
+          <article
+            key={card.key}
+            className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8"
+          >
+            <p className="font-label text-[9px] font-bold uppercase tracking-[0.45em] text-zinc-500">
+              {card.label}
+            </p>
+            <p className="mt-1 font-label text-[8px] font-semibold uppercase tracking-[0.28em] text-zinc-600">
+              {card.hint}
+            </p>
+            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-white/95 md:text-5xl">
+              {card.value}
+            </p>
+          </article>
+        ))}
       </div>
     </section>
   );

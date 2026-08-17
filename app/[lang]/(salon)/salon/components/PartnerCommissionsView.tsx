@@ -8,6 +8,7 @@ import type { Locale } from "@/i18n.config";
 import { appRoutes } from "@/src/lib/appRoutes";
 import {
   EMPTY_COMMISSION_BALANCE,
+  EMPTY_COMMISSION_PILOTAGE,
   PartnerCommissionDashboardResponseSchema,
   type PartnerCommissionDashboard,
 } from "@/src/lib/partner/partnerCommissionTypes";
@@ -99,6 +100,7 @@ export function PartnerCommissionsView({ lang }: PartnerCommissionsViewProps) {
         setDashboard({
           balance: parsed.data.balance,
           ledger: parsed.data.ledger,
+          pilotage: parsed.data.pilotage,
         });
         setLoadError(false);
       } catch {
@@ -150,6 +152,7 @@ export function PartnerCommissionsView({ lang }: PartnerCommissionsViewProps) {
           <CommissionKpiCards
             lang={lang}
             balance={dashboard?.balance ?? EMPTY_COMMISSION_BALANCE}
+            pilotage={dashboard?.pilotage ?? EMPTY_COMMISSION_PILOTAGE}
           />
           <CommissionLedgerTable
             lang={lang}

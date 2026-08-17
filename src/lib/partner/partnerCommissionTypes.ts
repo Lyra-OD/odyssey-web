@@ -57,10 +57,31 @@ export type PartnerCommissionLedgerRow = {
   delta_cents: number;
 };
 
+export type PartnerCommissionPilotage = {
+  grossVolumeCents: number;
+  invitationsSent: number;
+  invitationsAccepted: number;
+  upsells: number;
+  openingRatePercent: number;
+  conversionRatePercent: number;
+};
+
 export type PartnerCommissionDashboard = {
   balance: PartnerCommissionBalance;
   ledger: PartnerCommissionLedgerRow[];
+  pilotage: PartnerCommissionPilotage;
 };
+
+export const PartnerCommissionPilotageSchema = z
+  .object({
+    grossVolumeCents: z.number().int().nonnegative(),
+    invitationsSent: z.number().int().nonnegative(),
+    invitationsAccepted: z.number().int().nonnegative(),
+    upsells: z.number().int().nonnegative(),
+    openingRatePercent: z.number().int().min(0).max(100),
+    conversionRatePercent: z.number().int().min(0).max(100),
+  })
+  .strict();
 
 export const PartnerCommissionQuerySchema = z.object({
   tenantId: z.string().uuid(),
@@ -89,6 +110,7 @@ export const PartnerCommissionDashboardResponseSchema = z
         delta_cents: z.number().int(),
       }),
     ),
+    pilotage: PartnerCommissionPilotageSchema,
   })
   .strict();
 
@@ -102,9 +124,55 @@ export const EMPTY_COMMISSION_BALANCE: PartnerCommissionBalance = {
   paid_cents: 0,
 };
 
+export const EMPTY_COMMISSION_PILOTAGE: PartnerCommissionPilotage = {
+  grossVolumeCents: 0,
+  invitationsSent: 0,
+  invitationsAccepted: 0,
+  upsells: 0,
+  openingRatePercent: 0,
+  conversionRatePercent: 0,
+};
+
 /** Solde payable affiché en légende, pas en 4ᵉ carte KPI. */
 export function payableCents(balance: PartnerCommissionBalance): number {
   return Math.max(0, balance.accrued_cents - balance.paid_cents);
+}
+
+/** Ratio 0–100. Dénominateur ≤ 0 → 0 (jamais NaN / Infinity). */
+export function percentRate(numerator: number, denominator: number): number {
+  if (
+    !Number.isFinite(numerator) ||
+    !Number.isFinite(denominator) ||
+    denominator <= 0
+  ) {
+    return 0;
+  }
+  const pct = Math.round((Math.max(0, numerator) / denominator) * 100);
+  return Math.min(100, Math.max(0, pct));
+}
+
+export function buildSalonPilotage(input: {
+  invitationsSent: number;
+  invitationsAccepted: number;
+  upsells: number;
+  grossVolumeCents: number;
+}): PartnerCommissionPilotage {
+  const invitationsSent = Math.max(0, Math.floor(input.invitationsSent));
+  const invitationsAccepted = Math.max(
+    0,
+    Math.floor(input.invitationsAccepted),
+  );
+  const upsells = Math.max(0, Math.floor(input.upsells));
+  const grossVolumeCents = Math.max(0, Math.floor(input.grossVolumeCents));
+
+  return {
+    grossVolumeCents,
+    invitationsSent,
+    invitationsAccepted,
+    upsells,
+    openingRatePercent: percentRate(invitationsAccepted, invitationsSent),
+    conversionRatePercent: percentRate(upsells, invitationsSent),
+  };
 }
 
 export function formatUsdFromCents(cents: number, locale: Locale): string {

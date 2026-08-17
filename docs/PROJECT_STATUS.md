@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — `/salon/commissions` : GMV + ouverture + conversion salon (admin).
 - 17 août 2026 — `/salon/mes-performances` : scoreboard conseiller (pas le solde salon).
 - 17 août 2026 — invitation Salon Souvenir-only (plus de picker) ; KPIs commissions fail-open.
 - 17 août 2026 — `/salon/commissions` lit SQL (`GET /api/partner/commissions`) ; invitations Freemium en dollars ; `next` post-login conservé.
 - 17 août 2026 — Scanner Phase B : aperçu IA → add-on `aiRetouch` (pas de job serveur).
-- 17 août 2026 — Scanner Phase A (QR + galerie) dans l’étape Coffre.
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -52,7 +52,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Checkout famille (Stripe) | 🟢 | Soft Cap, `freemium_free`, entitlements |
 | Checkout jetons B2B | — | **N/A** — purgé P8. Ne plus planifier |
 | Salon invitations | 🟢 | Souvenir 0 $ — **un geste**, pas de picker forfait |
-| Salon commissions | 🟢 | `/salon/commissions` + API `partner_commission_*` · `/facturation` → redirect |
+| Salon commissions | 🟢 | `/salon/commissions` + API caisse + pilotage GMV/ouverture/conversion · `/facturation` → redirect |
 | Salon mes performances | 🟢 | `/salon/mes-performances` + `GET /api/partner/my-performance` (attribution invitation) |
 | Fonds / packs invité | 🟢 gated | Code 3a livré · visible si `viral_loop_enabled` sur le tenant |
 | Scanner Compagnon | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
