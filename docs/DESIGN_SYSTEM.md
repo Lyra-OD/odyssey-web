@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · 11 août 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — KPI Salon (commissions + mes performances) : chiffres en `--salon-cyan`.
 - 17 août 2026 — invitation Salon : email + CTA Souvenir (plus de cartes forfait).
 - 17 août 2026 — en-tête type + carte.
 - 11 août 2026 — marque Éclipse + die-cut ODYSSEY §4.2.
@@ -73,7 +74,7 @@ Accent **chirurgical** réservé au Salon partenaire (invitations, commissions).
 
 | Token | Valeur | Usage |
 |-------|--------|--------|
-| `--salon-cyan` | `#00E8F0` | Ligne carte active, chiffres accent, soldes commissions, CTA invitation |
+| `--salon-cyan` | `#00E8F0` | Ligne carte active, **chiffres KPI** (commissions + mes performances), CTA invitation |
 | `--salon-cyan-dim` | `rgba(0, 232, 240, 0.4)` | Badges recommandé |
 
 **Règle d’or tertiaire Salon :** jamais sur le logo partenaire ni « Propulsé par » ; maximum **5–10 %** de la surface ; halo mauve **uniquement** sur Héritage au repos (Option A) ; à la sélection : ligne cyan + scale (Camera Dolly).

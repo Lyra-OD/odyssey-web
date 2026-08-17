@@ -119,7 +119,7 @@ export function CommissionKpiCards({
             <p className="mt-1 font-label text-[8px] font-semibold uppercase tracking-[0.28em] text-zinc-600">
               {card.hint}
             </p>
-            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-white/95 md:text-5xl">
+            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-[var(--salon-cyan)] md:text-5xl">
               {formatUsdFromCents(card.cents, lang)}
             </p>
           </article>
@@ -156,7 +156,7 @@ export function CommissionKpiCards({
             <p className="mt-1 font-label text-[8px] font-semibold uppercase tracking-[0.28em] text-zinc-600">
               {card.hint}
             </p>
-            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-white/95 md:text-5xl">
+            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-[var(--salon-cyan)] md:text-5xl">
               {card.value}
             </p>
           </article>

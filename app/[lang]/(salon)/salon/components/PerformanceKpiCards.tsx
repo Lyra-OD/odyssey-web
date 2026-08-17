@@ -106,7 +106,7 @@ export function PerformanceKpiCards({ lang, kpis }: PerformanceKpiCardsProps) {
             <p className="font-label text-[9px] font-bold uppercase tracking-[0.45em] text-zinc-500">
               {card.label}
             </p>
-            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-white/95 md:text-5xl">
+            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-[var(--salon-cyan)] md:text-5xl">
               {card.value}
             </p>
             {"hint" in card && card.hint ? (
@@ -130,13 +130,7 @@ export function PerformanceKpiCards({ lang, kpis }: PerformanceKpiCardsProps) {
             <p className="mt-1 font-label text-[8px] font-semibold uppercase tracking-[0.28em] text-zinc-600">
               {card.hint}
             </p>
-            <p
-              className={`mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight md:text-5xl ${
-                card.key === "followUp"
-                  ? "text-[var(--salon-cyan)]"
-                  : "text-white/95"
-              }`}
-            >
+            <p className="mt-3 font-editorial text-4xl font-medium tabular-nums tracking-tight text-[var(--salon-cyan)] md:text-5xl">
               {card.value}
             </p>
           </article>
