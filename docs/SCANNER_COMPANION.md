@@ -1,9 +1,10 @@
 # Odyssey — Scanner Compagnon (Killer App)
 
-**Type :** canon · **Vérité pour :** spec scanner. Phase A (QR + galerie) 🟡 à valider en démo · Phase B IA ⏳ — ne pas montrer comme Killer App livrée.  
+**Type :** canon · **Vérité pour :** spec scanner. Phase A+B (QR, galerie, aperçu IA → `aiRetouch`) 🟡 · job IA serveur ⏳ — ne pas montrer comme Killer App livrée.  
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — Phase B : aperçu Avant/Après + CTA add-on `aiRetouch` / Éternité. Recadrage inset (pas OpenCV). Pas de job IA serveur.
 - 17 août 2026 — Phase A : QR étape 3 · `/scan/[token]` galerie/caméra · `source=scanner_companion` · poll grille. HEIC accepté (iPhone).
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — spec B2B2C v2 + stubs P6.
@@ -86,10 +87,10 @@ Desktop Wizard  ←—— temps réel ——→  Mobile Scanner (PWA web)
 
 | Étape | Surface | Comportement |
 |-------|---------|--------------|
-| 1 | `RestorationPreviewModal` | Slider **Avant / Après** sur la photo scanner |
-| 2 | Gate freemium | Preview **complète** si Éternité/Légendaire · **floutée / watermark** sinon |
-| 3 | CTA | « Débloquer la restauration IA — **Éternité 349 $** » · lien secondaire **Légendaire 499 $** (Gants Blancs) |
-| 4 | Checkout | Pré-sélection `basePackage = heritage` ou `legendary` · scroll étape checkout |
+| 1 | `RestorationPreviewModal` | Slider **Avant / Après** sur la photo scanner (aperçu CSS) |
+| 2 | Gate | Complet si **Éternité+** (inclus) ou add-on **`aiRetouch`** · sinon watermark + flou après 3 s |
+| 3 | CTA primaire | **Ajouter la restauration IA** — add-on checkout [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 (`aiRetouch`) |
+| 4 | CTA secondaire | Passer à **Éternité** (IA incluse) |
 
 ### Acte 5 — Légendaire Gants Blancs (B2C)
 
@@ -176,7 +177,7 @@ flowchart TB
 | `POST /api/scan/sessions` | Titulaire ou Co-Créateur | Crée session · retourne `scanUrl` + token |
 | `GET /api/scan/sessions/:token` | Token session | Valide TTL · nom d’hommage minimal |
 | `POST /api/scan/sessions/:token/upload` | Token session | Multipart image → Storage + `media_assets` |
-| `POST /api/ai/restoration/preview` | Owner projet | Phase B ⏳ |
+| `POST /api/ai/restoration/preview` | Owner projet | ⏳ job serveur — aperçu actuel = client |
 | `GET /api/scan/sessions/:id/events` | Owner projet | Phase C ⏳ — poll grille projet à la place |
 
 **Sécurité session mobile :**
@@ -205,8 +206,8 @@ flowchart TB
 
 | Couche | Technologie cible | Fallback |
 |--------|-------------------|----------|
-| **Client mobile** | Canvas + lib recadrage (ex. OpenCV.js léger ou algorithme 4 coins) | Crop manuel drag handles |
-| **Serveur** | Validation dimensions · re-save WebP proxy | Reject si < 800 px côté court |
+| **Client mobile** | **Phase B** : cadre visuel + **inset 8 %** canvas (pas OpenCV) | Photo telle quelle si HEIC / échec canvas |
+| **Serveur** | Validation MIME / taille (Phase A) | — |
 
 **Pipeline image :**
 
@@ -228,15 +229,15 @@ Alignement egress : [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §4.1 (thumbs WebP,
 
 | Mode | Comportement |
 |------|--------------|
-| **Preview upsell** (Souvenir / Héritage) | Job IA **basse résolution** · watermark « Odyssey » · flou partiel après 3 s |
-| **Complet** (Éternité / Légendaire) | Job IA **pleine résolution** · slider Avant/Après sans restriction |
-| **Stockage** | `restoration_preview_path` + option `restoration_final_path` post-achat |
+| **Preview upsell** (Souvenir / Héritage sans add-on) | Aperçu **client** (filtres) · watermark Odyssey · flou après 3 s |
+| **Débloqué** | Éternité / Légendaire **ou** add-on `aiRetouch` (checkout existant) · slider sans restriction |
+| **Job IA serveur** | ⏳ pas encore — l’aperçu n’est **pas** la restauration finale livrée |
 
 **Composant UI :** `RestorationPreviewModal.tsx`
 
-- Props : `mediaId`, `beforeUrl`, `afterUrl`, `canFullPreview`, `upsellPackages`
-- CTA primaire : **Éternité 349 $** (`heritage`)
-- CTA secondaire : **Légendaire 499 $** (`legendary`) — copy Gants Blancs
+- Props : `src`, `canFullPreview`, CTA add-on / Éternité
+- CTA primaire : **`aiRetouch`** (grille add-ons — ne pas recopier le prix ici)
+- CTA secondaire : forfait **Éternité** (`heritage`) si pas déjà Éternité+
 
 ---
 
@@ -323,7 +324,7 @@ Le Scanner n’enforce pas cette règle lui-même ; il alimente simplement le vo
 | Upload médias wizard | ✅ | `app/api/projects/...` |
 | Thumbs WebP egress | ✅ | `StoragePreviewImage`, policy egress |
 | Wizard étape médias | ✅ | `TributeWizard` step 4 |
-| Restauration IA pipeline | ⏳ | Backend job TBD |
+| Restauration IA pipeline | ⏳ | Aperçu UI ✅ · job serveur TBD |
 | Checkout saga v2 | ⏳ | [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) |
 | Forfait `legendary` | ⏳ | [`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) |
 
@@ -338,12 +339,12 @@ Le Scanner n’enforce pas cette règle lui-même ; il alimente simplement le vo
 - [x] QR panel desktop · polling médias (5 s)
 - [x] `source = scanner_companion` sur `media_assets`
 
-### Phase B — Killer App (2 semaines)
+### Phase B — Pont retouche (add-on existant)
 
-- [ ] Recadrage papier client
-- [ ] Preview restauration IA + `RestorationPreviewModal`
-- [ ] Gate upsell · CTA Éternité / Légendaire
-- [ ] Metadata conversion checkout
+- [x] Recadrage papier client (inset, pas détection 4 coins)
+- [x] Preview restauration + `RestorationPreviewModal` (aperçu CSS, pas job serveur)
+- [x] Gate upsell · CTA **`aiRetouch`** / Éternité
+- [ ] Metadata `conversion_source` Stripe (déjà `ai_retouch` sur la session)
 
 ### Phase C — Polish
 
@@ -361,7 +362,8 @@ Le Scanner n’enforce pas cette règle lui-même ; il alimente simplement le vo
 | `src/components/scanner/ScannerCompanionPlaceholder.tsx` | Draft coffre pas prêt |
 | `src/components/scanner/ScannerCompanionPanel.tsx` | **Phase A** — QR + lien |
 | `src/components/scanner/ScannerCaptureClient.tsx` | **Phase A** — caméra / galerie |
-| `src/components/scanner/RestorationPreviewModal.tsx` | Phase B ⏳ |
+| `src/components/scanner/RestorationPreviewModal.tsx` | **Phase B** — Avant/Après + CTA `aiRetouch` |
+| `src/lib/scanner/cropPaperInset.ts` | Recadrage inset mobile |
 | `app/[lang]/scan/[token]/page.tsx` | **Phase A** |
 | `app/api/scan/sessions/route.ts` | **Phase A** |
 | `app/api/scan/sessions/[token]/upload/route.ts` | **Phase A** |

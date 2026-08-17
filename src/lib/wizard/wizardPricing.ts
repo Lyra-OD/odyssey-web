@@ -59,6 +59,7 @@ export {
   isExtensionBundledInBasePackage,
   resolveMusicCatalogTier,
   resolveMusicEntitlement,
+  hasAiRestorationEntitlement,
   hasPremiumMusicCatalogAccess,
   canUploadPersonalAudio,
   packageTierRank,

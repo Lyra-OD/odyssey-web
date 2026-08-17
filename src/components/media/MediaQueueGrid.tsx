@@ -9,6 +9,7 @@ import {
   Image as ImageIcon,
   Loader2,
   RefreshCcw,
+  Wand2,
   X,
 } from "lucide-react";
 import {
@@ -34,6 +35,8 @@ export type MediaQueueGridCopy = {
   retry: string;
   /** Badge tuile — médias arrivés via Scanner Compagnon. */
   viaScanner?: string;
+  /** Ouvre l’aperçu restauration IA (tuiles Scanner). */
+  restorePreview?: string;
   /** Message affiché quand item.error === MEDIA_QUOTA_EXCEEDED_ERROR (support `{max}`). */
   quotaExceededError?: string;
 };
@@ -45,6 +48,7 @@ type Props = {
   copy: MediaQueueGridCopy;
   onRemove: (id: string) => void;
   onRetry: (id: string) => void;
+  onPreviewScanner?: (item: UploadQueueItem) => void;
 };
 
 function displayItemError(
@@ -154,6 +158,7 @@ export function MediaQueueGrid({
   copy,
   onRemove,
   onRetry,
+  onPreviewScanner,
 }: Props) {
   const previews = useImagePreviews(items);
 
@@ -276,6 +281,19 @@ export function MediaQueueGrid({
                 <span className="absolute left-1.5 top-1.5 rounded-sm border border-teal-400/35 bg-black/55 px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-[0.16em] text-teal-200/90">
                   {copy.viaScanner}
                 </span>
+              ) : null}
+
+              {item.source === "scanner_companion" &&
+              onPreviewScanner &&
+              (previewUrl || item.fullPreviewUrl) ? (
+                <button
+                  type="button"
+                  aria-label={copy.restorePreview ?? copy.viaScanner ?? "IA"}
+                  onClick={() => onPreviewScanner(item)}
+                  className="absolute bottom-[2.35rem] left-1.5 flex h-8 w-8 items-center justify-center rounded-full border border-teal-400/35 bg-black/60 text-teal-100"
+                >
+                  <Wand2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+                </button>
               ) : null}
 
               {removable ? (

@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — Scanner Phase B : aperçu restauration → `aiRetouch`.
 - 17 août 2026 — M2 Phase A (QR + galerie + poll coffre).
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — canon M0–M6.
@@ -235,7 +236,7 @@ Le Scanner n’est pas un « nice-to-have » : c’est la **réponse produit** a
 | **Réduction charge Étape 5** | Moins de médias à placer manuellement depuis la banque |
 | **Cross-device** | QR wizard desktop → session mobile → sync temps réel → continuation desktop |
 | **Spec technique** | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
-| **État code** | Phase A QR + galerie 🟡 · Phase B IA ⏳ |
+| **État code** | Phase A+B QR + aperçu `aiRetouch` 🟡 · job IA ⏳ |
 
 ### Parcours cible Scanner × Wizard
 

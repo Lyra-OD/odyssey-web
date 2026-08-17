@@ -1,16 +1,40 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
   beforeLabel: string;
   afterLabel: string;
+  /** Photo réelle. Sans `src` : démo gradient (carte add-on checkout). */
+  src?: string | null;
+  canFullPreview?: boolean;
+  watermark?: string;
 };
 
-export function BeforeAfterSlider({ beforeLabel, afterLabel }: Props) {
+/**
+ * Slider Avant / Après.
+ * Aperçu Scanner : même photo, filtres CSS — pas un job IA serveur.
+ */
+export function BeforeAfterSlider({
+  beforeLabel,
+  afterLabel,
+  src,
+  canFullPreview = true,
+  watermark,
+}: Props) {
   const [position, setPosition] = useState(52);
+  const [lockedBlur, setLockedBlur] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
+
+  useEffect(() => {
+    if (canFullPreview || !src) {
+      setLockedBlur(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setLockedBlur(true), 3000);
+    return () => window.clearTimeout(timer);
+  }, [canFullPreview, src]);
 
   const updateFromClientX = useCallback((clientX: number) => {
     const node = containerRef.current;
@@ -41,6 +65,10 @@ export function BeforeAfterSlider({ beforeLabel, afterLabel }: Props) {
     draggingRef.current = false;
   }, []);
 
+  const afterFilter = lockedBlur
+    ? "contrast(1.14) saturate(1.18) brightness(1.08) blur(10px)"
+    : "contrast(1.14) saturate(1.18) brightness(1.08)";
+
   return (
     <div
       ref={containerRef}
@@ -52,42 +80,73 @@ export function BeforeAfterSlider({ beforeLabel, afterLabel }: Props) {
       role="img"
       aria-label={`${beforeLabel} / ${afterLabel}`}
     >
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(145deg, #134e4a 0%, #312e81 55%, #0f172a 100%)",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-80"
-        style={{
-          background:
-            "radial-gradient(circle at 35% 40%, rgba(254,243,199,0.55) 0%, transparent 42%), radial-gradient(circle at 68% 62%, rgba(45,212,191,0.35) 0%, transparent 48%)",
-        }}
-      />
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt=""
+          draggable={false}
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ filter: afterFilter }}
+        />
+      ) : (
+        <>
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(145deg, #134e4a 0%, #312e81 55%, #0f172a 100%)",
+            }}
+          />
+          <div
+            className="pointer-events-none absolute inset-0 opacity-80"
+            style={{
+              background:
+                "radial-gradient(circle at 35% 40%, rgba(254,243,199,0.55) 0%, transparent 42%), radial-gradient(circle at 68% 62%, rgba(45,212,191,0.35) 0%, transparent 48%)",
+            }}
+          />
+        </>
+      )}
+
+      {!canFullPreview && src && watermark ? (
+        <span className="pointer-events-none absolute bottom-10 right-3 z-[5] rotate-[-18deg] text-lg font-medium uppercase tracking-[0.28em] text-white/35">
+          {watermark}
+        </span>
+      ) : null}
 
       <div
         className="absolute inset-0 overflow-hidden"
-        style={{ width: `${position}%` }}
+        style={{
+          clipPath: `inset(0 ${100 - position}% 0 0)`,
+        }}
       >
-        <div
-          className="absolute inset-0 h-full"
-          style={{
-            width: "100vw",
-            maxWidth: "none",
-            filter: "sepia(0.5) contrast(0.8) brightness(0.72) grayscale(0.35)",
-            background:
-              "linear-gradient(160deg, #3f3f46 0%, #27272a 50%, #18181b 100%)",
-          }}
-        />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 3px)",
-          }}
-        />
+        {src ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={src}
+            alt=""
+            draggable={false}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <>
+            <div
+              className="absolute inset-0 h-full"
+              style={{
+                filter: "sepia(0.5) contrast(0.8) brightness(0.72) grayscale(0.35)",
+                background:
+                  "linear-gradient(160deg, #3f3f46 0%, #27272a 50%, #18181b 100%)",
+              }}
+            />
+            <div
+              className="pointer-events-none absolute inset-0 opacity-20"
+              style={{
+                backgroundImage:
+                  "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 3px)",
+              }}
+            />
+          </>
+        )}
       </div>
 
       <div

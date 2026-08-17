@@ -5,6 +5,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
 import { parseApiJson } from "@/src/lib/http/parseApiJson";
+import { cropPaperInset } from "@/src/lib/scanner/cropPaperInset";
 import {
   sanctuaryGhostButton,
   sanctuaryHoverDashed,
@@ -26,6 +27,7 @@ export type ScannerCaptureCopy = {
   quota: string;
   tooLarge: string;
   unsupported: string;
+  cropHint: string;
   poweredBy: string;
 };
 
@@ -107,8 +109,9 @@ export function ScannerCaptureClient({ token, locale, copy }: Props) {
         const id = `${file.name}-${file.size}-${file.lastModified}`;
         setRows((prev) => [...prev, { id, name: file.name, status: "uploading" }]);
 
+        const cropped = await cropPaperInset(file);
         const form = new FormData();
-        form.set("file", file);
+        form.set("file", cropped);
 
         try {
           const res = await fetch(
@@ -187,6 +190,20 @@ export function ScannerCaptureClient({ token, locale, copy }: Props) {
           {subtitle}
         </p>
 
+        <div
+          className="relative mx-auto mt-8 aspect-[3/4] w-full max-w-[16rem] overflow-hidden rounded-sm border border-teal-400/25 bg-black/40"
+          aria-hidden
+        >
+          <div className="absolute inset-[12%] border border-dashed border-teal-300/40" />
+          <div className="absolute left-[10%] top-[10%] h-4 w-4 border-l border-t border-teal-200/80" />
+          <div className="absolute right-[10%] top-[10%] h-4 w-4 border-r border-t border-teal-200/80" />
+          <div className="absolute bottom-[10%] left-[10%] h-4 w-4 border-b border-l border-teal-200/80" />
+          <div className="absolute bottom-[10%] right-[10%] h-4 w-4 border-b border-r border-teal-200/80" />
+        </div>
+        <p className="mt-3 text-center text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-500">
+          {copy.cropHint}
+        </p>
+
         <input
           ref={cameraRef}
           id={cameraId}
@@ -210,7 +227,7 @@ export function ScannerCaptureClient({ token, locale, copy }: Props) {
           type="button"
           disabled={busy}
           onClick={() => cameraRef.current?.click()}
-          className={`mt-10 w-full ${sanctuarySubmitButton} disabled:opacity-40`}
+          className={`mt-6 w-full ${sanctuarySubmitButton} disabled:opacity-40`}
         >
           <span className="inline-flex items-center gap-2">
             <Camera className="h-4 w-4" strokeWidth={1.5} aria-hidden />

@@ -44,6 +44,7 @@ import {
 } from "@/src/components/tribute/CollabInvitePanel";
 import { ScannerCompanionPanel } from "@/src/components/scanner/ScannerCompanionPanel";
 import { ScannerCompanionPlaceholder } from "@/src/components/scanner/ScannerCompanionPlaceholder";
+import { RestorationPreviewModal } from "@/src/components/scanner/RestorationPreviewModal";
 import { VaultOnlineSourcesSection } from "@/src/components/tribute/VaultOnlineSourcesSection";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
@@ -75,12 +76,15 @@ import {
   bundleSavingsDollarsLabel,
   calculateBundleSavings,
   canUploadPersonalAudio,
+  formatWizardPrice,
+  hasAiRestorationEntitlement,
   packageCents,
   packageTierRank,
   resolveMusicCatalogTier,
   WIZARD_ALL_PACKAGES,
   WIZARD_B2C_DIRECT_PACKAGES,
   WIZARD_PARTNER_GRANTED_PACKAGES,
+  WIZARD_PRICING,
 } from "@/src/lib/wizard/wizardPricing";
 import { resolveChannelProfile } from "@/src/lib/wizard/channelProfile";
 import {
@@ -88,7 +92,7 @@ import {
   packageMaxMediaItems,
   packageMaxSongs,
 } from "@/src/lib/wizard/wizardDeliverables";
-import { normalizeWizardStateForSave } from "@/src/lib/wizard/wizardExtensions";
+import { normalizeWizardStateForSave, toggleWizardExtension } from "@/src/lib/wizard/wizardExtensions";
 import { resolvePackageDossierRows } from "@/src/lib/wizard/packageDossier";
 import {
   emptyActTracks,
@@ -232,6 +236,7 @@ export function TributeWizard({
   const [extensions, setExtensions] = useState<WizardExtensionsState>(
     () => hydrated.extensions ?? {},
   );
+  const [restorationSrc, setRestorationSrc] = useState<string | null>(null);
   const [musicRightsAttestation, setMusicRightsAttestation] = useState<
     WizardStateV1["musicRightsAttestation"]
   >(() => hydrated.musicRightsAttestation);
@@ -1541,11 +1546,17 @@ export function TributeWizard({
                             remove: copy.queueRemove,
                             retry: copy.queueRetry,
                             viaScanner: copy.queueViaScanner,
+                            restorePreview: copy.scannerRestorePreview,
                             quotaExceededError:
                               copy.uploadLimitExceededItemError.replace(
                                 "{max}",
                                 String(currentMaxMediaItems),
                               ),
+                          }}
+                          onPreviewScanner={(item) => {
+                            const url =
+                              item.fullPreviewUrl || item.previewUrl || null;
+                            if (url) setRestorationSrc(url);
                           }}
                         />
 
@@ -1945,6 +1956,47 @@ export function TributeWizard({
           ) : null}
         </div>
       </section>
+
+      <RestorationPreviewModal
+        open={Boolean(restorationSrc)}
+        src={restorationSrc}
+        canFullPreview={hasAiRestorationEntitlement(
+          intendedPackage,
+          extensions,
+        )}
+        alreadyAdded={Boolean(
+          extensions.aiRetouch || extensions.heritagePack,
+        )}
+        allowPurchase={!isEditor}
+        showUpgrade={!isEditor && packageTierRank(intendedPackage) < 2}
+        addPriceLabel={formatWizardPrice(
+          WIZARD_PRICING.extensions.RETOUCHE_IA.priceCents,
+          locale,
+        )}
+        onClose={() => setRestorationSrc(null)}
+        onAddRetouch={() => {
+          handleExtensionsChange(
+            toggleWizardExtension(extensions, "aiRetouch", true),
+          );
+        }}
+        onUpgradeEternity={() => {
+          handleBasePackageChange("heritage");
+          setRestorationSrc(null);
+        }}
+        copy={{
+          title: copy.scannerRestoreTitle,
+          hint: copy.scannerRestoreHint,
+          lockedHint: copy.scannerRestoreLockedHint,
+          included: copy.scannerRestoreIncluded,
+          addCta: copy.scannerRestoreAddCta,
+          addedCta: copy.scannerRestoreAddedCta,
+          upgradeEternity: copy.scannerRestoreUpgrade,
+          beforeLabel: copy.scannerRestoreBefore,
+          afterLabel: copy.scannerRestoreAfter,
+          closeAria: copy.scannerRestoreClose,
+          watermark: copy.scannerRestoreWatermark,
+        }}
+      />
 
       {!isEditor ? (
       <SoftCapModal

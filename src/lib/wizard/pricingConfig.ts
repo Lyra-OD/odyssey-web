@@ -352,7 +352,19 @@ export type WizardExtensionsLike = {
   /** @deprecated → musicLicense */
   extendedLicense?: boolean;
   heritagePack?: boolean;
+  aiRetouch?: boolean;
 };
+
+/** Restauration IA : Éternité+ (inclus) ou add-on `aiRetouch` / pack Héritage. */
+export function hasAiRestorationEntitlement(
+  intendedPackage: WizardBasePackage,
+  extensions: WizardExtensionsLike = {},
+): boolean {
+  if (isExtensionBundledInBasePackage(intendedPackage, "aiRetouch")) {
+    return true;
+  }
+  return Boolean(extensions.aiRetouch || extensions.heritagePack);
+}
 
 /**
  * Accès catalogue Stingray officiel (API tier `premium`).
