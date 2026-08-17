@@ -1,9 +1,10 @@
 # Odyssey — RevShare partenaire (Partner Commission)
 
 **Type :** canon · **Vérité pour :** waterfall 30 % Net, ledger, clawback.  
-**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — UI Salon `/commissions` mock (`partner_admin`, `is_freemium`) ; payout CTA inactif ; SQL ⏳.
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — Freemium V1 · modèle Bulletproof · jetons DROP P8.
 
@@ -370,11 +371,13 @@ record_partner_commission_payout(
 
 ### RBAC UI (cible)
 
+Route : `/{lang}/salon/commissions` · `/{lang}/salon/facturation` redirige. Directeur sans accès → `/salon`. Tenant `is_freemium = false` : état vide, pas de chiffres.
+
 | Rôle | Accès |
 |------|-------|
-| `partner_admin` | Lecture solde + historique ledger (son tenant) |
-| `partner` (Directeur) | **Aucun** accès commissions (aligné P5.5 wallet) |
-| Super Admin Odyssey | Payout + adjustments |
+| `partner_admin` | Lecture solde + historique ledger (son tenant) — **mock UI** août 2026 · SQL ⏳ |
+| `partner` (Directeur) | **Aucun** accès commissions |
+| Super Admin Odyssey | Payout + adjustments — CTA « Demander un versement » **disabled** (ops mensuel, pas Stripe Connect) |
 
 ---
 
@@ -441,7 +444,7 @@ WHERE tc.project_id = :project_id;
 | Webhook handler `checkout.session.completed` | ✅ (b2b2c_family + b2c + **guest_support** V-Final) |
 | RPC `accrue_guest_micro_checkout` (contribution invité) | ✅ P10.1 |
 | Webhook handler `charge.refunded` | ⏳ |
-| UI Salon commissions waterfall (`partner_admin`) | ⏳ |
+| UI Salon commissions waterfall (`partner_admin`) | 🟢 mock · ⏳ SQL |
 | Payout admin Odyssey | ⏳ |
 | QA checklist | ✅ [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) |
 | Stripe Connect auto-payout | 🔮 Phase 2 |

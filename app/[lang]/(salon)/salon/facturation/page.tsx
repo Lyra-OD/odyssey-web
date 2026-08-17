@@ -1,6 +1,7 @@
-import type { Locale } from "@/i18n.config";
+import { redirect } from "next/navigation";
 
-import { PartnerFacturationView } from "../components/PartnerFacturationView";
+import type { Locale } from "@/i18n.config";
+import { appRoutes } from "@/src/lib/appRoutes";
 
 export const dynamic = "force-dynamic";
 
@@ -8,9 +9,10 @@ type PageProps = {
   params: Promise<{ lang: string }>;
 };
 
-export default async function SalonFacturationPage({ params }: PageProps) {
+/** Jetons morts — l’ancienne facturation pointe vers le dashboard commissions. */
+export default async function SalonFacturationRedirectPage({ params }: PageProps) {
   const { lang: routeLang } = await params;
   const lang: Locale = routeLang === "en" ? "en" : "fr";
 
-  return <PartnerFacturationView lang={lang} />;
+  redirect(appRoutes.salonCommissions(lang));
 }

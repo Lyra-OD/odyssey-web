@@ -1,9 +1,10 @@
 # Odyssey — Routes applicatives & authentification
 
 **Type :** canon · **Vérité pour :** URLs, connexions Studio/Salon, `appRoutes.ts`.  
-**Dernière MAJ :** 17 août 2026 (en-tête) · 24 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — `/salon/commissions` (admin RevShare) ; `/salon/facturation` redirige.
 - 17 août 2026 — Scanner Phase A : `/scan/[token]` + API sessions (plus « cible »).
 - 17 août 2026 — en-tête type + carte.
 - 24 juillet 2026 — Freemium V1 + Cascade + Collab.
@@ -21,7 +22,8 @@ Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes /
 | **Studio** (famille) | `/[lang]/studio` | Oui (ou cookie editor) | Wizard hommage **7** étapes — B2C / B2B2C / Co-Créateur |
 | **Studio connexion** | `/[lang]/studio/connexion` | Non | Login + **inscription** famille |
 | **Salon** (funérarium) | `/[lang]/salon` | Oui | Console partenaire — invitations, commissions |
-| **Salon facturation** | `/[lang]/salon/facturation` | Oui | Admin (`canRecharge`) — solde, découvert, recharge (Payment Link optionnel) |
+| **Salon commissions** | `/[lang]/salon/commissions` | Oui | Admin (`canViewLedger`) — KPIs RevShare + ledger (mock ; SQL ⏳) |
+| **Salon facturation** | `/[lang]/salon/facturation` | Oui | **Redirect** → `/salon/commissions` (jetons morts) |
 | **Salon connexion** | `/[lang]/salon/connexion` | Non | Login partenaire **sans** inscription |
 | **Marketing partenaires** | `/[lang]/partners` ou `/partenaires` | Non | Formulaire « devenir partenaire » (≠ Salon) |
 | **Acceptation invitation** | `/[lang]/invite/accept?token=…` | Oui (redir. studio connexion) | Magic link famille → projet B2B2C |
@@ -170,7 +172,8 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 |-------|-------------------|
 | `/[lang]/studio` | → `/studio/connexion?next=/[lang]/studio` |
 | `/[lang]/salon` (+ layout) | → `/salon/connexion?next=/[lang]/salon` ; si auth mais **sans** rôle partenaire → redirect `/studio` |
-| `/[lang]/salon/facturation` | Même gate auth/partenaire ; si **sans** `canRecharge` / `canViewLedger` → redirect `/salon` (client) |
+| `/[lang]/salon/commissions` | Même gate auth/partenaire ; si **sans** `canViewLedger` → redirect `/salon` (client) |
+| `/[lang]/salon/facturation` | Redirect serveur → `/salon/commissions` |
 | `/[lang]/invite/accept` | → `/studio/connexion?next=…` (famille invitée) |
 | `/[lang]/tribute/welcome` | → `/studio/connexion?next=…` |
 
@@ -230,7 +233,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 3. `/fr/login` → redirect studio connexion.
 4. `/fr/salon/connexion?partenaire=partner-qa-demo` — branding partenaire + même signature Halo-Éclipse en fond.
 5. Erreur login (mauvais mot de passe) — halo **magenta** + message ; éclipse inchangée (cf. [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)).
-6. `/fr/salon` — Admin voit soldes commissions ; Directeur selon RBAC (plus de bloc jetons).
+6. `/fr/salon/commissions` — Admin voit KPIs + ledger (mock) ; Directeur redirigé `/salon` ; `/facturation` redirige.
 7. Déconnexion studio → retour studio connexion ; déconnexion salon → connexion salon brandée (slug conservé).
 8. Toggle FR/EN — conserve query `?partenaire=` ; « Retour au site » apparaît en dernier (Acte V).
 9. Invitation magic link → accept → tribute welcome (voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)).

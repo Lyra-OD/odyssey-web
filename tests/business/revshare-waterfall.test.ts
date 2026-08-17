@@ -101,6 +101,13 @@ describe("RevShare — waterfall Bulletproof (30 % du Net Distribuable)", () => 
     }
   });
 
+  it("Souvenir + musicLicense 39 $ → commission 10,53 $", () => {
+    const wf = computeRevenueWaterfall(3900);
+    expect(wf.platformFeeCents).toBe(390);
+    expect(wf.netDistributableCents).toBe(3510);
+    expect(wf.commissionCents).toBe(1053);
+  });
+
   it("session à 0 $ (Souvenir offert) → aucune commission", () => {
     const wf = computeRevenueWaterfall(0);
     expect(wf.commissionCents).toBe(0);

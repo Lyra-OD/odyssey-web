@@ -50,14 +50,14 @@ export function PartnerHeader({
           tenantLoading: "Loading…",
           tenantEmpty: "No partner workspace",
           navHome: "Invitations",
-          navBilling: "Billing",
+          navBilling: "Commissions",
         }
       : {
           tenantAria: "Espace partenaire actif",
           tenantLoading: "Chargement…",
           tenantEmpty: "Aucun espace partenaire",
           navHome: "Invitations",
-          navBilling: "Facturation",
+          navBilling: "Commissions",
         };
 
   const tenantSelectValue = activeTenantId ?? "";
@@ -142,7 +142,7 @@ export function PartnerHeader({
             animationPreset="dashboard"
           />
 
-          {capabilities?.canRecharge ? (
+          {capabilities?.canViewLedger ? (
             <nav
               aria-label={
                 lang === "en" ? "Partner console" : "Console partenaire"
@@ -156,7 +156,7 @@ export function PartnerHeader({
                 {copy.navHome}
               </Link>
               <Link
-                href={appRoutes.salonFacturation(lang)}
+                href={appRoutes.salonCommissions(lang)}
                 className="font-label text-[10px] font-bold uppercase tracking-[0.36em] text-violet-300/80 transition-colors hover:text-violet-200"
               >
                 {copy.navBilling}

@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — Salon `/commissions` mock (KPIs + ledger RevShare) ; `/facturation` redirige ; plus d’UI jetons.
 - 17 août 2026 — Scanner Phase B : aperçu IA → add-on `aiRetouch` (pas de job serveur).
 - 17 août 2026 — Scanner Phase A (QR + galerie) dans l’étape Coffre.
 - 17 août 2026 — split vivant / log ; 4 contradictions corrigées (wizard 7, Creatomate, checkout, viral, plus de wallets dans le schéma).
@@ -23,8 +24,8 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Family Studio (wizard)** | 🟢 | **7** étapes (`TOTAL_STEPS = 7`, Extensions au checkout). Autosave, Stingray, Livre Ouvert, Soft Cap, Inviter, Co-Créateur |
 | **Partner Salon** | 🟢 | Invitations Souvenir 0 $ · solde = **commissions** (jetons **DROP P8**) |
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Soft Cap + entitlements + gate export + MP3/ToS — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Héritage **1080p** · 4K dès Éternité · Phase 6 QA ⏳ |
-| **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual. **Pas** ⏳. Reste : UI commissions Salon |
-| **RevShare** | 🟡 | Spec + SQL P6/P8 + webhook ✅ · écran Salon ledger ⏳ |
+| **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual. **Pas** ⏳. |
+| **RevShare** | 🟡 | Spec + SQL P6/P8 + webhook ✅ · UI Salon **mock** 🟢 · lecture SQL ledger ⏳ |
 | **Export Creatomate** | 🟡 P0 / master ⏳ | **P0 livré** (gate, P9/P9.1, `src/lib/creatomate/`, drain, webhook fail-closed). **Pas** « documented only ». Master Stingray / rendu cinéma ⏳ |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
 | **UX mobile** | 🟡 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 |
@@ -34,7 +35,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Tests & CI** | 🟡 | Vitest business 🟢 · CI GitHub ⏳ |
 | **Security** | 🟡 | RLS, gate Salon, entitlements never-trust, webhook Creatomate fail-closed |
 
-**Suite :** master Stingray · UI commissions · Phase 6 / CI · pilote 1 tenant flag ON.
+**Suite :** master Stingray · brancher UI commissions sur SQL · Phase 6 / CI · pilote 1 tenant flag ON.
 
 ---
 
@@ -51,7 +52,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Checkout famille (Stripe) | 🟢 | Soft Cap, `freemium_free`, entitlements |
 | Checkout jetons B2B | — | **N/A** — purgé P8. Ne plus planifier |
 | Salon invitations | 🟢 | Souvenir 0 $ |
-| Salon solde / facturation | 🟡 | Solde commissions ✅ · page facturation shell · ledger UI ⏳ |
+| Salon commissions | 🟡 | `/salon/commissions` mock 🟢 · `/facturation` → redirect · API `partner_commission_*` ⏳ |
 | Fonds / packs invité | 🟢 gated | Code 3a livré · visible si `viral_loop_enabled` sur le tenant |
 | Scanner Compagnon | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Export / render** | 🟡 | P0 🟢 · master / cinéma ⏳ — **pas** 🔴 |
@@ -68,7 +69,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Priorité | Quoi | Done when |
 |----------|------|-----------|
 | A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |
-| A | UI commissions Salon | Admin lit le ledger sans SQL |
+| A | Brancher UI commissions sur SQL | Mock remplacé par `partner_commission_*` (RLS admin) |
 | A | Phase 6 : CI `npm test` sur PR | Pipeline vert |
 | B | Flag `viral_loop_enabled` sur **1 tenant** démo/pilote | Fonds visible en démo — [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md) |
 | C | Rails UX | Mobile M0 · S5-J/K/L · Scanner job IA serveur |

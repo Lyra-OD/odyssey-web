@@ -4,9 +4,11 @@ import type { Locale } from "@/i18n.config";
 export const appRoutes = {
   /** Wizard hommage — famille & création B2C directe. */
   studio: (lang: Locale) => `/${lang}/studio`,
-  /** Console funérarium — invitations B2B2C, jetons. */
+  /** Console funérarium — invitations B2B2C, commissions. */
   salon: (lang: Locale) => `/${lang}/salon`,
-  /** Facturation partenaire — solde, recharge (admin). */
+  /** Dashboard RevShare partenaire (admin). */
+  salonCommissions: (lang: Locale) => `/${lang}/salon/commissions`,
+  /** @deprecated Alias URL — redirige vers salonCommissions. */
   salonFacturation: (lang: Locale) => `/${lang}/salon/facturation`,
   /** Connexion famille — inscription autorisée. */
   studioConnexion: (lang: Locale) => `/${lang}/studio/connexion`,
