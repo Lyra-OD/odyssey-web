@@ -454,7 +454,7 @@ WHERE tc.project_id = :project_id;
 | Migration SQL P6 (base brut) | ✅ appliquée |
 | Migration SQL **P6.1** waterfall | ✅ appliquée |
 | `compute_revenue_waterfall()` | ✅ P6.1 |
-| RPC accrue / clawback / payout | ✅ P6.1 (accrue/clawback) · payout ⏳ |
+| RPC accrue / clawback / payout | ✅ P6.1 (accrue/clawback) · payout P14 (`record_partner_commission_payout`) |
 | Webhook handler `checkout.session.completed` | ✅ (b2b2c_family + b2c + **guest_support** V-Final) |
 | RPC `accrue_guest_micro_checkout` (contribution invité) | ✅ P10.1 |
 | Webhook handler `charge.refunded` | ⏳ |

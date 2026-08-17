@@ -248,6 +248,21 @@
       "odysseyNetHint": "70% RevShare of net — excl. Platform Fee",
       "conversion": "Global conversion rate",
       "conversionHint": "Network upsells / invitations sent"
+    },
+    "salons": {
+      "title": "Active salons",
+      "loading": "Loading salon list…",
+      "error": "Unable to load salons or record the payout.",
+      "empty": "No active freemium salons.",
+      "name": "Salon name",
+      "invitations": "Invitations sent",
+      "conversion": "Conversion rate",
+      "payable": "Payable balance",
+      "actions": "Actions",
+      "markPaid": "Mark as paid",
+      "markPaidConfirm": "Confirm payout of {amount} for {name}?",
+      "markPaidLoading": "Paying out…",
+      "noPayable": "—"
     }
   },
   "tributeWizard": {

@@ -2,6 +2,7 @@ import type { Locale } from "@/i18n.config";
 import { getDictionary } from "@/lib/dictionaries";
 
 import { HqOverviewDashboard } from "./components/HqOverviewDashboard";
+import { HqSalonTable } from "./components/HqSalonTable";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,7 @@ export default async function HqHomePage({ params }: PageProps) {
   const lang: Locale = routeLang === "en" ? "en" : "fr";
   const dictionary = await getDictionary(lang);
   const overview = dictionary.hq.overview;
+  const salons = dictionary.hq.salons;
 
   return (
     <div>
@@ -27,6 +29,7 @@ export default async function HqHomePage({ params }: PageProps) {
         {overview.subtitle}
       </p>
       <HqOverviewDashboard lang={lang} labels={overview} />
+      <HqSalonTable lang={lang} labels={salons} />
     </div>
   );
 }

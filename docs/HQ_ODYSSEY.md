@@ -182,15 +182,16 @@ Hors slice : aucun chiffre, aucun payout.
 
 Hors slice : liste salons, payout.
 
-### Slice C — Dashboard micro & payout
+### Slice C — Dashboard micro & payout ✅
 
 **Done when :**
 
-1. Table des tenants (nom, accrued, payable, paid).
-2. Fiche `/hq/salons/[tenantId]` = miroir commissions de ce tenant.
-3. **Marquer comme payé** → ligne `payout` + `paid_cents` ; payable = 0 ; 403 si non-opérateur ; 409 si payable = 0.
+1. Table des tenants (nom, invitations, conversion, payable).
+2. **Marquer comme payé** → RPC `record_partner_commission_payout` + ligne `payout` ; payable = 0 ; 403 si non-opérateur ; 409 si payable = 0.
 
-Hors slice : drill conseiller, adjustments, formulaire partners.
+**Livré :** `GET /api/hq/tenants` · `POST /api/hq/tenants/[id]/payout` · `HqSalonTable` · SQL P14 · `tests/business/hq-tenant-payout.test.ts`.
+
+Hors slice : fiche `/hq/salons/[tenantId]`, drill conseiller, adjustments.
 
 ### Slice D — Formulaire `/partners`
 
@@ -214,8 +215,12 @@ Hors slice : CRM, onboarding Salon automatique.
 | `docs/sql/odyssey_p13_hq_allowlist.sql` | A |
 | `app/api/hq/overview/route.ts` | B |
 | `app/api/hq/tenants/route.ts` | C |
-| `app/api/hq/tenants/[id]/route.ts` | C |
 | `app/api/hq/tenants/[id]/payout/route.ts` | C |
+| `app/[lang]/(hq)/hq/components/HqSalonTable.tsx` | C |
+| `src/lib/hq/hqTenantsList.ts` | C |
+| `src/lib/hq/requireHqOperator.ts` | B · C |
+| `docs/sql/odyssey_p14_hq_commission_payout.sql` | C |
+| `app/api/hq/tenants/[id]/route.ts` | C (fiche — hors V1 livré) |
 | `app/api/partners/lead/route.ts` | D |
 
 Noms anglais dans le code. Copy HQ FR/EN dans les dictionnaires.

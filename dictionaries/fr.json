@@ -248,6 +248,21 @@
       "odysseyNetHint": "70 % RevShare du net — hors Platform Fee",
       "conversion": "Taux de conversion global",
       "conversionHint": "Upsells réseau / invitations envoyées"
+    },
+    "salons": {
+      "title": "Salons actifs",
+      "loading": "Chargement de la liste des salons…",
+      "error": "Impossible de charger les salons ou d’enregistrer le versement.",
+      "empty": "Aucun salon freemium actif.",
+      "name": "Nom du salon",
+      "invitations": "Invitations envoyées",
+      "conversion": "Taux de conversion",
+      "payable": "Solde payable",
+      "actions": "Actions",
+      "markPaid": "Marquer comme payé",
+      "markPaidConfirm": "Confirmer le versement de {amount} pour {name} ?",
+      "markPaidLoading": "Versement…",
+      "noPayable": "—"
     }
   },
   "tributeWizard": {

@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — `POST /api/hq/tenants/[id]/payout` + liste salons (RPC P14).
 - 17 août 2026 — `GET /api/hq/overview` : KPI réseau macro (allowlist + service_role).
 - 17 août 2026 — `/hq` : table `hq_allowlist` (P13), middleware + layout.
 - 17 août 2026 — `POST /api/partner/invitations/[id]/follow-up` (relance e-mail conseiller).
@@ -191,7 +192,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 
 **API partenaire (session) :** `GET /api/partner/tenants` · `GET /api/partner/my-performance` (`canInvite`) · `GET /api/partner/commissions` (`canViewLedger`) · `POST /api/partner/invitations` · `POST /api/partner/invitations/[id]/follow-up` (`canInvite`, auteur de l’invitation) · `GET /api/partner/wallet` (deprecated).
 
-**API HQ (session + allowlist) :** `GET /api/hq/overview` — KPI réseau macro (service_role, tenants freemium).
+**API HQ (session + allowlist) :** `GET /api/hq/overview` · `GET /api/hq/tenants` · `POST /api/hq/tenants/[id]/payout` — KPI macro, liste micro, versement (service_role + RPC P14).
 
 ---
 
@@ -229,7 +230,12 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | `middleware.ts` | Session cookies + gate `/hq` (`hq_allowlist`) |
 | `src/lib/hq/isOdysseyOperator.ts` | Allowlist `hq_allowlist` (SQL P13) |
 | `src/lib/hq/hqNetworkOverview.ts` | Agrégation KPI réseau macro |
+| `src/lib/hq/hqTenantsList.ts` | Liste micro salons + appel payout |
+| `src/lib/hq/requireHqOperator.ts` | Gate session + allowlist + admin |
 | `app/api/hq/overview/route.ts` | KPI réseau HQ (`hq_allowlist`) |
+| `app/api/hq/tenants/route.ts` | Liste salons HQ |
+| `app/api/hq/tenants/[id]/payout/route.ts` | Versement payable intégral |
+| `docs/sql/odyssey_p14_hq_commission_payout.sql` | RPC payout P14 |
 | `docs/HQ_ODYSSEY.md` | Canon tour de contrôle |
 | `app/[lang]/(salon)/salon/layout.tsx` | Garde auth + branding serveur initial |
 | `app/[lang]/(salon)/salon/components/PartnerHeader.tsx` | Header co-brandé |
