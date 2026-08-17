@@ -104,7 +104,7 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 | [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) | canon | Palette, Halo-Éclipse |
 | [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md) | canon | Collab éditeur |
 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) | canon | UX mobile M0–M6 |
-| [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) | canon | Spec scanner (MVP ⏳) |
+| [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) | canon | Spec scanner (Phase A QR+galerie 🟡 · Phase B ⏳) |
 | [`sql/README.md`](sql/README.md) | ops | Migrations P0→P11 |
 
 ### Living & vision

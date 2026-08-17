@@ -32,6 +32,8 @@ export type MediaQueueGridCopy = {
   statusCancelled: string;
   remove: string;
   retry: string;
+  /** Badge tuile — médias arrivés via Scanner Compagnon. */
+  viaScanner?: string;
   /** Message affiché quand item.error === MEDIA_QUOTA_EXCEEDED_ERROR (support `{max}`). */
   quotaExceededError?: string;
 };
@@ -269,6 +271,12 @@ export function MediaQueueGrid({
                   {formatSize(getItemSizeBytes(item))}
                 </span>
               </div>
+
+              {item.source === "scanner_companion" && copy.viaScanner ? (
+                <span className="absolute left-1.5 top-1.5 rounded-sm border border-teal-400/35 bg-black/55 px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-[0.16em] text-teal-200/90">
+                  {copy.viaScanner}
+                </span>
+              ) : null}
 
               {removable ? (
                 <button

@@ -136,6 +136,12 @@ export type MediaDropzoneAdapterProps = {
    */
   overflowRejectionMessage?: string;
 
+  /**
+   * Recharge silencieuse des médias distants (Scanner QR → grille).
+   * `0` / omis = pas de poll.
+   */
+  pollIntervalMs?: number;
+
   onFilesRejected?: (rejections: MediaDropzoneRejection[]) => void;
   onUploadComplete?: (summary: MediaDropzoneSummary) => void;
   onUploadError?: (error: Error) => void;
@@ -175,6 +181,7 @@ export function MediaDropzoneAdapter({
   disabled = false,
   autoStart = false,
   overflowRejectionMessage,
+  pollIntervalMs,
   onFilesRejected,
   onUploadComplete,
   onUploadError,
@@ -334,6 +341,14 @@ export function MediaDropzoneAdapter({
       );
     });
   }, [onUploadError, projectId, upload.loadProjectMedia]);
+
+  useEffect(() => {
+    if (!projectId || !pollIntervalMs || pollIntervalMs < 1000) return;
+    const timer = window.setInterval(() => {
+      void upload.loadProjectMedia(projectId, { force: true, silent: true });
+    }, pollIntervalMs);
+    return () => window.clearInterval(timer);
+  }, [pollIntervalMs, projectId, upload.loadProjectMedia]);
 
   useEffect(() => {
     // Détection de fin d'exécution pour notifier une seule fois le résumé.

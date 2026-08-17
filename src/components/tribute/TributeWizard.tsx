@@ -42,6 +42,7 @@ import {
   CollabInviteTrigger,
   collabInviteCopyFromDictionary,
 } from "@/src/components/tribute/CollabInvitePanel";
+import { ScannerCompanionPanel } from "@/src/components/scanner/ScannerCompanionPanel";
 import { ScannerCompanionPlaceholder } from "@/src/components/scanner/ScannerCompanionPlaceholder";
 import { VaultOnlineSourcesSection } from "@/src/components/tribute/VaultOnlineSourcesSection";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
@@ -1301,16 +1302,40 @@ export function TributeWizard({
                 {copy.stepMediaDescription}
               </p>
 
-              <ScannerCompanionPlaceholder
-                className="mt-8"
-                copy={{
-                  eyebrow: copy.scannerEyebrow,
-                  title: copy.scannerTitle,
-                  description: copy.scannerDescription,
-                  badge: copy.scannerBadge,
-                  hint: copy.scannerHint,
-                }}
-              />
+              {uploadProjectId ? (
+                <ScannerCompanionPanel
+                  className="mt-8"
+                  projectId={uploadProjectId}
+                  locale={locale}
+                  copy={{
+                    eyebrow: copy.scannerEyebrow,
+                    title: copy.scannerTitle,
+                    description: copy.scannerDescription,
+                    badge: copy.scannerBadge,
+                    hint: copy.scannerHint,
+                    instructions: copy.scannerInstructions,
+                    generating: copy.scannerGenerating,
+                    copyLink: copy.scannerCopyLink,
+                    copied: copy.scannerCopied,
+                    qrAlt: copy.scannerQrAlt,
+                    errorGeneric: copy.scannerErrorGeneric,
+                    unavailable: copy.scannerUnavailable,
+                    waitingPhone: copy.scannerWaitingPhone,
+                    photosReceived: copy.scannerPhotosReceived,
+                  }}
+                />
+              ) : (
+                <ScannerCompanionPlaceholder
+                  className="mt-8"
+                  copy={{
+                    eyebrow: copy.scannerEyebrow,
+                    title: copy.scannerTitle,
+                    description: copy.scannerDescription,
+                    badge: copy.scannerBadge,
+                    hint: copy.scannerHint,
+                  }}
+                />
+              )}
 
               {projectDraftError ? (
                 <div className="mt-6 rounded-xl border border-fuchsia-500/45 bg-fuchsia-950/10 p-4 shadow-[0_0_24px_rgba(255,0,255,0.22)] backdrop-blur-md">
@@ -1349,6 +1374,7 @@ export function TributeWizard({
                   tenantId={uploadTenantId ?? undefined}
                   uploadStrategy={isEditor ? "signed" : "direct"}
                   autoStart
+                  pollIntervalMs={5000}
                   maxFiles={effectiveMaxMediaItems}
                   maxFileSizeBytes={300 * 1024 * 1024}
                   overflowRejectionMessage={copy.uploadLimitOverflowRejection}
@@ -1514,6 +1540,7 @@ export function TributeWizard({
                             statusCancelled: copy.queueStatusCancelled,
                             remove: copy.queueRemove,
                             retry: copy.queueRetry,
+                            viaScanner: copy.queueViaScanner,
                             quotaExceededError:
                               copy.uploadLimitExceededItemError.replace(
                                 "{max}",

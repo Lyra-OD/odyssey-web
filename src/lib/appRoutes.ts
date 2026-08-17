@@ -33,6 +33,9 @@ export const appRoutes = {
   /** Redeem lien Co-Créateur → cookie httpOnly → Studio. */
   collab: (lang: Locale, token: string) =>
     `/${lang}/collab/${encodeURIComponent(token)}`,
+  /** Scanner Compagnon — session QR mobile (TTL 2 h). */
+  scan: (lang: Locale, token: string) =>
+    `/${lang}/scan/${encodeURIComponent(token)}`,
 } as const;
 
 export function defaultPostAuthPath(lang: Locale): string {

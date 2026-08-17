@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — M2 Phase A (QR + galerie + poll coffre).
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — canon M0–M6.
 
@@ -234,7 +235,7 @@ Le Scanner n’est pas un « nice-to-have » : c’est la **réponse produit** a
 | **Réduction charge Étape 5** | Moins de médias à placer manuellement depuis la banque |
 | **Cross-device** | QR wizard desktop → session mobile → sync temps réel → continuation desktop |
 | **Spec technique** | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
-| **État code** | Tables P6 stub ✅ · MVP app ⏳ |
+| **État code** | Phase A QR + galerie 🟡 · Phase B IA ⏳ |
 
 ### Parcours cible Scanner × Wizard
 
@@ -295,12 +296,12 @@ Le Scanner n’est pas un « nice-to-have » : c’est la **réponse produit** a
 
 ### M2 — Scanner Phase A
 
-| ID | Tâche |
-|----|-------|
-| M2-A | QR + session `scan_sessions` sur étape 3 |
-| M2-B | Route mobile `/[lang]/scan/` — upload galerie |
-| M2-C | Sync médias vers projet wizard (realtime ou poll) |
-| M2-D | Copy rassurante + états loading (Ferpection onboarding) |
+| ID | Tâche | État |
+|----|-------|------|
+| M2-A | QR + session `scan_sessions` sur étape 3 | **Phase A** |
+| M2-B | Route mobile `/[lang]/scan/` — upload galerie | **Phase A** |
+| M2-C | Sync médias vers projet wizard (poll 5 s) | **Phase A** |
+| M2-D | Copy rassurante + états loading | **Phase A** |
 
 Voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) pour le détail technique.
 

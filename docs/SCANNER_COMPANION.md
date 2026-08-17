@@ -1,9 +1,10 @@
 # Odyssey — Scanner Compagnon (Killer App)
 
-**Type :** canon · **Vérité pour :** spec scanner. MVP app ⏳ — ne pas montrer comme livré.  
-**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Type :** canon · **Vérité pour :** spec scanner. Phase A (QR + galerie) 🟡 à valider en démo · Phase B IA ⏳ — ne pas montrer comme Killer App livrée.  
+**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — Phase A : QR étape 3 · `/scan/[token]` galerie/caméra · `source=scanner_companion` · poll grille. HEIC accepté (iPhone).
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — spec B2B2C v2 + stubs P6.
 
@@ -57,29 +58,29 @@ Desktop Wizard  ←—— temps réel ——→  Mobile Scanner (PWA web)
 | Étape | Surface | Comportement |
 |-------|---------|--------------|
 | 1 | Wizard **étape médias** (desktop) | Bandeau « Numérisez vos albums avec votre téléphone » |
-| 1bis | **V1 livré** — `ScannerCompanionPlaceholder` | Slot honête « Bientôt / Coming soon » (pas de fausse session live) — branché Étape 3 Coffre |
-| 2 | Composant `ScannerCompanionPanel` | Affiche **QR Code** + code session court (fallback saisie manuelle) |
+| 1bis | Draft pas prêt | `ScannerCompanionPlaceholder` — même chrome, pas de QR |
+| 2 | `ScannerCompanionPanel` | **Phase A** — QR + copie du lien (TTL 2 h, cache `sessionStorage`) |
 | 3 | Instructions | « Scannez avec l’appareil photo · aucune installation requise » |
-| 4 | État live | Indicateur « Téléphone connecté » dès ouverture session mobile |
+| 4 | État live | Phase C — heartbeat « Téléphone connecté » ⏳. Phase A : poll grille 5 s |
 
 ### Acte 2 — Mobile : session web légère
 
 | Étape | Surface | Comportement |
 |-------|---------|--------------|
 | 1 | Scan QR | Ouvre URL `https://{site}/[lang]/scan/{sessionToken}` |
-| 2 | **PWA web** (pas d’app store) | Plein écran · accès caméra (`getUserMedia`) |
-| 3 | Capture | Photo du tirage papier · overlay guide recadrage |
-| 4 | **Détection document** | Recadrage auto perspective (papier / polaroid / album) |
-| 5 | Confirmation | Aperçu recadré · bouton « Envoyer au hommage » |
-| 6 | Feedback | « Photo ajoutée ✓ » · propose capture suivante |
+| 2 | **PWA web** (pas d’app store) | Phase A : page web mobile (pas encore `manifest.json`) |
+| 3 | Capture | **Phase A** — caméra (`capture=environment`) **ou** galerie. Recadrage perspective = Phase B |
+| 4 | **Détection document** | Phase B ⏳ — fallback : photo telle quelle |
+| 5 | Confirmation | « Photo ajoutée ✓ » · capture suivante |
+| 6 | Feedback | Liste d’envois sur la page mobile |
 
 ### Acte 3 — Desktop : sync temps réel
 
 | Étape | Surface | Comportement |
 |-------|---------|--------------|
-| 1 | Grille médias wizard | Nouvelle vignette apparaît **sans refresh** (WebSocket ou polling court) |
+| 1 | Grille médias wizard | Nouvelle vignette **sans refresh manuel** (poll 5 s, Phase A) |
 | 2 | Badge | « Via Scanner » sur la vignette |
-| 3 | Pipeline | Proxy généré · job restauration IA enqueued |
+| 3 | Pipeline | Thumbs / proxy = pipeline existant. Job restauration IA = Phase B |
 
 ### Acte 4 — Avant/Après IA (upsell)
 
@@ -172,18 +173,18 @@ flowchart TB
 
 | Route | Auth | Rôle |
 |-------|------|------|
-| `POST /api/scan/sessions` | Owner projet | Crée session · retourne QR payload (token signé court) |
-| `GET /api/scan/sessions/:token/validate` | Token session | Valide TTL · retourne `projectId` minimal |
-| `POST /api/scan/sessions/:token/upload` | Token session | Multipart image recadrée → Storage + `media_assets` |
-| `POST /api/ai/restoration/preview` | Owner projet | Job IA preview · retourne signed URLs avant/après |
-| `GET /api/scan/sessions/:id/events` | Owner projet | SSE ou long-poll nouveaux médias *(alternative Realtime)* |
+| `POST /api/scan/sessions` | Titulaire ou Co-Créateur | Crée session · retourne `scanUrl` + token |
+| `GET /api/scan/sessions/:token` | Token session | Valide TTL · nom d’hommage minimal |
+| `POST /api/scan/sessions/:token/upload` | Token session | Multipart image → Storage + `media_assets` |
+| `POST /api/ai/restoration/preview` | Owner projet | Phase B ⏳ |
+| `GET /api/scan/sessions/:id/events` | Owner projet | Phase C ⏳ — poll grille projet à la place |
 
 **Sécurité session mobile :**
 
 - Token **opaque** 128-bit · TTL QR live **2 h** · **1 projet** par session
 - Contribution async invités : via `project_access_tokens` longue durée (stub P6, logique métier séparée)
-- Rate limit upload : max **30 photos / session / heure**
-- Validation MIME : `image/jpeg`, `image/png`, `image/webp` uniquement
+- Rate limit upload : max **30 photos / session** (session = 2 h)
+- Validation MIME : `image/jpeg`, `image/png`, `image/webp`, **plus HEIC/HEIF** (galerie iPhone)
 - Taille max : **12 Mo** par photo (mobile)
 
 ---
@@ -330,12 +331,12 @@ Le Scanner n’enforce pas cette règle lui-même ; il alimente simplement le vo
 
 ## Plan d’implémentation (phases)
 
-### Phase A — MVP Scanner (1 semaine)
+### Phase A — MVP Scanner (QR + galerie)
 
-- [ ] `POST /api/scan/sessions` + table `scan_sessions`
-- [ ] Page mobile `/scan/[token]` · caméra + upload simple (sans crop IA)
-- [ ] QR panel desktop · Realtime ou polling médias
-- [ ] `source = scanner_companion` sur `media_assets`
+- [x] `POST /api/scan/sessions` + table `scan_sessions` (P6 B5 / filet [`odyssey_p12_scan_sessions_ensure.sql`](sql/odyssey_p12_scan_sessions_ensure.sql))
+- [x] Page mobile `/scan/[token]` · caméra + galerie (sans crop IA)
+- [x] QR panel desktop · polling médias (5 s)
+- [x] `source = scanner_companion` sur `media_assets`
 
 ### Phase B — Killer App (2 semaines)
 
@@ -357,21 +358,23 @@ Le Scanner n’enforce pas cette règle lui-même ; il alimente simplement le vo
 
 | Fichier | Action |
 |---------|--------|
-| `src/components/scanner/ScannerCompanionPlaceholder.tsx` | **V1** — bandeau placeholder honête (Étape 3) |
-| `src/components/scanner/ScannerCompanionPanel.tsx` | **Créer** — QR + état session |
-| `src/components/scanner/RestorationPreviewModal.tsx` | **Créer** — Avant/Après + upsell |
-| `app/[lang]/scan/[token]/page.tsx` | **Créer** — mobile PWA |
-| `app/api/scan/sessions/route.ts` | **Créer** |
-| `app/api/scan/sessions/[token]/upload/route.ts` | **Créer** |
-| `app/api/ai/restoration/preview/route.ts` | **Créer** |
-| `src/lib/scanner/scanSessionToken.ts` | **Créer** — sign / hash |
+| `src/components/scanner/ScannerCompanionPlaceholder.tsx` | Draft coffre pas prêt |
+| `src/components/scanner/ScannerCompanionPanel.tsx` | **Phase A** — QR + lien |
+| `src/components/scanner/ScannerCaptureClient.tsx` | **Phase A** — caméra / galerie |
+| `src/components/scanner/RestorationPreviewModal.tsx` | Phase B ⏳ |
+| `app/[lang]/scan/[token]/page.tsx` | **Phase A** |
+| `app/api/scan/sessions/route.ts` | **Phase A** |
+| `app/api/scan/sessions/[token]/upload/route.ts` | **Phase A** |
+| `src/lib/scanner/scanSessionToken.ts` | Hash SHA-256 |
+| `docs/sql/odyssey_p12_scan_sessions_ensure.sql` | Filet table si P6 B5 absent |
 
 > **Cascade V-Final (✅ livré) :** le volet **contribution invité async** (Support Packs → Fonds
 > Commémoratif) est déjà câblé, distinct du Scanner QR : tokens opaques
 > `src/lib/contribute/contributeToken.ts` + `accessToken.ts`, routes `GET/POST /api/contribute/[token]`
 > et `POST /api/projects/[id]/contribute-link` (voir [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) §
-> Boucle Virale). Le Scanner QR (upload photo mobile) reste à construire (MVP ci-dessous).
-| `docs/sql/odyssey_p6_freemium_revshare.sql` | **Déjà créé** — `scan_sessions` en Partie B |
+> Boucle Virale). Le Scanner QR Phase A (upload photo mobile) est câblé ; recadrage papier + IA = Phase B.
+
+`docs/sql/odyssey_p6_freemium_revshare.sql` — `scan_sessions` en Partie B (création d’origine).
 
 ---
 

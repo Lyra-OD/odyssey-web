@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · 24 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — Scanner Phase A : `/scan/[token]` + API sessions (plus « cible »).
 - 17 août 2026 — en-tête type + carte.
 - 24 juillet 2026 — Freemium V1 + Cascade + Collab.
 
@@ -27,17 +28,16 @@ Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes /
 | **Bienvenue hommage** | `/[lang]/tribute/welcome?projectId=…` | Oui | Wizard seedé après invitation |
 | **Auth callback** | `/auth/callback?next=…` | — | Échange code Supabase (signup / magic link) |
 
-### Scanner Compagnon (cible P6 — Killer App)
+### Scanner Compagnon (Phase A — QR + galerie)
 
-Routes **prévues** pour l’ingestion mobile photos papier via QR Code wizard desktop. Spec : [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md).
+Ingestion mobile photos papier via QR Code wizard desktop (étape Coffre). Spec : [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md). Recadrage + IA = Phase B.
 
 | Route | Auth | Rôle |
 |-------|------|------|
-| **`/[lang]/scan/[token]`** | Token session (opaque, TTL 2 h) | **PWA mobile** — caméra, recadrage, upload vers projet Studio |
-| **`/[lang]/scan/[token]/done`** | Token session | Confirmation « Retournez à votre ordinateur » |
-| **`POST /api/scan/sessions`** | Owner projet (session) | Crée session QR · retourne payload QR |
-| **`POST /api/scan/sessions/[token]/upload`** | Token session | Upload image recadrée → Supabase Storage |
-| **`GET /api/scan/sessions/[token]/validate`** | Token session | Valide TTL · métadonnées projet minimales |
+| **`/[lang]/scan/[token]`** | Token session (opaque, TTL 2 h) | Mobile — caméra ou galerie → coffre |
+| **`POST /api/scan/sessions`** | Titulaire ou Co-Créateur | Crée session QR · retourne `scanUrl` |
+| **`POST /api/scan/sessions/[token]/upload`** | Token session | Upload image → Supabase Storage |
+| **`GET /api/scan/sessions/[token]`** | Token session | Valide TTL · nom d’hommage minimal |
 
 **Sécurité :** pas de login mobile requis — token lié à **un seul** `project_id` · rate limit uploads · pas d’app native (web only).
 

@@ -57,7 +57,10 @@ export type UseMassMediaUploadReturn = {
   moveItem: (id: string, direction: MoveDirection) => void;
   persistOrder: () => Promise<void>;
   deleteRemoteItem: (id: string) => Promise<void>;
-  loadProjectMedia: (projectId: string) => Promise<void>;
+  loadProjectMedia: (
+    projectId: string,
+    options?: { force?: boolean; silent?: boolean },
+  ) => Promise<void>;
   cancel: () => void;
   clearCompleted: () => void;
   clearAll: () => void;
@@ -338,14 +341,19 @@ export function useMassMediaUpload(
   );
 
   const loadProjectMedia = useCallback(
-    async (projectId: string) => {
-      setIsHydrating(true);
+    async (
+      projectId: string,
+      options?: { force?: boolean; silent?: boolean },
+    ) => {
+      if (!options?.silent) setIsHydrating(true);
       projectIdRef.current = projectId;
       try {
-        const apiItems = await fetchProjectMediaCached(projectId);
+        const apiItems = await fetchProjectMediaCached(projectId, {
+          force: options?.force,
+        });
         hydrateFromServer(apiItems);
       } finally {
-        setIsHydrating(false);
+        if (!options?.silent) setIsHydrating(false);
       }
     },
     [hydrateFromServer],

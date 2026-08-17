@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — Scanner Phase A (QR + galerie) dans l’étape Coffre. Pas Phase B IA.
 - 17 août 2026 — split vivant / log ; 4 contradictions corrigées (wizard 7, Creatomate, checkout, viral, plus de wallets dans le schéma).
 - 12 août 2026 — Play A–B KEEP · wormhole lab C · marque Éclipse ✅ · Freemium Phases 0–5 ✅.
 
@@ -27,7 +28,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
 | **UX mobile** | 🟡 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · S5-J/K/L ⏳ |
-| **Scanner** | 🟡 | Spec + stubs ✅ · MVP app ⏳ |
+| **Scanner** | 🟡 | Phase A QR + galerie 🟡 à valider · Phase B IA ⏳ |
 | **Marque Éclipse** | 🟢 | Play A–B KEEP · mark + exports · brancher UI ⚪ · wormhole = lab |
 | **Tests & CI** | 🟡 | Vitest business 🟢 · CI GitHub ⏳ |
 | **Security** | 🟡 | RLS, gate Salon, entitlements never-trust, webhook Creatomate fail-closed |
@@ -51,7 +52,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Salon invitations | 🟢 | Souvenir 0 $ |
 | Salon solde / facturation | 🟡 | Solde commissions ✅ · page facturation shell · ledger UI ⏳ |
 | Fonds / packs invité | 🟢 gated | Code 3a livré · visible si `viral_loop_enabled` sur le tenant |
-| Scanner Compagnon | 🟡 | Spec + stubs ✅ · MVP app ⏳ |
+| Scanner Compagnon | 🟡 | Phase A QR + galerie 🟡 à valider · Phase B IA ⏳ |
 | **Export / render** | 🟡 | P0 🟢 · master / cinéma ⏳ — **pas** 🔴 |
 | `app-backend/` | ⚪ | Hors périmètre Next |
 
@@ -69,7 +70,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | A | UI commissions Salon | Admin lit le ledger sans SQL |
 | A | Phase 6 : CI `npm test` sur PR | Pipeline vert |
 | B | Flag `viral_loop_enabled` sur **1 tenant** démo/pilote | Fonds visible en démo — [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md) |
-| C | Rails UX | Mobile M0 · S5-J/K/L · Scanner MVP |
+| C | Rails UX | Mobile M0 · S5-J/K/L · Scanner Phase B |
 | — | Labs wormhole / eclipse | Internes — jamais une démo VP |
 
 **Ne plus faire :** débit jetons, wholesale 40 $, coexistence `is_freemium=false`, saga checkout « v1 jetons ».

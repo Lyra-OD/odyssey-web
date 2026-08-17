@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · 20 juillet 2026 (revue code) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — Scanner Phase A (QR étape 3, pas une 8ᵉ étape).
 - 17 août 2026 — étape 4 : canaux / cents → FREEMIUM §2 (plus de grille recopiée).
 - 17 août 2026 — en-tête type ; « 8-step » → **7** étapes (Extensions au checkout).
 - 20 juillet 2026 — Soft Cap UX livré · Freemium Phases 0–5 (plus « 0–4 » dans ce bandeau).
@@ -52,7 +53,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
 | `app/api/checkout/route.ts` | Checkout (**cible** 3 modes — voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)) |
 | `app/[lang]/(salon)/salon/` | Console partenaire Salon (header, portefeuille, `InvitationComposer` sur manifeste) — auth via layout |
-| `src/components/scanner/ScannerCompanionPanel.tsx` | **Cible P6** — QR Scanner Compagnon (étape médias) — [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
+| `src/components/scanner/ScannerCompanionPanel.tsx` | **Phase A** — QR Scanner Compagnon (étape médias) — [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 
 `TOTAL_STEPS = 7` in `TributeWizard.tsx` (Extensions au checkout — pas une 8ᵉ étape wizard).
 
