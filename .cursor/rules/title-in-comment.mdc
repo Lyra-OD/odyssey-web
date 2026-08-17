@@ -1,0 +1,38 @@
+---
+description: SQL et git — toujours un titre de ce que c’est dans le commentaire / message.
+alwaysApply: true
+---
+
+# Titre dans le commentaire
+
+À chaque **SQL** et à chaque **commit** (donc à chaque **push**) : la première chose lue est **le titre de ce que c’est**. Pas de blob anonyme.
+
+## SQL (`docs/sql/*.sql` + onglet SQL Editor)
+
+En-tête commentaire **avant** le premier `BEGIN` / statement :
+
+```sql
+-- =====================================================================
+-- Odyssey P12 — Scanner Compagnon Phase A : garantir scan_sessions
+-- =====================================================================
+```
+
+- Une ligne titre : **quoi** (P-numéro si migration, surface, action).
+- Puis 2–6 lignes : pourquoi / prérequis / ce que ça ne fait pas.
+- Onglet Supabase = **le même titre** (jamais « Untitled query ») — déjà [`docs/sql/README.md`](docs/sql/README.md).
+
+❌ `-- fix` · `-- update` · fichier sans bandeau.
+
+## Git commit (et push)
+
+La **première ligne** du commit **est** le titre. Le push n’a pas de commentaire à part : il publie ce titre.
+
+```
+feat(scanner): Phase A — QR compagnon dans le Coffre
+```
+
+- `type(scope):` + titre lisible (ce qui change pour un humain).
+- 1–2 phrases **pourquoi** dans le corps si besoin.
+- Ne pas committer / pusher un message du type `wip`, `fix`, `update`, `asdf`.
+
+Si l’utilisateur donne déjà un `-m` avec un titre clair : le garder.
