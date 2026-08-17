@@ -63,6 +63,9 @@ describe("Mock dashboard commissions Salon", () => {
     expect(balance.paid_cents).toBe(paid);
     expect(balance.paid_cents).toBe(10_000);
     expect(payableCents(balance)).toBe(10_412);
+    expect(
+      ledger.find((row) => row.reason === "payout")?.delta_cents,
+    ).toBe(-10_000);
   });
 
   it("formatUsdFromCents : centimes → dollars, locales CA", () => {

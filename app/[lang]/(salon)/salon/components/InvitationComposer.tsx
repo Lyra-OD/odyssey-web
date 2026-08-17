@@ -55,7 +55,7 @@ type InvitationComposerProps = {
   lang: Locale;
   /** Noms et styles forfaits (`dictionaries/*.json` → `packages`). */
   packageLabels: PackageLabelsI18n;
-  /** Prévisualisation B2C dollars — défaut : compte partenaire (jetons). */
+  /** Compte salon — Freemium = dollars famille ; sinon axe jetons legacy. */
   isPartnerAccount?: boolean;
 };
 
@@ -92,9 +92,11 @@ export function InvitationComposer({
   const reducedMotion = prefersReducedMotion === true;
   const isFreemiumTenant = activeTenant?.isFreemium === true;
 
-  const transactionMode = resolveTransactionMode({
-    isPartnerAccount,
-  });
+  const transactionMode = isFreemiumTenant
+    ? "dollars"
+    : resolveTransactionMode({
+        isPartnerAccount,
+      });
 
   const tiers = useMemo(
     () => listPartnerInvitationTiers(locale, packageLabels),
@@ -123,7 +125,7 @@ export function InvitationComposer({
           validUntil: "This link is valid until",
           newInvitation: "Create another invitation",
           tenantMissing:
-            "No partner workspace linked to this account. Sign in via the partner link or run the QA seed (P5.4 + odyssey_p4_partner_token_qa_seed.sql).",
+            "No partner workspace linked to this account. Sign in via the partner link.",
         }
       : {
           kicker: "Invitation",
@@ -145,7 +147,7 @@ export function InvitationComposer({
           validUntil: "Ce lien est valide jusqu’au",
           newInvitation: "Créer une nouvelle invitation",
           tenantMissing:
-            "Aucun espace partenaire rattaché à ce compte. Reconnectez-vous via le lien partenaire ou exécutez le seed QA (P5.4 + odyssey_p4_partner_token_qa_seed.sql).",
+            "Aucun espace partenaire rattaché à ce compte. Reconnectez-vous via le lien partenaire.",
         };
 
   const hasSelection = selectedPackageId !== null;
@@ -433,11 +435,7 @@ export function InvitationComposer({
                       transactionMode,
                       priceFormatted,
                     );
-                const tokenDebitLabel = isFreemiumSouvenir
-                  ? locale === "en"
-                    ? "0 tokens debited on send"
-                    : "0 jeton debité à l'envoi"
-                  : tier.tokenDebitLabel;
+                const tokenDebitLabel = tier.tokenDebitLabel;
 
                 return (
                   <motion.div

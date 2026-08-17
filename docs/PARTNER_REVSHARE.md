@@ -4,7 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 17 août 2026 — UI Salon `/commissions` mock (`partner_admin`, `is_freemium`) ; payout CTA inactif ; SQL ⏳.
+- 17 août 2026 — UI Salon `/commissions` + `GET /api/partner/commissions` (`partner_admin`, `is_freemium`) ; payout CTA inactif.
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — Freemium V1 · modèle Bulletproof · jetons DROP P8.
 
@@ -375,7 +375,7 @@ Route : `/{lang}/salon/commissions` · `/{lang}/salon/facturation` redirige. Dir
 
 | Rôle | Accès |
 |------|-------|
-| `partner_admin` | Lecture solde + historique ledger (son tenant) — **mock UI** août 2026 · SQL ⏳ |
+| `partner_admin` | Lecture solde + historique ledger (son tenant) — **GET `/api/partner/commissions`** |
 | `partner` (Directeur) | **Aucun** accès commissions |
 | Super Admin Odyssey | Payout + adjustments — CTA « Demander un versement » **disabled** (ops mensuel, pas Stripe Connect) |
 
@@ -444,7 +444,7 @@ WHERE tc.project_id = :project_id;
 | Webhook handler `checkout.session.completed` | ✅ (b2b2c_family + b2c + **guest_support** V-Final) |
 | RPC `accrue_guest_micro_checkout` (contribution invité) | ✅ P10.1 |
 | Webhook handler `charge.refunded` | ⏳ |
-| UI Salon commissions waterfall (`partner_admin`) | 🟢 mock · ⏳ SQL |
+| UI Salon commissions waterfall (`partner_admin`) | 🟢 `/salon/commissions` + API |
 | Payout admin Odyssey | ⏳ |
 | QA checklist | ✅ [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) |
 | Stripe Connect auto-payout | 🔮 Phase 2 |

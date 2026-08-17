@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import type { ReactNode } from "react";
 
 import type { Locale } from "@/i18n.config";
 import { appRoutes } from "@/src/lib/appRoutes";
+import { sanitizeSalonNextPath } from "@/src/lib/auth/sanitizeNextPath";
 import { getDictionary } from "@/lib/dictionaries";
 import { resolvePartnerInitialBrand } from "@/src/lib/partner/fetchPartnerTenantsForUser";
 import { fetchPartnerBrandingBySlug } from "@/src/lib/partner/fetchPartnerBrandingBySlug";
@@ -29,9 +31,12 @@ export default async function SalonLayout({ children, params }: LayoutProps) {
 
   if (!user) {
     const rememberedSlug = readPartnerConnexionSlugFromCookie();
+    const pathname = headers().get("x-odyssey-pathname");
+    const nextPath =
+      sanitizeSalonNextPath(pathname) ?? appRoutes.salon(lang);
     redirect(
       appRoutes.salonConnexionWithParams(lang, {
-        next: appRoutes.salon(lang),
+        next: nextPath,
         partenaire: rememberedSlug,
       }),
     );

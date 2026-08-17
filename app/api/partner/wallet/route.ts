@@ -11,8 +11,8 @@ import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
 /**
  * GET /api/partner/wallet?tenantId=<uuid>
- * Freemium V1 : wallets jetons purged — renvoie un snapshot déprécié (0)
- * + soldes commissions si disponibles (Phase 3 UI complète plus tard).
+ * @deprecated Jetons purged — UI Salon lit GET /api/partner/commissions.
+ * Snapshot 0 + soldes commissions (compat). Ne plus brancher d’écran jetons.
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

@@ -1,9 +1,10 @@
 # Odyssey — Commerce B2B2C Freemium V1
 
 **Type :** canon · **Vérité pour :** flux salon → famille, Soft Cap, RevShare (post-purge).  
-**Dernière MAJ :** 17 août 2026 (en-tête) · 24 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — UI Salon commissions + API `GET /api/partner/commissions`.
 - 17 août 2026 — étape 4 : grille forfaits → FREEMIUM §2 (plus de copie).
 - 17 août 2026 — en-tête type + carte.
 - 24 juillet 2026 — Freemium V1 + grille Quiet Luxury.
@@ -90,7 +91,7 @@ Ne jamais hardcoder `if (vertical === 'human') isFreemium = true`.
 | Checkout Soft Cap + amputation 422 + `freemium_free` | ✅ |
 | Webhook → `project_paid_entitlements` | ✅ |
 | Soft Cap UX (médias, magie, musique dual) | ✅ Phase 4 |
-| UI Salon commissions | 🟡 partiel |
+| UI Salon commissions | ✅ `/salon/commissions` + API |
 | Creatomate gate entitlements | ✅ Phase 5 · worker P0 ✅ · master/ops ⏳ |
 | Accrual RevShare webhook (durcissement) | 🟡 |
 

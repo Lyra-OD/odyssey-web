@@ -2,7 +2,7 @@ import type { PartnerCommissionDashboard } from "@/src/lib/partner/partnerCommis
 
 /**
  * Snapshot démo — chiffres canon PARTNER_REVSHARE (waterfall Bulletproof).
- * Accrued = somme des accruals `confirmed` uniquement.
+ * Fixture tests uniquement. L’UI Salon lit GET /api/partner/commissions.
  */
 export const MOCK_COMMISSION_DASHBOARD: PartnerCommissionDashboard = {
   balance: {
@@ -21,6 +21,7 @@ export const MOCK_COMMISSION_DASHBOARD: PartnerCommissionDashboard = {
       commission_cents: 1_053,
       commission_rate_bps: 3_000,
       status: "pending",
+      delta_cents: 1_053,
     },
     {
       id: "a1b2c3d4-e5f6-4789-a012-3456789abcde",
@@ -32,6 +33,7 @@ export const MOCK_COMMISSION_DASHBOARD: PartnerCommissionDashboard = {
       commission_cents: 10_000,
       commission_rate_bps: null,
       status: "confirmed",
+      delta_cents: -10_000,
     },
     {
       id: "b7e9d041-2c55-4f8a-9e31-0a1b2c3d4e5f",
@@ -43,6 +45,7 @@ export const MOCK_COMMISSION_DASHBOARD: PartnerCommissionDashboard = {
       commission_cents: 6_156,
       commission_rate_bps: 3_000,
       status: "confirmed",
+      delta_cents: 6_156,
     },
     {
       id: "c0ffee00-1111-4222-8333-444455556666",
@@ -54,6 +57,7 @@ export const MOCK_COMMISSION_DASHBOARD: PartnerCommissionDashboard = {
       commission_cents: 9_423,
       commission_rate_bps: 3_000,
       status: "confirmed",
+      delta_cents: 9_423,
     },
     {
       id: "d1e2f3a4-b5c6-4789-8d0e-f1a2b3c4d5e6",
@@ -65,6 +69,7 @@ export const MOCK_COMMISSION_DASHBOARD: PartnerCommissionDashboard = {
       commission_cents: 4_833,
       commission_rate_bps: 3_000,
       status: "confirmed",
+      delta_cents: 4_833,
     },
   ],
 };

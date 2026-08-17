@@ -32,6 +32,9 @@ describe("sanitizeNextPath (anti open-redirect)", () => {
   });
 
   it("sanitizeSalonNextPath n’accepte que /…/salon hors connexion", () => {
+    expect(sanitizeSalonNextPath("/fr/salon/commissions")).toBe(
+      "/fr/salon/commissions",
+    );
     expect(sanitizeSalonNextPath("/fr/salon/acme")).toBe("/fr/salon/acme");
     expect(sanitizeSalonNextPath("/fr/studio")).toBeNull();
     expect(sanitizeSalonNextPath("/fr/salon/connexion")).toBeNull();

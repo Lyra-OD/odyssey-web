@@ -22,6 +22,7 @@ function ledgerCopy(lang: Locale) {
         pending: "Pending",
         reversed: "Reversed",
         payout: "Payout",
+        clawback: "Clawback",
         empty: "No commission entries yet.",
         caption:
           "Commission = 30% of Net Distributable (after 10% platform fee). Never 30% of gross.",
@@ -37,6 +38,7 @@ function ledgerCopy(lang: Locale) {
         pending: "En attente",
         reversed: "Annulé",
         payout: "Versement",
+        clawback: "Clawback",
         empty: "Aucune écriture de commission pour le moment.",
         caption:
           "Commission = 30 % du Net Distribuable (après 10 % plateforme). Jamais 30 % du brut.",
@@ -54,6 +56,12 @@ function statusLabel(
   copy: ReturnType<typeof ledgerCopy>,
 ): string {
   if (row.reason === "payout") return copy.payout;
+  if (
+    row.reason === "commission_clawback" ||
+    row.reason === "guest_commission_clawback"
+  ) {
+    return copy.clawback;
+  }
   if (row.status === "pending") return copy.pending;
   if (row.status === "reversed") return copy.reversed;
   return copy.confirmed;
@@ -141,7 +149,7 @@ export function CommissionLedgerTable({
                       : formatUsdFromCents(row.gross_payment_cents, lang)}
                   </td>
                   <td className="py-4 pr-4 font-editorial text-base font-medium tabular-nums text-white/95">
-                    {row.reason === "payout" ? "−" : ""}
+                    {row.delta_cents < 0 ? "−" : ""}
                     {formatUsdFromCents(row.commission_cents, lang)}
                   </td>
                   <td className="py-4">

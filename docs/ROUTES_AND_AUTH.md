@@ -4,7 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 17 août 2026 — `/salon/commissions` (admin RevShare) ; `/salon/facturation` redirige.
+- 17 août 2026 — `/salon/commissions` + API ; `next` login conserve le chemin Salon ; `/facturation` redirige.
 - 17 août 2026 — Scanner Phase A : `/scan/[token]` + API sessions (plus « cible »).
 - 17 août 2026 — en-tête type + carte.
 - 24 juillet 2026 — Freemium V1 + Cascade + Collab.
@@ -22,7 +22,7 @@ Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes /
 | **Studio** (famille) | `/[lang]/studio` | Oui (ou cookie editor) | Wizard hommage **7** étapes — B2C / B2B2C / Co-Créateur |
 | **Studio connexion** | `/[lang]/studio/connexion` | Non | Login + **inscription** famille |
 | **Salon** (funérarium) | `/[lang]/salon` | Oui | Console partenaire — invitations, commissions |
-| **Salon commissions** | `/[lang]/salon/commissions` | Oui | Admin (`canViewLedger`) — KPIs RevShare + ledger (mock ; SQL ⏳) |
+| **Salon commissions** | `/[lang]/salon/commissions` | Oui | Admin (`canViewLedger`) — KPIs RevShare + ledger SQL |
 | **Salon facturation** | `/[lang]/salon/facturation` | Oui | **Redirect** → `/salon/commissions` (jetons morts) |
 | **Salon connexion** | `/[lang]/salon/connexion` | Non | Login partenaire **sans** inscription |
 | **Marketing partenaires** | `/[lang]/partners` ou `/partenaires` | Non | Formulaire « devenir partenaire » (≠ Salon) |
@@ -171,7 +171,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | Route | Si non authentifié |
 |-------|-------------------|
 | `/[lang]/studio` | → `/studio/connexion?next=/[lang]/studio` |
-| `/[lang]/salon` (+ layout) | → `/salon/connexion?next=/[lang]/salon` ; si auth mais **sans** rôle partenaire → redirect `/studio` |
+| `/[lang]/salon` (+ layout) | → `/salon/connexion?next=<chemin Salon demandé>` ; si auth mais **sans** rôle partenaire → redirect `/studio` |
 | `/[lang]/salon/commissions` | Même gate auth/partenaire ; si **sans** `canViewLedger` → redirect `/salon` (client) |
 | `/[lang]/salon/facturation` | Redirect serveur → `/salon/commissions` |
 | `/[lang]/invite/accept` | → `/studio/connexion?next=…` (famille invitée) |
@@ -220,7 +220,8 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | `app/[lang]/(salon)/salon/components/PartnerSalonPageIntro.tsx` | Hiérarchie workspace + commissions |
 | `src/lib/partner/PartnerContext.tsx` | Tenant actif côté Salon |
 | `app/api/partner/tenants/route.ts` | Liste tenants partenaire (session) |
-| `app/api/partner/wallet/route.ts` | Snapshot commissions admin (`canViewBalance`) |
+| `app/api/partner/wallet/route.ts` | **Deprecated** — snapshot 0 (jetons morts) |
+| `app/api/partner/commissions/route.ts` | Soldes + ledger RevShare (`canViewLedger`) |
 | `app/api/partner/invitations/route.ts` | Création invitation + magic link |
 | `docs/DESIGN_SYSTEM.md` | Palette, hiérarchie, co-branding, **signature Halo-Éclipse** (§4.1), animations |
 
@@ -233,7 +234,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 3. `/fr/login` → redirect studio connexion.
 4. `/fr/salon/connexion?partenaire=partner-qa-demo` — branding partenaire + même signature Halo-Éclipse en fond.
 5. Erreur login (mauvais mot de passe) — halo **magenta** + message ; éclipse inchangée (cf. [`DESIGN_SYSTEM.md` §4.1](DESIGN_SYSTEM.md#41-signature-halo-éclipse-connexion-studio--salon)).
-6. `/fr/salon/commissions` — Admin voit KPIs + ledger (mock) ; Directeur redirigé `/salon` ; `/facturation` redirige.
+6. `/fr/salon/commissions` — Admin voit KPIs + ledger SQL ; Directeur redirigé `/salon` ; déconnecté → login avec `next=/fr/salon/commissions`.
 7. Déconnexion studio → retour studio connexion ; déconnexion salon → connexion salon brandée (slug conservé).
 8. Toggle FR/EN — conserve query `?partenaire=` ; « Retour au site » apparaît en dernier (Acte V).
 9. Invitation magic link → accept → tribute welcome (voir [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md)).
