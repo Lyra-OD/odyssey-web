@@ -265,7 +265,7 @@ Pour **Patrice**, une démo = Salon → Sanctuaire → Studio. Pas le lab wormho
 2. **Compte démo Salon** + 1 invitation Souvenir **déjà créée** (la veille).
 3. **Lien Sanctuaire** du même projet, testé sur iPhone (Safari).
 4. **Projet Studio** avec 8–12 belles photos (pas tes screenshots de sliders).
-5. Tenant démo : `is_freemium` + boucle virale **ON** si tu parles Fonds.
+5. Tenant démo : `is_freemium` + boucle virale **ON** si tu parles Fonds — [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md).
 6. Hotspot. Onglets dans l’ordre du §8. Pas de `localhost` au café.
 
 ### Reste **produit** (après un oui pilote, pas bloquant pour 60 min)

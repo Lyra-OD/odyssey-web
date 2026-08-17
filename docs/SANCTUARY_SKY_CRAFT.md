@@ -6,10 +6,12 @@
 
 > Vision produit → `SANCTUARY_SKY.md`  
 > Craft technique / visuel → **ce fichier**  
-> Knobs / thème / presets → [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md)
+> Knobs / thème / presets → [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md)  
+> Screensaver + intro Éclipse → [`SANCTUARY_SKY_SCREENSAVER.md`](SANCTUARY_SKY_SCREENSAVER.md)
 
 **Preview :** `/fr/contribute/test-ciel` (token `test-ciel`)  
 **Entrée scène :** `SanctuaryUniverse.tsx`  
+**Atome Lueur (un composant, deux contextes) :** [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md).  
 **Thème (couleurs, opacités, parallaxe) :** `constellation/skyTheme.ts` — **source de vérité des knobs** ; ne pas hardcoder dans les layers.
 
 ---
@@ -145,25 +147,11 @@ Du plus loin au plus près :
 | **F** | Pont famille | ⏳ après E |
 | **G** | Naissance d’étoile post-dépôt | ⏳ |
 | **H** | Audio immersif (mute default) | ⏳ optionnel |
-| **S** | Ciel screensaver (profondeur → moments WTF → intro → veille) | 🚧 craft éclipse (`test-eclipse`) |
+| **S** | Ciel screensaver (profondeur → moments WTF → intro → veille) | 🚧 — canon [`SANCTUARY_SKY_SCREENSAVER.md`](SANCTUARY_SKY_SCREENSAVER.md) |
 
-### Roadmap screensaver (S)
+Plan détaillé (phases, perf, intro OFF, veille ⏳) : **ce fichier screensaver**. Lab éclipse `/fr/contribute/test-eclipse`. Marque : [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md). Intro Sanctuaire (`scene.intro`) encore OFF. ≠ E′.
 
-Objectif : *« WTF I WANT THIS AS A SCREENSAVER »* — digne, léger GPU.
-
-| Phase | Contenu | Perf |
-|-------|---------|------|
-| **1** | `NebulaGasFar` + `GhostStars` | ✅ — skip `reduced` ; Ghost aussi skip `mobile` |
-| **2** | `ZodiacalLight` | ✅ — 1 plane, skip `reduced` |
-| **3** | Moments WTF — `AuroraVeil` + `EclipseDisc` + `StreakEcho` | ✅ — eclipse desktop only |
-| **4** | Intro cinéma (A–B KEEP · C craft wormhole · D–E plus tard) | 🟡 play `/test-eclipse-play` · lab `/test-wormhole` |
-| **5** | Mode veille (UI fade + idle plus lent) | comportement — **plus tard** |
-
-**Sky Eclipse :** craft isolé sur **`/fr/contribute/test-eclipse`** (dev, **lab permanent**).  
-**Marque logo (11 août 2026) :** matière + die-cut **ODYSSEY** — [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · play `/fr/contribute/test-eclipse-play` · mark `OdysseyEclipseMark` · preview `/fr/contribute/test-eclipse-mark`.  
-Intro Sanctuaire (`scene.intro`) = **encore OFF** — brancher le voyage ciel plus tard ; ≠ remplacer la marque. ≠ « Éclipse Résonnante » constellation (E′).
-
-**Journal essais :** [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md) — pistes KEEP/REJECT, anti-patterns, milestone logo.
+**Journal essais :** [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md).
 
 **Preview craft :** `/fr/contribute/test-ciel` (ciel) · `/fr/contribute/test-eclipse` (lab) · `/fr/contribute/test-eclipse-play` (A–B) · `/fr/contribute/test-wormhole` (warp C) · `/fr/contribute/test-eclipse-mark` (marque)
 

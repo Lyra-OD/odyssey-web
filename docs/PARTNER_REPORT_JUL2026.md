@@ -5,7 +5,7 @@
 
 **Confidentiel · Période couverte : 20–24 juillet 2026**  
 **Auteur :** équipe produit/tech · **Destinataire :** partenaire stratégique  
-**Canvas interactif :** ouvrir à côté du chat dans Cursor (`partner-report-jul2026.canvas.tsx`)
+**Catalogue leviers :** [`MONETIZATION_CATALOG.md`](MONETIZATION_CATALOG.md) (pas de canvas séparé).
 
 > **Snapshot historique** — état au **24 juil. 2026**. Ne pas recopier 0/179/349/499 d’ici.  
 > **Boucle virale :** `viral_loop_enabled = false` dans ce sprint = flag pas encore flippé sur un tenant. Le code Sanctuaire / Fonds est livré (voir STATUS vivant).

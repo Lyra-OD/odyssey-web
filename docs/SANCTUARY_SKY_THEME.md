@@ -1,7 +1,7 @@
 # Odyssey — Ciel · **Thème / knobs**
 
 **Statut : vivant · 5 août 2026**  
-**Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) (stack layers) · [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) (vision)
+**Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) (stack layers) · [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) (vision) · screensaver [`SANCTUARY_SKY_SCREENSAVER.md`](SANCTUARY_SKY_SCREENSAVER.md)
 
 > Ce doc = *ce qui est tuneable* et où ça vit.  
 > Pas une bible craft : juste le contrat pour ajuster layer par layer.
@@ -90,7 +90,7 @@ Tout se règle dans `defaultSkyTheme.scene.idle` (ou un merge preset).
 | `openScale` | Ouverture du disc (× scale) | `1.65` |
 
 Skip : Esc, clic, non-desktop, `prefers-reduced-motion`, déjà vu (`sessionStorage`).  
-**Statut :** intro Sanctuaire **coupée** — forme à valider sur `/fr/contribute/test-eclipse` avant rebranchement.
+**Statut :** intro Sanctuaire **coupée** — forme à valider sur `/fr/contribute/test-eclipse` avant rebranchement. Plan : [`SANCTUARY_SKY_SCREENSAVER.md`](SANCTUARY_SKY_SCREENSAVER.md).
 
 **Comportement rare :** une cible du pool est choisie au hasard (sans répéter d’affilée). Seul ce layer pulse ; optionnellement une filante spéciale part en même temps.
 

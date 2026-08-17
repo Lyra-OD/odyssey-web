@@ -1,7 +1,14 @@
 # Runbook — Pilote Boucle Virale (`viral_loop_enabled`)
 
-**Dernière révision : 28 juillet 2026**  
-**Statut :** prêt staging · flag **OFF** en prod jusqu’à activation manuelle **1 tenant**.
+**Type :** ops · **Vérité pour :** flip flag **1 tenant**, QA staging, rollback. Pas la grille prix.  
+**Dernière MAJ :** 17 août 2026 (en-tête) · 28 juillet 2026 (contenu) · **Carte :** [`../README.md`](../README.md)
+
+**Changelog** (max 5)
+- 17 août 2026 — en-tête type ; aligné STATUS : produit livré, flag = opt-in.
+- 28 juillet 2026 — runbook staging (P10.3, parcours QA, rollback).
+
+**Statut :** prêt staging. Défaut SQL `false`. Activation = **1 tenant** (ex. `partner-qa-demo`).  
+Ce n’est **pas** « viral OFF » comme état produit — Sanctuaire / Fonds sont livrés. Voir [`PROJECT_STATUS.md`](../PROJECT_STATUS.md).
 
 Canon : [`IMPLEMENTATION_CASCADE_VFINAL.md`](../IMPLEMENTATION_CASCADE_VFINAL.md) · plafonds [`sanctuaryLimits.ts`](../../src/lib/contribute/sanctuaryLimits.ts) · SQL P10.3 [`odyssey_p10_3_guest_photo_quota.sql`](../sql/odyssey_p10_3_guest_photo_quota.sql).
 

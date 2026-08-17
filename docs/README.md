@@ -136,6 +136,8 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 | [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) | craft | Promesse ciel Sanctuaire |
 | [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) | craft | Layers WebGL ciel |
 | [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md) | craft | Knobs / presets ciel |
+| [`SANCTUARY_SKY_SCREENSAVER.md`](SANCTUARY_SKY_SCREENSAVER.md) | craft | Screensaver + intro Éclipse (`scene.intro` OFF) |
+| [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md) | craft | Lueur : un composant, deux contextes (carte / ciel) |
 | [`brand/odyssey-eclipse/README.md`](brand/odyssey-eclipse/README.md) | craft | Exports DA disc / lockup |
 
 ### Ops / QA
@@ -144,7 +146,7 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 |---------|------|-------------|
 | [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md) | ops / QA | Checklist Étape 5 |
 | [`QA_P6_COMMISSION_WATERFALL.md`](QA_P6_COMMISSION_WATERFALL.md) | ops / QA | QA waterfall (lire RevShare d’abord) |
-| [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md) | ops | Pilote `viral_loop_enabled` |
+| [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md) | ops | Pilote 1 tenant `viral_loop_enabled` (flip / QA / rollback) |
 
 ### Stubs & archive
 

@@ -8,7 +8,8 @@
 - 17 août 2026 — en-tête type + carte.
 - juil. 2026 — Phase 1–2 ✅ · 3a UI ✅ (flag OFF défaut) · 3b live ⏳.
 
-**Statut :** APPROUVÉ CEO · suite pipeline : [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §10.
+**Statut :** APPROUVÉ CEO · suite pipeline : [`PROJECT_STATUS.md`](PROJECT_STATUS.md) §10.  
+**Pilote 1 tenant :** [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md).
 
 Document canonique d'implémentation de la **Boucle Virale (Fonds Commémoratif)** et du pivot
 d'entrée émotionnelle (Brouillon gratuit → paywall à l'export financé par les contributions

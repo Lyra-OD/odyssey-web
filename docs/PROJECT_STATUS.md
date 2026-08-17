@@ -68,7 +68,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |
 | A | UI commissions Salon | Admin lit le ledger sans SQL |
 | A | Phase 6 : CI `npm test` sur PR | Pipeline vert |
-| B | Flag `viral_loop_enabled` sur **1 tenant** démo/pilote | Fonds visible en démo (produit déjà là) |
+| B | Flag `viral_loop_enabled` sur **1 tenant** démo/pilote | Fonds visible en démo — [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md) |
 | C | Rails UX | Mobile M0 · S5-J/K/L · Scanner MVP |
 | — | Labs wormhole / eclipse | Internes — jamais une démo VP |
 
