@@ -1,0 +1,34 @@
+---
+description: Code produit → doc canon + changelog, même commit. Manifesto lecture seule.
+alwaysApply: true
+---
+
+# Docs = même commit
+
+Si tu changes le **comportement produit** (wizard, Soft Cap, prix, checkout, RevShare, Sanctuaire, export, Scanner, craft lab), mets à jour la **doc canon** et une puce **Changelog** (max 5) **dans le même commit**. Pas de hook Git, pas de CI : c’est un rituel.
+
+Carte : `docs/README.md`. Hiérarchie : `docs/CONVENTIONS.md`.
+
+## Où écrire
+
+| Tu touches | Tu mets à jour |
+|------------|----------------|
+| Prix / forfaits / `pricingConfig.ts` | `docs/FREEMIUM_V1_PIVOT.md` §2 · `docs/DELIVERABLES_AND_PACKAGES.md` — **jamais** recopier la grille ailleurs |
+| Soft Cap | `docs/NARRATIVE_SOFT_CAP.md` |
+| Wizard (étapes, state) | `docs/WIZARD_ARCHITECTURE.md` (aujourd’hui **7** ; Scanner = dans l’étape médias, pas une 8ᵉ) |
+| Étape 5 / magie | `docs/STORYBOARD_STEP5_LIVRE_OUVERT.md` |
+| Checkout / commissions | `docs/PARTNER_REVSHARE.md` · `docs/B2B2C_COMMERCE.md` |
+| Boucle / Fonds / flag viral | `docs/IMPLEMENTATION_CASCADE_VFINAL.md` · STATUS vivant |
+| Craft eclipse / wormhole / ciel | la doc `docs/ODYSSEY_*_CRAFT.md` du lab |
+| Milestone livré | `docs/PROJECT_STATUS.md` (vivant, court). Histoire longue → `_archive/PROJECT_STATUS_LOG.md` seulement si on archive |
+
+Nouveau fichier `docs/*.md` → une ligne dans `docs/README.md`.
+
+## Interdit
+
+- Éditer `docs/Manifesto-V10.4.md` (bible).
+- Corriger un prix dans un snapshot (`BUSINESS_CASE_V2`, `PARTNER_BRIEF_JON_*`, `PARTNER_REPORT_*`).
+- Déplacer des chemins `docs/FOO.md` (pas de dossiers canon/craft).
+- Inventer un 2ᵉ « Phase 2 » : cinéma = `ROADMAP_PHASE2.md` · CPL/Lyra = `VISION_PHASE_2.md`.
+
+Fix typo / refactor sans changement produit → pas de doc obligatoire.

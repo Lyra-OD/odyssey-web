@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 17 août 2026 — étape 6 : règle Cursor code+doc même commit. Étape 5 (dossiers) **sautée**.
 - 17 août 2026 — étape 4 : snapshots figés ; grilles hors FREEMIUM/DELIVERABLES → lien canon.
 - 17 août 2026 — étape 3 : STATUS vivant / log archive ; 4 contradictions corrigées dans le vivant.
 - 17 août 2026 — étape 2 : modèle d’en-tête sur les docs utiles (pas le Manifesto).
@@ -30,7 +31,8 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 
 **Pas d’en-tête à réécrire :** [`Manifesto-V10.4.md`](Manifesto-V10.4.md) = bible, lecture seule.  
 **Snapshots (étape 4) :** bandeau figé · grille live = FREEMIUM §2. Texte long conservé.  
-**Plus tard :** craft labs (déjà un `Statut`) · `_archive/` · stubs · dossiers (étape 5).
+**Étape 5 :** dossiers `canon/` etc. — **non faite** (chemins inchangés).  
+**Étape 6 :** [`.cursor/rules/docs-same-commit.mdc`](../.cursor/rules/docs-same-commit.mdc) — code + doc, même commit.
 
 ---
 
@@ -157,5 +159,6 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 ## Règle de cette carte
 
 - **Ajouter** un fichier docs → une ligne ici, même commit si possible.
-- **Ne pas** déplacer de chemins tant que l’étape 5 (dossiers + stubs) n’est pas ouverte.
+- **Ne pas** déplacer les chemins `docs/FOO.md` (étape 5 sautée).
 - **Ne jamais** modifier [`Manifesto-V10.4.md`](Manifesto-V10.4.md).
+- Code produit → doc + changelog : [`.cursor/rules/docs-same-commit.mdc`](../.cursor/rules/docs-same-commit.mdc).

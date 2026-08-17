@@ -4,7 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 17 août 2026 — STATUS vivant vs [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
+- 17 août 2026 — STATUS vivant vs log ; rituel Cursor code+doc (même commit, pas de hook).
 - 17 août 2026 — en-tête type ; Freemium **Phases 0–5 ✅**, Phase 6 QA ⏳ (plus « 0–4 »).
 - juillet 2026 — Freemium V1 (purge jetons, Soft Cap).
 
@@ -58,7 +58,7 @@ Carte (types, « ne pas copier ») : [`README.md`](README.md). Chemins inchangé
 
 **Archive :** [`_archive/`](_archive/) — onboarding pré-Freemium · B2B2C pré-purge · `QA_P5_5` jetons · **STATUS log**. **Ne plus exécuter / onboarder.**
 
-Après modification wizard, Soft Cap, Étape 5 / Composition Magique, pricing, checkout, RevShare, musique : mettre à jour **FREEMIUM** + **TECHNICAL_ONBOARDING_V1** + annexes touchées.
+Après modification wizard, Soft Cap, Étape 5 / Composition Magique, pricing, checkout, RevShare, musique : mettre à jour **FREEMIUM** + **TECHNICAL_ONBOARDING_V1** + annexes touchées **dans le même commit**. Rituel agent : [`.cursor/rules/docs-same-commit.mdc`](../.cursor/rules/docs-same-commit.mdc). Pas de hook Git.
 
 ## Vision produit (hors implémentation commerce)
 
