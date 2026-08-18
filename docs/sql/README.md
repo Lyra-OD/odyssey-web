@@ -25,6 +25,8 @@
 >
 > **P15 (leads `/partners`) :** [`odyssey_p15_partner_leads.sql`](odyssey_p15_partner_leads.sql) — table `partner_leads`. **À jouer** pour que le formulaire marketing stocke le lead (sinon 500 `table_not_deployed`). Alerte Resend = env `ODYSSEY_HQ_LEAD_EMAIL`.
 >
+> **P16 (RLS invitations salon) :** [`odyssey_p16_fix_invitations_rls.sql`](odyssey_p16_fix_invitations_rls.sql) — scope `partner` = ses invitations seulement ; `partner_admin` = tout le tenant. **À jouer** avant prod Salon multi-conseillers.
+>
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
 > **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).  
 > **Migrations P4 wallets** = historique de schéma (rejouées puis droppées par P8) — **ne plus seed « 100 jetons »**.
@@ -68,6 +70,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | 25 | `odyssey_p12_scan_sessions_ensure.sql` | **Filet** | **Scanner Phase A** — `CREATE TABLE IF NOT EXISTS scan_sessions` si P6 B5 absent |
 | 26 | `odyssey_p13_hq_allowlist.sql` | **Migration** | **HQ** — `hq_allowlist` opérateurs plateforme (RLS own-row) |
 | 27 | `odyssey_p15_partner_leads.sql` | **Migration** | **HQ D** — leads formulaire `/partners` (service_role only) |
+| 28 | `odyssey_p16_fix_invitations_rls.sql` | **Patch** | **Salon P0-03** — RLS invitations : conseiller = ses lignes · admin = tenant |
 | — | `odyssey_p6_1_waterfall_qa_assert.sql` | **QA** | Assert waterfall pur S1–S3 + clawback S5 (lecture seule). |
 | — | `odyssey_p6_qa_revshare_accrual.sql` | **QA** | Accrual RevShare E2E (solde +30 % net · idempotence · 0 jeton) — transactionnel ROLLBACK. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
