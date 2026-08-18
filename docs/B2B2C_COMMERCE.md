@@ -1,14 +1,14 @@
 # Odyssey — Commerce B2B2C Freemium V1
 
 **Type :** canon · **Vérité pour :** flux salon → famille, Soft Cap, RevShare (post-purge).  
-**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — P0-02 : `charge.refunded` clawback ledger + révocation entitlements film (fail-closed).
 - 17 août 2026 — HQ C.3 : drill conseillers en lecture sur `/hq/salons/[id]` (mêmes taux, pas de virement).
 - 17 août 2026 — relance conseiller : 1 courriel famille (Resend), au clic, max 1 par invitation.
 - 17 août 2026 — scoreboard conseiller : engagement + conversion perso.
 - 17 août 2026 — dashboard admin : GMV + ouverture + conversion salon (`GET /api/partner/commissions`).
-- 17 août 2026 — scoreboard conseiller `/salon/mes-performances` (attribution invitation, pas le ledger salon).
 
 > **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
 > **Archive pré-purge :** [`_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md`](_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md) — ne plus onboards dessus.
@@ -108,6 +108,7 @@ Ne jamais hardcoder `if (vertical === 'human') isFreemium = true`.
 | Manifeste TS Soft Cap / `musicLicense` | ✅ |
 | Checkout Soft Cap + amputation 422 + `freemium_free` | ✅ |
 | Webhook → `project_paid_entitlements` | ✅ |
+| Webhook `charge.refunded` | ✅ clawback + DELETE entitlements si remboursement total |
 | Soft Cap UX (médias, magie, musique dual) | ✅ Phase 4 |
 | UI Salon commissions | ✅ `/salon/commissions` + API (caisse + GMV / ouverture / conversion tenant) |
 | Scoreboard conseiller | ✅ `/salon/mes-performances` + `GET /api/partner/my-performance` |

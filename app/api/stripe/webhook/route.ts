@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
+import { handleChargeRefunded } from "@/src/lib/stripe/handleChargeRefunded";
 import {
   parseExtensionsFromMetadata,
   upsertProjectPaidEntitlements,
@@ -889,6 +890,14 @@ export async function POST(request: Request) {
           session,
           event,
           supabase,
+        );
+      } else if (event.type === "charge.refunded") {
+        const charge = event.data.object as Stripe.Charge;
+        processingStatus = await handleChargeRefunded(
+          charge,
+          event,
+          supabase,
+          stripe,
         );
       } else {
         processingStatus = "ignored";

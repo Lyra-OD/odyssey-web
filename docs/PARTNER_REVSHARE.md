@@ -1,14 +1,14 @@
 # Odyssey — RevShare partenaire (Partner Commission)
 
 **Type :** canon · **Vérité pour :** waterfall 30 % Net, ledger, clawback.  
-**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — P0-02 : webhook `charge.refunded` → RPC `clawback_partner_commission` + révocation entitlements film.
 - 17 août 2026 — HQ C.3 : même scoreboard conseiller en lecture sur `/hq/salons/[id]` (pas de virement au directeur).
 - 17 août 2026 — relance Mes performances : 1 courriel famille (Resend), déclenché par le directeur.
 - 17 août 2026 — scoreboard conseiller : taux engagement + conversion perso (0/0 → 0 %).
 - 17 août 2026 — `/salon/commissions` : GMV familles + ouverture + conversion salon (pilotage admin).
-- 17 août 2026 — `/salon/mes-performances` : scoreboard conseiller (`invited_by_user_id`) ; pas de versement Odyssey.
 
 > **V1 Pivot :** le ledger `partner_commission_*` est le **seul** solde partenaire. Wallets jetons = **DROP P8 ✅**. Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
 
@@ -305,6 +305,8 @@ accrue_partner_commission_for_checkout(
 |-----------|--------|
 | `charge.refunded` | Clawback **au prorata** du montant remboursé |
 | `charge.dispute.created` | Passer accrual en `pending` ou clawback provisionnel (Phase 2) |
+
+**Ops Stripe Dashboard :** l’endpoint `/api/stripe/webhook` doit écouter `charge.refunded` (en plus de `checkout.session.completed`). Idempotence = `webhook_events.event_id` + `partner_commission_ledger.stripe_event_id`.
 | `charge.dispute.closed` (lost) | Clawback définitif |
 | `checkout.session.expired` | **Pas** de clawback si jamais payé · clawback si remboursement post-paiement uniquement |
 
@@ -323,11 +325,13 @@ Exemple : S1 Héritage — commission 4 833¢ sur brut 17 900¢ — remboursemen
 ```sql
 clawback_partner_commission(
   p_checkout_id uuid,
-  p_clawback_cents integer,
+  p_refunded_cents integer,
   p_stripe_event_id text,
   p_reason text DEFAULT 'refund'
 ) RETURNS jsonb
 ```
+
+Le handler passe le **montant incremental** du remboursement Stripe. La RPC calcule ensuite `clawback_cents` au prorata du snapshot accrual.
 
 **Effets :**
 
@@ -459,7 +463,7 @@ WHERE tc.project_id = :project_id;
 | RPC accrue / clawback / payout | ✅ P6.1 (accrue/clawback) · payout P14 (`record_partner_commission_payout`) |
 | Webhook handler `checkout.session.completed` | ✅ (b2b2c_family + b2c + **guest_support** V-Final) |
 | RPC `accrue_guest_micro_checkout` (contribution invité) | ✅ P10.1 |
-| Webhook handler `charge.refunded` | ⏳ |
+| Webhook handler `charge.refunded` | ✅ P0-02 (`clawback_partner_commission` + révocation `project_paid_entitlements` si remboursement total B2C / B2B2C) |
 | UI Salon commissions waterfall (`partner_admin`) | 🟢 `/salon/commissions` + API |
 | Scoreboard conseiller (`partner`) | 🟢 `/salon/mes-performances` + `GET /api/partner/my-performance` |
 | Payout admin Odyssey | ⏳ |

@@ -125,7 +125,7 @@ Migration : **`docs/sql/odyssey_p10_memorial_fund.sql`** (idempotente). Prérequ
 | Support Packs | `src/lib/wizard/guestSupportPacks.ts` (new) | Catalogue TS (prix inline `price_data`, comme `/api/checkout`) |
 | Page invitée | `app/api/contribute/[token]/route.ts` (new) | Valide token, expose catalogue |
 | Checkout invité | `app/api/contribute/[token]/checkout/route.ts` (new) | Crée `guest_micro_checkouts` + session Stripe `guest_support` + email/consent |
-| Webhook | `app/api/stripe/webhook/route.ts` | **Nouvelle branche** `guest_support` → `accrue_guest_micro_checkout` ; activer `charge.refunded` |
+| Webhook | `app/api/stripe/webhook/route.ts` | `guest_support` → `accrue_guest_micro_checkout` · `charge.refunded` ✅ (film) ; clawback guest ⏳ |
 | Checkout famille | `app/api/checkout/route.ts` | `consume_family_fund_credit` avant Stripe ; Rider compte+consent même à 0 $ |
 
 **Tests :** conserver les 7 cas de `tests/business/revshare-waterfall.test.ts` ; ajouter `describe`

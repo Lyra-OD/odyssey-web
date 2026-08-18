@@ -80,6 +80,25 @@ export async function upsertProjectPaidEntitlements(
   return { ok: true };
 }
 
+/**
+ * Révocation fail-closed post-remboursement Stripe (P0-02).
+ * Sans ligne, `assertExportAllowed` refuse l'export.
+ */
+export async function revokeProjectPaidEntitlements(
+  admin: SupabaseClient,
+  projectId: string,
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  const { error } = await admin
+    .from("project_paid_entitlements")
+    .delete()
+    .eq("project_id", projectId);
+
+  if (error) {
+    return { ok: false, message: error.message };
+  }
+  return { ok: true };
+}
+
 export async function getProjectPaidEntitlements(
   client: SupabaseClient,
   projectId: string,

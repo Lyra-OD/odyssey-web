@@ -109,7 +109,7 @@ Specs : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`DELIVERABLES_AND_P
 | Étape 4 musique | `StoryboardChaptersStep.tsx` · `ChapterMusicPanel.tsx` |
 | Étape 5 Livre Ouvert | `StoryboardMontageStep.tsx` · `src/components/tribute/storyboard/*` |
 | Checkout API | `app/api/checkout/route.ts` |
-| Webhook Stripe | `app/api/stripe/webhook/route.ts` |
+| Webhook Stripe | `app/api/stripe/webhook/route.ts` (`checkout.session.completed`, `charge.refunded`) |
 | Musique proxy | `app/api/music/*` · `src/lib/music/stingrayClient.ts` |
 | Autosave | `app/api/projects/[id]/autosave/route.ts` |
 | Routes canon | `src/lib/appRoutes.ts` |
