@@ -193,6 +193,14 @@ Hors slice : liste salons, payout.
 
 Hors slice : fiche `/hq/salons/[tenantId]`, drill conseiller, adjustments.
 
+### Slice C.1 — Tabs verticales ✅
+
+**Done when :** le tableau micro se filtre par `tenants.vertical` (tabs). Les 3 cartes macro restent **réseau entier**. Payout toujours par tenant.
+
+**Livré :** SQL P14.2 · `normalizeHqVertical` · tabs dans `HqSalonTable`.
+
+Hors slice : fiche salon, drill directeur.
+
 ### Slice D — Formulaire `/partners`
 
 **Done when :** le formulaire marketing **envoie** (plus `noValidate` mort). Lead stocké (table simple ou e-mail seul). Courriel interne HQ selon [`COMMUNICATIONS_MVP.md`](COMMUNICATIONS_MVP.md) § lead. Pas de création auto de tenant.
@@ -219,7 +227,7 @@ Hors slice : CRM, onboarding Salon automatique.
 | `app/[lang]/(hq)/hq/components/HqSalonTable.tsx` | C |
 | `src/lib/hq/hqTenantsList.ts` | C |
 | `src/lib/hq/requireHqOperator.ts` | B · C |
-| `docs/sql/odyssey_p14_hq_commission_payout.sql` | C |
+| `docs/sql/odyssey_p14_2_hq_tenants_vertical.sql` | C.1 |
 | `app/api/hq/tenants/[id]/route.ts` | C (fiche — hors V1 livré) |
 | `app/api/partners/lead/route.ts` | D |
 

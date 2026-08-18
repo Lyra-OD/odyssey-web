@@ -1,17 +1,12 @@
 import { z } from "zod";
 
+import { loadHqFreemiumTenants, type HqFreemiumTenant, type HqVerticalKey, type HqVerticalTabId, HQ_KNOWN_VERTICALS } from "@/src/lib/hq/hqNetworkOverview";
 import {
   buildSalonPilotage,
   payableCents,
   type PartnerCommissionBalance,
 } from "@/src/lib/partner/partnerCommissionTypes";
 import type { SupabaseClient } from "@supabase/supabase-js";
-
-type TenantRow = {
-  id: string;
-  name: string;
-  slug: string | null;
-};
 
 type BalanceRow = {
   tenant_id: string;
@@ -32,6 +27,7 @@ export type HqTenantListRow = {
   id: string;
   name: string;
   slug: string | null;
+  vertical: HqVerticalKey;
   invitationsSent: number;
   conversionRatePercent: number;
   accrued_cents: number;
@@ -43,7 +39,11 @@ export const HqTenantListRowSchema = z
   .object({
     id: z.string().uuid(),
     name: z.string(),
-    slug: z.string().nullable(),
+    slug: z.string().nullish(),
+    vertical: z
+      .enum(["human", "pet", "wedding", "event", "other"])
+      .optional()
+      .default("other"),
     invitationsSent: z.number().int().nonnegative(),
     conversionRatePercent: z.number().int().min(0).max(100),
     accrued_cents: z.number().int().nonnegative(),
@@ -59,7 +59,7 @@ export const HqTenantsListResponseSchema = z
   .strict();
 
 export function buildHqTenantListRow(input: {
-  tenant: TenantRow;
+  tenant: HqFreemiumTenant;
   balance: PartnerCommissionBalance;
   invitationsSent: number;
   upsells: number;
@@ -74,13 +74,34 @@ export function buildHqTenantListRow(input: {
   return {
     id: input.tenant.id,
     name: input.tenant.name,
-    slug: input.tenant.slug,
+    slug: input.tenant.slug ?? null,
+    vertical: input.tenant.vertical,
     invitationsSent: pilotage.invitationsSent,
     conversionRatePercent: pilotage.conversionRatePercent,
     accrued_cents: input.balance.accrued_cents,
     paid_cents: input.balance.paid_cents,
     payable_cents: payableCents(input.balance),
   };
+}
+
+export function filterHqTenantsByVertical(
+  rows: HqTenantListRow[],
+  tab: HqVerticalTabId,
+): HqTenantListRow[] {
+  if (tab === "all") return rows;
+  return rows.filter((row) => row.vertical === tab);
+}
+
+export function presentHqVerticalTabs(
+  rows: HqTenantListRow[],
+): HqVerticalTabId[] {
+  const present = new Set(rows.map((row) => row.vertical));
+  const tabs: HqVerticalTabId[] = ["all"];
+  for (const key of HQ_KNOWN_VERTICALS) {
+    if (present.has(key)) tabs.push(key);
+  }
+  if (present.has("other")) tabs.push("other");
+  return tabs;
 }
 
 function countByTenant<T extends { tenant_id: string }>(
@@ -115,17 +136,7 @@ function upsellsByTenant(rows: AccrualInvitationRow[]): Map<string, number> {
 export async function loadHqTenantsList(
   admin: SupabaseClient,
 ): Promise<HqTenantListRow[]> {
-  const { data: tenantsRaw, error: tenantsError } = await admin
-    .from("tenants")
-    .select("id, name, slug")
-    .or("is_freemium.is.null,is_freemium.eq.true")
-    .order("name", { ascending: true });
-
-  if (tenantsError) {
-    throw new Error(`hq_tenants_list: ${tenantsError.message}`);
-  }
-
-  const tenants = (tenantsRaw ?? []) as TenantRow[];
+  const tenants = await loadHqFreemiumTenants(admin);
   if (tenants.length === 0) return [];
 
   const tenantIds = tenants.map((t) => t.id);

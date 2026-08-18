@@ -1,5 +1,11 @@
 import type { Locale } from "@/i18n.config";
 import { getDictionary } from "@/lib/dictionaries";
+import {
+  EMPTY_HQ_NETWORK_OVERVIEW,
+  loadHqNetworkOverview,
+} from "@/src/lib/hq/hqNetworkOverview";
+import { loadHqTenantsList } from "@/src/lib/hq/hqTenantsList";
+import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
 import { HqOverviewDashboard } from "./components/HqOverviewDashboard";
 import { HqSalonTable } from "./components/HqSalonTable";
@@ -14,8 +20,25 @@ export default async function HqHomePage({ params }: PageProps) {
   const { lang: routeLang } = await params;
   const lang: Locale = routeLang === "en" ? "en" : "fr";
   const dictionary = await getDictionary(lang);
-  const overview = dictionary.hq.overview;
-  const salons = dictionary.hq.salons;
+  const overviewCopy = dictionary.hq.overview;
+  const salonsCopy = dictionary.hq.salons;
+
+  let overview = EMPTY_HQ_NETWORK_OVERVIEW;
+  let salonRows: Awaited<ReturnType<typeof loadHqTenantsList>> = [];
+  let loadError = false;
+
+  try {
+    const admin = getSupabaseAdminClient();
+    const [loadedOverview, loadedSalons] = await Promise.all([
+      loadHqNetworkOverview(admin),
+      loadHqTenantsList(admin),
+    ]);
+    overview = loadedOverview;
+    salonRows = loadedSalons;
+  } catch (error) {
+    console.error("[hq/page]", error);
+    loadError = true;
+  }
 
   return (
     <div>
@@ -26,10 +49,22 @@ export default async function HqHomePage({ params }: PageProps) {
         {dictionary.hq.title}
       </h1>
       <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-zinc-400">
-        {overview.subtitle}
+        {overviewCopy.subtitle}
       </p>
-      <HqOverviewDashboard lang={lang} labels={overview} />
-      <HqSalonTable lang={lang} labels={salons} />
+      {loadError ? (
+        <p className="mt-8 text-sm font-light text-red-400/90" role="alert">
+          {overviewCopy.error}
+        </p>
+      ) : (
+        <>
+          <HqOverviewDashboard
+            lang={lang}
+            labels={overviewCopy}
+            overview={overview}
+          />
+          <HqSalonTable lang={lang} labels={salonsCopy} initialRows={salonRows} />
+        </>
+      )}
     </div>
   );
 }

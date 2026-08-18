@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { Locale } from "@/i18n.config";
 import {
+  filterHqTenantsByVertical,
+  presentHqVerticalTabs,
   HqTenantsListResponseSchema,
   type HqTenantListRow,
 } from "@/src/lib/hq/hqTenantsList";
+import type { HqVerticalTabId } from "@/src/lib/hq/hqNetworkOverview";
 import { formatUsdFromCents } from "@/src/lib/partner/partnerCommissionTypes";
 
 export type HqSalonTableLabels = {
@@ -14,6 +17,7 @@ export type HqSalonTableLabels = {
   loading: string;
   error: string;
   empty: string;
+  emptyTab: string;
   name: string;
   invitations: string;
   conversion: string;
@@ -23,11 +27,18 @@ export type HqSalonTableLabels = {
   markPaidConfirm: string;
   markPaidLoading: string;
   noPayable: string;
+  tabAll: string;
+  tabHuman: string;
+  tabPet: string;
+  tabWedding: string;
+  tabEvent: string;
+  tabOther: string;
 };
 
 type HqSalonTableProps = {
   lang: Locale;
   labels: HqSalonTableLabels;
+  initialRows: HqTenantListRow[];
 };
 
 function formatPercent(value: number): string {
@@ -41,44 +52,41 @@ function interpolate(
   return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? "");
 }
 
-export function HqSalonTable({ lang, labels }: HqSalonTableProps) {
-  const [tenants, setTenants] = useState<HqTenantListRow[] | null>(null);
-  const [error, setError] = useState(false);
-  const [payingTenantId, setPayingTenantId] = useState<string | null>(null);
+function tabLabel(
+  tab: HqVerticalTabId,
+  labels: HqSalonTableLabels,
+): string {
+  if (tab === "all") return labels.tabAll;
+  if (tab === "human") return labels.tabHuman;
+  if (tab === "pet") return labels.tabPet;
+  if (tab === "wedding") return labels.tabWedding;
+  if (tab === "event") return labels.tabEvent;
+  return labels.tabOther;
+}
 
-  const loadTenants = useCallback(async () => {
-    const response = await fetch("/api/hq/tenants", {
-      credentials: "same-origin",
-    });
-    if (!response.ok) {
-      throw new Error("hq_tenants_failed");
-    }
-    const json: unknown = await response.json();
-    return HqTenantsListResponseSchema.parse(json).tenants;
-  }, []);
+export function HqSalonTable({
+  lang,
+  labels,
+  initialRows,
+}: HqSalonTableProps) {
+  const [tenants, setTenants] = useState<HqTenantListRow[]>(initialRows);
+  const [payingTenantId, setPayingTenantId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<HqVerticalTabId>("all");
 
   useEffect(() => {
-    let cancelled = false;
+    setTenants(initialRows);
+  }, [initialRows]);
 
-    async function load() {
-      try {
-        const rows = await loadTenants();
-        if (!cancelled) {
-          setTenants(rows);
-          setError(false);
-        }
-      } catch {
-        if (!cancelled) {
-          setError(true);
-        }
-      }
+  useEffect(() => {
+    const nextTabs = presentHqVerticalTabs(tenants);
+    if (!nextTabs.includes(activeTab)) {
+      setActiveTab("all");
     }
+  }, [tenants, activeTab]);
 
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [loadTenants]);
+  const tabs = presentHqVerticalTabs(tenants);
+  const visible = filterHqTenantsByVertical(tenants, activeTab);
+  const showTabs = tabs.length > 2;
 
   async function handleMarkPaid(row: HqTenantListRow) {
     if (row.payable_cents <= 0 || payingTenantId) return;
@@ -94,44 +102,36 @@ export function HqSalonTable({ lang, labels }: HqSalonTableProps) {
 
     setPayingTenantId(row.id);
     try {
-      const response = await fetch(`/api/hq/tenants/${row.id}/payout`, {
+      const payoutResponse = await fetch(`/api/hq/tenants/${row.id}/payout`, {
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
       });
 
-      if (!response.ok) {
+      if (!payoutResponse.ok) {
         throw new Error("hq_payout_failed");
       }
 
-      const rows = await loadTenants();
-      setTenants(rows);
+      const listResponse = await fetch("/api/hq/tenants", {
+        credentials: "same-origin",
+      });
+      if (!listResponse.ok) {
+        throw new Error("hq_tenants_failed");
+      }
+      const json: unknown = await listResponse.json();
+      setTenants(
+        HqTenantsListResponseSchema.parse(json).tenants.map((row) => ({
+          ...row,
+          slug: row.slug ?? null,
+          vertical: row.vertical ?? "other",
+        })),
+      );
     } catch {
       window.alert(labels.error);
     } finally {
       setPayingTenantId(null);
     }
-  }
-
-  if (error) {
-    return (
-      <section className="mt-14">
-        <p className="text-sm font-light text-red-400/90" role="alert">
-          {labels.error}
-        </p>
-      </section>
-    );
-  }
-
-  if (!tenants) {
-    return (
-      <section className="mt-14">
-        <p className="text-sm font-light text-zinc-500" aria-live="polite">
-          {labels.loading}
-        </p>
-      </section>
-    );
   }
 
   return (
@@ -146,8 +146,38 @@ export function HqSalonTable({ lang, labels }: HqSalonTableProps) {
         {labels.title}
       </h2>
 
+      {showTabs ? (
+        <div
+          role="tablist"
+          aria-label={labels.title}
+          className="mt-6 flex flex-wrap gap-2"
+        >
+          {tabs.map((tab) => {
+            const selected = tab === activeTab;
+            return (
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => setActiveTab(tab)}
+                className={
+                  selected
+                    ? "rounded-lg border border-[var(--salon-cyan)]/50 bg-white/[0.06] px-4 py-2 font-label text-[9px] font-bold uppercase tracking-[0.28em] text-[var(--salon-cyan)]"
+                    : "rounded-lg border border-white/10 bg-transparent px-4 py-2 font-label text-[9px] font-bold uppercase tracking-[0.28em] text-zinc-500 transition-colors hover:text-zinc-300"
+                }
+              >
+                {tabLabel(tab, labels)}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
       {tenants.length === 0 ? (
         <p className="mt-6 text-sm font-light text-zinc-500">{labels.empty}</p>
+      ) : visible.length === 0 ? (
+        <p className="mt-6 text-sm font-light text-zinc-500">{labels.emptyTab}</p>
       ) : (
         <div className="mt-6 overflow-x-auto">
           <table className="w-full min-w-[640px] border-collapse text-left text-sm">
@@ -172,7 +202,7 @@ export function HqSalonTable({ lang, labels }: HqSalonTableProps) {
               </tr>
             </thead>
             <tbody>
-              {tenants.map((row) => {
+              {visible.map((row) => {
                 const isPaying = payingTenantId === row.id;
                 const canPay = row.payable_cents > 0;
 

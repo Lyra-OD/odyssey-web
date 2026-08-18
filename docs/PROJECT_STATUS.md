@@ -4,12 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — HQ C.1 : tabs verticales (`human` / `pet`) sur le tableau `/hq`.
 - 17 août 2026 — HQ Slice C : liste salons + payout (`POST /api/hq/tenants/[id]/payout`, SQL P14).
 - 17 août 2026 — HQ Slice B : KPI réseau macro sur `/hq` (`GET /api/hq/overview`).
 - 17 août 2026 — HQ Slice A : `/hq` + table `hq_allowlist` (P13).
 - 17 août 2026 — relance Mes performances : courriel famille au clic du directeur (1×, Resend).
-- 17 août 2026 — `/salon/mes-performances` : taux engagement + conversion du conseiller.
-- 17 août 2026 — `/salon/commissions` : GMV + ouverture + conversion salon (admin).
 - 17 août 2026 — `/salon/mes-performances` : scoreboard conseiller (pas le solde salon).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  

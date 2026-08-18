@@ -253,7 +253,8 @@
       "title": "Salons actifs",
       "loading": "Chargement de la liste des salons…",
       "error": "Impossible de charger les salons ou d’enregistrer le versement.",
-      "empty": "Aucun salon freemium actif.",
+      "empty": "Aucun salon freemium (is_freemium). Les KPI macro restent à 0 $ tant qu’il n’y a pas d’accrual.",
+      "emptyTab": "Aucun salon dans cette verticale.",
       "name": "Nom du salon",
       "invitations": "Invitations envoyées",
       "conversion": "Taux de conversion",
@@ -262,7 +263,13 @@
       "markPaid": "Marquer comme payé",
       "markPaidConfirm": "Confirmer le versement de {amount} pour {name} ?",
       "markPaidLoading": "Versement…",
-      "noPayable": "—"
+      "noPayable": "—",
+      "tabAll": "Toutes",
+      "tabHuman": "Humains",
+      "tabPet": "Animaux",
+      "tabWedding": "Mariage",
+      "tabEvent": "Événement",
+      "tabOther": "Autres"
     }
   },
   "tributeWizard": {

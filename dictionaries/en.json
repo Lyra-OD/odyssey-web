@@ -253,7 +253,8 @@
       "title": "Active salons",
       "loading": "Loading salon list…",
       "error": "Unable to load salons or record the payout.",
-      "empty": "No active freemium salons.",
+      "empty": "No freemium salons (is_freemium). Macro KPIs stay at $0 until an accrual exists.",
+      "emptyTab": "No salons in this vertical.",
       "name": "Salon name",
       "invitations": "Invitations sent",
       "conversion": "Conversion rate",
@@ -262,7 +263,13 @@
       "markPaid": "Mark as paid",
       "markPaidConfirm": "Confirm payout of {amount} for {name}?",
       "markPaidLoading": "Paying out…",
-      "noPayable": "—"
+      "noPayable": "—",
+      "tabAll": "All",
+      "tabHuman": "Human",
+      "tabPet": "Pets",
+      "tabWedding": "Wedding",
+      "tabEvent": "Event",
+      "tabOther": "Other"
     }
   },
   "tributeWizard": {

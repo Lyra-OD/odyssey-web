@@ -102,22 +102,72 @@ export function buildHqNetworkOverview(input: {
   };
 }
 
+export const HQ_KNOWN_VERTICALS = ["human", "pet", "wedding", "event"] as const;
+
+export type HqKnownVertical = (typeof HQ_KNOWN_VERTICALS)[number];
+export type HqVerticalKey = HqKnownVertical | "other";
+export type HqVerticalTabId = "all" | HqVerticalKey;
+
+export function normalizeHqVertical(
+  raw: string | null | undefined,
+): HqVerticalKey {
+  const key = raw?.trim().toLowerCase();
+  if (
+    key === "human" ||
+    key === "pet" ||
+    key === "wedding" ||
+    key === "event"
+  ) {
+    return key;
+  }
+  return "other";
+}
+
+export type HqFreemiumTenant = {
+  id: string;
+  name: string;
+  slug: string | null;
+  vertical: HqVerticalKey;
+};
+
+/**
+ * Tenants freemium via RPC P14.1 / P14.2 (SECURITY DEFINER).
+ * Pas de `.from("tenants")` : PostgREST refuse le GRANT table à service_role.
+ */
+export async function loadHqFreemiumTenants(
+  admin: SupabaseClient,
+): Promise<HqFreemiumTenant[]> {
+  const { data, error } = await admin.rpc("hq_list_freemium_tenants");
+
+  if (error) {
+    throw new Error(`hq_tenants: ${error.message}`);
+  }
+
+  return ((data ?? []) as Array<{
+    id?: string;
+    name?: string | null;
+    slug?: string | null;
+    vertical?: string | null;
+  }>)
+    .filter((row) => typeof row.id === "string" && row.id.length > 0)
+    .map((row) => ({
+      id: row.id as string,
+      name:
+        typeof row.name === "string" && row.name.trim().length > 0
+          ? row.name
+          : "Salon",
+      slug: row.slug ?? null,
+      vertical: normalizeHqVertical(row.vertical),
+    }));
+}
+
 /** Tenants freemium : `is_freemium !== false` (null = freemium). */
 export async function loadHqNetworkOverview(
   admin: SupabaseClient,
 ): Promise<HqNetworkOverview> {
-  const { data: tenants, error: tenantsError } = await admin
-    .from("tenants")
-    .select("id")
-    .or("is_freemium.is.null,is_freemium.eq.true");
+  const tenants = await loadHqFreemiumTenants(admin);
 
-  if (tenantsError) {
-    throw new Error(`hq_tenants: ${tenantsError.message}`);
-  }
-
-  const tenantIds = (tenants ?? [])
-    .map((row) => row.id)
-    .filter((id): id is string => typeof id === "string" && id.length > 0);
+  const tenantIds = tenants.map((row) => row.id);
 
   if (tenantIds.length === 0) {
     return EMPTY_HQ_NETWORK_OVERVIEW;

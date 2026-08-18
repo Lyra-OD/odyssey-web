@@ -6,9 +6,16 @@
 -- Prérequis : P6 partner_commission_balances / partner_commission_ledger.
 -- Ne modifie PAS accrued_cents ni pending_cents. service_role only.
 -- Idempotence concurrence : SELECT … FOR UPDATE sur la ligne solde.
+-- GRANT tenants : P5.3 a activé RLS sans GRANT service_role → HQ GET 500
+--   « permission denied for table tenants ».
 -- =====================================================================
 
 BEGIN;
+
+GRANT SELECT ON TABLE public.tenants TO service_role;
+GRANT SELECT ON TABLE public.partner_invitations TO service_role;
+GRANT SELECT, INSERT ON TABLE public.partner_commission_ledger TO service_role;
+GRANT SELECT, INSERT, UPDATE ON TABLE public.partner_commission_balances TO service_role;
 
 CREATE OR REPLACE FUNCTION public.record_partner_commission_payout(
   p_tenant_id uuid,

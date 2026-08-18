@@ -17,7 +17,11 @@
 >
 > **P13 (HQ allowlist) :** [`odyssey_p13_hq_allowlist.sql`](odyssey_p13_hq_allowlist.sql) — opérateurs `/hq`. **À jouer** (SQL Editor). Ajouter un admin = `INSERT`, pas de redeploy.
 >
-> **P14 (HQ payout) :** [`odyssey_p14_hq_commission_payout.sql`](odyssey_p14_hq_commission_payout.sql) — RPC `record_partner_commission_payout` (Slice C). **À jouer** avant le bouton « Marquer comme payé ».
+> **P14 (HQ payout) :** [`odyssey_p14_hq_commission_payout.sql`](odyssey_p14_hq_commission_payout.sql) — RPC `record_partner_commission_payout`. **À jouer** avant le bouton « Marquer comme payé ».
+>
+> **P14.1 (HQ lecture tenants) :** [`odyssey_p14_1_hq_tenants_read.sql`](odyssey_p14_1_hq_tenants_read.sql) — RPC `hq_list_freemium_tenants` (SECURITY DEFINER). **À jouer** pour que `/hq` charge les KPI (sinon 500 `permission denied for table tenants`).
+>
+> **P14.2 (HQ tabs verticales) :** [`odyssey_p14_2_hq_tenants_vertical.sql`](odyssey_p14_2_hq_tenants_vertical.sql) — même RPC + colonne `vertical`. **À jouer** pour les tabs Humains / Animaux (C.1). DROP + CREATE (changement de signature).
 >
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
 > **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).  

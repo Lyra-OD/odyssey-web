@@ -1,12 +1,5 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
 import type { Locale } from "@/i18n.config";
-import {
-  HqNetworkOverviewResponseSchema,
-  type HqNetworkOverview,
-} from "@/src/lib/hq/hqNetworkOverview";
+import type { HqNetworkOverview } from "@/src/lib/hq/hqNetworkOverview";
 import { formatUsdFromCents } from "@/src/lib/partner/partnerCommissionTypes";
 
 export type HqOverviewLabels = {
@@ -24,6 +17,7 @@ export type HqOverviewLabels = {
 type HqOverviewDashboardProps = {
   lang: Locale;
   labels: HqOverviewLabels;
+  overview: HqNetworkOverview;
 };
 
 function formatPercent(value: number): string {
@@ -57,56 +51,11 @@ function macroCards(
   ] as const;
 }
 
-export function HqOverviewDashboard({ lang, labels }: HqOverviewDashboardProps) {
-  const [overview, setOverview] = useState<HqNetworkOverview | null>(null);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const response = await fetch("/api/hq/overview", {
-          credentials: "same-origin",
-        });
-        if (!response.ok) {
-          throw new Error("hq_overview_failed");
-        }
-        const json: unknown = await response.json();
-        const parsed = HqNetworkOverviewResponseSchema.parse(json);
-        if (!cancelled) {
-          setOverview(parsed);
-          setError(false);
-        }
-      } catch {
-        if (!cancelled) {
-          setError(true);
-        }
-      }
-    }
-
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  if (error) {
-    return (
-      <p className="mt-8 text-sm font-light text-red-400/90" role="alert">
-        {labels.error}
-      </p>
-    );
-  }
-
-  if (!overview) {
-    return (
-      <p className="mt-8 text-sm font-light text-zinc-500" aria-live="polite">
-        {labels.loading}
-      </p>
-    );
-  }
-
+export function HqOverviewDashboard({
+  lang,
+  labels,
+  overview,
+}: HqOverviewDashboardProps) {
   const cards = macroCards(overview, lang, labels);
 
   return (
