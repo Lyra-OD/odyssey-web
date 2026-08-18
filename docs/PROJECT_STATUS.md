@@ -4,12 +4,11 @@
 **Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — Funnel B2B2C QA : replay webhook → checkout `completed` / commission `accrued` · P17 `project_status.submitted`.
 - 18 août 2026 — P0-02 : webhook Stripe `charge.refunded` (clawback ledger + révocation export).
 - 18 août 2026 — HQ Slice D : formulaire `/partners` + alerte Resend (SQL P15).
 - 17 août 2026 — HQ C.3 : drill directeurs sur `/hq/salons/[id]` (Mes performances, lecture).
 - 17 août 2026 — HQ C.2 : fiche `/hq/salons/[tenantId]` (miroir commissions + payout).
-- 17 août 2026 — HQ C.1 : tabs verticales (`human` / `pet`) sur le tableau `/hq`.
-- 17 août 2026 — HQ Slice C : liste salons + payout (`POST /api/hq/tenants/[id]/payout`, SQL P14).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -25,7 +24,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Family Studio (wizard)** | 🟢 | **7** étapes (`TOTAL_STEPS = 7`, Extensions au checkout). Autosave, Stingray, Livre Ouvert, Soft Cap, Inviter, Co-Créateur |
 | **Partner Salon** | 🟢 | Invitation Souvenir-only · mes perfs conseiller · solde = **commissions** admin |
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Soft Cap + entitlements + gate export + MP3/ToS — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Héritage **1080p** · 4K dès Éternité · Phase 6 QA ⏳ |
-| **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual / **`charge.refunded`**. |
+| **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual / **`charge.refunded`**. QA replay `checkout.session.completed` ✅ (P17 `submitted`). |
 | **RevShare** | 🟢 UI | Spec + SQL P6/P8 + webhook ✅ · UI Salon + `GET /api/partner/commissions` 🟢 · payout ops ⏳ |
 | **Export Creatomate** | 🟡 P0 / master ⏳ | **P0 livré** (gate, P9/P9.1, `src/lib/creatomate/`, drain, webhook fail-closed). **Pas** « documented only ». Master Stingray / rendu cinéma ⏳ |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
@@ -36,7 +35,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Tests & CI** | 🟡 | Vitest business 🟢 · CI GitHub ⏳ |
 | **Security** | 🟡 | RLS, gate Salon, entitlements never-trust, webhook Creatomate fail-closed |
 
-**Suite :** master Stingray · Phase 6 / CI · pilote 1 tenant flag ON.
+**Suite :** ops P16 + Stripe listen · CI GitHub · master Stingray · pilote 1 tenant flag ON.
 
 ---
 
@@ -71,8 +70,11 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 | Priorité | Quoi | Done when |
 |----------|------|-----------|
-| A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |
+| **Ops demain** | Jouer **P16** (RLS invitations) si pas encore en SQL Editor · confirmer P13–P15 | Policies salon scope conseiller |
+| **Ops demain** | Stripe CLI `stripe login` + `stripe listen` local · activer `charge.refunded` endpoint prod | Webhook local sans script replay |
+| **Ops demain** | Factu Supabase (bandeau *Grace period is over*) | Quota / billing OK |
 | A | Phase 6 : CI `npm test` sur PR | Pipeline vert |
+| A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |
 | B | Flag `viral_loop_enabled` sur **1 tenant** démo/pilote | Fonds visible en démo — [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md) |
 | C | Rails UX | Mobile M0 · S5-J/K/L · Scanner job IA serveur |
 | — | Labs wormhole / eclipse | Internes — jamais une démo VP |
