@@ -4,11 +4,11 @@
 **Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — checkout : metadata Stripe `act_tracks` compact (trackId only, ≤500 car.) + retry `tribute_checkouts` sans duplicate `idempotency_key`.
 - 18 août 2026 — P0-02 : `charge.refunded` clawback ledger + révocation entitlements film (fail-closed).
 - 17 août 2026 — HQ C.3 : drill conseillers en lecture sur `/hq/salons/[id]` (mêmes taux, pas de virement).
 - 17 août 2026 — relance conseiller : 1 courriel famille (Resend), au clic, max 1 par invitation.
 - 17 août 2026 — scoreboard conseiller : engagement + conversion perso.
-- 17 août 2026 — dashboard admin : GMV + ouverture + conversion salon (`GET /api/partner/commissions`).
 
 > **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
 > **Archive pré-purge :** [`_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md`](_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md) — ne plus onboards dessus.

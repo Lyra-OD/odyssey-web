@@ -3,6 +3,10 @@ import { z } from "zod";
 
 import { appRoutes } from "@/src/lib/appRoutes";
 import { getStripe } from "@/lib/stripe";
+import {
+  assertStripeMetadataWithinLimit,
+  serializeActTracksForStripeMetadata,
+} from "@/src/lib/stripe/actTracksMetadata";
 import { requireProjectOwner, rejectEditorForOwnerOnlyRoute } from "@/src/lib/api/projectAccess";
 import { resolveUserIsPartner } from "@/src/lib/partner/resolvePartnerAccess";
 import {
@@ -25,6 +29,7 @@ import {
   loadInvitationGrantedPackage,
   resolveB2b2cIntendedPackage,
 } from "@/src/lib/wizard/b2b2cPackageAuthority";
+import { resolveTributeCheckoutForRetry } from "@/src/lib/checkout/resolveTributeCheckout";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
 
@@ -111,6 +116,7 @@ export async function POST(request: Request) {
   const hasPartnerInvitation = Boolean(invitationId);
   const extensions = normalizeExtensionsState(wizardState.extensions ?? {});
   const actTracks = wizardState.musicalAmbiance?.tracks ?? {};
+  const actTracksMetadata = serializeActTracksForStripeMetadata(actTracks);
 
   let admin;
   try {
@@ -266,7 +272,7 @@ export async function POST(request: Request) {
         intended_package: intendedPackage,
         base_package: cart.basePackage,
         extensions: JSON.stringify(cart.extensions),
-        act_tracks: JSON.stringify(actTracks),
+        act_tracks: actTracksMetadata,
       },
     });
   }
@@ -500,7 +506,7 @@ export async function POST(request: Request) {
           checkout_mode: "b2b2c_family",
           is_freemium: "true",
           extensions: JSON.stringify(cart.extensions),
-          act_tracks: JSON.stringify(actTracks),
+          act_tracks: actTracksMetadata,
         },
       });
     }
@@ -570,36 +576,41 @@ export async function POST(request: Request) {
 
     const idempotencyKey = `b2b2c:${projectId}:${intendedPackage}:${totalCents}:${cart.extensions.musicLicense ? "ml" : "n"}`;
 
-    const { data: tributeCheckout, error: insertError } = await admin
-      .from("tribute_checkouts")
-      .insert({
-        project_id: projectId,
-        tenant_id: tenantId,
-        invitation_id: invitationId,
-        checkout_mode: "b2b2c_family",
-        granted_package: invitationGrant.grantedPackage,
-        selected_package: intendedPackage,
-        family_total_cents: totalCents,
-        partner_tokens_debited: 0,
-        status: "pending",
-        platform_fee_bps: platformFeeBps,
-        commission_rate_bps: commissionRateBps,
-        idempotency_key: idempotencyKey,
-      })
-      .select("id")
-      .single();
+    const checkoutRow = await resolveTributeCheckoutForRetry(admin, {
+      projectId,
+      tenantId,
+      invitationId,
+      grantedPackage: invitationGrant.grantedPackage,
+      selectedPackage: intendedPackage,
+      familyTotalCents: totalCents,
+      platformFeeBps,
+      commissionRateBps,
+      idempotencyKey,
+    });
 
-    if (insertError || !tributeCheckout?.id) {
+    if (!checkoutRow.ok) {
+      if (checkoutRow.reason === "already_completed") {
+        return NextResponse.json(
+          {
+            error: "checkout_already_completed",
+            message:
+              locale === "en"
+                ? "This tribute has already been paid."
+                : "Cet hommage a déjà été payé.",
+          },
+          { status: 409 },
+        );
+      }
       return NextResponse.json(
         {
           error: "tribute_checkout_insert_failed",
-          message: insertError?.message ?? "insert_failed",
+          message: checkoutRow.message,
         },
         { status: 400 },
       );
     }
 
-    tributeCheckoutId = tributeCheckout.id;
+    tributeCheckoutId = checkoutRow.id;
   }
 
   const normalizedExt = cart.extensions;
@@ -622,6 +633,63 @@ export async function POST(request: Request) {
       discounts = [{ coupon: coupon.id }];
     }
 
+    const stripeMetadata: Record<string, string> = {
+      ...(applyFundCoupon
+        ? {
+            fund_credit_applied_cents: String(fundAppliedCents),
+            precredit_total_cents: String(totalCents),
+            owner_floor_cents: String(ownerFloorCents),
+          }
+        : {}),
+      ...(tributeCheckoutId
+        ? {
+            checkout_id: tributeCheckoutId,
+            checkout_mode: "b2b2c_family",
+          }
+        : {
+            checkout_mode: hasPartnerInvitation ? "b2b2c_family" : "b2c",
+          }),
+      project_id: projectId,
+      user_id: user.id,
+      invitation_id: invitationId ?? "",
+      tenant_id: tenantId ?? "",
+      is_freemium: String(isFreemiumTenant),
+      total_cents: String(totalCents),
+      base_cents: String(Math.trunc(cart.baseCents)),
+      granted_package: grantedPackage,
+      intended_package: intendedPackage,
+      base_package: intendedPackage,
+      options_cents: String(Math.trunc(cart.optionsCents)),
+      music_license: String(Boolean(normalizedExt.musicLicense)),
+      ai_retouch: String(Boolean(normalizedExt.aiRetouch)),
+      sanctuary_token: String(Boolean(normalizedExt.sanctuaryToken)),
+      story_voice: String(Boolean(normalizedExt.storyVoice)),
+      memory_book: String(Boolean(normalizedExt.memoryBook)),
+      digital_vault: String(Boolean(normalizedExt.digitalVault)),
+      heritage_pack: String(Boolean(normalizedExt.heritagePack)),
+      extended_license: String(Boolean(normalizedExt.musicLicense)),
+      collector_usb: String(Boolean(normalizedExt.sanctuaryToken)),
+      extensions: JSON.stringify(normalizedExt),
+      act_tracks: actTracksMetadata,
+    };
+
+    try {
+      assertStripeMetadataWithinLimit(stripeMetadata);
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "metadata_limit";
+      console.error("[checkout] stripe metadata too long:", detail);
+      return NextResponse.json(
+        {
+          error: "stripe_metadata_too_long",
+          message:
+            locale === "en"
+              ? "Checkout metadata exceeds Stripe limits. Please retry or contact support."
+              : "Les métadonnées checkout dépassent la limite Stripe. Réessayez ou contactez le support.",
+        },
+        { status: 500 },
+      );
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: cart.lineItems
@@ -631,46 +699,7 @@ export async function POST(request: Request) {
       success_url: `${origin}${studioPath}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}${studioPath}?checkout=cancel`,
       client_reference_id: projectId,
-      metadata: {
-        ...(applyFundCoupon
-          ? {
-              fund_credit_applied_cents: String(fundAppliedCents),
-              precredit_total_cents: String(totalCents),
-              owner_floor_cents: String(ownerFloorCents),
-            }
-          : {}),
-        ...(tributeCheckoutId
-          ? {
-              checkout_id: tributeCheckoutId,
-              checkout_mode: "b2b2c_family",
-            }
-          : {
-              checkout_mode: hasPartnerInvitation ? "b2b2c_family" : "b2c",
-            }),
-        project_id: projectId,
-        user_id: user.id,
-        invitation_id: invitationId ?? "",
-        tenant_id: tenantId ?? "",
-        is_freemium: String(isFreemiumTenant),
-        total_cents: String(totalCents),
-        base_cents: String(Math.trunc(cart.baseCents)),
-        granted_package: grantedPackage,
-        intended_package: intendedPackage,
-        base_package: intendedPackage,
-        options_cents: String(Math.trunc(cart.optionsCents)),
-        music_license: String(Boolean(normalizedExt.musicLicense)),
-        ai_retouch: String(Boolean(normalizedExt.aiRetouch)),
-        sanctuary_token: String(Boolean(normalizedExt.sanctuaryToken)),
-        story_voice: String(Boolean(normalizedExt.storyVoice)),
-        memory_book: String(Boolean(normalizedExt.memoryBook)),
-        digital_vault: String(Boolean(normalizedExt.digitalVault)),
-        heritage_pack: String(Boolean(normalizedExt.heritagePack)),
-        // legacy metadata keys
-        extended_license: String(Boolean(normalizedExt.musicLicense)),
-        collector_usb: String(Boolean(normalizedExt.sanctuaryToken)),
-        extensions: JSON.stringify(normalizedExt),
-        act_tracks: JSON.stringify(actTracks),
-      },
+      metadata: stripeMetadata,
     });
 
     if (!session.url) {
