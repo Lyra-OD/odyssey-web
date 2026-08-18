@@ -4,7 +4,7 @@
 **Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 18 août 2026 — webhook `checkout.session.completed` : échec `projects.status = submitted` non bloquant (enum DB incomplet) — accrual + entitlements continuent.
+- 18 août 2026 — P17 : enum `project_status` + `submitted` · webhook n’abort plus l’accrual si l’UPDATE projet échoue.
 - 18 août 2026 — checkout : metadata Stripe `act_tracks` compact (trackId only, ≤500 car.) + retry `tribute_checkouts` sans duplicate `idempotency_key`.
 - 18 août 2026 — P0-02 : `charge.refunded` clawback ledger + révocation entitlements film (fail-closed).
 - 17 août 2026 — HQ C.3 : drill conseillers en lecture sur `/hq/salons/[id]` (mêmes taux, pas de virement).
@@ -114,7 +114,7 @@ Ne jamais hardcoder `if (vertical === 'human') isFreemium = true`.
 | Scoreboard conseiller | ✅ `/salon/mes-performances` + `GET /api/partner/my-performance` |
 | Relance famille | ✅ 1 e-mail au clic directeur (`POST …/invitations/[id]/follow-up`) — pas de cron |
 | Creatomate gate entitlements | ✅ Phase 5 · worker P0 ✅ · master/ops ⏳ |
-| Accrual RevShare webhook (durcissement) | ✅ QA replay · `projects.status=submitted` non bloquant si enum DB incomplet |
+| Accrual RevShare webhook (durcissement) | ✅ QA replay · P17 `submitted` **à jouer** |
 
 ---
 
