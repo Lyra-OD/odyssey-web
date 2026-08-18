@@ -678,7 +678,10 @@ async function handleCheckoutSessionCompleted(
       .eq("id", resolvedProjectId);
 
     if (updateProjectError) {
-      throw new Error(`project_submit_failed: ${updateProjectError.message}`);
+      logWebhookError("project_submit_non_fatal", updateProjectError, {
+        event_id: event.id,
+        project_id: resolvedProjectId,
+      });
     }
   }
 

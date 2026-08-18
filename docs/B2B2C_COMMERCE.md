@@ -4,11 +4,11 @@
 **Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — webhook `checkout.session.completed` : échec `projects.status = submitted` non bloquant (enum DB incomplet) — accrual + entitlements continuent.
 - 18 août 2026 — checkout : metadata Stripe `act_tracks` compact (trackId only, ≤500 car.) + retry `tribute_checkouts` sans duplicate `idempotency_key`.
 - 18 août 2026 — P0-02 : `charge.refunded` clawback ledger + révocation entitlements film (fail-closed).
 - 17 août 2026 — HQ C.3 : drill conseillers en lecture sur `/hq/salons/[id]` (mêmes taux, pas de virement).
 - 17 août 2026 — relance conseiller : 1 courriel famille (Resend), au clic, max 1 par invitation.
-- 17 août 2026 — scoreboard conseiller : engagement + conversion perso.
 
 > **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
 > **Archive pré-purge :** [`_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md`](_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md) — ne plus onboards dessus.
@@ -114,7 +114,7 @@ Ne jamais hardcoder `if (vertical === 'human') isFreemium = true`.
 | Scoreboard conseiller | ✅ `/salon/mes-performances` + `GET /api/partner/my-performance` |
 | Relance famille | ✅ 1 e-mail au clic directeur (`POST …/invitations/[id]/follow-up`) — pas de cron |
 | Creatomate gate entitlements | ✅ Phase 5 · worker P0 ✅ · master/ops ⏳ |
-| Accrual RevShare webhook (durcissement) | 🟡 |
+| Accrual RevShare webhook (durcissement) | ✅ QA replay · `projects.status=submitted` non bloquant si enum DB incomplet |
 
 ---
 
