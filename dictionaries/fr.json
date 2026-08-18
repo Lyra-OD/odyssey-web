@@ -278,7 +278,21 @@
       "markPaid": "Marquer comme payé",
       "markPaidConfirm": "Confirmer le versement de {amount} pour {name} ?",
       "markPaidLoading": "Versement…",
-      "payoutError": "Impossible d’enregistrer le versement."
+      "payoutError": "Impossible d’enregistrer le versement.",
+      "directors": {
+        "title": "Directeurs",
+        "caption": "Scoreboard par conseiller — commission salon attribuée, pas un versement Odyssey.",
+        "empty": "Aucune invitation pour ce salon.",
+        "director": "Conseiller",
+        "invitations": "Invitations",
+        "engagement": "Engagement",
+        "conversion": "Conversion",
+        "attributed": "Attribué",
+        "rolePartner": "Directeur",
+        "roleAdmin": "Admin salon",
+        "roleUnknown": "Conseiller",
+        "roleUnassigned": "Sans conseiller"
+      }
     }
   },
   "tributeWizard": {

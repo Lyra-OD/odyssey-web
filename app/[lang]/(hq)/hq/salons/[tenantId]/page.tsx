@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import type { Locale } from "@/i18n.config";
 import { getDictionary } from "@/lib/dictionaries";
+import { loadHqDirectors } from "@/src/lib/hq/hqDirectors";
 import { loadHqFreemiumTenants } from "@/src/lib/hq/hqNetworkOverview";
 import { HqTenantDetailResponseSchema } from "@/src/lib/hq/hqTenantsList";
 import { loadPartnerCommissionDashboard } from "@/src/lib/partner/loadPartnerCommissionDashboard";
@@ -29,6 +30,7 @@ export default async function HqSalonDetailPage({ params }: PageProps) {
   const dictionary = await getDictionary(lang);
 
   let detail;
+  let directors: Awaited<ReturnType<typeof loadHqDirectors>> = [];
   try {
     const admin = getSupabaseAdminClient();
     const listed = await loadHqFreemiumTenants(admin);
@@ -37,11 +39,14 @@ export default async function HqSalonDetailPage({ params }: PageProps) {
       notFound();
     }
 
-    const dashboard = await loadPartnerCommissionDashboard(
-      admin,
-      tenantId,
-      lang,
-    );
+    const [dashboard, loadedDirectors] = await Promise.all([
+      loadPartnerCommissionDashboard(admin, tenantId, lang),
+      loadHqDirectors(admin, tenantId, {
+        unassigned: dictionary.hq.salonDetail.directors.roleUnassigned,
+        unknown: dictionary.hq.salonDetail.directors.roleUnknown,
+      }),
+    ]);
+    directors = loadedDirectors;
     detail = HqTenantDetailResponseSchema.parse({
       ...dashboard,
       isFreemium: true,
@@ -59,6 +64,7 @@ export default async function HqSalonDetailPage({ params }: PageProps) {
       lang={lang}
       labels={dictionary.hq.salonDetail}
       initial={detail}
+      directors={directors}
     />
   );
 }

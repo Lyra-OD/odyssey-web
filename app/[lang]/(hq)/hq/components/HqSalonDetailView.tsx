@@ -8,6 +8,8 @@ import { CommissionKpiCards } from "@/app/[lang]/(salon)/salon/components/Commis
 import { CommissionLedgerTable } from "@/app/[lang]/(salon)/salon/components/CommissionLedgerTable";
 import type { Locale } from "@/i18n.config";
 import { appRoutes } from "@/src/lib/appRoutes";
+import { HqDirectorsTable, type HqDirectorsTableLabels } from "./HqDirectorsTable";
+import type { HqDirectorRow } from "@/src/lib/hq/hqDirectors";
 import {
   HqTenantDetailResponseSchema,
   type HqTenantDetailResponse,
@@ -22,18 +24,21 @@ export type HqSalonDetailLabels = {
   markPaidConfirm: string;
   markPaidLoading: string;
   payoutError: string;
+  directors: HqDirectorsTableLabels;
 };
 
 type HqSalonDetailViewProps = {
   lang: Locale;
   labels: HqSalonDetailLabels;
   initial: HqTenantDetailResponse;
+  directors: HqDirectorRow[];
 };
 
 export function HqSalonDetailView({
   lang,
   labels,
   initial,
+  directors,
 }: HqSalonDetailViewProps) {
   const router = useRouter();
   const [dashboard, setDashboard] = useState(initial);
@@ -111,6 +116,11 @@ export function HqSalonDetailView({
         }}
       />
       <CommissionLedgerTable lang={lang} rows={dashboard.ledger} />
+      <HqDirectorsTable
+        lang={lang}
+        labels={labels.directors}
+        rows={directors}
+      />
     </div>
   );
 }

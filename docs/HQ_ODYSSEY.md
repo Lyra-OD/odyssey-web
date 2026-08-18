@@ -4,8 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 17 août 2026 — Slice A : allowlist SQL `hq_allowlist` (pas d’env).
-- 17 août 2026 — vision figée (auth allowlist, lecture macro/micro, payout ledger, slices A–D).
+- 17 août 2026 — C.3 : drill conseillers sur `/hq/salons/[id]` (`aggregateMyPerformance`).
+- 17 août 2026 — C.2 : fiche `/hq/salons/[tenantId]` (miroir commissions + payout).
+- 17 août 2026 — C.1 : tabs verticales (`human` / `pet`).
+- 17 août 2026 — Slice C : liste salons + payout RPC P14.
+- 17 août 2026 — Slice B : KPI réseau macro (`GET /api/hq/overview`).
 
 Complète [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) (waterfall, ledger, payout) · [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) · [`COMMUNICATIONS_MVP.md`](COMMUNICATIONS_MVP.md).  
 **Ne pas** traiter HQ comme un 3ᵉ rôle salon. Rôles tenant inchangés : `partner` (directeur) · `partner_admin` (DG salon).
@@ -35,7 +38,7 @@ HQ Odyssey n’est **ni** un salon **ni** une famille. Y mettre un opérateur en
 |-----|------|------|
 | `/[lang]/hq/connexion` | Non | Login **sans** inscription (même famille que Salon) |
 | `/[lang]/hq` | Oui + allowlist | Macro réseau |
-| `/[lang]/hq/salons/[tenantId]` | Oui + allowlist | Micro tenant (miroir `partner_admin`) |
+| `/[lang]/hq/salons/[tenantId]` | Oui + allowlist | Micro tenant (miroir `partner_admin` + drill conseillers) |
 
 Post-login : `next` sanitisé (`/hq` seulement), défaut `/[lang]/hq`.  
 Compte connecté **sans** allowlist → `/salon` s’il est partenaire, sinon `/{lang}`. Pas de 403 HTML : redirect.
@@ -110,7 +113,7 @@ Le mot « Pending » du brief ops = **payable**, pas `pending_cents`.
 
 **Au clic** : vue **miroir** de `/salon/commissions` pour **ce** `tenant_id` — mêmes KPIs (accrued / pending_cents / paid, GMV, ouverture, conversion) + ledger. Ce que voit le `partner_admin` du salon, sans le CTA « Demander un versement » (disabled côté Salon). HQ a le bouton payout à la place.
 
-Hors V1 (après slices A–D) : drill directeurs (`invited_by_user_id`) — les données existent déjà via `GET /api/partner/my-performance`. Ne pas le coder dans C.
+**C.3 Directeurs :** sous le ledger, scoreboard par `invited_by_user_id` (mêmes formules que `aggregateMyPerformance` / Mes performances). Montant = commission salon **attribuée** aux liens — pas un payable conseiller. Odyssey verse le salon. Pas d’e-mail famille, pas d’impersonation, pas de relance HQ.
 
 ---
 
@@ -209,6 +212,14 @@ Hors slice : fiche salon, drill directeur.
 
 Hors slice : drill directeur (C.3).
 
+### Slice C.3 — Drill directeurs ✅
+
+**Done when :** la fiche salon liste les conseillers (`invited_by_user_id`) avec les mêmes taux que Mes performances. Pas de payable, pas d’e-mail famille, pas d’impersonation, pas de relance HQ.
+
+**Livré :** `src/lib/hq/hqDirectors.ts` · `HqDirectorsTable` · `tests/business/hq-directors.test.ts`.
+
+Hors slice : formulaire `/partners` (Slice D).
+
 ### Slice D — Formulaire `/partners`
 
 **Done when :** le formulaire marketing **envoie** (plus `noValidate` mort). Lead stocké (table simple ou e-mail seul). Courriel interne HQ selon [`COMMUNICATIONS_MVP.md`](COMMUNICATIONS_MVP.md) § lead. Pas de création auto de tenant.
@@ -236,7 +247,10 @@ Hors slice : CRM, onboarding Salon automatique.
 | `src/lib/hq/hqTenantsList.ts` | C |
 | `src/lib/hq/requireHqOperator.ts` | B · C |
 | `docs/sql/odyssey_p14_2_hq_tenants_vertical.sql` | C.1 |
-| `app/[lang]/(hq)/hq/salons/[tenantId]/page.tsx` | C.2 |
+| `app/[lang]/(hq)/hq/salons/[tenantId]/page.tsx` | C.2 · C.3 |
+| `src/lib/hq/hqDirectors.ts` | C.3 |
+| `app/[lang]/(hq)/hq/components/HqDirectorsTable.tsx` | C.3 |
+| `tests/business/hq-directors.test.ts` | C.3 |
 | `app/api/hq/tenants/[id]/route.ts` | C.2 |
 | `app/api/partners/lead/route.ts` | D |
 

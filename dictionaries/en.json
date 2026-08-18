@@ -278,7 +278,21 @@
       "markPaid": "Mark as paid",
       "markPaidConfirm": "Confirm payout of {amount} for {name}?",
       "markPaidLoading": "Paying out…",
-      "payoutError": "Unable to record the payout."
+      "payoutError": "Unable to record the payout.",
+      "directors": {
+        "title": "Directors",
+        "caption": "Counsellor scoreboard — salon commission attributed, not an Odyssey payout.",
+        "empty": "No invitations for this salon.",
+        "director": "Counsellor",
+        "invitations": "Invitations",
+        "engagement": "Engagement",
+        "conversion": "Conversion",
+        "attributed": "Attributed",
+        "rolePartner": "Director",
+        "roleAdmin": "Salon admin",
+        "roleUnknown": "Counsellor",
+        "roleUnassigned": "Unassigned"
+      }
     }
   },
   "tributeWizard": {
