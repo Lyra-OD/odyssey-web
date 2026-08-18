@@ -18,6 +18,8 @@ export const appRoutes = {
   salonConnexion: (lang: Locale) => `/${lang}/salon/connexion`,
   /** Tour de contrôle Odyssey — opérateurs plateforme (allowlist). */
   hq: (lang: Locale) => `/${lang}/hq`,
+  hqSalon: (lang: Locale, tenantId: string) =>
+    `/${lang}/hq/salons/${encodeURIComponent(tenantId)}`,
   /** Connexion HQ — sans inscription. */
   hqConnexion: (lang: Locale) => `/${lang}/hq/connexion`,
   hqConnexionWithParams: (lang: Locale, params?: { next?: string }) => {

@@ -1,6 +1,13 @@
 import { z } from "zod";
 
-import { loadHqFreemiumTenants, type HqFreemiumTenant, type HqVerticalKey, type HqVerticalTabId, HQ_KNOWN_VERTICALS } from "@/src/lib/hq/hqNetworkOverview";
+import {
+  HQ_KNOWN_VERTICALS,
+  loadHqFreemiumTenants,
+  type HqFreemiumTenant,
+  type HqVerticalKey,
+  type HqVerticalTabId,
+} from "@/src/lib/hq/hqNetworkOverview";
+import { PartnerCommissionDashboardResponseSchema } from "@/src/lib/partner/partnerCommissionTypes";
 import {
   buildSalonPilotage,
   payableCents,
@@ -57,6 +64,17 @@ export const HqTenantsListResponseSchema = z
     tenants: z.array(HqTenantListRowSchema),
   })
   .strict();
+
+export const HqTenantDetailResponseSchema =
+  PartnerCommissionDashboardResponseSchema.extend({
+    name: z.string(),
+    slug: z.string().nullish(),
+    vertical: z.enum(["human", "pet", "wedding", "event", "other"]),
+  }).strict();
+
+export type HqTenantDetailResponse = z.infer<
+  typeof HqTenantDetailResponseSchema
+>;
 
 export function buildHqTenantListRow(input: {
   tenant: HqFreemiumTenant;

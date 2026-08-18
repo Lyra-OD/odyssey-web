@@ -270,6 +270,15 @@
       "tabWedding": "Mariage",
       "tabEvent": "Événement",
       "tabOther": "Autres"
+    },
+    "salonDetail": {
+      "back": "Retour au réseau",
+      "subtitle": "Miroir du ledger salon — versement Odyssey sur le payable.",
+      "notFound": "Salon introuvable.",
+      "markPaid": "Marquer comme payé",
+      "markPaidConfirm": "Confirmer le versement de {amount} pour {name} ?",
+      "markPaidLoading": "Versement…",
+      "payoutError": "Impossible d’enregistrer le versement."
     }
   },
   "tributeWizard": {

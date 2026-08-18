@@ -10,6 +10,13 @@ type CommissionKpiCardsProps = {
   lang: Locale;
   balance: PartnerCommissionBalance;
   pilotage: PartnerCommissionPilotage;
+  payout?: {
+    label: string;
+    loadingLabel: string;
+    loading: boolean;
+    disabled: boolean;
+    onClick: () => void;
+  };
 };
 
 function kpiCopy(lang: Locale) {
@@ -58,6 +65,7 @@ export function CommissionKpiCards({
   lang,
   balance,
   pilotage,
+  payout,
 }: CommissionKpiCardsProps) {
   const copy = kpiCopy(lang);
   const cards = [
@@ -130,15 +138,26 @@ export function CommissionKpiCards({
         <p className="text-xs font-light tabular-nums text-zinc-500">
           {copy.payable} : {formatUsdFromCents(payableCents(balance), lang)}
         </p>
-        <button
-          type="button"
-          disabled
-          title={copy.payoutTitle}
-          aria-label={`${copy.payoutCta}. ${copy.payoutTitle}`}
-          className="inline-flex min-h-[48px] cursor-not-allowed items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-6 font-label text-[11px] font-bold uppercase tracking-[0.32em] text-zinc-500 opacity-60"
-        >
-          {copy.payoutCta}
-        </button>
+        {payout ? (
+          <button
+            type="button"
+            disabled={payout.disabled || payout.loading}
+            onClick={payout.onClick}
+            className="inline-flex min-h-[48px] items-center justify-center rounded-xl border border-[var(--salon-cyan)]/40 bg-white/[0.04] px-6 font-label text-[11px] font-bold uppercase tracking-[0.32em] text-[var(--salon-cyan)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:border-white/10 disabled:text-zinc-500 disabled:opacity-45"
+          >
+            {payout.loading ? payout.loadingLabel : payout.label}
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled
+            title={copy.payoutTitle}
+            aria-label={`${copy.payoutCta}. ${copy.payoutTitle}`}
+            className="inline-flex min-h-[48px] cursor-not-allowed items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-6 font-label text-[11px] font-bold uppercase tracking-[0.32em] text-zinc-500 opacity-60"
+          >
+            {copy.payoutCta}
+          </button>
+        )}
       </div>
 
       <div

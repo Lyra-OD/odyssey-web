@@ -201,6 +201,14 @@ Hors slice : fiche `/hq/salons/[tenantId]`, drill conseiller, adjustments.
 
 Hors slice : fiche salon, drill directeur.
 
+### Slice C.2 — Fiche salon ✅
+
+**Done when :** clic sur un salon → `/hq/salons/[tenantId]` = miroir `/salon/commissions` (accrued / pending / paid, GMV, ouverture, conversion, ledger) + **Marquer comme payé** (même RPC P14). 404 si tenant hors freemium.
+
+**Livré :** `GET /api/hq/tenants/[id]` · `HqSalonDetailView` · `loadPartnerCommissionDashboard` (partagé avec Salon).
+
+Hors slice : drill directeur (C.3).
+
 ### Slice D — Formulaire `/partners`
 
 **Done when :** le formulaire marketing **envoie** (plus `noValidate` mort). Lead stocké (table simple ou e-mail seul). Courriel interne HQ selon [`COMMUNICATIONS_MVP.md`](COMMUNICATIONS_MVP.md) § lead. Pas de création auto de tenant.
@@ -228,7 +236,8 @@ Hors slice : CRM, onboarding Salon automatique.
 | `src/lib/hq/hqTenantsList.ts` | C |
 | `src/lib/hq/requireHqOperator.ts` | B · C |
 | `docs/sql/odyssey_p14_2_hq_tenants_vertical.sql` | C.1 |
-| `app/api/hq/tenants/[id]/route.ts` | C (fiche — hors V1 livré) |
+| `app/[lang]/(hq)/hq/salons/[tenantId]/page.tsx` | C.2 |
+| `app/api/hq/tenants/[id]/route.ts` | C.2 |
 | `app/api/partners/lead/route.ts` | D |
 
 Noms anglais dans le code. Copy HQ FR/EN dans les dictionnaires.

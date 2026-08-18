@@ -4,13 +4,11 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 août 2026 — `/hq/salons/[tenantId]` + `GET /api/hq/tenants/[id]` (fiche micro).
 - 17 août 2026 — `POST /api/hq/tenants/[id]/payout` + liste salons (RPC P14).
 - 17 août 2026 — `GET /api/hq/overview` : KPI réseau macro (allowlist + service_role).
 - 17 août 2026 — `/hq` : table `hq_allowlist` (P13), middleware + layout.
 - 17 août 2026 — `POST /api/partner/invitations/[id]/follow-up` (relance e-mail conseiller).
-- 17 août 2026 — `/salon/mes-performances` + `GET /api/partner/my-performance` (scoreboard conseiller).
-- 17 août 2026 — invitation Salon Souvenir-only (plus de picker).
-- 17 août 2026 — `/salon/commissions` + API ; `next` login conserve le chemin Salon ; `/facturation` redirige.
 
 Document canonique pour les **URLs**, les **trois pages de connexion** (famille, partenaire, HQ Odyssey), les **redirects legacy**, et le **branding Salon** (gant blanc). Source de vérité code : `src/lib/appRoutes.ts`.
 
@@ -29,7 +27,8 @@ Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes /
 | **Salon commissions** | `/[lang]/salon/commissions` | Oui | Admin (`canViewLedger`) — KPIs RevShare + ledger SQL |
 | **Salon facturation** | `/[lang]/salon/facturation` | Oui | **Redirect** → `/salon/commissions` (jetons morts) |
 | **Salon connexion** | `/[lang]/salon/connexion` | Non | Login partenaire **sans** inscription |
-| **HQ Odyssey** | `/[lang]/hq` | Oui + allowlist | Tour de contrôle opérateurs (Slice B : KPI réseau macro) |
+| **HQ Odyssey** | `/[lang]/hq` | Oui + allowlist | Tour de contrôle (macro + liste salons) |
+| **HQ salon** | `/[lang]/hq/salons/[tenantId]` | Oui + allowlist | Fiche micro d’un salon (miroir commissions) |
 | **HQ connexion** | `/[lang]/hq/connexion` | Non | Login opérateurs **sans** inscription |
 | **Marketing partenaires** | `/[lang]/partners` ou `/partenaires` | Non | Formulaire « devenir partenaire » (≠ Salon) |
 | **Acceptation invitation** | `/[lang]/invite/accept?token=…` | Oui (redir. studio connexion) | Magic link famille → projet B2B2C |
@@ -192,7 +191,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 
 **API partenaire (session) :** `GET /api/partner/tenants` · `GET /api/partner/my-performance` (`canInvite`) · `GET /api/partner/commissions` (`canViewLedger`) · `POST /api/partner/invitations` · `POST /api/partner/invitations/[id]/follow-up` (`canInvite`, auteur de l’invitation) · `GET /api/partner/wallet` (deprecated).
 
-**API HQ (session + allowlist) :** `GET /api/hq/overview` · `GET /api/hq/tenants` · `POST /api/hq/tenants/[id]/payout` — KPI macro, liste micro, versement (service_role + RPC P14).
+**API HQ (session + allowlist) :** `GET /api/hq/overview` · `GET /api/hq/tenants` · `GET /api/hq/tenants/[id]` · `POST /api/hq/tenants/[id]/payout`.
 
 ---
 
@@ -234,6 +233,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | `src/lib/hq/requireHqOperator.ts` | Gate session + allowlist + admin |
 | `app/api/hq/overview/route.ts` | KPI réseau HQ (`hq_allowlist`) |
 | `app/api/hq/tenants/route.ts` | Liste salons HQ |
+| `app/api/hq/tenants/[id]/route.ts` | Fiche micro salon HQ |
 | `app/api/hq/tenants/[id]/payout/route.ts` | Versement payable intégral |
 | `docs/sql/odyssey_p14_hq_commission_payout.sql` | RPC payout P14 |
 | `docs/HQ_ODYSSEY.md` | Canon tour de contrôle |

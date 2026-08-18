@@ -270,6 +270,15 @@
       "tabWedding": "Wedding",
       "tabEvent": "Event",
       "tabOther": "Other"
+    },
+    "salonDetail": {
+      "back": "Back to network",
+      "subtitle": "Salon ledger mirror — Odyssey payout on the payable balance.",
+      "notFound": "Salon not found.",
+      "markPaid": "Mark as paid",
+      "markPaidConfirm": "Confirm payout of {amount} for {name}?",
+      "markPaidLoading": "Paying out…",
+      "payoutError": "Unable to record the payout."
     }
   },
   "tributeWizard": {

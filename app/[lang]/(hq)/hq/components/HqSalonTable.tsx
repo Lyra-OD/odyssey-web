@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import type { Locale } from "@/i18n.config";
+import { appRoutes } from "@/src/lib/appRoutes";
 import {
   filterHqTenantsByVertical,
   presentHqVerticalTabs,
@@ -211,7 +213,14 @@ export function HqSalonTable({
                     key={row.id}
                     className="border-b border-white/[0.06] last:border-b-0"
                   >
-                    <td className="py-4 pr-4 font-light text-white">{row.name}</td>
+                    <td className="py-4 pr-4 font-light text-white">
+                      <Link
+                        href={appRoutes.hqSalon(lang, row.id)}
+                        className="transition-colors hover:text-[var(--salon-cyan)]"
+                      >
+                        {row.name}
+                      </Link>
+                    </td>
                     <td className="py-4 pr-4 tabular-nums text-zinc-300">
                       {row.invitationsSent}
                     </td>
