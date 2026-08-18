@@ -36,13 +36,14 @@ export function storyboardSongPreviewKey(song: WizardStoryboardSong): string {
  */
 export function resolveStingraySongPreviewUrl(
   song: Extract<WizardStoryboardSong, { source: "stingray" }>,
+  projectId?: string | null,
 ): string {
   const catalog = findCatalogTrack(song.trackId);
   if (catalog) {
     const fromCatalog = resolvePreviewUrl(catalog);
-    if (fromCatalog) return fromCatalog;
+    if (fromCatalog && !projectId) return fromCatalog;
   }
-  return buildMusicPreviewProxyUrl(song.trackId);
+  return buildMusicPreviewProxyUrl(song.trackId, projectId ?? undefined);
 }
 
 export async function waitForAudioReady(audio: HTMLAudioElement): Promise<void> {

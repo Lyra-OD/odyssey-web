@@ -11,6 +11,7 @@ import {
   shouldUseStingrayMock,
   type StingrayConfig,
 } from "@/src/lib/music/stingrayConfig";
+import { filterApiTracksByCatalogTier } from "@/src/lib/music/musicCatalogTierFilter";
 import { searchStingrayTracksForApi } from "@/src/lib/wizard/stingrayCatalog";
 import type { MusicCatalogTier } from "@/src/lib/wizard/pricingConfig";
 
@@ -300,7 +301,8 @@ export async function searchMusicCatalog(
   }
 
   try {
-    const tracks = await searchStingrayMusicTracks(query, limit);
+    const rawTracks = await searchStingrayMusicTracks(query, limit);
+    const tracks = filterApiTracksByCatalogTier(rawTracks, catalogTier);
     return { tracks, source: "stingray" };
   } catch (error) {
     console.error("[StingrayClient] API indisponible:", error);

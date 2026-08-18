@@ -26,6 +26,7 @@ type Props = {
   tracks: WizardActTracks;
   copy: CinematicTeaserCopy;
   autoPlay?: boolean;
+  projectId?: string | null;
 };
 
 function formatTime(seconds: number): string {
@@ -40,6 +41,7 @@ export function CinematicTeaser({
   tracks,
   copy,
   autoPlay = true,
+  projectId = null,
 }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const slideStartRef = useRef<number>(Date.now());
@@ -113,8 +115,12 @@ export function CinematicTeaser({
       setIsAudioLoading(true);
       try {
         const url =
-          track.previewUrl?.trim() ||
-          buildMusicPreviewProxyUrl(track.trackId);
+          track.trackId && projectId
+            ? buildMusicPreviewProxyUrl(track.trackId, projectId)
+            : track.previewUrl?.trim() ||
+              (track.trackId
+                ? buildMusicPreviewProxyUrl(track.trackId)
+                : "");
         if (!url) {
           console.error("URL audio manquante pour", track.title);
           return;
@@ -130,7 +136,7 @@ export function CinematicTeaser({
         setIsAudioLoading(false);
       }
     },
-    [slides, tracks],
+    [slides, tracks, projectId],
   );
 
   const stopPlayback = useCallback(() => {

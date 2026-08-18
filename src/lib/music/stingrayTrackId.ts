@@ -22,6 +22,14 @@ export function parseStingrayTrackId(
   return { playlistId, songId };
 }
 
-export function buildMusicPreviewProxyUrl(trackId: string): string {
-  return `/api/music/preview?trackId=${encodeURIComponent(trackId)}`;
+export function buildMusicPreviewProxyUrl(
+  trackId: string,
+  projectId?: string,
+): string {
+  const params = new URLSearchParams({ trackId });
+  const scopedProjectId = projectId?.trim();
+  if (scopedProjectId) {
+    params.set("projectId", scopedProjectId);
+  }
+  return `/api/music/preview?${params.toString()}`;
 }

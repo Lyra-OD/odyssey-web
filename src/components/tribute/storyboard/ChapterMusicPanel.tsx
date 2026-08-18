@@ -181,6 +181,12 @@ export function ChapterMusicPanel({
 
   useEffect(() => {
     if (sourceMode !== "catalog") return;
+    if (!projectId) {
+      setResults([]);
+      setIsSearching(false);
+      setSearchError(copy.uploadNeedProject);
+      return;
+    }
 
     let cancelled = false;
     setIsSearching(true);
@@ -189,11 +195,13 @@ export function ChapterMusicPanel({
     const runSearch = async () => {
       try {
         const params = new URLSearchParams({
+          projectId,
           q: debouncedQuery,
           limit: "12",
-          tier: catalogTier,
         });
-        const res = await fetch(`/api/music/search?${params.toString()}`);
+        const res = await fetch(`/api/music/search?${params.toString()}`, {
+          credentials: "same-origin",
+        });
         const body = (await res.json()) as {
           ok?: boolean;
           tracks?: StingrayTrackApiPayload[];
@@ -224,7 +232,13 @@ export function ChapterMusicPanel({
     return () => {
       cancelled = true;
     };
-  }, [catalogTier, copy.serviceUnavailable, debouncedQuery, sourceMode]);
+  }, [
+    copy.serviceUnavailable,
+    copy.uploadNeedProject,
+    debouncedQuery,
+    projectId,
+    sourceMode,
+  ]);
 
   if (song) {
     const capacity = chapterRecommendedCapacity(song.durationSec, targetSecondsPerMedia);

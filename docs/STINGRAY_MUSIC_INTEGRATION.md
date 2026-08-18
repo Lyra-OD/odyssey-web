@@ -1,9 +1,10 @@
 # Stingray Music Integration (MAPI)
 
 **Type :** canon · **Vérité pour :** proxy musique, step 4, preview vs export.  
-**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (revue code) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — P0-05 : `/api/music/*` auth Wizard + `projectId` + `catalogTier` serveur (live inclus).
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — Freemium V1 Pivot (Stingray 100 % payant à l’export).
 
@@ -53,10 +54,11 @@ Parent reference: [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § 
 | `src/lib/music/stingrayClient.ts` | Search + playlist + stream fetch (`server-only`) |
 | `src/lib/music/stingrayTrackId.ts` | Composite `trackId` encode/decode + preview URL builder |
 | `src/lib/wizard/stingrayCatalog.ts` | Types, mock catalog (dev fallback only) |
-| `app/api/music/search/route.ts` | `GET ?q=&limit=&tier=standard\|premium` |
-| `src/lib/wizard/pricingConfig.ts` | `resolveMusicCatalogTier()`, package `musicCatalog` |
-| `app/api/music/preview/route.ts` | `GET ?trackId=` → audio stream |
-| `app/api/music/stream/route.ts` | `GET ?trackId=` → JSON `{ streamUrl }` (proxy path) |
+| `src/lib/music/resolveMusicRouteAccess.ts` | Auth Wizard + `catalogTier` serveur (`resolveMusicEntitlement` / Soft Cap) |
+| `app/api/music/search/route.ts` | `GET ?projectId=&q=&limit=` — ignore `tier` client |
+| `src/lib/wizard/pricingConfig.ts` | `resolveMusicEntitlement()`, package `musicCatalog` |
+| `app/api/music/preview/route.ts` | `GET ?projectId=&trackId=` → audio stream |
+| `app/api/music/stream/route.ts` | `GET ?projectId=&trackId=` → JSON `{ streamUrl }` |
 | `src/components/tribute/storyboard/ChapterMusicPanel.tsx` | Search UI + `HTMLAudioElement` on `previewUrl` (step 4, per chapter) |
 
 ---
@@ -70,8 +72,8 @@ sequenceDiagram
   participant Client as stingrayClient
   participant MAPI as Stingray MAPI
 
-  UI->>Search: q=Charles+Aznavour&tier=standard|premium
-  Search->>Client: searchMusicCatalog(q, limit, catalogTier)
+  UI->>Search: projectId=&q=Charles+Aznavour
+  Search->>Client: searchMusicCatalog(q, limit, catalogTier serveur)
   Client->>MAPI: GET /api/v1/channel?artist_name=&channel_name=
   loop Per channel (up to limit)
     Client->>MAPI: POST /api/v1/playlist { channel_id, quality, size }
@@ -124,13 +126,13 @@ resolveMusicEntitlement(intendedPackage, extensions): "standard" | "official"
 ### Search API
 
 ```http
-GET /api/music/search?q=Aznavour&limit=12&tier=standard
-GET /api/music/search?q=Adele&limit=12&tier=premium
+GET /api/music/search?projectId={uuid}&q=Aznavour&limit=12
+GET /api/music/preview?projectId={uuid}&trackId=sr:…
 ```
 
-- Query param `tier`: mappe `standard` \| `premium` (API actuelle) ↔ produit `standard` \| `official`.
-- **Mock :** filtre `musicTier` sur `STINGRAY_CATALOG_TRACKS`.
-- **Live MAPI :** roadmap filtrage catalogue officiel.
+- Auth : session owner ou cookie Co-Créateur (`resolveWizardCraftAccess`).
+- `catalogTier` **serveur** (`resolveMusicEntitlement` + Soft Cap / editor) — le param client `tier` est ignoré.
+- **Mock et live :** filtre `musicTier` / pistes inconnues = premium (fail-closed en `standard`).
 
 ### Step 4 UX (`ChapterMusicPanel`) — cible Phase 4
 
@@ -282,10 +284,11 @@ Official docs: [music-service.stingray.com/swagger-ui.html](https://music-servic
 5. DevTools → `/api/music/search` → 200 `{ source: "mock" }`; `/api/music/preview` → `audio/mpeg`
 
 ```bash
-curl -s "http://localhost:3000/api/music/search?q=test&limit=3&tier=standard" | jq .
-curl -s "http://localhost:3000/api/music/search?q=test&limit=3&tier=premium" | jq .
-curl -sI "http://localhost:3000/api/music/preview?trackId=sr:YOUR_PLAYLIST:YOUR_SONG"
+curl -s "http://localhost:3000/api/music/search?projectId=YOUR_UUID&q=test&limit=3" | jq .
+curl -sI "http://localhost:3000/api/music/preview?projectId=YOUR_UUID&trackId=sr:YOUR_PLAYLIST:YOUR_SONG"
 ```
+
+Sans session + `projectId` : **401** / **400**. `tier=` client est ignoré.
 
 ---
 

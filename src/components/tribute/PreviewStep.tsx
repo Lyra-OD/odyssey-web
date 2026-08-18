@@ -144,6 +144,7 @@ export function PreviewStep({
         <CinematicTeaser
           slides={slides}
           tracks={actTracks}
+          projectId={projectId}
           copy={{
             loading: copy.teaserLoading,
             empty: copy.teaserEmpty,

@@ -683,8 +683,8 @@ export function TributeWizard({
       wizardFieldsRef.current.basePackage = pkg;
       wizardFieldsRef.current.intendedPackage = pkg;
 
-      if (projectId) {
-        void fetch(`/api/projects/${projectId}/package-intent`, {
+      if (uploadProjectId) {
+        void fetch(`/api/projects/${uploadProjectId}/package-intent`, {
           method: "POST",
           credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
@@ -697,7 +697,7 @@ export function TributeWizard({
 
       queueSave("immediate");
     },
-    [projectId, queueSave],
+    [uploadProjectId, queueSave],
   );
 
   const handleExtensionsChange = useCallback(

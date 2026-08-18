@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { isTrackAllowedForCatalogTier } from "@/src/lib/music/musicCatalogTierFilter";
+import { resolveMusicRouteAccess } from "@/src/lib/music/resolveMusicRouteAccess";
 import {
   fetchStingrayTrackStream,
   StingrayApiError,
@@ -14,18 +16,21 @@ import {
   getStingrayConfig,
   shouldUseStingrayMock,
 } from "@/src/lib/music/stingrayConfig";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
 const QuerySchema = z.object({
+  projectId: ProjectIdSchema,
   trackId: z.string().trim().min(1).max(200),
 });
 
 /**
- * GET /api/music/preview?trackId=…
+ * GET /api/music/preview?projectId=…&trackId=…
  * Proxy same-origin : Stingray MAPI (sr:playlist:song) ou mock catalogue legacy.
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const parsed = QuerySchema.safeParse({
+    projectId: searchParams.get("projectId") ?? "",
     trackId: searchParams.get("trackId") ?? "",
   });
 
@@ -36,7 +41,14 @@ export async function GET(request: Request) {
     );
   }
 
-  const { trackId } = parsed.data;
+  const { projectId, trackId } = parsed.data;
+  const access = await resolveMusicRouteAccess(projectId);
+  if (!access.ok) return access.response;
+
+  if (!isTrackAllowedForCatalogTier(trackId, access.catalogTier)) {
+    return NextResponse.json({ error: "track_not_entitled" }, { status: 403 });
+  }
+
   const config = getStingrayConfig();
   const mockMode = shouldUseStingrayMock(config);
   const parsedStingray = parseStingrayTrackId(trackId);

@@ -264,7 +264,7 @@ export function StoryboardChaptersStep({
 
       let previewUrl = "";
       if (song.source === "stingray") {
-        previewUrl = resolveStingraySongPreviewUrl(song);
+        previewUrl = resolveStingraySongPreviewUrl(song, projectId);
       } else {
         try {
           const res = await fetch(

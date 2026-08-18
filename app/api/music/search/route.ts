@@ -1,31 +1,33 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { attachProjectIdToTrackPreviews } from "@/src/lib/music/musicPreviewUrls";
+import { resolveMusicRouteAccess } from "@/src/lib/music/resolveMusicRouteAccess";
 import {
   searchMusicCatalog,
   StingrayApiError,
 } from "@/src/lib/music/stingrayClient";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
 const QuerySchema = z.object({
+  projectId: ProjectIdSchema,
   q: z.string().trim().max(120).optional(),
   limit: z.coerce.number().int().min(1).max(24).optional(),
-  /** `standard` | `premium` — filtre catalogue mock / future MAPI. */
-  tier: z.enum(["standard", "premium"]).optional(),
 });
 
 const SERVICE_UNAVAILABLE_MESSAGE =
   "Service musical temporairement indisponible, veuillez réessayer.";
 
 /**
- * GET /api/music/search?q=Charles+Aznavour
- * Proxy serveur vers Stingray Music API (MAPI) — CORS désactivé côté Stingray.
+ * GET /api/music/search?projectId=…&q=Charles+Aznavour
+ * Proxy serveur vers Stingray — auth Wizard + tier catalogue serveur.
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const parsed = QuerySchema.safeParse({
+    projectId: searchParams.get("projectId") ?? "",
     q: searchParams.get("q") ?? "",
     limit: searchParams.get("limit") ?? 12,
-    tier: searchParams.get("tier") ?? undefined,
   });
 
   if (!parsed.success) {
@@ -35,14 +37,21 @@ export async function GET(request: Request) {
     );
   }
 
-  const { q = "", limit = 12, tier = "standard" } = parsed.data;
+  const { projectId, q = "", limit = 12 } = parsed.data;
+  const access = await resolveMusicRouteAccess(projectId);
+  if (!access.ok) return access.response;
 
   try {
-    const { tracks, source } = await searchMusicCatalog(q, limit, tier);
+    const { tracks, source } = await searchMusicCatalog(
+      q,
+      limit,
+      access.catalogTier,
+    );
     return NextResponse.json({
       ok: true,
       source,
-      tracks,
+      catalogTier: access.catalogTier,
+      tracks: attachProjectIdToTrackPreviews(tracks, projectId),
     });
   } catch (error) {
     console.error("[music/search] Stingray error:", error);
