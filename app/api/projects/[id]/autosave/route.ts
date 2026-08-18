@@ -7,6 +7,7 @@ import {
 } from "@/src/lib/wizard/wizardState";
 import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { filterAutosavePatchForEditor } from "@/src/lib/wizard/collabAutosave";
+import { stripOwnerMonetizationFields } from "@/src/lib/wizard/monetizationAutosaveGuard";
 import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
 /**
@@ -503,6 +504,35 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         { status: 400 },
       );
     }
+  }
+
+  if (access.role === "owner") {
+    patchState = stripOwnerMonetizationFields(patchState);
+  }
+
+  if (patchState === undefined && patchStep === undefined) {
+    const noopQuery = access.supabase
+      .from("projects")
+      .select("id, wizard_state, wizard_step, last_saved_at, status")
+      .eq("id", projectId);
+
+    const noopExisting =
+      access.role === "owner"
+        ? await noopQuery.eq("user_id", access.user.id).maybeSingle()
+        : await noopQuery.maybeSingle();
+
+    if (noopExisting.error || !noopExisting.data) {
+      return NextResponse.json({ error: "not_found" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      id: noopExisting.data.id,
+      wizard_state: noopExisting.data.wizard_state ?? {},
+      wizard_step: noopExisting.data.wizard_step ?? 1,
+      last_saved_at: noopExisting.data.last_saved_at,
+      status: noopExisting.data.status,
+      accessRole: access.role,
+    });
   }
 
   const existingQuery = access.supabase

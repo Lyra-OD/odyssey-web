@@ -681,9 +681,23 @@ export function TributeWizard({
     (pkg: WizardBasePackage) => {
       setBasePackage(pkg);
       wizardFieldsRef.current.basePackage = pkg;
+      wizardFieldsRef.current.intendedPackage = pkg;
+
+      if (projectId) {
+        void fetch(`/api/projects/${projectId}/package-intent`, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ intendedPackage: pkg }),
+        }).catch((error) => {
+          console.error("[wizard] package-intent failed:", error);
+        });
+        return;
+      }
+
       queueSave("immediate");
     },
-    [queueSave],
+    [projectId, queueSave],
   );
 
   const handleExtensionsChange = useCallback(

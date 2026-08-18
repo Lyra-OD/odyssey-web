@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { packageTierRank } from "@/src/lib/wizard/pricingConfig";
+import { loadInvitationGrantedPackage } from "@/src/lib/wizard/b2b2cPackageAuthority";
 
 /**
  * Soft Cap médias (infra) : si cadeau freemium et ≥50 médias familiaux,
@@ -13,7 +14,7 @@ export async function ensureFreemiumMediaSoftCapIntent(
 ): Promise<void> {
   const { data: project } = await admin
     .from("projects")
-    .select("wizard_state")
+    .select("wizard_state, invitation_id")
     .eq("id", projectId)
     .maybeSingle();
 
@@ -25,10 +26,20 @@ export async function ensureFreemiumMediaSoftCapIntent(
       : null;
   if (!state) return;
 
-  const grantedRaw =
+  let grantedRaw =
     (typeof state.grantedPackage === "string" && state.grantedPackage) ||
     (typeof state.basePackage === "string" && state.basePackage) ||
     "essential";
+
+  const invitationId =
+    typeof project?.invitation_id === "string" ? project.invitation_id : null;
+  if (invitationId) {
+    const lookup = await loadInvitationGrantedPackage(admin, invitationId);
+    if (lookup.ok) {
+      grantedRaw = lookup.grantedPackage;
+    }
+  }
+
   const intendedRaw =
     (typeof state.intendedPackage === "string" && state.intendedPackage) ||
     (typeof state.basePackage === "string" && state.basePackage) ||
@@ -55,6 +66,7 @@ export async function ensureFreemiumMediaSoftCapIntent(
 
   const nextState = {
     ...state,
+    grantedPackage: granted,
     intendedPackage: "signature",
     basePackage: "signature",
   };

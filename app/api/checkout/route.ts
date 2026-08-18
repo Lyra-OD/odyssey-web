@@ -21,6 +21,10 @@ import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
 import { parseTenantViralSettings } from "@/src/lib/wizard/tenantViralSettings";
 import { normalizeBasePackageId } from "@/src/lib/wizard/pricingConfig";
 import { coerceWizardState } from "@/src/lib/wizard/wizardState";
+import {
+  loadInvitationGrantedPackage,
+  resolveB2b2cIntendedPackage,
+} from "@/src/lib/wizard/b2b2cPackageAuthority";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { resolveSiteOrigin } from "@/src/lib/http/siteOrigin";
 
@@ -108,22 +112,53 @@ export async function POST(request: Request) {
   const extensions = normalizeExtensionsState(wizardState.extensions ?? {});
   const actTracks = wizardState.musicalAmbiance?.tracks ?? {};
 
-  const intendedPackage: WizardBasePackage = normalizeBasePackageId(
-    wizardState.intendedPackage ??
-      wizardState.basePackage ??
-      wizardState.pricing?.basePackage,
-  );
-  const grantedPackage: WizardBasePackage = normalizeBasePackageId(
-    wizardState.grantedPackage ??
-      (hasPartnerInvitation ? "essential" : intendedPackage),
-  );
+  let admin;
+  try {
+    admin = getSupabaseAdminClient();
+  } catch {
+    return NextResponse.json({ error: "internal" }, { status: 500 });
+  }
+
+  let grantedPackage: WizardBasePackage;
+  let intendedPackage: WizardBasePackage;
+
+  if (hasPartnerInvitation && invitationId) {
+    const invitationGrant = await loadInvitationGrantedPackage(
+      admin,
+      invitationId,
+    );
+    if (!invitationGrant.ok) {
+      return NextResponse.json(
+        {
+          error: "invitation_lookup_failed",
+          reason: invitationGrant.reason,
+        },
+        { status: 400 },
+      );
+    }
+
+    grantedPackage = invitationGrant.grantedPackage;
+    intendedPackage = resolveB2b2cIntendedPackage({
+      grantedPackage,
+      persistedIntended:
+        wizardState.intendedPackage ??
+        wizardState.basePackage ??
+        wizardState.pricing?.basePackage,
+    });
+  } else {
+    intendedPackage = normalizeBasePackageId(
+      wizardState.intendedPackage ??
+        wizardState.basePackage ??
+        wizardState.pricing?.basePackage,
+    );
+    grantedPackage = intendedPackage;
+  }
 
   let isFreemiumTenant = false;
   // Cascade V-Final : feature flag + plancher configurables par tenant.
   let viralLoopEnabled = false;
   let ownerFloorCents = 0;
   if (tenantId) {
-    const admin = getSupabaseAdminClient();
     const { data: tenant, error: tenantError } = await admin
       .from("tenants")
       .select("is_freemium, settings")
@@ -178,7 +213,6 @@ export async function POST(request: Request) {
 
   const origin = resolveSiteOrigin(request);
   const studioPath = appRoutes.studio(locale);
-  const admin = getSupabaseAdminClient();
 
   // Freemium V1 : parcours conseiller = soumission sans wallet.
   if (isPartner && !hasPartnerInvitation) {
@@ -351,6 +385,12 @@ export async function POST(request: Request) {
 
   if (totalCents <= 0) {
     if (hasPartnerInvitation && isFreemiumTenant) {
+      intendedPackage = resolveB2b2cIntendedPackage({
+        grantedPackage,
+        persistedIntended: intendedPackage,
+        forFreemiumFree: true,
+      });
+
       // Amputation : quotas = granted (Souvenir), hors médias invités Sanctuaire
       const { count, error: countError } = await admin
         .from("media_assets")
@@ -497,17 +537,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: invitation, error: invitationError } = await supabase
-      .from("partner_invitations")
-      .select("id, granted_package, tenant_id")
-      .eq("id", invitationId)
-      .maybeSingle();
-
-    if (invitationError || !invitation?.granted_package) {
+    const invitationGrant = await loadInvitationGrantedPackage(
+      admin,
+      invitationId,
+    );
+    if (!invitationGrant.ok) {
       return NextResponse.json(
         {
           error: "invitation_lookup_failed",
-          message: invitationError?.message ?? "granted_package manquant",
+          reason: invitationGrant.reason,
         },
         { status: 400 },
       );
@@ -539,7 +577,7 @@ export async function POST(request: Request) {
         tenant_id: tenantId,
         invitation_id: invitationId,
         checkout_mode: "b2b2c_family",
-        granted_package: invitation.granted_package,
+        granted_package: invitationGrant.grantedPackage,
         selected_package: intendedPackage,
         family_total_cents: totalCents,
         partner_tokens_debited: 0,
