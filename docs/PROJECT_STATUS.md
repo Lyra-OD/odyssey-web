@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — HQ Slice D : formulaire `/partners` + alerte Resend (SQL P15).
 - 17 août 2026 — HQ C.3 : drill directeurs sur `/hq/salons/[id]` (Mes performances, lecture).
 - 17 août 2026 — HQ C.2 : fiche `/hq/salons/[tenantId]` (miroir commissions + payout).
 - 17 août 2026 — HQ C.1 : tabs verticales (`human` / `pet`) sur le tableau `/hq`.
 - 17 août 2026 — HQ Slice C : liste salons + payout (`POST /api/hq/tenants/[id]/payout`, SQL P14).
-- 17 août 2026 — HQ Slice B : KPI réseau macro sur `/hq` (`GET /api/hq/overview`).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -54,7 +54,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Salon invitations | 🟢 | Souvenir 0 $ — **un geste**, pas de picker forfait |
 | Salon commissions | 🟢 | `/salon/commissions` + API caisse + pilotage GMV/ouverture/conversion · `/facturation` → redirect |
 | Salon mes performances | 🟢 | taux perso + relance `pending` ≥ 3 j (1 e-mail au clic, pas de drip) |
-| Odyssey HQ | 🟡 | C.3 ✅ drill conseillers · Slice D formulaire `/partners` ⏳ — [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) |
+| Odyssey HQ | 🟢 A–D | Formulaire `/partners` + alerte HQ · CRM / onboarding auto ⏳ — [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) |
 | Fonds / packs invité | 🟢 gated | Code 3a livré · visible si `viral_loop_enabled` sur le tenant |
 | Scanner Compagnon | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Export / render** | 🟡 | P0 🟢 · master / cinéma ⏳ — **pas** 🔴 |

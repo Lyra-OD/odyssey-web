@@ -1,9 +1,10 @@
 # Odyssey — Technical Onboarding V1
 
 **Type :** canon · **Vérité pour :** hub onboarding (stack, env, chemins code).  
-**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 18 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — env lead `/partners` : `ODYSSEY_HQ_LEAD_EMAIL` (alerte Resend HQ).
 - 17 août 2026 — HQ : table `hq_allowlist` (P13), plus d’env opérateurs.
 - 17 août 2026 — env Relance salon : `RESEND_API_KEY` · `RESEND_FROM_EMAIL`.
 - 17 août 2026 — en-tête type + carte.
@@ -53,7 +54,8 @@ npm run build    # gate avant merge
 | `STRIPE_WEBHOOK_SECRET` | Signature webhook |
 | `STINGRAY_*` / `STINGRAY_MODE` | Musique live ou `mock` |
 | `RESEND_API_KEY` | Relance invitation salon (serveur) |
-| `RESEND_FROM_EMAIL` | Expéditeur Relance (`Nom <email@domaine>`) |
+| `RESEND_FROM_EMAIL` | Expéditeur Relance et lead HQ (`Nom <email@domaine>`) |
+| `ODYSSEY_HQ_LEAD_EMAIL` | Destinataire(s) alerte formulaire `/partners` |
 
 Détail routes : [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).
 

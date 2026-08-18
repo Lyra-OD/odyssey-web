@@ -4,15 +4,11 @@ import {
   editorialColumn,
   editorialSectionShell,
 } from "@/src/lib/editorialSkin";
-import {
-  editorialFieldInput,
-  editorialFieldLabel,
-  editorialFieldTextarea,
-  editorialSubmitButton,
-} from "@/src/lib/editorialFormClasses";
 import { OdysseyBrandLockup } from "@/src/components/OdysseyBrandLockup";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
+
+import { PartnersLeadForm } from "./PartnersLeadForm";
 
 type PageProps = {
   params: Promise<{ lang: string }>;
@@ -38,52 +34,7 @@ export default async function PartnersPage({ params }: PageProps) {
             {t.subtitle}
           </p>
 
-          <form className="mt-14 space-y-10" noValidate>
-            <label className="block">
-              <span className={editorialFieldLabel}>{t.form.organization}</span>
-              <input
-                name="organization"
-                type="text"
-                autoComplete="organization"
-                className={editorialFieldInput}
-                required
-              />
-            </label>
-
-            <label className="block">
-              <span className={editorialFieldLabel}>{t.form.contactName}</span>
-              <input name="contactName" type="text" autoComplete="name" className={editorialFieldInput} required />
-            </label>
-
-            <label className="block">
-              <span className={editorialFieldLabel}>{t.form.email}</span>
-              <input name="email" type="email" autoComplete="email" className={editorialFieldInput} required />
-            </label>
-
-            <label className="block">
-              <span className={editorialFieldLabel}>{t.form.phone}</span>
-              <input name="phone" type="tel" autoComplete="tel" className={editorialFieldInput} />
-            </label>
-
-            <label className="block">
-              <span className={editorialFieldLabel}>{t.form.region}</span>
-              <input name="region" type="text" autoComplete="address-level1" className={editorialFieldInput} />
-            </label>
-
-            <label className="block">
-              <span className={editorialFieldLabel}>{t.form.context}</span>
-              <textarea name="context" rows={3} className={editorialFieldTextarea} />
-            </label>
-
-            <label className="block">
-              <span className={editorialFieldLabel}>{t.form.message}</span>
-              <textarea name="message" rows={5} className={editorialFieldTextarea} required />
-            </label>
-
-            <button type="submit" className={editorialSubmitButton}>
-              {t.form.submit}
-            </button>
-          </form>
+          <PartnersLeadForm lang={lang} labels={t.form} />
         </div>
       </section>
     </main>

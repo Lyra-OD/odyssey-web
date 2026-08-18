@@ -48,7 +48,11 @@
       "region": "Region or service area",
       "context": "Context (volume, team, current tools)",
       "message": "Your message",
-      "submit": "Submit request"
+      "submit": "Submit request",
+      "sending": "Sending…",
+      "success": "Your message arrived. We’ll write back.",
+      "error": "We couldn’t send the request. Please try again.",
+      "errorRate": "Please wait before sending another request."
     }
   },
   "hero": {

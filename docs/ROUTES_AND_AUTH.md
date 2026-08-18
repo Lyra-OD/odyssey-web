@@ -1,14 +1,14 @@
 # Odyssey — Routes applicatives & authentification
 
 **Type :** canon · **Vérité pour :** URLs, connexions Studio/Salon, `appRoutes.ts`.  
-**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — `POST /api/partners/lead` (formulaire marketing, alerte HQ).
 - 17 août 2026 — `/hq/salons/[tenantId]` : drill conseillers (lecture, pas de payout directeur).
 - 17 août 2026 — `/hq/salons/[tenantId]` + `GET /api/hq/tenants/[id]` (fiche micro).
 - 17 août 2026 — `POST /api/hq/tenants/[id]/payout` + liste salons (RPC P14).
 - 17 août 2026 — `GET /api/hq/overview` : KPI réseau macro (allowlist + service_role).
-- 17 août 2026 — `/hq` : table `hq_allowlist` (P13), middleware + layout.
 
 Document canonique pour les **URLs**, les **trois pages de connexion** (famille, partenaire, HQ Odyssey), les **redirects legacy**, et le **branding Salon** (gant blanc). Source de vérité code : `src/lib/appRoutes.ts`.
 
@@ -30,7 +30,7 @@ Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes /
 | **HQ Odyssey** | `/[lang]/hq` | Oui + allowlist | Tour de contrôle (macro + liste salons) |
 | **HQ salon** | `/[lang]/hq/salons/[tenantId]` | Oui + allowlist | Fiche micro (miroir commissions + drill conseillers) |
 | **HQ connexion** | `/[lang]/hq/connexion` | Non | Login opérateurs **sans** inscription |
-| **Marketing partenaires** | `/[lang]/partners` ou `/partenaires` | Non | Formulaire « devenir partenaire » (≠ Salon) |
+| **Marketing partenaires** | `/[lang]/partners` ou `/partenaires` | Non | Formulaire « devenir partenaire » → `POST /api/partners/lead` |
 | **Acceptation invitation** | `/[lang]/invite/accept?token=…` | Oui (redir. studio connexion) | Magic link famille → projet B2B2C |
 | **Bienvenue hommage** | `/[lang]/tribute/welcome?projectId=…` | Oui | Wizard seedé après invitation |
 | **Auth callback** | `/auth/callback?next=…` | — | Échange code Supabase (signup / magic link) |
@@ -97,7 +97,7 @@ Canon : [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md).
 
 **Ne pas confondre :**
 - **`/salon`** = espace connecté funérarium (B2B2C opérationnel).
-- **`/partners`** = page marketing acquisition partenaires.
+- **`/partners`** = page marketing acquisition partenaires (`POST /api/partners/lead`).
 
 ---
 
@@ -193,6 +193,8 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 
 **API HQ (session + allowlist) :** `GET /api/hq/overview` · `GET /api/hq/tenants` · `GET /api/hq/tenants/[id]` · `POST /api/hq/tenants/[id]/payout`.
 
+**API marketing (public) :** `POST /api/partners/lead` (honeypot + rate limit e-mail · table `partner_leads` · Resend HQ).
+
 ---
 
 ## Auth callback (`/auth/callback`)
@@ -248,6 +250,8 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | `app/api/partner/my-performance/route.ts` | Scoreboard conseiller (`invited_by_user_id`) |
 | `app/api/partner/invitations/route.ts` | Création invitation + magic link |
 | `app/api/partner/invitations/[id]/follow-up/route.ts` | Relance e-mail (1×, régénère le magic link) |
+| `app/api/partners/lead/route.ts` | Lead formulaire `/partners` (alerte HQ) |
+| `docs/sql/odyssey_p15_partner_leads.sql` | Table `partner_leads` (P15) |
 | `docs/DESIGN_SYSTEM.md` | Palette, hiérarchie, co-branding, **signature Halo-Éclipse** (§4.1), animations |
 
 ---

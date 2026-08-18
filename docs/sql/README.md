@@ -23,6 +23,8 @@
 >
 > **P14.2 (HQ tabs verticales) :** [`odyssey_p14_2_hq_tenants_vertical.sql`](odyssey_p14_2_hq_tenants_vertical.sql) — même RPC + colonne `vertical`. **À jouer** pour les tabs Humains / Animaux (C.1). DROP + CREATE (changement de signature).
 >
+> **P15 (leads `/partners`) :** [`odyssey_p15_partner_leads.sql`](odyssey_p15_partner_leads.sql) — table `partner_leads`. **À jouer** pour que le formulaire marketing stocke le lead (sinon 500 `table_not_deployed`). Alerte Resend = env `ODYSSEY_HQ_LEAD_EMAIL`.
+>
 > **P6 appliqué :** `legendary`, `is_freemium`, commission ledger.  
 > **P7 :** trigger quota — mis à jour par P8 (`intendedPackage`).  
 > **Migrations P4 wallets** = historique de schéma (rejouées puis droppées par P8) — **ne plus seed « 100 jetons »**.
@@ -65,6 +67,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | 24 | `odyssey_p11_wizard_editor_collab.sql` | **Migration** | **Co-Créateur Wizard** — purpose `wizard_editor` + 1 lien actif / projet — voir [`WIZARD_EDITOR_COLLAB.md`](../WIZARD_EDITOR_COLLAB.md) |
 | 25 | `odyssey_p12_scan_sessions_ensure.sql` | **Filet** | **Scanner Phase A** — `CREATE TABLE IF NOT EXISTS scan_sessions` si P6 B5 absent |
 | 26 | `odyssey_p13_hq_allowlist.sql` | **Migration** | **HQ** — `hq_allowlist` opérateurs plateforme (RLS own-row) |
+| 27 | `odyssey_p15_partner_leads.sql` | **Migration** | **HQ D** — leads formulaire `/partners` (service_role only) |
 | — | `odyssey_p6_1_waterfall_qa_assert.sql` | **QA** | Assert waterfall pur S1–S3 + clawback S5 (lecture seule). |
 | — | `odyssey_p6_qa_revshare_accrual.sql` | **QA** | Accrual RevShare E2E (solde +30 % net · idempotence · 0 jeton) — transactionnel ROLLBACK. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |

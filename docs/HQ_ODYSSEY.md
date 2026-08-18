@@ -1,14 +1,14 @@
 # Odyssey — Tour de contrôle HQ
 
 **Type :** canon · **Vérité pour :** auth `/hq`, vues réseau / tenant, payout ops.  
-**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — Slice D : formulaire `/partners` + table `partner_leads` (P15) + alerte Resend HQ.
 - 17 août 2026 — C.3 : drill conseillers sur `/hq/salons/[id]` (`aggregateMyPerformance`).
 - 17 août 2026 — C.2 : fiche `/hq/salons/[tenantId]` (miroir commissions + payout).
 - 17 août 2026 — C.1 : tabs verticales (`human` / `pet`).
 - 17 août 2026 — Slice C : liste salons + payout RPC P14.
-- 17 août 2026 — Slice B : KPI réseau macro (`GET /api/hq/overview`).
 
 Complète [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) (waterfall, ledger, payout) · [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) · [`COMMUNICATIONS_MVP.md`](COMMUNICATIONS_MVP.md).  
 **Ne pas** traiter HQ comme un 3ᵉ rôle salon. Rôles tenant inchangés : `partner` (directeur) · `partner_admin` (DG salon).
@@ -220,11 +220,13 @@ Hors slice : drill directeur (C.3).
 
 Hors slice : formulaire `/partners` (Slice D).
 
-### Slice D — Formulaire `/partners`
+### Slice D — Formulaire `/partners` ✅
 
 **Done when :** le formulaire marketing **envoie** (plus `noValidate` mort). Lead stocké (table simple ou e-mail seul). Courriel interne HQ selon [`COMMUNICATIONS_MVP.md`](COMMUNICATIONS_MVP.md) § lead. Pas de création auto de tenant.
 
-Hors slice : CRM, onboarding Salon automatique.
+**Livré :** `POST /api/partners/lead` · SQL P15 `partner_leads` · `PartnersLeadForm` · alerte Resend (`ODYSSEY_HQ_LEAD_EMAIL`). Honeypot + 3 envois / 15 min / e-mail.
+
+Hors slice : CRM, onboarding Salon automatique, accusé auto vers le salon.
 
 ---
 
@@ -253,6 +255,11 @@ Hors slice : CRM, onboarding Salon automatique.
 | `tests/business/hq-directors.test.ts` | C.3 |
 | `app/api/hq/tenants/[id]/route.ts` | C.2 |
 | `app/api/partners/lead/route.ts` | D |
+| `docs/sql/odyssey_p15_partner_leads.sql` | D |
+| `src/lib/partners/partnerLead.ts` | D |
+| `src/lib/email/sendPartnerLeadEmail.ts` | D |
+| `app/[lang]/partners/PartnersLeadForm.tsx` | D |
+| `tests/business/partner-lead.test.ts` | D |
 
 Noms anglais dans le code. Copy HQ FR/EN dans les dictionnaires.
 

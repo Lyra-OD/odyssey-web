@@ -1,9 +1,10 @@
 # Odyssey — Communications MVP
 
 **Type :** canon · **Vérité pour :** copy FR/EN du pilote (courriels + texte directeur).  
-**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 18 août 2026 — lead `/partners` : alerte Resend HQ livrée (Slice D, SQL P15).
 - 17 août 2026 — toutes les pièces MVP rédigées FR + EN (gant blanc).
 - 17 août 2026 — inventaire MVP figé (relance, Stripe, Auth, lead `/partners`, texte directeur, checklist Resend).
 
@@ -225,7 +226,7 @@ If this was not meant for you, just let us know.
 
 ## 4. Lead `/partners` → HQ (interne)
 
-Formulaire aujourd’hui mort. Slice D. Pas un mail famille. Accusé auto vers le salon : **hors MVP**.
+Formulaire **livré** (Slice D). `POST /api/partners/lead` → table `partner_leads` (P15) + Resend vers `ODYSSEY_HQ_LEAD_EMAIL`. Pas un mail famille. Accusé auto vers le salon : **hors MVP**.
 
 ### Français
 
@@ -319,7 +320,7 @@ Le **salon** signe. Pas de logo Odyssey en héros.
 
 ## 7. Checklist d’envoi (production)
 
-Sans Resend, **Envoyer le rappel** → 503 `email_not_configured`.
+Sans Resend, **Envoyer le rappel** → 503 `email_not_configured`. Idem lead `/partners` si `ODYSSEY_HQ_LEAD_EMAIL` manque.
 
 | Étape | Où |
 |-------|-----|
@@ -327,11 +328,13 @@ Sans Resend, **Envoyer le rappel** → 503 `email_not_configured`.
 | Domaine vérifié | DNS SPF + DKIM |
 | `RESEND_API_KEY` | `.env.local` **et** Vercel (serveur) |
 | `RESEND_FROM_EMAIL` | `Nom <bonjour@domaine-vérifié>` — pas `@gmail` |
+| `ODYSSEY_HQ_LEAD_EMAIL` | Destinataire(s) alerte lead `/partners` (virgules OK) |
 | Redeploy | Après les env |
 | Test sans domaine | Resend → seulement l’e-mail du compte Resend |
 | Invitation test | `pending` + créée il y a ≥ 4 jours |
 | Clic | `/salon/mes-performances` → inbox FR **et** EN (selon `locale`) |
 | Lien | `/invite/accept?token=` |
+| Lead test | `/fr/partners` → inbox HQ · SQL `partner_leads` |
 | Stripe | Branding + receipts ON |
 | Supabase | Coller §3 FR ou EN selon le projet (ou deux templates si un jour i18n Auth) |
 
@@ -346,5 +349,5 @@ Hub env : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 | Relance §1 | Oui | `partnerFollowUpCopy.ts` — **même texte** |
 | Reçu §2 | Pied de page seulement | Stripe Dashboard |
 | Auth §3 | Oui | Supabase Email Templates |
-| Lead §4 | Oui | Slice D |
+| Lead §4 | Oui | `partnerLead.ts` · `sendPartnerLeadEmail.ts` |
 | Directeur §5 | Oui | Copier-coller (légende UI plus tard, optionnel) |
