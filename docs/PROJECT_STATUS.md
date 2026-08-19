@@ -4,11 +4,11 @@
 **Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — S5-L : copy Étape 5 « Le film de sa vie » (FR/EN).
 - 19 août 2026 — CI GitHub : `npm test` (Vitest business) sur `main` et chaque PR.
 - 18 août 2026 — Funnel B2B2C QA : replay webhook → checkout `completed` / commission `accrued` · P17 `project_status.submitted`.
 - 18 août 2026 — P0-02 : webhook Stripe `charge.refunded` (clawback ledger + révocation export).
 - 18 août 2026 — HQ Slice D : formulaire `/partners` + alerte Resend (SQL P15).
-- 17 août 2026 — HQ C.3 : drill directeurs sur `/hq/salons/[id]` (Mes performances, lecture).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -29,7 +29,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Export Creatomate** | 🟡 P0 / master ⏳ | **P0 livré** (gate, P9/P9.1, `src/lib/creatomate/`, drain, webhook fail-closed). **Pas** « documented only ». Master Stingray / rendu cinéma ⏳ |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
 | **UX mobile** | 🟡 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 |
-| **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · S5-J/K/L ⏳ |
+| **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L** copy ✅ · S5-J/K ⏳ |
 | **Scanner** | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Marque Éclipse** | 🟢 | Play A–B KEEP · mark + exports · brancher UI ⚪ · wormhole = lab |
 | **Tests & CI** | 🟢 | Vitest business 🟢 · CI GitHub `npm test` sur `main` + PR |

@@ -1,9 +1,10 @@
 # Étape 5 — Le Livre Ouvert (Table de Montage)
 
-**Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. Polish S5-J/K/L ⏳.  
-**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L copy ✅ · S5-J/K ⏳.  
+**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — S5-L : copy « Le film de sa vie » (plus de timeline / acte / banque / Gérer).
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — PR-1/2/3 livrés (`fdeb7da` → `41235e8`).
 
@@ -315,15 +316,14 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 
 **Fichiers probables :** `StoryboardChapterBlock.tsx`, état `focusChapterId` dans `StoryboardMontageStep`.
 
-### 10.3 Vocabulaire narratif (S5-L) — 🟡 partiel
+### 10.3 Vocabulaire narratif (S5-L) — ✅
 
-**Intention :** parler de mémoire, pas de logiciel.
+**Intention :** parler de mémoire, pas de logiciel. Titre vivant : **Le film de sa vie**.
 
 | Fait | Reste |
 |------|-------|
-| « Médias non assignés », « Composition Magique », « Gérer » | Namespace i18n dédié `storyboardMontage.*` |
-| Copy Étape 5 mise à jour | Purger références « acte » / « timeline » dans clés legacy |
-| | Passe FR/EN éditoriale Gant Blanc |
+| Titre / sous-titre, colonne, tiroir, vide, Composer | Clés techniques `acte1` (ne pas afficher) |
+| Purge UI « acte / timeline / banque / Gérer » | — |
 
 ### 10.4 Matière & toucher — 🟡 partiel
 
@@ -360,7 +360,7 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 |--------|---------|---------------|
 | **S5-J** | Audio chapitre pendant montage | 0,5–1 j |
 | **S5-K** | Mode Focus organique | 0,5–1 j |
-| **S5-L** | Copy narrative + polish matière | 0,5 j |
+| **S5-L** | Copy narrative + polish matière | ✅ copy 19 août 2026 |
 | **Tests** | Unitaires `storyboardMagicTimeline.ts` | 0,5 j |
 | **Cleanup** | Suppression fichiers orphelins `storyboard/` | 0,25 j |
 
