@@ -4,11 +4,11 @@
 **Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — CI GitHub : `npm test` (Vitest business) sur `main` et chaque PR.
 - 18 août 2026 — Funnel B2B2C QA : replay webhook → checkout `completed` / commission `accrued` · P17 `project_status.submitted`.
 - 18 août 2026 — P0-02 : webhook Stripe `charge.refunded` (clawback ledger + révocation export).
 - 18 août 2026 — HQ Slice D : formulaire `/partners` + alerte Resend (SQL P15).
 - 17 août 2026 — HQ C.3 : drill directeurs sur `/hq/salons/[id]` (Mes performances, lecture).
-- 17 août 2026 — HQ C.2 : fiche `/hq/salons/[tenantId]` (miroir commissions + payout).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -32,10 +32,10 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · S5-J/K/L ⏳ |
 | **Scanner** | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Marque Éclipse** | 🟢 | Play A–B KEEP · mark + exports · brancher UI ⚪ · wormhole = lab |
-| **Tests & CI** | 🟡 | Vitest business 🟢 · CI GitHub ⏳ |
+| **Tests & CI** | 🟢 | Vitest business 🟢 · CI GitHub `npm test` sur `main` + PR |
 | **Security** | 🟡 | RLS, gate Salon, entitlements never-trust, webhook Creatomate fail-closed |
 
-**Suite :** ops P16 + Stripe listen · CI GitHub · master Stingray · pilote 1 tenant flag ON.
+**Suite :** ops P16 (quand Supabase dégelé) · master Stingray · pilote 1 tenant flag ON.
 
 ---
 
@@ -70,10 +70,9 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 | Priorité | Quoi | Done when |
 |----------|------|-----------|
-| **Ops demain** | Jouer **P16** (RLS invitations) si pas encore en SQL Editor · confirmer P13–P15 | Policies salon scope conseiller |
-| **Ops demain** | Stripe CLI `stripe login` + `stripe listen` local · activer `charge.refunded` endpoint prod | Webhook local sans script replay |
-| **Ops demain** | Factu Supabase (bandeau *Grace period is over*) | Quota / billing OK |
-| A | Phase 6 : CI `npm test` sur PR | Pipeline vert |
+| **Ops** | Jouer **P16** (RLS invitations) quand Supabase n’est plus *restricted* | Policies salon scope conseiller |
+| **Ops** | Stripe CLI `stripe login` + `stripe listen` local · activer `charge.refunded` endpoint prod | Webhook local sans script replay |
+| **Ops** | Factu / quota egress Supabase | Projet peut servir des requêtes |
 | A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |
 | B | Flag `viral_loop_enabled` sur **1 tenant** démo/pilote | Fonds visible en démo — [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md) |
 | C | Rails UX | Mobile M0 · S5-J/K/L · Scanner job IA serveur |
