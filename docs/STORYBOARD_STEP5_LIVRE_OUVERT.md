@@ -269,7 +269,7 @@ Namespace principal : `dictionaries/fr.json` / `en.json` — clés `montage*`, `
 | `mediaBankMagicComposition` | Bouton banque |
 | `montageMagicToast` | Toast fin de séquence (si branché) |
 
-**Dette copy :** certaines clés legacy (`montageActSparkLabel`, `montageUnassignedHint` « acte ») subsistent pour Preview / compat — passe linguistique narrative prévue (S5-L).
+**Dette copy :** clés internes `acte1` / `unassignedIds` restent techniques — ne plus les afficher.
 
 ---
 

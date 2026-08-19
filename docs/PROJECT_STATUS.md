@@ -4,7 +4,7 @@
 **Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 19 août 2026 — S5-L : copy Étape 5 « Le film de sa vie » (FR/EN).
+- 19 août 2026 — S5-L étendu : wizard + hero, même voix « film / souvenirs » (FR/EN).
 - 19 août 2026 — CI GitHub : `npm test` (Vitest business) sur `main` et chaque PR.
 - 18 août 2026 — Funnel B2B2C QA : replay webhook → checkout `completed` / commission `accrued` · P17 `project_status.submitted`.
 - 18 août 2026 — P0-02 : webhook Stripe `charge.refunded` (clawback ledger + révocation export).

@@ -4,7 +4,7 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
-- 17 août 2026 — index HQ + communications MVP.
+- 19 août 2026 — copy écran : `COPY.md` + catalogue généré.
 - 17 août 2026 — étape 6 : règle Cursor code+doc même commit. Étape 5 (dossiers) **sautée**.
 - 17 août 2026 — étape 4 : snapshots figés ; grilles hors FREEMIUM/DELIVERABLES → lien canon.
 - 17 août 2026 — étape 3 : STATUS vivant / log archive ; 4 contradictions corrigées dans le vivant.
@@ -97,6 +97,8 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 | [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) | canon | Hub onboarding (porte développeur) |
 | [`CONVENTIONS.md`](CONVENTIONS.md) | canon | Règles repo + hiérarchie lecture |
 | [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) | canon | Wizard **7** étapes |
+| [`COPY.md`](COPY.md) | canon | Copy écran · source = `dictionaries/*.json` |
+| [`COPY_CATALOG.md`](COPY_CATALOG.md) | living | Liste FR/EN générée — **ne pas éditer à la main** |
 | [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) | canon | Étape 5 + Composition Magique |
 | [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) | canon | Modèle chapitres / chansons |
 | [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) | canon | Proxy musique |

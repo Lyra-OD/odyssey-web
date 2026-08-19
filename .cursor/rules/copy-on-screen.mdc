@@ -1,0 +1,31 @@
+---
+description: Tout texte visible à l’écran = dictionaries FR+EN + régénérer COPY_CATALOG, même commit.
+alwaysApply: true
+---
+
+# Copy à l’écran
+
+**Source unique :** `dictionaries/fr.json` + `dictionaries/en.json`.  
+**Vue :** `docs/COPY_CATALOG.md` (générée). Canon : `docs/COPY.md`.
+
+## Obligatoire (même commit)
+
+1. Ajouter / modifier la clé **FR et EN**.
+2. L’UI lit le dictionnaire (`copy.*` / `dictionary.*`) — **pas** de phrase utilisateur en dur dans un `.tsx`.
+3. Régénérer : `node scripts/export-copy-catalog.mjs`
+
+## Voix famille
+
+Souvenirs, film, chapitre, Coffre. Pas timeline / acte / banque / dropzone / Checkout / jetons.
+
+## OK hors dictionnaire
+
+Logs serveur, erreurs ops, SQL, IDs (`acte1`). Si l’humain le lit à l’écran → dictionnaire.
+
+```tsx
+// ❌
+<button>Gérer</button>
+
+// ✅
+<button>{copy.montageChapterManage}</button>
+```
