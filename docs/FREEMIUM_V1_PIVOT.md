@@ -1,9 +1,10 @@
 # Odyssey — Pivot Freemium V1 (canon CEO)
 
 **Type :** canon · **Vérité pour :** grille, Soft Cap, musique, phases Freemium. Corriger ici, pas dans les snapshots.  
-**Dernière MAJ :** 17 août 2026 (en-tête) · 28 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 19 août 2026 (en-tête) · 28 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — GTM B2C (brouillon → paywall, pas ads) : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 - 17 août 2026 — en-tête type + carte.
 - 28 juillet 2026 — vision figée · Phases 0–5 ✅ (Creatomate P0) · 3a UI ✅ · Collab A–C ✅ · Phase 6 QA ⏳.
 
@@ -12,7 +13,7 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 **Onboarding :** [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · **Porte repo :** [`../README.md`](../README.md).
 
 **Docs filles alignées (Phase 0) :**
-[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) · [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md).
+[`DELIVERABLES_AND_PACKAGES.md`](DELIVERABLES_AND_PACKAGES.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) · [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · GTM direct [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 
 **Specs liées :** [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 

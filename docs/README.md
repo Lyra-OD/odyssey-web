@@ -4,11 +4,11 @@
 **Dernière MAJ :** 19 août 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 19 août 2026 — GTM B2C + plan session : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 - 19 août 2026 — DA Vague 1 : [`DA_SCREENS.md`](DA_SCREENS.md) (frames Figma ↔ URLs).
 - 19 août 2026 — copy écran : `COPY.md` + catalogue généré.
 - 17 août 2026 — étape 6 : règle Cursor code+doc même commit. Étape 5 (dossiers) **sautée**.
 - 17 août 2026 — étape 4 : snapshots figés ; grilles hors FREEMIUM/DELIVERABLES → lien canon.
-- 17 août 2026 — étape 3 : STATUS vivant / log archive ; 4 contradictions corrigées dans le vivant.
 
 Hiérarchie développeur (ordre de lecture code) : [`CONVENTIONS.md`](CONVENTIONS.md).  
 Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
@@ -125,6 +125,7 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 | Fichier | Type | Vérité pour |
 |---------|------|-------------|
 | [`MEETING_PATRICE_VP.md`](MEETING_PATRICE_VP.md) | playbook | Rencontre VP 60 min. Chiffres = modèle V2. Lyra orale ≠ Manifesto |
+| [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) | playbook | Canal direct : GTM, viabilité, session Figma + B2C |
 | [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) | snapshot | Projections juil. 2026 (1 salon). **Figé** — grille live = FREEMIUM §2 |
 | [`PARTNER_BRIEF_JON_JUL2026.md`](PARTNER_BRIEF_JON_JUL2026.md) | snapshot | Brief Jon, figé 31 juil. — ne pas copier la grille |
 | [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md) | snapshot | Rapport partenaire, figé 24 juil. |

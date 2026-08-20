@@ -1,9 +1,10 @@
 # Odyssey — Plan d'implémentation : Boucle Virale / Fonds Commémoratif (Cascade V-Final)
 
 **Type :** canon · **Vérité pour :** cascade 3a / boucle / fonds. Flag `viral_loop_enabled`.  
-**Dernière MAJ :** 17 août 2026 (en-tête) · 22 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 19 août 2026 (en-tête) · 22 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — GTM canal direct (pas ads) : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 - 17 août 2026 — étape 4 : grille famille → FREEMIUM §2 (empreintes invité restent ici).
 - 17 août 2026 — en-tête type + carte.
 - juil. 2026 — Phase 1–2 ✅ · 3a UI ✅ (flag OFF défaut) · 3b live ⏳.
@@ -17,7 +18,7 @@ invités). Prime sur les intentions Phase 2 de [`VISION_PHASE_2.md`](VISION_PHAS
 lorsqu'il y a conflit. Aligné canon [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
 
 Docs liés : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) ·
-[`sql/README.md`](sql/README.md) · [`MONETIZATION_CATALOG.md`](MONETIZATION_CATALOG.md).
+[`sql/README.md`](sql/README.md) · [`MONETIZATION_CATALOG.md`](MONETIZATION_CATALOG.md) · GTM B2C [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 
 ---
 

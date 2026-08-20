@@ -1,9 +1,10 @@
 # Odyssey — Rencontre Patrice (VP groupe funéraire)
 
 **Type :** playbook · **Vérité pour :** script 60 min. Chiffres = modèle V2. Lyra orale ≠ Manifesto.  
-**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — GTM B2C + valorisation : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) (pas ce playbook).
 - 17 août 2026 — étape 4 : grille live = FREEMIUM §2 (chiffres ici = modèle V2).
 - 17 août 2026 — en-tête type ; lien Manifesto (ampleur, pas à l’oral).
 - août 2026 — playbook prêt · courriel envoyé.
@@ -12,7 +13,7 @@
 **Durée :** 60 minutes  
 **Auteur :** Erik  
 **Statut :** prêt à jouer · courriel déjà envoyé (août 2026)  
-**Complète :** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`VISION_PHASE_2.md`](VISION_PHASE_2.md)
+**Complète :** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`VISION_PHASE_2.md`](VISION_PHASE_2.md) · canal direct [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 
 > Les montants ci-dessous sont des **hypothèses de modèle** (Business Case V2, 1 salon × 3 000 familles / an), pas du revenu encaissé. Les dire comme ça. Grille famille live : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 — pas ce playbook.
 >

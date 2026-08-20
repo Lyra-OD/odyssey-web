@@ -4,6 +4,7 @@
 **Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — Session Figma + B2C : ordre du jour [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) §1.
 - 19 août 2026 — Réf. Paul `Odysee Rev-2.pdf` : mapping 8→7 étapes, layout seulement.
 - 19 août 2026 — Vague 1 : 18 frames famille + variantes. Figma = wire ; copy = catalogue.
 
@@ -146,6 +147,8 @@ Ne pas ouvrir ces frames tant que Vague 1 n’est pas signée.
 6. Reste wizard (09, 10, 12, 14) + marketing (02–05) + watch (18).
 
 Code : on n’implémente **que** les frames signées, dans cet ordre-là.
+
+Session Figma + audit B2C (même jour) : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) §1.
 
 ---
 

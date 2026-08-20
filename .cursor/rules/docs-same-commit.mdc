@@ -22,6 +22,7 @@ Carte : `docs/README.md`. Hiérarchie : `docs/CONVENTIONS.md`.
 | Craft eclipse / wormhole / ciel | la doc `docs/ODYSSEY_*_CRAFT.md` du lab |
 | Milestone livré | `docs/PROJECT_STATUS.md` (vivant, court). Histoire longue → `_archive/PROJECT_STATUS_LOG.md` seulement si on archive |
 | Surfaces / frames DA | `docs/DA_SCREENS.md` (Vague 1 Figma ↔ URLs) |
+| GTM / canal B2C (sans changer la grille) | `docs/B2C_GO_TO_MARKET.md` |
 | **Copy écran** (nouveau texte UI) | `dictionaries/fr.json` + `en.json` · `node scripts/export-copy-catalog.mjs` → `docs/COPY_CATALOG.md` · canon [`COPY.md`](COPY.md) |
 
 Nouveau fichier `docs/*.md` → une ligne dans `docs/README.md`.

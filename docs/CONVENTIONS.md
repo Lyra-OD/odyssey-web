@@ -4,6 +4,7 @@
 **Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — GTM B2C : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) dans la hiérarchie lecture.
 - 19 août 2026 — DA Vague 1 : [`DA_SCREENS.md`](DA_SCREENS.md) dans la hiérarchie lecture.
 - 17 août 2026 — STATUS vivant vs log ; rituel Cursor code+doc (même commit, pas de hook).
 - 17 août 2026 — en-tête type ; Freemium **Phases 0–5 ✅**, Phase 6 QA ⏳ (plus « 0–4 »).
@@ -52,7 +53,7 @@ Carte (types, « ne pas copier ») : [`README.md`](README.md). Chemins inchangé
 8. [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) · [`DA_SCREENS.md`](DA_SCREENS.md) · [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) · [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md).
 9. [`sql/README.md`](sql/README.md) — migrations **P0→P11**.
 10. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) — living status. Journal : [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
-11. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce Soft Cap / RevShare.
+11. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce Soft Cap / RevShare. GTM canal direct : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 12. [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — Killer App mobile.
 13. [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) · [`MONETIZATION_CATALOG.md`](MONETIZATION_CATALOG.md).
 14. [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md) · [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) — rapport partenaire + projections.
