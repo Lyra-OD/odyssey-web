@@ -1,18 +1,19 @@
 # Odyssey — Routes applicatives & authentification
 
 **Type :** canon · **Vérité pour :** URLs, connexions Studio/Salon, `appRoutes.ts`.  
-**Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — inventaire DA Vague 1 : [`DA_SCREENS.md`](DA_SCREENS.md) (une frame = une URL).
 - 18 août 2026 — `POST /api/partners/lead` (formulaire marketing, alerte HQ).
 - 17 août 2026 — `/hq/salons/[tenantId]` : drill conseillers (lecture, pas de payout directeur).
 - 17 août 2026 — `/hq/salons/[tenantId]` + `GET /api/hq/tenants/[id]` (fiche micro).
 - 17 août 2026 — `POST /api/hq/tenants/[id]/payout` + liste salons (RPC P14).
-- 17 août 2026 — `GET /api/hq/overview` : KPI réseau macro (allowlist + service_role).
 
 Document canonique pour les **URLs**, les **trois pages de connexion** (famille, partenaire, HQ Odyssey), les **redirects legacy**, et le **branding Salon** (gant blanc). Source de vérité code : `src/lib/appRoutes.ts`.
 
-Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes / env et [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).
+Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes / env et [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).  
+Frames DA (une frame = une URL) : [`DA_SCREENS.md`](DA_SCREENS.md).
 
 ---
 

@@ -1,14 +1,14 @@
 # Carte documentation Odyssey
 
 **Type :** living · **Vérité pour :** index des docs, types, « ne pas copier ».  
-**Dernière MAJ :** 17 août 2026 · **Carte :** ce fichier.
+**Dernière MAJ :** 19 août 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 19 août 2026 — DA Vague 1 : [`DA_SCREENS.md`](DA_SCREENS.md) (frames Figma ↔ URLs).
 - 19 août 2026 — copy écran : `COPY.md` + catalogue généré.
 - 17 août 2026 — étape 6 : règle Cursor code+doc même commit. Étape 5 (dossiers) **sautée**.
 - 17 août 2026 — étape 4 : snapshots figés ; grilles hors FREEMIUM/DELIVERABLES → lien canon.
 - 17 août 2026 — étape 3 : STATUS vivant / log archive ; 4 contradictions corrigées dans le vivant.
-- 17 août 2026 — étape 2 : modèle d’en-tête sur les docs utiles (pas le Manifesto).
 
 Hiérarchie développeur (ordre de lecture code) : [`CONVENTIONS.md`](CONVENTIONS.md).  
 Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
@@ -106,6 +106,7 @@ Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).
 | [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) | canon | Tour de contrôle `/hq` (allowlist, macro/micro, payout) |
 | [`COMMUNICATIONS_MVP.md`](COMMUNICATIONS_MVP.md) | canon | Copy + courriels pilote (Relance, Stripe, Auth, lead) |
 | [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) | canon | Palette, Halo-Éclipse |
+| [`DA_SCREENS.md`](DA_SCREENS.md) | playbook | Frames Figma Vague 1 ↔ URLs (famille) |
 | [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md) | canon | Collab éditeur |
 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) | canon | UX mobile M0–M6 |
 | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) | canon | Spec scanner (Phase A+B aperçu `aiRetouch` 🟡 · job IA ⏳) |

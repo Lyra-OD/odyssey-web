@@ -1,9 +1,10 @@
 # Odyssey Frontend — Conventions
 
 **Type :** canon · **Vérité pour :** règles repo, hiérarchie docs, langue code.  
-**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — DA Vague 1 : [`DA_SCREENS.md`](DA_SCREENS.md) dans la hiérarchie lecture.
 - 17 août 2026 — STATUS vivant vs log ; rituel Cursor code+doc (même commit, pas de hook).
 - 17 août 2026 — en-tête type ; Freemium **Phases 0–5 ✅**, Phase 6 QA ⏳ (plus « 0–4 »).
 - juillet 2026 — Freemium V1 (purge jetons, Soft Cap).
@@ -48,7 +49,7 @@ Carte (types, « ne pas copier ») : [`README.md`](README.md). Chemins inchangé
 5c. [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md) · [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md).
 6. [`STINGRAY_MUSIC_INTEGRATION.md`](STINGRAY_MUSIC_INTEGRATION.md) — proxy musique.
 7. [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) — positionnement Quiet Luxury.
-8. [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) · [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) · [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md).
+8. [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) · [`DA_SCREENS.md`](DA_SCREENS.md) · [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md) · [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md).
 9. [`sql/README.md`](sql/README.md) — migrations **P0→P11**.
 10. [`PROJECT_STATUS.md`](PROJECT_STATUS.md) — living status. Journal : [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 11. [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) — commerce Soft Cap / RevShare.

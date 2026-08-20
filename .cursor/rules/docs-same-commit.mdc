@@ -21,6 +21,7 @@ Carte : `docs/README.md`. Hiérarchie : `docs/CONVENTIONS.md`.
 | Boucle / Fonds / flag viral | `docs/IMPLEMENTATION_CASCADE_VFINAL.md` · STATUS vivant |
 | Craft eclipse / wormhole / ciel | la doc `docs/ODYSSEY_*_CRAFT.md` du lab |
 | Milestone livré | `docs/PROJECT_STATUS.md` (vivant, court). Histoire longue → `_archive/PROJECT_STATUS_LOG.md` seulement si on archive |
+| Surfaces / frames DA | `docs/DA_SCREENS.md` (Vague 1 Figma ↔ URLs) |
 | **Copy écran** (nouveau texte UI) | `dictionaries/fr.json` + `en.json` · `node scripts/export-copy-catalog.mjs` → `docs/COPY_CATALOG.md` · canon [`COPY.md`](COPY.md) |
 
 Nouveau fichier `docs/*.md` → une ligne dans `docs/README.md`.

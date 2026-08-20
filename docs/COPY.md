@@ -4,6 +4,7 @@
 **Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — DA colle le catalogue dans Figma ; vérité = JSON ([`DA_SCREENS.md`](DA_SCREENS.md)).
 - 19 août 2026 — source de vérité = `dictionaries/*.json` · catalogue généré · règle Cursor.
 
 ## Opinion (à garder)
@@ -19,6 +20,8 @@ node scripts/export-copy-catalog.mjs
 ```
 
 Ajuster un texte = ouvrir le JSON (les deux langues), puis relancer le script. Même commit.
+
+Figma Vague 1 : coller le FR du catalogue, noter la **clé** en commentaire de frame. Un écart copy = ticket JSON, pas une vérité calque. Inventaire : [`DA_SCREENS.md`](DA_SCREENS.md).
 
 ## Surfaces
 

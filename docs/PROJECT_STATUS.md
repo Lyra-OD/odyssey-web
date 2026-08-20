@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — DA : playbook Vague 1 (18 frames Figma ↔ URLs) — [`DA_SCREENS.md`](DA_SCREENS.md).
 - 19 août 2026 — S5-L étendu : wizard + hero, même voix « film / souvenirs » (FR/EN).
 - 19 août 2026 — CI GitHub : `npm test` (Vitest business) sur `main` et chaque PR.
 - 18 août 2026 — Funnel B2B2C QA : replay webhook → checkout `completed` / commission `accrued` · P17 `project_status.submitted`.
 - 18 août 2026 — P0-02 : webhook Stripe `charge.refunded` (clawback ledger + révocation export).
-- 18 août 2026 — HQ Slice D : formulaire `/partners` + alerte Resend (SQL P15).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -75,7 +75,8 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Ops** | Factu / quota egress Supabase | Projet peut servir des requêtes |
 | A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |
 | B | Flag `viral_loop_enabled` sur **1 tenant** démo/pilote | Fonds visible en démo — [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md) |
-| C | Rails UX | Mobile M0 · S5-J/K/L · Scanner job IA serveur |
+| C | Rails UX | Mobile M0 · S5-J/K · Scanner job IA serveur |
+| **DA** | Vague 1 Figma ([`DA_SCREENS.md`](DA_SCREENS.md)) — Coffre / Film / Checkout / Sanctuaire / Scanner | Frames signées → code |
 | — | Labs wormhole / eclipse | Internes — jamais une démo VP |
 
 **Ne plus faire :** débit jetons, wholesale 40 $, coexistence `is_freemium=false`, saga checkout « v1 jetons ».
