@@ -4,6 +4,7 @@
 **Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 août 2026 — Réf. Paul `Odysee Rev-2.pdf` : mapping 8→7 étapes, layout seulement.
 - 19 août 2026 — Vague 1 : 18 frames famille + variantes. Figma = wire ; copy = catalogue.
 
 Méthode validée : **un fichier Figma**, **une frame = une URL** (ou une étape du wizard sur la même URL). Wire gris + typo + **copy du catalogue**. Le DA itère dans Figma ; le code reprend la frame **signée**. La copy ne se réécrit pas dans Figma comme vérité.
@@ -42,6 +43,7 @@ Pages (pas de pages « Archive » dans Vague 1) :
 4. `03 — Studio (wizard)`
 5. `04 — Sanctuaire & Scanner`
 6. `05 — Composants`
+7. `Ref — Paul Rev-2` *(optionnel)* — PDF wire importé, **verrouillé**, lecture seule · voir §8
 
 **Nom de frame** = id ci-dessous. **Sous-titre / description Figma** = URL. Langue de travail des wires : **FR** (`/fr/…`). EN = même structure, pas une 2ᵉ Vague.
 
@@ -155,3 +157,48 @@ Code : on n’implémente **que** les frames signées, dans cet ordre-là.
 - [ ] Pas de *timeline / acte / banque / dropzone / Checkout / jetons* côté famille
 - [ ] 7 étapes, Scanner dans le Coffre, Extensions dans Finaliser
 - [ ] 1440 + 390 sur les 5 frames cœur
+
+---
+
+## 8. Référence Paul Rev-2 (PDF)
+
+Wire externe **« Odysee Rev-2 »** (9 pages, EN, stepper « STEP X OF 8 »). Bonne **inspiration layout** (titres, stepper haut, CTA bas, cartes, compteurs). **Pas** la spec produit Odyssey — le code et le catalogue ont divergé.
+
+### Usage Figma
+
+1. Importer le PDF sur la page `Ref — Paul Rev-2` (images par page ou PDF collé).
+2. **Verrouiller** le calque ref — ne pas designer dessus.
+3. À côté, créer les frames **§3** avec les **noms canon** et la **copy FR** du catalogue.
+4. Reprendre uniquement : hiérarchie visuelle, spacing, densité — pas les textes ni le flow 8 étapes.
+
+### Mapping PDF → frames canon
+
+| PDF Paul | Titre Paul (EN) | Frame Odyssey | Écart produit |
+|----------|-----------------|---------------|---------------|
+| p.1 | Step 1 — Begin Here | `studio-01-essentiels` | Copy FR catalogue, pas « Begin Here » |
+| p.2 | Step 2 — Import Media | `studio-02-cercle` | **Pas** Facebook/Instagram — invitations / Co-Créateur |
+| p.3 | Step 3 — The Vault | `studio-03-coffre` | « Vault » → **Coffre** · ajouter variante `scan-qr` |
+| p.4 | Step 4 — Edit Table | `studio-05-film` | Timeline/actes Paul → **Livre Ouvert** · ordre **après** musique |
+| p.5 | Step 5 — Sound Signature | `studio-04-musique` | Ordre inversé vs Paul · voix chapitre/chanson, pas « act » |
+| p.6 | Step 6 — Memory Extensions | `studio-07-finaliser` *(section)* | **Pas** une étape séparée — Extensions **dans** Finaliser |
+| p.7 | Step 7 — Preview | `studio-06-apercu` | |
+| p.8 | Step 8 — Review & Pay | `studio-07-finaliser` *(section)* | Paiement + forfaits même frame · Soft Cap variante `soft-cap` |
+| — | *(absent)* | `contribute` · `scan` · `watch` · marketing · auth | Hors scope du PDF |
+
+**Stepper Figma :** toujours **7** positions (Essentiels → Finaliser), jamais « STEP X OF 8 ».
+
+### Ne pas recopier du PDF
+
+| Sujet | PDF Paul | Vérité Odyssey |
+|-------|----------|----------------|
+| Étapes | 8 | **7** — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) |
+| Langue wires | EN | **FR** — [`COPY_CATALOG.md`](COPY_CATALOG.md) |
+| Voix | Vault, timeline, act, checkout… | Coffre, film, chapitre, souvenirs — [`COPY.md`](COPY.md) |
+| Prix / packs | $149 Legacy, Heritage Pack $266… | [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 — ne pas figer le PDF |
+| Import réseaux | Étape 2 entière | **Non livré** — Cercle à la place |
+| Scanner mobile | Absent | `studio-03-coffre / scan-qr` + frame `scan` |
+
+### Brief une phrase (Paul)
+
+> Rev-2 = moodboard layout. Spec = ce doc + catalogue FR. Une frame = une URL, 7 étapes wizard, commentaire `OK DA YYYY-MM-DD` quand prêt à coder.
+
