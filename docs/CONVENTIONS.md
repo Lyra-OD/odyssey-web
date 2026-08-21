@@ -1,14 +1,14 @@
 # Odyssey Frontend — Conventions
 
 **Type :** canon · **Vérité pour :** règles repo, hiérarchie docs, langue code.  
-**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 21 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 21 août 2026 — catégories docs + **nouveaux** fichiers dans `business/` `product/` `design/` `craft/` `vision/` / `TEMP/` (existants inchangés).
 - 19 août 2026 — GTM B2C : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) dans la hiérarchie lecture.
 - 19 août 2026 — DA Vague 1 : [`DA_SCREENS.md`](DA_SCREENS.md) dans la hiérarchie lecture.
 - 17 août 2026 — STATUS vivant vs log ; rituel Cursor code+doc (même commit, pas de hook).
 - 17 août 2026 — en-tête type ; Freemium **Phases 0–5 ✅**, Phase 6 QA ⏳ (plus « 0–4 »).
-- juillet 2026 — Freemium V1 (purge jetons, Soft Cap).
 
 ## Langue du code
 
@@ -38,7 +38,27 @@
 
 ## Documentation — hiérarchie (vivante)
 
-Carte (types, « ne pas copier ») : [`README.md`](README.md). Chemins inchangés.
+Carte (types, catégories, « ne pas copier ») : [`README.md`](README.md).  
+**Chemins des docs existants inchangés** (sauf `sql/`, `ops/`, `TEMP/`, `brand/`, `_archive/`).
+
+### Où créer un **nouveau** fichier docs
+
+| Catégorie | Dossier |
+|-----------|---------|
+| Rush / mail / notes session | [`TEMP/`](TEMP/README.md) |
+| Runbook / QA | [`ops/`](ops/) |
+| SQL | [`sql/`](sql/README.md) |
+| Business / GTM / brief partenaire **neuf** | [`business/`](business/README.md) |
+| Produit (wizard, Sanctuaire, Scanner) **neuf** | [`product/`](product/README.md) |
+| DA / copy process **neuf** | [`design/`](design/README.md) |
+| Lab craft **neuf** | [`craft/`](craft/README.md) |
+| Vision stratégique **neuve** | [`vision/`](vision/README.md) |
+| Portes (STATUS, conventions) | racine `docs/` |
+
+Ne pas déplacer FREEMIUM / COPY / DA_SCREENS / Manifesto dans ces dossiers sans stubs + décision CEO.  
+Détail + index : [`README.md`](README.md) § regroupement logique.
+
+### Ordre de lecture code (existants — chemins racine)
 
 0. [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) — **hub onboarding** (porte développeur).
 1. [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) — **canon CEO** : purge jetons, Soft Cap dual (`musicLicense` 39 $), grille Héritage **1080p** / Éternité+ **4K**. Specs : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) · [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md). Vision cinéma Phase 2 : [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md).

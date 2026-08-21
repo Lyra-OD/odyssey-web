@@ -1,9 +1,10 @@
 # Odyssey — Rencontre Patrice (VP groupe funéraire)
 
 **Type :** playbook · **Vérité pour :** script 60 min. Chiffres = modèle V2. Lyra orale ≠ Manifesto.  
-**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 21 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 21 août 2026 — rush démo Urgel (6 beats + Figma) : [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md).
 - 19 août 2026 — GTM B2C + valorisation : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) (pas ce playbook).
 - 17 août 2026 — étape 4 : grille live = FREEMIUM §2 (chiffres ici = modèle V2).
 - 17 août 2026 — en-tête type ; lien Manifesto (ampleur, pas à l’oral).

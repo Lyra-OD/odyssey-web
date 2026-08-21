@@ -4,11 +4,11 @@
 **Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 19 août 2026 — GTM B2C + plan session Figma : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
-- 19 août 2026 — DA : playbook Vague 1 (18 frames Figma ↔ URLs) — [`DA_SCREENS.md`](DA_SCREENS.md).
+- 21 août 2026 — carte docs : catégories business/product/design + dossiers pour **nouveaux** fichiers ([`README.md`](README.md)).
+- 21 août 2026 — GTM B2C + plan session Figma : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
+- 21 août 2026 — DA : playbook Vague 1 — [`DA_SCREENS.md`](DA_SCREENS.md).
 - 19 août 2026 — S5-L étendu : wizard + hero, même voix « film / souvenirs » (FR/EN).
 - 19 août 2026 — CI GitHub : `npm test` (Vitest business) sur `main` et chaque PR.
-- 18 août 2026 — Funnel B2B2C QA : replay webhook → checkout `completed` / commission `accrued` · P17 `project_status.submitted`.
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
