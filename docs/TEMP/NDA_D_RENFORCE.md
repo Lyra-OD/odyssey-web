@@ -1,23 +1,23 @@
-# VERSION B — NDA Freemium / RevShare
+# VERSION D — NDA renforcé (B + polish démo / clauses)
 
-**Type :** temp · **Version :** **B** · **Vérité pour :** entente + protection modèle $ (cible Patrice).  
+**Type :** temp · **Version :** **D** · **Vérité pour :** cible signature Patrice après revalidation avocat.  
 **Dernière MAJ :** 21 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 21 août 2026 — **Version B** = A + Freemium / Héritage-Éternité / RevShare + alinéa §5 modèles financiers.
+- 21 août 2026 — **Version D** = B − exclusion 3(e) · non-contournement précisé · démos/accès plateforme explicites · infos mémorisées · § PI allégé.
 
-> **Différence vs A :** §2 et §5 nomment Freemium, forfaits Héritage/Éternité, RevShare, et interdisent de les copier pour une offre similaire.  
-> **Statut :** revalidation avocat recommandée sur ces ajouts (pas la même que A « validée »).  
-> Remplir les **`[CROCHETS]`** avant signature.
+> **Différence vs B :** mêmes Freemium / Héritage-Éternité / RevShare ; clauses cœur durcies pour démo live et exécutabilité.  
+> **Statut :** revalidation avocat **obligatoire** (surtout non-contournement, durée 3 ans, non-utilisation concurrente).  
+> Remplir les **`[CROCHETS]`** avant signature.  
+> **Ops :** le NDA ne donne pas accès au code source — démo UI / compte limité seulement.
 
-**Guide A/B/C/D :** [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md).  
-> **Note :** pour envoi partenaire, préférer **[`NDA_D_RENFORCE.md`](NDA_D_RENFORCE.md)** (même modèle $ + clauses durcies).
+**Guide A/B/C/D :** [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md).
 
 ---
 
 # ENTENTE DE CONFIDENTIALITÉ, DE NON-UTILISATION ET DE NON-CONTOURNEMENT
 
-**(Version B — Freemium / RevShare)**
+**Version D – 21 août 2026**
 
 **ENTRE :**
 
@@ -52,7 +52,7 @@ Aux fins de la présente entente, les « **Informations Confidentielles** » com
 - les maquettes, designs, interfaces UI/UX, parcours utilisateurs et expériences numériques ;
 - les fonctionnalités actuelles ou futures d’Odyssey ;
 - les concepts, méthodes, processus et mécanismes propriétaires développés par Odyssey, notamment le « Coffre », le « Sanctuaire » et le « Film de sa vie » ;
-- toute marque de commerce ou nom commercial au sens de la *Loi sur les marques de commerce* (L.R.C., 1985, ch. T-13) ;
+- toute marque de commerce ou nom commercial d’Odyssey ;
 - le modèle d’affaires B2B2C, incluant spécifiquement la stratégie d’acquisition « Freemium » (forfait de base offert gratuitement aux partenaires) ;
 - la structure de tarification incitative auprès des familles (notamment l’entonnoir de conversion vers les forfaits payants tels que « Héritage » ou « Éternité ») ;
 - les mécanismes financiers et les pourcentages de partage de revenus (« RevShare ») prévus pour les partenaires B2B ;
@@ -61,6 +61,8 @@ Aux fins de la présente entente, les « **Informations Confidentielles** » com
 - les présentations, documents, prototypes, démonstrations et autres matériels remis ou présentés par la Partie Divulgatrice ;
 - toute information qui, compte tenu de sa nature ou des circonstances de sa divulgation, devrait raisonnablement être considérée comme confidentielle ;
 - ainsi que toute analyse, adaptation, synthèse ou dérivation réalisée à partir de ces informations.
+
+Les démonstrations, présentations, accès temporaires à la plateforme, comptes de démonstration, prototypes et fonctionnalités présentés à la Partie Réceptrice sont réputés constituer des Informations Confidentielles, qu’ils soient ou non accompagnés d’un document écrit.
 
 Les Informations Confidentielles peuvent être communiquées verbalement, visuellement, électroniquement, par écrit ou par tout autre moyen. Pour assurer une gestion rigoureuse, les documents transmis par écrit ou par courriel porteront idéalement la mention « **CONFIDENTIEL** », bien que le fait qu’une information ne porte pas cette mention ne signifie pas qu’elle cesse d’être une Information Confidentielle lorsqu’elle répond à la présente définition.
 
@@ -76,11 +78,11 @@ b) qu’elles sont devenues publiques sans violation de la présente entente ;
 
 c) qu’elles étaient légalement connues de la Partie Réceptrice avant leur divulgation par la Partie Divulgatrice ;
 
-d) qu’elles ont été obtenues légalement d’un tiers qui n’était pas tenu à une obligation de confidentialité ;
+d) qu’elles ont été obtenues légalement d’un tiers qui n’était pas tenu à une obligation de confidentialité ; ou
 
-e) qu’elles sont généralement connues dans l’industrie en question ; ou
+e) qu’elles doivent être divulguées en vertu d’une obligation légale ou d’une ordonnance d’une autorité compétente, auquel cas la Partie Réceptrice devra, dans la mesure légalement permise, en aviser préalablement la Partie Divulgatrice.
 
-f) qu’elles doivent être divulguées en vertu d’une obligation légale ou d’une ordonnance d’une autorité compétente, auquel cas la Partie Réceptrice devra, dans la mesure légalement permise, en aviser préalablement la Partie Divulgatrice.
+Pour plus de clarté, le fait qu’un concept, une catégorie de produit ou une pratique commerciale soit généralement connu dans une industrie n’exclut pas du caractère confidentiel la combinaison, l’assemblage, l’exécution ou la commercialisation particulières d’Odyssey (notamment Coffre, Sanctuaire, Film de sa vie, Freemium, RevShare et parcours de conversion), lorsqu’ils ont été communiqués dans le cadre du But.
 
 ---
 
@@ -98,6 +100,8 @@ d) s’assurer que ces personnes sont soumises à des obligations de confidentia
 
 e) demeurer responsable de toute utilisation ou divulgation non autorisée effectuée par les personnes auxquelles elle a donné accès aux Informations Confidentielles.
 
+La Partie Réceptrice ne pourra invoquer le fait qu’une Information Confidentielle a été mémorisée, plutôt que conservée sous forme écrite ou électronique, afin de contourner les obligations de confidentialité et de non-utilisation prévues aux présentes.
+
 ---
 
 ## 5. NON-UTILISATION
@@ -111,7 +115,7 @@ La Partie Réceptrice ne pourra notamment pas, directement ou indirectement :
 - transmettre les Informations Confidentielles à un développeur, une agence, un consultant, un fournisseur ou tout autre tiers dans le but de reproduire ou de développer une solution fondée sur celles-ci ;
 - utiliser les concepts, fonctionnalités, méthodes, processus, architectures, designs ou stratégies propriétaires communiqués par la Partie Divulgatrice afin de créer une solution concurrente ou substantiellement similaire ;
 - reproduire, s’inspirer ou s’approprier les modèles financiers, les structures de tarification (Freemium) ou les mécanismes de partage de revenus (RevShare) divulgués par la Partie Divulgatrice pour structurer une offre de services similaire auprès de ses propres clients, de son réseau ou avec l’aide d’un tiers développeur ;
-- accomplir tout acte de concurrence déloyale au sens de l’article 7 de la *Loi sur les marques de commerce*, notamment en appelant l’attention du public sur ses propres produits, services ou entreprise de manière à causer de la confusion avec ceux d’Odyssey.
+- accomplir tout acte de concurrence déloyale, notamment en appelant l’attention du public sur ses propres produits, services ou entreprise de manière à causer de la confusion avec ceux d’Odyssey.
 
 La présente clause vise l’utilisation des Informations Confidentielles divulguées dans le cadre du But et ne constitue pas une interdiction générale pour la Partie Réceptrice d’exercer ses activités commerciales légitimes.
 
@@ -119,9 +123,9 @@ La présente clause vise l’utilisation des Informations Confidentielles divulg
 
 ## 6. NON-CONTOURNEMENT
 
-Pendant la durée de la présente entente, la Partie Réceptrice s’engage à ne pas utiliser les Informations Confidentielles ou les renseignements obtenus dans le cadre des discussions avec la Partie Divulgatrice afin de contourner directement ou indirectement la Partie Divulgatrice dans une relation d’affaires, un partenariat, une opportunité commerciale ou une relation avec un client, fournisseur ou partenaire qui lui aurait été présenté ou identifié par la Partie Divulgatrice dans le cadre du But.
+Pendant la durée des obligations de non-contournement prévues à la présente entente, la Partie Réceptrice ne pourra utiliser les Informations Confidentielles ou les renseignements obtenus dans le cadre du But afin de contourner Odyssey relativement à une opportunité commerciale, un client, un partenaire, un fournisseur ou une relation d’affaires qui lui a été spécifiquement présenté, introduit ou identifié par Odyssey dans le cadre des discussions, et dont elle n’avait pas connaissance antérieurement.
 
-La Partie Réceptrice s’engage également à ne pas utiliser les Informations Confidentielles pour établir directement avec un tiers une relation ou une structure ayant pour objectif de reproduire ou de réaliser, sans la participation de la Partie Divulgatrice, une opportunité commerciale spécifiquement présentée par celle-ci dans le cadre du But.
+La Partie Réceptrice s’engage également à ne pas utiliser les Informations Confidentielles pour établir directement avec un tiers une relation ou une structure ayant pour objectif de reproduire ou de réaliser, sans la participation de la Partie Divulgatrice, une opportunité commerciale spécifiquement présentée par celle-ci dans le cadre du But, et dont la Partie Réceptrice n’avait pas connaissance antérieurement.
 
 ---
 
@@ -129,11 +133,9 @@ La Partie Réceptrice s’engage également à ne pas utiliser les Informations 
 
 Toutes les Informations Confidentielles demeurent la propriété exclusive de la Partie Divulgatrice.
 
-Aucune disposition de la présente entente ne doit être interprétée comme accordant à la Partie Réceptrice une licence, un droit d’utilisation permanent, un droit de propriété ou tout autre droit sur les droits de propriété intellectuelle de la Partie Divulgatrice.
+Aucune disposition de la présente entente ne confère à la Partie Réceptrice un quelconque droit, licence ou intérêt dans les droits de propriété intellectuelle d’Odyssey, lesquels demeurent la propriété exclusive de leurs titulaires respectifs.
 
-Cela comprend notamment les droits d’auteur, brevets, secrets commerciaux, concepts, logiciels, designs, architectures, méthodes et autres éléments propriétaires d’Odyssey, ainsi que les marques de commerce conférant un droit exclusif selon l’article 19 de la *Loi sur les marques de commerce*.
-
-La Partie Réceptrice reconnaît expressément qu’elle ne peut violer ces droits (art. 20) ni agir d’une manière susceptible d’entraîner la diminution de la valeur de l’achalandage (art. 22) attaché à ces marques.
+La présente entente ne limite aucun des droits ou recours dont Odyssey pourrait disposer en vertu des lois applicables en matière de propriété intellectuelle, de marques de commerce, de droits d’auteur, de secrets commerciaux ou de concurrence déloyale.
 
 La divulgation d’une Information Confidentielle ne constitue pas une cession de propriété intellectuelle.
 

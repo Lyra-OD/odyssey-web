@@ -207,10 +207,11 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 |---------|------|-------------|
 | [`TEMP/README.md`](TEMP/README.md) | ops | Règles TEMP |
 | [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) | temp | Rush démo Patrice + courriel Paul |
-| [`TEMP/NDA_UNILATERAL_BROUILLON_QC.md`](TEMP/NDA_UNILATERAL_BROUILLON_QC.md) | temp | NDA — guide versions **A / B / C** |
+| [`TEMP/NDA_UNILATERAL_BROUILLON_QC.md`](TEMP/NDA_UNILATERAL_BROUILLON_QC.md) | temp | NDA — guide **A / B / C / D** |
 | [`TEMP/NDA_A_VALIDEE_LEGALE.md`](TEMP/NDA_A_VALIDEE_LEGALE.md) | temp | NDA **A** validée légale |
-| [`TEMP/NDA_B_FREEMIUM_REVSHARE.md`](TEMP/NDA_B_FREEMIUM_REVSHARE.md) | temp | NDA **B** Freemium / RevShare |
-| [`TEMP/NDA_C_ROBUSTE.md`](TEMP/NDA_C_ROBUSTE.md) | temp | NDA **C** + non-sollicitation + feedback |
+| [`TEMP/NDA_B_FREEMIUM_REVSHARE.md`](TEMP/NDA_B_FREEMIUM_REVSHARE.md) | temp | NDA **B** Freemium / RevShare (archive ; préférer D) |
+| [`TEMP/NDA_D_RENFORCE.md`](TEMP/NDA_D_RENFORCE.md) | temp | NDA **D** renforcé (cible Patrice) |
+| [`TEMP/NDA_C_ROBUSTE.md`](TEMP/NDA_C_ROBUSTE.md) | temp | NDA **C** = D + non-sollicitation + feedback |
 
 ### Archive
 
