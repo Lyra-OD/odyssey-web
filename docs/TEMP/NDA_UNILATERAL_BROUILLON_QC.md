@@ -1,9 +1,10 @@
-# NDA Odyssey — choix des versions A / B / C / D
+# NDA Odyssey — choix des versions A / B / C / D / D ENG
 
 **Type :** temp · **Vérité pour :** quelle version d’entente envoyer (démo partenaires).  
 **Dernière MAJ :** 21 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 21 août 2026 — **D ENG** miroir anglais séparé ([`NDA_D_RENFORCE_EN.md`](NDA_D_RENFORCE_EN.md)) · FR prévaut.
 - 21 août 2026 — **D** = B renforcé (3(e), démo, mémorisation, non-contournement, PI) · **C** réalignée sur D.
 - 21 août 2026 — versions **A** (validée) · **B** (Freemium/RevShare) · **C** (robustesse équipe).
 
@@ -17,12 +18,14 @@
 |---------|---------|------------------|
 | **A** | [`NDA_A_VALIDEE_LEGALE.md`](NDA_A_VALIDEE_LEGALE.md) | Déjà **validée légale** · signature rapide · friction minimale |
 | **B** | [`NDA_B_FREEMIUM_REVSHARE.md`](NDA_B_FREEMIUM_REVSHARE.md) | Archive de travail · Freemium/RevShare **sans** polish D |
-| **D** | [`NDA_D_RENFORCE.md`](NDA_D_RENFORCE.md) | **Reco CEO** pour Patrice · B + clauses démo / exécutabilité · **revalidation avocat** |
+| **D** | [`NDA_D_RENFORCE.md`](NDA_D_RENFORCE.md) | **Reco CEO** pour Patrice · B + clauses démo / exécutabilité · **revalidation avocat** · **FR** |
+| **D ENG** | [`NDA_D_RENFORCE_EN.md`](NDA_D_RENFORCE_EN.md) | Même substance que **D** · counsel / HQ EN · **fichier séparé** (pas FR+EN collés) |
 | **C** | [`NDA_C_ROBUSTE.md`](NDA_C_ROBUSTE.md) | **D** + non-sollicitation équipe + propriété du feedback · **revalidation avocat** · plus de négociation |
 
 Partie Divulgatrice : **Odyssey Video Inc.**, 4342 rue Rivard, Montréal (QC) H2J 2M8.  
 Remplir les **`[CROCHETS]`** côté Patrice / groupe avant signature (DocuSign OK).  
 **Multi-récepteurs (D/C) :** société + Patrice perso si les deux voient la démo ; pas chaque employé.  
+**Langue :** envoyer **FR ou EN**, pas les deux collés. Si les deux circulent → **français prévaut**.  
 **Ops :** NDA ≠ accès code source — démo UI / compte limité seulement.
 
 ---
@@ -55,8 +58,9 @@ Remplir les **`[CROCHETS]`** côté Patrice / groupe avant signature (DocuSign O
 ## Reco
 
 1. **Cette semaine, sans attendre :** **A** si tu dois faire signer demain.  
-2. **Cible Patrice :** **D** après OK avocat court (surtout non-contournement, durée, non-utilisation concurrente).  
+2. **Cible Patrice :** **D** (FR) après OK avocat court ; **D ENG** si leur juridique demande l’anglais.  
 3. **C** si l’avocat dit OK et que tu es prêt à négocier non-sollicitation / feedback.  
-4. **B** : garder comme historique ; ne plus envoyer si **D** est prête.
+4. **B** : garder comme historique ; ne plus envoyer si **D** est prête.  
+5. Ne pas stapler FR + EN dans un seul PDF.
 
 Ne pas envoyer **B**, **D** ou **C** en disant « version déjà validée » tant que l’avocat n’a pas vu **ces** ajouts.

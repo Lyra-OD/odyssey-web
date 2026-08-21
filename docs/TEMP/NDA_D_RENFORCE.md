@@ -14,7 +14,8 @@
 > **Reco multi-signataires :** société du groupe **+** Patrice à titre personnel si les deux voient la démo. Pas besoin de lister chaque employé (§4).  
 > **Ops :** le NDA ne donne pas accès au code source — démo UI / compte limité seulement.
 
-**Guide A/B/C/D :** [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md).
+**Guide A/B/C/D :** [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md).  
+**English (separate file) :** [`NDA_D_RENFORCE_EN.md`](NDA_D_RENFORCE_EN.md) — en cas de conflit FR/EN, le **français prévaut**.
 
 ---
 

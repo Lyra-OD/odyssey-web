@@ -29,7 +29,8 @@ Ne pas laisser pourrir 6 mois sans date dans le titre.
 | [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md) | **Guide A / B / C / D** — différences et reco |
 | [`NDA_A_VALIDEE_LEGALE.md`](NDA_A_VALIDEE_LEGALE.md) | **Version A** — validée légale |
 | [`NDA_B_FREEMIUM_REVSHARE.md`](NDA_B_FREEMIUM_REVSHARE.md) | **Version B** — Freemium / RevShare (archive ; préférer D) |
-| [`NDA_D_RENFORCE.md`](NDA_D_RENFORCE.md) | **Version D** — B renforcé (cible Patrice) |
+| [`NDA_D_RENFORCE.md`](NDA_D_RENFORCE.md) | **Version D** — B renforcé (cible Patrice, FR) |
+| [`NDA_D_RENFORCE_EN.md`](NDA_D_RENFORCE_EN.md) | **Version D ENG** — miroir anglais (fichier séparé) |
 | [`NDA_C_ROBUSTE.md`](NDA_C_ROBUSTE.md) | **Version C** — D + non-sollicitation + feedback |
 
 ## Candidats à déplacer ici plus tard (si tu veux alléger la racine `docs/`)
