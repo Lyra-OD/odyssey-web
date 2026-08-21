@@ -20,7 +20,9 @@
 | **D** | [`NDA_D_RENFORCE.md`](NDA_D_RENFORCE.md) | **Reco CEO** pour Patrice · B + clauses démo / exécutabilité · **revalidation avocat** |
 | **C** | [`NDA_C_ROBUSTE.md`](NDA_C_ROBUSTE.md) | **D** + non-sollicitation équipe + propriété du feedback · **revalidation avocat** · plus de négociation |
 
-Remplir les **`[CROCHETS]`** avant signature (DocuSign OK).  
+Partie Divulgatrice : **Odyssey Video Inc.**, 4342 rue Rivard, Montréal (QC) H2J 2M8.  
+Remplir les **`[CROCHETS]`** côté Patrice / groupe avant signature (DocuSign OK).  
+**Multi-récepteurs (D/C) :** société + Patrice perso si les deux voient la démo ; pas chaque employé.  
 **Ops :** NDA ≠ accès code source — démo UI / compte limité seulement.
 
 ---

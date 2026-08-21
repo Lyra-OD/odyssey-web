@@ -8,7 +8,7 @@
 
 > **Différence vs A :** §2 et §5 nomment Freemium, forfaits Héritage/Éternité, RevShare, et interdisent de les copier pour une offre similaire.  
 > **Statut :** revalidation avocat recommandée sur ces ajouts (pas la même que A « validée »).  
-> Remplir les **`[CROCHETS]`** avant signature.
+> Remplir les **`[CROCHETS]`** côté Patrice avant signature (Odyssey Video Inc. déjà renseignée).
 
 **Guide A/B/C/D :** [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md).  
 > **Note :** pour envoi partenaire, préférer **[`NDA_D_RENFORCE.md`](NDA_D_RENFORCE.md)** (même modèle $ + clauses durcies).
@@ -21,7 +21,7 @@
 
 **ENTRE :**
 
-**[NOM LÉGAL COMPLET D’ODYSSEY]**, société légalement constituée en vertu des lois applicables, ayant son siège social au **[adresse]**, représentée par Erik Gaudreault, dûment autorisé aux fins des présentes,  
+**Odyssey Video Inc.**, société légalement constituée en vertu des lois applicables, ayant son siège social au **4342, rue Rivard, Montréal (Québec) H2J 2M8**, représentée par Erik Gaudreault, dûment autorisé aux fins des présentes,  
 (ci-après la « **Partie Divulgatrice** ») ;
 
 **ET :**

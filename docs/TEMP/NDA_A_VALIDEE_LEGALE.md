@@ -8,7 +8,7 @@
 - 21 août 2026 — version validée légale (exclusions industrie, CONFIDENTIEL, signature électronique, LMC).
 
 > **Version A** = texte validé. Pas de Freemium/RevShare nommés, pas de non-sollicitation, pas de cession de feedback.  
-> Remplir les **`[CROCHETS]`** avant signature.
+> Remplir les **`[CROCHETS]`** côté Patrice avant signature (Odyssey Video Inc. déjà renseignée).
 
 **Guide des versions :** [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md).
 
@@ -20,7 +20,7 @@
 
 **ENTRE :**
 
-**[NOM LÉGAL COMPLET D’ODYSSEY]**, société légalement constituée en vertu des lois applicables, ayant son siège social au **[adresse]**, représentée par Erik Gaudreault, dûment autorisé aux fins des présentes,  
+**Odyssey Video Inc.**, société légalement constituée en vertu des lois applicables, ayant son siège social au **4342, rue Rivard, Montréal (Québec) H2J 2M8**, représentée par Erik Gaudreault, dûment autorisé aux fins des présentes,  
 (ci-après la « **Partie Divulgatrice** ») ;
 
 **ET :**

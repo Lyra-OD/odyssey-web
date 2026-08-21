@@ -4,11 +4,14 @@
 **Dernière MAJ :** 21 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 21 août 2026 — Parties Réceptrices multiples (optionnel) + solidarité + blocs signature.
+- 21 août 2026 — §2 : dédoublonnage bullet / paragraphe démos.
 - 21 août 2026 — **Version D** = B − exclusion 3(e) · non-contournement précisé · démos/accès plateforme explicites · infos mémorisées · § PI allégé.
 
 > **Différence vs B :** mêmes Freemium / Héritage-Éternité / RevShare ; clauses cœur durcies pour démo live et exécutabilité.  
 > **Statut :** revalidation avocat **obligatoire** (surtout non-contournement, durée 3 ans, non-utilisation concurrente).  
-> Remplir les **`[CROCHETS]`** avant signature.  
+> Remplir les **`[CROCHETS]`** côté Patrice avant signature (Odyssey Video Inc. déjà renseignée).  
+> **Reco multi-signataires :** société du groupe **+** Patrice à titre personnel si les deux voient la démo. Pas besoin de lister chaque employé (§4).  
 > **Ops :** le NDA ne donne pas accès au code source — démo UI / compte limité seulement.
 
 **Guide A/B/C/D :** [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md).
@@ -21,15 +24,31 @@
 
 **ENTRE :**
 
-**[NOM LÉGAL COMPLET D’ODYSSEY]**, société légalement constituée en vertu des lois applicables, ayant son siège social au **[adresse]**, représentée par Erik Gaudreault, dûment autorisé aux fins des présentes,  
+**Odyssey Video Inc.**, société légalement constituée en vertu des lois applicables, ayant son siège social au **4342, rue Rivard, Montréal (Québec) H2J 2M8**, représentée par Erik Gaudreault, dûment autorisé aux fins des présentes,  
 (ci-après la « **Partie Divulgatrice** ») ;
 
 **ET :**
 
-**[NOM LÉGAL COMPLET DE L’ENTREPRISE DE PATRICE]**, ayant son siège social au **[adresse]**, représentée par Patrice **[nom de famille]**, dûment autorisé aux fins des présentes,  
-(ci-après la « **Partie Réceptrice** »).
+**[NOM LÉGAL COMPLET DE LA SOCIÉTÉ / GROUPE]**, ayant son siège social au **[adresse]**, représentée par **[nom du représentant]**, dûment autorisé aux fins des présentes,  
+(ci-après une « **Partie Réceptrice** ») ;
 
-La Partie Divulgatrice et la Partie Réceptrice sont ci-après collectivement désignées les « **Parties** » et individuellement une « **Partie** ».
+**ET, le cas échéant (co-récepteur — personne physique) :**
+
+**[NOM COMPLET]**, domicilié au **[adresse]**,  
+(ci-après également une « **Partie Réceptrice** ») ;
+
+**ET, le cas échéant (autre personne morale du groupe) :**
+
+**[NOM LÉGAL COMPLET]**, ayant son siège social au **[adresse]**, représentée par **[nom]**, dûment autorisé aux fins des présentes,  
+(ci-après également une « **Partie Réceptrice** »).
+
+*(Biffer les blocs « le cas échéant » inutilisés, ou indiquer « N/A ».)*
+
+Lorsque la présente entente vise **plus d’une** Partie Réceptrice, le terme « **Partie Réceptrice** » désigne chacune d’elles, individuellement et collectivement, et elles s’engagent **solidairement** à l’égard de toutes les obligations prévues aux présentes.
+
+La Partie Divulgatrice et la ou les Parties Réceptrices sont ci-après collectivement désignées les « **Parties** » et individuellement une « **Partie** ».
+
+Les employés, dirigeants, conseillers et sous-traitants d’une Partie Réceptrice qui prennent connaissance des Informations Confidentielles dans le cadre du But n’ont pas à être désignés comme Parties Réceptrices distinctes, sous réserve du respect de l’article 4.
 
 ---
 
@@ -58,7 +77,7 @@ Aux fins de la présente entente, les « **Informations Confidentielles** » com
 - les mécanismes financiers et les pourcentages de partage de revenus (« RevShare ») prévus pour les partenaires B2B ;
 - les stratégies commerciales, marketing, de distribution et de développement ;
 - les informations relatives aux clients, partenaires, fournisseurs ou prospects ;
-- les présentations, documents, prototypes, démonstrations et autres matériels remis ou présentés par la Partie Divulgatrice ;
+- les documents et autres matériels remis par la Partie Divulgatrice ;
 - toute information qui, compte tenu de sa nature ou des circonstances de sa divulgation, devrait raisonnablement être considérée comme confidentielle ;
 - ainsi que toute analyse, adaptation, synthèse ou dérivation réalisée à partir de ces informations.
 
@@ -211,9 +230,9 @@ Les Parties conviennent que la présente entente peut être signée électroniqu
 
 ## SIGNATURES
 
-### POUR LA PARTIE DIVULGATRICE
+### POUR LA PARTIE DIVULGATRICE — Odyssey Video Inc.
 
-Nom légal : ______________________________
+Nom légal : Odyssey Video Inc.
 
 Nom du représentant : Erik Gaudreault
 
@@ -223,14 +242,38 @@ Signature : ______________________________
 
 Date : __________________________________
 
-### POUR LA PARTIE RÉCEPTRICE
+### POUR LA PARTIE RÉCEPTRICE 1 — société / groupe
 
 Nom légal : ______________________________
 
-Nom du représentant : Patrice **[nom de famille]**
+Nom du représentant : ____________________
 
 Titre : _________________________________
 
 Signature : ______________________________
 
 Date : __________________________________
+
+### POUR LA PARTIE RÉCEPTRICE 2 — personne physique (optionnel)
+
+Nom : ___________________________________
+
+Titre / lien : ____________________________
+
+Signature : ______________________________
+
+Date : __________________________________
+
+### POUR LA PARTIE RÉCEPTRICE 3 — autre personne morale (optionnel)
+
+Nom légal : ______________________________
+
+Nom du représentant : ____________________
+
+Titre : _________________________________
+
+Signature : ______________________________
+
+Date : __________________________________
+
+*(Biffer les blocs signature inutilisés.)*
