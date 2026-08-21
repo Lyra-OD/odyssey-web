@@ -1,162 +1,233 @@
-# BROUILLON — Entente de confidentialité unilatérale (NDA)
+# BROUILLON — Entente de confidentialité, de non-utilisation et de non-contournement
 
-**Type :** temp · **Vérité pour :** squelette à faire valider par un avocat (QC).  
+**Type :** temp · **Vérité pour :** brouillon NDA pour revue avocat (QC) · démo partenaires.  
 **Dernière MAJ :** 21 août 2026 · **Carte :** [`../README.md`](../README.md)
 
-> **CE DOCUMENT N’EST PAS UN AVIS JURIDIQUE.**  
-> Brouillon interne Odyssey pour accélérer la revue avocat. **Ne pas envoyer à Patrice / Urgel / un partenaire tel quel** sans validation par un avocat compétent au Québec (droit commercial / tech).  
-> Remplir les `[CROCHETS]` avant revue.
+**Changelog** (max 5)
+- 21 août 2026 — art. 2/5/7 : marques de commerce (L.R.C. 1985 ch. T-13) + concurrence déloyale.
+- 21 août 2026 — texte unifié (confidentialité + non-utilisation + non-contournement).
 
-**Usage prévu :** protection des infos Odyssey lors d’une démo / discussion pré-pilote (ex. VP funéraire).  
+> **CE DOCUMENT N’EST PAS UN AVIS JURIDIQUE.**  
+> Brouillon interne Odyssey. **Ne pas envoyer à Patrice / Urgel / un partenaire tel quel** sans validation par un avocat compétent au Québec.  
+> Remplir les `[CROCHETS]` avant revue / signature.
+
 **Complète :** [`DEMO_PATRICE_URGEL_RUSH.md`](DEMO_PATRICE_URGEL_RUSH.md).
 
 ---
 
-## Entente de confidentialité (unilatérale)
+# ENTENTE DE CONFIDENTIALITÉ, DE NON-UTILISATION ET DE NON-CONTOURNEMENT
 
-**Entre :**
+**ENTRE :**
 
-**[NOM LÉGAL DE LA SOCIÉTÉ ODYSSEY]** , société constituée selon les lois du **[Québec / Canada]**, ayant son siège au **[adresse]** (ci-après le « **Divulgateur** ») ;
+**[NOM LÉGAL COMPLET D’ODYSSEY]**, société légalement constituée en vertu des lois applicables, ayant son siège social au **[adresse]**, représentée par Erik Gaudreault, dûment autorisé aux fins des présentes,  
+(ci-après la « **Partie Divulgatrice** ») ;
 
-**et**
+**ET :**
 
-**[NOM LÉGAL DU DESTINATAIRE — ex. société du groupe / salon / holding]** , société constituée selon les lois du **[…]**, ayant son siège au **[adresse]** (ci-après le « **Destinataire** ») ;
+**[NOM LÉGAL COMPLET DE L’ENTREPRISE DE PATRICE]**, ayant son siège social au **[adresse]**, représentée par Patrice **[nom de famille]**, dûment autorisé aux fins des présentes,  
+(ci-après la « **Partie Réceptrice** »).
 
-(individuellement une « **Partie** » et collectivement les « **Parties** »).
-
-**Date d’entrée en vigueur :** **[AAAA-MM-JJ]** (la « **Date d’entrée en vigueur** »).
-
-### Préambule
-
-Le Divulgateur souhaite présenter au Destinataire certains éléments de son produit logiciel, de son modèle d’affaires et de ses matériaux de conception (la « **Présentation** »), dans le cadre de discussions exploratoires pouvant mener ou non à un pilote commercial. Le Destinataire accepte de recevoir des informations confidentielles du Divulgateur et de les protéger selon les termes ci-dessous. **Seules les obligations de confidentialité du Destinataire** sont créées par la présente (entente unilatérale).
+La Partie Divulgatrice et la Partie Réceptrice sont ci-après collectivement désignées les « **Parties** » et individuellement une « **Partie** ».
 
 ---
 
-### 1. Définitions
+## 1. OBJET
 
-**1.1 « Information confidentielle »** désigne toute information, sous quelque forme que ce soit (orale, écrite, électronique, visuelle, démonstration logicielle, maquette, schéma), divulguée par le Divulgateur au Destinataire ou à laquelle le Destinataire a accès dans le cadre de la Présentation, qu’elle soit ou non marquée « confidentiel », y compris sans s’y limiter :
+Les Parties souhaitent échanger certaines informations dans le cadre de discussions relatives à un éventuel partenariat commercial, technologique ou stratégique concernant Odyssey, ses produits, ses services et sa plateforme technologique (le « **But** »).
 
-a) le **code source et objet**, scripts, schémas de données, API, architecture logicielle et choix d’infrastructure ;  
-b) les **maquettes, wireframes, prototypes et fichiers de design** (y compris Figma) et la documentation produit associée ;  
-c) le **modèle d’affaires** et les mécaniques commerciales (notamment les flux B2B2C / B2C, structure de partage de revenus, grilles et logiques de tarification, forfaits, add-ons, mécanismes d’invitation partenaire) ;  
-d) les **spécifications produit** et surfaces applicatives (notamment Studio / wizard, Coffre, Sanctuaire, Scanner, espaces partenaire, processus de paiement et d’export) ;  
-e) les **projections, analyses, business cases, playbooks de rencontre** et documents stratégiques remis ;  
-f) toute information relative aux **clients, prospects, partenaires, fournisseurs** ou à la feuille de route produit du Divulgateur ;  
-g) les **combinaisons** et le fait même que certaines informations listées ci-dessus existent ou sont en développement.
+Dans le cadre de ces discussions, la Partie Divulgatrice pourrait communiquer à la Partie Réceptrice certaines informations confidentielles, commerciales, technologiques et stratégiques.
 
-**1.2** Les informations communiquées oralement sont réputées confidentielles si le Divulgateur les identifie comme telles au moment de la divulgation ou les confirme par écrit (y compris courriel) dans les **quinze (15) jours** suivant la divulgation.
+La présente entente vise à protéger ces informations et à encadrer strictement leur utilisation.
 
 ---
 
-### 2. Obligations du Destinataire
+## 2. DÉFINITION DES INFORMATIONS CONFIDENTIELLES
 
-Le Destinataire s’engage à :
+Aux fins de la présente entente, les « **Informations Confidentielles** » comprennent notamment, sans limitation :
 
-a) utiliser l’Information confidentielle **uniquement** pour évaluer un éventuel partenariat, pilote ou relation commerciale avec le Divulgateur (la « **Finalité autorisée** ») ;  
-b) ne pas divulguer l’Information confidentielle à des tiers, sauf à ses **Représentants** (dirigeants, employés, conseillers juridiques ou financiers) ayant **strictement besoin de la connaître** pour la Finalité autorisée, et liés par des obligations de confidentialité au moins aussi protectrices que la présente ;  
-c) protéger l’Information confidentielle avec un degré de soin **au moins égal** à celui qu’il applique à ses propres informations confidentielles de nature similaire, et en tout état de cause un soin raisonnable ;  
-d) ne pas copier, reproduire, ingénierie inverse, désassembler ou tenter d’extraire des secrets des logiciels ou matériaux présentés, sauf dans la mesure nécessaire à la Finalité autorisée et autorisée par écrit par le Divulgateur ;  
-e) informer sans délai le Divulgateur de toute divulgation non autorisée dont il a connaissance et collaborer raisonnablement pour en limiter les effets.
+- le code source, le code logiciel, les scripts et les éléments techniques d’Odyssey ;
+- l’architecture technique et logicielle, les infrastructures et les méthodes de fonctionnement ;
+- les maquettes, designs, interfaces UI/UX, parcours utilisateurs et expériences numériques ;
+- les fonctionnalités actuelles ou futures d’Odyssey ;
+- les concepts, méthodes, processus et mécanismes propriétaires développés par Odyssey, ainsi que toute marque de commerce ou nom commercial (au sens de l’article 2 de la *Loi sur les marques de commerce*, L.R.C., 1985, ch. T-13), notamment le « Coffre », le « Sanctuaire » et le « Film de sa vie » ;
+- le modèle d’affaires B2B2C ;
+- les stratégies commerciales, marketing, de distribution et de développement ;
+- les stratégies de tarification et les informations financières communiquées ;
+- les informations relatives aux clients, partenaires, fournisseurs ou prospects ;
+- les présentations, documents, prototypes, démonstrations et autres matériels remis ou présentés par la Partie Divulgatrice ;
+- toute information qui, compte tenu de sa nature ou des circonstances de sa divulgation, devrait raisonnablement être considérée comme confidentielle ;
+- ainsi que toute analyse, adaptation, synthèse ou dérivation réalisée à partir de ces informations.
 
-Le Destinataire demeure responsable des manquements de ses Représentants.
+Les Informations Confidentielles peuvent être communiquées verbalement, visuellement, électroniquement, par écrit ou par tout autre moyen.
 
----
-
-### 3. Non-contournement / non-utilisation concurrentielle
-
-*(Clause souvent discutée avec les grands groupes — à faire valider / éventuellement assouplir par l’avocat.)*
-
-Pendant la durée de protection de l’Information confidentielle (article 6), le Destinataire s’engage à ne pas :
-
-a) utiliser l’Information confidentielle pour **concevoir, développer, faire développer, commercialiser ou déployer** un produit ou service qui **reproduit de façon substantielle** les fonctionnalités, architectures ou mécaniques commerciales spécifiques du Divulgateur telles que révélées dans la Présentation ;  
-b) contourner le Divulgateur en engageant, pour un projet concurrent fondé sur l’Information confidentielle, un prestataire, agence ou fournisseur dans le but d’éviter une relation commerciale de bonne foi avec le Divulgateur.
-
-**Réserve :** la présente clause n’interdit pas au Destinataire de poursuivre le développement ou l’achat de solutions génériques du marché (ex. logiciels funéraires, montage vidéo grand public) **développées indépendamment** et **sans utilisation** de l’Information confidentielle.
+Le fait qu’une information ne porte pas la mention « confidentiel » ne signifie pas qu’elle cesse d’être une Information Confidentielle lorsqu’elle répond à la présente définition.
 
 ---
 
-### 4. Exclusions
+## 3. EXCLUSIONS
 
-Ne constitue pas de l’Information confidentielle l’information dont le Destinataire peut démontrer qu’elle :
+Ne constituent pas des Informations Confidentielles les informations dont la Partie Réceptrice peut démontrer :
 
-a) était **déjà connue** de lui de façon licite avant la divulgation, sans obligation de confidentialité ;  
-b) est ou devient **publique** autrement que par un manquement à la présente ;  
-c) a été reçue **légitimement d’un tiers** sans violation d’obligation de confidentialité ;  
-d) a été **développée indépendamment** par le Destinataire sans utilisation de l’Information confidentielle ;  
-e) doit être divulguée en vertu de la **loi**, d’une ordonnance judiciaire ou d’une autorité compétente — auquel cas, dans la mesure permise, le Destinataire en avise le Divulgateur à l’avance pour permettre de chercher une protection appropriée, et ne divulgue que le strict nécessaire.
+a) qu’elles étaient publiquement accessibles au moment de leur divulgation ;
 
----
+b) qu’elles sont devenues publiques sans violation de la présente entente ;
 
-### 5. Propriété intellectuelle — aucune licence
+c) qu’elles étaient légalement connues de la Partie Réceptrice avant leur divulgation par la Partie Divulgatrice ;
 
-Toute Information confidentielle et toute propriété intellectuelle s’y rapportant demeurent la **propriété exclusive** du Divulgateur.  
-La présente n’accorde **aucune licence**, cession, option ou droit d’utilisation autre que pour la Finalité autorisée.  
-Aucun feedback oral ou écrit du Destinataire n’oblige le Divulgateur ; le Destinataire cède gratuitement au Divulgateur, dans la mesure permise par la loi, tout droit sur les suggestions relatives aux produits du Divulgateur (à faire valider par l’avocat selon la stratégie PI).
+d) qu’elles ont été obtenues légalement d’un tiers qui n’était pas tenu à une obligation de confidentialité ;
+
+ou
+
+e) qu’elles doivent être divulguées en vertu d’une obligation légale ou d’une ordonnance d’une autorité compétente, auquel cas la Partie Réceptrice devra, dans la mesure légalement permise, en aviser préalablement la Partie Divulgatrice.
 
 ---
 
-### 6. Durée
+## 4. OBLIGATIONS DE CONFIDENTIALITÉ
 
-a) Les obligations de confidentialité prennent effet à la Date d’entrée en vigueur et se poursuivent pendant **trois (3) ans** à compter de la **dernière** divulgation d’Information confidentielle au Destinataire dans le cadre de la Présentation ou des discussions qui en découlent.  
-*(Alternative à discuter avec l’avocat : 2 ans ou 5 ans ; secrets industriels / code source parfois plus long.)*
+La Partie Réceptrice s’engage à :
 
-b) Les obligations relatives aux secrets industriels (trade secrets) demeurent tant que l’information conserve ce caractère, dans la mesure permise par la loi applicable.
+a) protéger les Informations Confidentielles avec un degré de diligence raisonnable et au moins équivalent à celui qu’elle applique à ses propres informations confidentielles de nature similaire ;
 
----
+b) ne pas divulguer les Informations Confidentielles à une personne ou entité non autorisée ;
 
-### 7. Restitution et destruction
+c) limiter l’accès aux Informations Confidentielles à ses employés, dirigeants, conseillers professionnels, consultants ou sous-traitants qui ont réellement besoin d’en prendre connaissance dans le cadre du But ;
 
-Sur demande écrite du Divulgateur, ou à la fin des discussions si le Divulgateur le demande, le Destinataire devra, dans les **quinze (15) jours** : restituer ou détruire (au choix du Divulgateur) les supports contenant de l’Information confidentielle, et confirmer par écrit la destruction, **sous réserve** des copies de sauvegarde archivées automatiquement dont l’extraction n’est pas raisonnablement praticable, lesquelles resteront soumises à la présente, et des copies que la loi impose de conserver.
+d) s’assurer que ces personnes sont soumises à des obligations de confidentialité appropriées ;
 
----
-
-### 8. Absence d’obligation de conclure
-
-Rien dans la présente n’oblige une Partie à conclure un contrat commercial, un pilote ou un investissement. Les discussions peuvent être interrompues à tout moment, sous réserve des obligations de confidentialité.
+e) demeurer responsable de toute utilisation ou divulgation non autorisée effectuée par les personnes auxquelles elle a donné accès aux Informations Confidentielles.
 
 ---
 
-### 9. Recours
+## 5. NON-UTILISATION ET CONCURRENCE DÉLOYALE
 
-Le Destinataire reconnaît qu’un manquement peut causer un préjudice **irréparable** au Divulgateur et que ce dernier pourra, outre les dommages-intérêts, demander des **mesures injonctives** ou autres recours équitables, sans renoncer à tout autre recours.  
-*(Certaines juridictions limitent ce type de reconnaissance — à faire valider.)*
+La Partie Réceptrice s’engage à utiliser les Informations Confidentielles exclusivement aux fins d’évaluer, de négocier ou, le cas échéant, de mettre en œuvre le partenariat envisagé dans le cadre du But.
 
----
+La Partie Réceptrice ne pourra notamment pas, directement ou indirectement :
 
-### 10. Divers
+- reproduire les Informations Confidentielles à des fins étrangères au But ;
+- utiliser les Informations Confidentielles pour développer, faire développer, financer, commercialiser ou exploiter un produit, logiciel, plateforme ou service concurrent d’Odyssey ;
+- transmettre les Informations Confidentielles à un développeur, une agence, un consultant, un fournisseur ou tout autre tiers dans le but de reproduire ou de développer une solution fondée sur celles-ci ;
+- utiliser les concepts, fonctionnalités, méthodes, processus, architectures, designs ou stratégies propriétaires communiqués par la Partie Divulgatrice afin de créer une solution concurrente ou substantiellement similaire ;
+- accomplir tout acte de concurrence déloyale au sens de l’article 7 de la *Loi sur les marques de commerce*, notamment en appelant l’attention du public sur ses propres produits ou services de manière à causer de la confusion au Canada avec les produits, services ou l’entreprise de la Partie Divulgatrice.
 
-a) **Loi applicable et for :** la présente est régie par les lois de la **province de Québec** et les lois fédérales du Canada qui s’y appliquent. Les tribunaux du district judiciaire de **[Montréal / autre]** ont compétence exclusive, sous réserve des règles d’ordre public.  
-b) **Intégralité :** la présente constitue l’entente complète des Parties sur son objet et remplace les discussions antérieures sur la confidentialité.  
-c) **Modifications :** par écrit, signé par les Parties.  
-d) **Cession :** le Destinataire ne peut céder la présente sans consentement écrit préalable du Divulgateur ; le Divulgateur peut céder à un successeur dans le cadre d’une réorganisation ou cession d’actifs.  
-e) **Nullité partielle :** si une disposition est invalide, le reste demeure en vigueur.  
-f) **Exemplaires :** signature électronique ou en plusieurs exemplaires = un seul instrument.  
-g) **Langue :** les Parties ont exigé que la présente soit rédigée en français. *(Si version bilingue : ajouter clause de primauté FR ou EN selon conseil avocat.)*
+La présente clause vise l’utilisation des Informations Confidentielles divulguées dans le cadre du But et ne constitue pas une interdiction générale pour la Partie Réceptrice d’exercer ses activités commerciales légitimes.
 
 ---
 
-### Signatures
+## 6. NON-CONTOURNEMENT
 
-**DIVULGATEUR — [NOM LÉGAL ODYSSEY]**
+Pendant la durée de la présente entente, la Partie Réceptrice s’engage à ne pas utiliser les Informations Confidentielles ou les renseignements obtenus dans le cadre des discussions avec la Partie Divulgatrice afin de contourner directement ou indirectement la Partie Divulgatrice dans une relation d’affaires, un partenariat, une opportunité commerciale ou une relation avec un client, fournisseur ou partenaire qui lui aurait été présenté ou identifié par la Partie Divulgatrice dans le cadre du But.
 
-Nom : _______________________________  
-Titre : _______________________________  
-Signature : ___________________________  
-Date : _______________________________
-
-**DESTINATAIRE — [NOM LÉGAL]**
-
-Nom : _______________________________  
-Titre : _______________________________  
-Signature : ___________________________  
-Date : _______________________________
+La Partie Réceptrice s’engage également à ne pas utiliser les Informations Confidentielles pour établir directement avec un tiers une relation ou une structure ayant pour objectif de reproduire ou de réaliser, sans la participation de la Partie Divulgatrice, une opportunité commerciale spécifiquement présentée par celle-ci dans le cadre du But.
 
 ---
 
-## Notes pour Erik (hors contrat — ne pas envoyer au partenaire)
+## 7. PROPRIÉTÉ INTELLECTUELLE ET PROTECTION DES MARQUES
 
-1. Remplir raison sociale exacte Odyssey (et celle d’Urgel / entité qui signe — pas seulement « Patrice » en personne si c’est le groupe qui doit être lié).  
-2. Demander à l’avocat : (i) non-contournement art. 3 acceptable tel quel ou version soft ; (ii) durée 3 vs 5 ans ; (iii) cession de feedback art. 5 ; (iv) compétence territoriale.  
-3. Envoyer le NDA **avant** la démo profonde (Figma + chiffres + archi). Une démo « teaser » très courte peut précéder, au jugement.  
-4. En parallèle : **cession PI Paul / freelances** (contrat séparé) — plus urgent en interne que les marques OPIC.  
-5. Loi 25 / CGU : pas dans ce NDA ; à traiter au pilote (phrase orale le jour J suffit).
+Toutes les Informations Confidentielles demeurent la propriété exclusive de la Partie Divulgatrice.
+
+Aucune disposition de la présente entente ne doit être interprétée comme accordant à la Partie Réceptrice une licence, un droit d’utilisation permanent, un droit de propriété ou tout autre droit sur les droits de propriété intellectuelle de la Partie Divulgatrice.
+
+Cela comprend notamment les droits d’auteur, brevets, secrets commerciaux, concepts, logiciels, designs, architectures, méthodes et autres éléments propriétaires d’Odyssey, ainsi que toutes les marques de commerce déposées ou non (art. 19 de la *Loi sur les marques de commerce*).
+
+À cet égard, la Partie Réceptrice reconnaît formellement qu’elle n’est pas autorisée à :
+
+a) violer les droits exclusifs de la Partie Divulgatrice en employant des marques ou noms commerciaux créant de la confusion, conformément à l’article 20 de la *Loi sur les marques de commerce* ;
+
+b) déprécier l’achalandage de l’entreprise en employant une marque de la Partie Divulgatrice d’une manière susceptible d’entraîner la diminution de la valeur de l’achalandage qui y est attaché, tel qu’interdit par l’article 22 de la *Loi sur les marques de commerce*.
+
+La divulgation d’une Information Confidentielle ne constitue en aucun cas une cession de propriété intellectuelle.
+
+---
+
+## 8. ABSENCE D’OBLIGATION DE CONCLURE UN PARTENARIAT
+
+La présente entente ne constitue pas une promesse, une offre ou une obligation de conclure un partenariat, une transaction, une licence, une distribution ou toute autre relation commerciale entre les Parties.
+
+Chaque Partie demeure libre de mettre fin aux discussions à tout moment, sous réserve des obligations prévues à la présente entente.
+
+---
+
+## 9. RESTITUTION OU DESTRUCTION DES INFORMATIONS
+
+À la demande de la Partie Divulgatrice, ou à la fin des discussions entre les Parties, la Partie Réceptrice devra, dans un délai raisonnable :
+
+a) retourner ou détruire les documents et matériels contenant des Informations Confidentielles ;
+
+b) supprimer les copies électroniques sous son contrôle, dans la mesure raisonnablement possible ;
+
+c) cesser toute utilisation des Informations Confidentielles.
+
+Sur demande, la Partie Réceptrice devra confirmer par écrit qu’elle s’est conformée à ces obligations.
+
+---
+
+## 10. DURÉE
+
+La présente entente entre en vigueur à la date de sa signature.
+
+Les obligations de confidentialité et de non-utilisation demeureront en vigueur pendant une période de **trois (3) ans** suivant la dernière divulgation d’Informations Confidentielles dans le cadre du But.
+
+Toutefois, à l’égard des informations constituant des secrets commerciaux ou des informations qui demeurent de nature confidentielle en vertu des lois applicables, les obligations de confidentialité demeureront en vigueur aussi longtemps que ces informations conserveront leur caractère confidentiel ou constitueront des secrets commerciaux.
+
+Les obligations de non-contournement demeureront en vigueur pendant une période de **trois (3) ans** suivant la dernière divulgation d’Informations Confidentielles dans le cadre du But.
+
+---
+
+## 11. ABSENCE DE GARANTIE
+
+Les Informations Confidentielles sont communiquées dans le cadre des discussions entre les Parties.
+
+Sauf entente écrite contraire, la Partie Divulgatrice ne donne aucune garantie quant à l’exhaustivité ou à l’exactitude des Informations Confidentielles communiquées dans le cadre des discussions exploratoires.
+
+---
+
+## 12. RECOURS
+
+Les Parties reconnaissent qu’une utilisation ou une divulgation non autorisée des Informations Confidentielles pourrait causer un préjudice important à la Partie Divulgatrice.
+
+La Partie Divulgatrice pourra exercer tout recours disponible en vertu des lois applicables relativement à une violation de la présente entente, y compris, lorsque les conditions applicables sont réunies, demander une injonction ou toute autre mesure visant à faire cesser une utilisation ou une divulgation non autorisée.
+
+---
+
+## 13. LOI APPLICABLE ET JURIDICTION
+
+La présente entente est régie par les lois de la province de Québec et les lois du Canada qui s’y appliquent.
+
+Tout litige découlant de la présente entente sera soumis aux tribunaux compétents du Québec, sous réserve des règles impératives applicables en matière de compétence.
+
+---
+
+## 14. ENTENTE COMPLÈTE
+
+La présente entente constitue l’intégralité de l’entente entre les Parties relativement à la confidentialité des Informations Confidentielles divulguées dans le cadre du But et remplace toute discussion ou entente antérieure portant spécifiquement sur cet objet.
+
+Toute modification à la présente entente devra être faite par écrit et signée par les Parties.
+
+---
+
+## SIGNATURES
+
+### POUR LA PARTIE DIVULGATRICE
+
+Nom légal : ______________________________
+
+Nom du représentant : Erik Gaudreault
+
+Titre : _________________________________
+
+Signature : ______________________________
+
+Date : __________________________________
+
+### POUR LA PARTIE RÉCEPTRICE
+
+Nom légal : ______________________________
+
+Nom du représentant : Patrice **[nom de famille]**
+
+Titre : _________________________________
+
+Signature : ______________________________
+
+Date : __________________________________
