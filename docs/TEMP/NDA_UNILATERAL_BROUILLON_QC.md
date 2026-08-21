@@ -1,15 +1,14 @@
-# BROUILLON — Entente de confidentialité, de non-utilisation et de non-contournement
+# Entente de confidentialité, de non-utilisation et de non-contournement
 
-**Type :** temp · **Vérité pour :** brouillon NDA pour revue avocat (QC) · démo partenaires.  
+**Type :** temp · **Vérité pour :** NDA partenaires / démo (version validée légale).  
 **Dernière MAJ :** 21 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 21 août 2026 — art. 2/5/7 : marques de commerce (L.R.C. 1985 ch. T-13) + concurrence déloyale.
-- 21 août 2026 — texte unifié (confidentialité + non-utilisation + non-contournement).
+- 21 août 2026 — **version validée légale** (exclusions industrie, CONFIDENTIEL, signature électronique, LMC).
+- 21 août 2026 — brouillons successifs (marques LMC, concurrence déloyale).
 
-> **CE DOCUMENT N’EST PAS UN AVIS JURIDIQUE.**  
-> Brouillon interne Odyssey. **Ne pas envoyer à Patrice / Urgel / un partenaire tel quel** sans validation par un avocat compétent au Québec.  
-> Remplir les `[CROCHETS]` avant revue / signature.
+> Remplir les **`[CROCHETS]`** (raisons sociales, adresses, nom de famille Patrice) avant signature.  
+> Conservé sous `TEMP/` jusqu’à archivage / PDF signé hors repo si besoin.
 
 **Complète :** [`DEMO_PATRICE_URGEL_RUSH.md`](DEMO_PATRICE_URGEL_RUSH.md).
 
@@ -49,7 +48,8 @@ Aux fins de la présente entente, les « **Informations Confidentielles** » com
 - l’architecture technique et logicielle, les infrastructures et les méthodes de fonctionnement ;
 - les maquettes, designs, interfaces UI/UX, parcours utilisateurs et expériences numériques ;
 - les fonctionnalités actuelles ou futures d’Odyssey ;
-- les concepts, méthodes, processus et mécanismes propriétaires développés par Odyssey, ainsi que toute marque de commerce ou nom commercial (au sens de l’article 2 de la *Loi sur les marques de commerce*, L.R.C., 1985, ch. T-13), notamment le « Coffre », le « Sanctuaire » et le « Film de sa vie » ;
+- les concepts, méthodes, processus et mécanismes propriétaires développés par Odyssey, notamment le « Coffre », le « Sanctuaire » et le « Film de sa vie » ;
+- toute marque de commerce ou nom commercial au sens de la *Loi sur les marques de commerce* (L.R.C., 1985, ch. T-13) ;
 - le modèle d’affaires B2B2C ;
 - les stratégies commerciales, marketing, de distribution et de développement ;
 - les stratégies de tarification et les informations financières communiquées ;
@@ -58,9 +58,7 @@ Aux fins de la présente entente, les « **Informations Confidentielles** » com
 - toute information qui, compte tenu de sa nature ou des circonstances de sa divulgation, devrait raisonnablement être considérée comme confidentielle ;
 - ainsi que toute analyse, adaptation, synthèse ou dérivation réalisée à partir de ces informations.
 
-Les Informations Confidentielles peuvent être communiquées verbalement, visuellement, électroniquement, par écrit ou par tout autre moyen.
-
-Le fait qu’une information ne porte pas la mention « confidentiel » ne signifie pas qu’elle cesse d’être une Information Confidentielle lorsqu’elle répond à la présente définition.
+Les Informations Confidentielles peuvent être communiquées verbalement, visuellement, électroniquement, par écrit ou par tout autre moyen. Pour assurer une gestion rigoureuse, les documents transmis par écrit ou par courriel porteront idéalement la mention « **CONFIDENTIEL** », bien que le fait qu’une information ne porte pas cette mention ne signifie pas qu’elle cesse d’être une Information Confidentielle lorsqu’elle répond à la présente définition.
 
 ---
 
@@ -76,9 +74,9 @@ c) qu’elles étaient légalement connues de la Partie Réceptrice avant leur d
 
 d) qu’elles ont été obtenues légalement d’un tiers qui n’était pas tenu à une obligation de confidentialité ;
 
-ou
+e) qu’elles sont généralement connues dans l’industrie en question ; ou
 
-e) qu’elles doivent être divulguées en vertu d’une obligation légale ou d’une ordonnance d’une autorité compétente, auquel cas la Partie Réceptrice devra, dans la mesure légalement permise, en aviser préalablement la Partie Divulgatrice.
+f) qu’elles doivent être divulguées en vertu d’une obligation légale ou d’une ordonnance d’une autorité compétente, auquel cas la Partie Réceptrice devra, dans la mesure légalement permise, en aviser préalablement la Partie Divulgatrice.
 
 ---
 
@@ -98,7 +96,7 @@ e) demeurer responsable de toute utilisation ou divulgation non autorisée effec
 
 ---
 
-## 5. NON-UTILISATION ET CONCURRENCE DÉLOYALE
+## 5. NON-UTILISATION
 
 La Partie Réceptrice s’engage à utiliser les Informations Confidentielles exclusivement aux fins d’évaluer, de négocier ou, le cas échéant, de mettre en œuvre le partenariat envisagé dans le cadre du But.
 
@@ -108,7 +106,7 @@ La Partie Réceptrice ne pourra notamment pas, directement ou indirectement :
 - utiliser les Informations Confidentielles pour développer, faire développer, financer, commercialiser ou exploiter un produit, logiciel, plateforme ou service concurrent d’Odyssey ;
 - transmettre les Informations Confidentielles à un développeur, une agence, un consultant, un fournisseur ou tout autre tiers dans le but de reproduire ou de développer une solution fondée sur celles-ci ;
 - utiliser les concepts, fonctionnalités, méthodes, processus, architectures, designs ou stratégies propriétaires communiqués par la Partie Divulgatrice afin de créer une solution concurrente ou substantiellement similaire ;
-- accomplir tout acte de concurrence déloyale au sens de l’article 7 de la *Loi sur les marques de commerce*, notamment en appelant l’attention du public sur ses propres produits ou services de manière à causer de la confusion au Canada avec les produits, services ou l’entreprise de la Partie Divulgatrice.
+- accomplir tout acte de concurrence déloyale au sens de l’article 7 de la *Loi sur les marques de commerce*, notamment en appelant l’attention du public sur ses propres produits, services ou entreprise de manière à causer de la confusion avec ceux d’Odyssey.
 
 La présente clause vise l’utilisation des Informations Confidentielles divulguées dans le cadre du But et ne constitue pas une interdiction générale pour la Partie Réceptrice d’exercer ses activités commerciales légitimes.
 
@@ -122,21 +120,17 @@ La Partie Réceptrice s’engage également à ne pas utiliser les Informations 
 
 ---
 
-## 7. PROPRIÉTÉ INTELLECTUELLE ET PROTECTION DES MARQUES
+## 7. PROPRIÉTÉ INTELLECTUELLE
 
 Toutes les Informations Confidentielles demeurent la propriété exclusive de la Partie Divulgatrice.
 
 Aucune disposition de la présente entente ne doit être interprétée comme accordant à la Partie Réceptrice une licence, un droit d’utilisation permanent, un droit de propriété ou tout autre droit sur les droits de propriété intellectuelle de la Partie Divulgatrice.
 
-Cela comprend notamment les droits d’auteur, brevets, secrets commerciaux, concepts, logiciels, designs, architectures, méthodes et autres éléments propriétaires d’Odyssey, ainsi que toutes les marques de commerce déposées ou non (art. 19 de la *Loi sur les marques de commerce*).
+Cela comprend notamment les droits d’auteur, brevets, secrets commerciaux, concepts, logiciels, designs, architectures, méthodes et autres éléments propriétaires d’Odyssey, ainsi que les marques de commerce conférant un droit exclusif selon l’article 19 de la *Loi sur les marques de commerce*.
 
-À cet égard, la Partie Réceptrice reconnaît formellement qu’elle n’est pas autorisée à :
+La Partie Réceptrice reconnaît expressément qu’elle ne peut violer ces droits (art. 20) ni agir d’une manière susceptible d’entraîner la diminution de la valeur de l’achalandage (art. 22) attaché à ces marques.
 
-a) violer les droits exclusifs de la Partie Divulgatrice en employant des marques ou noms commerciaux créant de la confusion, conformément à l’article 20 de la *Loi sur les marques de commerce* ;
-
-b) déprécier l’achalandage de l’entreprise en employant une marque de la Partie Divulgatrice d’une manière susceptible d’entraîner la diminution de la valeur de l’achalandage qui y est attaché, tel qu’interdit par l’article 22 de la *Loi sur les marques de commerce*.
-
-La divulgation d’une Information Confidentielle ne constitue en aucun cas une cession de propriété intellectuelle.
+La divulgation d’une Information Confidentielle ne constitue pas une cession de propriété intellectuelle.
 
 ---
 
@@ -198,11 +192,13 @@ Tout litige découlant de la présente entente sera soumis aux tribunaux compét
 
 ---
 
-## 14. ENTENTE COMPLÈTE
+## 14. ENTENTE COMPLÈTE ET SIGNATURE ÉLECTRONIQUE
 
 La présente entente constitue l’intégralité de l’entente entre les Parties relativement à la confidentialité des Informations Confidentielles divulguées dans le cadre du But et remplace toute discussion ou entente antérieure portant spécifiquement sur cet objet.
 
 Toute modification à la présente entente devra être faite par écrit et signée par les Parties.
+
+Les Parties conviennent que la présente entente peut être signée électroniquement (ex. DocuSign, HelloSign) et qu’une signature électronique sécurisée lie juridiquement les Parties au même titre qu’une signature manuscrite traditionnelle.
 
 ---
 

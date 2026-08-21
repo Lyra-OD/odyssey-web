@@ -207,7 +207,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 |---------|------|-------------|
 | [`TEMP/README.md`](TEMP/README.md) | ops | Règles TEMP |
 | [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) | temp | Rush démo Patrice + courriel Paul |
-| [`TEMP/NDA_UNILATERAL_BROUILLON_QC.md`](TEMP/NDA_UNILATERAL_BROUILLON_QC.md) | temp | Brouillon NDA unilatéral QC — avocat avant envoi |
+| [`TEMP/NDA_UNILATERAL_BROUILLON_QC.md`](TEMP/NDA_UNILATERAL_BROUILLON_QC.md) | temp | NDA validé légal — crochets avant signature |
 
 ### Archive
 

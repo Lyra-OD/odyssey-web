@@ -26,7 +26,7 @@ Ne pas laisser pourrir 6 mois sans date dans le titre.
 | Fichier | Usage |
 |---------|--------|
 | [`DEMO_PATRICE_URGEL_RUSH.md`](DEMO_PATRICE_URGEL_RUSH.md) | Max démo convaincante + rush Figma Paul + courriel |
-| [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md) | Brouillon NDA unilatéral QC — **avocat avant envoi** |
+| [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md) | NDA validé légal — remplir crochets avant signature |
 
 ## Candidats à déplacer ici plus tard (si tu veux alléger la racine `docs/`)
 
