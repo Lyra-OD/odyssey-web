@@ -26,7 +26,10 @@ Ne pas laisser pourrir 6 mois sans date dans le titre.
 | Fichier | Usage |
 |---------|--------|
 | [`DEMO_PATRICE_URGEL_RUSH.md`](DEMO_PATRICE_URGEL_RUSH.md) | Max démo convaincante + rush Figma Paul + courriel |
-| [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md) | NDA validé légal — remplir crochets avant signature |
+| [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md) | **Guide A / B / C** — différences et reco |
+| [`NDA_A_VALIDEE_LEGALE.md`](NDA_A_VALIDEE_LEGALE.md) | **Version A** — validée légale |
+| [`NDA_B_FREEMIUM_REVSHARE.md`](NDA_B_FREEMIUM_REVSHARE.md) | **Version B** — + Freemium / Héritage-Éternité / RevShare |
+| [`NDA_C_ROBUSTE.md`](NDA_C_ROBUSTE.md) | **Version C** — B + non-sollicitation + feedback |
 
 ## Candidats à déplacer ici plus tard (si tu veux alléger la racine `docs/`)
 

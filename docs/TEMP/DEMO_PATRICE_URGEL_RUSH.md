@@ -120,7 +120,7 @@ Erik
 
 ## 5. Checklist jour J (Erik)
 
-- [ ] **NDA signé** — [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md) (version validée légale · remplir crochets · DocuSign OK)  
+- [ ] **NDA signé** — choisir **A / B / C** : [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md) · crochets · DocuSign  
 - [ ] Compte Salon : 1 invitation prête  
 - [ ] Lien Sanctuaire ouvert (onglet + téléphone)  
 - [ ] Projet Studio avec photos dans le Coffre  
