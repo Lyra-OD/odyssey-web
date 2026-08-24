@@ -59,7 +59,7 @@ import { ClientWebGLGate } from "@/src/components/contribute/constellation/webgl
 
 const APPROACH_MS = 680;
 const CLOSE_SETTLE_MS = 980;
-const CONSTELLATION_REVEAL_MS = 3400;
+const CONSTELLATION_REVEAL_MS = 4200;
 
 type FocusSession = {
   soulId: string;
@@ -160,15 +160,20 @@ function Constellation({
             {isFocus ? (
               <StarScreenReporter active onScreen={onStarScreen} />
             ) : null}
-            {star.lit && star.memory ? (
+            {star.role === "hero" || (star.lit && star.memory) ? (
               <LueurHitTarget
                 radius={hitRadius}
-                onPointerUp={(e) => onTap(star.id, e)}
+                onPointerUp={(e) => {
+                  if (star.memory) onTap(star.id, e);
+                  else e.stopPropagation();
+                }}
                 onPointerOver={(e) => {
                   if (locked) return;
                   e.stopPropagation();
                   setHovered(star.id);
-                  document.body.style.cursor = "pointer";
+                  document.body.style.cursor = star.memory
+                    ? "pointer"
+                    : "default";
                 }}
                 onPointerOut={() => {
                   setHovered(null);
@@ -176,17 +181,31 @@ function Constellation({
                 }}
               />
             ) : null}
-            {hovered === star.id && star.name ? (
+            {star.name &&
+            (hovered === star.id ||
+              (star.role === "hero" && appear > 0.55)) ? (
               <Html
-                distanceFactor={6}
+                distanceFactor={star.role === "hero" ? 7.5 : 6}
                 style={{
                   pointerEvents: "none",
-                  transform: "translate(-50%, 18px)",
+                  transform:
+                    star.role === "hero"
+                      ? "translate(-50%, 28px)"
+                      : "translate(-50%, 18px)",
                   whiteSpace: "nowrap",
-                  fontSize: "11px",
-                  letterSpacing: "0.16em",
-                  fontWeight: 300,
-                  color: "rgba(204, 251, 241, 0.6)",
+                  fontSize: star.role === "hero" ? "13px" : "11px",
+                  letterSpacing: "0.2em",
+                  fontWeight: star.role === "hero" ? 400 : 300,
+                  color:
+                    star.role === "hero"
+                      ? hovered === star.id
+                        ? "rgba(255, 250, 245, 0.92)"
+                        : "rgba(255, 250, 245, 0.55)"
+                      : "rgba(204, 251, 241, 0.6)",
+                  textShadow:
+                    star.role === "hero"
+                      ? "0 0 24px rgba(94, 234, 212, 0.35)"
+                      : "none",
                 }}
                 center
               >

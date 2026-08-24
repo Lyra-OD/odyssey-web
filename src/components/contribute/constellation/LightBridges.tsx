@@ -112,7 +112,7 @@ export function LightBridges({
           color={TEAL_TIP}
           lineWidth={3.4}
           transparent
-          opacity={0.9}
+          opacity={0.55}
           depthWrite={false}
           toneMapped={false}
         />

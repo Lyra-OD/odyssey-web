@@ -13,6 +13,12 @@ export function easeInOutCubic(t: number): number {
   return x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2;
 }
 
+/** Softer than cubic — less “steppy” for strokes. */
+export function easeInOutQuad(t: number): number {
+  const x = Math.min(1, Math.max(0, t));
+  return x < 0.5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2;
+}
+
 export type ConstellationDrawState = {
   /** 0–1 appear per node id */
   nodeAppear: Record<string, number>;
@@ -22,10 +28,13 @@ export type ConstellationDrawState = {
   activeStroke: { from: string; to: string; t: number } | null;
 };
 
-const HERO_SHARE = 0.16;
+/** Hero alone a bit longer — breath before the constellation grows. */
+const HERO_SHARE = 0.24;
+/** Overlap between consecutive strokes (less mechanical). */
+const STROKE_OVERLAP = 0.42;
 
 /**
- * Hero alone first, then each stroke draws from → to (current), lighting the tip.
+ * Hero alone first, then overlapping strokes (current flows node → node).
  */
 export function resolveStrokeDraw(
   revealT: number,
@@ -40,15 +49,12 @@ export function resolveStrokeDraw(
     return { nodeAppear, edgeDraw, activeStroke };
   }
 
-  const heroStep = sequence.find((s) => s.kind === "hero");
   const strokes = sequence.filter(
     (s): s is Extract<LeoStrokeStep, { kind: "stroke" }> => s.kind === "stroke",
   );
 
-  if (heroStep) {
-    const heroT = Math.min(1, t / HERO_SHARE);
-    nodeAppear.hero = easeOutCubic(heroT);
-  }
+  const heroT = Math.min(1, t / HERO_SHARE);
+  nodeAppear.hero = easeOutCubic(heroT);
 
   if (t <= HERO_SHARE) {
     return { nodeAppear, edgeDraw, activeStroke };
@@ -56,15 +62,21 @@ export function resolveStrokeDraw(
 
   const u = (t - HERO_SHARE) / (1 - HERO_SHARE);
   const n = Math.max(1, strokes.length);
+  const windowLen = Math.min(1, (1 + STROKE_OVERLAP) / n);
+  const step =
+    n <= 1 ? 0 : (1 - windowLen) / (n - 1);
+
+  let bestActive = -1;
+  let bestLocal = 0;
 
   for (let i = 0; i < strokes.length; i++) {
     const stroke = strokes[i];
     const key = strokeKey(stroke.from, stroke.to);
-    const start = i / n;
-    const end = (i + 1) / n;
+    const start = i * step;
+    const end = start + windowLen;
 
     if (u <= start) {
-      edgeDraw[key] = 0;
+      edgeDraw[key] = Math.max(edgeDraw[key] ?? 0, 0);
       continue;
     }
     if (u >= end) {
@@ -74,15 +86,26 @@ export function resolveStrokeDraw(
       continue;
     }
 
-    const local = easeInOutCubic((u - start) / (end - start));
-    edgeDraw[key] = local;
+    const local = easeInOutQuad((u - start) / (end - start));
+    edgeDraw[key] = Math.max(edgeDraw[key] ?? 0, local);
     nodeAppear[stroke.from] = Math.max(nodeAppear[stroke.from] ?? 0, 1);
-    // Destination blooms as the current arrives
     nodeAppear[stroke.to] = Math.max(
       nodeAppear[stroke.to] ?? 0,
-      easeOutCubic(Math.max(0, (local - 0.35) / 0.65)),
+      easeOutCubic(Math.max(0, (local - 0.2) / 0.8)),
     );
-    activeStroke = { from: stroke.from, to: stroke.to, t: local };
+    if (local > bestLocal && local < 0.99) {
+      bestLocal = local;
+      bestActive = i;
+    }
+  }
+
+  if (bestActive >= 0) {
+    const s = strokes[bestActive];
+    activeStroke = {
+      from: s.from,
+      to: s.to,
+      t: edgeDraw[strokeKey(s.from, s.to)] ?? bestLocal,
+    };
   }
 
   if (t >= 1) {
