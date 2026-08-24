@@ -171,6 +171,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 
 | Fichier | Type | Vérité pour |
 |---------|------|-------------|
+| [`ODYSSEY_LUEUR_CRAFT.md`](ODYSSEY_LUEUR_CRAFT.md) | craft | Lab Lueur — Hero · Constellation · Produit |
 | [`ODYSSEY_WORMHOLE_CRAFT.md`](ODYSSEY_WORMHOLE_CRAFT.md) | craft | Lab wormhole |
 | [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](ODYSSEY_ECLIPSE_PLAY_FINALE.md) | craft | Play A–B KEEP |
 | [`ODYSSEY_ECLIPSE_PLAY_AUDIO.md`](ODYSSEY_ECLIPSE_PLAY_AUDIO.md) | craft | Audio / die-cut |

@@ -175,7 +175,7 @@ Plan détaillé (phases, perf, intro OFF, veille ⏳) : **ce fichier screensaver
 
 **Journal essais :** [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md).
 
-**Preview craft :** `/fr/contribute/test-ciel` (ciel) · `/fr/contribute/test-eclipse` (lab) · `/fr/contribute/test-eclipse-play` (A–B) · `/fr/contribute/test-wormhole` (warp C) · `/fr/contribute/test-eclipse-mark` (marque)
+**Preview craft :** `/fr/contribute/test-ciel` (ciel) · `/fr/contribute/test-lueur` (Hero · Constellation · Produit) · `/fr/contribute/test-eclipse` (lab) · `/fr/contribute/test-eclipse-play` (A–B) · `/fr/contribute/test-wormhole` (warp C) · `/fr/contribute/test-eclipse-mark` (marque)
 
 Règle de session : **une lettre / phase à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
 
