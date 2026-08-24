@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 24 août 2026 — lien [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md).
 - 17 août 2026 — étape 4 : montants forfaits → FREEMIUM §2 (échelle émotionnelle reste).
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — canon positionnement V1.
@@ -13,6 +14,7 @@ Document canonique de **positionnement produit / vente émotionnelle** et de **m
 **Documents liés :**
 - [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) — **pivot CEO V1** (grille, Soft Cap, musique, purge jetons) — **prime** sur ce fichier si conflit
 - [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) — **ciel WebGL / étoiles-mémoire** + pont famille → film (vision figée 29 juil. 2026)
+- [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md) — **ciel économique** (teal défunt · Lueurs colorées · valeur ressentie)
 - [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md)
 - [`VISION_PHASE_2.md`](VISION_PHASE_2.md) — Family Fund, diaspora, CPL
 - [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) — hook Scanner

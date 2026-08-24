@@ -148,6 +148,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md) | canon | Collab éditeur |
 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) | canon | UX mobile M0–M6 |
 | [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) | canon | Quiet Luxury |
+| [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md) | produit | Ciel économique — teal · Lueurs colorées · valeur |
 | [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md) | canon | Add-on NFC |
 | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) | canon | Scanner Phase A+B |
 | [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) | canon | Boucle / Fonds |

@@ -4,10 +4,12 @@
 **Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 24 août 2026 — lien ciel économique Lueurs.
 - 17 août 2026 — plan Cursor rangé ici (était hors repo). Code actuel = WebGL, plus MP4.
 
 Ciel / étoiles-mémoire : [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) · layers : [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md).  
-SKU invité Lueur 19 $ : [`MONETIZATION_CATALOG.md`](MONETIZATION_CATALOG.md) §A.3.
+SKU invité Lueur 19 $ : [`MONETIZATION_CATALOG.md`](MONETIZATION_CATALOG.md) §A.3.  
+Ciel économique (couleurs, 2 grilles) : [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md).
 
 ---
 

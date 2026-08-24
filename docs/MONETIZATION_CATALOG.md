@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 août 2026 (en-tête) · 22 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 24 août 2026 — lien ciel économique Lueurs (prix égal / palette).
 - 17 août 2026 — étape 4 : A.1 forfaits → FREEMIUM §2 (add-ons / empreintes restent ici).
 - 17 août 2026 — en-tête type + carte.
 - 22 juillet 2026 — plafonds dépôt Sanctuaire + témoignage live.
@@ -64,6 +65,8 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 | **Lueur** | **19 $** | `guest_candle` | Secondaire (jamais CTA #1) | ✅ présence V1 |
 | **Mécène** (montant libre) | `guest_patron` | **150–1000 $** (sugg. **250 $**) | Asymétrie | ✅ config · 🔜 checkout amount |
 | Pack HD | `guest_hd` | ~~49 $~~ | — | ⚠️ **DÉPRÉCIÉ** |
+
+**Couleurs Lueur (produit) :** palette curatée · **même prix** toutes teintes · teal = défunt seul — [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md).
 
 **Dépôt gratuit & plafonds (canon) —** `src/lib/contribute/sanctuaryLimits.ts` :
 

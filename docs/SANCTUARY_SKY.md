@@ -1,12 +1,13 @@
 # Odyssey — Ciel du Sanctuaire (étoiles-mémoire)
 
-**Statut : vision figée · 29 juillet 2026** · **MAJ craft silhouette :** 24 août 2026 (`leo-graph-v1`)  
+**Statut : vision figée · 29 juillet 2026** · **MAJ craft silhouette :** 24 août 2026 (`leo-graph-v1`) · **lien ciel économique :** 24 août 2026  
 **Base technique sécurisée :** commit `6ded642` (WebGL galaxy / `LueurNode` / `test-ciel`)
 
 Document canonique de l’expérience **ciel** du Sanctuaire invité et du **pont** vers le film famille.  
 **Craft technique / layers / polish WebGL :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md).  
 **Atome Lueur (carte vs ciel) :** [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md).  
 **Knobs / thème ciel (couleurs, presets) :** [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md).  
+**Ciel économique (Lueurs colorées, 2 grilles, prix) :** [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md).  
 Complète [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) (positionnement / monétisation) et [`VISION_PHASE_2.md`](VISION_PHASE_2.md) §2.1 (modération invité). Ne remplace pas le wizard film ([`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)).
 
 ---
@@ -18,6 +19,7 @@ Complète [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) (positionnement / mon
 - **Une étoile = une mémoire** (photo, vidéo, voix, message) — pas un avatar de personne.
 - **Centre = Lueur pure** (présence / mystère) — jamais un portrait vignette.
 - **Autour = satellites de mémoire** en orbite.
+- **Lueurs payées / colorées** (SKU) = autre grille — teal réservé au défunt : [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md).
 - Poésie = **image + mouvement**. Mots UI = **table de cuisine**.
 
 Test d’or :
