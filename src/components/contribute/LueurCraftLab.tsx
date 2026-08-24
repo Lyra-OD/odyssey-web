@@ -2,7 +2,7 @@
 
 import { Canvas, useThree } from "@react-three/fiber";
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Color, WebGLRenderer } from "three";
 
 import {
@@ -12,7 +12,15 @@ import {
   HeroStar,
   type HeroLayerKnobs,
 } from "@/src/components/contribute/constellation/HeroStar";
-import { SanctuaryUniverse } from "@/src/components/contribute/SanctuaryUniverse";
+import {
+  DEFAULT_CONSTELLATION_REVEAL_MS,
+  DEFAULT_HERO_SHARE,
+  DEFAULT_STROKE_OVERLAP,
+} from "@/src/components/contribute/constellation/graphs/reveal";
+import {
+  SanctuaryUniverse,
+  type ConstellationRevealCraft,
+} from "@/src/components/contribute/SanctuaryUniverse";
 import { SanctuaryLueurOrb } from "@/src/components/contribute/SanctuaryLueurOrb";
 import { ClientWebGLGate } from "@/src/components/contribute/constellation/webglGate";
 import {
@@ -115,12 +123,13 @@ const COPY = {
     tabConstellation: "2 — Constellation",
     tabProduit: "3 — Lueur produit",
     hintHero: "3 layers indépendants — blanc · teal · spikes",
-    hintConstellation: "Graphe Leo avec Hero au centre",
+    hintConstellation: "Reveal Leo — play / pause / scrub",
     hintProduit: "SKU / carte — même famille visuelle",
     layerWhite: "Layer blanc (cœur)",
     layerTeal: "Layer teal (glow)",
     layerSpikes: "Layer spikes",
     layer3d: "3D (profondeur + tilt)",
+    layerReveal: "Reveal constellation",
     size: "Taille",
     glow: "Intensité",
     breath: "Respiration",
@@ -128,6 +137,15 @@ const COPY = {
     amount: "Force spikes",
     rotate: "Rotation",
     parallax: "Parallax souris",
+    timeline: "Timeline",
+    play: "Play",
+    pause: "Pause",
+    restart: "Rejouer",
+    duration: "Durée (s)",
+    heroShare: "Solo hero",
+    strokeOverlap: "Overlap traits",
+    emphasisDuring: "Filaments (draw)",
+    emphasisIdle: "Filaments (fin)",
     sky: "Ciel",
     eclipse: "Éclipse",
     wormhole: "Wormhole",
@@ -139,12 +157,13 @@ const COPY = {
     tabConstellation: "2 — Constellation",
     tabProduit: "3 — Product Lueur",
     hintHero: "3 independent layers — white · teal · spikes",
-    hintConstellation: "Leo graph with Hero at center",
+    hintConstellation: "Leo reveal — play / pause / scrub",
     hintProduit: "SKU / card — same visual family",
     layerWhite: "White layer (core)",
     layerTeal: "Teal layer (glow)",
     layerSpikes: "Spikes layer",
     layer3d: "3D (depth + tilt)",
+    layerReveal: "Constellation reveal",
     size: "Size",
     glow: "Intensity",
     breath: "Breath",
@@ -152,6 +171,15 @@ const COPY = {
     amount: "Spike strength",
     rotate: "Rotation",
     parallax: "Mouse parallax",
+    timeline: "Timeline",
+    play: "Play",
+    pause: "Pause",
+    restart: "Replay",
+    duration: "Duration (s)",
+    heroShare: "Hero alone",
+    strokeOverlap: "Stroke overlap",
+    emphasisDuring: "Filaments (draw)",
+    emphasisIdle: "Filaments (end)",
     sky: "Sky",
     eclipse: "Eclipse",
     wormhole: "Wormhole",
@@ -241,6 +269,76 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [spikes, setSpikes] = useState<HeroLayerKnobs>(DEFAULT_HERO_SPIKES);
   const [parallax, setParallax] = useState(0.45);
 
+  const [revealT, setRevealT] = useState(0);
+  const [revealPlaying, setRevealPlaying] = useState(false);
+  const [revealDurationMs, setRevealDurationMs] = useState(
+    DEFAULT_CONSTELLATION_REVEAL_MS,
+  );
+  const [heroShare, setHeroShare] = useState(DEFAULT_HERO_SHARE);
+  const [strokeOverlap, setStrokeOverlap] = useState(DEFAULT_STROKE_OVERLAP);
+  const [emphasisDuring, setEmphasisDuring] = useState(0.25);
+  const [emphasisIdle, setEmphasisIdle] = useState(0.55);
+  const revealPlayFromRef = useRef(0);
+
+  useEffect(() => {
+    if (tab !== "constellation") {
+      setRevealPlaying(false);
+      return;
+    }
+    revealPlayFromRef.current = 0;
+    setRevealT(0);
+    setRevealPlaying(true);
+  }, [tab]);
+
+  useEffect(() => {
+    if (tab !== "constellation" || !revealPlaying) return;
+    let raf = 0;
+    const t0 = performance.now();
+    const r0 = revealPlayFromRef.current;
+    const spanMs = Math.max(80, (1 - r0) * revealDurationMs);
+    const tick = (now: number) => {
+      const u = Math.min(1, (now - t0) / spanMs);
+      setRevealT(r0 + (1 - r0) * u);
+      if (u < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        setRevealPlaying(false);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [tab, revealPlaying, revealDurationMs]);
+
+  const craftReveal: ConstellationRevealCraft = {
+    controlled: true,
+    revealT,
+    heroShare,
+    strokeOverlap,
+    emphasisDuring,
+    emphasisIdle,
+  };
+
+  const onRevealPlay = () => {
+    if (revealT >= 0.999) {
+      revealPlayFromRef.current = 0;
+      setRevealT(0);
+    } else {
+      revealPlayFromRef.current = revealT;
+    }
+    setRevealPlaying(true);
+  };
+  const onRevealPause = () => setRevealPlaying(false);
+  const onRevealRestart = () => {
+    setRevealPlaying(false);
+    revealPlayFromRef.current = 0;
+    setRevealT(0);
+    requestAnimationFrame(() => setRevealPlaying(true));
+  };
+  const onRevealScrub = (v: number) => {
+    setRevealPlaying(false);
+    setRevealT(v);
+  };
+
   const tabs: { id: LabTab; label: string; hint: string }[] = [
     { id: "hero", label: t.tabHero, hint: t.hintHero },
     { id: "constellation", label: t.tabConstellation, hint: t.hintConstellation },
@@ -267,6 +365,62 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       step: 0.01,
       value: parallax,
       onChange: setParallax,
+    },
+  ];
+  const constellationKnobs: KnobDef[] = [
+    {
+      key: "reveal-t",
+      label: t.timeline,
+      min: 0,
+      max: 1,
+      step: 0.001,
+      value: revealT,
+      onChange: onRevealScrub,
+    },
+    {
+      key: "reveal-dur",
+      label: t.duration,
+      min: 1,
+      max: 12,
+      step: 0.1,
+      value: revealDurationMs / 1000,
+      onChange: (v) => setRevealDurationMs(v * 1000),
+    },
+    {
+      key: "hero-share",
+      label: t.heroShare,
+      min: 0.05,
+      max: 0.55,
+      step: 0.01,
+      value: heroShare,
+      onChange: setHeroShare,
+    },
+    {
+      key: "stroke-overlap",
+      label: t.strokeOverlap,
+      min: 0,
+      max: 0.85,
+      step: 0.01,
+      value: strokeOverlap,
+      onChange: setStrokeOverlap,
+    },
+    {
+      key: "emp-during",
+      label: t.emphasisDuring,
+      min: 0,
+      max: 1.2,
+      step: 0.01,
+      value: emphasisDuring,
+      onChange: setEmphasisDuring,
+    },
+    {
+      key: "emp-idle",
+      label: t.emphasisIdle,
+      min: 0,
+      max: 1.5,
+      step: 0.01,
+      value: emphasisIdle,
+      onChange: setEmphasisIdle,
     },
   ];
 
@@ -308,7 +462,11 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
 
       {tab === "constellation" ? (
         <div className="fixed inset-0 z-0">
-          <SanctuaryUniverse mode="immersive" locale={locale} />
+          <SanctuaryUniverse
+            mode="immersive"
+            locale={locale}
+            craftReveal={craftReveal}
+          />
         </div>
       ) : null}
 
@@ -426,6 +584,43 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
                 {t.layer3d}
               </p>
               <CraftKnobGrid knobs={depth3dKnobs} />
+            </div>
+          ) : null}
+
+          {tab === "constellation" ? (
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={onRevealPlay}
+                  disabled={revealPlaying}
+                  className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45 disabled:opacity-40"
+                >
+                  {t.play}
+                </button>
+                <button
+                  type="button"
+                  onClick={onRevealPause}
+                  disabled={!revealPlaying}
+                  className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45 disabled:opacity-40"
+                >
+                  {t.pause}
+                </button>
+                <button
+                  type="button"
+                  onClick={onRevealRestart}
+                  className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45"
+                >
+                  {t.restart}
+                </button>
+                <span className="font-mono text-[12px] text-teal-400/80">
+                  {(revealT * 100).toFixed(0)}%
+                </span>
+              </div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+                {t.layerReveal}
+              </p>
+              <CraftKnobGrid knobs={constellationKnobs} />
             </div>
           ) : null}
         </div>

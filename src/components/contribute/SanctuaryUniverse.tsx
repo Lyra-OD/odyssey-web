@@ -50,7 +50,12 @@ import {
   resolveConstellation,
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import { LEO_STROKE_SEQUENCE } from "@/src/components/contribute/constellation/graphs/leo";
-import { resolveStrokeDraw } from "@/src/components/contribute/constellation/graphs/reveal";
+import {
+  DEFAULT_CONSTELLATION_REVEAL_MS,
+  DEFAULT_HERO_SHARE,
+  DEFAULT_STROKE_OVERLAP,
+  resolveStrokeDraw,
+} from "@/src/components/contribute/constellation/graphs/reveal";
 import {
   tierDpr,
   useVisualTier,
@@ -59,7 +64,18 @@ import { ClientWebGLGate } from "@/src/components/contribute/constellation/webgl
 
 const APPROACH_MS = 680;
 const CLOSE_SETTLE_MS = 980;
-const CONSTELLATION_REVEAL_MS = 4200;
+
+/** Lab craft — drive Leo reveal from outside (scrub / play-pause). */
+export type ConstellationRevealCraft = {
+  controlled: true;
+  revealT: number;
+  heroShare?: number;
+  strokeOverlap?: number;
+  /** Filament / node boost while drawing (default 0.25 × revealT) */
+  emphasisDuring?: number;
+  /** Filament boost when reveal complete (default 0.55) */
+  emphasisIdle?: number;
+};
 
 type FocusSession = {
   soulId: string;
@@ -95,6 +111,8 @@ function Constellation({
   onStarScreen,
   revealT,
   emphasis,
+  heroShare,
+  strokeOverlap,
 }: {
   onSelectMemory: (
     soulId: string,
@@ -105,6 +123,8 @@ function Constellation({
   onStarScreen: (anchor: ScreenAnchor | null) => void;
   revealT: number;
   emphasis: number;
+  heroShare?: number;
+  strokeOverlap?: number;
 }) {
   const stars = useMemo(() => resolveConstellation(), []);
   const positions = useMemo(() => constellationPositions(stars), [stars]);
@@ -113,8 +133,12 @@ function Constellation({
     [stars],
   );
   const draw = useMemo(
-    () => resolveStrokeDraw(revealT, LEO_STROKE_SEQUENCE),
-    [revealT],
+    () =>
+      resolveStrokeDraw(revealT, LEO_STROKE_SEQUENCE, {
+        heroShare,
+        strokeOverlap,
+      }),
+    [revealT, heroShare, strokeOverlap],
   );
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -237,6 +261,7 @@ function UniverseScene({
   focus,
   onStarScreen,
   craftLite = false,
+  craftReveal,
 }: {
   tier: ReturnType<typeof useVisualTier>;
   parallaxIntensity: number;
@@ -249,6 +274,7 @@ function UniverseScene({
   focus: FocusSession | null;
   onStarScreen: (anchor: ScreenAnchor | null) => void;
   craftLite?: boolean;
+  craftReveal?: ConstellationRevealCraft;
 }) {
   const theme = useSkyTheme();
   // Pendant closing, on garde le tracking pour suivre l’étoile au retour
@@ -262,25 +288,36 @@ function UniverseScene({
           ? 0.95
           : 0;
 
-  const [revealT, setRevealT] = useState(0);
+  const [autoRevealT, setAutoRevealT] = useState(0);
+  const controlled = craftReveal?.controlled === true;
+  const revealT = controlled ? craftReveal.revealT : autoRevealT;
+  const heroShare = craftReveal?.heroShare ?? DEFAULT_HERO_SHARE;
+  const strokeOverlap = craftReveal?.strokeOverlap ?? DEFAULT_STROKE_OVERLAP;
+  const emphasisDuring = craftReveal?.emphasisDuring ?? 0.25;
+  const emphasisIdle = craftReveal?.emphasisIdle ?? 0.55;
 
   useEffect(() => {
+    if (controlled) return;
     if (!showConstellation) {
-      setRevealT(0);
+      setAutoRevealT(0);
       return;
     }
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
-      const raw = Math.min(1, (now - start) / CONSTELLATION_REVEAL_MS);
-      setRevealT(raw);
+      const raw = Math.min(
+        1,
+        (now - start) / DEFAULT_CONSTELLATION_REVEAL_MS,
+      );
+      setAutoRevealT(raw);
       if (raw < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [showConstellation]);
+  }, [showConstellation, controlled]);
 
-  const emphasis = revealT >= 1 ? 0.55 : revealT * 0.25;
+  const emphasis =
+    revealT >= 1 ? emphasisIdle : revealT * emphasisDuring;
 
   return (
     <ParallaxProvider intensity={parallaxIntensity}>
@@ -393,6 +430,8 @@ function UniverseScene({
                 onStarScreen={onStarScreen}
                 revealT={revealT}
                 emphasis={emphasis}
+                heroShare={heroShare}
+                strokeOverlap={strokeOverlap}
               />
             </ConstellationLeash>
           </ParallaxLayer>
@@ -458,6 +497,8 @@ export type SanctuaryUniverseProps = {
    * Pas de molette zoom, dpr 1, tier mobile (moins de layers).
    */
   craftLite?: boolean;
+  /** Lab `/test-lueur` onglet Constellation — scrub / play reveal Leo. */
+  craftReveal?: ConstellationRevealCraft;
 };
 
 export function SanctuaryUniverse({
@@ -468,6 +509,7 @@ export function SanctuaryUniverse({
   onClose,
   locale = "fr",
   craftLite = false,
+  craftReveal,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -694,12 +736,15 @@ export function SanctuaryUniverse({
               <UniverseScene
                 tier={tier}
                 parallaxIntensity={intensity}
-                showConstellation={immersive && constellationOn}
+                showConstellation={
+                  immersive && (craftReveal ? true : constellationOn)
+                }
                 wanderEnabled={immersive && wanderOn}
                 onSelectMemory={beginFocus}
                 focus={focus}
                 onStarScreen={onStarScreen}
                 craftLite={craftLite}
+                craftReveal={craftReveal}
               />
             </SkyThemeProvider>
           </Suspense>
@@ -717,7 +762,7 @@ export function SanctuaryUniverse({
         />
       ) : null}
 
-      {immersive ? (
+      {immersive && !craftReveal ? (
         <div className="pointer-events-none absolute bottom-8 left-0 right-0 text-center">
           <p className="text-sm font-light uppercase tracking-widest text-teal-50/30">
             {fillLabel}

@@ -28,10 +28,16 @@ export type ConstellationDrawState = {
   activeStroke: { from: string; to: string; t: number } | null;
 };
 
-/** Hero alone a bit longer — breath before the constellation grows. */
-const HERO_SHARE = 0.24;
-/** Overlap between consecutive strokes (less mechanical). */
-const STROKE_OVERLAP = 0.42;
+export type ResolveStrokeDrawOptions = {
+  /** Share of timeline for hero alone (0.05–0.6). Default 0.24 */
+  heroShare?: number;
+  /** Overlap between consecutive strokes (0–0.85). Default 0.42 */
+  strokeOverlap?: number;
+};
+
+export const DEFAULT_HERO_SHARE = 0.24;
+export const DEFAULT_STROKE_OVERLAP = 0.42;
+export const DEFAULT_CONSTELLATION_REVEAL_MS = 4200;
 
 /**
  * Hero alone first, then overlapping strokes (current flows node → node).
@@ -39,7 +45,17 @@ const STROKE_OVERLAP = 0.42;
 export function resolveStrokeDraw(
   revealT: number,
   sequence: readonly LeoStrokeStep[],
+  options?: ResolveStrokeDrawOptions,
 ): ConstellationDrawState {
+  const heroShare = Math.min(
+    0.6,
+    Math.max(0.05, options?.heroShare ?? DEFAULT_HERO_SHARE),
+  );
+  const strokeOverlap = Math.min(
+    0.85,
+    Math.max(0, options?.strokeOverlap ?? DEFAULT_STROKE_OVERLAP),
+  );
+
   const nodeAppear: Record<string, number> = {};
   const edgeDraw: Record<string, number> = {};
   let activeStroke: ConstellationDrawState["activeStroke"] = null;
@@ -53,18 +69,17 @@ export function resolveStrokeDraw(
     (s): s is Extract<LeoStrokeStep, { kind: "stroke" }> => s.kind === "stroke",
   );
 
-  const heroT = Math.min(1, t / HERO_SHARE);
+  const heroT = Math.min(1, t / heroShare);
   nodeAppear.hero = easeOutCubic(heroT);
 
-  if (t <= HERO_SHARE) {
+  if (t <= heroShare) {
     return { nodeAppear, edgeDraw, activeStroke };
   }
 
-  const u = (t - HERO_SHARE) / (1 - HERO_SHARE);
+  const u = (t - heroShare) / (1 - heroShare);
   const n = Math.max(1, strokes.length);
-  const windowLen = Math.min(1, (1 + STROKE_OVERLAP) / n);
-  const step =
-    n <= 1 ? 0 : (1 - windowLen) / (n - 1);
+  const windowLen = Math.min(1, (1 + strokeOverlap) / n);
+  const step = n <= 1 ? 0 : (1 - windowLen) / (n - 1);
 
   let bestActive = -1;
   let bestLocal = 0;
