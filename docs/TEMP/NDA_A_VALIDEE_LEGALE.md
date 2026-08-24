@@ -16,7 +16,7 @@
 
 # ENTENTE DE CONFIDENTIALITÉ, DE NON-UTILISATION ET DE NON-CONTOURNEMENT
 
-**(Version A — validée légale)**
+**21 août 2026**
 
 **ENTRE :**
 

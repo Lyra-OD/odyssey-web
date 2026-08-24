@@ -17,7 +17,7 @@
 
 # ENTENTE DE CONFIDENTIALITÉ, DE NON-UTILISATION ET DE NON-CONTOURNEMENT
 
-**(Version B — Freemium / RevShare)**
+**21 août 2026**
 
 **ENTRE :**
 

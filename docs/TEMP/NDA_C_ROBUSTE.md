@@ -19,7 +19,7 @@
 
 # ENTENTE DE CONFIDENTIALITÉ, DE NON-UTILISATION ET DE NON-CONTOURNEMENT
 
-**Version C – 21 août 2026**
+**21 août 2026**
 
 **ENTRE :**
 
@@ -149,8 +149,6 @@ La Partie Réceptrice s’engage également à ne pas utiliser les Informations 
 
 ## 7. NON-SOLLICITATION
 
-*(Spécifique Version C — absent de A, B et D.)*
-
 Pendant toute la durée de la présente entente et pour une période de **douze (12) mois** suivant sa résiliation ou son expiration, la Partie Réceptrice s’engage à ne pas, directement ou indirectement, solliciter, recruter, embaucher ou tenter de débaucher tout employé, pigiste, consultant ou sous-traitant de la Partie Divulgatrice (incluant les designers et développeurs) avec qui elle aurait été en contact dans le cadre du But.
 
 ---
@@ -165,7 +163,7 @@ La présente entente ne limite aucun des droits ou recours dont Odyssey pourrait
 
 La divulgation d’une Information Confidentielle ne constitue pas une cession de propriété intellectuelle.
 
-**Propriété des suggestions :** *(Spécifique Version C — absent de A, B et D.)* Si la Partie Réceptrice fournit des commentaires, des suggestions ou des idées d’amélioration concernant les Informations Confidentielles ou les produits d’Odyssey (le « **Feedback** »), elle accepte que ce Feedback devienne la propriété exclusive et non restreinte de la Partie Divulgatrice. La Partie Divulgatrice pourra utiliser, intégrer ou commercialiser ce Feedback sans aucune obligation de compensation ou de reconnaissance envers la Partie Réceptrice.
+**Propriété des suggestions :** Si la Partie Réceptrice fournit des commentaires, des suggestions ou des idées d’amélioration concernant les Informations Confidentielles ou les produits d’Odyssey (le « **Feedback** »), elle accepte que ce Feedback devienne la propriété exclusive et non restreinte de la Partie Divulgatrice. La Partie Divulgatrice pourra utiliser, intégrer ou commercialiser ce Feedback sans aucune obligation de compensation ou de reconnaissance envers la Partie Réceptrice.
 
 ---
 

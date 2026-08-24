@@ -21,7 +21,7 @@
 
 # CONFIDENTIALITY, NON-USE AND NON-CIRCUMVENTION AGREEMENT
 
-**Version D ENG – 21 August 2026**
+**21 August 2026**
 
 **BETWEEN :**
 
@@ -231,7 +231,7 @@ The Parties agree that this Agreement may be signed electronically (e.g. DocuSig
 
 ## 15. LANGUAGE
 
-This English version is provided for convenience and for English-speaking counsel. If a French version of Version D is also executed or circulated between the Parties, the **French version prevails** in the event of any conflict or inconsistency.
+This English text is provided for convenience and for English-speaking counsel. If a French text of this Agreement is also executed or circulated between the Parties, the **French text prevails** in the event of any conflict or inconsistency.
 
 ---
 
