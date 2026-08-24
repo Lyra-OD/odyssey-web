@@ -43,9 +43,14 @@ import {
   type SkyTheme,
 } from "@/src/components/contribute/constellation/skyTheme";
 import {
-  MOCK_SOULS,
-  getMockSoul,
-} from "@/src/components/contribute/constellation/mockSouls";
+  ACTIVE_TEMPLATE,
+  CONSTELLATION_LAYOUT_ID,
+  constellationPositions,
+  getResolvedStar,
+  resolveConstellation,
+} from "@/src/components/contribute/constellation/graphs/resolveConstellation";
+import { LEO_STROKE_SEQUENCE } from "@/src/components/contribute/constellation/graphs/leo";
+import { resolveStrokeDraw } from "@/src/components/contribute/constellation/graphs/reveal";
 import {
   tierDpr,
   useVisualTier,
@@ -54,6 +59,7 @@ import { ClientWebGLGate } from "@/src/components/contribute/constellation/webgl
 
 const APPROACH_MS = 680;
 const CLOSE_SETTLE_MS = 980;
+const CONSTELLATION_REVEAL_MS = 3400;
 
 type FocusSession = {
   soulId: string;
@@ -61,17 +67,6 @@ type FocusSession = {
   /** approach → caméra ; open → portail ; closing → retour */
   phase: "approach" | "open" | "closing";
 };
-
-
-
-function initialPositions() {
-  return Object.fromEntries(
-    MOCK_SOULS.map((s) => [s.id, [...s.position] as [number, number, number]]),
-  );
-}
-
-/** Reset constellation — orb cloud V1 + zoom (sans orbites). */
-const CONSTELLATION_LAYOUT_ID = "orb-cloud-reset-v1";
 
 /** Garantit des frames même sans interaction souris (WebGL demand). */
 function ForceRenderLoop() {
@@ -98,6 +93,8 @@ function Constellation({
   focusedSoulId,
   focusBoost,
   onStarScreen,
+  revealT,
+  emphasis,
 }: {
   onSelectMemory: (
     soulId: string,
@@ -106,63 +103,80 @@ function Constellation({
   focusedSoulId: string | null;
   focusBoost: number;
   onStarScreen: (anchor: ScreenAnchor | null) => void;
+  revealT: number;
+  emphasis: number;
 }) {
-  const positions = useMemo(() => initialPositions(), []);
+  const stars = useMemo(() => resolveConstellation(), []);
+  const positions = useMemo(() => constellationPositions(stars), [stars]);
+  const ghostIds = useMemo(
+    () => new Set(stars.filter((s) => !s.lit).map((s) => s.id)),
+    [stars],
+  );
+  const draw = useMemo(
+    () => resolveStrokeDraw(revealT, LEO_STROKE_SEQUENCE),
+    [revealT],
+  );
   const [hovered, setHovered] = useState<string | null>(null);
 
-  const heroId = useMemo(
-    () => MOCK_SOULS.find((s) => s.tier === "hero")?.id ?? "hero",
-    [],
-  );
-  const soulIds = useMemo(() => MOCK_SOULS.map((s) => s.id), []);
   const locked = focusedSoulId !== null;
 
   const onTap = (id: string, e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     if (locked) return;
     if (skyWanderWasDrag()) return;
-    const soul = getMockSoul(id);
-    if (soul?.memory) {
-      onSelectMemory(id, positions[id] ?? soul.position);
+    if (revealT < 0.97) return;
+    const star = getResolvedStar(stars, id);
+    if (star?.memory) {
+      onSelectMemory(id, positions[id] ?? star.position);
     }
   };
 
   return (
-    <group>
-      {MOCK_SOULS.map((soul, i) => {
-        const pos = positions[soul.id] ?? soul.position;
+    <group position={[-0.45, -0.7, 0]} scale={1}>
+      {stars.map((star, i) => {
+        const pos = positions[star.id] ?? star.position;
+        const appear = draw.nodeAppear[star.id] ?? 0;
+        if (appear < 0.03) return null;
+
         const hitRadius =
-          soul.tier === "hero" ? 0.55 : soul.tier === "premium" ? 0.4 : 0.32;
-        const isFocus = focusedSoulId === soul.id;
+          star.visual === "hero"
+            ? 0.95
+            : star.visual === "premium"
+              ? 0.45
+              : star.visual === "ghost"
+                ? 0.28
+                : 0.36;
+        const isFocus = focusedSoulId === star.id;
 
         return (
-          <group key={soul.id} position={pos}>
+          <group key={star.id} position={pos}>
             <LueurNode
-              variant={soul.tier}
+              variant={star.visual}
               phase={i * 1.7}
-              floating={!isFocus}
+              floating={!isFocus && star.lit}
               focusBoost={isFocus ? focusBoost : 0}
+              appear={appear * (1 + emphasis * 0.1)}
             />
             {isFocus ? (
               <StarScreenReporter active onScreen={onStarScreen} />
             ) : null}
-            <LueurHitTarget
-              radius={hitRadius}
-              onPointerUp={(e) => onTap(soul.id, e)}
-              onPointerOver={(e) => {
-                if (locked) return;
-                e.stopPropagation();
-                setHovered(soul.id);
-                document.body.style.cursor = soul.memory
-                  ? "pointer"
-                  : "default";
-              }}
-              onPointerOut={() => {
-                setHovered(null);
-                document.body.style.cursor = "auto";
-              }}
-            />
-            {hovered === soul.id ? (
+            {star.lit && star.memory ? (
+              <LueurHitTarget
+                radius={hitRadius}
+                onPointerUp={(e) => onTap(star.id, e)}
+                onPointerOver={(e) => {
+                  if (locked) return;
+                  e.stopPropagation();
+                  setHovered(star.id);
+                  document.body.style.cursor = "pointer";
+                }}
+                onPointerOut={() => {
+                  setHovered(null);
+                  document.body.style.cursor = "auto";
+                }}
+              />
+            ) : null}
+            {hovered === star.id && star.name ? (
               <Html
                 distanceFactor={6}
                 style={{
@@ -176,16 +190,19 @@ function Constellation({
                 }}
                 center
               >
-                {soul.name}
+                {star.name}
               </Html>
             ) : null}
           </group>
         );
       })}
       <LightBridges
-        heroId={heroId}
         positions={positions}
-        soulIds={soulIds}
+        edges={ACTIVE_TEMPLATE.edges}
+        ghostIds={ghostIds}
+        draw={draw}
+        emphasis={emphasis}
+        revealComplete={revealT >= 1}
       />
     </group>
   );
@@ -225,6 +242,26 @@ function UniverseScene({
         : focus?.phase === "closing"
           ? 0.95
           : 0;
+
+  const [revealT, setRevealT] = useState(0);
+
+  useEffect(() => {
+    if (!showConstellation) {
+      setRevealT(0);
+      return;
+    }
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const raw = Math.min(1, (now - start) / CONSTELLATION_REVEAL_MS);
+      setRevealT(raw);
+      if (raw < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [showConstellation]);
+
+  const emphasis = revealT >= 1 ? 0.55 : revealT * 0.25;
 
   return (
     <ParallaxProvider intensity={parallaxIntensity}>
@@ -335,6 +372,8 @@ function UniverseScene({
                 focusedSoulId={focus?.soulId ?? null}
                 focusBoost={focusBoost}
                 onStarScreen={onStarScreen}
+                revealT={revealT}
+                emphasis={emphasis}
               />
             </ConstellationLeash>
           </ParallaxLayer>
@@ -621,7 +660,7 @@ export function SanctuaryUniverse({
           frameloop="demand"
           dpr={craftLite ? 1 : tierDpr(tier)}
           camera={{
-            position: [0, 0, craftLite ? 58 : 7.5],
+            position: [0, 0, craftLite ? 58 : 9.2],
             fov: craftLite ? 68 : 42,
             near: 0.1,
             far: craftLite ? 120 : 40,

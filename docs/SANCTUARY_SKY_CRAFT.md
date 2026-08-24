@@ -2,7 +2,13 @@
 
 **Statut : vivant · mis à jour 5 août 2026**  
 **Complète :** [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) (vision produit / UX / lexique)  
-**Ce doc =** *comment* on construit le ciel WebGL — layers, règles, anti-patterns, plan polish.
+**Ce doc =** *comment* on construit le ciel WebGL — layers, règles, anti-patterns, plan polish.  
+**Dernière MAJ :** 24 août 2026
+
+**Changelog** (max 5)
+- 24 août 2026 — E′ v3 : traits teal · hero perle distinct · courant stroke node→node · échelle mid.
+- 24 août 2026 — E′ v2 : Leo étalé · hero XXL · traits plus lisibles · reveal 1× ~2,4 s.
+- 24 août 2026 — E′ : graphe Leo `leo-graph-v1` (9 nœuds, slots fantômes, modèle C).
 
 > Vision produit → `SANCTUARY_SKY.md`  
 > Craft technique / visuel → **ce fichier**  
@@ -143,11 +149,27 @@ Du plus loin au plus près :
 | **C** | Filantes premium | ✅ |
 | **D** | Mode fond + « Voir le ciel » (UI) | ✅ stub + UI |
 | **E** | Focus étoile → révèle média | ⏸ pause (polish après constellation) |
-| **E′** | Éclipse Résonnante — constellation | 🚧 Acte I (anneaux + orbit) |
+| **E′** | Constellation silhouette (graphe) | 🚧 **`leo-graph-v1`** — remplace orb-cloud |
 | **F** | Pont famille | ⏳ après E |
 | **G** | Naissance d’étoile post-dépôt | ⏳ |
 | **H** | Audio immersif (mute default) | ⏳ optionnel |
 | **S** | Ciel screensaver (profondeur → moments WTF → intro → veille) | 🚧 — canon [`SANCTUARY_SKY_SCREENSAVER.md`](SANCTUARY_SKY_SCREENSAVER.md) |
+
+### E′ — décisions figées (24 août 2026)
+
+| Décision | Choix |
+|----------|--------|
+| Forme | **Zodiaque** (naissance + fallbacks) — craft actuel = **Leo** seul |
+| Modèle tailles | **C** — graphe fixe · slots souvenirs · famille plus brillante · overflow plus tard |
+| Slots | **9** = 1 Lueur (hero) + 8 souvenirs (fantômes jusqu’à dépôt) |
+| Layout id | `leo-graph-v1` (`constellation/graphs/`) |
+| Abandonné | orb-cloud · orbites Acte I (`_archive/`) |
+
+**Fichiers :** `graphs/leo.ts` · `graphs/resolveConstellation.ts` · `LightBridges` = arêtes du graphe · `LueurNode` variant `ghost`.
+
+**Preview :** `/fr/contribute/test-ciel` — faucille + queue du Lion, 5 allumées / 3 fantômes.
+
+**Suite E′ :** peaufiner positions Leo → puis 11 autres templates · résoudre signe depuis date.
 
 Plan détaillé (phases, perf, intro OFF, veille ⏳) : **ce fichier screensaver**. Lab éclipse `/fr/contribute/test-eclipse`. Marque : [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md). Intro Sanctuaire (`scene.intro`) encore OFF. ≠ E′.
 
@@ -200,6 +222,7 @@ Règle de session : **une lettre / phase à la fois**, go explicite, valider sur
 src/components/contribute/
   SanctuaryUniverse.tsx          # scène + mode stub
   constellation/
+    graphs/                      # leo-graph-v1 + resolve (silhouette zodiaque)
     NebulaGas.tsx
     CosmicDust.tsx
     StarDust.tsx
@@ -207,7 +230,7 @@ src/components/contribute/
     ParallaxLayer.tsx            # provider + shapePointer + layers
     CameraRig.tsx
     useVisualTier.ts
-  _archive/                      # vieux ciels canvas / LueurSky
+  _archive/                      # vieux ciels canvas / LueurSky / orb-cloud / orbites
 ```
 
 ---

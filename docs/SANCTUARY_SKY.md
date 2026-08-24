@@ -1,6 +1,6 @@
 # Odyssey — Ciel du Sanctuaire (étoiles-mémoire)
 
-**Statut : vision figée · 29 juillet 2026**  
+**Statut : vision figée · 29 juillet 2026** · **MAJ craft silhouette :** 24 août 2026 (`leo-graph-v1`)  
 **Base technique sécurisée :** commit `6ded642` (WebGL galaxy / `LueurNode` / `test-ciel`)
 
 Document canonique de l’expérience **ciel** du Sanctuaire invité et du **pont** vers le film famille.  
@@ -138,6 +138,7 @@ Confirmation prose après « Mettre dans le film » :
 - Jamais de miniatures permanentes dans le ciel.  
 - Voie lactée = poussière anonyme ; étoiles-mémoire = plus rares / plus présentes.  
 - Centre = Lueur pure ; prénom du défunt possible comme ancrage, sans portrait.  
+- **Silhouette** = template zodiaque (graphe 9 nœuds) — pas un nuage autour du centre.  
 - Perf : `useVisualTier` (desktop / mobile / `prefers-reduced-motion`).  
 - Éviter : tutoriel Voie lactée, jargon spirituel sur chaque bouton, forcer le mode ciel pour déposer.
 

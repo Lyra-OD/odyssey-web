@@ -14,7 +14,7 @@ import {
 import { idleCameraRef } from "@/src/components/contribute/constellation/IdleCameraDrift";
 import { skyIntroMul } from "@/src/components/contribute/constellation/SkyIntroEclipse";
 import { useSkyTheme } from "@/src/components/contribute/constellation/skyTheme";
-export type LueurNodeVariant = "standard" | "premium" | "hero";
+export type LueurNodeVariant = "standard" | "premium" | "hero" | "ghost";
 
 export type LueurNodeProps = {
   variant?: LueurNodeVariant;
@@ -22,6 +22,8 @@ export type LueurNodeProps = {
   phase?: number;
   /** 0–1 — bloom focus (approche révélation). */
   focusBoost?: number;
+  /** 0–1 — constellation draw-in / emphasis. */
+  appear?: number;
 };
 
 const VARIANT = {
@@ -40,11 +42,20 @@ const VARIANT = {
     spike: 0.72,
   },
   hero: {
-    size: 84,
-    color: new Color("#2dd4bf"),
-    pulse: 0.2,
-    breathSpeed: 0.35,
-    spike: 0.9,
+    /** Distinct from teal satellites — pearl / warm core. */
+    size: 172,
+    color: new Color("#f8fafc"),
+    pulse: 0.28,
+    breathSpeed: 0.3,
+    spike: 1.25,
+  },
+  /** Predefined slot not yet filled — faint teal silhouette. */
+  ghost: {
+    size: 20,
+    color: new Color("#5eead4"),
+    pulse: 0.05,
+    breathSpeed: 0.28,
+    spike: 0.18,
   },
 } as const;
 
@@ -90,10 +101,12 @@ export function LueurNode({
   floating = true,
   phase = 0,
   focusBoost = 0,
+  appear = 1,
 }: LueurNodeProps) {
   const matRef = useRef<ShaderMaterial>(null);
   const cfg = VARIANT[variant];
   const boost = Math.min(1, Math.max(0, focusBoost));
+  const appearClamped = Math.min(1, Math.max(0, appear));
   const rareLueurPulse = useSkyTheme().scene.idle?.rareLueurPulse ?? 0;
 
   const geometry = useMemo(() => {
@@ -139,10 +152,18 @@ export function LueurNode({
     const glowMul = 1 + boost * 1.35 + skyPulse * 1.1;
     mat.uniforms.uSize.value =
       cfg.size * (0.88 + 0.22 * breath) * sizeMul;
+    const ghostMul = variant === "ghost" ? 0.45 : 1;
+    const appearMul = 0.08 + 0.92 * appearClamped;
+    mat.uniforms.uSize.value =
+      cfg.size * (0.88 + 0.22 * breath) * sizeMul * (0.55 + 0.45 * appearClamped);
     mat.uniforms.uGlow.value =
-      (0.65 + 0.45 * breath * (1 + cfg.pulse)) * glowMul * skyIntroMul(1);
+      (0.65 + 0.45 * breath * (1 + cfg.pulse)) *
+      glowMul *
+      ghostMul *
+      appearMul *
+      skyIntroMul(1);
     mat.uniforms.uSpike.value =
-      cfg.spike * (1 + boost * 0.55 + skyPulse * 0.4);
+      cfg.spike * (1 + boost * 0.55 + skyPulse * 0.4) * appearClamped;
   });
 
   const star = (
@@ -151,7 +172,7 @@ export function LueurNode({
     </points>
   );
 
-  if (!floating) return star;
+  if (!floating || variant === "ghost") return star;
 
   return (
     <Float
