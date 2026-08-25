@@ -8,6 +8,7 @@ Les canons / snapshots **existants** restent à la racine `docs/` (`FREEMIUM_V1_
 | Doc | Sujet |
 |-----|--------|
 | [`URGEL_ADOPTION_AND_PILOT.md`](URGEL_ADOPTION_AND_PILOT.md) | Adoption conseillers · risques · tactiques · protocole pilote Urgel |
+| [`PATRICE_MURDER_BOARD_PITCH.md`](PATRICE_MURDER_BOARD_PITCH.md) | Pré-mortem VP · objections · revenu/famille · probabilités |
 - Notes deal / pricing *hors* grille live (la grille = toujours FREEMIUM §2)
 
 ## Ne pas mettre ici
