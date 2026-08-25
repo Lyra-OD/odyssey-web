@@ -1,234 +1,193 @@
 # Odyssey — Rencontre Patrice (VP groupe funéraire)
 
-**Type :** playbook · **Vérité pour :** stratégie Urgel Bourgie · démo Mode A / Mode B · script 60 min.  
-**Dernière MAJ :** 25 août 2026 · **Carte :** [`README.md`](README.md)
+**Type :** playbook · **Vérité pour :** script 60 min. Chiffres = modèle V2. Lyra orale ≠ Manifesto.  
+**Dernière MAJ :** 21 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 25 août 2026 — Bible restructurée : §1 stratégie · §2 Mode A (safe) · §3 Mode B (vision prologue).
-- 25 août 2026 — Prix canon FREEMIUM (179 $ / 349 $) · chaînon Salon · fallback vidéo labs.
-- 21 août 2026 — cheat sheet 2e écran : [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md).
-- 19 août 2026 — GTM B2C : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) (hors ce playbook).
+- 21 août 2026 — rush démo Urgel (6 beats + Figma) : [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md).
+- 19 août 2026 — GTM B2C + valorisation : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) (pas ce playbook).
+- 17 août 2026 — étape 4 : grille live = FREEMIUM §2 (chiffres ici = modèle V2).
+- 17 août 2026 — en-tête type ; lien Manifesto (ampleur, pas à l’oral).
 - août 2026 — playbook prêt · courriel envoyé.
 
-**Audience :** Patrice (VP Urgel Bourgie)  
+**Audience :** Patrice (ami, VP)  
 **Durée :** 60 minutes  
-**Objectif :** qu’il **voie** le produit, comprenne le share, booke un **pilote** — pas qu’il signe un contrat sur place.
+**Auteur :** Erik  
+**Statut :** prêt à jouer · courriel déjà envoyé (août 2026)  
+**Complète :** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`VISION_PHASE_2.md`](VISION_PHASE_2.md) · canal direct [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 
-**Complète :** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2.
+> Les montants ci-dessous sont des **hypothèses de modèle** (Business Case V2, 1 salon × 3 000 familles / an), pas du revenu encaissé. Les dire comme ça. Grille famille live : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 — pas ce playbook.
+>
+> **Boucle virale :** le produit (Sanctuaire, dépôts, Fonds famille, share invité) est **allumé**. Le « viral OFF » du conservateur dans le Business Case V2 (juillet) était un *what-if* : « et si aucun proche ne paie ». Ce n’est **pas** l’état produit. En rencontre, conservateur = cercle **timide**, pas fonction éteinte.
 
-**Cheat sheet jour J (2e écran) :** [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md)
+**Objectif de la rencontre :** qu’il **voie** le produit, comprenne le share, et booke un **pilote** (1 salon ou 1 équipe) — pas qu’il signe un contrat sur place.
 
-> **Reality check :** jamais de démo live sur des **labs déconnectés** devant un VP sans **vidéo de secours** blindée. Mode A = live prod. Mode B = script vision + fallback vidéo si le prologue n’est pas branché bout en bout.
-
-**À ne pas faire :** envoyer le deck avant. Montrer. Laisser les gros chiffres pour après la démo émotionnelle.
+**À ne pas faire :** envoyer le deck avant. Montrer. Laisser les chiffres pour le milieu de l’heure.
 
 ---
 
-## 1. Stratégie et chiffres
+## 0. Check technique (la veille)
 
-### 1.1 Les deux priorités Patrice
+| Item | OK |
+|------|----|
+| Laptop chargé + hotspot | |
+| Prod **ou** staging qui marche (pas localhost si le wifi du bureau bloque) | |
+| Compte **Salon** : 1 invitation Souvenir déjà générée | |
+| Lien **Sanctuaire** (`/fr/contribute/…`) ouvert dans un onglet invité | |
+| Studio famille (`/fr/studio`) : un projet avec photos | |
+| Salon commissions (`/fr/salon`) : écran solde (même vide, on explique) | |
+| PDF / 1 slide waterfall en secours si le web tombe | |
+| Téléphone : même Sanctuaire (il voit le geste « famille ») | |
 
-| Priorité VP | Ce qu’Odyssey répond |
-|-------------|----------------------|
-| **Image de marque Urgel Bourgie** | Expérience client lumineuse — pas un livre d’or statique. Service **Gant Blanc** : zéro formation lourde, zéro vente sous pression au salon. |
-| **Rentabilité sans alourdir l’équipe** | Souvenir **offert** par le salon · upsell familial **automatique** · **RevShare** tracé — le directeur **offre un geste**, il ne vend pas un logiciel. |
+**Phrase d’ouverture (30 s) :**
 
-**Phrase clé (anti-objection formation) :**
+> On ne s’est pas assis depuis trop longtemps. En 60 minutes je te montre trois choses : ce que le directeur offre, ce que la famille vit, et comment le groupe gagne sans acheter un outil. Ensuite tu me dis si ça mérite un pilote.
 
-> *Vos conseillers n’apprennent pas un logiciel. Ils offrent un geste. Odyssey fait le reste — le ciel, le Coffre, le film. Urgel Bourgie reste la main qui tend les clés.*
+---
 
-**Promesse trio (déjà dans le mail) :**
+## 1. Déroulé 60 minutes
 
-> *Vous offrez le geste, la famille élève l’histoire, vous participez aux revenus, et la relation continue après le service.*
+| Min | Bloc | Toi tu fais |
+|-----|------|-------------|
+| 0–5 | Cadre | Industrie cassée → Odyssey inverse. Pas de chiffres encore. |
+| 5–20 | **Démo** | Salon → invitation → Sanctuaire → Studio. Il tient le téléphone si possible. |
+| 20–40 | **Business case** | Share + familles + 1 salon modèle. Une page, pas un Excel. |
+| 40–48 | **Lyra** | Chef d’orchestre + préarrangements. Année prochaine. Pas de science-fiction. |
+| 48–55 | Objections | Il parle. Tu notes. |
+| 55–60 | **Ask** | Pilote, qui décide, prochaine date. |
 
-### 1.2 Le problème → l’inversion
+Si le temps file : **couper Lyra à 2 minutes**, jamais la démo.
 
-1. Les salons **paient** des outils.  
-2. Les directeurs **vendent** dans un moment fragile.  
+---
+
+## 2. Bloc 1 — Le problème (5 min)
+
+Ce que tu as déjà écrit, à l’oral :
+
+1. Les salons **paient** des outils.
+2. Les directeurs **vendent** dans un moment fragile.
 3. Le lien avec la famille **meurt** après le service.
 
 Odyssey inverse :
 
-1. **Gratuit pour le groupe** — pas de licence, pas de coût d’intégration V1.  
-2. Le directeur **offre** un Sanctuaire (invitation Souvenir, un clic).  
-3. Quand la famille et le cercle choisissent d’aller plus loin, **le groupe participe** aux revenus nés de **son invitation**.
+1. **Gratuit pour le groupe** : pas de licence, pas de coût d’intégration.
+2. Le directeur **offre** un Sanctuaire. Facilitateur, pas vendeur de software.
+3. Quand la famille (et les proches) choisissent d’aller plus loin, **le groupe participe** aux revenus nés de **son invitation**.
 
-### 1.3 Grille familiale (précision chirurgicale — canon live)
+Phrase à retenir (la sienne, déjà dans le mail) :
 
-Source : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2 — **pas** 149 $ / 299 $ à l’oral.
+> Vous offrez le geste, la famille élève l’histoire, vous participez aux revenus, et la relation continue après le service.
 
-| Forfait | Prix | Rôle en démo |
-|---------|------|--------------|
-| **Souvenir** | **0 $** (cadeau salon) | Valeur ajoutée Urgel Bourgie — zéro friction employé |
-| **Héritage** | **179 $** | Upsell familial principal (1080p, musique officielle incluse) |
-| **Éternité** | **349 $** | Pérennité (4K, IA, Coffre 50 ans…) |
+---
 
-*(149 $ = add-on **Livre de Mémoire**, pas un forfait.)*
+## 3. Bloc 2 — Démo (15 min)
 
-La famille **construit gratis** (Soft Cap) · paie au **pic émotionnel** (export, musique, pérennité).
+Ordre **strict**. Un clic de trop = tu perds le VP.
 
-### 1.4 RevShare (vocabulaire VP)
+### A. Salon (3 min) — « le directeur »
 
-Sur chaque paiement **né de l’invitation partenaire** :
+1. `/fr/salon` (brandé si slug partenaire dispo).
+2. **Générer une invitation Souvenir.** Un geste. Zéro carte.
+3. Dis : *C’est le cadeau du salon. Il ne vend rien. Il offre.*
 
-1. Montant payé (brut).  
-2. Odyssey retient **10 %** frais plateforme.  
-3. Sur le **Net distribuable**, le partenaire touche **30 %**.
+### B. Sanctuaire (6 min) — « la famille et la diaspora »
 
-Dire : *« **30 % du net distribuable** — contractuel, tracé, mensuel. Invisible pour la famille. »*  
-*(≈ 27 % du brut — une slide mentale, pas un Excel.)*
+1. Ouvre le lien contribute **sur son téléphone**.
+2. Dépôt : photo ou mot. Ciel / étoiles si ça charge (sinon on passe, pas de craft wormhole).
+3. Dis : *Ici comme à l’étranger. Les proches aident. Ce n’est plus un dossier papier dans le salon.*
 
-Canon waterfall : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
+### C. Studio (6 min) — « l’histoire s’élève »
 
-### 1.5 Machine à 3 temps (oral business case)
+1. Wizard : photos, récit, aperçu.
+2. Si Soft Cap : *Ils construisent sans payer. Ils paient quand ils veulent garder / exporter / restaurer.*
+3. Ne pas ouvrir le lab eclipse / wormhole.
 
-1. **Acquisition** — cadeau Sanctuaire. Coût Odyssey, pas le groupe.  
-2. **Révélation** — film, visages, souvenirs. Désir. Pas encore le panier.  
-3. **Pérennité** — Héritage / Éternité, restauration, coffre. **C’est là que le share se déclenche.**
+**Interdit en démo :** logs, SQL, TypeScript, « on a un bug sur… ».
 
-### 1.6 Ordre de grandeur (hypothèses — après démo)
+---
 
-Modèle 1 salon × 3 000 familles / an — **pas une prévision comptable**. Détail : [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md).
+## 4. Bloc 3 — Business case (20 min)
+
+Canon : [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · waterfall [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
+
+### 4.1 Qui paie, quand
+
+| Avant | Avec Odyssey |
+|-------|----------------|
+| Le salon achète l’outil | Le salon **n’achète rien** |
+| La famille paie (ou pas) au comptoir, sous pression | La famille s’attache d’abord, **paie plus tard** |
+| Les proches = condoléances | Les proches = **canal** (dépôts, fonds famille, options) |
+
+Trois temps :
+
+1. **Acquisition** — cadeau Sanctuaire. Coût Odyssey, pas le groupe.
+2. **Révélation** — film, visages, souvenirs. Désir. Pas encore le panier.
+3. **Pérennité** — forfait, restauration, jeton, coffre. **C’est là que le share se déclenche.**
+
+### 4.2 Share revenu (une slide mentale)
+
+Sur chaque paiement **né de l’invitation partenaire** (forfait famille **et** empreintes / Fonds des proches) :
+
+1. Montant payé par la famille / l’invité (brut).
+2. Odyssey retient une **frais plateforme** (10 % du brut).
+3. Sur le reste (**Net distribuable**), le **partenaire touche 30 %**.
+4. Ça fait environ **27 % du brut** pour le groupe.
+
+Dire : *C’est contractuel, tracé, mensuel. Invisible pour la famille. Pas un abonnement salon.*
+
+**Hors share :** familles B2C qui arrivent toutes seules, sans invitation (sauf deal tenant). Le volume groupe = **B2B2C**.
+
+### 4.3 La nouvelle opportunité familles
+
+Tu n’as plus **un** moment (l’arrangement). Tu as :
+
+- l’organisateur
+- les enfants, la fratrie, la diaspora
+- les invités qui déposent et, s’ils le veulent, **aident à financer** (Fonds famille)
+
+Le salon ne porte pas toute la facture. Le réseau familial devient le levier.
+
+### 4.4 Ordre de grandeur (1 salon, 3 000 familles / an)
+
+**Hypothèses**, pas une prévision comptable. Volume d’entrée figé : 250 familles / mois.
 
 | | Conservateur | Base | Optimiste |
 |--|--------------|------|-----------|
-| Commission groupe / mois | ~5,5 k$ | ~11 k$ | ~23 k$ |
+| Conversion famille payante | plus faible | ~1 famille sur 2 | plus forte |
+| Cercle / Fonds (boucle **ON**) | attach invité **faible** | attach solide | cercle large |
+| **Commission groupe / mois** | ~5,5 k$ **plancher famille** | ~11 k$ | ~23 k$ |
+| **Commission groupe / an** | ~66 k$ **plancher** | ~128 k$ | ~280 k$ |
 
-> *On dimensionne après **un salon preuve** — pas « signez le Canada ».*
+Les ~5,5 k$ / 66 k$ du V2 = **famille seule** (le scénario juillet sans invités). Avec la boucle allumée, même un conservateur a **un plus** (proches). Ne pas vendre le plancher comme le cas réel.
 
-**Ask modèle :** pilote 1 salon · invitations Souvenir · mesurer dépôts + checkouts + commission.
+Lecture pour un VP :
 
----
+- Conservateur = l’outil **rapporte déjà** sur les forfaits famille ; les proches, c’est du bonus même si ça démarre doux.
+- Base = familles + cercle qui jouent le jeu (~11 k$/mois dans le modèle).
+- Optimiste = conversion forte + diaspora ouverte. Ne pas le promettre.
 
-## 2. Démo — Mode A (Safe & Live)
+Si son groupe a **N salons**, tu ne multiplies pas au hasard. Tu dis : *on dimensionne après un salon preuve.*
 
-**Quand :** par défaut · prod/staging vert · Patrice doit **voir que ça existe**.
+### 4.5 Ce que tu demandes au modèle
 
-**Pitch Apple en 3 rôles :** directeur → proche (mobile) → famille → groupe (commissions).
-
-### 2.1 Accroche (0–2 min) — écran noir ou logo
-
-> *Patrice, merci de nous recevoir. Chez Urgel Bourgie, vous accompagnez les familles dans le moment le plus difficile. Les hommages en ligne sont souvent tristes et statiques. Une vie mérite un univers — pas une page web. Nous avons conçu un modèle où vous offrez ce cadeau sans effort pour votre équipe, tout en créant une nouvelle source de revenus. Laissez-moi vous montrer.*
-
-### 2.2 Parcours live (15–20 min) — ordre strict
-
-| # | Surface | Geste | Durée | Ce que tu dis |
-|---|---------|-------|-------|---------------|
-| 1 | **Salon** | `/fr/salon` → **1 invitation Souvenir** | 3 min | *Un clic. C’est le cadeau du salon. Il ne vend rien. Il offre les clés de l’univers.* |
-| 2 | **Sanctuaire** | `/fr/contribute/…` **sur son téléphone** | 5–6 min | *Voici ce que la famille et la diaspora voient. Un souvenir en 30 secondes.* |
-| 3 | **Studio — Coffre** | `/fr/studio` étape 3 | 3 min | *Tous les médias au même endroit. Scanner si prêt — sinon passer.* |
-| 4 | **Studio — Film** | étape 5 « Le film de sa vie » | 3 min | *Le chef-d’œuvre collectif.* |
-| 5 | **Studio — Finaliser** | étape 7 · Soft Cap / Héritage | 2 min | *Ils construisent sans payer. Ils paient quand c’est digne — 179 $ Héritage.* |
-| 6 | **Commissions** | `/fr/salon/commissions` (même vide) | 1–2 min | *Voici votre 30 % du net distribuable — automatique.* |
-
-**Plans de secours Mode A :** mêmes beats en Figma ([`DA_SCREENS.md`](DA_SCREENS.md)) · ou 1 téléphone Sanctuaire + Studio pré-rempli + 1 slide share.
-
-### 2.3 Interdit en Mode A live
-
-Labs `/test-eclipse*` · `/test-wormhole` · `/test-lueur` · logs · SQL · « on a un bug » · Lyra longue · grille Légendaire complète.
-
-Si le ciel Sanctuaire charge mal : **passer** — l’émotion tient sur le dépôt mobile + Studio.
+Pas « signez le Canada ». **Un pilote** : 1 salon ou 1 équipe, invitations Souvenir, on mesure dépôts + checkouts + commission.
 
 ---
 
-## 3. Démo — Mode B (Wow & Vision)
+## 5. Bloc 4 — Lyra (8 min, compressible)
 
-**Quand :** prologue **branché bout en bout** (gate craft C — voir [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11) **OU** vidéo fluide pré-enregistrée.
+Aujourd’hui : **l’IA est déjà dans Odyssey** (restauration, visages, récit).
 
-**Règle :** si pas branché d’ici la rencontre → **vidéo only** :
+**Lyra = phase 2, année prochaine.** Chef d’orchestre :
 
-> *« Voici l’expérience d’intégration immersive déployée dans notre prochaine mise à jour. »*
+- paperasse, suivi, admin → les directeurs **vendent et aident**
+- graphe (qui est qui, qui a contribué) → **prédiction des ventes suivantes et des préarrangements**
 
-Ne jamais improviser des labs live devant un VP.
+Un hommage n’est plus un dossier fermé. C’est le début d’une relation.
 
-### 3.1 Phase 1 — Accroche (0–2 min)
+**Ampleur (pas à l’oral) :** Brain, graphe, Attention→Data→Hub = [`Manifesto-V10.4.md`](Manifesto-V10.4.md) — constitution, **lecture seule**. Ici on ne raconte que le salon. Ne pas coller le Manifesto dans le pitch.
 
-*Identique §2.1* — écran noir · problème émotionnel · promesse univers + modèle B2B2C.
-
-### 3.2 Phase 2 — Le directeur, puis le wow (2–4 min)
-
-**Chaînon Salon (obligatoire avant le prologue) :**
-
-1. `/fr/salon` — **générer invitation Souvenir** (10 s).  
-2. *« Votre conseiller en rendez-vous : un geste. Pas un formulaire. Voici ce que la famille découvre en ouvrant le lien. »*
-
-**Écran :** éclipse → wormhole → **Hero teal** seule.
-
-*(Silence 3 s pendant le voyage.)*
-
-> *Chaque souvenir est une étoile. Construisons sa constellation. C’est l’univers du défunt au moment de sa création.*
-
-**Overlay étape 1 — L’essentiel** (panneau verre sur le ciel) :
-
-> *L’interface se superpose au ciel. Trois choses seulement : prénom, date de naissance, date de décès.*
-
-### 3.3 Phase 3 — Réponse du ciel (4–6 min)
-
-**Action :** valider étape 1 → panneau descend → reveal constellation Leo (2–4 s).
-
-> *Dès que ces trois informations sont entrées, le ciel répond. L’étoile s’ancre. Sa constellation prend forme.*
-
-**Étape 2 — Cercle :** lien privé · Partager / Copier · **skip immédiat** (canal-agnostique — pas WhatsApp-first).
-
-> *Le conseiller génère le lien. La famille partage quand elle veut.*
-
-**Filaments** si partage · **Étape 3 — Coffre** :
-
-> *Une première photo, ou « Plus tard ». On ne bloque jamais. Service Gant Blanc — Urgel remet les clés, Odyssey fait le reste.*
-
-### 3.4 Phase 4 — Modèle d’affaires (6–10 min)
-
-**Hub Sanctuaire plein écran** — ce que la famille voit chez elle.
-
-> *Le forfait Souvenir est **gratuit** pour Urgel Bourgie et pour la famille — c’est votre valeur ajoutée.*  
-> *La famille partage le lien. Les invités déposent dans le Coffre. Plus ils participent, plus le ciel s’illumine.*  
-> *Quand ils veulent aller plus loin — musique, export, pérennité — ils passent à **Héritage (179 $)** ou **Éternité (349 $)**.*  
-> *Comme c’est Urgel Bourgie qui a offert la porte d’entrée, vous touchez **30 % du net distribuable** sur chaque transaction. Aucune friction pour vos employés.*
-
-Montrer **commissions** si le temps le permet.
-
-### 3.5 Phase 5 — Call to action
-
-Fermer l’ordinateur à moitié — attention sur toi.
-
-> *Nous sommes prêts pour un **pilote** dans une succursale.*  
-> *J’ai envoyé notre NDA via DocuSign. Si le concept vous plaît, on signe et on attaque l’intégration. Qu’en pensez-vous ?*
-
-**Ne pas** négocier le 30 % Net dans cette heure.
-
----
-
-## 4. Déroulé 60 minutes
-
-| Min | Bloc | Contenu |
-|-----|------|---------|
-| 0–5 | Cadre | §1 problème · phrase clé directeur |
-| 5–25 | **Démo** | **Mode A** live (§2) · ou Mode A + **extrait vidéo Mode B** (3 min max) |
-| 25–45 | **Business** | §1.3–1.6 · commissions · pilote |
-| 45–52 | **Lyra** | 2–8 min · chef d’orchestre année prochaine — compressible |
-| 52–58 | Objections | §6 |
-| 58–60 | **Ask** | §7 |
-
-Si le temps file : **couper Lyra**, jamais Salon + mobile + share.
-
----
-
-## 5. Check technique (la veille)
-
-| Item | OK |
-|------|----|
-| Prod / staging vert (pas localhost) | |
-| Compte Salon + 1 invitation Souvenir | |
-| Lien Sanctuaire (onglet + **téléphone** Patrice) | |
-| Projet Studio (8–12 belles photos) | |
-| `/fr/salon/commissions` | |
-| **Vidéo Mode B** (MP4 60–90 s) si prologue pas branché | |
-| PDF waterfall secours | |
-| Hotspot | |
-
-**Phrase d’ouverture (30 s) :**
-
-> *En 60 minutes : ce que le directeur offre, ce que la famille vit, comment le groupe gagne sans acheter un outil. Ensuite tu me dis si ça mérite un pilote.*
+Ne pas : M&A, « licorne », biométrie vendue, Loi 25 en détail. Si privacy : *Vault vs insights, consentement. On le cadrera au pilote.*
 
 ---
 
@@ -236,53 +195,96 @@ Si le temps file : **couper Lyra**, jamais Salon + mobile + share.
 
 | Il dit | Tu réponds |
 |--------|------------|
-| Formation équipe | Un clic invitation. *Ils offrent un geste — pas un logiciel.* |
-| On a déjà un portail | Le portail ne **gagne** pas après le service. Ici le cadeau **rapporte**. |
-| Les familles ne paieront pas | Soft Cap — elles paient l’attachement, pas à la porte. |
-| Vente déguisée | Zéro pression salon. Checkout **après**, chez la famille. |
+| On a déjà un portail / un USB | Le portail ne **gagne** pas après le service. Ici le cadeau **rapporte**. |
+| Nos directeurs n’ont pas le temps | Un clic invitation. Lyra enlève le reste plus tard. |
+| Les familles ne paieront pas | Elles ne paient pas à la porte. Elles paient l’attachement. Soft Cap. |
+| C’est de la vente déguisée | Zéro pression au salon. Le checkout est **après**, dans le Sanctuaire / Studio. |
+| IT / intégration | Pas d’intégration lourde V1. Lien + salon web. |
 | Combien ça nous coûte | Licence groupe = **0**. Vous gagnez sur le flux. |
-| Envoie le PDF | *Je te le montre en 20 min.* |
+| Envoie-moi le PDF | *Je te le montre en 20 min, tu vas voir le produit.* (déjà envoyé le mail ainsi.) |
+| On verra l’an prochain | Le geste Sanctuaire est **maintenant**. Lyra s’appuie sur les données du pilote. Attendre = commencer Lyra à zéro. |
 
 ---
 
 ## 7. Ask (5 min)
 
-> *Un pilote sur un salon. Vous offrez le Sanctuaire. On se revoit avec les vrais chiffres de **vos** familles.*
+**Ask unique :**
 
-Sorties : **Oui pilote** · **Oui mais IT/juridique** · **Pas encore — quoi manque pour un oui en 30 jours ?**
+> Un pilote sur un salon (ou une équipe). Vous offrez le Sanctuaire. On se revoit avec les vrais chiffres de *vos* familles, pas le modèle.
 
----
+Sorties possibles :
 
-## 8. Gate démo (fait vs reste)
+1. **Oui pilote** → nom du salon, sponsor interne, date kickoff.
+2. **Oui, mais IT / juridique** → tu prends le nom de la personne, tu reviens avec 1 pager.
+3. **Pas encore** → *quoi qui manquerait pour un oui dans 30 jours ?*
 
-### Montrable aujourd’hui (Mode A)
-
-Salon Souvenir · Sanctuaire contribute · Wizard 7 · Soft Cap · commissions (shell).
-
-### Mode B — prologue intégré
-
-Craft en cours (Hero · Leo · wormhole · éclipse) — gate **C** avant shell J1. Voir [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11.
-
-| Surface | Démo |
-|---------|------|
-| Prologue éclipse → wormhole → hero | **Vidéo** ou live **seulement** si gate C passée |
-| Reveal constellation post-étape 1 | Idem |
-| Export master Creatomate | *Montage visible Studio · master au pilote* |
-| Lyra | Parole · pas produit |
+**Ne pas** négocier le 30 % Net dans cette heure. C’est le canon V1. Override tenant plus tard, pas au café.
 
 ---
 
-## 9. Lyra (compressible)
+## 8. Matériel (onglets)
 
-Aujourd’hui : IA déjà dans Odyssey (restauration, récit).  
-**Lyra = phase 2** — chef d’orchestre admin + graphe familial. Pas le Manifesto à l’oral.
-
----
-
-## 10. Après la rencontre
-
-Recap 5 lignes · prochain créneau ou intro IT · pas contrat 20 pages le jour même.
+1. Salon : `https://odyssey.video/fr/salon` (ou slug `?partenaire=`)
+2. Sanctuaire contribute (token de démo)
+3. Studio projet démo
+4. Ce fichier (toi seulement) + [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) si tu zooms
 
 ---
 
-*Playbook Patrice · chiffres famille = FREEMIUM §2 · modèle salon = Business Case V2.*
+## 9. Gate démo (fait vs reste)
+
+Pour **Patrice**, une démo = Salon → Sanctuaire → Studio. Pas le lab wormhole. Pas Lyra en produit.
+
+### On peut montrer (livré)
+
+| Surface | État | En démo tu fais |
+|---------|------|-----------------|
+| Landing / connexion Studio + Salon | 🟢 | Halo-Éclipse, crédible |
+| Salon : invitation **Souvenir 0 $** | 🟢 | Le clic « cadeau » |
+| Accueil famille (magic link / welcome) | 🟢 | Le pont salon → studio |
+| Wizard **7 étapes** | 🟢 | Photos, musique preview, Livre Ouvert, aperçu |
+| Soft Cap | 🟢 | « Ils construisent sans payer » (ne pas enchaîner un vrai Stripe) |
+| Sanctuaire contribute | 🟢 UI 3a | Dépôt photo / mot sur **son** téléphone |
+| Co-Créateur | 🟢 | Mention 10 s si le temps le permet |
+| Fonds / pack invité | 🟢 gated tenant | Seulement si le tenant démo a la boucle **ON** |
+| Marque Éclipse (play) | 🟢 | Optionnel 20 s en ouverture, pas le cœur |
+
+### On ne montre pas comme « fini »
+
+| Surface | État | Quoi dire |
+|---------|------|-----------|
+| **Film export Creatomate** | P0 code ; master Stingray / rendu « cinéma » ⏳ | *Le montage se voit dans le Studio. Le fichier master, on le livre au pilote.* |
+| **UI commissions Salon** (ledger lisible) | Shell / partiel | *Le share est en ledger. L’écran VP se peaufine. Le modèle est là.* |
+| **Scanner Compagnon** (QR papier → upload) | Spec + stubs, pas d’app | *Diaspora = lien Sanctuaire aujourd’hui. Le scanner, c’est la suite.* |
+| **Lyra** | Vision année prochaine | Parole seulement (chef d’orchestre + préarrangements). |
+| Voix / témoignage **live** (3b) | Spec | Pas de caméra live en démo. |
+| Intro ciel Sanctuaire `scene.intro` | Craft, pas branché | Ciel actuel suffit. |
+| Wormhole / craft labs | Labs internes | **Jamais** devant un VP. |
+
+### Reste **avant** la démo (ops, pas de features)
+
+1. **Prod verte** — les deploys Vercel `d9f66a1` / `ed07d43` ont foiré (typage `lightPos`). Vérifier que `4f0fa44`+ est **success** sur odyssey.video.
+2. **Compte démo Salon** + 1 invitation Souvenir **déjà créée** (la veille).
+3. **Lien Sanctuaire** du même projet, testé sur iPhone (Safari).
+4. **Projet Studio** avec 8–12 belles photos (pas tes screenshots de sliders).
+5. Tenant démo : `is_freemium` + boucle virale **ON** si tu parles Fonds — [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md).
+6. Hotspot. Onglets dans l’ordre du §8. Pas de `localhost` au café.
+
+### Reste **produit** (après un oui pilote, pas bloquant pour 60 min)
+
+- Export master fiable (Creatomate + Stingray payé)
+- Écran commissions que le groupe peut lire tout seul
+- Scanner MVP
+- Polish Étape 5 (audio / copy)
+- Lyra (phase 2)
+
+---
+
+## 10. Après la rencontre (même jour)
+
+- Recap 5 lignes (merci + ce qu’il a aimé + pilote oui/non + date).
+- Pas de contrat de 20 pages. Un **prochain créneau** ou un intro IT.
+
+---
+
+*Document vivant — playbook rencontre Patrice. Chiffres = Business Case V2 (juil. 2026).*

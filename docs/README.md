@@ -209,7 +209,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | Fichier | Type | Vérité pour |
 |---------|------|-------------|
 | [`TEMP/README.md`](TEMP/README.md) | ops | Règles TEMP |
-| [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) | temp | Cheat sheet démo Patrice (2e écran) · bible [`MEETING_PATRICE_VP.md`](MEETING_PATRICE_VP.md) |
+| [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) | temp | Rush démo Patrice + courriel Paul |
 | [`TEMP/NDA_UNILATERAL_BROUILLON_QC.md`](TEMP/NDA_UNILATERAL_BROUILLON_QC.md) | temp | NDA — guide **A / B / C / D** |
 | [`TEMP/NDA_A_VALIDEE_LEGALE.md`](TEMP/NDA_A_VALIDEE_LEGALE.md) | temp | NDA **A** validée légale |
 | [`TEMP/NDA_B_FREEMIUM_REVSHARE.md`](TEMP/NDA_B_FREEMIUM_REVSHARE.md) | temp | NDA **B** Freemium / RevShare (archive ; préférer D) |
