@@ -4,6 +4,7 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — §8 objections TI · vente déguisée · USB (réponses chirurgicales ajustées MVP).
 - 26 août 2026 — Canon initial : pitch killer · modèle revenu multi-leviers · % honnêtes · ajustements MVP.
 
 **Liens :** [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) · [`URGEL_ADOPTION_AND_PILOT.md`](URGEL_ADOPTION_AND_PILOT.md) · [`BUSINESS_CASE_V2.md`](../BUSINESS_CASE_V2.md) · [`FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) §2 · [`MONETIZATION_CATALOG.md`](../MONETIZATION_CATALOG.md)
@@ -231,15 +232,59 @@ Sur familles qui **passent au payant** (Base ~50 % des dossiers) :
 
 ---
 
-## 8. Objections bonus (préparer)
+## 8. Objections bonus — réponses chirurgicales (V1-MVP)
+
+### 8.1 TI, sécurité et hébergement
+
+**Son angle :** *« Mon TI n’a pas le temps d’intégrer. Où vont les données sensibles ? »*
+
+**Ta réponse (bouclier — version crédible) :**
+
+> *« **Zéro intégration** pour le pilote. OD V1-MVP est **100 % web autonome** : lien + espace Salon. Vos ERP, serveurs et bases internes **ne sont jamais touchés**.*
+>
+> *Données : hébergement **cloud enterprise** (Supabase · chiffrement · accès authentifié). Paiements via **Stripe** — les cartes ne transitent **pas** par vos systèmes. Déploiement **zéro friction TI**.*
+>
+> *Cadrage Loi 25 / résidence des données : **1-pager** pour le pilote avec votre juridique — pas une usine à gaz. »*
+
+**Ajustement :** ne pas dire *« normes bancaires »* — un VP **teste** le superlatif. *Enterprise cloud + Stripe (PCI hors Urgel)* suffit.
+
+---
+
+### 8.2 Vente déguisée
+
+**Son angle :** *« Cheval de Troie — 179 $ au comptoir dans le deuil. »*
+
+**Ta réponse (muraille — garder telle quelle) :**
+
+> *« Séparation **stricte**. Au salon : cadeau **100 % gratuit** — vos conseillers ne prononcent **jamais** un prix. L’upsell apparaît **des jours plus tard**, **chez la famille**, dans l’intimité du foyer.*
+>
+> *Achat volontaire de **préservation** — comme un album **après** un mariage. Le conseiller **n’a pas** l’écran panier en rendez-vous. »*
+
+---
+
+### 8.3 Concurrence — clé USB et portails
+
+**Son angle :** *« USB + livre d’or web — pourquoi changer ? »*
+
+**Ta réponse (centre de profit — ajustée) :**
+
+> *« USB et portail **marchent** — mais ce sont des **centres de coût** statiques : zéro revenu après le service. La clé finit dans un tiroir ; le portail ne **monétise** pas la diaspora.*
+>
+> *Odyssey : **même geste**, **centre de profit** — famille élargie · **30 % du net** · sans vente au comptoir.*
+>
+> *Pilote en **coexistence** 10 dossiers — vous comparez, vous ne remplacez pas tout le jour 1. »*
+
+**Ajustement :** ne pas centrer sur « USB coûte cher » (souvent inclus au forfait). Centrer : **statique · local · zéro RevShare**.
+
+---
+
+### 8.4 Tableau rapide (autres)
 
 | Il dit | Tu réponds |
 |--------|------------|
-| « IT va bloquer » | Lien + salon web · pas ERP V1 · 1 pager sécurité |
-| « Nos directeurs vendront mal » | **Ils ne vendent pas** — famille paie chez elle |
-| « Concurrence / USB » | USB ne **rapporte** pas après le service |
-| « Données au US » | Cadrer au pilote · Supabase / hébergement · Loi 25 — *pas* dissertation |
-| « 30 % négociable » | Canon V1 au café · tenant deal **après** preuve pilote |
+| « Nos directeurs vendront mal » | Ils **ne vendent pas** — famille paie chez elle |
+| « Données aux US » | 1-pager pilote · Loi 25 · **pas** dissertation |
+| « 30 % négociable » | Canon V1 au café · deal tenant **après** preuve |
 
 ---
 
