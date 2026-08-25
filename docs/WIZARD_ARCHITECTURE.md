@@ -1,9 +1,10 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 17 août 2026 (en-tête) · 20 juillet 2026 (revue code) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 25 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 25 août 2026 — parcours Sanctuaire : étapes 1–3 figées (identité · invite seul · Plus tard Coffre).
 - 17 août 2026 — invitation Salon Souvenir-only (plus de cartes forfait).
 - 17 août 2026 — Scanner Phase B : aperçu restauration → add-on `aiRetouch`.
 - 17 août 2026 — Scanner Phase A (QR étape 3, pas une 8ᵉ étape).
@@ -11,6 +12,7 @@
 - 17 août 2026 — en-tête type ; « 8-step » → **7** étapes (Extensions au checkout).
 
 > **Canon V1 :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · Commerce [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).  
+> **Parcours Sanctuaire (prologue · hub · tiroir) :** [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) — le wizard **7 étapes reste** ; couche onboarding séparée. **Étapes 1–3 :** identité complète (prénom + 2 dates) · étape 2 invite seul · étape 3 « Plus tard » obligatoire.  
 > **État :** `grantedPackage` + `intendedPackage` + `extensions.musicLicense` (aliases UI legacy OK).
 
 This document describes the **7-step** tribute wizard: navigation, state, autosave, **song-based storyboard**, pricing Freemium V1, and checkout. Parent overview: [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Wizard.

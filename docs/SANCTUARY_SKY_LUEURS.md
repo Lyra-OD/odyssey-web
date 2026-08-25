@@ -4,11 +4,13 @@
 **Dernière MAJ :** 24 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 25 août 2026 — Lien parcours onboarding [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md).
 - 24 août 2026 — Plan d’arrivée P0–P8 (craft → produit) + onglet Champ.
 - 24 août 2026 — Canon initial (brainstorm CEO) : 2 grilles, palette curatée, prix égal, moments inoubliables.
 
 **Liens :**
 - Ciel / souvenirs : [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md)
+- Parcours User X (prologue · hub · tiroir) : [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md)
 - Craft atome : [`ODYSSEY_LUEUR_CRAFT.md`](ODYSSEY_LUEUR_CRAFT.md) · [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md)
 - SKU prix : [`MONETIZATION_CATALOG.md`](MONETIZATION_CATALOG.md) §A.3 · live = `pricingConfig` / `guestSupportPacks`
 - Positionnement : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md)

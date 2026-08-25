@@ -1,9 +1,13 @@
 # product/ — nouveaux docs produit (wizard, Sanctuaire, Scanner)
 
 **Type :** ops · **Vérité pour :** où naissent les **nouveaux** docs produit.  
-**Dernière MAJ :** 21 août 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 25 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 Canons existants (`WIZARD_ARCHITECTURE.md`, `SCANNER_COMPANION.md`, …) restent à la **racine** — ne pas déplacer sans stubs.
+
+| Doc | Sujet |
+|-----|--------|
+| [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md) | Prologue · hub ciel · tiroir · navigation (wizard séparé) |
 
 ## Mettre ici
 
