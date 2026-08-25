@@ -1,9 +1,10 @@
 # Démo Patrice (Urgel) — rush max convaincant + courriel Paul
 
 **Type :** temp · **Vérité pour :** parcours démo VP + priorités Figma pour cette date.  
-**Dernière MAJ :** 21 août 2026 · **Carte :** [`../README.md`](../README.md) · **Dossier :** [`README.md`](README.md)
+**Dernière MAJ :** 25 août 2026 · **Carte :** [`../README.md`](../README.md) · **Dossier :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 25 août 2026 — aligné Mode A/B avec [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) §2–§3 · prix 179/349 · vidéo Mode B.
 - 21 août 2026 — max démo 6 beats · rush Figma (Salon inclus pour VP) · courriel Paul.
 
 **Canon durable (ne pas remplacer) :** [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) · frames [`../DA_SCREENS.md`](../DA_SCREENS.md) · copy [`../COPY_CATALOG.md`](../COPY_CATALOG.md) · chiffres [`../BUSINESS_CASE_V2.md`](../BUSINESS_CASE_V2.md).
@@ -40,19 +41,20 @@ Ordre **strict**.
 
 **Optionnel (+5 min max) :** Scanner `/fr/scan/…` · Aperçu étape 6 **seulement** si vrai preview/film.
 
-**Chiffres après** la démo (pas pendant) : modèle Base ~11 k$/mois commission salon mature — *hypothèses, pilote pour valider*. Détail oral : [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md).
+**Chiffres après** la démo (pas pendant) : Souvenir **0 $** · Héritage **179 $** · Éternité **349 $** · **30 % net distribuable** · modèle Base ~11 k$/mois — *hypothèses*. Détail : [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) §1.
 
 ### Plans de secours
 
 | Plan | Quoi |
 |------|------|
-| **A** | Live Salon → téléphone Sanctuaire → Studio → commissions |
-| **B** | Mêmes beats en Figma (frames §3) |
-| **C** | 1 téléphone Sanctuaire + 1 Studio déjà rempli + 1 slide share |
+| **Mode A live** | Salon → téléphone Sanctuaire → Studio → commissions (§2 playbook) |
+| **Mode A Figma** | Mêmes beats (frames §3 ci-dessous) |
+| **Mode B vidéo** | Prologue éclipse → wormhole → hero → étape 1 → constellation — *live labs interdit sans fallback* |
+| **Mode C minimal** | 1 téléphone Sanctuaire + Studio pré-rempli + 1 slide share |
 
 ### Interdit en démo
 
-18 frames une par une · labs éclipse/wormhole · HQ · SQL/Stripe/bugs egress · Lyra long · grille Légendaire complète · B2C ads.
+18 frames une par une · **labs éclipse/wormhole live** (vidéo OK) · HQ · SQL/Stripe/bugs · Lyra long · Légendaire complète · B2C ads · **149/299 $** (mauvais forfaits).
 
 ---
 
@@ -125,8 +127,9 @@ Erik
 - [ ] Lien Sanctuaire ouvert (onglet + téléphone)  
 - [ ] Projet Studio avec photos dans le Coffre  
 - [ ] `/salon/commissions` accessible  
-- [ ] Hotspot / plan B Figma (§3)  
-- [ ] Une slide share mentale (~27 % brut / 30 % Net) — pas Excel  
+- [ ] **Vidéo Mode B** (60–90 s) si prologue pas branché — [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) §3
+- [ ] Hotspot / plan B Figma (§3)
+- [ ] Chiffres oral : **179 $ / 349 $** · **30 % net distribuable**
 - [ ] Ask : pilote, qui décide, prochaine date  
 
 Détail 60 min : [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md).
