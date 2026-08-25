@@ -4,6 +4,7 @@
 **Dernière MAJ :** 25 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 25 août 2026 — Plan : phase **C craft** (Hero · constellation · wormhole) **avant** J1 shell prologue.
 - 25 août 2026 — Étape 2 invite : canal-agnostique · skip immédiat · layout Partager / Copier / QR (§5c).
 - 25 août 2026 — Décisions CEO figées : étapes 1–3 (identité complète · invite seul · Plus tard Coffre).
 - 25 août 2026 — Canon initial : prologue action→récompense, hub, tiroir global, plan d’implémentation.
@@ -308,22 +309,40 @@ Animations réutilisent le craft : [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_C
 
 ## 11. Plan d’implémentation
 
-Ordre recommandé — **craft d’abord**, puis shell produit, sans casser le wizard.
+**Ordre impératif :** boucler le **craft visuel** (labs) et obtenir le **KEEP CEO** **avant** le shell prologue (J1).  
+Ne pas brancher le flow onboarding tant que Hero, constellation et wormhole ne sont pas satisfaisants.
+
+### Phase C — Craft (en cours · gate avant J1)
+
+| Phase | Quoi | Lab / doc | Critère KEEP |
+|-------|------|-----------|--------------|
+| **C1** | **Hero teal** (diffraction, layers) | `/test-lueur` onglet 1 · [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md) | Knobs figés, DA OK — P0 [`SANCTUARY_SKY_LUEURS.md`](../SANCTUARY_SKY_LUEURS.md) |
+| **C2** | **Constellation Leo** (reveal, filaments, ghosts, tip) | `/test-lueur` onglet 2 · `HeroStar` partagé | Silhouette lisible, tempo reveal OK — P1 |
+| **C3** | **Wormhole** (voyage prologue) | `/test-wormhole` · [`ODYSSEY_WORMHOLE_CRAFT.md`](../ODYSSEY_WORMHOLE_CRAFT.md) | KEEP CEO · enchaînement avec éclipse |
+| **C4** | **Éclipse** (entrée prologue) | `/test-eclipse*` · [`ODYSSEY_ECLIPSE_PLAY_FINALE.md`](../ODYSSEY_ECLIPSE_PLAY_FINALE.md) | Play A–B validé · handoff wormhole → ciel |
+| **C5** | (Optionnel avant J1) Palette Lueurs + onglet Champ | `/test-lueur` onglets 3–4 · P2–P4 LUEURS | Peut attendre J8 produit si besoin |
+
+**Gate C → J1 :** CEO signe Hero + constellation + wormhole (+ éclipse si prologue complet). **Pas de J1 avant.**
+
+Ordre craft recommandé (sessions) : **C1 → C2 → C3 → C4** (C5 en parallèle ou après J4).
+
+### Phase J — Shell produit (après gate C)
 
 | Phase | Quoi | Craft / code | Critère done |
 |-------|------|--------------|--------------|
 | **J0** | Copy hub + décisions 1–3 | Ce doc + [`COPY.md`](../COPY.md) / JSON | ✅ D1–D3 figées |
-| **J1** | Prologue shell | Route onboarding · enchaîne éclipse + wormhole + ciel | 1× playable dev |
-| **J2** | Overlay étape 1 | Panneau verre · prénom + 2 dates · autosave step 1 | Valide = trigger reveal |
-| **J3** | Récompense constellation | Brancher reveal Leo post-step-1 · HeroStar craft | Animation 2–4 s |
+| **J1** | Prologue shell | Route onboarding · enchaîne **C4 éclipse + C3 wormhole + ciel** | 1× playable dev — **après gate C** |
+| **J2** | Overlay étape 1 | Panneau verre · prénom + 2 dates · autosave step 1 | Valide = trigger reveal **C2** |
+| **J3** | Récompense constellation | Brancher reveal Leo post-step-1 (craft **C2** déjà KEEP) | Animation 2–4 s |
 | **J4** | Hub + étape 2 overlay | UI post-récompense · invite canal-agnostique · retirer co-org step 2 | Partager · Copier · skip immédiat |
 | **J5** | Tiroir global | Chrome icône Coffre · ouvert depuis ciel + studio | Même banque step 3 |
 | **J6** | Nav permanente | Ciel ↔ wizard ↔ studio ↔ tiroir | 1 clic partout |
 | **J7** | Invités → tiroir → slot | Sanctuaire contribute · règle curation | Dépôt ≠ auto-star |
-| **J8** | Lueurs grille B + naissance | [`SANCTUARY_SKY_LUEURS.md`](../SANCTUARY_SKY_LUEURS.md) P2–P6 | SKU → étoile colorée |
+| **J8** | Lueurs grille B + naissance | [`SANCTUARY_SKY_LUEURS.md`](../SANCTUARY_SKY_LUEURS.md) P2–P6 · craft **C5** | SKU → étoile colorée |
 | **J9** | DA + mobile | [`DA_SCREENS.md`](../DA_SCREENS.md) frames onboarding | Bottom sheet 55 % |
 
-**Ne pas faire en J1–J4 :** grille Lueurs complète, seuils nebula, certificats papier.
+**Ne pas faire avant gate C :** J1–J3 (shell prologue / overlay / reveal produit).  
+**Ne pas faire en J1–J4 :** grille Lueurs complète en prod, seuils nebula, certificats papier.
 
 ---
 
