@@ -21,6 +21,7 @@ import {
   SanctuaryUniverse,
   type ConstellationRevealCraft,
 } from "@/src/components/contribute/SanctuaryUniverse";
+import type { CurrentTipStyle } from "@/src/components/contribute/constellation/LightBridges";
 import { SanctuaryLueurOrb } from "@/src/components/contribute/SanctuaryLueurOrb";
 import { ClientWebGLGate } from "@/src/components/contribute/constellation/webglGate";
 import {
@@ -123,13 +124,16 @@ const COPY = {
     tabConstellation: "2 — Constellation",
     tabProduit: "3 — Lueur produit",
     hintHero: "3 layers indépendants — blanc · teal · spikes",
-    hintConstellation: "Reveal Leo — play / pause / scrub",
+    hintConstellation:
+      "Même Hero que l’onglet 1 — change Hero, vois ici l’ensemble",
     hintProduit: "SKU / carte — même famille visuelle",
     layerWhite: "Layer blanc (cœur)",
     layerTeal: "Layer teal (glow)",
     layerSpikes: "Layer spikes",
     layer3d: "3D (profondeur + tilt)",
-    layerReveal: "Reveal constellation",
+    layerReveal: "Tempo (pendant le play / scrub)",
+    layerLook: "Look graphe",
+    layerTip: "Courant (pointe qui dessine)",
     size: "Taille",
     glow: "Intensité",
     breath: "Respiration",
@@ -137,15 +141,24 @@ const COPY = {
     amount: "Force spikes",
     rotate: "Rotation",
     parallax: "Parallax souris",
-    timeline: "Timeline",
+    timeline: "Scrub reveal",
     play: "Play",
     pause: "Pause",
     restart: "Rejouer",
-    duration: "Durée (s)",
-    heroShare: "Solo hero",
+    duration: "Durée play (s)",
+    heroShare: "Solo hero (début)",
     strokeOverlap: "Overlap traits",
-    emphasisDuring: "Filaments (draw)",
-    emphasisIdle: "Filaments (fin)",
+    graphScale: "Échelle graphe",
+    lineWidth: "Épaisseur traits",
+    lineOpacity: "Opacité traits",
+    tipStrength: "Force courant",
+    tipSize: "Taille courant",
+    tipColor: "Couleur courant",
+    tipTrail: "Trait",
+    tipStar: "Étoile",
+    tipOrb: "Rond + halo",
+    ghostDim: "Ghosts (slots vides)",
+    heroEmbed: "Taille hero (ciel)",
     sky: "Ciel",
     eclipse: "Éclipse",
     wormhole: "Wormhole",
@@ -157,13 +170,16 @@ const COPY = {
     tabConstellation: "2 — Constellation",
     tabProduit: "3 — Product Lueur",
     hintHero: "3 independent layers — white · teal · spikes",
-    hintConstellation: "Leo reveal — play / pause / scrub",
+    hintConstellation:
+      "Même Hero que l’onglet 1 — change Hero, vois ici l’ensemble",
     hintProduit: "SKU / card — same visual family",
     layerWhite: "White layer (core)",
     layerTeal: "Teal layer (glow)",
     layerSpikes: "Spikes layer",
     layer3d: "3D (depth + tilt)",
-    layerReveal: "Constellation reveal",
+    layerReveal: "Timing (during play / scrub)",
+    layerLook: "Graph look",
+    layerTip: "Current tip (drawing head)",
     size: "Size",
     glow: "Intensity",
     breath: "Breath",
@@ -171,15 +187,24 @@ const COPY = {
     amount: "Spike strength",
     rotate: "Rotation",
     parallax: "Mouse parallax",
-    timeline: "Timeline",
+    timeline: "Scrub reveal",
     play: "Play",
     pause: "Pause",
     restart: "Replay",
-    duration: "Duration (s)",
-    heroShare: "Hero alone",
+    duration: "Play duration (s)",
+    heroShare: "Hero alone (start)",
     strokeOverlap: "Stroke overlap",
-    emphasisDuring: "Filaments (draw)",
-    emphasisIdle: "Filaments (end)",
+    graphScale: "Graph scale",
+    lineWidth: "Line thickness",
+    lineOpacity: "Line opacity",
+    tipStrength: "Tip strength",
+    tipSize: "Tip size",
+    tipColor: "Tip color",
+    tipTrail: "Trail",
+    tipStar: "Star",
+    tipOrb: "Orb + halo",
+    ghostDim: "Ghosts (empty slots)",
+    heroEmbed: "Hero size (sky)",
     sky: "Sky",
     eclipse: "Eclipse",
     wormhole: "Wormhole",
@@ -276,8 +301,15 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
   );
   const [heroShare, setHeroShare] = useState(DEFAULT_HERO_SHARE);
   const [strokeOverlap, setStrokeOverlap] = useState(DEFAULT_STROKE_OVERLAP);
-  const [emphasisDuring, setEmphasisDuring] = useState(0.25);
-  const [emphasisIdle, setEmphasisIdle] = useState(0.55);
+  const [graphScale, setGraphScale] = useState(1);
+  const [lineWidth, setLineWidth] = useState(1);
+  const [lineOpacity, setLineOpacity] = useState(1);
+  const [tipStrength, setTipStrength] = useState(1.2);
+  const [tipSize, setTipSize] = useState(1);
+  const [tipColor, setTipColor] = useState("#5eead4");
+  const [tipStyle, setTipStyle] = useState<CurrentTipStyle>("orb");
+  const [ghostDim, setGhostDim] = useState(1);
+  const [heroEmbedScale, setHeroEmbedScale] = useState(0.42);
   const revealPlayFromRef = useRef(0);
 
   useEffect(() => {
@@ -314,8 +346,20 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
     revealT,
     heroShare,
     strokeOverlap,
-    emphasisDuring,
-    emphasisIdle,
+    graphScale,
+    lineWidth,
+    lineOpacity,
+    tipStrength,
+    tipStyle,
+    tipColor,
+    tipSize,
+    ghostDim,
+    heroAtom: {
+      white,
+      teal,
+      spikes,
+      embedScale: heroEmbedScale,
+    },
   };
 
   const onRevealPlay = () => {
@@ -367,7 +411,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       onChange: setParallax,
     },
   ];
-  const constellationKnobs: KnobDef[] = [
+  const timingKnobs: KnobDef[] = [
     {
       key: "reveal-t",
       label: t.timeline,
@@ -404,25 +448,81 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       value: strokeOverlap,
       onChange: setStrokeOverlap,
     },
+  ];
+  const lookKnobs: KnobDef[] = [
     {
-      key: "emp-during",
-      label: t.emphasisDuring,
-      min: 0,
-      max: 1.2,
+      key: "graph-scale",
+      label: t.graphScale,
+      min: 0.4,
+      max: 2.2,
       step: 0.01,
-      value: emphasisDuring,
-      onChange: setEmphasisDuring,
+      value: graphScale,
+      onChange: setGraphScale,
     },
     {
-      key: "emp-idle",
-      label: t.emphasisIdle,
-      min: 0,
-      max: 1.5,
+      key: "hero-embed",
+      label: t.heroEmbed,
+      min: 0.12,
+      max: 1.4,
       step: 0.01,
-      value: emphasisIdle,
-      onChange: setEmphasisIdle,
+      value: heroEmbedScale,
+      onChange: setHeroEmbedScale,
+    },
+    {
+      key: "line-width",
+      label: t.lineWidth,
+      min: 0.2,
+      max: 3.5,
+      step: 0.05,
+      value: lineWidth,
+      onChange: setLineWidth,
+    },
+    {
+      key: "line-opacity",
+      label: t.lineOpacity,
+      min: 0.1,
+      max: 2.5,
+      step: 0.05,
+      value: lineOpacity,
+      onChange: setLineOpacity,
+    },
+    {
+      key: "ghost-dim",
+      label: t.ghostDim,
+      min: 0.05,
+      max: 1.5,
+      step: 0.05,
+      value: ghostDim,
+      onChange: setGhostDim,
     },
   ];
+  const tipKnobs: KnobDef[] = [
+    {
+      key: "tip-strength",
+      label: t.tipStrength,
+      min: 0,
+      max: 2.5,
+      step: 0.05,
+      value: tipStrength,
+      onChange: setTipStrength,
+    },
+    {
+      key: "tip-size",
+      label: t.tipSize,
+      min: 0.2,
+      max: 3,
+      step: 0.05,
+      value: tipSize,
+      onChange: setTipSize,
+    },
+  ];
+
+  const tipModes: { id: CurrentTipStyle; label: string }[] = [
+    { id: "trail", label: t.tipTrail },
+    { id: "star", label: t.tipStar },
+    { id: "orb", label: t.tipOrb },
+  ];
+  const tipPresets = ["#5eead4", "#ccfbf1", "#a78bfa", "#f472b6", "#38bdf8", "#ffffff"];
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
@@ -620,7 +720,56 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
               <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
                 {t.layerReveal}
               </p>
-              <CraftKnobGrid knobs={constellationKnobs} />
+              <CraftKnobGrid knobs={timingKnobs} />
+              <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+                {t.layerLook}
+              </p>
+              <CraftKnobGrid knobs={lookKnobs} />
+              <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+                {t.layerTip}
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                {tipModes.map((mode) => (
+                  <button
+                    key={mode.id}
+                    type="button"
+                    onClick={() => setTipStyle(mode.id)}
+                    className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] ${
+                      tipStyle === mode.id
+                        ? "border-teal-400/50 text-teal-100"
+                        : "border-white/15 text-white/55 hover:border-white/30"
+                    }`}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+                <label className="ml-1 flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-white/55">
+                  <span>{t.tipColor}</span>
+                  <input
+                    type="color"
+                    value={tipColor}
+                    onChange={(e) => setTipColor(e.target.value)}
+                    className="h-7 w-10 cursor-pointer rounded-sm border border-white/20 bg-transparent"
+                  />
+                </label>
+                <div className="flex items-center gap-1.5">
+                  {tipPresets.map((hex) => (
+                    <button
+                      key={hex}
+                      type="button"
+                      aria-label={hex}
+                      onClick={() => setTipColor(hex)}
+                      className={`h-5 w-5 rounded-full border ${
+                        tipColor.toLowerCase() === hex.toLowerCase()
+                          ? "border-white"
+                          : "border-white/25"
+                      }`}
+                      style={{ backgroundColor: hex }}
+                    />
+                  ))}
+                </div>
+              </div>
+              <CraftKnobGrid knobs={tipKnobs} />
             </div>
           ) : null}
         </div>

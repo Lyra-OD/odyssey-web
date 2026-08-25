@@ -1,12 +1,12 @@
 # Odyssey — Craft Lueur (Hero · Constellation · Produit)
 
 **Type :** craft · **Vérité pour :** lab atome blanc+teal + emboîtement constellation / SKU.  
-**Dernière MAJ :** 24 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 25 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 25 août 2026 — Onglet 2 : Hero craft partagé (onglet 1 → centre Leo) · courant trait/étoile/orbe + couleur · knobs look.
 - 24 août 2026 — Onglet 2 : timeline reveal Leo (play / pause / scrub + knobs).
 - 24 août 2026 — Plan P0–P8 + onglet Champ (lien ciel économique).
-- 24 août 2026 — lien [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md) (palette produit ≠ knobs lab).
 - 24 août 2026 — Force + rotation spikes sur chaque layer (blanc / teal / spikes).
 - 24 août 2026 — Lab `/fr/contribute/test-lueur` · HeroStar layers.
 
@@ -21,7 +21,7 @@
 | Onglet | Quoi | État |
 |--------|------|------|
 | **1 — Hero** | Atome défunt seul — blanc + teal, spikes, breath | 🚧 craft sur ref photo |
-| **2 — Constellation** | Graphe Leo + reveal — **play / pause / scrub** + knobs | ✅ contrôles craft |
+| **2 — Constellation** | Graphe Leo — **même HeroStar que onglet 1** + reveal + courant | ✅ craft |
 | **3 — Lueur produit** | SKU / carte / ritual — même famille + **palette** | 🚧 + teintes curatées |
 | **4 — Champ** (à ajouter) | Grille B : N lueurs colorées + naissance | 🔜 plan [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md) §7 |
 

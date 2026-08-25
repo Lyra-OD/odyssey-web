@@ -9,6 +9,10 @@ import {
   LueurHitTarget,
   LueurNode,
 } from "@/src/components/contribute/LueurNode";
+import {
+  HeroStar,
+  type HeroLayerKnobs,
+} from "@/src/components/contribute/constellation/HeroStar";
 import { CameraRig } from "@/src/components/contribute/constellation/CameraRig";
 import { CosmicDust } from "@/src/components/contribute/constellation/CosmicDust";
 import { ZodiacalLight } from "@/src/components/contribute/constellation/ZodiacalLight";
@@ -75,6 +79,31 @@ export type ConstellationRevealCraft = {
   emphasisDuring?: number;
   /** Filament boost when reveal complete (default 0.55) */
   emphasisIdle?: number;
+  /** World scale of Leo graph (default 1) */
+  graphScale?: number;
+  /** Lit filament line width multiplier (default 1) */
+  lineWidth?: number;
+  /** Lit filament opacity multiplier (default 1) */
+  lineOpacity?: number;
+  /** Soft tip glow strength (default 1) */
+  tipStrength?: number;
+  /** Craft: ghost edge dim × (default 1) — lower = fainter ghosts */
+  ghostDim?: number;
+  /** Current tip look: trail segment · diffraction star · soft orb+halo */
+  tipStyle?: "trail" | "star" | "orb";
+  tipColor?: string;
+  tipSize?: number;
+  /**
+   * Live HeroStar from craft lab — replaces LueurNode hero when set.
+   * Same knobs as onglet 1 so constellation mirrors the atom.
+   */
+  heroAtom?: {
+    white: HeroLayerKnobs;
+    teal: HeroLayerKnobs;
+    spikes: HeroLayerKnobs;
+    /** Extra size mul for mid-sky (lab is close-up). Default 0.4 */
+    embedScale?: number;
+  };
 };
 
 type FocusSession = {
@@ -113,6 +142,15 @@ function Constellation({
   emphasis,
   heroShare,
   strokeOverlap,
+  graphScale = 1,
+  lineWidthMul = 1,
+  lineOpacityMul = 1,
+  tipStrength = 1,
+  ghostDim = 1,
+  tipStyle = "orb",
+  tipColor = "#ccfbf1",
+  tipSize = 1,
+  heroAtom,
 }: {
   onSelectMemory: (
     soulId: string,
@@ -125,6 +163,15 @@ function Constellation({
   emphasis: number;
   heroShare?: number;
   strokeOverlap?: number;
+  graphScale?: number;
+  lineWidthMul?: number;
+  lineOpacityMul?: number;
+  tipStrength?: number;
+  ghostDim?: number;
+  tipStyle?: "trail" | "star" | "orb";
+  tipColor?: string;
+  tipSize?: number;
+  heroAtom?: ConstellationRevealCraft["heroAtom"];
 }) {
   const stars = useMemo(() => resolveConstellation(), []);
   const positions = useMemo(() => constellationPositions(stars), [stars]);
@@ -156,7 +203,7 @@ function Constellation({
   };
 
   return (
-    <group position={[-0.45, -0.7, 0]} scale={1}>
+    <group position={[-0.45, -0.7, 0]} scale={graphScale}>
       {stars.map((star, i) => {
         const pos = positions[star.id] ?? star.position;
         const appear = draw.nodeAppear[star.id] ?? 0;
@@ -171,16 +218,35 @@ function Constellation({
                 ? 0.28
                 : 0.36;
         const isFocus = focusedSoulId === star.id;
+        const ghostFade =
+          star.visual === "ghost" ? Math.max(0.15, ghostDim) : 1;
+
+        const useCraftHero =
+          star.visual === "hero" && heroAtom != null;
+        const embed = heroAtom?.embedScale ?? 0.4;
+        const appearMul = appear * (1 + emphasis * 0.1) * ghostFade;
 
         return (
           <group key={star.id} position={pos}>
-            <LueurNode
-              variant={star.visual}
-              phase={i * 1.7}
-              floating={!isFocus && star.lit}
-              focusBoost={isFocus ? focusBoost : 0}
-              appear={appear * (1 + emphasis * 0.1)}
-            />
+            {useCraftHero && heroAtom ? (
+              <group scale={Math.max(0.05, appear * embed)}>
+                <HeroStar
+                  white={heroAtom.white}
+                  teal={heroAtom.teal}
+                  spikes={heroAtom.spikes}
+                  parallax={0}
+                  phase={i * 1.7}
+                />
+              </group>
+            ) : (
+              <LueurNode
+                variant={star.visual}
+                phase={i * 1.7}
+                floating={!isFocus && star.lit}
+                focusBoost={isFocus ? focusBoost : 0}
+                appear={appearMul}
+              />
+            )}
             {isFocus ? (
               <StarScreenReporter active onScreen={onStarScreen} />
             ) : null}
@@ -246,6 +312,13 @@ function Constellation({
         draw={draw}
         emphasis={emphasis}
         revealComplete={revealT >= 1}
+        lineWidthMul={lineWidthMul}
+        lineOpacityMul={lineOpacityMul}
+        tipStrength={tipStrength}
+        ghostDim={ghostDim}
+        tipStyle={tipStyle}
+        tipColor={tipColor}
+        tipSize={tipSize}
       />
     </group>
   );
@@ -295,6 +368,15 @@ function UniverseScene({
   const strokeOverlap = craftReveal?.strokeOverlap ?? DEFAULT_STROKE_OVERLAP;
   const emphasisDuring = craftReveal?.emphasisDuring ?? 0.25;
   const emphasisIdle = craftReveal?.emphasisIdle ?? 0.55;
+  const graphScale = craftReveal?.graphScale ?? 1;
+  const lineWidthMul = craftReveal?.lineWidth ?? 1;
+  const lineOpacityMul = craftReveal?.lineOpacity ?? 1;
+  const tipStrength = craftReveal?.tipStrength ?? 1;
+  const ghostDim = craftReveal?.ghostDim ?? 1;
+  const tipStyle = craftReveal?.tipStyle ?? "orb";
+  const tipColor = craftReveal?.tipColor ?? "#ccfbf1";
+  const tipSize = craftReveal?.tipSize ?? 1;
+  const heroAtom = craftReveal?.heroAtom;
 
   useEffect(() => {
     if (controlled) return;
@@ -432,6 +514,15 @@ function UniverseScene({
                 emphasis={emphasis}
                 heroShare={heroShare}
                 strokeOverlap={strokeOverlap}
+                graphScale={graphScale}
+                lineWidthMul={lineWidthMul}
+                lineOpacityMul={lineOpacityMul}
+                tipStrength={tipStrength}
+                ghostDim={ghostDim}
+                tipStyle={tipStyle}
+                tipColor={tipColor}
+                tipSize={tipSize}
+                heroAtom={heroAtom}
               />
             </ConstellationLeash>
           </ParallaxLayer>
