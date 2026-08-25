@@ -25,7 +25,7 @@ Ne pas laisser pourrir 6 mois sans date dans le titre.
 
 | Fichier | Usage |
 |---------|--------|
-| [`DEMO_PATRICE_URGEL_RUSH.md`](DEMO_PATRICE_URGEL_RUSH.md) | Max démo convaincante + rush Figma Paul + courriel |
+| [`DEMO_PATRICE_URGEL_RUSH.md`](DEMO_PATRICE_URGEL_RUSH.md) | Cheat sheet 2e écran démo Patrice → canon [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) |
 | [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md) | **Guide A / B / C / D** — différences et reco |
 | [`NDA_A_VALIDEE_LEGALE.md`](NDA_A_VALIDEE_LEGALE.md) | **Version A** — validée légale |
 | [`NDA_B_FREEMIUM_REVSHARE.md`](NDA_B_FREEMIUM_REVSHARE.md) | **Version B** — Freemium / RevShare (archive ; préférer D) |
