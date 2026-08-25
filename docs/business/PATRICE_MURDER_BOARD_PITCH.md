@@ -4,6 +4,7 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — Pitch business = **Fonds / achat collaboratif** (ancre Base ~11 k$) · §3.7 + closing.
 - 26 août 2026 — §8 objections TI · vente déguisée · USB (réponses chirurgicales ajustées MVP).
 - 26 août 2026 — Canon initial : pitch killer · modèle revenu multi-leviers · % honnêtes · ajustements MVP.
 
@@ -22,7 +23,7 @@
 | Pilote P0 = sortie de secours | Promettre déploiement 10 succursales J1 |
 | Under-promise technique · over-deliver pilote | Prologue wormhole live sans fallback |
 
-**Mot d’ordre :** OD V1-MVP = **efficacité opérationnelle** + **revenus accessoires automatiques** + **risque réputationnel maîtrisé** (pas un jouet).
+**Mot d’ordre :** OD V1-MVP = **efficacité opérationnelle** + **Fonds / achat collaboratif** (cercle + famille) + **risque réputationnel maîtrisé**. Ancre revenu = **Base ~11 k$/mois**, pas le seul conservateur.
 
 ---
 
@@ -116,6 +117,22 @@ Détail : [`URGEL_ADOPTION_AND_PILOT.md`](URGEL_ADOPTION_AND_PILOT.md) §7.
 
 ---
 
+### 3.7 Modèle d’affaires oral — Fonds / achat collaboratif (version qui maximise)
+
+**Décision CEO :** pitch VP = **cette version** (pas famille seule). Script long : [`MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) §1.5b.
+
+> *« L’achat ne se fait jamais au salon. Souvenir = **0 $**. Quand la famille veut le Film, le Livre ou Éternité (**349 $**), le **Fonds Commémoratif** change la règle.*
+>
+> *Au lieu de fleurs qui fanent, 100–150 proches peuvent contribuer (Lueur, voix, mécène). Chaque dollar devient un **crédit produit** pour l’hommage. On monétise la générosité du cercle — pas seulement la carte de la veuve. Sur **chaque** transaction (invité **et** famille) : **30 % du net**.*
+>
+> *Famille seule ≈ **5,5 k$/mois**. Avec le Fonds (scénario Base) ≈ **11 k$/mois**. La différence = ce levier. »*
+
+**Condition démo / pilote :** `viral_loop_enabled` **ON**. Sans partage de lien = pas de Fonds.
+
+**Objection prix 349 $ :** *« Ce n’est plus une seule carte qui porte tout — le cercle peut financer. »*
+
+---
+
 ## 4. Revenu par famille — tous les leviers (OD V1-MVP)
 
 ### 4.1 Cartographie (qui paie quoi)
@@ -158,7 +175,7 @@ Commission partenaire ≈ **27 % du GMV brut** (= 30 % du net après 10 % platef
 | Scénario | Hypothèses clés | **GMV / famille entrante** | **Commission Urgel / famille** | Commission / mois (250 fam) |
 |----------|-----------------|---------------------------|-------------------------------|----------------------------|
 | **Conservateur** | 35 % paient · AOV ~234 $ · viral **OFF** | **~82 $** | **~22 $** | **~5,5 k$** |
-| **Base** | 50 % paient · AOV ~275 $ · viral 30 % · ARPU invité ~96 $/projet viral | **~158 $** | **~43 $** | **~11 k$** |
+| **Base (cible pitch)** | 50 % paient · AOV ~275 $ · viral 30 % · ARPU invité ~96 $/projet viral · **Fonds ON** | **~158 $** | **~43 $** | **~11 k$** |
 | **Optimiste** | 65 % paient · AOV ~318 $ · viral 80 % · ARPU invité ~238 $ | **~380 $** | **~103 $** | **~23 k$** |
 
 *Source calcul : [`BUSINESS_CASE_V2.md`](../BUSINESS_CASE_V2.md) §0 — dire **hypothèses**, pas garantie.*
@@ -226,9 +243,13 @@ Sur familles qui **passent au payant** (Base ~50 % des dossiers) :
 
 ---
 
-## 7. Script closing (30 s)
+## 7. Script closing (30–45 s)
 
-> *« Patrice : **0 $** pour Urgel. **30 secondes** par conseiller. Support famille chez nous. **30 % du net** quand la famille choisit d’aller plus loin — modèle conservateur ~**22 $/famille**, base ~**43 $**. Vos risques sont réels — le pilote les teste sans engagement réseau. On commence par **2 conseillers** le mois prochain ? »*
+> *« Patrice : **0 $** pour Urgel. **30 secondes** par conseiller. Support famille chez nous.*
+>
+> *Vous ne monétisez pas seulement une veuve au comptoir — le **Fonds** monétise la générosité de 100–150 proches (*au lieu de fleurs*). Sur chaque dollar : **30 % du net**. Plancher famille seule ~**22 $/dossier** · **Base avec Fonds ~43 $** → ~**11 k$/mois** par salon mature.*
+>
+> *Pilote : 2 conseillers · flag Fonds ON · 10 dossiers. Si friction → stop. On commence ? »*
 
 ---
 

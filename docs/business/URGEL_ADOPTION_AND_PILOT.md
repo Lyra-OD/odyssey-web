@@ -193,7 +193,7 @@ Promettre : **invitation stable · dépôt · Coffre · lien mobile**.
 - 2 conseillers volontaires (pas les plus « tech » — les **plus empathiques**)  
 - 1 directeur succursale sponsor  
 - Kit QR A6 (batch 50 cartes)  
-- Compte salon brandé · tenant freemium + boucle ON si Fonds évoqué  
+- Compte salon brandé · tenant freemium + **`viral_loop_enabled` ON** (Fonds / achat collaboratif — pitch Base)  
 
 ### 7.2 Rituel conseiller (30 s)
 

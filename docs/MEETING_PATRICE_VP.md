@@ -4,6 +4,7 @@
 **Dernière MAJ :** 25 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — Bloc business = **Fonds / achat collaboratif** (cercle + famille) — ancre Base ~11 k$/mois.
 - 25 août 2026 — lien adoption & pilote Urgel · plan demain TEMP.
 - 25 août 2026 — §1 stratégie (179 $/349 $, net distribuable) · §2 Mode A · §3 Mode B vision prologue.
 - 25 août 2026 — Reality check labs · chaînon Salon · phrase directeur funéraire.
@@ -74,23 +75,40 @@ Sur chaque paiement **né de l’invitation partenaire** :
 Dire : *« **30 % du net distribuable** — contractuel, tracé, mensuel. Invisible pour la famille. »*  
 *(≈ 27 % du brut — slide mentale.)* · Canon : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
 
-### 1.5 Machine à 3 temps
+### 1.5 Machine à 3 temps (+ Fonds = levier qui double)
 
 1. **Acquisition** — cadeau Sanctuaire (coût Odyssey).  
-2. **Révélation** — film, souvenirs, désir.  
-3. **Pérennité** — Héritage / Éternité, extensions — **share ici**.
+2. **Révélation** — film, souvenirs, désir · le cercle dépose.  
+3. **Pérennité** — Héritage / Éternité **et** **Fonds Commémoratif** (empreintes invités → crédit famille) — **share sur les deux**.
+
+### 1.5b Fonds / achat collaboratif (pitch VP — version qui maximise le revenu)
+
+**Canon produit :** Boucle Virale · [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) · flag `viral_loop_enabled` **ON** au pilote.
+
+> *L’achat ne se fait **jamais** au salon. Séparation stricte — des jours plus tard, chez la famille.*
+>
+> *Souvenir = **0 $**, votre cadeau. Quand la famille veut le Film, le Livre ou Éternité (**349 $**), OD V1-MVP change la règle : **achat collaboratif** via le **Fonds Commémoratif**.*
+>
+> *La famille partage le lien à 100–150 proches. Au lieu de 100 $ de fleurs qui fanent en 3 jours, un proche laisse une **Lueur**, une voix, un geste de mécène. Chaque contribution alimente un **crédit produit** pour débloquer l’hommage — pas de cash-out.*
+>
+> *On enlève le fardeau d’**une** carte en deuil. On monétise la **générosité du cercle**. Sur **chaque dollar** (invité **et** famille), Urgel touche **30 % du net distribuable** — zéro vente au comptoir.*
+>
+> *Conservateur (famille seule / viral timide) ≈ **5,5 k$/mois**. Base (Fonds + diaspora) ≈ **11 k$/mois**. La différence = **ce levier**.*
+
+**Exécution :** carte QR · partage étape 2 · empreintes Sanctuaire · checkout famille avec crédit Fonds. Sans partage de lien = pas de Fonds = retour au conservateur.
 
 ### 1.6 Ordre de grandeur (hypothèses — oral après démo)
 
 Modèle 1 salon × 3 000 familles / an — [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md).
 
-| | Conservateur | Base | Optimiste |
-|--|--------------|------|-----------|
-| Commission groupe / mois | ~5,5 k$ | ~11 k$ | ~23 k$ |
+| | Conservateur | **Base (cible pitch)** | Optimiste |
+|--|--------------|------------------------|-----------|
+| Leviers | Famille seule · viral OFF | Famille + **Fonds / cercle** | Diaspora large |
+| Commission groupe / mois | ~5,5 k$ | **~11 k$** | ~23 k$ |
 
-> *On dimensionne après **un salon preuve** — pas « signez le Canada ».*
+> *Ancre orale = **Base**. Conservateur = plancher. Optimiste = upside. On dimensionne après **un salon preuve**.*
 
-**Boucle virale :** Sanctuaire, dépôts, Fonds famille = **allumés**. Conservateur en rencontre = cercle **timide**, pas produit éteint.
+**Boucle virale :** produit **livré** · flag tenant **ON** pour le pilote Urgel. Conservateur en rencontre = cercle **timide**, pas produit éteint.
 
 ---
 
@@ -112,8 +130,8 @@ Modèle 1 salon × 3 000 familles / an — [`BUSINESS_CASE_V2.md`](BUSINESS_CASE
 | 2 | **Sanctuaire** | `/fr/contribute/…` **sur son téléphone** | *Voici la famille et la diaspora. Un souvenir en 30 secondes.* |
 | 3 | **Studio — Coffre** | `/fr/studio` étape 3 | *Tous les médias au même endroit.* |
 | 4 | **Studio — Film** | étape 5 | *Le chef-d’œuvre collectif.* |
-| 5 | **Studio — Finaliser** | étape 7 · Soft Cap | *Ils construisent sans payer. Héritage **179 $** quand c’est digne.* |
-| 6 | **Commissions** | `/fr/salon/commissions` | *Votre **30 % du net distribuable** — automatique.* |
+| 5 | **Studio — Finaliser** | étape 7 · Soft Cap · crédit Fonds si ON | *Ils construisent sans payer. Le cercle peut financer via le Fonds — Héritage **179 $** / Éternité **349 $**.* |
+| 6 | **Commissions** | `/fr/salon/commissions` | *30 % du net — famille **et** invités. Base ~**11 k$/mois**.* |
 
 **Secours :** Figma ([`DA_SCREENS.md`](DA_SCREENS.md)) · ou tel + Studio pré-rempli + 1 slide share — voir rush TEMP §2.
 
@@ -166,14 +184,17 @@ Valider étape 1 → reveal constellation Leo (2–4 s).
 
 ### 3.4 Phase 4 — Modèle d’affaires (6–10 min)
 
-Hub Sanctuaire plein écran.
+Hub Sanctuaire plein écran. Script = **§1.5b** (Fonds / achat collaboratif).
 
-> *Souvenir **gratuit** pour Urgel Bourgie et la famille — votre valeur ajoutée.*  
-> *La famille partage le lien. Plus ils participent, plus le ciel s’illumine.*  
-> *Pour aller plus loin : **Héritage 179 $** · **Éternité 349 $**.*  
-> *Comme Urgel a offert la porte d’entrée : **30 % du net distribuable** sur chaque transaction.*
+Ordre oral :
 
-Enchaîner **commissions** si le temps le permet — ou reprendre Mode A §2.2 beats 3–6.
+1. Muraille — achat **jamais** au salon.  
+2. Souvenir **0 $** = cadeau Urgel.  
+3. ★ **Fonds** — cercle finance Film / Livre / Éternité (*au lieu de fleurs*).  
+4. Upsell famille (**179 $ / 349 $**) si crédit insuffisant.  
+5. **30 % du net** sur invités **et** famille → Base **~11 k$/mois**.
+
+Enchaîner **commissions** — ou Mode A beats 3–6. Tenant démo : `viral_loop_enabled` **ON** si tu montres le Fonds live.
 
 ### 3.5 Phase 5 — Call to action
 
