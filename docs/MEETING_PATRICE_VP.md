@@ -4,16 +4,18 @@
 **Dernière MAJ :** 25 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 25 août 2026 — lien adoption & pilote Urgel · plan demain TEMP.
 - 25 août 2026 — §1 stratégie (179 $/349 $, net distribuable) · §2 Mode A · §3 Mode B vision prologue.
 - 25 août 2026 — Reality check labs · chaînon Salon · phrase directeur funéraire.
 - 21 août 2026 — rush opérationnel : [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md).
 - 19 août 2026 — GTM B2C : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) (hors ce playbook).
-- août 2026 — playbook prêt · courriel envoyé.
 
 **Audience :** Patrice (VP Urgel Bourgie) · **Durée :** 60 min · **Auteur :** Erik  
 **Rush jour J (6 beats, Figma Paul, checklist) :** [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) — **ne pas remplacer** ce playbook.
 
-**Complète :** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2.
+**Complète :** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`business/URGEL_ADOPTION_AND_PILOT.md`](business/URGEL_ADOPTION_AND_PILOT.md) · [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2.
+
+**Plan J+1 :** [`TEMP/PLAN_DEMO_PATRICE_DEMAIN.md`](TEMP/PLAN_DEMO_PATRICE_DEMAIN.md)
 
 > **Reality check :** jamais de démo **live** sur des labs déconnectés (`/test-eclipse*`, `/test-wormhole`, `/test-lueur`) devant un VP — sauf **vidéo de secours blindée**. **Mode A** = prod live. **Mode B** = vision prologue (live si branché, sinon vidéo + « prochaine MAJ »).
 

@@ -1,7 +1,7 @@
 # TEMP — documents provisoires
 
 **Type :** ops · **Vérité pour :** brouillons, rush démo, courriels, notes de session.  
-**Dernière MAJ :** 21 août 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 Ce dossier **n’est pas** du canon. Pas de grille prix ici. Pas de source de vérité produit.
 
@@ -26,6 +26,7 @@ Ne pas laisser pourrir 6 mois sans date dans le titre.
 | Fichier | Usage |
 |---------|--------|
 | [`DEMO_PATRICE_URGEL_RUSH.md`](DEMO_PATRICE_URGEL_RUSH.md) | Max démo convaincante + rush Figma Paul + courriel |
+| [`PLAN_DEMO_PATRICE_DEMAIN.md`](PLAN_DEMO_PATRICE_DEMAIN.md) | Plan J+1 démo + craft + kit QR |
 | [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md) | **Guide A / B / C / D** — différences et reco |
 | [`NDA_A_VALIDEE_LEGALE.md`](NDA_A_VALIDEE_LEGALE.md) | **Version A** — validée légale |
 | [`NDA_B_FREEMIUM_REVSHARE.md`](NDA_B_FREEMIUM_REVSHARE.md) | **Version B** — Freemium / RevShare (archive ; préférer D) |
