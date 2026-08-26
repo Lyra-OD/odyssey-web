@@ -4,7 +4,8 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 26 août 2026 — Chiffres : **$/famille** d’abord · 5,5–11 k$ = hyp. **bannière** Bourgie (pas par salon) · volume 3 000 daté.
+- 26 août 2026 — Volume : 3 000/an = **plancher historique bannière** · réel aujourd’hui **plus haut** (Patrice multiplie).
+- 26 août 2026 — Chiffres : **$/famille** d’abord · 5,5–11 k$ = hyp. **bannière** (pas par salon).
 - 26 août 2026 — Script de Fer v1 : pré-mortem · salon · Fonds · bouclier · closing.
 
 **Canon :** [`MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) · [`PATRICE_MURDER_BOARD_PITCH.md`](PATRICE_MURDER_BOARD_PITCH.md) · [`URGEL_ADOPTION_AND_PILOT.md`](URGEL_ADOPTION_AND_PILOT.md)
@@ -55,7 +56,7 @@
 >
 > L’unité qui compte : environ **vingt-deux dollars** de commission par famille entrante en scénario conservateur — famille seule. Avec le Fonds : environ **quarante-trois dollars**. Le levier **double presque** l’économie unitaire.
 >
-> Sur une hypothèse **historique** — environ trois mille familles par an pour la **bannière Bourgie**, pas par salon — ça donnait de l’ordre de **cinq mille cinq cents à onze mille dollars par mois** au niveau réseau. On **recalibre** avec vos volumes 2026. Héritage : **cent soixante-dix-neuf**. Éternité : **trois cent quarante-neuf**.
+> Sur une hypothèse **historique** — environ trois mille familles par an pour la **bannière Bourgie**, pas par salon — ça donnait de l’ordre de **cinq mille cinq cents à onze mille dollars par mois** au niveau réseau. Aujourd’hui, votre volume est **largement au-dessus** de ce chiffre — vous multipliez dans votre tête. On **recalibre** avec vos volumes 2026. Héritage : **cent soixante-dix-neuf**. Éternité : **trois cent quarante-neuf**.
 
 *(Si tu montres le Fonds live : tenant `viral_loop_enabled` ON. Sinon reste oral — ne bluffe pas l’écran.)*
 

@@ -125,7 +125,7 @@ Détail : [`URGEL_ADOPTION_AND_PILOT.md`](URGEL_ADOPTION_AND_PILOT.md) §7.
 >
 > *Au lieu de fleurs qui fanent, 100–150 proches peuvent contribuer (Lueur, voix, mécène). Chaque dollar devient un **crédit produit** pour l’hommage. On monétise la générosité du cercle — pas seulement la carte de la veuve. Sur **chaque** transaction (invité **et** famille) : **30 % du net**.*
 >
-> *Unité : ~**22 $/famille** conservateur · ~**43 $/famille** avec Fonds. Sur une hyp. **historique bannière** (~3 000 fam./an réseau Bourgie, pas par salon) : ordre de grandeur **5,5 → 11 k$/mois** réseau. On recalibre avec vos volumes. »*
+> *Unité : ~**22 $/famille** conservateur · ~**43 $/famille** avec Fonds. Hyp. **historique bannière** (~3 000/an réseau, datée) : ordre **5,5 → 11 k$/mois** — **plancher** ; votre volume aujourd’hui est **plus haut**, vous multipliez. On recalibre avec vos chiffres. »*
 
 **Condition démo / pilote :** `viral_loop_enabled` **ON**. Sans partage de lien = pas de Fonds.
 
