@@ -821,13 +821,45 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       </div>
 
       {!panelOpen ? (
-        <button
-          type="button"
-          onClick={() => setPanelOpen(true)}
-          className="pointer-events-auto absolute bottom-4 right-4 z-30 rounded-sm border border-white/25 bg-black/70 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-white/80 backdrop-blur-md hover:border-teal-400/40 hover:text-teal-100"
-        >
-          {t.showPanel}
-        </button>
+        <div className="pointer-events-auto absolute bottom-4 right-4 z-30 flex flex-wrap items-center justify-end gap-1.5">
+          {tab === "constellation" ? (
+            <div className="flex items-center gap-1.5 rounded-sm border border-white/20 bg-black/70 px-2 py-1.5 backdrop-blur-md">
+              <button
+                type="button"
+                onClick={onRevealPlay}
+                disabled={revealPlaying}
+                className="rounded-sm border border-white/25 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/80 hover:border-white/45 disabled:opacity-40"
+              >
+                {t.play}
+              </button>
+              <button
+                type="button"
+                onClick={onRevealPause}
+                disabled={!revealPlaying}
+                className="rounded-sm border border-white/25 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/80 hover:border-white/45 disabled:opacity-40"
+              >
+                {t.pause}
+              </button>
+              <button
+                type="button"
+                onClick={onRevealRestart}
+                className="rounded-sm border border-white/25 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/80 hover:border-white/45"
+              >
+                {t.restart}
+              </button>
+              <span className="px-1 font-mono text-[11px] text-teal-400/80">
+                {(revealT * 100).toFixed(0)}%
+              </span>
+            </div>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => setPanelOpen(true)}
+            className="rounded-sm border border-white/25 bg-black/70 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-white/80 backdrop-blur-md hover:border-teal-400/40 hover:text-teal-100"
+          >
+            {t.showPanel}
+          </button>
+        </div>
       ) : (
         <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 max-h-[28vh] overflow-y-auto border-t border-white/10 bg-black/70 px-3 py-2 backdrop-blur-md md:max-h-[32vh] md:px-5 md:py-2.5">
           <div className="mx-auto flex max-w-6xl flex-col gap-2">
