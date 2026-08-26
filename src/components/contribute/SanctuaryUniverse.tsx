@@ -11,7 +11,7 @@ import {
   useState,
   type MutableRefObject,
 } from "react";
-import { WebGLRenderer } from "three";
+import { WebGLRenderer, Vector3 } from "three";
 
 import {
   LueurHitTarget,
@@ -42,7 +42,7 @@ import { NebulaGasMauve } from "@/src/components/contribute/constellation/Nebula
 import { NebulaGasRose } from "@/src/components/contribute/constellation/NebulaGasRose";
 import { NebulaGasTeal } from "@/src/components/contribute/constellation/NebulaGasTeal";
 import { GhostStars } from "@/src/components/contribute/constellation/GhostStars";
-import { ParallaxLayer, ParallaxProvider } from "@/src/components/contribute/constellation/ParallaxLayer";
+import { ParallaxLayer, ParallaxProvider, useParallaxPointerRef } from "@/src/components/contribute/constellation/ParallaxLayer";
 import { ShootingStars } from "@/src/components/contribute/constellation/ShootingStars";
 import { StarDust } from "@/src/components/contribute/constellation/StarDust";
 import {
@@ -72,6 +72,12 @@ import {
 import { LEO_STROKE_SEQUENCE } from "@/src/components/contribute/constellation/graphs/leo";
 import { resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
 import {
+  DEFAULT_WHISPER_EMPHASIS,
+  resolveDrawPhase,
+  slotWakeAppear,
+} from "@/src/components/contribute/constellation/graphs/drawPhase";
+import { CONSTELLATION_GROUP_OFFSET } from "@/src/components/contribute/constellation/graphs/revealCamera";
+import {
   DEFAULT_CONSTELLATION_REVEAL_MS,
   DEFAULT_HERO_SHARE,
   DEFAULT_STROKE_OVERLAP,
@@ -100,7 +106,7 @@ export type ConstellationRevealCraft = {
   strokeOverlap?: number;
   /** Filament / node boost while drawing (default 0.25 × revealT) */
   emphasisDuring?: number;
-  /** Filament boost when reveal complete (default 0.55) */
+  /** Filament boost when reveal complete (default whisper ~10 %) */
   emphasisIdle?: number;
   /** World scale of Leo graph (default 1) */
   graphScale?: number;
@@ -175,7 +181,7 @@ function Constellation({
   revealT: revealTProp,
   revealTRef,
   emphasisDuring = 0.25,
-  emphasisIdle = 0.55,
+  emphasisIdle = DEFAULT_WHISPER_EMPHASIS,
   heroShare,
   strokeOverlap,
   graphScale = 1,
@@ -218,21 +224,10 @@ function Constellation({
   bridges?: BridgesCraft;
   slotLit?: Record<string, boolean>;
 }) {
+  const pointerRef = useParallaxPointerRef();
+  const proxTmp = useRef(new Vector3());
   const [revealT, setRevealT] = useState(revealTProp);
-  useFrame(() => {
-    if (!revealTRef) return;
-    const v = revealTRef.current;
-    setRevealT((prev) => (Math.abs(prev - v) > 0.0008 ? v : prev));
-  });
-  useEffect(() => {
-    if (revealTRef) return;
-    setRevealT(revealTProp);
-  }, [revealTProp, revealTRef]);
-
-  const emphasis =
-    revealT >= 1 ? emphasisIdle : revealT * emphasisDuring;
-
-  const birth = useMemo(() => resolveBirth(revealT), [revealT]);
+  const [proximityBoost, setProximityBoost] = useState(0);
 
   const stars = useMemo(() => {
     if (slotLit) {
@@ -241,6 +236,61 @@ function Constellation({
     return resolveConstellation();
   }, [slotLit]);
   const positions = useMemo(() => constellationPositions(stars), [stars]);
+
+  useFrame(({ camera }) => {
+    if (revealTRef) {
+      const v = revealTRef.current;
+      setRevealT((prev) => (Math.abs(prev - v) > 0.0008 ? v : prev));
+    }
+
+    const drawPhaseLive = resolveDrawPhase(revealTRef?.current ?? revealT);
+    if (!drawPhaseLive.proximity || !pointerRef) {
+      setProximityBoost((p) => (p > 0 ? 0 : p));
+      return;
+    }
+    const ptr = pointerRef.current;
+    let maxProx = 0;
+    const gx = CONSTELLATION_GROUP_OFFSET[0];
+    const gy = CONSTELLATION_GROUP_OFFSET[1];
+    for (const star of stars) {
+      const pos = positions[star.id] ?? star.position;
+      proxTmp.current.set(
+        gx + pos[0] * graphScale,
+        gy + pos[1] * graphScale,
+        pos[2] * graphScale,
+      );
+      proxTmp.current.project(camera);
+      const dx = proxTmp.current.x - ptr.x;
+      const dy = proxTmp.current.y - ptr.y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      maxProx = Math.max(maxProx, Math.max(0, 1 - d / 0.38));
+    }
+    const boost = maxProx * 0.14;
+    setProximityBoost((prev) =>
+      Math.abs(prev - boost) > 0.006 ? boost : prev,
+    );
+  });
+  useEffect(() => {
+    if (revealTRef) return;
+    setRevealT(revealTProp);
+  }, [revealTProp, revealTRef]);
+
+  const drawPhase = useMemo(() => resolveDrawPhase(revealT), [revealT]);
+
+  const emphasis = useMemo(() => {
+    if (revealT >= 1) return emphasisIdle + proximityBoost;
+    if (drawPhase.beat) return drawPhase.emphasis + proximityBoost;
+    return revealT * emphasisDuring;
+  }, [
+    revealT,
+    emphasisDuring,
+    emphasisIdle,
+    drawPhase,
+    proximityBoost,
+  ]);
+
+  const birth = useMemo(() => resolveBirth(revealT), [revealT]);
+
   const ghostIds = useMemo(
     () => new Set(stars.filter((s) => !s.lit).map((s) => s.id)),
     [stars],
@@ -273,7 +323,8 @@ function Constellation({
     <group position={[-0.45, -0.7, 0]} scale={graphScale}>
       {stars.map((star, i) => {
         const pos = positions[star.id] ?? star.position;
-        const appear = draw.nodeAppear[star.id] ?? 0;
+        const appearRaw = draw.nodeAppear[star.id] ?? 0;
+        const appear = slotWakeAppear(appearRaw, drawPhase.beat);
         const isHero = star.role === "hero";
 
         // Hero slot: show for name alone, or when star is born
@@ -524,7 +575,7 @@ function UniverseScene({
   const heroShare = craftReveal?.heroShare ?? DEFAULT_HERO_SHARE;
   const strokeOverlap = craftReveal?.strokeOverlap ?? DEFAULT_STROKE_OVERLAP;
   const emphasisDuring = craftReveal?.emphasisDuring ?? 0.25;
-  const emphasisIdle = craftReveal?.emphasisIdle ?? 0.55;
+  const emphasisIdle = craftReveal?.emphasisIdle ?? DEFAULT_WHISPER_EMPHASIS;
   const graphScale = craftReveal?.graphScale ?? 1;
   const lineWidthMul = craftReveal?.lineWidth ?? 1;
   const lineOpacityMul = craftReveal?.lineOpacity ?? 1;

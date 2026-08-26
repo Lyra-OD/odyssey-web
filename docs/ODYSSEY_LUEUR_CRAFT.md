@@ -4,11 +4,11 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — Draw **D–F** : traits Hero · slots au trait · whisper ~10 % · champ souris · `C_END` 0,57.
 - 26 août 2026 — Hero **C3–C5** : spikes (fin C) · flash larme ≤ 0,12 · micro-hold avant traits.
 - 26 août 2026 — **Recette naissance** KEEP : nom fumée + Hero C0–C2 (depuis le nom, cam serrée→pull-back).
 - 26 août 2026 — Lab constellation : knobs **slots** + **traits major/minor**.
 - 26 août 2026 — **KEEP Hero** : defaults `DEFAULT_HERO_*` + parallax 1.2 · globalScale 0.83.
-- 25 août 2026 — Onglet 2 : Hero craft partagé · courant trait/étoile/orbe.
 
 **Preview :** `/fr/contribute/test-lueur` (dev only)  
 **Ciel :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · **Orb carte :** [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md)  
@@ -107,7 +107,7 @@ CEO craft → ensuite **0b KEEP** (fixer les defaults).
 | Offset départ Hero | **`y = −0.24`** | Milieu optique du mot (pas −0.4 = trop bas) |
 | Durée play | **14 s** | `DEFAULT_CONSTELLATION_REVEAL_MS` |
 
-Beat lab (affiche `A` / `B` / `C0` / `C1` / `C2` / `draw`) = `resolveBirth(revealT).beat`.
+Beat lab = `resolveDrawPhase(revealT).beat ?? resolveBirth(revealT).beat` (`D` / `E` / `F` pendant le draw).
 
 #### Recette B — Nom (fumée → mot)
 
@@ -168,9 +168,16 @@ Beat lab (affiche `A` / `B` / `C0` / `C1` / `C2` / `draw`) = `resolveBirth(revea
 6. **C3–C5** : spikes → flash larme → hold (~u 0,92) **avant** traits à 0,57.
 7. Traits après ~0,57 · cam s’ouvre.
 
-#### Pas encore (D–F)
+#### Draw D–F (`resolveDrawPhase`)
 
-Pull-back finement sync draw · slots au trait · whisper traits · proximité souris.
+| Beat | Fenêtre draw (`localU`) | Visuel |
+|------|-------------------------|--------|
+| **D** | 0 → ~0,45 | Traits partent du Hero · pull-back cam |
+| **E** | ~0,45 → ~0,88 | Slots s’éveillent à l’arrivée du trait |
+| **F** | ~0,88 → 1 + idle | Whisper traits (~10 %) · champ souris |
+
+- `emphasisIdle` default = **0,10** (whisper canon 8–12 %).
+- Proximité = champ NDC autour du curseur (pas hitbox UI).
 
 ---
 
@@ -180,10 +187,10 @@ Pull-back finement sync draw · slots au trait · whisper traits · proximité s
 |------|--------|--------|
 | **A** | Vide / poussière (`t≈0`) | Déjà serré |
 | **B** | **Nom naît** (bloom / brume) | Serré, stable |
-| **C** | **Hero** C0–C5 ✅ · D–F TODO | Serré → pull-back au draw |
-| **D** | Traits partent du Hero | Début pull-back |
-| **E** | Slots s’éveillent | Pull-back continue |
-| **F** | Whisper + champ souris | Cadre idle Leo |
+| **C** | **Hero** C0–C5 ✅ | Serré → pull-back au draw |
+| **D** | Traits partent du Hero ✅ | Début pull-back |
+| **E** | Slots s’éveillent ✅ | Pull-back continue |
+| **F** | Whisper + champ souris ✅ | Cadre idle Leo |
 
 ### Hors scope A→F (plus tard)
 Palette Champ / SKU · seuils Lueurs — [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md) §7.
