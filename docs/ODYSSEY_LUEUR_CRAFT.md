@@ -4,11 +4,11 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 26 août 2026 — Draw **D–F** : traits Hero · slots au trait · whisper ~10 % · champ souris · `C_END` 0,57.
-- 26 août 2026 — Hero **C3–C5** : spikes (fin C) · flash larme ≤ 0,12 · micro-hold avant traits.
-- 26 août 2026 — **Recette naissance** KEEP : nom fumée + Hero C0–C2 (depuis le nom, cam serrée→pull-back).
-- 26 août 2026 — Lab constellation : knobs **slots** + **traits major/minor**.
-- 26 août 2026 — **KEEP Hero** : defaults `DEFAULT_HERO_*` + parallax 1.2 · globalScale 0.83.
+- 26 août 2026 — **F fin reveal** : traits s’atténuent (whisper) · breath constellation monte.
+- 26 août 2026 — Draw **D–F** + barre beats lab · `C_END` 0,57.
+- 26 août 2026 — Hero **C3–C5** : spikes · flash larme · micro-hold.
+- 26 août 2026 — **Recette naissance** KEEP : nom fumée + Hero C0–C2.
+- 26 août 2026 — **KEEP Hero** : defaults `DEFAULT_HERO_*` + parallax 1.2.
 
 **Preview :** `/fr/contribute/test-lueur` (dev only)  
 **Ciel :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · **Orb carte :** [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md)  
@@ -174,9 +174,10 @@ Beat lab = `resolveDrawPhase(revealT).beat ?? resolveBirth(revealT).beat` (`D` /
 |------|-------------------------|--------|
 | **D** | 0 → ~0,45 | Traits partent du Hero · pull-back cam |
 | **E** | ~0,45 → ~0,88 | Slots s’éveillent à l’arrivée du trait |
-| **F** | ~0,88 → 1 + idle | Whisper traits (~10 %) · champ souris |
+| **F** | ~0,82 → 1 + idle | Traits **visibles** en whisper (~52 %) · breath étoiles · **relight souris** fort |
 
-- `emphasisIdle` default = **0,10** (whisper canon 8–12 %).
+- `lineDim` → ~0,52 idle (pas invisible) · floor opacité 0,26.
+- `edgeProximity` / étoile : relight ×~2,65 au passage souris (champ NDC, pas hitbox).
 - Proximité = champ NDC autour du curseur (pas hitbox UI).
 
 ---
@@ -190,7 +191,7 @@ Beat lab = `resolveDrawPhase(revealT).beat ?? resolveBirth(revealT).beat` (`D` /
 | **C** | **Hero** C0–C5 ✅ | Serré → pull-back au draw |
 | **D** | Traits partent du Hero ✅ | Début pull-back |
 | **E** | Slots s’éveillent ✅ | Pull-back continue |
-| **F** | Whisper + champ souris ✅ | Cadre idle Leo |
+| **F** | Traits s’atténuent + breath étoiles ✅ | Cadre idle Leo |
 
 ### Hors scope A→F (plus tard)
 Palette Champ / SKU · seuils Lueurs — [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md) §7.

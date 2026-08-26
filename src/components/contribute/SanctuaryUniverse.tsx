@@ -69,10 +69,17 @@ import {
   getResolvedStar,
   resolveConstellation,
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
-import { LEO_STROKE_SEQUENCE } from "@/src/components/contribute/constellation/graphs/leo";
+import {
+  LEO_STROKE_SEQUENCE,
+  undirectedEdgeKey,
+} from "@/src/components/contribute/constellation/graphs/leo";
 import { resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
 import {
   DEFAULT_WHISPER_EMPHASIS,
+  ndcFieldStrength,
+  ndcSegmentField,
+  PROXIMITY_FIELD_RADIUS,
+  PROXIMITY_RELIGHT,
   resolveDrawPhase,
   slotWakeAppear,
 } from "@/src/components/contribute/constellation/graphs/drawPhase";
@@ -224,10 +231,19 @@ function Constellation({
   bridges?: BridgesCraft;
   slotLit?: Record<string, boolean>;
 }) {
+  type ProximityField = {
+    stars: Record<string, number>;
+    edges: Record<string, number>;
+    max: number;
+  };
+  const EMPTY_PROX: ProximityField = { stars: {}, edges: {}, max: 0 };
+
   const pointerRef = useParallaxPointerRef();
   const proxTmp = useRef(new Vector3());
+  const ndcA = useRef(new Vector3());
+  const ndcB = useRef(new Vector3());
   const [revealT, setRevealT] = useState(revealTProp);
-  const [proximityBoost, setProximityBoost] = useState(0);
+  const [proximity, setProximity] = useState<ProximityField>(EMPTY_PROX);
 
   const stars = useMemo(() => {
     if (slotLit) {
@@ -245,29 +261,65 @@ function Constellation({
 
     const drawPhaseLive = resolveDrawPhase(revealTRef?.current ?? revealT);
     if (!drawPhaseLive.proximity || !pointerRef) {
-      setProximityBoost((p) => (p > 0 ? 0 : p));
+      setProximity((p) => (p.max > 0 ? EMPTY_PROX : p));
       return;
     }
     const ptr = pointerRef.current;
-    let maxProx = 0;
     const gx = CONSTELLATION_GROUP_OFFSET[0];
     const gy = CONSTELLATION_GROUP_OFFSET[1];
-    for (const star of stars) {
-      const pos = positions[star.id] ?? star.position;
+    const starsMap: Record<string, number> = {};
+    let maxProx = 0;
+
+    const projectLocal = (pos: [number, number, number]) => {
       proxTmp.current.set(
         gx + pos[0] * graphScale,
         gy + pos[1] * graphScale,
         pos[2] * graphScale,
       );
       proxTmp.current.project(camera);
-      const dx = proxTmp.current.x - ptr.x;
-      const dy = proxTmp.current.y - ptr.y;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      maxProx = Math.max(maxProx, Math.max(0, 1 - d / 0.38));
+      return proxTmp.current;
+    };
+
+    for (const star of stars) {
+      const pos = positions[star.id] ?? star.position;
+      const ndc = projectLocal(pos);
+      const prox = ndcFieldStrength(
+        ndc.x - ptr.x,
+        ndc.y - ptr.y,
+        PROXIMITY_FIELD_RADIUS,
+      );
+      starsMap[star.id] = prox;
+      maxProx = Math.max(maxProx, prox);
     }
-    const boost = maxProx * 0.14;
-    setProximityBoost((prev) =>
-      Math.abs(prev - boost) > 0.006 ? boost : prev,
+
+    const edgesMap: Record<string, number> = {};
+    for (const [a, b] of ACTIVE_TEMPLATE.edges) {
+      const from = positions[a];
+      const to = positions[b];
+      if (!from || !to) continue;
+      ndcA.current.copy(projectLocal(from));
+      ndcB.current.copy(projectLocal(to));
+      const prox = ndcSegmentField(
+        ndcA.current.x,
+        ndcA.current.y,
+        ndcB.current.x,
+        ndcB.current.y,
+        ptr.x,
+        ptr.y,
+        PROXIMITY_FIELD_RADIUS * 1.08,
+      );
+      const key = undirectedEdgeKey(a, b);
+      edgesMap[key] = Math.max(edgesMap[key] ?? 0, prox);
+      maxProx = Math.max(maxProx, prox);
+    }
+
+    setProximity((prev) =>
+      Math.abs(prev.max - maxProx) > 0.012 ||
+      Object.keys(starsMap).some(
+        (id) => Math.abs((prev.stars[id] ?? 0) - (starsMap[id] ?? 0)) > 0.04,
+      )
+        ? { stars: starsMap, edges: edgesMap, max: maxProx }
+        : prev,
     );
   });
   useEffect(() => {
@@ -278,15 +330,16 @@ function Constellation({
   const drawPhase = useMemo(() => resolveDrawPhase(revealT), [revealT]);
 
   const emphasis = useMemo(() => {
-    if (revealT >= 1) return emphasisIdle + proximityBoost;
-    if (drawPhase.beat) return drawPhase.emphasis + proximityBoost;
+    const proxLift = proximity.max * DEFAULT_WHISPER_EMPHASIS * 2.2;
+    if (revealT >= 1) return emphasisIdle + proxLift;
+    if (drawPhase.beat) return drawPhase.emphasis + proxLift;
     return revealT * emphasisDuring;
   }, [
     revealT,
     emphasisDuring,
     emphasisIdle,
     drawPhase,
-    proximityBoost,
+    proximity.max,
   ]);
 
   const birth = useMemo(() => resolveBirth(revealT), [revealT]);
@@ -352,7 +405,18 @@ function Constellation({
           star.visual === "hero" && heroAtom != null;
         const embed = heroAtom?.embedScale ?? 0.4;
         const gScale = heroAtom?.globalScale ?? 1;
-        const appearMul = appear * (1 + emphasis * 0.1) * ghostFade;
+        const breathDrive = drawPhase.constellationBreath;
+        const starProx = proximity.stars[star.id] ?? 0;
+        const proxRelight = 1 + starProx * PROXIMITY_RELIGHT;
+        const slotBreathMul =
+          slotStars.breath * (0.08 + 0.92 * breathDrive) * (1 + starProx * 0.9);
+        const starFloating =
+          !isFocus &&
+          (star.lit || appear > 0.85) &&
+          (breathDrive > 0.1 || starProx > 0.08);
+
+        const appearMul =
+          appear * (1 + emphasis * 0.06) * ghostFade * proxRelight;
 
         // C0–C2: rises from mid-name → KEEP seat; layers → KEEP
         const heroEase = birth.heroSize;
@@ -435,6 +499,11 @@ function Constellation({
                   globalScale={gScale}
                   birthFlash={birth.heroFlash}
                   birth={birthDrive}
+                  breathDrive={
+                    birth.heroKeep
+                      ? Math.min(1, breathDrive + starProx * 0.72)
+                      : Math.max(breathDrive, birth.heroSize * 0.25)
+                  }
                   parallax={0}
                   phase={i * 1.7}
                 />
@@ -443,15 +512,21 @@ function Constellation({
               <LueurNode
                 variant={star.visual}
                 phase={i * 1.7}
-                floating={!isFocus && star.lit}
+                floating={starFloating}
                 focusBoost={isFocus ? focusBoost : 0}
                 appear={
                   isHero ? Math.max(appearMul, heroEase) : appearMul
                 }
-                craftSizeMul={star.visual === "hero" ? 1 : slotSizeMul}
-                craftGlowMul={star.visual === "hero" ? 1 : slotStars.glow}
+                craftSizeMul={
+                  star.visual === "hero"
+                    ? 1
+                    : slotSizeMul * (1 + starProx * 0.35)
+                }
+                craftGlowMul={
+                  star.visual === "hero" ? 1 : slotStars.glow * proxRelight
+                }
                 craftBreathMul={
-                  star.visual === "hero" ? 1 : slotStars.breath
+                  star.visual === "hero" ? 1 : slotBreathMul
                 }
               />
             ) : null}
@@ -519,6 +594,8 @@ function Constellation({
         ghostIds={ghostIds}
         draw={draw}
         emphasis={emphasis}
+        lineDimMul={drawPhase.lineDim}
+        edgeProximity={proximity.edges}
         revealComplete={revealT >= 1}
         lineWidthMul={lineWidthMul}
         lineOpacityMul={lineOpacityMul}

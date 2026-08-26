@@ -20,7 +20,12 @@ import { DEFAULT_BRIDGES } from "@/src/components/contribute/constellation/craft
 import {
   edgeTier,
   strokeKey,
+  undirectedEdgeKey,
 } from "@/src/components/contribute/constellation/graphs/leo";
+import {
+  LINE_WHISPER_FLOOR,
+  PROXIMITY_RELIGHT,
+} from "@/src/components/contribute/constellation/graphs/drawPhase";
 import type { ConstellationDrawState } from "@/src/components/contribute/constellation/graphs/reveal";
 import type {
   ConstellationEdge,
@@ -35,6 +40,12 @@ type LightBridgesProps = {
   ghostIds?: Set<string>;
   draw: ConstellationDrawState;
   emphasis?: number;
+  /** F · idle — traits s’atténuent vers whisper (default 1). */
+  lineDimMul?: number;
+  /** Per-edge mouse field 0–1 (`undirectedEdgeKey`). */
+  edgeProximity?: Record<string, number>;
+  /** Min opacity at whisper idle. */
+  lineWhisperFloor?: number;
   revealComplete?: boolean;
   /** @deprecated prefer bridges.width — kept as global mul */
   lineWidthMul?: number;
@@ -258,6 +269,9 @@ export function LightBridges({
   ghostIds,
   draw,
   emphasis = 0,
+  lineDimMul = 1,
+  edgeProximity,
+  lineWhisperFloor = LINE_WHISPER_FLOOR,
   revealComplete = false,
   lineWidthMul = 1,
   lineOpacityMul = 1,
@@ -269,6 +283,7 @@ export function LightBridges({
   bridges = DEFAULT_BRIDGES,
 }: LightBridgesProps) {
   const emp = Math.min(1.5, Math.max(0, emphasis));
+  const lineDim = Math.min(1, Math.max(0.04, lineDimMul));
   const legacyW = Math.max(0.15, lineWidthMul);
   const legacyO = Math.max(0.05, lineOpacityMul);
   const tipMul = Math.max(0, tipStrength);
@@ -288,7 +303,8 @@ export function LightBridges({
     !!activeTip &&
     tipMul > 0.02 &&
     !!draw.activeStroke &&
-    draw.activeStroke.t < 0.98;
+    draw.activeStroke.t < 0.98 &&
+    lineDim > 0.55;
 
   return (
     <group>
@@ -305,18 +321,28 @@ export function LightBridges({
           ghostIds?.has(a) === true || ghostIds?.has(b) === true;
         const tier = edgeTier(a, b);
         const family = bridges[tier];
+        const edgeKey = undirectedEdgeKey(a, b);
+        const prox = Math.min(1, edgeProximity?.[edgeKey] ?? 0);
+        const proxRelight = 1 + prox * PROXIMITY_RELIGHT;
         const baseOp = touchesGhost ? 0.28 * gDim : 0.5;
-        const opacity = Math.min(
+        let opacity = Math.min(
           1,
           (baseOp + emp * 0.55) *
             Math.max(progress, 0.15) *
             Math.max(0.05, family.opacity) *
-            legacyO,
+            legacyO *
+            lineDim,
         );
+        if (revealComplete || lineDim < 0.98) {
+          opacity = Math.max(lineWhisperFloor, opacity);
+        }
+        opacity = Math.min(1, opacity * proxRelight);
         const width =
           (touchesGhost ? 1.5 * gDim : 2.4) *
           Math.max(0.1, family.width) *
-          legacyW;
+          legacyW *
+          (0.72 + 0.28 * lineDim) *
+          (1 + prox * 0.85);
 
         return (
           <BridgeSegment

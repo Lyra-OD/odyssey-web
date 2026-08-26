@@ -209,7 +209,7 @@ const COPY = {
     hidePanel: "Masquer",
     showPanel: "Knobs",
     beatRail: "Beat naissance",
-    beatDrawGuide: "Draw : scrub ≥57% (D) · ≥77% (E) · ≥95% (F)",
+    beatDrawGuide: "Draw : scrub ≥57% (D) · ≥77% (E) · ≥92% (F)",
     beatHints: {
       A: "Vide · poussière",
       B: "Nom naît (fumée → mot)",
@@ -221,7 +221,7 @@ const COPY = {
       C5: "Micro-hold · Hero = KEEP",
       D: "Traits partent du Hero · cam s’ouvre",
       E: "Slots s’éveillent à l’arrivée du trait",
-      F: "Whisper traits · champ souris",
+      F: "Traits visibles en whisper · gros relight souris",
     },
   },
   en: {
@@ -295,7 +295,7 @@ const COPY = {
     hidePanel: "Hide",
     showPanel: "Knobs",
     beatRail: "Birth beat",
-    beatDrawGuide: "Draw : scrub ≥57% (D) · ≥77% (E) · ≥95% (F)",
+    beatDrawGuide: "Draw : scrub ≥57% (D) · ≥77% (E) · ≥92% (F)",
     beatHints: {
       A: "Void · dust",
       B: "Name born (mist → word)",
@@ -307,7 +307,7 @@ const COPY = {
       C5: "Micro-hold · Hero = KEEP",
       D: "Strokes leave Hero · cam opens",
       E: "Slots wake when stroke arrives",
-      F: "Stroke whisper · mouse field",
+      F: "Lines whisper-visible · strong mouse relight",
     },
   },
 } as const;
@@ -341,7 +341,7 @@ function BeatRail({
   copy,
 }: {
   revealT: number;
-  copy: (typeof COPY)["fr"];
+  copy: (typeof COPY)[Locale];
 }) {
   const active = resolveLabBeat(revealT);
   const hint =

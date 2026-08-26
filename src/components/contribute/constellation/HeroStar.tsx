@@ -39,6 +39,8 @@ export type HeroStarProps = {
   globalScale?: number;
   /** Soft birth flash 0–1 (keep low — mourning magic, not blast) */
   birthFlash?: number;
+  /** F · idle — amplitude breath constellation 0→1 (default 1). */
+  breathDrive?: number;
   /**
    * C0–C2 birth drive (optional). When set, layers follow stellar formation
    * (veil / core / teal lag / spikes mul) instead of full idle look.
@@ -267,6 +269,7 @@ export function HeroStar({
   globalScale = 1,
   birthFlash = 0,
   birth,
+  breathDrive = 1,
 }: HeroStarProps) {
   const geo = usePointGeometry();
   const rootRef = useRef<Group>(null);
@@ -321,9 +324,17 @@ export function HeroStar({
     const ts =
       clock.elapsedTime * Math.max(0.05, spikes.breath) + phase + 0.8;
 
-    const bw = 0.62 + 0.22 * Math.sin(tw) + 0.1 * Math.sin(tw * 0.37);
-    const bt = 0.62 + 0.22 * Math.sin(tt) + 0.1 * Math.sin(tt * 0.41);
-    const bs = 0.62 + 0.22 * Math.sin(ts) + 0.1 * Math.sin(ts * 0.33);
+    const breathAmp = Math.max(0, Math.min(1, breathDrive));
+
+    const bw =
+      0.62 +
+      (0.22 * Math.sin(tw) + 0.1 * Math.sin(tw * 0.37)) * breathAmp;
+    const bt =
+      0.62 +
+      (0.22 * Math.sin(tt) + 0.1 * Math.sin(tt * 0.41)) * breathAmp;
+    const bs =
+      0.62 +
+      (0.22 * Math.sin(ts) + 0.1 * Math.sin(ts * 0.33)) * breathAmp;
 
     const persp = (z: number) => {
       const d = Math.max(0.35, camera.position.z - z);
