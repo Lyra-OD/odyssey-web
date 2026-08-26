@@ -133,6 +133,46 @@ export function defaultCraftSlotLit(): Record<string, boolean> {
   return lit;
 }
 
+/** 1ʳᵉ anim reveal — tous slots en ghost (canon lab Rejouer / Play). */
+export function allGhostSlotLit(): Record<string, boolean> {
+  const lit: Record<string, boolean> = {};
+  for (const id of LEO_SLOT_IDS) {
+    lit[id] = false;
+  }
+  return lit;
+}
+
+/**
+ * Bridge anchor — graph hero slot vs HeroStar embed visual core.
+ * Traits partent du centre perçu de l’atome, pas du nœud Leo brut.
+ */
+export function heroBridgeAnchor(
+  graphPos: [number, number, number],
+  embedScale = 0.42,
+  globalScale = 1,
+): [number, number, number] {
+  const embed = Math.max(0.12, Math.min(1.4, embedScale));
+  const g = Math.max(0.35, Math.min(2.8, globalScale));
+  const yLift = (0.1 + 0.12 * (1 - embed)) * (0.85 + 0.15 * g);
+  return [graphPos[0], graphPos[1] + yLift, graphPos[2]];
+}
+
+export function constellationBridgePositions(
+  positions: SoulPositionMap,
+  options?: { heroEmbed?: number; heroGlobal?: number },
+): SoulPositionMap {
+  const hero = positions.hero;
+  if (!hero) return positions;
+  return {
+    ...positions,
+    hero: heroBridgeAnchor(
+      hero,
+      options?.heroEmbed ?? 0.42,
+      options?.heroGlobal ?? 1,
+    ),
+  };
+}
+
 function weightToVisual(
   weight: StarWeight,
   prominence: "family" | "guest" | undefined,

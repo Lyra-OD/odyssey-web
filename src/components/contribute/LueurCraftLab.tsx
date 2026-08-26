@@ -31,7 +31,7 @@ import {
 } from "@/src/components/contribute/constellation/graphs/reveal";
 import {
   LEO_SLOT_IDS,
-  defaultCraftSlotLit,
+  allGhostSlotLit,
   leoSlotWeight,
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import {
@@ -500,7 +500,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [slotStars, setSlotStars] = useState<SlotStarsCraft>(DEFAULT_SLOT_STARS);
   const [bridges, setBridges] = useState<BridgesCraft>(DEFAULT_BRIDGES);
   const [slotLit, setSlotLit] = useState<Record<string, boolean>>(
-    defaultCraftSlotLit,
+    allGhostSlotLit,
   );
   const [heroEmbedScale, setHeroEmbedScale] = useState(0.42);
   const [panelOpen, setPanelOpen] = useState(true);
@@ -511,6 +511,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       setRevealPlaying(false);
       return;
     }
+    setSlotLit(allGhostSlotLit());
     revealPlayFromRef.current = 0;
     revealTRef.current = 0;
     setRevealT(0);
@@ -571,6 +572,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
 
   const onRevealPlay = () => {
     if (revealTRef.current >= 0.999) {
+      setSlotLit(allGhostSlotLit());
       revealPlayFromRef.current = 0;
       revealTRef.current = 0;
       setRevealT(0);
@@ -584,6 +586,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
     setRevealT(revealTRef.current);
   };
   const onRevealRestart = () => {
+    setSlotLit(allGhostSlotLit());
     setRevealPlaying(false);
     revealPlayFromRef.current = 0;
     revealTRef.current = 0;

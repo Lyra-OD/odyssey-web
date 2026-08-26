@@ -4,8 +4,8 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 26 août 2026 — **Cam pull** dès 0,59 · easeOut + sync `drawU` (cadre suit le trait).
-- 26 août 2026 — **F fin reveal** : whisper visible · breath · relight souris fort.
+- 26 août 2026 — Polish : anchor traits Hero (embed) · Play/Rejouer → tous ghosts.
+- 26 août 2026 — **Cam pull** dès 0,59 · easeOut + sync `drawU` · knob longueur trait.
 - 26 août 2026 — Draw **D–F** + barre beats lab · `C_END` 0,57.
 - 26 août 2026 — Hero **C3–C5** : spikes · flash larme · micro-hold.
 - 26 août 2026 — **Recette naissance** KEEP : nom fumée + Hero C0–C2.
@@ -197,3 +197,12 @@ Beat lab = `resolveDrawPhase(revealT).beat ?? resolveBirth(revealT).beat` (`D` /
 
 ### Hors scope A→F (plus tard)
 Palette Champ / SKU · seuils Lueurs — [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md) §7.
+
+### Polish / bugs connus (lab)
+
+| Item | Statut | Note |
+|------|--------|------|
+| Origine traits → centre visuel Hero | ✅ | `heroBridgeAnchor` · embed + globalScale |
+| Play / Rejouer → tous ghosts | ✅ | `allGhostSlotLit()` verrouillé |
+| **WOW signature** CEO | ⏳ | Pas posée — attente direction perso |
+| Tuning −0,24 · courbes voile/montée | ⏳ | Passes CEO si besoin |
