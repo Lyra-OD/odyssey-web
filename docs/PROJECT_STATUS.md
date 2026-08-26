@@ -4,6 +4,7 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — CI : job **`next build`** en parallèle de `npm test` (attrape les erreurs TS avant Vercel).
 - 26 août 2026 — **Egress démo VP** : `NEXT_PUBLIC_DEMO_MODE` · poll Coffre off · pas de fallback full-res · DB sans `wizard_state` sur endpoints publics.
 - 21 août 2026 — carte docs : catégories business/product/design + dossiers pour **nouveaux** fichiers ([`README.md`](README.md)).
 - 21 août 2026 — GTM B2C + plan session Figma : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
