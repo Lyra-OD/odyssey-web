@@ -73,7 +73,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 |----------|------|-----------|
 | **Ops** | Jouer **P16** (RLS invitations) quand Supabase n’est plus *restricted* | Policies salon scope conseiller |
 | **Ops** | Stripe CLI `stripe login` + `stripe listen` local · activer `charge.refunded` endpoint prod | Webhook local sans script replay |
-| **Ops** | Factu / quota egress Supabase | Projet peut servir des requêtes |
+| **Ops** | Factu / quota egress Supabase · **revert démo VP** [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) | Projet peut servir des requêtes |
 | A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |
 | B | Flag `viral_loop_enabled` sur **1 tenant** démo/pilote | Fonds visible en démo — [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md) |
 | C | Rails UX | Mobile M0 · S5-J/K · Scanner job IA serveur |

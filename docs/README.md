@@ -4,6 +4,7 @@
 **Dernière MAJ :** 21 août 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 26 août 2026 — runbook revert egress démo VP : [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md).
 - 21 août 2026 — regroupement **logique** (business / product / design…) · règle nouveaux docs · chemins inchangés.
 - 21 août 2026 — dossier [`TEMP/`](TEMP/README.md) : rush démo Patrice / brouillons.
 - 19 août 2026 — GTM B2C + plan session : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).

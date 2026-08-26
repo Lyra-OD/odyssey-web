@@ -1,6 +1,8 @@
 /**
  * Mode démo VP — hacks egress temporaires (poll médias off, pas de fallback full-res).
- * Activer : `NEXT_PUBLIC_DEMO_MODE=true` dans `.env.local` (jamais en prod par défaut).
+ *
+ * Activer : `NEXT_PUBLIC_DEMO_MODE=true` dans `.env.local`
+ * REVERT après démo : voir docs/ops/DEMO_VP_EGRESS_REVERT.md (checklist obligatoire).
  */
 export const IS_DEMO_MODE =
   process.env.NEXT_PUBLIC_DEMO_MODE === "true";
