@@ -208,6 +208,21 @@ const COPY = {
     wormhole: "Wormhole",
     hidePanel: "Masquer",
     showPanel: "Knobs",
+    beatRail: "Beat naissance",
+    beatDrawGuide: "Draw : scrub ≥57% (D) · ≥77% (E) · ≥95% (F)",
+    beatHints: {
+      A: "Vide · poussière",
+      B: "Nom naît (fumée → mot)",
+      C0: "Grain + voile dans le nom",
+      C1: "Core blanc · teal en retard",
+      C2: "Montée Hero · voile contracte",
+      C3: "Spikes se déploient",
+      C4: "Flash larme",
+      C5: "Micro-hold · Hero = KEEP",
+      D: "Traits partent du Hero · cam s’ouvre",
+      E: "Slots s’éveillent à l’arrivée du trait",
+      F: "Whisper traits · champ souris",
+    },
   },
   en: {
     title: "Lueur craft",
@@ -279,8 +294,105 @@ const COPY = {
     wormhole: "Wormhole",
     hidePanel: "Hide",
     showPanel: "Knobs",
+    beatRail: "Birth beat",
+    beatDrawGuide: "Draw : scrub ≥57% (D) · ≥77% (E) · ≥95% (F)",
+    beatHints: {
+      A: "Void · dust",
+      B: "Name born (mist → word)",
+      C0: "Grain + veil in the name",
+      C1: "White core · teal delayed",
+      C2: "Hero rise · veil contracts",
+      C3: "Spikes deploy",
+      C4: "Tear flash",
+      C5: "Micro-hold · Hero = KEEP",
+      D: "Strokes leave Hero · cam opens",
+      E: "Slots wake when stroke arrives",
+      F: "Stroke whisper · mouse field",
+    },
   },
 } as const;
+
+const BEAT_RAIL = [
+  "A",
+  "B",
+  "C0",
+  "C1",
+  "C2",
+  "C3",
+  "C4",
+  "C5",
+  "D",
+  "E",
+  "F",
+] as const;
+
+type BeatRailId = (typeof BEAT_RAIL)[number];
+
+function resolveLabBeat(revealT: number): BeatRailId {
+  const draw = resolveDrawPhase(revealT).beat;
+  if (draw) return draw;
+  const birth = resolveBirth(revealT).beat;
+  if (birth === "draw") return "D";
+  return birth as BeatRailId;
+}
+
+function BeatRail({
+  revealT,
+  copy,
+}: {
+  revealT: number;
+  copy: (typeof COPY)["fr"];
+}) {
+  const active = resolveLabBeat(revealT);
+  const hint =
+    copy.beatHints[active as keyof typeof copy.beatHints] ?? "";
+  const pct = (revealT * 100).toFixed(0);
+
+  return (
+    <div className="pointer-events-none flex flex-col gap-1.5 rounded-sm border border-white/15 bg-black/55 px-3 py-2 backdrop-blur-md">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span className="text-[9px] uppercase tracking-[0.2em] text-white/45">
+          {copy.beatRail}
+        </span>
+        <span className="font-mono text-[11px] text-teal-300/90">
+          {active} · {pct}%
+        </span>
+      </div>
+      <div className="flex flex-wrap items-center gap-0.5">
+        {BEAT_RAIL.map((beat, i) => {
+          const isDraw = beat === "D" || beat === "E" || beat === "F";
+          const on = active === beat;
+          return (
+            <span key={beat} className="flex items-center gap-0.5">
+              {i === 8 ? (
+                <span className="px-0.5 text-[9px] text-white/25">|</span>
+              ) : null}
+              <span
+                className={`rounded px-1 py-0.5 font-mono text-[10px] tracking-wide ${
+                  on
+                    ? isDraw
+                      ? "bg-amber-300/20 text-amber-100 ring-1 ring-amber-300/35"
+                      : "bg-teal-400/20 text-teal-100 ring-1 ring-teal-400/35"
+                    : isDraw
+                      ? "text-amber-200/55"
+                      : "text-white/28"
+                }`}
+              >
+                {beat}
+              </span>
+            </span>
+          );
+        })}
+      </div>
+      <p className="max-w-md text-[10px] leading-snug text-white/55">{hint}</p>
+      {revealT >= 0.57 || active === "D" || active === "E" || active === "F" ? (
+        <p className="text-[9px] uppercase tracking-[0.14em] text-amber-200/50">
+          {copy.beatDrawGuide}
+        </p>
+      ) : null}
+    </div>
+  );
+}
 
 function layerKnobs(
   prefix: string,
@@ -819,11 +931,16 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
         </div>
       ) : null}
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-0.5 px-4 pt-4 md:px-8 md:pt-6">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-2 px-4 pt-4 md:px-8 md:pt-6">
         <p className="text-[10px] font-light uppercase tracking-[0.28em] text-white/40 md:text-xs">
           {t.title}
         </p>
         <p className="text-xs font-light text-white/40 md:text-sm">{t.sub}</p>
+        {tab === "constellation" ? (
+          <div className="pointer-events-none max-w-xl">
+            <BeatRail revealT={revealT} copy={t} />
+          </div>
+        ) : null}
       </div>
 
       {!panelOpen ? (
