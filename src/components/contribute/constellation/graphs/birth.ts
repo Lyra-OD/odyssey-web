@@ -1,45 +1,63 @@
 /**
- * Birth-only choreography (nom → point) on revealT ∈ [0, 1].
- * Quiet magic — organic channels (désync), not a UI tween pack.
+ * Birth choreography on revealT ∈ [0, 1].
+ * Name (A–B) + Hero C0–C2 from mid-name → KEEP seat. C3–C5 later.
  *
- * A void court → B masse floue → mot → C mote → grow → draw.
+ * Recette canon (constantes, checklist) :
+ * docs/ODYSSEY_LUEUR_CRAFT.md §4.1
  */
 
-export type BirthBeat = "A" | "B" | "C" | "draw";
+export type BirthBeat = "A" | "B" | "C0" | "C1" | "C2" | "draw";
 
 export type BirthPhases = {
   beat: BirthBeat;
-  /** Lisibilité globale (opacité / présence) */
   nameBirth: number;
-  /** Clarity flou → net (plus rapide que lift) */
   nameClarity: number;
-  /** Lift vertical 0→1 (légèrement en retard) */
   nameLift: number;
-  /** Scale breath 0→1 (courbe propre, léger settle) */
   nameScale: number;
-  /** Tracking 0→1 (s’ouvre tôt, se resserre tard) */
   nameTrack: number;
-  /** Dérive organique horizontale (px-ish, −1…1) */
   nameDriftX: number;
-  /** Dérive organique verticale fine (−1…1) */
   nameDriftY: number;
-  /** Halo / souffle — pic à l’arrivée du mot */
   nameGlow: number;
-  /** Étoile : 0 = absent · 1 = taille idle */
+
+  /** Overall size 0–1 (mote flat, then expo-in → KEEP scale) */
+  heroSize: number;
+  /** 0 = mid-name · 1 = idle Hero seat (rises out of the word) */
+  heroFromName: number;
+  heroGrain: number;
+  /** Grain size breath: mini → peak → mote (0–1 mapped in HeroStar) */
+  heroGrainScale: number;
+  heroVeil: number;
+  /** Veil: mini → peak fumée → contracte vers le core */
+  heroVeilScale: number;
+  /** → 1 = full KEEP white layer */
+  heroCore: number;
+  /** → 1 = full KEEP teal layer */
+  heroTeal: number;
+  /** → 1 = full KEEP spikes (0 during C0–C2 proper) */
+  heroSpikes: number;
   heroBirth: number;
-  /** Flash très soft (0–~0.14) */
   heroFlash: number;
-  /** 0 avant fin C · 1 = traits terminés */
+  /** True when layers must match KEEP exactly (no birth muls) */
+  heroKeep: boolean;
   drawU: number;
 };
 
-/**
- * ~14s: A ~0.3s · B brume→mot plus court · hold · C · draw.
- */
 const SEG = {
   A_END: 0.02,
-  B_END: 0.42,
-  C_END: 0.68,
+  B_END: 0.4,
+  /** Slightly snappier C window */
+  C_END: 0.58,
+} as const;
+
+/** Absolute revealT — grain gathers in the name. */
+const HERO_START = 0.3;
+
+/** Within hero local u ∈ [0,1] (HERO_START→C_END). */
+const C = {
+  C0_END: 0.16,
+  C1_END: 0.42,
+  C2_END: 1,
+  SIZE_FLAT: 0.4,
 } as const;
 
 function clamp01(t: number): number {
@@ -61,33 +79,47 @@ function easeOutQuad(t: number): number {
   return 1 - (1 - x) * (1 - x);
 }
 
-/** Soft overshoot then settle to 1. */
 function easeOutBackSoft(t: number): number {
   const x = clamp01(t);
   const c = 1.15;
   return 1 + (c + 1) * (x - 1) ** 3 + c * (x - 1) ** 2;
 }
 
-function easeInOutQuint(t: number): number {
+function easeInQuint(t: number): number {
   const x = clamp01(t);
-  return x < 0.5
-    ? 16 * x * x * x * x * x
-    : 1 - (-2 * x + 2) ** 5 / 2;
+  return x ** 5;
+}
+
+function easeInExpo(t: number): number {
+  const x = clamp01(t);
+  return x <= 0 ? 0 : 2 ** (10 * (x - 1));
+}
+
+function easeInOutCubic(t: number): number {
+  const x = clamp01(t);
+  return x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2;
+}
+
+/**
+ * Rise from mid-name → seat: hesitate in the word, then detach, soft land.
+ * Not a UI easeOut rail.
+ */
+function organicFromName(u: number): number {
+  if (u <= 0.14) return 0;
+  if (u >= 0.68) return 1;
+  const x = (u - 0.14) / (0.68 - 0.14);
+  // Bias: slow leave, then commit, settle — blend of in-out + mild push
+  const body = easeInOutCubic(x);
+  const commit = Math.pow(x, 1.25);
+  return clamp01(0.4 * body + 0.6 * commit);
 }
 
 export function resolveBirth(revealT: number): BirthPhases {
   const t = clamp01(revealT);
 
-  let beat: BirthBeat = "A";
-  if (t >= SEG.C_END) beat = "draw";
-  else if (t >= SEG.B_END) beat = "C";
-  else if (t >= SEG.A_END) beat = "B";
-
-  // Name land earlier in B — keep mist, arrive readable sooner
   const mistStart = SEG.A_END;
   const mistEnd = SEG.A_END + (SEG.B_END - SEG.A_END) * 0.52;
 
-  // Channels désync on purpose (organic, not one tween)
   const nameClarity =
     t < mistStart
       ? 0
@@ -126,40 +158,99 @@ export function resolveBirth(revealT: number): BirthPhases {
 
   const nameGlow = (() => {
     if (t < mistStart) return 0;
-    if (t < mistEnd) {
-      return nameClarity * 0.5;
-    }
+    if (t < mistEnd) return nameClarity * 0.5;
     const land = smoothstep(mistEnd, mistEnd + 0.05, t);
     const settle = 1 - smoothstep(mistEnd + 0.05, SEG.C_END, t) * 0.35;
     return Math.min(1, (0.5 + 0.5 * land) * settle);
   })();
 
-  // Drift only during mist — dead stop once the word has landed (no C wiggle)
-  const driftAmp =
-    t >= mistEnd ? 0 : (1 - nameClarity) * 0.55;
+  const driftAmp = t >= mistEnd ? 0 : (1 - nameClarity) * 0.55;
   const nameDriftX =
     driftAmp * (Math.sin(t * 7.1) * 0.5 + Math.sin(t * 3.4 + 1.2) * 0.35);
   const nameDriftY =
     driftAmp * (Math.cos(t * 5.8 + 0.4) * 0.4 + Math.sin(t * 2.7) * 0.25);
 
-  // Hero after name is readable + short hold
-  const heroStart = SEG.A_END + (SEG.B_END - SEG.A_END) * 0.82;
-  const heroRaw =
-    t < heroStart
-      ? 0
-      : t < SEG.C_END
-        ? (t - heroStart) / (SEG.C_END - heroStart)
-        : 1;
-  const heroBirth = easeInOutQuint(heroRaw);
+  const heroSpan = Math.max(1e-6, SEG.C_END - HERO_START);
+  const u =
+    t < HERO_START ? 0 : t < SEG.C_END ? (t - HERO_START) / heroSpan : 1;
 
-  const heroFlash = (() => {
-    if (t < heroStart || t >= SEG.C_END + 0.04) return 0;
-    const u = (t - heroStart) / (SEG.C_END - heroStart);
-    const bell = Math.sin(Math.min(1, u / 0.72) * Math.PI);
-    const tail =
-      u > 0.72 ? Math.max(0, 1 - (u - 0.72) / 0.35) * 0.35 : 0;
-    return Math.min(0.14, bell * 0.14 + tail * 0.08);
+  // Presence gathers in the name first; rise lags (magic phrasing)
+  const heroFromName = u <= 0 ? 0 : organicFromName(u);
+
+  // --- Grain + veil: same language as name mist ---
+  // Opacity: fumée → présence (soft), then yields to core
+  const grainMist =
+    u <= 0
+      ? 0
+      : easeOutQuad(smoothstep(0, 0.2, u)) *
+        (1 - smoothstep(0.48, 0.78, u) * 0.92);
+  const heroGrain = Math.min(1, grainMist);
+
+  // Grain size: mini → peak (lent) → mote — grow takes most of early C
+  const grainGrow = easeInOutCubic(smoothstep(0.02, 0.42, u));
+  const grainShrink = easeInOutCubic(smoothstep(0.48, 0.82, u));
+  const heroGrainScale =
+    0.22 + 0.95 * grainGrow * (1 - grainShrink) + 0.32 * grainShrink;
+
+  // Veil opacity: fumée douce comme le nom
+  const veilMist =
+    u <= 0
+      ? 0
+      : easeOutQuad(smoothstep(0.04, 0.28, u)) *
+        (1 - smoothstep(0.52, 0.92, u) * 0.96);
+  const heroVeil = Math.min(1, veilMist * 0.92);
+
+  // Veil scale: mini → peak (lent / fluide) → contracte into core
+  const veilGrow = easeInOutCubic(smoothstep(0.04, 0.48, u));
+  const veilShrink = easeInOutCubic(smoothstep(0.52, 0.94, u));
+  const VEIL_MIN = 0.28;
+  const VEIL_PEAK = 2.15;
+  const VEIL_END = 0.38;
+  const heroVeilScale =
+    VEIL_MIN +
+    (VEIL_PEAK - VEIL_MIN) * veilGrow * (1 - veilShrink) +
+    (VEIL_END - VEIL_MIN) * veilShrink;
+
+  // Core/teal lag the rise — size after presence, not same slider
+  const heroCore =
+    u <= 0
+      ? 0
+      : easeInQuint(smoothstep(C.C0_END * 0.55, 0.86, u));
+
+  const heroTeal =
+    u <= 0
+      ? 0
+      : easeInQuint(smoothstep(C.C0_END * 0.85, 0.94, u));
+
+  // Size lags fromName — grow after it has started to leave the word
+  const heroSize = (() => {
+    if (u <= 0) return 0;
+    const sizeU = Math.max(0, (u - 0.08) / 0.92);
+    if (sizeU < C.SIZE_FLAT) {
+      return 0.04 + 0.07 * (sizeU / C.SIZE_FLAT);
+    }
+    const rise = (sizeU - C.SIZE_FLAT) / (1 - C.SIZE_FLAT);
+    return 0.11 + 0.89 * Math.max(easeInQuint(rise), easeInExpo(rise) * 0.75);
   })();
+
+  // Spikes still reserved for C3 — soft KEEP bridge only after C_END
+  const heroSpikes =
+    t < SEG.C_END ? 0 : smoothstep(SEG.C_END, SEG.C_END + 0.08, t);
+
+  const heroFlash = 0;
+
+  const heroKeep =
+    t >= SEG.C_END + 0.08 &&
+    heroVeil < 0.03 &&
+    heroGrain < 0.03;
+
+  let beat: BirthBeat = "A";
+  if (t >= SEG.C_END) beat = "draw";
+  else if (t >= HERO_START) {
+    if (u < C.C0_END) beat = "C0";
+    else if (u < C.C1_END) beat = "C1";
+    else beat = "C2";
+  } else if (t >= SEG.A_END) beat = "B";
 
   const drawU =
     t <= SEG.C_END ? 0 : (t - SEG.C_END) / (1 - SEG.C_END);
@@ -174,10 +265,22 @@ export function resolveBirth(revealT: number): BirthPhases {
     nameDriftX,
     nameDriftY,
     nameGlow,
-    heroBirth,
+    heroSize,
+    heroFromName,
+    heroGrain,
+    heroGrainScale,
+    heroVeil,
+    heroVeilScale,
+    heroCore,
+    heroTeal,
+    heroSpikes,
+    heroBirth: heroSize,
     heroFlash,
+    heroKeep,
     drawU,
   };
 }
 
 export const BIRTH_SEGMENTS = SEG;
+export const HERO_C_SEGMENTS = C;
+export const BIRTH_HERO_START = HERO_START;

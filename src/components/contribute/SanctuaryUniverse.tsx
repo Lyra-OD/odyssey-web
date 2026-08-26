@@ -303,12 +303,34 @@ function Constellation({
         const gScale = heroAtom?.globalScale ?? 1;
         const appearMul = appear * (1 + emphasis * 0.1) * ghostFade;
 
-        // Mote → star (heroBirth already quint-slow in birth.ts)
-        const heroEase = birth.heroBirth;
-        const showHeroStar = birth.heroBirth > 0.008;
+        // C0–C2: rises from mid-name → KEEP seat; layers → KEEP
+        const heroEase = birth.heroSize;
+        const showHeroStar =
+          birth.heroGrain > 0.02 ||
+          birth.heroVeil > 0.02 ||
+          birth.heroCore > 0.02 ||
+          birth.heroSize > 0.02;
         const heroGroupScale = useCraftHero
-          ? Math.max(0.012, embed * (0.04 + 0.96 * heroEase))
+          ? birth.heroKeep
+            ? Math.max(0.05, embed)
+            : Math.max(0.02, embed * (0.14 + 0.86 * heroEase))
           : 1;
+        // Mid-name (letter heart) → idle Hero — was −0.4 (too low under the word)
+        const heroFromNameY = useCraftHero
+          ? -0.24 * (1 - birth.heroFromName)
+          : 0;
+        const birthDrive =
+          useCraftHero && !birth.heroKeep
+            ? {
+                core: birth.heroCore,
+                teal: birth.heroTeal,
+                spikes: birth.heroSpikes,
+                veil: birth.heroVeil,
+                veilScale: birth.heroVeilScale,
+                grain: birth.heroGrain,
+                grainScale: birth.heroGrainScale,
+              }
+            : undefined;
 
         const slotSizeMul =
           star.visual === "ghost"
@@ -340,7 +362,6 @@ function Constellation({
         const nameBlurPx = isHero
           ? Math.max(0, (1 - nameClarity) * 16)
           : 0;
-        // Under the star — frozen once landed (no yield during C)
         const nameScale = isHero ? 0.78 + 0.22 * nameScaleCh : 1;
         const nameY = isHero
           ? 42 - 14 * nameLift + birth.nameDriftY * 4
@@ -355,13 +376,14 @@ function Constellation({
         return (
           <group key={star.id} position={pos}>
             {useCraftHero && heroAtom && showHeroStar ? (
-              <group scale={heroGroupScale}>
+              <group position={[0, heroFromNameY, 0]} scale={heroGroupScale}>
                 <HeroStar
                   white={heroAtom.white}
                   teal={heroAtom.teal}
                   spikes={heroAtom.spikes}
                   globalScale={gScale}
                   birthFlash={birth.heroFlash}
+                  birth={birthDrive}
                   parallax={0}
                   phase={i * 1.7}
                 />

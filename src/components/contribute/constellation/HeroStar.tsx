@@ -39,6 +39,26 @@ export type HeroStarProps = {
   globalScale?: number;
   /** Soft birth flash 0–1 (keep low — mourning magic, not blast) */
   birthFlash?: number;
+  /**
+   * C0–C2 birth drive (optional). When set, layers follow stellar formation
+   * (veil / core / teal lag / spikes mul) instead of full idle look.
+   */
+  birth?: {
+    /** White core mass 0–1 */
+    core: number;
+    /** Teal 0–1 (lags) */
+    teal: number;
+    /** Spikes amount multiplier 0–1 */
+    spikes: number;
+    /** Nebula veil opacity 0–1 */
+    veil: number;
+    /** Veil sprite scale (large → contracts) */
+    veilScale: number;
+    /** Tiny grain / mote presence 0–1 */
+    grain: number;
+    /** Grain size breath (mini → peak → mote) */
+    grainScale?: number;
+  };
 };
 
 const vertexShader = /* glsl */ `
@@ -89,6 +109,44 @@ float softCircleMask(vec2 pc) {
 float spikeCornerMask(vec2 pc) {
   float m = max(abs(pc.x), abs(pc.y));
   return 1.0 - smoothstep(0.46, 0.499, m);
+}
+`;
+
+const veilFragment = /* glsl */ `
+uniform vec3 uTeal;
+uniform float uGlow;
+uniform float uBreath;
+uniform float uAmount;
+uniform float uRot;
+${spikeFn}
+void main() {
+  vec2 pc = gl_PointCoord - 0.5;
+  float d = length(pc);
+  // Soft nebula mass — no spikes, circular only
+  float cloud = exp(-pow(d / 0.42, 1.35));
+  float inner = exp(-pow(d / 0.18, 2.0));
+  float a = (cloud * 0.45 + inner * 0.35) * uGlow * (0.75 + 0.2 * uBreath);
+  a *= softCircleMask(pc * 0.92);
+  if (a < 0.01) discard;
+  vec3 col = mix(vec3(1.0), uTeal, 0.55 + 0.2 * uBreath);
+  gl_FragColor = vec4(col, clamp(a, 0.0, 0.55));
+}
+`;
+
+const grainFragment = /* glsl */ `
+uniform float uGlow;
+uniform float uBreath;
+uniform float uAmount;
+uniform float uRot;
+${spikeFn}
+void main() {
+  vec2 pc = gl_PointCoord - 0.5;
+  float d = length(pc);
+  float mote = exp(-pow(d / 0.028, 2.0));
+  float a = mote * uGlow * (0.7 + 0.3 * uBreath);
+  a *= softCircleMask(pc);
+  if (a < 0.02) discard;
+  gl_FragColor = vec4(vec3(1.0), clamp(a, 0.0, 1.0));
 }
 `;
 
@@ -208,12 +266,15 @@ export function HeroStar({
   parallax = 0.35,
   globalScale = 1,
   birthFlash = 0,
+  birth,
 }: HeroStarProps) {
   const geo = usePointGeometry();
   const rootRef = useRef<Group>(null);
   const whiteRef = useRef<ShaderMaterial>(null);
   const tealRef = useRef<ShaderMaterial>(null);
   const spikesRef = useRef<ShaderMaterial>(null);
+  const veilRef = useRef<ShaderMaterial>(null);
+  const grainRef = useRef<ShaderMaterial>(null);
   const tealCol = useMemo(() => new Color(tealColor), [tealColor]);
   const { pointer } = useThree();
 
@@ -235,6 +296,19 @@ export function HeroStar({
       makeLayerMat(spikesFragment, 260 * spikes.size, spikes.glow, {
         teal: tealCol,
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+  const veilMat = useMemo(
+    () =>
+      makeLayerMat(veilFragment, 320, 0.55, {
+        teal: tealCol,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+  const grainMat = useMemo(
+    () => makeLayerMat(grainFragment, 48, 1.1),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
@@ -260,6 +334,24 @@ export function HeroStar({
     const flashSize = 1 + flash * 0.55;
     const flashGlow = 1 + flash * 0.7;
 
+    const core = birth ? Math.max(0, Math.min(1, birth.core)) : 1;
+    const tealB = birth ? Math.max(0, Math.min(1, birth.teal)) : 1;
+    const spikesB = birth ? Math.max(0, Math.min(1, birth.spikes)) : 1;
+    const veil = birth ? Math.max(0, Math.min(1, birth.veil)) : 0;
+    const veilScale = birth ? Math.max(0.15, birth.veilScale) : 1;
+    const grain = birth ? Math.max(0, Math.min(1, birth.grain)) : 0;
+    const grainScale = birth
+      ? Math.max(0.15, birth.grainScale ?? 1)
+      : 1;
+
+    // Birth muls → 1.0 = exact KEEP layer (size / glow / amount)
+    const whiteSizeMul = birth ? Math.max(0.01, core) : 1;
+    const whiteGlowMul = birth ? Math.max(0.02, core) : 1;
+    const tealSizeMul = birth ? Math.max(0.01, tealB) : 1;
+    const tealGlowMul = birth ? Math.max(0.02, tealB) : 1;
+    const whiteAmtMul = birth ? core : 1;
+    const tealAmtMul = birth ? tealB : 1;
+
     const drive = (
       mat: ShaderMaterial,
       layer: HeroLayerKnobs,
@@ -267,16 +359,20 @@ export function HeroStar({
       baseSize: number,
       glowMul: number,
       withTeal: boolean,
+      sizeMul = 1,
+      amountMul = 1,
     ) => {
       mat.uniforms.uSize.value =
         baseSize *
         layer.size *
         Math.max(0.05, globalScale) *
         persp(layer.depth) *
-        flashSize;
+        flashSize *
+        sizeMul;
       mat.uniforms.uGlow.value = layer.glow * glowMul * flashGlow;
       mat.uniforms.uBreath.value = breath;
-      mat.uniforms.uAmount.value = layer.amount * (1 + flash * 0.25);
+      mat.uniforms.uAmount.value =
+        layer.amount * (1 + flash * 0.25) * amountMul;
       mat.uniforms.uRot.value = (layer.rotationDeg * Math.PI) / 180;
       if (withTeal && mat.uniforms.uTeal) {
         mat.uniforms.uTeal.value.copy(tealCol);
@@ -288,16 +384,20 @@ export function HeroStar({
       white,
       bw,
       140,
-      0.85 + 0.25 * bw,
+      (0.85 + 0.25 * bw) * whiteGlowMul,
       false,
+      whiteSizeMul,
+      whiteAmtMul,
     );
     drive(
       tealRef.current ?? tealMat,
       teal,
       bt,
       220,
-      0.75 + 0.4 * bt,
+      (0.75 + 0.4 * bt) * tealGlowMul,
       true,
+      tealSizeMul,
+      tealAmtMul,
     );
     drive(
       spikesRef.current ?? spikesMat,
@@ -306,7 +406,31 @@ export function HeroStar({
       280,
       0.85 + 0.25 * bs,
       true,
+      birth ? Math.max(0.01, spikesB) : 1,
+      spikesB,
     );
+
+    // Veil + grain — mist breath (mini → peak → contract)
+    const vMat = veilRef.current ?? veilMat;
+    vMat.uniforms.uSize.value =
+      380 * veilScale * Math.max(0.05, globalScale) * persp(teal.depth - 0.15);
+    vMat.uniforms.uGlow.value =
+      veil > 0.015 ? 0.5 * veil * (0.75 + 0.25 * bt) : 0;
+    vMat.uniforms.uBreath.value = bt;
+    vMat.uniforms.uAmount.value = 0;
+    vMat.uniforms.uRot.value = 0;
+    if (vMat.uniforms.uTeal) vMat.uniforms.uTeal.value.copy(tealCol);
+
+    const gMat = grainRef.current ?? grainMat;
+    gMat.uniforms.uSize.value =
+      40 *
+      grainScale *
+      Math.max(0.05, globalScale) *
+      persp(white.depth);
+    gMat.uniforms.uGlow.value = grain > 0.015 ? 1.05 * grain : 0;
+    gMat.uniforms.uBreath.value = bw;
+    gMat.uniforms.uAmount.value = 0;
+    gMat.uniforms.uRot.value = 0;
 
     const root = rootRef.current;
     if (root && parallax > 0.001) {
@@ -321,6 +445,14 @@ export function HeroStar({
 
   return (
     <group ref={rootRef}>
+      <points
+        geometry={geo}
+        position={[0, 0, teal.depth - 0.12]}
+        frustumCulled={false}
+        renderOrder={-1}
+      >
+        <primitive object={veilMat} ref={veilRef} attach="material" />
+      </points>
       <points
         geometry={geo}
         position={[0, 0, teal.depth]}
@@ -344,6 +476,14 @@ export function HeroStar({
         renderOrder={2}
       >
         <primitive object={whiteMat} ref={whiteRef} attach="material" />
+      </points>
+      <points
+        geometry={geo}
+        position={[0, 0, white.depth + 0.02]}
+        frustumCulled={false}
+        renderOrder={3}
+      >
+        <primitive object={grainMat} ref={grainRef} attach="material" />
       </points>
     </group>
   );
