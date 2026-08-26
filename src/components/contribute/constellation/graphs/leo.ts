@@ -79,6 +79,31 @@ export const LEO_TEMPLATE: ConstellationTemplate = {
   ],
 };
 
+/** Undirected edge key for tier lookup. */
+export function undirectedEdgeKey(a: string, b: string): string {
+  return a < b ? `${a}|${b}` : `${b}|${a}`;
+}
+
+/**
+ * Major = sickle + body spine (silhouette).
+ * Minor = loop / cross links (détail).
+ */
+const LEO_MAJOR_EDGES = new Set([
+  undirectedEdgeKey("hero", "eta"),
+  undirectedEdgeKey("eta", "algieba"),
+  undirectedEdgeKey("algieba", "adhafera"),
+  undirectedEdgeKey("adhafera", "rasalas"),
+  undirectedEdgeKey("hero", "chertan"),
+  undirectedEdgeKey("chertan", "zosma"),
+  undirectedEdgeKey("zosma", "denebola"),
+]);
+
+export type EdgeTier = "major" | "minor";
+
+export function edgeTier(a: string, b: string): EdgeTier {
+  return LEO_MAJOR_EDGES.has(undirectedEdgeKey(a, b)) ? "major" : "minor";
+}
+
 /** Stroke order: hero first, then current flows node → node. */
 export type LeoStrokeStep =
   | { kind: "hero" }

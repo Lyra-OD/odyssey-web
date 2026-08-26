@@ -25,6 +25,10 @@ export type LueurNodeProps = {
   focusBoost?: number;
   /** 0–1 — constellation draw-in / emphasis. */
   appear?: number;
+  /** Craft lab — slots only (Hero ignores / uses HeroStar). */
+  craftSizeMul?: number;
+  craftGlowMul?: number;
+  craftBreathMul?: number;
 };
 
 const VARIANT = {
@@ -150,12 +154,18 @@ export function LueurNode({
   phase = 0,
   focusBoost = 0,
   appear = 1,
+  craftSizeMul = 1,
+  craftGlowMul = 1,
+  craftBreathMul = 1,
 }: LueurNodeProps) {
   const matRef = useRef<ShaderMaterial>(null);
   const haloRef = useRef<ShaderMaterial>(null);
   const cfg = VARIANT[variant];
   const boost = Math.min(1, Math.max(0, focusBoost));
   const appearClamped = Math.min(1, Math.max(0, appear));
+  const sizeCraft = Math.max(0.05, craftSizeMul);
+  const glowCraft = Math.max(0.05, craftGlowMul);
+  const breathCraft = Math.max(0.05, craftBreathMul);
   const rareLueurPulse = useSkyTheme().scene.idle?.rareLueurPulse ?? 0;
   const isHero = variant === "hero";
 
@@ -222,11 +232,10 @@ export function LueurNode({
   }, [cfg, isHero]);
 
   useFrame(({ clock }) => {
-    const t = clock.elapsedTime * cfg.breathSpeed + phase;
+    const t = clock.elapsedTime * cfg.breathSpeed * breathCraft + phase;
     const breath =
       0.55 +
-      0.3 * Math.sin(t) +
-      0.15 * Math.sin(t * 0.37 + 1.2);
+      (0.3 * Math.sin(t) + 0.15 * Math.sin(t * 0.37 + 1.2)) * breathCraft;
     const mat = matRef.current ?? material;
     const skyPulse =
       isHero && idleCameraRef.rareTarget === "band"
@@ -262,12 +271,14 @@ export function LueurNode({
 
     mat.uniforms.uSize.value =
       cfg.size *
+      sizeCraft *
       (0.88 + 0.22 * breath) *
       sizeMul *
       (0.55 + 0.45 * appearClamped);
     mat.uniforms.uGlow.value =
       (0.65 + 0.45 * breath * (1 + cfg.pulse)) *
       glowMul *
+      glowCraft *
       ghostMul *
       appearMul *
       skyIntroMul(1);

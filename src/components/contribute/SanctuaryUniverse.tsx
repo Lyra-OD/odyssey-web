@@ -29,6 +29,12 @@ import { EclipseDisc } from "@/src/components/contribute/constellation/EclipseDi
 import { FocusCamera } from "@/src/components/contribute/constellation/FocusCamera";
 import { IdleCameraDrift } from "@/src/components/contribute/constellation/IdleCameraDrift";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
+import {
+  DEFAULT_BRIDGES,
+  DEFAULT_SLOT_STARS,
+  type BridgesCraft,
+  type SlotStarsCraft,
+} from "@/src/components/contribute/constellation/craftDefaults";
 import { MemoryReveal } from "@/src/components/contribute/constellation/MemoryReveal";
 import { NebulaGasFar } from "@/src/components/contribute/constellation/NebulaGasFar";
 import { NebulaGasMauve } from "@/src/components/contribute/constellation/NebulaGasMauve";
@@ -57,6 +63,7 @@ import {
 import {
   ACTIVE_TEMPLATE,
   CONSTELLATION_LAYOUT_ID,
+  buildCraftSlotFills,
   constellationPositions,
   getResolvedStar,
   resolveConstellation,
@@ -103,6 +110,15 @@ export type ConstellationRevealCraft = {
   tipStrength?: number;
   /** Craft: ghost edge dim × (default 1) — lower = fainter ghosts */
   ghostDim?: number;
+  /** Slot stars craft (bright / medium / dim / ghost) */
+  slotStars?: SlotStarsCraft;
+  /** Bridge families major / minor · style · colors */
+  bridges?: BridgesCraft;
+  /**
+   * Lab only — per-slot lit map (true = allumé, false = ghost).
+   * When set, overrides mock fills for craft visibility.
+   */
+  slotLit?: Record<string, boolean>;
   /** Current tip look: trail segment · diffraction star · soft orb+halo */
   tipStyle?: "trail" | "star" | "orb";
   tipColor?: string;
@@ -169,6 +185,9 @@ function Constellation({
   tipColor = "#ccfbf1",
   tipSize = 1,
   heroAtom,
+  slotStars = DEFAULT_SLOT_STARS,
+  bridges = DEFAULT_BRIDGES,
+  slotLit,
 }: {
   onSelectMemory: (
     soulId: string,
@@ -193,6 +212,9 @@ function Constellation({
   tipColor?: string;
   tipSize?: number;
   heroAtom?: ConstellationRevealCraft["heroAtom"];
+  slotStars?: SlotStarsCraft;
+  bridges?: BridgesCraft;
+  slotLit?: Record<string, boolean>;
 }) {
   const [revealT, setRevealT] = useState(revealTProp);
   useFrame(() => {
@@ -208,7 +230,12 @@ function Constellation({
   const emphasis =
     revealT >= 1 ? emphasisIdle : revealT * emphasisDuring;
 
-  const stars = useMemo(() => resolveConstellation(), []);
+  const stars = useMemo(() => {
+    if (slotLit) {
+      return resolveConstellation(ACTIVE_TEMPLATE, buildCraftSlotFills(slotLit));
+    }
+    return resolveConstellation();
+  }, [slotLit]);
   const positions = useMemo(() => constellationPositions(stars), [stars]);
   const ghostIds = useMemo(
     () => new Set(stars.filter((s) => !s.lit).map((s) => s.id)),
@@ -253,14 +280,26 @@ function Constellation({
                 ? 0.28
                 : 0.36;
         const isFocus = focusedSoulId === star.id;
+        const effectiveGhostDim = slotStars.ghostDim ?? ghostDim;
         const ghostFade =
-          star.visual === "ghost" ? Math.max(0.15, ghostDim) : 1;
+          star.visual === "ghost"
+            ? Math.max(0.15, effectiveGhostDim)
+            : 1;
 
         const useCraftHero =
           star.visual === "hero" && heroAtom != null;
         const embed = heroAtom?.embedScale ?? 0.4;
         const gScale = heroAtom?.globalScale ?? 1;
         const appearMul = appear * (1 + emphasis * 0.1) * ghostFade;
+
+        const slotSizeMul =
+          star.visual === "ghost"
+            ? slotStars.ghostSize
+            : star.weight === "bright"
+              ? slotStars.sizeBright
+              : star.weight === "medium"
+                ? slotStars.sizeMedium
+                : slotStars.sizeDim;
 
         return (
           <group key={star.id} position={pos}>
@@ -282,6 +321,11 @@ function Constellation({
                 floating={!isFocus && star.lit}
                 focusBoost={isFocus ? focusBoost : 0}
                 appear={appearMul}
+                craftSizeMul={star.visual === "hero" ? 1 : slotSizeMul}
+                craftGlowMul={star.visual === "hero" ? 1 : slotStars.glow}
+                craftBreathMul={
+                  star.visual === "hero" ? 1 : slotStars.breath
+                }
               />
             )}
             {isFocus ? (
@@ -352,10 +396,11 @@ function Constellation({
         lineWidthMul={lineWidthMul}
         lineOpacityMul={lineOpacityMul}
         tipStrength={tipStrength}
-        ghostDim={ghostDim}
+        ghostDim={slotStars.ghostDim ?? ghostDim}
         tipStyle={tipStyle}
         tipColor={tipColor}
         tipSize={tipSize}
+        bridges={bridges}
       />
     </group>
   );
@@ -413,6 +458,9 @@ function UniverseScene({
   const tipColor = craftReveal?.tipColor ?? "#ccfbf1";
   const tipSize = craftReveal?.tipSize ?? 1;
   const heroAtom = craftReveal?.heroAtom;
+  const slotStars = craftReveal?.slotStars ?? DEFAULT_SLOT_STARS;
+  const bridges = craftReveal?.bridges ?? DEFAULT_BRIDGES;
+  const slotLit = craftReveal?.slotLit;
 
   useEffect(() => {
     if (controlled) return;
@@ -563,6 +611,9 @@ function UniverseScene({
                 tipColor={tipColor}
                 tipSize={tipSize}
                 heroAtom={heroAtom}
+                slotStars={slotStars}
+                bridges={bridges}
+                slotLit={slotLit}
               />
             </ConstellationLeash>
           </ParallaxLayer>

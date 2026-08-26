@@ -80,6 +80,59 @@ export const MOCK_SLOT_FILLS: Record<string, SlotFill | undefined> = {
   },
 };
 
+/** Slot ids from active Leo template (lab craft toggles). */
+export const LEO_SLOT_IDS: readonly string[] = ACTIVE_TEMPLATE.nodes
+  .filter((n) => n.role === "slot")
+  .map((n) => n.id);
+
+export function leoSlotWeight(id: string): StarWeight {
+  return (
+    ACTIVE_TEMPLATE.nodes.find((n) => n.id === id)?.weight ?? "medium"
+  );
+}
+
+/**
+ * Lab craft — build fills from per-slot lit map.
+ * Missing mock memory → placeholder so dim/bright knobs stay testable.
+ */
+export function buildCraftSlotFills(
+  lit: Readonly<Record<string, boolean>>,
+): Record<string, SlotFill | undefined> {
+  const out: Record<string, SlotFill | undefined> = {};
+  for (const id of LEO_SLOT_IDS) {
+    if (!lit[id]) {
+      out[id] = undefined;
+      continue;
+    }
+    const existing = MOCK_SLOT_FILLS[id];
+    if (existing?.memory) {
+      out[id] = existing;
+      continue;
+    }
+    out[id] = {
+      name: id.charAt(0).toUpperCase() + id.slice(1),
+      prominence: "guest",
+      memory: {
+        kind: "photo",
+        src: `https://picsum.photos/seed/odyssey-craft-${id}/720/900`,
+        captionFr: "Mock craft",
+        captionEn: "Craft mock",
+      },
+    };
+  }
+  return out;
+}
+
+/** Default lit map for lab — mock + rasalas ON so weight dim is visible. */
+export function defaultCraftSlotLit(): Record<string, boolean> {
+  const lit: Record<string, boolean> = {};
+  for (const id of LEO_SLOT_IDS) {
+    lit[id] = MOCK_SLOT_FILLS[id]?.memory != null;
+  }
+  lit.rasalas = true;
+  return lit;
+}
+
 function weightToVisual(
   weight: StarWeight,
   prominence: "family" | "guest" | undefined,
@@ -100,6 +153,7 @@ export function resolveConstellation(
         role: "hero",
         position: node.position,
         lit: true,
+        weight: node.weight,
         visual: "hero",
         name: heroName,
       };
@@ -112,6 +166,7 @@ export function resolveConstellation(
         role: "slot",
         position: node.position,
         lit: false,
+        weight: node.weight,
         visual: "ghost",
         name: "",
       };
@@ -122,6 +177,7 @@ export function resolveConstellation(
       role: "slot",
       position: node.position,
       lit: true,
+      weight: node.weight,
       visual: weightToVisual(node.weight, fill.prominence),
       name: fill.name,
       memory: fill.memory,

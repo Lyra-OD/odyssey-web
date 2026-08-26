@@ -11,15 +11,21 @@ import {
   ShaderMaterial,
 } from "three";
 
-import { strokeKey } from "@/src/components/contribute/constellation/graphs/leo";
+import type {
+  BridgeFamilyCraft,
+  BridgesCraft,
+  BridgeLineStyle,
+} from "@/src/components/contribute/constellation/craftDefaults";
+import { DEFAULT_BRIDGES } from "@/src/components/contribute/constellation/craftDefaults";
+import {
+  edgeTier,
+  strokeKey,
+} from "@/src/components/contribute/constellation/graphs/leo";
 import type { ConstellationDrawState } from "@/src/components/contribute/constellation/graphs/reveal";
 import type {
   ConstellationEdge,
   SoulPositionMap,
 } from "@/src/components/contribute/constellation/graphs/types";
-
-const TEAL = "#5eead4";
-const TEAL_GHOST = "#4d7c74";
 
 export type CurrentTipStyle = "trail" | "star" | "orb";
 
@@ -29,15 +35,17 @@ type LightBridgesProps = {
   ghostIds?: Set<string>;
   draw: ConstellationDrawState;
   emphasis?: number;
-  /** When true, all template edges shown full (reveal done). */
   revealComplete?: boolean;
+  /** @deprecated prefer bridges.width — kept as global mul */
   lineWidthMul?: number;
+  /** @deprecated prefer bridges.opacity — kept as global mul */
   lineOpacityMul?: number;
   tipStrength?: number;
   ghostDim?: number;
   tipStyle?: CurrentTipStyle;
   tipColor?: string;
   tipSize?: number;
+  bridges?: BridgesCraft;
 };
 
 function lerp3(
@@ -60,6 +68,20 @@ function edgeProgress(
   const forward = draw.edgeDraw[strokeKey(a, b)];
   const backward = draw.edgeDraw[strokeKey(b, a)];
   return Math.max(forward ?? 0, backward ?? 0);
+}
+
+function dashForStyle(style: BridgeLineStyle): {
+  dashed: boolean;
+  dashSize: number;
+  gapSize: number;
+} {
+  if (style === "dotted") {
+    return { dashed: true, dashSize: 0.04, gapSize: 0.11 };
+  }
+  if (style === "dashed") {
+    return { dashed: true, dashSize: 0.14, gapSize: 0.1 };
+  }
+  return { dashed: false, dashSize: 1, gapSize: 0 };
 }
 
 const tipVertex = /* glsl */ `
@@ -87,17 +109,12 @@ float spikePair(vec2 uv, float angle, float len, float width) {
 }
 void main() {
   vec2 uv = gl_PointCoord - 0.5;
-  float d = length(uv);
-  float core = exp(-pow(d / 0.04, 2.0));
-  float v = spikePair(uv, 1.5707963, 0.48, 0.008);
-  float h = spikePair(uv, 0.0, 0.4, 0.007);
-  float d1 = spikePair(uv, 0.7853982, 0.32, 0.0065);
-  float d2 = spikePair(uv, -0.7853982, 0.32, 0.0065);
-  float spikes = max(max(v, h), max(d1, d2));
-  float a = (core * 1.2 + spikes * 1.1) * uGlow;
-  if (a < 0.03) discard;
-  vec3 col = mix(uColor, vec3(1.0), core * 0.65);
-  gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+  float core = exp(-pow(length(uv) / 0.04, 2.0));
+  float v = spikePair(uv, 1.5707963, 0.42, 0.008);
+  float h = spikePair(uv, 0.0, 0.36, 0.007);
+  float a = max(core * 1.2, max(v, h) * uGlow);
+  if (a < 0.02) discard;
+  gl_FragColor = vec4(mix(uColor, vec3(1.0), core * 0.5), clamp(a, 0.0, 1.0));
 }
 `;
 
@@ -108,12 +125,10 @@ void main() {
   vec2 uv = gl_PointCoord - 0.5;
   float d = length(uv);
   float core = exp(-pow(d / 0.08, 2.0));
-  float mid = exp(-pow(d / 0.22, 2.0));
-  float halo = exp(-pow(d / 0.42, 2.0));
-  float a = (core * 1.35 + mid * 0.55 + halo * 0.28) * uGlow;
+  float halo = exp(-pow(d / 0.28, 2.0)) * 0.55;
+  float a = (core + halo) * uGlow;
   if (a < 0.02) discard;
-  vec3 col = mix(uColor, vec3(1.0), core * 0.55);
-  gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+  gl_FragColor = vec4(mix(uColor, vec3(1.0), core * 0.4), clamp(a, 0.0, 1.0));
 }
 `;
 
@@ -133,10 +148,12 @@ function CurrentTipSprite({
   const matRef = useRef<ShaderMaterial>(null);
   const geo = useMemo(() => {
     const g = new BufferGeometry();
-    g.setAttribute("position", new BufferAttribute(new Float32Array([0, 0, 0]), 3));
+    g.setAttribute(
+      "position",
+      new BufferAttribute(new Float32Array([0, 0, 0]), 3),
+    );
     return g;
   }, []);
-  const col = useMemo(() => new Color(color), [color]);
   const mat = useMemo(
     () =>
       new ShaderMaterial({
@@ -147,32 +164,93 @@ function CurrentTipSprite({
         toneMapped: false,
         blending: AdditiveBlending,
         uniforms: {
-          uSize: { value: 48 * size },
-          uColor: { value: col.clone() },
+          uSize: { value: 28 * size },
+          uColor: { value: new Color(color) },
           uGlow: { value: strength },
         },
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- driven in useFrame
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [style],
   );
 
-  useFrame(({ clock }) => {
+  useFrame(() => {
     const m = matRef.current ?? mat;
-    const breath = 0.88 + 0.12 * Math.sin(clock.elapsedTime * 3.2);
-    m.uniforms.uSize.value = (style === "star" ? 56 : 72) * size * breath;
-    m.uniforms.uGlow.value = strength * breath;
-    m.uniforms.uColor.value.copy(col);
+    m.uniforms.uSize.value =
+      (style === "star" ? 36 : 28) * size * (0.85 + 0.25 * strength);
+    m.uniforms.uGlow.value = Math.max(0.1, strength);
+    m.uniforms.uColor.value.set(color);
   });
 
   return (
-    <points position={position} geometry={geo} frustumCulled={false} renderOrder={5}>
+    <points position={position} geometry={geo} frustumCulled={false}>
       <primitive object={mat} ref={matRef} attach="material" />
     </points>
   );
 }
 
+function BridgeSegment({
+  from,
+  tip,
+  family,
+  opacity,
+  width,
+}: {
+  from: [number, number, number];
+  tip: [number, number, number];
+  family: BridgeFamilyCraft;
+  opacity: number;
+  width: number;
+}) {
+  const dash = dashForStyle(family.style);
+  const points = [from, tip] as [
+    [number, number, number],
+    [number, number, number],
+  ];
+
+  if (family.style === "glow") {
+    return (
+      <group>
+        <Line
+          points={points}
+          color={family.haloColor}
+          lineWidth={width * 2.4}
+          transparent
+          opacity={Math.min(1, opacity * 0.35)}
+          depthWrite={false}
+          toneMapped={false}
+        />
+        <Line
+          points={points}
+          color={family.coreColor}
+          lineWidth={width * 0.85}
+          transparent
+          opacity={Math.min(1, opacity * 0.95)}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      </group>
+    );
+  }
+
+  return (
+    <Line
+      points={points}
+      color={family.color}
+      lineWidth={width}
+      transparent
+      opacity={opacity}
+      depthWrite={false}
+      toneMapped={false}
+      dashed={dash.dashed}
+      dashSize={dash.dashSize}
+      gapSize={dash.gapSize}
+    />
+  );
+}
+
 /**
- * Teal filaments — grow from node to node (current), not white CAD lines.
+ * Filaments — grow node → node.
+ * Craft: major / minor · solid · dotted · dashed · glow (core+halo).
  */
 export function LightBridges({
   positions,
@@ -188,10 +266,11 @@ export function LightBridges({
   tipStyle = "orb",
   tipColor = "#ccfbf1",
   tipSize = 1,
+  bridges = DEFAULT_BRIDGES,
 }: LightBridgesProps) {
   const emp = Math.min(1.5, Math.max(0, emphasis));
-  const wMul = Math.max(0.15, lineWidthMul);
-  const oMul = Math.max(0.05, lineOpacityMul);
+  const legacyW = Math.max(0.15, lineWidthMul);
+  const legacyO = Math.max(0.05, lineOpacityMul);
   const tipMul = Math.max(0, tipStrength);
   const gDim = Math.min(1.5, Math.max(0.05, ghostDim));
   const sizeMul = Math.max(0.15, tipSize);
@@ -224,23 +303,29 @@ export function LightBridges({
         const tip = lerp3(from, to, progress);
         const touchesGhost =
           ghostIds?.has(a) === true || ghostIds?.has(b) === true;
+        const tier = edgeTier(a, b);
+        const family = bridges[tier];
         const baseOp = touchesGhost ? 0.28 * gDim : 0.5;
         const opacity = Math.min(
           1,
-          (baseOp + emp * 0.55) * Math.max(progress, 0.15) * oMul,
+          (baseOp + emp * 0.55) *
+            Math.max(progress, 0.15) *
+            Math.max(0.05, family.opacity) *
+            legacyO,
         );
-        const width = (touchesGhost ? 1.5 * gDim : 2.4) * wMul;
+        const width =
+          (touchesGhost ? 1.5 * gDim : 2.4) *
+          Math.max(0.1, family.width) *
+          legacyW;
 
         return (
-          <Line
+          <BridgeSegment
             key={`${a}-${b}`}
-            points={[from, tip]}
-            color={touchesGhost ? TEAL_GHOST : TEAL}
-            lineWidth={width}
-            transparent
+            from={from}
+            tip={tip}
+            family={family}
             opacity={opacity}
-            depthWrite={false}
-            toneMapped={false}
+            width={width}
           />
         );
       })}
@@ -256,9 +341,9 @@ export function LightBridges({
             activeTip,
           ]}
           color={tipColor}
-          lineWidth={3.4 * wMul * (0.6 + 0.8 * tipMul) * sizeMul}
+          lineWidth={3.4 * legacyW * (0.6 + 0.8 * tipMul) * sizeMul}
           transparent
-          opacity={Math.min(1, 0.7 * tipMul * oMul)}
+          opacity={Math.min(1, 0.7 * tipMul * legacyO)}
           depthWrite={false}
           toneMapped={false}
         />

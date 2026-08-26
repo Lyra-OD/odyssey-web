@@ -37,6 +37,8 @@ export type ResolvedConstellationStar = {
   position: [number, number, number];
   /** Ghost = predefined slot not yet filled. */
   lit: boolean;
+  /** Template weight — craft size knobs (bright / medium / dim). */
+  weight: StarWeight;
   /** Maps to LueurNode variant (+ ghost). */
   visual: "hero" | "premium" | "standard" | "ghost";
   name: string;

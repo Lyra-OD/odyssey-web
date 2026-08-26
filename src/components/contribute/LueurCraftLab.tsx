@@ -6,6 +6,14 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { Color, WebGLRenderer } from "three";
 
 import {
+  DEFAULT_BRIDGES,
+  DEFAULT_SLOT_STARS,
+  type BridgeFamilyCraft,
+  type BridgeLineStyle,
+  type BridgesCraft,
+  type SlotStarsCraft,
+} from "@/src/components/contribute/constellation/craftDefaults";
+import {
   DEFAULT_HERO_GLOBAL_SCALE,
   DEFAULT_HERO_PARALLAX,
   DEFAULT_HERO_SPIKES,
@@ -19,6 +27,11 @@ import {
   DEFAULT_HERO_SHARE,
   DEFAULT_STROKE_OVERLAP,
 } from "@/src/components/contribute/constellation/graphs/reveal";
+import {
+  LEO_SLOT_IDS,
+  defaultCraftSlotLit,
+  leoSlotWeight,
+} from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import {
   SanctuaryUniverse,
   type ConstellationRevealCraft,
@@ -87,28 +100,28 @@ type KnobDef = {
 
 function CraftKnobGrid({ knobs }: { knobs: readonly KnobDef[] }) {
   return (
-    <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+    <div className="grid grid-cols-3 gap-x-3 gap-y-1.5 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
       {knobs.map((knob) => {
         const decimals = knob.step < 1 ? 2 : 0;
         return (
           <label
             key={knob.key}
-            className={`flex min-w-0 flex-col gap-1 text-[11px] uppercase tracking-[0.12em] ${
-              knob.disabled ? "opacity-40" : "text-white/55"
+            className={`flex min-w-0 flex-col gap-0.5 text-[9px] uppercase tracking-[0.1em] ${
+              knob.disabled ? "opacity-40" : "text-white/50"
             }`}
           >
             <span className="flex items-baseline justify-between gap-1">
-              <span className="truncate font-medium text-white/70">
+              <span className="truncate font-medium text-white/65">
                 {knob.label}
               </span>
-              <span className="shrink-0 font-mono text-[12px] normal-case tracking-normal text-teal-400/80">
+              <span className="shrink-0 font-mono text-[10px] normal-case tracking-normal text-teal-400/75">
                 {knob.value.toFixed(decimals)}
               </span>
             </span>
             <input
               type="range"
               disabled={knob.disabled}
-              className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-white disabled:cursor-not-allowed"
+              className="h-1 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-white disabled:cursor-not-allowed"
               min={knob.min}
               max={knob.max}
               step={knob.step}
@@ -143,8 +156,20 @@ const COPY = {
     globalScale: "Taille générale",
     layerReveal: "Tempo (pendant le play / scrub)",
     layerLook: "Look graphe",
+    layerSlots: "Étoiles (slots)",
+    layerSlotLit: "Mock slots (allumé / ghost)",
+    slotLitAll: "Tous allumés",
+    slotGhostAll: "Tous ghosts",
+    slotLitOn: "ON",
+    slotLitOff: "Ghost",
+    layerBridgesMajor: "Traits majeurs (silhouette)",
+    layerBridgesMinor: "Traits mineurs (détail)",
     layerTip: "Courant (pointe qui dessine)",
     size: "Taille",
+    sizeBright: "Taille bright",
+    sizeMedium: "Taille medium",
+    sizeDim: "Taille dim",
+    ghostSize: "Taille ghosts",
     glow: "Intensité",
     breath: "Respiration",
     depth: "Profondeur Z",
@@ -159,19 +184,28 @@ const COPY = {
     heroShare: "Solo hero (début)",
     strokeOverlap: "Overlap traits",
     graphScale: "Échelle graphe",
-    lineWidth: "Épaisseur traits",
-    lineOpacity: "Opacité traits",
+    bridgeWidth: "Épaisseur",
+    bridgeOpacity: "Opacité",
+    bridgeColor: "Couleur",
+    bridgeCore: "Noyau",
+    bridgeHalo: "Halo",
+    styleSolid: "Continu",
+    styleDotted: "Pointillé",
+    styleDashed: "Tirets",
+    styleGlow: "Glow / ray",
     tipStrength: "Force courant",
     tipSize: "Taille courant",
     tipColor: "Couleur courant",
     tipTrail: "Trait",
     tipStar: "Étoile",
     tipOrb: "Rond + halo",
-    ghostDim: "Ghosts (slots vides)",
+    ghostDim: "Ghosts (dim)",
     heroEmbed: "Taille hero (ciel)",
     sky: "Ciel",
     eclipse: "Éclipse",
     wormhole: "Wormhole",
+    hidePanel: "Masquer",
+    showPanel: "Knobs",
   },
   en: {
     title: "Lueur craft",
@@ -181,7 +215,7 @@ const COPY = {
     tabProduit: "3 — Product Lueur",
     hintHero: "3 independent layers — white · teal · spikes",
     hintConstellation:
-      "Même Hero que l’onglet 1 — change Hero, vois ici l’ensemble",
+      "Same Hero as tab 1 — change Hero, see the whole here",
     hintProduit: "SKU / card — same visual family",
     layerWhite: "White layer (core)",
     layerTeal: "Teal layer (glow)",
@@ -193,8 +227,20 @@ const COPY = {
     globalScale: "Master size",
     layerReveal: "Timing (during play / scrub)",
     layerLook: "Graph look",
+    layerSlots: "Stars (slots)",
+    layerSlotLit: "Mock slots (lit / ghost)",
+    slotLitAll: "All lit",
+    slotGhostAll: "All ghosts",
+    slotLitOn: "ON",
+    slotLitOff: "Ghost",
+    layerBridgesMajor: "Major lines (silhouette)",
+    layerBridgesMinor: "Minor lines (detail)",
     layerTip: "Current tip (drawing head)",
     size: "Size",
+    sizeBright: "Bright size",
+    sizeMedium: "Medium size",
+    sizeDim: "Dim size",
+    ghostSize: "Ghost size",
     glow: "Intensity",
     breath: "Breath",
     depth: "Depth Z",
@@ -209,19 +255,28 @@ const COPY = {
     heroShare: "Hero alone (start)",
     strokeOverlap: "Stroke overlap",
     graphScale: "Graph scale",
-    lineWidth: "Line thickness",
-    lineOpacity: "Line opacity",
+    bridgeWidth: "Width",
+    bridgeOpacity: "Opacity",
+    bridgeColor: "Color",
+    bridgeCore: "Core",
+    bridgeHalo: "Halo",
+    styleSolid: "Solid",
+    styleDotted: "Dotted",
+    styleDashed: "Dashed",
+    styleGlow: "Glow / ray",
     tipStrength: "Tip strength",
     tipSize: "Tip size",
     tipColor: "Tip color",
     tipTrail: "Trail",
     tipStar: "Star",
     tipOrb: "Orb + halo",
-    ghostDim: "Ghosts (empty slots)",
+    ghostDim: "Ghosts (dim)",
     heroEmbed: "Hero size (sky)",
     sky: "Sky",
     eclipse: "Eclipse",
     wormhole: "Wormhole",
+    hidePanel: "Hide",
+    showPanel: "Knobs",
   },
 } as const;
 
@@ -321,14 +376,17 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [heroShare, setHeroShare] = useState(DEFAULT_HERO_SHARE);
   const [strokeOverlap, setStrokeOverlap] = useState(DEFAULT_STROKE_OVERLAP);
   const [graphScale, setGraphScale] = useState(1);
-  const [lineWidth, setLineWidth] = useState(1);
-  const [lineOpacity, setLineOpacity] = useState(1);
   const [tipStrength, setTipStrength] = useState(1.2);
   const [tipSize, setTipSize] = useState(1);
   const [tipColor, setTipColor] = useState("#5eead4");
   const [tipStyle, setTipStyle] = useState<CurrentTipStyle>("orb");
-  const [ghostDim, setGhostDim] = useState(1);
+  const [slotStars, setSlotStars] = useState<SlotStarsCraft>(DEFAULT_SLOT_STARS);
+  const [bridges, setBridges] = useState<BridgesCraft>(DEFAULT_BRIDGES);
+  const [slotLit, setSlotLit] = useState<Record<string, boolean>>(
+    defaultCraftSlotLit,
+  );
   const [heroEmbedScale, setHeroEmbedScale] = useState(0.42);
+  const [panelOpen, setPanelOpen] = useState(true);
   const revealPlayFromRef = useRef(0);
 
   useEffect(() => {
@@ -376,13 +434,14 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
     heroShare,
     strokeOverlap,
     graphScale,
-    lineWidth,
-    lineOpacity,
     tipStrength,
     tipStyle,
     tipColor,
     tipSize,
-    ghostDim,
+    ghostDim: slotStars.ghostDim,
+    slotStars,
+    bridges,
+    slotLit,
     heroAtom: {
       white,
       teal,
@@ -516,33 +575,118 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       value: heroEmbedScale,
       onChange: setHeroEmbedScale,
     },
+  ];
+  const slotKnobs: KnobDef[] = [
     {
-      key: "line-width",
-      label: t.lineWidth,
-      min: 0.2,
-      max: 3.5,
-      step: 0.05,
-      value: lineWidth,
-      onChange: setLineWidth,
+      key: "slot-bright",
+      label: t.sizeBright,
+      min: 0.3,
+      max: 2.8,
+      step: 0.01,
+      value: slotStars.sizeBright,
+      onChange: (v) => setSlotStars((s) => ({ ...s, sizeBright: v })),
     },
     {
-      key: "line-opacity",
-      label: t.lineOpacity,
+      key: "slot-medium",
+      label: t.sizeMedium,
+      min: 0.3,
+      max: 2.8,
+      step: 0.01,
+      value: slotStars.sizeMedium,
+      onChange: (v) => setSlotStars((s) => ({ ...s, sizeMedium: v })),
+    },
+    {
+      key: "slot-dim",
+      label: t.sizeDim,
+      min: 0.3,
+      max: 2.8,
+      step: 0.01,
+      value: slotStars.sizeDim,
+      onChange: (v) => setSlotStars((s) => ({ ...s, sizeDim: v })),
+    },
+    {
+      key: "slot-glow",
+      label: t.glow,
       min: 0.1,
       max: 2.5,
-      step: 0.05,
-      value: lineOpacity,
-      onChange: setLineOpacity,
+      step: 0.01,
+      value: slotStars.glow,
+      onChange: (v) => setSlotStars((s) => ({ ...s, glow: v })),
     },
     {
-      key: "ghost-dim",
+      key: "slot-breath",
+      label: t.breath,
+      min: 0.1,
+      max: 2.5,
+      step: 0.01,
+      value: slotStars.breath,
+      onChange: (v) => setSlotStars((s) => ({ ...s, breath: v })),
+    },
+    {
+      key: "slot-ghost-size",
+      label: t.ghostSize,
+      min: 0.2,
+      max: 2.5,
+      step: 0.01,
+      value: slotStars.ghostSize,
+      onChange: (v) => setSlotStars((s) => ({ ...s, ghostSize: v })),
+    },
+    {
+      key: "slot-ghost-dim",
       label: t.ghostDim,
       min: 0.05,
       max: 1.5,
       step: 0.05,
-      value: ghostDim,
-      onChange: setGhostDim,
+      value: slotStars.ghostDim,
+      onChange: (v) => setSlotStars((s) => ({ ...s, ghostDim: v })),
     },
+  ];
+
+  const patchBridge = (
+    tier: keyof BridgesCraft,
+    patch: Partial<BridgeFamilyCraft>,
+  ) => {
+    setBridges((b) => ({ ...b, [tier]: { ...b[tier], ...patch } }));
+  };
+
+  const bridgeFamilyKnobs = (tier: keyof BridgesCraft): KnobDef[] => {
+    const f = bridges[tier];
+    return [
+      {
+        key: `${tier}-w`,
+        label: t.bridgeWidth,
+        min: 0.15,
+        max: 3.5,
+        step: 0.05,
+        value: f.width,
+        onChange: (v) => patchBridge(tier, { width: v }),
+      },
+      {
+        key: `${tier}-o`,
+        label: t.bridgeOpacity,
+        min: 0.05,
+        max: 2.5,
+        step: 0.05,
+        value: f.opacity,
+        onChange: (v) => patchBridge(tier, { opacity: v }),
+      },
+    ];
+  };
+
+  const styleModes: { id: BridgeLineStyle; label: string }[] = [
+    { id: "solid", label: t.styleSolid },
+    { id: "dotted", label: t.styleDotted },
+    { id: "dashed", label: t.styleDashed },
+    { id: "glow", label: t.styleGlow },
+  ];
+
+  const colorPresets = [
+    "#5eead4",
+    "#ccfbf1",
+    "#99f6e4",
+    "#2dd4bf",
+    "#e8eef8",
+    "#fde68a",
   ];
   const tipKnobs: KnobDef[] = [
     {
@@ -669,73 +813,86 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
         </div>
       ) : null}
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-1 px-5 pt-6 md:px-10 md:pt-10">
-        <p className="text-xs font-light uppercase tracking-[0.28em] text-white/45 md:text-sm">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-0.5 px-4 pt-4 md:px-8 md:pt-6">
+        <p className="text-[10px] font-light uppercase tracking-[0.28em] text-white/40 md:text-xs">
           {t.title}
         </p>
-        <p className="text-sm font-light text-white/50 md:text-base">{t.sub}</p>
+        <p className="text-xs font-light text-white/40 md:text-sm">{t.sub}</p>
       </div>
 
-      <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 max-h-[42vh] overflow-y-auto border-t border-white/10 bg-black/55 px-4 py-3 backdrop-blur-md md:px-6">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            {tabs.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setTab(item.id)}
-                className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] ${
-                  tab === item.id
-                    ? "border-white/40 text-white/90"
-                    : "border-white/15 text-white/55 hover:border-white/30"
-                }`}
+      {!panelOpen ? (
+        <button
+          type="button"
+          onClick={() => setPanelOpen(true)}
+          className="pointer-events-auto absolute bottom-4 right-4 z-30 rounded-sm border border-white/25 bg-black/70 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-white/80 backdrop-blur-md hover:border-teal-400/40 hover:text-teal-100"
+        >
+          {t.showPanel}
+        </button>
+      ) : (
+        <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 max-h-[28vh] overflow-y-auto border-t border-white/10 bg-black/70 px-3 py-2 backdrop-blur-md md:max-h-[32vh] md:px-5 md:py-2.5">
+          <div className="mx-auto flex max-w-6xl flex-col gap-2">
+            <div className="sticky top-0 z-10 -mx-3 flex flex-wrap items-center gap-1.5 bg-black/80 px-3 py-1.5 backdrop-blur-md md:-mx-5 md:px-5">
+              {tabs.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setTab(item.id)}
+                  className={`rounded-sm border px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] ${
+                    tab === item.id
+                      ? "border-white/40 text-white/90"
+                      : "border-white/15 text-white/55 hover:border-white/30"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+              <Link
+                href={`/${locale}/contribute/test-ciel`}
+                className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/55 hover:border-white/30"
               >
-                {item.label}
+                {t.sky}
+              </Link>
+              <Link
+                href={`/${locale}/contribute/test-eclipse`}
+                className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/55 hover:border-white/30"
+              >
+                {t.eclipse}
+              </Link>
+              <Link
+                href={`/${locale}/contribute/test-wormhole`}
+                className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/55 hover:border-white/30"
+              >
+                {t.wormhole}
+              </Link>
+              <button
+                type="button"
+                onClick={() => setPanelOpen(false)}
+                className="ml-auto rounded-sm border border-white/20 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/70 hover:border-teal-400/40 hover:text-teal-100"
+              >
+                {t.hidePanel}
               </button>
-            ))}
-            <Link
-              href={`/${locale}/contribute/test-ciel`}
-              className="rounded-sm border border-white/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/55 hover:border-white/30"
-            >
-              {t.sky}
-            </Link>
-            <Link
-              href={`/${locale}/contribute/test-eclipse`}
-              className="rounded-sm border border-white/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/55 hover:border-white/30"
-            >
-              {t.eclipse}
-            </Link>
-            <Link
-              href={`/${locale}/contribute/test-wormhole`}
-              className="rounded-sm border border-white/15 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/55 hover:border-white/30"
-            >
-              {t.wormhole}
-            </Link>
-            <p className="ml-auto hidden text-[11px] font-light tracking-wide text-white/30 sm:block">
-              {tabs.find((x) => x.id === tab)?.hint}
-            </p>
-          </div>
+            </div>
 
           {tab === "hero" || tab === "produit" ? (
-            <div className="flex flex-col gap-3">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+            <div className="flex flex-col gap-1.5">
+              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
                 {t.layerWhite}
               </p>
               <CraftKnobGrid knobs={whiteKnobs} />
-              <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
                 {t.layerTeal}
               </p>
               <CraftKnobGrid knobs={tealKnobs} />
-              <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
                 {t.layerSpikes}
               </p>
               <CraftKnobGrid knobs={spikeKnobs} />
-              <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
                 {t.layer3d}
               </p>
               <CraftKnobGrid knobs={depth3dKnobs} />
-              <div className="flex flex-col gap-2 border-t border-white/10 pt-3">
-                <label className="flex cursor-pointer items-start gap-2.5 text-[12px] text-white/75">
+              <div className="flex flex-col gap-1.5 border-t border-white/10 pt-2">
+                <label className="flex cursor-pointer items-start gap-2 text-[11px] text-white/75">
                   <input
                     type="checkbox"
                     checked={heroRatiosOk}
@@ -750,12 +907,12 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
                     <span className="font-medium uppercase tracking-[0.14em] text-teal-200/90">
                       {t.ratiosOk}
                     </span>
-                    <span className="mt-0.5 block text-[11px] font-light normal-case tracking-normal text-white/40">
+                    <span className="mt-0.5 block text-[10px] font-light normal-case tracking-normal text-white/40">
                       {t.ratiosHint}
                     </span>
                   </span>
                 </label>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+                <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
                   {t.layerMaster}
                 </p>
                 <CraftKnobGrid knobs={masterSizeKnobs} />
@@ -764,13 +921,13 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
           ) : null}
 
           {tab === "constellation" ? (
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-col gap-1.5">
+              <div className="flex flex-wrap items-center gap-1.5">
                 <button
                   type="button"
                   onClick={onRevealPlay}
                   disabled={revealPlaying}
-                  className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45 disabled:opacity-40"
+                  className="rounded-sm border border-white/25 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/80 hover:border-white/45 disabled:opacity-40"
                 >
                   {t.play}
                 </button>
@@ -778,39 +935,195 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
                   type="button"
                   onClick={onRevealPause}
                   disabled={!revealPlaying}
-                  className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45 disabled:opacity-40"
+                  className="rounded-sm border border-white/25 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/80 hover:border-white/45 disabled:opacity-40"
                 >
                   {t.pause}
                 </button>
                 <button
                   type="button"
                   onClick={onRevealRestart}
-                  className="rounded-sm border border-white/25 px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/80 hover:border-white/45"
+                  className="rounded-sm border border-white/25 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/80 hover:border-white/45"
                 >
                   {t.restart}
                 </button>
-                <span className="font-mono text-[12px] text-teal-400/80">
+                <span className="font-mono text-[11px] text-teal-400/80">
                   {(revealT * 100).toFixed(0)}%
                 </span>
               </div>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
                 {t.layerReveal}
               </p>
               <CraftKnobGrid knobs={timingKnobs} />
-              <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
                 {t.layerLook}
               </p>
               <CraftKnobGrid knobs={lookKnobs} />
-              <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
+                {t.layerSlotLit}
+              </p>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next: Record<string, boolean> = {};
+                    for (const id of LEO_SLOT_IDS) next[id] = true;
+                    setSlotLit(next);
+                  }}
+                  className="rounded-sm border border-white/20 px-2 py-0.5 text-[9px] uppercase tracking-[0.14em] text-white/70 hover:border-teal-400/40"
+                >
+                  {t.slotLitAll}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next: Record<string, boolean> = {};
+                    for (const id of LEO_SLOT_IDS) next[id] = false;
+                    setSlotLit(next);
+                  }}
+                  className="rounded-sm border border-white/20 px-2 py-0.5 text-[9px] uppercase tracking-[0.14em] text-white/70 hover:border-teal-400/40"
+                >
+                  {t.slotGhostAll}
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {LEO_SLOT_IDS.map((id) => {
+                  const on = slotLit[id] === true;
+                  const w = leoSlotWeight(id);
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() =>
+                        setSlotLit((s) => ({ ...s, [id]: !s[id] }))
+                      }
+                      className={`rounded-sm border px-2 py-0.5 text-[9px] uppercase tracking-[0.12em] ${
+                        on
+                          ? "border-teal-400/45 text-teal-100"
+                          : "border-white/15 text-white/45"
+                      }`}
+                      title={`${id} · ${w}`}
+                    >
+                      {id}
+                      <span className="ml-1 opacity-50">{w}</span>
+                      <span className="ml-1 font-mono opacity-70">
+                        {on ? t.slotLitOn : t.slotLitOff}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
+                {t.layerSlots}
+              </p>
+              <CraftKnobGrid knobs={slotKnobs} />
+              {(
+                [
+                  ["major", t.layerBridgesMajor],
+                  ["minor", t.layerBridgesMinor],
+                ] as const
+              ).map(([tier, label]) => {
+                const fam = bridges[tier];
+                const isGlow = fam.style === "glow";
+                return (
+                  <div key={tier} className="flex flex-col gap-1.5">
+                    <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
+                      {label}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {styleModes.map((mode) => (
+                        <button
+                          key={mode.id}
+                          type="button"
+                          onClick={() =>
+                            patchBridge(tier, { style: mode.id })
+                          }
+                          className={`rounded-sm border px-2 py-0.5 text-[9px] uppercase tracking-[0.14em] ${
+                            fam.style === mode.id
+                              ? "border-teal-400/50 text-teal-100"
+                              : "border-white/15 text-white/55 hover:border-white/30"
+                          }`}
+                        >
+                          {mode.label}
+                        </button>
+                      ))}
+                    </div>
+                    <CraftKnobGrid knobs={bridgeFamilyKnobs(tier)} />
+                    <div className="flex flex-wrap items-center gap-2">
+                      {isGlow ? (
+                        <>
+                          <label className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-white/55">
+                            <span>{t.bridgeCore}</span>
+                            <input
+                              type="color"
+                              value={fam.coreColor}
+                              onChange={(e) =>
+                                patchBridge(tier, {
+                                  coreColor: e.target.value,
+                                })
+                              }
+                              className="h-6 w-8 cursor-pointer rounded-sm border border-white/20 bg-transparent"
+                            />
+                          </label>
+                          <label className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-white/55">
+                            <span>{t.bridgeHalo}</span>
+                            <input
+                              type="color"
+                              value={fam.haloColor}
+                              onChange={(e) =>
+                                patchBridge(tier, {
+                                  haloColor: e.target.value,
+                                })
+                              }
+                              className="h-6 w-8 cursor-pointer rounded-sm border border-white/20 bg-transparent"
+                            />
+                          </label>
+                        </>
+                      ) : (
+                        <label className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-white/55">
+                          <span>{t.bridgeColor}</span>
+                          <input
+                            type="color"
+                            value={fam.color}
+                            onChange={(e) =>
+                              patchBridge(tier, { color: e.target.value })
+                            }
+                            className="h-6 w-8 cursor-pointer rounded-sm border border-white/20 bg-transparent"
+                          />
+                        </label>
+                      )}
+                      <div className="flex items-center gap-1">
+                        {colorPresets.map((hex) => (
+                          <button
+                            key={`${tier}-${hex}`}
+                            type="button"
+                            aria-label={hex}
+                            onClick={() =>
+                              patchBridge(
+                                tier,
+                                isGlow
+                                  ? { coreColor: hex, haloColor: hex }
+                                  : { color: hex },
+                              )
+                            }
+                            className="h-4 w-4 rounded-full border border-white/25"
+                            style={{ backgroundColor: hex }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
                 {t.layerTip}
               </p>
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-1.5">
                 {tipModes.map((mode) => (
                   <button
                     key={mode.id}
                     type="button"
                     onClick={() => setTipStyle(mode.id)}
-                    className={`rounded-sm border px-3 py-1.5 text-[11px] uppercase tracking-[0.2em] ${
+                    className={`rounded-sm border px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] ${
                       tipStyle === mode.id
                         ? "border-teal-400/50 text-teal-100"
                         : "border-white/15 text-white/55 hover:border-white/30"
@@ -819,23 +1132,23 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
                     {mode.label}
                   </button>
                 ))}
-                <label className="ml-1 flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-white/55">
+                <label className="ml-1 flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-white/55">
                   <span>{t.tipColor}</span>
                   <input
                     type="color"
                     value={tipColor}
                     onChange={(e) => setTipColor(e.target.value)}
-                    className="h-7 w-10 cursor-pointer rounded-sm border border-white/20 bg-transparent"
+                    className="h-6 w-8 cursor-pointer rounded-sm border border-white/20 bg-transparent"
                   />
                 </label>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1">
                   {tipPresets.map((hex) => (
                     <button
                       key={hex}
                       type="button"
                       aria-label={hex}
                       onClick={() => setTipColor(hex)}
-                      className={`h-5 w-5 rounded-full border ${
+                      className={`h-4 w-4 rounded-full border ${
                         tipColor.toLowerCase() === hex.toLowerCase()
                           ? "border-white"
                           : "border-white/25"
@@ -848,8 +1161,9 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
               <CraftKnobGrid knobs={tipKnobs} />
             </div>
           ) : null}
+          </div>
         </div>
-      </div>
+      )}
     </main>
   );
 }
