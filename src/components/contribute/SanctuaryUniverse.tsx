@@ -65,7 +65,6 @@ import {
   ACTIVE_TEMPLATE,
   CONSTELLATION_LAYOUT_ID,
   buildCraftSlotFills,
-  constellationBridgePositions,
   constellationPositions,
   getResolvedStar,
   resolveConstellation,
@@ -257,14 +256,6 @@ function Constellation({
     return resolveConstellation();
   }, [slotLit]);
   const positions = useMemo(() => constellationPositions(stars), [stars]);
-  const bridgePositions = useMemo(() => {
-    const embed = heroAtom?.embedScale ?? 0.42;
-    const g = heroAtom?.globalScale ?? 1;
-    return constellationBridgePositions(positions, {
-      heroEmbed: embed,
-      heroGlobal: g,
-    });
-  }, [positions, heroAtom?.embedScale, heroAtom?.globalScale]);
 
   useFrame(({ camera }) => {
     if (revealTRef) {
@@ -602,7 +593,7 @@ function Constellation({
         );
       })}
       <LightBridges
-        positions={bridgePositions}
+        positions={positions}
         edges={ACTIVE_TEMPLATE.edges}
         ghostIds={ghostIds}
         draw={draw}

@@ -4,7 +4,7 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 26 août 2026 — Polish : anchor traits Hero (embed) · Play/Rejouer → tous ghosts.
+- 26 août 2026 — Fin reveal → tous ghosts (wizard étape 2) · mock lit au Rejouer.
 - 26 août 2026 — **Cam pull** dès 0,59 · easeOut + sync `drawU` · knob longueur trait.
 - 26 août 2026 — Draw **D–F** + barre beats lab · `C_END` 0,57.
 - 26 août 2026 — Hero **C3–C5** : spikes · flash larme · micro-hold.
@@ -84,7 +84,7 @@ CEO craft → ensuite **0b KEEP** (fixer les defaults).
 ### 4.1 Recette naissance (KEEP craft — 26 août) — reproduire
 
 **Lab :** `/fr/contribute/test-lueur` → onglet **Constellation** → **Rejouer** (durée ~14 s).  
-**« Tous ghosts »** ≈ état 1ʳᵉ anim (slots non allumés).
+**« Tous ghosts »** ≈ état **après** reveal complet (pont wizard étape 2) — pas au Play.
 
 | Fichier | Rôle |
 |---------|------|
@@ -202,7 +202,7 @@ Palette Champ / SKU · seuils Lueurs — [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_S
 
 | Item | Statut | Note |
 |------|--------|------|
-| Origine traits → centre visuel Hero | ✅ | `heroBridgeAnchor` · embed + globalScale |
-| Play / Rejouer → tous ghosts | ✅ | `allGhostSlotLit()` verrouillé |
+| Origine traits → centre visuel Hero | ⏳ | graph vs embed — pas de hack anchor |
+| Fin reveal → tous ghosts | ✅ | `allGhostSlotLit()` quand `revealT` ≥ 1 · Rejouer restore mock lit |
 | **WOW signature** CEO | ⏳ | Pas posée — attente direction perso |
 | Tuning −0,24 · courbes voile/montée | ⏳ | Passes CEO si besoin |
