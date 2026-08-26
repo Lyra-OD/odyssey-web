@@ -49,7 +49,7 @@ const SEG = {
   A_END: 0.02,
   B_END: 0.4,
   /** Fin C5 micro-hold · début traits */
-  C_END: 0.58,
+  C_END: 0.57,
 } as const;
 
 /** Grain gathers in the name. */

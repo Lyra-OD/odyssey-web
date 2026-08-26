@@ -101,7 +101,7 @@ CEO craft → ensuite **0b KEEP** (fixer les defaults).
 | `A_END` | `0.02` | Vide très court |
 | `B_END` | `0.40` | Fin hold nom (avant draw) |
 | `HERO_START` | `0.24` | Grain/voile commencent **dans** le nom |
-| `C_END` | `0.58` | Fin C0–C2 · début traits |
+| `C_END` | `0.57` | Fin C0–C2 · début traits |
 | Cam birth Z | `≈3.45` | Serré sur Hero+nom |
 | Cam idle Z | `≈7.5` | Cadre Leo |
 | Offset départ Hero | **`y = −0.24`** | Milieu optique du mot (pas −0.4 = trop bas) |
@@ -135,7 +135,7 @@ Beat lab (affiche `A` / `B` / `C0` / `C1` / `C2` / `draw`) = `resolveBirth(revea
 | **C3** | `u` ≥ 0,70 | **Spikes** se déploient (dernier ~30 % de C) |
 | **C4** | ~`u` 0,86 | **Flash larme** ≤ 0,12 (size « clique » idle) |
 | **C5** | `u` ≥ 0,92 | **Micro-hold** étoile + nom · `heroKeep` · traits pas encore |
-| **draw** | ≥ 0,58 | Traits · Hero = KEEP exact · pull-back |
+| **draw** | ≥ 0,57 | Traits · Hero = KEEP exact · pull-back |
 
 **Voile / grain (souffle) — à reproduire ainsi :**
 2. Scale : **mini → peak lent (`easeInOut`, grow jusqu’à ~u 0,42–0,48) → contracte** vers le core.  
@@ -165,8 +165,8 @@ Beat lab (affiche `A` / `B` / `C0` / `C1` / `C2` / `draw`) = `resolveBirth(revea
 3. Voile : mini → peak fluide → contracte (pas précipité).  
 4. Étoile monte du nom vers le siège.  
 5. Fin C / draw : Hero = **KEEP** onglet 1.  
-6. **C3–C5** : spikes → flash larme → hold (~u 0,92) **avant** traits à 0,58.  
-7. Traits après ~0,58 · cam s’ouvre.
+6. **C3–C5** : spikes → flash larme → hold (~u 0,92) **avant** traits à 0,57.
+7. Traits après ~0,57 · cam s’ouvre.
 
 #### Pas encore (D–F)
 
