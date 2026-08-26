@@ -1,9 +1,10 @@
 # Odyssey — Parcours Sanctuaire (User X · première visite)
 
 **Type :** produit · **Vérité pour :** prologue cinéma · hub ciel · séparation wizard · tiroir média · navigation.  
-**Dernière MAJ :** 25 août 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — §11b **matrice implémentation** (vérité code J1–J9) · écart D1 documenté · playbook démo = hors ce doc.
 - 26 août 2026 — **J2** : wizard étape 1 sur ciel — Hero idle · naissance live au prénom · reveal post-validation.
 - 25 août 2026 — Plan : phase **C craft** (Hero · constellation · wormhole) **avant** J1 shell prologue.
 - 25 août 2026 — Étape 2 invite : canal-agnostique · skip immédiat · layout Partager / Copier / QR (§5c).
@@ -17,7 +18,8 @@
 - Stratégie Quiet Luxury : [`SANCTUARY_STRATEGY.md`](../SANCTUARY_STRATEGY.md)
 - Craft prologue / ciel : [`SANCTUARY_SKY_CRAFT.md`](../SANCTUARY_SKY_CRAFT.md) · [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md)
 
-**Statut :** vision produit **figée** (étapes 1–3 tranchées) — **pas encore** implémentée comme flow onboarding unique.
+**Statut :** vision produit **figée** (étapes 1–3 tranchées). **Implémentation partielle** — matrice code §11b.  
+**Présentation démo VP** (live vs vidéo, timing oral) : [`MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) · plan opérationnel [`TEMP/PLAN_DEMO_PATRICE.md`](../TEMP/PLAN_DEMO_PATRICE.md) — **ne pas** confondre avec ce canon.
 
 ---
 
@@ -333,8 +335,8 @@ Ordre craft recommandé (sessions) : **C1 → C2 → C3 → C4** (C5 en parallè
 |-------|------|--------------|--------------|
 | **J0** | Copy hub + décisions 1–3 | Ce doc + [`COPY.md`](../COPY.md) / JSON | ✅ D1–D3 figées |
 | **J1** | Prologue shell | Route onboarding · enchaîne **C4 éclipse + C3 wormhole + ciel** | 1× playable dev — **après gate C** |
-| **J2** | Overlay étape 1 | Panneau verre · prénom + 2 dates · autosave step 1 | 🔄 ciel + birth live · reveal validation |
-| **J3** | Récompense constellation | Brancher reveal Leo post-step-1 (craft **C2** déjà KEEP) | Animation 2–4 s |
+| **J2** | Overlay étape 1 | Panneau verre · prénom + 2 dates · autosave step 1 | 🟡 **partiel** — voir §11b |
+| **J3** | Hub post-récompense | Carte Inviter / Continuer après reveal (2–4 s) | ⏳ pas branché — enchaîne étape 2 |
 | **J4** | Hub + étape 2 overlay | UI post-récompense · invite canal-agnostique · retirer co-org step 2 | Partager · Copier · skip immédiat |
 | **J5** | Tiroir global | Chrome icône Coffre · ouvert depuis ciel + studio | Même banque step 3 |
 | **J6** | Nav permanente | Ciel ↔ wizard ↔ studio ↔ tiroir | 1 clic partout |
@@ -342,8 +344,29 @@ Ordre craft recommandé (sessions) : **C1 → C2 → C3 → C4** (C5 en parallè
 | **J8** | Lueurs grille B + naissance | [`SANCTUARY_SKY_LUEURS.md`](../SANCTUARY_SKY_LUEURS.md) P2–P6 · craft **C5** | SKU → étoile colorée |
 | **J9** | DA + mobile | [`DA_SCREENS.md`](../DA_SCREENS.md) frames onboarding | Bottom sheet 55 % |
 
-**Ne pas faire avant gate C :** J1–J3 (shell prologue / overlay / reveal produit).  
+**Gate C → J1** inchangée (prologue cinéma complet). **Exception J2-first (26 août) :** overlay étape 1 branché **avant** J1 pour valider birth + reveal dans le wizard réel — sans remplacer le prologue labs.
+
 **Ne pas faire en J1–J4 :** grille Lueurs complète en prod, seuils nebula, certificats papier.
+
+### 11b. État d’implémentation (vérité code · canon)
+
+Dernière sync : **26 août 2026**. Mettre à jour **ici** à chaque milestone J — pas dans le playbook démo.
+
+| Phase | Vision (§4) | Code aujourd’hui | Fichiers / surface |
+|-------|-------------|------------------|---------------------|
+| **J1** Prologue | Éclipse → wormhole → Hero seule | ⏳ **Labs only** (`/test-eclipse*`, `/test-wormhole`) | Pas de route prod onboarding |
+| **J2** Overlay étape 1 | Panneau verre · ciel visible · birth live · reveal validation | 🟡 **Partiel** | `SanctuaryWizardStep1Sky.tsx` · `useWizardStep1Reveal.ts` · `wizardBirthReveal.ts` · `TributeWizard.tsx` (`step1Sky` si organisateur, étape 1) |
+| **J3** Hub post-reveal | Carte Inviter / Continuer · pause 2–4 s | ⏳ **Absent** | Après reveal → `goNext` direct vers étape 2 |
+| **J4** Invite overlay | Canal-agnostique · skip · sans co-org | 🟡 **Ancien flow** | `SanctuaryInviteStep` — co-org encore possible · pas overlay ciel |
+| **J5–J9** | Tiroir global · nav · Lueurs · mobile | ⏳ | Wizard étapes 2–7 inchangées hors J2 |
+
+**J2 — détail livré :**
+- Ciel fullscreen (`SanctuaryUniverse` background) + panneau verre formulaire.
+- Naissance Hero au **prénom** (beats craft C0–C2).
+- Validation étape 1 → reveal constellation ~3,2 s (`playReward`) puis passage étape 2.
+- Séparation Hero↔nom (spring) — craft [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md).
+
+**Écart D1 (à trancher) :** décision CEO = **prénom + 2 dates** (§10 D1). Code wizard exige encore **nom de famille** (`canProceedEssential` dans `TributeWizard.tsx`). Constellation / displayName utilisent prénom en live ; le nom reste requis pour « Continuer ».
 
 ---
 

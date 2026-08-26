@@ -1,23 +1,21 @@
 # Odyssey — Rencontre Patrice (VP groupe funéraire)
 
 **Type :** playbook · **Vérité pour :** bible stratégique Urgel Bourgie · démo Mode A / Mode B · script 60 min.  
-**Dernière MAJ :** 25 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 26 août 2026 — Chiffres pitch : **$/famille** · 5,5–11 k$ = hyp. **bannière** (pas par salon) · volume 3 000 daté.
+- 26 août 2026 — §0 **canon vs présentation** · scope live/vidéo (ref §11b journey).
+- 26 août 2026 — Chiffres pitch : **$/famille** · 5,5–11 k$ = hyp. **bannière** · plan TEMP renommé.
 - 26 août 2026 — Bloc business = **Fonds / achat collaboratif** (cercle + famille).
-- 25 août 2026 — lien adoption & pilote Urgel · plan demain TEMP.
-- 25 août 2026 — §1 stratégie (179 $/349 $, net distribuable) · §2 Mode A · §3 Mode B vision prologue.
-- 25 août 2026 — Reality check labs · chaînon Salon · phrase directeur funéraire.
+- 25 août 2026 — §1 stratégie · §2 Mode A · §3 Mode B vision prologue.
 - 21 août 2026 — rush opérationnel : [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md).
-- 19 août 2026 — GTM B2C : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) (hors ce playbook).
 
 **Audience :** Patrice (VP Urgel Bourgie) · **Durée :** 60 min · **Auteur :** Erik  
 **Rush jour J (6 beats, Figma Paul, checklist) :** [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) — **ne pas remplacer** ce playbook.
 
 **Complète :** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`business/URGEL_ADOPTION_AND_PILOT.md`](business/URGEL_ADOPTION_AND_PILOT.md) · [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2.
 
-**Plan J+1 :** [`TEMP/PLAN_DEMO_PATRICE_DEMAIN.md`](TEMP/PLAN_DEMO_PATRICE_DEMAIN.md)  
+**Plan opérationnel (TEMP) :** [`TEMP/PLAN_DEMO_PATRICE.md`](TEMP/PLAN_DEMO_PATRICE.md)  
 **Murder Board VP :** [`business/PATRICE_MURDER_BOARD_PITCH.md`](business/PATRICE_MURDER_BOARD_PITCH.md)  
 **Script oral (apprendre) :** [`business/SCRIPT_DE_FER_PATRICE.md`](business/SCRIPT_DE_FER_PATRICE.md)
 
@@ -26,6 +24,33 @@
 **Objectif :** qu’il **voie** le produit, comprenne le share, booke un **pilote** — pas qu’il signe un contrat sur place.
 
 **À ne pas faire :** envoyer le deck avant. Montrer. Laisser les gros chiffres après l’émotion.
+
+---
+
+## 0. Canon produit vs présentation démo
+
+Deux couches — **ne pas fusionner** :
+
+| Couche | Où | Rôle |
+|--------|-----|------|
+| **Produit (canon)** | [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b · [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) | Vision J1–J9 + **vérité code** · mis à jour à chaque milestone |
+| **Présentation (démo VP)** | Ce playbook · [`TEMP/PLAN_DEMO_PATRICE.md`](TEMP/PLAN_DEMO_PATRICE.md) | Ce qu’on **montre** · live vs vidéo · checklists J-7 / J-1 · **date session** |
+
+Mettre à jour le **canon** quand le code change. Mettre à jour le **plan TEMP** quand la date ou le script oral change — sans réécrire le journey.
+
+### Scope présentation (réf. code · août 2026)
+
+| Moment | Live prod ? | Notes oral |
+|--------|-------------|------------|
+| Salon → invitation Souvenir | ✅ Mode A | Inchangé |
+| Sanctuaire mobile (contribute) | ✅ Mode A | Inchangé |
+| **Prologue** éclipse → wormhole | ❌ **Vidéo** | J1 = labs — « prochaine MAJ » |
+| **Wizard étape 1 ciel** (J2) | 🟡 **Optionnel** | Tester avant ; si lag, passer |
+| **Hub post-reveal** (J3) | ❌ Pas encore | Ne pas promettre carte Inviter / Continuer |
+| Studio Coffre → Film → Finaliser | ✅ Mode A | Inchangé |
+| Commissions Salon | ✅ Mode A | Inchangé |
+
+**Règle safe :** Mode A seul suffit. Mode B = extrait **vidéo 60–90 s** en complément — pas un pari live sur J1.
 
 ---
 

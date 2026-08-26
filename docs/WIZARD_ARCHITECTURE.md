@@ -1,9 +1,10 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 25 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — **J2** Sanctuaire étape 1 : orchestrator + flow overlay ciel (fichiers · reveal · gate validation).
 - 25 août 2026 — parcours Sanctuaire : étapes 1–3 figées (identité · invite seul · Plus tard Coffre).
 - 17 août 2026 — invitation Salon Souvenir-only (plus de cartes forfait).
 - 17 août 2026 — Scanner Phase B : aperçu restauration → add-on `aiRetouch`.
@@ -24,6 +25,11 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 | File | Role |
 |------|------|
 | `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (package Dossier + phase progress) |
+| `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | **Step 1 (J2)** — ciel fullscreen + panneau verre ; `SanctuaryUniverse` background · birth live · reveal contrôlé |
+| `src/hooks/useWizardStep1Reveal.ts` | Phase reveal étape 1 (`idle` → `birth` → `reward` → `done`) · orchestration `playReward()` |
+| `src/lib/wizard/wizardBirthReveal.ts` | Courbes / beats C0–C2 pour naissance Hero au prénom (pont craft → wizard) |
+| `src/components/contribute/SanctuaryUniverse.tsx` | Scène WebGL partagée (lab + wizard) — Hero, constellation, lift séparation Hero↔nom |
+| `src/components/contribute/useHeroNameSeparation.ts` | Spring séparation Hero ↔ nom (craft J2) |
 | `src/hooks/useWizardStoryboard.ts` | Domaine storyboard pur — resync chapitres, doublons, validation structurelle, estimation durée ; autosave reste dans `TributeWizard` via `persistStoryboardRef` |
 | `src/components/tribute/WizardPhaseProgress.tsx` | Minimalist 3-phase progress indicator (Déposer / Composer / Recevoir) — replaces the old 8-circle `WizardStepper` |
 | `src/components/tribute/PackageDossierPanel.tsx` | Global off-canvas package selector (« Le Dossier ») — editorial trigger, exhaustive inclusions from `PACKAGE_MANIFEST`, cross-fade comparison, inline downgrade guard. Visible from Step 1 onward, replaces the per-step `WizardBasePackagePicker` and the short-lived `StoryboardPackageSwitcher` dropdown |
@@ -180,7 +186,7 @@ Package selection is no longer step-bound: the Dossier trigger (`PackageDossierP
 
 | Step | Label (i18n key) | Main UI | Server / DB |
 |------|------------------|---------|-------------|
-| 1 | `stepperEssentials` | Name, dates, avatar | `essentials`, `basePackage`; draft via `POST /api/projects/draft` |
+| 1 | `stepperEssentials` | **J2 :** overlay ciel (`SanctuaryWizardStep1Sky`) + panneau verre · prénom, **nom**, dates, avatar · reveal post-validation · **J3 hub** ⏳ | `essentials`, `basePackage`; draft via `POST /api/projects/draft` |
 | 2 | `stepperSources` | Social source + URL | `socialSources`, `basePackage` |
 | 3 | `stepperVault` | Dropzone + upload queue + **Scanner Compagnon QR** (cible) | `media_assets` rows; reload `GET /api/projects/[id]/media` · voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | 4 | `stepperChapters` | **Chapitres musicaux dynamiques** (`StoryboardChaptersStep`, live — ✅ `S6`) | `storyboard.chapters[].song` (canonique, plus de bridge) |
@@ -398,6 +404,15 @@ Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WAT
 | `WizardCartSummary` | Steps 5–6 (B2C only) | Line recap |
 | `StoryboardMontageStep` | Step 5 | Livre Ouvert — DnD, Composition Magique — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
 | `MontageExtensionsStep` | Checkout (étape 7) | Extensions + « Déjà inclus » when Heritage |
+
+### Step 1 — overlay Sanctuaire (J2)
+
+État détaillé : [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b. Playbook démo (live vs vidéo) : [`MEETING_PATRICE_VP.md`](MEETING_PATRICE_VP.md).
+
+- **Activation :** `step1Sky = !isEditor && currentStep === 1` dans `TributeWizard.tsx`.
+- **Validation :** `canProceedEssential` — prénom, **nom**, naissance, décès (écart D1 CEO : voir journey §11b).
+- **Continuer :** `flush()` autosave → si reveal pas `done`, `step1Reveal.playReward()` (~3,2 s) → puis étape 2 (**pas** de hub J3).
+- **Craft :** naissance C0–C2 · séparation Hero↔nom · [`ODYSSEY_LUEUR_CRAFT.md`](ODYSSEY_LUEUR_CRAFT.md).
 
 ---
 

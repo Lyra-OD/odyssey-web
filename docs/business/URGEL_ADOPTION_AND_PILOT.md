@@ -9,7 +9,7 @@
 **Liens :**
 - Démo Patrice (Mode A/B) : [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md)
 - Rush jour J : [`../TEMP/DEMO_PATRICE_URGEL_RUSH.md`](../TEMP/DEMO_PATRICE_URGEL_RUSH.md)
-- Plan demain : [`../TEMP/PLAN_DEMO_PATRICE_DEMAIN.md`](../TEMP/PLAN_DEMO_PATRICE_DEMAIN.md)
+- Plan prep démo : [`../TEMP/PLAN_DEMO_PATRICE.md`](../TEMP/PLAN_DEMO_PATRICE.md)
 - RevShare · scoreboard conseiller : [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md)
 - Parcours famille (3 champs · Plus tard) : [`../product/SANCTUARY_USER_JOURNEY.md`](../product/SANCTUARY_USER_JOURNEY.md)
 - Grille prix live : [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) §2

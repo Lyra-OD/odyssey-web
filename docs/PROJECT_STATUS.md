@@ -4,13 +4,11 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — Sanctuaire **J2** doc : matrice implémentation §11b [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · séparation canon / playbook démo.
 - 26 août 2026 — CI : job **`next build`** en parallèle de `npm test` (attrape les erreurs TS avant Vercel).
 - 26 août 2026 — **Egress démo VP** : `NEXT_PUBLIC_DEMO_MODE` · poll Coffre off · pas de fallback full-res · DB sans `wizard_state` sur endpoints publics.
 - 21 août 2026 — carte docs : catégories business/product/design + dossiers pour **nouveaux** fichiers ([`README.md`](README.md)).
 - 21 août 2026 — GTM B2C + plan session Figma : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
-- 21 août 2026 — DA : playbook Vague 1 — [`DA_SCREENS.md`](DA_SCREENS.md).
-- 19 août 2026 — S5-L étendu : wizard + hero, même voix « film / souvenirs » (FR/EN).
-- 19 août 2026 — CI GitHub : `npm test` (Vitest business) sur `main` et chaque PR.
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -34,7 +32,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L** copy ✅ · S5-J/K ⏳ |
 | **Scanner** | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Marque Éclipse** | 🟢 | Play A–B KEEP · mark + exports · brancher UI ⚪ · wormhole = lab |
-| **Tests & CI** | 🟢 | Vitest business 🟢 · CI GitHub `npm test` sur `main` + PR |
+| **Tests & CI** | 🟢 | Vitest business 🟢 · CI GitHub `npm test` + **`next build`** sur `main` + PR |
 | **Security** | 🟡 | RLS, gate Salon, entitlements never-trust, webhook Creatomate fail-closed |
 
 **Suite :** ops P16 (quand Supabase dégelé) · master Stingray · pilote 1 tenant flag ON.
@@ -48,7 +46,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Landing / connexions | 🟢 | Halo-Éclipse |
 | Wizard 7 étapes | 🟢 | Étape 5 = Livre Ouvert · Co-Créateur 3–5 |
 | Marque Éclipse + ODYSSEY | 🟢 | [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · brancher produit ⚪ |
-| Ciel Sanctuaire / intro | 🟡 | Craft ✅ · `scene.intro` OFF |
+| Ciel Sanctuaire / intro | 🟡 | Craft ✅ · **J2** wizard étape 1 (ciel + birth + reveal) 🟡 · hub J3 ⏳ · prologue J1 labs · `scene.intro` OFF |
 | Médias / Storage | 🟢 | Thumbs WebP + cache session — récit [log §4.1](_archive/PROJECT_STATUS_LOG.md#41-supabase-storage-egress-juin-2026) |
 | Stingray preview | 🟢 | MAPI + mock |
 | Checkout famille (Stripe) | 🟢 | Soft Cap, `freemium_free`, entitlements |
@@ -84,7 +82,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 **Ne plus faire :** débit jetons, wholesale 40 $, coexistence `is_freemium=false`, saga checkout « v1 jetons ».
 
-**Dette acceptée :** Preview/Checkout lisent encore le pont `actTracks` jusqu’à S8/S9 · mark Éclipse pas partout · intro ciel OFF.
+**Dette acceptée :** Preview/Checkout lisent encore le pont `actTracks` jusqu’à S8/S9 · mark Éclipse pas partout · intro ciel OFF · étape 1 code exige **nom** vs D1 CEO (prénom + 2 dates) — [`SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b.
 
 **Différé :** Stripe Connect auto-payout · Scanner Phase B · Gants Blancs ops · Lyra produit · verticales pets UI.
 

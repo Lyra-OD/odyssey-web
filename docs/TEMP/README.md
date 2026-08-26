@@ -26,7 +26,8 @@ Ne pas laisser pourrir 6 mois sans date dans le titre.
 | Fichier | Usage |
 |---------|--------|
 | [`DEMO_PATRICE_URGEL_RUSH.md`](DEMO_PATRICE_URGEL_RUSH.md) | Max démo convaincante + rush Figma Paul + courriel |
-| [`PLAN_DEMO_PATRICE_DEMAIN.md`](PLAN_DEMO_PATRICE_DEMAIN.md) | Plan J+1 démo + craft + kit QR |
+| [`PLAN_DEMO_PATRICE.md`](PLAN_DEMO_PATRICE.md) | Plan prep démo (J-7 / J-1 / jour J) · craft vidéo · kit QR |
+| [`PLAN_DEMO_PATRICE_DEMAIN.md`](PLAN_DEMO_PATRICE_DEMAIN.md) | Redirect → `PLAN_DEMO_PATRICE.md` |
 | [`NDA_UNILATERAL_BROUILLON_QC.md`](NDA_UNILATERAL_BROUILLON_QC.md) | **Guide A / B / C / D** — différences et reco |
 | [`NDA_A_VALIDEE_LEGALE.md`](NDA_A_VALIDEE_LEGALE.md) | **Version A** — validée légale |
 | [`NDA_B_FREEMIUM_REVSHARE.md`](NDA_B_FREEMIUM_REVSHARE.md) | **Version B** — Freemium / RevShare (archive ; préférer D) |
