@@ -17,7 +17,8 @@
 **Complète :** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`business/URGEL_ADOPTION_AND_PILOT.md`](business/URGEL_ADOPTION_AND_PILOT.md) · [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2.
 
 **Plan J+1 :** [`TEMP/PLAN_DEMO_PATRICE_DEMAIN.md`](TEMP/PLAN_DEMO_PATRICE_DEMAIN.md)  
-**Murder Board VP :** [`business/PATRICE_MURDER_BOARD_PITCH.md`](business/PATRICE_MURDER_BOARD_PITCH.md)
+**Murder Board VP :** [`business/PATRICE_MURDER_BOARD_PITCH.md`](business/PATRICE_MURDER_BOARD_PITCH.md)  
+**Script oral (apprendre) :** [`business/SCRIPT_DE_FER_PATRICE.md`](business/SCRIPT_DE_FER_PATRICE.md)
 
 > **Reality check :** jamais de démo **live** sur des labs déconnectés (`/test-eclipse*`, `/test-wormhole`, `/test-lueur`) devant un VP — sauf **vidéo de secours blindée**. **Mode A** = prod live. **Mode B** = vision prologue (live si branché, sinon vidéo + « prochaine MAJ »).
 
