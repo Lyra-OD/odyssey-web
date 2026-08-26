@@ -1,12 +1,21 @@
 /**
  * Birth choreography on revealT ∈ [0, 1].
- * Name (A–B) + Hero C0–C2 from mid-name → KEEP seat. C3–C5 later.
+ * Name (A–B) + Hero C0–C5 from mid-name → KEEP seat → draw.
  *
  * Recette canon (constantes, checklist) :
  * docs/ODYSSEY_LUEUR_CRAFT.md §4.1
  */
 
-export type BirthBeat = "A" | "B" | "C0" | "C1" | "C2" | "draw";
+export type BirthBeat =
+  | "A"
+  | "B"
+  | "C0"
+  | "C1"
+  | "C2"
+  | "C3"
+  | "C4"
+  | "C5"
+  | "draw";
 
 export type BirthPhases = {
   beat: BirthBeat;
@@ -19,25 +28,19 @@ export type BirthPhases = {
   nameDriftY: number;
   nameGlow: number;
 
-  /** Overall size 0–1 (mote flat, then expo-in → KEEP scale) */
   heroSize: number;
-  /** 0 = mid-name · 1 = idle Hero seat (rises out of the word) */
   heroFromName: number;
   heroGrain: number;
-  /** Grain size breath: mini → peak → mote (0–1 mapped in HeroStar) */
   heroGrainScale: number;
   heroVeil: number;
-  /** Veil: mini → peak fumée → contracte vers le core */
   heroVeilScale: number;
-  /** → 1 = full KEEP white layer */
   heroCore: number;
-  /** → 1 = full KEEP teal layer */
   heroTeal: number;
-  /** → 1 = full KEEP spikes (0 during C0–C2 proper) */
   heroSpikes: number;
   heroBirth: number;
+  /** Soft tear flash ≤ ~0.12 (C4) */
   heroFlash: number;
-  /** True when layers must match KEEP exactly (no birth muls) */
+  /** Full KEEP atom — no birth muls (C5 + draw) */
   heroKeep: boolean;
   drawU: number;
 };
@@ -45,18 +48,25 @@ export type BirthPhases = {
 const SEG = {
   A_END: 0.02,
   B_END: 0.4,
-  /** Slightly snappier C window */
+  /** Fin C5 micro-hold · début traits */
   C_END: 0.58,
 } as const;
 
-/** Absolute revealT — grain gathers in the name. */
+/** Grain gathers in the name. */
 const HERO_START = 0.24;
 
-/** Within hero local u ∈ [0,1] (HERO_START→C_END). */
+/** u ∈ [0,1] on [HERO_START, C_END]. */
 const C = {
   C0_END: 0.16,
   C1_END: 0.42,
-  C2_END: 1,
+  /** Core / size mostly done */
+  C2_END: 0.7,
+  /** Spikes — dernier ~30 % de C */
+  C3_START: 0.7,
+  /** Flash larme (size « clique » idle) */
+  C4_CENTER: 0.86,
+  /** Micro-hold étoile + nom avant traits */
+  C5_START: 0.92,
   SIZE_FLAT: 0.4,
 } as const;
 
@@ -100,15 +110,10 @@ function easeInOutCubic(t: number): number {
   return x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2;
 }
 
-/**
- * Rise from mid-name → seat: hesitate in the word, then detach, soft land.
- * Not a UI easeOut rail.
- */
 function organicFromName(u: number): number {
   if (u <= 0.14) return 0;
   if (u >= 0.68) return 1;
   const x = (u - 0.14) / (0.68 - 0.14);
-  // Bias: slow leave, then commit, settle — blend of in-out + mild push
   const body = easeInOutCubic(x);
   const commit = Math.pow(x, 1.25);
   return clamp01(0.4 * body + 0.6 * commit);
@@ -174,11 +179,8 @@ export function resolveBirth(revealT: number): BirthPhases {
   const u =
     t < HERO_START ? 0 : t < SEG.C_END ? (t - HERO_START) / heroSpan : 1;
 
-  // Presence gathers in the name first; rise lags (magic phrasing)
   const heroFromName = u <= 0 ? 0 : organicFromName(u);
 
-  // --- Grain + veil: same language as name mist ---
-  // Opacity: fumée → présence (soft), then yields to core
   const grainMist =
     u <= 0
       ? 0
@@ -186,13 +188,11 @@ export function resolveBirth(revealT: number): BirthPhases {
         (1 - smoothstep(0.48, 0.78, u) * 0.92);
   const heroGrain = Math.min(1, grainMist);
 
-  // Grain size: mini → peak (lent) → mote — grow takes most of early C
   const grainGrow = easeInOutCubic(smoothstep(0.02, 0.42, u));
   const grainShrink = easeInOutCubic(smoothstep(0.48, 0.82, u));
   const heroGrainScale =
     0.22 + 0.95 * grainGrow * (1 - grainShrink) + 0.32 * grainShrink;
 
-  // Veil opacity: fumée douce comme le nom
   const veilMist =
     u <= 0
       ? 0
@@ -200,7 +200,6 @@ export function resolveBirth(revealT: number): BirthPhases {
         (1 - smoothstep(0.52, 0.92, u) * 0.96);
   const heroVeil = Math.min(1, veilMist * 0.92);
 
-  // Veil scale: mini → peak (lent / fluide) → contracte into core
   const veilGrow = easeInOutCubic(smoothstep(0.04, 0.48, u));
   const veilShrink = easeInOutCubic(smoothstep(0.52, 0.94, u));
   const VEIL_MIN = 0.28;
@@ -211,18 +210,17 @@ export function resolveBirth(revealT: number): BirthPhases {
     (VEIL_PEAK - VEIL_MIN) * veilGrow * (1 - veilShrink) +
     (VEIL_END - VEIL_MIN) * veilShrink;
 
-  // Core/teal lag the rise — size after presence, not same slider
   const heroCore =
     u <= 0
       ? 0
-      : easeInQuint(smoothstep(C.C0_END * 0.55, 0.86, u));
+      : easeInQuint(smoothstep(C.C0_END * 0.55, C.C2_END * 0.95, u));
 
   const heroTeal =
     u <= 0
       ? 0
-      : easeInQuint(smoothstep(C.C0_END * 0.85, 0.94, u));
+      : easeInQuint(smoothstep(C.C0_END * 0.85, C.C2_END * 0.98, u));
 
-  // Size lags fromName — grow after it has started to leave the word
+  // Size reaches idle before C3 — flash can land on the « click »
   const heroSize = (() => {
     if (u <= 0) return 0;
     const sizeU = Math.max(0, (u - 0.08) / 0.92);
@@ -230,26 +228,46 @@ export function resolveBirth(revealT: number): BirthPhases {
       return 0.04 + 0.07 * (sizeU / C.SIZE_FLAT);
     }
     const rise = (sizeU - C.SIZE_FLAT) / (1 - C.SIZE_FLAT);
-    return 0.11 + 0.89 * Math.max(easeInQuint(rise), easeInExpo(rise) * 0.75);
+    const riseCap = Math.min(1, rise / 0.88);
+    return (
+      0.11 + 0.89 * Math.max(easeInQuint(riseCap), easeInExpo(riseCap) * 0.75)
+    );
   })();
 
-  // Spikes still reserved for C3 — soft KEEP bridge only after C_END
+  // C3 — spikes derniers ~30 % (forme arrive, n’explose pas)
   const heroSpikes =
-    t < SEG.C_END ? 0 : smoothstep(SEG.C_END, SEG.C_END + 0.08, t);
+    u < C.C3_START
+      ? 0
+      : easeInOutCubic(smoothstep(C.C3_START, C.C5_START + 0.04, u));
 
-  const heroFlash = 0;
+  // C4 — larme ≤ 0.12 quand la taille « clique »
+  const heroFlash = (() => {
+    if (u < C.C3_START + 0.05 || u > C.C5_START) return 0;
+    const flashSpan = 0.1;
+    const du = Math.abs(u - C.C4_CENTER) / flashSpan;
+    if (du >= 1) return 0;
+    const bell = Math.cos(du * Math.PI * 0.5);
+    const sizeGate = smoothstep(0.78, 0.9, heroSize);
+    return Math.min(0.12, bell * bell * 0.12 * sizeGate);
+  })();
 
   const heroKeep =
-    t >= SEG.C_END + 0.08 &&
-    heroVeil < 0.03 &&
-    heroGrain < 0.03;
+    t >= SEG.C_END ||
+    (u >= C.C5_START &&
+      heroVeil < 0.04 &&
+      heroGrain < 0.04 &&
+      heroCore >= 0.98 &&
+      heroTeal >= 0.98);
 
   let beat: BirthBeat = "A";
   if (t >= SEG.C_END) beat = "draw";
   else if (t >= HERO_START) {
-    if (u < C.C0_END) beat = "C0";
-    else if (u < C.C1_END) beat = "C1";
-    else beat = "C2";
+    if (u >= C.C5_START) beat = "C5";
+    else if (u >= C.C4_CENTER - 0.06) beat = "C4";
+    else if (u >= C.C3_START) beat = "C3";
+    else if (u >= C.C1_END) beat = "C2";
+    else if (u >= C.C0_END) beat = "C1";
+    else beat = "C0";
   } else if (t >= SEG.A_END) beat = "B";
 
   const drawU =

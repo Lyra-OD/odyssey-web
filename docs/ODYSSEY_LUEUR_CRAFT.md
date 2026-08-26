@@ -4,9 +4,9 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 26 août 2026 — **Recette naissance** KEEP : nom fumée + Hero C0–C2 (depuis le nom, voile mini→peak→contracte, cam serrée→pull-back).
-- 26 août 2026 — Lab constellation : knobs **slots** + **traits major/minor** (style · couleur · glow).
-- 26 août 2026 — Plan A→F + **caméra** (canon) : serré → pull-back ; Hero = centre causal.
+- 26 août 2026 — Hero **C3–C5** : spikes (fin C) · flash larme ≤ 0,12 · micro-hold avant traits.
+- 26 août 2026 — **Recette naissance** KEEP : nom fumée + Hero C0–C2 (depuis le nom, cam serrée→pull-back).
+- 26 août 2026 — Lab constellation : knobs **slots** + **traits major/minor**.
 - 26 août 2026 — **KEEP Hero** : defaults `DEFAULT_HERO_*` + parallax 1.2 · globalScale 0.83.
 - 25 août 2026 — Onglet 2 : Hero craft partagé · courant trait/étoile/orbe.
 
@@ -123,19 +123,21 @@ Beat lab (affiche `A` / `B` / `C0` / `C1` / `C2` / `draw`) = `resolveBirth(revea
 
 **Interdit :** bobbing idle du nom · yield quand l’étoile naît (retirés — trop méca).
 
-#### Recette C0–C2 — Hero naît **du** nom
+#### Recette C0–C5 — Hero naît **du** nom
 
-**Intention :** formation stellaire / Quiet Luxury — pas supernova. Spikes = **C3** (pas encore).
+**Intention :** formation stellaire / Quiet Luxury — pas supernova.
 
 | Sous-beat | `u` local (0→1 sur `[HERO_START, C_END]`) | Visuel |
 |-----------|-------------------------------------------|--------|
 | **C0** | tôt | Grain + voile = **même langage fumée que le nom** |
 | **C1** | milieu | Core blanc minuscule ; teal en retard |
-| **C2** | fin | Core/teal → **KEEP 1:1** ; voile contracte ; montée terminée |
+| **C2** | fin | Core/teal → KEEP ; voile contracte ; montée terminée |
+| **C3** | `u` ≥ 0,70 | **Spikes** se déploient (dernier ~30 % de C) |
+| **C4** | ~`u` 0,86 | **Flash larme** ≤ 0,12 (size « clique » idle) |
+| **C5** | `u` ≥ 0,92 | **Micro-hold** étoile + nom · `heroKeep` · traits pas encore |
+| **draw** | ≥ 0,58 | Traits · Hero = KEEP exact · pull-back |
 
 **Voile / grain (souffle) — à reproduire ainsi :**
-
-1. Opacité : fumée soft (pas pop opaque).  
 2. Scale : **mini → peak lent (`easeInOut`, grow jusqu’à ~u 0,42–0,48) → contracte** vers le core.  
    ❌ Pas : start-at-max puis shrink only.  
 3. Grossissement **plus lent** que le reste si ça « précipite » — élargir la fenêtre `smoothstep` du grow.
@@ -146,7 +148,7 @@ Beat lab (affiche `A` / `B` / `C0` / `C1` / `C2` / `draw`) = `resolveBirth(revea
 - Courbe `organicFromName` : **hold dans le mot** → se détache → soft land (pas easeOut UI rail).  
 - Taille Hero **en retard** sur la montée (désync).
 
-**KEEP :** quand `heroKeep` (après `C_END` + voile/grain morts) → `birth={undefined}` sur `HeroStar` = atom §2 exact.
+**KEEP :** `heroKeep` dès **C5** (`u` ≥ 0,92) puis draw → `birth={undefined}` sur `HeroStar` = atom §2 exact.
 
 #### Recette caméra
 
@@ -163,11 +165,12 @@ Beat lab (affiche `A` / `B` / `C0` / `C1` / `C2` / `draw`) = `resolveBirth(revea
 3. Voile : mini → peak fluide → contracte (pas précipité).  
 4. Étoile monte du nom vers le siège.  
 5. Fin C / draw : Hero = **KEEP** onglet 1.  
-6. Traits après ~0,58 · cam s’ouvre.
+6. **C3–C5** : spikes → flash larme → hold (~u 0,92) **avant** traits à 0,58.  
+7. Traits après ~0,58 · cam s’ouvre.
 
-#### Pas encore (C3–C5 / F)
+#### Pas encore (D–F)
 
-Spikes en dernier · flash ≤ 0,12 · micro-hold avant 1er trait · whisper / proximité souris.
+Pull-back finement sync draw · slots au trait · whisper traits · proximité souris.
 
 ---
 
@@ -177,7 +180,7 @@ Spikes en dernier · flash ≤ 0,12 · micro-hold avant 1er trait · whisper / p
 |------|--------|--------|
 | **A** | Vide / poussière (`t≈0`) | Déjà serré |
 | **B** | **Nom naît** (bloom / brume) | Serré, stable |
-| **C** | **Hero** (C0–C2 câblé · C3–C5 TODO) | Serré |
+| **C** | **Hero** C0–C5 ✅ · D–F TODO | Serré → pull-back au draw |
 | **D** | Traits partent du Hero | Début pull-back |
 | **E** | Slots s’éveillent | Pull-back continue |
 | **F** | Whisper + champ souris | Cadre idle Leo |
