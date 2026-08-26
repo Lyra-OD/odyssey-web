@@ -35,6 +35,8 @@ export type HeroStarProps = {
   phase?: number;
   /** 0 = flat · 1 = strong mouse/touch tilt (read as 3D) */
   parallax?: number;
+  /** Master size after layer craft is locked (default 1) */
+  globalScale?: number;
 };
 
 const vertexShader = /* glsl */ `
@@ -72,6 +74,20 @@ vec2 rotateUv(vec2 uv, float rot) {
   float sr = sin(rot);
   return vec2(cr * uv.x - sr * uv.y, sr * uv.x + cr * uv.y);
 }
+
+/**
+ * Soft glow dies in a CIRCLE, in SCREEN space (unrotated PointCoord).
+ * Never mask on rotated UV — that draws a tilted square (teal rot = 12°).
+ */
+float softCircleMask(vec2 pc) {
+  return 1.0 - smoothstep(0.32, 0.48, length(pc));
+}
+
+/** Spikes can reach farther; only kill absolute sprite corners. */
+float spikeCornerMask(vec2 pc) {
+  float m = max(abs(pc.x), abs(pc.y));
+  return 1.0 - smoothstep(0.46, 0.499, m);
+}
 `;
 
 const whiteFragment = /* glsl */ `
@@ -81,14 +97,15 @@ uniform float uAmount;
 uniform float uRot;
 ${spikeFn}
 void main() {
-  vec2 uv = rotateUv(gl_PointCoord - 0.5, uRot);
+  vec2 pc = gl_PointCoord - 0.5;
+  vec2 uv = rotateUv(pc, uRot);
   float d = length(uv);
   float core = exp(-pow(d / 0.03, 2.0));
   float hot = 1.0 - smoothstep(0.0, 0.045, d);
   float disk = (hot * 1.4 + core * 0.7) * uGlow * (0.85 + 0.25 * uBreath);
   float sp = diffractionSpikes(uv, uAmount, uBreath) * uGlow;
-  float a = max(disk, sp);
-  if (a < 0.03) discard;
+  float a = max(disk * softCircleMask(pc), sp * spikeCornerMask(pc));
+  if (a < 0.012) discard;
   gl_FragColor = vec4(vec3(1.0), clamp(a, 0.0, 1.0));
 }
 `;
@@ -101,15 +118,21 @@ uniform float uAmount;
 uniform float uRot;
 ${spikeFn}
 void main() {
-  vec2 uv = rotateUv(gl_PointCoord - 0.5, uRot);
+  vec2 pc = gl_PointCoord - 0.5;
+  vec2 uv = rotateUv(pc, uRot);
   float d = length(uv);
-  float inner = exp(-pow(d / 0.12, 2.0));
-  float mid = exp(-pow(d / 0.28, 2.0));
-  float outer = exp(-pow(d / 0.48, 2.0));
-  float halo = (inner * 0.85 + mid * 0.5 + outer * 0.22) * uGlow * (0.65 + 0.5 * uBreath);
-  float sp = diffractionSpikes(uv, uAmount, uBreath) * uGlow;
+  // Outer sigma inside the circle mask — additive tint must hit ~0 at edge
+  float inner = exp(-pow(d / 0.10, 2.0));
+  float mid = exp(-pow(d / 0.20, 2.0));
+  float outer = exp(-pow(d / 0.30, 2.0));
+  float halo =
+    (inner * 0.9 + mid * 0.45 + outer * 0.12)
+    * uGlow
+    * (0.65 + 0.5 * uBreath)
+    * softCircleMask(pc);
+  float sp = diffractionSpikes(uv, uAmount, uBreath) * uGlow * spikeCornerMask(pc);
   float a = max(halo, sp);
-  if (a < 0.02) discard;
+  if (a < 0.012) discard;
   vec3 col = mix(uTeal, vec3(1.0), clamp(sp * 0.35, 0.0, 0.45));
   gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
 }
@@ -123,10 +146,11 @@ uniform float uAmount;
 uniform float uRot;
 ${spikeFn}
 void main() {
-  vec2 uv = rotateUv(gl_PointCoord - 0.5, uRot);
+  vec2 pc = gl_PointCoord - 0.5;
+  vec2 uv = rotateUv(pc, uRot);
   float spikes = diffractionSpikes(uv, uAmount, uBreath);
-  float a = spikes * uGlow;
-  if (a < 0.02) discard;
+  float a = spikes * uGlow * spikeCornerMask(pc);
+  if (a < 0.012) discard;
   vec3 col = mix(uTeal, vec3(1.0), 0.3) * spikes * 1.2;
   gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
 }
@@ -180,6 +204,7 @@ export function HeroStar({
   tealColor = "#5eead4",
   phase = 0,
   parallax = 0.35,
+  globalScale = 1,
 }: HeroStarProps) {
   const geo = usePointGeometry();
   const rootRef = useRef<Group>(null);
@@ -236,7 +261,8 @@ export function HeroStar({
       glowMul: number,
       withTeal: boolean,
     ) => {
-      mat.uniforms.uSize.value = baseSize * layer.size * persp(layer.depth);
+      mat.uniforms.uSize.value =
+        baseSize * layer.size * Math.max(0.05, globalScale) * persp(layer.depth);
       mat.uniforms.uGlow.value = layer.glow * glowMul;
       mat.uniforms.uBreath.value = breath;
       mat.uniforms.uAmount.value = layer.amount;
@@ -312,29 +338,38 @@ export function HeroStar({
   );
 }
 
+/** KEEP 26 août 2026 — craft lab lock (CEO). */
 export const DEFAULT_HERO_WHITE: HeroLayerKnobs = {
-  size: 1,
+  size: 2.19,
   glow: 1.1,
-  breath: 0.28,
-  depth: 0.12,
+  breath: 0.7,
+  depth: -0.6,
   amount: 0.45,
   rotationDeg: 0,
 };
 
+/** KEEP 26 août 2026 — craft lab lock (CEO). */
 export const DEFAULT_HERO_TEAL: HeroLayerKnobs = {
-  size: 1.15,
+  size: 1.38,
   glow: 1,
-  breath: 0.3,
-  depth: -0.18,
+  breath: 0.7,
+  depth: -0.6,
   amount: 0.65,
   rotationDeg: 12,
 };
 
+/** KEEP 26 août 2026 — craft lab lock (CEO). */
 export const DEFAULT_HERO_SPIKES: HeroLayerKnobs = {
-  size: 1.2,
+  size: 1.56,
   glow: 1.15,
-  breath: 0.26,
-  depth: 0,
-  amount: 1.35,
-  rotationDeg: 0,
+  breath: 0.7,
+  depth: -0.6,
+  amount: 1.04,
+  rotationDeg: 108,
 };
+
+/** KEEP — parallax souris (lab onglet Hero). */
+export const DEFAULT_HERO_PARALLAX = 1.2;
+
+/** KEEP — master size après ratios figés. */
+export const DEFAULT_HERO_GLOBAL_SCALE = 0.83;

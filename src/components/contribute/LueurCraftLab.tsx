@@ -6,6 +6,8 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { Color, WebGLRenderer } from "three";
 
 import {
+  DEFAULT_HERO_GLOBAL_SCALE,
+  DEFAULT_HERO_PARALLAX,
   DEFAULT_HERO_SPIKES,
   DEFAULT_HERO_TEAL,
   DEFAULT_HERO_WHITE,
@@ -80,6 +82,7 @@ type KnobDef = {
   step: number;
   value: number;
   onChange: (v: number) => void;
+  disabled?: boolean;
 };
 
 function CraftKnobGrid({ knobs }: { knobs: readonly KnobDef[] }) {
@@ -90,7 +93,9 @@ function CraftKnobGrid({ knobs }: { knobs: readonly KnobDef[] }) {
         return (
           <label
             key={knob.key}
-            className="flex min-w-0 flex-col gap-1 text-[11px] uppercase tracking-[0.12em] text-white/55"
+            className={`flex min-w-0 flex-col gap-1 text-[11px] uppercase tracking-[0.12em] ${
+              knob.disabled ? "opacity-40" : "text-white/55"
+            }`}
           >
             <span className="flex items-baseline justify-between gap-1">
               <span className="truncate font-medium text-white/70">
@@ -102,7 +107,8 @@ function CraftKnobGrid({ knobs }: { knobs: readonly KnobDef[] }) {
             </span>
             <input
               type="range"
-              className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-white"
+              disabled={knob.disabled}
+              className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-white disabled:cursor-not-allowed"
               min={knob.min}
               max={knob.max}
               step={knob.step}
@@ -131,6 +137,10 @@ const COPY = {
     layerTeal: "Layer teal (glow)",
     layerSpikes: "Layer spikes",
     layer3d: "3D (profondeur + tilt)",
+    layerMaster: "Taille générale",
+    ratiosOk: "Knobs OK — ratios figés",
+    ratiosHint: "Coche quand le look layer-par-layer te plaît, puis agrandis tout",
+    globalScale: "Taille générale",
     layerReveal: "Tempo (pendant le play / scrub)",
     layerLook: "Look graphe",
     layerTip: "Courant (pointe qui dessine)",
@@ -177,6 +187,10 @@ const COPY = {
     layerTeal: "Teal layer (glow)",
     layerSpikes: "Spikes layer",
     layer3d: "3D (depth + tilt)",
+    layerMaster: "Master size",
+    ratiosOk: "Knobs OK — ratios locked",
+    ratiosHint: "Check when layer-by-layer look is right, then scale everything",
+    globalScale: "Master size",
     layerReveal: "Timing (during play / scrub)",
     layerLook: "Graph look",
     layerTip: "Current tip (drawing head)",
@@ -292,9 +306,14 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [white, setWhite] = useState<HeroLayerKnobs>(DEFAULT_HERO_WHITE);
   const [teal, setTeal] = useState<HeroLayerKnobs>(DEFAULT_HERO_TEAL);
   const [spikes, setSpikes] = useState<HeroLayerKnobs>(DEFAULT_HERO_SPIKES);
-  const [parallax, setParallax] = useState(0.45);
+  const [parallax, setParallax] = useState(DEFAULT_HERO_PARALLAX);
+  const [heroRatiosOk, setHeroRatiosOk] = useState(true);
+  const [heroGlobalScale, setHeroGlobalScale] = useState(
+    DEFAULT_HERO_GLOBAL_SCALE,
+  );
 
   const [revealT, setRevealT] = useState(0);
+  const revealTRef = useRef(0);
   const [revealPlaying, setRevealPlaying] = useState(false);
   const [revealDurationMs, setRevealDurationMs] = useState(
     DEFAULT_CONSTELLATION_REVEAL_MS,
@@ -318,6 +337,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       return;
     }
     revealPlayFromRef.current = 0;
+    revealTRef.current = 0;
     setRevealT(0);
     setRevealPlaying(true);
   }, [tab]);
@@ -328,9 +348,17 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
     const t0 = performance.now();
     const r0 = revealPlayFromRef.current;
     const spanMs = Math.max(80, (1 - r0) * revealDurationMs);
+    let lastUi = 0;
     const tick = (now: number) => {
       const u = Math.min(1, (now - t0) / spanMs);
-      setRevealT(r0 + (1 - r0) * u);
+      const next = r0 + (1 - r0) * u;
+      // Live path for WebGL — no React re-render of lab shell
+      revealTRef.current = next;
+      // Scrubber % only ~10 Hz (was every frame → saccades)
+      if (now - lastUi >= 100 || u >= 1) {
+        lastUi = now;
+        setRevealT(next);
+      }
       if (u < 1) {
         raf = requestAnimationFrame(tick);
       } else {
@@ -344,6 +372,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const craftReveal: ConstellationRevealCraft = {
     controlled: true,
     revealT,
+    revealTRef,
     heroShare,
     strokeOverlap,
     graphScale,
@@ -359,27 +388,34 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       teal,
       spikes,
       embedScale: heroEmbedScale,
+      globalScale: heroGlobalScale,
     },
   };
 
   const onRevealPlay = () => {
-    if (revealT >= 0.999) {
+    if (revealTRef.current >= 0.999) {
       revealPlayFromRef.current = 0;
+      revealTRef.current = 0;
       setRevealT(0);
     } else {
-      revealPlayFromRef.current = revealT;
+      revealPlayFromRef.current = revealTRef.current;
     }
     setRevealPlaying(true);
   };
-  const onRevealPause = () => setRevealPlaying(false);
+  const onRevealPause = () => {
+    setRevealPlaying(false);
+    setRevealT(revealTRef.current);
+  };
   const onRevealRestart = () => {
     setRevealPlaying(false);
     revealPlayFromRef.current = 0;
+    revealTRef.current = 0;
     setRevealT(0);
     requestAnimationFrame(() => setRevealPlaying(true));
   };
   const onRevealScrub = (v: number) => {
     setRevealPlaying(false);
+    revealTRef.current = v;
     setRevealT(v);
   };
 
@@ -409,6 +445,18 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       step: 0.01,
       value: parallax,
       onChange: setParallax,
+    },
+  ];
+  const masterSizeKnobs: KnobDef[] = [
+    {
+      key: "hero-global",
+      label: t.globalScale,
+      min: 0.35,
+      max: 2.8,
+      step: 0.01,
+      value: heroGlobalScale,
+      onChange: setHeroGlobalScale,
+      disabled: !heroRatiosOk,
     },
   ];
   const timingKnobs: KnobDef[] = [
@@ -553,6 +601,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
                   teal={teal}
                   spikes={spikes}
                   parallax={parallax}
+                  globalScale={heroGlobalScale}
                 />
               </Suspense>
             </Canvas>
@@ -607,6 +656,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
                       teal={{ ...teal, size: teal.size * 0.55 }}
                       spikes={{ ...spikes, size: spikes.size * 0.55 }}
                       parallax={parallax * 0.6}
+                      globalScale={heroGlobalScale}
                     />
                   </Suspense>
                 </Canvas>
@@ -684,6 +734,32 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
                 {t.layer3d}
               </p>
               <CraftKnobGrid knobs={depth3dKnobs} />
+              <div className="flex flex-col gap-2 border-t border-white/10 pt-3">
+                <label className="flex cursor-pointer items-start gap-2.5 text-[12px] text-white/75">
+                  <input
+                    type="checkbox"
+                    checked={heroRatiosOk}
+                    onChange={(e) => {
+                      const on = e.target.checked;
+                      setHeroRatiosOk(on);
+                      if (!on) setHeroGlobalScale(1);
+                    }}
+                    className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-teal-400"
+                  />
+                  <span>
+                    <span className="font-medium uppercase tracking-[0.14em] text-teal-200/90">
+                      {t.ratiosOk}
+                    </span>
+                    <span className="mt-0.5 block text-[11px] font-light normal-case tracking-normal text-white/40">
+                      {t.ratiosHint}
+                    </span>
+                  </span>
+                </label>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-teal-400/70">
+                  {t.layerMaster}
+                </p>
+                <CraftKnobGrid knobs={masterSizeKnobs} />
+              </div>
             </div>
           ) : null}
 

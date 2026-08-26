@@ -1,8 +1,16 @@
 "use client";
 
-import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MutableRefObject,
+} from "react";
 import { WebGLRenderer } from "three";
 
 import {
@@ -72,7 +80,13 @@ const CLOSE_SETTLE_MS = 980;
 /** Lab craft — drive Leo reveal from outside (scrub / play-pause). */
 export type ConstellationRevealCraft = {
   controlled: true;
+  /** UI / scrub snapshot — may lag during play (throttled). */
   revealT: number;
+  /**
+   * Live progress written every RAF by the lab — read inside Canvas via useFrame.
+   * Avoids setState-every-frame on the lab shell (main stutter source).
+   */
+  revealTRef?: MutableRefObject<number>;
   heroShare?: number;
   strokeOverlap?: number;
   /** Filament / node boost while drawing (default 0.25 × revealT) */
@@ -103,6 +117,8 @@ export type ConstellationRevealCraft = {
     spikes: HeroLayerKnobs;
     /** Extra size mul for mid-sky (lab is close-up). Default 0.4 */
     embedScale?: number;
+    /** Master size from craft Hero tab (default 1) */
+    globalScale?: number;
   };
 };
 
@@ -138,8 +154,10 @@ function Constellation({
   focusedSoulId,
   focusBoost,
   onStarScreen,
-  revealT,
-  emphasis,
+  revealT: revealTProp,
+  revealTRef,
+  emphasisDuring = 0.25,
+  emphasisIdle = 0.55,
   heroShare,
   strokeOverlap,
   graphScale = 1,
@@ -160,7 +178,10 @@ function Constellation({
   focusBoost: number;
   onStarScreen: (anchor: ScreenAnchor | null) => void;
   revealT: number;
-  emphasis: number;
+  /** When set, progress follows this ref every frame (smooth craft play). */
+  revealTRef?: MutableRefObject<number>;
+  emphasisDuring?: number;
+  emphasisIdle?: number;
   heroShare?: number;
   strokeOverlap?: number;
   graphScale?: number;
@@ -173,6 +194,20 @@ function Constellation({
   tipSize?: number;
   heroAtom?: ConstellationRevealCraft["heroAtom"];
 }) {
+  const [revealT, setRevealT] = useState(revealTProp);
+  useFrame(() => {
+    if (!revealTRef) return;
+    const v = revealTRef.current;
+    setRevealT((prev) => (Math.abs(prev - v) > 0.0008 ? v : prev));
+  });
+  useEffect(() => {
+    if (revealTRef) return;
+    setRevealT(revealTProp);
+  }, [revealTProp, revealTRef]);
+
+  const emphasis =
+    revealT >= 1 ? emphasisIdle : revealT * emphasisDuring;
+
   const stars = useMemo(() => resolveConstellation(), []);
   const positions = useMemo(() => constellationPositions(stars), [stars]);
   const ghostIds = useMemo(
@@ -224,6 +259,7 @@ function Constellation({
         const useCraftHero =
           star.visual === "hero" && heroAtom != null;
         const embed = heroAtom?.embedScale ?? 0.4;
+        const gScale = heroAtom?.globalScale ?? 1;
         const appearMul = appear * (1 + emphasis * 0.1) * ghostFade;
 
         return (
@@ -234,6 +270,7 @@ function Constellation({
                   white={heroAtom.white}
                   teal={heroAtom.teal}
                   spikes={heroAtom.spikes}
+                  globalScale={gScale}
                   parallax={0}
                   phase={i * 1.7}
                 />
@@ -361,9 +398,8 @@ function UniverseScene({
           ? 0.95
           : 0;
 
-  const [autoRevealT, setAutoRevealT] = useState(0);
+  const autoRevealRef = useRef(0);
   const controlled = craftReveal?.controlled === true;
-  const revealT = controlled ? craftReveal.revealT : autoRevealT;
   const heroShare = craftReveal?.heroShare ?? DEFAULT_HERO_SHARE;
   const strokeOverlap = craftReveal?.strokeOverlap ?? DEFAULT_STROKE_OVERLAP;
   const emphasisDuring = craftReveal?.emphasisDuring ?? 0.25;
@@ -381,7 +417,7 @@ function UniverseScene({
   useEffect(() => {
     if (controlled) return;
     if (!showConstellation) {
-      setAutoRevealT(0);
+      autoRevealRef.current = 0;
       return;
     }
     let raf = 0;
@@ -391,15 +427,17 @@ function UniverseScene({
         1,
         (now - start) / DEFAULT_CONSTELLATION_REVEAL_MS,
       );
-      setAutoRevealT(raw);
+      autoRevealRef.current = raw;
       if (raw < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [showConstellation, controlled]);
 
-  const emphasis =
-    revealT >= 1 ? emphasisIdle : revealT * emphasisDuring;
+  const revealTProp = controlled ? (craftReveal?.revealT ?? 0) : 0;
+  const revealTRef = controlled
+    ? craftReveal?.revealTRef
+    : autoRevealRef;
 
   return (
     <ParallaxProvider intensity={parallaxIntensity}>
@@ -510,8 +548,10 @@ function UniverseScene({
                 focusedSoulId={focus?.soulId ?? null}
                 focusBoost={focusBoost}
                 onStarScreen={onStarScreen}
-                revealT={revealT}
-                emphasis={emphasis}
+                revealT={revealTProp}
+                revealTRef={revealTRef}
+                emphasisDuring={emphasisDuring}
+                emphasisIdle={emphasisIdle}
                 heroShare={heroShare}
                 strokeOverlap={strokeOverlap}
                 graphScale={graphScale}
