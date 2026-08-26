@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-08-19 · **Entrées :** 676
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-08-26 · **Entrées :** 677
 
 ## `common`
 
@@ -307,6 +307,7 @@
 | `tributeWizard.stepperCheckout` | Finaliser | Review |
 | `tributeWizard.stepEssentialTitle` | Étape 1 : L’essentiel | Step 1: The essentials |
 | `tributeWizard.stepEssentialDescription` | Les informations qui donnent visage à cet hommage. Avancez à votre rythme. | What gives this tribute a face and a soul. Move at your own pace. |
+| `tributeWizard.step1ConstellationReward` | Sa constellation prend forme… | Her constellation is taking shape… |
 | `tributeWizard.firstNameLabel` | Prénom | First name |
 | `tributeWizard.lastNameLabel` | Nom | Last name |
 | `tributeWizard.birthDateLabel` | Date de naissance | Date of birth |

@@ -69,6 +69,7 @@ import {
   buildCraftSlotFills,
   constellationPositions,
   getResolvedStar,
+  MOCK_SLOT_FILLS,
   resolveConstellation,
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import {
@@ -157,6 +158,10 @@ export type ConstellationRevealCraft = {
   };
   /** Intensité séparation Hero↔nom au survol (knob lab parallax). */
   heroParallax?: number;
+  /** Prénom wizard — remplace le mock « Margaret ». */
+  heroName?: string;
+  /** Wizard step 1 — masquer le nom tant que le prénom est vide. */
+  hideHeroName?: boolean;
 };
 
 type FocusSession = {
@@ -208,6 +213,8 @@ function Constellation({
   tipTrailLen = 0.14,
   heroAtom,
   heroParallax = DEFAULT_HERO_PARALLAX,
+  heroName,
+  hideHeroName = false,
   slotStars = DEFAULT_SLOT_STARS,
   bridges = DEFAULT_BRIDGES,
   slotLit,
@@ -237,6 +244,8 @@ function Constellation({
   tipTrailLen?: number;
   heroAtom?: ConstellationRevealCraft["heroAtom"];
   heroParallax?: number;
+  heroName?: string;
+  hideHeroName?: boolean;
   slotStars?: SlotStarsCraft;
   bridges?: BridgesCraft;
   slotLit?: Record<string, boolean>;
@@ -256,11 +265,16 @@ function Constellation({
   const [proximity, setProximity] = useState<ProximityField>(EMPTY_PROX);
 
   const stars = useMemo(() => {
+    const name = heroName?.trim() || "Margaret";
     if (slotLit) {
-      return resolveConstellation(ACTIVE_TEMPLATE, buildCraftSlotFills(slotLit));
+      return resolveConstellation(
+        ACTIVE_TEMPLATE,
+        buildCraftSlotFills(slotLit),
+        name,
+      );
     }
-    return resolveConstellation();
-  }, [slotLit]);
+    return resolveConstellation(ACTIVE_TEMPLATE, MOCK_SLOT_FILLS, name);
+  }, [slotLit, heroName]);
   const positions = useMemo(() => constellationPositions(stars), [stars]);
 
   useFrame(({ camera }) => {
@@ -481,7 +495,7 @@ function Constellation({
         const nameClarity = isHero ? birth.nameClarity : 1;
         const nameScaleCh = isHero ? birth.nameScale : 1;
         const nameTrack = isHero ? birth.nameTrack : 1;
-        const showHeroName = isHero && nameBloom > 0.02;
+        const showHeroName = isHero && nameBloom > 0.02 && !hideHeroName;
         const showSlotName =
           !isHero && !!star.name && hovered === star.id;
         const nameOpacity = isHero
@@ -689,6 +703,8 @@ function UniverseScene({
   const tipTrailLen = craftReveal?.tipTrailLen ?? 0.14;
   const heroAtom = craftReveal?.heroAtom;
   const heroParallax = craftReveal?.heroParallax ?? DEFAULT_HERO_PARALLAX;
+  const heroName = craftReveal?.heroName;
+  const hideHeroName = craftReveal?.hideHeroName ?? false;
   const slotStars = craftReveal?.slotStars ?? DEFAULT_SLOT_STARS;
   const bridges = craftReveal?.bridges ?? DEFAULT_BRIDGES;
   const slotLit = craftReveal?.slotLit;
@@ -850,6 +866,8 @@ function UniverseScene({
                 tipTrailLen={tipTrailLen}
                 heroAtom={heroAtom}
                 heroParallax={heroParallax}
+                heroName={heroName}
+                hideHeroName={hideHeroName}
                 slotStars={slotStars}
                 bridges={bridges}
                 slotLit={slotLit}
@@ -920,6 +938,8 @@ export type SanctuaryUniverseProps = {
   craftLite?: boolean;
   /** Lab `/test-lueur` onglet Constellation — scrub / play reveal Leo. */
   craftReveal?: ConstellationRevealCraft;
+  /** Wizard onboarding — constellation visible en mode background. */
+  constellationVisible?: boolean;
 };
 
 export function SanctuaryUniverse({
@@ -931,6 +951,7 @@ export function SanctuaryUniverse({
   locale = "fr",
   craftLite = false,
   craftReveal,
+  constellationVisible,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -1158,7 +1179,8 @@ export function SanctuaryUniverse({
                 tier={tier}
                 parallaxIntensity={intensity}
                 showConstellation={
-                  immersive && (craftReveal ? true : constellationOn)
+                  constellationVisible ??
+                  (immersive && (craftReveal ? true : constellationOn))
                 }
                 wanderEnabled={immersive && wanderOn}
                 onSelectMemory={beginFocus}

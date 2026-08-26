@@ -48,6 +48,8 @@ import { RestorationPreviewModal } from "@/src/components/scanner/RestorationPre
 import { VaultOnlineSourcesSection } from "@/src/components/tribute/VaultOnlineSourcesSection";
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
+import { useWizardStep1Reveal } from "@/src/hooks/useWizardStep1Reveal";
+import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
 import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
 import { useWizardDraftLifecycle } from "@/src/hooks/useWizardDraftLifecycle";
 import {
@@ -520,6 +522,10 @@ export function TributeWizard({
       wizardFieldsRef as unknown as UseWizardEssentialsParams["wizardFieldsRef"],
   });
 
+  const step1Sky = !isEditor && currentStep === 1;
+  const step1Reveal = useWizardStep1Reveal(firstName);
+  const step1RewardPendingRef = useRef(false);
+
   // Réaffecté à chaque rendu maintenant que les champs Essentiels vivent dans
   // `useWizardEssentials` (voir l'amorçage hydraté plus haut).
   wizardFieldsRef.current = {
@@ -623,6 +629,13 @@ export function TributeWizard({
         return;
       }
       setEssentialError(false);
+      if (step1Sky && step1Reveal.phase !== "done") {
+        if (step1RewardPendingRef.current) return;
+        step1RewardPendingRef.current = true;
+        await flush();
+        await step1Reveal.playReward();
+        step1RewardPendingRef.current = false;
+      }
     }
     if (currentStep === 4) {
       if (!wizardStoryboard.structureValidation.isValid) {
@@ -646,6 +659,9 @@ export function TributeWizard({
     currentStep,
     canProceedEssential,
     navigateToStep,
+    step1Reveal,
+    step1Sky,
+    flush,
     wizardStoryboard.structureValidation,
     wizardStoryboard.duplicateSongInfo,
     wizardStoryboard.duplicateSongsAcknowledged,
@@ -856,6 +872,17 @@ export function TributeWizard({
   );
 
   return (
+    <>
+      {step1Sky ? (
+        <SanctuaryWizardStep1Sky
+          locale={locale}
+          firstName={firstName}
+          revealT={step1Reveal.revealT}
+          revealTRef={step1Reveal.revealTRef}
+          hideHeroName={step1Reveal.hideHeroName}
+          panelFading={step1Reveal.phase === "reward"}
+        />
+      ) : null}
     <div
       className={`relative mx-auto mt-10 w-full ${
         currentStep === 6
@@ -863,7 +890,7 @@ export function TributeWizard({
           : currentStep >= 4
             ? "max-w-3xl"
             : "max-w-xl"
-      }`}
+      } ${step1Sky ? "z-10" : ""}`}
     >
       {isEditor ? (
         <div
@@ -1105,6 +1132,14 @@ export function TributeWizard({
 
         <div className="min-h-[min(48vh,26rem)] pb-40">
           {currentStep === 1 ? (
+            <div
+              className={[
+                "rounded-2xl border border-white/10 bg-black/45 px-6 py-8 shadow-[0_8px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-opacity duration-700 md:px-8 md:py-10",
+                step1Reveal.phase === "reward"
+                  ? "pointer-events-none opacity-0"
+                  : "opacity-100",
+              ].join(" ")}
+            >
             <>
               <h2
                 id={wizardTitleId}
@@ -1263,6 +1298,7 @@ export function TributeWizard({
                 </p>
               ) : null}
             </>
+            </div>
           ) : null}
 
           {currentStep === 2 ? (
@@ -2042,15 +2078,21 @@ export function TributeWizard({
             ) : currentStep <= 5 ? (
               <button
                 type="button"
+                disabled={
+                  currentStep === 1 && step1Reveal.phase === "reward"
+                }
                 onClick={() => void goNext()}
-                className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50"
+                className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-wait disabled:opacity-70"
               >
-                {copy.next}
+                {currentStep === 1 && step1Reveal.phase === "reward"
+                  ? copy.step1ConstellationReward
+                  : copy.next}
               </button>
             ) : null}
           </div>
         </div>
       ) : null}
     </div>
+    </>
   );
 }

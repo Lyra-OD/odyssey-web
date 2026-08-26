@@ -4,6 +4,7 @@
 **Dernière MAJ :** 25 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — **J2** : wizard étape 1 sur ciel — Hero idle · naissance live au prénom · reveal post-validation.
 - 25 août 2026 — Plan : phase **C craft** (Hero · constellation · wormhole) **avant** J1 shell prologue.
 - 25 août 2026 — Étape 2 invite : canal-agnostique · skip immédiat · layout Partager / Copier / QR (§5c).
 - 25 août 2026 — Décisions CEO figées : étapes 1–3 (identité complète · invite seul · Plus tard Coffre).
@@ -332,7 +333,7 @@ Ordre craft recommandé (sessions) : **C1 → C2 → C3 → C4** (C5 en parallè
 |-------|------|--------------|--------------|
 | **J0** | Copy hub + décisions 1–3 | Ce doc + [`COPY.md`](../COPY.md) / JSON | ✅ D1–D3 figées |
 | **J1** | Prologue shell | Route onboarding · enchaîne **C4 éclipse + C3 wormhole + ciel** | 1× playable dev — **après gate C** |
-| **J2** | Overlay étape 1 | Panneau verre · prénom + 2 dates · autosave step 1 | Valide = trigger reveal **C2** |
+| **J2** | Overlay étape 1 | Panneau verre · prénom + 2 dates · autosave step 1 | 🔄 ciel + birth live · reveal validation |
 | **J3** | Récompense constellation | Brancher reveal Leo post-step-1 (craft **C2** déjà KEEP) | Animation 2–4 s |
 | **J4** | Hub + étape 2 overlay | UI post-récompense · invite canal-agnostique · retirer co-org step 2 | Partager · Copier · skip immédiat |
 | **J5** | Tiroir global | Chrome icône Coffre · ouvert depuis ciel + studio | Même banque step 3 |
