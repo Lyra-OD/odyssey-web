@@ -392,7 +392,7 @@ function Constellation({
   };
 
   return (
-    <group position={[-0.45, -0.7, 0]} scale={graphScale}>
+    <group position={[-0.45, -0.7 + heroSep.heroLift, 0]} scale={graphScale}>
       {stars.map((star, i) => {
         const pos = positions[star.id] ?? star.position;
         const appearRaw = draw.nodeAppear[star.id] ?? 0;
@@ -513,7 +513,7 @@ function Constellation({
           <group key={star.id} position={pos}>
             {useCraftHero && heroAtom && showHeroStar ? (
               <group
-                position={[0, heroFromNameY + heroSep.heroLift, 0]}
+                position={[0, heroFromNameY, 0]}
                 scale={heroGroupScale * heroSep.heroScale}
               >
                 <HeroStar

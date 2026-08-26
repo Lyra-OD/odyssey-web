@@ -9,7 +9,7 @@ import { useParallaxPointerRef } from "@/src/components/contribute/constellation
 import { CONSTELLATION_GROUP_OFFSET } from "@/src/components/contribute/constellation/graphs/revealCamera";
 
 export type HeroNameSeparation = {
-  /** Local Y — Hero monte (sans bouger le slot graphe). */
+  /** Local Y — Hero + constellation montent ensemble. */
   heroLift: number;
   /** px Html — nom descend. */
   nameDrop: number;
@@ -34,7 +34,7 @@ const NAME_SCALE_PEAK = 0.016;
 
 /**
  * Souris près du couple Hero+nom → ils s’écartent / s’étirent (spring bounce).
- * Le **siège** graphe ne bouge pas — seulement l’écart relatif vertical.
+ * Le **lift** déplace Hero + constellation ; le nom descend seul (Html).
  */
 export function useHeroNameSeparation(
   enabled: boolean,
