@@ -138,6 +138,8 @@ export type ConstellationRevealCraft = {
   tipStyle?: "trail" | "star" | "orb";
   tipColor?: string;
   tipSize?: number;
+  /** Trail mode only — segment length along active edge (0–1). Default 0.14 */
+  tipTrailLen?: number;
   /**
    * Live HeroStar from craft lab — replaces LueurNode hero when set.
    * Same knobs as onglet 1 so constellation mirrors the atom.
@@ -199,6 +201,7 @@ function Constellation({
   tipStyle = "orb",
   tipColor = "#ccfbf1",
   tipSize = 1,
+  tipTrailLen = 0.14,
   heroAtom,
   slotStars = DEFAULT_SLOT_STARS,
   bridges = DEFAULT_BRIDGES,
@@ -226,6 +229,7 @@ function Constellation({
   tipStyle?: "trail" | "star" | "orb";
   tipColor?: string;
   tipSize?: number;
+  tipTrailLen?: number;
   heroAtom?: ConstellationRevealCraft["heroAtom"];
   slotStars?: SlotStarsCraft;
   bridges?: BridgesCraft;
@@ -604,6 +608,7 @@ function Constellation({
         tipStyle={tipStyle}
         tipColor={tipColor}
         tipSize={tipSize}
+        tipTrailLen={tipTrailLen}
         bridges={bridges}
       />
     </group>
@@ -661,6 +666,7 @@ function UniverseScene({
   const tipStyle = craftReveal?.tipStyle ?? "orb";
   const tipColor = craftReveal?.tipColor ?? "#ccfbf1";
   const tipSize = craftReveal?.tipSize ?? 1;
+  const tipTrailLen = craftReveal?.tipTrailLen ?? 0.14;
   const heroAtom = craftReveal?.heroAtom;
   const slotStars = craftReveal?.slotStars ?? DEFAULT_SLOT_STARS;
   const bridges = craftReveal?.bridges ?? DEFAULT_BRIDGES;
@@ -820,6 +826,7 @@ function UniverseScene({
                 tipStyle={tipStyle}
                 tipColor={tipColor}
                 tipSize={tipSize}
+                tipTrailLen={tipTrailLen}
                 heroAtom={heroAtom}
                 slotStars={slotStars}
                 bridges={bridges}

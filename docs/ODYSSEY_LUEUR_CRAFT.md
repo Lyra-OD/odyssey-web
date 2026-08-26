@@ -4,7 +4,8 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 26 août 2026 — **F fin reveal** : traits s’atténuent (whisper) · breath constellation monte.
+- 26 août 2026 — **Cam pull** dès 0,59 · easeOut + sync `drawU` (cadre suit le trait).
+- 26 août 2026 — **F fin reveal** : whisper visible · breath · relight souris fort.
 - 26 août 2026 — Draw **D–F** + barre beats lab · `C_END` 0,57.
 - 26 août 2026 — Hero **C3–C5** : spikes · flash larme · micro-hold.
 - 26 août 2026 — **Recette naissance** KEEP : nom fumée + Hero C0–C2.
@@ -155,7 +156,8 @@ Beat lab = `resolveDrawPhase(revealT).beat ?? resolveBirth(revealT).beat` (`D` /
 | Moment | Framing |
 |--------|---------|
 | A–C | Serré Hero+nom (`REVEAL_CAM_BIRTH_Z`) · look un peu sous le Hero |
-| draw → 1 | Pull-back easeInOut → cadre Leo (`REVEAL_CAM_IDLE_Z`) |
+| **Pull start** | **`revealT = 0,59`** (traits dès 0,57 · micro hold serré sur 1er trait) |
+| draw → 1 | **easeOut** + **62 % `drawU`** (cadre suit le trait) → idle (`REVEAL_CAM_IDLE_Z`) |
 | Restart Play | Snap immédiat au cadre birth (pas lerp depuis idle) |
 
 #### Checklist validation (rejouer)

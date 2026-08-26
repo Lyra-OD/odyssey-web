@@ -4,6 +4,7 @@ import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Fog, Vector3 } from "three";
 
+import { resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
 import { resolveRevealCamera } from "@/src/components/contribute/constellation/graphs/revealCamera";
 
 /** FocusCamera yields while this is true. */
@@ -40,7 +41,7 @@ export function RevealCamera({
     const t = Math.min(1, Math.max(0, revealTRef?.current ?? revealT));
     revealCameraDriveRef.active = true;
 
-    const pose = resolveRevealCamera(t, graphScale);
+    const pose = resolveRevealCamera(t, graphScale, resolveBirth(t).drawU);
     const prev = lastT.current;
     const jumped = Math.abs(t - prev) > 0.18;
     const restart = t < 0.025 && prev > 0.08;
@@ -54,10 +55,10 @@ export function RevealCamera({
       cam.position.copy(desired);
       look.current.copy(lookTarget);
     } else {
-      // Tight birth = stable; pull-back = smooth follow
-      const follow = 0.028 + pose.pull * 0.035;
+      // Tight birth = stable; pull-back = faster follow (easeOut + stroke sync)
+      const follow = 0.032 + pose.pull * 0.048 + (pose.pull < 0.35 ? 0.022 : 0);
       cam.position.lerp(desired, follow);
-      look.current.lerp(lookTarget, follow * 1.05);
+      look.current.lerp(lookTarget, follow * 1.08);
     }
     cam.lookAt(look.current);
 

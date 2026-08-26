@@ -4,7 +4,7 @@
  */
 
 import { BIRTH_SEGMENTS } from "@/src/components/contribute/constellation/graphs/birth";
-import { easeInOutCubic } from "@/src/components/contribute/constellation/graphs/reveal";
+import { easeOutCubic } from "@/src/components/contribute/constellation/graphs/reveal";
 
 /** Matches Constellation group in SanctuaryUniverse. */
 export const CONSTELLATION_GROUP_OFFSET = [-0.45, -0.7, 0] as const;
@@ -17,6 +17,12 @@ const LEO_CENTER_LOCAL: [number, number, number] = [0.5, 1.13, -0.35];
 
 export const REVEAL_CAM_BIRTH_Z = 3.45;
 export const REVEAL_CAM_IDLE_Z = 7.5;
+
+/** Pull-back begins just after first stroke leaves Hero (traits @ C_END 0.57). */
+export const REVEAL_CAM_PULL_START = 0.59;
+
+/** Weight of stroke draw vs wall-clock for framing (stroke-led = voir le graphe). */
+const STROKE_PULL_WEIGHT = 0.62;
 
 export type RevealCameraPose = {
   /** 0 = naissance serrée · 1 = cadre Leo idle */
@@ -54,16 +60,33 @@ function leoIdleLook(graphScale = 1): { x: number; y: number; z: number } {
 }
 
 /**
- * Pull starts as draw begins (after C), eases to idle by revealT = 1.
+ * Pull starts @ REVEAL_CAM_PULL_START · easeOut + blend drawU (suit le trait).
  */
 export function resolveRevealCamera(
   revealT: number,
   graphScale = 1,
+  drawU = 0,
 ): RevealCameraPose {
   const t = clamp01(revealT);
   const cEnd = BIRTH_SEGMENTS.C_END;
-  const pull =
-    t <= cEnd ? 0 : easeInOutCubic((t - cEnd) / Math.max(1e-6, 1 - cEnd));
+  const strokeU =
+    drawU > 0
+      ? clamp01(drawU)
+      : t <= cEnd
+        ? 0
+        : (t - cEnd) / Math.max(1e-6, 1 - cEnd);
+
+  const timeU =
+    t <= REVEAL_CAM_PULL_START
+      ? 0
+      : (t - REVEAL_CAM_PULL_START) /
+        Math.max(1e-6, 1 - REVEAL_CAM_PULL_START);
+
+  const strokePull = easeOutCubic(strokeU);
+  const timePull = easeOutCubic(timeU);
+  const pull = clamp01(
+    strokePull * STROKE_PULL_WEIGHT + timePull * (1 - STROKE_PULL_WEIGHT),
+  );
 
   const hero = heroWorldPos(graphScale);
   const idle = leoIdleLook(graphScale);

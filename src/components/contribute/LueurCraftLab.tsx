@@ -197,6 +197,7 @@ const COPY = {
     styleGlow: "Glow / ray",
     tipStrength: "Force courant",
     tipSize: "Taille courant",
+    tipTrailLen: "Longueur trait",
     tipColor: "Couleur courant",
     tipTrail: "Trait",
     tipStar: "Étoile",
@@ -283,6 +284,7 @@ const COPY = {
     styleGlow: "Glow / ray",
     tipStrength: "Tip strength",
     tipSize: "Tip size",
+    tipTrailLen: "Trail length",
     tipColor: "Tip color",
     tipTrail: "Trail",
     tipStar: "Star",
@@ -492,6 +494,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [graphScale, setGraphScale] = useState(1);
   const [tipStrength, setTipStrength] = useState(1.2);
   const [tipSize, setTipSize] = useState(1);
+  const [tipTrailLen, setTipTrailLen] = useState(0.14);
   const [tipColor, setTipColor] = useState("#5eead4");
   const [tipStyle, setTipStyle] = useState<CurrentTipStyle>("orb");
   const [slotStars, setSlotStars] = useState<SlotStarsCraft>(DEFAULT_SLOT_STARS);
@@ -552,6 +555,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
     tipStyle,
     tipColor,
     tipSize,
+    tipTrailLen,
     ghostDim: slotStars.ghostDim,
     slotStars,
     bridges,
@@ -825,6 +829,19 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       value: tipSize,
       onChange: setTipSize,
     },
+    ...(tipStyle === "trail"
+      ? [
+          {
+            key: "tip-trail-len",
+            label: t.tipTrailLen,
+            min: 0.02,
+            max: 0.55,
+            step: 0.01,
+            value: tipTrailLen,
+            onChange: setTipTrailLen,
+          } satisfies KnobDef,
+        ]
+      : []),
   ];
 
   const tipModes: { id: CurrentTipStyle; label: string }[] = [

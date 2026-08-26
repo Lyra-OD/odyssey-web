@@ -56,6 +56,8 @@ type LightBridgesProps = {
   tipStyle?: CurrentTipStyle;
   tipColor?: string;
   tipSize?: number;
+  /** Trail mode — length along active edge (0–1). Ignored for star / orb. */
+  tipTrailLen?: number;
   bridges?: BridgesCraft;
 };
 
@@ -280,6 +282,7 @@ export function LightBridges({
   tipStyle = "orb",
   tipColor = "#ccfbf1",
   tipSize = 1,
+  tipTrailLen = 0.14,
   bridges = DEFAULT_BRIDGES,
 }: LightBridgesProps) {
   const emp = Math.min(1.5, Math.max(0, emphasis));
@@ -289,6 +292,7 @@ export function LightBridges({
   const tipMul = Math.max(0, tipStrength);
   const gDim = Math.min(1.5, Math.max(0.05, ghostDim));
   const sizeMul = Math.max(0.15, tipSize);
+  const trailLen = Math.min(0.85, Math.max(0.02, tipTrailLen));
 
   const activeTip = useMemo(() => {
     const s = draw.activeStroke;
@@ -362,7 +366,7 @@ export function LightBridges({
             lerp3(
               positions[draw.activeStroke.from]!,
               positions[draw.activeStroke.to]!,
-              Math.max(0, draw.activeStroke.t - 0.14),
+              Math.max(0, draw.activeStroke.t - trailLen),
             ),
             activeTip,
           ]}
