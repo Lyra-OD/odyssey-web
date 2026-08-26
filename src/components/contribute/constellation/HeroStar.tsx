@@ -3,6 +3,10 @@
 import { useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import {
+  shapePointer,
+  useParallaxPointerRef,
+} from "@/src/components/contribute/constellation/ParallaxLayer";
+import {
   AdditiveBlending,
   BufferAttribute,
   BufferGeometry,
@@ -279,6 +283,7 @@ export function HeroStar({
   const veilRef = useRef<ShaderMaterial>(null);
   const grainRef = useRef<ShaderMaterial>(null);
   const tealCol = useMemo(() => new Color(tealColor), [tealColor]);
+  const parallaxPointerRef = useParallaxPointerRef();
   const { pointer } = useThree();
 
   const whiteMat = useMemo(
@@ -445,9 +450,12 @@ export function HeroStar({
 
     const root = rootRef.current;
     if (root && parallax > 0.001) {
+      const ptr = parallaxPointerRef?.current;
+      const px = ptr ? shapePointer(ptr.x) : pointer.x;
+      const py = ptr ? shapePointer(ptr.y) : pointer.y;
       const maxTilt = 0.22 * parallax;
-      root.rotation.y += (pointer.x * maxTilt - root.rotation.y) * 0.08;
-      root.rotation.x += (-pointer.y * maxTilt - root.rotation.x) * 0.08;
+      root.rotation.y += (px * maxTilt - root.rotation.y) * 0.08;
+      root.rotation.x += (-py * maxTilt - root.rotation.x) * 0.08;
     } else if (root) {
       root.rotation.x *= 0.9;
       root.rotation.y *= 0.9;

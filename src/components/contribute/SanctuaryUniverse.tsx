@@ -19,8 +19,10 @@ import {
 } from "@/src/components/contribute/LueurNode";
 import {
   HeroStar,
+  DEFAULT_HERO_PARALLAX,
   type HeroLayerKnobs,
 } from "@/src/components/contribute/constellation/HeroStar";
+import { useHeroNameSeparation } from "@/src/components/contribute/constellation/useHeroNameSeparation";
 import { CameraRig } from "@/src/components/contribute/constellation/CameraRig";
 import { CosmicDust } from "@/src/components/contribute/constellation/CosmicDust";
 import { ZodiacalLight } from "@/src/components/contribute/constellation/ZodiacalLight";
@@ -153,6 +155,8 @@ export type ConstellationRevealCraft = {
     /** Master size from craft Hero tab (default 1) */
     globalScale?: number;
   };
+  /** Intensité séparation Hero↔nom au survol (knob lab parallax). */
+  heroParallax?: number;
 };
 
 type FocusSession = {
@@ -203,6 +207,7 @@ function Constellation({
   tipSize = 1,
   tipTrailLen = 0.14,
   heroAtom,
+  heroParallax = DEFAULT_HERO_PARALLAX,
   slotStars = DEFAULT_SLOT_STARS,
   bridges = DEFAULT_BRIDGES,
   slotLit,
@@ -231,6 +236,7 @@ function Constellation({
   tipSize?: number;
   tipTrailLen?: number;
   heroAtom?: ConstellationRevealCraft["heroAtom"];
+  heroParallax?: number;
   slotStars?: SlotStarsCraft;
   bridges?: BridgesCraft;
   slotLit?: Record<string, boolean>;
@@ -347,6 +353,15 @@ function Constellation({
   ]);
 
   const birth = useMemo(() => resolveBirth(revealT), [revealT]);
+
+  const heroSepActive =
+    heroAtom != null && (birth.nameBirth > 0.02 || birth.heroSize > 0.02);
+  const heroSep = useHeroNameSeparation(
+    heroSepActive,
+    heroParallax,
+    positions.hero,
+    graphScale,
+  );
 
   const ghostIds = useMemo(
     () => new Set(stars.filter((s) => !s.lit).map((s) => s.id)),
@@ -481,9 +496,11 @@ function Constellation({
         const nameBlurPx = isHero
           ? Math.max(0, (1 - nameClarity) * 16)
           : 0;
-        const nameScale = isHero ? 0.78 + 0.22 * nameScaleCh : 1;
+        const nameScale =
+          (isHero ? 0.78 + 0.22 * nameScaleCh : 1) *
+          (isHero ? heroSep.nameScale : 1);
         const nameY = isHero
-          ? 42 - 14 * nameLift + birth.nameDriftY * 4
+          ? 42 - 14 * nameLift + birth.nameDriftY * 4 + heroSep.nameDrop
           : 18;
         const nameX = isHero ? birth.nameDriftX * 5 : 0;
         const nameTracking = isHero
@@ -495,7 +512,10 @@ function Constellation({
         return (
           <group key={star.id} position={pos}>
             {useCraftHero && heroAtom && showHeroStar ? (
-              <group position={[0, heroFromNameY, 0]} scale={heroGroupScale}>
+              <group
+                position={[0, heroFromNameY + heroSep.heroLift, 0]}
+                scale={heroGroupScale * heroSep.heroScale}
+              >
                 <HeroStar
                   white={heroAtom.white}
                   teal={heroAtom.teal}
@@ -668,6 +688,7 @@ function UniverseScene({
   const tipSize = craftReveal?.tipSize ?? 1;
   const tipTrailLen = craftReveal?.tipTrailLen ?? 0.14;
   const heroAtom = craftReveal?.heroAtom;
+  const heroParallax = craftReveal?.heroParallax ?? DEFAULT_HERO_PARALLAX;
   const slotStars = craftReveal?.slotStars ?? DEFAULT_SLOT_STARS;
   const bridges = craftReveal?.bridges ?? DEFAULT_BRIDGES;
   const slotLit = craftReveal?.slotLit;
@@ -828,6 +849,7 @@ function UniverseScene({
                 tipSize={tipSize}
                 tipTrailLen={tipTrailLen}
                 heroAtom={heroAtom}
+                heroParallax={heroParallax}
                 slotStars={slotStars}
                 bridges={bridges}
                 slotLit={slotLit}

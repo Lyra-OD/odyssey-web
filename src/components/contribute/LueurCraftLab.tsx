@@ -178,7 +178,7 @@ const COPY = {
     depth: "Profondeur Z",
     amount: "Force spikes",
     rotate: "Rotation",
-    parallax: "Parallax souris",
+    parallax: "Séparation Hero↔nom",
     timeline: "Scrub reveal",
     play: "Play",
     pause: "Pause",
@@ -265,7 +265,7 @@ const COPY = {
     depth: "Depth Z",
     amount: "Spike strength",
     rotate: "Rotation",
-    parallax: "Mouse parallax",
+    parallax: "Hero↔name separation",
     timeline: "Scrub reveal",
     play: "Play",
     pause: "Pause",
@@ -574,6 +574,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
       embedScale: heroEmbedScale,
       globalScale: heroGlobalScale,
     },
+    heroParallax: parallax,
   };
 
   const onRevealPlay = () => {
