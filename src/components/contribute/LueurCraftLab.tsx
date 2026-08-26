@@ -1029,6 +1029,12 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
                 </button>
               ))}
               <Link
+                href={`/${locale}/contribute/test-sky`}
+                className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/55 hover:border-white/30"
+              >
+                {locale === "en" ? "Sky craft" : "Craft ciel"}
+              </Link>
+              <Link
                 href={`/${locale}/contribute/test-ciel`}
                 className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/55 hover:border-white/30"
               >

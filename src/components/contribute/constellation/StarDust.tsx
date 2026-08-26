@@ -229,12 +229,18 @@ function StarField({ kind, count, cfg }: StarFieldProps) {
 
 type StarDustProps = {
   tier: VisualTier;
+  showBand?: boolean;
+  showField?: boolean;
 };
 
 /**
  * 2 layers : bande + field. Knobs : `skyTheme.starsBand` / `starsField`.
  */
-export function StarDust({ tier }: StarDustProps) {
+export function StarDust({
+  tier,
+  showBand = true,
+  showField = true,
+}: StarDustProps) {
   const theme = useSkyTheme();
   const total = tierDustCount(tier);
   const bandCount = tier === "reduced" ? total : Math.floor(total * 0.96);
@@ -244,6 +250,7 @@ export function StarDust({ tier }: StarDustProps) {
 
   return (
     <group>
+      {showBand && bandCount > 0 ? (
       <ParallaxLayer
         factor={band.parallax.factor}
         lerp={band.parallax.lerp}
@@ -251,7 +258,8 @@ export function StarDust({ tier }: StarDustProps) {
       >
         <StarField kind="band" count={bandCount} cfg={band} />
       </ParallaxLayer>
-      {fieldCount > 0 ? (
+      ) : null}
+      {showField && fieldCount > 0 ? (
         <ParallaxLayer
           factor={field.parallax.factor}
           lerp={field.parallax.lerp}

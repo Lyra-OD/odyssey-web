@@ -6,6 +6,7 @@
 **Dernière MAJ :** 24 août 2026
 
 **Changelog** (max 5)
+- 26 août 2026 — Lab `/contribute/test-sky` — doc [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md).
 - 24 août 2026 — E′ v3 : traits teal · hero perle distinct · courant stroke node→node · échelle mid.
 - 24 août 2026 — E′ v2 : Leo étalé · hero XXL · traits plus lisibles · reveal 1× ~2,4 s.
 - 24 août 2026 — E′ : graphe Leo `leo-graph-v1` (9 nœuds, slots fantômes, modèle C).
@@ -15,7 +16,7 @@
 > Knobs / thème / presets → [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md)  
 > Screensaver + intro Éclipse → [`SANCTUARY_SKY_SCREENSAVER.md`](SANCTUARY_SKY_SCREENSAVER.md)
 
-**Preview :** `/fr/contribute/test-ciel` (token `test-ciel`)  
+**Preview :** `/fr/contribute/test-ciel` (token `test-ciel`) · **Lab fond :** [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md) (`/fr/contribute/test-sky`)  
 **Entrée scène :** `SanctuaryUniverse.tsx`  
 **Atome Lueur (un composant, deux contextes) :** [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md).  
 **Thème (couleurs, opacités, parallaxe) :** `constellation/skyTheme.ts` — **source de vérité des knobs** ; ne pas hardcoder dans les layers.
@@ -175,7 +176,7 @@ Plan détaillé (phases, perf, intro OFF, veille ⏳) : **ce fichier screensaver
 
 **Journal essais :** [`ECLIPSE_CRAFT_LAB_NOTES.md`](ECLIPSE_CRAFT_LAB_NOTES.md).
 
-**Preview craft :** `/fr/contribute/test-ciel` (ciel) · `/fr/contribute/test-lueur` (Hero · Constellation · Produit) · `/fr/contribute/test-eclipse` (lab) · `/fr/contribute/test-eclipse-play` (A–B) · `/fr/contribute/test-wormhole` (warp C) · `/fr/contribute/test-eclipse-mark` (marque)
+**Preview craft :** `/fr/contribute/test-ciel` (ciel) · **`/fr/contribute/test-sky`** (fond · [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md)) · `/fr/contribute/test-lueur` (Hero · Constellation · Produit) · `/fr/contribute/test-eclipse` (lab) · `/fr/contribute/test-eclipse-play` (A–B) · `/fr/contribute/test-wormhole` (warp C) · `/fr/contribute/test-eclipse-mark` (marque)
 
 Règle de session : **une lettre / phase à la fois**, go explicite, valider sur `test-ciel`, commit sur demande.
 

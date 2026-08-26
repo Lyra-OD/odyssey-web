@@ -98,6 +98,10 @@ import {
   useVisualTier,
 } from "@/src/components/contribute/constellation/useVisualTier";
 import { ClientWebGLGate } from "@/src/components/contribute/constellation/webglGate";
+import {
+  isSkyLayerOn,
+  type SkyCraftLayerMap,
+} from "@/src/components/contribute/constellation/skyCraftLayers";
 
 const APPROACH_MS = 680;
 const CLOSE_SETTLE_MS = 980;
@@ -660,6 +664,7 @@ function UniverseScene({
   onStarScreen,
   craftLite = false,
   craftReveal,
+  skyLayers,
 }: {
   tier: ReturnType<typeof useVisualTier>;
   parallaxIntensity: number;
@@ -673,6 +678,7 @@ function UniverseScene({
   onStarScreen: (anchor: ScreenAnchor | null) => void;
   craftLite?: boolean;
   craftReveal?: ConstellationRevealCraft;
+  skyLayers?: SkyCraftLayerMap;
 }) {
   const theme = useSkyTheme();
   // Pendant closing, on garde le tracking pour suivre l’étoile au retour
@@ -764,7 +770,7 @@ function UniverseScene({
       <CameraRig>
         {/* Craft : remonte le ciel pour que la bande d etoiles soit en haut d ecran */}
         <group position={craftLite ? [0, 5.5, 0] : [0, 0, 0]}>
-        {tier !== "reduced" ? (
+        {tier !== "reduced" && isSkyLayerOn(skyLayers, "gasFar") ? (
           <ParallaxLayer
             factor={theme.gasFar.parallax.factor}
             lerp={theme.gasFar.parallax.lerp}
@@ -772,7 +778,7 @@ function UniverseScene({
             <NebulaGasFar tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {tier === "desktop" ? (
+        {tier === "desktop" && isSkyLayerOn(skyLayers, "ghostStars") ? (
           <ParallaxLayer
             factor={theme.ghostStars.parallax.factor}
             lerp={theme.ghostStars.parallax.lerp}
@@ -780,31 +786,39 @@ function UniverseScene({
             <GhostStars tier={tier} />
           </ParallaxLayer>
         ) : null}
+        {isSkyLayerOn(skyLayers, "gasRose") ? (
         <ParallaxLayer
           factor={theme.gasRose.parallax.factor}
           lerp={theme.gasRose.parallax.lerp}
         >
           <NebulaGasRose tier={tier} />
         </ParallaxLayer>
+        ) : null}
+        {isSkyLayerOn(skyLayers, "gasMauve") ? (
         <ParallaxLayer
           factor={theme.gasMauve.parallax.factor}
           lerp={theme.gasMauve.parallax.lerp}
         >
           <NebulaGasMauve tier={tier} />
         </ParallaxLayer>
+        ) : null}
+        {isSkyLayerOn(skyLayers, "gasTeal") ? (
         <ParallaxLayer
           factor={theme.gasTeal.parallax.factor}
           lerp={theme.gasTeal.parallax.lerp}
         >
           <NebulaGasTeal tier={tier} />
         </ParallaxLayer>
+        ) : null}
+        {isSkyLayerOn(skyLayers, "cosmicDust") ? (
         <ParallaxLayer
           factor={theme.cosmicDust.parallax.factor}
           lerp={theme.cosmicDust.parallax.lerp}
         >
           <CosmicDust tier={tier} />
         </ParallaxLayer>
-        {tier !== "reduced" && !craftLite ? (
+        ) : null}
+        {tier !== "reduced" && !craftLite && isSkyLayerOn(skyLayers, "zodiacal") ? (
           <ParallaxLayer
             factor={theme.zodiacal.parallax.factor}
             lerp={theme.zodiacal.parallax.lerp}
@@ -812,7 +826,7 @@ function UniverseScene({
             <ZodiacalLight tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {tier !== "reduced" && !craftLite ? (
+        {tier !== "reduced" && !craftLite && isSkyLayerOn(skyLayers, "aurora") ? (
           <ParallaxLayer
             factor={theme.aurora.parallax.factor}
             lerp={theme.aurora.parallax.lerp}
@@ -820,7 +834,7 @@ function UniverseScene({
             <AuroraVeil tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {tier === "desktop" ? (
+        {tier === "desktop" && isSkyLayerOn(skyLayers, "eclipse") ? (
           <ParallaxLayer
             factor={theme.eclipse.parallax.factor}
             lerp={theme.eclipse.parallax.lerp}
@@ -828,8 +842,12 @@ function UniverseScene({
             <EclipseDisc tier={tier} />
           </ParallaxLayer>
         ) : null}
-        <StarDust tier={tier} />
-        {!craftLite ? (
+        <StarDust
+          tier={tier}
+          showBand={isSkyLayerOn(skyLayers, "starsBand")}
+          showField={isSkyLayerOn(skyLayers, "starsField")}
+        />
+        {!craftLite && isSkyLayerOn(skyLayers, "shootingStars") ? (
           <ParallaxLayer
             factor={theme.shootingStars.parallax.factor}
             lerp={theme.shootingStars.parallax.lerp}
@@ -837,7 +855,7 @@ function UniverseScene({
             <ShootingStars tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {showConstellation ? (
+        {showConstellation && isSkyLayerOn(skyLayers, "constellation") ? (
           <ParallaxLayer
             factor={theme.constellation.parallax.factor}
             lerp={theme.constellation.parallax.lerp}
@@ -940,6 +958,10 @@ export type SanctuaryUniverseProps = {
   craftReveal?: ConstellationRevealCraft;
   /** Wizard onboarding — constellation visible en mode background. */
   constellationVisible?: boolean;
+  /** Lab `/test-sky` — masque le toggle chrome « constellation » (panneau lab à la place). */
+  skyCraftChrome?: boolean;
+  /** Lab — visibilité par layer (undefined = tout on sauf constellation). */
+  skyLayers?: SkyCraftLayerMap;
 };
 
 export function SanctuaryUniverse({
@@ -952,6 +974,8 @@ export function SanctuaryUniverse({
   craftLite = false,
   craftReveal,
   constellationVisible,
+  skyCraftChrome = true,
+  skyLayers,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -1124,6 +1148,7 @@ export function SanctuaryUniverse({
               <span className="ml-2 hidden text-white/30 sm:inline">Esc</span>
             </button>
           ) : null}
+          {skyCraftChrome ? (
           <button
             type="button"
             onClick={toggleConstellation}
@@ -1132,6 +1157,7 @@ export function SanctuaryUniverse({
           >
             {constellationLabel}
           </button>
+          ) : null}
           <button
             type="button"
             onClick={toggleWander}
@@ -1179,8 +1205,7 @@ export function SanctuaryUniverse({
                 tier={tier}
                 parallaxIntensity={intensity}
                 showConstellation={
-                  constellationVisible ??
-                  (immersive && (craftReveal ? true : constellationOn))
+                  constellationVisible ?? (immersive && constellationOn)
                 }
                 wanderEnabled={immersive && wanderOn}
                 onSelectMemory={beginFocus}
@@ -1188,6 +1213,7 @@ export function SanctuaryUniverse({
                 onStarScreen={onStarScreen}
                 craftLite={craftLite}
                 craftReveal={craftReveal}
+                skyLayers={skyLayers}
               />
             </SkyThemeProvider>
           </Suspense>

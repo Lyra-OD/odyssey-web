@@ -26,6 +26,7 @@ import {
   SANCTUARY_PREVIEW_TRIBUTE,
   sanctuaryPreviewPacks,
 } from "@/src/lib/contribute/sanctuaryPreview";
+import { useConstellationCraftReveal } from "@/src/components/contribute/constellation/useConstellationCraftReveal";
 import {
   SANCTUARY_HALO_TEAL,
   SANCTUARY_HALO_UV,
@@ -155,9 +156,13 @@ const copy = {
   },
 } as const;
 
-/** Preview `test-ciel` — double mode fond / Voir le ciel (plan D). */
+/** Preview `test-ciel` — même reveal que onglet Constellation (`/test-lueur`). */
 function SkyPreviewExperience({ locale }: { locale: Locale }) {
   const [skyOpen, setSkyOpen] = useState(true);
+  const { craftReveal, restart } = useConstellationCraftReveal({
+    autoPlay: skyOpen,
+    heroName: SANCTUARY_PREVIEW_TRIBUTE.firstName,
+  });
   const seeSky = locale === "en" ? "See the sky" : "Voir le ciel";
   const whisper =
     locale === "en" ? "The sky is filling" : "Le ciel se remplit";
@@ -169,6 +174,7 @@ function SkyPreviewExperience({ locale }: { locale: Locale }) {
         className={skyOpen ? "fixed inset-0 z-40" : "absolute inset-0 z-0"}
         onClose={skyOpen ? () => setSkyOpen(false) : undefined}
         locale={locale}
+        craftReveal={craftReveal}
       />
       <div className="absolute right-4 top-4 z-50 md:right-8 md:top-8">
         <LocaleSwitcher
@@ -185,7 +191,10 @@ function SkyPreviewExperience({ locale }: { locale: Locale }) {
           </p>
           <button
             type="button"
-            onClick={() => setSkyOpen(true)}
+            onClick={() => {
+              setSkyOpen(true);
+              restart();
+            }}
             className={`${sanctuaryGhostButton} px-6 py-3 text-[11px] uppercase tracking-[0.28em]`}
           >
             {seeSky}
