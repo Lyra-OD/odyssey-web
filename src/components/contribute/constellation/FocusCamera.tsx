@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { Fog, Vector3 } from "three";
 
 import { idleCameraRef } from "./IdleCameraDrift";
+import { revealCameraDriveRef } from "./RevealCamera";
 import { useSkyTheme } from "./skyTheme";
 import { skyWanderRef } from "./SkyWander";
 import { cameraZoomRef, ZOOM_DEFAULT, ZOOM_MAX, ZOOM_MIN } from "./WheelZoom";
@@ -36,6 +37,8 @@ export function FocusCamera({ target, active }: FocusCameraProps) {
   const fogBreathAmp = useSkyTheme().scene.idle?.fogBreathAmp ?? 0;
 
   useFrame((state) => {
+    if (revealCameraDriveRef.active) return;
+
     const cam = state.camera;
     const fog = state.scene.fog instanceof Fog ? state.scene.fog : null;
     const wx = skyWanderRef.x;

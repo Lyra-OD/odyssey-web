@@ -37,6 +37,8 @@ export type HeroStarProps = {
   parallax?: number;
   /** Master size after layer craft is locked (default 1) */
   globalScale?: number;
+  /** Soft birth flash 0–1 (keep low — mourning magic, not blast) */
+  birthFlash?: number;
 };
 
 const vertexShader = /* glsl */ `
@@ -205,6 +207,7 @@ export function HeroStar({
   phase = 0,
   parallax = 0.35,
   globalScale = 1,
+  birthFlash = 0,
 }: HeroStarProps) {
   const geo = usePointGeometry();
   const rootRef = useRef<Group>(null);
@@ -253,6 +256,10 @@ export function HeroStar({
       return camera.position.z / d;
     };
 
+    const flash = Math.max(0, Math.min(1, birthFlash));
+    const flashSize = 1 + flash * 0.55;
+    const flashGlow = 1 + flash * 0.7;
+
     const drive = (
       mat: ShaderMaterial,
       layer: HeroLayerKnobs,
@@ -262,10 +269,14 @@ export function HeroStar({
       withTeal: boolean,
     ) => {
       mat.uniforms.uSize.value =
-        baseSize * layer.size * Math.max(0.05, globalScale) * persp(layer.depth);
-      mat.uniforms.uGlow.value = layer.glow * glowMul;
+        baseSize *
+        layer.size *
+        Math.max(0.05, globalScale) *
+        persp(layer.depth) *
+        flashSize;
+      mat.uniforms.uGlow.value = layer.glow * glowMul * flashGlow;
       mat.uniforms.uBreath.value = breath;
-      mat.uniforms.uAmount.value = layer.amount;
+      mat.uniforms.uAmount.value = layer.amount * (1 + flash * 0.25);
       mat.uniforms.uRot.value = (layer.rotationDeg * Math.PI) / 180;
       if (withTeal && mat.uniforms.uTeal) {
         mat.uniforms.uTeal.value.copy(tealCol);

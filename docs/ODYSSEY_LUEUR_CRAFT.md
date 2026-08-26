@@ -4,11 +4,11 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 26 août 2026 — Lab constellation : knobs **slots** (bright/medium/dim/ghost) + **traits major/minor** (style · couleur · glow noyau/halo).
-- 26 août 2026 — Plan A→F + **caméra** : serré naissance → pull-back sync reveal (Hero = centre causal, pas centroïde graphe).
-- 26 août 2026 — **KEEP Hero** : defaults `DEFAULT_HERO_*` + parallax 1.2 · globalScale 0.83 · ratios OK.
+- 26 août 2026 — Naissance + **cam** : serré A–C (nom breath scale/lift) → pull-back au draw (`RevealCamera`).
+- 26 août 2026 — Lab constellation : knobs **slots** + **traits major/minor** (style · couleur · glow).
+- 26 août 2026 — Plan A→F + **caméra** (canon, pas encore câblé) : serré → pull-back ; Hero = centre causal.
+- 26 août 2026 — **KEEP Hero** : defaults `DEFAULT_HERO_*` + parallax 1.2 · globalScale 0.83.
 - 25 août 2026 — Onglet 2 : Hero craft partagé · courant trait/étoile/orbe.
-- 24 août 2026 — Timeline reveal Leo · force/rotation spikes · lab test-lueur.
 
 **Preview :** `/fr/contribute/test-lueur` (dev only)  
 **Ciel :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · **Orb carte :** [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md)  
@@ -80,15 +80,18 @@ CEO craft → ensuite **0b KEEP** (fixer les defaults).
 **Principe :** une seule timeline (`revealT`). Caméra **liée** au même `revealT` (pas un 2ᵉ clock).  
 **Hero** = **centre causal** (traits partent de lui) — **pas** obligé d’être le centroïde géométrique du graphe Leo (la silhouette prime).
 
-### Caméra (décision CEO 26 août)
+### Naissance seule (câblé — 26 août)
 
-| Moment | Framing |
-|--------|---------|
-| **B–C** | **Serré** sur Hero (+ nom) — Hero **optiquement** au centre de l’écran |
-| **D–E** | **Zoom-out** synchronisé au draw (même `revealT`) — le monde s’ouvre |
-| **F / idle** | Cadre **silhouette Leo** lisible — Hero légèrement off-center OK si la forme gagne |
+Fichier : [`birth.ts`](../src/components/contribute/constellation/graphs/birth.ts) · cam : [`revealCamera.ts`](../src/components/contribute/constellation/graphs/revealCamera.ts) · durée défaut **14 s**.
 
-Quiet Luxury : amplitude douce, pas de whiplash. Pas de Hero dead-center viewport pendant tout le reveal.
+| Beat | `revealT` | Visuel (~temps) | Caméra |
+|------|-----------|-----------------|--------|
+| **A** | 0 → 0,04 | Vide court (~0,6 s) | **Serrée** Hero+nom (z≈3,45) |
+| **B** | 0,04 → 0,46 | Nom : masse floue → **scale+lift** + tenue | Serrée, stable |
+| **C** | 0,46 → 0,70 | Mote → grow + nom **yield** ; flash ≤ ~0,14 | Serrée |
+| **draw** | 0,70 → 1 | Traits | **Pull-back** → cadre Leo (z≈7,5) |
+
+Émotion : deuil magique. Whisper / proximité souris = plus tard.
 
 ### Beats
 

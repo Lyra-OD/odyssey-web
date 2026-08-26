@@ -22,6 +22,7 @@ import {
   HeroStar,
   type HeroLayerKnobs,
 } from "@/src/components/contribute/constellation/HeroStar";
+import { resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
 import {
   DEFAULT_CONSTELLATION_REVEAL_MS,
   DEFAULT_HERO_SHARE,
@@ -478,6 +479,8 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
     setRevealT(v);
   };
 
+  const birthBeat = resolveBirth(revealT).beat;
+
   const tabs: { id: LabTab; label: string; hint: string }[] = [
     { id: "hero", label: t.tabHero, hint: t.hintHero },
     { id: "constellation", label: t.tabConstellation, hint: t.hintConstellation },
@@ -848,7 +851,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
                 {t.restart}
               </button>
               <span className="px-1 font-mono text-[11px] text-teal-400/80">
-                {(revealT * 100).toFixed(0)}%
+                {birthBeat} · {(revealT * 100).toFixed(0)}%
               </span>
             </div>
           ) : null}
@@ -979,7 +982,7 @@ export function LueurCraftLab({ locale = "fr" }: { locale?: Locale }) {
                   {t.restart}
                 </button>
                 <span className="font-mono text-[11px] text-teal-400/80">
-                  {(revealT * 100).toFixed(0)}%
+                  {birthBeat} · {(revealT * 100).toFixed(0)}%
                 </span>
               </div>
               <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">

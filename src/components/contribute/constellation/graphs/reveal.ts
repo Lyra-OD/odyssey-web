@@ -29,7 +29,10 @@ export type ConstellationDrawState = {
 };
 
 export type ResolveStrokeDrawOptions = {
-  /** Share of timeline for hero alone (0.05–0.6). Default 0.24 */
+  /**
+   * Share of timeline for hero alone (0–0.6). Default 0.24.
+   * Pass **0** when birth choreography drives the Hero separately.
+   */
   heroShare?: number;
   /** Overlap between consecutive strokes (0–0.85). Default 0.42 */
   strokeOverlap?: number;
@@ -37,10 +40,11 @@ export type ResolveStrokeDrawOptions = {
 
 export const DEFAULT_HERO_SHARE = 0.24;
 export const DEFAULT_STROKE_OVERLAP = 0.42;
-export const DEFAULT_CONSTELLATION_REVEAL_MS = 4200;
+/** Slow play: birth alone ~10s, then strokes. */
+export const DEFAULT_CONSTELLATION_REVEAL_MS = 14000;
 
 /**
- * Hero alone first, then overlapping strokes (current flows node → node).
+ * Hero alone first (unless heroShare === 0), then overlapping strokes.
  */
 export function resolveStrokeDraw(
   revealT: number,
@@ -49,7 +53,7 @@ export function resolveStrokeDraw(
 ): ConstellationDrawState {
   const heroShare = Math.min(
     0.6,
-    Math.max(0.05, options?.heroShare ?? DEFAULT_HERO_SHARE),
+    Math.max(0, options?.heroShare ?? DEFAULT_HERO_SHARE),
   );
   const strokeOverlap = Math.min(
     0.85,
@@ -69,14 +73,15 @@ export function resolveStrokeDraw(
     (s): s is Extract<LeoStrokeStep, { kind: "stroke" }> => s.kind === "stroke",
   );
 
-  const heroT = Math.min(1, t / heroShare);
-  nodeAppear.hero = easeOutCubic(heroT);
-
-  if (t <= heroShare) {
-    return { nodeAppear, edgeDraw, activeStroke };
+  if (heroShare > 0) {
+    const heroT = Math.min(1, t / heroShare);
+    nodeAppear.hero = easeOutCubic(heroT);
+    if (t <= heroShare) {
+      return { nodeAppear, edgeDraw, activeStroke };
+    }
   }
 
-  const u = (t - heroShare) / (1 - heroShare);
+  const u = heroShare > 0 ? (t - heroShare) / (1 - heroShare) : t;
   const n = Math.max(1, strokes.length);
   const windowLen = Math.min(1, (1 + strokeOverlap) / n);
   const step = n <= 1 ? 0 : (1 - windowLen) / (n - 1);

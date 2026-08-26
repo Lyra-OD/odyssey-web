@@ -28,6 +28,7 @@ import { AuroraVeil } from "@/src/components/contribute/constellation/AuroraVeil
 import { EclipseDisc } from "@/src/components/contribute/constellation/EclipseDisc";
 import { FocusCamera } from "@/src/components/contribute/constellation/FocusCamera";
 import { IdleCameraDrift } from "@/src/components/contribute/constellation/IdleCameraDrift";
+import { RevealCamera } from "@/src/components/contribute/constellation/RevealCamera";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
 import {
   DEFAULT_BRIDGES,
@@ -69,6 +70,7 @@ import {
   resolveConstellation,
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import { LEO_STROKE_SEQUENCE } from "@/src/components/contribute/constellation/graphs/leo";
+import { resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
 import {
   DEFAULT_CONSTELLATION_REVEAL_MS,
   DEFAULT_HERO_SHARE,
@@ -230,6 +232,8 @@ function Constellation({
   const emphasis =
     revealT >= 1 ? emphasisIdle : revealT * emphasisDuring;
 
+  const birth = useMemo(() => resolveBirth(revealT), [revealT]);
+
   const stars = useMemo(() => {
     if (slotLit) {
       return resolveConstellation(ACTIVE_TEMPLATE, buildCraftSlotFills(slotLit));
@@ -241,14 +245,15 @@ function Constellation({
     () => new Set(stars.filter((s) => !s.lit).map((s) => s.id)),
     [stars],
   );
-  const draw = useMemo(
-    () =>
-      resolveStrokeDraw(revealT, LEO_STROKE_SEQUENCE, {
-        heroShare,
-        strokeOverlap,
-      }),
-    [revealT, heroShare, strokeOverlap],
-  );
+  const draw = useMemo(() => {
+    void heroShare;
+    const d = resolveStrokeDraw(birth.drawU, LEO_STROKE_SEQUENCE, {
+      heroShare: 0,
+      strokeOverlap,
+    });
+    d.nodeAppear.hero = Math.max(d.nodeAppear.hero ?? 0, birth.heroBirth);
+    return d;
+  }, [birth, strokeOverlap, heroShare]);
   const [hovered, setHovered] = useState<string | null>(null);
 
   const locked = focusedSoulId !== null;
@@ -269,7 +274,13 @@ function Constellation({
       {stars.map((star, i) => {
         const pos = positions[star.id] ?? star.position;
         const appear = draw.nodeAppear[star.id] ?? 0;
-        if (appear < 0.03) return null;
+        const isHero = star.role === "hero";
+
+        // Hero slot: show for name alone, or when star is born
+        const heroAnchor =
+          isHero && (birth.nameBirth > 0.02 || birth.heroBirth > 0.02);
+        if (!isHero && appear < 0.03) return null;
+        if (isHero && !heroAnchor) return null;
 
         const hitRadius =
           star.visual === "hero"
@@ -292,6 +303,13 @@ function Constellation({
         const gScale = heroAtom?.globalScale ?? 1;
         const appearMul = appear * (1 + emphasis * 0.1) * ghostFade;
 
+        // Mote → star (heroBirth already quint-slow in birth.ts)
+        const heroEase = birth.heroBirth;
+        const showHeroStar = birth.heroBirth > 0.008;
+        const heroGroupScale = useCraftHero
+          ? Math.max(0.012, embed * (0.04 + 0.96 * heroEase))
+          : 1;
+
         const slotSizeMul =
           star.visual === "ghost"
             ? slotStars.ghostSize
@@ -301,33 +319,68 @@ function Constellation({
                 ? slotStars.sizeMedium
                 : slotStars.sizeDim;
 
+        const nameBloom = isHero ? birth.nameBirth : 0;
+        const nameGlow = isHero ? birth.nameGlow : 0;
+        const nameLift = isHero ? birth.nameLift : 1;
+        const nameYield = isHero ? birth.nameYield : 0;
+        const showHeroName = isHero && nameBloom > 0.02;
+        const showSlotName =
+          !isHero && !!star.name && hovered === star.id;
+        // Mist → presence : opacity lags slightly behind bloom
+        const nameOpacity = isHero
+          ? Math.min(
+              1,
+              nameBloom * nameBloom * (0.35 + 0.55 * nameBloom) *
+                (0.75 + 0.25 * nameGlow) *
+                (hovered === star.id ? 1 : 0.92),
+            )
+          : 0.6;
+        const nameBlurPx = isHero
+          ? Math.max(0, (1 - nameBloom) * 18)
+          : 0;
+        // Breath: grows + rises into place, then yields slightly for the star
+        const nameScale = isHero
+          ? 0.7 + 0.3 * nameLift
+          : 1;
+        const nameY = isHero
+          ? 44 - 16 * nameLift + 8 * nameYield
+          : 18;
+        const nameTracking = isHero
+          ? 0.42 - 0.18 * nameLift + 0.03 * nameGlow
+          : 0.2;
+        const glowPx = 12 + 28 * nameGlow + 10 * nameBloom;
+        const glowA = 0.12 + 0.42 * nameGlow;
+
         return (
           <group key={star.id} position={pos}>
-            {useCraftHero && heroAtom ? (
-              <group scale={Math.max(0.05, appear * embed)}>
+            {useCraftHero && heroAtom && showHeroStar ? (
+              <group scale={heroGroupScale}>
                 <HeroStar
                   white={heroAtom.white}
                   teal={heroAtom.teal}
                   spikes={heroAtom.spikes}
                   globalScale={gScale}
+                  birthFlash={birth.heroFlash}
                   parallax={0}
                   phase={i * 1.7}
                 />
               </group>
-            ) : (
+            ) : !useCraftHero ? (
               <LueurNode
                 variant={star.visual}
                 phase={i * 1.7}
                 floating={!isFocus && star.lit}
                 focusBoost={isFocus ? focusBoost : 0}
-                appear={appearMul}
+                appear={
+                  isHero ? Math.max(appearMul, heroEase) : appearMul
+                }
                 craftSizeMul={star.visual === "hero" ? 1 : slotSizeMul}
                 craftGlowMul={star.visual === "hero" ? 1 : slotStars.glow}
                 craftBreathMul={
                   star.visual === "hero" ? 1 : slotStars.breath
                 }
               />
-            )}
+            ) : null}
             {isFocus ? (
               <StarScreenReporter active onScreen={onStarScreen} />
             ) : null}
@@ -352,31 +405,31 @@ function Constellation({
                 }}
               />
             ) : null}
-            {star.name &&
-            (hovered === star.id ||
-              (star.role === "hero" && appear > 0.55)) ? (
+            {showHeroName || showSlotName ? (
               <Html
-                distanceFactor={star.role === "hero" ? 7.5 : 6}
+                distanceFactor={isHero ? 7.2 : 6}
                 style={{
                   pointerEvents: "none",
-                  transform:
-                    star.role === "hero"
-                      ? "translate(-50%, 28px)"
-                      : "translate(-50%, 18px)",
+                  transform: `translate(-50%, ${nameY}px) scale(${nameScale})`,
+                  transformOrigin: "50% 0%",
                   whiteSpace: "nowrap",
-                  fontSize: star.role === "hero" ? "13px" : "11px",
-                  letterSpacing: "0.2em",
-                  fontWeight: star.role === "hero" ? 400 : 300,
-                  color:
-                    star.role === "hero"
-                      ? hovered === star.id
-                        ? "rgba(255, 250, 245, 0.92)"
-                        : "rgba(255, 250, 245, 0.55)"
-                      : "rgba(204, 251, 241, 0.6)",
-                  textShadow:
-                    star.role === "hero"
-                      ? "0 0 24px rgba(94, 234, 212, 0.35)"
-                      : "none",
+                  fontSize: isHero ? "15px" : "11px",
+                  letterSpacing: `${nameTracking}em`,
+                  fontWeight: 300,
+                  opacity: nameOpacity,
+                  filter:
+                    nameBlurPx > 0.35
+                      ? `blur(${nameBlurPx.toFixed(1)}px)`
+                      : undefined,
+                  color: isHero
+                    ? `rgba(255, 252, 248, ${0.72 + 0.22 * nameBloom})`
+                    : "rgba(204, 251, 241, 0.6)",
+                  textShadow: isHero
+                    ? `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)}), 0 0 ${(glowPx * 0.45).toFixed(0)}px rgba(255, 248, 240, ${
+                        0.08 + 0.2 * nameGlow
+                      })`
+                    : "none",
+                  transition: "none",
                 }}
                 center
               >
@@ -507,6 +560,12 @@ function UniverseScene({
       <FocusCamera
         target={focus ? focus.pos : null}
         active={focusing}
+      />
+      <RevealCamera
+        enabled={showConstellation && !focusing}
+        revealT={revealTProp}
+        revealTRef={revealTRef}
+        graphScale={graphScale}
       />
       <CameraRig>
         {/* Craft : remonte le ciel pour que la bande d etoiles soit en haut d ecran */}
