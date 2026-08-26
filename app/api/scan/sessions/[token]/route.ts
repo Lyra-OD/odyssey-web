@@ -29,14 +29,13 @@ export async function GET(
   const admin = getSupabaseAdminClient();
   const { data: project } = await admin
     .from("projects")
-    .select("first_name, last_name, wizard_state")
+    .select("first_name, last_name")
     .eq("id", session.project_id)
     .maybeSingle();
 
   const tribute = resolveTributeNames({
     first_name: (project?.first_name as string | null) ?? null,
     last_name: (project?.last_name as string | null) ?? null,
-    wizard_state: project?.wizard_state,
   });
 
   return NextResponse.json({

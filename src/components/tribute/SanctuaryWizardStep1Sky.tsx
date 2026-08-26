@@ -71,8 +71,7 @@ export function SanctuaryWizardStep1Sky({
   return (
     <div
       className={[
-        "pointer-events-none fixed inset-0 z-0 transition-opacity duration-700",
-        panelFading || phase === "reward" ? "opacity-100" : "opacity-100",
+        "pointer-events-none fixed inset-0 z-0 transition-opacity duration-700 opacity-100",
       ].join(" ")}
       aria-hidden
     >

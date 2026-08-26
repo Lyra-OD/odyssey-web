@@ -1,9 +1,10 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — **Egress démo VP** : `NEXT_PUBLIC_DEMO_MODE` · poll Coffre off · pas de fallback full-res · DB sans `wizard_state` sur endpoints publics.
 - 21 août 2026 — carte docs : catégories business/product/design + dossiers pour **nouveaux** fichiers ([`README.md`](README.md)).
 - 21 août 2026 — GTM B2C + plan session Figma : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 - 21 août 2026 — DA : playbook Vague 1 — [`DA_SCREENS.md`](DA_SCREENS.md).
@@ -96,4 +97,4 @@ Les §3–9, §11–13 (diagramme wallets, P5.5, dette jetons, SQL P5.5, revue J
 
 ### 4.1 Supabase Storage egress
 
-🟢 thumbs WebP. Détail : [log §4.1](_archive/PROJECT_STATUS_LOG.md#41-supabase-storage-egress-juin-2026).
+🟢 thumbs WebP · **démo VP** : `NEXT_PUBLIC_DEMO_MODE=true` → poll Coffre off + pas de fallback original. Détail : [log §4.1](_archive/PROJECT_STATUS_LOG.md#41-supabase-storage-egress-juin-2026).

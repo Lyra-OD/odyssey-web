@@ -43,14 +43,13 @@ export async function GET(
 
   const { data: project } = await admin
     .from("projects")
-    .select("id, first_name, last_name, wizard_state")
+    .select("id, first_name, last_name")
     .eq("id", tokenRow.project_id)
     .maybeSingle();
 
   const tribute = resolveTributeNames({
     first_name: (project?.first_name as string | null) ?? null,
     last_name: (project?.last_name as string | null) ?? null,
-    wizard_state: project?.wizard_state,
   });
 
   const [{ data: guestMedia }, { data: paidCheckouts }, guestPhotoCount] =

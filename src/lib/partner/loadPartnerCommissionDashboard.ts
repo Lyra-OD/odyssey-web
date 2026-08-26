@@ -32,7 +32,6 @@ type ProjectNameRow = {
   id: string;
   first_name: string | null;
   last_name: string | null;
-  wizard_state: unknown;
 };
 
 function projectLabel(
@@ -145,7 +144,7 @@ export async function loadPartnerCommissionDashboard(
   if (projectIds.length > 0) {
     const { data: projects } = await admin
       .from("projects")
-      .select("id, first_name, last_name, wizard_state")
+      .select("id, first_name, last_name")
       .in("id", projectIds);
 
     for (const project of (projects ?? []) as ProjectNameRow[]) {

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { IS_DEMO_MODE } from "@/src/lib/demoMode";
+
 type Props = {
   src: string | null | undefined;
   fallbackSrc?: string | null;
@@ -43,6 +45,7 @@ export function StoragePreviewImage({
       decoding="async"
       onClick={onClick}
       onError={() => {
+        if (IS_DEMO_MODE) return;
         if (fallbackSrc && currentSrc !== fallbackSrc) {
           setCurrentSrc(fallbackSrc);
         }
