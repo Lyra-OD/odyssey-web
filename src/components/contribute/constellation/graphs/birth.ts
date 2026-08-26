@@ -50,7 +50,7 @@ const SEG = {
 } as const;
 
 /** Absolute revealT — grain gathers in the name. */
-const HERO_START = 0.3;
+const HERO_START = 0.24;
 
 /** Within hero local u ∈ [0,1] (HERO_START→C_END). */
 const C = {

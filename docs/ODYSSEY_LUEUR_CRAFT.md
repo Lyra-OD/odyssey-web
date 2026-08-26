@@ -100,7 +100,7 @@ CEO craft → ensuite **0b KEEP** (fixer les defaults).
 |-------|--------|------|
 | `A_END` | `0.02` | Vide très court |
 | `B_END` | `0.40` | Fin hold nom (avant draw) |
-| `HERO_START` | `0.30` | Grain/voile commencent **dans** le nom |
+| `HERO_START` | `0.24` | Grain/voile commencent **dans** le nom |
 | `C_END` | `0.58` | Fin C0–C2 · début traits |
 | Cam birth Z | `≈3.45` | Serré sur Hero+nom |
 | Cam idle Z | `≈7.5` | Cadre Leo |
@@ -159,7 +159,7 @@ Beat lab (affiche `A` / `B` / `C0` / `C1` / `C2` / `draw`) = `resolveBirth(revea
 #### Checklist validation (rejouer)
 
 1. Nom : fumée → mot lisible, **figé** sous l’étoile.  
-2. ~0,30 : grain **dans** le mot (pas sous le bas des lettres).  
+2. ~0,24 : grain **dans** le mot (pas sous le bas des lettres).  
 3. Voile : mini → peak fluide → contracte (pas précipité).  
 4. Étoile monte du nom vers le siège.  
 5. Fin C / draw : Hero = **KEEP** onglet 1.  
