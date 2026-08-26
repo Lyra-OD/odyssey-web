@@ -86,10 +86,10 @@ Fichier : [`birth.ts`](../src/components/contribute/constellation/graphs/birth.t
 
 | Beat | `revealT` | Visuel (~temps) | Caméra |
 |------|-----------|-----------------|--------|
-| **A** | 0 → 0,04 | Vide court (~0,6 s) | **Serrée** Hero+nom (z≈3,45) |
-| **B** | 0,04 → 0,46 | Nom : masse floue → **scale+lift** + tenue | Serrée, stable |
-| **C** | 0,46 → 0,70 | Mote → grow + nom **yield** ; flash ≤ ~0,14 | Serrée |
-| **draw** | 0,70 → 1 | Traits | **Pull-back** → cadre Leo (z≈7,5) |
+| **A** | 0 → 0,02 | Vide très court | **Serrée** Hero+nom (z≈3,45) |
+| **B** | 0,02 → 0,42 | Masse floue → mot (canaux désync) + tenue | Serrée, stable |
+| **C** | 0,42 → 0,68 | Mote → grow ; nom **figé** ; flash ≤ ~0,14 | Serrée |
+| **draw** | 0,68 → 1 | Traits | **Pull-back** → cadre Leo (z≈7,5) |
 
 Émotion : deuil magique. Whisper / proximité souris = plus tard.
 

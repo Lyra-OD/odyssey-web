@@ -322,34 +322,35 @@ function Constellation({
         const nameBloom = isHero ? birth.nameBirth : 0;
         const nameGlow = isHero ? birth.nameGlow : 0;
         const nameLift = isHero ? birth.nameLift : 1;
-        const nameYield = isHero ? birth.nameYield : 0;
+        const nameClarity = isHero ? birth.nameClarity : 1;
+        const nameScaleCh = isHero ? birth.nameScale : 1;
+        const nameTrack = isHero ? birth.nameTrack : 1;
         const showHeroName = isHero && nameBloom > 0.02;
         const showSlotName =
           !isHero && !!star.name && hovered === star.id;
-        // Mist → presence : opacity lags slightly behind bloom
         const nameOpacity = isHero
           ? Math.min(
               1,
-              nameBloom * nameBloom * (0.35 + 0.55 * nameBloom) *
-                (0.75 + 0.25 * nameGlow) *
+              nameBloom *
+                (0.4 + 0.6 * nameClarity) *
+                (0.78 + 0.22 * nameGlow) *
                 (hovered === star.id ? 1 : 0.92),
             )
           : 0.6;
         const nameBlurPx = isHero
-          ? Math.max(0, (1 - nameBloom) * 18)
+          ? Math.max(0, (1 - nameClarity) * 16)
           : 0;
-        // Breath: grows + rises into place, then yields slightly for the star
-        const nameScale = isHero
-          ? 0.7 + 0.3 * nameLift
-          : 1;
+        // Under the star — frozen once landed (no yield during C)
+        const nameScale = isHero ? 0.78 + 0.22 * nameScaleCh : 1;
         const nameY = isHero
-          ? 44 - 16 * nameLift + 8 * nameYield
+          ? 42 - 14 * nameLift + birth.nameDriftY * 4
           : 18;
+        const nameX = isHero ? birth.nameDriftX * 5 : 0;
         const nameTracking = isHero
-          ? 0.42 - 0.18 * nameLift + 0.03 * nameGlow
+          ? 0.36 - 0.14 * nameTrack + 0.025 * nameGlow
           : 0.2;
-        const glowPx = 12 + 28 * nameGlow + 10 * nameBloom;
-        const glowA = 0.12 + 0.42 * nameGlow;
+        const glowPx = 14 + 30 * nameGlow + 8 * nameClarity;
+        const glowA = 0.12 + 0.4 * nameGlow;
 
         return (
           <group key={star.id} position={pos}>
@@ -407,14 +408,14 @@ function Constellation({
             ) : null}
             {showHeroName || showSlotName ? (
               <Html
-                distanceFactor={isHero ? 7.2 : 6}
+                distanceFactor={isHero ? 6.4 : 6}
                 style={{
                   pointerEvents: "none",
-                  transform: `translate(-50%, ${nameY}px) scale(${nameScale})`,
+                  transform: `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameY.toFixed(1)}px) scale(${nameScale.toFixed(3)})`,
                   transformOrigin: "50% 0%",
                   whiteSpace: "nowrap",
-                  fontSize: isHero ? "15px" : "11px",
-                  letterSpacing: `${nameTracking}em`,
+                  fontSize: isHero ? "19px" : "11px",
+                  letterSpacing: `${nameTracking.toFixed(3)}em`,
                   fontWeight: 300,
                   opacity: nameOpacity,
                   filter:
@@ -422,7 +423,7 @@ function Constellation({
                       ? `blur(${nameBlurPx.toFixed(1)}px)`
                       : undefined,
                   color: isHero
-                    ? `rgba(255, 252, 248, ${0.72 + 0.22 * nameBloom})`
+                    ? `rgba(255, 252, 248, ${0.72 + 0.22 * nameClarity})`
                     : "rgba(204, 251, 241, 0.6)",
                   textShadow: isHero
                     ? `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)}), 0 0 ${(glowPx * 0.45).toFixed(0)}px rgba(255, 248, 240, ${
