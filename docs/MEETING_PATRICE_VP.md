@@ -4,7 +4,8 @@
 **Dernière MAJ :** 25 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 26 août 2026 — Bloc business = **Fonds / achat collaboratif** (cercle + famille) — ancre Base ~11 k$/mois.
+- 26 août 2026 — Chiffres pitch : **$/famille** · 5,5–11 k$ = hyp. **bannière** (pas par salon) · volume 3 000 daté.
+- 26 août 2026 — Bloc business = **Fonds / achat collaboratif** (cercle + famille).
 - 25 août 2026 — lien adoption & pilote Urgel · plan demain TEMP.
 - 25 août 2026 — §1 stratégie (179 $/349 $, net distribuable) · §2 Mode A · §3 Mode B vision prologue.
 - 25 août 2026 — Reality check labs · chaînon Salon · phrase directeur funéraire.
@@ -94,22 +95,26 @@ Dire : *« **30 % du net distribuable** — contractuel, tracé, mensuel. Invisi
 >
 > *On enlève le fardeau d’**une** carte en deuil. On monétise la **générosité du cercle**. Sur **chaque dollar** (invité **et** famille), Urgel touche **30 % du net distribuable** — zéro vente au comptoir.*
 >
-> *Conservateur (famille seule / viral timide) ≈ **5,5 k$/mois**. Base (Fonds + diaspora) ≈ **11 k$/mois**. La différence = **ce levier**.*
+> *Unité : ~**22 $/famille** (conservateur) → ~**43 $/famille** (Base / Fonds). Sur une hyp. **historique bannière** (~3 000 fam./an **réseau** Bourgie, chiffre daté — **pas** par salon) : ordre de grandeur **5,5 → 11 k$/mois** réseau. On **recalibre** avec vos volumes 2026.*
 
-**Exécution :** carte QR · partage étape 2 · empreintes Sanctuaire · checkout famille avec crédit Fonds. Sans partage de lien = pas de Fonds = retour au conservateur.
+**Exécution :** carte QR · partage étape 2 · empreintes Sanctuaire · checkout famille avec crédit Fonds. Sans partage de lien = pas de Fonds = retour au plancher unitaire.
 
 ### 1.6 Ordre de grandeur (hypothèses — oral après démo)
 
-Modèle 1 salon × 3 000 familles / an — [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md).
+**D’abord l’unité** (indépendante du volume) :
 
-| | Conservateur | **Base (cible pitch)** | Optimiste |
-|--|--------------|------------------------|-----------|
-| Leviers | Famille seule · viral OFF | Famille + **Fonds / cercle** | Diaspora large |
-| Commission groupe / mois | ~5,5 k$ | **~11 k$** | ~23 k$ |
+| | Conservateur | **Base (Fonds)** | Optimiste |
+|--|--------------|------------------|-----------|
+| Commission / **famille entrante** | ~22 $ | **~43 $** | ~103 $ |
 
-> *Ancre orale = **Base**. Conservateur = plancher. Optimiste = upside. On dimensionne après **un salon preuve**.*
+**Puis le volume** — snapshot V2 a modélisé « 1 salon × 3 000/an ». **Correction Urgel :** les ~3 000/an étaient pour la **bannière / réseau**, pas une succursale ; chiffre **~4 ans**. Voir [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) + note lecture.
 
-**Boucle virale :** produit **livré** · flag tenant **ON** pour le pilote Urgel. Conservateur en rencontre = cercle **timide**, pas produit éteint.
+| Si volume ≈ 250 fam./mois **réseau** | ~5,5 k$/mois | **~11 k$/mois** | ~23 k$ |
+| **1 succursale** (N fam./mois) | 22 × N | **43 × N** | 103 × N |
+
+> *Ancre orale = **$/famille** + levier Fonds. Demander le volume réel à Patrice. Ne pas dire « 11 k$ par salon ».*
+
+**Boucle virale :** produit **livré** · flag tenant **ON** pour le pilote Urgel.
 
 ---
 
@@ -132,7 +137,7 @@ Modèle 1 salon × 3 000 familles / an — [`BUSINESS_CASE_V2.md`](BUSINESS_CASE
 | 3 | **Studio — Coffre** | `/fr/studio` étape 3 | *Tous les médias au même endroit.* |
 | 4 | **Studio — Film** | étape 5 | *Le chef-d’œuvre collectif.* |
 | 5 | **Studio — Finaliser** | étape 7 · Soft Cap · crédit Fonds si ON | *Ils construisent sans payer. Le cercle peut financer via le Fonds — Héritage **179 $** / Éternité **349 $**.* |
-| 6 | **Commissions** | `/fr/salon/commissions` | *30 % du net — famille **et** invités. Base ~**11 k$/mois**.* |
+| 6 | **Commissions** | `/fr/salon/commissions` | *30 % du net — famille **et** invités. Unité ~**43 $/dossier** avec Fonds.* |
 
 **Secours :** Figma ([`DA_SCREENS.md`](DA_SCREENS.md)) · ou tel + Studio pré-rempli + 1 slide share — voir rush TEMP §2.
 
@@ -193,7 +198,7 @@ Ordre oral :
 2. Souvenir **0 $** = cadeau Urgel.  
 3. ★ **Fonds** — cercle finance Film / Livre / Éternité (*au lieu de fleurs*).  
 4. Upsell famille (**179 $ / 349 $**) si crédit insuffisant.  
-5. **30 % du net** sur invités **et** famille → Base **~11 k$/mois**.
+5. **30 % du net** sur invités **et** famille → unité **~22 → ~43 $/famille** (5,5→11 k$ = hyp. **bannière** seulement).
 
 Enchaîner **commissions** — ou Mode A beats 3–6. Tenant démo : `viral_loop_enabled` **ON** si tu montres le Fonds live.
 

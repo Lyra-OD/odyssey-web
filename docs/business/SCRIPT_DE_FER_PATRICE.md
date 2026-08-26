@@ -4,6 +4,7 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — Chiffres : **$/famille** d’abord · 5,5–11 k$ = hyp. **bannière** Bourgie (pas par salon) · volume 3 000 daté.
 - 26 août 2026 — Script de Fer v1 : pré-mortem · salon · Fonds · bouclier · closing.
 
 **Canon :** [`MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) · [`PATRICE_MURDER_BOARD_PITCH.md`](PATRICE_MURDER_BOARD_PITCH.md) · [`URGEL_ADOPTION_AND_PILOT.md`](URGEL_ADOPTION_AND_PILOT.md)
@@ -52,7 +53,9 @@
 >
 > On monétise la **générosité du cercle** — pas seulement la carte d’une personne en deuil. Sur **chaque** transaction — invité **et** famille — Urgel touche **trente pour cent du net distribuable**.
 >
-> Famille seule, scénario conservateur : environ **cinq mille cinq cents dollars par mois** et par salon. Avec le Fonds et la diaspora — scénario **Base** : environ **onze mille**. La différence, c’est **ce levier**. Héritage, pour mémoire : **cent soixante-dix-neuf**.
+> L’unité qui compte : environ **vingt-deux dollars** de commission par famille entrante en scénario conservateur — famille seule. Avec le Fonds : environ **quarante-trois dollars**. Le levier **double presque** l’économie unitaire.
+>
+> Sur une hypothèse **historique** — environ trois mille familles par an pour la **bannière Bourgie**, pas par salon — ça donnait de l’ordre de **cinq mille cinq cents à onze mille dollars par mois** au niveau réseau. On **recalibre** avec vos volumes 2026. Héritage : **cent soixante-dix-neuf**. Éternité : **trois cent quarante-neuf**.
 
 *(Si tu montres le Fonds live : tenant `viral_loop_enabled` ON. Sinon reste oral — ne bluffe pas l’écran.)*
 
@@ -100,11 +103,11 @@
 |------|----------|
 | Pré-mortem | 30 s · support Odyssey · pilote 2×10 |
 | Salon | Geste + QR · Coffre · ~2 h |
-| Argent | Fonds · fleurs · 30 % net · **5,5 → 11 k$** |
+| Argent | Fonds · fleurs · 30 % net · **~22 $ → ~43 $/famille** · 5,5→11 k$ = **bannière** (hyp. historique) |
 | Bouclier | Web autonome · pas de panier salon · coexistence USB |
 | Close | 0 $ · on mesure · on arrête si friction |
 
-**Interdit oral :** 149/299 $ forfaits · 30 % du brut · « normes bancaires » · wormhole live · « responsabilité 100 % » · Canada day one.
+**Interdit oral :** 149/299 $ forfaits · 30 % du brut · « normes bancaires » · wormhole live · « responsabilité 100 % » · Canada day one · **5,5 / 11 k$ « par salon »** (c’était une hyp. **réseau** / volume daté).
 
 ---
 

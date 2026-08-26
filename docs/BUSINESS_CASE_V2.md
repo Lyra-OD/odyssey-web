@@ -14,7 +14,9 @@
 
 ## 0. Cadre partenaire — 3 000 familles / an (1 salon)
 
-**Hypothèse volume figée (demandée) :**
+> **Note lecture Urgel (26 août 2026) :** le volume **~3 000 fam./an** utiliséé dans ce snapshot a été demandé comme « 1 salon ». En réalité, pour la **bannière Bourgie**, ce chiffre était une hyp. **réseau** (datée ~4 ans) — **pas** un volume par succursale. **Pitch oral :** ancrer **$/famille** (~22 $ conservateur · ~43 $ Base/Fonds) ; les **5,5 / 11 k$/mois** = illustration si ~250 fam./mois **réseau**, jamais « par salon ». Recalibrer avec volumes 2026 Patrice. Voir [`business/SCRIPT_DE_FER_PATRICE.md`](business/SCRIPT_DE_FER_PATRICE.md).
+
+**Hypothèse volume figée dans ce snapshot (demandée à l’époque) :**
 
 | Paramètre | Valeur |
 |-----------|--------|

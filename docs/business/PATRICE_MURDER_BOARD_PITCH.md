@@ -4,9 +4,9 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 26 août 2026 — Pitch business = **Fonds / achat collaboratif** (ancre Base ~11 k$) · §3.7 + closing.
-- 26 août 2026 — §8 objections TI · vente déguisée · USB (réponses chirurgicales ajustées MVP).
-- 26 août 2026 — Canon initial : pitch killer · modèle revenu multi-leviers · % honnêtes · ajustements MVP.
+- 26 août 2026 — Chiffres : **$/famille** · 5,5–11 k$ = hyp. **bannière** (pas par salon) · volume 3 000 daté.
+- 26 août 2026 — Pitch business = **Fonds / achat collaboratif** · §3.7 + closing.
+- 26 août 2026 — §8 objections TI · vente déguisée · USB.
 
 **Liens :** [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) · [`URGEL_ADOPTION_AND_PILOT.md`](URGEL_ADOPTION_AND_PILOT.md) · [`BUSINESS_CASE_V2.md`](../BUSINESS_CASE_V2.md) · [`FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) §2 · [`MONETIZATION_CATALOG.md`](../MONETIZATION_CATALOG.md)
 
@@ -23,7 +23,7 @@
 | Pilote P0 = sortie de secours | Promettre déploiement 10 succursales J1 |
 | Under-promise technique · over-deliver pilote | Prologue wormhole live sans fallback |
 
-**Mot d’ordre :** OD V1-MVP = **efficacité opérationnelle** + **Fonds / achat collaboratif** (cercle + famille) + **risque réputationnel maîtrisé**. Ancre revenu = **Base ~11 k$/mois**, pas le seul conservateur.
+**Mot d’ordre :** OD V1-MVP = efficacité + **Fonds** + risque maîtrisé. Ancre orale = **~22 → ~43 $/famille** (le levier). Montants **5,5 / 11 k$** = hyp. **bannière** (volume daté) — **jamais « par salon »**.
 
 ---
 
@@ -125,7 +125,7 @@ Détail : [`URGEL_ADOPTION_AND_PILOT.md`](URGEL_ADOPTION_AND_PILOT.md) §7.
 >
 > *Au lieu de fleurs qui fanent, 100–150 proches peuvent contribuer (Lueur, voix, mécène). Chaque dollar devient un **crédit produit** pour l’hommage. On monétise la générosité du cercle — pas seulement la carte de la veuve. Sur **chaque** transaction (invité **et** famille) : **30 % du net**.*
 >
-> *Famille seule ≈ **5,5 k$/mois**. Avec le Fonds (scénario Base) ≈ **11 k$/mois**. La différence = ce levier. »*
+> *Unité : ~**22 $/famille** conservateur · ~**43 $/famille** avec Fonds. Sur une hyp. **historique bannière** (~3 000 fam./an réseau Bourgie, pas par salon) : ordre de grandeur **5,5 → 11 k$/mois** réseau. On recalibre avec vos volumes. »*
 
 **Condition démo / pilote :** `viral_loop_enabled` **ON**. Sans partage de lien = pas de Fonds.
 
@@ -166,27 +166,32 @@ Détail : [`URGEL_ADOPTION_AND_PILOT.md`](URGEL_ADOPTION_AND_PILOT.md) §7.
 
 **Plafond théorique dossier « exceptionnel » :** **~1 000–1 500 $ GMV** — **&lt; 1 %** des dossiers. Ne jamais l’utiliser en slide VP.
 
-### 4.3 Revenu attendu par famille entrante (modèle Business Case V2)
+### 4.3 Revenu attendu — unité + volume (attention cadrage)
 
-Hypothèse : **1 salon · 3 000 familles/an · 250/mois · 100 % B2B2C**.
+**Unité (robuste — à dire en premier) :**
 
-Commission partenaire ≈ **27 % du GMV brut** (= 30 % du net après 10 % plateforme).
+| Scénario | Commission Urgel / **famille entrante** |
+|----------|----------------------------------------|
+| Conservateur (famille seule · viral OFF) | **~22 $** |
+| Base (Fonds / diaspora) | **~43 $** |
+| Optimiste | **~103 $** |
 
-| Scénario | Hypothèses clés | **GMV / famille entrante** | **Commission Urgel / famille** | Commission / mois (250 fam) |
-|----------|-----------------|---------------------------|-------------------------------|----------------------------|
-| **Conservateur** | 35 % paient · AOV ~234 $ · viral **OFF** | **~82 $** | **~22 $** | **~5,5 k$** |
-| **Base (cible pitch)** | 50 % paient · AOV ~275 $ · viral 30 % · ARPU invité ~96 $/projet viral · **Fonds ON** | **~158 $** | **~43 $** | **~11 k$** |
-| **Optimiste** | 65 % paient · AOV ~318 $ · viral 80 % · ARPU invité ~238 $ | **~380 $** | **~103 $** | **~23 k$** |
+**Volume :** le snapshot [`BUSINESS_CASE_V2.md`](../BUSINESS_CASE_V2.md) a été calibré « **1 salon × 3 000 fam./an** ». **Correction pitch Urgel :** les ~3 000 fam./an étaient une hyp. **bannière / réseau Bourgie** (chiffre daté ~4 ans) — **pas** un volume par salon. Donc **ne pas** dire « 5,5 k$ / 11 k$ **par salon** ».
 
-*Source calcul : [`BUSINESS_CASE_V2.md`](../BUSINESS_CASE_V2.md) §0 — dire **hypothèses**, pas garantie.*
+| Lecture | Conservateur | Base (Fonds) |
+|---------|--------------|--------------|
+| Si ~250 fam./mois **réseau** (hyp. 3 000/an) | ~**5,5 k$/mois bannière** | ~**11 k$/mois bannière** |
+| **1 succursale** | `22 $ × N` fam./mois | `43 $ × N` fam./mois |
 
-**Décomposition Base (la slide qu’il faut retenir) :**
+> *« Donnez-moi votre volume réel par succursale — on multiplie. Le levier Fonds, c’est le passage ~22 → ~43 $ par dossier. »*
+
+*Source taux : Business Case V2 §0 — dire **hypothèses**, pas garantie.*
+
+**Décomposition Base (unité) :**
 
 ```
-GMV/famille ≈ P(paye) × AOV_famille  +  P(cercle actif) × ARPU_invité
-            ≈ 0,50 × 275 $            +  0,30 × 96 $
-            ≈ 137,5 $                 +  28,8 $
-            ≈ 166 $  (arrondi ~158–167 selon rider Fonds)
+GMV/famille ≈ 0,50 × 275 $  +  0,30 × 96 $  ≈ 166 $
+Commission ≈ 27 % GMV ≈ 43 $/famille
 ```
 
 ---
@@ -238,7 +243,7 @@ Sur familles qui **passent au payant** (Base ~50 % des dossiers) :
 | « Responsabilité 100 % protégée » | **Architecture + juridique pilote** — pas de garantie absolue oral |
 | « 30 secondes » tout le temps | Vrai pour **invitation** · identité = 3 champs (une fois) |
 | Poésie du ciel en pitch VP | **Après** Mode A · ou **vidéo Mode B** 60 s max |
-| Optimiste 23 k$/mois | **Upside** — ancrer **5,5–11 k$/mois** conservateur-base |
+| Optimiste 23 k$/mois · 5,5–11 k$ « par salon » | Upside / **bannière** seulement · ancrer **$/famille** · demander volume réel |
 | Labs wormhole live | **Interdit** — vidéo seulement |
 
 ---
@@ -247,7 +252,7 @@ Sur familles qui **passent au payant** (Base ~50 % des dossiers) :
 
 > *« Patrice : **0 $** pour Urgel. **30 secondes** par conseiller. Support famille chez nous.*
 >
-> *Vous ne monétisez pas seulement une veuve au comptoir — le **Fonds** monétise la générosité de 100–150 proches (*au lieu de fleurs*). Sur chaque dollar : **30 % du net**. Plancher famille seule ~**22 $/dossier** · **Base avec Fonds ~43 $** → ~**11 k$/mois** par salon mature.*
+> *Le **Fonds** monétise la générosité de 100–150 proches (*au lieu de fleurs*). Sur chaque dollar : **30 % du net**. Unité : ~**22 $/dossier** plancher · ~**43 $** avec Fonds. Hyp. bannière historique (~3 000/an réseau) : ordre **5,5 → 11 k$/mois** réseau — on recalibre avec vos volumes.*
 >
 > *Pilote : 2 conseillers · flag Fonds ON · 10 dossiers. Si friction → stop. On commence ? »*
 
