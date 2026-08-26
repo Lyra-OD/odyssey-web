@@ -59,13 +59,13 @@ Tout se règle dans `defaultSkyTheme.scene.idle` (ou un merge preset).
 | `breathBoost` | Amplifie la parallaxe autonome des layers | `0.45` |
 | `fogBreathAmp` | Micro-dérive fog (vide qui respire) | `1.1` |
 | `rareEnabled` | Moments rares on/off | `true` |
-| `rareTargets` | Pool : `"rose"` \| `"mauve"` \| `"teal"` \| `"band"` \| `"aurora"` \| `"eclipse"` | les 6 |
+| `rareTargets` | Pool : `"rose"` \| `"mauve"` \| `"teal"` \| `"band"` \| `"aurora"` | les 5 (pas `"eclipse"` — réservé labs / intro) |
 | `rareGasPulse` | Force du pulse opacité (gaz) | `0.14` |
 | `rareBandPulse` | Force du pulse alpha (voie lactée) | `0.22` |
 | `rareDustPulse` | Pulse voile poussière si rare = gaz | `0.1` |
 | `rareLueurPulse` | Pulse Lueur hero si rare = `band` | `0.38` |
 | `rareAuroraPulse` | Pulse aurore si rare = `aurora` | `0.7` |
-| `rareEclipsePulse` | Bloom éclipse si rare = `eclipse` | `0.92` |
+| `rareEclipsePulse` | Bloom éclipse si rare = `eclipse` (labs / intro seulement) | `0.92` |
 | `rareGapMinSec` / `rareGapMaxSec` | Intervalle entre rares (pendant idle) | `140`–`260` |
 | `rareDurationSec` | Durée d’un pulse | `9` |
 | `rareSpecialStreak` | Filante un cran plus belle avec le pulse | `true` |
@@ -76,7 +76,7 @@ Tout se règle dans `defaultSkyTheme.scene.idle` (ou un merge preset).
 
 **Aurore :** knobs `aurora` — dormant hors rare ; pulse via `rareAuroraPulse`.
 
-**Éclipse :** knobs `eclipse` (body/corona/rim/coronaAmp) — desktop ; rare via `rareEclipsePulse` + intro via `scene.intro`.
+**Éclipse :** knobs `eclipse` (body/corona/rim/coronaAmp) — **hors** `SanctuaryUniverse` ambiant ; labs `/test-eclipse*` + intro future via `scene.intro`.
 
 ---
 

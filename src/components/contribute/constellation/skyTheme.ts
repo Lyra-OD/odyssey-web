@@ -256,7 +256,7 @@ export const defaultSkyTheme: SkyTheme = {
       breathBoost: 0.45,
       fogBreathAmp: 1.1,
       rareEnabled: true,
-      rareTargets: ["rose", "mauve", "teal", "band", "aurora", "eclipse"],
+      rareTargets: ["rose", "mauve", "teal", "band", "aurora"],
       rareGasPulse: 0.14,
       rareBandPulse: 0.22,
       rareDustPulse: 0.1,

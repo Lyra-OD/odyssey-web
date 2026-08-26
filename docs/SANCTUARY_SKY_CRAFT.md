@@ -6,6 +6,7 @@
 **Dernière MAJ :** 24 août 2026
 
 **Changelog** (max 5)
+- 26 août 2026 — **EclipseDisc hors ciel ambiant** — plus monté dans `SanctuaryUniverse` ; labs `/test-eclipse*` + prologue J1 seulement ; retiré du pool idle `rareTargets`.
 - 26 août 2026 — Lab `/contribute/test-sky` — doc [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md).
 - 24 août 2026 — E′ v3 : traits teal · hero perle distinct · courant stroke node→node · échelle mid.
 - 24 août 2026 — E′ v2 : Leo étalé · hero XXL · traits plus lisibles · reveal 1× ~2,4 s.
@@ -53,7 +54,7 @@ Du plus loin au plus près :
 | 1 | **CosmicDust** | `constellation/CosmicDust.tsx` | Voile poussière sur l’axe voie lactée | `cosmicDust` |
 | 1b | **ZodiacalLight** | `ZodiacalLight.tsx` | Lumière solaire soft (axe bande) | `zodiacal` — skip `reduced` |
 | 1c | **AuroraVeil** | `AuroraVeil.tsx` | Rideau aurore (dormant → pulse rare `aurora`) | `aurora` — skip `reduced` |
-| 1d | **EclipseDisc** | `EclipseDisc.tsx` | Disque + corona (rare `eclipse` + **intro**) | `eclipse` / `scene.intro` — desktop |
+| 1d | **EclipseDisc** | `EclipseDisc.tsx` | Disque + corona (**labs + prologue J1** — pas le fond ambiant) | `eclipse` / `scene.intro` — desktop · voir `/test-eclipse` |
 | 2 | **StarDust band** | `constellation/StarDust.tsx` | Voie lactée (~96 % du budget étoiles) | `starsBand` (+ zoom-out compensate) |
 | 3 | **StarDust field** | idem | Peu d’étoiles proches (~4 %) | `starsField` (+ zoom-out compensate) |
 | 4 | **ShootingStars** | `constellation/ShootingStars.tsx` | Filantes + **StreakEcho** (fantôme post-rare) | `shootingStars` |

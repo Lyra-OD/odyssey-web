@@ -69,7 +69,7 @@ flowchart TB
 |-------|---------|--------|
 | **1** Profondeur | `NebulaGasFar` + `GhostStars` | ✅ skip `reduced` ; Ghost aussi skip `mobile` |
 | **2** Lumière solaire | `ZodiacalLight` | ✅ 1 plane, skip `reduced` |
-| **3** Moments WTF | `AuroraVeil` + `EclipseDisc` + `StreakEcho` | ✅ eclipse desktop only |
+| **3** Moments WTF | `AuroraVeil` + `StreakEcho` | ✅ aurore idle ; **EclipseDisc** = labs + intro J1 (hors fond ambiant) |
 | **4** Intro Éclipse | `SkyIntroEclipse` ~2,5–3,5 s, 1×/session, skippable | ⏸ `scene.intro` OFF |
 | **5** Veille | UI fade + idle plus lent | ⏳ plus tard |
 
@@ -84,7 +84,7 @@ flowchart TB
 
 Pas de wordmark ODYSSEY sur le Sanctuaire (le ciel *est* la marque). Skip : Esc, clic, non-desktop, reduced, déjà vu.
 
-Même `EclipseDisc` : modes `intro` | `rare`.
+Même `EclipseDisc` : modes `intro` | `craft` (labs) — **plus** de pulse idle `rare` sur le ciel Sanctuaire.
 
 ---
 

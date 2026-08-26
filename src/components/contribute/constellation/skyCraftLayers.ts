@@ -8,7 +8,6 @@ export type SkyCraftLayerId =
   | "cosmicDust"
   | "zodiacal"
   | "aurora"
-  | "eclipse"
   | "starsBand"
   | "starsField"
   | "shootingStars"
@@ -26,7 +25,6 @@ export const SKY_LAB_DEFAULT_LAYERS: Record<SkyCraftLayerId, boolean> = {
   cosmicDust: true,
   zodiacal: true,
   aurora: true,
-  eclipse: true,
   starsBand: true,
   starsField: true,
   shootingStars: true,
