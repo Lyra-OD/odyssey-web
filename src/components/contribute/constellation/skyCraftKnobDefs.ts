@@ -607,6 +607,62 @@ export function buildSkyCraftKnobs(
 
     case "gasFar":
       return gasKnobs(patch, theme, "gasFar", "gasFar");
+
+    case "panorama": {
+      const p = theme.skyPanorama;
+      return [
+        opacityDesktop("Opacity", p.opacity.desktop, (v) =>
+          patch({
+            skyPanorama: {
+              opacity: { desktop: v, mobile: 0, reduced: 0 },
+            },
+          }),
+        ),
+        knob("pano-dim", "Dim", p.dim, 0.35, 1, 0.01, (v) =>
+          patch({ skyPanorama: { dim: v } }),
+        ),
+        knob("pano-posX", "Pos X", p.position[0], -8, 8, 0.05, (v) => {
+          const next: [number, number, number] = [...p.position];
+          next[0] = v;
+          patch({ skyPanorama: { position: next } });
+        }),
+        knob("pano-posY", "Pos Y", p.position[1], -6, 6, 0.05, (v) => {
+          const next: [number, number, number] = [...p.position];
+          next[1] = v;
+          patch({ skyPanorama: { position: next } });
+        }),
+        knob("pano-posZ", "Pos Z", p.position[2], -18, -6, 0.1, (v) => {
+          const next: [number, number, number] = [...p.position];
+          next[2] = v;
+          patch({ skyPanorama: { position: next } });
+        }),
+        knob("pano-scaleW", "Scale W", p.scale[0], 20, 70, 0.5, (v) => {
+          const next: [number, number, number] = [...p.scale];
+          next[0] = v;
+          patch({ skyPanorama: { scale: next } });
+        }),
+        knob("pano-scaleH", "Scale H", p.scale[1], 10, 40, 0.5, (v) => {
+          const next: [number, number, number] = [...p.scale];
+          next[1] = v;
+          patch({ skyPanorama: { scale: next } });
+        }),
+        knob("pano-rotZ", "Tilt", p.rotation[2], -0.6, 0.6, 0.01, (v) => {
+          const r: [number, number, number] = [...p.rotation];
+          r[2] = v;
+          patch({ skyPanorama: { rotation: r } });
+        }),
+        knob("pano-parallax", "Parallax", p.parallax.factor, -0.2, 0.1, 0.005, (v) =>
+          patch({ skyPanorama: { parallax: { factor: v } } }),
+        ),
+        knob("pano-parallaxLerp", "Par. lerp", p.parallax.lerp, 0.005, 0.05, 0.001, (v) =>
+          patch({ skyPanorama: { parallax: { lerp: v } } }),
+        ),
+        knob("pano-renderOrder", "Z-order", p.renderOrder, -6, 0, 1, (v) =>
+          patch({ skyPanorama: { renderOrder: v } }),
+        ),
+      ];
+    }
+
     case "gasRose":
       return gasKnobs(patch, theme, "gasRose", "gasRose");
     case "gasMauve":

@@ -6,6 +6,7 @@
 **Dernière MAJ :** 24 août 2026
 
 **Changelog** (max 5)
+- 26 août 2026 — **S2 `SkyPanorama`** — fond NASA opt-in · layer `panorama` off prod par défaut.
 - 26 août 2026 — **S1 `MilkyDustLanes`** — dark lanes · bande StarDust plus dense / serrée.
 - 26 août 2026 — **EclipseDisc hors ciel ambiant** — plus monté dans `SanctuaryUniverse` ; labs `/test-eclipse*` + prologue J1 seulement ; retiré du pool idle `rareTargets`.
 - 26 août 2026 — Lab `/contribute/test-sky` — doc [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md).
@@ -47,6 +48,7 @@ Du plus loin au plus près :
 
 | # | Layer | Fichier | Rôle | Thème / parallaxe |
 |--|--|--|--|--|
+| −2 | **SkyPanorama** | `SkyPanorama.tsx` | Photo voie lactée (plan 2:1, hybride S2) | `skyPanorama` — opt-in lab · skip mobile/reduced |
 | −1 | **NebulaGasFar** | `NebulaGasFar.tsx` | Nébuleuse quasi noire (profondeur) | `gasFar` — skip `reduced` |
 | −0.5 | **GhostStars** | `GhostStars.tsx` | Bokeh / optique soft | `ghostStars` — skip `reduced`/`mobile` |
 | 0a | **NebulaGasRose** | `NebulaGasRose.tsx` | Magenta 2001, biais droite, plus loin | `gasRose` |

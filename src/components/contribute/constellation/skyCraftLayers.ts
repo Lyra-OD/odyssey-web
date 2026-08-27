@@ -1,5 +1,6 @@
 /** Layer ids — ordre ≈ stack render (cf. `SANCTUARY_SKY_CRAFT.md` §2). */
 export type SkyCraftLayerId =
+  | "panorama"
   | "gasFar"
   | "ghostStars"
   | "gasRose"
@@ -18,6 +19,7 @@ export type SkyCraftLayerMap = Partial<Record<SkyCraftLayerId, boolean>>;
 
 /** Lab `/test-sky` — constellation off par défaut (fond seul). */
 export const SKY_LAB_DEFAULT_LAYERS: Record<SkyCraftLayerId, boolean> = {
+  panorama: false,
   gasFar: true,
   ghostStars: true,
   gasRose: true,
@@ -33,10 +35,21 @@ export const SKY_LAB_DEFAULT_LAYERS: Record<SkyCraftLayerId, boolean> = {
   constellation: false,
 };
 
+/** Opacités gaz recommandées en mode hybride (panorama + layers). */
+export const SKY_LAB_HYBRID_GAS_OPACITY = {
+  gasFar: 0.12,
+  gasRose: 0.06,
+  gasMauve: 0.08,
+  gasTeal: 0.1,
+} as const;
+
 export function isSkyLayerOn(
   layers: SkyCraftLayerMap | undefined,
   id: SkyCraftLayerId,
 ): boolean {
-  if (!layers) return true;
+  if (!layers) {
+    if (id === "panorama") return false;
+    return true;
+  }
   return layers[id] !== false;
 }

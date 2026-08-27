@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTexture } from "@react-three/drei";
 
 import { SanctuaryUniverse } from "@/src/components/contribute/SanctuaryUniverse";
 import {
@@ -17,8 +18,10 @@ import {
 } from "@/src/components/contribute/constellation/skyCraftKnobDefs";
 import {
   SKY_LAB_DEFAULT_LAYERS,
+  SKY_LAB_HYBRID_GAS_OPACITY,
   type SkyCraftLayerId,
 } from "@/src/components/contribute/constellation/skyCraftLayers";
+import { SKY_PANORAMA_TEXTURE } from "@/src/components/contribute/constellation/SkyPanorama";
 import {
   defaultSkyTheme,
   mergeSkyTheme,
@@ -110,6 +113,8 @@ const COPY = {
     rarePool: "Pool idle rare",
     rareOn: "Rares actifs",
     rareStreak: "Filante spéciale",
+    modeProcedural: "A · Procédural",
+    modeHybrid: "B · Photo NASA",
     scene: "Scène",
     reset: "Réinit.",
     tier: "Tier",
@@ -122,6 +127,7 @@ const COPY = {
     testEclipse: "Éclipse",
     testWormhole: "Wormhole",
     layerLabels: {
+      panorama: "Panorama",
       gasFar: "Gaz lointain",
       ghostStars: "Ghost stars",
       gasRose: "Gaz rose",
@@ -146,6 +152,8 @@ const COPY = {
     rarePool: "Idle rare pool",
     rareOn: "Rares enabled",
     rareStreak: "Special streak",
+    modeProcedural: "A · Procedural",
+    modeHybrid: "B · NASA photo",
     scene: "Scene",
     reset: "Reset",
     tier: "Tier",
@@ -158,6 +166,7 @@ const COPY = {
     testEclipse: "Eclipse",
     testWormhole: "Wormhole",
     layerLabels: {
+      panorama: "Panorama",
       gasFar: "Far gas",
       ghostStars: "Ghost stars",
       gasRose: "Rose gas",
@@ -185,7 +194,11 @@ export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [layers, setLayers] = useState(SKY_LAB_DEFAULT_LAYERS);
   const [themeOverrides, setThemeOverrides] = useState<DeepPartial<SkyTheme>>({});
   const [parallaxIntensity, setParallaxIntensity] = useState(1);
-  const [knobTarget, setKnobTarget] = useState<SkyCraftKnobTarget>("gasTeal");
+  const [knobTarget, setKnobTarget] = useState<SkyCraftKnobTarget>("panorama");
+
+  useEffect(() => {
+    useTexture.preload(SKY_PANORAMA_TEXTURE);
+  }, []);
 
   const resolvedTheme = useMemo(
     () => mergeSkyTheme(defaultSkyTheme, themeOverrides),
@@ -203,6 +216,46 @@ export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
     setThemeOverrides({});
     setParallaxIntensity(1);
     setKnobTarget("gasTeal");
+  };
+
+  const applyProceduralMode = () => {
+    setLayers({ ...SKY_LAB_DEFAULT_LAYERS, panorama: false });
+    setKnobTarget("gasTeal");
+  };
+
+  const applyHybridMode = () => {
+    setLayers({ ...SKY_LAB_DEFAULT_LAYERS, panorama: true });
+    setKnobTarget("panorama");
+    patchTheme({
+      gasFar: {
+        opacity: {
+          desktop: SKY_LAB_HYBRID_GAS_OPACITY.gasFar,
+          mobile: SKY_LAB_HYBRID_GAS_OPACITY.gasFar * 0.85,
+          reduced: 0,
+        },
+      },
+      gasRose: {
+        opacity: {
+          desktop: SKY_LAB_HYBRID_GAS_OPACITY.gasRose,
+          mobile: SKY_LAB_HYBRID_GAS_OPACITY.gasRose * 0.85,
+          reduced: 0,
+        },
+      },
+      gasMauve: {
+        opacity: {
+          desktop: SKY_LAB_HYBRID_GAS_OPACITY.gasMauve,
+          mobile: SKY_LAB_HYBRID_GAS_OPACITY.gasMauve * 0.85,
+          reduced: 0,
+        },
+      },
+      gasTeal: {
+        opacity: {
+          desktop: SKY_LAB_HYBRID_GAS_OPACITY.gasTeal,
+          mobile: SKY_LAB_HYBRID_GAS_OPACITY.gasTeal * 0.85,
+          reduced: 0,
+        },
+      },
+    });
   };
 
   const toggleLayer = (id: SkyCraftLayerId) => {
@@ -279,6 +332,28 @@ export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
         <div className="pointer-events-auto absolute bottom-0 left-0 right-0 z-20 max-h-[45vh] overflow-y-auto border-t border-white/10 bg-black/70 px-3 py-2 backdrop-blur-md md:max-h-[50vh] md:px-5 md:py-2.5">
           <div className="mx-auto flex max-w-7xl flex-col gap-2">
             <div className="sticky top-0 z-10 -mx-3 flex flex-wrap items-center gap-1.5 bg-black/80 px-3 py-1.5 backdrop-blur-md md:-mx-5 md:px-5">
+              <button
+                type="button"
+                onClick={applyProceduralMode}
+                className={`rounded-sm border px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] ${
+                  !layers.panorama
+                    ? "border-teal-400/45 bg-teal-500/10 text-teal-100"
+                    : "border-white/15 text-white/55 hover:border-white/30"
+                }`}
+              >
+                {t.modeProcedural}
+              </button>
+              <button
+                type="button"
+                onClick={applyHybridMode}
+                className={`rounded-sm border px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] ${
+                  layers.panorama
+                    ? "border-teal-400/45 bg-teal-500/10 text-teal-100"
+                    : "border-white/15 text-white/55 hover:border-white/30"
+                }`}
+              >
+                {t.modeHybrid}
+              </button>
               <Link href={`/${locale}/contribute/test-ciel`} className={labLinkClass}>
                 {t.testCiel}
               </Link>

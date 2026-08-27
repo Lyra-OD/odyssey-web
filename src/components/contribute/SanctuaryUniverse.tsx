@@ -28,6 +28,7 @@ import { CosmicDust } from "@/src/components/contribute/constellation/CosmicDust
 import { ZodiacalLight } from "@/src/components/contribute/constellation/ZodiacalLight";
 import { AuroraVeil } from "@/src/components/contribute/constellation/AuroraVeil";
 import { MilkyDustLanes } from "@/src/components/contribute/constellation/MilkyDustLanes";
+import { SkyPanorama } from "@/src/components/contribute/constellation/SkyPanorama";
 import { FocusCamera } from "@/src/components/contribute/constellation/FocusCamera";
 import { IdleCameraDrift } from "@/src/components/contribute/constellation/IdleCameraDrift";
 import { RevealCamera } from "@/src/components/contribute/constellation/RevealCamera";
@@ -770,6 +771,14 @@ function UniverseScene({
       <CameraRig>
         {/* Craft : remonte le ciel pour que la bande d etoiles soit en haut d ecran */}
         <group position={craftLite ? [0, 5.5, 0] : [0, 0, 0]}>
+        {tier === "desktop" && isSkyLayerOn(skyLayers, "panorama") ? (
+          <ParallaxLayer
+            factor={theme.skyPanorama.parallax.factor}
+            lerp={theme.skyPanorama.parallax.lerp}
+          >
+            <SkyPanorama tier={tier} />
+          </ParallaxLayer>
+        ) : null}
         {tier !== "reduced" && isSkyLayerOn(skyLayers, "gasFar") ? (
           <ParallaxLayer
             factor={theme.gasFar.parallax.factor}

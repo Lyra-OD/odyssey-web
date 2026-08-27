@@ -202,6 +202,21 @@ export type SceneTheme = {
   };
 };
 
+export type SkyPanoramaTheme = {
+  /** Chemin public (ex. `/craft/sky/milky-way-v1.jpg`). */
+  texturePath: string;
+  opacity: TierOpacity;
+  position: [number, number, number];
+  /** Plan large — ratio ~2:1 (W × H). */
+  scale: [number, number, number];
+  /** Rotation Euler (rad) — aligne la bande galactique. */
+  rotation: [number, number, number];
+  /** Assombrissement multiply (0–1). */
+  dim: number;
+  renderOrder: number;
+  parallax: ParallaxKnobs;
+};
+
 export type GhostStarsTheme = {
   tint: string;
   count: number;
@@ -222,6 +237,7 @@ export type SkyTheme = {
   id: string;
   baseLoopPeriod: number;
   scene: SceneTheme;
+  skyPanorama: SkyPanoramaTheme;
   gasFar: GasLayerTheme;
   gasRose: GasLayerTheme;
   gasMauve: GasLayerTheme;
@@ -284,6 +300,18 @@ export const defaultSkyTheme: SkyTheme = {
       rareDurationSec: 9,
       rareSpecialStreak: true,
     },
+  },
+  skyPanorama: {
+    texturePath: "/craft/sky/milky-way-v1.jpg",
+    opacity: { desktop: 0.75, mobile: 0, reduced: 0 },
+    position: [0, 0.15, -13.5],
+    /** Plus petit / plus loin — photo = texture de fond, pas un wallpaper plein écran. */
+    scale: [34, 17, 1],
+    /** Légère pente ≈ axe StarDust (0.85 / 0.22). */
+    rotation: [0, 0, 0.22],
+    dim: 0.55,
+    renderOrder: -4,
+    parallax: { factor: -0.04, lerp: 0.01 },
   },
   gasFar: {
     color: "#1a1520",
