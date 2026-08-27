@@ -31,6 +31,7 @@ Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas har
 | `gasFar` | Nébuleuse lointaine (Phase S1) |
 | `ghostStars` | Bokeh optique (Phase S1) |
 | `cosmicDust` | Voile poussière |
+| `milkyDustLanes` | Dark lanes voie lactée (S1 profondeur) |
 | `zodiacal` | Lumière zodiacale (Phase S2) |
 | `starsBand` | Voie lactée |
 | `starsField` | Étoiles proches |
@@ -75,6 +76,8 @@ Tout se règle dans `defaultSkyTheme.scene.idle` (ou un merge preset).
 **StreakEcho :** `shootingStars.echoDelaySec` (`0.4`) + `echoOpacity` (`0.35`) — fantôme soft après filante spéciale.
 
 **Aurore :** knobs `aurora` — dormant hors rare ; pulse via `rareAuroraPulse`.
+
+**Dark lanes :** knobs `milkyDustLanes` (`lane`, `deep`, `contrast`, opacité) — filaments sur axe bande ; skip `reduced`.
 
 **Éclipse :** knobs `eclipse` (body/corona/rim/coronaAmp) — **hors** `SanctuaryUniverse` ambiant ; labs `/test-eclipse*` + intro future via `scene.intro`.
 

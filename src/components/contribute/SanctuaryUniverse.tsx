@@ -27,6 +27,7 @@ import { CameraRig } from "@/src/components/contribute/constellation/CameraRig";
 import { CosmicDust } from "@/src/components/contribute/constellation/CosmicDust";
 import { ZodiacalLight } from "@/src/components/contribute/constellation/ZodiacalLight";
 import { AuroraVeil } from "@/src/components/contribute/constellation/AuroraVeil";
+import { MilkyDustLanes } from "@/src/components/contribute/constellation/MilkyDustLanes";
 import { FocusCamera } from "@/src/components/contribute/constellation/FocusCamera";
 import { IdleCameraDrift } from "@/src/components/contribute/constellation/IdleCameraDrift";
 import { RevealCamera } from "@/src/components/contribute/constellation/RevealCamera";
@@ -831,6 +832,14 @@ function UniverseScene({
             lerp={theme.aurora.parallax.lerp}
           >
             <AuroraVeil tier={tier} />
+          </ParallaxLayer>
+        ) : null}
+        {tier !== "reduced" && isSkyLayerOn(skyLayers, "dustLanes") ? (
+          <ParallaxLayer
+            factor={theme.milkyDustLanes.parallax.factor}
+            lerp={theme.milkyDustLanes.parallax.lerp}
+          >
+            <MilkyDustLanes tier={tier} />
           </ParallaxLayer>
         ) : null}
         <StarDust

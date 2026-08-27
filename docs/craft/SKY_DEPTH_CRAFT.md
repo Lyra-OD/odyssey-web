@@ -4,6 +4,8 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 26 août 2026 — Lab : couleurs par layer + **pool idle rare** (cibles · pulses · gaps).
+- 26 août 2026 — **S1 `MilkyDustLanes`** — dark lanes shader · knobs lab · bande StarDust resserrée.
 - 26 août 2026 — Lab **`/contribute/test-sky`** v0 : toggles layers · knobs `skyTheme` · sans constellation par défaut.
 
 **Liens :**
@@ -40,7 +42,7 @@ Infra layers : `constellation/skyCraftLayers.ts` · props `skyLayers` / `skyCraf
 
 ## 3. v0 livré
 
-- Toggle **13 layers** (constellation **off** par défaut)
+- Toggle **14 layers** · **knobs par layer** (position · scale · parallaxe · opacité · …)
 - Knobs : parallaxe · fog · opacités gaz · poussière · band/field α/size
 - **Reset** → `defaultSkyTheme` + layers défaut
 - Liens vers `test-ciel` · `test-lueur`
@@ -52,7 +54,7 @@ Infra layers : `constellation/skyCraftLayers.ts` · props `skyLayers` / `skyCraf
 | Phase | Quoi | Statut |
 |-------|------|--------|
 | **S0** | Lab v0 (ce doc) | ✅ |
-| **S1** | **`MilkyDustLanes`** — masque sombre soustractif (ref photo) | ⏳ |
+| **S1** | **`MilkyDustLanes`** — masque sombre soustractif (ref photo) | ✅ v1 |
 | **S2** | Panorama fond (NASA WebP) + toggle lab A/B | ⏳ |
 | **S3** | Export preset JSON (`skyTheme` partial) · bouton Copy | ⏳ |
 | **S4** | Sim tier mobile/reduced dans le panel | ⏳ |

@@ -53,6 +53,8 @@ export type StarFieldTheme = {
   scaleRange: number;
   brightMin: number;
   brightRange: number;
+  /** Épaisseur bande (voie lactée) — plus bas = bande plus serrée. */
+  bandThickness?: number;
   drift: number;
   breathSpeedA: number;
   breathSpeedB: number;
@@ -69,6 +71,19 @@ export type DustLayerTheme = {
   dust: string;
   tint: string;
   opacity: TierOpacity;
+  position: [number, number, number];
+  scale: [number, number, number];
+  renderOrder: number;
+  parallax: ParallaxKnobs;
+};
+
+/** Dark dust lanes — rivières sombres sur l’axe voie lactée (S1 profondeur). */
+export type MilkyDustLanesTheme = {
+  lane: string;
+  deep: string;
+  opacity: TierOpacity;
+  /** 0 = lanes larges · 1 = filaments fins. */
+  contrast: number;
   position: [number, number, number];
   scale: [number, number, number];
   renderOrder: number;
@@ -212,6 +227,7 @@ export type SkyTheme = {
   gasMauve: GasLayerTheme;
   gasTeal: GasLayerTheme;
   cosmicDust: DustLayerTheme;
+  milkyDustLanes: MilkyDustLanesTheme;
   zodiacal: ZodiacalTheme;
   aurora: AuroraTheme;
   eclipse: EclipseTheme;
@@ -319,6 +335,16 @@ export const defaultSkyTheme: SkyTheme = {
     renderOrder: 1,
     parallax: { factor: 0.16, lerp: 0.026 },
   },
+  milkyDustLanes: {
+    lane: "#120c0a",
+    deep: "#030204",
+    opacity: { desktop: 0.52, mobile: 0.38, reduced: 0 },
+    contrast: 0.62,
+    position: [0, 0, -4.65],
+    scale: [32, 18, 1],
+    renderOrder: 2,
+    parallax: { factor: 0.14, lerp: 0.018 },
+  },
   zodiacal: {
     warm: "#1a1510",
     core: "#6a5640",
@@ -364,10 +390,11 @@ export const defaultSkyTheme: SkyTheme = {
     tint: "#c8d4f0",
     zSpread: 9,
     zBias: -4.5,
-    scaleMin: 0.28,
-    scaleRange: 1.0,
-    brightMin: 0.5,
-    brightRange: 0.5,
+    scaleMin: 0.22,
+    scaleRange: 1.12,
+    brightMin: 0.42,
+    brightRange: 0.58,
+    bandThickness: 0.86,
     drift: 0.028,
     breathSpeedA: 0.42,
     breathSpeedB: 0.26,

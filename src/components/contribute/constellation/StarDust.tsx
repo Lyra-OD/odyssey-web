@@ -122,7 +122,7 @@ function buildGeometry(
     if (kind === "band") {
       const t = (rand() - 0.5) * 24;
       const u = rand() + rand() + rand() - 1.5;
-      const thickness = u * 1.05;
+      const thickness = u * (cfg.bandThickness ?? 1.05);
       x = t * 0.85 + thickness * 0.4;
       y = t * 0.22 + thickness * 0.95;
       z = (rand() - 0.5) * cfg.zSpread + cfg.zBias;

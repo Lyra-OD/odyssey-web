@@ -6,6 +6,7 @@ export type SkyCraftLayerId =
   | "gasMauve"
   | "gasTeal"
   | "cosmicDust"
+  | "dustLanes"
   | "zodiacal"
   | "aurora"
   | "starsBand"
@@ -23,6 +24,7 @@ export const SKY_LAB_DEFAULT_LAYERS: Record<SkyCraftLayerId, boolean> = {
   gasMauve: true,
   gasTeal: true,
   cosmicDust: true,
+  dustLanes: true,
   zodiacal: true,
   aurora: true,
   starsBand: true,
