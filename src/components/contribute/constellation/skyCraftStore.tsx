@@ -12,6 +12,7 @@ import {
 
 import type { DeepPartial } from "./skyTheme";
 import {
+  MILKY_GROUP_CHILD_IDS,
   type SkyCraftState,
   type SkyCraftVisualLayerId,
   type SkyLayersState,
@@ -184,6 +185,49 @@ export function SkyCraftStoreProvider({
             },
           };
         }
+
+        /** Groupe milky ON sans enfants = écran vide — réveiller les 4 enfants. */
+        if (id === "milkyGroup" && visible) {
+          let layers = {
+            ...prev.layers,
+            milkyGroup: { ...prev.layers.milkyGroup, isVisible: true },
+          };
+          const anyChildOn = MILKY_GROUP_CHILD_IDS.some(
+            (childId) => layers[childId].isVisible,
+          );
+          if (!anyChildOn) {
+            layers = Object.fromEntries(
+              Object.entries(layers).map(([key, layer]) => [
+                key,
+                (MILKY_GROUP_CHILD_IDS as readonly string[]).includes(key)
+                  ? { ...layer, isVisible: true }
+                  : layer,
+              ]),
+            ) as SkyLayersState;
+            layers = {
+              ...layers,
+              milkyGroup: { ...layers.milkyGroup, isVisible: true },
+            };
+          }
+          return { ...prev, layers };
+        }
+
+        /** Enfant milky ON → parent obligatoire (sinon toLegacy mute). */
+        if (
+          visible &&
+          (MILKY_GROUP_CHILD_IDS as readonly string[]).includes(id)
+        ) {
+          const childId = id as (typeof MILKY_GROUP_CHILD_IDS)[number];
+          return {
+            ...prev,
+            layers: {
+              ...prev.layers,
+              milkyGroup: { ...prev.layers.milkyGroup, isVisible: true },
+              [childId]: { ...prev.layers[childId], isVisible: true },
+            },
+          };
+        }
+
         return {
           ...prev,
           layers: {

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 27 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 27 août 2026 — Fix : activer **Groupe milky** / enfant réveille parent+enfants (plus d’écran vide).
 - 27 août 2026 — Backup **`/test-sky-legacy`** (SkyTheme) isolé · lab courant = SkyCraftState.
 - 27 août 2026 — Lab branché sur `SkyCraftState` (Context) · knobs → store · preview `toLegacy*` · Log state.
 - 27 août 2026 — Contrat `SkyCraftState` + adaptateur legacy — Fond/Fog = scène · milkyGroup parent.
 - 27 août 2026 — Lab : isolation knobs · Solo · Export/Import preset JSON v1.
-- 27 août 2026 — Panorama hors milky · void noir séparé · chips Fond/Fog.
 
 **Liens :**
 - Stack layers (canon) : [`../SANCTUARY_SKY_CRAFT.md`](../SANCTUARY_SKY_CRAFT.md)
