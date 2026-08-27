@@ -4,11 +4,11 @@
 **Dernière MAJ :** 27 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 27 août 2026 — Presets nommés (Défaut · Démo VP · Nuit douce) · Copy/Import JSON · badge **Modifié**.
 - 27 août 2026 — Fix : activer **Groupe milky** / enfant réveille parent+enfants (plus d’écran vide).
 - 27 août 2026 — Backup **`/test-sky-legacy`** (SkyTheme) isolé · lab courant = SkyCraftState.
 - 27 août 2026 — Lab branché sur `SkyCraftState` (Context) · knobs → store · preview `toLegacy*` · Log state.
 - 27 août 2026 — Contrat `SkyCraftState` + adaptateur legacy — Fond/Fog = scène · milkyGroup parent.
-- 27 août 2026 — Lab : isolation knobs · Solo · Export/Import preset JSON v1.
 
 **Liens :**
 - Stack layers (canon) : [`../SANCTUARY_SKY_CRAFT.md`](../SANCTUARY_SKY_CRAFT.md)
@@ -59,7 +59,8 @@ Source : `skyCraftState.ts` · pont prod : `skyCraftStateAdapter.ts` · store la
 
 Lab branché : knobs ↔ `SkyCraftState` · preview via `toLegacySkyTheme` / `toLegacyLayerMap`.  
 Régression : bouton **Log state** + `window.__SKY_CRAFT__` (state · legacyTheme · legacyLayers).  
-Chips **Fond / Fog** éditent `scene` (pas des meshes). Preset JSON = snapshot `SkyCraftState`.
+Chips **Fond / Fog** éditent `scene` (pas des meshes).  
+**Presets :** `skyPresets.ts` (Défaut · Démo VP · Nuit douce) · UI `SkyCraftPresets.tsx` · Copy/Import JSON · badge **Modifié** si l’état diverge du dernier slot chargé.
 
 ---
 
@@ -85,7 +86,7 @@ Chips **Fond / Fog** éditent `scene` (pas des meshes). Preset JSON = snapshot `
 | **S0** | Lab v0 (ce doc) | ✅ |
 | **S1** | **`MilkyDustLanes`** — masque sombre soustractif (ref photo) | ✅ v1 |
 | **S2** | Panorama fond (NASA WebP) + toggle lab A/B | ✅ v1 |
-| **S3** | `SkyCraftState` + store + Solo + Export/Import + backup legacy | ✅ v1 |
+| **S3** | `SkyCraftState` + store + Solo + presets nommés + Copy/Import JSON | ✅ v1 |
 | **S4** | Sim tier mobile/reduced dans le panel | ⏳ |
 | **S5** | Merge preset KEEP → prod · themes nommés · meshes R3F sur contrat | ⏳ |
 

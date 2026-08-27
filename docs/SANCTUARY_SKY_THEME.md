@@ -16,6 +16,7 @@
 | Store lab (Context) | `skyCraftStore.tsx` |
 | Adaptateur `toLegacySkyTheme` / `fromLegacySkyTheme` / `toLegacyLayerMap` | `skyCraftStateAdapter.ts` |
 | Preset JSON = snapshot `SkyCraftState` | `skyCraftPreset.ts` |
+| Slots nommés (Défaut · Démo VP · Nuit douce) | `skyPresets.ts` · UI `SkyCraftPresets.tsx` |
 | Knobs lab courant | `skyCraftKnobDefs.ts` |
 | Backup knobs (`test-sky-legacy`) | `skyCraftKnobDefsLegacy.ts` |
 | Types + `defaultSkyTheme` + Provider (prod / meshes) | `skyTheme.ts` |

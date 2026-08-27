@@ -59,3 +59,12 @@ export function parseSkyCraftPreset(
 
   return { ok: true, preset: merged };
 }
+
+/** Empreinte stable pour détecter « Modifié » vs dernier preset chargé. */
+export function fingerprintSkyCraftState(state: SkyCraftState): string {
+  return JSON.stringify(state);
+}
+
+export function skyCraftStateEquals(a: SkyCraftState, b: SkyCraftState): boolean {
+  return fingerprintSkyCraftState(a) === fingerprintSkyCraftState(b);
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTexture } from "@react-three/drei";
 
 import { SanctuaryUniverse } from "@/src/components/contribute/SanctuaryUniverse";
@@ -18,10 +18,6 @@ import {
 } from "@/src/components/contribute/constellation/skyCraftKnobDefs";
 import { SKY_LAB_HYBRID_GAS_OPACITY } from "@/src/components/contribute/constellation/skyCraftLayers";
 import {
-  parseSkyCraftPreset,
-  stringifySkyCraftPreset,
-} from "@/src/components/contribute/constellation/skyCraftPreset";
-import {
   toLegacyLayerMap,
   toLegacySkyTheme,
 } from "@/src/components/contribute/constellation/skyCraftStateAdapter";
@@ -31,6 +27,7 @@ import {
   useSkyCraftStore,
   type SkyCraftUiTarget,
 } from "@/src/components/contribute/constellation/skyCraftStore";
+import { SkyCraftPresetsBar } from "@/src/components/contribute/SkyCraftPresets";
 import { SKY_PANORAMA_TEXTURE } from "@/src/components/contribute/constellation/SkyPanorama";
 import { useVisualTier } from "@/src/components/contribute/constellation/useVisualTier";
 import type { Locale } from "@/i18n.config";
@@ -147,11 +144,6 @@ const COPY = {
     logState: "Log state",
     solo: "Solo",
     soloOff: "Quitter solo",
-    exportPreset: "Export",
-    importPreset: "Import",
-    exportOk: "Preset copié",
-    importOk: "Preset chargé",
-    importFail: "Import échoué",
     reset: "Réinit.",
     tier: "Tier",
     hidePanel: "Masquer",
@@ -203,11 +195,6 @@ const COPY = {
     logState: "Log state",
     solo: "Solo",
     soloOff: "Exit solo",
-    exportPreset: "Export",
-    importPreset: "Import",
-    exportOk: "Preset copied",
-    importOk: "Preset loaded",
-    importFail: "Import failed",
     reset: "Reset",
     tier: "Tier",
     hidePanel: "Hide",
@@ -246,12 +233,10 @@ const COPY = {
 function SkyCraftLabInner({ locale }: { locale: Locale }) {
   const tier = useVisualTier();
   const t = COPY[locale === "en" ? "en" : "fr"];
-  const importRef = useRef<HTMLInputElement>(null);
   const {
     state,
     soloId,
     patch,
-    setState,
     reset,
     setLayerVisible,
     setAllVisible,
@@ -263,6 +248,8 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
   const [knobTarget, setKnobTarget] = useState<SkyCraftKnobTarget>("panorama");
   const [panoramaScaleLock, setPanoramaScaleLock] = useState(true);
   const [presetFlash, setPresetFlash] = useState<string | null>(null);
+  /** Remonte la barre presets après Réinit. (baseline + slot Défaut). */
+  const [presetsNonce, setPresetsNonce] = useState(0);
 
   const legacyTheme = useMemo(() => toLegacySkyTheme(state), [state]);
   const legacyLayers = useMemo(() => toLegacyLayerMap(state), [state]);
@@ -332,30 +319,6 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
       return;
     }
     enterSolo(knobTarget);
-  };
-
-  const exportPreset = async () => {
-    const snapshot = {
-      ...state,
-      id: `craft-${new Date().toISOString().slice(0, 10)}`,
-    };
-    try {
-      await navigator.clipboard.writeText(stringifySkyCraftPreset(snapshot));
-      setPresetFlash(t.exportOk);
-    } catch {
-      setPresetFlash(t.importFail);
-    }
-  };
-
-  const applyImportedPreset = (raw: string) => {
-    const parsed = parseSkyCraftPreset(raw);
-    if (!parsed.ok) {
-      setPresetFlash(`${t.importFail}: ${parsed.error}`);
-      return;
-    }
-    if (soloId) exitSolo();
-    setState(parsed.preset);
-    setPresetFlash(`${t.importOk} · ${parsed.preset.id}`);
   };
 
   const logState = () => {
@@ -465,33 +428,6 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
               </button>
               <button
                 type="button"
-                onClick={() => void exportPreset()}
-                className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/55 hover:border-teal-400/40 hover:text-teal-100"
-              >
-                {t.exportPreset}
-              </button>
-              <button
-                type="button"
-                onClick={() => importRef.current?.click()}
-                className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/55 hover:border-teal-400/40 hover:text-teal-100"
-              >
-                {t.importPreset}
-              </button>
-              <input
-                ref={importRef}
-                type="file"
-                accept="application/json,.json"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    void file.text().then(applyImportedPreset);
-                  }
-                  e.target.value = "";
-                }}
-              />
-              <button
-                type="button"
                 onClick={logState}
                 className="rounded-sm border border-amber-400/35 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-amber-100/80 hover:border-amber-400/60"
               >
@@ -526,6 +462,7 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                 onClick={() => {
                   reset();
                   setKnobTarget("gasTeal");
+                  setPresetsNonce((n) => n + 1);
                 }}
                 className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-teal-400/80 hover:border-teal-400/40"
               >
@@ -539,6 +476,12 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                 {t.hidePanel}
               </button>
             </div>
+
+            <SkyCraftPresetsBar
+              key={presetsNonce}
+              locale={locale}
+              onFlash={setPresetFlash}
+            />
 
             <div className="flex flex-col gap-1.5">
               <div className="flex flex-wrap items-center gap-2">
