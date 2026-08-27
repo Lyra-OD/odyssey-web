@@ -207,12 +207,21 @@ export type SkyPanoramaTheme = {
   texturePath: string;
   opacity: TierOpacity;
   position: [number, number, number];
-  /** Plan large — ratio ~2:1 (W × H). */
+  /** Taille du plan **photo** (W × H). */
   scale: [number, number, number];
   /** Rotation Euler (rad) — aligne la bande galactique. */
   rotation: [number, number, number];
   /** Assombrissement multiply (0–1). */
   dim: number;
+  /**
+   * Taille du plan **noir** derrière la photo (indépendant).
+   * Grand = couvre le bleu scène `#02040a` sans rétrécir la photo.
+   */
+  voidScale: number;
+  /** Couleur du void (défaut noir pur). */
+  voidColor: string;
+  /** Soft mix bords photo → void (optionnel, ne change pas la taille). */
+  blackSoft: number;
   renderOrder: number;
   parallax: ParallaxKnobs;
 };
@@ -305,11 +314,14 @@ export const defaultSkyTheme: SkyTheme = {
     texturePath: "/craft/sky/milky-way-v1.jpg",
     opacity: { desktop: 0.75, mobile: 0, reduced: 0 },
     position: [0, 0.15, -13.5],
-    /** Plus petit / plus loin — photo = texture de fond, pas un wallpaper plein écran. */
     scale: [34, 17, 1],
     /** Légère pente ≈ axe StarDust (0.85 / 0.22). */
     rotation: [0, 0, 0.22],
     dim: 0.55,
+    /** Assez grand pour couvrir le FOV desktop hors photo. */
+    voidScale: 80,
+    voidColor: "#000000",
+    blackSoft: 0,
     renderOrder: -4,
     parallax: { factor: -0.04, lerp: 0.01 },
   },

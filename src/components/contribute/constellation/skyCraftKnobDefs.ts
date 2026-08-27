@@ -422,13 +422,20 @@ function starFieldKnobs(
 
 export type SkyCraftKnobTarget = SkyCraftLayerId | "scene";
 
+export type SkyCraftKnobOptions = {
+  /** Lock Scale W/H panorama — agrandit sans déformer. */
+  panoramaScaleLock?: boolean;
+};
+
 export function buildSkyCraftKnobs(
   target: SkyCraftKnobTarget,
   theme: SkyTheme,
   patch: PatchTheme,
   parallaxIntensity: number,
   setParallaxIntensity: (v: number) => void,
+  options: SkyCraftKnobOptions = {},
 ): SkyCraftKnobDef[] {
+  const panoramaScaleLock = options.panoramaScaleLock ?? true;
   switch (target) {
     case "scene":
       return [
@@ -621,6 +628,12 @@ export function buildSkyCraftKnobs(
         knob("pano-dim", "Dim", p.dim, 0.35, 1, 0.01, (v) =>
           patch({ skyPanorama: { dim: v } }),
         ),
+        knob("pano-voidScale", "Noir void", p.voidScale, 0, 160, 1, (v) =>
+          patch({ skyPanorama: { voidScale: v } }),
+        ),
+        knob("pano-blackSoft", "Bord soft", p.blackSoft, 0, 0.35, 0.01, (v) =>
+          patch({ skyPanorama: { blackSoft: v } }),
+        ),
         knob("pano-posX", "Pos X", p.position[0], -8, 8, 0.05, (v) => {
           const next: [number, number, number] = [...p.position];
           next[0] = v;
@@ -636,15 +649,27 @@ export function buildSkyCraftKnobs(
           next[2] = v;
           patch({ skyPanorama: { position: next } });
         }),
-        knob("pano-scaleW", "Scale W", p.scale[0], 20, 70, 0.5, (v) => {
-          const next: [number, number, number] = [...p.scale];
-          next[0] = v;
-          patch({ skyPanorama: { scale: next } });
+        knob("pano-scaleW", "Scale W", p.scale[0], 20, 90, 0.5, (v) => {
+          if (panoramaScaleLock) {
+            const aspect = p.scale[0] / Math.max(p.scale[1], 0.001);
+            const h = Math.min(45, Math.max(10, v / aspect));
+            patch({ skyPanorama: { scale: [v, h, 1] } });
+          } else {
+            const next: [number, number, number] = [...p.scale];
+            next[0] = v;
+            patch({ skyPanorama: { scale: next } });
+          }
         }),
-        knob("pano-scaleH", "Scale H", p.scale[1], 10, 40, 0.5, (v) => {
-          const next: [number, number, number] = [...p.scale];
-          next[1] = v;
-          patch({ skyPanorama: { scale: next } });
+        knob("pano-scaleH", "Scale H", p.scale[1], 10, 45, 0.5, (v) => {
+          if (panoramaScaleLock) {
+            const aspect = p.scale[0] / Math.max(p.scale[1], 0.001);
+            const w = Math.min(90, Math.max(20, v * aspect));
+            patch({ skyPanorama: { scale: [w, v, 1] } });
+          } else {
+            const next: [number, number, number] = [...p.scale];
+            next[1] = v;
+            patch({ skyPanorama: { scale: next } });
+          }
         }),
         knob("pano-rotZ", "Tilt", p.rotation[2], -0.6, 0.6, 0.01, (v) => {
           const r: [number, number, number] = [...p.rotation];
@@ -820,6 +845,12 @@ export function buildSkyCraftColors(
         ),
         colorKnob("scene-fog", "Fog", theme.scene.fogColor, (v) =>
           patch({ scene: { fogColor: v } }),
+        ),
+      ];
+    case "panorama":
+      return [
+        colorKnob("pano-void", "Void", theme.skyPanorama.voidColor, (v) =>
+          patch({ skyPanorama: { voidColor: v } }),
         ),
       ];
     case "gasFar":

@@ -108,6 +108,8 @@ const COPY = {
     title: "Craft ciel",
     subtitle: "Fond Sanctuaire — un layer · tous ses knobs",
     layers: "Layers",
+    layersAll: "Tout on",
+    layersNone: "Tout off",
     knobsFor: "Knobs",
     colors: "Couleurs",
     rarePool: "Pool idle rare",
@@ -115,6 +117,7 @@ const COPY = {
     rareStreak: "Filante spéciale",
     modeProcedural: "A · Procédural",
     modeHybrid: "B · Photo NASA",
+    lockScale: "Lock W/H",
     scene: "Scène",
     reset: "Réinit.",
     tier: "Tier",
@@ -147,6 +150,8 @@ const COPY = {
     title: "Sky craft",
     subtitle: "Sanctuary backdrop — one layer · all its knobs",
     layers: "Layers",
+    layersAll: "All on",
+    layersNone: "All off",
     knobsFor: "Knobs",
     colors: "Colors",
     rarePool: "Idle rare pool",
@@ -154,6 +159,7 @@ const COPY = {
     rareStreak: "Special streak",
     modeProcedural: "A · Procedural",
     modeHybrid: "B · NASA photo",
+    lockScale: "Lock W/H",
     scene: "Scene",
     reset: "Reset",
     tier: "Tier",
@@ -195,6 +201,7 @@ export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
   const [themeOverrides, setThemeOverrides] = useState<DeepPartial<SkyTheme>>({});
   const [parallaxIntensity, setParallaxIntensity] = useState(1);
   const [knobTarget, setKnobTarget] = useState<SkyCraftKnobTarget>("panorama");
+  const [panoramaScaleLock, setPanoramaScaleLock] = useState(true);
 
   useEffect(() => {
     useTexture.preload(SKY_PANORAMA_TEXTURE);
@@ -227,6 +234,15 @@ export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
     setLayers({ ...SKY_LAB_DEFAULT_LAYERS, panorama: true });
     setKnobTarget("panorama");
     patchTheme({
+      scene: {
+        background: "#000000",
+        fogColor: "#000000",
+      },
+      skyPanorama: {
+        voidColor: "#000000",
+        voidScale: 80,
+        blackSoft: 0,
+      },
       gasFar: {
         opacity: {
           desktop: SKY_LAB_HYBRID_GAS_OPACITY.gasFar,
@@ -262,6 +278,16 @@ export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
     setLayers((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const setAllLayers = (on: boolean) => {
+    setLayers((prev) => {
+      const next = { ...prev };
+      for (const id of Object.keys(next) as SkyCraftLayerId[]) {
+        next[id] = on;
+      }
+      return next;
+    });
+  };
+
   const knobs = useMemo(
     () =>
       buildSkyCraftKnobs(
@@ -270,8 +296,9 @@ export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
         patchTheme,
         parallaxIntensity,
         setParallaxIntensity,
+        { panoramaScaleLock },
       ),
-    [knobTarget, resolvedTheme, parallaxIntensity],
+    [knobTarget, resolvedTheme, parallaxIntensity, panoramaScaleLock],
   );
 
   const colors = useMemo(
@@ -389,9 +416,25 @@ export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
-                {t.layers}
-              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
+                  {t.layers}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setAllLayers(true)}
+                  className="rounded-sm border border-white/15 px-2 py-0.5 text-[9px] uppercase tracking-[0.12em] text-white/55 hover:border-teal-400/40 hover:text-teal-100"
+                >
+                  {t.layersAll}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAllLayers(false)}
+                  className="rounded-sm border border-white/15 px-2 py-0.5 text-[9px] uppercase tracking-[0.12em] text-white/55 hover:border-teal-400/40 hover:text-teal-100"
+                >
+                  {t.layersNone}
+                </button>
+              </div>
               <div className="flex flex-wrap gap-1.5">
                 <button
                   type="button"
@@ -438,13 +481,26 @@ export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
-                {t.knobsFor}{" "}
-                <span className="text-white/50">{knobTargetLabel}</span>
-                <span className="ml-2 font-mono text-white/30">
-                  ({knobs.length})
-                </span>
-              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
+                  {t.knobsFor}{" "}
+                  <span className="text-white/50">{knobTargetLabel}</span>
+                  <span className="ml-2 font-mono text-white/30">
+                    ({knobs.length})
+                  </span>
+                </p>
+                {knobTarget === "panorama" ? (
+                  <label className="flex cursor-pointer items-center gap-1.5 text-[9px] uppercase tracking-[0.12em] text-white/60">
+                    <input
+                      type="checkbox"
+                      checked={panoramaScaleLock}
+                      onChange={(e) => setPanoramaScaleLock(e.target.checked)}
+                      className="h-3 w-3 accent-teal-400"
+                    />
+                    {t.lockScale}
+                  </label>
+                ) : null}
+              </div>
               <CraftKnobGrid knobs={knobs} emptyLabel={t.emptyKnobs} />
             </div>
 

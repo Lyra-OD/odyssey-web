@@ -37,7 +37,7 @@ Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas har
 | `starsField` | Étoiles proches |
 | `shootingStars` | Filantes (couleurs + parallaxe) |
 | `scene` | Background / fog / ambient / **idle** / **intro** |
-| `skyPanorama` | Panorama NASA (S2 — lab opt-in) |
+| `skyPanorama` | Panorama photo · `voidScale` (plan noir séparé) · photo `scale` indépendant |
 | `eclipse` | Disque + corona (rare + intro) |
 | `aurora` | Rideau aurore |
 | `constellation` | Parallaxe constellation |
