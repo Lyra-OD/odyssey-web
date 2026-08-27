@@ -130,6 +130,8 @@ const COPY = {
     testEclipse: "Éclipse",
     testWormhole: "Wormhole",
     layerLabels: {
+      fond: "Fond",
+      fog: "Fog",
       panorama: "Panorama",
       gasFar: "Gaz lointain",
       ghostStars: "Ghost stars",
@@ -172,6 +174,8 @@ const COPY = {
     testEclipse: "Eclipse",
     testWormhole: "Wormhole",
     layerLabels: {
+      fond: "Backdrop",
+      fog: "Fog",
       panorama: "Panorama",
       gasFar: "Far gas",
       ghostStars: "Ghost stars",
@@ -238,9 +242,10 @@ export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
         background: "#000000",
         fogColor: "#000000",
       },
+      fond: { color: "#000000" },
       skyPanorama: {
         voidColor: "#000000",
-        voidScale: 80,
+        voidScale: 90,
         blackSoft: 0,
       },
       gasFar: {

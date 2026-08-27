@@ -11,7 +11,7 @@ import {
   useState,
   type MutableRefObject,
 } from "react";
-import { WebGLRenderer, Vector3 } from "three";
+import { WebGLRenderer, Vector3, Color } from "three";
 
 import {
   LueurHitTarget,
@@ -716,6 +716,18 @@ function UniverseScene({
   const bridges = craftReveal?.bridges ?? DEFAULT_BRIDGES;
   const slotLit = craftReveal?.slotLit;
 
+  const fondOn = isSkyLayerOn(skyLayers, "fond");
+  const fogOn = isSkyLayerOn(skyLayers, "fog");
+  /** Clear / background — layer Fond uniquement (indépendant du fog). */
+  const voidHex = fondOn
+    ? theme.fond.color || "#000000"
+    : theme.scene.background || "#000000";
+
+  const { gl } = useThree();
+  useEffect(() => {
+    gl.setClearColor(new Color(voidHex), 1);
+  }, [gl, voidHex]);
+
   useEffect(() => {
     if (controlled) return;
     if (!showConstellation) {
@@ -748,15 +760,17 @@ function UniverseScene({
       <WheelZoom enabled={!craftLite} />
       <SkyWander enabled={wanderEnabled} />
       <IdleCameraDrift />
-      <color attach="background" args={[theme.scene.background]} />
-      <fog
-        attach="fog"
-        args={[
-          theme.scene.fogColor,
-          theme.scene.fogNear,
-          craftLite ? theme.scene.fogFar * 3.2 : theme.scene.fogFar,
-        ]}
-      />
+      <color attach="background" args={[voidHex]} />
+      {fogOn ? (
+        <fog
+          attach="fog"
+          args={[
+            theme.scene.fogColor || "#000000",
+            theme.scene.fogNear,
+            craftLite ? theme.scene.fogFar * 3.2 : theme.scene.fogFar,
+          ]}
+        />
+      ) : null}
       <ambientLight intensity={theme.scene.ambientIntensity} />
       <FocusCamera
         target={focus ? focus.pos : null}
@@ -771,6 +785,11 @@ function UniverseScene({
       <CameraRig>
         {/* Craft : remonte le ciel pour que la bande d etoiles soit en haut d ecran */}
         <group position={craftLite ? [0, 5.5, 0] : [0, 0, 0]}>
+        {/* Voie lactée entière — `scene.milkyRotate` + `milkyPosition` */}
+        <group
+          position={theme.scene.milkyPosition ?? [0, 0, 0]}
+          rotation={[0, 0, theme.scene.milkyRotate ?? 0]}
+        >
         {tier === "desktop" && isSkyLayerOn(skyLayers, "panorama") ? (
           <ParallaxLayer
             factor={theme.skyPanorama.parallax.factor}
@@ -779,6 +798,39 @@ function UniverseScene({
             <SkyPanorama tier={tier} />
           </ParallaxLayer>
         ) : null}
+        {isSkyLayerOn(skyLayers, "cosmicDust") ? (
+        <ParallaxLayer
+          factor={theme.cosmicDust.parallax.factor}
+          lerp={theme.cosmicDust.parallax.lerp}
+        >
+          <CosmicDust tier={tier} />
+        </ParallaxLayer>
+        ) : null}
+        {tier !== "reduced" && !craftLite && isSkyLayerOn(skyLayers, "zodiacal") ? (
+          <ParallaxLayer
+            factor={theme.zodiacal.parallax.factor}
+            lerp={theme.zodiacal.parallax.lerp}
+          >
+            <ZodiacalLight tier={tier} />
+          </ParallaxLayer>
+        ) : null}
+        {tier !== "reduced" && isSkyLayerOn(skyLayers, "dustLanes") ? (
+          <ParallaxLayer
+            factor={theme.milkyDustLanes.parallax.factor}
+            lerp={theme.milkyDustLanes.parallax.lerp}
+          >
+            <MilkyDustLanes tier={tier} />
+          </ParallaxLayer>
+        ) : null}
+        {isSkyLayerOn(skyLayers, "starsBand") ? (
+          <StarDust
+            tier={tier}
+            showBand
+            showField={false}
+          />
+        ) : null}
+        </group>
+
         {tier !== "reduced" && isSkyLayerOn(skyLayers, "gasFar") ? (
           <ParallaxLayer
             factor={theme.gasFar.parallax.factor}
@@ -819,22 +871,6 @@ function UniverseScene({
           <NebulaGasTeal tier={tier} />
         </ParallaxLayer>
         ) : null}
-        {isSkyLayerOn(skyLayers, "cosmicDust") ? (
-        <ParallaxLayer
-          factor={theme.cosmicDust.parallax.factor}
-          lerp={theme.cosmicDust.parallax.lerp}
-        >
-          <CosmicDust tier={tier} />
-        </ParallaxLayer>
-        ) : null}
-        {tier !== "reduced" && !craftLite && isSkyLayerOn(skyLayers, "zodiacal") ? (
-          <ParallaxLayer
-            factor={theme.zodiacal.parallax.factor}
-            lerp={theme.zodiacal.parallax.lerp}
-          >
-            <ZodiacalLight tier={tier} />
-          </ParallaxLayer>
-        ) : null}
         {tier !== "reduced" && !craftLite && isSkyLayerOn(skyLayers, "aurora") ? (
           <ParallaxLayer
             factor={theme.aurora.parallax.factor}
@@ -843,19 +879,13 @@ function UniverseScene({
             <AuroraVeil tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {tier !== "reduced" && isSkyLayerOn(skyLayers, "dustLanes") ? (
-          <ParallaxLayer
-            factor={theme.milkyDustLanes.parallax.factor}
-            lerp={theme.milkyDustLanes.parallax.lerp}
-          >
-            <MilkyDustLanes tier={tier} />
-          </ParallaxLayer>
+        {isSkyLayerOn(skyLayers, "starsField") ? (
+          <StarDust
+            tier={tier}
+            showBand={false}
+            showField
+          />
         ) : null}
-        <StarDust
-          tier={tier}
-          showBand={isSkyLayerOn(skyLayers, "starsBand")}
-          showField={isSkyLayerOn(skyLayers, "starsField")}
-        />
         {!craftLite && isSkyLayerOn(skyLayers, "shootingStars") ? (
           <ParallaxLayer
             factor={theme.shootingStars.parallax.factor}

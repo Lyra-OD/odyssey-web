@@ -4,6 +4,7 @@
 **Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 27 août 2026 — Layers **Fond** / **Fog** séparés · milky Pos XYZ · Rotate global · void noir.
 - 27 août 2026 — Panorama : **Noir void** = plan noir séparé (pas de shrink photo) + fond scène `#000` en mode B.
 - 26 août 2026 — **S2 panorama** — plan photo (pas sphère 360) · asset `/craft/sky/milky-way-v1.jpg` · modes A/B.
 - 26 août 2026 — Lab : couleurs par layer + **pool idle rare** (cibles · pulses · gaps).

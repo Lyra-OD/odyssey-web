@@ -414,6 +414,57 @@ function starFieldKnobs(
         0.01,
         (v) => patch({ [layerKey]: { bandThickness: v } }),
       ),
+      knob(
+        `${prefix}-rotate`,
+        "Rotate",
+        theme.scene.milkyRotate,
+        -3.14,
+        3.14,
+        0.01,
+        (v) => patch({ scene: { milkyRotate: v } }),
+      ),
+      knob(
+        `${prefix}-posX`,
+        "Pos X",
+        theme.scene.milkyPosition?.[0] ?? 0,
+        -12,
+        12,
+        0.05,
+        (v) => {
+          const base = theme.scene.milkyPosition ?? [0, 0, 0];
+          const next: [number, number, number] = [...base];
+          next[0] = v;
+          patch({ scene: { milkyPosition: next } });
+        },
+      ),
+      knob(
+        `${prefix}-posY`,
+        "Pos Y",
+        theme.scene.milkyPosition?.[1] ?? 0,
+        -10,
+        10,
+        0.05,
+        (v) => {
+          const base = theme.scene.milkyPosition ?? [0, 0, 0];
+          const next: [number, number, number] = [...base];
+          next[1] = v;
+          patch({ scene: { milkyPosition: next } });
+        },
+      ),
+      knob(
+        `${prefix}-posZ`,
+        "Pos Z",
+        theme.scene.milkyPosition?.[2] ?? 0,
+        -8,
+        8,
+        0.05,
+        (v) => {
+          const base = theme.scene.milkyPosition ?? [0, 0, 0];
+          const next: [number, number, number] = [...base];
+          next[2] = v;
+          patch({ scene: { milkyPosition: next } });
+        },
+      ),
     );
   }
 
@@ -474,6 +525,60 @@ export function buildSkyCraftKnobs(
           0.25,
           0.005,
           (v) => patch({ scene: { ambientIntensity: v } }),
+        ),
+        knob(
+          "scene-milkyRotate",
+          "Milky rotate",
+          theme.scene.milkyRotate,
+          -3.14,
+          3.14,
+          0.01,
+          (v) => patch({ scene: { milkyRotate: v } }),
+        ),
+        knob(
+          "scene-milkyPosX",
+          "Milky X",
+          theme.scene.milkyPosition[0],
+          -12,
+          12,
+          0.05,
+          (v) => {
+            const next: [number, number, number] = [
+              ...theme.scene.milkyPosition,
+            ];
+            next[0] = v;
+            patch({ scene: { milkyPosition: next } });
+          },
+        ),
+        knob(
+          "scene-milkyPosY",
+          "Milky Y",
+          theme.scene.milkyPosition[1],
+          -10,
+          10,
+          0.05,
+          (v) => {
+            const next: [number, number, number] = [
+              ...theme.scene.milkyPosition,
+            ];
+            next[1] = v;
+            patch({ scene: { milkyPosition: next } });
+          },
+        ),
+        knob(
+          "scene-milkyPosZ",
+          "Milky Z",
+          theme.scene.milkyPosition[2],
+          -8,
+          8,
+          0.05,
+          (v) => {
+            const next: [number, number, number] = [
+              ...theme.scene.milkyPosition,
+            ];
+            next[2] = v;
+            patch({ scene: { milkyPosition: next } });
+          },
         ),
         knob(
           "scene-loopBase",
@@ -614,6 +719,31 @@ export function buildSkyCraftKnobs(
 
     case "gasFar":
       return gasKnobs(patch, theme, "gasFar", "gasFar");
+
+    case "fond":
+      return [];
+
+    case "fog":
+      return [
+        knob(
+          "fog-near",
+          "Fog near",
+          theme.scene.fogNear,
+          4,
+          24,
+          0.25,
+          (v) => patch({ scene: { fogNear: v } }),
+        ),
+        knob(
+          "fog-far",
+          "Fog far",
+          theme.scene.fogFar,
+          12,
+          48,
+          0.25,
+          (v) => patch({ scene: { fogFar: v } }),
+        ),
+      ];
 
     case "panorama": {
       const p = theme.skyPanorama;
@@ -851,6 +981,21 @@ export function buildSkyCraftColors(
       return [
         colorKnob("pano-void", "Void", theme.skyPanorama.voidColor, (v) =>
           patch({ skyPanorama: { voidColor: v } }),
+        ),
+      ];
+    case "fond":
+      return [
+        colorKnob("fond-color", "Fond", theme.fond.color, (v) =>
+          patch({
+            fond: { color: v },
+            scene: { background: v },
+          }),
+        ),
+      ];
+    case "fog":
+      return [
+        colorKnob("fog-color", "Fog", theme.scene.fogColor, (v) =>
+          patch({ scene: { fogColor: v } }),
         ),
       ];
     case "gasFar":

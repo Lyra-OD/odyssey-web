@@ -146,6 +146,13 @@ export type SceneTheme = {
   fogNear: number;
   fogFar: number;
   ambientIntensity: number;
+  /**
+   * Rotation Z (rad) de toute la voie lactée :
+   * panorama · poussière · zodiacal · dust lanes · bande étoiles.
+   */
+  milkyRotate: number;
+  /** Décalage monde de toute la voie lactée. */
+  milkyPosition: [number, number, number];
   /** Intro Éclipse immersif 1×/session. */
   intro: {
     enabled: boolean;
@@ -238,6 +245,11 @@ export type GhostStarsTheme = {
   parallax: ParallaxKnobs;
 };
 
+export type FondTheme = {
+  /** Couleur du vide / clear (layer Fond). */
+  color: string;
+};
+
 /**
  * Thème ciel — knobs par layer.
  * Shape stable pour presets / API / designer plus tard.
@@ -246,6 +258,7 @@ export type SkyTheme = {
   id: string;
   baseLoopPeriod: number;
   scene: SceneTheme;
+  fond: FondTheme;
   skyPanorama: SkyPanoramaTheme;
   gasFar: GasLayerTheme;
   gasRose: GasLayerTheme;
@@ -276,11 +289,13 @@ export const defaultSkyTheme: SkyTheme = {
   id: "default",
   baseLoopPeriod: 38,
   scene: {
-    background: "#02040a",
-    fogColor: "#03050c",
+    background: "#000000",
+    fogColor: "#000000",
     fogNear: 12,
     fogFar: 28,
     ambientIntensity: 0.05,
+    milkyRotate: 0,
+    milkyPosition: [0, 0, 0],
     intro: {
       enabled: false,
       durationSec: 3.2,
@@ -310,6 +325,9 @@ export const defaultSkyTheme: SkyTheme = {
       rareSpecialStreak: true,
     },
   },
+  fond: {
+    color: "#000000",
+  },
   skyPanorama: {
     texturePath: "/craft/sky/milky-way-v1.jpg",
     opacity: { desktop: 0.75, mobile: 0, reduced: 0 },
@@ -319,7 +337,7 @@ export const defaultSkyTheme: SkyTheme = {
     rotation: [0, 0, 0.22],
     dim: 0.55,
     /** Assez grand pour couvrir le FOV desktop hors photo. */
-    voidScale: 80,
+    voidScale: 90,
     voidColor: "#000000",
     blackSoft: 0,
     renderOrder: -4,

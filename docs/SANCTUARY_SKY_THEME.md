@@ -36,7 +36,9 @@ Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas har
 | `starsBand` | Voie lactée |
 | `starsField` | Étoiles proches |
 | `shootingStars` | Filantes (couleurs + parallaxe) |
-| `scene` | Background / fog / ambient / **idle** / **intro** |
+| `fond` | Couleur clear / vide (indépendant du fog) |
+| `fog` | Brouiillard profondeur — couleur · near · far (layer toggle) |
+| `scene` | ambient / **milkyRotate** / **milkyPosition** / idle |
 | `skyPanorama` | Panorama photo · `voidScale` (plan noir séparé) · photo `scale` indépendant |
 | `eclipse` | Disque + corona (rare + intro) |
 | `aurora` | Rideau aurore |

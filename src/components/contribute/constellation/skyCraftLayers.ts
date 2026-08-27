@@ -1,5 +1,7 @@
 /** Layer ids — ordre ≈ stack render (cf. `SANCTUARY_SKY_CRAFT.md` §2). */
 export type SkyCraftLayerId =
+  | "fond"
+  | "fog"
   | "panorama"
   | "gasFar"
   | "ghostStars"
@@ -19,6 +21,8 @@ export type SkyCraftLayerMap = Partial<Record<SkyCraftLayerId, boolean>>;
 
 /** Lab `/test-sky` — constellation off par défaut (fond seul). */
 export const SKY_LAB_DEFAULT_LAYERS: Record<SkyCraftLayerId, boolean> = {
+  fond: true,
+  fog: true,
   panorama: false,
   gasFar: true,
   ghostStars: true,
