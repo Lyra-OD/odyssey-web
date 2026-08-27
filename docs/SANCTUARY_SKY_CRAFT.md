@@ -6,23 +6,21 @@
 **Dernière MAJ :** 24 août 2026
 
 **Changelog** (max 5)
+- 27 août 2026 — Lab fond : contrat `SkyCraftState` + backup `/test-sky-legacy` — [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md).
 - 26 août 2026 — **S2 `SkyPanorama`** — fond NASA opt-in · layer `panorama` off prod par défaut.
 - 26 août 2026 — **S1 `MilkyDustLanes`** — dark lanes · bande StarDust plus dense / serrée.
-- 26 août 2026 — **EclipseDisc hors ciel ambiant** — plus monté dans `SanctuaryUniverse` ; labs `/test-eclipse*` + prologue J1 seulement ; retiré du pool idle `rareTargets`.
+- 26 août 2026 — **EclipseDisc hors ciel ambiant** — labs `/test-eclipse*` + prologue J1 ; hors pool idle ambiant.
 - 26 août 2026 — Lab `/contribute/test-sky` — doc [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md).
-- 24 août 2026 — E′ v3 : traits teal · hero perle distinct · courant stroke node→node · échelle mid.
-- 24 août 2026 — E′ v2 : Leo étalé · hero XXL · traits plus lisibles · reveal 1× ~2,4 s.
-- 24 août 2026 — E′ : graphe Leo `leo-graph-v1` (9 nœuds, slots fantômes, modèle C).
 
 > Vision produit → `SANCTUARY_SKY.md`  
 > Craft technique / visuel → **ce fichier**  
 > Knobs / thème / presets → [`SANCTUARY_SKY_THEME.md`](SANCTUARY_SKY_THEME.md)  
 > Screensaver + intro Éclipse → [`SANCTUARY_SKY_SCREENSAVER.md`](SANCTUARY_SKY_SCREENSAVER.md)
 
-**Preview :** `/fr/contribute/test-ciel` (token `test-ciel`) · **Lab fond :** [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md) (`/fr/contribute/test-sky`)  
+**Preview :** `/fr/contribute/test-ciel` (token `test-ciel`) · **Lab fond :** [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md) (`/fr/contribute/test-sky` · backup `test-sky-legacy`)  
 **Entrée scène :** `SanctuaryUniverse.tsx`  
 **Atome Lueur (un composant, deux contextes) :** [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md).  
-**Thème (couleurs, opacités, parallaxe) :** `constellation/skyTheme.ts` — **source de vérité des knobs** ; ne pas hardcoder dans les layers.
+**Thème prod (meshes) :** `constellation/skyTheme.ts` · **contrat lab :** `skyCraftState.ts` (+ adaptateur).
 
 ---
 
