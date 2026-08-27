@@ -24,6 +24,8 @@ void main() {
 const fragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uOpacity;
+uniform float uFlowSpeed;
+uniform float uBandTight;
 uniform vec3 uDust;
 uniform vec3 uTint;
 
@@ -65,10 +67,10 @@ void main() {
   float v = dot(p, perp);
 
   // Bande large, densite max au milieu
-  float band = exp(-pow(v * 1.55, 2.0)) * smoothstep(1.35, 0.15, abs(u) * 0.55);
+  float band = exp(-pow(v * uBandTight, 2.0)) * smoothstep(1.35, 0.15, abs(u) * 0.55);
 
   // Poussiere lente (rythme plus lent que le gaz)
-  float t = uTime * 0.018;
+  float t = uTime * uFlowSpeed;
   float n = fbm(vec2(u * 1.8 + t, v * 3.2 - t * 0.7));
   float n2 = fbm(vec2(u * 3.1 - t * 0.5, v * 5.0 + t * 0.35) + 2.7);
   float grain = mix(n, n2, 0.45);
@@ -107,11 +109,13 @@ export function CosmicDust({ tier }: CosmicDustProps) {
         uniforms: {
           uTime: { value: 0 },
           uOpacity: { value: opacity },
+          uFlowSpeed: { value: cfg.flowSpeed },
+          uBandTight: { value: cfg.bandTight },
           uDust: { value: new Color(cfg.dust) },
           uTint: { value: new Color(cfg.tint) },
         },
       }),
-    [opacity, cfg.dust, cfg.tint],
+    [opacity, cfg.dust, cfg.tint, cfg.flowSpeed, cfg.bandTight],
   );
 
   useEffect(() => {
@@ -130,6 +134,8 @@ export function CosmicDust({ tier }: CosmicDustProps) {
     const amp = theme.scene.idle?.rareDustPulse ?? 0;
     mat.uniforms.uOpacity.value =
       opacity * (1 + pulse * amp) * skyIntroMul(1);
+    mat.uniforms.uFlowSpeed.value = cfg.flowSpeed;
+    mat.uniforms.uBandTight.value = cfg.bandTight;
   });
 
   return (

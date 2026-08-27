@@ -67,25 +67,41 @@ export type GasLayerExtras = {
   deep: string;
   colorHot?: string;
   loopPeriodMul: number;
+  /** Amplitude domain warp (shader). */
+  warpAmp: number;
+  /** Amplitude respiration `sin(phase)` — 0 = figé. */
+  breathAmp: number;
+  /** Plafond alpha dens*opacity. */
+  densityCap: number;
 };
 
 export type DustLayerExtras = {
   /** Couleur poussière (secondaire ; `color` = tint). */
   dust: string;
+  flowSpeed: number;
+  bandTight: number;
 };
 
 export type DustLanesLayerExtras = {
   deep: string;
   contrast: number;
+  flowSpeed: number;
+  bandTight: number;
+  warpAmp: number;
 };
 
 export type ZodiacalLayerExtras = {
   core: string;
   idleBoost: number;
+  coneTight: number;
+  coreTight: number;
+  alphaCap: number;
 };
 
 export type AuroraLayerExtras = {
   edge: string;
+  curtainSpeed: number;
+  alphaCap: number;
 };
 
 export type PanoramaLayerExtras = {
@@ -120,6 +136,10 @@ export type StarFieldLayerExtras = {
   sizeMul: number;
   repulsion: number;
   repelStrength: number;
+  /** Force croix diffraction sprite. */
+  spikeAmt: number;
+  /** Rayon cœur softstep. */
+  coreRadius: number;
 };
 
 export type ShootingStarsLayerExtras = {
@@ -128,6 +148,12 @@ export type ShootingStarsLayerExtras = {
   rareTints: Record<RareSkyTarget, { tip: string; mid: string; tail: string }>;
   echoDelaySec: number;
   echoOpacity: number;
+  /** Gap min (s) entre petites filantes ; max = min + 6. */
+  spawnGapSmall: number;
+  /** Gap min (s) entre grosses ; max = min + 26. */
+  spawnGapLarge: number;
+  speedMul: number;
+  lengthMul: number;
 };
 
 export type EclipseLayerExtras = {

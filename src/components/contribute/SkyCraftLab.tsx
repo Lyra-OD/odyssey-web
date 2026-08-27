@@ -60,6 +60,39 @@ function CraftColorGrid({ colors }: { colors: readonly SkyCraftColorDef[] }) {
   );
 }
 
+function CraftKnobLabel({
+  label,
+  description,
+}: {
+  label: string;
+  description?: string;
+}) {
+  if (!description) {
+    return (
+      <span className="truncate font-medium text-white/65">{label}</span>
+    );
+  }
+
+  // title natif = fiable (le panel a overflow-y-auto → pas de tooltip CSS absolu clipé)
+  return (
+    <span
+      className="inline-flex min-w-0 max-w-[90%] items-center gap-1"
+      title={description}
+    >
+      <span className="truncate border-b border-dotted border-white/45 font-medium text-white/70">
+        {label}
+      </span>
+      <span
+        className="shrink-0 cursor-help select-none rounded-sm px-0.5 font-mono text-[10px] leading-none text-teal-400/80 hover:bg-white/10 hover:text-teal-300"
+        title={description}
+        aria-label={description}
+      >
+        [?]
+      </span>
+    </span>
+  );
+}
+
 function CraftKnobGrid({
   knobs,
   emptyLabel,
@@ -81,9 +114,10 @@ function CraftKnobGrid({
             className="flex min-w-0 flex-col gap-0.5 text-[9px] uppercase tracking-[0.1em] text-white/50"
           >
             <span className="flex items-baseline justify-between gap-1">
-              <span className="truncate font-medium text-white/65">
-                {knob.label}
-              </span>
+              <CraftKnobLabel
+                label={knob.label}
+                description={knob.description}
+              />
               <span className="shrink-0 font-mono text-[10px] normal-case tracking-normal text-teal-400/75">
                 {knob.value.toFixed(decimals)}
               </span>

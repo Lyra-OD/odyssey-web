@@ -4,11 +4,11 @@
 **Dernière MAJ :** 27 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 27 août 2026 — **Vague 1** — knobs shader branchés (gaz warp/breath/density · dust flow/band · stars spike/core + `uTint` · zodiacal/aurora · filantes spawn/speed/length). Defaults = hardcodes.
 - 27 août 2026 — Presets nommés (Défaut · Démo VP · Nuit douce) · Copy/Import JSON · badge **Modifié**.
 - 27 août 2026 — Fix : activer **Groupe milky** / enfant réveille parent+enfants (plus d’écran vide).
 - 27 août 2026 — Backup **`/test-sky-legacy`** (SkyTheme) isolé · lab courant = SkyCraftState.
 - 27 août 2026 — Lab branché sur `SkyCraftState` (Context) · knobs → store · preview `toLegacy*` · Log state.
-- 27 août 2026 — Contrat `SkyCraftState` + adaptateur legacy — Fond/Fog = scène · milkyGroup parent.
 
 **Liens :**
 - Stack layers (canon) : [`../SANCTUARY_SKY_CRAFT.md`](../SANCTUARY_SKY_CRAFT.md)
@@ -67,6 +67,7 @@ Chips **Fond / Fog** éditent `scene` (pas des meshes).
 ## 3. Lab outil (hands-on)
 
 - Toggle layers · modes **A / B** · knobs **par cible** (layer | Scène | **milkyGroup**)
+- Knobs auto-doc : `description?` + survol `[?]` / label pointillé (`KNOB_DESC` seed)
 - Chips **Fond** / **Fog** → écrivent `scene.clear*` / `scene.fog` (pas des meshes)
 - **`layers.milkyGroup`** = Rotate/Pos parent (poussière · zodiacal · lanes · bande) — **pas** le panorama
 - **Solo** / Mute → `LayerState.isVisible` natif
@@ -87,6 +88,7 @@ Chips **Fond / Fog** éditent `scene` (pas des meshes).
 | **S1** | **`MilkyDustLanes`** — masque sombre soustractif (ref photo) | ✅ v1 |
 | **S2** | Panorama fond (NASA WebP) + toggle lab A/B | ✅ v1 |
 | **S3** | `SkyCraftState` + store + Solo + presets nommés + Copy/Import JSON | ✅ v1 |
+| **S3b** | Vague 1 knobs shader (gaz · dust · stars · zodiacal · aurora · filantes) | ✅ v1 |
 | **S4** | Sim tier mobile/reduced dans le panel | ⏳ |
 | **S5** | Merge preset KEEP → prod · themes nommés · meshes R3F sur contrat | ⏳ |
 

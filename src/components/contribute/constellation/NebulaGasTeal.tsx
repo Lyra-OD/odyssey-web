@@ -22,6 +22,9 @@ const fragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uOpacity;
 uniform float uLoopPeriod;
+uniform float uWarpAmp;
+uniform float uBreathAmp;
+uniform float uDensityCap;
 uniform vec3 uTeal;
 uniform vec3 uDeep;
 uniform sampler2D uTex;
@@ -56,13 +59,13 @@ void main() {
     loopWarp(phase3, 0.08);
   vec2 liveUv2 = loopWarp(phase4, 0.16) + loopWarp(phase + 2.4, 0.1);
 
-  float breath = 0.78 + 0.22 * sin(phase);
+  float breath = (1.0 - uBreathAmp) + uBreathAmp * sin(phase);
   float billow = 0.88 + 0.12 * sin(phase3);
 
   vec2 warpBase = world * 0.12 + liveW * 0.12;
   float w1 = fbm(warpBase + 2.1);
   float w2 = fbm(warpBase * 1.3 + liveW2 * 0.18 + 5.0);
-  vec2 warped = world + vec2(w1, w2) * 2.8;
+  vec2 warped = world + vec2(w1, w2) * uWarpAmp;
   warped += vec2(
     fbm(warped * 0.2 + liveW),
     fbm(warped * 0.2 - liveW2 + 2.4)
@@ -138,7 +141,7 @@ void main() {
   float aA = densA * uOpacity;
   float aB = densB * uOpacity * 0.9;
   vec3 col = colA * aA + colB * aB;
-  float alpha = clamp(aA + aB, 0.0, 0.5);
+  float alpha = clamp(aA + aB, 0.0, uDensityCap);
   if (alpha < 0.012) discard;
 
   col = col / max(alpha, 0.001);
@@ -178,6 +181,9 @@ export function NebulaGasTeal({ tier }: Props) {
           uLoopPeriod: {
             value: theme.baseLoopPeriod * cfg.loopPeriodMul,
           },
+          uWarpAmp: { value: cfg.warpAmp },
+          uBreathAmp: { value: cfg.breathAmp },
+          uDensityCap: { value: cfg.densityCap },
           uTeal: { value: new Color(cfg.color) },
           uDeep: { value: new Color(cfg.deep) },
           uTex: { value: noiseTex },
@@ -194,6 +200,10 @@ export function NebulaGasTeal({ tier }: Props) {
     const amp = theme.scene.idle?.rareGasPulse ?? 0;
     mat.uniforms.uOpacity.value =
       opacity * (1 + pulse * amp) * skyIntroMul(1);
+    mat.uniforms.uLoopPeriod.value = theme.baseLoopPeriod * cfg.loopPeriodMul;
+    mat.uniforms.uWarpAmp.value = cfg.warpAmp;
+    mat.uniforms.uBreathAmp.value = cfg.breathAmp;
+    mat.uniforms.uDensityCap.value = cfg.densityCap;
   });
 
   return (

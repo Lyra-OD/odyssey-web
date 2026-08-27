@@ -24,6 +24,8 @@ void main() {
 const fragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uOpacity;
+uniform float uCurtainSpeed;
+uniform float uAlphaCap;
 uniform vec3 uCool;
 uniform vec3 uEdge;
 
@@ -60,7 +62,7 @@ void main() {
   p.x *= 1.4;
 
   // Rideaux verticaux ondulés (biais gauche / centre)
-  float t = uTime * 0.08;
+  float t = uTime * uCurtainSpeed;
   float curtains =
     exp(-pow((p.x + 0.55 + sin(p.y * 2.2 + t) * 0.08) * 2.8, 2.0)) * 0.85 +
     exp(-pow((p.x + 0.05 + cos(p.y * 1.7 - t * 0.7) * 0.06) * 3.2, 2.0)) * 0.55 +
@@ -73,7 +75,7 @@ void main() {
   veil = pow(clamp(veil, 0.0, 1.0), 1.25);
 
   vec3 col = mix(uCool, uEdge, grain * 0.4 + curtains * 0.25);
-  float alpha = clamp(veil * uOpacity, 0.0, 0.22);
+  float alpha = clamp(veil * uOpacity, 0.0, uAlphaCap);
   if (alpha < 0.005) discard;
 
   gl_FragColor = vec4(col, alpha);
@@ -105,11 +107,13 @@ export function AuroraVeil({ tier }: Props) {
         uniforms: {
           uTime: { value: 0 },
           uOpacity: { value: base },
+          uCurtainSpeed: { value: cfg.curtainSpeed },
+          uAlphaCap: { value: cfg.alphaCap },
           uCool: { value: new Color(cfg.cool) },
           uEdge: { value: new Color(cfg.edge) },
         },
       }),
-    [base, cfg.cool, cfg.edge],
+    [base, cfg.cool, cfg.edge, cfg.curtainSpeed, cfg.alphaCap],
   );
 
   useFrame(({ clock }) => {
@@ -121,6 +125,8 @@ export function AuroraVeil({ tier }: Props) {
     // Dormant ~base, rare monte clairement puis redescend
     mat.uniforms.uOpacity.value =
       (base + pulse * amp * (cfg.opacity.desktop || 0.12)) * skyIntroMul(1);
+    mat.uniforms.uCurtainSpeed.value = cfg.curtainSpeed;
+    mat.uniforms.uAlphaCap.value = cfg.alphaCap;
   });
 
   if (tier === "reduced" || base <= 0) return null;

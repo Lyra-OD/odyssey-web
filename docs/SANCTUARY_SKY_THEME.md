@@ -3,6 +3,10 @@
 **Statut : vivant · 27 août 2026**  
 **Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) (stack layers) · [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) (vision) · lab fond [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md)
 
+**Changelog** (max 5)
+- 27 août 2026 — Vague 1 : knobs shader (warp/breath/density · flow/band · spike/core/`uTint` · zodiacal/aurora · filantes).
+- 27 août 2026 — Contrat lab `SkyCraftState` · store · adaptateur · presets.
+
 > Ce doc = *ce qui est tuneable* et où ça vit.  
 > Lab outil : contrat **`SkyCraftState`** · prod R3F lit encore **`SkyTheme`** via adaptateur.
 
@@ -87,9 +91,15 @@ Tout se règle dans `defaultSkyTheme.scene.idle` (ou un merge preset).
 
 **StreakEcho :** `shootingStars.echoDelaySec` (`0.4`) + `echoOpacity` (`0.35`) — fantôme soft après filante spéciale.
 
-**Aurore :** knobs `aurora` — dormant hors rare ; pulse via `rareAuroraPulse`.
+**Aurore :** knobs `aurora` (`curtainSpeed`, `alphaCap`) — dormant hors rare ; pulse via `rareAuroraPulse`.
 
-**Dark lanes :** knobs `milkyDustLanes` (`lane`, `deep`, `contrast`, opacité) — filaments sur axe bande ; skip `reduced`.
+**Dark lanes :** knobs `milkyDustLanes` (`lane`, `deep`, `contrast`, `flowSpeed`, `bandTight`, `warpAmp`) — filaments sur axe bande ; skip `reduced`.
+
+**Gaz :** `warpAmp` · `breathAmp` · `densityCap` (Far / Rose / Mauve / Teal) — defaults = hardcodes historiques.
+
+**Étoiles :** `spikeAmt` · `coreRadius` · tint branché `uTint` (défaut `#d1e0ff` ≈ cool shader).
+
+**Filantes :** `spawnGapSmall` / `spawnGapLarge` · `speedMul` · `lengthMul`.
 
 **Éclipse :** knobs `eclipse` (body/corona/rim/coronaAmp) — **hors** `SanctuaryUniverse` ambiant ; labs `/test-eclipse*` + intro future via `scene.intro`.
 
@@ -157,8 +167,8 @@ const winter = mergeSkyTheme(defaultSkyTheme, {
 
 ## 5. Ce qui n’est PAS un knob
 
-Forme du nuage, domain warp, seeds PRNG, logique reveal — restent dans le code layer / craft bible.  
-Les knobs = **présence, couleur, rythme, parallaxe, placement, idle / rare**.
+Seeds PRNG, logique reveal / idle rare, forme exacte des blobs — restent dans le code layer / craft bible.  
+Les knobs = **présence, couleur, rythme, parallaxe, placement, idle / rare**, + **Vague 1** amplitudes shader (warp, breath, densité, flow, spikes, gaps filantes…).
 
 ---
 

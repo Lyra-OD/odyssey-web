@@ -16,6 +16,8 @@ export type SkyCraftKnobDef = {
   step: number;
   value: number;
   onChange: (v: number) => void;
+  /** Aide au survol — impact visuel / plage. */
+  description?: string;
 };
 
 export type SkyCraftColorDef = {
@@ -26,6 +28,34 @@ export type SkyCraftColorDef = {
 };
 
 export type SkyCraftKnobTarget = SkyCraftUiTarget;
+
+/** Descriptions knobs — seed auto-doc (étendre au fil du craft). */
+export const KNOB_DESC = {
+  baseLoopPeriod:
+    "Durée en secondes pour une révolution complète de l'animation (ex: nuages de gaz). Valeur plus basse = animation plus rapide.",
+  parallaxFactor:
+    "Force du déplacement du calque selon le mouvement de la souris. 0 = fixe, 1 = maximum. Crée l'effet de profondeur (3D).",
+  panoramaDim:
+    "Assombrit la texture de fond. 0 = couleur originale, 1 = noir total.",
+  panoramaVoidScale:
+    "Échelle du vide stellaire. Contrôle la densité et la taille apparente de la texture projetée.",
+  warpAmp: "Amplitude de la turbulence (domain warp) du nuage de gaz.",
+  breathAmp: "Amplitude de la respiration sinusoïdale. 0 = figé.",
+  densityCap: "Plafond d'opacité du gaz (évite le blanc saturé).",
+  flowSpeed: "Vitesse de dérive du bruit / grain le long de la bande.",
+  bandTight: "Serrage de la bande (plus haut = voie plus étroite).",
+  lanesWarpAmp: "Amplitude du warp des filaments sombres (dust lanes).",
+  spikeAmt: "Force des croix de diffraction sur les sprites d'étoiles.",
+  coreRadius: "Rayon du cœur soft de chaque étoile (sprite).",
+  coneTight: "Serrage du cône zodiacal (bande principale).",
+  coreTight: "Serrage du cœur chaud zodiacal (plus étroit que le cône).",
+  alphaCap: "Plafond d'alpha du voile (évite la saturation).",
+  curtainSpeed: "Vitesse d'ondulation des rideaux d'aurore.",
+  spawnGapSmall: "Intervalle minimum (s) entre deux petites filantes.",
+  spawnGapLarge: "Intervalle minimum (s) entre deux grosses filantes.",
+  speedMul: "Multiplicateur de vitesse des étoiles filantes.",
+  lengthMul: "Multiplicateur de longueur des traînées.",
+} as const;
 
 /** Cibles idle rare — `eclipse` réservé labs / intro. */
 export const SKY_CRAFT_RARE_TARGETS: readonly RareSkyTarget[] = [
@@ -45,8 +75,9 @@ function knob(
   max: number,
   step: number,
   onChange: (v: number) => void,
+  description?: string,
 ): SkyCraftKnobDef {
-  return { key, label, min, max, step, value, onChange };
+  return { key, label, min, max, step, value, onChange, description };
 }
 
 function colorKnob(
@@ -97,8 +128,15 @@ function planeKnobs(
     knob(`${prefix}-renderOrder`, "Z-order", layer.renderOrder, -4, 6, 1, (v) =>
       patchLayer(patch, id, { renderOrder: v }),
     ),
-    knob(`${prefix}-parallax`, "Parallax", layer.parallax.factor, -0.35, 0.35, 0.005, (v) =>
-      patchLayer(patch, id, { parallax: { factor: v } }),
+    knob(
+      `${prefix}-parallax`,
+      "Parallax",
+      layer.parallax.factor,
+      -0.35,
+      0.35,
+      0.005,
+      (v) => patchLayer(patch, id, { parallax: { factor: v } }),
+      KNOB_DESC.parallaxFactor,
     ),
     knob(
       `${prefix}-parallaxLerp`,
@@ -123,6 +161,36 @@ function gasKnobs(
     ),
     knob(`${id}-loop`, "Loop ×", layer.loopPeriodMul, 0.4, 2.5, 0.01, (v) =>
       patchLayer(patch, id, { loopPeriodMul: v }),
+    ),
+    knob(
+      `${id}-warpAmp`,
+      "Warp amp",
+      layer.warpAmp,
+      0,
+      8,
+      0.05,
+      (v) => patchLayer(patch, id, { warpAmp: v }),
+      KNOB_DESC.warpAmp,
+    ),
+    knob(
+      `${id}-breathAmp`,
+      "Breath amp",
+      layer.breathAmp,
+      0,
+      0.5,
+      0.01,
+      (v) => patchLayer(patch, id, { breathAmp: v }),
+      KNOB_DESC.breathAmp,
+    ),
+    knob(
+      `${id}-densityCap`,
+      "Density cap",
+      layer.densityCap,
+      0.05,
+      1,
+      0.01,
+      (v) => patchLayer(patch, id, { densityCap: v }),
+      KNOB_DESC.densityCap,
     ),
     ...planeKnobs(patch, id, layer, id),
   ];
@@ -211,6 +279,26 @@ function starFieldKnobs(
     knob(`${prefix}-breathAmp`, "Breath amp", layer.breathAmp, 0, 0.35, 0.005, (v) =>
       patchLayer(patch, id, { breathAmp: v }),
     ),
+    knob(
+      `${prefix}-spikeAmt`,
+      "Spike",
+      layer.spikeAmt,
+      0,
+      1.5,
+      0.01,
+      (v) => patchLayer(patch, id, { spikeAmt: v }),
+      KNOB_DESC.spikeAmt,
+    ),
+    knob(
+      `${prefix}-coreRadius`,
+      "Core r",
+      layer.coreRadius,
+      0.02,
+      0.35,
+      0.005,
+      (v) => patchLayer(patch, id, { coreRadius: v }),
+      KNOB_DESC.coreRadius,
+    ),
     knob(`${prefix}-repulsion`, "Repulsion", layer.repulsion, 0, 3, 0.05, (v) =>
       patchLayer(patch, id, { repulsion: v }),
     ),
@@ -220,8 +308,15 @@ function starFieldKnobs(
     knob(`${prefix}-renderOrder`, "Z-order", layer.renderOrder, -2, 6, 1, (v) =>
       patchLayer(patch, id, { renderOrder: v }),
     ),
-    knob(`${prefix}-parallax`, "Parallax", layer.parallax.factor, -0.2, 1, 0.005, (v) =>
-      patchLayer(patch, id, { parallax: { factor: v } }),
+    knob(
+      `${prefix}-parallax`,
+      "Parallax",
+      layer.parallax.factor,
+      -0.2,
+      1,
+      0.005,
+      (v) => patchLayer(patch, id, { parallax: { factor: v } }),
+      KNOB_DESC.parallaxFactor,
     ),
     knob(`${prefix}-parallaxLerp`, "Par. lerp", layer.parallax.lerp, 0.005, 0.12, 0.001, (v) =>
       patchLayer(patch, id, { parallax: { lerp: v } }),
@@ -298,6 +393,7 @@ export function buildSkyCraftKnobs(
           120,
           1,
           (v) => patch({ scene: { baseLoopPeriod: v } }),
+          KNOB_DESC.baseLoopPeriod,
         ),
         knob(
           "scene-idlePeriod",
@@ -446,11 +542,25 @@ export function buildSkyCraftKnobs(
         knob("pano-opacity", "Opacity", p.opacity, 0, 1, 0.01, (v) =>
           patchLayer(patch, "panorama", { opacity: v }),
         ),
-        knob("pano-dim", "Dim", p.dim, 0.35, 1, 0.01, (v) =>
-          patchLayer(patch, "panorama", { dim: v }),
+        knob(
+          "pano-dim",
+          "Dim",
+          p.dim,
+          0.35,
+          1,
+          0.01,
+          (v) => patchLayer(patch, "panorama", { dim: v }),
+          KNOB_DESC.panoramaDim,
         ),
-        knob("pano-voidScale", "Noir void", p.voidScale, 0, 160, 1, (v) =>
-          patchLayer(patch, "panorama", { voidScale: v }),
+        knob(
+          "pano-voidScale",
+          "Noir void",
+          p.voidScale,
+          0,
+          160,
+          1,
+          (v) => patchLayer(patch, "panorama", { voidScale: v }),
+          KNOB_DESC.panoramaVoidScale,
         ),
         knob("pano-blackSoft", "Bord soft", p.blackSoft, 0, 0.35, 0.01, (v) =>
           patchLayer(patch, "panorama", { blackSoft: v }),
@@ -503,8 +613,15 @@ export function buildSkyCraftKnobs(
         knob("pano-flipH", "Flip H", p.flipH ? 1 : 0, 0, 1, 1, (v) =>
           patchLayer(patch, "panorama", { flipH: v >= 0.5 }),
         ),
-        knob("pano-parallax", "Parallax", p.parallax.factor, -0.2, 0.1, 0.005, (v) =>
-          patchLayer(patch, "panorama", { parallax: { factor: v } }),
+        knob(
+          "pano-parallax",
+          "Parallax",
+          p.parallax.factor,
+          -0.2,
+          0.1,
+          0.005,
+          (v) => patchLayer(patch, "panorama", { parallax: { factor: v } }),
+          KNOB_DESC.parallaxFactor,
         ),
         knob("pano-parallaxLerp", "Par. lerp", p.parallax.lerp, 0.005, 0.05, 0.001, (v) =>
           patchLayer(patch, "panorama", { parallax: { lerp: v } }),
@@ -545,8 +662,15 @@ export function buildSkyCraftKnobs(
         knob("ghost-renderOrder", "Z-order", g.renderOrder, -4, 4, 1, (v) =>
           patchLayer(patch, "ghostStars", { renderOrder: v }),
         ),
-        knob("ghost-parallax", "Parallax", g.parallax.factor, -0.35, 0.1, 0.005, (v) =>
-          patchLayer(patch, "ghostStars", { parallax: { factor: v } }),
+        knob(
+          "ghost-parallax",
+          "Parallax",
+          g.parallax.factor,
+          -0.35,
+          0.1,
+          0.005,
+          (v) => patchLayer(patch, "ghostStars", { parallax: { factor: v } }),
+          KNOB_DESC.parallaxFactor,
         ),
         knob("ghost-parallaxLerp", "Par. lerp", g.parallax.lerp, 0.005, 0.05, 0.001, (v) =>
           patchLayer(patch, "ghostStars", { parallax: { lerp: v } }),
@@ -559,6 +683,26 @@ export function buildSkyCraftKnobs(
       return [
         knob("dust-opacity", "Opacity", d.opacity, 0, 1, 0.01, (v) =>
           patchLayer(patch, "cosmicDust", { opacity: v }),
+        ),
+        knob(
+          "dust-flowSpeed",
+          "Flow speed",
+          d.flowSpeed,
+          0,
+          0.08,
+          0.001,
+          (v) => patchLayer(patch, "cosmicDust", { flowSpeed: v }),
+          KNOB_DESC.flowSpeed,
+        ),
+        knob(
+          "dust-bandTight",
+          "Band tight",
+          d.bandTight,
+          0.4,
+          3.5,
+          0.01,
+          (v) => patchLayer(patch, "cosmicDust", { bandTight: v }),
+          KNOB_DESC.bandTight,
         ),
         ...planeKnobs(patch, "cosmicDust", d, "dust"),
       ];
@@ -573,6 +717,36 @@ export function buildSkyCraftKnobs(
         knob("lanes-contrast", "Contrast", l.contrast, 0, 1, 0.01, (v) =>
           patchLayer(patch, "dustLanes", { contrast: v }),
         ),
+        knob(
+          "lanes-flowSpeed",
+          "Flow speed",
+          l.flowSpeed,
+          0,
+          0.06,
+          0.001,
+          (v) => patchLayer(patch, "dustLanes", { flowSpeed: v }),
+          KNOB_DESC.flowSpeed,
+        ),
+        knob(
+          "lanes-bandTight",
+          "Band tight",
+          l.bandTight,
+          0.4,
+          3.5,
+          0.01,
+          (v) => patchLayer(patch, "dustLanes", { bandTight: v }),
+          KNOB_DESC.bandTight,
+        ),
+        knob(
+          "lanes-warpAmp",
+          "Warp amp",
+          l.warpAmp,
+          0,
+          1.5,
+          0.01,
+          (v) => patchLayer(patch, "dustLanes", { warpAmp: v }),
+          KNOB_DESC.lanesWarpAmp,
+        ),
         ...planeKnobs(patch, "dustLanes", l, "lanes"),
       ];
     }
@@ -586,6 +760,36 @@ export function buildSkyCraftKnobs(
         knob("zodiac-idleBoost", "Idle boost", z.idleBoost, 0, 0.6, 0.01, (v) =>
           patchLayer(patch, "zodiacal", { idleBoost: v }),
         ),
+        knob(
+          "zodiac-coneTight",
+          "Cone tight",
+          z.coneTight,
+          1,
+          8,
+          0.05,
+          (v) => patchLayer(patch, "zodiacal", { coneTight: v }),
+          KNOB_DESC.coneTight,
+        ),
+        knob(
+          "zodiac-coreTight",
+          "Core tight",
+          z.coreTight,
+          2,
+          14,
+          0.05,
+          (v) => patchLayer(patch, "zodiacal", { coreTight: v }),
+          KNOB_DESC.coreTight,
+        ),
+        knob(
+          "zodiac-alphaCap",
+          "Alpha cap",
+          z.alphaCap,
+          0.02,
+          0.5,
+          0.005,
+          (v) => patchLayer(patch, "zodiacal", { alphaCap: v }),
+          KNOB_DESC.alphaCap,
+        ),
         ...planeKnobs(patch, "zodiacal", z, "zodiac"),
       ];
     }
@@ -595,6 +799,26 @@ export function buildSkyCraftKnobs(
       return [
         knob("aurora-opacity", "Opacity", a.opacity, 0, 1, 0.01, (v) =>
           patchLayer(patch, "aurora", { opacity: v }),
+        ),
+        knob(
+          "aurora-curtainSpeed",
+          "Curtain speed",
+          a.curtainSpeed,
+          0,
+          0.35,
+          0.005,
+          (v) => patchLayer(patch, "aurora", { curtainSpeed: v }),
+          KNOB_DESC.curtainSpeed,
+        ),
+        knob(
+          "aurora-alphaCap",
+          "Alpha cap",
+          a.alphaCap,
+          0.02,
+          0.6,
+          0.005,
+          (v) => patchLayer(patch, "aurora", { alphaCap: v }),
+          KNOB_DESC.alphaCap,
         ),
         ...planeKnobs(patch, "aurora", a, "aurora"),
       ];
@@ -608,8 +832,15 @@ export function buildSkyCraftKnobs(
     case "shootingStars": {
       const s = layers.shootingStars;
       return [
-        knob("shoot-parallax", "Parallax", s.parallax.factor, 0, 1.2, 0.01, (v) =>
-          patchLayer(patch, "shootingStars", { parallax: { factor: v } }),
+        knob(
+          "shoot-parallax",
+          "Parallax",
+          s.parallax.factor,
+          0,
+          1.2,
+          0.01,
+          (v) => patchLayer(patch, "shootingStars", { parallax: { factor: v } }),
+          KNOB_DESC.parallaxFactor,
         ),
         knob("shoot-parallaxLerp", "Par. lerp", s.parallax.lerp, 0.01, 0.15, 0.001, (v) =>
           patchLayer(patch, "shootingStars", { parallax: { lerp: v } }),
@@ -620,14 +851,61 @@ export function buildSkyCraftKnobs(
         knob("shoot-echoOpacity", "Echo α", s.echoOpacity, 0, 1, 0.01, (v) =>
           patchLayer(patch, "shootingStars", { echoOpacity: v }),
         ),
+        knob(
+          "shoot-spawnGapSmall",
+          "Gap petites",
+          s.spawnGapSmall,
+          1,
+          20,
+          0.1,
+          (v) => patchLayer(patch, "shootingStars", { spawnGapSmall: v }),
+          KNOB_DESC.spawnGapSmall,
+        ),
+        knob(
+          "shoot-spawnGapLarge",
+          "Gap grosses",
+          s.spawnGapLarge,
+          8,
+          120,
+          1,
+          (v) => patchLayer(patch, "shootingStars", { spawnGapLarge: v }),
+          KNOB_DESC.spawnGapLarge,
+        ),
+        knob(
+          "shoot-speedMul",
+          "Speed ×",
+          s.speedMul,
+          0.25,
+          2.5,
+          0.05,
+          (v) => patchLayer(patch, "shootingStars", { speedMul: v }),
+          KNOB_DESC.speedMul,
+        ),
+        knob(
+          "shoot-lengthMul",
+          "Length ×",
+          s.lengthMul,
+          0.25,
+          2.5,
+          0.05,
+          (v) => patchLayer(patch, "shootingStars", { lengthMul: v }),
+          KNOB_DESC.lengthMul,
+        ),
       ];
     }
 
     case "constellation": {
       const c = layers.constellation;
       return [
-        knob("const-parallax", "Parallax", c.parallax.factor, 0, 0.8, 0.005, (v) =>
-          patchLayer(patch, "constellation", { parallax: { factor: v } }),
+        knob(
+          "const-parallax",
+          "Parallax",
+          c.parallax.factor,
+          0,
+          0.8,
+          0.005,
+          (v) => patchLayer(patch, "constellation", { parallax: { factor: v } }),
+          KNOB_DESC.parallaxFactor,
         ),
         knob("const-parallaxLerp", "Par. lerp", c.parallax.lerp, 0.01, 0.1, 0.001, (v) =>
           patchLayer(patch, "constellation", { parallax: { lerp: v } }),

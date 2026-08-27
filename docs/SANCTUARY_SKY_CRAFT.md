@@ -6,11 +6,11 @@
 **Dernière MAJ :** 24 août 2026
 
 **Changelog** (max 5)
+- 27 août 2026 — Vague 1 knobs shader (gaz · dust · stars · zodiacal · aurora · filantes) — [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md).
 - 27 août 2026 — Lab fond : contrat `SkyCraftState` + backup `/test-sky-legacy` — [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md).
 - 26 août 2026 — **S2 `SkyPanorama`** — fond NASA opt-in · layer `panorama` off prod par défaut.
 - 26 août 2026 — **S1 `MilkyDustLanes`** — dark lanes · bande StarDust plus dense / serrée.
 - 26 août 2026 — **EclipseDisc hors ciel ambiant** — labs `/test-eclipse*` + prologue J1 ; hors pool idle ambiant.
-- 26 août 2026 — Lab `/contribute/test-sky` — doc [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md).
 
 > Vision produit → `SANCTUARY_SKY.md`  
 > Craft technique / visuel → **ce fichier**  

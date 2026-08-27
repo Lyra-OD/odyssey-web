@@ -22,6 +22,9 @@ const fragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uOpacity;
 uniform float uLoopPeriod;
+uniform float uWarpAmp;
+uniform float uBreathAmp;
+uniform float uDensityCap;
 uniform vec3 uMauve;
 uniform vec3 uDeep;
 uniform sampler2D uTex;
@@ -54,13 +57,13 @@ void main() {
     loopWarp(phaseM, 0.3) +
     loopWarp(phaseM2, 0.18);
 
-  float breathMauve = 0.8 + 0.2 * sin(phaseM2);
+  float breathMauve = (1.0 - uBreathAmp) + uBreathAmp * sin(phaseM2);
   float billowMauve = 0.9 + 0.1 * sin(phaseM3);
 
   vec2 warpBase = world * 0.115 + liveMauve * 0.14;
   float w1 = fbm(warpBase + 3.3);
   float w2 = fbm(warpBase * 1.28 + liveMauve2 * 0.2 + 6.1);
-  vec2 warped = world + vec2(w1, w2) * 3.0;
+  vec2 warped = world + vec2(w1, w2) * uWarpAmp;
   warped += vec2(
     fbm(warped * 0.21 + liveMauve),
     fbm(warped * 0.21 - liveMauve2 + 2.8)
@@ -100,7 +103,7 @@ void main() {
   vec3 col = mix(uDeep, uMauve, 0.5 + 0.5 * nM2);
   col = mix(col, uMauve * 1.05, (texDetail - 0.5) * 0.14);
 
-  float alpha = clamp(dens * uOpacity, 0.0, 0.52);
+  float alpha = clamp(dens * uOpacity, 0.0, uDensityCap);
   if (alpha < 0.012) discard;
 
   float grain = hash(gl_FragCoord.xy * 0.7 + vec2(uTime * 0.15, uTime * 0.11));
@@ -137,6 +140,9 @@ export function NebulaGasMauve({ tier }: Props) {
           uLoopPeriod: {
             value: theme.baseLoopPeriod * cfg.loopPeriodMul,
           },
+          uWarpAmp: { value: cfg.warpAmp },
+          uBreathAmp: { value: cfg.breathAmp },
+          uDensityCap: { value: cfg.densityCap },
           uMauve: { value: new Color(cfg.color) },
           uDeep: { value: new Color(cfg.deep) },
           uTex: { value: noiseTex },
@@ -153,6 +159,10 @@ export function NebulaGasMauve({ tier }: Props) {
     const amp = theme.scene.idle?.rareGasPulse ?? 0;
     mat.uniforms.uOpacity.value =
       opacity * (1 + pulse * amp) * skyIntroMul(1);
+    mat.uniforms.uLoopPeriod.value = theme.baseLoopPeriod * cfg.loopPeriodMul;
+    mat.uniforms.uWarpAmp.value = cfg.warpAmp;
+    mat.uniforms.uBreathAmp.value = cfg.breathAmp;
+    mat.uniforms.uDensityCap.value = cfg.densityCap;
   });
 
   return (

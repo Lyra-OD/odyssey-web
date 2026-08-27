@@ -21,6 +21,9 @@ const fragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uOpacity;
 uniform float uLoopPeriod;
+uniform float uWarpAmp;
+uniform float uBreathAmp;
+uniform float uDensityCap;
 uniform vec3 uFar;
 uniform vec3 uDeep;
 uniform sampler2D uTex;
@@ -42,7 +45,7 @@ void main() {
   vec2 warpBase = world * 0.08 + live * 0.1;
   float w1 = fbm(warpBase + 0.7);
   float w2 = fbm(warpBase * 1.2 + 3.4);
-  vec2 warped = world + vec2(w1, w2) * 4.5;
+  vec2 warped = world + vec2(w1, w2) * uWarpAmp;
 
   float n1 = fbm(warped * 0.09 + 2.0);
   float n2 = fbm(warped * 0.2 - live * 0.5 + 6.0);
@@ -59,12 +62,15 @@ void main() {
   float dens = islands * sculpt * (0.35 + 0.65 * n3);
   dens *= 0.55 + 0.45 * softBlob(pUv, vec2(0.0), 1.6, 1.2);
 
+  float breath = (1.0 - uBreathAmp) + uBreathAmp * sin(phase);
+  dens *= breath;
+
   vec2 texUv = vUv * 2.4 + live * 0.02 + vec2(uTime * 0.0015, -uTime * 0.001);
   float tex = texture2D(uTex, texUv).r;
   dens *= 0.8 + 0.35 * tex;
 
   vec3 col = mix(uDeep, uFar, 0.35 + 0.65 * n1);
-  float alpha = clamp(dens * uOpacity, 0.0, 0.32);
+  float alpha = clamp(dens * uOpacity, 0.0, uDensityCap);
   if (alpha < 0.008) discard;
 
   gl_FragColor = vec4(col, alpha);
@@ -97,6 +103,9 @@ export function NebulaGasFar({ tier }: Props) {
           uLoopPeriod: {
             value: theme.baseLoopPeriod * cfg.loopPeriodMul,
           },
+          uWarpAmp: { value: cfg.warpAmp },
+          uBreathAmp: { value: cfg.breathAmp },
+          uDensityCap: { value: cfg.densityCap },
           uFar: { value: new Color(cfg.color) },
           uDeep: { value: new Color(cfg.deep) },
           uTex: { value: noiseTex },
@@ -109,6 +118,10 @@ export function NebulaGasFar({ tier }: Props) {
     const mat = matRef.current ?? material;
     mat.uniforms.uTime.value = clock.elapsedTime;
     mat.uniforms.uOpacity.value = opacity * skyIntroMul(1);
+    mat.uniforms.uLoopPeriod.value = theme.baseLoopPeriod * cfg.loopPeriodMul;
+    mat.uniforms.uWarpAmp.value = cfg.warpAmp;
+    mat.uniforms.uBreathAmp.value = cfg.breathAmp;
+    mat.uniforms.uDensityCap.value = cfg.densityCap;
   });
 
   if (opacity < 0.001) return null;

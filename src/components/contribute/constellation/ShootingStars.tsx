@@ -26,10 +26,10 @@ import { skyIntroRef } from "./SkyIntroEclipse";
 
 const POOL = 5;
 const SEGMENTS = 12;
-const SPAWN_GAP_MIN = 4.5;
-const SPAWN_GAP_MAX = 10.5;
-const LARGE_GAP_MIN = 36;
-const LARGE_GAP_MAX = 62;
+/** Écart max = min + cette constante (petites). */
+const SPAWN_GAP_SPAN_SMALL = 6;
+/** Écart max = min + cette constante (grosses). */
+const SPAWN_GAP_SPAN_LARGE = 26;
 
 type StreakKind = "small" | "large";
 
@@ -271,6 +271,8 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
       const line = lines[idx];
       if (!line) return false;
       spawnStreak(slot, dirTmp, kind, special);
+      slot.speed *= streak.speedMul;
+      slot.length *= streak.lengthMul;
       if (special) {
         const target = idleCameraRef.rareTarget as RareSkyTarget;
         const tint =
@@ -291,14 +293,14 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
       idleCameraRef.requestSpecialStreak = false;
       if (trySpawn("large", true)) {
         nextLargeRef.current =
-          LARGE_GAP_MIN + Math.random() * (LARGE_GAP_MAX - LARGE_GAP_MIN);
+          streak.spawnGapLarge + Math.random() * SPAWN_GAP_SPAN_LARGE;
       }
     }
 
     if (nextLargeRef.current <= 0) {
       if (trySpawn("large")) {
         nextLargeRef.current =
-          LARGE_GAP_MIN + Math.random() * (LARGE_GAP_MAX - LARGE_GAP_MIN);
+          streak.spawnGapLarge + Math.random() * SPAWN_GAP_SPAN_LARGE;
       } else {
         nextLargeRef.current = 2.5;
       }
@@ -307,7 +309,7 @@ export function ShootingStars({ tier }: ShootingStarsProps) {
     if (nextSmallRef.current <= 0) {
       if (trySpawn("small")) {
         nextSmallRef.current =
-          SPAWN_GAP_MIN + Math.random() * (SPAWN_GAP_MAX - SPAWN_GAP_MIN);
+          streak.spawnGapSmall + Math.random() * SPAWN_GAP_SPAN_SMALL;
       } else {
         nextSmallRef.current = 1;
       }

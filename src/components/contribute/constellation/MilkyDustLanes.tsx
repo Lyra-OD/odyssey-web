@@ -25,6 +25,9 @@ const fragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uOpacity;
 uniform float uContrast;
+uniform float uFlowSpeed;
+uniform float uBandTight;
+uniform float uWarpAmp;
 uniform vec3 uLane;
 uniform vec3 uDeep;
 
@@ -68,13 +71,13 @@ void main() {
   float u = dot(p, along);
   float v = dot(p, perp);
 
-  float band = exp(-pow(v * 1.45, 2.0)) * smoothstep(1.4, 0.1, abs(u) * 0.52);
+  float band = exp(-pow(v * uBandTight, 2.0)) * smoothstep(1.4, 0.1, abs(u) * 0.52);
 
-  float t = uTime * 0.012;
+  float t = uTime * uFlowSpeed;
   vec2 warp = vec2(
     fbm(vec2(u * 0.9 + t, v * 2.1 - t * 0.6)),
     fbm(vec2(u * 1.1 - t * 0.45, v * 1.8 + t * 0.35) + 4.2)
-  ) * 0.55;
+  ) * uWarpAmp;
 
   vec2 q = vec2(u, v) + warp;
   float r1 = ridge(fbm(q * vec2(2.8, 6.2) + 1.3));
@@ -120,11 +123,14 @@ export function MilkyDustLanes({ tier }: MilkyDustLanesProps) {
           uTime: { value: 0 },
           uOpacity: { value: opacity },
           uContrast: { value: cfg.contrast },
+          uFlowSpeed: { value: cfg.flowSpeed },
+          uBandTight: { value: cfg.bandTight },
+          uWarpAmp: { value: cfg.warpAmp },
           uLane: { value: new Color(cfg.lane) },
           uDeep: { value: new Color(cfg.deep) },
         },
       }),
-    [opacity, cfg.contrast, cfg.lane, cfg.deep],
+    [opacity, cfg.contrast, cfg.lane, cfg.deep, cfg.flowSpeed, cfg.bandTight, cfg.warpAmp],
   );
 
   useEffect(() => {
@@ -141,6 +147,9 @@ export function MilkyDustLanes({ tier }: MilkyDustLanesProps) {
     mat.uniforms.uOpacity.value =
       opacity * (1 + bandPulse) * skyIntroMul(1);
     mat.uniforms.uContrast.value = cfg.contrast;
+    mat.uniforms.uFlowSpeed.value = cfg.flowSpeed;
+    mat.uniforms.uBandTight.value = cfg.bandTight;
+    mat.uniforms.uWarpAmp.value = cfg.warpAmp;
   });
 
   if (tier === "reduced") return null;

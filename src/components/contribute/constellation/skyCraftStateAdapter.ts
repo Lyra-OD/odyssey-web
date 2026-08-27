@@ -79,6 +79,9 @@ function gasFromLegacy(
     deep: g.deep,
     ...(g.colorHot ? { colorHot: g.colorHot } : {}),
     loopPeriodMul: g.loopPeriodMul,
+    warpAmp: g.warpAmp,
+    breathAmp: g.breathAmp,
+    densityCap: g.densityCap,
   };
 }
 
@@ -89,6 +92,9 @@ function gasToLegacy(l: GasLayerState, id: SkyCraftVisualLayerId): GasLayerTheme
     deep: l.deep,
     opacity: toTierOpacity(l.opacity, id),
     loopPeriodMul: l.loopPeriodMul,
+    warpAmp: l.warpAmp,
+    breathAmp: l.breathAmp,
+    densityCap: l.densityCap,
     position: l.position,
     scale: l.scale,
     renderOrder: l.renderOrder,
@@ -125,12 +131,14 @@ function starsFromLegacy(
     sizeMul: s.sizeMul,
     repulsion: s.repulsion,
     repelStrength: s.repelStrength,
+    spikeAmt: s.spikeAmt,
+    coreRadius: s.coreRadius,
   };
 }
 
 function starsToLegacy(l: StarFieldLayerState): StarFieldTheme {
   return {
-    tint: l.color ?? "#c8d4f0",
+    tint: l.color ?? "#d1e0ff",
     zSpread: l.zSpread,
     zBias: l.zBias,
     scaleMin: l.scaleMin,
@@ -146,6 +154,8 @@ function starsToLegacy(l: StarFieldLayerState): StarFieldTheme {
     alphaMul: l.opacity,
     repulsion: l.repulsion,
     repelStrength: l.repelStrength,
+    spikeAmt: l.spikeAmt,
+    coreRadius: l.coreRadius,
     renderOrder: l.renderOrder,
     parallax: l.parallax,
   };
@@ -246,6 +256,8 @@ export function fromLegacySkyTheme(
           parallax: d.parallax,
         }),
         dust: d.dust,
+        flowSpeed: d.flowSpeed,
+        bandTight: d.bandTight,
       },
       dustLanes: {
         ...baseLayer({
@@ -260,6 +272,9 @@ export function fromLegacySkyTheme(
         }),
         deep: lanes.deep,
         contrast: lanes.contrast,
+        flowSpeed: lanes.flowSpeed,
+        bandTight: lanes.bandTight,
+        warpAmp: lanes.warpAmp,
       },
       zodiacal: {
         ...baseLayer({
@@ -274,6 +289,9 @@ export function fromLegacySkyTheme(
         }),
         core: z.core,
         idleBoost: z.idleBoost,
+        coneTight: z.coneTight,
+        coreTight: z.coreTight,
+        alphaCap: z.alphaCap,
       },
       aurora: {
         ...baseLayer({
@@ -287,6 +305,8 @@ export function fromLegacySkyTheme(
           parallax: a.parallax,
         }),
         edge: a.edge,
+        curtainSpeed: a.curtainSpeed,
+        alphaCap: a.alphaCap,
       },
       eclipse: {
         ...baseLayer({
@@ -319,6 +339,10 @@ export function fromLegacySkyTheme(
         rareTints: shoot.rareTints,
         echoDelaySec: shoot.echoDelaySec,
         echoOpacity: shoot.echoOpacity,
+        spawnGapSmall: shoot.spawnGapSmall,
+        spawnGapLarge: shoot.spawnGapLarge,
+        speedMul: shoot.speedMul,
+        lengthMul: shoot.lengthMul,
       },
       constellation: baseLayer({
         isVisible: vis(layerMap, "constellation"),
@@ -385,6 +409,8 @@ export function toLegacySkyTheme(state: SkyCraftState): SkyTheme {
       dust: d.dust,
       tint: d.color ?? "#3a4a5c",
       opacity: toTierOpacity(d.opacity, "cosmicDust"),
+      flowSpeed: d.flowSpeed,
+      bandTight: d.bandTight,
       position: d.position,
       scale: d.scale,
       renderOrder: d.renderOrder,
@@ -395,6 +421,9 @@ export function toLegacySkyTheme(state: SkyCraftState): SkyTheme {
       deep: lanes.deep,
       opacity: toTierOpacity(lanes.opacity, "dustLanes"),
       contrast: lanes.contrast,
+      flowSpeed: lanes.flowSpeed,
+      bandTight: lanes.bandTight,
+      warpAmp: lanes.warpAmp,
       position: lanes.position,
       scale: lanes.scale,
       renderOrder: lanes.renderOrder,
@@ -409,6 +438,9 @@ export function toLegacySkyTheme(state: SkyCraftState): SkyTheme {
       renderOrder: z.renderOrder,
       parallax: z.parallax,
       idleBoost: z.idleBoost,
+      coneTight: z.coneTight,
+      coreTight: z.coreTight,
+      alphaCap: z.alphaCap,
     },
     aurora: {
       cool: a.color ?? "#0a2a28",
@@ -418,6 +450,8 @@ export function toLegacySkyTheme(state: SkyCraftState): SkyTheme {
       scale: a.scale,
       renderOrder: a.renderOrder,
       parallax: a.parallax,
+      curtainSpeed: a.curtainSpeed,
+      alphaCap: a.alphaCap,
     },
     eclipse: {
       body: e.color ?? "#05060a",
@@ -449,6 +483,10 @@ export function toLegacySkyTheme(state: SkyCraftState): SkyTheme {
       rareTints: shoot.rareTints,
       echoDelaySec: shoot.echoDelaySec,
       echoOpacity: shoot.echoOpacity,
+      spawnGapSmall: shoot.spawnGapSmall,
+      spawnGapLarge: shoot.spawnGapLarge,
+      speedMul: shoot.speedMul,
+      lengthMul: shoot.lengthMul,
       parallax: shoot.parallax,
     },
     constellation: { parallax: layers.constellation.parallax },

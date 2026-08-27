@@ -67,20 +67,23 @@ void main() {
 const fragmentShader = /* glsl */ `
 varying float vAlpha;
 varying float vBright;
+uniform vec3 uTint;
+uniform float uSpikeAmt;
+uniform float uCoreRadius;
 void main() {
   vec2 uv = gl_PointCoord - 0.5;
   float d = length(uv);
 
-  float core = 1.0 - smoothstep(0.0, 0.12, d);
+  float core = 1.0 - smoothstep(0.0, uCoreRadius, d);
   float spikeX = (1.0 - smoothstep(0.0, 0.035, abs(uv.x))) * (1.0 - smoothstep(0.0, 0.42, abs(uv.y)));
   float spikeY = (1.0 - smoothstep(0.0, 0.035, abs(uv.y))) * (1.0 - smoothstep(0.0, 0.42, abs(uv.x)));
-  float spikes = max(spikeX, spikeY) * 0.55;
+  float spikes = max(spikeX, spikeY) * uSpikeAmt;
   float soft = (1.0 - smoothstep(0.0, 0.4, d)) * 0.15;
 
   float a = (core + spikes + soft) * vAlpha;
   if (a < 0.02) discard;
 
-  vec3 col = mix(vec3(0.82, 0.88, 1.0), vec3(1.0, 0.99, 0.96), vBright);
+  vec3 col = mix(uTint, vec3(1.0, 0.99, 0.96), vBright);
   gl_FragColor = vec4(col, min(a * 1.15, 1.0));
 }
 `;
@@ -169,6 +172,8 @@ function createMaterial(cfg: StarFieldTheme): ShaderMaterial {
       uAlphaMul: { value: cfg.alphaMul },
       uZoomComp: { value: 1 },
       uTint: { value: new Color(cfg.tint) },
+      uSpikeAmt: { value: cfg.spikeAmt },
+      uCoreRadius: { value: cfg.coreRadius },
     },
   });
 }
@@ -214,6 +219,14 @@ function StarField({ kind, count, cfg }: StarFieldProps) {
         : 0;
     mat.uniforms.uAlphaMul.value =
       cfg.alphaMul * (1 + bandPulse) * skyIntroMul(1);
+    (mat.uniforms.uTint.value as Color).set(cfg.tint);
+    mat.uniforms.uSpikeAmt.value = cfg.spikeAmt;
+    mat.uniforms.uCoreRadius.value = cfg.coreRadius;
+    mat.uniforms.uBreathSpeedA.value = cfg.breathSpeedA;
+    mat.uniforms.uBreathSpeedB.value = cfg.breathSpeedB;
+    mat.uniforms.uBreathAmp.value = cfg.breathAmp;
+    mat.uniforms.uSizeMul.value = cfg.sizeMul;
+    mat.uniforms.uDrift.value = cfg.drift;
   });
 
   return (

@@ -24,6 +24,9 @@ void main() {
 const fragmentShader = /* glsl */ `
 uniform float uTime;
 uniform float uOpacity;
+uniform float uConeTight;
+uniform float uCoreTight;
+uniform float uAlphaCap;
 uniform vec3 uWarm;
 uniform vec3 uCore;
 
@@ -63,8 +66,8 @@ void main() {
   float v = dot(p, perp);
 
   // Cône très étroit — suggestion de lumière, pas un nuage
-  float band = exp(-pow(v * 3.6, 2.0)) * smoothstep(1.15, 0.25, abs(u) * 0.55);
-  float core = exp(-pow(v * 6.5, 2.0)) * smoothstep(0.85, 0.15, abs(u) * 0.7);
+  float band = exp(-pow(v * uConeTight, 2.0)) * smoothstep(1.15, 0.25, abs(u) * 0.55);
+  float core = exp(-pow(v * uCoreTight, 2.0)) * smoothstep(0.85, 0.15, abs(u) * 0.7);
 
   float t = uTime * 0.012;
   float grain = fbm(vec2(u * 1.4 + t, v * 2.8 - t * 0.4));
@@ -73,7 +76,7 @@ void main() {
   veil = pow(clamp(veil, 0.0, 1.0), 1.35);
 
   vec3 col = mix(uWarm, uCore, core * 0.45 + grain * 0.1);
-  float alpha = clamp(veil * uOpacity, 0.0, 0.18);
+  float alpha = clamp(veil * uOpacity, 0.0, uAlphaCap);
   if (alpha < 0.004) discard;
 
   gl_FragColor = vec4(col, alpha);
@@ -101,11 +104,14 @@ export function ZodiacalLight({ tier }: Props) {
         uniforms: {
           uTime: { value: 0 },
           uOpacity: { value: baseOpacity },
+          uConeTight: { value: cfg.coneTight },
+          uCoreTight: { value: cfg.coreTight },
+          uAlphaCap: { value: cfg.alphaCap },
           uWarm: { value: new Color(cfg.warm) },
           uCore: { value: new Color(cfg.core) },
         },
       }),
-    [baseOpacity, cfg.warm, cfg.core],
+    [baseOpacity, cfg.warm, cfg.core, cfg.coneTight, cfg.coreTight, cfg.alphaCap],
   );
 
   useEffect(() => {
@@ -120,6 +126,9 @@ export function ZodiacalLight({ tier }: Props) {
     // Respire un peu plus pendant idle caméra
     const breath = 1 + idleCameraRef.breath * (cfg.idleBoost ?? 0.25);
     mat.uniforms.uOpacity.value = baseOpacity * breath * skyIntroMul(1);
+    mat.uniforms.uConeTight.value = cfg.coneTight;
+    mat.uniforms.uCoreTight.value = cfg.coreTight;
+    mat.uniforms.uAlphaCap.value = cfg.alphaCap;
   });
 
   if (baseOpacity < 0.001) return null;

@@ -39,6 +39,9 @@ export type GasLayerTheme = {
   opacity: TierOpacity;
   /** Multiplicateur sur `baseLoopPeriod`. */
   loopPeriodMul: number;
+  warpAmp: number;
+  breathAmp: number;
+  densityCap: number;
   position: [number, number, number];
   scale: [number, number, number];
   renderOrder: number;
@@ -63,6 +66,8 @@ export type StarFieldTheme = {
   alphaMul: number;
   repulsion: number;
   repelStrength: number;
+  spikeAmt: number;
+  coreRadius: number;
   renderOrder: number;
   parallax: ParallaxKnobs;
 };
@@ -71,6 +76,8 @@ export type DustLayerTheme = {
   dust: string;
   tint: string;
   opacity: TierOpacity;
+  flowSpeed: number;
+  bandTight: number;
   position: [number, number, number];
   scale: [number, number, number];
   renderOrder: number;
@@ -84,6 +91,9 @@ export type MilkyDustLanesTheme = {
   opacity: TierOpacity;
   /** 0 = lanes larges · 1 = filaments fins. */
   contrast: number;
+  flowSpeed: number;
+  bandTight: number;
+  warpAmp: number;
   position: [number, number, number];
   scale: [number, number, number];
   renderOrder: number;
@@ -100,6 +110,9 @@ export type ZodiacalTheme = {
   parallax: ParallaxKnobs;
   /** Boost opacité × breath idle. */
   idleBoost: number;
+  coneTight: number;
+  coreTight: number;
+  alphaCap: number;
 };
 
 export type AuroraTheme = {
@@ -111,6 +124,8 @@ export type AuroraTheme = {
   scale: [number, number, number];
   renderOrder: number;
   parallax: ParallaxKnobs;
+  curtainSpeed: number;
+  alphaCap: number;
 };
 
 /** Sky Eclipse — disque + corona (logo-ready). Intro réutilisera ce layer. */
@@ -136,6 +151,12 @@ export type ShootingStarsTheme = {
   /** Echo fantôme après filante spéciale (retard s, opacité relative). */
   echoDelaySec: number;
   echoOpacity: number;
+  /** Gap min petites (s) ; max = min + 6. */
+  spawnGapSmall: number;
+  /** Gap min grosses (s) ; max = min + 26. */
+  spawnGapLarge: number;
+  speedMul: number;
+  lengthMul: number;
   parallax: ParallaxKnobs;
 };
 
@@ -355,6 +376,9 @@ export const defaultSkyTheme: SkyTheme = {
     deep: "#05060c",
     opacity: { desktop: 0.22, mobile: 0.16, reduced: 0 },
     loopPeriodMul: 1.8,
+    warpAmp: 4.5,
+    breathAmp: 0,
+    densityCap: 0.32,
     position: [0.4, -0.2, -11.5],
     scale: [38, 22, 1],
     renderOrder: -3,
@@ -366,6 +390,9 @@ export const defaultSkyTheme: SkyTheme = {
     deep: "#1a0514",
     opacity: { desktop: 0.4, mobile: 0.34, reduced: 0.26 },
     loopPeriodMul: 1.35,
+    warpAmp: 3.2,
+    breathAmp: 0.18,
+    densityCap: 0.44,
     position: [1.2, 0.1, -8.4],
     scale: [32, 18, 1],
     renderOrder: -1,
@@ -376,6 +403,9 @@ export const defaultSkyTheme: SkyTheme = {
     deep: "#1a1024",
     opacity: { desktop: 0.5, mobile: 0.4, reduced: 0.3 },
     loopPeriodMul: 1.15,
+    warpAmp: 3.0,
+    breathAmp: 0.2,
+    densityCap: 0.52,
     position: [0, 0.15, -7.2],
     scale: [30, 17, 1],
     renderOrder: 0,
@@ -386,6 +416,9 @@ export const defaultSkyTheme: SkyTheme = {
     deep: "#0f1a22",
     opacity: { desktop: 0.44, mobile: 0.36, reduced: 0.26 },
     loopPeriodMul: 1,
+    warpAmp: 2.8,
+    breathAmp: 0.22,
+    densityCap: 0.5,
     position: [0, 0, -5.5],
     scale: [28, 16, 1],
     renderOrder: 1,
@@ -395,6 +428,8 @@ export const defaultSkyTheme: SkyTheme = {
     dust: "#1c1828",
     tint: "#3a4a5c",
     opacity: { desktop: 0.18, mobile: 0.14, reduced: 0.1 },
+    flowSpeed: 0.018,
+    bandTight: 1.55,
     position: [0, 0, -5.2],
     scale: [30, 17, 1],
     renderOrder: 1,
@@ -405,6 +440,9 @@ export const defaultSkyTheme: SkyTheme = {
     deep: "#030204",
     opacity: { desktop: 0.52, mobile: 0.38, reduced: 0 },
     contrast: 0.62,
+    flowSpeed: 0.012,
+    bandTight: 1.45,
+    warpAmp: 0.55,
     position: [0, 0, -4.65],
     scale: [32, 18, 1],
     renderOrder: 2,
@@ -419,6 +457,9 @@ export const defaultSkyTheme: SkyTheme = {
     renderOrder: 0,
     parallax: { factor: 0.1, lerp: 0.02 },
     idleBoost: 0.22,
+    coneTight: 3.6,
+    coreTight: 6.5,
+    alphaCap: 0.18,
   },
   aurora: {
     cool: "#0a2a28",
@@ -428,6 +469,8 @@ export const defaultSkyTheme: SkyTheme = {
     scale: [26, 18, 1],
     renderOrder: 0,
     parallax: { factor: -0.07, lerp: 0.018 },
+    curtainSpeed: 0.08,
+    alphaCap: 0.22,
   },
   eclipse: {
     body: "#05060a",
@@ -452,7 +495,8 @@ export const defaultSkyTheme: SkyTheme = {
     parallax: { factor: -0.2, lerp: 0.012 },
   },
   starsBand: {
-    tint: "#c8d4f0",
+    /** Aligné cool hardcodé shader `(0.82, 0.88, 1)` — uTint branché Vague 1. */
+    tint: "#d1e0ff",
     zSpread: 9,
     zBias: -4.5,
     scaleMin: 0.22,
@@ -468,11 +512,13 @@ export const defaultSkyTheme: SkyTheme = {
     alphaMul: 1.18,
     repulsion: 0.9,
     repelStrength: 0.05,
+    spikeAmt: 0.55,
+    coreRadius: 0.12,
     renderOrder: 1,
     parallax: { factor: 0.22, lerp: 0.032 },
   },
   starsField: {
-    tint: "#c8d4f0",
+    tint: "#d1e0ff",
     zSpread: 3.2,
     zBias: 1.2,
     scaleMin: 0.55,
@@ -487,6 +533,8 @@ export const defaultSkyTheme: SkyTheme = {
     alphaMul: 1.08,
     repulsion: 1.5,
     repelStrength: 0.22,
+    spikeAmt: 0.55,
+    coreRadius: 0.12,
     renderOrder: 3,
     parallax: { factor: 0.65, lerp: 0.055 },
   },
@@ -504,6 +552,10 @@ export const defaultSkyTheme: SkyTheme = {
     },
     echoDelaySec: 0.4,
     echoOpacity: 0.35,
+    spawnGapSmall: 4.5,
+    spawnGapLarge: 36,
+    speedMul: 1,
+    lengthMul: 1,
     parallax: { factor: 0.85, lerp: 0.07 },
   },
   constellation: {
