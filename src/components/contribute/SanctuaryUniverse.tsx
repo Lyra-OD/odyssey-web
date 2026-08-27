@@ -785,11 +785,7 @@ function UniverseScene({
       <CameraRig>
         {/* Craft : remonte le ciel pour que la bande d etoiles soit en haut d ecran */}
         <group position={craftLite ? [0, 5.5, 0] : [0, 0, 0]}>
-        {/* Voie lactée entière — `scene.milkyRotate` + `milkyPosition` */}
-        <group
-          position={theme.scene.milkyPosition ?? [0, 0, 0]}
-          rotation={[0, 0, theme.scene.milkyRotate ?? 0]}
-        >
+        {/* Panorama hors milkyRotate — orientation propre (Tilt / Flip). */}
         {tier === "desktop" && isSkyLayerOn(skyLayers, "panorama") ? (
           <ParallaxLayer
             factor={theme.skyPanorama.parallax.factor}
@@ -798,6 +794,11 @@ function UniverseScene({
             <SkyPanorama tier={tier} />
           </ParallaxLayer>
         ) : null}
+        {/* Groupe milky procédural (pas panorama) — knobs lab cible « milky » */}
+        <group
+          position={theme.scene.milkyPosition ?? [0, 0, 0]}
+          rotation={[0, 0, theme.scene.milkyRotate ?? 0]}
+        >
         {isSkyLayerOn(skyLayers, "cosmicDust") ? (
         <ParallaxLayer
           factor={theme.cosmicDust.parallax.factor}

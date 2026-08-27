@@ -1,15 +1,14 @@
 # Craft ciel — profondeur & fond Sanctuaire (lab)
 
 **Type :** craft · **Vérité pour :** itération fond WebGL · layers · presets · roadmap dust lanes / panorama.  
-**Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 27 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 27 août 2026 — Layers **Fond** / **Fog** séparés · milky Pos XYZ · Rotate global · void noir.
-- 27 août 2026 — Panorama : **Noir void** = plan noir séparé (pas de shrink photo) + fond scène `#000` en mode B.
-- 26 août 2026 — **S2 panorama** — plan photo (pas sphère 360) · asset `/craft/sky/milky-way-v1.jpg` · modes A/B.
-- 26 août 2026 — Lab : couleurs par layer + **pool idle rare** (cibles · pulses · gaps).
-- 26 août 2026 — **S1 `MilkyDustLanes`** — dark lanes shader · knobs lab · bande StarDust resserrée.
-- 26 août 2026 — Lab **`/contribute/test-sky`** v0 : toggles layers · knobs `skyTheme` · sans constellation par défaut.
+- 27 août 2026 — Backup **`/test-sky-legacy`** (SkyTheme) isolé · lab courant = SkyCraftState.
+- 27 août 2026 — Lab branché sur `SkyCraftState` (Context) · knobs → store · preview `toLegacy*` · Log state.
+- 27 août 2026 — Contrat `SkyCraftState` + adaptateur legacy — Fond/Fog = scène · milkyGroup parent.
+- 27 août 2026 — Lab : isolation knobs · Solo · Export/Import preset JSON v1.
+- 27 août 2026 — Panorama hors milky · void noir séparé · chips Fond/Fog.
 
 **Liens :**
 - Stack layers (canon) : [`../SANCTUARY_SKY_CRAFT.md`](../SANCTUARY_SKY_CRAFT.md)
@@ -23,34 +22,59 @@
 
 | Surface | Rôle |
 |---------|------|
-| **`/contribute/test-sky`** | Atelier **fond ciel** — gaz · poussière · étoiles · parallaxe |
+| **`/contribute/test-sky`** | Atelier **fond ciel** — store `SkyCraftState` · presets |
+| **`/contribute/test-sky-legacy`** | Backup figé (état `SkyTheme` pré-refactor) — secours only |
 | **`/contribute/test-ciel`** | Preview Sanctuaire (immersif + constellation auto) |
 | **`/contribute/test-lueur`** | Hero · reveal Leo · Lueur produit |
 
-Ne pas mélanger : le craft ciel **n’implémente pas** naissance prénom, Leo, bridges.
+Ne pas mélanger : le craft ciel **n’implémente pas** naissance prénom, Leo, bridges.  
+Ne pas éditer le legacy pour de nouvelles features — uniquement `test-sky`.
 
 ---
 
 ## 2. Accès (dev only)
 
 ```
-/fr/contribute/test-sky
+/fr/contribute/test-sky          ← lab courant (SkyCraftState)
+/fr/contribute/test-sky-legacy   ← backup pré-refactor (SkyTheme)
 /en/contribute/test-sky
+/en/contribute/test-sky-legacy
 ```
 
-Code : `SkyCraftLab.tsx` · page `app/[lang]/contribute/test-sky/page.tsx`  
+Code : `SkyCraftLab.tsx` · backup : `SkyCraftLabLegacy.tsx` + `skyCraftKnobDefsLegacy.ts`  
+Page : `app/[lang]/contribute/test-sky/page.tsx` · legacy : `…/test-sky-legacy/page.tsx`  
 Infra layers : `constellation/skyCraftLayers.ts` · props `skyLayers` / `skyCraftChrome` sur `SanctuaryUniverse.tsx`.
 
 ---
 
-## 3. v0 livré
+## 2b. Contrat d’état (fondation outil)
 
-- Toggle **15 layers** · modes **A procédural / B photo NASA** · knobs par layer
+Source : `skyCraftState.ts` · pont prod : `skyCraftStateAdapter.ts` · store lab : `skyCraftStore.tsx`.
 
-**Asset S2 :** `public/craft/sky/milky-way-v1.jpg` — lab (Vecteezy, temporaire) · 3840×1920 · ~2 Mo · desktop only. Prod → licence claire ou NASA PD.
-- Knobs : parallaxe · fog · opacités gaz · poussière · band/field α/size
-- **Reset** → `defaultSkyTheme` + layers défaut
-- Liens vers `test-ciel` · `test-lueur`
+| Store | Contenu |
+|-------|---------|
+| `scene` | clearColor · fog · ambient · idle · `parallaxIntensity` |
+| `layers.milkyGroup` | Transform parent (poussière · zodiacal · lanes · bande) |
+| `layers.*` | Socle `LayerState` (`isVisible` · opacity desktop · pos/rot/scale) |
+
+Lab branché : knobs ↔ `SkyCraftState` · preview via `toLegacySkyTheme` / `toLegacyLayerMap`.  
+Régression : bouton **Log state** + `window.__SKY_CRAFT__` (state · legacyTheme · legacyLayers).  
+Chips **Fond / Fog** éditent `scene` (pas des meshes). Preset JSON = snapshot `SkyCraftState`.
+
+---
+
+## 3. Lab outil (hands-on)
+
+- Toggle layers · modes **A / B** · knobs **par cible** (layer | Scène | **milkyGroup**)
+- Chips **Fond** / **Fog** → écrivent `scene.clear*` / `scene.fog` (pas des meshes)
+- **`layers.milkyGroup`** = Rotate/Pos parent (poussière · zodiacal · lanes · bande) — **pas** le panorama
+- **Solo** / Mute → `LayerState.isVisible` natif
+- **Export / Import** = snapshot JSON `SkyCraftState` (`skyCraftPreset.ts`)
+- **Log state** + `window.__SKY_CRAFT__` pour régression adaptateur
+
+**Asset S2 :** `public/craft/sky/milky-way-v1.jpg` — lab (Vecteezy, temporaire) · desktop only. Prod → licence claire ou NASA PD.
+
+**Reset** → `defaultSkyCraftState` · liens `test-ciel` / `test-lueur` / eclipse / wormhole / **Legacy**.
 
 ---
 
@@ -61,9 +85,9 @@ Infra layers : `constellation/skyCraftLayers.ts` · props `skyLayers` / `skyCraf
 | **S0** | Lab v0 (ce doc) | ✅ |
 | **S1** | **`MilkyDustLanes`** — masque sombre soustractif (ref photo) | ✅ v1 |
 | **S2** | Panorama fond (NASA WebP) + toggle lab A/B | ✅ v1 |
-| **S3** | Export preset JSON (`skyTheme` partial) · bouton Copy | ⏳ |
+| **S3** | `SkyCraftState` + store + Solo + Export/Import + backup legacy | ✅ v1 |
 | **S4** | Sim tier mobile/reduced dans le panel | ⏳ |
-| **S5** | Merge preset KEEP → `defaultSkyTheme` + prod | ⏳ |
+| **S5** | Merge preset KEEP → prod · themes nommés · meshes R3F sur contrat | ⏳ |
 
 ### Direction visuelle (rappel)
 
@@ -83,4 +107,4 @@ Infra layers : `constellation/skyCraftLayers.ts` · props `skyLayers` / `skyCraf
 
 ## 6. Une phrase
 
-**`test-sky` = décor ; `test-lueur` = Lueur ; `test-ciel` = preview famille — trois ateliers, trois rôles.**
+**`test-sky` = décor (SkyCraftState) ; `test-sky-legacy` = backup ; `test-lueur` = Lueur ; `test-ciel` = preview famille.**

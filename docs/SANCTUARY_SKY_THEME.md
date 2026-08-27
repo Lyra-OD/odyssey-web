@@ -1,10 +1,10 @@
 # Odyssey — Ciel · **Thème / knobs**
 
-**Statut : vivant · 5 août 2026**  
-**Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) (stack layers) · [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) (vision) · screensaver [`SANCTUARY_SKY_SCREENSAVER.md`](SANCTUARY_SKY_SCREENSAVER.md)
+**Statut : vivant · 27 août 2026**  
+**Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) (stack layers) · [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) (vision) · lab fond [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md)
 
 > Ce doc = *ce qui est tuneable* et où ça vit.  
-> Pas une bible craft : juste le contrat pour ajuster layer par layer.
+> Lab outil : contrat **`SkyCraftState`** · prod R3F lit encore **`SkyTheme`** via adaptateur.
 
 ---
 
@@ -12,18 +12,24 @@
 
 | Quoi | Fichier |
 |------|---------|
-| Types + `defaultSkyTheme` + `mergeSkyTheme` + Provider | `src/components/contribute/constellation/skyTheme.ts` |
+| **Contrat craft** `SkyCraftState` / `LayerState` / `SceneState` | `constellation/skyCraftState.ts` |
+| Store lab (Context) | `skyCraftStore.tsx` |
+| Adaptateur `toLegacySkyTheme` / `fromLegacySkyTheme` / `toLegacyLayerMap` | `skyCraftStateAdapter.ts` |
+| Preset JSON = snapshot `SkyCraftState` | `skyCraftPreset.ts` |
+| Knobs lab courant | `skyCraftKnobDefs.ts` |
+| Backup knobs (`test-sky-legacy`) | `skyCraftKnobDefsLegacy.ts` |
+| Types + `defaultSkyTheme` + Provider (prod / meshes) | `skyTheme.ts` |
 | Idle (dérive / rare) | `IdleCameraDrift.tsx` — lit `scene.idle` |
 | Intro Éclipse | `SkyIntroEclipse.tsx` — lit `scene.intro` |
 | Injection | `SanctuaryUniverse` prop `skyTheme` (défaut = `defaultSkyTheme`) |
 
-Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas hardcoder les couleurs / amplitudes dans les layers.
+Les shaders / composants **lisent** encore le thème legacy via `useSkyTheme()` — ne pas hardcoder les couleurs / amplitudes dans les layers. Migration mesh-par-mesh vers `LayerState` = roadmap S5.
 
 ---
 
 ## 2. Layers tuneables
 
-| Clé | Layer |
+| Clé (craft / legacy) | Layer |
 |-----|--------|
 | `gasRose` | Gaz magenta 2001 |
 | `gasMauve` | Gaz mauve |
@@ -31,20 +37,22 @@ Les shaders / composants **lisent** le thème via `useSkyTheme()` — ne pas har
 | `gasFar` | Nébuleuse lointaine (Phase S1) |
 | `ghostStars` | Bokeh optique (Phase S1) |
 | `cosmicDust` | Voile poussière |
-| `milkyDustLanes` | Dark lanes voie lactée (S1 profondeur) |
-| `zodiacal` | Lumière zodiacale (Phase S2) |
-| `starsBand` | Voie lactée |
+| `dustLanes` / `milkyDustLanes` | Dark lanes voie lactée |
+| `zodiacal` | Lumière zodiacale |
+| `starsBand` | Bande VL (étoiles — pas le transform groupe) |
 | `starsField` | Étoiles proches |
-| `shootingStars` | Filantes (couleurs + parallaxe) |
-| `fond` | Couleur clear / vide (indépendant du fog) |
-| `fog` | Brouiillard profondeur — couleur · near · far (layer toggle) |
-| `scene` | ambient / **milkyRotate** / **milkyPosition** / idle |
-| `skyPanorama` | Panorama photo · `voidScale` (plan noir séparé) · photo `scale` indépendant |
+| `shootingStars` | Filantes |
+| chip **Fond** → `scene.clearColor` | Clear WebGL (pas un mesh) |
+| chip **Fog** → `scene.fog` | Fog Three.js (pas un mesh) |
+| `scene` | ambient · parallax× · loop · idle |
+| `milkyGroup` | Transform parent poussière · zodiacal · lanes · bande |
+| `panorama` / `skyPanorama` | Panorama photo · rotation/flip · void |
 | `eclipse` | Disque + corona (rare + intro) |
 | `aurora` | Rideau aurore |
 | `constellation` | Parallaxe constellation |
 
-Chaque gaz : `color`, `deep`, `opacity` (desktop/mobile/reduced), `parallax`, `position`, `scale`, …
+Socle craft par layer : `isVisible` · `opacity` (desktop) · `position` · `rotation` · `scale` · `color?` · `parallax` · extras.  
+Tiers mobile/reduced = dérivés au render (`deriveOpacityForTier`), pas dans le preset.
 
 ---
 
@@ -155,7 +163,9 @@ Les knobs = **présence, couleur, rythme, parallaxe, placement, idle / rare**.
 
 ## 6. Règle
 
-1. Toucher un layer → une clé thème.  
+1. Lab : toucher un layer → `layers[id]` (socle + extras). Fond/Fog → `scene` seulement.  
 2. Idle / rare → `scene.idle` uniquement.  
-3. Nouveau look vivant → preset (pas `_archive/`).  
-4. Essai mort → `_archive/`.
+3. Nouveau look vivant → preset `SkyCraftState` (pas `_archive/`).  
+4. Essai mort → `_archive/`.  
+5. Prod / meshes non migrés → passer par `toLegacySkyTheme` (étrangleur).  
+6. Backup UI → `/contribute/test-sky-legacy` uniquement (pas de nouvelles features).

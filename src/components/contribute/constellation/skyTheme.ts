@@ -147,11 +147,12 @@ export type SceneTheme = {
   fogFar: number;
   ambientIntensity: number;
   /**
-   * Rotation Z (rad) de toute la voie lactée :
-   * panorama · poussière · zodiacal · dust lanes · bande étoiles.
+   * Rotation Z (rad) du **groupe milky** procédural uniquement :
+   * poussière · zodiacal · dust lanes · bande étoiles.
+   * Pas le panorama (orientation propre `skyPanorama.rotation` / flip).
    */
   milkyRotate: number;
-  /** Décalage monde de toute la voie lactée. */
+  /** Décalage monde du groupe milky (pas le panorama). */
   milkyPosition: [number, number, number];
   /** Intro Éclipse immersif 1×/session. */
   intro: {
@@ -229,6 +230,10 @@ export type SkyPanoramaTheme = {
   voidColor: string;
   /** Soft mix bords photo → void (optionnel, ne change pas la taille). */
   blackSoft: number;
+  /** Miroir vertical (corrige photo à l’envers). */
+  flipV: boolean;
+  /** Miroir horizontal. */
+  flipH: boolean;
   renderOrder: number;
   parallax: ParallaxKnobs;
 };
@@ -333,13 +338,15 @@ export const defaultSkyTheme: SkyTheme = {
     opacity: { desktop: 0.75, mobile: 0, reduced: 0 },
     position: [0, 0.15, -13.5],
     scale: [34, 17, 1],
-    /** Légère pente ≈ axe StarDust (0.85 / 0.22). */
-    rotation: [0, 0, 0.22],
+    /** Orientation neutre — Rotate / Flip dans le lab. */
+    rotation: [0, 0, 0],
     dim: 0.55,
     /** Assez grand pour couvrir le FOV desktop hors photo. */
     voidScale: 90,
     voidColor: "#000000",
     blackSoft: 0,
+    flipV: false,
+    flipH: false,
     renderOrder: -4,
     parallax: { factor: -0.04, lerp: 0.01 },
   },

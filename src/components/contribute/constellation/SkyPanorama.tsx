@@ -25,21 +25,27 @@ uniform sampler2D uMap;
 uniform float uOpacity;
 uniform float uDim;
 uniform float uSoft;
+uniform float uFlipV;
+uniform float uFlipH;
 uniform vec3 uVoid;
 
 varying vec2 vUv;
 
 void main() {
-  vec4 tex = texture2D(uMap, vUv);
+  vec2 uv = vUv;
+  if (uFlipH > 0.5) uv.x = 1.0 - uv.x;
+  if (uFlipV > 0.5) uv.y = 1.0 - uv.y;
+
+  vec4 tex = texture2D(uMap, uv);
   vec3 col = tex.rgb * uDim;
 
   float soft = max(uSoft, 0.0);
   if (soft > 0.001) {
     float fx =
-      smoothstep(0.0, soft, vUv.x) * smoothstep(0.0, soft, 1.0 - vUv.x);
+      smoothstep(0.0, soft, uv.x) * smoothstep(0.0, soft, 1.0 - uv.x);
     float fy =
-      smoothstep(0.0, soft * 0.6, vUv.y) *
-      smoothstep(0.0, soft * 0.6, 1.0 - vUv.y);
+      smoothstep(0.0, soft * 0.6, uv.y) *
+      smoothstep(0.0, soft * 0.6, 1.0 - uv.y);
     col = mix(col, uVoid, 1.0 - (fx * fy));
   }
 
@@ -81,10 +87,12 @@ export function SkyPanorama({ tier }: SkyPanoramaProps) {
         uOpacity: { value: opacity },
         uDim: { value: cfg.dim },
         uSoft: { value: cfg.blackSoft },
+        uFlipV: { value: cfg.flipV ? 1 : 0 },
+        uFlipH: { value: cfg.flipH ? 1 : 0 },
         uVoid: { value: new Color(voidColor) },
       },
     });
-  }, [texture, opacity, cfg.dim, cfg.blackSoft, voidColor]);
+  }, [texture, opacity, cfg.dim, cfg.blackSoft, cfg.flipV, cfg.flipH, voidColor]);
 
   const voidMaterial = useMemo(
     () =>
@@ -109,6 +117,8 @@ export function SkyPanorama({ tier }: SkyPanoramaProps) {
     mat.uniforms.uOpacity.value = opacity * skyIntroMul(1);
     mat.uniforms.uDim.value = cfg.dim;
     mat.uniforms.uSoft.value = cfg.blackSoft;
+    mat.uniforms.uFlipV.value = cfg.flipV ? 1 : 0;
+    mat.uniforms.uFlipH.value = cfg.flipH ? 1 : 0;
     (mat.uniforms.uVoid.value as Color).set(voidColor);
     voidMaterial.color.set(voidColor);
     voidMaterial.opacity = skyIntroMul(1);

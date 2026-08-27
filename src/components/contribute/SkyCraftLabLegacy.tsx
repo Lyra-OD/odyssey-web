@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTexture } from "@react-three/drei";
 
 import { SanctuaryUniverse } from "@/src/components/contribute/SanctuaryUniverse";
@@ -15,25 +15,26 @@ import {
   type SkyCraftColorDef,
   type SkyCraftKnobDef,
   type SkyCraftKnobTarget,
-} from "@/src/components/contribute/constellation/skyCraftKnobDefs";
-import { SKY_LAB_HYBRID_GAS_OPACITY } from "@/src/components/contribute/constellation/skyCraftLayers";
+} from "@/src/components/contribute/constellation/skyCraftKnobDefsLegacy";
 import {
-  parseSkyCraftPreset,
-  stringifySkyCraftPreset,
-} from "@/src/components/contribute/constellation/skyCraftPreset";
-import {
-  toLegacyLayerMap,
-  toLegacySkyTheme,
-} from "@/src/components/contribute/constellation/skyCraftStateAdapter";
-import {
-  isUiTargetVisible,
-  SkyCraftStoreProvider,
-  useSkyCraftStore,
-  type SkyCraftUiTarget,
-} from "@/src/components/contribute/constellation/skyCraftStore";
+  SKY_LAB_DEFAULT_LAYERS,
+  SKY_LAB_HYBRID_GAS_OPACITY,
+  type SkyCraftLayerId,
+} from "@/src/components/contribute/constellation/skyCraftLayers";
 import { SKY_PANORAMA_TEXTURE } from "@/src/components/contribute/constellation/SkyPanorama";
+import {
+  defaultSkyTheme,
+  mergeSkyTheme,
+  type DeepPartial,
+  type SkyTheme,
+} from "@/src/components/contribute/constellation/skyTheme";
 import { useVisualTier } from "@/src/components/contribute/constellation/useVisualTier";
 import type { Locale } from "@/i18n.config";
+
+/**
+ * Backup figé du lab craft ciel (état `SkyTheme` + layers map séparée).
+ * Route : `/contribute/test-sky-legacy` — isolé du store `SkyCraftState`.
+ */
 
 function CraftColorGrid({ colors }: { colors: readonly SkyCraftColorDef[] }) {
   if (colors.length === 0) return null;
@@ -107,31 +108,10 @@ function CraftKnobGrid({
   );
 }
 
-/** Ordre chips lab — Fond/Fog (scène) puis layers. */
-const LAB_CHIP_ORDER: SkyCraftUiTarget[] = [
-  "fond",
-  "fog",
-  "milkyGroup",
-  "panorama",
-  "gasFar",
-  "ghostStars",
-  "gasRose",
-  "gasMauve",
-  "gasTeal",
-  "cosmicDust",
-  "dustLanes",
-  "zodiacal",
-  "aurora",
-  "starsBand",
-  "starsField",
-  "shootingStars",
-  "constellation",
-];
-
 const COPY = {
   fr: {
-    title: "Craft ciel",
-    subtitle: "Fond Sanctuaire — SkyCraftState → legacy preview",
+    title: "Craft ciel · LEGACY",
+    subtitle: "Backup — SkyTheme + layers map (pré-SkyCraftState)",
     layers: "Layers",
     layersAll: "Tout on",
     layersNone: "Tout off",
@@ -144,30 +124,20 @@ const COPY = {
     modeHybrid: "B · Photo NASA",
     lockScale: "Lock W/H",
     scene: "Scène",
-    logState: "Log state",
-    solo: "Solo",
-    soloOff: "Quitter solo",
-    exportPreset: "Export",
-    importPreset: "Import",
-    exportOk: "Preset copié",
-    importOk: "Preset chargé",
-    importFail: "Import échoué",
     reset: "Réinit.",
     tier: "Tier",
     hidePanel: "Masquer",
     showPanel: "Knobs",
-    selectHint: "Clique un layer — store unique SkyCraftState",
+    selectHint: "Backup isolé — ne pas y brancher le nouveau store",
     emptyKnobs: "Aucun knob pour ce layer.",
+    testSkyNew: "test-sky (nouveau)",
     testCiel: "test-ciel",
     testLueur: "Lueur",
     testEclipse: "Éclipse",
     testWormhole: "Wormhole",
-    testSkyLegacy: "Legacy",
-    chipLabels: {
-      scene: "Scène",
+    layerLabels: {
       fond: "Fond",
       fog: "Fog",
-      milkyGroup: "Groupe milky",
       panorama: "Panorama",
       gasFar: "Gaz lointain",
       ghostStars: "Ghost stars",
@@ -178,16 +148,15 @@ const COPY = {
       dustLanes: "Dark lanes",
       zodiacal: "Zodiacal",
       aurora: "Aurore",
-      eclipse: "Éclipse",
-      starsBand: "Bande VL",
+      starsBand: "Voie lactée",
       starsField: "Étoiles proches",
       shootingStars: "Filantes",
       constellation: "Constellation",
-    } satisfies Record<SkyCraftUiTarget, string>,
+    } satisfies Record<SkyCraftLayerId, string>,
   },
   en: {
-    title: "Sky craft",
-    subtitle: "Sanctuary backdrop — SkyCraftState → legacy preview",
+    title: "Sky craft · LEGACY",
+    subtitle: "Backup — SkyTheme + layers map (pre-SkyCraftState)",
     layers: "Layers",
     layersAll: "All on",
     layersNone: "All off",
@@ -200,30 +169,20 @@ const COPY = {
     modeHybrid: "B · NASA photo",
     lockScale: "Lock W/H",
     scene: "Scene",
-    logState: "Log state",
-    solo: "Solo",
-    soloOff: "Exit solo",
-    exportPreset: "Export",
-    importPreset: "Import",
-    exportOk: "Preset copied",
-    importOk: "Preset loaded",
-    importFail: "Import failed",
     reset: "Reset",
     tier: "Tier",
     hidePanel: "Hide",
     showPanel: "Knobs",
-    selectHint: "Click a layer — single SkyCraftState store",
+    selectHint: "Isolated backup — do not wire the new store here",
     emptyKnobs: "No knobs for this layer.",
+    testSkyNew: "test-sky (new)",
     testCiel: "test-ciel",
     testLueur: "Lueur",
     testEclipse: "Eclipse",
     testWormhole: "Wormhole",
-    testSkyLegacy: "Legacy",
-    chipLabels: {
-      scene: "Scene",
+    layerLabels: {
       fond: "Backdrop",
       fog: "Fog",
-      milkyGroup: "Milky group",
       panorama: "Panorama",
       gasFar: "Far gas",
       ghostStars: "Ghost stars",
@@ -234,154 +193,139 @@ const COPY = {
       dustLanes: "Dark lanes",
       zodiacal: "Zodiacal",
       aurora: "Aurora",
-      eclipse: "Eclipse",
       starsBand: "Milky band",
       starsField: "Near stars",
       shootingStars: "Shooting stars",
       constellation: "Constellation",
-    } satisfies Record<SkyCraftUiTarget, string>,
+    } satisfies Record<SkyCraftLayerId, string>,
   },
 } as const;
 
-function SkyCraftLabInner({ locale }: { locale: Locale }) {
+/**
+ * Lab craft ciel LEGACY — `/fr/contribute/test-sky-legacy` (dev only).
+ */
+export function SkyCraftLabLegacy({ locale = "fr" }: { locale?: Locale }) {
   const tier = useVisualTier();
   const t = COPY[locale === "en" ? "en" : "fr"];
-  const importRef = useRef<HTMLInputElement>(null);
-  const {
-    state,
-    soloId,
-    patch,
-    setState,
-    reset,
-    setLayerVisible,
-    setAllVisible,
-    enterSolo,
-    exitSolo,
-  } = useSkyCraftStore();
-
   const [panelOpen, setPanelOpen] = useState(true);
+  const [layers, setLayers] = useState(SKY_LAB_DEFAULT_LAYERS);
+  const [themeOverrides, setThemeOverrides] = useState<DeepPartial<SkyTheme>>({});
+  const [parallaxIntensity, setParallaxIntensity] = useState(1);
   const [knobTarget, setKnobTarget] = useState<SkyCraftKnobTarget>("panorama");
   const [panoramaScaleLock, setPanoramaScaleLock] = useState(true);
-  const [presetFlash, setPresetFlash] = useState<string | null>(null);
-
-  const legacyTheme = useMemo(() => toLegacySkyTheme(state), [state]);
-  const legacyLayers = useMemo(() => toLegacyLayerMap(state), [state]);
 
   useEffect(() => {
     useTexture.preload(SKY_PANORAMA_TEXTURE);
   }, []);
 
-  useEffect(() => {
-    if (!presetFlash) return;
-    const tmr = window.setTimeout(() => setPresetFlash(null), 2200);
-    return () => window.clearTimeout(tmr);
-  }, [presetFlash]);
+  const resolvedTheme = useMemo(
+    () => mergeSkyTheme(defaultSkyTheme, themeOverrides),
+    [themeOverrides],
+  );
 
-  /** DevTools / régression — state craft + sortie adaptateur. */
-  useEffect(() => {
-    const w = window as Window & {
-      __SKY_CRAFT__?: {
-        state: typeof state;
-        legacyTheme: typeof legacyTheme;
-        legacyLayers: typeof legacyLayers;
-      };
-    };
-    w.__SKY_CRAFT__ = { state, legacyTheme, legacyLayers };
-    return () => {
-      delete w.__SKY_CRAFT__;
-    };
-  }, [state, legacyTheme, legacyLayers]);
+  const patchTheme = (partial: DeepPartial<SkyTheme>) => {
+    setThemeOverrides((prev) =>
+      mergeSkyTheme(mergeSkyTheme(defaultSkyTheme, prev), partial),
+    );
+  };
+
+  const resetAll = () => {
+    setLayers({ ...SKY_LAB_DEFAULT_LAYERS });
+    setThemeOverrides({});
+    setParallaxIntensity(1);
+    setKnobTarget("gasTeal");
+  };
 
   const applyProceduralMode = () => {
-    if (soloId) exitSolo();
-    patch({
-      layers: {
-        panorama: { isVisible: false },
-      },
-    });
+    setLayers({ ...SKY_LAB_DEFAULT_LAYERS, panorama: false });
     setKnobTarget("gasTeal");
   };
 
   const applyHybridMode = () => {
-    if (soloId) exitSolo();
+    setLayers({ ...SKY_LAB_DEFAULT_LAYERS, panorama: true });
     setKnobTarget("panorama");
-    patch({
+    patchTheme({
       scene: {
-        clearColor: "#000000",
-        fog: { color: "#000000" },
+        background: "#000000",
+        fogColor: "#000000",
       },
-      layers: {
-        panorama: {
-          isVisible: true,
-          voidColor: "#000000",
-          voidScale: 90,
-          blackSoft: 0,
+      fond: { color: "#000000" },
+      skyPanorama: {
+        voidColor: "#000000",
+        voidScale: 90,
+        blackSoft: 0,
+      },
+      gasFar: {
+        opacity: {
+          desktop: SKY_LAB_HYBRID_GAS_OPACITY.gasFar,
+          mobile: SKY_LAB_HYBRID_GAS_OPACITY.gasFar * 0.85,
+          reduced: 0,
         },
-        gasFar: { opacity: SKY_LAB_HYBRID_GAS_OPACITY.gasFar },
-        gasRose: { opacity: SKY_LAB_HYBRID_GAS_OPACITY.gasRose },
-        gasMauve: { opacity: SKY_LAB_HYBRID_GAS_OPACITY.gasMauve },
-        gasTeal: { opacity: SKY_LAB_HYBRID_GAS_OPACITY.gasTeal },
+      },
+      gasRose: {
+        opacity: {
+          desktop: SKY_LAB_HYBRID_GAS_OPACITY.gasRose,
+          mobile: SKY_LAB_HYBRID_GAS_OPACITY.gasRose * 0.85,
+          reduced: 0,
+        },
+      },
+      gasMauve: {
+        opacity: {
+          desktop: SKY_LAB_HYBRID_GAS_OPACITY.gasMauve,
+          mobile: SKY_LAB_HYBRID_GAS_OPACITY.gasMauve * 0.85,
+          reduced: 0,
+        },
+      },
+      gasTeal: {
+        opacity: {
+          desktop: SKY_LAB_HYBRID_GAS_OPACITY.gasTeal,
+          mobile: SKY_LAB_HYBRID_GAS_OPACITY.gasTeal * 0.85,
+          reduced: 0,
+        },
       },
     });
   };
 
-  const toggleSolo = () => {
-    if (knobTarget === "scene") return;
-    if (soloId === knobTarget) {
-      exitSolo();
-      return;
-    }
-    enterSolo(knobTarget);
+  const toggleLayer = (id: SkyCraftLayerId) => {
+    setLayers((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const exportPreset = async () => {
-    const snapshot = {
-      ...state,
-      id: `craft-${new Date().toISOString().slice(0, 10)}`,
-    };
-    try {
-      await navigator.clipboard.writeText(stringifySkyCraftPreset(snapshot));
-      setPresetFlash(t.exportOk);
-    } catch {
-      setPresetFlash(t.importFail);
-    }
-  };
-
-  const applyImportedPreset = (raw: string) => {
-    const parsed = parseSkyCraftPreset(raw);
-    if (!parsed.ok) {
-      setPresetFlash(`${t.importFail}: ${parsed.error}`);
-      return;
-    }
-    if (soloId) exitSolo();
-    setState(parsed.preset);
-    setPresetFlash(`${t.importOk} · ${parsed.preset.id}`);
-  };
-
-  const logState = () => {
-    // eslint-disable-next-line no-console -- bouton régression lab
-    console.log("[SkyCraft] state", state);
-    // eslint-disable-next-line no-console
-    console.log("[SkyCraft] legacyTheme", legacyTheme);
-    // eslint-disable-next-line no-console
-    console.log("[SkyCraft] legacyLayers", legacyLayers);
-    setPresetFlash("logged → console / window.__SKY_CRAFT__");
+  const setAllLayers = (on: boolean) => {
+    setLayers((prev) => {
+      const next = { ...prev };
+      for (const id of Object.keys(next) as SkyCraftLayerId[]) {
+        next[id] = on;
+      }
+      return next;
+    });
   };
 
   const knobs = useMemo(
     () =>
-      buildSkyCraftKnobs(knobTarget, state, patch, { panoramaScaleLock }),
-    [knobTarget, state, patch, panoramaScaleLock],
+      buildSkyCraftKnobs(
+        knobTarget,
+        resolvedTheme,
+        patchTheme,
+        parallaxIntensity,
+        setParallaxIntensity,
+        { panoramaScaleLock },
+      ),
+    [knobTarget, resolvedTheme, parallaxIntensity, panoramaScaleLock],
   );
 
   const colors = useMemo(
-    () => buildSkyCraftColors(knobTarget, state, patch),
-    [knobTarget, state, patch],
+    () => buildSkyCraftColors(knobTarget, resolvedTheme, patchTheme),
+    [knobTarget, resolvedTheme],
   );
 
-  const idle = state.scene.idle;
-  const canSolo = knobTarget !== "scene";
-  const soloActive = canSolo && soloId === knobTarget;
+  const idle = resolvedTheme.scene.idle;
+
+  const layerIds = Object.keys(SKY_LAB_DEFAULT_LAYERS) as SkyCraftLayerId[];
+
+  const knobTargetLabel =
+    knobTarget === "scene"
+      ? t.scene
+      : t.layerLabels[knobTarget];
 
   const labLinkClass =
     "rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/55 hover:border-white/30";
@@ -392,11 +336,11 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
         <SanctuaryUniverse
           mode="immersive"
           locale={locale === "en" ? "en" : "fr"}
-          skyTheme={legacyTheme}
-          skyLayers={legacyLayers}
+          skyTheme={resolvedTheme}
+          skyLayers={layers}
           skyCraftChrome={false}
-          parallaxIntensity={state.scene.parallaxIntensity}
-          constellationVisible={legacyLayers.constellation}
+          parallaxIntensity={parallaxIntensity}
+          constellationVisible={layers.constellation}
         />
       </div>
 
@@ -410,20 +354,6 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
           <span className="font-mono text-teal-400/70">{tier}</span>
           {" · "}
           <span className="text-white/25">{t.selectHint}</span>
-          {soloId ? (
-            <>
-              {" · "}
-              <span className="font-mono text-amber-300/80">
-                solo:{t.chipLabels[soloId]}
-              </span>
-            </>
-          ) : null}
-          {presetFlash ? (
-            <>
-              {" · "}
-              <span className="font-mono text-teal-300/85">{presetFlash}</span>
-            </>
-          ) : null}
         </p>
       </div>
 
@@ -445,7 +375,7 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                 type="button"
                 onClick={applyProceduralMode}
                 className={`rounded-sm border px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] ${
-                  !state.layers.panorama.isVisible
+                  !layers.panorama
                     ? "border-teal-400/45 bg-teal-500/10 text-teal-100"
                     : "border-white/15 text-white/55 hover:border-white/30"
                 }`}
@@ -456,52 +386,18 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                 type="button"
                 onClick={applyHybridMode}
                 className={`rounded-sm border px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] ${
-                  state.layers.panorama.isVisible
+                  layers.panorama
                     ? "border-teal-400/45 bg-teal-500/10 text-teal-100"
                     : "border-white/15 text-white/55 hover:border-white/30"
                 }`}
               >
                 {t.modeHybrid}
               </button>
-              <button
-                type="button"
-                onClick={() => void exportPreset()}
-                className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/55 hover:border-teal-400/40 hover:text-teal-100"
-              >
-                {t.exportPreset}
-              </button>
-              <button
-                type="button"
-                onClick={() => importRef.current?.click()}
-                className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/55 hover:border-teal-400/40 hover:text-teal-100"
-              >
-                {t.importPreset}
-              </button>
-              <input
-                ref={importRef}
-                type="file"
-                accept="application/json,.json"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    void file.text().then(applyImportedPreset);
-                  }
-                  e.target.value = "";
-                }}
-              />
-              <button
-                type="button"
-                onClick={logState}
-                className="rounded-sm border border-amber-400/35 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-amber-100/80 hover:border-amber-400/60"
-              >
-                {t.logState}
-              </button>
               <Link
-                href={`/${locale}/contribute/test-sky-legacy`}
-                className="rounded-sm border border-white/25 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-white/70 hover:border-amber-400/40 hover:text-amber-100"
+                href={`/${locale}/contribute/test-sky`}
+                className="rounded-sm border border-teal-400/40 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-teal-100/90 hover:border-teal-400/70"
               >
-                {t.testSkyLegacy}
+                {t.testSkyNew}
               </Link>
               <Link href={`/${locale}/contribute/test-ciel`} className={labLinkClass}>
                 {t.testCiel}
@@ -523,10 +419,7 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
               </Link>
               <button
                 type="button"
-                onClick={() => {
-                  reset();
-                  setKnobTarget("gasTeal");
-                }}
+                onClick={resetAll}
                 className="rounded-sm border border-white/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-teal-400/80 hover:border-teal-400/40"
               >
                 {t.reset}
@@ -547,31 +440,18 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                 </p>
                 <button
                   type="button"
-                  onClick={() => setAllVisible(true)}
+                  onClick={() => setAllLayers(true)}
                   className="rounded-sm border border-white/15 px-2 py-0.5 text-[9px] uppercase tracking-[0.12em] text-white/55 hover:border-teal-400/40 hover:text-teal-100"
                 >
                   {t.layersAll}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setAllVisible(false)}
+                  onClick={() => setAllLayers(false)}
                   className="rounded-sm border border-white/15 px-2 py-0.5 text-[9px] uppercase tracking-[0.12em] text-white/55 hover:border-teal-400/40 hover:text-teal-100"
                 >
                   {t.layersNone}
                 </button>
-                {canSolo ? (
-                  <button
-                    type="button"
-                    onClick={toggleSolo}
-                    className={`rounded-sm border px-2 py-0.5 text-[9px] uppercase tracking-[0.12em] ${
-                      soloActive
-                        ? "border-amber-400/50 bg-amber-500/10 text-amber-100"
-                        : "border-white/15 text-white/55 hover:border-amber-400/40 hover:text-amber-100"
-                    }`}
-                  >
-                    {soloActive ? t.soloOff : t.solo}
-                  </button>
-                ) : null}
               </div>
               <div className="flex flex-wrap gap-1.5">
                 <button
@@ -585,27 +465,23 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                 >
                   {t.scene}
                 </button>
-                {LAB_CHIP_ORDER.map((id) => {
+                {layerIds.map((id) => {
                   const selected = knobTarget === id;
-                  const layerOn = isUiTargetVisible(state, id);
                   return (
                     <div
                       key={id}
                       className={`flex items-center gap-1 rounded-sm border px-1.5 py-0.5 transition-colors ${
                         selected
                           ? "border-teal-400/50 bg-teal-500/10"
-                          : soloId === id
-                            ? "border-amber-400/40 bg-amber-500/5"
-                            : "border-white/10 bg-white/[0.03] hover:border-teal-500/25"
+                          : "border-white/10 bg-white/[0.03] hover:border-teal-500/25"
                       }`}
                     >
                       <input
                         type="checkbox"
-                        checked={layerOn}
-                        onChange={() => setLayerVisible(id, !layerOn)}
+                        checked={layers[id]}
+                        onChange={() => toggleLayer(id)}
                         className="h-3 w-3 shrink-0 accent-teal-400"
-                        aria-label={t.chipLabels[id]}
-                        disabled={Boolean(soloId)}
+                        aria-label={t.layerLabels[id]}
                       />
                       <button
                         type="button"
@@ -614,7 +490,7 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                           selected ? "text-teal-100" : "text-white/60"
                         }`}
                       >
-                        {t.chipLabels[id]}
+                        {t.layerLabels[id]}
                       </button>
                     </div>
                   );
@@ -626,7 +502,7 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
               <div className="flex flex-wrap items-center gap-3">
                 <p className="text-[9px] uppercase tracking-[0.18em] text-teal-400/70">
                   {t.knobsFor}{" "}
-                  <span className="text-white/50">{t.chipLabels[knobTarget]}</span>
+                  <span className="text-white/50">{knobTargetLabel}</span>
                   <span className="ml-2 font-mono text-white/30">
                     ({knobs.length})
                   </span>
@@ -666,7 +542,7 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                       type="checkbox"
                       checked={idle.rareEnabled}
                       onChange={(e) =>
-                        setSkyCraftRareEnabled(patch, e.target.checked)
+                        setSkyCraftRareEnabled(patchTheme, e.target.checked)
                       }
                       className="h-3 w-3 accent-teal-400"
                     />
@@ -677,7 +553,7 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                       type="checkbox"
                       checked={idle.rareSpecialStreak}
                       onChange={(e) =>
-                        setSkyCraftRareSpecialStreak(patch, e.target.checked)
+                        setSkyCraftRareSpecialStreak(patchTheme, e.target.checked)
                       }
                       className="h-3 w-3 accent-teal-400"
                     />
@@ -692,7 +568,11 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                         key={target}
                         type="button"
                         onClick={() =>
-                          toggleSkyCraftRareTarget(state, patch, target)
+                          toggleSkyCraftRareTarget(
+                            resolvedTheme,
+                            patchTheme,
+                            target,
+                          )
                         }
                         className={`rounded-sm border px-2 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
                           active
@@ -711,17 +591,5 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
         </div>
       )}
     </main>
-  );
-}
-
-/**
- * Lab craft fond ciel — `/fr/contribute/test-sky` (dev only).
- * Store = `SkyCraftState` · preview = `toLegacy*` → SanctuaryUniverse.
- */
-export function SkyCraftLab({ locale = "fr" }: { locale?: Locale }) {
-  return (
-    <SkyCraftStoreProvider>
-      <SkyCraftLabInner locale={locale === "en" ? "en" : "fr"} />
-    </SkyCraftStoreProvider>
   );
 }
