@@ -49,7 +49,7 @@ import { VaultOnlineSourcesSection } from "@/src/components/tribute/VaultOnlineS
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
 import { useWizardStep1Reveal } from "@/src/hooks/useWizardStep1Reveal";
-import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/demoMode";
+import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
 import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
 import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
 import { useWizardDraftLifecycle } from "@/src/hooks/useWizardDraftLifecycle";

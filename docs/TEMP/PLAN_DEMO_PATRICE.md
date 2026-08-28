@@ -76,7 +76,7 @@
 ### Ven **28 août** (J-13 · aujourd’hui)
 
 - [x] `/partners` B2B · CTA Hero cliquable · nav Manifesto
-- [ ] **Fixer URL prod démo** (Vercel preview ou prod + `DEMO_MODE`)
+- [ ] **Fixer URL prod démo** (Vercel preview ou prod)
 - [ ] Créer / vérifier **tenant démo Urgel** (logo, slug `?partenaire=`)
 - [ ] Lister comptes : directeur salon · famille studio · tel secondaire
 
@@ -89,7 +89,6 @@
 ### Lun **31 août** (J-10)
 
 - [ ] **Environnement démo stable** : build Vercel vert · smoke login studio/salon
-- [ ] Activer `NEXT_PUBLIC_DEMO_MODE=true` sur preview démo si egress serré — [`../ops/DEMO_VP_EGRESS_REVERT.md`](../ops/DEMO_VP_EGRESS_REVERT.md)
 - [ ] **Invitation Souvenir** test de bout en bout → lien Sanctuaire iPhone Safari
 - [ ] Pré-remplir Studio (Coffre + quelques médias contribute)
 
@@ -185,9 +184,8 @@
 | Oral + objections | 7 sept. | |
 | MP4 Mode B ou « reporté » noté | 2 sept. | |
 | PDF QR A6 v0 | 3 sept. | |
-| DEMO_MODE egress si besoin | 31 août | |
 | Gel prod J-2 | 8 sept. | |
 
 ---
 
-*Après la session : cocher revert egress [`../ops/DEMO_VP_EGRESS_REVERT.md`](../ops/DEMO_VP_EGRESS_REVERT.md) · archiver ce TEMP.*
+*Après la session : archiver ce TEMP.*

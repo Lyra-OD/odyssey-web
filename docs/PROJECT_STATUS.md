@@ -4,6 +4,7 @@
 **Dernière MAJ :** 28 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 28 août 2026 — **Egress revert** : `demoMode.ts` retiré · poll 5 s · stub ops clôturé.
 - 28 août 2026 — Marketing **Phase 3** : `/partners` refonte (4 actes, copy B2B, form au clic, DA cyan + teal lead).
 - 26 août 2026 — Sanctuaire **J2** doc : matrice implémentation §11b [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · séparation canon / playbook démo.
 - 26 août 2026 — CI : job **`next build`** en parallèle de `npm test` (attrape les erreurs TS avant Vercel).
@@ -73,7 +74,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 |----------|------|-----------|
 | **Ops** | Jouer **P16** (RLS invitations) quand Supabase n’est plus *restricted* | Policies salon scope conseiller |
 | **Ops** | Stripe CLI `stripe login` + `stripe listen` local · activer `charge.refunded` endpoint prod | Webhook local sans script replay |
-| **Ops** | Factu / quota egress Supabase · **revert démo VP** [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) | Projet peut servir des requêtes |
+| **Ops** | Factu / quota egress Supabase | 🟢 egress payé · revert DEMO_MODE **28 août** — [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) (clôturé) |
 | A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |
 | B | Flag `viral_loop_enabled` sur **1 tenant** démo/pilote | Fonds visible en démo — [`ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](ops/VIRAL_LOOP_PILOT_RUNBOOK.md) |
 | C | Rails UX | Mobile M0 · S5-J/K · Scanner job IA serveur |
@@ -97,4 +98,4 @@ Les §3–9, §11–13 (diagramme wallets, P5.5, dette jetons, SQL P5.5, revue J
 
 ### 4.1 Supabase Storage egress
 
-🟢 thumbs WebP · **démo VP** : `NEXT_PUBLIC_DEMO_MODE=true` → poll Coffre off + pas de fallback original. Détail : [log §4.1](_archive/PROJECT_STATUS_LOG.md#41-supabase-storage-egress-juin-2026).
+🟢 thumbs WebP · poll Coffre **5 s** · fallback full-res legacy OK. Détail : [log §4.1](_archive/PROJECT_STATUS_LOG.md#41-supabase-storage-egress-juin-2026).
