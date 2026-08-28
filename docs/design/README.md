@@ -9,6 +9,8 @@ Exports marque : [`../brand/odyssey-eclipse/`](../brand/odyssey-eclipse/README.m
 ## Mettre ici
 
 - Nouveau playbook frames, note tokens, checklist DA **neuve**
+- Accès Vercel / liens DA : [`DA_VERCEL_ACCESS.md`](DA_VERCEL_ACCESS.md)
+- Cheatsheet DA (1 page) : [`DA_CHEATSHEET.md`](DA_CHEATSHEET.md)
 
 ## Ne pas mettre ici
 

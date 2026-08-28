@@ -4,6 +4,7 @@
 **Dernière MAJ :** 21 août 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 28 août 2026 — accès Vercel DA (liens directs + provisioning) : [`design/DA_VERCEL_ACCESS.md`](design/DA_VERCEL_ACCESS.md).
 - 26 août 2026 — runbook revert egress démo VP : [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md).
 - 21 août 2026 — regroupement **logique** (business / product / design…) · règle nouveaux docs · chemins inchangés.
 - 21 août 2026 — dossier [`TEMP/`](TEMP/README.md) : rush démo Patrice / brouillons.
@@ -167,6 +168,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | Fichier | Type | Vérité pour |
 |---------|------|-------------|
 | [`DA_SCREENS.md`](DA_SCREENS.md) | playbook | Frames Figma ↔ URLs |
+| [`design/DA_VERCEL_ACCESS.md`](design/DA_VERCEL_ACCESS.md) | playbook | Liens prod Vercel + checklist compte DA |
 | [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) | canon | Palette, Halo-Éclipse |
 | [`COPY.md`](COPY.md) | canon | Copy écran · source JSON |
 | [`COPY_CATALOG.md`](COPY_CATALOG.md) | living | Liste FR/EN générée — **pas à la main** |
