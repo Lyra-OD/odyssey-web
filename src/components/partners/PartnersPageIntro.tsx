@@ -80,15 +80,22 @@ export function PartnersPageIntro({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={CINEMATIC_VIEWPORT}
             transition={{ duration: 0.95, ease: LOCOMOTIVE_EASE, delay: 0.1 }}
-            className="mt-8 space-y-5"
+            className="mt-8"
           >
             <p className="font-label text-sm leading-relaxed text-zinc-400 md:text-base md:leading-relaxed">
               {copy.introProblem}
             </p>
-            <p className="font-label text-sm leading-relaxed text-zinc-300 md:text-base md:leading-relaxed">
-              {copy.introResolution}
-            </p>
           </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={CINEMATIC_VIEWPORT}
+            transition={{ duration: 1.05, ease: LOCOMOTIVE_EASE, delay: 0.15 }}
+            className="font-editorial mx-auto mt-12 max-w-xl text-xl leading-relaxed tracking-tight text-white md:mt-14 md:text-[1.65rem] md:leading-relaxed"
+          >
+            {copy.introResolution}
+          </motion.p>
         </header>
 
         {/* Acte II — La Promesse */}

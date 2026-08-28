@@ -29,7 +29,7 @@
 | `header.langOptionFr` | FR | FR |
 | `header.langOptionEn` | EN | EN |
 | `header.nav.home` | Accueil | Home |
-| `header.nav.manifesto` | Notre manifeste | Manifesto |
+| `header.nav.manifesto` | Manifesto | Manifesto |
 | `header.nav.process` | Processus | Process |
 | `header.nav.pricing` | Forfaits | Pricing |
 | `header.nav.partners` | Partenaires | Partners |
