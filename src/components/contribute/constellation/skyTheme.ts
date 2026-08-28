@@ -43,6 +43,8 @@ export type GasLayerTheme = {
   breathAmp: number;
   densityCap: number;
   position: [number, number, number];
+  /** Euler radians — craft Rot Z = `[2]`. */
+  rotation: [number, number, number];
   scale: [number, number, number];
   renderOrder: number;
   parallax: ParallaxKnobs;
@@ -68,6 +70,8 @@ export type StarFieldTheme = {
   repelStrength: number;
   spikeAmt: number;
   coreRadius: number;
+  /** Euler radians — craft Rot Z = `[2]` (groupe points). */
+  rotation: [number, number, number];
   renderOrder: number;
   parallax: ParallaxKnobs;
 };
@@ -79,6 +83,7 @@ export type DustLayerTheme = {
   flowSpeed: number;
   bandTight: number;
   position: [number, number, number];
+  rotation: [number, number, number];
   scale: [number, number, number];
   renderOrder: number;
   parallax: ParallaxKnobs;
@@ -95,6 +100,7 @@ export type MilkyDustLanesTheme = {
   bandTight: number;
   warpAmp: number;
   position: [number, number, number];
+  rotation: [number, number, number];
   scale: [number, number, number];
   renderOrder: number;
   parallax: ParallaxKnobs;
@@ -105,6 +111,7 @@ export type ZodiacalTheme = {
   core: string;
   opacity: TierOpacity;
   position: [number, number, number];
+  rotation: [number, number, number];
   scale: [number, number, number];
   renderOrder: number;
   parallax: ParallaxKnobs;
@@ -121,6 +128,7 @@ export type AuroraTheme = {
   /** Opacité dormante (quasi invisible hors rare). */
   opacity: TierOpacity;
   position: [number, number, number];
+  rotation: [number, number, number];
   scale: [number, number, number];
   renderOrder: number;
   parallax: ParallaxKnobs;
@@ -380,6 +388,7 @@ export const defaultSkyTheme: SkyTheme = {
     breathAmp: 0,
     densityCap: 0.32,
     position: [0.4, -0.2, -11.5],
+    rotation: [0, 0, 0],
     scale: [38, 22, 1],
     renderOrder: -3,
     parallax: { factor: -0.16, lerp: 0.01 },
@@ -394,6 +403,7 @@ export const defaultSkyTheme: SkyTheme = {
     breathAmp: 0.18,
     densityCap: 0.44,
     position: [1.2, 0.1, -8.4],
+    rotation: [0, 0, 0],
     scale: [32, 18, 1],
     renderOrder: -1,
     parallax: { factor: -0.12, lerp: 0.014 },
@@ -407,6 +417,7 @@ export const defaultSkyTheme: SkyTheme = {
     breathAmp: 0.2,
     densityCap: 0.52,
     position: [0, 0.15, -7.2],
+    rotation: [0, 0, 0],
     scale: [30, 17, 1],
     renderOrder: 0,
     parallax: { factor: -0.09, lerp: 0.016 },
@@ -420,6 +431,7 @@ export const defaultSkyTheme: SkyTheme = {
     breathAmp: 0.22,
     densityCap: 0.5,
     position: [0, 0, -5.5],
+    rotation: [0, 0, 0],
     scale: [28, 16, 1],
     renderOrder: 1,
     parallax: { factor: -0.04, lerp: 0.022 },
@@ -431,6 +443,7 @@ export const defaultSkyTheme: SkyTheme = {
     flowSpeed: 0.018,
     bandTight: 1.55,
     position: [0, 0, -5.2],
+    rotation: [0, 0, 0],
     scale: [30, 17, 1],
     renderOrder: 1,
     parallax: { factor: 0.16, lerp: 0.026 },
@@ -444,6 +457,7 @@ export const defaultSkyTheme: SkyTheme = {
     bandTight: 1.45,
     warpAmp: 0.55,
     position: [0, 0, -4.65],
+    rotation: [0, 0, 0],
     scale: [32, 18, 1],
     renderOrder: 2,
     parallax: { factor: 0.14, lerp: 0.018 },
@@ -453,6 +467,7 @@ export const defaultSkyTheme: SkyTheme = {
     core: "#6a5640",
     opacity: { desktop: 0.085, mobile: 0.06, reduced: 0 },
     position: [0, 0, -4.8],
+    rotation: [0, 0, 0],
     scale: [30, 15, 1],
     renderOrder: 0,
     parallax: { factor: 0.1, lerp: 0.02 },
@@ -466,6 +481,7 @@ export const defaultSkyTheme: SkyTheme = {
     edge: "#3d8a7a",
     opacity: { desktop: 0.02, mobile: 0.012, reduced: 0 },
     position: [-1.2, 0.4, -6.5],
+    rotation: [0, 0, 0],
     scale: [26, 18, 1],
     renderOrder: 0,
     parallax: { factor: -0.07, lerp: 0.018 },
@@ -514,6 +530,7 @@ export const defaultSkyTheme: SkyTheme = {
     repelStrength: 0.05,
     spikeAmt: 0.55,
     coreRadius: 0.12,
+    rotation: [0, 0, 0],
     renderOrder: 1,
     parallax: { factor: 0.22, lerp: 0.032 },
   },
@@ -535,6 +552,7 @@ export const defaultSkyTheme: SkyTheme = {
     repelStrength: 0.22,
     spikeAmt: 0.55,
     coreRadius: 0.12,
+    rotation: [0, 0, 0],
     renderOrder: 3,
     parallax: { factor: 0.65, lerp: 0.055 },
   },

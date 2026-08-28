@@ -4,6 +4,7 @@
 **Complète :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) (stack layers) · [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md) (vision) · lab fond [`craft/SKY_DEPTH_CRAFT.md`](craft/SKY_DEPTH_CRAFT.md)
 
 **Changelog** (max 5)
+- 27 août 2026 — Rot Z layer (`rotation[2]`) : gaz · dust · lanes · zodiacal · aurora · stars · knob lab.
 - 27 août 2026 — Vague 1 : knobs shader (warp/breath/density · flow/band · spike/core/`uTint` · zodiacal/aurora · filantes).
 - 27 août 2026 — Contrat lab `SkyCraftState` · store · adaptateur · presets.
 

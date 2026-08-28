@@ -55,6 +55,8 @@ export const KNOB_DESC = {
   spawnGapLarge: "Intervalle minimum (s) entre deux grosses filantes.",
   speedMul: "Multiplicateur de vitesse des étoiles filantes.",
   lengthMul: "Multiplicateur de longueur des traînées.",
+  rotZ:
+    "Rotation du calque autour de l’axe Z (radians). Incline le nuage / la bande dans le plan de l’écran.",
 } as const;
 
 /** Cibles idle rare — `eclipse` réservé labs / intro. */
@@ -106,7 +108,13 @@ function setVec3Axis(v: Vec3, axis: 0 | 1 | 2, value: number): Vec3 {
 function planeKnobs(
   patch: PatchSkyCraft,
   id: SkyCraftVisualLayerId,
-  layer: { position: Vec3; scale: Vec3; renderOrder: number; parallax: { factor: number; lerp: number } },
+  layer: {
+    position: Vec3;
+    rotation: Vec3;
+    scale: Vec3;
+    renderOrder: number;
+    parallax: { factor: number; lerp: number };
+  },
   prefix: string,
 ): SkyCraftKnobDef[] {
   return [
@@ -118,6 +126,16 @@ function planeKnobs(
     ),
     knob(`${prefix}-posZ`, "Pos Z", layer.position[2], -14, -2, 0.05, (v) =>
       patchLayer(patch, id, { position: setVec3Axis(layer.position, 2, v) }),
+    ),
+    knob(
+      `${prefix}-rotZ`,
+      "Rot Z",
+      layer.rotation[2],
+      -Math.PI,
+      Math.PI,
+      0.01,
+      (v) => patchLayer(patch, id, { rotation: setVec3Axis(layer.rotation, 2, v) }),
+      KNOB_DESC.rotZ,
     ),
     knob(`${prefix}-scaleW`, "Scale W", layer.scale[0], 4, 48, 0.25, (v) =>
       patchLayer(patch, id, { scale: setVec3Axis(layer.scale, 0, v) }),
@@ -298,6 +316,16 @@ function starFieldKnobs(
       0.005,
       (v) => patchLayer(patch, id, { coreRadius: v }),
       KNOB_DESC.coreRadius,
+    ),
+    knob(
+      `${prefix}-rotZ`,
+      "Rot Z",
+      layer.rotation[2],
+      -Math.PI,
+      Math.PI,
+      0.01,
+      (v) => patchLayer(patch, id, { rotation: setVec3Axis(layer.rotation, 2, v) }),
+      KNOB_DESC.rotZ,
     ),
     knob(`${prefix}-repulsion`, "Repulsion", layer.repulsion, 0, 3, 0.05, (v) =>
       patchLayer(patch, id, { repulsion: v }),

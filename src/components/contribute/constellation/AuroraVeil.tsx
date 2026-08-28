@@ -134,6 +134,7 @@ export function AuroraVeil({ tier }: Props) {
   return (
     <mesh
       position={cfg.position}
+      rotation={cfg.rotation}
       scale={cfg.scale}
       frustumCulled={false}
       renderOrder={cfg.renderOrder}

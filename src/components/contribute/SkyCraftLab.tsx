@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTexture } from "@react-three/drei";
 
 import { SanctuaryUniverse } from "@/src/components/contribute/SanctuaryUniverse";
@@ -60,80 +61,160 @@ function CraftColorGrid({ colors }: { colors: readonly SkyCraftColorDef[] }) {
   );
 }
 
+/** Tooltip fixe (portal) — le panel `overflow-y-auto` clippe les tooltips CSS. */
 function CraftKnobLabel({
   label,
   description,
+  onHint,
 }: {
   label: string;
   description?: string;
+  onHint?: (text: string | null) => void;
 }) {
+  const anchorRef = useRef<HTMLSpanElement>(null);
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+
+  const place = useCallback(() => {
+    const el = anchorRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const width = 220;
+    const left = Math.max(8, Math.min(r.left, window.innerWidth - width - 8));
+    const below = r.bottom + 8;
+    const above = r.top - 8;
+    const top =
+      below + 72 < window.innerHeight ? below : Math.max(8, above - 72);
+    setPos({ top, left });
+  }, []);
+
+  const show = useCallback(() => {
+    if (!description) return;
+    place();
+    setOpen(true);
+    onHint?.(description);
+  }, [description, onHint, place]);
+
+  const hide = useCallback(() => {
+    setOpen(false);
+    onHint?.(null);
+  }, [onHint]);
+
   if (!description) {
     return (
       <span className="truncate font-medium text-white/65">{label}</span>
     );
   }
 
-  // title natif = fiable (le panel a overflow-y-auto → pas de tooltip CSS absolu clipé)
   return (
-    <span
-      className="inline-flex min-w-0 max-w-[90%] items-center gap-1"
-      title={description}
-    >
-      <span className="truncate border-b border-dotted border-white/45 font-medium text-white/70">
-        {label}
-      </span>
+    <>
       <span
-        className="shrink-0 cursor-help select-none rounded-sm px-0.5 font-mono text-[10px] leading-none text-teal-400/80 hover:bg-white/10 hover:text-teal-300"
-        title={description}
-        aria-label={description}
+        ref={anchorRef}
+        className="inline-flex min-w-0 max-w-[90%] items-center gap-1"
+        onMouseEnter={show}
+        onMouseLeave={hide}
+        onFocus={show}
+        onBlur={hide}
       >
-        [?]
+        <span className="truncate border-b border-dotted border-teal-400/50 font-medium text-white/75">
+          {label}
+        </span>
+        <span
+          role="button"
+          tabIndex={0}
+          className="inline-flex h-3.5 w-3.5 shrink-0 cursor-help items-center justify-center rounded-full border border-teal-400/50 bg-teal-500/15 font-mono text-[9px] leading-none text-teal-300 hover:border-teal-300 hover:bg-teal-500/30"
+          aria-label={description}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (open) hide();
+              else show();
+            }
+          }}
+        >
+          ?
+        </span>
       </span>
-    </span>
+      {open
+        ? createPortal(
+            <span
+              role="tooltip"
+              style={{
+                position: "fixed",
+                top: pos.top,
+                left: pos.left,
+                zIndex: 9999,
+                width: 220,
+              }}
+              className="pointer-events-none rounded-md border border-teal-400/30 bg-zinc-950 px-2.5 py-2 text-left text-[11px] font-normal normal-case leading-snug tracking-normal text-white/85 shadow-xl"
+            >
+              {description}
+            </span>,
+            document.body,
+          )
+        : null}
+    </>
   );
 }
 
 function CraftKnobGrid({
   knobs,
   emptyLabel,
+  hintIdle,
 }: {
   knobs: readonly SkyCraftKnobDef[];
   emptyLabel: string;
+  hintIdle: string;
 }) {
+  const [hint, setHint] = useState<string | null>(null);
+
   if (knobs.length === 0) {
     return <p className="text-[10px] text-white/35">{emptyLabel}</p>;
   }
 
   return (
-    <div className="grid grid-cols-3 gap-x-3 gap-y-1.5 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10">
-      {knobs.map((knob) => {
-        const decimals = knob.step < 1 ? 2 : 0;
-        return (
-          <label
-            key={knob.key}
-            className="flex min-w-0 flex-col gap-0.5 text-[9px] uppercase tracking-[0.1em] text-white/50"
-          >
-            <span className="flex items-baseline justify-between gap-1">
-              <CraftKnobLabel
-                label={knob.label}
-                description={knob.description}
-              />
-              <span className="shrink-0 font-mono text-[10px] normal-case tracking-normal text-teal-400/75">
-                {knob.value.toFixed(decimals)}
+    <div className="flex flex-col gap-1.5">
+      <p
+        className={`rounded-sm border px-2 py-1.5 text-[11px] normal-case leading-snug tracking-normal ${
+          hint
+            ? "border-teal-400/35 bg-teal-950/50 text-teal-50/95"
+            : "border-white/10 bg-white/[0.03] text-white/40"
+        }`}
+        aria-live="polite"
+      >
+        {hint ?? hintIdle}
+      </p>
+      <div className="grid grid-cols-3 gap-x-3 gap-y-1.5 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10">
+        {knobs.map((knob) => {
+          const decimals = knob.step < 1 ? 2 : 0;
+          return (
+            <label
+              key={knob.key}
+              className="flex min-w-0 flex-col gap-0.5 text-[9px] uppercase tracking-[0.1em] text-white/50"
+            >
+              <span className="flex items-baseline justify-between gap-1">
+                <CraftKnobLabel
+                  label={knob.label}
+                  description={knob.description}
+                  onHint={setHint}
+                />
+                <span className="shrink-0 font-mono text-[10px] normal-case tracking-normal text-teal-400/75">
+                  {knob.value.toFixed(decimals)}
+                </span>
               </span>
-            </span>
-            <input
-              type="range"
-              min={knob.min}
-              max={knob.max}
-              step={knob.step}
-              value={knob.value}
-              onChange={(e) => knob.onChange(Number(e.target.value))}
-              className="h-1 w-full cursor-pointer accent-teal-500/80"
-            />
-          </label>
-        );
-      })}
+              <input
+                type="range"
+                min={knob.min}
+                max={knob.max}
+                step={knob.step}
+                value={knob.value}
+                onChange={(e) => knob.onChange(Number(e.target.value))}
+                className="h-1 w-full cursor-pointer accent-teal-500/80"
+              />
+            </label>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -184,6 +265,7 @@ const COPY = {
     showPanel: "Knobs",
     selectHint: "Clique un layer — store unique SkyCraftState",
     emptyKnobs: "Aucun knob pour ce layer.",
+    hintIdle: "Survole un label pointillé ou ? pour l’aide du paramètre.",
     testCiel: "test-ciel",
     testLueur: "Lueur",
     testEclipse: "Éclipse",
@@ -235,6 +317,7 @@ const COPY = {
     showPanel: "Knobs",
     selectHint: "Click a layer — single SkyCraftState store",
     emptyKnobs: "No knobs for this layer.",
+    hintIdle: "Hover a dotted label or ? for parameter help.",
     testCiel: "test-ciel",
     testLueur: "Lueur",
     testEclipse: "Eclipse",
@@ -620,7 +703,11 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                   </label>
                 ) : null}
               </div>
-              <CraftKnobGrid knobs={knobs} emptyLabel={t.emptyKnobs} />
+              <CraftKnobGrid
+                knobs={knobs}
+                emptyLabel={t.emptyKnobs}
+                hintIdle={t.hintIdle}
+              />
             </div>
 
             {colors.length > 0 ? (

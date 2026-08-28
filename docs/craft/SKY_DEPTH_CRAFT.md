@@ -4,11 +4,11 @@
 **Dernière MAJ :** 27 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 27 août 2026 — **Rot Z** craft : knob + `rotation` mesh (gaz · dust · lanes · zodiacal · aurora · stars).
 - 27 août 2026 — **Vague 1** — knobs shader branchés (gaz warp/breath/density · dust flow/band · stars spike/core + `uTint` · zodiacal/aurora · filantes spawn/speed/length). Defaults = hardcodes.
 - 27 août 2026 — Presets nommés (Défaut · Démo VP · Nuit douce) · Copy/Import JSON · badge **Modifié**.
 - 27 août 2026 — Fix : activer **Groupe milky** / enfant réveille parent+enfants (plus d’écran vide).
 - 27 août 2026 — Backup **`/test-sky-legacy`** (SkyTheme) isolé · lab courant = SkyCraftState.
-- 27 août 2026 — Lab branché sur `SkyCraftState` (Context) · knobs → store · preview `toLegacy*` · Log state.
 
 **Liens :**
 - Stack layers (canon) : [`../SANCTUARY_SKY_CRAFT.md`](../SANCTUARY_SKY_CRAFT.md)

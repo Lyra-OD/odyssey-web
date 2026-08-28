@@ -232,6 +232,7 @@ function StarField({ kind, count, cfg }: StarFieldProps) {
   return (
     <points
       geometry={geometry}
+      rotation={cfg.rotation}
       frustumCulled={false}
       renderOrder={cfg.renderOrder}
     >

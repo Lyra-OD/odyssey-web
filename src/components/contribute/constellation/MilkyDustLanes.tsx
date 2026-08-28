@@ -157,6 +157,7 @@ export function MilkyDustLanes({ tier }: MilkyDustLanesProps) {
   return (
     <mesh
       position={cfg.position}
+      rotation={cfg.rotation}
       scale={cfg.scale}
       frustumCulled={false}
       renderOrder={cfg.renderOrder}

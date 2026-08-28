@@ -129,6 +129,7 @@ export function NebulaGasFar({ tier }: Props) {
   return (
     <mesh
       position={cfg.position}
+      rotation={cfg.rotation}
       scale={cfg.scale}
       frustumCulled={false}
       renderOrder={cfg.renderOrder}
