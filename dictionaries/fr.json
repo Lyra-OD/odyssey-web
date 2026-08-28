@@ -10,6 +10,7 @@
     "logo": "Odyssey",
     "logoFallback": "ODYSSEY",
     "login": "Connexion",
+    "createTribute": "Créer un hommage",
     "languageLabel": "Langue",
     "langOptionFr": "FR",
     "langOptionEn": "EN",
@@ -38,8 +39,32 @@
     }
   },
   "partnersPage": {
-    "title": "Partenariat Odyssey",
-    "subtitle": "Maisons funéraires, réseaux et accompagnants : proposez à vos familles une expérience de mémoire cinématographique. Décrivez votre structure et vos besoins. Nous étudions un déploiement adapté.",
+    "title": "Odyssey — Le Sanctuaire Souvenir pour vos familles",
+    "subtitle": "Vous offrez l'accès en un clic. La famille invite ses proches. Notre moteur tisse le film. Zéro montage pour eux, zéro effort pour vous.",
+    "growthEngineTitle": "Moteur de croissance",
+    "growthEngineItems": [
+      {
+        "title": "Acquisition virale",
+        "body": "Visibilité digne via l'entourage — chaque invitation élargit naturellement la portée de votre maison."
+      },
+      {
+        "title": "Socio-financement",
+        "body": "L'entourage débloque formats premium et souvenirs tangibles — sans pression au salon."
+      },
+      {
+        "title": "Revenus partagés",
+        "body": "Commissions automatiques tracées en temps réel dans votre espace partenaire."
+      },
+      {
+        "title": "Rétention post-cérémonie",
+        "body": "Suivi de deuil et anniversaires automatisés — la relation continue après le service."
+      },
+      {
+        "title": "Friction zéro",
+        "body": "Aucune licence ni équipement — vos conseillers offrent un geste, Odyssey fait le reste."
+      }
+    ],
+    "formSectionTitle": "Demander une démo",
     "form": {
       "organization": "Maison ou organisation",
       "contactName": "Nom du contact",
@@ -62,6 +87,7 @@
     },
     "login": "Connexion",
     "primaryCta": "Créer un hommage",
+    "ctaSubline": "Commencez gratuitement. Formats premium et socio-financement à partir de 179 $.",
     "pitch": {
       "hooks": [
         "Le cinéma de leur vie",
@@ -159,27 +185,27 @@
   "process": {
     "title": "LE PROCESSUS ODYSSEY",
     "emotionalKicker": "Leur vie en cinéma",
-    "sectionSubtitle": "Le processus Odyssey",
-    "timelineHint": "Trois chapitres d’un même film : matière, composition, transmission.",
-    "subtitle": "Trois gestes pour les familles : rassembler ce qui compte, composer le film, recevoir un hommage digne d’eux.",
-    "step1Label": "Déposer",
-    "step2Label": "Composer",
-    "step3Label": "Recevoir",
+    "sectionSubtitle": "Trois temps, un hommage",
+    "timelineHint": "Coffre, Cercle, Cinéma — sans montage de votre part.",
+    "subtitle": "Vous déposez les souvenirs. Les proches enrichissent l'hommage. Notre moteur tisse le film.",
+    "step1Label": "Coffre",
+    "step2Label": "Cercle",
+    "step3Label": "Cinéma",
     "steps": [
       {
         "labelKey": "step1Label",
-        "title": "Vos photos, vidéos et archives",
-        "body": "Vous déposez ce qui raconte leur vie. Nous sécurisons chaque fragment avec une structure claire et respectueuse."
+        "title": "Le Coffre",
+        "body": "Rassemblez les souvenirs de toute une vie — photos, voix, histoires — en un seul lieu sûr."
       },
       {
         "labelKey": "step2Label",
-        "title": "Le film prend forme",
-        "body": "Nous composons rythme, lumière et narration pour respecter l’émotion et l’intention de la famille."
+        "title": "Le Cercle",
+        "body": "Invitez l'entourage à contribuer. Chacun dépose un fragment de mémoire dans le Sanctuaire."
       },
       {
         "labelKey": "step3Label",
-        "title": "Un film à faire vivre",
-        "body": "Le film devient un objet de transmission : sobre, cinématographique, fidèle à la dignité du souvenir."
+        "title": "Le Cinéma",
+        "body": "Notre moteur tisse le film, sans aucun montage de votre part — digne du grand écran."
       }
     ]
   },

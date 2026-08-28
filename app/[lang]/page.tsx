@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Hero } from "@/src/components/Hero";
 import { Manifesto } from "@/src/components/Manifesto";
 import { Navbar } from "@/src/components/Navbar";
-import { Partnerships } from "@/src/components/Partnerships";
-import { Pricing } from "@/src/components/Pricing";
 import { Process } from "@/src/components/Process";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSiteUrl } from "@/lib/siteUrl";
@@ -45,12 +43,6 @@ export default async function HomePage({ params }: PageProps) {
       <Hero lang={lang} dictionary={dictionary.hero} headerNav={dictionary.header.nav} />
       <Manifesto lang={lang} dictionary={dictionary.manifesto} />
       <Process lang={lang} dictionary={dictionary.process} />
-      <Pricing lang={lang} dictionary={dictionary.pricing} />
-      <Partnerships
-        lang={lang}
-        dictionary={dictionary.partnerships}
-        logoFallback={dictionary.header.logoFallback}
-      />
     </main>
   );
 }

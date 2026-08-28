@@ -2,9 +2,11 @@
 
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Link from "next/link";
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback, type ReactNode } from "react";
 import type { AppDictionary } from "../../lib/dictionaries";
 import type { Locale } from "../../i18n.config";
+import { appRoutes } from "@/src/lib/appRoutes";
+import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
 
 type HeroPitchDeck = {
   hooks: string[];
@@ -30,11 +32,11 @@ const FILM_GRAIN_STYLES = `
   }
   .vibrant-halo {
     color: white;
-    text-shadow: 0 0 15px rgba(124, 58, 237, 0.8), 0 0 30px rgba(139, 92, 246, 0.5);
+    text-shadow: 0 0 15px rgba(0, 232, 240, 0.8), 0 0 30px rgba(0, 232, 240, 0.5);
   }
   .neon-vivid:hover {
     color: #ffffff !important;
-    text-shadow: 0 0 10px #fff, 0 0 20px #8b5cf6, 0 0 40px #7c3aed;
+    text-shadow: 0 0 10px #fff, 0 0 20px #00e8f0, 0 0 40px rgba(0, 232, 240, 0.55);
     transform: scale(1.06); letter-spacing: 0.6em;
   }
   .hero-kenburns {
@@ -90,11 +92,6 @@ export function Hero({
 
   const menuNav = useMemo(() => headerNav, [headerNav]);
 
-  const brandFoot = useMemo(() => {
-    const b = dictionary.branding;
-    return `${b.line1} ${b.line2}`;
-  }, [dictionary.branding]);
-
   useEffect(() => {
     setPitchPhase(0);
   }, [lang]);
@@ -137,7 +134,7 @@ export function Hero({
 
   /**
    * useInView starts false until the observer runs; resetting narrative on that first `false`
-   * cleared the 3.5s timeout and blocked pitch + branding transitions. Only treat `false` as
+   * cleared the 3.5s timeout and blocked pitch transitions. Only treat `false` as
    * "user left the hero" after we have observed a transition from visible -> not visible.
    */
   useEffect(() => {
@@ -362,53 +359,51 @@ export function Hero({
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 z-[1]" />
       </div>
 
-      {/* LAYER 2 : BRANDING (Position Initiale 14vh -> 20% Opacité) */}
-      <motion.div 
-        initial={{ opacity: 0, y: 40, filter: "blur(20px)" }}
-        animate={{ 
-          opacity: isNarrativeMode ? 0.4 : 0.2, 
-          y: 0,
-          filter: "blur(0px)",
-          top: isNarrativeMode ? "85px" : "14vh", 
-          left: "40px",
-          scale: isNarrativeMode ? 0.12 : 1,
-        }}
-        transition={{ duration: 2.5, ease: LOCOMOTIVE_EASE }}
-        className="absolute z-20 pointer-events-none px-8 md:px-20 origin-top-left will-change-transform"
-      >
-        <h1 className="text-[16vw] md:text-[12.5vw] leading-[0.8] tracking-[-0.05em] text-white font-bold uppercase whitespace-nowrap">
-          Odyssey <br /> Films
-        </h1>
-      </motion.div>
+      {/* LAYER 3–4 : PITCH + CTA (colonne — bouton sous les slides) */}
+      <div className="absolute inset-0 z-[35] flex flex-col items-center justify-center px-6 text-center pointer-events-none">
+        <div className="mb-8 flex min-h-[3.5rem] w-full max-w-[92vw] items-center justify-center sm:mb-10 sm:min-h-[4.5rem] md:mb-12 md:min-h-[5.5rem]">
+          <AnimatePresence mode="wait">
+            {isNarrativeMode && (
+              <motion.div
+                key={`${lang}-${pitchPhase}-${pitchLine}`}
+                initial={{ opacity: 0, filter: "blur(20px)", y: 20 }}
+                animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+                exit={{ opacity: 0, filter: "blur(20px)", y: -16 }}
+                transition={{ duration: 1.8, ease: LOCOMOTIVE_EASE }}
+                className="will-change-transform"
+              >
+                <PitchLine
+                  phrase={pitchLine || pitchDeck.hooks[0]}
+                  phase={pitchPhase % 4}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-      {/* LAYER 3 : PITCH (Remonté, 50% Opacité, Halo serré) */}
-      <div className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center px-12 text-center">
-        <AnimatePresence mode="wait">
-          {isNarrativeMode && (
-            <motion.div
-              key={`${lang}-${pitchPhase}-${pitchLine}`}
-              initial={{ opacity: 0, filter: "blur(20px)", y: 25 }}
-              animate={{ opacity: 1, filter: "blur(0px)", y: -60 }}
-              exit={{ opacity: 0, filter: "blur(20px)", y: -80 }}
-              transition={{ duration: 1.8, ease: LOCOMOTIVE_EASE }}
-              className="will-change-transform"
-            >
-              <PitchLine
-                phrase={pitchLine || pitchDeck.hooks[0]}
-                phase={pitchPhase % 4}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.6, ease: LOCOMOTIVE_EASE, delay: 0.9 }}
+          className="pointer-events-auto flex flex-col items-center gap-4"
+        >
+          <Link
+            href={appRoutes.studioConnexion(lang)}
+            className={`${connexionSubmitButtonClass} inline-flex w-auto px-8 py-4 tracking-widest touch-manipulation`}
+          >
+            {dictionary.primaryCta}
+          </Link>
+          <HeroLuminousSubline>{dictionary.ctaSubline}</HeroLuminousSubline>
+        </motion.div>
       </div>
 
       <div className="absolute inset-0 z-50 pointer-events-none grain-engine" />
 
       {/* LAYER 10 : NAVIGATION BASSE */}
       <div className="absolute inset-0 z-[100] flex flex-col justify-end p-10 md:p-24 pointer-events-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-20 w-full">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-12 md:gap-20 w-full">
           <div className="flex flex-col gap-5 items-start md:-translate-x-1 md:translate-y-2 md:rotate-[-0.4deg]">
-            <NavItem href="/" label={menuNav.home} delay={1.2} itemClass="md:translate-x-2" />
+            <NavItem href={`/${lang}`} label={menuNav.home} delay={1.2} itemClass="md:translate-x-2" />
             <NavItem
               href="#manifesto"
               label={menuNav.manifesto}
@@ -416,45 +411,42 @@ export function Hero({
               isWhite
               itemClass="-translate-y-0.5 md:-translate-x-1"
             />
-            <Link
-              href="/"
-              className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.5em] text-zinc-600 transition-colors duration-300 hover:text-zinc-400 md:translate-x-3"
-            >
-              {brandFoot}
-            </Link>
           </div>
           <div className="flex flex-col items-start pt-2.5 md:translate-x-4 md:-translate-y-1 md:rotate-[0.6deg]">
             <NavItem href="#process" label={menuNav.process} delay={1.4} itemClass="md:-translate-x-1" />
-            <NavItem href="#pricing" label={menuNav.pricing} delay={1.45} itemClass="md:mt-2 md:-translate-x-1" />
-          </div>
-          <div className="flex flex-col gap-5 items-start md:translate-x-1 md:-translate-y-3 md:rotate-[0.35deg]">
             <NavItem
-              href="#partners"
-              label={menuNav.partners}
-              delay={1.5}
-              itemClass="md:translate-x-2 md:translate-y-1"
+              href={`/${lang}/contact`}
+              label={menuNav.contact}
+              delay={1.45}
+              itemClass="md:mt-2 md:-translate-x-1"
             />
+          </div>
+          <div className="flex flex-col items-start pt-2.5 md:-translate-x-2 md:translate-y-4 md:rotate-[-0.55deg]">
             <NavItem
               href="#manifesto"
               label={menuNav.manifesto}
-              delay={1.6}
+              delay={1.5}
               isWhite
-              itemClass="-translate-x-1 md:translate-y-2"
+              itemClass="md:translate-x-1"
             />
-            <Link
-              href="/"
-              className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.5em] text-zinc-600 transition-colors duration-300 hover:text-zinc-400 md:-translate-x-2"
-            >
-              {brandFoot}
-            </Link>
-          </div>
-          <div className="flex flex-col items-start pt-2.5 md:-translate-x-2 md:translate-y-4 md:rotate-[-0.55deg]">
-            <NavItem href="/contact" label={menuNav.contact} delay={1.7} itemClass="md:translate-x-1" />
           </div>
         </div>
       </div>
 
     </section>
+  );
+}
+
+function HeroLuminousSubline({ children }: { children: ReactNode }) {
+  return (
+    <p className="font-label max-w-md text-[10px] leading-relaxed tracking-[0.22em] md:text-[11px] md:tracking-[0.26em]">
+      <span className="odyssey-connexion-mark relative inline-block text-white">
+        <span aria-hidden className="odyssey-connexion-mark-glow select-none">
+          {children}
+        </span>
+        <span className="relative">{children}</span>
+      </span>
+    </p>
   );
 }
 

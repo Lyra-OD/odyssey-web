@@ -149,7 +149,7 @@ export function Process({
 
       {/* Soft vignette + lens accent (very low contrast, dignified) */}
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_55%_at_50%_35%,rgba(88,28,135,0.05),transparent_62%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_55%_at_50%_35%,rgba(0,232,240,0.05),transparent_62%)]"
         aria-hidden
       />
 
@@ -213,11 +213,11 @@ export function Process({
                         scale: emphasizedIndex === index ? 1.22 : 1,
                         borderColor:
                           emphasizedIndex === index
-                            ? "rgba(167, 139, 250, 0.55)"
+                            ? "rgba(0, 232, 240, 0.55)"
                             : "rgba(255,255,255,0.22)",
                         boxShadow:
                           emphasizedIndex === index
-                            ? "0 0 28px rgba(139, 92, 246, 0.38)"
+                            ? "0 0 28px rgba(0, 232, 240, 0.38)"
                             : "0 0 0 rgba(0,0,0,0)",
                       }}
                       transition={SPOTLIGHT_TRANSITION}
@@ -253,13 +253,13 @@ export function Process({
                     scale: emphasizedIndex === index ? 1.045 : 1,
                     borderColor:
                       emphasizedIndex === index
-                        ? "rgba(167, 139, 250, 0.52)"
+                        ? "rgba(0, 232, 240, 0.52)"
                         : "rgba(255, 255, 255, 0.1)",
                     backgroundColor:
                       emphasizedIndex === index ? "rgba(255, 255, 255, 0.055)" : "rgba(255, 255, 255, 0.02)",
                     boxShadow:
                       emphasizedIndex === index
-                        ? "0 0 56px -10px rgba(124, 58, 237, 0.35), 0 16px 48px -24px rgba(0, 0, 0, 0.65)"
+                        ? "0 0 56px -10px rgba(0, 232, 240, 0.35), 0 16px 48px -24px rgba(0, 0, 0, 0.65)"
                         : "0 0 0 rgba(0,0,0,0)",
                   }}
                   style={{ transformOrigin: "center center" }}

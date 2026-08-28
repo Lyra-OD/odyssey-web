@@ -10,6 +10,7 @@
     "logo": "Odyssey",
     "logoFallback": "ODYSSEY",
     "login": "Login",
+    "createTribute": "Create a Tribute",
     "languageLabel": "Language",
     "langOptionFr": "FR",
     "langOptionEn": "EN",
@@ -38,8 +39,32 @@
     }
   },
   "partnersPage": {
-    "title": "Odyssey partnerships",
-    "subtitle": "Funeral homes, networks, and bereavement professionals: offer families a cinematic remembrance journey. Describe your organization and needs. We’ll explore a tailored rollout.",
+    "title": "Odyssey — The Souvenir Sanctuary for your families",
+    "subtitle": "You offer access in one click. The family invites their circle. Our engine weaves the film. Zero editing for them, zero effort for you.",
+    "growthEngineTitle": "Growth engine",
+    "growthEngineItems": [
+      {
+        "title": "Viral acquisition",
+        "body": "Dignified visibility through the family circle — each invitation naturally extends your reach."
+      },
+      {
+        "title": "Community funding",
+        "body": "The circle unlocks premium formats and tangible keepsakes — without pressure at the funeral home."
+      },
+      {
+        "title": "Shared revenue",
+        "body": "Automatic commissions tracked in real time in your partner space."
+      },
+      {
+        "title": "Post-ceremony retention",
+        "body": "Automated grief follow-up and anniversaries — the relationship continues after the service."
+      },
+      {
+        "title": "Zero friction",
+        "body": "No license or equipment — your counselors offer a gesture; Odyssey does the rest."
+      }
+    ],
+    "formSectionTitle": "Request a demo",
     "form": {
       "organization": "Organization",
       "contactName": "Contact name",
@@ -62,6 +87,7 @@
     },
     "login": "Login",
     "primaryCta": "Create a Tribute",
+    "ctaSubline": "Start free. Premium formats and community funding from $179.",
     "pitch": {
       "hooks": [
         "The cinema of their life",
@@ -159,27 +185,27 @@
   "process": {
     "title": "THE ODYSSEY PROCESS",
     "emotionalKicker": "The cinema of their life",
-    "sectionSubtitle": "The Odyssey process",
-    "timelineHint": "Three chapters of one film: material, composition, legacy.",
-    "subtitle": "Three gestures for families: gather what matters, compose the film, receive a tribute worthy of them.",
-    "step1Label": "Gather",
-    "step2Label": "Craft",
-    "step3Label": "Receive",
+    "sectionSubtitle": "Three beats, one tribute",
+    "timelineHint": "Vault, Circle, Cinema — no editing on your part.",
+    "subtitle": "You gather the memories. Loved ones enrich the tribute. Our engine weaves the film.",
+    "step1Label": "Vault",
+    "step2Label": "Circle",
+    "step3Label": "Cinema",
     "steps": [
       {
         "labelKey": "step1Label",
-        "title": "Your photos, videos, and archives",
-        "body": "You gather what tells their story. We secure every fragment with a clear, respectful structure."
+        "title": "The Vault",
+        "body": "Gather a lifetime of memories — photos, voices, stories — in one safe place."
       },
       {
         "labelKey": "step2Label",
-        "title": "The film takes shape",
-        "body": "We compose rhythm, light, and narrative to honor the family’s emotion and intent."
+        "title": "The Circle",
+        "body": "Invite loved ones to contribute. Each person adds a fragment of memory to the Sanctuary."
       },
       {
         "labelKey": "step3Label",
-        "title": "A film meant to be shared",
-        "body": "The film becomes something to pass on: restrained, cinematic, faithful to the dignity of remembrance."
+        "title": "The Cinema",
+        "body": "Our engine weaves the film with no editing on your part — worthy of the big screen."
       }
     ]
   },

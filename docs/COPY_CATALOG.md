@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-08-26 · **Entrées :** 677
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-08-28 · **Entrées :** 691
 
 ## `common`
 
@@ -24,6 +24,7 @@
 | `header.logo` | Odyssey | Odyssey |
 | `header.logoFallback` | ODYSSEY | ODYSSEY |
 | `header.login` | Connexion | Login |
+| `header.createTribute` | Créer un hommage | Create a Tribute |
 | `header.languageLabel` | Langue | Language |
 | `header.langOptionFr` | FR | FR |
 | `header.langOptionEn` | EN | EN |
@@ -54,8 +55,20 @@
 
 | Clé | FR | EN |
 |-----|----|----|
-| `partnersPage.title` | Partenariat Odyssey | Odyssey partnerships |
-| `partnersPage.subtitle` | Maisons funéraires, réseaux et accompagnants : proposez à vos familles une expérience de mémoire cinématographique. Décrivez votre structure et vos besoins. Nous étudions un déploiement adapté. | Funeral homes, networks, and bereavement professionals: offer families a cinematic remembrance journey. Describe your organization and needs. We’ll explore a tailored rollout. |
+| `partnersPage.title` | Odyssey — Le Sanctuaire Souvenir pour vos familles | Odyssey — The Souvenir Sanctuary for your families |
+| `partnersPage.subtitle` | Vous offrez l'accès en un clic. La famille invite ses proches. Notre moteur tisse le film. Zéro montage pour eux, zéro effort pour vous. | You offer access in one click. The family invites their circle. Our engine weaves the film. Zero editing for them, zero effort for you. |
+| `partnersPage.growthEngineTitle` | Moteur de croissance | Growth engine |
+| `partnersPage.growthEngineItems[0].title` | Acquisition virale | Viral acquisition |
+| `partnersPage.growthEngineItems[0].body` | Visibilité digne via l'entourage — chaque invitation élargit naturellement la portée de votre maison. | Dignified visibility through the family circle — each invitation naturally extends your reach. |
+| `partnersPage.growthEngineItems[1].title` | Socio-financement | Community funding |
+| `partnersPage.growthEngineItems[1].body` | L'entourage débloque formats premium et souvenirs tangibles — sans pression au salon. | The circle unlocks premium formats and tangible keepsakes — without pressure at the funeral home. |
+| `partnersPage.growthEngineItems[2].title` | Revenus partagés | Shared revenue |
+| `partnersPage.growthEngineItems[2].body` | Commissions automatiques tracées en temps réel dans votre espace partenaire. | Automatic commissions tracked in real time in your partner space. |
+| `partnersPage.growthEngineItems[3].title` | Rétention post-cérémonie | Post-ceremony retention |
+| `partnersPage.growthEngineItems[3].body` | Suivi de deuil et anniversaires automatisés — la relation continue après le service. | Automated grief follow-up and anniversaries — the relationship continues after the service. |
+| `partnersPage.growthEngineItems[4].title` | Friction zéro | Zero friction |
+| `partnersPage.growthEngineItems[4].body` | Aucune licence ni équipement — vos conseillers offrent un geste, Odyssey fait le reste. | No license or equipment — your counselors offer a gesture; Odyssey does the rest. |
+| `partnersPage.formSectionTitle` | Demander une démo | Request a demo |
 | `partnersPage.form.organization` | Maison ou organisation | Organization |
 | `partnersPage.form.contactName` | Nom du contact | Contact name |
 | `partnersPage.form.email` | Courriel professionnel | Work email |
@@ -77,6 +90,7 @@
 | `hero.branding.line2` | Films | Films |
 | `hero.login` | Connexion | Login |
 | `hero.primaryCta` | Créer un hommage | Create a Tribute |
+| `hero.ctaSubline` | Commencez gratuitement. Formats premium et socio-financement à partir de 179 $. | Start free. Premium formats and community funding from $179. |
 | `hero.pitch.hooks[0]` | Le cinéma de leur vie | The cinema of their life |
 | `hero.pitch.hooks[1]` | Leur vie mérite un grand écran. | Their life deserves the big screen. |
 | `hero.pitch.hooks[2]` | Un hommage digne du grand écran. | A tribute fit for the big screen. |
@@ -153,21 +167,21 @@
 |-----|----|----|
 | `process.title` | LE PROCESSUS ODYSSEY | THE ODYSSEY PROCESS |
 | `process.emotionalKicker` | Leur vie en cinéma | The cinema of their life |
-| `process.sectionSubtitle` | Le processus Odyssey | The Odyssey process |
-| `process.timelineHint` | Trois chapitres d’un même film : matière, composition, transmission. | Three chapters of one film: material, composition, legacy. |
-| `process.subtitle` | Trois gestes pour les familles : rassembler ce qui compte, composer le film, recevoir un hommage digne d’eux. | Three gestures for families: gather what matters, compose the film, receive a tribute worthy of them. |
-| `process.step1Label` | Déposer | Gather |
-| `process.step2Label` | Composer | Craft |
-| `process.step3Label` | Recevoir | Receive |
+| `process.sectionSubtitle` | Trois temps, un hommage | Three beats, one tribute |
+| `process.timelineHint` | Coffre, Cercle, Cinéma — sans montage de votre part. | Vault, Circle, Cinema — no editing on your part. |
+| `process.subtitle` | Vous déposez les souvenirs. Les proches enrichissent l'hommage. Notre moteur tisse le film. | You gather the memories. Loved ones enrich the tribute. Our engine weaves the film. |
+| `process.step1Label` | Coffre | Vault |
+| `process.step2Label` | Cercle | Circle |
+| `process.step3Label` | Cinéma | Cinema |
 | `process.steps[0].labelKey` | step1Label | step1Label |
-| `process.steps[0].title` | Vos photos, vidéos et archives | Your photos, videos, and archives |
-| `process.steps[0].body` | Vous déposez ce qui raconte leur vie. Nous sécurisons chaque fragment avec une structure claire et respectueuse. | You gather what tells their story. We secure every fragment with a clear, respectful structure. |
+| `process.steps[0].title` | Le Coffre | The Vault |
+| `process.steps[0].body` | Rassemblez les souvenirs de toute une vie — photos, voix, histoires — en un seul lieu sûr. | Gather a lifetime of memories — photos, voices, stories — in one safe place. |
 | `process.steps[1].labelKey` | step2Label | step2Label |
-| `process.steps[1].title` | Le film prend forme | The film takes shape |
-| `process.steps[1].body` | Nous composons rythme, lumière et narration pour respecter l’émotion et l’intention de la famille. | We compose rhythm, light, and narrative to honor the family’s emotion and intent. |
+| `process.steps[1].title` | Le Cercle | The Circle |
+| `process.steps[1].body` | Invitez l'entourage à contribuer. Chacun dépose un fragment de mémoire dans le Sanctuaire. | Invite loved ones to contribute. Each person adds a fragment of memory to the Sanctuary. |
 | `process.steps[2].labelKey` | step3Label | step3Label |
-| `process.steps[2].title` | Un film à faire vivre | A film meant to be shared |
-| `process.steps[2].body` | Le film devient un objet de transmission : sobre, cinématographique, fidèle à la dignité du souvenir. | The film becomes something to pass on: restrained, cinematic, faithful to the dignity of remembrance. |
+| `process.steps[2].title` | Le Cinéma | The Cinema |
+| `process.steps[2].body` | Notre moteur tisse le film, sans aucun montage de votre part — digne du grand écran. | Our engine weaves the film with no editing on your part — worthy of the big screen. |
 
 ## `auth`
 

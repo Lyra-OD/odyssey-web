@@ -1,4 +1,5 @@
 import { Navbar } from "@/src/components/Navbar";
+import { PartnersPageIntro } from "@/src/components/partners/PartnersPageIntro";
 import {
   editorialAccentRule,
   editorialColumn,
@@ -27,13 +28,19 @@ export default async function PartnersPage({ params }: PageProps) {
       <section className={`mx-auto px-6 pb-28 pt-32 md:px-12 ${editorialSectionShell}`}>
         <div className={`${editorialColumn} md:max-w-[76rem] lg:max-w-[92rem] ${editorialAccentRule}`}>
           <OdysseyBrandLockup wordmark={logoFallback} size="page" className="mb-10 md:mb-12" />
-          <h1 className="font-editorial text-4xl tracking-tight text-zinc-50 md:text-5xl lg:text-6xl">
-            {t.title}
-          </h1>
-          <p className="font-label mt-8 text-sm leading-relaxed text-zinc-400 md:text-base">
-            {t.subtitle}
-          </p>
+        </div>
 
+        <PartnersPageIntro
+          copy={{
+            title: t.title,
+            subtitle: t.subtitle,
+            growthEngineTitle: t.growthEngineTitle,
+            growthEngineItems: t.growthEngineItems,
+            formSectionTitle: t.formSectionTitle,
+          }}
+        />
+
+        <div className={`${editorialColumn} md:max-w-[76rem] lg:max-w-[92rem] mt-10 md:mt-12`}>
           <PartnersLeadForm lang={lang} labels={t.form} />
         </div>
       </section>

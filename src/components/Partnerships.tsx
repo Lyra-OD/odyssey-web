@@ -70,7 +70,7 @@ export function Partnerships({
           >
             <Link
               href="/partners"
-              className="font-label inline-flex border border-white/15 bg-transparent px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.42em] text-white transition-colors duration-300 hover:border-violet-500/45 hover:text-violet-100 touch-manipulation"
+              className="font-label inline-flex border border-white/15 bg-transparent px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.42em] text-white transition-colors duration-300 hover:border-[var(--salon-cyan)]/45 hover:text-[var(--salon-cyan)] touch-manipulation"
             >
               {t.cta}
             </Link>

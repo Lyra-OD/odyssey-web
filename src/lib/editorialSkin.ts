@@ -10,5 +10,6 @@ export const editorialColumn = "mx-auto w-full max-w-[42rem]";
 
 export const editorialColumnWide = "mx-auto w-full max-w-[48rem]";
 
-/** Thin violet rule — suggests case-study / dossier without loud glow */
-export const editorialAccentRule = "border-l border-violet-500/25 pl-8 md:pl-10";
+/** Thin cyan rule — suggests case-study / dossier without loud glow */
+export const editorialAccentRule =
+  "border-l border-[var(--salon-cyan)]/25 pl-8 md:pl-10";

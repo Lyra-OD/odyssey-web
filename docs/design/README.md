@@ -11,6 +11,7 @@ Exports marque : [`../brand/odyssey-eclipse/`](../brand/odyssey-eclipse/README.m
 - Nouveau playbook frames, note tokens, checklist DA **neuve**
 - Accès Vercel / liens DA : [`DA_VERCEL_ACCESS.md`](DA_VERCEL_ACCESS.md)
 - Cheatsheet DA (1 page) : [`DA_CHEATSHEET.md`](DA_CHEATSHEET.md)
+- Plan refresh marketing B2C/B2B : [`MARKETING_SITE_REFRESH_PLAN.md`](MARKETING_SITE_REFRESH_PLAN.md)
 
 ## Ne pas mettre ici
 

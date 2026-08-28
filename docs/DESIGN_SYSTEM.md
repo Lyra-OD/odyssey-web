@@ -1,13 +1,12 @@
 # Odyssey — Design System
 
 **Type :** canon · **Vérité pour :** palette, Halo-Éclipse, tokens UI.  
-**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 28 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 28 août 2026 — stratégie bicolore DA : **Cyan Connexion** (#00E8F0) marketing + login · **Teal Sanctuaire** (#2DD4BF) wizard + Studio · §2 réécrit.
 - 19 août 2026 — contrat DA : frames Vague 1 = [`DA_SCREENS.md`](DA_SCREENS.md).
-- 17 août 2026 — KPI Salon (commissions + mes performances) : chiffres en `--salon-cyan`.
-- 17 août 2026 — invitation Salon : email + CTA Souvenir (plus de cartes forfait).
-- 17 août 2026 — en-tête type + carte.
+- 17 août 2026 — KPI Salon : chiffres en `--salon-cyan` · invitation Salon email + CTA Souvenir.
 - 11 août 2026 — marque Éclipse + die-cut ODYSSEY §4.2.
 
 Guide visuel et produit pour l’ensemble du site Next.js (Studio B2C, Salon B2B2C, pages marketing). Complète [`CONVENTIONS.md`](CONVENTIONS.md) et [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).  
@@ -29,31 +28,49 @@ Le Salon est un **gant blanc** : la marque partenaire est héroïne ; Odyssey es
 
 ---
 
-## 2. Palette de couleurs
+## 2. Palette de couleurs — stratégie bicolore (DA août 2026)
 
-### 2.1 Primaire — Violet Odyssey (UV)
+Deux accents interactifs **stricts**, complémentaires :
 
-Couleur de marque, énergie, action, glow.
+| Accent | Hex | Rôle | Surfaces |
+|--------|-----|------|----------|
+| **Cyan Connexion** | `#00E8F0` (`--salon-cyan`) | Moteur de **conversion** et portes d'entrée | Site marketing · pages login · CTA acquisition |
+| **Teal Sanctuaire** | `#2DD4BF` (`teal-400`) | Espace de **recueillement** (« Quiet Luxury ») | Wizard hommage · Studio famille · Sanctuaire |
 
-| Token | Valeur | Usage |
-|-------|--------|--------|
-| `uv-500` | `#8B5CF6` | Accents, focus, halo |
-| `uv-600` | `#7C3AED` | Glow cartes forfaits |
-| `uv-glow` | `rgba(192, 167, 255, 0.62)` | Halos connexion / salon |
+**Règle d'or :** le cyan **guide vers l'action** (dynamique, cinématographique) ; le teal **enveloppe la famille** (douceur, sélection, respiration produit). Ne pas mélanger les deux sur une même surface.
 
-**Règle :** le violet ne doit pas concurrencer le logo partenaire sur le Salon. Réserver aux CTA marketing, halos d’ambiance, cartes « Héritage ».
+### 2.1 Cyan Connexion — acquisition & marketing
 
-### 2.1bis Secondaire interactif Studio — Teal (login / wizard / Sanctuaire)
-
-Couleur d’**interaction** (sélection, focus, états actifs, respiration). Alignée login sign-up + wizard (`teal-400` / cyan doux), **distincte** du cyan Salon fluo.
+Couleur d'**entrée** : conversion, halos marketing, hover navbar, pitch hero, spotlight Process public.
 
 | Token | Valeur | Usage |
 |-------|--------|--------|
-| `teal-400` | Tailwind / `#2DD4BF` famille | Bordures sélection, focus inputs, glow léger |
-| `teal-300` | — | Labels « sélectionné », accents hover |
-| Respiration | `.connexion-submit-breathe` / `.sanctuary-halo-breathe` / `.sanctuary-select-breathe` | CTA · halo d’ambiance · **élément sélectionné** (1 / zone) |
+| `--salon-cyan` | `#00E8F0` | Bordures CTA marketing · FR/EN actif · liens hover · glow pitch |
+| `--salon-cyan-dim` | `rgba(0, 232, 240, 0.4)` | Hover inactif · badges discrets |
+| Respiration | `.connexion-submit-breathe` | CTA « Créer un hommage » · submit login |
 
-**Règle :** tout contrôle **sélectionnable ou focusable** en Studio/Sanctuaire privilégie le teal. Le violet reste l’énergie de marque en fond ; le champagne reste tertiaire mémoriel (≤10 %).
+**Règle :** tout le **site public** (Hero, Navbar, Manifesto, Process, `/partners` marketing) utilise le cyan — **plus de violet UV** en accent interactif marketing.
+
+### 2.1bis Teal Sanctuaire — recueillement Studio
+
+Couleur d'**interaction produit** (sélection, focus, états actifs, respiration wizard). Réservée au parcours famille après la porte d'entrée.
+
+| Token | Valeur | Usage |
+|-------|--------|--------|
+| `teal-400` | `#2DD4BF` | Bordures sélection wizard · focus inputs · glow Sanctuaire |
+| `teal-300` | — | Labels « sélectionné », accents hover Studio |
+| Respiration | `.sanctuary-halo-breathe` · `.sanctuary-select-breathe` | Halo d'ambiance · **élément sélectionné** (1 / zone) |
+
+**Règle :** dès l'entrée Studio (wizard, montage, Sanctuaire), privilégier le **teal**. Le cyan reste sur la porte ; le teal accueille la famille.
+
+### 2.1ter Violet UV — héritage (hors marketing public)
+
+Conservé en référence craft / pricing legacy ; **retiré du marketing public** (août 2026).
+
+| Token | Valeur | Usage résiduel |
+|-------|--------|----------------|
+| `uv-500` | `#8B5CF6` | Craft interne · cartes pricing legacy |
+| `uv-600` | `#7C3AED` | — |
 
 ### 2.2 Secondaire — Neutres froids
 
@@ -70,18 +87,18 @@ Fond sombre, typographie, structure.
 | `text-muted` | `zinc-400` – `zinc-500` | Kickers, métadonnées |
 | `border-subtle` | `white / 6–10 %` | Cartes glass, séparateurs |
 
-### 2.3 Tertiaire Salon — Cyan action (Quiet Luxury)
+### 2.3 Cyan Salon KPI (partenaire B2B2C)
 
-Accent **chirurgical** réservé au Salon partenaire (invitations, commissions). **Ne pas utiliser** sur le marketing B2C ni le co-branding header.
+Accent **chirurgical** pour le **dashboard Salon partenaire** (invitations, commissions KPI). Même token que le cyan marketing.
 
 | Token | Valeur | Usage |
 |-------|--------|--------|
-| `--salon-cyan` | `#00E8F0` | Ligne carte active, **chiffres KPI** (commissions + mes performances), CTA invitation |
+| `--salon-cyan` | `#00E8F0` | Ligne carte active · **chiffres KPI** · CTA invitation partenaire |
 | `--salon-cyan-dim` | `rgba(0, 232, 240, 0.4)` | Badges recommandé |
 
-**Règle d’or tertiaire Salon :** jamais sur le logo partenaire ni « Propulsé par » ; maximum **5–10 %** de la surface ; halo mauve **uniquement** sur Héritage au repos (Option A) ; à la sélection : ligne cyan + scale (Camera Dolly).
+**Règle d'or Salon :** jamais sur le logo partenaire ni « Propulsé par » ; maximum **5–10 %** de la surface.
 
-**Studio / Marketing B2C :** conserve le violet UV (`pricingTierCardSkin.ts`) — pas de cyan fluo sur `Pricing.tsx`.
+**Marketing B2C :** cyan identique — continuité visuelle marketing → login.
 
 ### 2.4 Champagne memorial (Studio / éditorial — optionnel)
 
