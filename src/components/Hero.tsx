@@ -389,9 +389,11 @@ export function Hero({
         >
           <Link
             href={appRoutes.studioConnexion(lang)}
-            className={`${connexionSubmitButtonClass} inline-flex w-auto px-8 py-4 tracking-widest touch-manipulation`}
+            className={`${connexionSubmitButtonClass} inline-flex w-auto px-8 py-4 touch-manipulation`}
           >
-            {dictionary.primaryCta}
+            <HeroLuminousText className="font-label text-[11px] font-semibold uppercase tracking-widest md:text-xs">
+              {dictionary.primaryCta}
+            </HeroLuminousText>
           </Link>
           <HeroLuminousSubline>{dictionary.ctaSubline}</HeroLuminousSubline>
         </motion.div>
@@ -437,15 +439,27 @@ export function Hero({
   );
 }
 
+function HeroLuminousText({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span className={`odyssey-connexion-mark relative inline-block text-white ${className}`}>
+      <span aria-hidden className="odyssey-connexion-mark-glow select-none">
+        {children}
+      </span>
+      <span className="relative">{children}</span>
+    </span>
+  );
+}
+
 function HeroLuminousSubline({ children }: { children: ReactNode }) {
   return (
     <p className="font-label max-w-md text-[10px] leading-relaxed tracking-[0.22em] md:text-[11px] md:tracking-[0.26em]">
-      <span className="odyssey-connexion-mark relative inline-block text-white">
-        <span aria-hidden className="odyssey-connexion-mark-glow select-none">
-          {children}
-        </span>
-        <span className="relative">{children}</span>
-      </span>
+      <HeroLuminousText>{children}</HeroLuminousText>
     </p>
   );
 }

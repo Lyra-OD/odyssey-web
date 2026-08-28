@@ -4,6 +4,7 @@
 **Dernière MAJ :** 28 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 28 août 2026 — §3.1bis blanc lumineux `odyssey-connexion-mark` : grammaire emblème (wordmark + accroches courtes, pas le corps).
 - 28 août 2026 — stratégie bicolore DA : **Cyan Connexion** (#00E8F0) marketing + login · **Teal Sanctuaire** (#2DD4BF) wizard + Studio · §2 réécrit.
 - 19 août 2026 — contrat DA : frames Vague 1 = [`DA_SCREENS.md`](DA_SCREENS.md).
 - 17 août 2026 — KPI Salon : chiffres en `--salon-cyan` · invitation Salon email + CTA Souvenir.
@@ -128,6 +129,23 @@ Chaque tenant peut avoir une accent couleur dans son logo (ex. vert `#2D6A4F` Ur
 | Marque | `font-brand` | Odyssey, ESPACE PARTENAIRES, kickers caps |
 | Éditorial | `font-editorial` | Titres invitation, storytelling |
 | Interface | `font-label` | Labels formulaires, onglets, soldes |
+
+### 3.1bis Blanc lumineux — emblème (`odyssey-connexion-mark`)
+
+Recette canon (voir `globals.css` + `OdysseyConnexionMark.tsx`) : texte blanc pur + couche `odyssey-connexion-mark-glow` (blur) + `text-shadow` blanc en trois intensités. **Voix de la marque**, distincte du cyan (action) et du teal (recueillement).
+
+| Niveau | Traitement | Où |
+|--------|------------|-----|
+| **0 — Emblème** | Blanc lumineux complet | Wordmark **ODYSSEY** (navbar accueil, connexion) |
+| **1 — Accroche** | Blanc lumineux | **1–2 lignes max** par écran : sous-texte CTA hero, tagline connexion |
+| **2 — CTA libellé** | Blanc lumineux **dans** le bouton | Label du bouton hero / connexion — **cadre cyan** + `.connexion-submit-breathe` |
+| **3 — Corps éditorial** | Blanc cassé / `zinc-200`–`300`, **sans glow** | Manifesto, Process, `/partners`, paragraphes |
+| **4 — Metadata** | `zinc-400`–`500`, plat | Nav secondaire, labels, hints |
+
+**Règles :**
+- Ne **pas** généraliser le glow sur les paragraphes — fatigue visuelle, perte de hiérarchie.
+- Sur un même écran hero : **cyan = cadre qui respire**, **blanc lumineux = voix** (label + sous-ligne), pas de troisième accent en compétition.
+- Studio / Sanctuaire : texte blanc **mat** ou teal interactif — pas le glow connexion sur les blocs de contenu.
 
 ### 3.2 Échelle hiérarchique — Salon (dashboard)
 
