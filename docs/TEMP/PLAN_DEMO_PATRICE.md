@@ -86,11 +86,10 @@
 - [ ] Relire [`SCRIPT_DE_FER_PATRICE.md`](../business/SCRIPT_DE_FER_PATRICE.md) 20 min
 - [ ] 1 dry-run solo Mode A · noter les frictions
 
-### Lun **31 août** (J-10)
+### Lun **31 août** (J-10) — **session AM** : [`SESSION_LUNDI_31_AOUT_WIZARD_DEMO.md`](SESSION_LUNDI_31_AOUT_WIZARD_DEMO.md)
 
-- [ ] **Environnement démo stable** : build Vercel vert · smoke login studio/salon
-- [ ] **Invitation Souvenir** test de bout en bout → lien Sanctuaire iPhone Safari
-- [ ] Pré-remplir Studio (Coffre + quelques médias contribute)
+- [ ] Option A : `/fr/studio/test-wizard` (dev)
+- [ ] Option C : tenant + comptes + smoke invitation → Sanctuaire
 
 ### Mar **1er sept.** (J-9)
 
