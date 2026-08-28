@@ -1,6 +1,6 @@
 # Démo VP — Egress : activer / revert (checklist)
 
-**Type :** ops · **Deadline revert :** **après** la démo VP Patrice (date session dans [`TEMP/PLAN_DEMO_PATRICE.md`](../TEMP/PLAN_DEMO_PATRICE.md))  
+**Type :** ops · **Deadline revert :** **après** la démo VP Patrice (**10 septembre 2026, 8 h** — [`TEMP/PLAN_DEMO_PATRICE.md`](../TEMP/PLAN_DEMO_PATRICE.md))  
 **Commit egress :** `fb7ad1d` · **Carte :** [`../README.md`](../README.md)
 
 > **Rappel équipe + agents Cursor :** tant que cette checklist n’est pas cochée « REVERT FAIT », ne pas considérer la prod « clean » si `NEXT_PUBLIC_DEMO_MODE=true`.
