@@ -360,7 +360,7 @@ export function Hero({
       </div>
 
       {/* LAYER 3–4 : PITCH + CTA (colonne — bouton sous les slides) */}
-      <div className="absolute inset-0 z-[35] flex flex-col items-center justify-center px-6 text-center pointer-events-none">
+      <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center px-6 text-center pointer-events-none">
         <div className="mb-8 flex min-h-[3.5rem] w-full max-w-[92vw] items-center justify-center sm:mb-10 sm:min-h-[4.5rem] md:mb-12 md:min-h-[5.5rem]">
           <AnimatePresence mode="wait">
             {isNarrativeMode && (
@@ -388,8 +388,8 @@ export function Hero({
           className="pointer-events-auto flex flex-col items-center gap-4"
         >
           <Link
-            href={appRoutes.studioConnexion(lang)}
-            className={`${connexionSubmitButtonClass} inline-flex w-auto px-8 py-4 touch-manipulation`}
+            href={appRoutes.studioInscription(lang)}
+            className={`${connexionSubmitButtonClass} relative z-10 inline-flex w-auto px-8 py-4 touch-manipulation`}
           >
             <HeroLuminousText className="font-label text-[11px] font-semibold uppercase tracking-widest md:text-xs">
               {dictionary.primaryCta}
@@ -401,9 +401,9 @@ export function Hero({
 
       <div className="absolute inset-0 z-50 pointer-events-none grain-engine" />
 
-      {/* LAYER 10 : NAVIGATION BASSE */}
-      <div className="absolute inset-0 z-[100] flex flex-col justify-end p-10 md:p-24 pointer-events-auto">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-12 md:gap-20 w-full">
+      {/* LAYER 10 : NAVIGATION BASSE — inset plein écran mais clics réservés aux liens */}
+      <div className="absolute inset-0 z-[100] flex flex-col justify-end p-10 md:p-24 pointer-events-none">
+        <div className="pointer-events-auto grid w-full grid-cols-2 gap-12 md:grid-cols-3 md:gap-20">
           <div className="flex flex-col gap-5 items-start md:-translate-x-1 md:translate-y-2 md:rotate-[-0.4deg]">
             <NavItem href={`/${lang}`} label={menuNav.home} delay={1.2} itemClass="md:translate-x-2" />
             <NavItem

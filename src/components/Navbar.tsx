@@ -210,7 +210,7 @@ export function Navbar({
           </div>
 
           <MotionLink
-            href={appRoutes.studioConnexion(lang)}
+            href={appRoutes.studioInscription(lang)}
             className={`${connexionSubmitButtonClass} hidden min-h-[44px] !w-auto px-3.5 py-2 text-[10px] tracking-[0.22em] sm:inline-flex sm:text-[11px] touch-manipulation`}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.98 }}
@@ -275,7 +275,7 @@ export function Navbar({
                 </MotionLink>
               ))}
               <MotionLink
-                href={appRoutes.studioConnexion(lang)}
+                href={appRoutes.studioInscription(lang)}
                 onClick={closeMobile}
                 className="mt-3 flex min-h-[48px] items-center justify-center px-3 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] touch-manipulation connexion-submit-breathe rounded-lg border border-[var(--salon-cyan)] bg-white/[0.06] text-white/90"
                 whileTap={{ scale: 0.99 }}

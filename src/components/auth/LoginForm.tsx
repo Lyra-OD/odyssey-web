@@ -237,6 +237,13 @@ export function LoginForm({
     }
   }, [searchParams, t.errors, raiseError]);
 
+  useEffect(() => {
+    if (!allowSignUp) return;
+    if (searchParams.get("mode") === "signup") {
+      setMode("signUp");
+    }
+  }, [allowSignUp, searchParams]);
+
   const partnerSlugFromUrl = useMemo(() => {
     if (audience !== "salon") return null;
     return (

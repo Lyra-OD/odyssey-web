@@ -14,6 +14,19 @@ export const appRoutes = {
   salonFacturation: (lang: Locale) => `/${lang}/salon/facturation`,
   /** Connexion famille — inscription autorisée. */
   studioConnexion: (lang: Locale) => `/${lang}/studio/connexion`,
+  /** Inscription famille — onglet Sign up pré-sélectionné. */
+  studioInscription: (lang: Locale) => `/${lang}/studio/connexion?mode=signup`,
+  studioConnexionWithParams: (
+    lang: Locale,
+    params?: { mode?: "signup" | "signin"; next?: string },
+  ) => {
+    const search = new URLSearchParams();
+    if (params?.mode === "signup") search.set("mode", "signup");
+    if (params?.next) search.set("next", params.next);
+    const qs = search.toString();
+    const base = `/${lang}/studio/connexion`;
+    return qs ? `${base}?${qs}` : base;
+  },
   /** Connexion partenaire — provisionnement admin uniquement. */
   salonConnexion: (lang: Locale) => `/${lang}/salon/connexion`,
   /** Tour de contrôle Odyssey — opérateurs plateforme (allowlist). */
