@@ -39,32 +39,37 @@
     }
   },
   "partnersPage": {
-    "title": "Odyssey — The Souvenir Sanctuary for your families",
-    "subtitle": "You offer access in one click. The family invites their circle. Our engine weaves the film. Zero editing for them, zero effort for you.",
-    "growthEngineTitle": "Growth engine",
+    "title": "The Souvenir Sanctuary for your families",
+    "kicker": "A new standard of remembrance for funeral homes",
+    "introProblem": "Families want authentic celebrations but shy away from high-pressure commercial approaches. Your counselors have neither the time for video editing nor the appetite to push add-on sales.",
+    "introResolution": "Odyssey resolves this paradox: we turn technology into a pure gesture of empathy.",
+    "promiseTitle": "The promise: you offer, we create",
+    "promiseBody": "Your counselors grant access to the Sanctuary in one click. The family invites their circle to contribute memories. Our cinematic engine weaves those fragments into a tribute film—automatically. Zero editing for them, zero effort for you.",
+    "growthEngineTitle": "The Growth Engine",
     "growthEngineItems": [
       {
-        "title": "Viral acquisition",
-        "body": "Dignified visibility through the family circle — each invitation naturally extends your reach."
+        "title": "Emotional viral acquisition",
+        "body": "By inviting their circle to contribute, the family naturally exposes your brand to dozens of loved ones. It is the most dignified, organic visibility for your funeral home."
       },
       {
-        "title": "Community funding",
-        "body": "The circle unlocks premium formats and tangible keepsakes — without pressure at the funeral home."
+        "title": "Integrated community funding",
+        "body": "The extended circle can contribute financially to unlock premium formats, extended archives, or tangible keepsakes (commemorative books, physical copies). The financial burden leaves the immediate family and becomes a collective act of generosity."
       },
       {
-        "title": "Shared revenue",
-        "body": "Automatic commissions tracked in real time in your partner space."
+        "title": "Automatic shared revenue",
+        "body": "Whenever the community enriches the tribute or orders a keepsake, your firm shares in the revenue generated. Everything is tracked in real time on your partner dashboard."
       },
       {
-        "title": "Post-ceremony retention",
-        "body": "Automated grief follow-up and anniversaries — the relationship continues after the service."
+        "title": "Post-ceremony retention (grief follow-up)",
+        "body": "The relationship no longer ends on the day of the service. Automated commemorative communications (anniversary reminders, milestone dates) extend your firm's presence over months and years."
       },
       {
         "title": "Zero friction",
-        "body": "No license or equipment — your counselors offer a gesture; Odyssey does the rest."
+        "body": "No software to install, no equipment to buy, no complex training."
       }
     ],
-    "formSectionTitle": "Request a demo",
+    "demoTitle": "Book your demonstration",
+    "demoIntro": "In 30 minutes, discover the family's emotional journey on mobile, your future partner space, and the transparent mechanics of your commissions.",
     "form": {
       "organization": "Organization",
       "contactName": "Contact name",
@@ -73,7 +78,7 @@
       "region": "Region or service area",
       "context": "Context (volume, team, current tools)",
       "message": "Your message",
-      "submit": "Submit request",
+      "submit": "Schedule a 30-minute demo",
       "sending": "Sending…",
       "success": "Your message arrived. We’ll write back.",
       "error": "We couldn’t send the request. Please try again.",

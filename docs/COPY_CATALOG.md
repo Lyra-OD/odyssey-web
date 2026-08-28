@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-08-28 · **Entrées :** 691
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-08-28 · **Entrées :** 696
 
 ## `common`
 
@@ -55,20 +55,25 @@
 
 | Clé | FR | EN |
 |-----|----|----|
-| `partnersPage.title` | Odyssey — Le Sanctuaire Souvenir pour vos familles | Odyssey — The Souvenir Sanctuary for your families |
-| `partnersPage.subtitle` | Vous offrez l'accès en un clic. La famille invite ses proches. Notre moteur tisse le film. Zéro montage pour eux, zéro effort pour vous. | You offer access in one click. The family invites their circle. Our engine weaves the film. Zero editing for them, zero effort for you. |
-| `partnersPage.growthEngineTitle` | Moteur de croissance | Growth engine |
-| `partnersPage.growthEngineItems[0].title` | Acquisition virale | Viral acquisition |
-| `partnersPage.growthEngineItems[0].body` | Visibilité digne via l'entourage — chaque invitation élargit naturellement la portée de votre maison. | Dignified visibility through the family circle — each invitation naturally extends your reach. |
-| `partnersPage.growthEngineItems[1].title` | Socio-financement | Community funding |
-| `partnersPage.growthEngineItems[1].body` | L'entourage débloque formats premium et souvenirs tangibles — sans pression au salon. | The circle unlocks premium formats and tangible keepsakes — without pressure at the funeral home. |
-| `partnersPage.growthEngineItems[2].title` | Revenus partagés | Shared revenue |
-| `partnersPage.growthEngineItems[2].body` | Commissions automatiques tracées en temps réel dans votre espace partenaire. | Automatic commissions tracked in real time in your partner space. |
-| `partnersPage.growthEngineItems[3].title` | Rétention post-cérémonie | Post-ceremony retention |
-| `partnersPage.growthEngineItems[3].body` | Suivi de deuil et anniversaires automatisés — la relation continue après le service. | Automated grief follow-up and anniversaries — the relationship continues after the service. |
+| `partnersPage.title` | Le Sanctuaire Souvenir pour vos familles | The Souvenir Sanctuary for your families |
+| `partnersPage.kicker` | Une nouvelle norme d'hommage pour les maisons funéraires | A new standard of remembrance for funeral homes |
+| `partnersPage.introProblem` | Les familles exigent des célébrations authentiques mais fuient les approches commerciales sous pression. Vos conseillers, eux, n'ont ni le temps de faire du montage vidéo, ni l'envie de forcer des ventes additionnelles. | Families want authentic celebrations but shy away from high-pressure commercial approaches. Your counselors have neither the time for video editing nor the appetite to push add-on sales. |
+| `partnersPage.introResolution` | Odyssey résout ce paradoxe : nous transformons la technologie en un pur geste d'empathie. | Odyssey resolves this paradox: we turn technology into a pure gesture of empathy. |
+| `partnersPage.promiseTitle` | La Promesse : Vous offrez, nous créons | The promise: you offer, we create |
+| `partnersPage.promiseBody` | Vos conseillers offrent l'accès au Sanctuaire d'un simple clic. La famille y invite ses proches pour déposer leurs souvenirs. Notre moteur cinématographique tisse automatiquement ces fragments en un film d'hommage. Zéro montage pour eux, zéro effort pour vous. | Your counselors grant access to the Sanctuary in one click. The family invites their circle to contribute memories. Our cinematic engine weaves those fragments into a tribute film—automatically. Zero editing for them, zero effort for you. |
+| `partnersPage.growthEngineTitle` | Le Moteur de Croissance | The Growth Engine |
+| `partnersPage.growthEngineItems[0].title` | Acquisition virale par l'émotion | Emotional viral acquisition |
+| `partnersPage.growthEngineItems[0].body` | En invitant son entourage à contribuer, la famille expose naturellement votre marque à des dizaines de proches. C'est la forme de visibilité la plus digne et organique pour votre salon. | By inviting their circle to contribute, the family naturally exposes your brand to dozens of loved ones. It is the most dignified, organic visibility for your funeral home. |
+| `partnersPage.growthEngineItems[1].title` | Socio-financement intégré | Integrated community funding |
+| `partnersPage.growthEngineItems[1].body` | L'entourage élargi peut participer financièrement pour débloquer des formats premium, des archives étendues ou des souvenirs tangibles (livres commémoratifs, copies physiques). Le fardeau financier quitte la famille immédiate pour devenir un élan de générosité collectif. | The extended circle can contribute financially to unlock premium formats, extended archives, or tangible keepsakes (commemorative books, physical copies). The financial burden leaves the immediate family and becomes a collective act of generosity. |
+| `partnersPage.growthEngineItems[2].title` | Revenus partagés automatiques | Automatic shared revenue |
+| `partnersPage.growthEngineItems[2].body` | Chaque fois que la communauté enrichit l'hommage ou commande un souvenir, votre maison participe aux revenus générés. Tout est tracé en temps réel sur votre tableau de bord partenaire. | Whenever the community enriches the tribute or orders a keepsake, your firm shares in the revenue generated. Everything is tracked in real time on your partner dashboard. |
+| `partnersPage.growthEngineItems[3].title` | Rétention post-cérémonie (suivi de deuil) | Post-ceremony retention (grief follow-up) |
+| `partnersPage.growthEngineItems[3].body` | La relation ne s'arrête plus le jour des obsèques. Grâce aux communications commémoratives automatisées (rappels d'anniversaire, dates marquantes), le Sanctuaire prolonge l'empreinte de votre établissement sur des mois et des années. | The relationship no longer ends on the day of the service. Automated commemorative communications (anniversary reminders, milestone dates) extend your firm's presence over months and years. |
 | `partnersPage.growthEngineItems[4].title` | Friction zéro | Zero friction |
-| `partnersPage.growthEngineItems[4].body` | Aucune licence ni équipement — vos conseillers offrent un geste, Odyssey fait le reste. | No license or equipment — your counselors offer a gesture; Odyssey does the rest. |
-| `partnersPage.formSectionTitle` | Demander une démo | Request a demo |
+| `partnersPage.growthEngineItems[4].body` | Aucun logiciel à installer, aucun équipement à acheter, aucune formation complexe. | No software to install, no equipment to buy, no complex training. |
+| `partnersPage.demoTitle` | Réservez votre démonstration | Book your demonstration |
+| `partnersPage.demoIntro` | En 30 minutes, découvrez le parcours émotionnel des familles sur mobile, votre futur espace partenaire et la mécanique transparente de vos commissions. | In 30 minutes, discover the family's emotional journey on mobile, your future partner space, and the transparent mechanics of your commissions. |
 | `partnersPage.form.organization` | Maison ou organisation | Organization |
 | `partnersPage.form.contactName` | Nom du contact | Contact name |
 | `partnersPage.form.email` | Courriel professionnel | Work email |
@@ -76,7 +81,7 @@
 | `partnersPage.form.region` | Région ou bassin desservi | Region or service area |
 | `partnersPage.form.context` | Contexte (volume, équipe, outils actuels) | Context (volume, team, current tools) |
 | `partnersPage.form.message` | Votre message | Your message |
-| `partnersPage.form.submit` | Envoyer la demande | Submit request |
+| `partnersPage.form.submit` | Planifier une démo de 30 minutes | Schedule a 30-minute demo |
 | `partnersPage.form.sending` | Envoi… | Sending… |
 | `partnersPage.form.success` | Votre message est bien arrivé. Nous vous écrivons. | Your message arrived. We’ll write back. |
 | `partnersPage.form.error` | Impossible d’envoyer la demande. Réessayez. | We couldn’t send the request. Please try again. |

@@ -1,15 +1,9 @@
 import { Navbar } from "@/src/components/Navbar";
-import { PartnersPageIntro } from "@/src/components/partners/PartnersPageIntro";
-import {
-  editorialAccentRule,
-  editorialColumn,
-  editorialSectionShell,
-} from "@/src/lib/editorialSkin";
-import { OdysseyBrandLockup } from "@/src/components/OdysseyBrandLockup";
+import { editorialSectionShell } from "@/src/lib/editorialSkin";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
 
-import { PartnersLeadForm } from "./PartnersLeadForm";
+import { PartnersPageContent } from "./PartnersPageContent";
 
 type PageProps = {
   params: Promise<{ lang: string }>;
@@ -20,29 +14,27 @@ export default async function PartnersPage({ params }: PageProps) {
   const lang: Locale = routeLang === "en" ? "en" : "fr";
   const dictionary = await getDictionary(lang);
   const t = dictionary.partnersPage;
-  const logoFallback = dictionary.header.logoFallback;
 
   return (
     <main className="min-h-screen bg-[#030303] text-zinc-100 antialiased">
       <Navbar lang={lang} dictionary={dictionary.header} />
       <section className={`mx-auto px-6 pb-28 pt-32 md:px-12 ${editorialSectionShell}`}>
-        <div className={`${editorialColumn} md:max-w-[76rem] lg:max-w-[92rem] ${editorialAccentRule}`}>
-          <OdysseyBrandLockup wordmark={logoFallback} size="page" className="mb-10 md:mb-12" />
-        </div>
-
-        <PartnersPageIntro
+        <PartnersPageContent
+          lang={lang}
           copy={{
             title: t.title,
-            subtitle: t.subtitle,
+            kicker: t.kicker,
+            introProblem: t.introProblem,
+            introResolution: t.introResolution,
+            promiseTitle: t.promiseTitle,
+            promiseBody: t.promiseBody,
             growthEngineTitle: t.growthEngineTitle,
             growthEngineItems: t.growthEngineItems,
-            formSectionTitle: t.formSectionTitle,
+            demoTitle: t.demoTitle,
+            demoIntro: t.demoIntro,
           }}
+          formLabels={t.form}
         />
-
-        <div className={`${editorialColumn} md:max-w-[76rem] lg:max-w-[92rem] mt-10 md:mt-12`}>
-          <PartnersLeadForm lang={lang} labels={t.form} />
-        </div>
       </section>
     </main>
   );

@@ -1,9 +1,10 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 28 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 28 août 2026 — Marketing **Phase 3** : `/partners` refonte (4 actes, copy B2B, form au clic, DA cyan + teal lead).
 - 26 août 2026 — Sanctuaire **J2** doc : matrice implémentation §11b [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · séparation canon / playbook démo.
 - 26 août 2026 — CI : job **`next build`** en parallèle de `npm test` (attrape les erreurs TS avant Vercel).
 - 26 août 2026 — **Egress démo VP** : `NEXT_PUBLIC_DEMO_MODE` · poll Coffre off · pas de fallback full-res · DB sans `wizard_state` sur endpoints publics.

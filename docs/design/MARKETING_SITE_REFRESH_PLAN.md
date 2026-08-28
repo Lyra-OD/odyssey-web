@@ -4,6 +4,8 @@
 **Dernière MAJ :** 28 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 28 août 2026 — `/partners` livré : 4 actes · layout centré · H1 blanc lumineux soft · CTA démo teal Studio · formulaire au clic.
+- 28 août 2026 — `/partners` : copy B2B (cadre · promesse · moteur chiffré · démo) · retrait lockup ODYSSEY.
 - 28 août 2026 — §8 croisement explicite [`B2C_GO_TO_MARKET.md`](../B2C_GO_TO_MARKET.md) · D1 realigné (pas de grille landing).
 - 28 août 2026 — audit code + copy · plan 4 phases · inventaire fichiers · docs à mettre à jour ensuite.
 
@@ -28,7 +30,7 @@ On modifie : **copy**, **ordre des sections**, **CTAs**, **contenu `/partners`**
 | `/[lang]` | `Navbar` → `Hero` → `Manifesto` → `Process` → `Pricing` → `Partnerships` | **Tout-en-un** : émotion + process + forfaits + teaser B2B |
 | `/[lang]/process` | `Navbar` → `Process` seul | Répétition section accueil |
 | `/[lang]/manifesto` | `Navbar` → `Manifesto` seul | Page marketing manifeste |
-| `/[lang]/partners` | `Navbar` → titre + sous-titre + `PartnersLeadForm` | Lead B2B **sans** pitch business |
+| `/[lang]/partners` | `Navbar` → `PartnersPageIntro` (4 actes) → CTA démo → `PartnersLeadForm` **au clic** | Pitch B2B autonome + lead démo |
 | `/[lang]/contact` | Formulaire famille | Support pré-achat |
 | `/[lang]/partenaires` | redirect → `/partners` | Alias FR |
 
@@ -63,9 +65,16 @@ On modifie : **copy**, **ordre des sections**, **CTAs**, **contenu `/partners`**
 
 ### 1.5 Page `/partners`
 
-- Titre + 1 paragraphe générique + formulaire (`POST /api/partners/lead`)  
-- **Absent :** geste cadeau · modernité image · zéro friction · revenus teaser · « ce qu’on montre en démo 30 min »  
-- **Absent visuellement :** sections structurées (composant réutilisable possible)
+**Livré (28 août 2026)** — `PartnersPageIntro` + `PartnersPageContent` :
+
+1. **Cadre** — kicker cyan · H1 blanc lumineux soft · paradoxe familles / conseillers  
+2. **Promesse** — « Vous offrez, nous créons »  
+3. **Moteur de croissance** — bande ciné · 5 leviers chiffrés (01–05) · texte long  
+4. **Démo** — intro 30 min · bouton teal Studio → révèle le formulaire + scroll `#partners-form`  
+
+- Copy : `partnersPage.*` FR/EN · submit « Planifier une démo de 30 minutes »  
+- Formulaire : `POST /api/partners/lead` · champs `sanctuaryField*` · submit `sanctuarySubmitButton`  
+- **Reste optionnel :** frame Figma `V2-partners-teaser` · aperçu visuel démo (Salon / Sanctuaire mobile)
 
 ### 1.6 Points forts à préserver (ne pas casser)
 
@@ -169,17 +178,17 @@ Fichier : `app/[lang]/page.tsx` uniquement.
 
 ---
 
-### Phase 3 — Page `/partners` riche (1–2 sessions)
+### Phase 3 — Page `/partners` riche ✅ (livré 28 août 2026)
 
 **Objectif :** page B2B autonome qui convertit en démo — **sans** nouvelle route.
 
-| # | Tâche | Fichiers |
-|---|--------|----------|
-| 3.1 | Nouveau namespace JSON `partnersPage.sections[]` (hero, problem, gift, simplicity, modernity, revenueTeaser, demoPreview) | `dictionaries/fr.json` + `en.json` |
-| 3.2 | Composant `PartnersPitchSections.tsx` (réutilise `editorialSkin`, `CinematicWordReveal`, même DA que Process) | `src/components/PartnersPitchSections.tsx` |
-| 3.3 | Intégrer sections **au-dessus** du formulaire existant | `app/[lang]/partners/page.tsx` |
-| 3.4 | CTA répété bas de page → ancre `#partners-form` | idem |
-| 3.5 | Frame Figma `V2-partners-teaser` (optionnel DA) | `DA_SCREENS.md` (doc phase 4) |
+| # | Tâche | Statut |
+|---|--------|--------|
+| 3.1 | Copy `partnersPage` (kicker, cadre, promesse, leviers, démo) | ✅ |
+| 3.2 | `PartnersPageIntro.tsx` + `PartnersPageContent.tsx` (révélation form) | ✅ |
+| 3.3 | Intégration `app/[lang]/partners/page.tsx` | ✅ |
+| 3.4 | CTA démo → formulaire (clic, pas ancre visible par défaut) | ✅ |
+| 3.5 | Frame Figma `V2-partners-teaser` | ⬜ optionnel |
 
 **Contenu sections (ordre fixe) :**
 
@@ -263,9 +272,9 @@ Recommandation : **D1-C ou D1-B** (canon B2C §4.2 « voix film, pas grille ») 
 - [ ] (Option) Retirer Partnerships du scroll accueil
 
 ### Phase 3
-- [ ] Sections `/partners`
-- [ ] FR + EN
-- [ ] Test formulaire lead
+- [x] Sections `/partners` (4 actes + moteur chiffré)
+- [x] FR + EN
+- [x] Test formulaire lead (révélation au clic CTA démo)
 
 ### Phase 4
 - [ ] Docs canon mises à jour

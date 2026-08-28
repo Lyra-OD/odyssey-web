@@ -4,6 +4,7 @@
 **Dernière MAJ :** 28 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 28 août 2026 — `/partners` : H1 `OdysseyLuminousText` variant `soft` · lead form + CTA démo = `sanctuarySubmitButton` (teal Studio).
 - 28 août 2026 — §3.1bis blanc lumineux `odyssey-connexion-mark` : grammaire emblème (wordmark + accroches courtes, pas le corps).
 - 28 août 2026 — stratégie bicolore DA : **Cyan Connexion** (#00E8F0) marketing + login · **Teal Sanctuaire** (#2DD4BF) wizard + Studio · §2 réécrit.
 - 19 août 2026 — contrat DA : frames Vague 1 = [`DA_SCREENS.md`](DA_SCREENS.md).
@@ -50,7 +51,9 @@ Couleur d'**entrée** : conversion, halos marketing, hover navbar, pitch hero, s
 | `--salon-cyan-dim` | `rgba(0, 232, 240, 0.4)` | Hover inactif · badges discrets |
 | Respiration | `.connexion-submit-breathe` | CTA « Créer un hommage » · submit login |
 
-**Règle :** tout le **site public** (Hero, Navbar, Manifesto, Process, `/partners` marketing) utilise le cyan — **plus de violet UV** en accent interactif marketing.
+**Règle :** tout le **site public** (Hero, Navbar, Manifesto, Process, accents `/partners`) utilise le cyan — **plus de violet UV** en accent interactif marketing.
+
+**Exception `/partners` — CTA démo + submit lead :** `sanctuarySubmitButton` (teal, `.connexion-submit-breathe`) — même chrome que Studio ; le formulaire est un geste de recueillement, pas une porte d’acquisition cyan.
 
 ### 2.1bis Teal Sanctuaire — recueillement Studio
 
@@ -138,8 +141,9 @@ Recette canon (voir `globals.css` + `OdysseyConnexionMark.tsx`) : texte blanc pu
 |--------|------------|-----|
 | **0 — Emblème** | Blanc lumineux complet | Wordmark **ODYSSEY** (navbar accueil, connexion) |
 | **1 — Accroche** | Blanc lumineux | **1–2 lignes max** par écran : sous-texte CTA hero, tagline connexion |
+| **1b — Titre éditorial** | Blanc lumineux **soft** (`OdysseyLuminousText variant="soft"`) | H1 `/partners` uniquement — glow atténué, pas emblème ODYSSEY |
 | **2 — CTA libellé** | Blanc lumineux **dans** le bouton | Label du bouton hero / connexion — **cadre cyan** + `.connexion-submit-breathe` |
-| **3 — Corps éditorial** | Blanc cassé / `zinc-200`–`300`, **sans glow** | Manifesto, Process, `/partners`, paragraphes |
+| **3 — Corps éditorial** | Blanc cassé / `zinc-200`–`300`, **sans glow** | Manifesto, Process, paragraphes `/partners` |
 | **4 — Metadata** | `zinc-400`–`500`, plat | Nav secondaire, labels, hints |
 
 **Règles :**

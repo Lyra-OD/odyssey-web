@@ -3,11 +3,11 @@
 import { useState } from "react";
 
 import {
-  editorialFieldInput,
-  editorialFieldLabel,
-  editorialFieldTextarea,
-  editorialSubmitButton,
-} from "@/src/lib/editorialFormClasses";
+  sanctuaryFieldInput,
+  sanctuaryFieldTextarea,
+  sanctuarySubmitButton,
+} from "@/src/lib/contribute/sanctuaryChrome";
+import { editorialFieldLabel } from "@/src/lib/editorialFormClasses";
 import type { Locale } from "@/i18n.config";
 
 export type PartnersLeadFormLabels = {
@@ -103,7 +103,7 @@ export function PartnersLeadForm({ lang, labels }: PartnersLeadFormProps) {
           name="organization"
           type="text"
           autoComplete="organization"
-          className={editorialFieldInput}
+          className={sanctuaryFieldInput}
           required
           maxLength={200}
           disabled={sending || success}
@@ -116,7 +116,7 @@ export function PartnersLeadForm({ lang, labels }: PartnersLeadFormProps) {
           name="contactName"
           type="text"
           autoComplete="name"
-          className={editorialFieldInput}
+          className={sanctuaryFieldInput}
           required
           maxLength={120}
           disabled={sending || success}
@@ -129,7 +129,7 @@ export function PartnersLeadForm({ lang, labels }: PartnersLeadFormProps) {
           name="email"
           type="email"
           autoComplete="email"
-          className={editorialFieldInput}
+          className={sanctuaryFieldInput}
           required
           maxLength={320}
           disabled={sending || success}
@@ -142,7 +142,7 @@ export function PartnersLeadForm({ lang, labels }: PartnersLeadFormProps) {
           name="phone"
           type="tel"
           autoComplete="tel"
-          className={editorialFieldInput}
+          className={sanctuaryFieldInput}
           maxLength={40}
           disabled={sending || success}
         />
@@ -154,7 +154,7 @@ export function PartnersLeadForm({ lang, labels }: PartnersLeadFormProps) {
           name="region"
           type="text"
           autoComplete="address-level1"
-          className={editorialFieldInput}
+          className={sanctuaryFieldInput}
           maxLength={120}
           disabled={sending || success}
         />
@@ -165,7 +165,7 @@ export function PartnersLeadForm({ lang, labels }: PartnersLeadFormProps) {
         <textarea
           name="context"
           rows={3}
-          className={editorialFieldTextarea}
+          className={sanctuaryFieldTextarea}
           maxLength={1000}
           disabled={sending || success}
         />
@@ -176,7 +176,7 @@ export function PartnersLeadForm({ lang, labels }: PartnersLeadFormProps) {
         <textarea
           name="message"
           rows={5}
-          className={editorialFieldTextarea}
+          className={sanctuaryFieldTextarea}
           required
           maxLength={4000}
           disabled={sending || success}
@@ -184,13 +184,13 @@ export function PartnersLeadForm({ lang, labels }: PartnersLeadFormProps) {
       </label>
 
       {success ? (
-        <p className="text-sm font-light text-[var(--salon-cyan)]" role="status">
+        <p className="text-sm font-light text-teal-300/90" role="status">
           {labels.success}
         </p>
       ) : (
         <button
           type="submit"
-          className={editorialSubmitButton}
+          className={`${sanctuarySubmitButton} min-h-[52px] w-full rounded-2xl bg-white/[0.06] hover:bg-white/[0.09] touch-manipulation`}
           disabled={sending}
         >
           {sending ? labels.sending : labels.submit}

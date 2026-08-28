@@ -39,32 +39,37 @@
     }
   },
   "partnersPage": {
-    "title": "Odyssey — Le Sanctuaire Souvenir pour vos familles",
-    "subtitle": "Vous offrez l'accès en un clic. La famille invite ses proches. Notre moteur tisse le film. Zéro montage pour eux, zéro effort pour vous.",
-    "growthEngineTitle": "Moteur de croissance",
+    "title": "Le Sanctuaire Souvenir pour vos familles",
+    "kicker": "Une nouvelle norme d'hommage pour les maisons funéraires",
+    "introProblem": "Les familles exigent des célébrations authentiques mais fuient les approches commerciales sous pression. Vos conseillers, eux, n'ont ni le temps de faire du montage vidéo, ni l'envie de forcer des ventes additionnelles.",
+    "introResolution": "Odyssey résout ce paradoxe : nous transformons la technologie en un pur geste d'empathie.",
+    "promiseTitle": "La Promesse : Vous offrez, nous créons",
+    "promiseBody": "Vos conseillers offrent l'accès au Sanctuaire d'un simple clic. La famille y invite ses proches pour déposer leurs souvenirs. Notre moteur cinématographique tisse automatiquement ces fragments en un film d'hommage. Zéro montage pour eux, zéro effort pour vous.",
+    "growthEngineTitle": "Le Moteur de Croissance",
     "growthEngineItems": [
       {
-        "title": "Acquisition virale",
-        "body": "Visibilité digne via l'entourage — chaque invitation élargit naturellement la portée de votre maison."
+        "title": "Acquisition virale par l'émotion",
+        "body": "En invitant son entourage à contribuer, la famille expose naturellement votre marque à des dizaines de proches. C'est la forme de visibilité la plus digne et organique pour votre salon."
       },
       {
-        "title": "Socio-financement",
-        "body": "L'entourage débloque formats premium et souvenirs tangibles — sans pression au salon."
+        "title": "Socio-financement intégré",
+        "body": "L'entourage élargi peut participer financièrement pour débloquer des formats premium, des archives étendues ou des souvenirs tangibles (livres commémoratifs, copies physiques). Le fardeau financier quitte la famille immédiate pour devenir un élan de générosité collectif."
       },
       {
-        "title": "Revenus partagés",
-        "body": "Commissions automatiques tracées en temps réel dans votre espace partenaire."
+        "title": "Revenus partagés automatiques",
+        "body": "Chaque fois que la communauté enrichit l'hommage ou commande un souvenir, votre maison participe aux revenus générés. Tout est tracé en temps réel sur votre tableau de bord partenaire."
       },
       {
-        "title": "Rétention post-cérémonie",
-        "body": "Suivi de deuil et anniversaires automatisés — la relation continue après le service."
+        "title": "Rétention post-cérémonie (suivi de deuil)",
+        "body": "La relation ne s'arrête plus le jour des obsèques. Grâce aux communications commémoratives automatisées (rappels d'anniversaire, dates marquantes), le Sanctuaire prolonge l'empreinte de votre établissement sur des mois et des années."
       },
       {
         "title": "Friction zéro",
-        "body": "Aucune licence ni équipement — vos conseillers offrent un geste, Odyssey fait le reste."
+        "body": "Aucun logiciel à installer, aucun équipement à acheter, aucune formation complexe."
       }
     ],
-    "formSectionTitle": "Demander une démo",
+    "demoTitle": "Réservez votre démonstration",
+    "demoIntro": "En 30 minutes, découvrez le parcours émotionnel des familles sur mobile, votre futur espace partenaire et la mécanique transparente de vos commissions.",
     "form": {
       "organization": "Maison ou organisation",
       "contactName": "Nom du contact",
@@ -73,7 +78,7 @@
       "region": "Région ou bassin desservi",
       "context": "Contexte (volume, équipe, outils actuels)",
       "message": "Votre message",
-      "submit": "Envoyer la demande",
+      "submit": "Planifier une démo de 30 minutes",
       "sending": "Envoi…",
       "success": "Votre message est bien arrivé. Nous vous écrivons.",
       "error": "Impossible d’envoyer la demande. Réessayez.",
