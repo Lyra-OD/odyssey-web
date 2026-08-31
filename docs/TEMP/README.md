@@ -1,7 +1,7 @@
 # TEMP — documents provisoires
 
 **Type :** ops · **Vérité pour :** brouillons, rush démo, courriels, notes de session.  
-**Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 Ce dossier **n’est pas** du canon. Pas de grille prix ici. Pas de source de vérité produit.
 
@@ -25,6 +25,9 @@ Ne pas laisser pourrir 6 mois sans date dans le titre.
 
 | Fichier | Usage |
 |---------|--------|
+| [`SESSION_LUNDI_31_AOUT_WIZARD_DEMO.md`](SESSION_LUNDI_31_AOUT_WIZARD_DEMO.md) | Session wizard / démo |
+| [`PLAN_B_HUB_CAPTURE_CANVAS.md`](PLAN_B_HUB_CAPTURE_CANVAS.md) | **1 sept** — plan chirurgical capture canvas gel hub (B) |
+| [`NOTES_COPY_WIZARD_HUB.md`](NOTES_COPY_WIZARD_HUB.md) | **31 août** — notes session copy hub étape 1 |
 | [`DEMO_PATRICE_URGEL_RUSH.md`](DEMO_PATRICE_URGEL_RUSH.md) | Max démo convaincante + rush Figma Paul + courriel |
 | [`PLAN_DEMO_PATRICE.md`](PLAN_DEMO_PATRICE.md) | Plan prep démo (J-7 / J-1 / jour J) · craft vidéo · kit QR |
 | [`PLAN_DEMO_PATRICE_DEMAIN.md`](PLAN_DEMO_PATRICE_DEMAIN.md) | Redirect → `PLAN_DEMO_PATRICE.md` |
