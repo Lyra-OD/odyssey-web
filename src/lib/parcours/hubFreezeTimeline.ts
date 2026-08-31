@@ -14,8 +14,10 @@ export const HUB_FREEZE_TOTAL_MS = HUB_FREEZE_HOLD_MS + HUB_FREEZE_FADE_MS;
 
 /** D — panneau sort. */
 export const HUB_CLOSE_PANEL_OUT_MS = 400;
-/** D — silence : PNG seul (ciel encore figé). */
-export const HUB_CLOSE_SILENCE_MS = 140;
+/** D — thaw crossfade démarre pendant la sortie panneau (pas de silence mort). */
+export const HUB_CLOSE_THAW_START_MS = 120;
+/** @deprecated silence retiré — conservé pour doc legacy. */
+export const HUB_CLOSE_SILENCE_MS = 0;
 
 /**
  * KEEP — courbe d’apparition du hub (thaw).
@@ -34,9 +36,9 @@ export const HUB_THAW_APPEAR_MS = 880;
 /** Contrôle cubic-bezier CSS (x1,y1,x2,y2) — sync breath/invite. */
 const THAW_BZ = [0.45, 0.02, 0.22, 1] as const;
 
-/** D — total close. */
+/** D — total close (panneau out + ramp KEEP). */
 export const HUB_CLOSE_TOTAL_MS =
-  HUB_CLOSE_PANEL_OUT_MS + HUB_CLOSE_SILENCE_MS + HUB_THAW_APPEAR_MS;
+  HUB_CLOSE_PANEL_OUT_MS + HUB_THAW_APPEAR_MS;
 
 export type HubFreezeFx = {
   /** 1 → 0 flash soft sur Hero (hold). */

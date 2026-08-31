@@ -4,6 +4,7 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — **Thaw D fluide** : canvas chaud sous panneau · dolly préservé · thaw chevauche sortie verre.
 - 31 août 2026 — **Revert C2** : gel PNG sous panneau · WebGL off saisie · thaw D restauré.
 - 31 août 2026 — **T1b panneau œil** : overlay centré · slide-in simple · scroll sans barre OS.
 - 31 août 2026 — **T1b thaw KEEP** : courbe apparition hub `HUB_THAW_APPEAR_EASE_CSS` · silence + ramp organique (B réutilisera).
@@ -95,7 +96,7 @@
 | ID | Déclencheur | Effet perceptif |
 |----|-------------|-----------------|
 | `transition.hubFreezeTo2D` | Clic Hero | **Souffle** (flash+hold 200 ms) → crossfade ciel 560 ms → panneau verre slide (~340 ms) |
-| `transition.panelCloseToHub` | Fermer panneau | Panneau out 280 ms → PNG→WebGL 520 ms · étoile **respire à nouveau** |
+| `transition.panelCloseToHub` | Fermer panneau | Panneau out + thaw KEEP **dès 120 ms** · pas de silence mort |
 | `transition.backdropToWebGL` | Continuer | Le ciel **s'allume** → constellation |
 
 ### Implémentation (cible)

@@ -557,7 +557,12 @@ export function TributeWizard({
   );
 
   useEffect(() => {
-    if (!step1Sky || !step1Parcours.showHubWebGL) {
+    if (!step1Sky) {
+      setHubWebGLReady(false);
+      hubStarAnchorRef.current = null;
+      return;
+    }
+    if (!step1Parcours.showHubWebGL) {
       setHubWebGLReady(false);
       hubStarAnchorRef.current = null;
     }

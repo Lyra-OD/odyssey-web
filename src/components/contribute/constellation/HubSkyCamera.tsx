@@ -26,6 +26,7 @@ const HUB_APPROACH_MS = 2800;
 const HUB_CAM_Z_END = 5.15;
 /** Remonte le regard pour centrer l’étoile à l’écran (pas le slot prénom). */
 const HUB_LOOK_Y_LIFT = 0.22;
+const HUB_SETTLED_U = 0.98;
 
 function easeOutCubic(t: number): number {
   const x = Math.min(1, Math.max(0, t));
@@ -54,20 +55,26 @@ export function HubSkyCamera({ enabled, graphScale = 1 }: HubSkyCameraProps) {
 
   useEffect(() => {
     if (!enabled) {
-      startAtRef.current = null;
       hubSkyCameraDriveRef.active = false;
-      hubSkyApproachRef.current = 0;
+      // Pause — ne pas rembobiner le dolly (thaw après panneau = même zoom).
       return;
     }
-    startAtRef.current = null;
-    cameraZoomRef.current = ZOOM_DEFAULT;
-    hubSkyApproachRef.current = 0;
+    hubSkyCameraDriveRef.active = true;
+    const settled = hubSkyApproachRef.current >= HUB_SETTLED_U;
+    if (settled) {
+      startAtRef.current =
+        (typeof performance !== "undefined" ? performance.now() : Date.now()) -
+        HUB_APPROACH_MS;
+    } else {
+      startAtRef.current = null;
+      cameraZoomRef.current = ZOOM_DEFAULT;
+      hubSkyApproachRef.current = 0;
+    }
   }, [enabled]);
 
   useFrame((state) => {
     if (!enabled) {
       hubSkyCameraDriveRef.active = false;
-      hubSkyApproachRef.current = 0;
       return;
     }
     hubSkyCameraDriveRef.active = true;

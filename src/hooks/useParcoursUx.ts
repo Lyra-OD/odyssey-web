@@ -7,7 +7,7 @@ import {
   beginHubFreezeFx,
   beginHubThawAppear,
   HUB_CLOSE_PANEL_OUT_MS,
-  HUB_CLOSE_SILENCE_MS,
+  HUB_CLOSE_THAW_START_MS,
   HUB_CLOSE_TOTAL_MS,
   HUB_FREEZE_FADE_MS,
   HUB_FREEZE_HOLD_MS,
@@ -57,8 +57,8 @@ export function useParcoursUx({
   const [freezeHolding, setFreezeHolding] = useState(false);
   const [panelExiting, setPanelExiting] = useState(false);
   /**
-   * D — après silence : remount WebGL @0 puis true → ramp KEEP vers 1.
-   * false pendant panelOut + silence (PNG seul / WebGL invisible).
+   * D — ramp KEEP : WebGL 0→1 · PNG 1→0 · breath/invite suivent la courbe.
+   * false jusqu’au début du crossfade (thaw démarre tôt, en parallèle du panneau out).
    */
   const [thawReveal, setThawReveal] = useState(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -144,27 +144,21 @@ export function useParcoursUx({
     setFreezeHolding(false);
     setThawReveal(false);
     setTransition("panelCloseToHub");
+    beginHubThawAppear();
 
-    const silenceAt = HUB_CLOSE_PANEL_OUT_MS;
-    const appearAt = HUB_CLOSE_PANEL_OUT_MS + HUB_CLOSE_SILENCE_MS;
-
-    // Panneau parti → hub idle, WebGL remount @ opacity 0, PNG reste.
+    // Crossfade ciel dès t≈120 ms — chevauche la sortie du verre.
     schedule(() => {
-      setPhase("hub.idle");
-      setPanelExiting(false);
-      setThawReveal(false);
-    }, silenceAt);
-
-    // Ramp KEEP : WebGL 0→1 · PNG 1→0 · breath/invite suivent la courbe.
-    schedule(() => {
-      beginHubThawAppear();
-      // Double rAF : pose opacity 0 une frame avant la cible 1 (sinon pas de transition).
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setThawReveal(true);
         });
       });
-    }, appearAt);
+    }, HUB_CLOSE_THAW_START_MS);
+
+    schedule(() => {
+      setPhase("hub.idle");
+      setPanelExiting(false);
+    }, HUB_CLOSE_PANEL_OUT_MS);
 
     schedule(() => {
       setTransition(null);
@@ -186,11 +180,12 @@ export function useParcoursUx({
     enabled &&
     (phase === "ritual.reveal" || phase === "hub.postReveal");
 
-  /** Hub WebGL : idle + crossfades — pas sous le formulaire (PNG seul). */
+  /** Canvas reste monté sous panneau (opacity 0) — thaw instantané sans remount. */
   const mountHubWebGL =
     enabled &&
     !showRitualWebGL &&
     (phase === "hub.idle" ||
+      phase === "panel.essentials" ||
       transition === "hubFreezeTo2D" ||
       transition === "panelCloseToHub");
 
@@ -236,12 +231,12 @@ export function useParcoursUx({
         phase === "hub.postReveal") &&
         transition !== "panelCloseToHub"));
 
-  /** Loop WebGL : hub vivant + hold freeze + thaw — off en saisie panneau. */
+  /** Loop off en saisie · reprise dès fermeture (moteur chaud, canvas déjà là). */
   const hubSkyLive =
     enabled &&
     ((phase === "hub.idle" && transition === null) ||
       (transition === "hubFreezeTo2D" && freezeHolding) ||
-      (transition === "panelCloseToHub" && phase === "hub.idle"));
+      transition === "panelCloseToHub");
 
   const hubChromeHidden = enabled;
 
