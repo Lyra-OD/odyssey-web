@@ -117,16 +117,20 @@ export function useParcoursUx({
     enabled &&
     (phase === "ritual.reveal" || phase === "hub.postReveal");
 
-  /** Hub + panneau partagent la stack ciel — opacité croisée (T1b). */
-  const mountSkyStack =
+  /** Hub WebGL : uniquement idle + crossfades (pas sous le formulaire). */
+  const mountHubWebGL =
+    enabled &&
+    !showRitualWebGL &&
+    (phase === "hub.idle" ||
+      transition === "hubFreezeTo2D" ||
+      transition === "panelCloseToHub");
+
+  const mountBackdrop =
     enabled &&
     !showRitualWebGL &&
     (phase === "hub.idle" ||
       phase === "panel.essentials" ||
       transition !== null);
-
-  const mountHubWebGL = mountSkyStack;
-  const mountBackdrop = mountSkyStack;
 
   const hubWebGLOpacity =
     transition === "hubFreezeTo2D"
@@ -149,6 +153,12 @@ export function useParcoursUx({
       phase === "ritual.reveal" ||
       phase === "hub.postReveal");
 
+  /** Loop WebGL active seulement hub vivant (pas pendant freeze / panneau). */
+  const hubSkyLive =
+    enabled &&
+    ((phase === "hub.idle" && transition === null) ||
+      transition === "panelCloseToHub");
+
   const hubChromeHidden = enabled && showHubHero;
 
   return {
@@ -163,6 +173,7 @@ export function useParcoursUx({
     backdropOpacity,
     showHubHero,
     showEssentialsPanel,
+    hubSkyLive,
     hubChromeHidden,
     crossfadeMs: SKY_CROSSFADE_MS,
   };

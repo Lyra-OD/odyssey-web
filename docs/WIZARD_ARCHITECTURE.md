@@ -4,8 +4,8 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — **T1b gel perf** : `hubSkyLive` stop loop + unmount WebGL sous panneau.
 - 31 août 2026 — **T1b caméra hub** : `HubSkyCamera` (plan test-ciel → dolly Hero).
-- 31 août 2026 — **T1b** : hub WebGL lite animé · crossfade `hubFreezeTo2D` / `panelCloseToHub` · chrome atténué au hub.
 - 31 août 2026 — **Figé** : hub WebGL lite ↔ gel 2D (§2b Traversée) · Chemins A/B · T1b cible.
 - 31 août 2026 — **T1 Traversée** : `SkyBackdrop` · `useParcoursUx` · `SanctuaryHubHero` · panneau open/close.
 - 31 août 2026 — Parcours UX Chemin 1 : spec Traversée · lien step 1 backdrop 2D + rituel séparé.

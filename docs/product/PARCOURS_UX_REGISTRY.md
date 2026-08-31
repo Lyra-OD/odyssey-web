@@ -4,6 +4,7 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — `hub.idle` / `hub.heroPulse` → ready · module `hubIdle.ts` (étapes isolées).
 - 31 août 2026 — **Figé** : Chemins A/B · transitions `hubFreezeTo2D` · `panelCloseToHub` · hub WebGL lite.
 - 31 août 2026 — +7 beats pédagogiques · lien [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md).
 - 31 août 2026 — Registre initial Chemin 1 · 10 beats · stubs explicites.
@@ -35,8 +36,8 @@
 | ID | Surface | Craft / source | Durée cible | Stub | Statut | Wizard |
 |----|---------|----------------|-------------|------|--------|--------|
 | `prologue.arrival` | webgl-ritual → hub | [`ODYSSEY_ECLIPSE_CRAFT.md`](../ODYSSEY_ECLIPSE_CRAFT.md) · wormhole | 20–30 s | Skip → `hub.idle` WebGL lite · Chemin A seulement | blocked-craft | — |
-| **`hub.idle`** | **webgl hub-lite** | SanctuaryUniverse layers réduits | loop | PNG + Hero CSS (T1 placeholder) | stub | — |
-| `hub.heroPulse` | hub (webgl ou backdrop) | Hero sprite · CSS | loop | `animation: pulse` 2s ease | stub | — |
+| **`hub.idle`** | **webgl hub-lite** | SanctuaryUniverse + `hubIdle.ts` · HubSkyCamera | loop | PNG + Hero CSS (T1 placeholder) | ready | — |
+| `hub.heroPulse` | hub webgl | `hubIdle.hubHeroBreath` · HeroStar breathDrive | loop | CSS pulse | ready | — |
 | `anchor.form` | panel-glass + backdrop-2d | **`transition.hubFreezeTo2D`** | — | Cut → PNG ciel · zéro WebGL sous champs | todo | step 1 |
 | `anchor.reveal` | webgl-ritual | [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md) · `DEFAULT_CONSTELLATION_REVEAL_MS` | 8–14 s + dwell 3–4 s | Crossfade 400 ms avant mount | ready-craft | step 1 Continuer |
 | **`anchor.identityDisplay`** | webgl + hub | Html Hero · hub chrome | post-reveal | Prénom seul en rituel · dates + nom discret au settle | todo | § Traversée |

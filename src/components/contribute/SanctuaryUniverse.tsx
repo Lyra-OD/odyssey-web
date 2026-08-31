@@ -79,7 +79,14 @@ import {
   undirectedEdgeKey,
   type LeoStrokeStep,
 } from "@/src/components/contribute/constellation/graphs/leo";
-import { resolveBirth, resolveHubBirth, hubTapHintVisible } from "@/src/components/contribute/constellation/graphs/birth";
+import { resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
+import {
+  hubHeroBreath,
+  hubProximityActive,
+  hubTapHintVisible,
+  HUB_HERO_SIZE_BREATH,
+  resolveHubBirth,
+} from "@/src/components/contribute/constellation/graphs/hubIdle";
 import { hubSkyApproachRef } from "@/src/components/contribute/constellation/HubSkyCamera";
 import {
   DEFAULT_LINE_WHISPER,
@@ -344,7 +351,10 @@ function Constellation({
     }
 
     const drawPhaseLive = resolveDrawPhase(revealTRef?.current ?? revealT);
-    if (!drawPhaseLive.proximity || !pointerRef) {
+    const allowProximity =
+      (hubBirthMode && hubProximityActive(hubSkyApproachRef.current)) ||
+      drawPhaseLive.proximity;
+    if (!allowProximity || !pointerRef) {
       setProximity((p) => (p.max > 0 ? EMPTY_PROX : p));
       return;
     }
@@ -515,7 +525,9 @@ function Constellation({
           star.visual === "hero" && heroAtom != null;
         const embed = heroAtom?.embedScale ?? 0.4;
         const gScale = heroAtom?.globalScale ?? 1;
-        const breathDrive = drawPhase.constellationBreath;
+        const breathDrive = hubBirthMode
+          ? hubHeroBreath(hubApproach)
+          : drawPhase.constellationBreath;
         const starProx = proximity.stars[star.id] ?? 0;
         const proxRelight = 1 + starProx * PROXIMITY_RELIGHT;
         const slotBreathMul =
@@ -594,7 +606,7 @@ function Constellation({
           ? 42 - 14 * nameLift + birth.nameDriftY * 4 + heroSep.nameDrop
           : 18;
         const hubInviteScale =
-          hubPrompt && isHero ? nameScale * 0.62 : nameScale;
+          hubPrompt && isHero ? nameScale * 0.58 : nameScale;
         const hubInviteY = isHero
           ? 26 - 8 * nameLift + birth.nameDriftY * 2.5 + heroSep.nameDrop
           : nameY;
@@ -627,9 +639,14 @@ function Constellation({
                   birthFlash={birth.heroFlash}
                   birth={birthDrive}
                   breathDrive={
-                    birth.heroKeep
-                      ? Math.min(1, breathDrive + starProx * 0.72)
-                      : Math.max(breathDrive, birth.heroSize * 0.25)
+                    hubBirthMode
+                      ? Math.min(1, breathDrive + starProx * 0.55)
+                      : birth.heroKeep
+                        ? Math.min(1, breathDrive + starProx * 0.72)
+                        : Math.max(breathDrive, birth.heroSize * 0.25)
+                  }
+                  sizeBreath={
+                    hubBirthMode ? HUB_HERO_SIZE_BREATH * breathDrive : 0
                   }
                   parallax={0}
                   phase={i * 1.7}
@@ -693,7 +710,7 @@ function Constellation({
                   whiteSpace: "nowrap",
                   textAlign: hubPrompt && isHero ? "center" : undefined,
                   width: hubPrompt && isHero ? "max-content" : undefined,
-                  fontSize: hubPrompt && isHero ? "11px" : isHero ? "19px" : "11px",
+                  fontSize: hubPrompt && isHero ? "9.5px" : isHero ? "19px" : "11px",
                   lineHeight: hubPrompt && isHero ? 1.35 : undefined,
                   fontFamily:
                     hubPrompt && isHero
@@ -722,6 +739,7 @@ function Constellation({
                     : "none",
                   transition: "none",
                 }}
+                wrapperClass="!pointer-events-none"
                 center
               >
                 {hubPrompt && isHero ? (
@@ -1202,8 +1220,12 @@ export function SanctuaryUniverse({
 
   const onStarScreen = useCallback(
     (anchor: ScreenAnchor | null) => {
+      // Hub : ref only via callback — évite setState/frame sur le parent Canvas.
+      if (onStarAnchorChange) {
+        onStarAnchorChange(anchor);
+        return;
+      }
       setStarAnchor(anchor);
-      onStarAnchorChange?.(anchor);
     },
     [onStarAnchorChange],
   );

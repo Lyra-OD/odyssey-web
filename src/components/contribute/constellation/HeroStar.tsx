@@ -46,6 +46,11 @@ export type HeroStarProps = {
   /** F · idle — amplitude breath constellation 0→1 (default 1). */
   breathDrive?: number;
   /**
+   * Hub / idle wow — breath affecte aussi la **taille** (±%).
+   * 0 = KEEP craft (glow only) · 1 = pulse lisible hub.
+   */
+  sizeBreath?: number;
+  /**
    * C0–C2 birth drive (optional). When set, layers follow stellar formation
    * (veil / core / teal lag / spikes mul) instead of full idle look.
    */
@@ -274,6 +279,7 @@ export function HeroStar({
   birthFlash = 0,
   birth,
   breathDrive = 1,
+  sizeBreath = 0,
 }: HeroStarProps) {
   const geo = usePointGeometry();
   const rootRef = useRef<Group>(null);
@@ -330,6 +336,7 @@ export function HeroStar({
       clock.elapsedTime * Math.max(0.05, spikes.breath) + phase + 0.8;
 
     const breathAmp = Math.max(0, Math.min(1, breathDrive));
+    const sizeBreathK = Math.max(0, Math.min(1.5, sizeBreath));
 
     const bw =
       0.62 +
@@ -340,6 +347,14 @@ export function HeroStar({
     const bs =
       0.62 +
       (0.22 * Math.sin(ts) + 0.1 * Math.sin(ts * 0.33)) * breathAmp;
+
+    /** Hub pulse : taille suit le souffle (±14 % @ sizeBreath=1). */
+    const sizeFromBreath = (b: number) =>
+      1 + sizeBreathK * ((b - 0.62) / 0.32) * 0.14;
+    const glowFromBreath = (b: number) =>
+      sizeBreathK > 0.02
+        ? 0.62 + 0.55 * b
+        : 0.85 + 0.25 * b;
 
     const persp = (z: number) => {
       const d = Math.max(0.35, camera.position.z - z);
@@ -400,9 +415,9 @@ export function HeroStar({
       white,
       bw,
       140,
-      (0.85 + 0.25 * bw) * whiteGlowMul,
+      glowFromBreath(bw) * whiteGlowMul,
       false,
-      whiteSizeMul,
+      whiteSizeMul * sizeFromBreath(bw),
       whiteAmtMul,
     );
     drive(
@@ -410,9 +425,9 @@ export function HeroStar({
       teal,
       bt,
       220,
-      (0.75 + 0.4 * bt) * tealGlowMul,
+      glowFromBreath(bt) * tealGlowMul,
       true,
-      tealSizeMul,
+      tealSizeMul * sizeFromBreath(bt),
       tealAmtMul,
     );
     drive(
@@ -420,9 +435,9 @@ export function HeroStar({
       spikes,
       bs,
       280,
-      0.85 + 0.25 * bs,
+      glowFromBreath(bs),
       true,
-      birth ? Math.max(0.01, spikesB) : 1,
+      (birth ? Math.max(0.01, spikesB) : 1) * sizeFromBreath(bs),
       spikesB,
     );
 

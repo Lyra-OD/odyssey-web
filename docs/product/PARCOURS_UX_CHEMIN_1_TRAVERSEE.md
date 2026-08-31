@@ -4,6 +4,8 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — **T1b gel perf** : WebGL stop au clic (`hubSkyLive`) · unmount sous panneau · ancre étoile via ref.
+- 31 août 2026 — **T1b hub.heroPulse** : respiration Hero isolée (`hubIdle.ts`) · étapes prologue-safe.
 - 31 août 2026 — **T1b invite hub** : texte craft Html sur Hero · birth hub · clic ancré projection.
 - 31 août 2026 — **T1b caméra hub** : `HubSkyCamera` (plan test-ciel + dolly Hero).
 - 31 août 2026 — **T1b code** : hub WebGL lite · crossfade gel 2D · chrome hub masqué.
@@ -78,7 +80,7 @@
 
 | Phase | Rendu ciel | GPU | Panneau |
 |-------|------------|-----|---------|
-| **Hub idle** (Hero attend) | **WebGL animé** — plan test-ciel puis dolly Hero (`HubSkyCamera`) | Actif (budget serré) | Fermé |
+| **Hub idle** (Hero attend) | **WebGL animé** — plan test-ciel · dolly · `hub.heroPulse` (breath) · invite Html | Actif (budget serré) | Fermé |
 | **Clic Hero** | `transition.hubFreezeTo2D` | Stop loop · capture ou frame alignée | Ouvre — **verre teinté** (distinct du hub) |
 | **Saisie** (`panel.essentials`) | **Image 2D fixe** (même frame) | **Off** | Ouvert — zéro lag clavier |
 | **Fermer panneau** (X / Esc) | `transition.panelCloseToHub` — fondu 2D → **reprise WebGL hub** | Reprise hub-lite | Ferme |
@@ -96,8 +98,9 @@
 
 1. **Capture** canvas hub au clic **ou** PNG export lab **même caméra** idle.
 2. Crossfade **300–500 ms** · **aucun saut** de cadrage.
-3. `ForceRenderLoop` **off** tant que 2D visible.
-4. Panneau verre : blur + teinte (ex. teal très soft / bordure) — **lisiblement ≠ hub pur**.
+3. `ForceRenderLoop` **off** dès `hubFreezeTo2D` (`hubSkyLive=false`) · **unmount** WebGL en `panel.essentials`.
+4. Ancre étoile hub = **ref** (pas `setState`/frame) — hit target DOM via rAF.
+5. Panneau verre : blur + teinte (ex. teal très soft / bordure) — **lisiblement ≠ hub pur**.
 
 ### Ce n'est PAS
 
@@ -293,7 +296,7 @@ hub.postReveal    → admiration + chaînons + carte Inviter / Continuer
 | `hub.idle` | WebGL hub-lite + Hero animé | ⏳ T1b | PNG + CSS (T1 placeholder) |
 | `transition.hubFreezeTo2D` | Clic Hero | ⏳ T1b | Cut → PNG existant |
 | `transition.panelCloseToHub` | Fermer panneau | ⏳ T1b | Fade noir |
-| `hub.heroPulse` | Hero attend clic | 🟡 T1 | Pulse CSS |
+| `hub.heroPulse` | Hero attend clic | ✅ T1b | Breath KEEP (`hubIdle.hubHeroBreath`) |
 | `anchor.form` | Aucune (confort) | ✅ spec | PNG / frame export lab |
 | `anchor.reveal` | Play A→F constellation | ✅ craft lab | — |
 | `hub.postReveal` | Carte + dwell | ⏳ | UI statique 2–4 s |

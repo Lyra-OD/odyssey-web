@@ -10,6 +10,7 @@ import {
   DEFAULT_HERO_TEAL,
   DEFAULT_HERO_WHITE,
 } from "@/src/components/contribute/constellation/HeroStar";
+import { HUB_HERO_BREATH_SPEED } from "@/src/components/contribute/constellation/graphs/hubIdle";
 import type { ScreenAnchor } from "@/src/components/contribute/constellation/StarScreenReporter";
 import {
   allGhostSlotLit,
@@ -114,9 +115,15 @@ export function SanctuaryWizardStep1Sky({
       template,
       strokeSequence,
       heroAtom: {
-        white: DEFAULT_HERO_WHITE,
-        teal: DEFAULT_HERO_TEAL,
-        spikes: DEFAULT_HERO_SPIKES,
+        white: isHubLite
+          ? { ...DEFAULT_HERO_WHITE, breath: HUB_HERO_BREATH_SPEED }
+          : DEFAULT_HERO_WHITE,
+        teal: isHubLite
+          ? { ...DEFAULT_HERO_TEAL, breath: HUB_HERO_BREATH_SPEED }
+          : DEFAULT_HERO_TEAL,
+        spikes: isHubLite
+          ? { ...DEFAULT_HERO_SPIKES, breath: HUB_HERO_BREATH_SPEED }
+          : DEFAULT_HERO_SPIKES,
         embedScale: 0.42,
         globalScale: DEFAULT_HERO_GLOBAL_SCALE,
       },

@@ -56,6 +56,7 @@ import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll"
 import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
 import { SanctuaryHubHero } from "@/src/components/tribute/SanctuaryHubHero";
 import { ParcoursHubBodyFlag } from "@/src/components/tribute/ParcoursHubBodyFlag";
+import { hubStarAnchorRef } from "@/src/components/tribute/hubStarAnchorRef";
 import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
 import { useWizardDraftLifecycle } from "@/src/hooks/useWizardDraftLifecycle";
 import {
@@ -547,20 +548,18 @@ export function TributeWizard({
     virginHub: step1VirginHub,
   });
   const [hubWebGLReady, setHubWebGLReady] = useState(false);
-  const [hubStarAnchor, setHubStarAnchor] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
   const onHubWebGLReady = useCallback(() => setHubWebGLReady(true), []);
   const onHubStarAnchor = useCallback(
-    (anchor: { x: number; y: number } | null) => setHubStarAnchor(anchor),
+    (anchor: { x: number; y: number } | null) => {
+      hubStarAnchorRef.current = anchor;
+    },
     [],
   );
 
   useEffect(() => {
     if (!step1Sky || !step1Parcours.showHubWebGL) {
       setHubWebGLReady(false);
-      setHubStarAnchor(null);
+      hubStarAnchorRef.current = null;
     }
   }, [step1Sky, step1Parcours.showHubWebGL]);
 
@@ -937,8 +936,6 @@ export function TributeWizard({
       {step1Parcours.showHubHero ? (
         <SanctuaryHubHero
           openLabel={copy.parcoursHeroOpenLabel}
-          webglHero={hubWebGLReady}
-          starAnchor={hubStarAnchor}
           onOpen={step1Parcours.openPanel}
         />
       ) : null}
@@ -950,7 +947,7 @@ export function TributeWizard({
           revealT={step1Reveal.revealT}
           revealTRef={step1Reveal.revealTRef}
           hideHeroName={step1Reveal.hideHeroName}
-          skyActive
+          skyActive={step1Parcours.hubSkyLive}
           silhouetteIdle={false}
           variant="hub-lite"
           layerOpacity={hubWebGLLayerOpacity}
