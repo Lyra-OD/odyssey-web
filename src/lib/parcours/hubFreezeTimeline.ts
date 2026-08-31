@@ -9,8 +9,13 @@ export const HUB_FREEZE_HOLD_MS = 200;
 export const HUB_FREEZE_FADE_MS = 560;
 /** Panneau verre commence (pendant le fade). */
 export const HUB_FREEZE_PANEL_AT_MS = 340;
-/** Fin freeze → unmount WebGL. */
+/** Fin freeze → rideau PNG retombe (C2 : WebGL reste sous le verre). */
 export const HUB_FREEZE_TOTAL_MS = HUB_FREEZE_HOLD_MS + HUB_FREEZE_FADE_MS;
+
+/** C2 — opacité hub-lite sous panneau verre (respire, lisible). */
+export const HUB_PANEL_LIVE_WEBGL_OPACITY = 0.82;
+/** C2 — PNG out · WebGL in après le rite clic. */
+export const HUB_CURTAIN_LIFT_MS = 560;
 
 /** D — panneau sort. */
 export const HUB_CLOSE_PANEL_OUT_MS = 400;
@@ -112,9 +117,18 @@ export function beginHubFreezeFx() {
   hubFreezeFxRef.thawAppearStartedAt = null;
 }
 
-/** Fin hold → laisse le flash mourir, breath reste hold jusqu’à unmount. */
+/** Fin hold → laisse le flash mourir, breath reste hold jusqu’au rideau. */
 export function softenHubFreezeFx() {
   hubFreezeFxRef.flash = 0;
+}
+
+/** C2 — saisie panneau : WebGL vivant atténué · invite masquée. */
+export function beginPanelLivingSky() {
+  hubFreezeFxRef.flash = 0;
+  hubFreezeFxRef.holdBreath = false;
+  hubFreezeFxRef.inviteMul = 0;
+  hubFreezeFxRef.thawAppearU = 1;
+  hubFreezeFxRef.thawAppearStartedAt = null;
 }
 
 /**
