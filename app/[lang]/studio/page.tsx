@@ -132,7 +132,7 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100">
       <div
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        className="studio-shell-halo pointer-events-none absolute inset-0 z-0 overflow-hidden transition-opacity duration-500"
         aria-hidden
       >
         <div
@@ -147,7 +147,7 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
       </div>
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-6 pb-10 pt-12 md:px-10 md:pt-16">
-        <header className="relative mb-10">
+        <header className="studio-shell-chrome relative mb-10 transition-opacity duration-500">
           <h1 className="sr-only">{welcomeSrOnly}</h1>
 
           <div className="absolute right-0 top-0 z-10 flex flex-col items-end gap-3">
@@ -190,7 +190,7 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
           accessRole={accessRole}
         />
 
-        <footer className="mt-auto mb-20 flex flex-col items-center gap-1 pb-2 pt-16 text-center">
+        <footer className="studio-shell-chrome mt-auto mb-20 flex flex-col items-center gap-1 pb-2 pt-16 text-center transition-opacity duration-500">
           <p className="text-[8px] font-medium uppercase tracking-[0.44em] text-white/26">
             {poweredBy}
           </p>

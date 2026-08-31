@@ -4,6 +4,8 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — **T1b caméra hub** : `HubSkyCamera` (plan test-ciel → dolly Hero).
+- 31 août 2026 — **T1b** : hub WebGL lite animé · crossfade `hubFreezeTo2D` / `panelCloseToHub` · chrome atténué au hub.
 - 31 août 2026 — **Figé** : hub WebGL lite ↔ gel 2D (§2b Traversée) · Chemins A/B · T1b cible.
 - 31 août 2026 — **T1 Traversée** : `SkyBackdrop` · `useParcoursUx` · `SanctuaryHubHero` · panneau open/close.
 - 31 août 2026 — Parcours UX Chemin 1 : spec Traversée · lien step 1 backdrop 2D + rituel séparé.
@@ -411,9 +413,8 @@ Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WAT
 
 État détaillé : [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §1 · [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b. Playbook démo : [`MEETING_PATRICE_VP.md`](MEETING_PATRICE_VP.md).
 
-- **Aujourd'hui (T1 placeholder) :** PNG + Hero CSS · panneau open/close · WebGL **seulement** au rituel Continuer.
-- **Cible T1b :** hub **WebGL lite animé** · `hubFreezeTo2D` au clic Hero · `panelCloseToHub` à la fermeture.
-- **Cible T2 :** `backdropToWebGL` · hub J3 post-reveal.
+- **Aujourd'hui (T1b) :** hub **WebGL lite** animé · crossfade gel 2D au clic Hero · reprise hub à la fermeture · chrome masqué au hub.
+- **Cible T2 :** `backdropToWebGL` au Continuer · hub J3 post-reveal.
 - **Chemins :** A (première traversée · prologue) vs B (retour · draft rempli → panneau direct) — [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §1b.
 - **Activation :** `step1Sky = !isEditor && currentStep === 1` dans `TributeWizard.tsx`.
 - **Validation :** `canProceedEssential` — prénom, **nom**, naissance, décès (écart D1 CEO : voir journey §11b).

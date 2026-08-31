@@ -31,6 +31,7 @@ import { MilkyDustLanes } from "@/src/components/contribute/constellation/MilkyD
 import { SkyPanorama } from "@/src/components/contribute/constellation/SkyPanorama";
 import { FocusCamera } from "@/src/components/contribute/constellation/FocusCamera";
 import { IdleCameraDrift } from "@/src/components/contribute/constellation/IdleCameraDrift";
+import { HubSkyCamera } from "@/src/components/contribute/constellation/HubSkyCamera";
 import { RevealCamera } from "@/src/components/contribute/constellation/RevealCamera";
 import { LightBridges } from "@/src/components/contribute/constellation/LightBridges";
 import {
@@ -78,7 +79,8 @@ import {
   undirectedEdgeKey,
   type LeoStrokeStep,
 } from "@/src/components/contribute/constellation/graphs/leo";
-import { resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
+import { resolveBirth, resolveHubBirth, hubTapHintVisible } from "@/src/components/contribute/constellation/graphs/birth";
+import { hubSkyApproachRef } from "@/src/components/contribute/constellation/HubSkyCamera";
 import {
   DEFAULT_LINE_WHISPER,
   DEFAULT_WHISPER_EMPHASIS,
@@ -169,6 +171,10 @@ export type ConstellationRevealCraft = {
   heroName?: string;
   /** Wizard step 1 — masquer le nom tant que le prénom est vide. */
   hideHeroName?: boolean;
+  /** Chemin 1 hub — invite accrochée à l’étoile (birth hub, pas prénom). */
+  hubPrompt?: boolean;
+  /** Chemin 1 hub — sous-texte tap (Html sous l’invite). */
+  hubTapHint?: string;
   /**
    * Wizard — `false` gèle le WebGL (stop ForceRenderLoop, dpr 1).
    * Défaut `true` (labs / immersive).
@@ -250,6 +256,10 @@ function Constellation({
   heroParallax = DEFAULT_HERO_PARALLAX,
   heroName,
   hideHeroName = false,
+  hubPrompt = false,
+  hubTapHint,
+  reportHeroScreen = false,
+  hubBirthMode = false,
   slotStars = DEFAULT_SLOT_STARS,
   bridges = DEFAULT_BRIDGES,
   slotLit,
@@ -285,6 +295,10 @@ function Constellation({
   heroParallax?: number;
   heroName?: string;
   hideHeroName?: boolean;
+  hubPrompt?: boolean;
+  hubTapHint?: string;
+  reportHeroScreen?: boolean;
+  hubBirthMode?: boolean;
   slotStars?: SlotStarsCraft;
   bridges?: BridgesCraft;
   slotLit?: Record<string, boolean>;
@@ -303,6 +317,7 @@ function Constellation({
   const ndcA = useRef(new Vector3());
   const ndcB = useRef(new Vector3());
   const [revealT, setRevealT] = useState(revealTProp);
+  const [hubApproach, setHubApproach] = useState(0);
   const [proximity, setProximity] = useState<ProximityField>(EMPTY_PROX);
 
   const stars = useMemo(() => {
@@ -319,6 +334,10 @@ function Constellation({
   const positions = useMemo(() => constellationPositions(stars), [stars]);
 
   useFrame(({ camera }) => {
+    if (hubBirthMode) {
+      const v = hubSkyApproachRef.current;
+      setHubApproach((prev) => (Math.abs(prev - v) > 0.006 ? v : prev));
+    }
     if (revealTRef) {
       const v = revealTRef.current;
       setRevealT((prev) => (Math.abs(prev - v) > 0.0008 ? v : prev));
@@ -414,10 +433,19 @@ function Constellation({
     proximity.max,
   ]);
 
-  const birth = useMemo(() => resolveBirth(revealT), [revealT]);
+  const birth = useMemo(
+    () =>
+      hubBirthMode
+        ? resolveHubBirth(hubApproach)
+        : resolveBirth(revealT),
+    [hubBirthMode, hubApproach, revealT],
+  );
 
   const heroSepActive =
-    heroAtom != null && (birth.nameBirth > 0.02 || birth.heroSize > 0.02);
+    heroAtom != null &&
+    (birth.nameBirth > 0.02 ||
+      birth.heroSize > 0.02 ||
+      (hubBirthMode && birth.heroBirth > 0.02));
   const heroSep = useHeroNameSeparation(
     heroSepActive,
     heroParallax,
@@ -565,12 +593,24 @@ function Constellation({
         const nameY = isHero
           ? 42 - 14 * nameLift + birth.nameDriftY * 4 + heroSep.nameDrop
           : 18;
+        const hubInviteScale =
+          hubPrompt && isHero ? nameScale * 0.62 : nameScale;
+        const hubInviteY = isHero
+          ? 26 - 8 * nameLift + birth.nameDriftY * 2.5 + heroSep.nameDrop
+          : nameY;
+        const nameYResolved = hubPrompt && isHero ? hubInviteY : nameY;
         const nameX = isHero ? birth.nameDriftX * 5 : 0;
         const nameTracking = isHero
-          ? 0.36 - 0.14 * nameTrack + 0.025 * nameGlow
+          ? hubPrompt
+            ? 0.14
+            : 0.36 - 0.14 * nameTrack + 0.025 * nameGlow
           : 0.2;
-        const glowPx = 14 + 30 * nameGlow + 8 * nameClarity;
-        const glowA = 0.12 + 0.4 * nameGlow;
+        const glowPx = hubPrompt && isHero
+          ? 10 + 18 * nameGlow + 4 * nameClarity
+          : 14 + 30 * nameGlow + 8 * nameClarity;
+        const glowA = hubPrompt && isHero
+          ? 0.06 + 0.22 * nameGlow
+          : 0.12 + 0.4 * nameGlow;
 
         return (
           <group key={star.id} position={pos}>
@@ -617,7 +657,7 @@ function Constellation({
                 }
               />
             ) : null}
-            {isFocus ? (
+            {isHero && (isFocus || reportHeroScreen) ? (
               <StarScreenReporter active onScreen={onStarScreen} />
             ) : null}
             {star.role === "hero" || (star.lit && star.memory) ? (
@@ -643,14 +683,25 @@ function Constellation({
             ) : null}
             {showHeroName || showSlotName ? (
               <Html
-                distanceFactor={isHero ? 6.4 : 6}
+                distanceFactor={
+                  isHero ? (hubPrompt ? 18 : 6.4) : 6
+                }
                 style={{
                   pointerEvents: "none",
-                  transform: `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameY.toFixed(1)}px) scale(${nameScale.toFixed(3)})`,
+                  transform: `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameYResolved.toFixed(1)}px) scale(${(hubPrompt && isHero ? hubInviteScale : nameScale).toFixed(3)})`,
                   transformOrigin: "50% 0%",
                   whiteSpace: "nowrap",
-                  fontSize: isHero ? "19px" : "11px",
-                  letterSpacing: `${nameTracking.toFixed(3)}em`,
+                  textAlign: hubPrompt && isHero ? "center" : undefined,
+                  width: hubPrompt && isHero ? "max-content" : undefined,
+                  fontSize: hubPrompt && isHero ? "11px" : isHero ? "19px" : "11px",
+                  lineHeight: hubPrompt && isHero ? 1.35 : undefined,
+                  fontFamily:
+                    hubPrompt && isHero
+                      ? "var(--font-editorial), ui-serif, Georgia, serif"
+                      : undefined,
+                  letterSpacing: hubPrompt && isHero
+                    ? "0.14em"
+                    : `${nameTracking.toFixed(3)}em`,
                   fontWeight: 300,
                   opacity: nameOpacity,
                   filter:
@@ -658,18 +709,58 @@ function Constellation({
                       ? `blur(${nameBlurPx.toFixed(1)}px)`
                       : undefined,
                   color: isHero
-                    ? `rgba(255, 252, 248, ${0.72 + 0.22 * nameClarity})`
+                    ? hubPrompt
+                      ? "rgba(244, 244, 245, 0.88)"
+                      : `rgba(255, 252, 248, ${0.72 + 0.22 * nameClarity})`
                     : "rgba(204, 251, 241, 0.6)",
                   textShadow: isHero
-                    ? `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)}), 0 0 ${(glowPx * 0.45).toFixed(0)}px rgba(255, 248, 240, ${
-                        0.08 + 0.2 * nameGlow
-                      })`
+                    ? hubPrompt
+                      ? `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)})`
+                      : `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)}), 0 0 ${(glowPx * 0.45).toFixed(0)}px rgba(255, 248, 240, ${
+                          0.08 + 0.2 * nameGlow
+                        })`
                     : "none",
                   transition: "none",
                 }}
                 center
               >
-                {star.name}
+                {hubPrompt && isHero ? (
+                  <span
+                    style={{
+                      display: "inline-block",
+                      whiteSpace: "nowrap",
+                      transform: "scaleX(1.06)",
+                      transformOrigin: "50% 0%",
+                    }}
+                  >
+                    {star.name}
+                    {hubTapHint && hubTapHintVisible(hubApproach) ? (
+                      <span
+                        style={{
+                          display: "block",
+                          marginTop: "0.55rem",
+                          whiteSpace: "nowrap",
+                          transform: "scaleX(1.02)",
+                          fontFamily:
+                            'var(--font-label), "Inter", ui-sans-serif, system-ui, sans-serif',
+                          fontSize: "6px",
+                          letterSpacing: "0.1em",
+                          fontWeight: 300,
+                          color: "rgba(161, 161, 170, 0.82)",
+                          textShadow: "none",
+                          opacity: Math.min(
+                            1,
+                            (hubApproach - 0.72) / 0.28,
+                          ),
+                        }}
+                      >
+                        {hubTapHint}
+                      </span>
+                    ) : null}
+                  </span>
+                ) : (
+                  star.name
+                )}
               </Html>
             ) : null}
           </group>
@@ -710,6 +801,7 @@ function UniverseScene({
   craftLite = false,
   craftReveal,
   skyLayers,
+  hubSkyCamera = false,
 }: {
   tier: ReturnType<typeof useVisualTier>;
   parallaxIntensity: number;
@@ -724,6 +816,8 @@ function UniverseScene({
   craftLite?: boolean;
   craftReveal?: ConstellationRevealCraft;
   skyLayers?: SkyCraftLayerMap;
+  /** Chemin 1 hub — plan test-ciel puis dolly Hero (pas RevealCamera KEEP). */
+  hubSkyCamera?: boolean;
 }) {
   const theme = useSkyTheme();
   // Pendant closing, on garde le tracking pour suivre l’étoile au retour
@@ -756,6 +850,8 @@ function UniverseScene({
   const heroParallax = craftReveal?.heroParallax ?? DEFAULT_HERO_PARALLAX;
   const heroName = craftReveal?.heroName;
   const hideHeroName = craftReveal?.hideHeroName ?? false;
+  const hubPrompt = craftReveal?.hubPrompt === true;
+  const hubTapHint = craftReveal?.hubTapHint;
   const slotStars = craftReveal?.slotStars ?? DEFAULT_SLOT_STARS;
   const bridges = craftReveal?.bridges ?? DEFAULT_BRIDGES;
   const slotLit = craftReveal?.slotLit;
@@ -826,8 +922,12 @@ function UniverseScene({
         target={focus ? focus.pos : null}
         active={focusing}
       />
+      <HubSkyCamera
+        enabled={hubSkyCamera && showConstellation && !focusing}
+        graphScale={graphScale}
+      />
       <RevealCamera
-        enabled={showConstellation && !focusing}
+        enabled={showConstellation && !focusing && !hubSkyCamera}
         revealT={revealTProp}
         revealTRef={revealTRef}
         graphScale={graphScale}
@@ -977,6 +1077,10 @@ function UniverseScene({
                 heroParallax={heroParallax}
                 heroName={heroName}
                 hideHeroName={hideHeroName}
+                hubPrompt={hubPrompt}
+                hubTapHint={hubTapHint}
+                reportHeroScreen={hubSkyCamera && showConstellation}
+                hubBirthMode={hubSkyCamera}
                 slotStars={slotStars}
                 bridges={bridges}
                 slotLit={slotLit}
@@ -1055,6 +1159,12 @@ export type SanctuaryUniverseProps = {
   skyCraftChrome?: boolean;
   /** Lab — visibilité par layer (undefined = tout on sauf constellation). */
   skyLayers?: SkyCraftLayerMap;
+  /** Premier frame Canvas prêt (hub T1b — fondu PNG → WebGL). */
+  onCanvasReady?: () => void;
+  /** Chemin 1 hub idle — plan ciel test-ciel + dolly Hero. */
+  hubSkyCamera?: boolean;
+  /** Projection étoile Hero → overlay clic (hub). */
+  onStarAnchorChange?: (anchor: ScreenAnchor | null) => void;
 };
 
 export function SanctuaryUniverse({
@@ -1069,6 +1179,9 @@ export function SanctuaryUniverse({
   constellationVisible,
   skyCraftChrome = true,
   skyLayers,
+  onCanvasReady,
+  hubSkyCamera = false,
+  onStarAnchorChange,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -1087,9 +1200,13 @@ export function SanctuaryUniverse({
   const [wanderOn, setWanderOn] = useState(false);
   const [starAnchor, setStarAnchor] = useState<ScreenAnchor | null>(null);
 
-  const onStarScreen = useCallback((anchor: ScreenAnchor | null) => {
-    setStarAnchor(anchor);
-  }, []);
+  const onStarScreen = useCallback(
+    (anchor: ScreenAnchor | null) => {
+      setStarAnchor(anchor);
+      onStarAnchorChange?.(anchor);
+    },
+    [onStarAnchorChange],
+  );
 
   const beginFocus = useCallback(
     (soulId: string, pos: [number, number, number]) => {
@@ -1291,6 +1408,11 @@ export function SanctuaryUniverse({
           gl={createRenderer}
           onCreated={({ gl }) => {
             gl.setClearColor(skyTheme.scene.background, 1);
+            if (onCanvasReady) {
+              requestAnimationFrame(() => {
+                onCanvasReady();
+              });
+            }
           }}
         >
           <Suspense fallback={null}>
@@ -1308,6 +1430,7 @@ export function SanctuaryUniverse({
                 craftLite={craftLite}
                 craftReveal={craftReveal}
                 skyLayers={skyLayers}
+                hubSkyCamera={hubSkyCamera}
               />
             </SkyThemeProvider>
           </Suspense>

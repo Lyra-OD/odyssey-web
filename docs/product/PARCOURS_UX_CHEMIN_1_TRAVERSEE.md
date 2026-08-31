@@ -4,13 +4,16 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — **T1b invite hub** : texte craft Html sur Hero · birth hub · clic ancré projection.
+- 31 août 2026 — **T1b caméra hub** : `HubSkyCamera` (plan test-ciel + dolly Hero).
+- 31 août 2026 — **T1b code** : hub WebGL lite · crossfade gel 2D · chrome hub masqué.
 - 31 août 2026 — **Figé** : Chemins A/B · contrat hub WebGL animé ↔ gel 2D (clic Hero · fermer · Continuer).
 - 31 août 2026 — **G1** : nom de famille obligatoire · prénom = Hero · retour draft → panneau direct.
 - 31 août 2026 — T1 code : backdrop · hub Hero · panneau (placeholder 2D — cible hub animé T1b).
 - 31 août 2026 — Chaînons P0–P1 · audit [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md).
 - 31 août 2026 — Canon Chemin 1 §0–4 · matrice stub/ready · plan tranches.
 
-**Statut :** spec produit **figée** · code **T1 placeholder** · prochaine tranche **T1b** (hub animé + transitions gel) — voir §8.
+**Statut :** spec produit **figée** · code **T1b livré** (hub animé + transitions gel) · prochaine tranche **T2** — voir §8.
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
@@ -75,7 +78,7 @@
 
 | Phase | Rendu ciel | GPU | Panneau |
 |-------|------------|-----|---------|
-| **Hub idle** (Hero attend) | **WebGL animé** — vrai ciel · Hero pulse · layers **hub-lite** | Actif (budget serré) | Fermé |
+| **Hub idle** (Hero attend) | **WebGL animé** — plan test-ciel puis dolly Hero (`HubSkyCamera`) | Actif (budget serré) | Fermé |
 | **Clic Hero** | `transition.hubFreezeTo2D` | Stop loop · capture ou frame alignée | Ouvre — **verre teinté** (distinct du hub) |
 | **Saisie** (`panel.essentials`) | **Image 2D fixe** (même frame) | **Off** | Ouvert — zéro lag clavier |
 | **Fermer panneau** (X / Esc) | `transition.panelCloseToHub` — fondu 2D → **reprise WebGL hub** | Reprise hub-lite | Ferme |
@@ -371,6 +374,7 @@ Les tranches **ne dépendent pas** du prologue craft pour démarrer.
 | **Inventaire complet** | Living | [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md) — gate T1 §11 |
 | **G1 nom de famille** | ✅ Tranché | **Obligatoire** pour l'hommage (prénom + nom + 2 dates). Hero / constellation = **prénom** live. |
 | **Contrat hub ↔ 2D** | ✅ Figé | §2b · Registry transitions |
+| **Caméra hub** | `HubSkyCamera` — plan test-ciel (z=7.5) → dolly Hero (~5.15) · prologue éclipse skip | T1b |
 | **Chemins A / B** | ✅ Figé | §1b |
 | **Frame ciel 2D** | Capture hub ou export lab · alignement caméra | T1b |
 | **Chemins 2+** | Hors scope | Chemin 1b Salon · invité seul · retour hub |

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { WizardStep1RevealPhase } from "@/src/hooks/useWizardStep1Reveal";
 
@@ -10,6 +10,13 @@ export type ParcoursPhase =
   | "panel.essentials"
   | "ritual.reveal"
   | "hub.postReveal";
+
+export type ParcoursSkyTransition =
+  | null
+  | "hubFreezeTo2D"
+  | "panelCloseToHub";
+
+const SKY_CROSSFADE_MS = 420;
 
 type UseParcoursUxOptions = {
   /** Wizard étape 1 Sanctuaire (organisateur). */
@@ -38,6 +45,15 @@ export function useParcoursUx({
   const [phase, setPhase] = useState<ParcoursPhase>(() =>
     resolveInitialPhase(enabled, virginHub),
   );
+  const [transition, setTransition] = useState<ParcoursSkyTransition>(null);
+  const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearTransitionTimer = useCallback(() => {
+    if (transitionTimerRef.current) {
+      clearTimeout(transitionTimerRef.current);
+      transitionTimerRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     if (!enabled) {
@@ -52,23 +68,41 @@ export function useParcoursUx({
   useEffect(() => {
     if (!enabled) return;
     if (revealPhase === "reward") {
+      clearTransitionTimer();
+      setTransition(null);
       setPhase("ritual.reveal");
     } else if (revealPhase === "done") {
       setPhase("hub.postReveal");
     }
-  }, [enabled, revealPhase]);
+  }, [enabled, revealPhase, clearTransitionTimer]);
+
+  useEffect(() => () => clearTransitionTimer(), [clearTransitionTimer]);
 
   const openPanel = useCallback(() => {
     if (!enabled) return;
     if (revealPhase === "reward") return;
-    setPhase("panel.essentials");
-  }, [enabled, revealPhase]);
+    if (phase !== "hub.idle") return;
+    clearTransitionTimer();
+    setTransition("hubFreezeTo2D");
+    transitionTimerRef.current = setTimeout(() => {
+      setPhase("panel.essentials");
+      setTransition(null);
+      transitionTimerRef.current = null;
+    }, SKY_CROSSFADE_MS);
+  }, [enabled, revealPhase, phase, clearTransitionTimer]);
 
   const closePanel = useCallback(() => {
     if (!enabled) return;
     if (revealPhase !== "typing") return;
-    setPhase("hub.idle");
-  }, [enabled, revealPhase]);
+    if (phase !== "panel.essentials") return;
+    clearTransitionTimer();
+    setTransition("panelCloseToHub");
+    transitionTimerRef.current = setTimeout(() => {
+      setPhase("hub.idle");
+      setTransition(null);
+      transitionTimerRef.current = null;
+    }, SKY_CROSSFADE_MS);
+  }, [enabled, revealPhase, phase, clearTransitionTimer]);
 
   useEffect(() => {
     if (!enabled || phase !== "panel.essentials") return;
@@ -79,24 +113,57 @@ export function useParcoursUx({
     return () => window.removeEventListener("keydown", onKey);
   }, [enabled, phase, closePanel]);
 
-  const showWebGL =
+  const showRitualWebGL =
     enabled &&
     (phase === "ritual.reveal" || phase === "hub.postReveal");
-  const showBackdrop = enabled && !showWebGL;
-  const showHubHero = enabled && phase === "hub.idle";
+
+  /** Hub + panneau partagent la stack ciel — opacité croisée (T1b). */
+  const mountSkyStack =
+    enabled &&
+    !showRitualWebGL &&
+    (phase === "hub.idle" ||
+      phase === "panel.essentials" ||
+      transition !== null);
+
+  const mountHubWebGL = mountSkyStack;
+  const mountBackdrop = mountSkyStack;
+
+  const hubWebGLOpacity =
+    transition === "hubFreezeTo2D"
+      ? 0
+      : phase === "hub.idle" || transition === "panelCloseToHub"
+        ? 1
+        : 0;
+
+  const backdropOpacity =
+    transition === "panelCloseToHub"
+      ? 0
+      : phase === "panel.essentials" || transition === "hubFreezeTo2D"
+        ? 1
+        : 0;
+
+  const showHubHero = enabled && phase === "hub.idle" && !transition;
   const showEssentialsPanel =
     enabled &&
     (phase === "panel.essentials" ||
       phase === "ritual.reveal" ||
       phase === "hub.postReveal");
 
+  const hubChromeHidden = enabled && showHubHero;
+
   return {
     phase,
+    transition,
     openPanel,
     closePanel,
-    showWebGL,
-    showBackdrop,
+    showHubWebGL: mountHubWebGL,
+    showRitualWebGL,
+    showBackdrop: mountBackdrop,
+    hubWebGLOpacity,
+    backdropOpacity,
     showHubHero,
     showEssentialsPanel,
+    hubChromeHidden,
+    crossfadeMs: SKY_CROSSFADE_MS,
   };
 }

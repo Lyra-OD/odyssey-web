@@ -55,6 +55,7 @@ import { SkyBackdrop } from "@/src/components/contribute/SkyBackdrop";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
 import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
 import { SanctuaryHubHero } from "@/src/components/tribute/SanctuaryHubHero";
+import { ParcoursHubBodyFlag } from "@/src/components/tribute/ParcoursHubBodyFlag";
 import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
 import { useWizardDraftLifecycle } from "@/src/hooks/useWizardDraftLifecycle";
 import {
@@ -545,6 +546,35 @@ export function TributeWizard({
     revealPhase: step1Reveal.phase,
     virginHub: step1VirginHub,
   });
+  const [hubWebGLReady, setHubWebGLReady] = useState(false);
+  const [hubStarAnchor, setHubStarAnchor] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const onHubWebGLReady = useCallback(() => setHubWebGLReady(true), []);
+  const onHubStarAnchor = useCallback(
+    (anchor: { x: number; y: number } | null) => setHubStarAnchor(anchor),
+    [],
+  );
+
+  useEffect(() => {
+    if (!step1Sky || !step1Parcours.showHubWebGL) {
+      setHubWebGLReady(false);
+      setHubStarAnchor(null);
+    }
+  }, [step1Sky, step1Parcours.showHubWebGL]);
+
+  /** P0 : PNG immédiat au hub · fondu quand WebGL prêt. */
+  const hubBackdropOpacity = step1Parcours.showHubHero
+    ? hubWebGLReady
+      ? 0
+      : 1
+    : step1Parcours.backdropOpacity;
+
+  const hubWebGLLayerOpacity = hubWebGLReady
+    ? step1Parcours.hubWebGLOpacity
+    : 0;
+
   const step1RewardPendingRef = useRef(false);
 
   // Réaffecté à chaque rendu maintenant que les champs Essentiels vivent dans
@@ -900,16 +930,37 @@ export function TributeWizard({
 
   return (
     <>
-      {step1Sky && step1Parcours.showBackdrop ? <SkyBackdrop /> : null}
+      <ParcoursHubBodyFlag active={step1Parcours.hubChromeHidden} />
+      {step1Sky && step1Parcours.showBackdrop ? (
+        <SkyBackdrop opacity={hubBackdropOpacity} />
+      ) : null}
       {step1Parcours.showHubHero ? (
         <SanctuaryHubHero
-          prompt={copy.parcoursHeroPrompt}
-          tapHint={copy.parcoursHeroTapHint}
           openLabel={copy.parcoursHeroOpenLabel}
+          webglHero={hubWebGLReady}
+          starAnchor={hubStarAnchor}
           onOpen={step1Parcours.openPanel}
         />
       ) : null}
-      {step1Sky && step1Parcours.showWebGL ? (
+      {step1Sky && step1Parcours.showHubWebGL ? (
+        <SanctuaryWizardStep1Sky
+          locale={locale}
+          firstName={firstName}
+          birthDate={birthDate}
+          revealT={step1Reveal.revealT}
+          revealTRef={step1Reveal.revealTRef}
+          hideHeroName={step1Reveal.hideHeroName}
+          skyActive
+          silhouetteIdle={false}
+          variant="hub-lite"
+          layerOpacity={hubWebGLLayerOpacity}
+          onHubReady={onHubWebGLReady}
+          hubPrompt={copy.parcoursHeroPrompt}
+          hubTapHint={copy.parcoursHeroTapHint}
+          onStarAnchorChange={onHubStarAnchor}
+        />
+      ) : null}
+      {step1Sky && step1Parcours.showRitualWebGL ? (
         <SanctuaryWizardStep1Sky
           locale={locale}
           firstName={firstName}
@@ -922,6 +973,7 @@ export function TributeWizard({
           panelFading={
             step1Reveal.phase === "reward" || step1Reveal.phase === "done"
           }
+          variant="ritual"
         />
       ) : null}
     <div
@@ -966,14 +1018,24 @@ export function TributeWizard({
           saved: copy.autosaveSaved,
           error: copy.autosaveError,
         }}
-        className="-translate-y-1 md:-translate-y-2"
+        className={
+          step1Parcours.hubChromeHidden
+            ? "-translate-y-1 opacity-0 md:-translate-y-2"
+            : "-translate-y-1 md:-translate-y-2"
+        }
       />
 
       {/* En-tête sticky — dès l'Étape 1. Le déclencheur du Dossier de forfait
           (typographique, sans chrome de bouton) y est toujours visible, même
           avant que l'identité du défunt ne soit renseignée ; le bloc
           avatar/nom ne rejoint l'en-tête qu'à partir de l'Étape 2. */}
-      <header className="sticky top-0 z-50 -mx-6 mb-8 border-b border-white/10 bg-black/40 px-6 py-3.5 backdrop-blur-xl md:-mx-10 md:px-10">
+      <header
+        className={`sticky top-0 z-50 -mx-6 mb-8 border-b border-white/10 bg-black/40 px-6 py-3.5 backdrop-blur-xl transition-opacity duration-500 md:-mx-10 md:px-10 ${
+          step1Parcours.hubChromeHidden
+            ? "pointer-events-none opacity-0"
+            : ""
+        }`}
+      >
         <div
           className={`mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 ${
             currentStep >= 2 ? "sm:justify-between" : "sm:justify-end"
@@ -1127,6 +1189,13 @@ export function TributeWizard({
         className="flex flex-col"
         aria-labelledby={wizardTitleId}
       >
+        <div
+          className={
+            step1Parcours.hubChromeHidden
+              ? "pointer-events-none h-0 overflow-hidden opacity-0"
+              : undefined
+          }
+        >
         <WizardPhaseProgress
           phases={wizardPhases}
           currentStep={progressCurrentStep}
@@ -1139,8 +1208,9 @@ export function TributeWizard({
             stepProgressLabel: copy.stepProgressLabel,
           }}
         />
+        </div>
 
-        {!isEditor ? (
+        {!isEditor && !step1Parcours.hubChromeHidden ? (
         <StickyPriceBar
           extensions={extensions}
           basePackage={basePackage}
@@ -1175,7 +1245,11 @@ export function TributeWizard({
           {currentStep === 1 && step1Parcours.showEssentialsPanel ? (
             <div
               className={[
-                "relative rounded-2xl border border-white/10 bg-black/45 px-6 py-8 shadow-[0_8px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all duration-500 md:px-8 md:py-10",
+                "relative rounded-2xl border px-6 py-8 shadow-[0_8px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all duration-500 md:px-8 md:py-10",
+                step1Parcours.phase === "panel.essentials" &&
+                step1Reveal.phase === "typing"
+                  ? "border-teal-400/20 bg-teal-950/15"
+                  : "border-white/10 bg-black/45",
                 step1Reveal.phase === "reward" ||
                 step1Reveal.phase === "done"
                   ? "pointer-events-none opacity-0"

@@ -22,6 +22,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/** Chemin 1 hub idle — masque chrome shell studio (logo · déconnexion · footer). */
+html[data-parcours-hub-idle] .studio-shell-chrome,
+html[data-parcours-hub-idle] .studio-shell-halo {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 420ms ease-out;
+}
+
 :root {
   --salon-cyan: #00e8f0;
   --salon-cyan-dim: rgba(0, 232, 240, 0.4);

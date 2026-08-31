@@ -4,6 +4,7 @@ import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Fog, Vector3 } from "three";
 
+import { hubSkyCameraDriveRef } from "./HubSkyCamera";
 import { idleCameraRef } from "./IdleCameraDrift";
 import { revealCameraDriveRef } from "./RevealCamera";
 import { useSkyTheme } from "./skyTheme";
@@ -37,7 +38,7 @@ export function FocusCamera({ target, active }: FocusCameraProps) {
   const fogBreathAmp = useSkyTheme().scene.idle?.fogBreathAmp ?? 0;
 
   useFrame((state) => {
-    if (revealCameraDriveRef.active) return;
+    if (revealCameraDriveRef.active || hubSkyCameraDriveRef.active) return;
 
     const cam = state.camera;
     const fog = state.scene.fog instanceof Fog ? state.scene.fog : null;

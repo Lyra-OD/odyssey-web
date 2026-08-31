@@ -5,18 +5,22 @@ export const SKY_BACKDROP_IMAGE_SRC = "/craft/sky/milky-way-v1.jpg";
 
 type SkyBackdropProps = {
   className?: string;
+  /** 0–1 — fondu crossfade hub WebGL ↔ gel 2D (T1b). */
+  opacity?: number;
 };
 
 /**
- * Ciel fixe Traversée — zéro WebGL pendant hub / saisie (T1).
+ * Ciel fixe Traversée — image gelée pendant saisie panneau (zéro WebGL sous champs).
  */
-export function SkyBackdrop({ className = "" }: SkyBackdropProps) {
+export function SkyBackdrop({ className = "", opacity = 1 }: SkyBackdropProps) {
   return (
     <div
       className={[
-        "pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#020202]",
+        "pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#020202] transition-opacity ease-out",
+        opacity < 0.02 ? "opacity-0" : "opacity-100",
         className,
       ].join(" ")}
+      style={{ transitionDuration: "420ms", opacity }}
       aria-hidden
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}

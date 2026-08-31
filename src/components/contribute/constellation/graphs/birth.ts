@@ -302,3 +302,50 @@ export function resolveBirth(revealT: number): BirthPhases {
 export const BIRTH_SEGMENTS = SEG;
 export const HERO_C_SEGMENTS = C;
 export const BIRTH_HERO_START = HERO_START;
+
+/**
+ * Chemin 1 hub — étoile d’abord (dolly caméra), invite ensuite (bounce nom craft).
+ * `approach` = progression HubSkyCamera 0→1.
+ */
+export function resolveHubBirth(approach: number): BirthPhases {
+  const u = clamp01(approach);
+  const heroU = clamp01((u - 0.05) / 0.58);
+  const heroPhase = resolveBirth(0.24 + heroU * (SEG.C_END - 0.24 - 0.01));
+  const nameU = clamp01((u - 0.5) / 0.5);
+  const namePhase = resolveBirth(0.02 + nameU * (SEG.B_END - 0.02));
+
+  if (u < 0.5) {
+    return {
+      ...heroPhase,
+      nameBirth: 0,
+      nameClarity: 0,
+      nameLift: 0,
+      nameScale: 0,
+      nameTrack: 0,
+      nameDriftX: 0,
+      nameDriftY: 0,
+      nameGlow: 0,
+    };
+  }
+
+  return {
+    ...heroPhase,
+    nameBirth: namePhase.nameBirth,
+    nameClarity: namePhase.nameClarity,
+    nameLift: namePhase.nameLift,
+    nameScale: namePhase.nameScale,
+    nameTrack: namePhase.nameTrack,
+    nameDriftX: namePhase.nameDriftX,
+    nameDriftY: namePhase.nameDriftY,
+    nameGlow: namePhase.nameGlow,
+  };
+}
+
+/** Invite hub visible (tap hint suit ~0.72). */
+export function hubPromptVisible(approach: number): boolean {
+  return clamp01(approach) >= 0.48;
+}
+
+export function hubTapHintVisible(approach: number): boolean {
+  return clamp01(approach) >= 0.72;
+}

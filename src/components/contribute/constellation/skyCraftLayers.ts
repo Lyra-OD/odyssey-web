@@ -19,6 +19,27 @@ export type SkyCraftLayerId =
 
 export type SkyCraftLayerMap = Partial<Record<SkyCraftLayerId, boolean>>;
 
+/** Chemin 1 hub idle — ciel vivant léger · Hero seul (pas de traits reveal). */
+export const SKY_HUB_LITE_LAYERS: Record<SkyCraftLayerId, boolean> = {
+  fond: true,
+  fog: true,
+  panorama: false,
+  gasFar: true,
+  ghostStars: false,
+  gasRose: true,
+  gasMauve: true,
+  gasTeal: true,
+  cosmicDust: true,
+  dustLanes: true,
+  zodiacal: false,
+  aurora: false,
+  starsBand: true,
+  starsField: true,
+  shootingStars: false,
+  /** Hero KEEP @ revealT 0.56 — visible sans traits ; caméra = HubSkyCamera. */
+  constellation: true,
+};
+
 /** Lab `/test-sky` — constellation off par défaut (fond seul). */
 export const SKY_LAB_DEFAULT_LAYERS: Record<SkyCraftLayerId, boolean> = {
   fond: true,
