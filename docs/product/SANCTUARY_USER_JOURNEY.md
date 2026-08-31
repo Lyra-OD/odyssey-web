@@ -4,10 +4,10 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — **Figé** : hub WebGL animé ↔ gel 2D (clic Hero · fermer · Continuer) · Chemins A/B — [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §1b §2b.
+- 31 août 2026 — **G1 tranché** : prénom (Hero) + **nom de famille obligatoire** (hommage) + 2 dates — aligné code `canProceedEssential`.
 - 31 août 2026 — Chemin 1 Traversée + audit trous [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md) · impl active vs §4.
-- 31 août 2026 — Vrai final : date→silhouette idle · panneau wizard = ciel gelé (obsolète → Traversée 2D).
-- 31 août 2026 — J2 cœur produit : skyActive · birthDate→Libra/Leo · dwell post-reveal · Plus tard Coffre (sans previewMode).
-- 31 août 2026 — Continuer = play craft 0→1 (14 s) + dwell — plus de raccourci depuis idle 0,56.
+- 31 août 2026 — T1 placeholder : `SkyBackdrop` · hub Hero · `useParcoursUx` — cible T1b hub WebGL lite.
 - 26 août 2026 — §11b **matrice implémentation** (vérité code J1–J9) · écart D1 documenté · playbook démo = hors ce doc.
 
 **Liens :**
@@ -303,7 +303,7 @@ Animations réutilisent le craft : [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_C
 
 | # | Sujet | Décision |
 |---|--------|----------|
-| **D1** | Champs étape 1 | **Prénom + date de naissance + date de décès** — indispensables pour figer la constellation. |
+| **D1** | Champs étape 1 | **Prénom + nom de famille + date de naissance + date de décès** — indispensables pour l'hommage et figer la constellation. **Prénom** = Hero / constellation live · **nom** = identité complète de l'hommage. |
 | **D2** | Étape 2 | **Générer le lien / Inviter seulement.** Co-organisateurs → Studio. **Canal-agnostique** — Partager (sheet) · Copier message · QR. Skip immédiat. |
 | **D3** | Étape 3 | **« Plus tard » obligatoire.** Ne jamais bloquer. Photo → étoile s’allume ; skip → fantômes. |
 | **D4** | Slots invités (reste) | Dépôt invité → tiroir ; allumer un slot Leo = **curation famille** (hors premier dépôt orga étape 3). |
@@ -350,25 +350,31 @@ Ordre craft recommandé (sessions) : **C1 → C2 → C3 → C4** (C5 en parallè
 
 ### 11b. État d’implémentation (vérité code · canon)
 
-Dernière sync : **26 août 2026**. Mettre à jour **ici** à chaque milestone J — pas dans le playbook démo.
+Dernière sync : **31 août 2026**. Mettre à jour **ici** à chaque milestone J — pas dans le playbook démo.
+
+**Contrat rendu ciel (figé) :** hub = **WebGL lite animé** · clic Hero = **gel 2D** + panneau verre · fermer = **reprise hub** · Continuer = reveal WebGL. Détail : Traversée §2b.
+
+| Chemin | Entrée | Prologue | Étape 1 |
+|--------|--------|----------|---------|
+| **A** Première traversée | Compte neuf · draft vierge | Oui 1× | Hub animé → clic Hero → gel + panneau |
+| **B** Retour | Compte + draft | Non | Draft rempli → panneau direct · vierge → hub comme A |
 
 | Phase | Vision (§4) | Code aujourd’hui | Fichiers / surface |
 |-------|-------------|------------------|---------------------|
-| **J1** Prologue | Éclipse → wormhole → Hero seule | ⏳ **Labs only** (`/test-eclipse*`, `/test-wormhole`) | Pas de route prod onboarding |
-| **J2** Overlay étape 1 | Panneau verre · ciel visible · birth live · reveal validation | 🟡 **Partiel** | `SanctuaryWizardStep1Sky.tsx` · `useWizardStep1Reveal.ts` · `wizardBirthReveal.ts` · `TributeWizard.tsx` (`step1Sky` si organisateur, étape 1) |
+| **J1** Prologue | Éclipse → wormhole → **hub WebGL** | ⏳ **Labs only** | Pas de route prod onboarding |
+| **J2** Overlay étape 1 | Hub animé → gel 2D · panneau verre · reveal | 🟡 **T1 placeholder** | `SkyBackdrop` · `SanctuaryHubHero` · `useParcoursUx` · `TributeWizard.tsx` |
 | **J3** Hub post-reveal | Carte Inviter / Continuer · pause 2–4 s | ⏳ **Absent** | Après reveal → `goNext` direct vers étape 2 |
 | **J4** Invite overlay | Canal-agnostique · skip · sans co-org | 🟡 **Ancien flow** | `SanctuaryInviteStep` — co-org encore possible · pas overlay ciel |
 | **J5–J9** | Tiroir global · nav · Lueurs · mobile | ⏳ | Wizard étapes 2–7 inchangées hors J2 |
 
-**J2 — détail livré :**
-- Ciel fullscreen (`SanctuaryUniverse` background) + panneau verre formulaire.
-- **Date valide → silhouette idle** (template zodiaque settled whisper) sans attendre Continuer.
-- **Panneau saisie → ciel gelé** (`skyActive` seulement en reward/done) · une paint via `skyWakeKey`.
-- Naissance Hero au **prénom** (snap beats craft ; pas de loop WebGL en typing).
-- Continuer → reveal 0→1 + dwell puis étape 2 (rituel réveil à peaufiner).
-- Séparation Hero↔nom (spring) — craft [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md).
+**J2 — détail livré (T1 placeholder · cible T1b) :**
+- Hub Hero + backdrop PNG (`SkyBackdrop`) — **cible** : WebGL hub-lite animé.
+- Machine états `useParcoursUx` : `hub.idle` · `panel.essentials` · `ritual.reveal`.
+- Clic Hero → panneau verre · fermer (X/Esc) → retour hub · **cible** : `hubFreezeTo2D` / `panelCloseToHub`.
+- Continuer → WebGL reveal 0→1 + dwell puis étape 2 (direct — hub J3 ⏳).
+- Chemins A/B : `virginHub` · draft rempli → panneau sans hub.
 
-**Écart D1 (à trancher) :** décision CEO = **prénom + 2 dates** (§10 D1). Code wizard exige encore **nom de famille** (`canProceedEssential` dans `TributeWizard.tsx`). Constellation / displayName utilisent prénom en live ; le nom reste requis pour « Continuer ».
+**D1 / G1 (31 août 2026 — tranché) :** prénom + **nom de famille** + 2 dates requis. Le Hero et la constellation réagissent au **prénom** ; le **nom** ancre l'identité de l'hommage (code = spec).
 
 ---
 

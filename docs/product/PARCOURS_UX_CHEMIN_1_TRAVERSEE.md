@@ -4,8 +4,13 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 31 août 2026 — Chaînons P0–P1 (Ciel≠Coffre · invité · Studio←Coffre) · §11 audit trous → [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md).
-- 31 août 2026 — Canon Chemin 1 : Traversée §0–4 · matrice stub/ready · plan tranches · séparation 2D / rituel WebGL.
+- 31 août 2026 — **Figé** : Chemins A/B · contrat hub WebGL animé ↔ gel 2D (clic Hero · fermer · Continuer).
+- 31 août 2026 — **G1** : nom de famille obligatoire · prénom = Hero · retour draft → panneau direct.
+- 31 août 2026 — T1 code : backdrop · hub Hero · panneau (placeholder 2D — cible hub animé T1b).
+- 31 août 2026 — Chaînons P0–P1 · audit [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md).
+- 31 août 2026 — Canon Chemin 1 §0–4 · matrice stub/ready · plan tranches.
+
+**Statut :** spec produit **figée** · code **T1 placeholder** · prochaine tranche **T1b** (hub animé + transitions gel) — voir §8.
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
@@ -17,7 +22,6 @@
 - Frames DA (à compléter) : [`../DA_SCREENS.md`](../DA_SCREENS.md)
 - Playbook démo VP : [`../MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md)
 
-**Statut :** spec produit **figée** (Chemin 1). **Implémentation** : à démarrer — voir §8 plan tranches.  
 **Règle :** une animation craft non terminée **ne bloque pas** le chemin — stub documenté dans [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md).
 
 ---
@@ -32,7 +36,22 @@
 | **Image 2D → moteur 3D** | Même cadrage, aucun saut visuel — la magie = le même univers qui s'allume |
 | **Draft = vérité** | Prénom, dates, signe, étape parcours vivent dans le draft wizard — pas dans Three.js |
 | **Wizard 7 étapes** | Rail métier conservé (autosave, forfait, checkout) — la Traversée est la **mise en scène** |
-| **Chemin 1** | Parcours linéaire unique pour la première visite organisateur — pas de moteur de quêtes en V1 |
+| **Chemin 1** | Parcours linéaire première visite — **deux entrées** A / B (§1b) |
+| **Hub ↔ panel** | Ciel **animé** au hub · **gel 2D** à la saisie · réversible (§2b) |
+
+---
+
+## 1b. Deux chemins d'entrée (figé — ne pas mélanger)
+
+| | **Chemin A — Première traversée** | **Chemin B — Retour** |
+|--|-----------------------------------|------------------------|
+| **Qui** | Compte neuf · projet vierge · jamais vu le prologue | Compte + draft existant |
+| **Prologue éclipse** | **Oui** (1×) | **Non** |
+| **Arrivée ciel** | Après cinéma → **hub WebGL animé** + Hero | Pas de « Pose son nom » si déjà ancré |
+| **Entrée étape 1** | Clic Hero → gel 2D + panneau verre | **Draft rempli** → panneau direct · **vierge** → hub Hero comme A |
+| **Chorégraphie** | Film complet §0→1 | Reprend où le draft indique |
+
+**Règle code :** flags séparés (`hasSeenPrologue`, `virginHub`, `draft essentials`) — **jamais** une seule UI pour les deux.
 
 ---
 
@@ -48,6 +67,48 @@
 
 ---
 
+## 2b. Contrat rendu ciel — hub animé ↔ gel 2D (figé 31 août 2026)
+
+> **Hub = lieu vivant (WebGL léger). Panneau = travail (2D gelée + verre). Même cadrage — le ciel se fige, il ne change pas de décor.**
+
+### Matrice des modes
+
+| Phase | Rendu ciel | GPU | Panneau |
+|-------|------------|-----|---------|
+| **Hub idle** (Hero attend) | **WebGL animé** — vrai ciel · Hero pulse · layers **hub-lite** | Actif (budget serré) | Fermé |
+| **Clic Hero** | `transition.hubFreezeTo2D` | Stop loop · capture ou frame alignée | Ouvre — **verre teinté** (distinct du hub) |
+| **Saisie** (`panel.essentials`) | **Image 2D fixe** (même frame) | **Off** | Ouvert — zéro lag clavier |
+| **Fermer panneau** (X / Esc) | `transition.panelCloseToHub` — fondu 2D → **reprise WebGL hub** | Reprise hub-lite | Ferme |
+| **Continuer** | `transition.backdropToWebGL` — 2D → WebGL · play reveal A→F | Rituel full | Ferme ou fade |
+
+### Transitions nommées
+
+| ID | Déclencheur | Effet perceptif |
+|----|-------------|-----------------|
+| `transition.hubFreezeTo2D` | Clic Hero | Le ciel **retient son souffle** → image · panneau glisse |
+| `transition.panelCloseToHub` | Fermer panneau | Image s'efface → le ciel **respire à nouveau** |
+| `transition.backdropToWebGL` | Continuer | Le ciel **s'allume** → constellation |
+
+### Implémentation (cible)
+
+1. **Capture** canvas hub au clic **ou** PNG export lab **même caméra** idle.
+2. Crossfade **300–500 ms** · **aucun saut** de cadrage.
+3. `ForceRenderLoop` **off** tant que 2D visible.
+4. Panneau verre : blur + teinte (ex. teal très soft / bordure) — **lisiblement ≠ hub pur**.
+
+### Ce n'est PAS
+
+- WebGL full + formulaire concurrent (lag) ❌  
+- Hub = PNG statique en permanence (perd le « vrai ciel ») ❌  
+- Deux décors différents au clic (saut visuel) ❌  
+
+### Stub acceptable (T1 → T1b)
+
+- T1 actuel : PNG + Hero CSS partout → **placeholder** jusqu'à hub WebGL lite branché.  
+- Fermer panneau : fondu noir acceptable en dev · cible = reprise hub animée.
+
+---
+
 ## 3. La Traversée — Chemin 1 (spec beat par beat)
 
 ### 0. Le Prologue & Le Seuil (L'Arrivée)
@@ -56,11 +117,12 @@
 |--|--|
 | **Beat ID** | `prologue.arrival` |
 | **Fréquence** | Une fois par organisateur (flag `hasSeenPrologue` ou équivalent) |
-| **Visuel** | Cinématique éclipse → transition → **image 2D fixe** d'un ciel étoilé profond |
-| **Interaction** | Écran calme. **Hero** palpite doucement — attend qu'on vienne la réveiller |
-| **Message** (une ligne) | *« Une présence. Pose son nom. »* |
-| **Geste** | Clic Hero → le **panneau verre** wizard glisse par-dessus l'image (pas de page austère) |
-| **Stub si craft absent** | Skip prologue → hub direct avec image ciel + Hero CSS pulse |
+| **Visuel** | Cinématique éclipse → transition → **hub WebGL animé** (ciel vivant · Hero pulse) |
+| **Chemin** | **A** uniquement |
+| **Interaction** | Écran calme. **Hero** teal animé — attend qu'on vienne la réveiller |
+| **Message** (une ligne) | *« Une présence. Pose son nom. »* — le **prénom** réveille le Hero ; le formulaire demande aussi le **nom de famille** (hommage complet). |
+| **Geste** | Clic Hero → **`transition.hubFreezeTo2D`** + panneau verre (**Chemin A vierge**). **Chemin B · draft rempli** → panneau direct (sans hub). |
+| **Stub si craft absent** | Skip prologue → hub WebGL lite ou PNG + Hero CSS en dernier recours |
 | **Craft cible** | [`ODYSSEY_ECLIPSE_CRAFT.md`](../ODYSSEY_ECLIPSE_CRAFT.md) · wormhole · hand-off ciel |
 
 ---
@@ -71,7 +133,9 @@
 |--|--|
 | **Beat ID** | `anchor.form` → `anchor.reveal` → `hub.postReveal` |
 | **Wizard métier** | Étape 1 — L'essentiel (prénom, nom, dates, avatar) |
-| **Visuel saisie** | Formulaire **ultra-fluide** sur **image fixe** du ciel — zéro WebGL, zéro lag |
+| **Visuel saisie** | **`transition.hubFreezeTo2D`** puis formulaire sur **image 2D fixe** — zéro WebGL sous les champs |
+| **Panneau** | Verre **teinté** — visuellement distinct du hub (§2b) |
+| **Fermer** | **`transition.panelCloseToHub`** — retour ciel animé (draft conservé) |
 | **Déclencheur** | Clic **Continuer** (après validation + autosave flush) |
 | **Transition magique** | Image 2D → **réveil WebGL** (même cadrage) → play constellation liée à la date (~8–14 s craft) |
 | **Message post-draw** | *« Sa constellation prend forme. »* (une ligne max) |
@@ -80,6 +144,18 @@
 | **Craft cible** | [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md) — timeline A→F |
 
 **Règle zodiac :** date de naissance valide → template silhouette (ex. Balance) au moment du **rituel** reveal — pas besoin de WebGL pendant la saisie.
+
+#### Identité à l'écran (G1 + respect — tranché 31 août 2026)
+
+| Moment | Prénom | Nom de famille | Dates (années) |
+|--------|--------|----------------|----------------|
+| **Reveal A→F (rituel)** | **Seul** — au Hero, beats craft | Non | Non |
+| **Hub post-reveal / idle settle** | Visible (Hero) | **Discret** — sous ou près du prénom, typo plus petite / soft | **Ligne whisper** · ex. `1942 — 2024` |
+| **Formulaire étape 1** | Champ requis | Champ requis | Champs requis |
+
+**Beat ID :** `anchor.identityDisplay` · craft : [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md) (Html Hero) + hub chrome.
+
+**Règle :** le **prénom** porte l'émotion · **dates + nom** portent le respect — jamais « PRÉNOM NOM » en gros titre concurrent avec l'étoile pendant le wow.
 
 ---
 
@@ -190,23 +266,19 @@ Ces beats **ne remplacent pas** les rituels WebGL — une ligne + carte UI suffi
 États **UX** (couche au-dessus du wizard) — le wizard step 1–7 reste la source métier.
 
 ```
-prologue          → cinéma éclipse (skippable)
-hub.idle          → image ciel + Hero pulse + message
-panel.essentials  → panneau verre étape 1 (backdrop 2D)
-ritual.reveal     → WebGL mount + play constellation + dwell
-hub.postReveal    → admiration + **hub.skyVsVault** + **hub.noRush** + carte Inviter / Continuer
-panel.invite      → panneau étape 2 + **circle.guestJourney** après 1ère action
-vault.filmBridge  → beat pédagogique Coffre → film
-panel.media       → panneau étape 3 (Coffre) · **media.firstDeposit** si dépôt
-studio.storyboard → entrée step 4 · **studio.filmBridge**
-studio.*          → étapes 4–7 sans ciel WebGL
-checkout.farewell → ligne poétique + commande
+prologue          → cinéma éclipse (Chemin A · skippable)
+hub.idle          → WebGL hub-lite animé + Hero pulse + message
+panel.essentials  → hubFreezeTo2D + panneau verre (2D fixe)
+ritual.reveal     → backdropToWebGL + play constellation + dwell
+hub.postReveal    → admiration + chaînons + carte Inviter / Continuer
+...
 ```
 
-**Transitions fluides obligatoires :**
-- `hub.idle` ↔ `panel.*` — entrée/sortie panneau (fermer = retour hub, draft conservé)
-- `panel.essentials` → `ritual.reveal` — image 2D → WebGL (même cadrage)
-- `ritual.reveal` → `hub.postReveal` — pas de jump vers étape 2 sans dwell
+**Transitions fluides obligatoires (§2b) :**
+- `hub.idle` → `panel.essentials` : **`transition.hubFreezeTo2D`** + slide panneau verre
+- `panel.essentials` → `hub.idle` : **`transition.panelCloseToHub`** (fermer = retour ciel animé)
+- `panel.essentials` → `ritual.reveal` : **`transition.backdropToWebGL`** (Continuer)
+- `ritual.reveal` → `hub.postReveal` : pas de jump vers étape 2 sans dwell
 
 ---
 
@@ -214,8 +286,11 @@ checkout.farewell → ligne poétique + commande
 
 | Beat | Animation cible | État août 2026 | Stub acceptable |
 |------|-----------------|----------------|-----------------|
-| `prologue.arrival` | Éclipse + wormhole → ciel | ⏳ craft | Skip ou fade → image ciel |
-| `hub.heroPulse` | Hero attend clic | ⏳ | Pulse CSS sur sprite 2D |
+| `prologue.arrival` | Éclipse → hub WebGL | ⏳ craft | Skip → hub |
+| `hub.idle` | WebGL hub-lite + Hero animé | ⏳ T1b | PNG + CSS (T1 placeholder) |
+| `transition.hubFreezeTo2D` | Clic Hero | ⏳ T1b | Cut → PNG existant |
+| `transition.panelCloseToHub` | Fermer panneau | ⏳ T1b | Fade noir |
+| `hub.heroPulse` | Hero attend clic | 🟡 T1 | Pulse CSS |
 | `anchor.form` | Aucune (confort) | ✅ spec | PNG / frame export lab |
 | `anchor.reveal` | Play A→F constellation | ✅ craft lab | — |
 | `hub.postReveal` | Carte + dwell | ⏳ | UI statique 2–4 s |
@@ -276,8 +351,9 @@ Les tranches **ne dépendent pas** du prologue craft pour démarrer.
 | Tranche | Contenu | Bloqué par craft ? |
 |---------|---------|-------------------|
 | **T0** | Ce canon + Registry + index docs | Non |
-| **T1** | Infra : `SkyBackdrop` 2D · panneau verre · machine états · skip prologue | Non |
-| **T2** | Ancrage : saisie image → reveal → hub J3 | Non (reveal OK) |
+| **T1** | Infra placeholder : `SkyBackdrop` · `useParcoursUx` · hub Hero · panneau · Chemins A/B | Non · **placeholder 2D** |
+| **T1b** | Hub **WebGL lite animé** · `hubFreezeTo2D` · `panelCloseToHub` · panneau verre teinté | Partiel |
+| **T2** | `backdropToWebGL` · reveal · hub J3 | Non (reveal OK) |
 | **T3** | Cercle : overlay invite + copy | Non |
 | **T4** | Beat Coffre → film (drawer + porte double) | Non |
 | **T5** | Studio sans ciel · ligne checkout | Non |
@@ -293,13 +369,14 @@ Les tranches **ne dépendent pas** du prologue craft pour démarrer.
 | Sujet | État | Note |
 |-------|------|------|
 | **Inventaire complet** | Living | [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md) — gate T1 §11 |
-| **D1 nom de famille** | 🔴 Écart | CEO = prénom + 2 dates · code exige encore nom — **G1** |
-| **Frame ciel 2D** | À produire | Export PNG lab ou stub noir T1 |
-| **Alignement caméra 2D→3D** | Craft | Même `revealCamera` idle Z |
+| **G1 nom de famille** | ✅ Tranché | **Obligatoire** pour l'hommage (prénom + nom + 2 dates). Hero / constellation = **prénom** live. |
+| **Contrat hub ↔ 2D** | ✅ Figé | §2b · Registry transitions |
+| **Chemins A / B** | ✅ Figé | §1b |
+| **Frame ciel 2D** | Capture hub ou export lab · alignement caméra | T1b |
 | **Chemins 2+** | Hors scope | Chemin 1b Salon · invité seul · retour hub |
 
 ---
 
 ## 10. Une phrase
 
-**Prologue (wow) → Hero qui invite → ancrage calme sur image ciel → le même ciel s'allume (constellation) → hub pour respirer → cercle qui remplit le ciel → Coffre qui explique le film → studio sans distraction → le film part, le ciel reste.**
+**Prologue (A) → ciel animé → Hero invite → clic = ciel se fige + verre → Continuer = ciel s'allume → hub respire → cercle → Coffre → film → le ciel reste.**

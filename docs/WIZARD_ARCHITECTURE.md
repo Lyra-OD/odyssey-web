@@ -4,6 +4,8 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — **Figé** : hub WebGL lite ↔ gel 2D (§2b Traversée) · Chemins A/B · T1b cible.
+- 31 août 2026 — **T1 Traversée** : `SkyBackdrop` · `useParcoursUx` · `SanctuaryHubHero` · panneau open/close.
 - 31 août 2026 — Parcours UX Chemin 1 : spec Traversée · lien step 1 backdrop 2D + rituel séparé.
 - 31 août 2026 — J2 produit : Plus tard étape 3 · snap birth · pause WebGL · Libra/Leo · Continuer = play craft 0→1 (14 s) + dwell.
 - 26 août 2026 — **J2** Sanctuaire étape 1 : orchestrator + flow overlay ciel (fichiers · reveal · gate validation).
@@ -409,8 +411,10 @@ Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WAT
 
 État détaillé : [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §1 · [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b. Playbook démo : [`MEETING_PATRICE_VP.md`](MEETING_PATRICE_VP.md).
 
-- **Cible Chemin 1 :** saisie sur **backdrop 2D** (image ciel) · Continuer → transition → **rituel WebGL** reveal · hub post-reveal (J3).
-- **Aujourd'hui (transition) :** WebGL derrière panneau — à remplacer par Traversée §8 T1–T2.
+- **Aujourd'hui (T1 placeholder) :** PNG + Hero CSS · panneau open/close · WebGL **seulement** au rituel Continuer.
+- **Cible T1b :** hub **WebGL lite animé** · `hubFreezeTo2D` au clic Hero · `panelCloseToHub` à la fermeture.
+- **Cible T2 :** `backdropToWebGL` · hub J3 post-reveal.
+- **Chemins :** A (première traversée · prologue) vs B (retour · draft rempli → panneau direct) — [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §1b.
 - **Activation :** `step1Sky = !isEditor && currentStep === 1` dans `TributeWizard.tsx`.
 - **Validation :** `canProceedEssential` — prénom, **nom**, naissance, décès (écart D1 CEO : voir journey §11b).
 - **Continuer :** `flush()` → `playReward()` (0→1 craft + dwell) → **cible** hub J3 · **aujourd'hui** étape 2 direct.

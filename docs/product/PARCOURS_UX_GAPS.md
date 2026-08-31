@@ -4,6 +4,8 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — **Figé** : Chemins A/B · contrat hub WebGL ↔ gel 2D · tranche T1b.
+- 31 août 2026 — G1 tranché · T1 code partiel · gate T1 partiellement passé.
 - 31 août 2026 — Audit initial Chemin 1 · chaînons P0–P3 · matrice 6 catégories · gate avant T1.
 
 **Liens :**
@@ -63,10 +65,14 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | Trou | Priorité | Cible spec | Code aujourd'hui | Tranche |
 |------|----------|------------|------------------|---------|
-| Backdrop 2D (image ciel) | P0 | `SkyBackdrop` | ⏳ WebGL derrière formulaire | T1 |
-| Machine états `parcours` | P0 | `useParcoursUx` | ⏳ wizard step seul | T1 |
-| Panneau verre open/close fluide | P0 | `transition.panelOpen/Close` | 🟡 panneau wizard fixe | T1 |
-| Skip prologue → hub | P1 | flag `hasSeenPrologue` | ⏳ | T1 |
+| **Chemins A / B séparés** | P0 | §1b TRAVERSEE · `virginHub` · `hasSeenPrologue` | 🟡 T1 flags | T1 |
+| **Hub WebGL lite animé** | P0 | `hub.idle` — ciel vivant · Hero pulse | ⏳ PNG + CSS (placeholder) | **T1b** |
+| **`transition.hubFreezeTo2D`** | P0 | Clic Hero · stop GPU · capture/frame | ⏳ cut direct PNG | **T1b** |
+| **`transition.panelCloseToHub`** | P0 | Fermer panneau · reprise hub animé | ⏳ fade noir | **T1b** |
+| Backdrop 2D (image ciel gelé) | P0 | `SkyBackdrop` · même cadrage hub | ✅ T1 placeholder | T1b capture |
+| Machine états `parcours` | P0 | `useParcoursUx` | ✅ T1 | — |
+| Panneau verre open/close fluide | P0 | `transition.panelOpen/Close` + gel 2D | 🟡 T1 Esc + X | T1b |
+| Skip prologue → hub | P1 | flag `hasSeenPrologue` · Chemin A | ⏳ | T6 |
 | Transition image 2D → WebGL | P0 | `transition.backdropToWebGL` | ⏳ | T2 |
 | Hub post-reveal J3 | P0 | carte Inviter / Continuer + dwell | ⏳ `goNext` → step 2 | T2 |
 | Overlay invite sur ciel | P1 | `panel.invite` | 🟡 page step 2 classique | T3 |
@@ -74,8 +80,9 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 | Studio sans ciel WebGL | P1 | fond éditorial steps 4–6 | 🟡 ciel peut encore monter | T5 |
 | Tiroir Coffre global (J5) | P2 | icône depuis hub + studio | ⏳ step 3 seulement | post-T4 |
 | Nav permanente Ciel↔Wizard (J6) | P2 | 1 clic partout | ⏳ | post-T4 |
-| Frame PNG ciel exportée | P0 | asset `sky-backdrop-chemin1.png` | ⏳ | T1 (stub : noir + grain OK) |
+| Frame PNG ciel exportée | P0 | capture hub ou export lab · alignement caméra | ⏳ stub milky-way | T1b |
 | Alignement caméra 2D↔3D | P1 | même idle Z reveal | ⏳ à valider visuellement | T2 |
+| Chrome wizard atténué au hub | P1 | stepper / StickyPrice masqués en `hub.idle` | ⏳ visible (confusion UX) | T1b polish |
 
 ---
 
@@ -83,9 +90,10 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | Écart | Priorité | Spec Chemin 1 | Code actuel | Action |
 |-------|----------|---------------|-------------|--------|
-| Saisie étape 1 | P0 | Image 2D · zéro WebGL | `SanctuaryUniverse` background | Remplacer T2 |
+| Saisie étape 1 | P0 | Hub animé → **gel 2D** · zéro WebGL sous champs | T1 : PNG permanent (placeholder) | **T1b** |
+| Retour draft rempli | P0 | Chemin B → panneau direct | 🟡 `virginHub` | T1 |
 | Après reveal | P0 | Hub J3 dwell | Direct étape 2 | Brancher J3 T2 |
-| Nom de famille requis | 🔴 P0 | D1 CEO : prénom + 2 dates | `canProceedEssential` exige nom | **Décision CEO** |
+| Nom de famille requis | ✅ | Prénom + **nom** + 2 dates (G1) | `canProceedEssential` | Aligné — pas de changement code |
 | Co-org étape 2 | P1 | Invite seul (D2) | Co-org encore possible | Retirer J4 |
 | Invité → tiroir d'abord | P1 | D4 · pas auto-star | Partiel Sanctuaire | J7 · pas bloquant T1 |
 | Zodiac 12 signes | P2 | Balance + fallback Leo | Libra + Leo | Craft backlog |
@@ -139,13 +147,14 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | # | Sujet | Options | Recommandation | Gate |
 |---|--------|---------|----------------|------|
-| **G1** | Nom famille étape 1 | A) Garder requis B) D1 CEO seul | Trancher CEO | 🔴 avant Continuer UX final |
+| **G1** | Nom famille étape 1 | **✅ Tranché 31 août 2026** | **Obligatoire** — hommage = identité complète. Prénom = Hero / constellation · nom = famille / titre de l'hommage. Code `canProceedEssential` = spec. | ✅ |
 | **G2** | Hub J3 : Inviter vs Continuer défaut | A) Inviter mis en avant B) neutre | Inviter first (cercle) | P1 |
 | **G3** | `vault.filmBridge` timing | A) après step 2 B) au clic médias | A) systématique Chemin 1 | P0 spec ✅ |
 | **G4** | Retour hub après step 3+ | Toujours accessible ? | Oui J6 — stub nav P2 | P2 |
 | **G5** | Prologue obligatoire 1× | Skip dev / replay ? | Skip dev · 1× prod | P2 |
 | **G6** | Durée reveal prod | 14 s lab vs 8–10 s prod | Ajuster post-T2 perf | P2 |
-| **G7** | État parcours dans DB | `wizard_state.parcours` vs flags projet | `wizard_state` extension | P1 avant T1 |
+| **G7** | État parcours dans DB | `wizard_state.parcours` vs flags projet | `wizard_state` extension | P1 |
+| **G8** | Contrat hub animé ↔ gel 2D | **✅ Tranché 31 août 2026** | Hub = WebGL lite · clic = freeze · fermer = reprise · Continuer = reveal. §2b TRAVERSEE. | ✅ |
 
 ---
 
@@ -182,7 +191,7 @@ Cocher **tous** les P0 spec avant `SkyBackdrop` :
 - [x] Registre beats
 - [x] Audit trous (ce doc)
 - [x] Chaînons P0 spec (`hub.skyVsVault`, `circle.guestJourney`, `vault.filmBridge`)
-- [ ] **G1** nom famille — décision CEO ou acceptation temporaire doc
+- [x] **G1** nom famille — **tranché** : obligatoire (hommage) · prénom = Hero
 - [ ] Asset backdrop (PNG ou stub noir acceptable T1)
 - [ ] Clés copy P0 listées (implémentation peut suivre T1 en parallèle)
 
@@ -195,12 +204,14 @@ Cocher **tous** les P0 spec avant `SkyBackdrop` :
 | Catégorie | Combien P0 | Lesquels |
 |-----------|------------|----------|
 | **Pédagogie** | 3 | Ciel≠Coffre · invité→Coffre · Coffre→film |
-| **Infra** | 4 | Backdrop 2D · états parcours · J3 · transition 2D→3D |
-| **Code** | 2 | WebGL sous form · pas de J3 |
-| **Décision** | 1 | G1 nom famille |
+| **Infra** | 5 | Hub WebGL lite · hubFreezeTo2D · panelCloseToHub · J3 · backdropToWebGL |
+| **Code** | 2 | T1 placeholder PNG · pas de J3 |
+| **Décision** | 2 | G1 ✅ · G8 ✅ hub ↔ 2D |
 | **Craft** | 0 bloquant | Prologue skip OK |
 
-**Conclusion :** on peut **démarrer T1** dès que **G1** est tranché (ou explicitement reporté avec nom encore requis). Les chaînons P0 sont **spec** — pas besoin d'animation craft. Le plus gros risque restant n'est pas un oubli narratif : c'est **d'implémenter sans backdrop 2D** (reproduire le lag).
+| **Décision** | 0 ouvert | G1 ✅ · G8 ✅ |
+
+**Conclusion :** **G1 + G8 fermés** — T1 placeholder livré · prochaine tranche **T1b** (hub WebGL animé + transitions gel).
 
 ---
 
@@ -208,7 +219,7 @@ Cocher **tous** les P0 spec avant `SkyBackdrop` :
 
 | Quand | Mettre à jour |
 |-------|---------------|
-| Décision G1 | Ce doc §8 · TRAVERSEE §9 · SANCTUARY §11b |
-| Fin T1 | §3 surfaces · §4 code · PROJECT_STATUS |
+| Décision G1 / G8 | Ce doc §8 · TRAVERSEE §1b §2b · SANCTUARY §11b |
+| Fin T1 / T1b | §3 surfaces · §4 code · PROJECT_STATUS |
 | Clés copy | TRAVERSEE §6 · COPY_CATALOG |
 | Frames DA | DA_SCREENS.md |

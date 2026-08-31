@@ -7,6 +7,7 @@ import {
   Image as ImageIcon,
   Music2,
   User,
+  X,
 } from "lucide-react";
 import {
   useCallback,
@@ -49,8 +50,11 @@ import { VaultOnlineSourcesSection } from "@/src/components/tribute/VaultOnlineS
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
 import { useWizardStep1Reveal } from "@/src/hooks/useWizardStep1Reveal";
+import { useParcoursUx } from "@/src/hooks/useParcoursUx";
+import { SkyBackdrop } from "@/src/components/contribute/SkyBackdrop";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
 import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
+import { SanctuaryHubHero } from "@/src/components/tribute/SanctuaryHubHero";
 import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
 import { useWizardDraftLifecycle } from "@/src/hooks/useWizardDraftLifecycle";
 import {
@@ -525,7 +529,22 @@ export function TributeWizard({
   });
 
   const step1Sky = !isEditor && currentStep === 1;
+  /** Hub Hero seulement si identité jamais saisie (draft vierge à l'arrivée). */
+  const [step1VirginHub] = useState(() => {
+    const e = hydrated.essentials;
+    return (
+      !e?.firstName?.trim() &&
+      !e?.lastName?.trim() &&
+      !e?.birthDate?.trim() &&
+      !e?.deathDate?.trim()
+    );
+  });
   const step1Reveal = useWizardStep1Reveal(firstName);
+  const step1Parcours = useParcoursUx({
+    enabled: step1Sky,
+    revealPhase: step1Reveal.phase,
+    virginHub: step1VirginHub,
+  });
   const step1RewardPendingRef = useRef(false);
 
   // Réaffecté à chaque rendu maintenant que les champs Essentiels vivent dans
@@ -881,7 +900,16 @@ export function TributeWizard({
 
   return (
     <>
-      {step1Sky ? (
+      {step1Sky && step1Parcours.showBackdrop ? <SkyBackdrop /> : null}
+      {step1Parcours.showHubHero ? (
+        <SanctuaryHubHero
+          prompt={copy.parcoursHeroPrompt}
+          tapHint={copy.parcoursHeroTapHint}
+          openLabel={copy.parcoursHeroOpenLabel}
+          onOpen={step1Parcours.openPanel}
+        />
+      ) : null}
+      {step1Sky && step1Parcours.showWebGL ? (
         <SanctuaryWizardStep1Sky
           locale={locale}
           firstName={firstName}
@@ -890,7 +918,7 @@ export function TributeWizard({
           revealTRef={step1Reveal.revealTRef}
           hideHeroName={step1Reveal.hideHeroName}
           skyActive={step1Reveal.skyActive}
-          silhouetteIdle={step1Reveal.phase === "typing"}
+          silhouetteIdle={false}
           panelFading={
             step1Reveal.phase === "reward" || step1Reveal.phase === "done"
           }
@@ -1144,16 +1172,27 @@ export function TributeWizard({
         ) : null}
 
         <div className="min-h-[min(48vh,26rem)] pb-40">
-          {currentStep === 1 ? (
+          {currentStep === 1 && step1Parcours.showEssentialsPanel ? (
             <div
               className={[
-                "rounded-2xl border border-white/10 bg-black/45 px-6 py-8 shadow-[0_8px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-opacity duration-700 md:px-8 md:py-10",
+                "relative rounded-2xl border border-white/10 bg-black/45 px-6 py-8 shadow-[0_8px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all duration-500 md:px-8 md:py-10",
                 step1Reveal.phase === "reward" ||
                 step1Reveal.phase === "done"
                   ? "pointer-events-none opacity-0"
-                  : "opacity-100",
+                  : "translate-y-0 opacity-100",
               ].join(" ")}
             >
+            {step1Parcours.phase === "panel.essentials" &&
+            step1Reveal.phase === "typing" ? (
+              <button
+                type="button"
+                onClick={step1Parcours.closePanel}
+                className="absolute right-4 top-4 rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+                aria-label={copy.parcoursPanelCloseHint}
+              >
+                <X className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+              </button>
+            ) : null}
             <>
               <h2
                 id={wizardTitleId}
@@ -2080,7 +2119,10 @@ export function TributeWizard({
       />
       ) : null}
 
-      {currentStep !== 3 && currentStep !== 6 && currentStep !== 7 ? (
+      {currentStep !== 3 &&
+      currentStep !== 6 &&
+      currentStep !== 7 &&
+      !(currentStep === 1 && step1Parcours.showHubHero) ? (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
           <div
             className={`mx-auto ${

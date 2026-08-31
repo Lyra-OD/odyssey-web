@@ -4,6 +4,7 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — **Figé** : Chemins A/B · transitions `hubFreezeTo2D` · `panelCloseToHub` · hub WebGL lite.
 - 31 août 2026 — +7 beats pédagogiques · lien [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md).
 - 31 août 2026 — Registre initial Chemin 1 · 10 beats · stubs explicites.
 
@@ -33,11 +34,13 @@
 
 | ID | Surface | Craft / source | Durée cible | Stub | Statut | Wizard |
 |----|---------|----------------|-------------|------|--------|--------|
-| `prologue.arrival` | webgl-ritual → backdrop-2d | [`ODYSSEY_ECLIPSE_CRAFT.md`](../ODYSSEY_ECLIPSE_CRAFT.md) · wormhole | 20–30 s | Skip → `hub.idle` · fade noir → PNG ciel | blocked-craft | — |
-| `hub.heroPulse` | backdrop-2d | Hero 2D sprite · CSS | loop | `animation: pulse` 2s ease | stub | — |
-| `anchor.form` | panel-glass + backdrop-2d | Aucun WebGL | — | PNG ciel full bleed | todo | step 1 |
+| `prologue.arrival` | webgl-ritual → hub | [`ODYSSEY_ECLIPSE_CRAFT.md`](../ODYSSEY_ECLIPSE_CRAFT.md) · wormhole | 20–30 s | Skip → `hub.idle` WebGL lite · Chemin A seulement | blocked-craft | — |
+| **`hub.idle`** | **webgl hub-lite** | SanctuaryUniverse layers réduits | loop | PNG + Hero CSS (T1 placeholder) | stub | — |
+| `hub.heroPulse` | hub (webgl ou backdrop) | Hero sprite · CSS | loop | `animation: pulse` 2s ease | stub | — |
+| `anchor.form` | panel-glass + backdrop-2d | **`transition.hubFreezeTo2D`** | — | Cut → PNG ciel · zéro WebGL sous champs | todo | step 1 |
 | `anchor.reveal` | webgl-ritual | [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md) · `DEFAULT_CONSTELLATION_REVEAL_MS` | 8–14 s + dwell 3–4 s | Crossfade 400 ms avant mount | ready-craft | step 1 Continuer |
-| `hub.postReveal` | hub + backdrop-2d ou webgl idle | Carte Inviter / Continuer + chaînons | 2–4 s dwell | UI statique · pas filaments animés | todo | J3 |
+| **`anchor.identityDisplay`** | webgl + hub | Html Hero · hub chrome | post-reveal | Prénom seul en rituel · dates + nom discret au settle | todo | § Traversée |
+| `hub.postReveal` | hub (webgl idle ou backdrop) | Carte Inviter / Continuer + chaînons | 2–4 s dwell | UI statique · pas filaments animés | todo | J3 |
 | **`hub.skyVsVault`** | hub | Copy pédagogique | 5–8 s lecture | Carte texte | todo | J3 |
 | **`hub.noRush`** | hub · panel footer | Copy permission | — | Ligne sous CTAs | todo | J3 |
 | `circle.invite` | panel-glass + hub | Invite step · filaments (backlog) | — | Copy + ghosts · compteur invites | stub | step 2 |
@@ -57,10 +60,12 @@
 
 | ID transition | De → Vers | Priorité shareable | Stub |
 |---------------|-----------|-------------------|------|
-| `transition.prologueToHub` | éclipse → image ciel | #2 (quand prologue prêt) | Fade |
-| `transition.backdropToWebGL` | PNG → Canvas même cadrage | **#1** | Crossfade |
-| `transition.panelOpen` | hub → panneau verre | UX core | CSS slide 300–500 ms |
-| `transition.panelClose` | panneau → hub | UX core | CSS slide |
+| `transition.prologueToHub` | éclipse → **hub WebGL lite** | #2 (quand prologue prêt) | Fade · Chemin A |
+| **`transition.hubFreezeTo2D`** | **hub animé → image 2D gelée** | **UX core T1b** | Cut → PNG · capture canvas |
+| **`transition.panelCloseToHub`** | **2D gelée → reprise hub WebGL** | **UX core T1b** | Fade noir → hub |
+| `transition.backdropToWebGL` | PNG → Canvas même cadrage (Continuer) | **#1** | Crossfade 400 ms |
+| `transition.panelOpen` | hub → panneau verre (slide) | UX core | CSS slide 300–500 ms · avec hubFreeze |
+| `transition.panelClose` | panneau → hub (slide) | UX core | CSS slide · avec panelCloseToHub |
 | `transition.checkoutFarewell` | checkout → message ciel | #3 | Copy seule |
 
 ---
@@ -69,13 +74,23 @@
 
 | Concept prod | Fichier / zone cible |
 |--------------|---------------------|
-| Machine états parcours | `src/hooks/useParcoursUx.ts` (à créer) |
-| Backdrop 2D | `src/components/contribute/SkyBackdrop.tsx` (à créer) |
+| Machine états parcours | `src/hooks/useParcoursUx.ts` | ✅ T1 |
+| Backdrop 2D | `src/components/contribute/SkyBackdrop.tsx` | ✅ T1 |
+| Hub Hero idle | `src/components/tribute/SanctuaryHubHero.tsx` | ✅ T1 |
 | Panneau verre | `TributeWizard.tsx` + chrome Sanctuaire |
 | Rituel reveal | `useWizardStep1Reveal.ts` · `SanctuaryWizardStep1Sky.tsx` |
 | Hub J3 | `SanctuaryHubPostReveal.tsx` (à créer) |
 | Beat Coffre → film | `VaultFilmBridgeBeat.tsx` (à créer) |
 | Flag prologue | `wizard_state.parcours` ou colonne projet |
+
+---
+
+## Chemins d'entrée (figé)
+
+| Chemin | Entrée | Prologue | Hub initial |
+|--------|--------|----------|-------------|
+| **A — Première traversée** | Compte neuf · draft vierge | Oui 1× | WebGL hub-lite + Hero |
+| **B — Retour** | Compte + draft | Non | Draft rempli → panneau · vierge → hub comme A |
 
 ---
 
