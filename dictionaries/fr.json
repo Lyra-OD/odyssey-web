@@ -240,6 +240,17 @@
     "submitSignUp": "Créer un compte",
     "loading": "Envoi…",
     "backToSite": "Retour au site",
+    "forgotPasswordLink": "Mot de passe oublié ?",
+    "forgotPasswordTitle": "Réinitialiser le mot de passe",
+    "forgotPasswordDescription": "Indiquez votre courriel. Nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+    "forgotPasswordSubmit": "Envoyer le lien",
+    "forgotPasswordSent": "Si un compte existe pour ce courriel, un lien de réinitialisation vient d’être envoyé. Consultez votre boîte mail.",
+    "resetPasswordTitle": "Nouveau mot de passe",
+    "resetPasswordDescription": "Choisissez un mot de passe sécurisé pour votre accès.",
+    "resetPasswordSubmit": "Enregistrer le mot de passe",
+    "backToSignIn": "Retour à la connexion",
+    "resendConfirmationLink": "Renvoyer le courriel de confirmation",
+    "resendConfirmationSent": "Un nouveau lien de confirmation a été envoyé. Consultez votre boîte mail.",
     "verificationTitle": "Presque terminé",
     "verificationBody": "Consultez votre boîte mail. Un lien magique a été envoyé pour activer votre accès au studio.",
     "confirmationMessage": "Un lien de confirmation a été envoyé. Validez votre courriel pour activer votre accès.",
@@ -259,7 +270,8 @@
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "displayNameRequired": "Indiquez un nom affiché.",
       "rateLimit": "Trop de tentatives. Patientez un instant puis réessayez.",
-      "generic": "Une erreur est survenue. Réessayez."
+      "generic": "Une erreur est survenue. Réessayez.",
+      "resetSessionExpired": "Ce lien a expiré ou n’est plus valide. Demandez un nouveau lien."
     }
   },
   "dashboard": {

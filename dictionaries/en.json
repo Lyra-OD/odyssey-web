@@ -240,6 +240,17 @@
     "submitSignUp": "Create account",
     "loading": "Sending…",
     "backToSite": "Back to site",
+    "forgotPasswordLink": "Forgot password?",
+    "forgotPasswordTitle": "Reset your password",
+    "forgotPasswordDescription": "Enter your email. We will send you a link to choose a new password.",
+    "forgotPasswordSubmit": "Send reset link",
+    "forgotPasswordSent": "If an account exists for this email, a reset link has been sent. Check your inbox.",
+    "resetPasswordTitle": "New password",
+    "resetPasswordDescription": "Choose a secure password for your access.",
+    "resetPasswordSubmit": "Save password",
+    "backToSignIn": "Back to sign in",
+    "resendConfirmationLink": "Resend confirmation email",
+    "resendConfirmationSent": "A new confirmation link has been sent. Check your inbox.",
     "verificationTitle": "Almost there",
     "verificationBody": "Check your inbox. A magic link has been sent to activate your studio access.",
     "confirmationMessage": "A confirmation link has been sent. Please validate your email to activate your access key.",
@@ -259,7 +270,8 @@
       "passwordMismatch": "Passwords do not match.",
       "displayNameRequired": "Please enter a display name.",
       "rateLimit": "Too many attempts. Wait a moment and try again.",
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "resetSessionExpired": "This link has expired or is no longer valid. Request a new link."
     }
   },
   "dashboard": {

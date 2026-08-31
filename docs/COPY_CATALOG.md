@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-08-31 · **Entrées :** 701
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-08-31 · **Entrées :** 713
 
 ## `common`
 
@@ -217,6 +217,17 @@
 | `auth.submitSignUp` | Créer un compte | Create account |
 | `auth.loading` | Envoi… | Sending… |
 | `auth.backToSite` | Retour au site | Back to site |
+| `auth.forgotPasswordLink` | Mot de passe oublié ? | Forgot password? |
+| `auth.forgotPasswordTitle` | Réinitialiser le mot de passe | Reset your password |
+| `auth.forgotPasswordDescription` | Indiquez votre courriel. Nous vous enverrons un lien pour choisir un nouveau mot de passe. | Enter your email. We will send you a link to choose a new password. |
+| `auth.forgotPasswordSubmit` | Envoyer le lien | Send reset link |
+| `auth.forgotPasswordSent` | Si un compte existe pour ce courriel, un lien de réinitialisation vient d’être envoyé. Consultez votre boîte mail. | If an account exists for this email, a reset link has been sent. Check your inbox. |
+| `auth.resetPasswordTitle` | Nouveau mot de passe | New password |
+| `auth.resetPasswordDescription` | Choisissez un mot de passe sécurisé pour votre accès. | Choose a secure password for your access. |
+| `auth.resetPasswordSubmit` | Enregistrer le mot de passe | Save password |
+| `auth.backToSignIn` | Retour à la connexion | Back to sign in |
+| `auth.resendConfirmationLink` | Renvoyer le courriel de confirmation | Resend confirmation email |
+| `auth.resendConfirmationSent` | Un nouveau lien de confirmation a été envoyé. Consultez votre boîte mail. | A new confirmation link has been sent. Check your inbox. |
 | `auth.verificationTitle` | Presque terminé | Almost there |
 | `auth.verificationBody` | Consultez votre boîte mail. Un lien magique a été envoyé pour activer votre accès au studio. | Check your inbox. A magic link has been sent to activate your studio access. |
 | `auth.confirmationMessage` | Un lien de confirmation a été envoyé. Validez votre courriel pour activer votre accès. | A confirmation link has been sent. Please validate your email to activate your access key. |
@@ -236,6 +247,7 @@
 | `auth.errors.displayNameRequired` | Indiquez un nom affiché. | Please enter a display name. |
 | `auth.errors.rateLimit` | Trop de tentatives. Patientez un instant puis réessayez. | Too many attempts. Wait a moment and try again. |
 | `auth.errors.generic` | Une erreur est survenue. Réessayez. | Something went wrong. Please try again. |
+| `auth.errors.resetSessionExpired` | Ce lien a expiré ou n’est plus valide. Demandez un nouveau lien. | This link has expired or is no longer valid. Request a new link. |
 
 ## `dashboard`
 
