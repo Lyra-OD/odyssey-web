@@ -228,6 +228,7 @@ export function TributeWizard({
     () => hydrated.montage ?? emptyMontageState(),
   );
   const [projectMediaCount, setProjectMediaCount] = useState(0);
+  const [step3UploadRunning, setStep3UploadRunning] = useState(false);
   const [isPartner] = useState(isPartnerInitial);
   // Cascade V-Final : ChannelProfile décide l'entrée (partner = Souvenir 0 $,
   // B2C = Héritage 179 $). Plus jamais Éternité 349 $ par défaut.
@@ -589,6 +590,12 @@ export function TributeWizard({
     }
   }, [isPartnerProp]);
 
+  useEffect(() => {
+    if (currentStep !== 3 || !uploadProjectId) {
+      setStep3UploadRunning(false);
+    }
+  }, [currentStep, uploadProjectId]);
+
   // Volume total de médias (Étape 3) — pilote le nombre minimum de chapitres
   // pré-générés à l'Étape 4 (S4). Refetch à chaque entrée dans l'étape pour
   // capter d'éventuels ajouts/suppressions faits en revenant en arrière.
@@ -878,10 +885,15 @@ export function TributeWizard({
         <SanctuaryWizardStep1Sky
           locale={locale}
           firstName={firstName}
+          birthDate={birthDate}
           revealT={step1Reveal.revealT}
           revealTRef={step1Reveal.revealTRef}
           hideHeroName={step1Reveal.hideHeroName}
-          panelFading={step1Reveal.phase === "reward"}
+          skyActive={step1Reveal.skyActive}
+          silhouetteIdle={step1Reveal.phase === "typing"}
+          panelFading={
+            step1Reveal.phase === "reward" || step1Reveal.phase === "done"
+          }
         />
       ) : null}
     <div
@@ -1136,7 +1148,8 @@ export function TributeWizard({
             <div
               className={[
                 "rounded-2xl border border-white/10 bg-black/45 px-6 py-8 shadow-[0_8px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-opacity duration-700 md:px-8 md:py-10",
-                step1Reveal.phase === "reward"
+                step1Reveal.phase === "reward" ||
+                step1Reveal.phase === "done"
                   ? "pointer-events-none opacity-0"
                   : "opacity-100",
               ].join(" ")}
@@ -1437,14 +1450,16 @@ export function TributeWizard({
                 >
                   {(dz) => {
                     const totalQueued = dz.items.length;
-                    const isStep3Locked =
-                      dz.isRunning || dz.totals.uploaded === 0;
 
                     return (
                       <>
                         <SoftCapMediaCountSync
                           count={totalQueued}
                           onCount={syncStep3MediaCount}
+                        />
+                        <SoftCapMediaCountSync
+                          count={dz.isRunning ? 1 : 0}
+                          onCount={(n) => setStep3UploadRunning(n > 0)}
                         />
                         <div
                           {...dz.getRootProps({
@@ -1618,37 +1633,14 @@ export function TributeWizard({
                               ? copy.uploadAtLeastOne
                               : null}
                         </p>
-
-                        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
-                          <div className="mx-auto flex max-w-xl gap-3">
-                            {!isEditor ? (
-                            <button
-                              type="button"
-                              onClick={() => void goBack()}
-                              className="font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/10 bg-white/[0.06] px-4 text-base font-normal text-zinc-200 shadow-[0_0_20px_rgba(255,255,255,0.04)] transition-colors hover:bg-white/[0.09]"
-                            >
-                              {copy.back}
-                            </button>
-                            ) : null}
-
-                          <button
-                            type="button"
-                            onClick={() => void goNext()}
-                            disabled={isStep3Locked}
-                            className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
-                          >
-                            {copy.next}
-                          </button>
-                        </div>
-                      </div>
-                    </>
-                  );
-                }}
-              </MediaDropzoneAdapter>
+                      </>
+                    );
+                  }}
+                </MediaDropzoneAdapter>
               )}
 
               <VaultOnlineSourcesSection
-                className="mt-12"
+                className="mt-12 mb-28"
                 selected={selectedSocial}
                 onSelect={handleSocialSelect}
                 copy={{
@@ -1661,6 +1653,29 @@ export function TributeWizard({
                   googlePhotos: copy.socialGooglePhotos,
                 }}
               />
+
+              <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
+                <div className="mx-auto flex max-w-xl gap-3">
+                  {!isEditor ? (
+                    <button
+                      type="button"
+                      onClick={() => void goBack()}
+                      className="font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/10 bg-white/[0.06] px-4 text-base font-normal text-zinc-200 shadow-[0_0_20px_rgba(255,255,255,0.04)] transition-colors hover:bg-white/[0.09]"
+                    >
+                      {copy.back}
+                    </button>
+                  ) : null}
+
+                  <button
+                    type="button"
+                    onClick={() => void goNext()}
+                    disabled={step3UploadRunning}
+                    className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+                  >
+                    {projectMediaCount > 0 ? copy.next : copy.stepMediaLater}
+                  </button>
+                </div>
+              </div>
             </>
           ) : null}
 
@@ -2080,12 +2095,16 @@ export function TributeWizard({
               <button
                 type="button"
                 disabled={
-                  currentStep === 1 && step1Reveal.phase === "reward"
+                  currentStep === 1 &&
+                  (step1Reveal.phase === "reward" ||
+                    step1Reveal.phase === "done")
                 }
                 onClick={() => void goNext()}
                 className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-wait disabled:opacity-70"
               >
-                {currentStep === 1 && step1Reveal.phase === "reward"
+                {currentStep === 1 &&
+                (step1Reveal.phase === "reward" ||
+                  step1Reveal.phase === "done")
                   ? copy.step1ConstellationReward
                   : copy.next}
               </button>

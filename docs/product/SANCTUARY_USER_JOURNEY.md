@@ -1,24 +1,24 @@
 # Odyssey — Parcours Sanctuaire (User X · première visite)
 
 **Type :** produit · **Vérité pour :** prologue cinéma · hub ciel · séparation wizard · tiroir média · navigation.  
-**Dernière MAJ :** 26 août 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — Chemin 1 Traversée + audit trous [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md) · impl active vs §4.
+- 31 août 2026 — Vrai final : date→silhouette idle · panneau wizard = ciel gelé (obsolète → Traversée 2D).
+- 31 août 2026 — J2 cœur produit : skyActive · birthDate→Libra/Leo · dwell post-reveal · Plus tard Coffre (sans previewMode).
+- 31 août 2026 — Continuer = play craft 0→1 (14 s) + dwell — plus de raccourci depuis idle 0,56.
 - 26 août 2026 — §11b **matrice implémentation** (vérité code J1–J9) · écart D1 documenté · playbook démo = hors ce doc.
-- 26 août 2026 — **J2** : wizard étape 1 sur ciel — Hero idle · naissance live au prénom · reveal post-validation.
-- 25 août 2026 — Plan : phase **C craft** (Hero · constellation · wormhole) **avant** J1 shell prologue.
-- 25 août 2026 — Étape 2 invite : canal-agnostique · skip immédiat · layout Partager / Copier / QR (§5c).
-- 25 août 2026 — Décisions CEO figées : étapes 1–3 (identité complète · invite seul · Plus tard Coffre).
-- 25 août 2026 — Canon initial : prologue action→récompense, hub, tiroir global, plan d’implémentation.
 
 **Liens :**
+- **Chemin 1 (spec impl)** : [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md) · **trous** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
 - Ciel / étoiles-mémoire : [`SANCTUARY_SKY.md`](../SANCTUARY_SKY.md)
 - Ciel économique (Lueurs colorées) : [`SANCTUARY_SKY_LUEURS.md`](../SANCTUARY_SKY_LUEURS.md)
 - Wizard 7 étapes (inchangé) : [`WIZARD_ARCHITECTURE.md`](../WIZARD_ARCHITECTURE.md)
 - Stratégie Quiet Luxury : [`SANCTUARY_STRATEGY.md`](../SANCTUARY_STRATEGY.md)
 - Craft prologue / ciel : [`SANCTUARY_SKY_CRAFT.md`](../SANCTUARY_SKY_CRAFT.md) · [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md)
 
-**Statut :** vision produit **figée** (étapes 1–3 tranchées). **Implémentation partielle** — matrice code §11b.  
+**Statut :** vision produit **figée** (étapes 1–3 tranchées). **Implémentation active** = Chemin 1 [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · matrice code §11b.  
 **Présentation démo VP** (live vs vidéo, timing oral) : [`MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) · plan opérationnel [`TEMP/PLAN_DEMO_PATRICE.md`](../TEMP/PLAN_DEMO_PATRICE.md) — **ne pas** confondre avec ce canon.
 
 ---
@@ -362,8 +362,10 @@ Dernière sync : **26 août 2026**. Mettre à jour **ici** à chaque milestone J
 
 **J2 — détail livré :**
 - Ciel fullscreen (`SanctuaryUniverse` background) + panneau verre formulaire.
-- Naissance Hero au **prénom** (beats craft C0–C2).
-- Validation étape 1 → reveal constellation ~3,2 s (`playReward`) puis passage étape 2.
+- **Date valide → silhouette idle** (template zodiaque settled whisper) sans attendre Continuer.
+- **Panneau saisie → ciel gelé** (`skyActive` seulement en reward/done) · une paint via `skyWakeKey`.
+- Naissance Hero au **prénom** (snap beats craft ; pas de loop WebGL en typing).
+- Continuer → reveal 0→1 + dwell puis étape 2 (rituel réveil à peaufiner).
 - Séparation Hero↔nom (spring) — craft [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md).
 
 **Écart D1 (à trancher) :** décision CEO = **prénom + 2 dates** (§10 D1). Code wizard exige encore **nom de famille** (`canProceedEssential` dans `TributeWizard.tsx`). Constellation / displayName utilisent prénom en live ; le nom reste requis pour « Continuer ».

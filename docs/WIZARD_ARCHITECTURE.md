@@ -1,16 +1,16 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 31 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — Parcours UX Chemin 1 : spec Traversée · lien step 1 backdrop 2D + rituel séparé.
+- 31 août 2026 — J2 produit : Plus tard étape 3 · snap birth · pause WebGL · Libra/Leo · Continuer = play craft 0→1 (14 s) + dwell.
 - 26 août 2026 — **J2** Sanctuaire étape 1 : orchestrator + flow overlay ciel (fichiers · reveal · gate validation).
 - 25 août 2026 — parcours Sanctuaire : étapes 1–3 figées (identité · invite seul · Plus tard Coffre).
 - 17 août 2026 — invitation Salon Souvenir-only (plus de cartes forfait).
-- 17 août 2026 — Scanner Phase B : aperçu restauration → add-on `aiRetouch`.
-- 17 août 2026 — Scanner Phase A (QR étape 3, pas une 8ᵉ étape).
-- 17 août 2026 — étape 4 : canaux / cents → FREEMIUM §2 (plus de grille recopiée).
-- 17 août 2026 — en-tête type ; « 8-step » → **7** étapes (Extensions au checkout).
+
+> **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
 > **Canon V1 :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · Commerce [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).  
 > **Parcours Sanctuaire (prologue · hub · tiroir) :** [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) — le wizard **7 étapes reste** ; couche onboarding séparée. **Étapes 1–3 :** identité complète (prénom + 2 dates) · étape 2 invite seul · étape 3 « Plus tard » obligatoire.  
@@ -405,14 +405,16 @@ Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WAT
 | `StoryboardMontageStep` | Step 5 | Livre Ouvert — DnD, Composition Magique — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
 | `MontageExtensionsStep` | Checkout (étape 7) | Extensions + « Déjà inclus » when Heritage |
 
-### Step 1 — overlay Sanctuaire (J2)
+### Step 1 — overlay Sanctuaire (J2 → Chemin 1)
 
-État détaillé : [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b. Playbook démo (live vs vidéo) : [`MEETING_PATRICE_VP.md`](MEETING_PATRICE_VP.md).
+État détaillé : [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §1 · [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b. Playbook démo : [`MEETING_PATRICE_VP.md`](MEETING_PATRICE_VP.md).
 
+- **Cible Chemin 1 :** saisie sur **backdrop 2D** (image ciel) · Continuer → transition → **rituel WebGL** reveal · hub post-reveal (J3).
+- **Aujourd'hui (transition) :** WebGL derrière panneau — à remplacer par Traversée §8 T1–T2.
 - **Activation :** `step1Sky = !isEditor && currentStep === 1` dans `TributeWizard.tsx`.
 - **Validation :** `canProceedEssential` — prénom, **nom**, naissance, décès (écart D1 CEO : voir journey §11b).
-- **Continuer :** `flush()` autosave → si reveal pas `done`, `step1Reveal.playReward()` (~3,2 s) → puis étape 2 (**pas** de hub J3).
-- **Craft :** naissance C0–C2 · séparation Hero↔nom · [`ODYSSEY_LUEUR_CRAFT.md`](ODYSSEY_LUEUR_CRAFT.md).
+- **Continuer :** `flush()` → `playReward()` (0→1 craft + dwell) → **cible** hub J3 · **aujourd'hui** étape 2 direct.
+- **Craft :** reveal A→F · [`ODYSSEY_LUEUR_CRAFT.md`](ODYSSEY_LUEUR_CRAFT.md).
 
 ---
 

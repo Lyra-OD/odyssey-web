@@ -18,10 +18,17 @@ import type {
 } from "@/src/components/contribute/constellation/craftDefaults";
 import { DEFAULT_BRIDGES } from "@/src/components/contribute/constellation/craftDefaults";
 import {
-  edgeTier,
+  edgeTier as leoEdgeTier,
   strokeKey,
   undirectedEdgeKey,
+  type EdgeTier,
 } from "@/src/components/contribute/constellation/graphs/leo";
+import { isLibraMajorEdge } from "@/src/components/contribute/constellation/graphs/libra";
+
+function edgeTier(a: string, b: string): EdgeTier {
+  if (leoEdgeTier(a, b) === "major") return "major";
+  return isLibraMajorEdge(a, b) ? "major" : "minor";
+}
 import {
   LINE_WHISPER_FLOOR,
   PROXIMITY_RELIGHT,

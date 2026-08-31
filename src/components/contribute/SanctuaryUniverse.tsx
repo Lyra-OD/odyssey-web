@@ -66,19 +66,21 @@ import {
 } from "@/src/components/contribute/constellation/skyTheme";
 import {
   ACTIVE_TEMPLATE,
-  CONSTELLATION_LAYOUT_ID,
   buildCraftSlotFills,
   constellationPositions,
   getResolvedStar,
   MOCK_SLOT_FILLS,
   resolveConstellation,
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
+import type { ConstellationTemplate } from "@/src/components/contribute/constellation/graphs/types";
 import {
   LEO_STROKE_SEQUENCE,
   undirectedEdgeKey,
+  type LeoStrokeStep,
 } from "@/src/components/contribute/constellation/graphs/leo";
 import { resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
 import {
+  DEFAULT_LINE_WHISPER,
   DEFAULT_WHISPER_EMPHASIS,
   ndcFieldStrength,
   ndcSegmentField,
@@ -167,6 +169,24 @@ export type ConstellationRevealCraft = {
   heroName?: string;
   /** Wizard step 1 — masquer le nom tant que le prénom est vide. */
   hideHeroName?: boolean;
+  /**
+   * Wizard — `false` gèle le WebGL (stop ForceRenderLoop, dpr 1).
+   * Défaut `true` (labs / immersive).
+   */
+  skyActive?: boolean;
+  /**
+   * Wizard — date valide + panneau saisie : graphe settled (whisper) sans play A→F.
+   * Désactivé pendant reward (Continuer anime 0→1).
+   */
+  silhouetteIdle?: boolean;
+  /**
+   * Wizard — invalide une frame même si `skyActive=false` (date→silhouette, prénom).
+   */
+  skyWakeKey?: string | number;
+  /** Silhouette zodiaque (wizard) — défaut Leo craft. */
+  template?: ConstellationTemplate;
+  /** Séquence de traits reveal — défaut Leo. */
+  strokeSequence?: readonly LeoStrokeStep[];
 };
 
 type FocusSession = {
@@ -177,9 +197,18 @@ type FocusSession = {
 };
 
 /** Garantit des frames même sans interaction souris (WebGL demand). */
-function ForceRenderLoop() {
+function ForceRenderLoop({
+  enabled = true,
+  wakeKey,
+}: {
+  enabled?: boolean;
+  /** Change → une paint (même ciel gelé) pour silhouette / prénom. */
+  wakeKey?: string | number;
+}) {
   const invalidate = useThree((s) => s.invalidate);
   useEffect(() => {
+    invalidate();
+    if (!enabled) return;
     let raf = 0;
     let running = true;
     const tick = () => {
@@ -192,7 +221,7 @@ function ForceRenderLoop() {
       running = false;
       cancelAnimationFrame(raf);
     };
-  }, [invalidate]);
+  }, [invalidate, enabled, wakeKey]);
   return null;
 }
 
@@ -203,6 +232,7 @@ function Constellation({
   onStarScreen,
   revealT: revealTProp,
   revealTRef,
+  silhouetteIdle = false,
   emphasisDuring = 0.25,
   emphasisIdle = DEFAULT_WHISPER_EMPHASIS,
   heroShare,
@@ -223,6 +253,8 @@ function Constellation({
   slotStars = DEFAULT_SLOT_STARS,
   bridges = DEFAULT_BRIDGES,
   slotLit,
+  template = ACTIVE_TEMPLATE,
+  strokeSequence = LEO_STROKE_SEQUENCE,
 }: {
   onSelectMemory: (
     soulId: string,
@@ -234,6 +266,8 @@ function Constellation({
   revealT: number;
   /** When set, progress follows this ref every frame (smooth craft play). */
   revealTRef?: MutableRefObject<number>;
+  /** Date valide — graphe settled whisper sans play A→F. */
+  silhouetteIdle?: boolean;
   emphasisDuring?: number;
   emphasisIdle?: number;
   heroShare?: number;
@@ -254,6 +288,8 @@ function Constellation({
   slotStars?: SlotStarsCraft;
   bridges?: BridgesCraft;
   slotLit?: Record<string, boolean>;
+  template?: ConstellationTemplate;
+  strokeSequence?: readonly LeoStrokeStep[];
 }) {
   type ProximityField = {
     stars: Record<string, number>;
@@ -273,13 +309,13 @@ function Constellation({
     const name = heroName?.trim() || "Margaret";
     if (slotLit) {
       return resolveConstellation(
-        ACTIVE_TEMPLATE,
+        template,
         buildCraftSlotFills(slotLit),
         name,
       );
     }
-    return resolveConstellation(ACTIVE_TEMPLATE, MOCK_SLOT_FILLS, name);
-  }, [slotLit, heroName]);
+    return resolveConstellation(template, MOCK_SLOT_FILLS, name);
+  }, [slotLit, heroName, template]);
   const positions = useMemo(() => constellationPositions(stars), [stars]);
 
   useFrame(({ camera }) => {
@@ -322,7 +358,7 @@ function Constellation({
     }
 
     const edgesMap: Record<string, number> = {};
-    for (const [a, b] of ACTIVE_TEMPLATE.edges) {
+    for (const [a, b] of template.edges) {
       const from = positions[a];
       const to = positions[b];
       if (!from || !to) continue;
@@ -356,14 +392,21 @@ function Constellation({
     setRevealT(revealTProp);
   }, [revealTProp, revealTRef]);
 
-  const drawPhase = useMemo(() => resolveDrawPhase(revealT), [revealT]);
+  /** Silhouette idle = settled whisper ; sinon timeline revealT. */
+  const settled = silhouetteIdle || revealT >= 1;
+
+  const drawPhase = useMemo(
+    () => resolveDrawPhase(settled ? 1 : revealT),
+    [revealT, settled],
+  );
 
   const emphasis = useMemo(() => {
     const proxLift = proximity.max * DEFAULT_WHISPER_EMPHASIS * 2.2;
-    if (revealT >= 1) return emphasisIdle + proxLift;
+    if (settled) return emphasisIdle + proxLift;
     if (drawPhase.beat) return drawPhase.emphasis + proxLift;
     return revealT * emphasisDuring;
   }, [
+    settled,
     revealT,
     emphasisDuring,
     emphasisIdle,
@@ -388,13 +431,14 @@ function Constellation({
   );
   const draw = useMemo(() => {
     void heroShare;
-    const d = resolveStrokeDraw(birth.drawU, LEO_STROKE_SEQUENCE, {
+    const drawU = settled ? 1 : birth.drawU;
+    const d = resolveStrokeDraw(drawU, strokeSequence, {
       heroShare: 0,
       strokeOverlap,
     });
     d.nodeAppear.hero = Math.max(d.nodeAppear.hero ?? 0, birth.heroBirth);
     return d;
-  }, [birth, strokeOverlap, heroShare]);
+  }, [birth, strokeOverlap, heroShare, strokeSequence, settled]);
   const [hovered, setHovered] = useState<string | null>(null);
 
   const locked = focusedSoulId !== null;
@@ -633,13 +677,13 @@ function Constellation({
       })}
       <LightBridges
         positions={positions}
-        edges={ACTIVE_TEMPLATE.edges}
+        edges={template.edges}
         ghostIds={ghostIds}
         draw={draw}
         emphasis={emphasis}
-        lineDimMul={drawPhase.lineDim}
+        lineDimMul={settled ? DEFAULT_LINE_WHISPER : drawPhase.lineDim}
         edgeProximity={proximity.edges}
-        revealComplete={revealT >= 1}
+        revealComplete={settled}
         lineWidthMul={lineWidthMul}
         lineOpacityMul={lineOpacityMul}
         tipStrength={tipStrength}
@@ -715,6 +759,12 @@ function UniverseScene({
   const slotStars = craftReveal?.slotStars ?? DEFAULT_SLOT_STARS;
   const bridges = craftReveal?.bridges ?? DEFAULT_BRIDGES;
   const slotLit = craftReveal?.slotLit;
+  const skyActive = craftReveal?.skyActive ?? true;
+  const silhouetteIdle = craftReveal?.silhouetteIdle === true;
+  const skyWakeKey = craftReveal?.skyWakeKey;
+  const constellationTemplate = craftReveal?.template ?? ACTIVE_TEMPLATE;
+  const strokeSequence =
+    craftReveal?.strokeSequence ?? LEO_STROKE_SEQUENCE;
 
   const fondOn = isSkyLayerOn(skyLayers, "fond");
   const fogOn = isSkyLayerOn(skyLayers, "fog");
@@ -755,7 +805,7 @@ function UniverseScene({
 
   return (
     <ParallaxProvider intensity={parallaxIntensity}>
-      <ForceRenderLoop />
+      <ForceRenderLoop enabled={skyActive} wakeKey={skyWakeKey} />
       {/* Craft : zoom fixe (pas de molette qui recentre) */}
       <WheelZoom enabled={!craftLite} />
       <SkyWander enabled={wanderEnabled} />
@@ -902,13 +952,14 @@ function UniverseScene({
           >
             <ConstellationLeash>
               <Constellation
-                key={CONSTELLATION_LAYOUT_ID}
+                key={constellationTemplate.id}
                 onSelectMemory={onSelectMemory}
                 focusedSoulId={focus?.soulId ?? null}
                 focusBoost={focusBoost}
                 onStarScreen={onStarScreen}
                 revealT={revealTProp}
                 revealTRef={revealTRef}
+                silhouetteIdle={silhouetteIdle}
                 emphasisDuring={emphasisDuring}
                 emphasisIdle={emphasisIdle}
                 heroShare={heroShare}
@@ -929,6 +980,8 @@ function UniverseScene({
                 slotStars={slotStars}
                 bridges={bridges}
                 slotLit={slotLit}
+                template={constellationTemplate}
+                strokeSequence={strokeSequence}
               />
             </ConstellationLeash>
           </ParallaxLayer>
@@ -1028,6 +1081,7 @@ export function SanctuaryUniverse({
     parallaxIntensity ??
     (craftLite ? 0.25 : mode === "background" ? 0.55 : 1);
   const immersive = mode === "immersive" && !craftLite;
+  const skyPaused = craftReveal?.skyActive === false;
   const [focus, setFocus] = useState<FocusSession | null>(null);
   const [constellationOn, setConstellationOn] = useState(true);
   const [wanderOn, setWanderOn] = useState(false);
@@ -1227,7 +1281,7 @@ export function SanctuaryUniverse({
           className={immersive ? undefined : "!pointer-events-none"}
           style={{ pointerEvents: immersive ? "auto" : "none" }}
           frameloop="demand"
-          dpr={craftLite ? 1 : tierDpr(tier)}
+          dpr={craftLite || skyPaused ? 1 : tierDpr(tier)}
           camera={{
             position: [0, 0, craftLite ? 58 : 9.2],
             fov: craftLite ? 68 : 42,

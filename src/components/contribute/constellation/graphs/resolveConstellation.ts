@@ -1,4 +1,12 @@
-import { LEO_TEMPLATE } from "@/src/components/contribute/constellation/graphs/leo";
+import {
+  LEO_STROKE_SEQUENCE,
+  LEO_TEMPLATE,
+  type LeoStrokeStep,
+} from "@/src/components/contribute/constellation/graphs/leo";
+import {
+  LIBRA_STROKE_SEQUENCE,
+  LIBRA_TEMPLATE,
+} from "@/src/components/contribute/constellation/graphs/libra";
 import type {
   ConstellationTemplate,
   MemoryMedia,
@@ -6,12 +14,31 @@ import type {
   SoulPositionMap,
   StarWeight,
 } from "@/src/components/contribute/constellation/graphs/types";
+import type { ZodiacSign } from "@/src/lib/contribute/zodiacSign";
 
 /** Craft layout id — Leo graph replaces orb-cloud-reset-v1. */
 export const CONSTELLATION_LAYOUT_ID = "leo-graph-v1";
 
-/** Default craft template until zodiac is resolved from birth date. */
+/** Default craft template (labs) — Leo jusqu’à résolution zodiaque. */
 export const ACTIVE_TEMPLATE: ConstellationTemplate = LEO_TEMPLATE;
+
+/**
+ * Template silhouette wizard / reveal.
+ * Libra livré · autres signes → Leo fallback.
+ */
+export function resolveConstellationTemplate(
+  sign: ZodiacSign | null,
+): ConstellationTemplate {
+  if (sign === "libra") return LIBRA_TEMPLATE;
+  return LEO_TEMPLATE;
+}
+
+export function resolveStrokeSequence(
+  sign: ZodiacSign | null,
+): readonly LeoStrokeStep[] {
+  if (sign === "libra") return LIBRA_STROKE_SEQUENCE;
+  return LEO_STROKE_SEQUENCE;
+}
 
 export type SlotFill = {
   name: string;
@@ -80,15 +107,18 @@ export const MOCK_SLOT_FILLS: Record<string, SlotFill | undefined> = {
   },
 };
 
-/** Slot ids from active Leo template (lab craft toggles). */
-export const LEO_SLOT_IDS: readonly string[] = ACTIVE_TEMPLATE.nodes
-  .filter((n) => n.role === "slot")
-  .map((n) => n.id);
+/** Slot ids from a template (lab craft / wizard ghosts). */
+export function slotIdsFromTemplate(
+  template: ConstellationTemplate = ACTIVE_TEMPLATE,
+): readonly string[] {
+  return template.nodes.filter((n) => n.role === "slot").map((n) => n.id);
+}
+
+/** Slot ids from Leo template (lab craft toggles). */
+export const LEO_SLOT_IDS: readonly string[] = slotIdsFromTemplate(LEO_TEMPLATE);
 
 export function leoSlotWeight(id: string): StarWeight {
-  return (
-    ACTIVE_TEMPLATE.nodes.find((n) => n.id === id)?.weight ?? "medium"
-  );
+  return LEO_TEMPLATE.nodes.find((n) => n.id === id)?.weight ?? "medium";
 }
 
 /**
@@ -134,9 +164,11 @@ export function defaultCraftSlotLit(): Record<string, boolean> {
 }
 
 /** 1ʳᵉ anim terminée → tous slots ghost (pont wizard étape 2). */
-export function allGhostSlotLit(): Record<string, boolean> {
+export function allGhostSlotLit(
+  template: ConstellationTemplate = ACTIVE_TEMPLATE,
+): Record<string, boolean> {
   const lit: Record<string, boolean> = {};
-  for (const id of LEO_SLOT_IDS) {
+  for (const id of slotIdsFromTemplate(template)) {
     lit[id] = false;
   }
   return lit;

@@ -11,8 +11,11 @@ import {
 } from "@/src/components/contribute/constellation/HeroStar";
 import {
   allGhostSlotLit,
+  resolveConstellationTemplate,
+  resolveStrokeSequence,
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import type { ConstellationRevealCraft } from "@/src/components/contribute/SanctuaryUniverse";
+import { birthDateToZodiacSign } from "@/src/lib/contribute/zodiacSign";
 import type { Locale } from "@/i18n.config";
 
 const SanctuaryUniverse = dynamic(
@@ -31,20 +34,42 @@ const SanctuaryUniverse = dynamic(
 type SanctuaryWizardStep1SkyProps = {
   locale: Locale;
   firstName: string;
+  birthDate: string;
   revealT: number;
   revealTRef: MutableRefObject<number>;
   hideHeroName: boolean;
+  skyActive: boolean;
+  /** Phase typing = silhouette idle ; reward/done = play A→F (pas de settled forcé). */
+  silhouetteIdle: boolean;
   panelFading?: boolean;
 };
 
 export function SanctuaryWizardStep1Sky({
   locale,
   firstName,
+  birthDate,
   revealT,
   revealTRef,
   hideHeroName,
+  skyActive,
+  silhouetteIdle,
   panelFading = false,
 }: SanctuaryWizardStep1SkyProps) {
+  const zodiacSign = useMemo(
+    () => birthDateToZodiacSign(birthDate),
+    [birthDate],
+  );
+  const template = useMemo(
+    () => resolveConstellationTemplate(zodiacSign),
+    [zodiacSign],
+  );
+  const strokeSequence = useMemo(
+    () => resolveStrokeSequence(zodiacSign),
+    [zodiacSign],
+  );
+  /** Silhouette settled seulement si date valide + panneau saisie. */
+  const showSilhouetteIdle = silhouetteIdle && zodiacSign != null;
+
   const craftReveal = useMemo((): ConstellationRevealCraft => {
     const heroName = firstName.trim() || "Margaret";
     return {
@@ -53,6 +78,12 @@ export function SanctuaryWizardStep1Sky({
       revealTRef,
       hideHeroName,
       heroName,
+      skyActive,
+      silhouetteIdle: showSilhouetteIdle,
+      /** Une paint même ciel gelé — date / prénom / template. */
+      skyWakeKey: `${template.id}|${showSilhouetteIdle ? 1 : 0}|${firstName.trim()}|${birthDate}`,
+      template,
+      strokeSequence,
       heroAtom: {
         white: DEFAULT_HERO_WHITE,
         teal: DEFAULT_HERO_TEAL,
@@ -60,18 +91,29 @@ export function SanctuaryWizardStep1Sky({
         embedScale: 0.42,
         globalScale: DEFAULT_HERO_GLOBAL_SCALE,
       },
-      slotLit: allGhostSlotLit(),
+      slotLit: allGhostSlotLit(template),
       graphScale: 1,
       tipStrength: 1.2,
       tipStyle: "orb",
       tipColor: "#5eead4",
     };
-  }, [firstName, revealT, revealTRef, hideHeroName]);
+  }, [
+    firstName,
+    birthDate,
+    revealT,
+    revealTRef,
+    hideHeroName,
+    skyActive,
+    showSilhouetteIdle,
+    template,
+    strokeSequence,
+  ]);
 
   return (
     <div
       className={[
-        "pointer-events-none fixed inset-0 z-0 transition-opacity duration-700 opacity-100",
+        "pointer-events-none fixed inset-0 z-0 transition-opacity duration-700",
+        panelFading ? "opacity-90" : "opacity-100",
       ].join(" ")}
       aria-hidden
     >

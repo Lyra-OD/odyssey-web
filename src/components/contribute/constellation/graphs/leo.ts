@@ -98,6 +98,8 @@ const LEO_MAJOR_EDGES = new Set([
   undirectedEdgeKey("zosma", "denebola"),
 ]);
 
+export { LEO_MAJOR_EDGES };
+
 export type EdgeTier = "major" | "minor";
 
 export function edgeTier(a: string, b: string): EdgeTier {

@@ -4,64 +4,69 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   WIZARD_IDLE_REVEAL_T,
-  easeOutCubic,
   firstNameToBirthRevealT,
+  WIZARD_REWARD_DWELL_MS,
   WIZARD_REWARD_REVEAL_MS,
 } from "@/src/lib/contribute/wizardBirthReveal";
 
 export type WizardStep1RevealPhase = "typing" | "reward" | "done";
 
-const LERP = 0.14;
-
+/**
+ * Architecture « vrai final » :
+ * - Panneau saisie (typing) → ciel gelé (`skyActive=false`) — confort frappe.
+ * - Rituel Continuer (reward/done) → ciel réveillé pour le play A→F.
+ * - Snap prénom (pas de lerp WebGL) — une paint via wakeKey Canvas suffit.
+ */
 export function useWizardStep1Reveal(firstName: string) {
   const revealTRef = useRef(WIZARD_IDLE_REVEAL_T);
   const [revealT, setRevealT] = useState(WIZARD_IDLE_REVEAL_T);
   const [phase, setPhase] = useState<WizardStep1RevealPhase>("typing");
   const rewardRafRef = useRef(0);
-  const lerpRafRef = useRef(0);
+  const dwellTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (phase !== "typing") return;
-    let running = true;
-
-    const tick = () => {
-      if (!running) return;
-      const target = firstNameToBirthRevealT(firstName);
-      const cur = revealTRef.current;
-      const next = cur + (target - cur) * LERP;
-      revealTRef.current = next;
-      setRevealT((prev) =>
-        Math.abs(prev - next) > 0.001 ? next : prev,
-      );
-      if (Math.abs(target - next) > 0.0008) {
-        lerpRafRef.current = requestAnimationFrame(tick);
-      }
-    };
-
-    lerpRafRef.current = requestAnimationFrame(tick);
-    return () => {
-      running = false;
-      cancelAnimationFrame(lerpRafRef.current);
-    };
+    const target = firstNameToBirthRevealT(firstName);
+    revealTRef.current = target;
+    setRevealT(target);
   }, [firstName, phase]);
 
+  /** Ciel actif seulement pendant le rituel — panneau ouvert = pause totale. */
+  const skyActive = phase === "reward" || phase === "done";
+
   const playReward = useCallback((): Promise<void> => {
-    cancelAnimationFrame(lerpRafRef.current);
+    cancelAnimationFrame(rewardRafRef.current);
+    if (dwellTimerRef.current) {
+      clearTimeout(dwellTimerRef.current);
+      dwellTimerRef.current = null;
+    }
     return new Promise((resolve) => {
       setPhase("reward");
-      const from = revealTRef.current;
+      // Même play que le lab craft : timeline complète 0→1 (pas depuis idle 0.56).
+      revealTRef.current = 0;
+      setRevealT(0);
       const t0 = performance.now();
+      let lastUi = 0;
 
       const tick = (now: number) => {
+        // Linéaire comme le Play craft lab — pas d’ease qui comprime les traits D–F.
         const u = Math.min(1, (now - t0) / WIZARD_REWARD_REVEAL_MS);
-        const next = from + (1 - from) * easeOutCubic(u);
-        revealTRef.current = next;
-        setRevealT(next);
+        revealTRef.current = u;
+        // UI React throttlée ; le Canvas lit revealTRef chaque frame (ForceRenderLoop).
+        if (now - lastUi >= 100 || u >= 1) {
+          lastUi = now;
+          setRevealT(u);
+        }
         if (u < 1) {
           rewardRafRef.current = requestAnimationFrame(tick);
         } else {
+          revealTRef.current = 1;
+          setRevealT(1);
           setPhase("done");
-          resolve();
+          dwellTimerRef.current = setTimeout(() => {
+            dwellTimerRef.current = null;
+            resolve();
+          }, WIZARD_REWARD_DWELL_MS);
         }
       };
 
@@ -72,7 +77,7 @@ export function useWizardStep1Reveal(firstName: string) {
   useEffect(() => {
     return () => {
       cancelAnimationFrame(rewardRafRef.current);
-      cancelAnimationFrame(lerpRafRef.current);
+      if (dwellTimerRef.current) clearTimeout(dwellTimerRef.current);
     };
   }, []);
 
@@ -84,6 +89,7 @@ export function useWizardStep1Reveal(firstName: string) {
     phase,
     playReward,
     hideHeroName,
+    skyActive,
     showGhostSlots: phase === "reward" || phase === "done" || revealT >= 0.55,
   };
 }

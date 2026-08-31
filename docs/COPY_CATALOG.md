@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-08-28 · **Entrées :** 696
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-08-31 · **Entrées :** 697
 
 ## `common`
 
@@ -350,6 +350,7 @@
 | `tributeWizard.skipSources` | Passer cette étape | Skip this step |
 | `tributeWizard.stepMediaTitle` | Étape 3 : Le Coffre-fort | Step 3: The Vault |
 | `tributeWizard.stepMediaDescription` | Déposez ici tous vos souvenirs : photos et vidéos. Le film s’assemblera ensuite, sous vos yeux. | Drop all your memories here: photos and videos. The film will come together next, before your eyes. |
+| `tributeWizard.stepMediaLater` | Plus tard | Later |
 | `tributeWizard.scannerEyebrow` | Scanner Compagnon | Companion Scanner |
 | `tributeWizard.scannerTitle` | Numérisez vos albums papier | Digitize your paper albums |
 | `tributeWizard.scannerDescription` | Scannez le QR avec votre téléphone. Aucune application. | Scan the QR with your phone. No app required. |
