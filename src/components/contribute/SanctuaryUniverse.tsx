@@ -87,6 +87,7 @@ import {
   HUB_HERO_SIZE_BREATH,
   resolveHubBirth,
 } from "@/src/components/contribute/constellation/graphs/hubIdle";
+import { hubFreezeFxRef, tickHubThawAppear } from "@/src/lib/parcours/hubFreezeTimeline";
 import { hubSkyApproachRef } from "@/src/components/contribute/constellation/HubSkyCamera";
 import {
   DEFAULT_LINE_WHISPER,
@@ -344,6 +345,11 @@ function Constellation({
     if (hubBirthMode) {
       const v = hubSkyApproachRef.current;
       setHubApproach((prev) => (Math.abs(prev - v) > 0.006 ? v : prev));
+      tickHubThawAppear();
+      // Flash soft decay (rite freeze aller)
+      if (hubFreezeFxRef.flash > 0.01) {
+        hubFreezeFxRef.flash = Math.max(0, hubFreezeFxRef.flash - 0.028);
+      }
     }
     if (revealTRef) {
       const v = revealTRef.current;
@@ -526,7 +532,9 @@ function Constellation({
         const embed = heroAtom?.embedScale ?? 0.4;
         const gScale = heroAtom?.globalScale ?? 1;
         const breathDrive = hubBirthMode
-          ? hubHeroBreath(hubApproach)
+          ? hubFreezeFxRef.holdBreath
+            ? 0
+            : hubHeroBreath(hubApproach) * hubFreezeFxRef.thawAppearU
           : drawPhase.constellationBreath;
         const starProx = proximity.stars[star.id] ?? 0;
         const proxRelight = 1 + starProx * PROXIMITY_RELIGHT;
@@ -593,7 +601,8 @@ function Constellation({
               nameBloom *
                 (0.4 + 0.6 * nameClarity) *
                 (0.78 + 0.22 * nameGlow) *
-                (hovered === star.id ? 1 : 0.92),
+                (hovered === star.id ? 1 : 0.92) *
+                (hubPrompt ? hubFreezeFxRef.inviteMul : 1),
             )
           : 0.6;
         const nameBlurPx = isHero
@@ -636,7 +645,11 @@ function Constellation({
                   teal={heroAtom.teal}
                   spikes={heroAtom.spikes}
                   globalScale={gScale}
-                  birthFlash={birth.heroFlash}
+                  birthFlash={
+                    hubBirthMode
+                      ? Math.max(birth.heroFlash, hubFreezeFxRef.flash)
+                      : birth.heroFlash
+                  }
                   birth={birthDrive}
                   breathDrive={
                     hubBirthMode
@@ -646,7 +659,9 @@ function Constellation({
                         : Math.max(breathDrive, birth.heroSize * 0.25)
                   }
                   sizeBreath={
-                    hubBirthMode ? HUB_HERO_SIZE_BREATH * breathDrive : 0
+                    hubBirthMode && !hubFreezeFxRef.holdBreath
+                      ? HUB_HERO_SIZE_BREATH * breathDrive
+                      : 0
                   }
                   parallax={0}
                   phase={i * 1.7}

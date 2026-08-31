@@ -51,6 +51,10 @@ type SanctuaryWizardStep1SkyProps = {
   layerOpacity?: number;
   /** Hub WebGL : premier frame prêt. */
   onHubReady?: () => void;
+  /** Durée crossfade A/D. */
+  fadeMs?: number;
+  /** Courbe CSS (KEEP thaw). */
+  fadeEase?: string;
   /** Hub — invite accrochée à l’étoile (dictionnaire). */
   hubPrompt?: string;
   hubTapHint?: string;
@@ -72,6 +76,8 @@ export function SanctuaryWizardStep1Sky({
   variant = "ritual",
   layerOpacity = 1,
   onHubReady,
+  fadeMs = 560,
+  fadeEase = "cubic-bezier(0.4, 0, 0.2, 1)",
   hubPrompt,
   hubTapHint,
   onStarAnchorChange,
@@ -155,7 +161,11 @@ export function SanctuaryWizardStep1Sky({
         "pointer-events-none fixed inset-0 z-0 transition-opacity ease-out",
         panelFading ? "opacity-90" : "opacity-100",
       ].join(" ")}
-      style={{ transitionDuration: "420ms", opacity: layerOpacity }}
+      style={{
+        transitionDuration: `${fadeMs}ms`,
+        transitionTimingFunction: fadeEase,
+        opacity: layerOpacity,
+      }}
       aria-hidden
     >
       <SanctuaryUniverse

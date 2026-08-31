@@ -4,9 +4,11 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 31 août 2026 — **T1b panneau œil** : overlay centré · slide-in simple · scroll sans barre OS.
+- 31 août 2026 — **T1b thaw KEEP** : courbe apparition hub `HUB_THAW_APPEAR_EASE_CSS` · silence + ramp organique (B réutilisera).
+- 31 août 2026 — **T1b rite freeze** : E+A+D — align PNG · souffle → gel → verre · miroir fermeture (`hubFreezeTimeline`).
+- 31 août 2026 — **T1b polish** : backdrop `hub-freeze-v1.png` · chrome forfait masqué toute étape 1.
 - 31 août 2026 — **T1b gel perf** : WebGL stop au clic (`hubSkyLive`) · unmount sous panneau · ancre étoile via ref.
-- 31 août 2026 — **T1b hub.heroPulse** : respiration Hero isolée (`hubIdle.ts`) · étapes prologue-safe.
-- 31 août 2026 — **T1b invite hub** : texte craft Html sur Hero · birth hub · clic ancré projection.
 - 31 août 2026 — **T1b caméra hub** : `HubSkyCamera` (plan test-ciel + dolly Hero).
 - 31 août 2026 — **T1b code** : hub WebGL lite · crossfade gel 2D · chrome hub masqué.
 - 31 août 2026 — **Figé** : Chemins A/B · contrat hub WebGL animé ↔ gel 2D (clic Hero · fermer · Continuer).
@@ -81,6 +83,7 @@
 | Phase | Rendu ciel | GPU | Panneau |
 |-------|------------|-----|---------|
 | **Hub idle** (Hero attend) | **WebGL animé** — plan test-ciel · dolly · `hub.heroPulse` (breath) · invite Html | Actif (budget serré) | Fermé |
+| **Étape 1 (hub + panneau)** | Chrome forfait / Cercle / shell **masqué** | — | Forfait = plus tard (étape 2+ / menu) |
 | **Clic Hero** | `transition.hubFreezeTo2D` | Stop loop · capture ou frame alignée | Ouvre — **verre teinté** (distinct du hub) |
 | **Saisie** (`panel.essentials`) | **Image 2D fixe** (même frame) | **Off** | Ouvert — zéro lag clavier |
 | **Fermer panneau** (X / Esc) | `transition.panelCloseToHub` — fondu 2D → **reprise WebGL hub** | Reprise hub-lite | Ferme |
@@ -90,17 +93,17 @@
 
 | ID | Déclencheur | Effet perceptif |
 |----|-------------|-----------------|
-| `transition.hubFreezeTo2D` | Clic Hero | Le ciel **retient son souffle** → image · panneau glisse |
-| `transition.panelCloseToHub` | Fermer panneau | Image s'efface → le ciel **respire à nouveau** |
+| `transition.hubFreezeTo2D` | Clic Hero | **Souffle** (flash+hold 200 ms) → crossfade ciel 560 ms → panneau verre slide (~340 ms) |
+| `transition.panelCloseToHub` | Fermer panneau | Panneau out 280 ms → PNG→WebGL 520 ms · étoile **respire à nouveau** |
 | `transition.backdropToWebGL` | Continuer | Le ciel **s'allume** → constellation |
 
 ### Implémentation (cible)
 
-1. **Capture** canvas hub au clic **ou** PNG export lab **même caméra** idle.
-2. Crossfade **300–500 ms** · **aucun saut** de cadrage.
-3. `ForceRenderLoop` **off** dès `hubFreezeTo2D` (`hubSkyLive=false`) · **unmount** WebGL en `panel.essentials`.
-4. Ancre étoile hub = **ref** (pas `setState`/frame) — hit target DOM via rAF.
-5. Panneau verre : blur + teinte (ex. teal très soft / bordure) — **lisiblement ≠ hub pur**.
+1. PNG `hub-freeze-v1` **aligné** centre (`object-center`, pas scale) · capture canvas = **B plus tard**.
+2. Timeline : `hubFreezeTimeline.ts` (hold → fade → panel · miroir close).
+3. `ForceRenderLoop` on pendant hold (flash) · off après · **unmount** en `panel.essentials`.
+4. Ancre étoile hub = **ref** · FX freeze = `hubFreezeFxRef` (flash / holdBreath / inviteMul).
+5. Panneau verre : enter `parcours-panel-in` · exit translate+fade.
 
 ### Ce n'est PAS
 

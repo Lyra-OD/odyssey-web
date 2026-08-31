@@ -931,7 +931,24 @@ export function TributeWizard({
     <>
       <ParcoursHubBodyFlag active={step1Parcours.hubChromeHidden} />
       {step1Sky && step1Parcours.showBackdrop ? (
-        <SkyBackdrop opacity={hubBackdropOpacity} />
+        <SkyBackdrop
+          opacity={hubBackdropOpacity}
+          durationMs={step1Parcours.skyFadeMs}
+          easing={step1Parcours.skyFadeEase}
+        />
+      ) : null}
+      {step1Sky && step1Parcours.showFreezeVeil ? (
+        <div
+          className="pointer-events-none fixed inset-0 z-[1] transition-opacity"
+          style={{
+            transitionDuration: `${step1Parcours.skyFadeMs}ms`,
+            transitionTimingFunction: step1Parcours.skyFadeEase,
+            opacity: step1Parcours.freezeHolding ? 0.55 : 0.22,
+            background:
+              "radial-gradient(ellipse 55% 45% at 50% 48%, rgba(94,234,212,0.22) 0%, transparent 70%)",
+          }}
+          aria-hidden
+        />
       ) : null}
       {step1Parcours.showHubHero ? (
         <SanctuaryHubHero
@@ -951,6 +968,8 @@ export function TributeWizard({
           silhouetteIdle={false}
           variant="hub-lite"
           layerOpacity={hubWebGLLayerOpacity}
+          fadeMs={step1Parcours.skyFadeMs}
+          fadeEase={step1Parcours.skyFadeEase}
           onHubReady={onHubWebGLReady}
           hubPrompt={copy.parcoursHeroPrompt}
           hubTapHint={copy.parcoursHeroTapHint}
@@ -974,13 +993,17 @@ export function TributeWizard({
         />
       ) : null}
     <div
-      className={`relative mx-auto mt-10 w-full ${
+      className={`relative mx-auto w-full ${
         currentStep === 6
           ? "max-w-4xl"
           : currentStep >= 4
             ? "max-w-3xl"
             : "max-w-xl"
-      } ${step1Sky ? "z-10" : ""}`}
+      } ${step1Sky ? "z-10" : ""} ${
+        currentStep === 1 && step1Parcours.showEssentialsPanel
+          ? "mt-0"
+          : "mt-10"
+      }`}
     >
       {isEditor ? (
         <div
@@ -1238,11 +1261,21 @@ export function TributeWizard({
           </div>
         ) : null}
 
-        <div className="min-h-[min(48vh,26rem)] pb-40">
+        <div
+          className={
+            currentStep === 1 && step1Parcours.showEssentialsPanel
+              ? "min-h-0 pb-0"
+              : "min-h-[min(48vh,26rem)] pb-40"
+          }
+        >
           {currentStep === 1 && step1Parcours.showEssentialsPanel ? (
             <div
+              className="parcours-panel-shell pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-4"
+              aria-hidden={false}
+            >
+            <div
               className={[
-                "relative rounded-2xl border px-6 py-8 shadow-[0_8px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all duration-500 md:px-8 md:py-10",
+                "parcours-panel-scroll pointer-events-auto relative w-full max-w-xl max-h-[min(78dvh,42rem)] overflow-y-auto rounded-2xl border px-6 py-7 shadow-[0_8px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl md:px-8 md:py-9",
                 step1Parcours.phase === "panel.essentials" &&
                 step1Reveal.phase === "typing"
                   ? "border-teal-400/20 bg-teal-950/15"
@@ -1250,8 +1283,17 @@ export function TributeWizard({
                 step1Reveal.phase === "reward" ||
                 step1Reveal.phase === "done"
                   ? "pointer-events-none opacity-0"
-                  : "translate-y-0 opacity-100",
+                  : step1Parcours.panelExiting
+                    ? "pointer-events-none translate-y-3 opacity-0 transition-[opacity,transform] ease-in"
+                    : "parcours-panel-in",
               ].join(" ")}
+              style={
+                step1Parcours.panelExiting
+                  ? {
+                      transitionDuration: `${step1Parcours.panelExitMs}ms`,
+                    }
+                  : undefined
+              }
             >
             {step1Parcours.phase === "panel.essentials" &&
             step1Reveal.phase === "typing" ? (
@@ -1422,6 +1464,7 @@ export function TributeWizard({
                 </p>
               ) : null}
             </>
+            </div>
             </div>
           ) : null}
 
