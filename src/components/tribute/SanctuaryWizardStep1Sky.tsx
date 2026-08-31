@@ -113,7 +113,7 @@ export function SanctuaryWizardStep1Sky({
       hubPrompt: isHubLite,
       hubTapHint: isHubLite ? hubTapHint : undefined,
       heroName,
-      skyActive: isHubLite ? true : skyActive,
+      skyActive,
       silhouetteIdle: isHubLite ? false : showSilhouetteIdle,
       skyWakeKey: isHubLite
         ? "hub-lite-sky"

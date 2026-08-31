@@ -4,7 +4,7 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 31 août 2026 — **T1b C2 2 layers** : WebGL sous panneau · PNG rideau transition · close simplifié.
+- 31 août 2026 — **Revert C2** : gel PNG sous panneau · WebGL off saisie · thaw D restauré.
 - 31 août 2026 — **T1b panneau œil** : overlay centré · slide-in simple · scroll sans barre OS.
 - 31 août 2026 — **T1b thaw KEEP** : courbe apparition hub `HUB_THAW_APPEAR_EASE_CSS` · silence + ramp organique (B réutilisera).
 - 31 août 2026 — **T1b rite freeze** : E+A+D — align PNG · souffle → gel → verre · miroir fermeture (`hubFreezeTimeline`).
@@ -86,8 +86,8 @@
 | **Hub idle** (Hero attend) | **WebGL animé** — plan test-ciel · dolly · `hub.heroPulse` (breath) · invite Html | Actif (budget serré) | Fermé |
 | **Étape 1 (hub + panneau)** | Chrome forfait / Cercle / shell **masqué** | — | Forfait = plus tard (étape 2+ / menu) |
 | **Clic Hero** | `transition.hubFreezeTo2D` | Stop loop · capture ou frame alignée | Ouvre — **verre teinté** (distinct du hub) |
-| **Saisie** (`panel.essentials`) | **WebGL lite atténué** (~82 %) + verre | **On** (budget serré) | Ouvert — ciel respire sous le verre |
-| **Fermer panneau** (X / Esc) | Hub idle direct (WebGL déjà là) | Loop hub-lite | Ferme |
+| **Saisie** (`panel.essentials`) | **Image 2D fixe** (même frame) | **Off** | Ouvert — zéro lag clavier |
+| **Fermer panneau** (X / Esc) | `transition.panelCloseToHub` — fondu PNG → **reprise WebGL hub** | Reprise hub-lite | Ferme |
 | **Continuer** | `transition.backdropToWebGL` — 2D → WebGL · play reveal A→F | Rituel full | Ferme ou fade |
 
 ### Transitions nommées
@@ -102,7 +102,7 @@
 
 1. PNG `hub-freeze-v1` **aligné** centre (`object-center`, pas scale) · capture canvas = **B plus tard**.
 2. Timeline : `hubFreezeTimeline.ts` (hold → fade → panel · miroir close).
-3. `ForceRenderLoop` on pendant hold (flash) · **on** en saisie (C2) · PNG = rideau transition seulement.
+3. `ForceRenderLoop` on pendant hold (flash) · **off** en saisie · **unmount** WebGL en `panel.essentials`.
 4. Ancre étoile hub = **ref** · FX freeze = `hubFreezeFxRef` (flash / holdBreath / inviteMul).
 5. Panneau verre : enter `parcours-panel-in` · exit translate+fade.
 

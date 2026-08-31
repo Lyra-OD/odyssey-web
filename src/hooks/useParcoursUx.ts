@@ -5,14 +5,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { WizardStep1RevealPhase } from "@/src/hooks/useWizardStep1Reveal";
 import {
   beginHubFreezeFx,
-  beginPanelLivingSky,
+  beginHubThawAppear,
   HUB_CLOSE_PANEL_OUT_MS,
-  HUB_CURTAIN_LIFT_MS,
+  HUB_CLOSE_SILENCE_MS,
+  HUB_CLOSE_TOTAL_MS,
   HUB_FREEZE_FADE_MS,
   HUB_FREEZE_HOLD_MS,
   HUB_FREEZE_PANEL_AT_MS,
   HUB_FREEZE_TOTAL_MS,
-  HUB_PANEL_LIVE_WEBGL_OPACITY,
+  HUB_THAW_APPEAR_EASE_CSS,
+  HUB_THAW_APPEAR_MS,
   resetHubFreezeFx,
   softenHubFreezeFx,
 } from "@/src/lib/parcours/hubFreezeTimeline";
@@ -54,6 +56,11 @@ export function useParcoursUx({
   const [transition, setTransition] = useState<ParcoursSkyTransition>(null);
   const [freezeHolding, setFreezeHolding] = useState(false);
   const [panelExiting, setPanelExiting] = useState(false);
+  /**
+   * D — après silence : remount WebGL @0 puis true → ramp KEEP vers 1.
+   * false pendant panelOut + silence (PNG seul / WebGL invisible).
+   */
+  const [thawReveal, setThawReveal] = useState(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const clearTimers = useCallback(() => {
@@ -75,11 +82,11 @@ export function useParcoursUx({
       setTransition(null);
       setFreezeHolding(false);
       setPanelExiting(false);
+      setThawReveal(false);
       return;
     }
     if (revealPhase === "typing") {
       setPhase(virginHub ? "hub.idle" : "panel.essentials");
-      if (!virginHub) beginPanelLivingSky();
     }
   }, [enabled, virginHub, revealPhase, clearTimers]);
 
@@ -91,6 +98,7 @@ export function useParcoursUx({
       setTransition(null);
       setFreezeHolding(false);
       setPanelExiting(false);
+      setThawReveal(false);
       setPhase("ritual.reveal");
     } else if (revealPhase === "done") {
       setPhase("hub.postReveal");
@@ -108,6 +116,7 @@ export function useParcoursUx({
     beginHubFreezeFx();
     setFreezeHolding(true);
     setPanelExiting(false);
+    setThawReveal(false);
     setTransition("hubFreezeTo2D");
 
     schedule(() => {
@@ -121,7 +130,7 @@ export function useParcoursUx({
 
     schedule(() => {
       setTransition(null);
-      beginPanelLivingSky();
+      resetHubFreezeFx();
     }, HUB_FREEZE_TOTAL_MS);
   }, [enabled, revealPhase, phase, transition, clearTimers, schedule]);
 
@@ -133,12 +142,35 @@ export function useParcoursUx({
     clearTimers();
     setPanelExiting(true);
     setFreezeHolding(false);
+    setThawReveal(false);
+    setTransition("panelCloseToHub");
 
+    const silenceAt = HUB_CLOSE_PANEL_OUT_MS;
+    const appearAt = HUB_CLOSE_PANEL_OUT_MS + HUB_CLOSE_SILENCE_MS;
+
+    // Panneau parti → hub idle, WebGL remount @ opacity 0, PNG reste.
     schedule(() => {
-      resetHubFreezeFx();
       setPhase("hub.idle");
       setPanelExiting(false);
-    }, HUB_CLOSE_PANEL_OUT_MS);
+      setThawReveal(false);
+    }, silenceAt);
+
+    // Ramp KEEP : WebGL 0→1 · PNG 1→0 · breath/invite suivent la courbe.
+    schedule(() => {
+      beginHubThawAppear();
+      // Double rAF : pose opacity 0 une frame avant la cible 1 (sinon pas de transition).
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setThawReveal(true);
+        });
+      });
+    }, appearAt);
+
+    schedule(() => {
+      setTransition(null);
+      setThawReveal(false);
+      resetHubFreezeFx();
+    }, HUB_CLOSE_TOTAL_MS);
   }, [enabled, revealPhase, phase, transition, clearTimers, schedule]);
 
   useEffect(() => {
@@ -154,33 +186,44 @@ export function useParcoursUx({
     enabled &&
     (phase === "ritual.reveal" || phase === "hub.postReveal");
 
-  /** C2 — WebGL monté hub + panneau (PNG = rideau transition seulement). */
+  /** Hub WebGL : idle + crossfades — pas sous le formulaire (PNG seul). */
   const mountHubWebGL =
     enabled &&
     !showRitualWebGL &&
     (phase === "hub.idle" ||
-      phase === "panel.essentials" ||
-      transition === "hubFreezeTo2D");
+      transition === "hubFreezeTo2D" ||
+      transition === "panelCloseToHub");
 
-  /** PNG visible seulement pendant le crossfade freeze (pas en saisie stable). */
   const mountBackdrop =
     enabled &&
     !showRitualWebGL &&
-    (phase === "hub.idle" || transition === "hubFreezeTo2D");
+    (phase === "hub.idle" ||
+      phase === "panel.essentials" ||
+      transition !== null ||
+      panelExiting);
 
   const hubWebGLOpacity =
     transition === "hubFreezeTo2D"
       ? freezeHolding
         ? 1
         : 0
-      : phase === "panel.essentials"
-        ? HUB_PANEL_LIVE_WEBGL_OPACITY
+      : transition === "panelCloseToHub"
+        ? thawReveal
+          ? 1
+          : 0
         : phase === "hub.idle"
           ? 1
           : 0;
 
   const backdropOpacity =
-    transition === "hubFreezeTo2D" && !freezeHolding ? 1 : 0;
+    transition === "panelCloseToHub"
+      ? thawReveal
+        ? 0
+        : 1
+      : phase === "panel.essentials" ||
+          (transition === "hubFreezeTo2D" && !freezeHolding)
+        ? 1
+        : 0;
 
   const showHubHero =
     enabled && phase === "hub.idle" && transition === null;
@@ -191,29 +234,38 @@ export function useParcoursUx({
       ((phase === "panel.essentials" ||
         phase === "ritual.reveal" ||
         phase === "hub.postReveal") &&
-        !panelExiting));
+        transition !== "panelCloseToHub"));
 
-  /** C2 — loop WebGL hub idle + saisie panneau · off pendant fade PNG. */
+  /** Loop WebGL : hub vivant + hold freeze + thaw — off en saisie panneau. */
   const hubSkyLive =
     enabled &&
     ((phase === "hub.idle" && transition === null) ||
-      (phase === "panel.essentials" && transition === null) ||
-      (transition === "hubFreezeTo2D" && freezeHolding));
+      (transition === "hubFreezeTo2D" && freezeHolding) ||
+      (transition === "panelCloseToHub" && phase === "hub.idle"));
 
   const hubChromeHidden = enabled;
 
-  const showFreezeVeil = transition === "hubFreezeTo2D";
+  const showFreezeVeil =
+    transition === "hubFreezeTo2D" ||
+    (transition === "panelCloseToHub" && panelExiting);
 
-  const skyFadeEase = "cubic-bezier(0.4, 0, 0.2, 1)";
+  /** Courbe CSS KEEP — thaw only · aller garde ease-in-out standard. */
+  const skyFadeEase =
+    transition === "panelCloseToHub"
+      ? HUB_THAW_APPEAR_EASE_CSS
+      : "cubic-bezier(0.4, 0, 0.2, 1)";
 
   const skyFadeMs =
-    transition === "hubFreezeTo2D" ? HUB_FREEZE_FADE_MS : HUB_CURTAIN_LIFT_MS;
+    transition === "panelCloseToHub"
+      ? HUB_THAW_APPEAR_MS
+      : HUB_FREEZE_FADE_MS;
 
   return {
     phase,
     transition,
     freezeHolding,
     panelExiting,
+    thawReveal,
     openPanel,
     closePanel,
     showHubWebGL: mountHubWebGL,
@@ -227,7 +279,7 @@ export function useParcoursUx({
     hubChromeHidden,
     showFreezeVeil,
     crossfadeMs: HUB_FREEZE_FADE_MS,
-    closeFadeMs: HUB_CURTAIN_LIFT_MS,
+    closeFadeMs: HUB_THAW_APPEAR_MS,
     panelExitMs: HUB_CLOSE_PANEL_OUT_MS,
     skyFadeMs,
     skyFadeEase,

@@ -63,7 +63,7 @@
 |---------------|-----------|-------------------|------|
 | `transition.prologueToHub` | éclipse → **hub WebGL lite** | #2 (quand prologue prêt) | Fade · Chemin A |
 | **`transition.hubFreezeTo2D`** | **hub animé → image 2D gelée** | **UX core T1b** | Souffle + fade + panneau (`hubFreezeTimeline`) |
-| **`transition.panelCloseToHub`** | **panneau → hub idle** | **UX core T1b** | Panneau out · WebGL déjà vivant (C2) |
+| **`transition.panelCloseToHub`** | **2D gelée → reprise hub WebGL** | **UX core T1b** | Panneau out → thaw breath KEEP |
 | `transition.backdropToWebGL` | PNG → Canvas même cadrage (Continuer) | **#1** | Crossfade 400 ms |
 | `transition.panelOpen` | hub → panneau verre (slide) | UX core | CSS slide 300–500 ms · avec hubFreeze |
 | `transition.panelClose` | panneau → hub (slide) | UX core | CSS slide · avec panelCloseToHub |
