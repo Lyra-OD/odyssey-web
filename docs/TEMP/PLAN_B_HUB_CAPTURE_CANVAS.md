@@ -1,7 +1,8 @@
 # Plan B — Capture canvas hub au clic (gel pixel-perfect)
 
 **Type :** TEMP · rush · **Date :** 1 sept 2026 (demain)  
-**Prérequis livré ce soir :** `12f1c34` — thaw D fluide, canvas chaud sous panneau, dolly préservé.  
+**Prérequis livré :** monolithe verre (`070cce3`→`44a7fd0`) · WebGL unmount saisie · thaw A+B · gel JPEG fallback.  
+**Prochaine tranche code :** **Plan B** capture canvas · puis polish entrée panneau (§7 recette).
 **Canon :** [`../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §2b · [`hubFreezeTimeline.ts`](../../src/lib/parcours/hubFreezeTimeline.ts)
 
 ---
@@ -25,9 +26,9 @@ Au clic Hero, **capturer le dernier frame WebGL** (même caméra, même zoom) et
 
 | Symptôme | Cause |
 |----------|--------|
-| « Cadre » / bandes noires | PNG `hub-freeze-v1` ≠ viewport canvas |
-| Zoom différent à la fermeture | partiellement fixé (`HubSkyCamera` settled) — B aligne aussi l’**aller** |
-| Magie clic insuffisante | crossfade vers asset approximatif, pas le frame vécu |
+| « Cadre » / bandes noires | PNG/JPEG fallback ≠ viewport canvas → **B** |
+| Zoom différent à la fermeture | thaw A+B OK · **B** aligne aussi l’**aller** |
+| Magie clic insuffisante | crossfade vers asset approximatif + entrée panneau slide générique |
 
 ---
 

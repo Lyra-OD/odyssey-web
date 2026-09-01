@@ -4,6 +4,7 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 1 sept 2026 — **Recette monolithe** : [`../design/PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) · rollout wizard · ordre B → entrée panneau.
 - 1 sept 2026 — **Monolithe polish** : halo `--salon-cyan` pur (sans UV) · spread renforcé · breath minimal (5,8 s).
 - 1 sept 2026 — **Monolithe verre** : WebGL unmount saisie · silence React · stèle ~90dvh · CTA Continuer intégré.
 - 1 sept 2026 — **Thaw sync A+B** : GPU @ `thawReveal` · `beginHubThawAppear` aligné · gel `hub-freeze-v1.jpg` (~236 KB).
@@ -104,11 +105,11 @@
 
 ### Implémentation (cible)
 
-1. PNG `hub-freeze-v1` **aligné** centre (`object-center`, pas scale) · capture canvas = **B plus tard**.
+1. Gel 2D : **Plan B** capture canvas @ clic · fallback `hub-freeze-v1.jpg` (~236 KB) — voir [`../TEMP/PLAN_B_HUB_CAPTURE_CANVAS.md`](../TEMP/PLAN_B_HUB_CAPTURE_CANVAS.md).
 2. Timeline : `hubFreezeTimeline.ts` (hold → fade → panel · miroir close).
 3. `ForceRenderLoop` on pendant hold (flash) · **off** en saisie · **unmount** WebGL en `panel.essentials`.
 4. Ancre étoile hub = **ref** · FX freeze = `hubFreezeFxRef` (flash / holdBreath / inviteMul).
-5. Panneau verre : enter `parcours-panel-in` · exit translate+fade.
+5. Panneau monolithe : recette [`../design/PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) · enter `parcours-panel-in` (**polish magie prévu** §7) · exit translate+fade.
 
 ### Ce n'est PAS
 
@@ -387,7 +388,9 @@ Les tranches **ne dépendent pas** du prologue craft pour démarrer.
 | **Contrat hub ↔ 2D** | ✅ Figé | §2b · Registry transitions |
 | **Caméra hub** | `HubSkyCamera` — plan test-ciel (z=7.5) → dolly Hero (~5.15) · prologue éclipse skip | T1b |
 | **Chemins A / B** | ✅ Figé | §1b |
-| **Frame ciel 2D** | Capture hub ou export lab · alignement caméra | T1b |
+| **Frame ciel 2D** | Capture hub (**Plan B**) · fallback JPEG · alignement caméra | 🟡 T1b livré · **B next** |
+| **Entrée panneau (magie)** | Slide `parcours-panel-in` — scale/blur/stagger prévu | ⏳ après B · [`PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) §7 |
+| **Peau wizard 2–7** | Monolithe généralisé (verre · halo · CTA) | ⏳ spec [`PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) §6 |
 | **Chemins 2+** | Hors scope | Chemin 1b Salon · invité seul · retour hub |
 
 ---
