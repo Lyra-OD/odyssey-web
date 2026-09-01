@@ -15,6 +15,8 @@ type SkyBackdropProps = {
   src?: string | null;
   /** 0–1 — fondu crossfade hub WebGL ↔ gel 2D (T1b). */
   opacity?: number;
+  /** T-close-5a — opacité live via CSS var (rituel close, sans re-render). */
+  liveOpacityVar?: string;
   /** Durée crossfade (A/D). */
   durationMs?: number;
   /** Courbe CSS — KEEP thaw = `HUB_THAW_APPEAR_EASE_CSS`. */
@@ -31,6 +33,7 @@ export function SkyBackdrop({
   className = "",
   src,
   opacity = 1,
+  liveOpacityVar,
   durationMs = 560,
   easing = "cubic-bezier(0.4, 0, 0.2, 1)",
   closeRitual = "idle",
@@ -42,18 +45,21 @@ export function SkyBackdrop({
       : closeRitual === "collapse" || closeRitual === "hold"
         ? "parcours-backdrop-ritual-collapse"
         : "";
+  const resolvedOpacity = liveOpacityVar
+    ? (`var(${liveOpacityVar}, ${opacity})` as const)
+    : opacity;
   return (
     <div
       className={[
         "pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#020202] transition-opacity",
-        opacity < 0.02 ? "opacity-0" : "opacity-100",
+        !liveOpacityVar && opacity < 0.02 ? "opacity-0" : "opacity-100",
         ritualClass,
         className,
       ].join(" ")}
       style={{
         transitionDuration: `${durationMs}ms`,
         transitionTimingFunction: easing,
-        opacity,
+        opacity: resolvedOpacity,
       }}
       aria-hidden
     >

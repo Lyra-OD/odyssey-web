@@ -49,6 +49,8 @@ type SanctuaryWizardStep1SkyProps = {
   variant?: "hub-lite" | "ritual";
   /** Opacité crossfade hub ↔ panneau (0–1). */
   layerOpacity?: number;
+  /** T-close-5a — opacité live via CSS var (rituel close, sans re-render). */
+  liveLayerOpacityVar?: string;
   /** Hub WebGL : premier frame prêt. */
   onHubReady?: () => void;
   /** Durée crossfade A/D. */
@@ -117,6 +119,7 @@ export function SanctuaryWizardStep1Sky({
   panelFading = false,
   variant = "ritual",
   layerOpacity = 1,
+  liveLayerOpacityVar,
   onHubReady,
   fadeMs = 560,
   fadeEase = "cubic-bezier(0.4, 0, 0.2, 1)",
@@ -189,6 +192,9 @@ export function SanctuaryWizardStep1Sky({
   ]);
 
   const craftReveal = isHubLite ? hubLiteCraftReveal : ritualCraftReveal;
+  const resolvedLayerOpacity = liveLayerOpacityVar
+    ? (`var(${liveLayerOpacityVar}, ${layerOpacity})` as const)
+    : layerOpacity;
 
   return (
     <div
@@ -199,7 +205,7 @@ export function SanctuaryWizardStep1Sky({
       style={{
         transitionDuration: `${fadeMs}ms`,
         transitionTimingFunction: fadeEase,
-        opacity: layerOpacity,
+        opacity: resolvedLayerOpacity,
       }}
       aria-hidden
     >

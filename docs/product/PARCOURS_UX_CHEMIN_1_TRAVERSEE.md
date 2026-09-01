@@ -4,13 +4,11 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 1 sept 2026 — **T-close-5a-b** : canvas hub monté en saisie (opacité 0 · loop off) + prefetch chunk — plus de remontage @ Esc.
+- 1 sept 2026 — **T-close-5a** : horloge rAF sans setState 60 fps · opacités via CSS vars · `skyFadeMs=180` au rituel.
 - 1 sept 2026 — **T-close-4** : timeline unifiée `u` 0→1 · opacités continues · une horloge rAF.
 - 1 sept 2026 — **T-close-3f** : bridge verre→étoile — thaw 88 % collapse · flash Hero sync.
 - 1 sept 2026 — **T-close-2b** : pivot collapse figé · ancre hub conservée · thaw @ hold (stabilité).
-- 1 sept 2026 — **T-close-2** : flash / voile inspire centrés sur `--parcours-star-x/y` (ancre étoile).
-- 1 sept 2026 — **T-close-1** : ancre rAF + centre optique Hero · collapse vers étoile.
-- 1 sept 2026 — **Tranche 1 fermeture D1** : pre-warm WebGL · thaw @ `hubWebGLReady` · backdrop jusqu’au moteur chaud.
-- 1 sept 2026 — **Plan B livré** : capture canvas @ clic Hero · gel pixel-perfect · fallback JPEG.
 
 **Statut :** spec produit **figée** · fermeture **T-close-1–4 livrés** · prochaine tranche **T-open-mirror** (ouverture depuis l’étoile).
 

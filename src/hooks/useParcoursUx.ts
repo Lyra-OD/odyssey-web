@@ -7,6 +7,7 @@ import {
   captureHubCanvas,
   revokeHubFreezeCapture,
 } from "@/src/lib/parcours/hubFreezeCapture";
+import { prefetchSanctuaryUniverse } from "@/src/lib/parcours/prefetchSanctuaryUniverse";
 import {
   beginHubCloseInspire,
   beginHubFreezeFx,
@@ -15,6 +16,7 @@ import {
   HUB_CLOSE_COLLAPSE_MS,
   HUB_CLOSE_IMPACT_RITUAL_U,
   HUB_CLOSE_RITUAL_MS,
+  HUB_CLOSE_STREAK_LAYER_FADE_MS,
   HUB_CLOSE_THAW_RITUAL_U,
   hubCloseBackdropOpacityU,
   hubClosePhaseFromU,
@@ -45,6 +47,34 @@ export type ParcoursSkyTransition =
   | "panelCloseToHub";
 
 export type ParcoursCloseRitualPhase = HubCloseRitualPhase;
+
+/** T-close-5a — opacités rituel close sans setState (rAF → CSS vars). */
+export const PARCOURS_CLOSE_WEBGL_OPACITY_VAR =
+  "--parcours-close-webgl-opacity";
+export const PARCOURS_CLOSE_BACKDROP_OPACITY_VAR =
+  "--parcours-close-backdrop-opacity";
+
+function syncCloseRitualSkyOpacities(u: number) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  const phase = hubClosePhaseFromU(u);
+  let webgl = hubCloseWebGLOpacityU(u);
+  if (phase === "collapse" || phase === "hold") {
+    webgl = Math.max(webgl, 0.72);
+  }
+  root.style.setProperty(
+    PARCOURS_CLOSE_BACKDROP_OPACITY_VAR,
+    String(hubCloseBackdropOpacityU(u)),
+  );
+  root.style.setProperty(PARCOURS_CLOSE_WEBGL_OPACITY_VAR, String(webgl));
+}
+
+function clearCloseRitualSkyOpacities() {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  root.style.removeProperty(PARCOURS_CLOSE_WEBGL_OPACITY_VAR);
+  root.style.removeProperty(PARCOURS_CLOSE_BACKDROP_OPACITY_VAR);
+}
 
 type UseParcoursUxOptions = {
   enabled: boolean;
@@ -86,8 +116,8 @@ export function useParcoursUx({
   const [freezeCaptureUrl, setFreezeCaptureUrl] = useState<string | null>(null);
   const [closeRitualPhase, setCloseRitualPhase] =
     useState<ParcoursCloseRitualPhase>("idle");
-  /** T-close-4 — timeline unifiée 0→1 (rAF · opacités continues). */
-  const [closeRitualU, setCloseRitualU] = useState(0);
+  /** T-close-5a — timeline 0→1 en ref (opacités via CSS vars, pas de re-render). */
+  const closeRitualURef = useRef(0);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const closeThawCommittedRef = useRef(false);
   const closeThawArmedRef = useRef(false);
@@ -117,6 +147,11 @@ export function useParcoursUx({
   }, []);
 
   useEffect(() => {
+    if (!enabled) return;
+    prefetchSanctuaryUniverse();
+  }, [enabled]);
+
+  useEffect(() => {
     if (!enabled) {
       clearTimers();
       stopCloseRitualRaf();
@@ -129,7 +164,8 @@ export function useParcoursUx({
       setPanelExiting(false);
       setThawReveal(false);
       setCloseRitualPhase("idle");
-      setCloseRitualU(0);
+      closeRitualURef.current = 0;
+      clearCloseRitualSkyOpacities();
       closeRitualPhaseRef.current = "idle";
       closeImpactFiredRef.current = false;
       closeThawArmedRef.current = false;
@@ -201,6 +237,7 @@ export function useParcoursUx({
   const commitCloseThaw = useCallback(() => {
     if (closeThawCommittedRef.current) return;
     closeThawCommittedRef.current = true;
+    clearCloseRitualSkyOpacities();
     beginHubThawAppear();
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -216,7 +253,8 @@ export function useParcoursUx({
       closeThawCommittedRef.current = false;
       closeThawArmedRef.current = false;
       setCloseRitualPhase("idle");
-      setCloseRitualU(0);
+      closeRitualURef.current = 0;
+      clearCloseRitualSkyOpacities();
       closeRitualPhaseRef.current = "idle";
       closeImpactFiredRef.current = false;
       closeRitualActiveRef.current = false;
@@ -229,7 +267,8 @@ export function useParcoursUx({
 
     const elapsed = performance.now() - start;
     const u = hubCloseRitualU(elapsed);
-    setCloseRitualU(u);
+    closeRitualURef.current = u;
+    syncCloseRitualSkyOpacities(u);
 
     const nextPhase = hubClosePhaseFromU(u);
     if (nextPhase !== closeRitualPhaseRef.current) {
@@ -275,7 +314,8 @@ export function useParcoursUx({
     setFreezeHolding(false);
     setThawReveal(false);
     setCloseRitualPhase("inspire");
-    setCloseRitualU(0);
+    closeRitualURef.current = 0;
+    syncCloseRitualSkyOpacities(0);
     setTransition("panelCloseToHub");
 
     closeRitualStartedAtRef.current = performance.now();
@@ -318,11 +358,12 @@ export function useParcoursUx({
     enabled &&
     (phase === "ritual.reveal" || phase === "hub.postReveal");
 
-  /** Hub WebGL : idle + crossfades — unmount total en saisie panneau. */
+  /** Hub WebGL : idle + crossfades — canvas chaud en saisie (loop off, opacité 0). */
   const mountHubWebGL =
     enabled &&
     !showRitualWebGL &&
     (phase === "hub.idle" ||
+      phase === "panel.essentials" ||
       transition === "hubFreezeTo2D" ||
       transition === "panelCloseToHub");
 
@@ -342,7 +383,7 @@ export function useParcoursUx({
       : transition === "panelCloseToHub"
         ? thawReveal
           ? 1
-          : hubCloseWebGLOpacityU(closeRitualU)
+          : hubCloseWebGLOpacityU(closeRitualURef.current)
         : phase === "hub.idle"
           ? 1
           : 0;
@@ -351,7 +392,7 @@ export function useParcoursUx({
     transition === "panelCloseToHub"
       ? thawReveal
         ? 0
-        : hubCloseBackdropOpacityU(closeRitualU)
+        : hubCloseBackdropOpacityU(closeRitualURef.current)
       : phase === "panel.essentials" ||
           (transition === "hubFreezeTo2D" && !freezeHolding)
         ? 1
@@ -369,7 +410,7 @@ export function useParcoursUx({
         phase === "hub.postReveal") &&
         transition !== "panelCloseToHub"));
 
-  /** Loop off en saisie · pre-warm + reprise @ thaw close (D1). */
+  /** Loop off en saisie · canvas monté @ opacité 0 (pre-warm) · reprise @ close (D1). */
   const hubSkyLive =
     enabled &&
     ((phase === "hub.idle" && transition === null) ||
@@ -401,8 +442,12 @@ export function useParcoursUx({
     transition === "panelCloseToHub"
       ? thawReveal
         ? HUB_THAW_APPEAR_MS
-        : 0
+        : HUB_CLOSE_STREAK_LAYER_FADE_MS
       : HUB_FREEZE_FADE_MS;
+
+  /** Rituel close — opacités pilotées en rAF (CSS vars), pas via props React. */
+  const closeSkyOpacityLive =
+    transition === "panelCloseToHub" && !thawReveal;
 
   return {
     phase,
@@ -412,7 +457,7 @@ export function useParcoursUx({
     thawReveal,
     freezeCaptureUrl,
     closeRitualPhase,
-    closeRitualU,
+    closeSkyOpacityLive,
     openPanel,
     closePanel,
     showHubWebGL: mountHubWebGL,

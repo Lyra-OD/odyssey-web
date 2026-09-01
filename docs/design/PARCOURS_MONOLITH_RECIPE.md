@@ -154,7 +154,11 @@
 
 **T-close-4 :** une horloge rAF · `hubCloseRitualU` 0→1 · opacités backdrop/WebGL continues · beats impact/thaw @ `HUB_CLOSE_*_RITUAL_U` · `skyFadeMs=0` pendant rituel.
 
-### P1 — Entrée formulaire (magie panneau) — **après T-close-4**
+**T-close-5a :** horloge rAF **sans** `setState` 60 fps — `closeRitualU` en ref · opacités JPEG/WebGL via CSS vars (`--parcours-close-*-opacity`) · `skyFadeMs=180` pendant rituel · React ne re-render que aux frontières de phase.
+
+**T-close-5a-b :** canvas hub **monté** en saisie (opacité 0 · loop off) + prefetch chunk @ step 1 — plus de remontage WebGL @ Esc/X.
+
+### P1 — Entrée formulaire (magie panneau) — **après T-close-5**
 Beat actuel trop « slide générique » vs souffle freeze.
 
 **Pistes (sans changer le métier) :**

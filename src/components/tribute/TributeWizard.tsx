@@ -50,7 +50,11 @@ import { VaultOnlineSourcesSection } from "@/src/components/tribute/VaultOnlineS
 import { AutosaveIndicator } from "@/src/components/tribute/AutosaveIndicator";
 import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
 import { useWizardStep1Reveal } from "@/src/hooks/useWizardStep1Reveal";
-import { useParcoursUx } from "@/src/hooks/useParcoursUx";
+import {
+  PARCOURS_CLOSE_BACKDROP_OPACITY_VAR,
+  PARCOURS_CLOSE_WEBGL_OPACITY_VAR,
+  useParcoursUx,
+} from "@/src/hooks/useParcoursUx";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
 import { SkyBackdrop } from "@/src/components/contribute/SkyBackdrop";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
@@ -645,24 +649,13 @@ export function TributeWizard({
       hubCanvasRef.current = null;
       return;
     }
-    const panelTyping =
-      step1Parcours.phase === "panel.essentials" &&
-      step1Parcours.transition === null;
-    const closeWarming = step1Parcours.transition === "panelCloseToHub";
-    if (panelTyping) {
-      setHubWebGLReady(false);
-      hubCanvasRef.current = null;
-      return;
-    }
-    if (!step1Parcours.showHubWebGL && !closeWarming) {
+    if (!step1Parcours.showHubWebGL) {
       setHubWebGLReady(false);
       hubCanvasRef.current = null;
     }
   }, [
     step1Sky,
     step1Parcours.showHubWebGL,
-    step1Parcours.phase,
-    step1Parcours.transition,
   ]);
 
   /** Hub initial : attendre 1er frame · close pre-warm : gate via thawReveal (D1). */
@@ -1043,6 +1036,11 @@ export function TributeWizard({
         <SkyBackdrop
           src={step1Parcours.freezeCaptureUrl}
           opacity={hubBackdropOpacity}
+          liveOpacityVar={
+            step1Parcours.closeSkyOpacityLive
+              ? PARCOURS_CLOSE_BACKDROP_OPACITY_VAR
+              : undefined
+          }
           durationMs={step1Parcours.skyFadeMs}
           easing={step1Parcours.skyFadeEase}
           closeRitual={
@@ -1095,6 +1093,11 @@ export function TributeWizard({
           silhouetteIdle={false}
           variant="hub-lite"
           layerOpacity={hubWebGLLayerOpacity}
+          liveLayerOpacityVar={
+            step1Parcours.closeSkyOpacityLive
+              ? PARCOURS_CLOSE_WEBGL_OPACITY_VAR
+              : undefined
+          }
           fadeMs={step1Parcours.skyFadeMs}
           fadeEase={step1Parcours.skyFadeEase}
           onHubReady={onHubWebGLReady}
