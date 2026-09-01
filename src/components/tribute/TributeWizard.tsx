@@ -57,7 +57,11 @@ import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll"
 import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
 import { SanctuaryHubHero } from "@/src/components/tribute/SanctuaryHubHero";
 import { ParcoursHubBodyFlag } from "@/src/components/tribute/ParcoursHubBodyFlag";
-import { hubStarAnchorRef, hubStarCollapseTransformOrigin } from "@/src/components/tribute/hubStarAnchorRef";
+import {
+  hubStarAnchorRef,
+  hubStarCollapseTransformOrigin,
+  syncHubStarCssVars,
+} from "@/src/components/tribute/hubStarAnchorRef";
 import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
 import { useWizardDraftLifecycle } from "@/src/hooks/useWizardDraftLifecycle";
 import {
@@ -547,8 +551,7 @@ export function TributeWizard({
   });
   const hubCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const monolithFrameRef = useRef<HTMLDivElement | null>(null);
-  const [monolithCollapseOrigin, setMonolithCollapseOrigin] =
-    useState("50% 45%");
+  const monolithShellRef = useRef<HTMLDivElement | null>(null);
   const onHubCanvasMount = useCallback((canvas: HTMLCanvasElement | null) => {
     hubCanvasRef.current = canvas;
   }, []);
@@ -568,27 +571,27 @@ export function TributeWizard({
     [],
   );
 
+  /** T-close-1 — ancre étoile vivante (rAF) pendant tout `panelCloseToHub`. */
   useEffect(() => {
-    if (
-      step1Parcours.closeRitualPhase !== "inspire" &&
-      step1Parcours.closeRitualPhase !== "collapse"
-    ) {
-      return;
-    }
-    const frame = monolithFrameRef.current;
-    if (!frame) {
-      setMonolithCollapseOrigin("50% 45%");
-      return;
-    }
-    const updateOrigin = () => {
-      const rect = frame.getBoundingClientRect();
-      setMonolithCollapseOrigin(
-        hubStarCollapseTransformOrigin(hubStarAnchorRef.current, rect),
-      );
+    if (step1Parcours.transition !== "panelCloseToHub") return;
+    let raf = 0;
+    const tick = () => {
+      const frame = monolithFrameRef.current;
+      const shell = monolithShellRef.current;
+      const anchor = hubStarAnchorRef.current;
+      if (shell) syncHubStarCssVars(shell, anchor);
+      if (frame) {
+        const rect = frame.getBoundingClientRect();
+        frame.style.setProperty(
+          "--parcours-collapse-origin",
+          hubStarCollapseTransformOrigin(anchor, rect),
+        );
+      }
+      raf = requestAnimationFrame(tick);
     };
-    updateOrigin();
-    requestAnimationFrame(updateOrigin);
-  }, [step1Parcours.closeRitualPhase]);
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [step1Parcours.transition]);
 
   useEffect(() => {
     if (!step1Sky) {
@@ -1340,6 +1343,7 @@ export function TributeWizard({
         >
           {currentStep === 1 && step1Parcours.showEssentialsPanel ? (
             <div
+              ref={monolithShellRef}
               className={[
                 "parcours-monolith-shell pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-4",
                 step1Parcours.closeRitualPhase !== "idle"
@@ -1366,8 +1370,6 @@ export function TributeWizard({
                 step1Parcours.closeRitualPhase === "collapse" ||
                 step1Parcours.closeRitualPhase === "hold"
                   ? {
-                      ["--parcours-collapse-origin" as string]:
-                        monolithCollapseOrigin,
                       ["--parcours-collapse-ms" as string]:
                         `${step1Parcours.panelExitMs}ms`,
                     }

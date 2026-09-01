@@ -4,6 +4,7 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 1 sept 2026 — **T-close-1** : ancre étoile rAF + centre optique Hero pendant fermeture.
 - 1 sept 2026 — **Fermeture seamless** : crossfade ciel pendant collapse · flash `beginHubCloseInspire`.
 - 1 sept 2026 — **Tranches 2–3 fermeture** : inspire backdrop · collapse verre → étoile · hold avant thaw D1.
 - 1 sept 2026 — Recette initiale post-T1b monolithe (perf · DA · rollout wizard).
@@ -126,7 +127,19 @@
 **CSS :** `.parcours-backdrop-ritual-inspire` · `.parcours-monolith-collapse` · `.parcours-monolith-inspire` (halo)  
 **Timeline :** `HUB_CLOSE_INSPIRE_MS` · `HUB_CLOSE_COLLAPSE_MS` · `HUB_CLOSE_HOLD_MS` · `HUB_CLOSE_RITUAL_MS`
 
-### P1 — Entrée formulaire (magie panneau) — **next**
+### P0d — Fermeture magique (étapes chirurgicales · ordre fixe)
+
+| Étape | Contenu | Statut |
+|-------|---------|--------|
+| **T-close-1** | Ancre étoile vivante (rAF) + centre optique Hero | ✅ |
+| **T-close-2** | Voiles inspire suivent `--parcours-star-x/y` | ⏳ |
+| **T-close-3** | Halo tracteur fixed (viewport) · verre fade | ⏳ |
+| **T-close-4** | Timeline unifiée + thaw overlap fluide | ⏳ |
+| **T-open-mirror** | Ouverture miroir depuis l’étoile (après close OK) | ⏳ |
+
+**T-close-1 :** `hubStarVisualViewportPx` · offset hitbox Hero · rAF pendant `panelCloseToHub` · pas de setState 60 fps.
+
+### P1 — Entrée formulaire (magie panneau) — **après T-close-4**
 Beat actuel trop « slide générique » vs souffle freeze.
 
 **Pistes (sans changer le métier) :**
