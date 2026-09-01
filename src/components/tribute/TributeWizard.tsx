@@ -541,7 +541,9 @@ export function TributeWizard({
       !e?.deathDate?.trim()
     );
   });
-  const step1Reveal = useWizardStep1Reveal(firstName);
+  const step1Reveal = useWizardStep1Reveal(firstName, {
+    muteFirstNameSnap: step1Sky,
+  });
   const step1Parcours = useParcoursUx({
     enabled: step1Sky,
     revealPhase: step1Reveal.phase,
@@ -1275,16 +1277,12 @@ export function TributeWizard({
         >
           {currentStep === 1 && step1Parcours.showEssentialsPanel ? (
             <div
-              className="parcours-panel-shell pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-4"
+              className="parcours-monolith-shell pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-4"
               aria-hidden={false}
             >
             <div
               className={[
-                "parcours-panel-scroll pointer-events-auto relative w-full max-w-xl max-h-[min(78dvh,42rem)] overflow-y-auto rounded-2xl border px-6 py-7 shadow-[0_8px_48px_rgba(0,0,0,0.45)] backdrop-blur-xl md:px-8 md:py-9",
-                step1Parcours.phase === "panel.essentials" &&
-                step1Reveal.phase === "typing"
-                  ? "border-teal-400/20 bg-teal-950/15"
-                  : "border-white/10 bg-black/45",
+                "parcours-monolith-scroll parcours-monolith-glass pointer-events-auto relative w-full max-w-xl px-6 py-7 md:px-8 md:py-9",
                 step1Reveal.phase === "reward" ||
                 step1Reveal.phase === "done"
                   ? "pointer-events-none opacity-0"
@@ -1467,6 +1465,20 @@ export function TributeWizard({
                 >
                   {copy.validationEssential}
                 </p>
+              ) : null}
+
+              {step1Parcours.phase === "panel.essentials" &&
+              step1Reveal.phase === "typing" ? (
+                <div className="mt-10 pb-2">
+                  <button
+                    type="button"
+                    disabled={!canProceedEssential}
+                    onClick={() => void goNext()}
+                    className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+                  >
+                    {copy.parcoursMonolithContinue}
+                  </button>
+                </div>
               ) : null}
             </>
             </div>
@@ -2241,7 +2253,12 @@ export function TributeWizard({
       {currentStep !== 3 &&
       currentStep !== 6 &&
       currentStep !== 7 &&
-      !(currentStep === 1 && step1Parcours.showHubHero) ? (
+      !(currentStep === 1 && step1Parcours.showHubHero) &&
+      !(
+        currentStep === 1 &&
+        step1Parcours.phase === "panel.essentials" &&
+        step1Reveal.phase === "typing"
+      ) ? (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
           <div
             className={`mx-auto ${

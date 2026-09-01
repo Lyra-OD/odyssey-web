@@ -1,7 +1,7 @@
 "use client";
 
 /** Frame 2D Chemin 1 — gel hub (≠ panorama lab `milky-way-v1`). */
-export const SKY_BACKDROP_IMAGE_SRC = "/craft/sky/hub-freeze-v1.png";
+export const SKY_BACKDROP_IMAGE_SRC = "/craft/sky/hub-freeze-v1.jpg";
 
 type SkyBackdropProps = {
   className?: string;

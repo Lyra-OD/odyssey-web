@@ -63,6 +63,45 @@ type SanctuaryWizardStep1SkyProps = {
 
 const HUB_IDLE_REVEAL_REF = { current: WIZARD_IDLE_REVEAL_T } as MutableRefObject<number>;
 
+const HUB_LITE_TEMPLATE = resolveConstellationTemplate(null);
+const HUB_LITE_STROKE = resolveStrokeSequence(null);
+const HUB_LITE_SLOT_LIT = allGhostSlotLit(HUB_LITE_TEMPLATE);
+
+function buildHubLiteCraftReveal(
+  skyActive: boolean,
+  hubPrompt?: string,
+  hubTapHint?: string,
+): ConstellationRevealCraft {
+  const heroName = hubPrompt?.trim() || "Margaret";
+  return {
+    controlled: true,
+    revealT: WIZARD_IDLE_REVEAL_T,
+    revealTRef: HUB_IDLE_REVEAL_REF,
+    hideHeroName: false,
+    hubPrompt: true,
+    hubTapHint,
+    heroName,
+    skyActive,
+    silhouetteIdle: false,
+    skyWakeKey: "hub-lite-sky",
+    template: HUB_LITE_TEMPLATE,
+    strokeSequence: HUB_LITE_STROKE,
+    heroAtom: {
+      white: { ...DEFAULT_HERO_WHITE, breath: HUB_HERO_BREATH_SPEED },
+      teal: { ...DEFAULT_HERO_TEAL, breath: HUB_HERO_BREATH_SPEED },
+      spikes: { ...DEFAULT_HERO_SPIKES, breath: HUB_HERO_BREATH_SPEED },
+      embedScale: 0.42,
+      globalScale: DEFAULT_HERO_GLOBAL_SCALE,
+    },
+    slotLit: HUB_LITE_SLOT_LIT,
+    graphScale: 1,
+    tipStrength: 1.2,
+    tipStyle: "orb",
+    tipColor: "#5eead4",
+    heroParallax: 1,
+  };
+}
+
 export function SanctuaryWizardStep1Sky({
   locale,
   firstName,
@@ -101,35 +140,28 @@ export function SanctuaryWizardStep1Sky({
   /** Silhouette settled seulement si date valide + panneau saisie. */
   const showSilhouetteIdle = silhouetteIdle && zodiacSign != null;
 
-  const craftReveal = useMemo((): ConstellationRevealCraft => {
-    const heroName = isHubLite
-      ? (hubPrompt?.trim() || "Margaret")
-      : firstName.trim() || "Margaret";
+  const hubLiteCraftReveal = useMemo(
+    () => buildHubLiteCraftReveal(skyActive, hubPrompt, hubTapHint),
+    [skyActive, hubPrompt, hubTapHint],
+  );
+
+  const ritualCraftReveal = useMemo((): ConstellationRevealCraft => {
+    const heroName = firstName.trim() || "Margaret";
     return {
       controlled: true,
-      revealT: isHubLite ? WIZARD_IDLE_REVEAL_T : revealT,
-      revealTRef: isHubLite ? HUB_IDLE_REVEAL_REF : revealTRef,
-      hideHeroName: isHubLite ? false : hideHeroName,
-      hubPrompt: isHubLite,
-      hubTapHint: isHubLite ? hubTapHint : undefined,
+      revealT,
+      revealTRef,
+      hideHeroName,
       heroName,
       skyActive,
-      silhouetteIdle: isHubLite ? false : showSilhouetteIdle,
-      skyWakeKey: isHubLite
-        ? "hub-lite-sky"
-        : `${template.id}|${showSilhouetteIdle ? 1 : 0}|${firstName.trim()}|${birthDate}`,
+      silhouetteIdle: showSilhouetteIdle,
+      skyWakeKey: `${template.id}|${showSilhouetteIdle ? 1 : 0}|${firstName.trim()}|${birthDate}`,
       template,
       strokeSequence,
       heroAtom: {
-        white: isHubLite
-          ? { ...DEFAULT_HERO_WHITE, breath: HUB_HERO_BREATH_SPEED }
-          : DEFAULT_HERO_WHITE,
-        teal: isHubLite
-          ? { ...DEFAULT_HERO_TEAL, breath: HUB_HERO_BREATH_SPEED }
-          : DEFAULT_HERO_TEAL,
-        spikes: isHubLite
-          ? { ...DEFAULT_HERO_SPIKES, breath: HUB_HERO_BREATH_SPEED }
-          : DEFAULT_HERO_SPIKES,
+        white: DEFAULT_HERO_WHITE,
+        teal: DEFAULT_HERO_TEAL,
+        spikes: DEFAULT_HERO_SPIKES,
         embedScale: 0.42,
         globalScale: DEFAULT_HERO_GLOBAL_SCALE,
       },
@@ -138,12 +170,8 @@ export function SanctuaryWizardStep1Sky({
       tipStrength: 1.2,
       tipStyle: "orb",
       tipColor: "#5eead4",
-      heroParallax: isHubLite ? 1 : undefined,
     };
   }, [
-    isHubLite,
-    hubPrompt,
-    hubTapHint,
     firstName,
     birthDate,
     revealT,
@@ -154,6 +182,8 @@ export function SanctuaryWizardStep1Sky({
     template,
     strokeSequence,
   ]);
+
+  const craftReveal = isHubLite ? hubLiteCraftReveal : ritualCraftReveal;
 
   return (
     <div

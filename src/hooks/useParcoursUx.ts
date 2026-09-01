@@ -144,10 +144,10 @@ export function useParcoursUx({
     setFreezeHolding(false);
     setThawReveal(false);
     setTransition("panelCloseToHub");
-    beginHubThawAppear();
 
-    // Crossfade ciel dès t≈120 ms — chevauche la sortie du verre.
+    // Crossfade ciel @ +120 ms — GPU + courbe JS alignés sur thawReveal (Fix A+B).
     schedule(() => {
+      beginHubThawAppear();
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setThawReveal(true);
@@ -180,12 +180,11 @@ export function useParcoursUx({
     enabled &&
     (phase === "ritual.reveal" || phase === "hub.postReveal");
 
-  /** Canvas reste monté sous panneau (opacity 0) — thaw instantané sans remount. */
+  /** Hub WebGL : idle + crossfades — unmount total en saisie panneau. */
   const mountHubWebGL =
     enabled &&
     !showRitualWebGL &&
     (phase === "hub.idle" ||
-      phase === "panel.essentials" ||
       transition === "hubFreezeTo2D" ||
       transition === "panelCloseToHub");
 
@@ -231,12 +230,12 @@ export function useParcoursUx({
         phase === "hub.postReveal") &&
         transition !== "panelCloseToHub"));
 
-  /** Loop off en saisie · reprise dès fermeture (moteur chaud, canvas déjà là). */
+  /** Loop off en saisie · reprise au fondu thaw seulement (Fix A — pas de GPU à opacity 0). */
   const hubSkyLive =
     enabled &&
     ((phase === "hub.idle" && transition === null) ||
       (transition === "hubFreezeTo2D" && freezeHolding) ||
-      transition === "panelCloseToHub");
+      (transition === "panelCloseToHub" && thawReveal));
 
   const hubChromeHidden = enabled;
 

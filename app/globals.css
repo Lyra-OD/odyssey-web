@@ -55,6 +55,52 @@ body {
   height: 0;
 }
 
+/** Monolithe verre spatial — étape 1 saisie (~90dvh, blur léger). */
+.parcours-monolith-shell {
+  padding-top: max(0.75rem, 4vh);
+  padding-bottom: max(0.75rem, 4vh);
+}
+
+.parcours-monolith-glass {
+  position: relative;
+  border-radius: 1rem;
+  border: 1px solid rgba(129, 140, 248, 0.15);
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  background: linear-gradient(
+    165deg,
+    rgba(30, 27, 75, 0.88) 0%,
+    rgba(15, 12, 45, 0.92) 55%,
+    rgba(8, 6, 28, 0.9) 100%
+  );
+}
+
+.parcours-monolith-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 55% 45% at 50% 38%,
+    rgba(94, 234, 212, 0.12) 0%,
+    transparent 62%
+  );
+}
+
+.parcours-monolith-scroll {
+  max-height: 90dvh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.parcours-monolith-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 /** Chemin 1 hub idle — masque chrome shell studio (logo · déconnexion · footer). */
 html[data-parcours-hub-idle] .studio-shell-chrome,
 html[data-parcours-hub-idle] .studio-shell-halo {

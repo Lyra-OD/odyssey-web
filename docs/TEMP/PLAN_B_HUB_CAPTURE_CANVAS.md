@@ -38,7 +38,7 @@ hub.idle (WebGL live)
     ↓ clic — fin HUB_FREEZE_HOLD_MS (200 ms)
 captureCanvas() → blob/data URL
     ↓ HUB_FREEZE_FADE_MS (560 ms)
-panel.essentials : backdrop = capture dynamique (fallback hub-freeze-v1.png)
+panel.essentials : backdrop = capture dynamique (fallback hub-freeze-v1.jpg)
     ↓ WebGL unmount / opacity 0 · loop off
 saisie fluide
     ↓ fermer — thaw D (inchangé)
@@ -108,7 +108,7 @@ Dans `openPanel` schedule @ `HUB_FREEZE_HOLD_MS` :
 
 ### Étape 4 — Fallback + cleanup (30 min)
 
-- Capture fail → log dev · fallback `hub-freeze-v1.png`
+- Capture fail → log dev · fallback `hub-freeze-v1.jpg`
 - `revokeHubFreezeCapture()` on : close panel, unmount step 1, openPanel again
 - Pas de fuite mémoire data URL (réutiliser ou revoke)
 

@@ -17,7 +17,10 @@ export type WizardStep1RevealPhase = "typing" | "reward" | "done";
  * - Rituel Continuer (reward/done) → ciel réveillé pour le play A→F.
  * - Snap prénom (pas de lerp WebGL) — une paint via wakeKey Canvas suffit.
  */
-export function useWizardStep1Reveal(firstName: string) {
+export function useWizardStep1Reveal(
+  firstName: string,
+  options?: { muteFirstNameSnap?: boolean },
+) {
   const revealTRef = useRef(WIZARD_IDLE_REVEAL_T);
   const [revealT, setRevealT] = useState(WIZARD_IDLE_REVEAL_T);
   const [phase, setPhase] = useState<WizardStep1RevealPhase>("typing");
@@ -25,11 +28,11 @@ export function useWizardStep1Reveal(firstName: string) {
   const dwellTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (phase !== "typing") return;
+    if (phase !== "typing" || options?.muteFirstNameSnap) return;
     const target = firstNameToBirthRevealT(firstName);
     revealTRef.current = target;
     setRevealT(target);
-  }, [firstName, phase]);
+  }, [firstName, phase, options?.muteFirstNameSnap]);
 
   /** Ciel actif seulement pendant le rituel — panneau ouvert = pause totale. */
   const skyActive = phase === "reward" || phase === "done";
