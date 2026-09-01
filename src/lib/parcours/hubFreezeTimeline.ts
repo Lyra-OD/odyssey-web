@@ -70,8 +70,8 @@ export function hubClosePhaseFromU(u: number): HubCloseRitualPhase {
 /** T-close-5c — backdrop @ hold : pont JPEG jusqu’au thaw KEEP (panneau off). */
 export const HUB_CLOSE_HOLD_BACKDROP_OPACITY = 0.35;
 
-/** T-close-4 — backdrop JPEG : inspire plein → handoff collapse → hold pont. */
-export function hubCloseBackdropOpacityU(u: number): number {
+/** Courbe JPEG collapse. */
+function hubCloseBackdropOpacityCore(u: number): number {
   if (u <= HUB_CLOSE_INSPIRE_U) return 1;
   if (u >= HUB_CLOSE_COLLAPSE_END_U) return HUB_CLOSE_HOLD_BACKDROP_OPACITY;
   const t =
@@ -91,7 +91,12 @@ export function hubCloseBackdropOpacityU(u: number): number {
   return 0.06 - local * 0.02;
 }
 
-/** T-close-4 — WebGL pre-warm : 0 inspire → 0.88 collapse (courbe KEEP). */
+/** T-close-5c — backdrop JPEG : inspire → collapse → hold pont. */
+export function hubCloseBackdropOpacityU(u: number): number {
+  return hubCloseBackdropOpacityCore(u);
+}
+
+/** T-close-5c — WebGL pre-warm : 0 inspire → 0.88 @ fin collapse. */
 export function hubCloseWebGLOpacityU(u: number): number {
   if (u <= HUB_CLOSE_INSPIRE_U) return 0;
   if (u >= HUB_CLOSE_COLLAPSE_END_U) return 0.88;

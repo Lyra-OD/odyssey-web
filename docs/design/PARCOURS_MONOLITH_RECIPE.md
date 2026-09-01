@@ -162,6 +162,8 @@
 
 **T-close-5c :** thaw KEEP **@ hold** seulement (plus @ 88 % collapse) · backdrop pont @ 0.35 pendant le beat hold.
 
+**T-close-5e :** revert 5d · `skyFadeMs=0` pendant rituel (vars rAF) · thaw 2× rAF @ hold · handoff sans flash.
+
 ### P1 — Entrée formulaire (magie panneau) — **après T-close-5**
 Beat actuel trop « slide générique » vs souffle freeze.
 

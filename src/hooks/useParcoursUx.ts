@@ -16,7 +16,6 @@ import {
   HUB_CLOSE_COLLAPSE_MS,
   HUB_CLOSE_IMPACT_RITUAL_U,
   HUB_CLOSE_RITUAL_MS,
-  HUB_CLOSE_STREAK_LAYER_FADE_MS,
   hubCloseBackdropOpacityU,
   hubClosePhaseFromU,
   hubCloseRitualU,
@@ -234,13 +233,10 @@ export function useParcoursUx({
   const commitCloseThaw = useCallback(() => {
     if (closeThawCommittedRef.current) return;
     closeThawCommittedRef.current = true;
-    clearCloseRitualSkyOpacities();
     beginHubThawAppear();
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setThawReveal(true);
-      });
-    });
+    /** React reprend les opacités avant de retirer les vars (évite le flash). */
+    setThawReveal(true);
+    clearCloseRitualSkyOpacities();
     schedule(() => {
       setTransition(null);
       setThawReveal(false);
@@ -279,6 +275,8 @@ export function useParcoursUx({
     }
 
     if (elapsed >= HUB_CLOSE_RITUAL_MS) {
+      closeRitualURef.current = 1;
+      syncCloseRitualSkyOpacities(1);
       setCloseRitualPhase("hold");
       closeRitualPhaseRef.current = "hold";
       setPhase("hub.idle");
@@ -322,20 +320,23 @@ export function useParcoursUx({
     driveCloseRitual,
   ]);
 
-  /** T-close-5c — thaw KEEP @ hold seulement (panneau off · WebGL prêt). */
+  /** T-close-5e — thaw @ hold : 2× rAF (canvas chaud) · pas de gate hubWebGLReady flaky. */
   useEffect(() => {
     if (transition !== "panelCloseToHub") return;
     if (thawReveal || closeThawCommittedRef.current) return;
-    if (!hubWebGLReady) return;
     if (closeRitualPhase !== "hold") return;
-    commitCloseThaw();
-  }, [
-    transition,
-    thawReveal,
-    hubWebGLReady,
-    closeRitualPhase,
-    commitCloseThaw,
-  ]);
+
+    let inner = 0;
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => {
+        commitCloseThaw();
+      });
+    });
+    return () => {
+      cancelAnimationFrame(outer);
+      cancelAnimationFrame(inner);
+    };
+  }, [transition, thawReveal, closeRitualPhase, commitCloseThaw]);
 
   useEffect(() => {
     if (!enabled || phase !== "panel.essentials" || transition) return;
@@ -434,7 +435,7 @@ export function useParcoursUx({
     transition === "panelCloseToHub"
       ? thawReveal
         ? HUB_THAW_APPEAR_MS
-        : HUB_CLOSE_STREAK_LAYER_FADE_MS
+        : 0
       : HUB_FREEZE_FADE_MS;
 
   /** Rituel close — opacités pilotées en rAF (CSS vars), pas via props React. */
