@@ -5,6 +5,8 @@
 
 /** Beat 1 — étoile flash · invite out · breath hold. */
 export const HUB_FREEZE_HOLD_MS = 200;
+/** Plan B — capture canvas @ fin hold (frame WebGL stable). */
+export const HUB_CAPTURE_AT_MS = HUB_FREEZE_HOLD_MS;
 /** Beat 2 — crossfade WebGL → PNG (aller). */
 export const HUB_FREEZE_FADE_MS = 560;
 /** Panneau verre commence (pendant le fade). */

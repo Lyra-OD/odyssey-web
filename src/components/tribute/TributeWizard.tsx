@@ -545,10 +545,15 @@ export function TributeWizard({
   const step1Reveal = useWizardStep1Reveal(firstName, {
     muteFirstNameSnap: step1Sky,
   });
+  const hubCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const onHubCanvasMount = useCallback((canvas: HTMLCanvasElement | null) => {
+    hubCanvasRef.current = canvas;
+  }, []);
   const step1Parcours = useParcoursUx({
     enabled: step1Sky,
     revealPhase: step1Reveal.phase,
     virginHub: step1VirginHub,
+    hubCanvasRef,
   });
   const [hubWebGLReady, setHubWebGLReady] = useState(false);
   const onHubWebGLReady = useCallback(() => setHubWebGLReady(true), []);
@@ -568,6 +573,7 @@ export function TributeWizard({
     if (!step1Parcours.showHubWebGL) {
       setHubWebGLReady(false);
       hubStarAnchorRef.current = null;
+      hubCanvasRef.current = null;
     }
   }, [step1Sky, step1Parcours.showHubWebGL]);
 
@@ -940,6 +946,7 @@ export function TributeWizard({
       <ParcoursHubBodyFlag active={step1Parcours.hubChromeHidden} />
       {step1Sky && step1Parcours.showBackdrop ? (
         <SkyBackdrop
+          src={step1Parcours.freezeCaptureUrl}
           opacity={hubBackdropOpacity}
           durationMs={step1Parcours.skyFadeMs}
           easing={step1Parcours.skyFadeEase}
@@ -979,6 +986,7 @@ export function TributeWizard({
           fadeMs={step1Parcours.skyFadeMs}
           fadeEase={step1Parcours.skyFadeEase}
           onHubReady={onHubWebGLReady}
+          onHubCanvasMount={onHubCanvasMount}
           hubPrompt={copy.parcoursHeroPrompt}
           hubTapHint={copy.parcoursHeroTapHint}
           onStarAnchorChange={onHubStarAnchor}

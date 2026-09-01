@@ -112,11 +112,10 @@
 
 ## 7. Travail ouvert (ordre recommandé)
 
-### P0 — Plan B (gel pixel-perfect)
-→ [`PLAN_B_HUB_CAPTURE_CANVAS.md`](../TEMP/PLAN_B_HUB_CAPTURE_CANVAS.md)  
-Symptôme : « pas de magie au clic » en partie parce que `hub-freeze-v1.jpg` ≠ frame WebGL vécu. **B avant** polish entrée panneau évite de retoucher deux fois.
+### P0 — Plan B (gel pixel-perfect) ✅
+→ [`PLAN_B_HUB_CAPTURE_CANVAS.md`](../TEMP/PLAN_B_HUB_CAPTURE_CANVAS.md) — **livré 1 sept 2026**
 
-### P1 — Entrée formulaire (magie panneau)
+### P1 — Entrée formulaire (magie panneau) — **next**
 Beat actuel trop « slide générique » vs souffle freeze.
 
 **Pistes (sans changer le métier) :**

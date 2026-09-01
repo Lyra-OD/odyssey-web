@@ -5,6 +5,8 @@ export const SKY_BACKDROP_IMAGE_SRC = "/craft/sky/hub-freeze-v1.jpg";
 
 type SkyBackdropProps = {
   className?: string;
+  /** Override gel — Plan B capture data URL · défaut = JPEG statique. */
+  src?: string | null;
   /** 0–1 — fondu crossfade hub WebGL ↔ gel 2D (T1b). */
   opacity?: number;
   /** Durée crossfade (A/D). */
@@ -19,10 +21,12 @@ type SkyBackdropProps = {
  */
 export function SkyBackdrop({
   className = "",
+  src,
   opacity = 1,
   durationMs = 560,
   easing = "cubic-bezier(0.4, 0, 0.2, 1)",
 }: SkyBackdropProps) {
+  const imageSrc = src ?? SKY_BACKDROP_IMAGE_SRC;
   return (
     <div
       className={[
@@ -39,7 +43,7 @@ export function SkyBackdrop({
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={SKY_BACKDROP_IMAGE_SRC}
+        src={imageSrc}
         alt=""
         className="absolute inset-0 h-full w-full object-cover object-center"
         draggable={false}

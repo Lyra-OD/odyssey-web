@@ -1,8 +1,8 @@
 # Plan B — Capture canvas hub au clic (gel pixel-perfect)
 
-**Type :** TEMP · rush · **Date :** 1 sept 2026 (demain)  
-**Prérequis livré :** monolithe verre (`070cce3`→`44a7fd0`) · WebGL unmount saisie · thaw A+B · gel JPEG fallback.  
-**Prochaine tranche code :** **Plan B** capture canvas · puis polish entrée panneau (§7 recette).
+**Type :** TEMP · rush · **Date :** 1 sept 2026  
+**Statut :** ✅ **Livré** — `hubFreezeCapture.ts` · `preserveDrawingBuffer` hub-lite · `SkyBackdrop.src` dynamique.  
+**Suite :** entrée panneau magie · T2 reveal.
 **Canon :** [`../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §2b · [`hubFreezeTimeline.ts`](../../src/lib/parcours/hubFreezeTimeline.ts)
 
 ---

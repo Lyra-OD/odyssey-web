@@ -1129,7 +1129,10 @@ function UniverseScene({
   );
 }
 
-function createRenderer(canvas: HTMLCanvasElement | OffscreenCanvas) {
+function createRenderer(
+  canvas: HTMLCanvasElement | OffscreenCanvas,
+  options?: { preserveDrawingBuffer?: boolean },
+) {
   const opts: WebGLContextAttributes = {
     alpha: false,
     antialias: false,
@@ -1137,7 +1140,7 @@ function createRenderer(canvas: HTMLCanvasElement | OffscreenCanvas) {
     stencil: false,
     powerPreference: "low-power",
     failIfMajorPerformanceCaveat: false,
-    preserveDrawingBuffer: false,
+    preserveDrawingBuffer: options?.preserveDrawingBuffer ?? false,
   };
   const context =
     canvas.getContext("webgl2", opts) ||
@@ -1198,6 +1201,8 @@ export type SanctuaryUniverseProps = {
   hubSkyCamera?: boolean;
   /** Projection étoile Hero → overlay clic (hub). */
   onStarAnchorChange?: (anchor: ScreenAnchor | null) => void;
+  /** Hub Traversée — canvas WebGL pour capture gel (Plan B). */
+  onHubCanvasMount?: (canvas: HTMLCanvasElement | null) => void;
 };
 
 export function SanctuaryUniverse({
@@ -1215,6 +1220,7 @@ export function SanctuaryUniverse({
   onCanvasReady,
   hubSkyCamera = false,
   onStarAnchorChange,
+  onHubCanvasMount,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -1228,6 +1234,19 @@ export function SanctuaryUniverse({
     (craftLite ? 0.25 : mode === "background" ? 0.55 : 1);
   const immersive = mode === "immersive" && !craftLite;
   const skyPaused = craftReveal?.skyActive === false;
+  const hubCaptureBuffer = hubSkyCamera && mode === "background";
+  const glFactory = useCallback(
+    (canvas: HTMLCanvasElement | OffscreenCanvas) =>
+      createRenderer(canvas, { preserveDrawingBuffer: hubCaptureBuffer }),
+    [hubCaptureBuffer],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (hubCaptureBuffer) onHubCanvasMount?.(null);
+    };
+  }, [hubCaptureBuffer, onHubCanvasMount]);
+
   const [focus, setFocus] = useState<FocusSession | null>(null);
   const [constellationOn, setConstellationOn] = useState(true);
   const [wanderOn, setWanderOn] = useState(false);
@@ -1442,9 +1461,12 @@ export function SanctuaryUniverse({
             near: 0.1,
             far: craftLite ? 120 : 40,
           }}
-          gl={createRenderer}
+          gl={glFactory}
           onCreated={({ gl }) => {
             gl.setClearColor(skyTheme.scene.background, 1);
+            if (hubCaptureBuffer) {
+              onHubCanvasMount?.(gl.domElement as HTMLCanvasElement);
+            }
             if (onCanvasReady) {
               requestAnimationFrame(() => {
                 onCanvasReady();

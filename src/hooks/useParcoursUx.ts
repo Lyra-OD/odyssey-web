@@ -1,16 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 
 import type { WizardStep1RevealPhase } from "@/src/hooks/useWizardStep1Reveal";
 import {
+  captureHubCanvas,
+  revokeHubFreezeCapture,
+} from "@/src/lib/parcours/hubFreezeCapture";
+import {
   beginHubFreezeFx,
   beginHubThawAppear,
+  HUB_CAPTURE_AT_MS,
   HUB_CLOSE_PANEL_OUT_MS,
   HUB_CLOSE_THAW_START_MS,
   HUB_CLOSE_TOTAL_MS,
   HUB_FREEZE_FADE_MS,
-  HUB_FREEZE_HOLD_MS,
   HUB_FREEZE_PANEL_AT_MS,
   HUB_FREEZE_TOTAL_MS,
   HUB_THAW_APPEAR_EASE_CSS,
@@ -35,6 +39,8 @@ type UseParcoursUxOptions = {
   enabled: boolean;
   revealPhase: WizardStep1RevealPhase;
   virginHub: boolean;
+  /** Canvas hub-lite — capture Plan B @ clic Hero. */
+  hubCanvasRef?: RefObject<HTMLCanvasElement | null>;
 };
 
 function resolveInitialPhase(
@@ -49,6 +55,7 @@ export function useParcoursUx({
   enabled,
   revealPhase,
   virginHub,
+  hubCanvasRef,
 }: UseParcoursUxOptions) {
   const [phase, setPhase] = useState<ParcoursPhase>(() =>
     resolveInitialPhase(enabled, virginHub),
@@ -61,6 +68,8 @@ export function useParcoursUx({
    * false jusqu’au début du crossfade (thaw démarre tôt, en parallèle du panneau out).
    */
   const [thawReveal, setThawReveal] = useState(false);
+  /** Plan B — data URL capture session · null = fallback JPEG. */
+  const [freezeCaptureUrl, setFreezeCaptureUrl] = useState<string | null>(null);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const clearTimers = useCallback(() => {
@@ -78,6 +87,8 @@ export function useParcoursUx({
     if (!enabled) {
       clearTimers();
       resetHubFreezeFx();
+      revokeHubFreezeCapture();
+      setFreezeCaptureUrl(null);
       setPhase("hub.idle");
       setTransition(null);
       setFreezeHolding(false);
@@ -113,6 +124,8 @@ export function useParcoursUx({
     if (phase !== "hub.idle") return;
     if (transition) return;
     clearTimers();
+    revokeHubFreezeCapture();
+    setFreezeCaptureUrl(null);
     beginHubFreezeFx();
     setFreezeHolding(true);
     setPanelExiting(false);
@@ -121,8 +134,14 @@ export function useParcoursUx({
 
     schedule(() => {
       softenHubFreezeFx();
-      setFreezeHolding(false);
-    }, HUB_FREEZE_HOLD_MS);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const captured = captureHubCanvas(hubCanvasRef?.current ?? null);
+          setFreezeCaptureUrl(captured);
+          setFreezeHolding(false);
+        });
+      });
+    }, HUB_CAPTURE_AT_MS);
 
     schedule(() => {
       setPhase("panel.essentials");
@@ -132,7 +151,7 @@ export function useParcoursUx({
       setTransition(null);
       resetHubFreezeFx();
     }, HUB_FREEZE_TOTAL_MS);
-  }, [enabled, revealPhase, phase, transition, clearTimers, schedule]);
+  }, [enabled, revealPhase, phase, transition, clearTimers, schedule, hubCanvasRef]);
 
   const closePanel = useCallback(() => {
     if (!enabled) return;
@@ -164,6 +183,8 @@ export function useParcoursUx({
       setTransition(null);
       setThawReveal(false);
       resetHubFreezeFx();
+      revokeHubFreezeCapture();
+      setFreezeCaptureUrl(null);
     }, HUB_CLOSE_TOTAL_MS);
   }, [enabled, revealPhase, phase, transition, clearTimers, schedule]);
 
@@ -260,6 +281,7 @@ export function useParcoursUx({
     freezeHolding,
     panelExiting,
     thawReveal,
+    freezeCaptureUrl,
     openPanel,
     closePanel,
     showHubWebGL: mountHubWebGL,
