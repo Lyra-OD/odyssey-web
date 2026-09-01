@@ -4,13 +4,14 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 1 sept 2026 — **T-close-3** : halo tracteur `--salon-cyan` verre → étoile · collapse verre fade.
 - 1 sept 2026 — **T-close-2b** : pivot collapse figé · ancre hub conservée · thaw @ hold (stabilité).
 - 1 sept 2026 — **T-close-2** : flash / voile inspire centrés sur `--parcours-star-x/y` (ancre étoile).
 - 1 sept 2026 — **T-close-1** : ancre rAF + centre optique Hero · collapse vers étoile.
 - 1 sept 2026 — **Tranche 1 fermeture D1** : pre-warm WebGL · thaw @ `hubWebGLReady` · backdrop jusqu’au moteur chaud.
 - 1 sept 2026 — **Plan B livré** : capture canvas @ clic Hero · gel pixel-perfect · fallback JPEG.
 
-**Statut :** spec produit **figée** · fermeture **T-close-1–2b livrés** · prochaine tranche **T-close-3** (halo tracteur).
+**Statut :** spec produit **figée** · fermeture **T-close-1–3 livrés** · prochaine tranche **T-close-4** (timeline unifiée).
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)

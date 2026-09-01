@@ -64,6 +64,7 @@ import {
   hubStarLastKnownAnchorRef,
   rememberHubStarAnchor,
   resolveHubStarAnchorForClose,
+  syncCloseTracteurCssVars,
   syncHubStarCssVars,
 } from "@/src/components/tribute/hubStarAnchorRef";
 import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
@@ -591,13 +592,15 @@ export function TributeWizard({
     const freezeCollapsePivot = () => {
       const frame = monolithFrameRef.current;
       const anchor = resolveHubStarAnchorForClose();
-      applyStarVars();
       if (frame) {
         const rect = frame.getBoundingClientRect();
+        syncCloseTracteurCssVars(root, anchor, rect);
         frame.style.setProperty(
           "--parcours-collapse-origin",
           hubStarCollapseTransformOrigin(anchor, rect),
         );
+      } else {
+        syncHubStarCssVars(root, anchor);
       }
     };
 
@@ -626,6 +629,10 @@ export function TributeWizard({
     const root = document.documentElement;
     root.style.removeProperty("--parcours-star-x");
     root.style.removeProperty("--parcours-star-y");
+    root.style.removeProperty("--parcours-glass-x");
+    root.style.removeProperty("--parcours-glass-y");
+    root.style.removeProperty("--parcours-tracteur-dx");
+    root.style.removeProperty("--parcours-tracteur-dy");
   }, [step1Parcours.transition]);
 
   useEffect(() => {
@@ -1056,6 +1063,15 @@ export function TributeWizard({
       ) : null}
       {step1Sky && step1Parcours.showCloseInspireVeil ? (
         <div className="parcours-close-inspire-veil" aria-hidden />
+      ) : null}
+      {step1Sky && step1Parcours.showCloseHaloTracteur ? (
+        <div
+          className="parcours-close-halo-tracteur"
+          style={{
+            ["--parcours-collapse-ms" as string]: `${step1Parcours.panelExitMs}ms`,
+          }}
+          aria-hidden
+        />
       ) : null}
       {step1Parcours.showHubHero ? (
         <SanctuaryHubHero

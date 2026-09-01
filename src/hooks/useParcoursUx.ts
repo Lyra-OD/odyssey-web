@@ -314,6 +314,10 @@ export function useParcoursUx({
     transition === "panelCloseToHub" &&
     (closeRitualPhase === "inspire" || closeRitualPhase === "collapse");
 
+  const showCloseHaloTracteur =
+    transition === "panelCloseToHub" &&
+    (closeRitualPhase === "collapse" || closeRitualPhase === "hold");
+
   /** Courbe CSS KEEP — thaw only · aller garde ease-in-out standard. */
   const skyFadeEase =
     transition === "panelCloseToHub"
@@ -346,6 +350,7 @@ export function useParcoursUx({
     hubChromeHidden,
     showFreezeVeil,
     showCloseInspireVeil,
+    showCloseHaloTracteur,
     crossfadeMs: HUB_FREEZE_FADE_MS,
     closeFadeMs: HUB_THAW_APPEAR_MS,
     panelExitMs: HUB_CLOSE_COLLAPSE_MS,

@@ -102,3 +102,38 @@ export function syncHubStarCssVars(
   el.style.setProperty("--parcours-star-x", `${star.x}%`);
   el.style.setProperty("--parcours-star-y", `${star.y}%`);
 }
+
+/** Centre optique du monolithe (viewport %) — départ tracteur T-close-3. */
+export function hubGlassCenterViewportPercent(rect: DOMRect): ScreenAnchor {
+  if (typeof window === "undefined" || rect.width <= 0 || rect.height <= 0) {
+    return { x: 50, y: 48 };
+  }
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  return {
+    x: (cx / window.innerWidth) * 100,
+    y: (cy / window.innerHeight) * 100,
+  };
+}
+
+/** T-close-3 — halo tracteur : verre → étoile (viewport px + %). */
+export function syncCloseTracteurCssVars(
+  el: HTMLElement,
+  anchor: ScreenAnchor | null,
+  glassRect: DOMRect,
+): void {
+  syncHubStarCssVars(el, anchor);
+  const glass = hubGlassCenterViewportPercent(glassRect);
+  el.style.setProperty("--parcours-glass-x", `${glass.x}%`);
+  el.style.setProperty("--parcours-glass-y", `${glass.y}%`);
+  const visual = hubStarVisualViewportPx(anchor);
+  if (visual) {
+    const cx = glassRect.left + glassRect.width / 2;
+    const cy = glassRect.top + glassRect.height / 2;
+    el.style.setProperty("--parcours-tracteur-dx", `${visual.x - cx}px`);
+    el.style.setProperty("--parcours-tracteur-dy", `${visual.y - cy}px`);
+  } else {
+    el.style.setProperty("--parcours-tracteur-dx", "0px");
+    el.style.setProperty("--parcours-tracteur-dy", "0px");
+  }
+}
