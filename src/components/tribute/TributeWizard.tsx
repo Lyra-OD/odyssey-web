@@ -1301,7 +1301,7 @@ export function TributeWizard({
             >
               <div className="parcours-monolith-atmosphere" aria-hidden>
                 <div className="parcours-monolith-aura-uv" />
-                <div className="parcours-monolith-aura-teal" />
+                <div className="parcours-monolith-aura-cyan" />
               </div>
             <div
               className="parcours-monolith-scroll parcours-monolith-glass relative z-[1] w-full px-6 py-7 md:px-8 md:py-9"
