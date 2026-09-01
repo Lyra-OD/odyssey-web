@@ -52,10 +52,6 @@ import { useWizardAutosave } from "@/src/hooks/useWizardAutosave";
 import { useWizardStep1Reveal } from "@/src/hooks/useWizardStep1Reveal";
 import { useParcoursUx } from "@/src/hooks/useParcoursUx";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
-import {
-  SANCTUARY_HALO_TEAL,
-  SANCTUARY_HALO_UV,
-} from "@/src/lib/contribute/sanctuaryChrome";
 import { SkyBackdrop } from "@/src/components/contribute/SkyBackdrop";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
 import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
@@ -1304,15 +1300,8 @@ export function TributeWizard({
               }
             >
               <div className="parcours-monolith-atmosphere" aria-hidden>
-                <div
-                  className="parcours-monolith-atmosphere-uv absolute left-1/2 top-[28%] h-[min(42vh,320px)] w-[min(140vw,28rem)] -translate-x-1/2 -translate-y-1/2 opacity-55 blur-[120px]"
-                  style={{ backgroundImage: SANCTUARY_HALO_UV }}
-                />
-                <div
-                  className="sanctuary-halo-breathe parcours-monolith-atmosphere-teal absolute left-1/2 top-[36%] h-[min(36vh,260px)] w-[min(120vw,24rem)] -translate-x-1/2 -translate-y-1/2 blur-[100px]"
-                  style={{ backgroundImage: SANCTUARY_HALO_TEAL }}
-                />
-                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/25 to-transparent" />
+                <div className="parcours-monolith-aura-uv" />
+                <div className="parcours-monolith-aura-teal" />
               </div>
             <div
               className="parcours-monolith-scroll parcours-monolith-glass relative z-[1] w-full px-6 py-7 md:px-8 md:py-9"

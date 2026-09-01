@@ -59,13 +59,36 @@ body {
 .parcours-monolith-shell {
   padding-top: max(0.75rem, 4vh);
   padding-bottom: max(0.75rem, 4vh);
+  overflow: visible;
+}
+
+.parcours-monolith-frame {
+  overflow: visible;
+  isolation: isolate;
+}
+
+@keyframes parcours-monolith-edge-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(94, 234, 212, 0.14),
+      0 0 36px rgba(45, 212, 191, 0.22),
+      0 0 72px rgba(0, 232, 240, 0.14),
+      0 0 108px rgba(45, 212, 191, 0.07);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(94, 234, 212, 0.26),
+      0 0 52px rgba(45, 212, 191, 0.38),
+      0 0 96px rgba(0, 232, 240, 0.24),
+      0 0 132px rgba(45, 212, 191, 0.11);
+  }
 }
 
 .parcours-monolith-glass {
   position: relative;
   border-radius: 1rem;
-  border: 1px solid rgba(129, 140, 248, 0.15);
-  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(129, 140, 248, 0.18);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   background: linear-gradient(
@@ -74,6 +97,7 @@ body {
     rgba(15, 12, 45, 0.92) 55%,
     rgba(8, 6, 28, 0.9) 100%
   );
+  animation: parcours-monolith-edge-glow 4.2s ease-in-out infinite;
 }
 
 .parcours-monolith-glass::before {
@@ -104,13 +128,57 @@ body {
 .parcours-monolith-atmosphere {
   pointer-events: none;
   position: absolute;
-  inset: -12%;
+  inset: -2.5rem -2rem;
   z-index: 0;
   overflow: visible;
 }
 
-.parcours-monolith-frame {
-  isolation: isolate;
+@keyframes parcours-monolith-aura-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.82;
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+}
+
+.parcours-monolith-aura-uv,
+.parcours-monolith-aura-teal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+  border-radius: 9999px;
+}
+
+.parcours-monolith-aura-uv {
+  width: min(130%, 36rem);
+  height: min(95%, 680px);
+  opacity: 0.65;
+  filter: blur(72px);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse 100% 72% at 50% 46%,
+    rgba(139, 92, 246, 0.2) 0%,
+    rgba(91, 33, 182, 0.08) 46%,
+    transparent 72%
+  );
+}
+
+.parcours-monolith-aura-teal {
+  width: min(118%, 32rem);
+  height: min(88%, 620px);
+  filter: blur(56px);
+  animation: parcours-monolith-aura-breathe 4.2s ease-in-out infinite;
+  background: radial-gradient(
+    ellipse 92% 68% at 50% 48%,
+    rgba(34, 211, 238, 0.32) 0%,
+    rgba(45, 212, 191, 0.16) 38%,
+    transparent 68%
+  );
 }
 
 /** Continuer monolithe — ADN login, respiration même disabled (phare d'invitation). */
@@ -933,6 +1001,8 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   .salon-dashboard-wordmark,
   .connexion-submit-breathe,
   .sanctuary-halo-breathe,
+  .parcours-monolith-glass,
+  .parcours-monolith-aura-teal,
   .sanctuary-select-breathe,
   .voice-memo-wave-breathe,
   .voice-memo-wave-breathe-live,
@@ -945,6 +1015,16 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   }
 
   .sanctuary-halo-breathe {
+    opacity: 0.55;
+  }
+
+  .parcours-monolith-glass {
+    box-shadow:
+      0 0 0 1px rgba(94, 234, 212, 0.16),
+      0 0 40px rgba(45, 212, 191, 0.2);
+  }
+
+  .parcours-monolith-aura-teal {
     opacity: 0.55;
   }
 
