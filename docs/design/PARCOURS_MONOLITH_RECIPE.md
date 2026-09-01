@@ -160,6 +160,8 @@
 
 **T-close-5b :** panneau démonté @ fin collapse (`hold`) — filante / ciel visibles pendant le beat final · plus de formulaire opaque par-dessus.
 
+**T-close-5c :** thaw KEEP **@ hold** seulement (plus @ 88 % collapse) · backdrop pont @ 0.35 pendant le beat hold.
+
 ### P1 — Entrée formulaire (magie panneau) — **après T-close-5**
 Beat actuel trop « slide générique » vs souffle freeze.
 

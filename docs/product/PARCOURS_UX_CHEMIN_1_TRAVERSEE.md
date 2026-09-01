@@ -4,6 +4,7 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 1 sept 2026 — **T-close-5c** : thaw KEEP @ hold seulement · backdrop pont jusqu’au crossfade (plus @ 88 % collapse).
 - 1 sept 2026 — **T-close-5b** : panneau démonté @ fin collapse — ciel et filante visibles au beat hold.
 - 1 sept 2026 — **T-close-5a-b** : canvas hub monté en saisie (opacité 0 · loop off) + prefetch chunk — plus de remontage @ Esc.
 - 1 sept 2026 — **T-close-5a** : horloge rAF sans setState 60 fps · opacités via CSS vars · `skyFadeMs=180` au rituel.

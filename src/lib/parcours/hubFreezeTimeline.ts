@@ -26,7 +26,7 @@ export const HUB_CLOSE_HOLD_MS = 80;
 export const HUB_CLOSE_THAW_AT_MS = 140;
 /** T-close-3f — impact verre→étoile (% durée collapse). */
 export const HUB_CLOSE_IMPACT_COLLAPSE_U = 0.78;
-/** T-close-3f — thaw bridge (% durée collapse, avant fin hold). */
+/** @deprecated T-close-5c — thaw @ hold seulement (plus @ 88 % collapse). */
 export const HUB_CLOSE_THAW_COLLAPSE_U = 0.88;
 /** T-close-3f — backdrop JPEG recule (% durée collapse). */
 export const HUB_CLOSE_BACKDROP_FADE_COLLAPSE_U = 0.75;
@@ -67,10 +67,13 @@ export function hubClosePhaseFromU(u: number): HubCloseRitualPhase {
   return "hold";
 }
 
-/** T-close-4 — backdrop JPEG : inspire plein → handoff → hold bas (overlap fluide). */
+/** T-close-5c — backdrop @ hold : pont JPEG jusqu’au thaw KEEP (panneau off). */
+export const HUB_CLOSE_HOLD_BACKDROP_OPACITY = 0.35;
+
+/** T-close-4 — backdrop JPEG : inspire plein → handoff collapse → hold pont. */
 export function hubCloseBackdropOpacityU(u: number): number {
   if (u <= HUB_CLOSE_INSPIRE_U) return 1;
-  if (u >= HUB_CLOSE_COLLAPSE_END_U) return 0.04;
+  if (u >= HUB_CLOSE_COLLAPSE_END_U) return HUB_CLOSE_HOLD_BACKDROP_OPACITY;
   const t =
     (u - HUB_CLOSE_INSPIRE_U) / (HUB_CLOSE_COLLAPSE_END_U - HUB_CLOSE_INSPIRE_U);
   const handoffT =

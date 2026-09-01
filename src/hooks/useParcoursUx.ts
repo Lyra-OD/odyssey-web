@@ -17,7 +17,6 @@ import {
   HUB_CLOSE_IMPACT_RITUAL_U,
   HUB_CLOSE_RITUAL_MS,
   HUB_CLOSE_STREAK_LAYER_FADE_MS,
-  HUB_CLOSE_THAW_RITUAL_U,
   hubCloseBackdropOpacityU,
   hubClosePhaseFromU,
   hubCloseRitualU,
@@ -120,7 +119,6 @@ export function useParcoursUx({
   const closeRitualURef = useRef(0);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const closeThawCommittedRef = useRef(false);
-  const closeThawArmedRef = useRef(false);
   const closeRitualActiveRef = useRef(false);
   const closeRitualStartedAtRef = useRef<number | null>(null);
   const closeRitualRafRef = useRef(0);
@@ -168,7 +166,6 @@ export function useParcoursUx({
       clearCloseRitualSkyOpacities();
       closeRitualPhaseRef.current = "idle";
       closeImpactFiredRef.current = false;
-      closeThawArmedRef.current = false;
       closeRitualActiveRef.current = false;
       return;
     }
@@ -251,7 +248,6 @@ export function useParcoursUx({
       revokeHubFreezeCapture();
       setFreezeCaptureUrl(null);
       closeThawCommittedRef.current = false;
-      closeThawArmedRef.current = false;
       setCloseRitualPhase("idle");
       closeRitualURef.current = 0;
       clearCloseRitualSkyOpacities();
@@ -281,9 +277,6 @@ export function useParcoursUx({
       closeImpactFiredRef.current = true;
       pulseHubCloseStarKiss();
     }
-    if (u >= HUB_CLOSE_THAW_RITUAL_U) {
-      closeThawArmedRef.current = true;
-    }
 
     if (elapsed >= HUB_CLOSE_RITUAL_MS) {
       setCloseRitualPhase("hold");
@@ -305,7 +298,6 @@ export function useParcoursUx({
     clearTimers();
     stopCloseRitualRaf();
     closeThawCommittedRef.current = false;
-    closeThawArmedRef.current = false;
     closeImpactFiredRef.current = false;
     closeRitualActiveRef.current = true;
     closeRitualPhaseRef.current = "inspire";
@@ -330,12 +322,12 @@ export function useParcoursUx({
     driveCloseRitual,
   ]);
 
-  /** T-close-4 — thaw @ u≥88 % (fallback si WebGL pas prêt @ fin rituel). */
+  /** T-close-5c — thaw KEEP @ hold seulement (panneau off · WebGL prêt). */
   useEffect(() => {
     if (transition !== "panelCloseToHub") return;
     if (thawReveal || closeThawCommittedRef.current) return;
     if (!hubWebGLReady) return;
-    if (!closeThawArmedRef.current && closeRitualPhase !== "hold") return;
+    if (closeRitualPhase !== "hold") return;
     commitCloseThaw();
   }, [
     transition,
