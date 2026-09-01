@@ -1069,7 +1069,13 @@ export function TributeWizard({
         <div className="parcours-close-inspire-veil" aria-hidden />
       ) : null}
       {step1Sky && step1Parcours.showCloseStarImpact ? (
-        <div className="parcours-close-star-impact" aria-hidden />
+        <div
+          className="parcours-close-star-impact"
+          style={{
+            ["--parcours-collapse-ms" as string]: `${step1Parcours.panelExitMs}ms`,
+          }}
+          aria-hidden
+        />
       ) : null}
       {step1Parcours.showHubHero ? (
         <SanctuaryHubHero

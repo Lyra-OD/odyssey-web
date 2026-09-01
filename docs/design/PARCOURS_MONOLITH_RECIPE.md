@@ -4,6 +4,7 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 1 sept 2026 — **T-close-3e** : verre aspire vers étoile (scale + aura) synchronisé filante.
 - 1 sept 2026 — **T-close-3d** : filante @ collapse · fondu calque 180 ms · WebGL 0.88.
 - 1 sept 2026 — **T-close-3c** : filante canvas `ParcoursCloseStreak` · retrait tracteur CSS.
 - 1 sept 2026 — **T-close-2b** : pivot collapse figé · ancre hub conservée · thaw @ hold.
@@ -148,7 +149,7 @@
 
 **T-close-2b :** inspire = rAF vars seulement · collapse = snapshot `transform-origin` + vars (pas rect shrink) · `hubStarLastKnownAnchorRef` · thaw @ `hold` seulement.
 
-**T-close-3 :** `ParcoursCloseStreak` (ADN ShootingStars) @ hold · verre dissolve collapse · flash `parcours-close-star-impact` · WebGL pré-fade 0.44.
+**T-close-3 :** `ParcoursCloseStreak` @ collapse · verre **aspire** (scale → étoile, pivot figé) · aura + filante synchronisées · impact @ 66%.
 
 ### P1 — Entrée formulaire (magie panneau) — **après T-close-4**
 Beat actuel trop « slide générique » vs souffle freeze.

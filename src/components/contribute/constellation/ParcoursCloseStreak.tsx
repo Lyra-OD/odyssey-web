@@ -19,7 +19,7 @@ import {
 } from "@/src/components/tribute/hubStarAnchorRef";
 
 const SEGMENTS = 16;
-const LIFE_SEC = 0.52;
+const LIFE_SEC = 0.54;
 const TIP = "#e8fffe";
 const MID = "#00e8f0";
 const TAIL = "#0a4a52";
