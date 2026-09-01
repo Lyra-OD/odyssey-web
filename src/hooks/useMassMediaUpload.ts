@@ -352,6 +352,10 @@ export function useMassMediaUpload(
           force: options?.force,
         });
         hydrateFromServer(apiItems);
+      } catch (error) {
+        if (!options?.silent) {
+          throw error;
+        }
       } finally {
         if (!options?.silent) setIsHydrating(false);
       }

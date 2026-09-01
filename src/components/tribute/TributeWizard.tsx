@@ -57,7 +57,7 @@ import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll"
 import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
 import { SanctuaryHubHero } from "@/src/components/tribute/SanctuaryHubHero";
 import { ParcoursHubBodyFlag } from "@/src/components/tribute/ParcoursHubBodyFlag";
-import { hubStarAnchorRef } from "@/src/components/tribute/hubStarAnchorRef";
+import { hubStarAnchorRef, hubStarCollapseTransformOrigin } from "@/src/components/tribute/hubStarAnchorRef";
 import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
 import { useWizardDraftLifecycle } from "@/src/hooks/useWizardDraftLifecycle";
 import {
@@ -582,14 +582,9 @@ export function TributeWizard({
     }
     const updateOrigin = () => {
       const rect = frame.getBoundingClientRect();
-      const anchor = hubStarAnchorRef.current;
-      if (!anchor || rect.width <= 0 || rect.height <= 0) {
-        setMonolithCollapseOrigin("50% 45%");
-        return;
-      }
-      const ox = ((anchor.x - rect.left) / rect.width) * 100;
-      const oy = ((anchor.y - rect.top) / rect.height) * 100;
-      setMonolithCollapseOrigin(`${ox}% ${oy}%`);
+      setMonolithCollapseOrigin(
+        hubStarCollapseTransformOrigin(hubStarAnchorRef.current, rect),
+      );
     };
     updateOrigin();
     requestAnimationFrame(updateOrigin);

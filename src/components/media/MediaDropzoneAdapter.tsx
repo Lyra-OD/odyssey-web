@@ -345,7 +345,11 @@ export function MediaDropzoneAdapter({
   useEffect(() => {
     if (!projectId || !pollIntervalMs || pollIntervalMs < 1000) return;
     const timer = window.setInterval(() => {
-      void upload.loadProjectMedia(projectId, { force: true, silent: true });
+      void upload
+        .loadProjectMedia(projectId, { force: true, silent: true })
+        .catch(() => {
+          /* poll best-effort — pas d’overlay Next sur 401 */
+        });
     }, pollIntervalMs);
     return () => window.clearInterval(timer);
   }, [pollIntervalMs, projectId, upload.loadProjectMedia]);
