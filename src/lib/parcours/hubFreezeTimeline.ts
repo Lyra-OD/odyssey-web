@@ -27,6 +27,8 @@ export const HUB_CLOSE_THAW_AT_MS = 140;
 /** Fin rituel fermeture → panneau off. */
 export const HUB_CLOSE_RITUAL_MS =
   HUB_CLOSE_INSPIRE_MS + HUB_CLOSE_COLLAPSE_MS + HUB_CLOSE_HOLD_MS;
+/** Fondu rapide calque WebGL @ collapse (filante visible — pas KEEP 880 ms). */
+export const HUB_CLOSE_STREAK_LAYER_FADE_MS = 180;
 /** @deprecated silence retiré — conservé pour doc legacy. */
 export const HUB_CLOSE_SILENCE_MS = 0;
 

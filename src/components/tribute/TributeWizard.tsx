@@ -679,7 +679,9 @@ export function TributeWizard({
   const hubWebGLLayerOpacity =
     deferHubWebGLUntilReady && !hubWebGLReady
       ? 0
-      : step1Parcours.hubWebGLOpacity;
+      : step1Parcours.showCloseCanvasStreak
+        ? Math.max(step1Parcours.hubWebGLOpacity, 0.72)
+        : step1Parcours.hubWebGLOpacity;
 
   const step1RewardPendingRef = useRef(false);
 

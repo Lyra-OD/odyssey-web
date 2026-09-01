@@ -4,7 +4,8 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 1 sept 2026 — **T-close-3** : halo tracteur cyan verre → étoile · verre fade (moins shrink).
+- 1 sept 2026 — **T-close-3d** : filante @ collapse · fondu calque 180 ms · WebGL 0.88.
+- 1 sept 2026 — **T-close-3c** : filante canvas `ParcoursCloseStreak` · retrait tracteur CSS.
 - 1 sept 2026 — **T-close-2b** : pivot collapse figé · ancre hub conservée · thaw @ hold.
 - 1 sept 2026 — **T-close-2** : voiles inspire centrés sur `--parcours-star-x/y`.
 - 1 sept 2026 — **T-close-1** : ancre étoile rAF + centre optique Hero pendant fermeture.

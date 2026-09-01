@@ -15,6 +15,7 @@ import {
   HUB_CLOSE_COLLAPSE_MS,
   HUB_CLOSE_INSPIRE_MS,
   HUB_CLOSE_RITUAL_MS,
+  HUB_CLOSE_STREAK_LAYER_FADE_MS,
   HUB_FREEZE_FADE_MS,
   HUB_FREEZE_PANEL_AT_MS,
   HUB_FREEZE_TOTAL_MS,
@@ -272,8 +273,8 @@ export function useParcoursUx({
       : transition === "panelCloseToHub"
         ? thawReveal
           ? 1
-          : closeRitualPhase === "hold"
-            ? 0.44
+          : closeRitualPhase === "collapse" || closeRitualPhase === "hold"
+            ? 0.88
             : 0
         : phase === "hub.idle"
           ? 1
@@ -283,7 +284,11 @@ export function useParcoursUx({
     transition === "panelCloseToHub"
       ? thawReveal
         ? 0
-        : 1
+        : closeRitualPhase === "collapse"
+          ? 0.42
+          : closeRitualPhase === "hold"
+            ? 0.12
+            : 1
       : phase === "panel.essentials" ||
           (transition === "hubFreezeTo2D" && !freezeHolding)
         ? 1
@@ -316,10 +321,12 @@ export function useParcoursUx({
     transition === "panelCloseToHub" && closeRitualPhase === "inspire";
 
   const showCloseStarImpact =
-    transition === "panelCloseToHub" && closeRitualPhase === "hold";
+    transition === "panelCloseToHub" &&
+    (closeRitualPhase === "collapse" || closeRitualPhase === "hold");
 
   const showCloseCanvasStreak =
-    transition === "panelCloseToHub" && closeRitualPhase === "hold";
+    transition === "panelCloseToHub" &&
+    (closeRitualPhase === "collapse" || closeRitualPhase === "hold");
 
   /** Courbe CSS KEEP — thaw only · aller garde ease-in-out standard. */
   const skyFadeEase =
@@ -329,7 +336,9 @@ export function useParcoursUx({
 
   const skyFadeMs =
     transition === "panelCloseToHub"
-      ? HUB_THAW_APPEAR_MS
+      ? thawReveal
+        ? HUB_THAW_APPEAR_MS
+        : HUB_CLOSE_STREAK_LAYER_FADE_MS
       : HUB_FREEZE_FADE_MS;
 
   return {

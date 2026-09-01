@@ -18,8 +18,8 @@ import {
   resolveHubStarAnchorForClose,
 } from "@/src/components/tribute/hubStarAnchorRef";
 
-const SEGMENTS = 14;
-const LIFE_SEC = 0.44;
+const SEGMENTS = 16;
+const LIFE_SEC = 0.52;
 const TIP = "#e8fffe";
 const MID = "#00e8f0";
 const TAIL = "#0a4a52";
@@ -94,7 +94,7 @@ function screenPxToWorld(
 }
 
 type ParcoursCloseStreakProps = {
-  /** Beat hold — verre off · WebGL pré-fade. */
+  /** Beat collapse — verre dissolve · calque WebGL monte vite (180 ms). */
   fire: boolean;
 };
 
@@ -132,7 +132,7 @@ export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
     });
     const l = new Line(geo, mat);
     l.frustumCulled = false;
-    l.renderOrder = 12;
+    l.renderOrder = 24;
     l.visible = false;
     paintLineColors(l, TIP, MID, TAIL);
     return l;
@@ -149,47 +149,53 @@ export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
       return;
     }
     if (firedKeyRef.current) return;
-    firedKeyRef.current = true;
 
-    const glass = readGlassPercent();
-    const glassPx = {
-      x: (glass.x / 100) * size.width,
-      y: (glass.y / 100) * size.height,
+    const arm = () => {
+      if (firedKeyRef.current) return;
+      firedKeyRef.current = true;
+
+      const glass = readGlassPercent();
+      const glassPx = {
+        x: (glass.x / 100) * size.width,
+        y: (glass.y / 100) * size.height,
+      };
+      const anchor = resolveHubStarAnchorForClose();
+      const starPx = hubStarVisualViewportPx(anchor);
+      const endPx = starPx ?? glassPx;
+
+      const planeZ = -1.8;
+      const start = screenPxToWorld(
+        glassPx.x,
+        glassPx.y,
+        camera,
+        size.width,
+        size.height,
+        planeZ,
+      );
+      const end = screenPxToWorld(
+        endPx.x,
+        endPx.y,
+        camera,
+        size.width,
+        size.height,
+        planeZ,
+      );
+      const delta = end.clone().sub(start);
+      const dist = delta.length();
+      if (dist < 0.05) {
+        firedKeyRef.current = false;
+        return;
+      }
+      delta.normalize();
+      originRef.current.copy(start).addScaledVector(delta, -0.42);
+      dirRef.current.copy(delta);
+      speedRef.current = dist / (LIFE_SEC * 0.68);
+      lengthRef.current = Math.min(1.35, dist * 0.52);
+      ageRef.current = 0;
+      activeRef.current = true;
     };
-    const anchor = resolveHubStarAnchorForClose();
-    const starPx = hubStarVisualViewportPx(anchor);
-    const endPx = starPx ?? glassPx;
 
-    const planeZ = -1.8;
-    const start = screenPxToWorld(
-      glassPx.x,
-      glassPx.y,
-      camera,
-      size.width,
-      size.height,
-      planeZ,
-    );
-    const end = screenPxToWorld(
-      endPx.x,
-      endPx.y,
-      camera,
-      size.width,
-      size.height,
-      planeZ,
-    );
-    const delta = end.clone().sub(start);
-    const dist = delta.length();
-    if (dist < 0.05) {
-      firedKeyRef.current = false;
-      return;
-    }
-    delta.normalize();
-    originRef.current.copy(start).addScaledVector(delta, -0.35);
-    dirRef.current.copy(delta);
-    speedRef.current = dist / (LIFE_SEC * 0.72);
-    lengthRef.current = Math.min(1.1, dist * 0.42);
-    ageRef.current = 0;
-    activeRef.current = true;
+    requestAnimationFrame(arm);
   }, [fire, camera, size.width, size.height, line]);
 
   useFrame((_, delta) => {
@@ -228,7 +234,7 @@ export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
       arr[i3 + 2] = head.z - dz * along;
     }
     pos.needsUpdate = true;
-    mat.opacity = (0.38 + 0.52 * fade) * fade;
+    mat.opacity = (0.62 + 0.38 * fade) * Math.min(1, fade * 1.15);
     line.visible = fade > 0.03;
   });
 
