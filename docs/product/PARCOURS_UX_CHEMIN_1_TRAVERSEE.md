@@ -4,14 +4,13 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 1 sept 2026 — **Fermeture seamless** : inspire 220 ms + flash étoile · collapse 520 ms · thaw chevauche collapse · voile inspire.
-- 1 sept 2026 — **Tranches 2–3 fermeture** : inspire stellaire · collapse verre → étoile · hold avant thaw D1.
-- 1 sept 2026 — **Tranche 1 fermeture D1** : pre-warm WebGL · thaw @ `hubWebGLReady` · backdrop jusqu’au moteur chaud · voile off.
+- 1 sept 2026 — **T-close-2** : flash / voile inspire centrés sur `--parcours-star-x/y` (ancre étoile).
+- 1 sept 2026 — **T-close-1** : ancre rAF + centre optique Hero · collapse vers étoile.
+- 1 sept 2026 — **Tranche 1 fermeture D1** : pre-warm WebGL · thaw @ `hubWebGLReady` · backdrop jusqu’au moteur chaud.
 - 1 sept 2026 — **Plan B livré** : capture canvas @ clic Hero · gel pixel-perfect · fallback JPEG.
 - 1 sept 2026 — **Recette monolithe** : [`../design/PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) · rollout wizard · ordre B → entrée panneau.
-- 1 sept 2026 — **Monolithe verre** : WebGL unmount saisie · silence React · stèle ~90dvh · CTA Continuer intégré.
 
-**Statut :** spec produit **figée** · code **T1b livré** (hub animé + transitions gel) · prochaine tranche **T2** — voir §8.
+**Statut :** spec produit **figée** · fermeture **T-close-1–2 livrés** · prochaine tranche **T-close-3** (halo tracteur).
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)

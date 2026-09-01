@@ -571,14 +571,16 @@ export function TributeWizard({
     [],
   );
 
-  /** T-close-1 — ancre étoile vivante (rAF) pendant tout `panelCloseToHub`. */
+  /** T-close-1/2 — ancre étoile vivante (rAF) pendant tout `panelCloseToHub`. */
   useEffect(() => {
     if (step1Parcours.transition !== "panelCloseToHub") return;
+    const root = document.documentElement;
     let raf = 0;
     const tick = () => {
       const frame = monolithFrameRef.current;
       const shell = monolithShellRef.current;
       const anchor = hubStarAnchorRef.current;
+      syncHubStarCssVars(root, anchor);
       if (shell) syncHubStarCssVars(shell, anchor);
       if (frame) {
         const rect = frame.getBoundingClientRect();
@@ -590,7 +592,11 @@ export function TributeWizard({
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf);
+      root.style.removeProperty("--parcours-star-x");
+      root.style.removeProperty("--parcours-star-y");
+    };
   }, [step1Parcours.transition]);
 
   useEffect(() => {
