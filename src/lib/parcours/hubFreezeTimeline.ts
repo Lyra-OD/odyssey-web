@@ -24,6 +24,17 @@ export const HUB_CLOSE_COLLAPSE_MS = 520;
 export const HUB_CLOSE_HOLD_MS = 80;
 /** Début thaw KEEP pendant collapse (depuis début collapse). */
 export const HUB_CLOSE_THAW_AT_MS = 140;
+/** T-close-3f — impact verre→étoile (% durée collapse). */
+export const HUB_CLOSE_IMPACT_COLLAPSE_U = 0.78;
+/** T-close-3f — thaw bridge (% durée collapse, avant fin hold). */
+export const HUB_CLOSE_THAW_COLLAPSE_U = 0.88;
+/** T-close-3f — backdrop JPEG recule (% durée collapse). */
+export const HUB_CLOSE_BACKDROP_FADE_COLLAPSE_U = 0.75;
+
+/** Ms depuis début `closePanel` @ ratio u du collapse (après inspire). */
+export function hubCloseMsAtCollapseU(u: number): number {
+  return HUB_CLOSE_INSPIRE_MS + HUB_CLOSE_COLLAPSE_MS * u;
+}
 /** Fin rituel fermeture → panneau off. */
 export const HUB_CLOSE_RITUAL_MS =
   HUB_CLOSE_INSPIRE_MS + HUB_CLOSE_COLLAPSE_MS + HUB_CLOSE_HOLD_MS;
@@ -141,6 +152,12 @@ export function beginHubCloseInspire() {
 
 export function softenHubCloseInspire() {
   hubFreezeFxRef.flash = 0;
+}
+
+/** T-close-3f — kiss étoile @ impact (sync CSS + canvas Hero). */
+export function pulseHubCloseStarKiss() {
+  hubFreezeFxRef.flash = 1;
+  hubFreezeFxRef.holdBreath = false;
 }
 
 /**
