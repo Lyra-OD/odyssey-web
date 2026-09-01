@@ -220,12 +220,12 @@ export function useParcoursUx({
     }, HUB_CLOSE_RITUAL_MS);
   }, [enabled, revealPhase, phase, transition, clearTimers, schedule]);
 
-  /** D1 — thaw pendant collapse si moteur chaud (crossfade seamless). */
+  /** D1 + T-close-2b — thaw @ hold seulement (pas pendant collapse vivant). */
   useEffect(() => {
     if (transition !== "panelCloseToHub") return;
     if (thawReveal || closeThawCommittedRef.current) return;
     if (!hubWebGLReady) return;
-    if (closeRitualPhase !== "collapse" && closeRitualPhase !== "hold") return;
+    if (closeRitualPhase !== "hold") return;
     commitCloseThaw();
   }, [
     transition,

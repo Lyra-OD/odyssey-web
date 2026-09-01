@@ -10,6 +10,26 @@ export const hubStarAnchorRef: { current: ScreenAnchor | null } = {
   current: null,
 };
 
+/** Défaut `SanctuaryHubHero` — Esc avant 1er frame WebGL. */
+export const HUB_HERO_FALLBACK_ANCHOR: ScreenAnchor = { x: 50, y: 48 };
+
+/** Dernière ancre hub connue — conservée pendant saisie panneau (gel 2D). */
+export const hubStarLastKnownAnchorRef: { current: ScreenAnchor } = {
+  current: { ...HUB_HERO_FALLBACK_ANCHOR },
+};
+
+export function rememberHubStarAnchor(anchor: ScreenAnchor | null): void {
+  if (anchor) {
+    hubStarLastKnownAnchorRef.current = anchor;
+  }
+  hubStarAnchorRef.current = anchor;
+}
+
+/** Fermeture — live WebGL ou dernière position hub avant unmount. */
+export function resolveHubStarAnchorForClose(): ScreenAnchor {
+  return hubStarAnchorRef.current ?? hubStarLastKnownAnchorRef.current;
+}
+
 /** Aligné `SanctuaryHubHero` — hit `13.5rem` · `-translate-y-[28%]`. */
 export const HUB_HERO_HIT_HEIGHT_REM = 13.5;
 
@@ -40,7 +60,8 @@ export function hubStarVisualViewportPercent(
 ): ScreenAnchor {
   const px = hubStarVisualViewportPx(anchor);
   if (!px || typeof window === "undefined") {
-    return { x: 50, y: 45 };
+    const fb = hubStarVisualViewportPercent(HUB_HERO_FALLBACK_ANCHOR);
+    return fb;
   }
   const vw = window.innerWidth;
   const vh = window.innerHeight;

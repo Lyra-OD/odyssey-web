@@ -58,8 +58,12 @@ import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizar
 import { SanctuaryHubHero } from "@/src/components/tribute/SanctuaryHubHero";
 import { ParcoursHubBodyFlag } from "@/src/components/tribute/ParcoursHubBodyFlag";
 import {
+  HUB_HERO_FALLBACK_ANCHOR,
   hubStarAnchorRef,
   hubStarCollapseTransformOrigin,
+  hubStarLastKnownAnchorRef,
+  rememberHubStarAnchor,
+  resolveHubStarAnchorForClose,
   syncHubStarCssVars,
 } from "@/src/components/tribute/hubStarAnchorRef";
 import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
@@ -566,22 +570,28 @@ export function TributeWizard({
   });
   const onHubStarAnchor = useCallback(
     (anchor: { x: number; y: number } | null) => {
-      hubStarAnchorRef.current = anchor;
+      rememberHubStarAnchor(anchor);
     },
     [],
   );
 
-  /** T-close-1/2 — ancre étoile vivante (rAF) pendant tout `panelCloseToHub`. */
+  /** T-close-2b — inspire : vars vivantes · collapse : pivot + vars figés (pas wobble). */
   useEffect(() => {
     if (step1Parcours.transition !== "panelCloseToHub") return;
     const root = document.documentElement;
     let raf = 0;
-    const tick = () => {
-      const frame = monolithFrameRef.current;
-      const shell = monolithShellRef.current;
-      const anchor = hubStarAnchorRef.current;
+
+    const applyStarVars = () => {
+      const anchor = resolveHubStarAnchorForClose();
       syncHubStarCssVars(root, anchor);
+      const shell = monolithShellRef.current;
       if (shell) syncHubStarCssVars(shell, anchor);
+    };
+
+    const freezeCollapsePivot = () => {
+      const frame = monolithFrameRef.current;
+      const anchor = resolveHubStarAnchorForClose();
+      applyStarVars();
       if (frame) {
         const rect = frame.getBoundingClientRect();
         frame.style.setProperty(
@@ -589,20 +599,40 @@ export function TributeWizard({
           hubStarCollapseTransformOrigin(anchor, rect),
         );
       }
+    };
+
+    if (
+      step1Parcours.closeRitualPhase === "collapse" ||
+      step1Parcours.closeRitualPhase === "hold"
+    ) {
+      freezeCollapsePivot();
+    } else {
+      applyStarVars();
+      const tick = () => {
+        applyStarVars();
+        raf = requestAnimationFrame(tick);
+      };
       raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(raf);
-      root.style.removeProperty("--parcours-star-x");
-      root.style.removeProperty("--parcours-star-y");
-    };
+    }
+
+    return () => cancelAnimationFrame(raf);
+  }, [
+    step1Parcours.transition,
+    step1Parcours.closeRitualPhase,
+  ]);
+
+  useEffect(() => {
+    if (step1Parcours.transition === "panelCloseToHub") return;
+    const root = document.documentElement;
+    root.style.removeProperty("--parcours-star-x");
+    root.style.removeProperty("--parcours-star-y");
   }, [step1Parcours.transition]);
 
   useEffect(() => {
     if (!step1Sky) {
       setHubWebGLReady(false);
       hubStarAnchorRef.current = null;
+      hubStarLastKnownAnchorRef.current = { ...HUB_HERO_FALLBACK_ANCHOR };
       hubCanvasRef.current = null;
       return;
     }
@@ -617,7 +647,6 @@ export function TributeWizard({
     }
     if (!step1Parcours.showHubWebGL && !closeWarming) {
       setHubWebGLReady(false);
-      hubStarAnchorRef.current = null;
       hubCanvasRef.current = null;
     }
   }, [
