@@ -158,6 +158,8 @@
 
 **T-close-5a-b :** canvas hub **monté** en saisie (opacité 0 · loop off) + prefetch chunk @ step 1 — plus de remontage WebGL @ Esc/X.
 
+**T-close-5b :** panneau démonté @ fin collapse (`hold`) — filante / ciel visibles pendant le beat final · plus de formulaire opaque par-dessus.
+
 ### P1 — Entrée formulaire (magie panneau) — **après T-close-5**
 Beat actuel trop « slide générique » vs souffle freeze.
 

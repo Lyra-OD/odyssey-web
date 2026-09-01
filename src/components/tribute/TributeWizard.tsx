@@ -1418,16 +1418,14 @@ export function TributeWizard({
                 step1Reveal.phase === "reward" ||
                 step1Reveal.phase === "done"
                   ? "pointer-events-none opacity-0"
-                  : step1Parcours.closeRitualPhase === "collapse" ||
-                      step1Parcours.closeRitualPhase === "hold"
+                  : step1Parcours.closeRitualPhase === "collapse"
                     ? "parcours-monolith-collapse pointer-events-none"
                     : step1Parcours.closeRitualPhase === "inspire"
                       ? "parcours-monolith-inspire"
                       : "parcours-panel-in",
               ].join(" ")}
               style={
-                step1Parcours.closeRitualPhase === "collapse" ||
-                step1Parcours.closeRitualPhase === "hold"
+                step1Parcours.closeRitualPhase === "collapse"
                   ? {
                       ["--parcours-collapse-ms" as string]:
                         `${step1Parcours.panelExitMs}ms`,

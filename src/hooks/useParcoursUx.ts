@@ -403,12 +403,12 @@ export function useParcoursUx({
 
   const showEssentialsPanel =
     enabled &&
-    (panelExiting ||
-      closeRitualPhase !== "idle" ||
-      ((phase === "panel.essentials" ||
+    (transition === "panelCloseToHub"
+      ? closeRitualPhase === "inspire" || closeRitualPhase === "collapse"
+      : panelExiting ||
+        phase === "panel.essentials" ||
         phase === "ritual.reveal" ||
-        phase === "hub.postReveal") &&
-        transition !== "panelCloseToHub"));
+        phase === "hub.postReveal");
 
   /** Loop off en saisie · canvas monté @ opacité 0 (pre-warm) · reprise @ close (D1). */
   const hubSkyLive =
