@@ -47,6 +47,7 @@ import { NebulaGasRose } from "@/src/components/contribute/constellation/NebulaG
 import { NebulaGasTeal } from "@/src/components/contribute/constellation/NebulaGasTeal";
 import { GhostStars } from "@/src/components/contribute/constellation/GhostStars";
 import { ParallaxLayer, ParallaxProvider, useParallaxPointerRef } from "@/src/components/contribute/constellation/ParallaxLayer";
+import { ParcoursCloseStreak } from "@/src/components/contribute/constellation/ParcoursCloseStreak";
 import { ShootingStars } from "@/src/components/contribute/constellation/ShootingStars";
 import { StarDust } from "@/src/components/contribute/constellation/StarDust";
 import {
@@ -835,6 +836,7 @@ function UniverseScene({
   craftReveal,
   skyLayers,
   hubSkyCamera = false,
+  closeStreakFire = false,
 }: {
   tier: ReturnType<typeof useVisualTier>;
   parallaxIntensity: number;
@@ -851,6 +853,8 @@ function UniverseScene({
   skyLayers?: SkyCraftLayerMap;
   /** Chemin 1 hub — plan test-ciel puis dolly Hero (pas RevealCamera KEEP). */
   hubSkyCamera?: boolean;
+  /** T-close-3c — filante verre → étoile @ hold. */
+  closeStreakFire?: boolean;
 }) {
   const theme = useSkyTheme();
   // Pendant closing, on garde le tracking pour suivre l’étoile au retour
@@ -1078,6 +1082,9 @@ function UniverseScene({
             <ShootingStars tier={tier} />
           </ParallaxLayer>
         ) : null}
+        {hubSkyCamera && closeStreakFire ? (
+          <ParcoursCloseStreak fire={closeStreakFire} />
+        ) : null}
         {showConstellation && isSkyLayerOn(skyLayers, "constellation") ? (
           <ParallaxLayer
             factor={theme.constellation.parallax.factor}
@@ -1203,6 +1210,7 @@ export type SanctuaryUniverseProps = {
   onStarAnchorChange?: (anchor: ScreenAnchor | null) => void;
   /** Hub Traversée — canvas WebGL pour capture gel (Plan B). */
   onHubCanvasMount?: (canvas: HTMLCanvasElement | null) => void;
+  closeStreakFire?: boolean;
 };
 
 export function SanctuaryUniverse({
@@ -1221,6 +1229,7 @@ export function SanctuaryUniverse({
   hubSkyCamera = false,
   onStarAnchorChange,
   onHubCanvasMount,
+  closeStreakFire = false,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -1490,6 +1499,7 @@ export function SanctuaryUniverse({
                 craftReveal={craftReveal}
                 skyLayers={skyLayers}
                 hubSkyCamera={hubSkyCamera}
+                closeStreakFire={closeStreakFire}
               />
             </SkyThemeProvider>
           </Suspense>

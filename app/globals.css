@@ -132,20 +132,20 @@ body {
     transform: scale(1);
     filter: blur(0);
   }
-  38% {
-    opacity: 0.88;
-    transform: scale(0.94);
+  52% {
+    opacity: 1;
+    transform: scale(0.98);
     filter: blur(0);
   }
-  72% {
-    opacity: 0.38;
-    transform: scale(0.9);
-    filter: blur(4px);
+  78% {
+    opacity: 0.35;
+    transform: scale(0.96);
+    filter: blur(5px);
   }
   100% {
     opacity: 0;
-    transform: scale(0.86);
-    filter: blur(16px);
+    transform: scale(0.94);
+    filter: blur(14px);
   }
 }
 
@@ -168,56 +168,40 @@ body {
     0 0 28px rgba(0, 232, 240, 0.14);
 }
 
-/** T-close-3 — halo tracteur fixed : cyan aspire verre → étoile. */
-.parcours-close-halo-tracteur {
+/** Kiss @ étoile — handoff filante canvas + thaw (pas une 2ᵉ étoile CSS). */
+.parcours-close-star-impact {
   pointer-events: none;
   position: fixed;
-  inset: 0;
-  z-index: 29;
-  overflow: hidden;
-}
-
-.parcours-close-halo-tracteur::before {
-  content: "";
-  position: absolute;
-  left: var(--parcours-glass-x, 50%);
-  top: var(--parcours-glass-y, 48%);
-  width: min(40rem, 94vw);
-  height: min(50vh, 520px);
-  border-radius: 9999px;
-  pointer-events: none;
-  filter: blur(68px);
+  left: var(--parcours-star-x, 50%);
+  top: var(--parcours-star-y, 45%);
+  z-index: 32;
+  width: min(14rem, 36vw);
+  height: min(14rem, 36vw);
+  transform: translate(-50%, -50%);
   background: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    rgba(0, 232, 240, 0.58) 0%,
-    rgba(0, 232, 240, 0.26) 44%,
-    transparent 72%
+    circle at 50% 50%,
+    rgba(0, 232, 240, 0.38) 0%,
+    rgba(0, 232, 240, 0.12) 38%,
+    transparent 68%
   );
-  animation: parcours-close-halo-tracteur var(--parcours-collapse-ms, 520ms)
-    cubic-bezier(0.58, 0.02, 0.84, 0.38) forwards;
-  will-change: transform, opacity;
+  filter: blur(18px);
+  opacity: 0;
+  animation: parcours-close-star-impact 320ms cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
 }
 
-@keyframes parcours-close-halo-tracteur {
+@keyframes parcours-close-star-impact {
   0% {
-    opacity: 0.9;
-    transform: translate(-50%, -50%) translate(0, 0) scale(1);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.55);
   }
-  42% {
-    opacity: 0.95;
-    transform: translate(-50%, -50%) translate(
-        calc(var(--parcours-tracteur-dx, 0px) * 0.55),
-        calc(var(--parcours-tracteur-dy, 0px) * 0.55)
-      )
-      scale(0.62);
+  28% {
+    opacity: 0.72;
+    transform: translate(-50%, -50%) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) translate(
-        var(--parcours-tracteur-dx, 0px),
-        var(--parcours-tracteur-dy, 0px)
-      )
-      scale(0.14);
+    transform: translate(-50%, -50%) scale(1.35);
   }
 }
 
@@ -1183,7 +1167,7 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   .parcours-monolith-glass,
   .parcours-monolith-aura-cyan,
   .parcours-monolith-collapse,
-  .parcours-close-halo-tracteur::before,
+  .parcours-close-star-impact,
   .sanctuary-select-breathe,
   .voice-memo-wave-breathe,
   .voice-memo-wave-breathe-live,
@@ -1210,7 +1194,7 @@ html[data-parcours-hub-idle] .studio-shell-halo {
     opacity: 0.54;
   }
 
-  .parcours-close-halo-tracteur::before {
+  .parcours-close-star-impact {
     animation: none;
     opacity: 0;
   }

@@ -4,7 +4,7 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 1 sept 2026 — **T-close-3** : halo tracteur `--salon-cyan` verre → étoile · collapse verre fade.
+- 1 sept 2026 — **T-close-3c** : filante WebGL verre → étoile @ hold + flash impact.
 - 1 sept 2026 — **T-close-2b** : pivot collapse figé · ancre hub conservée · thaw @ hold (stabilité).
 - 1 sept 2026 — **T-close-2** : flash / voile inspire centrés sur `--parcours-star-x/y` (ancre étoile).
 - 1 sept 2026 — **T-close-1** : ancre rAF + centre optique Hero · collapse vers étoile.

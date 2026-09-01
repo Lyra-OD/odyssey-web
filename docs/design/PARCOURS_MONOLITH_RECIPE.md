@@ -147,7 +147,7 @@
 
 **T-close-2b :** inspire = rAF vars seulement · collapse = snapshot `transform-origin` + vars (pas rect shrink) · `hubStarLastKnownAnchorRef` · thaw @ `hold` seulement.
 
-**T-close-3 :** `.parcours-close-halo-tracteur` fixed z-29 · `--parcours-glass-x/y` → `--parcours-tracteur-dx/dy` · verre fade/blur (scale ~0.86) · aura monolithe off.
+**T-close-3 :** `ParcoursCloseStreak` (ADN ShootingStars) @ hold · verre dissolve collapse · flash `parcours-close-star-impact` · WebGL pré-fade 0.44.
 
 ### P1 — Entrée formulaire (magie panneau) — **après T-close-4**
 Beat actuel trop « slide générique » vs souffle freeze.

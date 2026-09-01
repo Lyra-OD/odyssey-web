@@ -272,7 +272,9 @@ export function useParcoursUx({
       : transition === "panelCloseToHub"
         ? thawReveal
           ? 1
-          : 0
+          : closeRitualPhase === "hold"
+            ? 0.44
+            : 0
         : phase === "hub.idle"
           ? 1
           : 0;
@@ -311,12 +313,13 @@ export function useParcoursUx({
   const showFreezeVeil = transition === "hubFreezeTo2D";
 
   const showCloseInspireVeil =
-    transition === "panelCloseToHub" &&
-    (closeRitualPhase === "inspire" || closeRitualPhase === "collapse");
+    transition === "panelCloseToHub" && closeRitualPhase === "inspire";
 
-  const showCloseHaloTracteur =
-    transition === "panelCloseToHub" &&
-    (closeRitualPhase === "collapse" || closeRitualPhase === "hold");
+  const showCloseStarImpact =
+    transition === "panelCloseToHub" && closeRitualPhase === "hold";
+
+  const showCloseCanvasStreak =
+    transition === "panelCloseToHub" && closeRitualPhase === "hold";
 
   /** Courbe CSS KEEP — thaw only · aller garde ease-in-out standard. */
   const skyFadeEase =
@@ -350,7 +353,8 @@ export function useParcoursUx({
     hubChromeHidden,
     showFreezeVeil,
     showCloseInspireVeil,
-    showCloseHaloTracteur,
+    showCloseCanvasStreak,
+    showCloseStarImpact,
     crossfadeMs: HUB_FREEZE_FADE_MS,
     closeFadeMs: HUB_THAW_APPEAR_MS,
     panelExitMs: HUB_CLOSE_COLLAPSE_MS,

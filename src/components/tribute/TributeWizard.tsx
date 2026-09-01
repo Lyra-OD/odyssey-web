@@ -633,6 +633,8 @@ export function TributeWizard({
     root.style.removeProperty("--parcours-glass-y");
     root.style.removeProperty("--parcours-tracteur-dx");
     root.style.removeProperty("--parcours-tracteur-dy");
+    root.style.removeProperty("--parcours-tracteur-angle");
+    root.style.removeProperty("--parcours-tracteur-dist");
   }, [step1Parcours.transition]);
 
   useEffect(() => {
@@ -1064,14 +1066,8 @@ export function TributeWizard({
       {step1Sky && step1Parcours.showCloseInspireVeil ? (
         <div className="parcours-close-inspire-veil" aria-hidden />
       ) : null}
-      {step1Sky && step1Parcours.showCloseHaloTracteur ? (
-        <div
-          className="parcours-close-halo-tracteur"
-          style={{
-            ["--parcours-collapse-ms" as string]: `${step1Parcours.panelExitMs}ms`,
-          }}
-          aria-hidden
-        />
+      {step1Sky && step1Parcours.showCloseStarImpact ? (
+        <div className="parcours-close-star-impact" aria-hidden />
       ) : null}
       {step1Parcours.showHubHero ? (
         <SanctuaryHubHero
@@ -1098,6 +1094,7 @@ export function TributeWizard({
           hubPrompt={copy.parcoursHeroPrompt}
           hubTapHint={copy.parcoursHeroTapHint}
           onStarAnchorChange={onHubStarAnchor}
+          closeStreakFire={step1Parcours.showCloseCanvasStreak}
         />
       ) : null}
       {step1Sky && step1Parcours.showRitualWebGL ? (

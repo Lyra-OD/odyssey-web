@@ -61,6 +61,7 @@ type SanctuaryWizardStep1SkyProps = {
   onStarAnchorChange?: (anchor: ScreenAnchor | null) => void;
   /** Hub — canvas pour capture gel Plan B. */
   onHubCanvasMount?: (canvas: HTMLCanvasElement | null) => void;
+  closeStreakFire?: boolean;
 };
 
 const HUB_IDLE_REVEAL_REF = { current: WIZARD_IDLE_REVEAL_T } as MutableRefObject<number>;
@@ -123,6 +124,7 @@ export function SanctuaryWizardStep1Sky({
   hubTapHint,
   onStarAnchorChange,
   onHubCanvasMount,
+  closeStreakFire = false,
 }: SanctuaryWizardStep1SkyProps) {
   const isHubLite = variant === "hub-lite";
   const handleCanvasReady = useCallback(() => {
@@ -212,6 +214,7 @@ export function SanctuaryWizardStep1Sky({
         onCanvasReady={isHubLite ? handleCanvasReady : undefined}
         onStarAnchorChange={isHubLite ? onStarAnchorChange : undefined}
         onHubCanvasMount={isHubLite ? onHubCanvasMount : undefined}
+        closeStreakFire={isHubLite ? closeStreakFire : false}
         className="h-full w-full"
       />
       <div

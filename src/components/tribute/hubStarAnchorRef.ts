@@ -130,10 +130,18 @@ export function syncCloseTracteurCssVars(
   if (visual) {
     const cx = glassRect.left + glassRect.width / 2;
     const cy = glassRect.top + glassRect.height / 2;
-    el.style.setProperty("--parcours-tracteur-dx", `${visual.x - cx}px`);
-    el.style.setProperty("--parcours-tracteur-dy", `${visual.y - cy}px`);
+    const dx = visual.x - cx;
+    const dy = visual.y - cy;
+    el.style.setProperty("--parcours-tracteur-dx", `${dx}px`);
+    el.style.setProperty("--parcours-tracteur-dy", `${dy}px`);
+    const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    el.style.setProperty("--parcours-tracteur-angle", `${angleDeg}deg`);
+    const dist = Math.hypot(dx, dy);
+    el.style.setProperty("--parcours-tracteur-dist", `${dist}px`);
   } else {
     el.style.setProperty("--parcours-tracteur-dx", "0px");
     el.style.setProperty("--parcours-tracteur-dy", "0px");
+    el.style.setProperty("--parcours-tracteur-angle", "0deg");
+    el.style.setProperty("--parcours-tracteur-dist", "0px");
   }
 }
