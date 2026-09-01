@@ -1300,7 +1300,6 @@ export function TributeWizard({
               }
             >
               <div className="parcours-monolith-atmosphere" aria-hidden>
-                <div className="parcours-monolith-aura-uv" />
                 <div className="parcours-monolith-aura-cyan" />
               </div>
             <div

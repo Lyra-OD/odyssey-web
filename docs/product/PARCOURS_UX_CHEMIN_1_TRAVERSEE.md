@@ -4,7 +4,7 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 1 sept 2026 — **Monolithe polish** : halo `--salon-cyan` aligné bouton · respiration 5,8 s (plus douce que Continuer 3,6 s).
+- 1 sept 2026 — **Monolithe polish** : halo `--salon-cyan` pur (sans UV) · spread renforcé · breath minimal (5,8 s).
 - 1 sept 2026 — **Monolithe verre** : WebGL unmount saisie · silence React · stèle ~90dvh · CTA Continuer intégré.
 - 1 sept 2026 — **Thaw sync A+B** : GPU @ `thawReveal` · `beginHubThawAppear` aligné · gel `hub-freeze-v1.jpg` (~236 KB).
 - 31 août 2026 — **Thaw D fluide** : canvas chaud sous panneau · dolly préservé · thaw chevauche sortie verre.
