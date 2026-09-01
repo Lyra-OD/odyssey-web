@@ -4,7 +4,8 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 1 sept 2026 — **Monolithe verre** : WebGL unmount saisie · silence React (craftReveal hub-lite · `setRevealT` muet) · stèle ~90dvh `.parcours-monolith-glass` · CTA Continuer intégré · barre z-40 masquée.
+- 1 sept 2026 — **Monolithe polish** : barre z-40 masquée pendant typing (plus de flash « Étape suivante ») · halo teal login · Continuer `connexionSubmitButtonClass` respire toujours.
+- 1 sept 2026 — **Monolithe verre** : WebGL unmount saisie · silence React · stèle ~90dvh · CTA Continuer intégré.
 - 1 sept 2026 — **Thaw sync A+B** : GPU @ `thawReveal` · `beginHubThawAppear` aligné · gel `hub-freeze-v1.jpg` (~236 KB).
 - 31 août 2026 — **Thaw D fluide** : canvas chaud sous panneau · dolly préservé · thaw chevauche sortie verre.
 - 31 août 2026 — **Revert C2** : gel PNG sous panneau · WebGL off saisie · thaw D restauré.

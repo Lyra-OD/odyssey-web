@@ -101,6 +101,33 @@ body {
   height: 0;
 }
 
+.parcours-monolith-atmosphere {
+  pointer-events: none;
+  position: absolute;
+  inset: -12%;
+  z-index: 0;
+  overflow: visible;
+}
+
+.parcours-monolith-frame {
+  isolation: isolate;
+}
+
+/** Continuer monolithe — ADN login, respiration même disabled (phare d'invitation). */
+.connexion-submit-breathe.parcours-monolith-continue:not(:hover) {
+  animation: connexion-submit-breathe 3.6s ease-in-out infinite;
+}
+
+.connexion-submit-breathe.parcours-monolith-continue:disabled {
+  animation: connexion-submit-breathe 3.6s ease-in-out infinite;
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.connexion-submit-breathe.parcours-monolith-continue:disabled:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
 /** Chemin 1 hub idle — masque chrome shell studio (logo · déconnexion · footer). */
 html[data-parcours-hub-idle] .studio-shell-chrome,
 html[data-parcours-hub-idle] .studio-shell-halo {
