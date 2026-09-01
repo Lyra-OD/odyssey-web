@@ -1,29 +1,15 @@
 # Parcours UX — Chemin 1 : La Traversée d'Odyssey
 
 **Type :** canon · **Vérité pour :** premier chemin UX (organisateur · première visite) — beats, surfaces, transitions, placeholders craft.  
-**Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 1 sept 2026 — **Fermeture seamless** : inspire 220 ms + flash étoile · collapse 520 ms · thaw chevauche collapse · voile inspire.
+- 1 sept 2026 — **Tranches 2–3 fermeture** : inspire stellaire · collapse verre → étoile · hold avant thaw D1.
 - 1 sept 2026 — **Tranche 1 fermeture D1** : pre-warm WebGL · thaw @ `hubWebGLReady` · backdrop jusqu’au moteur chaud · voile off.
 - 1 sept 2026 — **Plan B livré** : capture canvas @ clic Hero · gel pixel-perfect · fallback JPEG.
 - 1 sept 2026 — **Recette monolithe** : [`../design/PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) · rollout wizard · ordre B → entrée panneau.
-- 1 sept 2026 — **Monolithe polish** : halo `--salon-cyan` pur (sans UV) · spread renforcé · breath minimal (5,8 s).
 - 1 sept 2026 — **Monolithe verre** : WebGL unmount saisie · silence React · stèle ~90dvh · CTA Continuer intégré.
-- 1 sept 2026 — **Thaw sync A+B** : GPU @ `thawReveal` · `beginHubThawAppear` aligné · gel `hub-freeze-v1.jpg` (~236 KB).
-- 31 août 2026 — **Thaw D fluide** : canvas chaud sous panneau · dolly préservé · thaw chevauche sortie verre.
-- 31 août 2026 — **Revert C2** : gel PNG sous panneau · WebGL off saisie · thaw D restauré.
-- 31 août 2026 — **T1b panneau œil** : overlay centré · slide-in simple · scroll sans barre OS.
-- 31 août 2026 — **T1b thaw KEEP** : courbe apparition hub `HUB_THAW_APPEAR_EASE_CSS` · silence + ramp organique (B réutilisera).
-- 31 août 2026 — **T1b rite freeze** : E+A+D — align PNG · souffle → gel → verre · miroir fermeture (`hubFreezeTimeline`).
-- 31 août 2026 — **T1b polish** : backdrop `hub-freeze-v1.png` · chrome forfait masqué toute étape 1.
-- 31 août 2026 — **T1b gel perf** : WebGL stop au clic (`hubSkyLive`) · unmount sous panneau · ancre étoile via ref.
-- 31 août 2026 — **T1b caméra hub** : `HubSkyCamera` (plan test-ciel + dolly Hero).
-- 31 août 2026 — **T1b code** : hub WebGL lite · crossfade gel 2D · chrome hub masqué.
-- 31 août 2026 — **Figé** : Chemins A/B · contrat hub WebGL animé ↔ gel 2D (clic Hero · fermer · Continuer).
-- 31 août 2026 — **G1** : nom de famille obligatoire · prénom = Hero · retour draft → panneau direct.
-- 31 août 2026 — T1 code : backdrop · hub Hero · panneau (placeholder 2D — cible hub animé T1b).
-- 31 août 2026 — Chaînons P0–P1 · audit [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md).
-- 31 août 2026 — Canon Chemin 1 §0–4 · matrice stub/ready · plan tranches.
 
 **Statut :** spec produit **figée** · code **T1b livré** (hub animé + transitions gel) · prochaine tranche **T2** — voir §8.
 
@@ -102,7 +88,7 @@
 | ID | Déclencheur | Effet perceptif |
 |----|-------------|-----------------|
 | `transition.hubFreezeTo2D` | Clic Hero | **Souffle** (flash+hold 200 ms) → crossfade ciel 560 ms → panneau verre slide (~340 ms) |
-| `transition.panelCloseToHub` | Fermer panneau | Panneau out + thaw KEEP **dès 120 ms** · pas de silence mort |
+| `transition.panelCloseToHub` | Fermer panneau | Inspire 220 ms → collapse 520 ms → thaw KEEP **pendant** collapse (@ moteur chaud) |
 | `transition.backdropToWebGL` | Continuer | Le ciel **s'allume** → constellation |
 
 ### Implémentation (cible)
@@ -111,7 +97,7 @@
 2. Timeline : `hubFreezeTimeline.ts` (hold → fade → panel · miroir close).
 3. `ForceRenderLoop` on pendant hold (flash) · **off** en saisie · **unmount** WebGL en `panel.essentials`.
 4. Ancre étoile hub = **ref** · FX freeze = `hubFreezeFxRef` (flash / holdBreath / inviteMul).
-5. Panneau monolithe : recette [`../design/PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) · enter `parcours-panel-in` (**polish magie prévu** §7) · exit translate+fade.
+5. Panneau monolithe : recette [`../design/PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) · enter `parcours-panel-in` (**polish magie prévu** §7) · exit **collapse → étoile** (`parcours-monolith-collapse` + `hubStarAnchorRef`).
 
 ### Ce n'est PAS
 

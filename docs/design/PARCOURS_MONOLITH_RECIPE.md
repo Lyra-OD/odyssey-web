@@ -4,6 +4,8 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 1 sept 2026 — **Fermeture seamless** : crossfade ciel pendant collapse · flash `beginHubCloseInspire`.
+- 1 sept 2026 — **Tranches 2–3 fermeture** : inspire backdrop · collapse verre → étoile · hold avant thaw D1.
 - 1 sept 2026 — Recette initiale post-T1b monolithe (perf · DA · rollout wizard).
 
 **Liens :**
@@ -81,7 +83,7 @@
 | `hub.idle` | monté | on | |
 | `hubFreezeTo2D` | monté → fade | hold puis off | |
 | `panel.essentials` | **unmount total** | off | pas C2 sous verre |
-| `panelCloseToHub` | remount @ thaw | @ `thawReveal` (+120 ms) | Fix A+B |
+| `panelCloseToHub` | remount @ thaw | @ `thawReveal` (post-rituel 600 ms + D1) | Fix A+B · T2–T3 |
 
 | React | Règle |
 |-------|--------|
@@ -117,6 +119,12 @@
 
 ### P0b — Fermeture tranche 1 (D1 + pre-warm) ✅
 → Thaw @ `onHubCanvasReady` + panneau sorti · loop pre-warm · voile off close · **livré 1 sept 2026**
+
+### P0c — Fermeture tranches 2–3 (inspire + collapse) ✅
+→ **220 ms** inspire + flash étoile · **520 ms** collapse · thaw KEEP **pendant** collapse (@ 140 ms) · voile inspire · **livré 1 sept 2026**
+
+**CSS :** `.parcours-backdrop-ritual-inspire` · `.parcours-monolith-collapse` · `.parcours-monolith-inspire` (halo)  
+**Timeline :** `HUB_CLOSE_INSPIRE_MS` · `HUB_CLOSE_COLLAPSE_MS` · `HUB_CLOSE_HOLD_MS` · `HUB_CLOSE_RITUAL_MS`
 
 ### P1 — Entrée formulaire (magie panneau) — **next**
 Beat actuel trop « slide générique » vs souffle freeze.

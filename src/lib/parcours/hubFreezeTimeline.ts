@@ -14,10 +14,19 @@ export const HUB_FREEZE_PANEL_AT_MS = 340;
 /** Fin freeze → unmount WebGL. */
 export const HUB_FREEZE_TOTAL_MS = HUB_FREEZE_HOLD_MS + HUB_FREEZE_FADE_MS;
 
-/** D — panneau sort. */
+/** D — panneau sort (legacy slide · remplacé par rituel collapse T2–T3). */
 export const HUB_CLOSE_PANEL_OUT_MS = 400;
-/** D — thaw crossfade démarre pendant la sortie panneau (pas de silence mort). */
-export const HUB_CLOSE_THAW_START_MS = 120;
+/** T2 — inspire stellaire sur capture (brightness + flash étoile). */
+export const HUB_CLOSE_INSPIRE_MS = 220;
+/** T3 — aspiration verre vers Hero. */
+export const HUB_CLOSE_COLLAPSE_MS = 520;
+/** T3 — beat @ étoile (crossfade déjà en cours). */
+export const HUB_CLOSE_HOLD_MS = 80;
+/** Début thaw KEEP pendant collapse (depuis début collapse). */
+export const HUB_CLOSE_THAW_AT_MS = 140;
+/** Fin rituel fermeture → panneau off. */
+export const HUB_CLOSE_RITUAL_MS =
+  HUB_CLOSE_INSPIRE_MS + HUB_CLOSE_COLLAPSE_MS + HUB_CLOSE_HOLD_MS;
 /** @deprecated silence retiré — conservé pour doc legacy. */
 export const HUB_CLOSE_SILENCE_MS = 0;
 
@@ -38,9 +47,9 @@ export const HUB_THAW_APPEAR_MS = 880;
 /** Contrôle cubic-bezier CSS (x1,y1,x2,y2) — sync breath/invite. */
 const THAW_BZ = [0.45, 0.02, 0.22, 1] as const;
 
-/** D — total close (panneau out + ramp KEEP). */
+/** D — total close (rituel + ramp KEEP après D1). */
 export const HUB_CLOSE_TOTAL_MS =
-  HUB_CLOSE_PANEL_OUT_MS + HUB_THAW_APPEAR_MS;
+  HUB_CLOSE_RITUAL_MS + HUB_THAW_APPEAR_MS;
 
 export type HubFreezeFx = {
   /** 1 → 0 flash soft sur Hero (hold). */
@@ -118,6 +127,17 @@ export function beginHubFreezeFx() {
 
 /** Fin hold → laisse le flash mourir, breath reste hold jusqu’à unmount. */
 export function softenHubFreezeFx() {
+  hubFreezeFxRef.flash = 0;
+}
+
+/** Fermeture T2 — flash étoile miroir (inspire) · breath libre pour reprise. */
+export function beginHubCloseInspire() {
+  hubFreezeFxRef.flash = 1;
+  hubFreezeFxRef.holdBreath = false;
+  hubFreezeFxRef.inviteMul = 0;
+}
+
+export function softenHubCloseInspire() {
   hubFreezeFxRef.flash = 0;
 }
 

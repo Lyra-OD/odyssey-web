@@ -8,16 +8,20 @@ import {
   revokeHubFreezeCapture,
 } from "@/src/lib/parcours/hubFreezeCapture";
 import {
+  beginHubCloseInspire,
   beginHubFreezeFx,
   beginHubThawAppear,
   HUB_CAPTURE_AT_MS,
-  HUB_CLOSE_PANEL_OUT_MS,
+  HUB_CLOSE_COLLAPSE_MS,
+  HUB_CLOSE_INSPIRE_MS,
+  HUB_CLOSE_RITUAL_MS,
   HUB_FREEZE_FADE_MS,
   HUB_FREEZE_PANEL_AT_MS,
   HUB_FREEZE_TOTAL_MS,
   HUB_THAW_APPEAR_EASE_CSS,
   HUB_THAW_APPEAR_MS,
   resetHubFreezeFx,
+  softenHubCloseInspire,
   softenHubFreezeFx,
 } from "@/src/lib/parcours/hubFreezeTimeline";
 
@@ -32,6 +36,12 @@ export type ParcoursSkyTransition =
   | null
   | "hubFreezeTo2D"
   | "panelCloseToHub";
+
+export type ParcoursCloseRitualPhase =
+  | "idle"
+  | "inspire"
+  | "collapse"
+  | "hold";
 
 type UseParcoursUxOptions = {
   enabled: boolean;
@@ -71,8 +81,11 @@ export function useParcoursUx({
   const [thawReveal, setThawReveal] = useState(false);
   /** Plan B — data URL capture session · null = fallback JPEG. */
   const [freezeCaptureUrl, setFreezeCaptureUrl] = useState<string | null>(null);
+  const [closeRitualPhase, setCloseRitualPhase] =
+    useState<ParcoursCloseRitualPhase>("idle");
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const closeThawCommittedRef = useRef(false);
+  const closeRitualActiveRef = useRef(false);
 
   const clearTimers = useCallback(() => {
     for (const t of timersRef.current) clearTimeout(t);
@@ -96,9 +109,11 @@ export function useParcoursUx({
       setFreezeHolding(false);
       setPanelExiting(false);
       setThawReveal(false);
+      setCloseRitualPhase("idle");
+      closeRitualActiveRef.current = false;
       return;
     }
-    if (revealPhase === "typing") {
+    if (revealPhase === "typing" && !closeRitualActiveRef.current) {
       setPhase(virginHub ? "hub.idle" : "panel.essentials");
     }
   }, [enabled, virginHub, revealPhase, clearTimers]);
@@ -128,6 +143,8 @@ export function useParcoursUx({
     clearTimers();
     revokeHubFreezeCapture();
     setFreezeCaptureUrl(null);
+    setCloseRitualPhase("idle");
+    closeRitualActiveRef.current = false;
     beginHubFreezeFx();
     setFreezeHolding(true);
     setPanelExiting(false);
@@ -171,6 +188,8 @@ export function useParcoursUx({
       revokeHubFreezeCapture();
       setFreezeCaptureUrl(null);
       closeThawCommittedRef.current = false;
+      setCloseRitualPhase("idle");
+      closeRitualActiveRef.current = false;
     }, HUB_THAW_APPEAR_MS);
   }, [schedule]);
 
@@ -181,29 +200,38 @@ export function useParcoursUx({
     if (transition) return;
     clearTimers();
     closeThawCommittedRef.current = false;
+    closeRitualActiveRef.current = true;
+    beginHubCloseInspire();
     setPanelExiting(true);
     setFreezeHolding(false);
     setThawReveal(false);
+    setCloseRitualPhase("inspire");
     setTransition("panelCloseToHub");
 
     schedule(() => {
+      softenHubCloseInspire();
+      setCloseRitualPhase("collapse");
+    }, HUB_CLOSE_INSPIRE_MS);
+
+    schedule(() => {
+      setCloseRitualPhase("hold");
       setPhase("hub.idle");
       setPanelExiting(false);
-    }, HUB_CLOSE_PANEL_OUT_MS);
+    }, HUB_CLOSE_RITUAL_MS);
   }, [enabled, revealPhase, phase, transition, clearTimers, schedule]);
 
-  /** D1 — backdrop reste @ 100 % jusqu'à moteur chaud + panneau sorti. */
+  /** D1 — thaw pendant collapse si moteur chaud (crossfade seamless). */
   useEffect(() => {
     if (transition !== "panelCloseToHub") return;
     if (thawReveal || closeThawCommittedRef.current) return;
     if (!hubWebGLReady) return;
-    if (panelExiting) return;
+    if (closeRitualPhase !== "collapse" && closeRitualPhase !== "hold") return;
     commitCloseThaw();
   }, [
     transition,
     thawReveal,
     hubWebGLReady,
-    panelExiting,
+    closeRitualPhase,
     commitCloseThaw,
   ]);
 
@@ -265,6 +293,7 @@ export function useParcoursUx({
   const showEssentialsPanel =
     enabled &&
     (panelExiting ||
+      closeRitualPhase !== "idle" ||
       ((phase === "panel.essentials" ||
         phase === "ritual.reveal" ||
         phase === "hub.postReveal") &&
@@ -280,6 +309,10 @@ export function useParcoursUx({
   const hubChromeHidden = enabled;
 
   const showFreezeVeil = transition === "hubFreezeTo2D";
+
+  const showCloseInspireVeil =
+    transition === "panelCloseToHub" &&
+    (closeRitualPhase === "inspire" || closeRitualPhase === "collapse");
 
   /** Courbe CSS KEEP — thaw only · aller garde ease-in-out standard. */
   const skyFadeEase =
@@ -299,6 +332,7 @@ export function useParcoursUx({
     panelExiting,
     thawReveal,
     freezeCaptureUrl,
+    closeRitualPhase,
     openPanel,
     closePanel,
     showHubWebGL: mountHubWebGL,
@@ -311,9 +345,11 @@ export function useParcoursUx({
     hubSkyLive,
     hubChromeHidden,
     showFreezeVeil,
+    showCloseInspireVeil,
     crossfadeMs: HUB_FREEZE_FADE_MS,
     closeFadeMs: HUB_THAW_APPEAR_MS,
-    panelExitMs: HUB_CLOSE_PANEL_OUT_MS,
+    panelExitMs: HUB_CLOSE_COLLAPSE_MS,
+    closeRitualMs: HUB_CLOSE_RITUAL_MS,
     skyFadeMs,
     skyFadeEase,
   };

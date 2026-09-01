@@ -546,6 +546,9 @@ export function TributeWizard({
     muteFirstNameSnap: step1Sky,
   });
   const hubCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const monolithFrameRef = useRef<HTMLDivElement | null>(null);
+  const [monolithCollapseOrigin, setMonolithCollapseOrigin] =
+    useState("50% 45%");
   const onHubCanvasMount = useCallback((canvas: HTMLCanvasElement | null) => {
     hubCanvasRef.current = canvas;
   }, []);
@@ -564,6 +567,33 @@ export function TributeWizard({
     },
     [],
   );
+
+  useEffect(() => {
+    if (
+      step1Parcours.closeRitualPhase !== "inspire" &&
+      step1Parcours.closeRitualPhase !== "collapse"
+    ) {
+      return;
+    }
+    const frame = monolithFrameRef.current;
+    if (!frame) {
+      setMonolithCollapseOrigin("50% 45%");
+      return;
+    }
+    const updateOrigin = () => {
+      const rect = frame.getBoundingClientRect();
+      const anchor = hubStarAnchorRef.current;
+      if (!anchor || rect.width <= 0 || rect.height <= 0) {
+        setMonolithCollapseOrigin("50% 45%");
+        return;
+      }
+      const ox = ((anchor.x - rect.left) / rect.width) * 100;
+      const oy = ((anchor.y - rect.top) / rect.height) * 100;
+      setMonolithCollapseOrigin(`${ox}% ${oy}%`);
+    };
+    updateOrigin();
+    requestAnimationFrame(updateOrigin);
+  }, [step1Parcours.closeRitualPhase]);
 
   useEffect(() => {
     if (!step1Sky) {
@@ -971,6 +1001,11 @@ export function TributeWizard({
           opacity={hubBackdropOpacity}
           durationMs={step1Parcours.skyFadeMs}
           easing={step1Parcours.skyFadeEase}
+          closeRitual={
+            step1Parcours.transition === "panelCloseToHub"
+              ? step1Parcours.closeRitualPhase
+              : "idle"
+          }
         />
       ) : null}
       {step1Sky && step1Parcours.showFreezeVeil ? (
@@ -985,6 +1020,9 @@ export function TributeWizard({
           }}
           aria-hidden
         />
+      ) : null}
+      {step1Sky && step1Parcours.showCloseInspireVeil ? (
+        <div className="parcours-close-inspire-veil" aria-hidden />
       ) : null}
       {step1Parcours.showHubHero ? (
         <SanctuaryHubHero
@@ -1307,23 +1345,36 @@ export function TributeWizard({
         >
           {currentStep === 1 && step1Parcours.showEssentialsPanel ? (
             <div
-              className="parcours-monolith-shell pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-4"
+              className={[
+                "parcours-monolith-shell pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-4",
+                step1Parcours.closeRitualPhase !== "idle"
+                  ? "parcours-monolith-close-active"
+                  : "",
+              ].join(" ")}
               aria-hidden={false}
             >
             <div
+              ref={monolithFrameRef}
               className={[
                 "parcours-monolith-frame pointer-events-auto relative w-full max-w-xl",
                 step1Reveal.phase === "reward" ||
                 step1Reveal.phase === "done"
                   ? "pointer-events-none opacity-0"
-                  : step1Parcours.panelExiting
-                    ? "pointer-events-none translate-y-3 opacity-0 transition-[opacity,transform] ease-in"
-                    : "parcours-panel-in",
+                  : step1Parcours.closeRitualPhase === "collapse" ||
+                      step1Parcours.closeRitualPhase === "hold"
+                    ? "parcours-monolith-collapse pointer-events-none"
+                    : step1Parcours.closeRitualPhase === "inspire"
+                      ? "parcours-monolith-inspire"
+                      : "parcours-panel-in",
               ].join(" ")}
               style={
-                step1Parcours.panelExiting
+                step1Parcours.closeRitualPhase === "collapse" ||
+                step1Parcours.closeRitualPhase === "hold"
                   ? {
-                      transitionDuration: `${step1Parcours.panelExitMs}ms`,
+                      ["--parcours-collapse-origin" as string]:
+                        monolithCollapseOrigin,
+                      ["--parcours-collapse-ms" as string]:
+                        `${step1Parcours.panelExitMs}ms`,
                     }
                   : undefined
               }

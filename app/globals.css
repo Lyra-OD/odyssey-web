@@ -38,6 +38,137 @@ body {
   animation: parcours-panel-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/** T2 — inspire stellaire sur capture gelée (fermeture panneau). */
+.parcours-backdrop-media {
+  transition:
+    filter 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  filter: brightness(1);
+  transform: scale(1);
+}
+
+.parcours-backdrop-ritual-inspire .parcours-backdrop-media {
+  filter: brightness(1.38) saturate(1.12);
+  transform: scale(1.028);
+}
+
+.parcours-backdrop-ritual-collapse .parcours-backdrop-media {
+  filter: brightness(1.14) saturate(1.05);
+  transform: scale(1.01);
+  transition:
+    filter 520ms cubic-bezier(0.45, 0.02, 0.22, 1),
+    transform 520ms cubic-bezier(0.45, 0.02, 0.22, 1);
+}
+
+.parcours-backdrop-ritual-inspire::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 42% 38% at 50% 45%,
+    rgba(0, 232, 240, 0.42) 0%,
+    rgba(0, 232, 240, 0.12) 42%,
+    transparent 72%
+  );
+  animation: parcours-close-star-flash 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes parcours-close-star-flash {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/** Voile inspire fermeture — miroir souffle freeze. */
+.parcours-close-inspire-veil {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  animation: parcours-close-veil 700ms cubic-bezier(0.45, 0.02, 0.22, 1) both;
+  background: radial-gradient(
+    ellipse 48% 42% at 50% 45%,
+    rgba(0, 232, 240, 0.28) 0%,
+    rgba(0, 232, 240, 0.08) 48%,
+    transparent 74%
+  );
+}
+
+@keyframes parcours-close-veil {
+  0% {
+    opacity: 0.85;
+  }
+  40% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/** T3 — aspiration verre vers étoile Hero. */
+@keyframes parcours-monolith-inspire-pulse {
+  from {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  to {
+    transform: scale(1.022);
+    filter: brightness(1.06);
+  }
+}
+
+.parcours-monolith-inspire {
+  animation: parcours-monolith-inspire-pulse 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes parcours-monolith-collapse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  38% {
+    opacity: 1;
+    transform: scale(0.78);
+    filter: blur(0);
+  }
+  72% {
+    opacity: 0.72;
+    transform: scale(0.22);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.035);
+    filter: blur(10px);
+  }
+}
+
+.parcours-monolith-collapse {
+  transform-origin: var(--parcours-collapse-origin, 50% 45%);
+  animation: parcours-monolith-collapse var(--parcours-collapse-ms, 520ms)
+    cubic-bezier(0.58, 0.02, 0.84, 0.38) forwards;
+  will-change: transform, opacity, filter;
+}
+
+.parcours-monolith-close-active .parcours-monolith-glass,
+.parcours-monolith-close-active .parcours-monolith-aura-cyan {
+  animation-play-state: paused;
+}
+
+.parcours-monolith-inspire .parcours-monolith-aura-cyan {
+  opacity: 0.9;
+  transform: translate(-50%, -50%) scale(1.12);
+  transition:
+    opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .parcours-panel-shell {
   /* Hauteur d’œil : centre optique ~45 % viewport, air haut + place CTA. */
   padding-top: max(1.25rem, 6vh);
@@ -986,6 +1117,7 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   .sanctuary-halo-breathe,
   .parcours-monolith-glass,
   .parcours-monolith-aura-cyan,
+  .parcours-monolith-collapse,
   .sanctuary-select-breathe,
   .voice-memo-wave-breathe,
   .voice-memo-wave-breathe-live,
@@ -1010,6 +1142,27 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 
   .parcours-monolith-aura-cyan {
     opacity: 0.54;
+  }
+
+  .parcours-monolith-collapse {
+    opacity: 0;
+    filter: none;
+  }
+
+  .parcours-backdrop-ritual-inspire .parcours-backdrop-media,
+  .parcours-backdrop-ritual-collapse .parcours-backdrop-media {
+    filter: brightness(1);
+    transform: none;
+  }
+
+  .parcours-backdrop-ritual-inspire::after,
+  .parcours-close-inspire-veil {
+    animation: none;
+    opacity: 0;
+  }
+
+  .parcours-monolith-inspire {
+    animation: none;
   }
 
   .voice-memo-halo-breathe {
