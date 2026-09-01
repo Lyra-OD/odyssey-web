@@ -141,7 +141,7 @@
 | **T-close-2** | Voiles inspire suivent `--parcours-star-x/y` | ✅ |
 | **T-close-2b** | Pivot figé @ collapse · vars figées · thaw @ hold · ancre conservée | ✅ |
 | **T-close-3** | Halo tracteur fixed (viewport) · verre fade | ✅ |
-| **T-close-4** | Timeline unifiée + thaw overlap fluide | ⏳ |
+| **T-close-4** | Timeline unifiée `u` 0→1 + thaw overlap fluide | ✅ |
 | **T-open-mirror** | Ouverture miroir depuis l’étoile (après close OK) | ⏳ |
 
 **T-close-1 :** `hubStarVisualViewportPx` · offset hitbox Hero · rAF pendant `panelCloseToHub` · pas de setState 60 fps.
@@ -151,6 +151,8 @@
 **T-close-2b :** inspire = rAF vars seulement · collapse = snapshot `transform-origin` + vars (pas rect shrink) · `hubStarLastKnownAnchorRef` · thaw @ `hold` seulement.
 
 **T-close-3 :** `ParcoursCloseStreak` @ collapse · verre aspire · impact **78 %** · thaw **88 %** · `pulseHubCloseStarKiss`.
+
+**T-close-4 :** une horloge rAF · `hubCloseRitualU` 0→1 · opacités backdrop/WebGL continues · beats impact/thaw @ `HUB_CLOSE_*_RITUAL_U` · `skyFadeMs=0` pendant rituel.
 
 ### P1 — Entrée formulaire (magie panneau) — **après T-close-4**
 Beat actuel trop « slide générique » vs souffle freeze.

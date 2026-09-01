@@ -38,6 +38,65 @@ export function hubCloseMsAtCollapseU(u: number): number {
 /** Fin rituel fermeture → panneau off. */
 export const HUB_CLOSE_RITUAL_MS =
   HUB_CLOSE_INSPIRE_MS + HUB_CLOSE_COLLAPSE_MS + HUB_CLOSE_HOLD_MS;
+
+/** T-close-4 — phases du rituel sur timeline normalisée 0→1. */
+export type HubCloseRitualPhase = "idle" | "inspire" | "collapse" | "hold";
+
+/** T-close-4 — bornes segments (u global rituel). */
+export const HUB_CLOSE_INSPIRE_U = HUB_CLOSE_INSPIRE_MS / HUB_CLOSE_RITUAL_MS;
+export const HUB_CLOSE_COLLAPSE_END_U =
+  (HUB_CLOSE_INSPIRE_MS + HUB_CLOSE_COLLAPSE_MS) / HUB_CLOSE_RITUAL_MS;
+export const HUB_CLOSE_IMPACT_RITUAL_U =
+  hubCloseMsAtCollapseU(HUB_CLOSE_IMPACT_COLLAPSE_U) / HUB_CLOSE_RITUAL_MS;
+export const HUB_CLOSE_THAW_RITUAL_U =
+  hubCloseMsAtCollapseU(HUB_CLOSE_THAW_COLLAPSE_U) / HUB_CLOSE_RITUAL_MS;
+export const HUB_CLOSE_BACKDROP_HANDOFF_RITUAL_U =
+  hubCloseMsAtCollapseU(HUB_CLOSE_BACKDROP_FADE_COLLAPSE_U) /
+  HUB_CLOSE_RITUAL_MS;
+
+/** T-close-4 — u global @ ms depuis début `closePanel`. */
+export function hubCloseRitualU(elapsedMs: number): number {
+  return clamp01(elapsedMs / HUB_CLOSE_RITUAL_MS);
+}
+
+/** T-close-4 — phase discrète (CSS classes) depuis u. */
+export function hubClosePhaseFromU(u: number): HubCloseRitualPhase {
+  if (u <= 0) return "idle";
+  if (u < HUB_CLOSE_INSPIRE_U) return "inspire";
+  if (u < HUB_CLOSE_COLLAPSE_END_U) return "collapse";
+  return "hold";
+}
+
+/** T-close-4 — backdrop JPEG : inspire plein → handoff → hold bas (overlap fluide). */
+export function hubCloseBackdropOpacityU(u: number): number {
+  if (u <= HUB_CLOSE_INSPIRE_U) return 1;
+  if (u >= HUB_CLOSE_COLLAPSE_END_U) return 0.04;
+  const t =
+    (u - HUB_CLOSE_INSPIRE_U) / (HUB_CLOSE_COLLAPSE_END_U - HUB_CLOSE_INSPIRE_U);
+  const handoffT =
+    (HUB_CLOSE_BACKDROP_HANDOFF_RITUAL_U - HUB_CLOSE_INSPIRE_U) /
+    (HUB_CLOSE_COLLAPSE_END_U - HUB_CLOSE_INSPIRE_U);
+  if (t < 0.32) {
+    const local = t / 0.32;
+    return 1 - local * 0.58;
+  }
+  if (t < handoffT) {
+    const local = (t - 0.32) / Math.max(0.001, handoffT - 0.32);
+    return 0.42 - local * 0.36;
+  }
+  const local = (t - handoffT) / Math.max(0.001, 1 - handoffT);
+  return 0.06 - local * 0.02;
+}
+
+/** T-close-4 — WebGL pre-warm : 0 inspire → 0.88 collapse (courbe KEEP). */
+export function hubCloseWebGLOpacityU(u: number): number {
+  if (u <= HUB_CLOSE_INSPIRE_U) return 0;
+  if (u >= HUB_CLOSE_COLLAPSE_END_U) return 0.88;
+  const t =
+    (u - HUB_CLOSE_INSPIRE_U) / (HUB_CLOSE_COLLAPSE_END_U - HUB_CLOSE_INSPIRE_U);
+  const ramp = Math.min(1, t / 0.42);
+  return 0.88 * hubThawAppearEase(ramp);
+}
 /** Fondu rapide calque WebGL @ collapse (filante visible — pas KEEP 880 ms). */
 export const HUB_CLOSE_STREAK_LAYER_FADE_MS = 180;
 /** @deprecated silence retiré — conservé pour doc legacy. */

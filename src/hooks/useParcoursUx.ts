@@ -13,13 +13,13 @@ import {
   beginHubThawAppear,
   HUB_CAPTURE_AT_MS,
   HUB_CLOSE_COLLAPSE_MS,
-  HUB_CLOSE_INSPIRE_MS,
+  HUB_CLOSE_IMPACT_RITUAL_U,
   HUB_CLOSE_RITUAL_MS,
-  HUB_CLOSE_STREAK_LAYER_FADE_MS,
-  hubCloseMsAtCollapseU,
-  HUB_CLOSE_BACKDROP_FADE_COLLAPSE_U,
-  HUB_CLOSE_IMPACT_COLLAPSE_U,
-  HUB_CLOSE_THAW_COLLAPSE_U,
+  HUB_CLOSE_THAW_RITUAL_U,
+  hubCloseBackdropOpacityU,
+  hubClosePhaseFromU,
+  hubCloseRitualU,
+  hubCloseWebGLOpacityU,
   HUB_FREEZE_FADE_MS,
   HUB_FREEZE_PANEL_AT_MS,
   HUB_FREEZE_TOTAL_MS,
@@ -29,6 +29,7 @@ import {
   resetHubFreezeFx,
   softenHubCloseInspire,
   softenHubFreezeFx,
+  type HubCloseRitualPhase,
 } from "@/src/lib/parcours/hubFreezeTimeline";
 
 /** États UX Chemin 1 — couche au-dessus du wizard step 1. */
@@ -43,11 +44,7 @@ export type ParcoursSkyTransition =
   | "hubFreezeTo2D"
   | "panelCloseToHub";
 
-export type ParcoursCloseRitualPhase =
-  | "idle"
-  | "inspire"
-  | "collapse"
-  | "hold";
+export type ParcoursCloseRitualPhase = HubCloseRitualPhase;
 
 type UseParcoursUxOptions = {
   enabled: boolean;
@@ -89,16 +86,28 @@ export function useParcoursUx({
   const [freezeCaptureUrl, setFreezeCaptureUrl] = useState<string | null>(null);
   const [closeRitualPhase, setCloseRitualPhase] =
     useState<ParcoursCloseRitualPhase>("idle");
-  /** T-close-3f — backdrop JPEG bas @ 75 % collapse. */
-  const [closeSkyHandoff, setCloseSkyHandoff] = useState(false);
+  /** T-close-4 — timeline unifiée 0→1 (rAF · opacités continues). */
+  const [closeRitualU, setCloseRitualU] = useState(0);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const closeThawCommittedRef = useRef(false);
   const closeThawArmedRef = useRef(false);
   const closeRitualActiveRef = useRef(false);
+  const closeRitualStartedAtRef = useRef<number | null>(null);
+  const closeRitualRafRef = useRef(0);
+  const closeRitualPhaseRef = useRef<ParcoursCloseRitualPhase>("idle");
+  const closeImpactFiredRef = useRef(false);
 
   const clearTimers = useCallback(() => {
     for (const t of timersRef.current) clearTimeout(t);
     timersRef.current = [];
+  }, []);
+
+  const stopCloseRitualRaf = useCallback(() => {
+    if (closeRitualRafRef.current) {
+      cancelAnimationFrame(closeRitualRafRef.current);
+      closeRitualRafRef.current = 0;
+    }
+    closeRitualStartedAtRef.current = null;
   }, []);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
@@ -110,6 +119,7 @@ export function useParcoursUx({
   useEffect(() => {
     if (!enabled) {
       clearTimers();
+      stopCloseRitualRaf();
       resetHubFreezeFx();
       revokeHubFreezeCapture();
       setFreezeCaptureUrl(null);
@@ -119,7 +129,9 @@ export function useParcoursUx({
       setPanelExiting(false);
       setThawReveal(false);
       setCloseRitualPhase("idle");
-      setCloseSkyHandoff(false);
+      setCloseRitualU(0);
+      closeRitualPhaseRef.current = "idle";
+      closeImpactFiredRef.current = false;
       closeThawArmedRef.current = false;
       closeRitualActiveRef.current = false;
       return;
@@ -127,7 +139,7 @@ export function useParcoursUx({
     if (revealPhase === "typing" && !closeRitualActiveRef.current) {
       setPhase(virginHub ? "hub.idle" : "panel.essentials");
     }
-  }, [enabled, virginHub, revealPhase, clearTimers]);
+  }, [enabled, virginHub, revealPhase, clearTimers, stopCloseRitualRaf]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -144,7 +156,10 @@ export function useParcoursUx({
     }
   }, [enabled, revealPhase, clearTimers]);
 
-  useEffect(() => () => clearTimers(), [clearTimers]);
+  useEffect(() => () => {
+    clearTimers();
+    stopCloseRitualRaf();
+  }, [clearTimers, stopCloseRitualRaf]);
 
   const openPanel = useCallback(() => {
     if (!enabled) return;
@@ -201,10 +216,47 @@ export function useParcoursUx({
       closeThawCommittedRef.current = false;
       closeThawArmedRef.current = false;
       setCloseRitualPhase("idle");
-      setCloseSkyHandoff(false);
+      setCloseRitualU(0);
+      closeRitualPhaseRef.current = "idle";
+      closeImpactFiredRef.current = false;
       closeRitualActiveRef.current = false;
     }, HUB_THAW_APPEAR_MS);
   }, [schedule]);
+
+  const driveCloseRitual = useCallback(() => {
+    const start = closeRitualStartedAtRef.current;
+    if (start == null) return;
+
+    const elapsed = performance.now() - start;
+    const u = hubCloseRitualU(elapsed);
+    setCloseRitualU(u);
+
+    const nextPhase = hubClosePhaseFromU(u);
+    if (nextPhase !== closeRitualPhaseRef.current) {
+      if (nextPhase === "collapse") softenHubCloseInspire();
+      closeRitualPhaseRef.current = nextPhase;
+      setCloseRitualPhase(nextPhase);
+    }
+
+    if (u >= HUB_CLOSE_IMPACT_RITUAL_U && !closeImpactFiredRef.current) {
+      closeImpactFiredRef.current = true;
+      pulseHubCloseStarKiss();
+    }
+    if (u >= HUB_CLOSE_THAW_RITUAL_U) {
+      closeThawArmedRef.current = true;
+    }
+
+    if (elapsed >= HUB_CLOSE_RITUAL_MS) {
+      setCloseRitualPhase("hold");
+      closeRitualPhaseRef.current = "hold";
+      setPhase("hub.idle");
+      setPanelExiting(false);
+      stopCloseRitualRaf();
+      return;
+    }
+
+    closeRitualRafRef.current = requestAnimationFrame(driveCloseRitual);
+  }, [stopCloseRitualRaf]);
 
   const closePanel = useCallback(() => {
     if (!enabled) return;
@@ -212,42 +264,33 @@ export function useParcoursUx({
     if (phase !== "panel.essentials") return;
     if (transition) return;
     clearTimers();
+    stopCloseRitualRaf();
     closeThawCommittedRef.current = false;
     closeThawArmedRef.current = false;
+    closeImpactFiredRef.current = false;
     closeRitualActiveRef.current = true;
-    setCloseSkyHandoff(false);
+    closeRitualPhaseRef.current = "inspire";
     beginHubCloseInspire();
     setPanelExiting(true);
     setFreezeHolding(false);
     setThawReveal(false);
     setCloseRitualPhase("inspire");
+    setCloseRitualU(0);
     setTransition("panelCloseToHub");
 
-    schedule(() => {
-      softenHubCloseInspire();
-      setCloseRitualPhase("collapse");
-    }, HUB_CLOSE_INSPIRE_MS);
+    closeRitualStartedAtRef.current = performance.now();
+    closeRitualRafRef.current = requestAnimationFrame(driveCloseRitual);
+  }, [
+    enabled,
+    revealPhase,
+    phase,
+    transition,
+    clearTimers,
+    stopCloseRitualRaf,
+    driveCloseRitual,
+  ]);
 
-    schedule(() => {
-      setCloseSkyHandoff(true);
-    }, hubCloseMsAtCollapseU(HUB_CLOSE_BACKDROP_FADE_COLLAPSE_U));
-
-    schedule(() => {
-      pulseHubCloseStarKiss();
-    }, hubCloseMsAtCollapseU(HUB_CLOSE_IMPACT_COLLAPSE_U));
-
-    schedule(() => {
-      closeThawArmedRef.current = true;
-    }, hubCloseMsAtCollapseU(HUB_CLOSE_THAW_COLLAPSE_U));
-
-    schedule(() => {
-      setCloseRitualPhase("hold");
-      setPhase("hub.idle");
-      setPanelExiting(false);
-    }, HUB_CLOSE_RITUAL_MS);
-  }, [enabled, revealPhase, phase, transition, clearTimers, schedule]);
-
-  /** T-close-3f — thaw @ 88 % collapse (fallback si WebGL pas prêt). */
+  /** T-close-4 — thaw @ u≥88 % (fallback si WebGL pas prêt @ fin rituel). */
   useEffect(() => {
     if (transition !== "panelCloseToHub") return;
     if (thawReveal || closeThawCommittedRef.current) return;
@@ -299,9 +342,7 @@ export function useParcoursUx({
       : transition === "panelCloseToHub"
         ? thawReveal
           ? 1
-          : closeRitualPhase === "collapse" || closeRitualPhase === "hold"
-            ? 0.88
-            : 0
+          : hubCloseWebGLOpacityU(closeRitualU)
         : phase === "hub.idle"
           ? 1
           : 0;
@@ -310,13 +351,7 @@ export function useParcoursUx({
     transition === "panelCloseToHub"
       ? thawReveal
         ? 0
-        : closeSkyHandoff
-          ? 0.06
-          : closeRitualPhase === "collapse"
-            ? 0.42
-            : closeRitualPhase === "hold"
-              ? 0.04
-              : 1
+        : hubCloseBackdropOpacityU(closeRitualU)
       : phase === "panel.essentials" ||
           (transition === "hubFreezeTo2D" && !freezeHolding)
         ? 1
@@ -366,7 +401,7 @@ export function useParcoursUx({
     transition === "panelCloseToHub"
       ? thawReveal
         ? HUB_THAW_APPEAR_MS
-        : HUB_CLOSE_STREAK_LAYER_FADE_MS
+        : 0
       : HUB_FREEZE_FADE_MS;
 
   return {
@@ -377,6 +412,7 @@ export function useParcoursUx({
     thawReveal,
     freezeCaptureUrl,
     closeRitualPhase,
+    closeRitualU,
     openPanel,
     closePanel,
     showHubWebGL: mountHubWebGL,
