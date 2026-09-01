@@ -12,8 +12,6 @@ import {
   beginHubThawAppear,
   HUB_CAPTURE_AT_MS,
   HUB_CLOSE_PANEL_OUT_MS,
-  HUB_CLOSE_THAW_START_MS,
-  HUB_CLOSE_TOTAL_MS,
   HUB_FREEZE_FADE_MS,
   HUB_FREEZE_PANEL_AT_MS,
   HUB_FREEZE_TOTAL_MS,
@@ -41,6 +39,8 @@ type UseParcoursUxOptions = {
   virginHub: boolean;
   /** Canvas hub-lite — capture Plan B @ clic Hero. */
   hubCanvasRef?: RefObject<HTMLCanvasElement | null>;
+  /** D1 — thaw close seulement quand le moteur a peint un frame chaud. */
+  hubWebGLReady?: boolean;
 };
 
 function resolveInitialPhase(
@@ -56,6 +56,7 @@ export function useParcoursUx({
   revealPhase,
   virginHub,
   hubCanvasRef,
+  hubWebGLReady = false,
 }: UseParcoursUxOptions) {
   const [phase, setPhase] = useState<ParcoursPhase>(() =>
     resolveInitialPhase(enabled, virginHub),
@@ -71,6 +72,7 @@ export function useParcoursUx({
   /** Plan B — data URL capture session · null = fallback JPEG. */
   const [freezeCaptureUrl, setFreezeCaptureUrl] = useState<string | null>(null);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const closeThawCommittedRef = useRef(false);
 
   const clearTimers = useCallback(() => {
     for (const t of timersRef.current) clearTimeout(t);
@@ -153,40 +155,57 @@ export function useParcoursUx({
     }, HUB_FREEZE_TOTAL_MS);
   }, [enabled, revealPhase, phase, transition, clearTimers, schedule, hubCanvasRef]);
 
-  const closePanel = useCallback(() => {
-    if (!enabled) return;
-    if (revealPhase !== "typing") return;
-    if (phase !== "panel.essentials") return;
-    if (transition) return;
-    clearTimers();
-    setPanelExiting(true);
-    setFreezeHolding(false);
-    setThawReveal(false);
-    setTransition("panelCloseToHub");
-
-    // Crossfade ciel @ +120 ms — GPU + courbe JS alignés sur thawReveal (Fix A+B).
-    schedule(() => {
-      beginHubThawAppear();
+  const commitCloseThaw = useCallback(() => {
+    if (closeThawCommittedRef.current) return;
+    closeThawCommittedRef.current = true;
+    beginHubThawAppear();
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setThawReveal(true);
-        });
+        setThawReveal(true);
       });
-    }, HUB_CLOSE_THAW_START_MS);
-
-    schedule(() => {
-      setPhase("hub.idle");
-      setPanelExiting(false);
-    }, HUB_CLOSE_PANEL_OUT_MS);
-
+    });
     schedule(() => {
       setTransition(null);
       setThawReveal(false);
       resetHubFreezeFx();
       revokeHubFreezeCapture();
       setFreezeCaptureUrl(null);
-    }, HUB_CLOSE_TOTAL_MS);
+      closeThawCommittedRef.current = false;
+    }, HUB_THAW_APPEAR_MS);
+  }, [schedule]);
+
+  const closePanel = useCallback(() => {
+    if (!enabled) return;
+    if (revealPhase !== "typing") return;
+    if (phase !== "panel.essentials") return;
+    if (transition) return;
+    clearTimers();
+    closeThawCommittedRef.current = false;
+    setPanelExiting(true);
+    setFreezeHolding(false);
+    setThawReveal(false);
+    setTransition("panelCloseToHub");
+
+    schedule(() => {
+      setPhase("hub.idle");
+      setPanelExiting(false);
+    }, HUB_CLOSE_PANEL_OUT_MS);
   }, [enabled, revealPhase, phase, transition, clearTimers, schedule]);
+
+  /** D1 — backdrop reste @ 100 % jusqu'à moteur chaud + panneau sorti. */
+  useEffect(() => {
+    if (transition !== "panelCloseToHub") return;
+    if (thawReveal || closeThawCommittedRef.current) return;
+    if (!hubWebGLReady) return;
+    if (panelExiting) return;
+    commitCloseThaw();
+  }, [
+    transition,
+    thawReveal,
+    hubWebGLReady,
+    panelExiting,
+    commitCloseThaw,
+  ]);
 
   useEffect(() => {
     if (!enabled || phase !== "panel.essentials" || transition) return;
@@ -251,18 +270,16 @@ export function useParcoursUx({
         phase === "hub.postReveal") &&
         transition !== "panelCloseToHub"));
 
-  /** Loop off en saisie · reprise au fondu thaw seulement (Fix A — pas de GPU à opacity 0). */
+  /** Loop off en saisie · pre-warm + reprise @ thaw close (D1). */
   const hubSkyLive =
     enabled &&
     ((phase === "hub.idle" && transition === null) ||
       (transition === "hubFreezeTo2D" && freezeHolding) ||
-      (transition === "panelCloseToHub" && thawReveal));
+      transition === "panelCloseToHub");
 
   const hubChromeHidden = enabled;
 
-  const showFreezeVeil =
-    transition === "hubFreezeTo2D" ||
-    (transition === "panelCloseToHub" && panelExiting);
+  const showFreezeVeil = transition === "hubFreezeTo2D";
 
   /** Courbe CSS KEEP — thaw only · aller garde ease-in-out standard. */
   const skyFadeEase =

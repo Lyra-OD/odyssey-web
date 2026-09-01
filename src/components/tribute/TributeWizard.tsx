@@ -549,14 +549,15 @@ export function TributeWizard({
   const onHubCanvasMount = useCallback((canvas: HTMLCanvasElement | null) => {
     hubCanvasRef.current = canvas;
   }, []);
+  const [hubWebGLReady, setHubWebGLReady] = useState(false);
+  const onHubWebGLReady = useCallback(() => setHubWebGLReady(true), []);
   const step1Parcours = useParcoursUx({
     enabled: step1Sky,
     revealPhase: step1Reveal.phase,
     virginHub: step1VirginHub,
     hubCanvasRef,
+    hubWebGLReady,
   });
-  const [hubWebGLReady, setHubWebGLReady] = useState(false);
-  const onHubWebGLReady = useCallback(() => setHubWebGLReady(true), []);
   const onHubStarAnchor = useCallback(
     (anchor: { x: number; y: number } | null) => {
       hubStarAnchorRef.current = anchor;
@@ -568,25 +569,45 @@ export function TributeWizard({
     if (!step1Sky) {
       setHubWebGLReady(false);
       hubStarAnchorRef.current = null;
+      hubCanvasRef.current = null;
       return;
     }
-    if (!step1Parcours.showHubWebGL) {
+    const panelTyping =
+      step1Parcours.phase === "panel.essentials" &&
+      step1Parcours.transition === null;
+    const closeWarming = step1Parcours.transition === "panelCloseToHub";
+    if (panelTyping) {
+      setHubWebGLReady(false);
+      hubCanvasRef.current = null;
+      return;
+    }
+    if (!step1Parcours.showHubWebGL && !closeWarming) {
       setHubWebGLReady(false);
       hubStarAnchorRef.current = null;
       hubCanvasRef.current = null;
     }
-  }, [step1Sky, step1Parcours.showHubWebGL]);
+  }, [
+    step1Sky,
+    step1Parcours.showHubWebGL,
+    step1Parcours.phase,
+    step1Parcours.transition,
+  ]);
 
-  /** P0 : PNG immédiat au hub · fondu quand WebGL prêt. */
+  /** Hub initial : attendre 1er frame · close pre-warm : gate via thawReveal (D1). */
+  const deferHubWebGLUntilReady =
+    step1Parcours.showHubHero && step1Parcours.transition !== "panelCloseToHub";
+
+  /** P0 : JPEG au hub · fondu quand WebGL prêt. Close : backdrop D1 via hook. */
   const hubBackdropOpacity = step1Parcours.showHubHero
     ? hubWebGLReady
       ? 0
       : 1
     : step1Parcours.backdropOpacity;
 
-  const hubWebGLLayerOpacity = hubWebGLReady
-    ? step1Parcours.hubWebGLOpacity
-    : 0;
+  const hubWebGLLayerOpacity =
+    deferHubWebGLUntilReady && !hubWebGLReady
+      ? 0
+      : step1Parcours.hubWebGLOpacity;
 
   const step1RewardPendingRef = useRef(false);
 

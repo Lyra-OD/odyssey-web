@@ -4,6 +4,7 @@
 **Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 1 sept 2026 — **Tranche 1 fermeture D1** : pre-warm WebGL · thaw @ `hubWebGLReady` · backdrop jusqu’au moteur chaud · voile off.
 - 1 sept 2026 — **Plan B livré** : capture canvas @ clic Hero · gel pixel-perfect · fallback JPEG.
 - 1 sept 2026 — **Recette monolithe** : [`../design/PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) · rollout wizard · ordre B → entrée panneau.
 - 1 sept 2026 — **Monolithe polish** : halo `--salon-cyan` pur (sans UV) · spread renforcé · breath minimal (5,8 s).

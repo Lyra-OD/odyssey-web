@@ -115,6 +115,9 @@
 ### P0 — Plan B (gel pixel-perfect) ✅
 → [`PLAN_B_HUB_CAPTURE_CANVAS.md`](../TEMP/PLAN_B_HUB_CAPTURE_CANVAS.md) — **livré 1 sept 2026**
 
+### P0b — Fermeture tranche 1 (D1 + pre-warm) ✅
+→ Thaw @ `onHubCanvasReady` + panneau sorti · loop pre-warm · voile off close · **livré 1 sept 2026**
+
 ### P1 — Entrée formulaire (magie panneau) — **next**
 Beat actuel trop « slide générique » vs souffle freeze.
 
