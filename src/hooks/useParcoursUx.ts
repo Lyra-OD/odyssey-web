@@ -382,14 +382,21 @@ export function useParcoursUx({
     enabled &&
     (phase === "ritual.reveal" || phase === "hub.postReveal");
 
-  /** Hub WebGL : idle + crossfades — canvas chaud en saisie (loop off, opacité 0). */
-  const mountHubWebGL =
+  /**
+   * Un seul Canvas Chemin 1 (hub + ritual) — évite cold start WebGL au Continuer.
+   * Avant : hub unmount → ritual mount = lag + shaders recompilés.
+   */
+  const showSkyWebGL =
     enabled &&
-    !showRitualWebGL &&
     (phase === "hub.idle" ||
       phase === "panel.essentials" ||
+      phase === "ritual.reveal" ||
+      phase === "hub.postReveal" ||
       transition === "hubFreezeTo2D" ||
       transition === "panelCloseToHub");
+
+  /** @deprecated alias — préférer showSkyWebGL */
+  const mountHubWebGL = showSkyWebGL && !showRitualWebGL;
 
   const mountBackdrop =
     enabled &&
@@ -411,7 +418,9 @@ export function useParcoursUx({
           : 0
         : phase === "hub.idle"
           ? 1
-          : 0;
+          : showRitualWebGL
+            ? 1
+            : 0;
 
   /** T2-freeze — gel 2D reste visible pendant reveal / J3 (constellation en overlay). */
   const backdropOpacity =
@@ -498,6 +507,7 @@ export function useParcoursUx({
     closePanel,
     showHubWebGL: mountHubWebGL,
     showRitualWebGL,
+    showSkyWebGL,
     showBackdrop: mountBackdrop,
     hubWebGLOpacity,
     backdropOpacity,

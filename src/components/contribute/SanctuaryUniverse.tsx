@@ -353,6 +353,8 @@ function Constellation({
   /** T-invite-2 — glow CTA live (prox souris + breath Hero), pas hubApproach figé. */
   const [hubCtaGlow, setHubCtaGlow] = useState(0);
   const [proximity, setProximity] = useState<ProximityField>(EMPTY_PROX);
+  /** Sync React depuis revealTRef — max ~10 Hz (évite setState chaque RAF = lag). */
+  const lastRevealReactSyncRef = useRef(0);
 
   const stars = useMemo(() => {
     const name = heroName?.trim() || "Margaret";
@@ -388,7 +390,12 @@ function Constellation({
     }
     if (revealTRef) {
       const v = revealTRef.current;
-      setRevealT((prev) => (Math.abs(prev - v) > 0.0008 ? v : prev));
+      const now =
+        typeof performance !== "undefined" ? performance.now() : 0;
+      if (now - lastRevealReactSyncRef.current >= 100) {
+        lastRevealReactSyncRef.current = now;
+        setRevealT((prev) => (Math.abs(prev - v) > 0.008 ? v : prev));
+      }
     }
 
     const drawPhaseLive = resolveDrawPhase(revealTRef?.current ?? revealT);
@@ -1357,14 +1364,17 @@ export function SanctuaryUniverse({
   const immersive = mode === "immersive" && !craftLite;
   const skyPaused = craftReveal?.skyActive === false;
   const hubCaptureBuffer = hubSkyCamera && mode === "background";
-  const glNeedsAlpha = hubCaptureBuffer || overlayOnBackdrop || closeStreakFire;
+  /**
+   * glFactory stable pour mode background — hub→ritual ne remonte PAS le Canvas
+   * (sinon cold shaders = lag Continuer).
+   */
   const glFactory = useCallback(
     (canvas: HTMLCanvasElement | OffscreenCanvas) =>
       createRenderer(canvas, {
-        preserveDrawingBuffer: hubCaptureBuffer,
-        alpha: glNeedsAlpha,
+        preserveDrawingBuffer: mode === "background",
+        alpha: mode === "background",
       }),
-    [hubCaptureBuffer, glNeedsAlpha],
+    [mode],
   );
 
   useEffect(() => {
@@ -1513,7 +1523,8 @@ export function SanctuaryUniverse({
   return (
     <section
       className={[
-        "overflow-hidden bg-black",
+        "overflow-hidden",
+        overlayOnBackdrop || closeStreakFire ? "bg-transparent" : "bg-black",
         immersive
           ? "relative h-screen w-full"
           : "pointer-events-none absolute inset-0 h-full w-full",

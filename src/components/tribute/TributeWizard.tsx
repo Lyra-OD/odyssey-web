@@ -1094,7 +1094,11 @@ export function TributeWizard({
       <ParcoursHubBodyFlag active={step1Parcours.hubChromeHidden} />
       {step1Sky && step1Parcours.showBackdrop ? (
         <SkyBackdrop
-          src={step1Parcours.freezeCaptureUrl}
+          src={
+            step1Parcours.showRitualWebGL
+              ? null
+              : step1Parcours.freezeCaptureUrl
+          }
           opacity={hubBackdropOpacity}
           liveOpacityVar={
             step1Parcours.closeSkyOpacityLive
@@ -1168,7 +1172,7 @@ export function TributeWizard({
           onOpen={step1Parcours.openPanel}
         />
       ) : null}
-      {step1Sky && step1Parcours.showHubWebGL ? (
+      {step1Sky && step1Parcours.showSkyWebGL ? (
         <SanctuaryWizardStep1Sky
           locale={locale}
           firstName={firstName}
@@ -1176,11 +1180,23 @@ export function TributeWizard({
           revealT={step1Reveal.revealT}
           revealTRef={step1Reveal.revealTRef}
           hideHeroName={step1Reveal.hideHeroName}
-          skyActive={step1Parcours.hubSkyLive}
+          skyActive={
+            step1Parcours.showRitualWebGL
+              ? step1Reveal.skyActive
+              : step1Parcours.hubSkyLive
+          }
           silhouetteIdle={false}
-          variant="hub-lite"
-          layerOpacity={hubWebGLLayerOpacity}
+          panelFading={
+            step1Reveal.phase === "reward" || step1Reveal.phase === "done"
+          }
+          variant={
+            step1Parcours.showRitualWebGL ? "ritual" : "hub-lite"
+          }
+          layerOpacity={
+            step1Parcours.showRitualWebGL ? 1 : hubWebGLLayerOpacity
+          }
           liveLayerOpacityVar={
+            !step1Parcours.showRitualWebGL &&
             step1Parcours.closeSkyOpacityLive
               ? PARCOURS_CLOSE_WEBGL_OPACITY_VAR
               : undefined
@@ -1189,26 +1205,18 @@ export function TributeWizard({
           fadeEase={step1Parcours.skyFadeEase}
           onHubReady={onHubWebGLReady}
           onHubCanvasMount={onHubCanvasMount}
-          hubPrompt={copy.parcoursHeroPrompt}
-          hubTapHint={copy.parcoursHeroTapHint}
+          hubPrompt={
+            step1Parcours.showRitualWebGL
+              ? undefined
+              : copy.parcoursHeroPrompt
+          }
+          hubTapHint={
+            step1Parcours.showRitualWebGL
+              ? undefined
+              : copy.parcoursHeroTapHint
+          }
           onStarAnchorChange={onHubStarAnchor}
           closeStreakFire={false}
-        />
-      ) : null}
-      {step1Sky && step1Parcours.showRitualWebGL ? (
-        <SanctuaryWizardStep1Sky
-          locale={locale}
-          firstName={firstName}
-          birthDate={birthDate}
-          revealT={step1Reveal.revealT}
-          revealTRef={step1Reveal.revealTRef}
-          hideHeroName={step1Reveal.hideHeroName}
-          skyActive={step1Reveal.skyActive}
-          silhouetteIdle={false}
-          panelFading={
-            step1Reveal.phase === "reward" || step1Reveal.phase === "done"
-          }
-          variant="ritual"
         />
       ) : null}
       {step1Sky && step1Parcours.showEditEssentials ? (
