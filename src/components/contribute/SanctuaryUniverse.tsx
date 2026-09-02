@@ -916,6 +916,7 @@ function UniverseScene({
   skyLayers,
   hubSkyCamera = false,
   closeStreakFire = false,
+  overlayOnBackdrop = false,
 }: {
   tier: ReturnType<typeof useVisualTier>;
   parallaxIntensity: number;
@@ -934,6 +935,8 @@ function UniverseScene({
   hubSkyCamera?: boolean;
   /** T-close-3c — filante verre → étoile @ hold. */
   closeStreakFire?: boolean;
+  /** T2-freeze — clear alpha au-dessus du gel 2D. */
+  overlayOnBackdrop?: boolean;
 }) {
   const theme = useSkyTheme();
   // Pendant closing, on garde le tracking pour suivre l’étoile au retour
@@ -987,8 +990,12 @@ function UniverseScene({
 
   const { gl } = useThree();
   useEffect(() => {
+    if (closeStreakFire || overlayOnBackdrop) {
+      gl.setClearColor(0x000000, 0);
+      return;
+    }
     gl.setClearColor(new Color(voidHex), 1);
-  }, [gl, voidHex]);
+  }, [gl, voidHex, closeStreakFire, overlayOnBackdrop]);
 
   useEffect(() => {
     if (controlled) return;
@@ -1017,7 +1024,10 @@ function UniverseScene({
 
   return (
     <ParallaxProvider intensity={parallaxIntensity}>
-      <CloseRitualClearAlpha active={closeStreakFire} voidHex={voidHex} />
+      <CloseRitualClearAlpha
+        active={closeStreakFire || overlayOnBackdrop}
+        voidHex={voidHex}
+      />
       <ForceRenderLoop enabled={skyActive} wakeKey={skyWakeKey} />
       {/* Craft : zoom fixe (pas de molette qui recentre) */}
       <WheelZoom enabled={!craftLite} />
@@ -1225,11 +1235,12 @@ function UniverseScene({
 
 function createRenderer(
   canvas: HTMLCanvasElement | OffscreenCanvas,
-  options?: { preserveDrawingBuffer?: boolean },
+  options?: { preserveDrawingBuffer?: boolean; alpha?: boolean },
 ) {
-  const hubAlpha = options?.preserveDrawingBuffer ?? false;
+  const useAlpha =
+    options?.alpha === true || options?.preserveDrawingBuffer === true;
   const opts: WebGLContextAttributes = {
-    alpha: hubAlpha,
+    alpha: useAlpha,
     antialias: false,
     depth: true,
     stencil: false,
@@ -1251,7 +1262,7 @@ function createRenderer(
   return new WebGLRenderer({
     canvas,
     context: context as WebGLRenderingContext,
-    alpha: hubAlpha,
+    alpha: useAlpha,
     antialias: false,
     powerPreference: "high-performance",
     failIfMajorPerformanceCaveat: false,
@@ -1299,6 +1310,11 @@ export type SanctuaryUniverseProps = {
   /** Hub Traversée — canvas WebGL pour capture gel (Plan B). */
   onHubCanvasMount?: (canvas: HTMLCanvasElement | null) => void;
   closeStreakFire?: boolean;
+  /**
+   * T2-freeze — clear alpha : constellation au-dessus du SkyBackdrop gelé.
+   * Nécessite `skyLayers` sans fond/gaz (ex. `SKY_RITUAL_LAYERS`).
+   */
+  overlayOnBackdrop?: boolean;
 };
 
 export function SanctuaryUniverse({
@@ -1318,6 +1334,7 @@ export function SanctuaryUniverse({
   onStarAnchorChange,
   onHubCanvasMount,
   closeStreakFire = false,
+  overlayOnBackdrop = false,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -1332,10 +1349,14 @@ export function SanctuaryUniverse({
   const immersive = mode === "immersive" && !craftLite;
   const skyPaused = craftReveal?.skyActive === false;
   const hubCaptureBuffer = hubSkyCamera && mode === "background";
+  const glNeedsAlpha = hubCaptureBuffer || overlayOnBackdrop || closeStreakFire;
   const glFactory = useCallback(
     (canvas: HTMLCanvasElement | OffscreenCanvas) =>
-      createRenderer(canvas, { preserveDrawingBuffer: hubCaptureBuffer }),
-    [hubCaptureBuffer],
+      createRenderer(canvas, {
+        preserveDrawingBuffer: hubCaptureBuffer,
+        alpha: glNeedsAlpha,
+      }),
+    [hubCaptureBuffer, glNeedsAlpha],
   );
 
   useEffect(() => {
@@ -1551,7 +1572,11 @@ export function SanctuaryUniverse({
           className={immersive ? undefined : "!pointer-events-none"}
           style={{ pointerEvents: immersive ? "auto" : "none" }}
           frameloop="demand"
-          dpr={craftLite || skyPaused || closeStreakFire ? 1 : tierDpr(tier)}
+          dpr={
+            craftLite || skyPaused || closeStreakFire || overlayOnBackdrop
+              ? 1
+              : tierDpr(tier)
+          }
           camera={{
             position: [0, 0, craftLite ? 58 : 9.2],
             fov: craftLite ? 68 : 42,
@@ -1560,7 +1585,11 @@ export function SanctuaryUniverse({
           }}
           gl={glFactory}
           onCreated={({ gl }) => {
-            gl.setClearColor(skyTheme.scene.background, 1);
+            if (overlayOnBackdrop || closeStreakFire) {
+              gl.setClearColor(0x000000, 0);
+            } else {
+              gl.setClearColor(skyTheme.scene.background, 1);
+            }
             if (hubCaptureBuffer) {
               onHubCanvasMount?.(gl.domElement as HTMLCanvasElement);
             }
@@ -1588,6 +1617,7 @@ export function SanctuaryUniverse({
                 skyLayers={skyLayers}
                 hubSkyCamera={hubSkyCamera}
                 closeStreakFire={closeStreakFire}
+                overlayOnBackdrop={overlayOnBackdrop}
               />
             </SkyThemeProvider>
           </Suspense>

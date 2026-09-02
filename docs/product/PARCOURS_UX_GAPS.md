@@ -72,9 +72,11 @@ UI J3 = **T2-5** (brancher ces clés).
 
 ### Tranches T2 (1 commit chacune) — ordre
 
-**Fait :** `T2-0` · `T2-lang` · `T2-copy` · **`T2-1`** ✅  
+**Fait :** `T2-0` · `T2-lang` · `T2-copy` · `T2-1` · **`T2-freeze`** ✅  
 
-**Suite :** `T2-2` backdropToWebGL → `T2-3` reveal → `T2-4` born → `T2-5` J3 carte A+B+C → `T2-6` identité settle.
+**Suite :** `T2-name` (hold/stretch prénom) → `T2-2` backdrop polish → `T2-3`… → `T2-5` J3.
+
+**Ordre perf figé :** freeze ciel pendant reveal → nom lisible → choré transition.
 
 Hors T2 : T3 cercle outils · T4 `vault.filmBridge` · G6 durée reveal · prologue.
 

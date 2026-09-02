@@ -18,7 +18,7 @@ import {
   resolveStrokeSequence,
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import type { ConstellationRevealCraft } from "@/src/components/contribute/SanctuaryUniverse";
-import { SKY_HUB_LITE_LAYERS } from "@/src/components/contribute/constellation/skyCraftLayers";
+import { SKY_HUB_LITE_LAYERS, SKY_RITUAL_LAYERS } from "@/src/components/contribute/constellation/skyCraftLayers";
 import { birthDateToZodiacSign } from "@/src/lib/contribute/zodiacSign";
 import { WIZARD_IDLE_REVEAL_T } from "@/src/lib/contribute/wizardBirthReveal";
 import type { Locale } from "@/i18n.config";
@@ -178,6 +178,7 @@ export function SanctuaryWizardStep1Sky({
       tipStrength: 1.2,
       tipStyle: "orb",
       tipColor: "#5eead4",
+      heroParallax: 0,
     };
   }, [
     firstName,
@@ -220,7 +221,8 @@ export function SanctuaryWizardStep1Sky({
         constellationVisible
         craftLite={false}
         hubSkyCamera={isHubLite}
-        skyLayers={isHubLite ? SKY_HUB_LITE_LAYERS : undefined}
+        skyLayers={isHubLite ? SKY_HUB_LITE_LAYERS : SKY_RITUAL_LAYERS}
+        overlayOnBackdrop={!isHubLite}
         craftReveal={craftReveal}
         onCanvasReady={isHubLite ? handleCanvasReady : undefined}
         onStarAnchorChange={isHubLite ? onStarAnchorChange : undefined}

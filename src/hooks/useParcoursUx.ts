@@ -349,9 +349,10 @@ export function useParcoursUx({
 
   const mountBackdrop =
     enabled &&
-    !showRitualWebGL &&
     (phase === "hub.idle" ||
       phase === "panel.essentials" ||
+      phase === "ritual.reveal" ||
+      phase === "hub.postReveal" ||
       transition !== null ||
       panelExiting);
 
@@ -368,12 +369,15 @@ export function useParcoursUx({
           ? 1
           : 0;
 
+  /** T2-freeze — gel 2D reste visible pendant reveal / J3 (constellation en overlay). */
   const backdropOpacity =
     transition === "panelCloseToHub"
       ? thawReveal
         ? 0
         : hubCloseBackdropOpacityU(closeRitualURef.current)
       : phase === "panel.essentials" ||
+          phase === "ritual.reveal" ||
+          phase === "hub.postReveal" ||
           (transition === "hubFreezeTo2D" && !freezeHolding)
         ? 1
         : 0;

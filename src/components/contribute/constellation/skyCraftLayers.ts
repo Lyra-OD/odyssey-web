@@ -40,6 +40,29 @@ export const SKY_HUB_LITE_LAYERS: Record<SkyCraftLayerId, boolean> = {
   constellation: true,
 };
 
+/**
+ * T2-freeze — rituel Continuer : constellation seule au-dessus du gel 2D.
+ * Zéro gaz / dust / filantes (perf) · fond off = clear alpha.
+ */
+export const SKY_RITUAL_LAYERS: Record<SkyCraftLayerId, boolean> = {
+  fond: false,
+  fog: false,
+  panorama: false,
+  gasFar: false,
+  ghostStars: false,
+  gasRose: false,
+  gasMauve: false,
+  gasTeal: false,
+  cosmicDust: false,
+  dustLanes: false,
+  zodiacal: false,
+  aurora: false,
+  starsBand: false,
+  starsField: false,
+  shootingStars: false,
+  constellation: true,
+};
+
 /** Lab `/test-sky` — constellation off par défaut (fond seul). */
 export const SKY_LAB_DEFAULT_LAYERS: Record<SkyCraftLayerId, boolean> = {
   fond: true,
