@@ -4,11 +4,11 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-copy** : clés J3 A+B+C + born + CTAs (FR/EN · catalogue).
 - 2 sept 2026 — **T2-lang** : LocaleSwitcher fixed studio — toujours visible (hub + rite), hors chrome masqué.
 - 2 sept 2026 — **T2-0** : audit Continuer / J3 / copy · T1b traité comme livré · prochaine = T2 · G2 Inviter first.
 - 31 août 2026 — **Figé** : Chemins A/B · contrat hub WebGL ↔ gel 2D · tranche T1b.
 - 31 août 2026 — G1 tranché · T1 code partiel · gate T1 partiellement passé.
-- 31 août 2026 — Audit initial Chemin 1 · chaînons P0–P3 · matrice 6 catégories · gate avant T1.
 
 **Liens :**
 - Spec Traversée : [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md)
@@ -49,20 +49,18 @@ Audit **lecture seule** avant code T2. Ne pas confondre « phase parcours nommé
 | Zodiac ritual | `birthDateToZodiacSign` → template | ✅ branché sur variant ritual |
 | Identité reveal | Prénom seul sur Hero ritual | ✅ approx · settle nom/dates = T2-6 |
 
-### Copy J3 — absente du dictionnaire
+### Copy J3 — dictionnaire (T2-copy ✅)
 
-Présent : `parcoursHero*` · `parcoursPanelCloseHint` · `parcoursMonolithContinue`.
+| Clé | FR |
+|-----|-----|
+| `parcoursConstellationBorn` | Sa constellation prend forme. |
+| `parcoursCircleShare` (titre A) | Plus le cercle partage, plus le ciel s’allume. |
+| `parcoursSkyVsVault` (sous-ligne B) | Ils déposent des souvenirs. Vous composez le ciel et le film. |
+| `parcoursNoRush` (footer C) | Prenez votre temps. Le ciel attend. |
+| `parcoursInviteCta` | Inviter |
+| `parcoursContinueCta` | Continuer |
 
-**Manquant (bloquant UI T2-4/5) :**
-
-| Clé (proposée) | Rôle figé produit |
-|----------------|-------------------|
-| `parcoursConstellationBorn` | Post-draw · *Sa constellation prend forme.* |
-| `parcoursCircleShare` (titre A) | *Plus le cercle partage, plus le ciel s’allume.* |
-| `parcoursSkyVsVault` (sous-ligne B) | *Ils déposent des souvenirs. Vous composez le ciel et le film.* |
-| `parcoursNoRush` (footer C) | *Prenez votre temps. Le ciel attend.* |
-| `parcoursInviteCta` | Inviter (primaire) |
-| `parcoursContinueCta` | Continuer (secondaire) |
+UI J3 = **T2-5** (brancher ces clés).
 
 ### Décisions T2 figées (T2-0)
 
@@ -74,9 +72,9 @@ Présent : `parcoursHero*` · `parcoursPanelCloseHint` · `parcoursMonolithConti
 
 ### Tranches T2 (1 commit chacune) — ordre
 
-`T2-copy` → `T2-1` coupe tunnel → `T2-2` backdropToWebGL → `T2-3` reveal → `T2-4` born → `T2-5` J3 carte A+B+C → `T2-6` identité settle.
+**Fait :** `T2-0` · `T2-lang` · **`T2-copy`** ✅  
 
-**Fait avant copy :** `T2-lang` ✅ — FR/EN fixed, visible hub + rite (accessibilité).
+**Suite :** `T2-1` coupe tunnel → `T2-2` backdropToWebGL → `T2-3` reveal → `T2-4` born → `T2-5` J3 carte A+B+C → `T2-6` identité settle.
 
 Hors T2 : T3 cercle outils · T4 `vault.filmBridge` · G6 durée reveal · prologue.
 
@@ -174,7 +172,7 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | Trou | Priorité | Action |
 |------|----------|--------|
-| Clés J3 absentes | P0 | **T2-copy** — liste §0 |
+| Clés J3 absentes | P0 | **T2-copy ✅** — brancher UI en T2-4/5 |
 | Voix « film » vs jargon | P1 | A+B+C figés · pas RevShare famille |
 | `export-copy-catalog.mjs` | P1 | Même commit que clés |
 

@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-02 · **Entrées :** 714
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-02 · **Entrées :** 720
 
 ## `common`
 
@@ -344,6 +344,12 @@
 | `tributeWizard.parcoursHeroOpenLabel` | Ouvrir l’essentiel — prénom et identité de l’hommage | Open essentials — name and tribute identity |
 | `tributeWizard.parcoursPanelCloseHint` | Fermer · le ciel vous attend | Close · the sky awaits |
 | `tributeWizard.parcoursMonolithContinue` | Continuer | Continue |
+| `tributeWizard.parcoursConstellationBorn` | Sa constellation prend forme. | Their constellation takes shape. |
+| `tributeWizard.parcoursCircleShare` | Plus le cercle partage, plus le ciel s’allume. | The more the circle shares, the more the sky lights up. |
+| `tributeWizard.parcoursSkyVsVault` | Ils déposent des souvenirs. Vous composez le ciel et le film. | They leave memories. You shape the sky and the film. |
+| `tributeWizard.parcoursNoRush` | Prenez votre temps. Le ciel attend. | Take your time. The sky can wait. |
+| `tributeWizard.parcoursInviteCta` | Inviter | Invite |
+| `tributeWizard.parcoursContinueCta` | Continuer | Continue |
 | `tributeWizard.firstNameLabel` | Prénom | First name |
 | `tributeWizard.lastNameLabel` | Nom | Last name |
 | `tributeWizard.birthDateLabel` | Date de naissance | Date of birth |

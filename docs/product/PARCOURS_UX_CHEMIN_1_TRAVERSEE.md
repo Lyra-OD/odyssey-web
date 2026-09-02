@@ -4,13 +4,13 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-copy** : copy J3 (cercle A · skyVsVault B · noRush C · born · CTAs) · prochaine **T2-1**.
 - 2 sept 2026 — **T2-lang** : FR/EN always-on studio (hub + rite) · prochaine **T2-copy**.
 - 2 sept 2026 — **T2-0** : audit trous · G2 Inviter first · carte J3 = A+B+C · prochaine = T2-copy.
 - 2 sept 2026 — **Autosave** : hors ciel hub · visible dans le monolithe Essentiels (+ étapes wizard hors hub).
 - 2 sept 2026 — **Hub cold start** : void → WebGL (plus de JPEG `hub-freeze` au reload) · gel JPEG garde panneau/close.
-- 2 sept 2026 — **T-invite-2–3** : CTA glow cyan live · breath hub invite plus rapide (2.6) · copy Une Présence.
 
-**Statut :** T1b + invite **livrés** · **T2-0** + **T2-lang** ✅ · prochaine **T2-copy** → J3 (Inviter first · A+B+C).
+**Statut :** T1b + invite · **T2-0 / lang / copy** ✅ · prochaine **T2-1** (coupe tunnel `goNext`).
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
@@ -310,24 +310,22 @@ Détail IDs et durées : [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md).
 
 ---
 
-## 6. Copy écran (clés à créer — FR + EN)
+## 6. Copy écran (clés — FR + EN)
 
-| Moment | Clé proposée | FR (canon) |
-|--------|--------------|------------|
-| Hero hub | `parcours.heroPrompt` | Une présence. Pose son nom. |
-| Post-reveal | `parcours.constellationBorn` | Sa constellation prend forme. |
-| **Ciel ≠ Coffre** | `parcours.skyVsVault` | Le Coffre rassemble tout. Le ciel montre l'hommage que la famille choisit d'illuminer. |
-| **Permission** | `parcours.noRush` | Prenez votre temps. Le ciel attend. |
-| Cercle | `parcours.circleShare` | Plus le cercle partage, plus le ciel s'allume. |
-| **Parcours invité** | `parcours.guestJourney` | Ils reçoivent un lien. Leurs souvenirs entrent dans le Coffre — vous composez le film et le ciel ensemble. |
-| Coffre → film | `parcours.vaultFilmBridge` | Ici se rangent les souvenirs. Plus tard, vous en ferez un film. |
-| **Studio ← Coffre** | `parcours.studioFilmBridge` | Maintenant, vous donnez une forme au film — à partir de ce que le Coffre contient. |
-| Checkout | `parcours.filmLeavesSkyStays` | Le film part, le ciel reste. |
-| Fermer panneau | `parcours.panelCloseHint` | Fermer · le ciel vous attend |
-| Cadeau salon (1b) | `parcours.souvenirGift` | C'est un cadeau du salon. Le film peut grandir si la famille le souhaite. |
-| Hub post-reveal CTA | `parcours.inviteCta` / `parcours.continueCta` | Inviter · Continuer |
+| Moment | Clé `tributeWizard.*` | FR (canon écran) | Code |
+|--------|----------------------|------------------|------|
+| Hero hub | `parcoursHeroPrompt` / `TapHint` | Une Présence · Toucher l’étoile | ✅ |
+| Post-reveal | `parcoursConstellationBorn` | Sa constellation prend forme. | ✅ T2-copy |
+| **Cercle A (titre J3)** | `parcoursCircleShare` | Plus le cercle partage, plus le ciel s’allume. | ✅ T2-copy |
+| **Sous-ligne B** | `parcoursSkyVsVault` | Ils déposent des souvenirs. Vous composez le ciel et le film. | ✅ T2-copy |
+| **Permission C** | `parcoursNoRush` | Prenez votre temps. Le ciel attend. | ✅ T2-copy |
+| Hub J3 CTA | `parcoursInviteCta` / `parcoursContinueCta` | Inviter · Continuer | ✅ T2-copy |
+| Fermer panneau | `parcoursPanelCloseHint` | Fermer · le ciel vous attend | ✅ |
+| Cercle étape 2 | (réutiliser `parcoursCircleShare`) | — | T3 |
+| **Parcours invité** | `parcoursGuestJourney` (à créer T3) | Ils reçoivent un lien… | ⏳ T3 |
+| Coffre → film | `parcoursVaultFilmBridge` (à créer T4) | Ici se rangent les souvenirs… | ⏳ T4 |
 
-→ Implémentation : `dictionaries/fr.json` + `en.json` · régénérer [`COPY_CATALOG.md`](../COPY_CATALOG.md).
+→ Catalogue : [`COPY_CATALOG.md`](../COPY_CATALOG.md). UI J3 = **T2-5**.
 
 ---
 
