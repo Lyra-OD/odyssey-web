@@ -131,15 +131,22 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100">
-      {/** T2-lang — FR/EN toujours accessible (hub + rite + wizard), hors chrome masqué. */}
+      {/** T2-lang + P0′ — langue + déconnexion toujours accessibles (hors chrome masqué). */}
       <div className="pointer-events-none fixed right-4 top-4 z-[60] md:right-8 md:top-6">
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto flex flex-col items-end gap-2">
           <LocaleSwitcher
             lang={lang}
             languageLabel={dictionary.header.languageLabel}
             langOptionFr={dictionary.header.langOptionFr}
             langOptionEn={dictionary.header.langOptionEn}
           />
+          {accessRole === "owner" ? (
+            <DashboardSignOut
+              lang={lang}
+              label={dictionary.dashboard.signOut}
+              className="border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] tracking-[0.22em] text-white/55 shadow-none hover:border-white/16 hover:bg-white/[0.08] hover:text-white/80"
+            />
+          ) : null}
         </div>
       </div>
 
@@ -161,15 +168,6 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
       <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-6 pb-10 pt-12 md:px-10 md:pt-16">
         <header className="studio-shell-chrome relative mb-10 transition-opacity duration-500">
           <h1 className="sr-only">{welcomeSrOnly}</h1>
-
-          <div className="absolute right-0 top-10 z-10 flex flex-col items-end gap-3 md:top-12">
-            {accessRole === "owner" ? (
-              <DashboardSignOut
-                lang={lang}
-                label={dictionary.dashboard.signOut}
-              />
-            ) : null}
-          </div>
 
           <div className="mx-auto flex max-w-[16rem] origin-top scale-[0.82] justify-center sm:max-w-[18rem] sm:scale-[0.88]">
             <OdysseyConnexionMark

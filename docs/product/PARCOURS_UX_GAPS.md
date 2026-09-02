@@ -4,11 +4,11 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **P0** : retour Essentiels (`reopenEssentials`) · déconnexion sous langue · backlog P1 Atelier · P2 fil constellation.
 - 2 sept 2026 — **T2-copy** : clés J3 A+B+C + born + CTAs (FR/EN · catalogue).
 - 2 sept 2026 — **T2-lang** : LocaleSwitcher fixed studio — toujours visible (hub + rite), hors chrome masqué.
 - 2 sept 2026 — **T2-0** : audit Continuer / J3 / copy · T1b traité comme livré · prochaine = T2 · G2 Inviter first.
 - 31 août 2026 — **Figé** : Chemins A/B · contrat hub WebGL ↔ gel 2D · tranche T1b.
-- 31 août 2026 — G1 tranché · T1 code partiel · gate T1 partiellement passé.
 
 **Liens :**
 - Spec Traversée : [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md)
@@ -72,11 +72,20 @@ UI J3 = **T2-5** (brancher ces clés).
 
 ### Tranches T2 (1 commit chacune) — ordre
 
-**Fait :** `T2-0` · `T2-lang` · `T2-copy` · `T2-1` · `T2-freeze` · **`T2-name`** ✅  
+**Fait :** `T2-0` · `T2-lang` · `T2-copy` · `T2-1` · `T2-freeze` · `T2-name` · **`P0`** (retour Essentiels + logout) ✅  
 
-**Suite :** `T2-2` backdrop polish → `T2-3`… → `T2-5` J3.
+**Suite :** `T2-2` backdrop polish → `T2-3`… → `T2-5` J3 · puis **P1 Atelier** · **P2** fil constellation.
 
 **Ordre perf figé :** freeze ciel pendant reveal → nom lisible → choré transition.
+
+### Navigation / chrome (2 sept 2026)
+
+| ID | Quoi | Priorité | Statut |
+|----|------|----------|--------|
+| **P0** | Porte retour Essentiels depuis `hub.postReveal` + soft close | P0 | ✅ |
+| **P0′** | Déconnexion sous LocaleSwitcher (toujours-on) | P0 | ✅ |
+| **P1** | Mode Atelier (wizard sans rite) | P1 | ⏳ |
+| **P2** | Progress constellation (nœuds débloqués) | P2 | ⏳ |
 
 Hors T2 : T3 cercle outils · T4 `vault.filmBridge` · G6 durée reveal · prologue.
 

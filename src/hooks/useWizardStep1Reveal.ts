@@ -86,11 +86,38 @@ export function useWizardStep1Reveal(
 
   const hideHeroName = firstName.trim().length < 1;
 
+  /** P0 — revenir à la saisie Essentiels (après reveal / typo). */
+  const resumeTyping = useCallback(() => {
+    cancelAnimationFrame(rewardRafRef.current);
+    if (dwellTimerRef.current) {
+      clearTimeout(dwellTimerRef.current);
+      dwellTimerRef.current = null;
+    }
+    const target = firstNameToBirthRevealT(firstName);
+    revealTRef.current = target;
+    setRevealT(target);
+    setPhase("typing");
+  }, [firstName]);
+
+  /** P0 — soft-close Essentiels → constellation settled (hub.postReveal). */
+  const settlePostReveal = useCallback(() => {
+    cancelAnimationFrame(rewardRafRef.current);
+    if (dwellTimerRef.current) {
+      clearTimeout(dwellTimerRef.current);
+      dwellTimerRef.current = null;
+    }
+    revealTRef.current = 1;
+    setRevealT(1);
+    setPhase("done");
+  }, []);
+
   return {
     revealT,
     revealTRef,
     phase,
     playReward,
+    resumeTyping,
+    settlePostReveal,
     hideHeroName,
     skyActive,
     showGhostSlots: phase === "reward" || phase === "done" || revealT >= 0.55,

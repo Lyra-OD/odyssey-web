@@ -642,7 +642,7 @@ body {
   background-color: rgba(255, 255, 255, 0.06);
 }
 
-/** Chemin 1 hub — masque chrome shell (logo · déconnexion · footer). Langue = hors chrome (T2-lang). */
+/** Chemin 1 hub — masque chrome shell (logo · footer). Langue + déconnexion = hors chrome (T2-lang · P0′). */
 html[data-parcours-hub-idle] .studio-shell-chrome,
 html[data-parcours-hub-idle] .studio-shell-halo {
   opacity: 0;

@@ -575,6 +575,7 @@ export function TributeWizard({
     virginHub: step1VirginHub,
     hubCanvasRef,
     hubWebGLReady,
+    onSoftCloseEssentials: step1Reveal.settlePostReveal,
   });
   const onHubStarAnchor = useCallback(
     (anchor: { x: number; y: number } | null) => {
@@ -582,6 +583,12 @@ export function TributeWizard({
     },
     [],
   );
+
+  /** P0 — typo : rouvrir Essentiels depuis le ciel post-reveal. */
+  const handleEditEssentials = useCallback(() => {
+    step1Reveal.resumeTyping();
+    step1Parcours.reopenEssentials();
+  }, [step1Reveal, step1Parcours]);
 
   /** T-open-1 — pivot expand figé sur ancre Hero dès montage panneau (avant paint). */
   useLayoutEffect(() => {
@@ -1203,6 +1210,17 @@ export function TributeWizard({
           }
           variant="ritual"
         />
+      ) : null}
+      {step1Sky && step1Parcours.showEditEssentials ? (
+        <div className="pointer-events-none fixed inset-x-0 bottom-8 z-40 flex justify-center px-4 md:bottom-10">
+          <button
+            type="button"
+            onClick={handleEditEssentials}
+            className="pointer-events-auto rounded-lg px-3 py-2 text-sm font-light tracking-wide text-white/55 transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+          >
+            {copy.parcoursEditEssentials}
+          </button>
+        </div>
       ) : null}
     <div
       className={`relative mx-auto w-full ${

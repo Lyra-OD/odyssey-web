@@ -77,6 +77,8 @@ type UseParcoursUxOptions = {
   hubCanvasRef?: RefObject<HTMLCanvasElement | null>;
   /** D1 — thaw close seulement quand le moteur a peint un frame chaud. */
   hubWebGLReady?: boolean;
+  /** P0 — soft close post-reveal → resettler constellation (revealT=1). */
+  onSoftCloseEssentials?: () => void;
 };
 
 function resolveInitialPhase(
@@ -93,11 +95,15 @@ export function useParcoursUx({
   virginHub,
   hubCanvasRef,
   hubWebGLReady = false,
+  onSoftCloseEssentials,
 }: UseParcoursUxOptions) {
   const [phase, setPhase] = useState<ParcoursPhase>(() =>
     resolveInitialPhase(enabled, virginHub),
   );
   const [transition, setTransition] = useState<ParcoursSkyTransition>(null);
+  /** Après Continuer A→F — soft reopen/close Essentiels sans retour hub.idle. */
+  const hasCompletedRevealRef = useRef(false);
+  const [hasCompletedReveal, setHasCompletedReveal] = useState(false);
   const [freezeHolding, setFreezeHolding] = useState(false);
   const [panelExiting, setPanelExiting] = useState(false);
   /**
@@ -162,7 +168,12 @@ export function useParcoursUx({
       return;
     }
     if (revealPhase === "typing" && !closeRitualActiveRef.current) {
-      setPhase(virginHub ? "hub.idle" : "panel.essentials");
+      setPhase((prev) => {
+        /** Soft close post-reveal reste en ciel jusqu’à settlePostReveal. */
+        if (prev === "hub.postReveal" || prev === "ritual.reveal") return prev;
+        if (prev === "panel.essentials") return prev;
+        return virginHub ? "hub.idle" : "panel.essentials";
+      });
     }
   }, [enabled, virginHub, revealPhase, clearTimers, stopCloseRitualRaf]);
 
@@ -177,6 +188,8 @@ export function useParcoursUx({
       setThawReveal(false);
       setPhase("ritual.reveal");
     } else if (revealPhase === "done") {
+      hasCompletedRevealRef.current = true;
+      setHasCompletedReveal(true);
       setPhase("hub.postReveal");
     }
   }, [enabled, revealPhase, clearTimers]);
@@ -222,6 +235,21 @@ export function useParcoursUx({
       resetHubFreezeFx();
     }, HUB_FREEZE_TOTAL_MS);
   }, [enabled, revealPhase, phase, transition, clearTimers, schedule, hubCanvasRef]);
+
+  /** P0 — typo / retour Essentiels depuis le ciel post-reveal (gel déjà là). */
+  const reopenEssentials = useCallback(() => {
+    if (!enabled) return;
+    if (phase !== "hub.postReveal") return;
+    if (transition) return;
+    clearTimers();
+    setCloseRitualPhase("idle");
+    closeRitualActiveRef.current = false;
+    setPanelExiting(false);
+    setFreezeHolding(false);
+    setThawReveal(false);
+    setTransition(null);
+    setPhase("panel.essentials");
+  }, [enabled, phase, transition, clearTimers]);
 
   const commitCloseThaw = useCallback(() => {
     if (closeThawCommittedRef.current) return;
@@ -281,6 +309,21 @@ export function useParcoursUx({
     if (revealPhase !== "typing") return;
     if (phase !== "panel.essentials") return;
     if (transition) return;
+
+    /** Soft close — constellation déjà née : revenir au ciel sans hub.idle. */
+    if (hasCompletedRevealRef.current) {
+      clearTimers();
+      setPanelExiting(false);
+      setFreezeHolding(false);
+      setThawReveal(false);
+      setCloseRitualPhase("idle");
+      closeRitualActiveRef.current = false;
+      setTransition(null);
+      setPhase("hub.postReveal");
+      onSoftCloseEssentials?.();
+      return;
+    }
+
     clearTimers();
     stopCloseRitualRaf();
     closeThawCommittedRef.current = false;
@@ -305,6 +348,7 @@ export function useParcoursUx({
     clearTimers,
     stopCloseRitualRaf,
     driveCloseRitual,
+    onSoftCloseEssentials,
   ]);
 
   /** T-close-5e — thaw @ hold : 2× rAF (canvas chaud) · pas de gate hubWebGLReady flaky. */
@@ -389,11 +433,11 @@ export function useParcoursUx({
     enabled &&
     (transition === "panelCloseToHub"
       ? closeRitualPhase === "inspire" || closeRitualPhase === "collapse"
-      : panelExiting ||
-        phase === "panel.essentials" ||
-        phase === "ritual.reveal" ||
-        phase === "hub.postReveal");
+      : panelExiting || phase === "panel.essentials");
 
+  /** P0 — CTA retour Essentiels visible sur le ciel post-reveal. */
+  const showEditEssentials =
+    enabled && phase === "hub.postReveal" && transition === null;
   /** Loop off en saisie · T-close-7 : loop on seulement @ thaw (verre disparu). */
   const hubSkyLive =
     enabled &&
@@ -450,6 +494,7 @@ export function useParcoursUx({
     closeRitualPhase,
     closeSkyOpacityLive,
     openPanel,
+    reopenEssentials,
     closePanel,
     showHubWebGL: mountHubWebGL,
     showRitualWebGL,
@@ -458,6 +503,8 @@ export function useParcoursUx({
     backdropOpacity,
     showHubHero,
     showEssentialsPanel,
+    showEditEssentials,
+    hasCompletedReveal,
     hubSkyLive,
     hubChromeHidden,
     showFreezeVeil,

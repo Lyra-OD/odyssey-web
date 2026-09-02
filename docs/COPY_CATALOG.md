@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-02 · **Entrées :** 720
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-02 · **Entrées :** 721
 
 ## `common`
 
@@ -343,6 +343,7 @@
 | `tributeWizard.parcoursHeroTapHint` | Toucher l’étoile | Touch the star |
 | `tributeWizard.parcoursHeroOpenLabel` | Ouvrir l’essentiel — prénom et identité de l’hommage | Open essentials — name and tribute identity |
 | `tributeWizard.parcoursPanelCloseHint` | Fermer · le ciel vous attend | Close · the sky awaits |
+| `tributeWizard.parcoursEditEssentials` | Revenir à l’essentiel | Return to essentials |
 | `tributeWizard.parcoursMonolithContinue` | Continuer | Continue |
 | `tributeWizard.parcoursConstellationBorn` | Sa constellation prend forme. | Their constellation takes shape. |
 | `tributeWizard.parcoursCircleShare` | Plus le cercle partage, plus le ciel s’allume. | The more the circle shares, the more the sky lights up. |
