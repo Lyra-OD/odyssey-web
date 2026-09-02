@@ -1,32 +1,109 @@
-import { useEffect, useRef, type Ref } from "react";
+"use client";
 
-type HubInviteLabelsProps = {
+import { useId } from "react";
+
+type HubInviteArcsProps = {
   prompt: string;
   tapHint?: string;
-  promptRef?: Ref<HTMLParagraphElement>;
-  tapRef?: Ref<HTMLParagraphElement>;
+  /** Opacité arc haut (discret). */
+  promptOpacity?: number;
+  /** Opacité arc bas (CTA). */
+  tapOpacity?: number;
+  /** Scale breath arc bas (1 = repos). */
+  tapScale?: number;
 };
 
 /**
- * T-invite Option C — typo droite au bord du halo (DOM, hors WebGL).
- * pointer-events: none — hitbox = bouton parent.
+ * T-invite-2 — typo en deux arcs SVG autour de l’étoile Hero.
+ * pointer-events: none — la hitbox reste `SanctuaryHubHero`.
  */
-export function HubInviteLabels({
+export function HubInviteArcs({
   prompt,
   tapHint,
-  promptRef,
-  tapRef,
-}: HubInviteLabelsProps) {
+  promptOpacity = 0.72,
+  tapOpacity = 1,
+  tapScale = 1,
+}: HubInviteArcsProps) {
+  const rawId = useId().replace(/:/g, "");
+  const topPathId = `hub-invite-arc-top-${rawId}`;
+  const botPathId = `hub-invite-arc-bot-${rawId}`;
+
   return (
-    <>
-      <p ref={promptRef} className="hub-invite-prompt" aria-hidden>
-        {prompt}
-      </p>
+    <svg
+      viewBox="0 0 200 200"
+      width="13.5rem"
+      height="13.5rem"
+      overflow="visible"
+      aria-hidden
+      style={{
+        display: "block",
+        pointerEvents: "none",
+        overflow: "visible",
+      }}
+    >
+      <defs>
+        {/* Haut : bulge vers le haut (concave vu du centre). */}
+        <path
+          id={topPathId}
+          d="M 22 92 Q 100 28 178 92"
+          fill="none"
+        />
+        {/* Bas : bulge vers le bas. */}
+        <path
+          id={botPathId}
+          d="M 22 108 Q 100 172 178 108"
+          fill="none"
+        />
+      </defs>
+
+      <text
+        fill="rgba(244, 244, 245, 0.9)"
+        style={{
+          fontFamily:
+            'var(--font-label), "Inter", ui-sans-serif, system-ui, sans-serif',
+          fontSize: "9.5px",
+          fontWeight: 300,
+          letterSpacing: "0.14em",
+          opacity: promptOpacity,
+          transform: "translateZ(0)",
+          willChange: "opacity",
+        }}
+      >
+        <textPath
+          href={`#${topPathId}`}
+          startOffset="50%"
+          textAnchor="middle"
+        >
+          {prompt}
+        </textPath>
+      </text>
+
       {tapHint ? (
-        <p ref={tapRef} className="hub-invite-tap" aria-hidden>
-          {tapHint}
-        </p>
+        <g
+          transform={`translate(100 140) scale(${tapScale}) translate(-100 -140)`}
+          opacity={tapOpacity}
+          style={{ willChange: "transform, opacity" }}
+        >
+          <text
+            fill="rgba(161, 161, 170, 0.92)"
+            style={{
+              fontFamily:
+                'var(--font-label), "Inter", ui-sans-serif, system-ui, sans-serif',
+              fontSize: "7px",
+              fontWeight: 300,
+              letterSpacing: "0.12em",
+            }}
+          >
+            <textPath
+              href={`#${botPathId}`}
+              startOffset="50%"
+              textAnchor="middle"
+            >
+              {tapHint}
+            </textPath>
+          </text>
+        </g>
       ) : null}
-    </>
+    </svg>
   );
 }
