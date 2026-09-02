@@ -941,6 +941,7 @@ function UniverseScene({
   hubSkyCamera = false,
   closeStreakFire = false,
   overlayOnBackdrop = false,
+  wizardRewardFullPerf = false,
 }: {
   tier: ReturnType<typeof useVisualTier>;
   parallaxIntensity: number;
@@ -961,6 +962,8 @@ function UniverseScene({
   closeStreakFire?: boolean;
   /** T2-freeze — clear alpha au-dessus du gel 2D. */
   overlayOnBackdrop?: boolean;
+  /** T1 — reward wizard : pleine puissance render (60 fps, Hero full). */
+  wizardRewardFullPerf?: boolean;
 }) {
   const theme = useSkyTheme();
   // Pendant closing, on garde le tracking pour suivre l’étoile au retour
@@ -1056,7 +1059,7 @@ function UniverseScene({
       <ForceRenderLoop
         enabled={skyActive}
         wakeKey={skyWakeKey}
-        maxFps={overlayOnBackdrop ? 24 : 60}
+        maxFps={wizardRewardFullPerf ? 60 : overlayOnBackdrop ? 24 : 60}
       />
       {/* Craft : zoom fixe (pas de molette qui recentre) */}
       <WheelZoom enabled={!craftLite} />
@@ -1251,7 +1254,7 @@ function UniverseScene({
                 hubTapHint={hubTapHint}
                 reportHeroScreen={hubSkyCamera && showConstellation}
                 hubBirthMode={hubSkyCamera}
-                heroPerfLite={overlayOnBackdrop}
+                heroPerfLite={!wizardRewardFullPerf && overlayOnBackdrop}
                 slotStars={slotStars}
                 bridges={bridges}
                 slotLit={slotLit}
@@ -1351,6 +1354,11 @@ export type SanctuaryUniverseProps = {
    * Nécessite `skyLayers` sans fond/gaz (ex. `SKY_RITUAL_LAYERS`).
    */
   overlayOnBackdrop?: boolean;
+  /**
+   * T1 reward wizard — 60 fps + Hero full (sans perfLite / cap overlay).
+   * Actif seulement pendant `phase === "reward"` (skyActive).
+   */
+  wizardRewardFullPerf?: boolean;
 };
 
 export function SanctuaryUniverse({
@@ -1371,6 +1379,7 @@ export function SanctuaryUniverse({
   onHubCanvasMount,
   closeStreakFire = false,
   overlayOnBackdrop = false,
+  wizardRewardFullPerf = false,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -1665,6 +1674,7 @@ export function SanctuaryUniverse({
                 hubSkyCamera={hubSkyCamera}
                 closeStreakFire={closeStreakFire}
                 overlayOnBackdrop={overlayOnBackdrop}
+                wizardRewardFullPerf={wizardRewardFullPerf}
               />
             </SkyThemeProvider>
           </Suspense>

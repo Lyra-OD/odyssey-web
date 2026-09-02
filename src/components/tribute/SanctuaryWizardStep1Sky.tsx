@@ -220,7 +220,6 @@ export function SanctuaryWizardStep1Sky({
       aria-hidden
     >
       <SanctuaryUniverse
-        key={isHubLite ? "parcours-hub" : "parcours-ritual"}
         mode="background"
         locale={locale === "en" ? "en" : "fr"}
         constellationVisible
@@ -228,6 +227,7 @@ export function SanctuaryWizardStep1Sky({
         hubSkyCamera={isHubLite}
         skyLayers={isHubLite ? SKY_HUB_LITE_LAYERS : SKY_RITUAL_LAYERS}
         overlayOnBackdrop={!isHubLite}
+        wizardRewardFullPerf={!isHubLite && skyActive}
         craftReveal={craftReveal}
         onCanvasReady={isHubLite ? handleCanvasReady : undefined}
         onStarAnchorChange={isHubLite ? onStarAnchorChange : undefined}

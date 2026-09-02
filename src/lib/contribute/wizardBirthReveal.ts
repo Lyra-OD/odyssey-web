@@ -7,10 +7,10 @@ export const WIZARD_BIRTH_REVEAL_END = BIRTH_SEGMENTS.C_END;
 export const WIZARD_IDLE_REVEAL_T = 0.56;
 
 /**
- * Durée play Continuer = même timeline craft lab (`DEFAULT_CONSTELLATION_REVEAL_MS`).
+ * Durée play Continuer wizard (MVP) — découplée du craft lab (14 s).
  * revealT 0→1 (naissance A–C + traits D–F), pas un raccourci depuis idle 0.56.
  */
-export { DEFAULT_CONSTELLATION_REVEAL_MS as WIZARD_REWARD_REVEAL_MS } from "@/src/components/contribute/constellation/graphs/reveal";
+export const WIZARD_REWARD_REVEAL_MS = 8000;
 
 /** Pause admiration après constellation complète, avant étape 2. */
 export const WIZARD_REWARD_DWELL_MS = 3500;
