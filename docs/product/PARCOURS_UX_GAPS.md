@@ -72,9 +72,9 @@ UI J3 = **T2-5** (brancher ces clés).
 
 ### Tranches T2 (1 commit chacune) — ordre
 
-**Fait :** `T2-0` · `T2-lang` · `T2-copy` · `T2-1` · **`T2-freeze`** ✅  
+**Fait :** `T2-0` · `T2-lang` · `T2-copy` · `T2-1` · `T2-freeze` · **`T2-name`** ✅  
 
-**Suite :** `T2-name` (hold/stretch prénom) → `T2-2` backdrop polish → `T2-3`… → `T2-5` J3.
+**Suite :** `T2-2` backdrop polish → `T2-3`… → `T2-5` J3.
 
 **Ordre perf figé :** freeze ciel pendant reveal → nom lisible → choré transition.
 

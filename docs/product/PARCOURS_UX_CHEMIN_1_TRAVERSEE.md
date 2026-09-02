@@ -4,13 +4,13 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-name** : hold prénom A–B (~1,5–2 s lisibles avant Hero) · `HERO_START` 0,42 · `C_END` 0,72.
 - 2 sept 2026 — **T2-freeze** : gel 2D pendant reveal · WebGL = constellation seule (overlay alpha).
 - 2 sept 2026 — **T2-1** : coupe tunnel Continuer → plus d’auto `navigateToStep(2)` après reveal.
 - 2 sept 2026 — **T2-copy** : copy J3 (cercle A · skyVsVault B · noRush C · born · CTAs) · prochaine **T2-1**.
 - 2 sept 2026 — **T2-lang** : FR/EN always-on studio (hub + rite) · prochaine **T2-copy**.
-- 2 sept 2026 — **T2-0** : audit trous · G2 Inviter first · carte J3 = A+B+C · prochaine = T2-copy.
 
-**Statut :** **T2-freeze** (ciel figé + constellation overlay) · prochaine **T2-name** (hold prénom) puis T2-2.
+**Statut :** **T2-name** ✅ · prochaine **T2-2** (`backdropToWebGL` polish).
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)

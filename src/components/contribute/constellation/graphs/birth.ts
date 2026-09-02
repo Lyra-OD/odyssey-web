@@ -47,13 +47,17 @@ export type BirthPhases = {
 
 const SEG = {
   A_END: 0.02,
-  B_END: 0.4,
+  /** Fin fenêtre nom (brume + hold lisible) — T2-name */
+  B_END: 0.5,
   /** Fin C5 micro-hold · début traits */
-  C_END: 0.57,
+  C_END: 0.72,
 } as const;
 
-/** Grain gathers in the name. */
-const HERO_START = 0.24;
+/**
+ * Grain/voile commencent après hold prénom (~1,5–2 s à 14 s play).
+ * Avant : 0.24 → l’étoile mangeait le nom trop tôt.
+ */
+const HERO_START = 0.42;
 
 /** u ∈ [0,1] on [HERO_START, C_END]. */
 const C = {
@@ -123,7 +127,8 @@ export function resolveBirth(revealT: number): BirthPhases {
   const t = clamp01(revealT);
 
   const mistStart = SEG.A_END;
-  const mistEnd = SEG.A_END + (SEG.B_END - SEG.A_END) * 0.52;
+  /** Brume → mot un peu plus long ; reste du B = hold lisible avant Hero. */
+  const mistEnd = SEG.A_END + (SEG.B_END - SEG.A_END) * 0.58;
 
   const nameClarity =
     t < mistStart

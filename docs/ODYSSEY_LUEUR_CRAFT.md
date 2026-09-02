@@ -1,15 +1,14 @@
 # Odyssey — Craft Lueur (Hero · Constellation · Produit)
 
 **Type :** craft · **Vérité pour :** lab atome blanc+teal + emboîtement constellation / SKU.  
-**Dernière MAJ :** 26 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 2 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-name** : hold prénom (~1,5–2 s) · `HERO_START` 0,42 · `C_END` 0,72.
 - 26 août 2026 — **Séparation Hero↔nom** : spring · nom descend · constellation suit le Hero (lift commun).
 - 26 août 2026 — Fin reveal → tous ghosts (wizard étape 2) · mock lit au Rejouer.
-- 26 août 2026 — Draw **D–F** + barre beats lab · `C_END` 0,57.
+- 26 août 2026 — Draw **D–F** + barre beats lab · `C_END` (traits après naissance).
 - 26 août 2026 — Hero **C3–C5** : spikes · flash larme · micro-hold.
-- 26 août 2026 — **Recette naissance** KEEP : nom fumée + Hero C0–C2.
-- 26 août 2026 — **KEEP Hero** : defaults `DEFAULT_HERO_*` + parallax 1.2.
 
 **Preview :** `/fr/contribute/test-lueur` (dev only)  
 **Ciel :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · **Orb carte :** [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md)  
@@ -100,9 +99,9 @@ CEO craft → ensuite **0b KEEP** (fixer les defaults).
 | Const | Valeur | Sens |
 |-------|--------|------|
 | `A_END` | `0.02` | Vide très court |
-| `B_END` | `0.40` | Fin hold nom (avant draw) |
-| `HERO_START` | `0.24` | Grain/voile commencent **dans** le nom |
-| `C_END` | `0.57` | Fin C0–C2 · début traits |
+| `B_END` | `0.50` | Fin fenêtre nom (brume + hold lisible) |
+| `HERO_START` | `0.42` | Grain/voile **après** hold prénom (~1,5–2 s à 14 s) |
+| `C_END` | `0.72` | Fin C0–C5 · début traits |
 | Cam birth Z | `≈3.45` | Serré sur Hero+nom |
 | Cam idle Z | `≈7.5` | Cadre Leo |
 | Offset départ Hero | **`y = −0.24`** | Milieu optique du mot (pas −0.4 = trop bas) |
@@ -136,7 +135,7 @@ Beat lab = `resolveDrawPhase(revealT).beat ?? resolveBirth(revealT).beat` (`D` /
 | **C3** | `u` ≥ 0,70 | **Spikes** se déploient (dernier ~30 % de C) |
 | **C4** | ~`u` 0,86 | **Flash larme** ≤ 0,12 (size « clique » idle) |
 | **C5** | `u` ≥ 0,92 | **Micro-hold** étoile + nom · `heroKeep` · traits pas encore |
-| **draw** | ≥ 0,57 | Traits · Hero = KEEP exact · pull-back |
+| **draw** | ≥ 0,72 | Traits · Hero = KEEP exact · pull-back |
 
 **Voile / grain (souffle) — à reproduire ainsi :**
 2. Scale : **mini → peak lent (`easeInOut`, grow jusqu’à ~u 0,42–0,48) → contracte** vers le core.  

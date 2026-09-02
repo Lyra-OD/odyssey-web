@@ -18,8 +18,8 @@ const LEO_CENTER_LOCAL: [number, number, number] = [0.5, 1.13, -0.35];
 export const REVEAL_CAM_BIRTH_Z = 3.45;
 export const REVEAL_CAM_IDLE_Z = 7.5;
 
-/** Pull-back begins just after first stroke leaves Hero (traits @ C_END 0.57). */
-export const REVEAL_CAM_PULL_START = 0.59;
+/** Pull-back begins just after first stroke leaves Hero (traits @ C_END). */
+export const REVEAL_CAM_PULL_START = BIRTH_SEGMENTS.C_END + 0.02;
 
 /** Weight of stroke draw vs wall-clock for framing (stroke-led = voir le graphe). */
 const STROKE_PULL_WEIGHT = 0.62;

@@ -22,7 +22,7 @@ import {
   HeroStar,
   type HeroLayerKnobs,
 } from "@/src/components/contribute/constellation/HeroStar";
-import { resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
+import { BIRTH_SEGMENTS, resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
 import { resolveDrawPhase } from "@/src/components/contribute/constellation/graphs/drawPhase";
 import {
   DEFAULT_CONSTELLATION_REVEAL_MS,
@@ -388,7 +388,7 @@ function BeatRail({
         })}
       </div>
       <p className="max-w-md text-[10px] leading-snug text-white/55">{hint}</p>
-      {revealT >= 0.57 || active === "D" || active === "E" || active === "F" ? (
+      {revealT >= BIRTH_SEGMENTS.C_END || active === "D" || active === "E" || active === "F" ? (
         <p className="text-[9px] uppercase tracking-[0.14em] text-amber-200/50">
           {copy.beatDrawGuide}
         </p>

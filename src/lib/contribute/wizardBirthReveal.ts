@@ -1,5 +1,7 @@
+import { BIRTH_SEGMENTS } from "@/src/components/contribute/constellation/graphs/birth";
+
 /** Fin beats naissance A–C (`birth.ts` SEG.C_END). */
-export const WIZARD_BIRTH_REVEAL_END = 0.57;
+export const WIZARD_BIRTH_REVEAL_END = BIRTH_SEGMENTS.C_END;
 
 /** Hero KEEP en attente du prénom (juste avant traits). */
 export const WIZARD_IDLE_REVEAL_T = 0.56;
