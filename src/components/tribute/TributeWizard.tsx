@@ -1155,6 +1155,8 @@ export function TributeWizard({
         <SanctuaryHubHero
           openLabel={copy.parcoursHeroOpenLabel}
           onOpen={step1Parcours.openPanel}
+          prompt={copy.parcoursHeroPrompt}
+          tapHint={copy.parcoursHeroTapHint}
         />
       ) : null}
       {step1Sky && step1Parcours.showHubWebGL ? (

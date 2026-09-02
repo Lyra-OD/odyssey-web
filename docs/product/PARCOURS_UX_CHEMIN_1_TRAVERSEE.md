@@ -122,7 +122,7 @@
 | **Visuel** | Cinématique éclipse → transition → **hub WebGL animé** (ciel vivant · Hero pulse) |
 | **Chemin** | **A** uniquement |
 | **Interaction** | Écran calme. **Hero** teal animé — attend qu'on vienne la réveiller |
-| **Message** (hub) | *« Une présence. »* (arc haut) · *« Toucher l’étoile »* (arc bas) — le formulaire porte prénom + nom. |
+| **Message** (hub) | *UNE PRÉSENCE.* (tracking large · fantôme) · *Toucher l’étoile* (droit · CTA) — Option C DOM au-dessus du canvas. |
 | **Geste** | Clic Hero → **`transition.hubFreezeTo2D`** + panneau verre (**Chemin A vierge**). **Chemin B · draft rempli** → panneau direct (sans hub). |
 | **Stub si craft absent** | Skip prologue → hub WebGL lite ou PNG + Hero CSS en dernier recours |
 | **Craft cible** | [`ODYSSEY_ECLIPSE_CRAFT.md`](../ODYSSEY_ECLIPSE_CRAFT.md) · wormhole · hand-off ciel |

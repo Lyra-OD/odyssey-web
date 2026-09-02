@@ -48,7 +48,6 @@ import { NebulaGasTeal } from "@/src/components/contribute/constellation/NebulaG
 import { GhostStars } from "@/src/components/contribute/constellation/GhostStars";
 import { ParallaxLayer, ParallaxProvider, useParallaxPointerRef } from "@/src/components/contribute/constellation/ParallaxLayer";
 import { ParcoursCloseStreak } from "@/src/components/contribute/constellation/ParcoursCloseStreak";
-import { HubInviteArcs } from "@/src/components/tribute/HubInviteArcs";
 import { ShootingStars } from "@/src/components/contribute/constellation/ShootingStars";
 import { StarDust } from "@/src/components/contribute/constellation/StarDust";
 import {
@@ -622,7 +621,8 @@ function Constellation({
         const nameClarity = isHero ? birth.nameClarity : 1;
         const nameScaleCh = isHero ? birth.nameScale : 1;
         const nameTrack = isHero ? birth.nameTrack : 1;
-        const showHeroName = isHero && nameBloom > 0.02 && !hideHeroName;
+        const showHeroName =
+          isHero && nameBloom > 0.02 && !hideHeroName && !hubPrompt;
         const showSlotName =
           !isHero && !!star.name && hovered === star.id;
         const nameOpacity = isHero
@@ -644,23 +644,13 @@ function Constellation({
         const nameY = isHero
           ? 42 - 14 * nameLift + birth.nameDriftY * 4 + heroSep.nameDrop
           : 18;
-        const hubInviteScale =
-          hubPrompt && isHero ? nameScale * 0.72 : nameScale;
-        /** T-invite-2 — arcs centrés sur l’étoile (pas sous le Hero). */
-        const hubInviteY = isHero ? birth.nameDriftY * 1.2 : nameY;
-        const nameYResolved = hubPrompt && isHero ? hubInviteY : nameY;
+        const nameYResolved = nameY;
         const nameX = isHero ? birth.nameDriftX * 5 : 0;
         const nameTracking = isHero
-          ? hubPrompt
-            ? 0.14
-            : 0.36 - 0.14 * nameTrack + 0.025 * nameGlow
+          ? 0.36 - 0.14 * nameTrack + 0.025 * nameGlow
           : 0.2;
-        const glowPx = hubPrompt && isHero
-          ? 10 + 18 * nameGlow + 4 * nameClarity
-          : 14 + 30 * nameGlow + 8 * nameClarity;
-        const glowA = hubPrompt && isHero
-          ? 0.06 + 0.22 * nameGlow
-          : 0.12 + 0.4 * nameGlow;
+        const glowPx = 14 + 30 * nameGlow + 8 * nameClarity;
+        const glowA = 0.12 + 0.4 * nameGlow;
 
         return (
           <group key={star.id} position={pos}>
@@ -756,69 +746,34 @@ function Constellation({
             ) : null}
             {showHeroName || showSlotName ? (
               <Html
-                distanceFactor={
-                  isHero ? (hubPrompt ? 16 : 6.4) : 6
-                }
+                distanceFactor={isHero ? 6.4 : 6}
                 style={{
                   pointerEvents: "none",
-                  transform: hubPrompt && isHero
-                    ? `translate(calc(-50% + ${nameX.toFixed(2)}px), calc(-50% + ${nameYResolved.toFixed(1)}px)) scale(${hubInviteScale.toFixed(3)})`
-                    : `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameYResolved.toFixed(1)}px) scale(${nameScale.toFixed(3)})`,
-                  transformOrigin: hubPrompt && isHero ? "50% 50%" : "50% 0%",
-                  whiteSpace: hubPrompt && isHero ? undefined : "nowrap",
-                  textAlign: hubPrompt && isHero ? "center" : undefined,
-                  width: hubPrompt && isHero ? "max-content" : undefined,
-                  fontSize: hubPrompt && isHero ? undefined : isHero ? "19px" : "11px",
-                  letterSpacing: hubPrompt && isHero
-                    ? undefined
-                    : `${nameTracking.toFixed(3)}em`,
+                  transform: `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameYResolved.toFixed(1)}px) scale(${nameScale.toFixed(3)})`,
+                  transformOrigin: "50% 0%",
+                  whiteSpace: "nowrap",
+                  fontSize: isHero ? "19px" : "11px",
+                  letterSpacing: `${nameTracking.toFixed(3)}em`,
                   fontWeight: 300,
                   opacity: nameOpacity,
                   filter:
-                    hubPrompt && isHero
-                      ? undefined
-                      : nameBlurPx > 0.35
-                        ? `blur(${nameBlurPx.toFixed(1)}px)`
-                        : undefined,
+                    nameBlurPx > 0.35
+                      ? `blur(${nameBlurPx.toFixed(1)}px)`
+                      : undefined,
                   color: isHero
-                    ? hubPrompt
-                      ? undefined
-                      : `rgba(255, 252, 248, ${0.72 + 0.22 * nameClarity})`
+                    ? `rgba(255, 252, 248, ${0.72 + 0.22 * nameClarity})`
                     : "rgba(204, 251, 241, 0.6)",
                   textShadow: isHero
-                    ? hubPrompt
-                      ? undefined
-                      : `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)}), 0 0 ${(glowPx * 0.45).toFixed(0)}px rgba(255, 248, 240, ${
-                          0.08 + 0.2 * nameGlow
-                        })`
+                    ? `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)}), 0 0 ${(glowPx * 0.45).toFixed(0)}px rgba(255, 248, 240, ${
+                        0.08 + 0.2 * nameGlow
+                      })`
                     : "none",
                   transition: "none",
                 }}
                 wrapperClass="!pointer-events-none"
                 center
               >
-                {hubPrompt && isHero ? (
-                  <HubInviteArcs
-                    prompt={star.name}
-                    tapHint={hubTapHint}
-                    promptOpacity={0.34 + 0.18 * nameClarity}
-                    tapOpacity={Math.min(
-                      1,
-                      Math.max(0, (hubApproach - 0.5) / 0.42),
-                    )}
-                    tapScale={
-                      1 +
-                      0.055 *
-                        breathDrive *
-                        Math.min(
-                          1,
-                          Math.max(0, (hubApproach - 0.5) / 0.42),
-                        )
-                    }
-                  />
-                ) : (
-                  star.name
-                )}
+                {star.name}
               </Html>
             ) : null}
           </group>
