@@ -1,6 +1,6 @@
 /**
  * Reveal camera pose from the same revealT as birth/draw.
- * Birth = tight on Hero+name · draw = pull-back to Leo idle frame.
+ * Birth = même cadre optique que HubSkyCamera (Hero au centre) · draw = pull-back Leo.
  */
 
 import { BIRTH_SEGMENTS } from "@/src/components/contribute/constellation/graphs/birth";
@@ -15,7 +15,15 @@ const HERO_LOCAL: [number, number, number] = [-0.4 * 0.78, -0.35 * 0.78, 0];
 /** Approx Leo silhouette centroid (local). */
 const LEO_CENTER_LOCAL: [number, number, number] = [0.5, 1.13, -0.35];
 
-export const REVEAL_CAM_BIRTH_Z = 3.45;
+/**
+ * Cadre hub partagé (HubSkyCamera + RevealCamera birth).
+ * Remonte le regard pour centrer l’étoile (pas le slot prénom Html).
+ */
+export const HUB_LOOK_Y_LIFT = 0.22;
+export const HUB_CAM_Z_END = 5.15;
+
+/** Birth Z = hub settled — cohérent avec le gel PNG / Continuer. */
+export const REVEAL_CAM_BIRTH_Z = HUB_CAM_Z_END;
 export const REVEAL_CAM_IDLE_Z = 7.5;
 
 /** Pull-back begins just after first stroke leaves Hero (traits @ C_END). */
@@ -61,6 +69,8 @@ function leoIdleLook(graphScale = 1): { x: number; y: number; z: number } {
 
 /**
  * Pull starts @ REVEAL_CAM_PULL_START · easeOut + blend drawU (suit le trait).
+ * A–C : cadre hub (étoile centre écran · nom Html sous l’étoile).
+ * D–F : pull-back silhouette Leo.
  */
 export function resolveRevealCamera(
   revealT: number,
@@ -91,15 +101,18 @@ export function resolveRevealCamera(
   const hero = heroWorldPos(graphScale);
   const idle = leoIdleLook(graphScale);
 
-  // Birth frame: look slightly under Hero so name+star share the glass
-  const birthLookY = hero.y - 0.28 * graphScale;
-  const lookX = hero.x + (idle.x - hero.x) * pull;
-  const lookY = birthLookY + (idle.y - birthLookY) * pull;
-  const lookZ = hero.z + (idle.z - hero.z) * pull;
+  /** Même optique que HubSkyCamera — pas look sous le nom (bas-gauche). */
+  const birthLookX = hero.x;
+  const birthLookY = hero.y + HUB_LOOK_Y_LIFT * graphScale;
+  const birthLookZ = hero.z;
 
-  // Stay optically on Hero during birth; drift toward idle framing
-  const camX = lookX + (idle.x * 0.08 - lookX * 0.02) * pull;
-  const camY = lookY + 0.12 * (1 - pull) + (idle.y * 0.05) * pull;
+  const lookX = birthLookX + (idle.x - birthLookX) * pull;
+  const lookY = birthLookY + (idle.y - birthLookY) * pull;
+  const lookZ = birthLookZ + (idle.z - birthLookZ) * pull;
+
+  /** Birth : cam XY ≈ 0 comme le hub · draw : dérive douce vers Leo. */
+  const camX = 0 + idle.x * 0.08 * pull;
+  const camY = 0 + idle.y * 0.05 * pull;
   const camZ =
     REVEAL_CAM_BIRTH_Z + (REVEAL_CAM_IDLE_Z - REVEAL_CAM_BIRTH_Z) * pull;
 

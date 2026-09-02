@@ -242,7 +242,7 @@ function ForceRenderLoop({
   return null;
 }
 
-/** T-close-6c — fond canvas transparent : Hero + filante au-dessus du verre. */
+/** T-close-6c / T2-freeze — fond canvas transparent au-dessus du gel 2D. */
 function CloseRitualClearAlpha({
   active,
   voidHex,
@@ -250,15 +250,16 @@ function CloseRitualClearAlpha({
   active: boolean;
   voidHex: string;
 }) {
-  const { gl } = useThree();
+  const { gl, scene } = useThree();
   const voidColor = useMemo(() => new Color(voidHex), [voidHex]);
   useEffect(() => {
     if (active) {
       gl.setClearColor(0x000000, 0);
+      scene.background = null;
     } else {
       gl.setClearColor(voidColor, 1);
     }
-  }, [active, gl, voidColor]);
+  }, [active, gl, scene, voidColor]);
   return null;
 }
 
@@ -1033,7 +1034,9 @@ function UniverseScene({
       <WheelZoom enabled={!craftLite} />
       <SkyWander enabled={wanderEnabled} />
       <IdleCameraDrift />
-      <color attach="background" args={[voidHex]} />
+      {overlayOnBackdrop || closeStreakFire ? null : (
+        <color attach="background" args={[voidHex]} />
+      )}
       {fogOn ? (
         <fog
           attach="fog"

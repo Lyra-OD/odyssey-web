@@ -4,11 +4,11 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-overlay** : gel PNG visible (pas de `scene.background`) · birth cam = hub centre.
 - 2 sept 2026 — **T2-name** : hold prénom (~1,5–2 s) · `HERO_START` 0,42 · `C_END` 0,72.
 - 26 août 2026 — **Séparation Hero↔nom** : spring · nom descend · constellation suit le Hero (lift commun).
 - 26 août 2026 — Fin reveal → tous ghosts (wizard étape 2) · mock lit au Rejouer.
 - 26 août 2026 — Draw **D–F** + barre beats lab · `C_END` (traits après naissance).
-- 26 août 2026 — Hero **C3–C5** : spikes · flash larme · micro-hold.
 
 **Preview :** `/fr/contribute/test-lueur` (dev only)  
 **Ciel :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · **Orb carte :** [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md)  
@@ -102,8 +102,9 @@ CEO craft → ensuite **0b KEEP** (fixer les defaults).
 | `B_END` | `0.50` | Fin fenêtre nom (brume + hold lisible) |
 | `HERO_START` | `0.42` | Grain/voile **après** hold prénom (~1,5–2 s à 14 s) |
 | `C_END` | `0.72` | Fin C0–C5 · début traits |
-| Cam birth Z | `≈3.45` | Serré sur Hero+nom |
-| Cam idle Z | `≈7.5` | Cadre Leo |
+| Cam birth Z | `5.15` (= hub settled) | Hero centre écran · aligné gel PNG |
+| Cam idle Z | `≈7.5` | Cadre Leo (pull D–F) |
+| Look birth | `HUB_LOOK_Y_LIFT` | Même optique que `HubSkyCamera` |
 | Offset départ Hero | **`y = −0.24`** | Milieu optique du mot (pas −0.4 = trop bas) |
 | Durée play | **14 s** | `DEFAULT_CONSTELLATION_REVEAL_MS` |
 

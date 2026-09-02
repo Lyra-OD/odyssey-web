@@ -4,7 +4,11 @@ import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Fog, Vector3 } from "three";
 
-import { heroWorldPos } from "@/src/components/contribute/constellation/graphs/revealCamera";
+import {
+  heroWorldPos,
+  HUB_CAM_Z_END,
+  HUB_LOOK_Y_LIFT,
+} from "@/src/components/contribute/constellation/graphs/revealCamera";
 import { idleCameraRef } from "./IdleCameraDrift";
 import { skyWanderRef } from "./SkyWander";
 import {
@@ -23,9 +27,6 @@ export const hubSkyApproachRef = { current: 0 };
 
 /** Arrivée test-ciel (constellation off) → dolly léger vers Hero. */
 const HUB_APPROACH_MS = 2800;
-const HUB_CAM_Z_END = 5.15;
-/** Remonte le regard pour centrer l’étoile à l’écran (pas le slot prénom). */
-const HUB_LOOK_Y_LIFT = 0.22;
 const HUB_SETTLED_U = 0.98;
 
 function easeOutCubic(t: number): number {

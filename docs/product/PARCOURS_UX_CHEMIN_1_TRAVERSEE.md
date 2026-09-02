@@ -4,13 +4,13 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-overlay** : PNG gel visible pendant reveal · birth cadré hub (plus bas-gauche).
 - 2 sept 2026 — **P0** : retour Essentiels post-reveal · déconnexion sous langue.
 - 2 sept 2026 — **T2-name** : hold prénom A–B (~1,5–2 s lisibles avant Hero) · `HERO_START` 0,42 · `C_END` 0,72.
 - 2 sept 2026 — **T2-freeze** : gel 2D pendant reveal · WebGL = constellation seule (overlay alpha).
 - 2 sept 2026 — **T2-1** : coupe tunnel Continuer → plus d’auto `navigateToStep(2)` après reveal.
-- 2 sept 2026 — **T2-copy** : copy J3 (cercle A · skyVsVault B · noRush C · born · CTAs).
 
-**Statut :** **P0 retour Essentiels** ✅ · prochaine **T2-2** (backdrop) · puis P1 Atelier · P2 fil constellation.
+**Statut :** **T2-overlay** ✅ · prochaine **T2-2** (backdrop polish) · P1 Atelier · P2 fil constellation.
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
