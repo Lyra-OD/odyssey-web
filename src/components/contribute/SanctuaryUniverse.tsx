@@ -662,6 +662,15 @@ function Constellation({
         const glowA = hubPrompt && isHero
           ? 0.06 + 0.22 * nameGlow
           : 0.12 + 0.4 * nameGlow;
+        /** T-invite-2 — glow CTA = cyan Hero, modulé approach + breath (plafond doux). */
+        const tapApproachU =
+          hubPrompt && isHero
+            ? Math.min(1, Math.max(0, (hubApproach - 0.55) / 0.35))
+            : 0;
+        const tapGlowU =
+          tapApproachU * (0.4 + 0.6 * Math.min(1, breathDrive));
+        const tapGlowPx = 3 + 12 * tapGlowU;
+        const tapGlowA = 0.06 + 0.32 * tapGlowU;
 
         return (
           <group key={star.id} position={pos}>
@@ -821,8 +830,11 @@ function Constellation({
                           fontSize: "6px",
                           letterSpacing: "0.1em",
                           fontWeight: 300,
-                          color: "rgba(161, 161, 170, 0.82)",
-                          textShadow: "none",
+                          color: `rgba(${Math.round(161 + 50 * tapGlowU)}, ${Math.round(161 + 55 * tapGlowU)}, ${Math.round(170 + 30 * tapGlowU)}, ${0.75 + 0.2 * tapApproachU})`,
+                          textShadow:
+                            tapGlowU > 0.04
+                              ? `0 0 ${tapGlowPx.toFixed(1)}px rgba(94, 234, 212, ${tapGlowA.toFixed(2)}), 0 0 ${(tapGlowPx * 0.5).toFixed(1)}px rgba(255, 248, 240, ${(0.04 + 0.14 * tapGlowU).toFixed(2)})`
+                              : "none",
                           opacity: Math.min(
                             1,
                             (hubApproach - 0.72) / 0.28,
