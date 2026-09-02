@@ -18,7 +18,8 @@ type AutosaveIndicatorProps = {
 };
 
 /**
- * Quiet Luxury autosave feedback — floats top-right, never blocks the wizard.
+ * Quiet Luxury autosave feedback — never blocks the wizard.
+ * Position via `className` (ex. `right-0 top-0`) — pas sur le ciel hub idle.
  */
 export function AutosaveIndicator({
   status,
@@ -52,7 +53,7 @@ export function AutosaveIndicator({
 
   return (
     <div
-      className={`pointer-events-none absolute right-0 top-0 z-20 transition-opacity duration-700 ease-out ${
+      className={`pointer-events-none absolute z-20 transition-opacity duration-700 ease-out ${
         visible ? "opacity-100" : "opacity-0"
       } ${className}`}
       aria-live="polite"

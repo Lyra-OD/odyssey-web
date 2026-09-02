@@ -4,11 +4,11 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **Autosave** dans le monolithe Essentiels (plus sur le ciel hub).
 - 2 sept 2026 — **Hub cold start** : void → WebGL (plus de JPEG gate au reload).
 - 2 sept 2026 — **T-invite-3** : breath Hero hub invite `HUB_HERO_BREATH_SPEED_INVITE` (2.6) — pas reveal/craft.
 - 2 sept 2026 — **T-invite-2** : glow CTA cyan × prox + breath · scale invite 0.63 · nudge optique.
 - 2 sept 2026 — **T-open-5** : stagger titre→champs→CTA (80/160/240 ms) pendant émanation.
-- 2 sept 2026 — **T-open-4** : souffle CSS bloom + filante étoile→verre pendant émanation.
 
 **Liens :**
 - Spec Traversée : [`../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §2b

@@ -1238,19 +1238,17 @@ export function TributeWizard({
         </button>
       ) : null}
 
-      <AutosaveIndicator
-        status={autosaveStatus}
-        copy={{
-          saving: copy.autosaveSaving,
-          saved: copy.autosaveSaved,
-          error: copy.autosaveError,
-        }}
-        className={
-          step1Parcours.hubChromeHidden
-            ? "-translate-y-1 opacity-0 md:-translate-y-2"
-            : "-translate-y-1 md:-translate-y-2"
-        }
-      />
+      {!step1Parcours.hubChromeHidden ? (
+        <AutosaveIndicator
+          status={autosaveStatus}
+          copy={{
+            saving: copy.autosaveSaving,
+            saved: copy.autosaveSaved,
+            error: copy.autosaveError,
+          }}
+          className="right-0 top-0 -translate-y-1 md:-translate-y-2"
+        />
+      ) : null}
 
       {/* En-tête sticky — dès l'Étape 1. Le déclencheur du Dossier de forfait
           (typographique, sans chrome de bouton) y est toujours visible, même
@@ -1523,14 +1521,25 @@ export function TributeWizard({
             >
             {step1Parcours.phase === "panel.essentials" &&
             step1Reveal.phase === "typing" ? (
-              <button
-                type="button"
-                onClick={step1Parcours.closePanel}
-                className="absolute right-4 top-4 rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
-                aria-label={copy.parcoursPanelCloseHint}
-              >
-                <X className="h-5 w-5" strokeWidth={1.5} aria-hidden />
-              </button>
+              <>
+                <AutosaveIndicator
+                  status={autosaveStatus}
+                  copy={{
+                    saving: copy.autosaveSaving,
+                    saved: copy.autosaveSaved,
+                    error: copy.autosaveError,
+                  }}
+                  className="right-14 top-4"
+                />
+                <button
+                  type="button"
+                  onClick={step1Parcours.closePanel}
+                  className="absolute right-4 top-4 z-[2] rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+                  aria-label={copy.parcoursPanelCloseHint}
+                >
+                  <X className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+                </button>
+              </>
             ) : null}
             <>
               <div className="parcours-open-stagger-1">

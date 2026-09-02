@@ -4,11 +4,11 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **Autosave** : hors ciel hub · visible dans le monolithe Essentiels (+ étapes wizard hors hub).
 - 2 sept 2026 — **Hub cold start** : void → WebGL (plus de JPEG `hub-freeze` au reload) · gel JPEG garde panneau/close.
 - 2 sept 2026 — **T-invite-2–3** : CTA glow cyan live · breath hub invite plus rapide (2.6) · copy Une Présence.
 - 1 sept 2026 — **T-close-5e** : revert 5d · rituel sans transition CSS · thaw 2× rAF @ hold · handoff sans flash.
 - 1 sept 2026 — **T-close-5c** : thaw KEEP @ hold seulement · backdrop pont jusqu’au crossfade (plus @ 88 % collapse).
-- 1 sept 2026 — **T-close-5b** : panneau démonté @ fin collapse — ciel et filante visibles au beat hold.
 
 **Statut :** spec produit **figée** · fermeture **T-close-7** · ouverture **T-open-1–3** (miroir CSS depuis l’étoile).
 
