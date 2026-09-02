@@ -4,13 +4,13 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **Suite nav** : P1 Atelier · P2 fil constellation documentés (§ dédié) — pas encore codés.
 - 2 sept 2026 — **T2-overlay** : PNG gel visible pendant reveal · birth cadré hub (plus bas-gauche).
 - 2 sept 2026 — **P0** : retour Essentiels post-reveal · déconnexion sous langue.
 - 2 sept 2026 — **T2-name** : hold prénom A–B (~1,5–2 s lisibles avant Hero) · `HERO_START` 0,42 · `C_END` 0,72.
 - 2 sept 2026 — **T2-freeze** : gel 2D pendant reveal · WebGL = constellation seule (overlay alpha).
-- 2 sept 2026 — **T2-1** : coupe tunnel Continuer → plus d’auto `navigateToStep(2)` après reveal.
 
-**Statut :** **T2-overlay** ✅ · prochaine **T2-2** (backdrop polish) · P1 Atelier · P2 fil constellation.
+**Statut :** **T2-overlay** ✅ · prochaine **T2-2** · suite nav **P1 / P2** figée (spec) · P0 ✅.
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
@@ -344,7 +344,23 @@ Le wizard **n'est pas refondu** — on change **quand** le Canvas existe et **co
 
 ---
 
-## 8. Plan d'exécution (tranches — ordre chirurgical)
+## 8. Suite navigation (P0 → P1 → P2)
+
+**Détail vivant + tableau :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md) §0 « Suite navigation figée ».
+
+| ID | Statut | En une phrase |
+|----|--------|---------------|
+| **P0** / **P0′** | ✅ | Retour Essentiels depuis le ciel · déconnexion sous la langue |
+| **P1 — Atelier** | ⏳ spec | Mode **wizard sans rite** : formulaires, nav libre, ciel léger — pour typo / retour / perf |
+| **P2 — Fil constellation** | ⏳ spec | Progress en haut (nœuds Essentiels · Cercle · Coffre · Film), cliquables une fois débloqués |
+
+**Pourquoi P1 avant P2 :** le fil seul ne remplace pas un mode « je compose sans cinéma ». L’Atelier porte la navigation libre ; le fil porte la **marque** et le jump entre étapes.
+
+**Ordre de build :** finir T2 (J3) → P1 → P2. Ne pas coder P2 pendant le 1er play cinéma sans règles « déjà visité ».
+
+---
+
+## 9. Plan d'exécution (tranches — ordre chirurgical)
 
 Les tranches **ne dépendent pas** du prologue craft pour démarrer.
 
@@ -359,12 +375,14 @@ Les tranches **ne dépendent pas** du prologue craft pour démarrer.
 | **T5** | Studio sans ciel · ligne checkout | Non |
 | **T6** | Prologue éclipse (brancher quand craft prêt) | Oui |
 | **T7** | Polish shareables + filaments invités animés | Partiel |
+| **Nav P1** | Mode Atelier | Après T2 J3 |
+| **Nav P2** | Fil constellation | Après P1 |
 
 **Démo VP (Patrice) :** T1 + T2 suffisent pour la vision ; T4 si on vend le film ; prologue = vidéo ou skip.
 
 ---
 
-## 9. Écarts connus / décisions ouvertes
+## 10. Écarts connus / décisions ouvertes
 
 | Sujet | État | Note |
 |-------|------|------|
@@ -376,10 +394,11 @@ Les tranches **ne dépendent pas** du prologue craft pour démarrer.
 | **Frame ciel 2D** | Capture canvas @ clic (**Plan B livré**) · fallback JPEG | ✅ T1b+B |
 | **Entrée panneau (magie)** | T-open-1–5 : expand depuis étoile · souffle · stagger | ✅ |
 | **Peau wizard 2–7** | Monolithe généralisé (verre · halo · CTA) | ⏳ spec [`PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) §6 |
+| **Suite nav P1 / P2** | ✅ Spec · ⏳ code | §8 · GAPS §0 |
 | **Chemins 2+** | Hors scope | Chemin 1b Salon · invité seul · retour hub |
 
 ---
 
-## 10. Une phrase
+## 11. Une phrase
 
 **Prologue (A) → ciel animé → Hero invite → clic = ciel se fige + verre → Continuer = ciel s'allume → hub respire → cercle → Coffre → film → le ciel reste.**

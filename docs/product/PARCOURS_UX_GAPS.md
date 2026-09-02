@@ -4,11 +4,11 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 2 sept 2026 — **P0** : retour Essentiels (`reopenEssentials`) · déconnexion sous langue · backlog P1 Atelier · P2 fil constellation.
+- 2 sept 2026 — **Suite nav figée** : P1 Atelier · P2 fil constellation (spec, pas encore code).
+- 2 sept 2026 — **P0** : retour Essentiels (`reopenEssentials`) · déconnexion sous langue.
 - 2 sept 2026 — **T2-copy** : clés J3 A+B+C + born + CTAs (FR/EN · catalogue).
 - 2 sept 2026 — **T2-lang** : LocaleSwitcher fixed studio — toujours visible (hub + rite), hors chrome masqué.
 - 2 sept 2026 — **T2-0** : audit Continuer / J3 / copy · T1b traité comme livré · prochaine = T2 · G2 Inviter first.
-- 31 août 2026 — **Figé** : Chemins A/B · contrat hub WebGL ↔ gel 2D · tranche T1b.
 
 **Liens :**
 - Spec Traversée : [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md)
@@ -78,14 +78,54 @@ UI J3 = **T2-5** (brancher ces clés).
 
 **Ordre perf figé :** freeze ciel pendant reveal → nom lisible → choré transition.
 
-### Navigation / chrome (2 sept 2026)
+### Suite navigation figée (2 sept 2026) — **pas encore codée** sauf P0
 
-| ID | Quoi | Priorité | Statut |
-|----|------|----------|--------|
-| **P0** | Porte retour Essentiels depuis `hub.postReveal` + soft close | P0 | ✅ |
-| **P0′** | Déconnexion sous LocaleSwitcher (toujours-on) | P0 | ✅ |
-| **P1** | Mode Atelier (wizard sans rite) | P1 | ⏳ |
-| **P2** | Progress constellation (nœuds débloqués) | P2 | ⏳ |
+> **Où lire :** ce § · résumé canon dans [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) § « Suite navigation ».  
+> **Ne pas confondre** avec la légende priorités P0/P1/P2 du §1 (bloquant / important / polish) : ici **P0 / P1 / P2** = **tranches navigation / chrome**.
+
+| ID | Quoi | Priorité tranche | Statut |
+|----|------|------------------|--------|
+| **P0** | Porte retour Essentiels depuis `hub.postReveal` + soft close | Immédiat | ✅ code |
+| **P0′** | Déconnexion sous LocaleSwitcher (toujours-on) | Immédiat | ✅ code |
+| **P1** | Mode **Atelier** (wizard sans rite) | Après T2 J3 | ⏳ spec ✅ · code non |
+| **P2** | Fil d’Ariane **constellation** (nœuds débloqués) | Après P1 | ⏳ spec ✅ · code non |
+
+#### P0 / P0′ — livré (rappel)
+
+- Post-reveal : CTA *Revenir à l’essentiel* · soft close X/Échap → ciel settled.
+- Studio : langue + déconnexion empilées en haut à droite (`z-[60]`), hors chrome masqué hub.
+
+#### P1 — Mode Atelier (wizard sans expérience / sans rite)
+
+**Problème :** la Traversée (ciel, reveal A→F, gels) est le défaut **première visite**. Elle est mauvaise pour : typo rapide, orga qui revient, accessibilité, perf, QA, power users qui veulent enchaîner les 7 étapes.
+
+**Intention :** deux **modes** explicites, pas un 2ᵉ produit.
+
+| Mode | Pour qui | Comportement |
+|------|----------|--------------|
+| **Traversée** (défaut 1ʳᵉ visite) | Wow · émotion · 1er Continuer | Hub · gel · reveal · J3 · beats |
+| **Atelier** | Édition / retour / skip cinéma | Formulaires / monolithe · ciel léger ou figé · **navigation libre** entre étapes déjà ouvertes |
+
+**Entrées possibles (à trancher au code) :**
+- Lien discret sous la langue : *Passer à l’atelier* / *Reprendre la Traversée*
+- Auto-Atelier si le draft a déjà un prénom sauvé (lié G7 état parcours)
+
+**Ne fait pas :** supprimer la Traversée · bypass checkout · changer le rail métier 7 étapes.
+
+#### P2 — Fil d’Ariane constellation (en haut)
+
+**Problème :** après P0 on peut revenir à l’Essentiel, mais pas **sauter** entre Cercle / Coffre / Film de façon marque.
+
+**Intention :** progress **discrète** en haut (3–5 nœuds : Essentiels · Cercle · Coffre · Film…), **pas** un breadcrumb wizard 1-2-3-4-5-6-7 collé sur le ciel.
+
+| Règle | Détail |
+|-------|--------|
+| 1ʳᵉ Traversée | Nœuds **lisibles** mais peu cliquables (ou seulement étapes déjà visitées) — ne pas casser le cinéma |
+| Atelier / post-J3 | Nœuds **cliquables** pour étapes débloquées |
+| DA | Langage constellation (points / lueurs), pas pills dashboard |
+
+**Ordre de build figé :** P0 ✅ → finir T2 (J3) → **P1 Atelier** → **P2 fil**.  
+Sans Atelier, le fil seul ne résout pas assez le « je veux avancer sans rite ».
 
 Hors T2 : T3 cercle outils · T4 `vault.filmBridge` · G6 durée reveal · prologue.
 
