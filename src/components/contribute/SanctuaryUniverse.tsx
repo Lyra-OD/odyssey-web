@@ -767,7 +767,7 @@ function Constellation({
                   whiteSpace: "nowrap",
                   textAlign: hubPrompt && isHero ? "center" : undefined,
                   width: hubPrompt && isHero ? "max-content" : undefined,
-                  fontSize: hubPrompt && isHero ? "6px" : isHero ? "19px" : "11px",
+                  fontSize: hubPrompt && isHero ? "9.5px" : isHero ? "19px" : "11px",
                   lineHeight: hubPrompt && isHero ? 1.35 : undefined,
                   fontFamily:
                     hubPrompt && isHero
@@ -804,25 +804,11 @@ function Constellation({
                     style={{
                       display: "inline-block",
                       whiteSpace: "nowrap",
+                      transform: "scaleX(1.06)",
                       transformOrigin: "50% 0%",
                     }}
                   >
-                    <span
-                      style={{
-                        display: "block",
-                        textTransform: "uppercase",
-                        fontFamily:
-                          "var(--font-editorial), ui-serif, Georgia, serif",
-                        fontSize: "7.5px",
-                        letterSpacing: "0.2em",
-                        fontWeight: 300,
-                        lineHeight: 1.25,
-                        transform: "scaleX(1.06)",
-                        transformOrigin: "50% 0%",
-                      }}
-                    >
-                      {star.name}
-                    </span>
+                    {star.name}
                     {hubTapHint && hubTapHintVisible(hubApproach) ? (
                       <span
                         style={{
