@@ -10,7 +10,7 @@
 - 1 sept 2026 — **T-close-5a-b** : canvas hub monté en saisie (opacité 0 · loop off) + prefetch chunk — plus de remontage @ Esc.
 - 1 sept 2026 — **T-close-5a** : horloge rAF sans setState 60 fps · opacités via CSS vars · `skyFadeMs=180` au rituel.
 
-**Statut :** spec produit **figée** · fermeture **T-close-1–4 livrés** · prochaine tranche **T-open-mirror** (ouverture depuis l’étoile).
+**Statut :** spec produit **figée** · fermeture **T-close-7** · ouverture **T-open-1–3** (miroir CSS depuis l’étoile).
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
@@ -86,7 +86,7 @@
 
 | ID | Déclencheur | Effet perceptif |
 |----|-------------|-----------------|
-| `transition.hubFreezeTo2D` | Clic Hero | **Souffle** (flash+hold 200 ms) → crossfade ciel 560 ms → panneau verre slide (~340 ms) |
+| `transition.hubFreezeTo2D` | Clic Hero | **Souffle** (flash+hold 200 ms) → crossfade ciel 560 ms → panneau expand @ 760 ms (ciel figé) · total transition ~1200 ms |
 | `transition.panelCloseToHub` | Fermer panneau | Inspire 220 ms → collapse 520 ms → hold 80 ms → thaw KEEP 880 ms (sérialisé T-close-7) |
 | `transition.backdropToWebGL` | Continuer | Le ciel **s'allume** → constellation |
 
@@ -96,7 +96,7 @@
 2. Timeline : `hubFreezeTimeline.ts` (hold → fade → panel · miroir close).
 3. `ForceRenderLoop` on pendant hold (flash) · **off** en saisie · **unmount** WebGL en `panel.essentials`.
 4. Ancre étoile hub = **ref** · FX freeze = `hubFreezeFxRef` (flash / holdBreath / inviteMul).
-5. Panneau monolithe : recette [`../design/PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) · enter `parcours-panel-in` (**polish magie prévu** §7) · exit **collapse → étoile** (`parcours-monolith-collapse` + `hubStarAnchorRef`).
+5. Panneau monolithe : recette [`../design/PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) · enter **`parcours-monolith-expand`** (T-open-1–3) · exit **collapse → étoile** (`parcours-monolith-collapse` + `hubStarAnchorRef`).
 
 ### Ce n'est PAS
 

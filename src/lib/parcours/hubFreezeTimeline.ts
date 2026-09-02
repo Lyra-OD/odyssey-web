@@ -9,14 +9,17 @@ export const HUB_FREEZE_HOLD_MS = 200;
 export const HUB_CAPTURE_AT_MS = HUB_FREEZE_HOLD_MS;
 /** Beat 2 — crossfade WebGL → PNG (aller). */
 export const HUB_FREEZE_FADE_MS = 560;
-/** Panneau verre commence (pendant le fade). */
-export const HUB_FREEZE_PANEL_AT_MS = 340;
-/** Fin freeze → unmount WebGL. */
-export const HUB_FREEZE_TOTAL_MS = HUB_FREEZE_HOLD_MS + HUB_FREEZE_FADE_MS;
-
 /** T-open-2 — émanation verre depuis l’étoile (scale + opacity · pas reverse close). */
 export const HUB_OPEN_EXPAND_MS = 440;
 export const HUB_OPEN_EXPAND_EASE_CSS = "cubic-bezier(0.16, 1, 0.3, 1)";
+/**
+ * T-open-3 — panneau @ ciel 2D figé (après hold + fondu capture complet).
+ * Avant : 340 ms (panneau pendant le crossfade) → expand sur ciel encore vivant.
+ */
+export const HUB_FREEZE_PANEL_AT_MS = HUB_FREEZE_HOLD_MS + HUB_FREEZE_FADE_MS;
+/** Fin transition open — laisse l’expand terminer avant reset FX. */
+export const HUB_FREEZE_TOTAL_MS =
+  HUB_FREEZE_PANEL_AT_MS + HUB_OPEN_EXPAND_MS;
 
 /** D — panneau sort (legacy slide · remplacé par rituel collapse T2–T3). */
 export const HUB_CLOSE_PANEL_OUT_MS = 400;

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T-open-3** : panneau @ `HUB_FREEZE_PANEL_AT_MS` = hold+fade (760) · ciel 2D figé avant expand.
 - 2 sept 2026 — **T-open-2** : émanation `.parcours-monolith-expand` (scale+opacity · 440 ms) · plus de slide Y.
 - 2 sept 2026 — **T-open-1** : pivot expand `--parcours-expand-origin` = ancre Hero au montage panneau.
 - 1 sept 2026 — **T-close-7** : 60 FPS close — CSS transform/opacity only · tracteur CSS · WebGL gelé jusqu'au thaw · absorb @ hold.
 - 1 sept 2026 — **T-close-6c** : calque WebGL z-42 · monolithe translucide · kiss @ 255 ms (supersédé par T-close-7).
-- 1 sept 2026 — **T-close-6b** : filante arm @ useFrame · gel IdleCameraDrift · absorption @ impact.
 
 **Liens :**
 - Spec Traversée : [`../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §2b
@@ -74,7 +74,7 @@
 
 ### Entrée panneau (actuel — polish prévu)
 - `.parcours-monolith-expand` : **440 ms** · scale 0.04→1 + opacity · `transform-origin` étoile · ease-out `(0.16, 1, 0.3, 1)`
-- Déclenché @ `HUB_FREEZE_PANEL_AT_MS` (340 ms) via `useParcoursUx`
+- Déclenché @ `HUB_FREEZE_PANEL_AT_MS` (**760 ms** = hold 200 + fade 560) via `useParcoursUx` — ciel 2D figé avant émanation.
 
 ---
 
@@ -137,9 +137,10 @@
 | **T-close-2b** | Pivot figé @ collapse · vars figées · thaw @ hold · ancre conservée | ✅ |
 | **T-close-3** | Halo tracteur fixed (viewport) · verre fade | ✅ |
 | **T-close-4** | Timeline unifiée `u` 0→1 + thaw overlap fluide | ✅ |
-| **T-open-mirror** | Ouverture miroir depuis l’étoile (après close OK) | ⏳ |
+| **T-open-mirror** | Ouverture miroir depuis l’étoile | ✅ T-open-1–3 |
 | **T-open-1** | Pivot expand figé sur ancre Hero (`--parcours-expand-origin`) | ✅ |
 | **T-open-2** | Émanation scale+opacity 440 ms (pas reverse close) | ✅ |
+| **T-open-3** | Départ panneau @ hold+fade (ciel 2D figé) · expand seulement pendant `hubFreezeTo2D` | ✅ |
 
 **T-close-1 :** `hubStarVisualViewportPx` · offset hitbox Hero · rAF pendant `panelCloseToHub` · pas de setState 60 fps.
 
