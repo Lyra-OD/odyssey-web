@@ -85,6 +85,7 @@ import { resolveBirth } from "@/src/components/contribute/constellation/graphs/b
 import {
   hubHeroBreath,
   hubProximityActive,
+  hubTapHintVisible,
   HUB_HERO_SIZE_BREATH,
   resolveHubBirth,
 } from "@/src/components/contribute/constellation/graphs/hubIdle";
@@ -800,21 +801,14 @@ function Constellation({
                 {hubPrompt && isHero ? (
                   <HubInviteArcs
                     prompt={star.name}
-                    tapHint={hubTapHint}
-                    promptOpacity={0.34 + 0.18 * nameClarity}
-                    tapOpacity={Math.min(
-                      1,
-                      Math.max(0, (hubApproach - 0.5) / 0.42),
-                    )}
-                    tapScale={
-                      1 +
-                      0.055 *
-                        breathDrive *
-                        Math.min(
-                          1,
-                          Math.max(0, (hubApproach - 0.5) / 0.42),
-                        )
+                    tapHint={
+                      hubTapHint && hubTapHintVisible(hubApproach)
+                        ? hubTapHint
+                        : undefined
                     }
+                    promptOpacity={0.55 + 0.2 * nameClarity}
+                    tapOpacity={1}
+                    tapScale={1}
                   />
                 ) : (
                   star.name
