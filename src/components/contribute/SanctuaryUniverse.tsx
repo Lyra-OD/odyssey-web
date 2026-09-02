@@ -348,6 +348,8 @@ function Constellation({
   const ndcB = useRef(new Vector3());
   const [revealT, setRevealT] = useState(revealTProp);
   const [hubApproach, setHubApproach] = useState(0);
+  /** T-invite-2 — glow CTA live (prox souris + breath Hero), pas hubApproach figé. */
+  const [hubCtaGlow, setHubCtaGlow] = useState(0);
   const [proximity, setProximity] = useState<ProximityField>(EMPTY_PROX);
 
   const stars = useMemo(() => {
@@ -363,7 +365,8 @@ function Constellation({
   }, [slotLit, heroName, template]);
   const positions = useMemo(() => constellationPositions(stars), [stars]);
 
-  useFrame(({ camera }) => {
+  useFrame(({ camera, clock }) => {
+    let heroProxFrame = 0;
     if (hubBirthMode) {
       if (!parcoursCloseStreakLockRef.current) {
         const v = hubSkyApproachRef.current;
@@ -392,65 +395,89 @@ function Constellation({
       drawPhaseLive.proximity;
     if (!allowProximity || !pointerRef) {
       setProximity((p) => (p.max > 0 ? EMPTY_PROX : p));
-      return;
-    }
-    const ptr = pointerRef.current;
-    const gx = CONSTELLATION_GROUP_OFFSET[0];
-    const gy = CONSTELLATION_GROUP_OFFSET[1];
-    const starsMap: Record<string, number> = {};
-    let maxProx = 0;
+    } else {
+      const ptr = pointerRef.current;
+      const gx = CONSTELLATION_GROUP_OFFSET[0];
+      const gy = CONSTELLATION_GROUP_OFFSET[1];
+      const starsMap: Record<string, number> = {};
+      let maxProx = 0;
 
-    const projectLocal = (pos: [number, number, number]) => {
-      proxTmp.current.set(
-        gx + pos[0] * graphScale,
-        gy + pos[1] * graphScale,
-        pos[2] * graphScale,
+      const projectLocal = (pos: [number, number, number]) => {
+        proxTmp.current.set(
+          gx + pos[0] * graphScale,
+          gy + pos[1] * graphScale,
+          pos[2] * graphScale,
+        );
+        proxTmp.current.project(camera);
+        return proxTmp.current;
+      };
+
+      for (const star of stars) {
+        const pos = positions[star.id] ?? star.position;
+        const ndc = projectLocal(pos);
+        const prox = ndcFieldStrength(
+          ndc.x - ptr.x,
+          ndc.y - ptr.y,
+          PROXIMITY_FIELD_RADIUS,
+        );
+        starsMap[star.id] = prox;
+        maxProx = Math.max(maxProx, prox);
+      }
+      heroProxFrame = starsMap.hero ?? 0;
+
+      const edgesMap: Record<string, number> = {};
+      for (const [a, b] of template.edges) {
+        const from = positions[a];
+        const to = positions[b];
+        if (!from || !to) continue;
+        ndcA.current.copy(projectLocal(from));
+        ndcB.current.copy(projectLocal(to));
+        const prox = ndcSegmentField(
+          ndcA.current.x,
+          ndcA.current.y,
+          ndcB.current.x,
+          ndcB.current.y,
+          ptr.x,
+          ptr.y,
+          PROXIMITY_FIELD_RADIUS * 1.08,
+        );
+        const key = undirectedEdgeKey(a, b);
+        edgesMap[key] = Math.max(edgesMap[key] ?? 0, prox);
+        maxProx = Math.max(maxProx, prox);
+      }
+
+      setProximity((prev) =>
+        Math.abs(prev.max - maxProx) > 0.012 ||
+        Object.keys(starsMap).some(
+          (id) => Math.abs((prev.stars[id] ?? 0) - (starsMap[id] ?? 0)) > 0.04,
+        )
+          ? { stars: starsMap, edges: edgesMap, max: maxProx }
+          : prev,
       );
-      proxTmp.current.project(camera);
-      return proxTmp.current;
-    };
-
-    for (const star of stars) {
-      const pos = positions[star.id] ?? star.position;
-      const ndc = projectLocal(pos);
-      const prox = ndcFieldStrength(
-        ndc.x - ptr.x,
-        ndc.y - ptr.y,
-        PROXIMITY_FIELD_RADIUS,
-      );
-      starsMap[star.id] = prox;
-      maxProx = Math.max(maxProx, prox);
     }
 
-    const edgesMap: Record<string, number> = {};
-    for (const [a, b] of template.edges) {
-      const from = positions[a];
-      const to = positions[b];
-      if (!from || !to) continue;
-      ndcA.current.copy(projectLocal(from));
-      ndcB.current.copy(projectLocal(to));
-      const prox = ndcSegmentField(
-        ndcA.current.x,
-        ndcA.current.y,
-        ndcB.current.x,
-        ndcB.current.y,
-        ptr.x,
-        ptr.y,
-        PROXIMITY_FIELD_RADIUS * 1.08,
+    /** CTA « Toucher l’étoile » : glow cyan = prox + souffle Hero (lisible). */
+    if (hubBirthMode && hubTapHintVisible(hubSkyApproachRef.current)) {
+      const envelope =
+        hubHeroBreath(hubSkyApproachRef.current) *
+        hubFreezeFxRef.thawAppearU;
+      const t = clock.elapsedTime * 0.7;
+      const breathWave =
+        0.5 +
+        0.5 *
+          (0.68 * Math.sin(t) + 0.32 * Math.sin(t * 0.41 + 0.4));
+      const live = Math.min(
+        1,
+        0.22 * envelope +
+          0.62 * heroProxFrame +
+          0.48 * breathWave * envelope * (0.35 + 0.65 * heroProxFrame),
       );
-      const key = undirectedEdgeKey(a, b);
-      edgesMap[key] = Math.max(edgesMap[key] ?? 0, prox);
-      maxProx = Math.max(maxProx, prox);
+      setHubCtaGlow((prev) =>
+        Math.abs(prev - live) > 0.028 ? live : prev,
+      );
+    } else {
+      setHubCtaGlow((prev) => (prev > 0 ? 0 : prev));
     }
-
-    setProximity((prev) =>
-      Math.abs(prev.max - maxProx) > 0.012 ||
-      Object.keys(starsMap).some(
-        (id) => Math.abs((prev.stars[id] ?? 0) - (starsMap[id] ?? 0)) > 0.04,
-      )
-        ? { stars: starsMap, edges: edgesMap, max: maxProx }
-        : prev,
-    );
   });
   useEffect(() => {
     if (revealTRef) return;
@@ -645,12 +672,15 @@ function Constellation({
           ? 42 - 14 * nameLift + birth.nameDriftY * 4 + heroSep.nameDrop
           : 18;
         const hubInviteScale =
-          hubPrompt && isHero ? nameScale * 0.58 : nameScale;
+          hubPrompt && isHero ? nameScale * 0.63 : nameScale;
         const hubInviteY = isHero
           ? 26 - 8 * nameLift + birth.nameDriftY * 2.5 + heroSep.nameDrop
           : nameY;
         const nameYResolved = hubPrompt && isHero ? hubInviteY : nameY;
-        const nameX = isHero ? birth.nameDriftX * 5 : 0;
+        /** Hub : +px = texte vers la droite (sous le cœur). Sens inverse du coup trop fort à gauche. */
+        const nameX = isHero
+          ? birth.nameDriftX * 5 + (hubPrompt ? 4 : 0)
+          : 0;
         const nameTracking = isHero
           ? hubPrompt
             ? 0.14
@@ -662,15 +692,10 @@ function Constellation({
         const glowA = hubPrompt && isHero
           ? 0.06 + 0.22 * nameGlow
           : 0.12 + 0.4 * nameGlow;
-        /** T-invite-2 — glow CTA = cyan Hero, modulé approach + breath (plafond doux). */
-        const tapApproachU =
-          hubPrompt && isHero
-            ? Math.min(1, Math.max(0, (hubApproach - 0.55) / 0.35))
-            : 0;
-        const tapGlowU =
-          tapApproachU * (0.4 + 0.6 * Math.min(1, breathDrive));
-        const tapGlowPx = 3 + 12 * tapGlowU;
-        const tapGlowA = 0.06 + 0.32 * tapGlowU;
+        /** T-invite-2 — glow CTA = cyan Hero × prox souris + breath live. */
+        const tapGlowU = hubPrompt && isHero ? hubCtaGlow : 0;
+        const tapGlowPx = 10 + 36 * tapGlowU;
+        const tapGlowA = 0.2 + 0.75 * tapGlowU;
 
         return (
           <group key={star.id} position={pos}>
@@ -830,10 +855,10 @@ function Constellation({
                           fontSize: "6px",
                           letterSpacing: "0.1em",
                           fontWeight: 300,
-                          color: `rgba(${Math.round(161 + 50 * tapGlowU)}, ${Math.round(161 + 55 * tapGlowU)}, ${Math.round(170 + 30 * tapGlowU)}, ${0.75 + 0.2 * tapApproachU})`,
+                          color: `rgba(${Math.round(161 + (94 - 161) * tapGlowU)}, ${Math.round(161 + (234 - 161) * tapGlowU)}, ${Math.round(170 + (212 - 170) * tapGlowU)}, ${0.78 + 0.22 * tapGlowU})`,
                           textShadow:
-                            tapGlowU > 0.04
-                              ? `0 0 ${tapGlowPx.toFixed(1)}px rgba(94, 234, 212, ${tapGlowA.toFixed(2)}), 0 0 ${(tapGlowPx * 0.5).toFixed(1)}px rgba(255, 248, 240, ${(0.04 + 0.14 * tapGlowU).toFixed(2)})`
+                            tapGlowU > 0.05
+                              ? `0 0 ${tapGlowPx.toFixed(1)}px rgba(94, 234, 212, ${tapGlowA.toFixed(2)}), 0 0 ${(tapGlowPx * 1.6).toFixed(1)}px rgba(94, 234, 212, ${(0.12 + 0.35 * tapGlowU).toFixed(2)}), 0 0 ${(tapGlowPx * 0.35).toFixed(1)}px rgba(255, 248, 240, ${(0.08 + 0.22 * tapGlowU).toFixed(2)})`
                               : "none",
                           opacity: Math.min(
                             1,
