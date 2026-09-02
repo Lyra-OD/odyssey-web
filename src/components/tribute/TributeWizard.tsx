@@ -713,11 +713,10 @@ export function TributeWizard({
   const deferHubWebGLUntilReady =
     step1Parcours.showHubHero && step1Parcours.transition !== "panelCloseToHub";
 
-  /** P0 : JPEG au hub · fondu quand WebGL prêt. Close : backdrop D1 via hook. */
+  /** Hub idle : void (#020202) jusqu’au 1er frame WebGL — plus de JPEG gate au cold start.
+   *  JPEG / capture Plan B restent pour freeze panneau + rituel close (hors showHubHero). */
   const hubBackdropOpacity = step1Parcours.showHubHero
-    ? hubWebGLReady
-      ? 0
-      : 1
+    ? 0
     : step1Parcours.backdropOpacity;
 
   const hubWebGLLayerOpacity =

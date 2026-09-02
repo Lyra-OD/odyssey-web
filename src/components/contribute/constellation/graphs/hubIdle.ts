@@ -92,8 +92,9 @@ export const HUB_HERO_BREATH_SPEED = 1.15;
 /**
  * T-invite-3 — souffle plus rapide **hub invite seulement** (hub lite / `hubPrompt`).
  * Ne pas brancher sur reveal, craft lab, ni thaw rituel.
+ * 2.6 ≈ période ~2,4 s (1.5 était encore ~4 s, lu « au ralenti »).
  */
-export const HUB_HERO_BREATH_SPEED_INVITE = 1.5;
+export const HUB_HERO_BREATH_SPEED_INVITE = 2.6;
 
 /** Intensité pulse taille hub → HeroStar.sizeBreath (craft = 0). */
 export const HUB_HERO_SIZE_BREATH = 1.15;
