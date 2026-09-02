@@ -4,11 +4,11 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T-invite-1–3** : copy Une présence / Toucher l’étoile · arcs SVG · souffle arc bas via hubApproach.
 - 2 sept 2026 — **T-open-5** : stagger titre→champs→CTA (80/160/240 ms) pendant émanation.
 - 2 sept 2026 — **T-open-4** : souffle CSS bloom + filante étoile→verre pendant émanation.
 - 2 sept 2026 — **T-open-3** : panneau @ `HUB_FREEZE_PANEL_AT_MS` = hold+fade (760) · ciel 2D figé avant expand.
 - 2 sept 2026 — **T-open-2** : émanation `.parcours-monolith-expand` (scale+opacity · 440 ms) · plus de slide Y.
-- 2 sept 2026 — **T-open-1** : pivot expand `--parcours-expand-origin` = ancre Hero au montage panneau.
 
 **Liens :**
 - Spec Traversée : [`../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §2b
