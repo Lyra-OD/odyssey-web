@@ -1,16 +1,16 @@
 # Parcours UX — Chemin 1 : La Traversée d'Odyssey
 
 **Type :** canon · **Vérité pour :** premier chemin UX (organisateur · première visite) — beats, surfaces, transitions, placeholders craft.  
-**Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-0** : audit trous · G2 Inviter first · carte J3 = A+B+C · prochaine = T2-copy.
 - 2 sept 2026 — **Autosave** : hors ciel hub · visible dans le monolithe Essentiels (+ étapes wizard hors hub).
 - 2 sept 2026 — **Hub cold start** : void → WebGL (plus de JPEG `hub-freeze` au reload) · gel JPEG garde panneau/close.
 - 2 sept 2026 — **T-invite-2–3** : CTA glow cyan live · breath hub invite plus rapide (2.6) · copy Une Présence.
 - 1 sept 2026 — **T-close-5e** : revert 5d · rituel sans transition CSS · thaw 2× rAF @ hold · handoff sans flash.
-- 1 sept 2026 — **T-close-5c** : thaw KEEP @ hold seulement · backdrop pont jusqu’au crossfade (plus @ 88 % collapse).
 
-**Statut :** spec produit **figée** · fermeture **T-close-7** · ouverture **T-open-1–3** (miroir CSS depuis l’étoile).
+**Statut :** T1b + invite **livrés** · **T2-0** audit OK · prochaine **T2-copy** → J3 (Inviter first · A+B+C).
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
@@ -355,7 +355,7 @@ Les tranches **ne dépendent pas** du prologue craft pour démarrer.
 | **T0** | Ce canon + Registry + index docs | Non |
 | **T1** | Infra placeholder : `SkyBackdrop` · `useParcoursUx` · hub Hero · panneau · Chemins A/B | Non · **placeholder 2D** |
 | **T1b** | Hub **WebGL lite animé** · `hubFreezeTo2D` · `panelCloseToHub` · panneau verre teinté | Partiel |
-| **T2** | `backdropToWebGL` · reveal · hub J3 | Non (reveal OK) |
+| **T2** | `backdropToWebGL` · reveal · hub J3 (Inviter first · A+B+C) | Non (reveal OK) · **T2-0 ✅** |
 | **T3** | Cercle : overlay invite + copy | Non |
 | **T4** | Beat Coffre → film (drawer + porte double) | Non |
 | **T5** | Studio sans ciel · ligne checkout | Non |

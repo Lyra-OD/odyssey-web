@@ -1,9 +1,10 @@
 # Parcours UX — Audit des trous (Chemin 1)
 
 **Type :** living · **Vérité pour :** inventaire exhaustif des écarts avant implémentation Traversée — pédagogie · code · craft · copy · DA · décisions.  
-**Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-0** : audit Continuer / J3 / copy · T1b traité comme livré · prochaine = T2 · G2 Inviter first.
 - 31 août 2026 — **Figé** : Chemins A/B · contrat hub WebGL ↔ gel 2D · tranche T1b.
 - 31 août 2026 — G1 tranché · T1 code partiel · gate T1 partiellement passé.
 - 31 août 2026 — Audit initial Chemin 1 · chaînons P0–P3 · matrice 6 catégories · gate avant T1.
@@ -15,6 +16,66 @@
 - Wizard métier : [`WIZARD_ARCHITECTURE.md`](../WIZARD_ARCHITECTURE.md)
 
 **Usage :** cocher / mettre à jour **ici** avant chaque tranche code (T1+). Un trou **P0** non tranché = **stop** implémentation concernée.
+
+---
+
+## 0. T2-0 — État réel repo (2 sept 2026)
+
+Audit **lecture seule** avant code T2. Ne pas confondre « phase parcours nommée » et « UX livrée ».
+
+### Ce qui est livré (T1b + invite)
+
+| Surface | État |
+|---------|------|
+| Hub WebGL lite · dolly · breath invite · Html | ✅ |
+| `hubFreezeTo2D` · Plan B capture · monolithe open (T-open) | ✅ |
+| `panelCloseToHub` · T-close-7 | ✅ |
+| Cold start void→WebGL (plus JPEG gate reload) | ✅ |
+| Autosave hors ciel · dans monolithe | ✅ |
+| Copy hub idle | ✅ `parcoursHeroPrompt` / `TapHint` / open / close / monolith Continue |
+
+### Continuer aujourd’hui (écart P0)
+
+| Étape | Code | Écart vs canon |
+|-------|------|----------------|
+| Clic Continuer monolithe | `goNext` → `flush` → `playReward()` | OK départ |
+| Play A→F | `useWizardStep1Reveal.playReward` · `revealT` 0→1 · durée = craft lab · dwell **3,5 s** | OK craft |
+| Phases parcours | `reward` → `ritual.reveal` · `done` → `hub.postReveal` | Phases **set** |
+| UI J3 | **Absente** | Canon : dwell + carte · code : **rien** |
+| Après dwell | `goNext` enchaîne **`navigateToStep(2)`** | **Tunnel** — trou P0 « Après reveal » |
+| `transition.backdropToWebGL` | **Pas de chorégraphie nommée** | Switch `showRitualWebGL` + `skyActive` via phase reward — pas de crossfade gel→ritual documenté |
+| Caméra | Hub = `hubSkyCamera` (dolly) · Ritual = RevealCamera / défaut constellation | **Deux modes** — alignement 2D↔3D à valider visuellement (P1) |
+| Zodiac ritual | `birthDateToZodiacSign` → template | ✅ branché sur variant ritual |
+| Identité reveal | Prénom seul sur Hero ritual | ✅ approx · settle nom/dates = T2-6 |
+
+### Copy J3 — absente du dictionnaire
+
+Présent : `parcoursHero*` · `parcoursPanelCloseHint` · `parcoursMonolithContinue`.
+
+**Manquant (bloquant UI T2-4/5) :**
+
+| Clé (proposée) | Rôle figé produit |
+|----------------|-------------------|
+| `parcoursConstellationBorn` | Post-draw · *Sa constellation prend forme.* |
+| `parcoursCircleShare` (titre A) | *Plus le cercle partage, plus le ciel s’allume.* |
+| `parcoursSkyVsVault` (sous-ligne B) | *Ils déposent des souvenirs. Vous composez le ciel et le film.* |
+| `parcoursNoRush` (footer C) | *Prenez votre temps. Le ciel attend.* |
+| `parcoursInviteCta` | Inviter (primaire) |
+| `parcoursContinueCta` | Continuer (secondaire) |
+
+### Décisions T2 figées (T2-0)
+
+| # | Décision |
+|---|----------|
+| **G2** | **Inviter first** — CTA Inviter dominant · Continuer soft · skip toujours possible |
+| **Carte J3** | **A** titre + **B** sous-ligne · **C** = `noRush` footer |
+| **Business** | Volume d’invites via promesse ciel/cercle — **jamais** argent / RevShare à l’écran famille |
+
+### Tranches T2 (1 commit chacune) — ordre
+
+`T2-copy` → `T2-1` coupe tunnel → `T2-2` backdropToWebGL → `T2-3` reveal → `T2-4` born → `T2-5` J3 carte A+B+C → `T2-6` identité settle.
+
+Hors T2 : T3 cercle outils · T4 `vault.filmBridge` · G6 durée reveal · prologue.
 
 ---
 
@@ -42,22 +103,21 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | ID | Priorité | Message FR (canon) | Où | Statut spec | Statut code |
 |----|----------|-------------------|-----|-------------|-------------|
-| `parcours.heroPrompt` | P0 | Une présence. Pose son nom. | Hub idle · clic Hero | ✅ | ⏳ |
-| `parcours.constellationBorn` | P1 | Sa constellation prend forme. | Post-reveal | ✅ | ⏳ |
-| **`hub.skyVsVault`** | **P0** | Le Coffre rassemble tout. Le ciel montre l'hommage que la famille choisit d'illuminer. | Hub post-reveal (J3) | ✅ | ⏳ |
-| **`hub.noRush`** | **P1** | Prenez votre temps. Le ciel attend. | Hub post-reveal · footer panneau | ✅ | ⏳ |
-| `parcours.circleShare` | P1 | Plus le cercle partage, plus le ciel s'allume. | Étape 2 / overlay invite | ✅ | ⏳ |
-| **`circle.guestJourney`** | **P0** | Ils reçoivent un lien. Leurs souvenirs entrent dans le Coffre — vous composez le film et le ciel ensemble. | Après 1ère invite ou skip step 2 | ✅ | ⏳ |
-| **`vault.filmBridge`** | **P0** | Ici se rangent les souvenirs. Plus tard, vous en ferez un film. | Avant étape 3 · drawer | ✅ | ⏳ |
-| **`studio.filmBridge`** | **P1** | Maintenant, vous donnez une forme au film — à partir de ce que le Coffre contient. | Entrée étape 4 (chapitres) | ✅ | ⏳ |
-| `media.firstDeposit` | P1 | (Rituel visuel — pas de ligne longue) | Étape 3 si dépôt · slot s'allume | ✅ vision D3 | 🟡 code partiel |
+| `parcours.heroPrompt` | P0 | Une Présence · Toucher l’étoile | Hub idle · clic Hero | ✅ | ✅ |
+| `parcours.constellationBorn` | P1 | Sa constellation prend forme. | Post-reveal | ✅ | ⏳ T2-4 |
+| **`hub.skyVsVault`** | **P0** | Sous-ligne B (raccourci dépôt→ciel/film) | Hub post-reveal (J3) | ✅ | ⏳ T2-copy+5 |
+| **Cercle A** | **P0** | Plus le cercle partage, plus le ciel s’allume. | Titre carte J3 | ✅ | ⏳ T2-copy+5 |
+| **`hub.noRush`** | **P1** | Prenez votre temps. Le ciel attend. | Footer J3 | ✅ | ⏳ T2-copy+5 |
+| `parcours.circleShare` | P1 | (= titre A — réutiliser clé) | Étape 2 / overlay invite | ✅ | ⏳ T3 |
+| **`circle.guestJourney`** | **P0** | Ils reçoivent un lien… | Après 1ère invite ou skip step 2 | ✅ | ⏳ T3 |
+| **`vault.filmBridge`** | **P0** | Ici se rangent les souvenirs… | Avant étape 3 · drawer | ✅ | ⏳ T4 |
+| **`studio.filmBridge`** | **P1** | Maintenant, vous donnez une forme au film… | Entrée étape 4 | ✅ | ⏳ T5 |
+| `media.firstDeposit` | P1 | (Rituel visuel — pas de ligne longue) | Étape 3 si dépôt | ✅ vision D3 | 🟡 |
 | `parcours.filmLeavesSkyStays` | P1 | Le film part, le ciel reste. | Checkout étape 7 | ✅ | ⏳ |
-| **`panel.closeHint`** | **P2** | Fermer · le ciel vous attend | Chrome panneau (tooltip / aria) | ✅ | ⏳ |
-| `channel.souvenirGift` | P2 | C'est un cadeau du salon. Le film peut grandir si la famille le souhaite. | Canal B2B2C · avant Dossier / checkout | ✅ | ⏳ |
+| **`panel.closeHint`** | **P2** | Fermer · le ciel vous attend | Chrome panneau | ✅ | ✅ aria |
+| `channel.souvenirGift` | P2 | Cadeau du salon… | Canal B2B2C | ✅ | ⏳ |
 
-**Trous narratifs résolus par ce tableau :** Coffre→film (P0) · Ciel≠Coffre (P0) · parcours invité (P0) · permission tempo (P1) · Studio←Coffre (P1).
-
-**Encore implicite (ne pas sur-expliquer Chemin 1) :** Lueurs grille B · co-organisateurs · Soft Cap détail · Scanner — voir §6.
+**Trous narratifs :** Coffre→film (P0) · Ciel≠Coffre (P0) · parcours invité (P0) · permission tempo (P1) · Studio←Coffre (P1).
 
 ---
 
@@ -65,54 +125,44 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | Trou | Priorité | Cible spec | Code aujourd'hui | Tranche |
 |------|----------|------------|------------------|---------|
-| **Chemins A / B séparés** | P0 | §1b TRAVERSEE · `virginHub` · `hasSeenPrologue` | 🟡 T1 flags | T1 |
-| **Hub WebGL lite animé** | P0 | `hub.idle` — ciel vivant · Hero pulse | ⏳ PNG + CSS (placeholder) | **T1b** |
-| **`transition.hubFreezeTo2D`** | P0 | Clic Hero · stop GPU · capture/frame | ⏳ cut direct PNG | **T1b** |
-| **`transition.panelCloseToHub`** | P0 | Fermer panneau · reprise hub animé | ⏳ fade noir | **T1b** |
-| Backdrop 2D (image ciel gelé) | P0 | `SkyBackdrop` · même cadrage hub | ✅ T1 placeholder | T1b capture |
-| Machine états `parcours` | P0 | `useParcoursUx` | ✅ T1 | — |
-| Panneau verre open/close fluide | P0 | `transition.panelOpen/Close` + gel 2D | 🟡 T1 Esc + X | T1b |
-| Skip prologue → hub | P1 | flag `hasSeenPrologue` · Chemin A | ⏳ | T6 |
-| Transition image 2D → WebGL | P0 | `transition.backdropToWebGL` | ⏳ | T2 |
-| Hub post-reveal J3 | P0 | carte Inviter / Continuer + dwell | ⏳ `goNext` → step 2 | T2 |
-| Overlay invite sur ciel | P1 | `panel.invite` | 🟡 page step 2 classique | T3 |
+| **Chemins A / B séparés** | P0 | §1b TRAVERSEE · `virginHub` | 🟡 flags | T1 |
+| **Hub WebGL lite animé** | P0 | `hub.idle` | ✅ | **T1b ✅** |
+| **`transition.hubFreezeTo2D`** | P0 | Clic Hero | ✅ | **T1b ✅** |
+| **`transition.panelCloseToHub`** | P0 | Fermer panneau | ✅ T-close-7 | **T1b ✅** |
+| Backdrop 2D | P0 | `SkyBackdrop` · Plan B | ✅ | T1b ✅ |
+| Machine états `parcours` | P0 | `useParcoursUx` | ✅ | — |
+| Panneau verre open/close | P0 | monolithe | ✅ T-open / T-close | T1b ✅ |
+| Skip prologue → hub | P1 | `hasSeenPrologue` | ⏳ | T6 |
+| Transition image 2D → WebGL | P0 | `backdropToWebGL` | 🟡 switch phase · **pas** choré | **T2-2** |
+| Hub post-reveal J3 | P0 | carte Inviter / Continuer + dwell | ⏳ tunnel step 2 | **T2-1 + T2-5** |
+| Overlay invite sur ciel | P1 | `panel.invite` | 🟡 step 2 classique | T3 |
 | Beat drawer Coffre→film | P0 | `VaultFilmBridgeBeat` | ⏳ | T4 |
-| Studio sans ciel WebGL | P1 | fond éditorial steps 4–6 | 🟡 ciel peut encore monter | T5 |
-| Tiroir Coffre global (J5) | P2 | icône depuis hub + studio | ⏳ step 3 seulement | post-T4 |
-| Nav permanente Ciel↔Wizard (J6) | P2 | 1 clic partout | ⏳ | post-T4 |
-| Frame PNG ciel exportée | P0 | capture hub ou export lab · alignement caméra | ⏳ stub milky-way | T1b |
-| Alignement caméra 2D↔3D | P1 | même idle Z reveal | ⏳ à valider visuellement | T2 |
-| Chrome wizard atténué au hub | P1 | stepper / StickyPrice masqués en `hub.idle` | ⏳ visible (confusion UX) | T1b polish |
+| Studio sans ciel WebGL | P1 | steps 4–6 | 🟡 | T5 |
+| Alignement caméra 2D↔3D | P1 | même idle Z reveal | ⏳ valider | **T2-2/3** |
+| Chrome wizard atténué au hub | P1 | `hubChromeHidden` | ✅ | T1b ✅ |
 
 ---
 
-## 4. Code vs spec (vérité repo · août 2026)
+## 4. Code vs spec (vérité repo · sept 2026)
 
 | Écart | Priorité | Spec Chemin 1 | Code actuel | Action |
 |-------|----------|---------------|-------------|--------|
-| Saisie étape 1 | P0 | Hub animé → **gel 2D** · zéro WebGL sous champs | T1 : PNG permanent (placeholder) | **T1b** |
-| Retour draft rempli | P0 | Chemin B → panneau direct | 🟡 `virginHub` | T1 |
-| Après reveal | P0 | Hub J3 dwell | Direct étape 2 | Brancher J3 T2 |
-| Nom de famille requis | ✅ | Prénom + **nom** + 2 dates (G1) | `canProceedEssential` | Aligné — pas de changement code |
-| Co-org étape 2 | P1 | Invite seul (D2) | Co-org encore possible | Retirer J4 |
-| Invité → tiroir d'abord | P1 | D4 · pas auto-star | Partiel Sanctuaire | J7 · pas bloquant T1 |
-| Zodiac 12 signes | P2 | Balance + fallback Leo | Libra + Leo | Craft backlog |
-| `wizardBirthReveal` path doc | P2 | `lib/contribute/wizardBirthReveal.ts` | doc cite `lib/wizard/` | Fix doc WIZARD_ARCHITECTURE |
-| Perf WebGL + formulaire | P0 | Résolu par Traversée | Lag constaté | **Ne pas patcher** — exécuter T1 |
+| Saisie étape 1 | P0 | Gel 2D · zéro WebGL sous champs | ✅ capture + opacity 0 | — |
+| Retour draft rempli | P0 | Chemin B → panneau direct | 🟡 `virginHub` | Polish T1 |
+| Après reveal | P0 | Hub J3 dwell | Direct étape 2 | **T2-1 + T2-5** |
+| Nom de famille requis | ✅ | G1 | `canProceedEssential` | — |
+| Zodiac ritual | P2 | date → silhouette | ✅ | — |
+| Perf WebGL + formulaire | P0 | Traversée | ✅ gel saisie | — |
 
 ---
 
 ## 5. Craft & animation
 
-| Asset / beat | Priorité | État craft | Stub Chemin 1 | Bloque T1–T2 ? |
-|--------------|----------|------------|---------------|----------------|
+| Asset / beat | Priorité | État craft | Stub Chemin 1 | Bloque T2 ? |
+|--------------|----------|------------|---------------|-------------|
 | Prologue éclipse | P2 | ⏳ labs | Skip → hub | **Non** |
-| Wormhole | P2 | ⏳ labs | Skip | **Non** |
-| Hero pulse 2D | P1 | ⏳ | CSS pulse | **Non** |
-| Reveal constellation A→F | P0 | ✅ lab | — | **Non** |
-| Filaments invités animés | P2 | ⏳ | Copy + ghosts | **Non** |
-| Tiroir 3D précieux | P2 | ⏳ | Drawer CSS | **Non** |
-| Premier dépôt → slot | P1 | ⏳ rituel | Optionnel step 3 | **Non** |
+| Reveal constellation A→F | P0 | ✅ lab + `playReward` | — | **Non** |
+| Filaments invités | P2 | ⏳ | Copy + ghosts | **Non** |
 | 11 silhouettes zodiac | P3 | ⏳ | Leo fallback | **Non** |
 
 ---
@@ -121,10 +171,9 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | Trou | Priorité | Action |
 |------|----------|--------|
-| Clés `parcours.*` absentes | P0 | Ajouter FR+EN avant beats UI — voir TRAVERSEE §6 |
-| Voix « film » vs « montage » vs « chapitre » | P1 | Aligner COPY.md · famille pas jargon studio |
-| Messages hub J3 (3 chaînons + CTAs) | P0 | 5–7 clés max · pas de paragraphe |
-| `node scripts/export-copy-catalog.mjs` | P1 | Même commit que clés |
+| Clés J3 absentes | P0 | **T2-copy** — liste §0 |
+| Voix « film » vs jargon | P1 | A+B+C figés · pas RevShare famille |
+| `export-copy-catalog.mjs` | P1 | Même commit que clés |
 
 ---
 
@@ -132,86 +181,68 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | Frame manquante | Priorité | Réf |
 |-----------------|----------|-----|
-| Hub Hero idle + message | P0 | À ajouter `DA_SCREENS.md` |
-| Panneau verre open/close | P0 | idem |
-| Hub post-reveal J3 | P0 | idem |
-| Beat Coffre→film drawer | P1 | idem |
-| Transition 2D→3D (spec visuelle) | P1 | moodboard ou note craft |
-| Checkout farewell | P2 | idem |
-
-**Trou :** pas de doc `PARCOURS_UX_FRAMES.md` — optionnel ; peut vivre dans `DA_SCREENS.md` § Sanctuaire.
+| Hub Hero idle + message | P0 | Partiel live · `DA_SCREENS.md` |
+| Panneau verre open/close | P0 | Live |
+| Hub post-reveal J3 | P0 | **À faire** avec T2-5 |
+| Transition 2D→3D | P1 | Stub crossfade T2-2 |
 
 ---
 
-## 8. Décisions produit ouvertes
+## 8. Décisions produit
 
-| # | Sujet | Options | Recommandation | Gate |
-|---|--------|---------|----------------|------|
-| **G1** | Nom famille étape 1 | **✅ Tranché 31 août 2026** | **Obligatoire** — hommage = identité complète. Prénom = Hero / constellation · nom = famille / titre de l'hommage. Code `canProceedEssential` = spec. | ✅ |
-| **G2** | Hub J3 : Inviter vs Continuer défaut | A) Inviter mis en avant B) neutre | Inviter first (cercle) | P1 |
-| **G3** | `vault.filmBridge` timing | A) après step 2 B) au clic médias | A) systématique Chemin 1 | P0 spec ✅ |
-| **G4** | Retour hub après step 3+ | Toujours accessible ? | Oui J6 — stub nav P2 | P2 |
-| **G5** | Prologue obligatoire 1× | Skip dev / replay ? | Skip dev · 1× prod | P2 |
-| **G6** | Durée reveal prod | 14 s lab vs 8–10 s prod | Ajuster post-T2 perf | P2 |
-| **G7** | État parcours dans DB | `wizard_state.parcours` vs flags projet | `wizard_state` extension | P1 |
-| **G8** | Contrat hub animé ↔ gel 2D | **✅ Tranché 31 août 2026** | Hub = WebGL lite · clic = freeze · fermer = reprise · Continuer = reveal. §2b TRAVERSEE. | ✅ |
+| # | Sujet | État | Note |
+|---|--------|------|------|
+| **G1** | Nom famille | ✅ | Obligatoire |
+| **G2** | Inviter vs Continuer | ✅ **2 sept 2026** | **Inviter first** · Continuer soft |
+| **G3** | `vault.filmBridge` timing | ✅ spec | Après step 2 systématique |
+| **G6** | Durée reveal prod | P2 ouvert | Ajuster **post-T2** |
+| **G7** | État parcours en DB | P1 ouvert | Reload mid-J3 — noter · pas bloquant 1er play |
+| **G8** | Hub ↔ gel 2D | ✅ | §2b |
 
 ---
 
 ## 9. Canal & persona (Chemin 1 vs variantes)
 
-| Trou | Chemin 1 (B2C incognito) | Variante Salon (Chemin 1b · plus tard) |
-|------|--------------------------|--------------------------------------|
-| Souvenir 0 $ expliqué | P2 — moins urgent | P0 `channel.souvenirGift` |
-| Branding tenant | N/A | Logo salon connexion |
-| RevShare / Fonds | Checkout step 7 | Flag tenant · runbook séparé |
-| Parcours invité contribute | Hors Chemin 1 orga | [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md) J7 |
+| Trou | Chemin 1 (B2C) | Variante Salon |
+|------|----------------|----------------|
+| Souvenir 0 $ | P2 | P0 `channel.souvenirGift` |
+| RevShare | Checkout — **pas** hub J3 | Ops salon |
 
-**Ne pas mélanger** Chemin 1 orga et parcours invité dans la même spec sans fork explicite.
+**Ne pas mélanger** orga Chemin 1 et parcours invité sans fork.
 
 ---
 
-## 10. Démo & ops (Patrice · sept 2026)
+## 10. Démo & ops (Patrice)
 
 | Trou | Mitigation |
 |------|------------|
-| Prologue pas prêt | Skip · oral + vidéo craft |
-| J3 absent | Oral « ici la famille respire » · montrer Figma |
-| Coffre→film absent | **Bloquant pitch film** — T4 avant démo si vente montage |
-| Perf live | Traversée T1–T2 obligatoire · pas WebGL sous form |
-| Tenant QA / comptes | [`TEMP/PLAN_DEMO_PATRICE.md`](../TEMP/PLAN_DEMO_PATRICE.md) |
+| J3 absent | **T2** — sinon oral + Figma |
+| Coffre→film | T4 si vente montage |
+| Perf | Pas WebGL sous form — déjà |
+
+**Gate démo-ready vision ciel :** T1b ✅ + **T2**. Film pitch : + T4.
 
 ---
 
-## 11. Gate « prêt à coder T1 »
+## 11. Gate T1 (historique)
 
-Cocher **tous** les P0 spec avant `SkyBackdrop` :
+- [x] Spec Traversée · Registry · Audit · G1 · G8
+- [x] T1b hub + freeze + close (livré sept 2026)
 
-- [x] Spec Traversée canon
-- [x] Registre beats
-- [x] Audit trous (ce doc)
-- [x] Chaînons P0 spec (`hub.skyVsVault`, `circle.guestJourney`, `vault.filmBridge`)
-- [x] **G1** nom famille — **tranché** : obligatoire (hommage) · prénom = Hero
-- [ ] Asset backdrop (PNG ou stub noir acceptable T1)
-- [ ] Clés copy P0 listées (implémentation peut suivre T1 en parallèle)
-
-**Gate « Chemin 1 démo-ready » (Patrice) :** T1 + T2 + T4 + chaînons P0 en copy à l'écran.
+**Gate T2 prêt à coder :** T2-0 ✅ (ce §0) · G2 ✅ · copy listée → enchaîner **T2-copy**.
 
 ---
 
-## 12. Synthèse — les vrais trous avant de continuer
+## 12. Synthèse — vrais trous maintenant
 
-| Catégorie | Combien P0 | Lesquels |
-|-----------|------------|----------|
-| **Pédagogie** | 3 | Ciel≠Coffre · invité→Coffre · Coffre→film |
-| **Infra** | 5 | Hub WebGL lite · hubFreezeTo2D · panelCloseToHub · J3 · backdropToWebGL |
-| **Code** | 2 | T1 placeholder PNG · pas de J3 |
-| **Décision** | 2 | G1 ✅ · G8 ✅ hub ↔ 2D |
-| **Craft** | 0 bloquant | Prologue skip OK |
+| Catégorie | P0 restants T2 | Lesquels |
+|-----------|----------------|----------|
+| **Infra / flux** | 2 | `backdropToWebGL` choré · J3 (coupe tunnel + UI) |
+| **Pédagogie J3** | 2 | Titre A + sous-ligne B (`skyVsVault`) |
+| **Copy** | 1 | Clés J3 absentes |
+| **Craft** | 0 | A→F déjà là |
 
-| **Décision** | 0 ouvert | G1 ✅ · G8 ✅ |
-
-**Conclusion :** **G1 + G8 fermés** — T1 placeholder livré · prochaine tranche **T1b** (hub WebGL animé + transitions gel).
+**Conclusion :** T1b **livré**. Prochaine implémentation = **T2** (copy → tunnel → transition → reveal → J3). Hors scope T2 : T3 invite volume · T4 Coffre→film.
 
 ---
 
@@ -219,7 +250,7 @@ Cocher **tous** les P0 spec avant `SkyBackdrop` :
 
 | Quand | Mettre à jour |
 |-------|---------------|
-| Décision G1 / G8 | Ce doc §8 · TRAVERSEE §1b §2b · SANCTUARY §11b |
-| Fin T1 / T1b | §3 surfaces · §4 code · PROJECT_STATUS |
-| Clés copy | TRAVERSEE §6 · COPY_CATALOG |
-| Frames DA | DA_SCREENS.md |
+| Fin chaque tranche T2 | §0 · §3 · TRAVERSEE changelog |
+| T2-copy | COPY_CATALOG · fr/en |
+| T2-5 | DA_SCREENS J3 · Registry `hub.postReveal` |
+| Décision G6/G7 | §8 |

@@ -1,16 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 28 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 2 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **Parcours T2-0** : audit Continuer/J3 · prochaine T2-copy ([`product/PARCOURS_UX_GAPS.md`](product/PARCOURS_UX_GAPS.md) §0).
 - 28 août 2026 — **Egress revert** : `demoMode.ts` retiré · poll 5 s · stub ops clôturé.
 - 28 août 2026 — Marketing **Phase 3** : `/partners` refonte (4 actes, copy B2B, form au clic, DA cyan + teal lead).
 - 26 août 2026 — Sanctuaire **J2** doc : matrice implémentation §11b [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · séparation canon / playbook démo.
 - 26 août 2026 — CI : job **`next build`** en parallèle de `npm test` (attrape les erreurs TS avant Vercel).
-- 26 août 2026 — **Egress démo VP** : `NEXT_PUBLIC_DEMO_MODE` · poll Coffre off · pas de fallback full-res · DB sans `wizard_state` sur endpoints publics.
-- 21 août 2026 — carte docs : catégories business/product/design + dossiers pour **nouveaux** fichiers ([`README.md`](README.md)).
-- 21 août 2026 — GTM B2C + plan session Figma : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

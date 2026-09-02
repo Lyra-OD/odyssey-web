@@ -336,7 +336,7 @@ Ordre craft recommandé (sessions) : **C1 → C2 → C3 → C4** (C5 en parallè
 | **J0** | Copy hub + décisions 1–3 | Ce doc + [`COPY.md`](../COPY.md) / JSON | ✅ D1–D3 figées |
 | **J1** | Prologue shell | Route onboarding · enchaîne **C4 éclipse + C3 wormhole + ciel** | 1× playable dev — **après gate C** |
 | **J2** | Overlay étape 1 | Panneau verre · prénom + 2 dates · autosave step 1 | 🟡 **partiel** — voir §11b |
-| **J3** | Hub post-récompense | Carte Inviter / Continuer après reveal (2–4 s) | ⏳ pas branché — enchaîne étape 2 |
+| **J3** | Hub post-récompense | Carte Inviter / Continuer après reveal (2–4 s) | ⏳ **T2** (T2-0 audit) — encore tunnel `goNext` → étape 2 |
 | **J4** | Hub + étape 2 overlay | UI post-récompense · invite canal-agnostique · retirer co-org step 2 | Partager · Copier · skip immédiat |
 | **J5** | Tiroir global | Chrome icône Coffre · ouvert depuis ciel + studio | Même banque step 3 |
 | **J6** | Nav permanente | Ciel ↔ wizard ↔ studio ↔ tiroir | 1 clic partout |
@@ -363,7 +363,7 @@ Dernière sync : **31 août 2026**. Mettre à jour **ici** à chaque milestone J
 |-------|-------------|------------------|---------------------|
 | **J1** Prologue | Éclipse → wormhole → **hub WebGL** | ⏳ **Labs only** | Pas de route prod onboarding |
 | **J2** Overlay étape 1 | Hub animé → gel 2D · panneau verre · reveal | 🟡 **T1 placeholder** | `SkyBackdrop` · `SanctuaryHubHero` · `useParcoursUx` · `TributeWizard.tsx` |
-| **J3** Hub post-reveal | Carte Inviter / Continuer · pause 2–4 s | ⏳ **Absent** | Après reveal → `goNext` direct vers étape 2 |
+| **J3** Hub post-reveal | Carte Inviter first · A+B+C · pause 2–4 s | ⏳ **T2** | Après reveal → encore `goNext` step 2 (coupe = T2-1) |
 | **J4** Invite overlay | Canal-agnostique · skip · sans co-org | 🟡 **Ancien flow** | `SanctuaryInviteStep` — co-org encore possible · pas overlay ciel |
 | **J5–J9** | Tiroir global · nav · Lueurs · mobile | ⏳ | Wizard étapes 2–7 inchangées hors J2 |
 
