@@ -835,12 +835,17 @@ export function TributeWizard({
         return;
       }
       setEssentialError(false);
+      /** T2-1 — Continuer joue le reveal puis reste en `hub.postReveal` (pas d’auto step 2). */
       if (step1Sky && step1Reveal.phase !== "done") {
         if (step1RewardPendingRef.current) return;
         step1RewardPendingRef.current = true;
-        await flush();
-        await step1Reveal.playReward();
-        step1RewardPendingRef.current = false;
+        try {
+          await flush();
+          await step1Reveal.playReward();
+        } finally {
+          step1RewardPendingRef.current = false;
+        }
+        return;
       }
     }
     if (currentStep === 4) {

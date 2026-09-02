@@ -43,7 +43,7 @@ Audit **lecture seule** avant code T2. Ne pas confondre « phase parcours nommé
 | Play A→F | `useWizardStep1Reveal.playReward` · `revealT` 0→1 · durée = craft lab · dwell **3,5 s** | OK craft |
 | Phases parcours | `reward` → `ritual.reveal` · `done` → `hub.postReveal` | Phases **set** |
 | UI J3 | **Absente** | Canon : dwell + carte · code : **rien** |
-| Après dwell | `goNext` enchaîne **`navigateToStep(2)`** | **Tunnel** — trou P0 « Après reveal » |
+| Après dwell | `goNext` **return** après `playReward` (T2-1 ✅) | Plus de tunnel step 2 · UI J3 = T2-5 |
 | `transition.backdropToWebGL` | **Pas de chorégraphie nommée** | Switch `showRitualWebGL` + `skyActive` via phase reward — pas de crossfade gel→ritual documenté |
 | Caméra | Hub = `hubSkyCamera` (dolly) · Ritual = RevealCamera / défaut constellation | **Deux modes** — alignement 2D↔3D à valider visuellement (P1) |
 | Zodiac ritual | `birthDateToZodiacSign` → template | ✅ branché sur variant ritual |
@@ -72,9 +72,9 @@ UI J3 = **T2-5** (brancher ces clés).
 
 ### Tranches T2 (1 commit chacune) — ordre
 
-**Fait :** `T2-0` · `T2-lang` · **`T2-copy`** ✅  
+**Fait :** `T2-0` · `T2-lang` · `T2-copy` · **`T2-1`** ✅  
 
-**Suite :** `T2-1` coupe tunnel → `T2-2` backdropToWebGL → `T2-3` reveal → `T2-4` born → `T2-5` J3 carte A+B+C → `T2-6` identité settle.
+**Suite :** `T2-2` backdropToWebGL → `T2-3` reveal → `T2-4` born → `T2-5` J3 carte A+B+C → `T2-6` identité settle.
 
 Hors T2 : T3 cercle outils · T4 `vault.filmBridge` · G6 durée reveal · prologue.
 
@@ -150,7 +150,7 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 |-------|----------|---------------|-------------|--------|
 | Saisie étape 1 | P0 | Gel 2D · zéro WebGL sous champs | ✅ capture + opacity 0 | — |
 | Retour draft rempli | P0 | Chemin B → panneau direct | 🟡 `virginHub` | Polish T1 |
-| Après reveal | P0 | Hub J3 dwell | Direct étape 2 | **T2-1 + T2-5** |
+| Après reveal | P0 | Hub J3 dwell | **T2-1 ✅** reste step 1 · UI carte = T2-5 | **T2-5** |
 | Nom de famille requis | ✅ | G1 | `canProceedEssential` | — |
 | Zodiac ritual | P2 | date → silhouette | ✅ | — |
 | Perf WebGL + formulaire | P0 | Traversée | ✅ gel saisie | — |

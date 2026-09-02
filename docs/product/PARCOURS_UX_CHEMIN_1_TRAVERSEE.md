@@ -4,13 +4,13 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-1** : coupe tunnel Continuer → plus d’auto `navigateToStep(2)` après reveal.
 - 2 sept 2026 — **T2-copy** : copy J3 (cercle A · skyVsVault B · noRush C · born · CTAs) · prochaine **T2-1**.
 - 2 sept 2026 — **T2-lang** : FR/EN always-on studio (hub + rite) · prochaine **T2-copy**.
 - 2 sept 2026 — **T2-0** : audit trous · G2 Inviter first · carte J3 = A+B+C · prochaine = T2-copy.
 - 2 sept 2026 — **Autosave** : hors ciel hub · visible dans le monolithe Essentiels (+ étapes wizard hors hub).
-- 2 sept 2026 — **Hub cold start** : void → WebGL (plus de JPEG `hub-freeze` au reload) · gel JPEG garde panneau/close.
 
-**Statut :** T1b + invite · **T2-0 / lang / copy** ✅ · prochaine **T2-1** (coupe tunnel `goNext`).
+**Statut :** **T2-1** ✅ (reste sur ciel post-reveal) · prochaine **T2-2** (`backdropToWebGL`).
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
