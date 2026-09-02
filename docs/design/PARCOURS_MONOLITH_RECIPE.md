@@ -164,6 +164,12 @@
 
 **T-close-5e :** revert 5d · `skyFadeMs=0` pendant rituel (vars rAF) · thaw 2× rAF @ hold · handoff sans flash.
 
+**T-close-6a :** filante verrouillée sur `hubStarWorldRef` (StarScreenReporter) · départ verre au Z Hero · tête @ pic = centre 3D.
+
+**T-close-6a′ :** kiss CSS + collapse pivot + tracteur → `hubStarProjectedViewport*` (ancre 3D) · plus `hubStarVisualViewport*` (+22 % invite) pour le rituel fermeture.
+
+**T-close-6b :** filante arm @ `useFrame` · cible `hubStarWorldRef` live · départ haut verre (`--parcours-glass-launch-*`) · gel `IdleCameraDrift` · absorption @ impact (plus traverse).
+
 ### P1 — Entrée formulaire (magie panneau) — **après T-close-5**
 Beat actuel trop « slide générique » vs souffle freeze.
 

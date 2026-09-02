@@ -14,15 +14,25 @@ import {
 } from "three";
 
 import {
-  hubStarVisualViewportPx,
+  hubStarWorldReadyRef,
+  hubStarWorldRef,
+  parcoursCloseStreakLockRef,
   resolveHubStarAnchorForClose,
 } from "@/src/components/tribute/hubStarAnchorRef";
 
 const SEGMENTS = 16;
-const LIFE_SEC = 0.54;
+const LIFE_SEC = 0.58;
+/** Tête arrive @ centre Hero — puis absorption (plus de traverse). */
+const IMPACT_U = 0.46;
 const TIP = "#e8fffe";
 const MID = "#00e8f0";
 const TAIL = "#0a4a52";
+
+const tmpEnd = new Vector3();
+const tmpStart = new Vector3();
+const tmpHead = new Vector3();
+const tmpDir = new Vector3();
+const tmpFallback = new Vector3(0, 0, -1.8);
 
 function paintLineColors(
   line: Line,
@@ -49,48 +59,77 @@ function paintLineColors(
   colAttr.needsUpdate = true;
 }
 
-function cinematicFade(u: number): number {
-  if (u < 0.1) {
-    const t = u / 0.1;
-    return t * t * (3 - 2 * t);
-  }
-  if (u > 0.45) {
-    const t = Math.max(0, (1 - u) / 0.55);
-    return Math.pow(t, 1.35);
-  }
-  return 1;
+function easeOutCubic(t: number): number {
+  const x = Math.min(1, Math.max(0, t));
+  return 1 - (1 - x) ** 3;
 }
 
-function readGlassPercent(): { x: number; y: number } {
-  if (typeof document === "undefined") return { x: 50, y: 48 };
+function cinematicFade(u: number, impactU: number): number {
+  if (u < 0.08) {
+    const t = u / 0.08;
+    return t * t * (3 - 2 * t);
+  }
+  if (u < impactU) return 1;
+  const t = Math.max(0, (1 - u) / (1 - impactU));
+  return Math.pow(t, 1.45);
+}
+
+function readGlassLaunchPercent(): { x: number; y: number } {
+  if (typeof document === "undefined") return { x: 50, y: 38 };
   const root = document.documentElement;
+  const lx = parseFloat(
+    root.style.getPropertyValue("--parcours-glass-launch-x").replace("%", ""),
+  );
+  const ly = parseFloat(
+    root.style.getPropertyValue("--parcours-glass-launch-y").replace("%", ""),
+  );
+  if (Number.isFinite(lx) && Number.isFinite(ly)) return { x: lx, y: ly };
   const gx = parseFloat(
     root.style.getPropertyValue("--parcours-glass-x").replace("%", ""),
   );
   const gy = parseFloat(
     root.style.getPropertyValue("--parcours-glass-y").replace("%", ""),
   );
-  if (Number.isFinite(gx) && Number.isFinite(gy)) return { x: gx, y: gy };
-  return { x: 50, y: 48 };
+  if (Number.isFinite(gx) && Number.isFinite(gy)) {
+    return { x: gx, y: Math.max(8, gy - 11) };
+  }
+  return { x: 50, y: 38 };
 }
 
-function screenPxToWorld(
+function screenPxToWorldAtRefDepth(
   px: number,
   py: number,
+  depthRef: Vector3,
   camera: Camera,
   width: number,
   height: number,
-  planeZ: number,
+  out: Vector3,
 ): Vector3 {
-  const ndc = new Vector3(
-    (px / width) * 2 - 1,
-    -(py / height) * 2 + 1,
-    0.5,
+  const depthNdc = depthRef.clone().project(camera).z;
+  out.set((px / width) * 2 - 1, -(py / height) * 2 + 1, depthNdc);
+  return out.unproject(camera);
+}
+
+function resolveStarWorld(
+  camera: Camera,
+  width: number,
+  height: number,
+  out: Vector3,
+): void {
+  if (hubStarWorldReadyRef.current) {
+    out.copy(hubStarWorldRef.current);
+    return;
+  }
+  const anchor = resolveHubStarAnchorForClose();
+  screenPxToWorldAtRefDepth(
+    (anchor.x / 100) * width,
+    (anchor.y / 100) * height,
+    tmpFallback,
+    camera,
+    width,
+    height,
+    out,
   );
-  ndc.unproject(camera);
-  const dir = ndc.sub(camera.position).normalize();
-  const t = (planeZ - camera.position.z) / dir.z;
-  return camera.position.clone().add(dir.multiplyScalar(t));
 }
 
 type ParcoursCloseStreakProps = {
@@ -99,18 +138,18 @@ type ParcoursCloseStreakProps = {
 };
 
 /**
- * Filante dirigée verre → étoile Hero (Chemin 1 fermeture).
- * ADN ShootingStars · pas de blob CSS lens flare.
+ * Filante verre (haut) → étoile Hero — arm @ useFrame · cible live · absorption @ impact.
  */
 export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
   const { camera, size } = useThree();
+  const pendingRef = useRef(false);
   const activeRef = useRef(false);
   const ageRef = useRef(0);
-  const originRef = useRef(new Vector3());
-  const dirRef = useRef(new Vector3());
-  const speedRef = useRef(0);
-  const lengthRef = useRef(0.55);
-  const firedKeyRef = useRef(false);
+  const waitFramesRef = useRef(0);
+  const startRef = useRef(new Vector3());
+  const flightDirRef = useRef(new Vector3());
+  const baseLengthRef = useRef(0.55);
+  const fireLatchRef = useRef(false);
 
   const line = useMemo(() => {
     const positions = new Float32Array(SEGMENTS * 3);
@@ -140,102 +179,116 @@ export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
 
   useEffect(() => {
     if (!fire) {
-      firedKeyRef.current = false;
+      pendingRef.current = false;
       activeRef.current = false;
+      fireLatchRef.current = false;
       ageRef.current = 0;
+      waitFramesRef.current = 0;
+      parcoursCloseStreakLockRef.current = false;
       const mat = line.material as LineBasicMaterial;
       mat.opacity = 0;
       line.visible = false;
       return;
     }
-    if (firedKeyRef.current) return;
-
-    const arm = () => {
-      if (firedKeyRef.current) return;
-      firedKeyRef.current = true;
-
-      const glass = readGlassPercent();
-      const glassPx = {
-        x: (glass.x / 100) * size.width,
-        y: (glass.y / 100) * size.height,
-      };
-      const anchor = resolveHubStarAnchorForClose();
-      const starPx = hubStarVisualViewportPx(anchor);
-      const endPx = starPx ?? glassPx;
-
-      const planeZ = -1.8;
-      const start = screenPxToWorld(
-        glassPx.x,
-        glassPx.y,
-        camera,
-        size.width,
-        size.height,
-        planeZ,
-      );
-      const end = screenPxToWorld(
-        endPx.x,
-        endPx.y,
-        camera,
-        size.width,
-        size.height,
-        planeZ,
-      );
-      const delta = end.clone().sub(start);
-      const dist = delta.length();
-      if (dist < 0.05) {
-        firedKeyRef.current = false;
-        return;
-      }
-      delta.normalize();
-      originRef.current.copy(start).addScaledVector(delta, -0.42);
-      dirRef.current.copy(delta);
-      speedRef.current = dist / (LIFE_SEC * 0.68);
-      lengthRef.current = Math.min(1.35, dist * 0.52);
-      ageRef.current = 0;
-      activeRef.current = true;
-    };
-
-    requestAnimationFrame(arm);
-  }, [fire, camera, size.width, size.height, line]);
+    if (fireLatchRef.current) return;
+    pendingRef.current = true;
+  }, [fire, line]);
 
   useFrame((_, delta) => {
     const mat = line.material as LineBasicMaterial;
+    const w = size.width;
+    const h = size.height;
+
+    if (pendingRef.current && !fireLatchRef.current) {
+      if (!hubStarWorldReadyRef.current) {
+        waitFramesRef.current += 1;
+        if (waitFramesRef.current < 30) return;
+      }
+
+      resolveStarWorld(camera, w, h, tmpEnd);
+
+      const launch = readGlassLaunchPercent();
+      screenPxToWorldAtRefDepth(
+        (launch.x / 100) * w,
+        (launch.y / 100) * h,
+        tmpEnd,
+        camera,
+        w,
+        h,
+        tmpStart,
+      );
+
+      const dist = tmpStart.distanceTo(tmpEnd);
+      if (dist < 0.06) return;
+
+      startRef.current.copy(tmpStart);
+      flightDirRef.current.copy(tmpEnd).sub(tmpStart).normalize();
+      baseLengthRef.current = Math.min(1.05, dist * 0.42);
+      ageRef.current = 0;
+      waitFramesRef.current = 0;
+      activeRef.current = true;
+      pendingRef.current = false;
+      fireLatchRef.current = true;
+      parcoursCloseStreakLockRef.current = true;
+    }
+
     if (!activeRef.current) {
       mat.opacity = 0;
       line.visible = false;
       return;
     }
+
     const dt = Math.min(delta, 0.05);
     ageRef.current += dt;
     const u = ageRef.current / LIFE_SEC;
+
     if (u >= 1) {
       activeRef.current = false;
+      parcoursCloseStreakLockRef.current = false;
       mat.opacity = 0;
       line.visible = false;
       return;
     }
-    const fade = cinematicFade(u);
-    const head = originRef.current.clone().addScaledVector(
-      dirRef.current,
-      speedRef.current * ageRef.current,
-    );
+
+    resolveStarWorld(camera, w, h, tmpEnd);
+    tmpDir.copy(tmpEnd).sub(startRef.current);
+    if (tmpDir.lengthSq() > 1e-8) {
+      flightDirRef.current.copy(tmpDir).normalize();
+    }
+
+    const approachT = Math.min(1, u / IMPACT_U);
+    const eased = easeOutCubic(approachT);
+    if (u < IMPACT_U) {
+      tmpHead.lerpVectors(startRef.current, tmpEnd, eased);
+    } else {
+      tmpHead.copy(tmpEnd);
+    }
+
+    const absorbT =
+      u < IMPACT_U ? 0 : (u - IMPACT_U) / Math.max(0.001, 1 - IMPACT_U);
+    const tailLen =
+      baseLengthRef.current *
+      (u < IMPACT_U ? 1 : Math.max(0, 1 - easeOutCubic(absorbT) * 1.15));
+
+    const dx = flightDirRef.current.x;
+    const dy = flightDirRef.current.y;
+    const dz = flightDirRef.current.z;
     const pos = line.geometry.attributes.position as BufferAttribute;
     const arr = pos.array as Float32Array;
-    const len = lengthRef.current;
-    const dx = dirRef.current.x;
-    const dy = dirRef.current.y;
-    const dz = dirRef.current.z;
     for (let p = 0; p < SEGMENTS; p += 1) {
       const t = p / (SEGMENTS - 1);
-      const along = Math.pow(1 - t, 1.55) * len;
+      const along = Math.pow(1 - t, 1.65) * tailLen;
       const i3 = p * 3;
-      arr[i3] = head.x - dx * along;
-      arr[i3 + 1] = head.y - dy * along;
-      arr[i3 + 2] = head.z - dz * along;
+      arr[i3] = tmpHead.x - dx * along;
+      arr[i3 + 1] = tmpHead.y - dy * along;
+      arr[i3 + 2] = tmpHead.z - dz * along;
     }
     pos.needsUpdate = true;
-    mat.opacity = (0.62 + 0.38 * fade) * Math.min(1, fade * 1.15);
-    line.visible = fade > 0.03;
+
+    const fade = cinematicFade(u, IMPACT_U);
+    const impactBoost = u >= IMPACT_U * 0.92 && u < IMPACT_U + 0.08 ? 1.22 : 1;
+    mat.opacity = (0.64 + 0.36 * fade) * Math.min(1, fade * 1.12) * impactBoost;
+    line.visible = fade > 0.03 || absorbT < 0.95;
   });
 
   return <primitive object={line} />;

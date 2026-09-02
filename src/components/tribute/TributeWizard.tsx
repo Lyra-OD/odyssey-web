@@ -635,6 +635,8 @@ export function TributeWizard({
     root.style.removeProperty("--parcours-star-y");
     root.style.removeProperty("--parcours-glass-x");
     root.style.removeProperty("--parcours-glass-y");
+    root.style.removeProperty("--parcours-glass-launch-x");
+    root.style.removeProperty("--parcours-glass-launch-y");
     root.style.removeProperty("--parcours-tracteur-dx");
     root.style.removeProperty("--parcours-tracteur-dy");
     root.style.removeProperty("--parcours-tracteur-angle");

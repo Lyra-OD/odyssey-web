@@ -667,6 +667,9 @@ function Constellation({
                   parallax={0}
                   phase={i * 1.7}
                 />
+                {isHero && (isFocus || reportHeroScreen) ? (
+                  <StarScreenReporter active onScreen={onStarScreen} />
+                ) : null}
               </group>
             ) : !useCraftHero ? (
               <LueurNode
@@ -690,7 +693,9 @@ function Constellation({
                 }
               />
             ) : null}
-            {isHero && (isFocus || reportHeroScreen) ? (
+            {isHero &&
+            (isFocus || reportHeroScreen) &&
+            !(useCraftHero && heroAtom && showHeroStar) ? (
               <StarScreenReporter active onScreen={onStarScreen} />
             ) : null}
             {star.role === "hero" || (star.lit && star.memory) ? (

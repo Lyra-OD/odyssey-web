@@ -1,4 +1,21 @@
 import type { ScreenAnchor } from "@/src/components/contribute/constellation/StarScreenReporter";
+import { Vector3 } from "three";
+
+/**
+ * Position monde Hero @ useFrame (StarScreenReporter) — cible filante 3D.
+ */
+export const hubStarWorldRef = { current: new Vector3() };
+
+/** true dès qu’un frame hub a publié la position monde. */
+export const hubStarWorldReadyRef = { current: false };
+
+/** Gel dérive caméra idle pendant la filante fermeture. */
+export const parcoursCloseStreakLockRef = { current: false };
+
+export function resetHubStarWorldRef(): void {
+  hubStarWorldRef.current.set(0, 0, 0);
+  hubStarWorldReadyRef.current = false;
+}
 
 /**
  * Projection étoile hub — écrit depuis le Canvas (useFrame), lu en DOM (rAF).
@@ -40,7 +57,34 @@ function rootFontSizePx(): number {
   return parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 }
 
-/** Centre optique Hero (viewport px) — pas seulement l’origine 3D projetée. */
+/**
+ * Projection WebGL Hero → viewport px (StarScreenReporter).
+ * Rituel fermeture : kiss CSS · collapse · filante — même cible que `hubStarWorldRef`.
+ */
+export function hubStarProjectedViewportPx(
+  anchor: ScreenAnchor | null,
+): { x: number; y: number } | null {
+  if (typeof window === "undefined" || !anchor) return null;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  return {
+    x: (anchor.x / 100) * vw,
+    y: (anchor.y / 100) * vh,
+  };
+}
+
+/** % viewport — rituel fermeture (pas l’offset hitbox invite). */
+export function hubStarProjectedViewportPercent(
+  anchor: ScreenAnchor | null,
+): ScreenAnchor {
+  if (!anchor) return { ...HUB_HERO_FALLBACK_ANCHOR };
+  return {
+    x: Math.min(92, Math.max(8, anchor.x)),
+    y: Math.min(90, Math.max(10, anchor.y)),
+  };
+}
+
+/** Centre optique Hero (viewport px) — hit `SanctuaryHubHero` · invite sous l’étoile. */
 export function hubStarVisualViewportPx(
   anchor: ScreenAnchor | null,
 ): { x: number; y: number } | null {
@@ -71,7 +115,7 @@ export function hubStarVisualViewportPercent(
   };
 }
 
-/** transform-origin local — aspiration verre → centre optique étoile. */
+/** transform-origin local — aspiration verre → projection Hero (alignée filante). */
 export function hubStarCollapseTransformOrigin(
   anchor: ScreenAnchor | null,
   rect: DOMRect,
@@ -82,7 +126,7 @@ export function hubStarCollapseTransformOrigin(
   if (!anchor || rect.width <= 0 || rect.height <= 0) {
     return "50% 45%";
   }
-  const visual = hubStarVisualViewportPx(anchor);
+  const visual = hubStarProjectedViewportPx(anchor);
   if (!visual) return "50% 45%";
   const ox = ((visual.x - rect.left) / rect.width) * 100;
   const oy = ((visual.y - rect.top) / rect.height) * 100;
@@ -93,12 +137,12 @@ export function hubStarCollapseTransformOrigin(
   return `${clamp(ox)}% ${clamp(oy)}%`;
 }
 
-/** Sync CSS vars étoile sur un élément (fermeture rAF). */
+/** Sync CSS vars étoile sur un élément (fermeture rAF · projection 3D). */
 export function syncHubStarCssVars(
   el: HTMLElement,
   anchor: ScreenAnchor | null,
 ): void {
-  const star = hubStarVisualViewportPercent(anchor);
+  const star = hubStarProjectedViewportPercent(anchor);
   el.style.setProperty("--parcours-star-x", `${star.x}%`);
   el.style.setProperty("--parcours-star-y", `${star.y}%`);
 }
@@ -116,6 +160,19 @@ export function hubGlassCenterViewportPercent(rect: DOMRect): ScreenAnchor {
   };
 }
 
+/** Haut du verre (~16 %) — départ filante fermeture (arc vers Hero). */
+export function hubGlassLaunchViewportPercent(rect: DOMRect): ScreenAnchor {
+  if (typeof window === "undefined" || rect.width <= 0 || rect.height <= 0) {
+    return { x: 50, y: 38 };
+  }
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height * 0.16;
+  return {
+    x: (cx / window.innerWidth) * 100,
+    y: (cy / window.innerHeight) * 100,
+  };
+}
+
 /** T-close-3 — halo tracteur : verre → étoile (viewport px + %). */
 export function syncCloseTracteurCssVars(
   el: HTMLElement,
@@ -124,14 +181,20 @@ export function syncCloseTracteurCssVars(
 ): void {
   syncHubStarCssVars(el, anchor);
   const glass = hubGlassCenterViewportPercent(glassRect);
+  const launch = hubGlassLaunchViewportPercent(glassRect);
   el.style.setProperty("--parcours-glass-x", `${glass.x}%`);
   el.style.setProperty("--parcours-glass-y", `${glass.y}%`);
-  const visual = hubStarVisualViewportPx(anchor);
-  if (visual) {
-    const cx = glassRect.left + glassRect.width / 2;
-    const cy = glassRect.top + glassRect.height / 2;
-    const dx = visual.x - cx;
-    const dy = visual.y - cy;
+  el.style.setProperty("--parcours-glass-launch-x", `${launch.x}%`);
+  el.style.setProperty("--parcours-glass-launch-y", `${launch.y}%`);
+  const projected = hubStarProjectedViewportPx(anchor);
+  if (projected) {
+    const launchPx = hubGlassLaunchViewportPercent(glassRect);
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const lx = (launchPx.x / 100) * vw;
+    const ly = (launchPx.y / 100) * vh;
+    const dx = projected.x - lx;
+    const dy = projected.y - ly;
     el.style.setProperty("--parcours-tracteur-dx", `${dx}px`);
     el.style.setProperty("--parcours-tracteur-dy", `${dy}px`);
     const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;

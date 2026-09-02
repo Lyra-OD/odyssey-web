@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 
 import { useSkyTheme, type RareSkyTarget } from "./skyTheme";
 import { skyIntroRef } from "./SkyIntroEclipse";
+import { parcoursCloseStreakLockRef } from "@/src/components/tribute/hubStarAnchorRef";
 
 export type { RareSkyTarget };
 
@@ -77,6 +78,8 @@ export function IdleCameraDrift() {
       idleCameraRef.rarePulse = 0;
       return;
     }
+
+    if (parcoursCloseStreakLockRef.current) return;
 
     const ease = Math.min(1, delta * 1.8);
     const now =

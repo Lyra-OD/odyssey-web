@@ -4,6 +4,12 @@ import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 
+import {
+  hubStarWorldReadyRef,
+  hubStarWorldRef,
+  resetHubStarWorldRef,
+} from "@/src/components/tribute/hubStarAnchorRef";
+
 export type ScreenAnchor = { x: number; y: number };
 
 type StarScreenReporterProps = {
@@ -32,6 +38,7 @@ export function StarScreenReporter({
   useEffect(() => {
     if (!active) {
       last.current = null;
+      resetHubStarWorldRef();
       onScreenRef.current(null);
     }
   }, [active]);
@@ -40,6 +47,8 @@ export function StarScreenReporter({
     if (!active || !group.current) return;
     const v = tmp.current;
     group.current.getWorldPosition(v);
+    hubStarWorldRef.current.copy(v);
+    hubStarWorldReadyRef.current = true;
     v.project(camera);
     const x = (v.x * 0.5 + 0.5) * 100;
     const y = (-v.y * 0.5 + 0.5) * 100;
