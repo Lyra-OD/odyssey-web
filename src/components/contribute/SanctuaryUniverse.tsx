@@ -767,14 +767,14 @@ function Constellation({
                   whiteSpace: "nowrap",
                   textAlign: hubPrompt && isHero ? "center" : undefined,
                   width: hubPrompt && isHero ? "max-content" : undefined,
-                  fontSize: hubPrompt && isHero ? "9.5px" : isHero ? "19px" : "11px",
+                  fontSize: hubPrompt && isHero ? "6px" : isHero ? "19px" : "11px",
                   lineHeight: hubPrompt && isHero ? 1.35 : undefined,
                   fontFamily:
                     hubPrompt && isHero
-                      ? "var(--font-editorial), ui-serif, Georgia, serif"
+                      ? 'var(--font-label), "Inter", ui-sans-serif, system-ui, sans-serif'
                       : undefined,
                   letterSpacing: hubPrompt && isHero
-                    ? "0.14em"
+                    ? "0.1em"
                     : `${nameTracking.toFixed(3)}em`,
                   fontWeight: 300,
                   opacity: nameOpacity,
@@ -784,12 +784,12 @@ function Constellation({
                       : undefined,
                   color: isHero
                     ? hubPrompt
-                      ? "rgba(244, 244, 245, 0.88)"
+                      ? undefined
                       : `rgba(255, 252, 248, ${0.72 + 0.22 * nameClarity})`
                     : "rgba(204, 251, 241, 0.6)",
                   textShadow: isHero
                     ? hubPrompt
-                      ? `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)})`
+                      ? "none"
                       : `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)}), 0 0 ${(glowPx * 0.45).toFixed(0)}px rgba(255, 248, 240, ${
                           0.08 + 0.2 * nameGlow
                         })`
@@ -804,11 +804,24 @@ function Constellation({
                     style={{
                       display: "inline-block",
                       whiteSpace: "nowrap",
-                      transform: "scaleX(1.06)",
                       transformOrigin: "50% 0%",
                     }}
                   >
-                    {star.name}
+                    <span
+                      style={{
+                        display: "block",
+                        textTransform: "uppercase",
+                        fontFamily:
+                          'var(--font-label), "Inter", ui-sans-serif, system-ui, sans-serif',
+                        fontSize: "7.5px",
+                        letterSpacing: "0.2em",
+                        fontWeight: 300,
+                        lineHeight: 1.25,
+                        color: "rgba(244, 244, 245, 0.72)",
+                      }}
+                    >
+                      {star.name}
+                    </span>
                     {hubTapHint && hubTapHintVisible(hubApproach) ? (
                       <span
                         style={{
