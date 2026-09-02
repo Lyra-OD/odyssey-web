@@ -4,13 +4,13 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 2 sept 2026 — **T2-reward-perf** : ForceRenderLoop 30 fps overlay · setRevealT ~4 Hz · HeroStar sans veil/grain.
-- 2 sept 2026 — **T2-sticky** : sticky Continuer masqué en `done` / `hub.postReveal` — seul P0 « Revenir à l’essentiel ».
-- 2 sept 2026 — **T2-perf** : 1 Canvas hub→ritual · setState reveal throttlé · section sans `bg-black` en overlay · JPEG gel au reveal.
+- 2 sept 2026 — **T2-sticky** : sticky **absent** sur tout le ciel step1 (reward/done/postReveal) — seul P0 « Revenir à l’essentiel » en bas.
+- 2 sept 2026 — **T2-reward-perf** : remount Canvas hub≠ritual · ForceRenderLoop 24 fps overlay · HeroStar lite · sync ~4 Hz.
+- 2 sept 2026 — **T2-perf** : setState reveal throttlé · section sans `bg-black` en overlay · JPEG gel au reveal.
 - 2 sept 2026 — **Suite nav** : P1 Atelier · P2 fil constellation documentés (§ dédié) — pas encore codés.
 - 2 sept 2026 — **P0** : retour Essentiels post-reveal · déconnexion sous langue.
 
-**Statut :** **T2-reward-perf** ✅ · prochaine **T2-2** · suite nav P1/P2 · P0 ✅.
+**Statut :** **T2-sticky+reward-perf** ✅ · tester **uniquement** `http://localhost:3000` · suite nav P1/P2 · P0 ✅.
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)

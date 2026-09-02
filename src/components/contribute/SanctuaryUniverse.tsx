@@ -1056,7 +1056,7 @@ function UniverseScene({
       <ForceRenderLoop
         enabled={skyActive}
         wakeKey={skyWakeKey}
-        maxFps={overlayOnBackdrop ? 30 : 60}
+        maxFps={overlayOnBackdrop ? 24 : 60}
       />
       {/* Craft : zoom fixe (pas de molette qui recentre) */}
       <WheelZoom enabled={!craftLite} />

@@ -220,6 +220,7 @@ export function SanctuaryWizardStep1Sky({
       aria-hidden
     >
       <SanctuaryUniverse
+        key={isHubLite ? "parcours-hub" : "parcours-ritual"}
         mode="background"
         locale={locale === "en" ? "en" : "fr"}
         constellationVisible
