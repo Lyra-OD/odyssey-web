@@ -22,54 +22,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/** Chemin 1 — invite hub Option C (texte droit dans <Html> drei). */
-.hub-invite-html {
-  position: relative;
-  width: 18rem;
-  height: 0;
-  pointer-events: none;
-}
-
-.hub-invite-html-prompt {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  margin: 0;
-  transform: translate(-50%, calc(-1 * clamp(40px, 14vw, 60px)));
-  text-align: center;
-  text-transform: uppercase;
-  font-family: var(--font-label), "Inter", ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(0.58rem, 1.45vw, 0.72rem);
-  font-weight: 300;
-  letter-spacing: 0.28em;
-  line-height: 1.2;
-  white-space: nowrap;
-  color: inherit;
-  pointer-events: none;
-  user-select: none;
-}
-
-.hub-invite-html-prompt,
-.hub-invite-html-cta {
-  color: inherit;
-}
-
-.hub-invite-html-cta {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translate(-50%, clamp(40px, 14vw, 60px));
-  text-align: center;
-  font-family: var(--font-label), "Inter", ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(0.68rem, 1.6vw, 0.82rem);
-  font-weight: 300;
-  letter-spacing: 0.06em;
-  line-height: 1.25;
-  white-space: nowrap;
-  pointer-events: none;
-  user-select: none;
-}
-
 /** Chemin 1 — T-open-2 : émanation depuis l’étoile (scale + opacity · ease-out). */
 @keyframes parcours-monolith-expand {
   0% {
