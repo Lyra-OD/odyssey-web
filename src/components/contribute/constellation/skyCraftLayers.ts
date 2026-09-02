@@ -36,7 +36,7 @@ export const SKY_HUB_LITE_LAYERS: Record<SkyCraftLayerId, boolean> = {
   starsBand: true,
   starsField: true,
   shootingStars: false,
-  /** Hero KEEP @ revealT 0.56 — visible sans traits ; caméra = HubSkyCamera. */
+  /** Hero KEEP @ revealT 0.56 — couche Constellation (Hero seul via hubHeroOnly). */
   constellation: true,
 };
 

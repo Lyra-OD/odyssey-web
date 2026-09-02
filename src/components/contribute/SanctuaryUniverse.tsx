@@ -187,6 +187,11 @@ export type ConstellationRevealCraft = {
   /** Chemin 1 hub — sous-texte tap (Html sous l’invite). */
   hubTapHint?: string;
   /**
+   * Chemin 1 hub / saisie — Hero seul : zéro trait, zéro slot, zéro silhouette.
+   * Désactivé au reward (Continuer).
+   */
+  hubHeroOnly?: boolean;
+  /**
    * Wizard — `false` gèle le WebGL (stop ForceRenderLoop, dpr 1).
    * Défaut `true` (labs / immersive).
    */
@@ -302,6 +307,7 @@ function Constellation({
   hubBirthMode = false,
   /** T2-reward-perf — overlay gel : Hero lite + moins de setState. */
   heroPerfLite = false,
+  hubHeroOnly = false,
   slotStars = DEFAULT_SLOT_STARS,
   bridges = DEFAULT_BRIDGES,
   slotLit,
@@ -343,6 +349,8 @@ function Constellation({
   hubBirthMode?: boolean;
   /** Overlay gel Continuer — moins de setState / Hero lite. */
   heroPerfLite?: boolean;
+  /** Hub / saisie — traits et slots masqués. */
+  hubHeroOnly?: boolean;
   slotStars?: SlotStarsCraft;
   bridges?: BridgesCraft;
   slotLit?: Record<string, boolean>;
@@ -583,9 +591,11 @@ function Constellation({
     <group position={[-0.45, -0.7 + heroSep.heroLift, 0]} scale={graphScale}>
       {stars.map((star, i) => {
         const pos = positions[star.id] ?? star.position;
+        const isHero = star.role === "hero";
+        if (hubHeroOnly && !isHero) return null;
+
         const appearRaw = draw.nodeAppear[star.id] ?? 0;
         const appear = slotWakeAppear(appearRaw, drawPhase.beat);
-        const isHero = star.role === "hero";
 
         // Hero slot: show for name alone, or when star is born
         const heroAnchor =
@@ -903,6 +913,7 @@ function Constellation({
           </group>
         );
       })}
+      {!hubHeroOnly ? (
       <LightBridges
         positions={positions}
         edges={template.edges}
@@ -922,6 +933,7 @@ function Constellation({
         tipTrailLen={tipTrailLen}
         bridges={bridges}
       />
+      ) : null}
     </group>
   );
 }
@@ -998,6 +1010,7 @@ function UniverseScene({
   const hideHeroName = craftReveal?.hideHeroName ?? false;
   const hubPrompt = craftReveal?.hubPrompt === true;
   const hubTapHint = craftReveal?.hubTapHint;
+  const hubHeroOnly = craftReveal?.hubHeroOnly === true;
   const slotStars = craftReveal?.slotStars ?? DEFAULT_SLOT_STARS;
   const bridges = craftReveal?.bridges ?? DEFAULT_BRIDGES;
   const slotLit = craftReveal?.slotLit;
@@ -1255,6 +1268,7 @@ function UniverseScene({
                 reportHeroScreen={hubSkyCamera && showConstellation}
                 hubBirthMode={hubSkyCamera}
                 heroPerfLite={!wizardRewardFullPerf && overlayOnBackdrop}
+                hubHeroOnly={hubHeroOnly}
                 slotStars={slotStars}
                 bridges={bridges}
                 slotLit={slotLit}

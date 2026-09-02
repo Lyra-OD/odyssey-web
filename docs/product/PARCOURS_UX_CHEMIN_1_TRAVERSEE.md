@@ -4,7 +4,8 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 2 sept 2026 — **T1-reward** : Continuer 8 s (`WIZARD_REWARD_REVEAL_MS`) · 60 fps + Hero full · canvas sans remount hub/ritual.
+- 2 sept 2026 — **T1-hotfix** : key hub/ritual restaurée · hubHeroOnly (zéro traits Léo avant Continuer).
+- 2 sept 2026 — **T1-reward** : Continuer 8 s · 60 fps + Hero full · canvas chaud (remount ritual temporaire).
 - 2 sept 2026 — **T2-gel-photo** : Continuer / postReveal = **même capture canvas** que le panneau Essentiels (plus de forcer `hub-freeze-v1.jpg`).
 - 2 sept 2026 — **T2-sticky** : sticky **absent** sur tout le ciel step1 — seul P0 « Revenir à l’essentiel » en bas.
 - 2 sept 2026 — **T2-reward-perf** : remount Canvas hub≠ritual · ForceRenderLoop 24 fps overlay · HeroStar lite · sync ~4 Hz.

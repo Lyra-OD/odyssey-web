@@ -13,7 +13,6 @@ import {
 import { HUB_HERO_BREATH_SPEED_INVITE } from "@/src/components/contribute/constellation/graphs/hubIdle";
 import type { ScreenAnchor } from "@/src/components/contribute/constellation/StarScreenReporter";
 import {
-  allGhostSlotLit,
   resolveConstellationTemplate,
   resolveStrokeSequence,
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
@@ -70,7 +69,6 @@ const HUB_IDLE_REVEAL_REF = { current: WIZARD_IDLE_REVEAL_T } as MutableRefObjec
 
 const HUB_LITE_TEMPLATE = resolveConstellationTemplate(null);
 const HUB_LITE_STROKE = resolveStrokeSequence(null);
-const HUB_LITE_SLOT_LIT = allGhostSlotLit(HUB_LITE_TEMPLATE);
 
 function buildHubLiteCraftReveal(
   skyActive: boolean,
@@ -85,6 +83,7 @@ function buildHubLiteCraftReveal(
     hideHeroName: false,
     hubPrompt: true,
     hubTapHint,
+    hubHeroOnly: true,
     heroName,
     skyActive,
     silhouetteIdle: false,
@@ -98,7 +97,6 @@ function buildHubLiteCraftReveal(
       embedScale: 0.42,
       globalScale: DEFAULT_HERO_GLOBAL_SCALE,
     },
-    slotLit: HUB_LITE_SLOT_LIT,
     graphScale: 1,
     tipStrength: 1.2,
     tipStyle: "orb",
@@ -220,6 +218,7 @@ export function SanctuaryWizardStep1Sky({
       aria-hidden
     >
       <SanctuaryUniverse
+        key={isHubLite ? "parcours-hub" : "parcours-ritual"}
         mode="background"
         locale={locale === "en" ? "en" : "fr"}
         constellationVisible
