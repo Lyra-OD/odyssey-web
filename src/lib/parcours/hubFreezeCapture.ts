@@ -5,8 +5,13 @@ export function captureHubCanvas(canvas: HTMLCanvasElement | null): string | nul
   if (!canvas || canvas.width === 0 || canvas.height === 0) return null;
   try {
     revokeHubFreezeCapture();
-    const url = canvas.toDataURL("image/png");
-    if (!url.startsWith("data:image/png")) return null;
+    /**
+     * JPEG et pas PNG : l'encodage est synchrone et bloque le thread principal.
+     * En PNG plein écran ça coûte plusieurs secondes de gel + une data URL de
+     * plusieurs Mo que le compositeur doit ensuite redécoder.
+     */
+    const url = canvas.toDataURL("image/jpeg", 0.82);
+    if (!url.startsWith("data:image/jpeg")) return null;
     hubFreezeCaptureRef.url = url;
     return url;
   } catch (err) {

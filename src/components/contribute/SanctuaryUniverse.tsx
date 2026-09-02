@@ -1008,8 +1008,14 @@ function UniverseScene({
   const heroParallax = craftReveal?.heroParallax ?? DEFAULT_HERO_PARALLAX;
   const heroName = craftReveal?.heroName;
   const hideHeroName = craftReveal?.hideHeroName ?? false;
-  const hubPrompt = craftReveal?.hubPrompt === true;
-  const hubTapHint = craftReveal?.hubTapHint;
+  /**
+   * L'invite du hub est une couche HTML (drei `Html`) au-dessus du canvas :
+   * elle ne doit jamais survivre au passage en rituel, sinon elle se superpose
+   * au prénom 3D et à la constellation. `hubSkyCamera` est faux dès le reward,
+   * donc il sert de verrou dur — indépendamment de ce que contient craftReveal.
+   */
+  const hubPrompt = craftReveal?.hubPrompt === true && hubSkyCamera;
+  const hubTapHint = hubSkyCamera ? craftReveal?.hubTapHint : undefined;
   const hubHeroOnly = craftReveal?.hubHeroOnly === true;
   const slotStars = craftReveal?.slotStars ?? DEFAULT_SLOT_STARS;
   const bridges = craftReveal?.bridges ?? DEFAULT_BRIDGES;
@@ -1238,7 +1244,7 @@ function UniverseScene({
           >
             <ConstellationLeash>
               <Constellation
-                key={constellationTemplate.id}
+                key={`${constellationTemplate.id}|${hubSkyCamera ? "hub" : "ritual"}`}
                 onSelectMemory={onSelectMemory}
                 focusedSoulId={focus?.soulId ?? null}
                 focusBoost={focusBoost}
@@ -1295,7 +1301,11 @@ function createRenderer(
     antialias: false,
     depth: true,
     stencil: false,
-    powerPreference: "low-power",
+    /**
+     * Le contexte est créé ici : c'est ce `powerPreference` qui décide du GPU,
+     * pas celui passé à `WebGLRenderer` (ignoré quand on fournit un contexte).
+     */
+    powerPreference: "high-performance",
     failIfMajorPerformanceCaveat: false,
     preserveDrawingBuffer: options?.preserveDrawingBuffer ?? false,
     premultipliedAlpha: true,

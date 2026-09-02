@@ -847,10 +847,10 @@ export function TributeWizard({
         if (step1RewardPendingRef.current) return;
         step1RewardPendingRef.current = true;
         try {
-          /** Même gel photo que la saisie — avant remount Canvas ritual. */
-          step1Parcours.ensureFreezeCapture();
-          await flush();
+          /** Autosave en parallèle : l'attendre ici retardait le départ du reward. */
+          const saving = flush();
           await step1Reveal.playReward();
+          await saving;
         } finally {
           step1RewardPendingRef.current = false;
         }
@@ -881,7 +881,6 @@ export function TributeWizard({
     navigateToStep,
     step1Reveal,
     step1Sky,
-    step1Parcours.ensureFreezeCapture,
     flush,
     wizardStoryboard.structureValidation,
     wizardStoryboard.duplicateSongInfo,

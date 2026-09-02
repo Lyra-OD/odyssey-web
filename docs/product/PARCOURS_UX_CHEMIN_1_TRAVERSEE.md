@@ -4,15 +4,22 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 2 sept 2026 — **T1-hotfix** : key hub/ritual restaurée · hubHeroOnly (zéro traits Léo avant Continuer).
-- 2 sept 2026 — **T1-reward** : Continuer 8 s · 60 fps + Hero full · canvas chaud (remount ritual temporaire).
+- 2 sept 2026 — **T1-invite-off** : l'invite hub (`hubPrompt` / `hubTapHint`) est verrouillée sur `hubSkyCamera` — plus aucun texte du hub par-dessus la constellation en reward / postReveal. Copy Option C : « Une présence. » / « Toucher l'étoile ».
+- 2 sept 2026 — **T1-perf-runtime** : GPU `high-performance` (le ciel tournait en `low-power` depuis le 29 juil.) · gel capturé en JPEG (le PNG bloquait le thread) · **plus de remount WebGL** au Continuer (reset ciblé sur la sous-scène Constellation) · `revealT` hors re-render React pendant le play.
+- 2 sept 2026 — **T1-hotfix** : hubHeroOnly (zéro traits Léo avant Continuer).
+- 2 sept 2026 — **T1-reward** : Continuer 8 s · 60 fps + Hero full.
 - 2 sept 2026 — **T2-gel-photo** : Continuer / postReveal = **même capture canvas** que le panneau Essentiels (plus de forcer `hub-freeze-v1.jpg`).
 - 2 sept 2026 — **T2-sticky** : sticky **absent** sur tout le ciel step1 — seul P0 « Revenir à l’essentiel » en bas.
-- 2 sept 2026 — **T2-reward-perf** : remount Canvas hub≠ritual · ForceRenderLoop 24 fps overlay · HeroStar lite · sync ~4 Hz.
-- 2 sept 2026 — **T2-perf** : setState reveal throttlé · section sans `bg-black` en overlay.
-- 2 sept 2026 — **P0** : retour Essentiels post-reveal · déconnexion sous langue.
 
-**Statut :** **T2-gel-photo** ✅ · tester **uniquement** `http://localhost:3000` · suite nav P1/P2 · P0 ✅.
+**Statut :** **T1-perf-runtime** ✅ · tester **uniquement** `http://localhost:3000` · suite nav P1/P2 · P0 ✅.
+
+> **Mesure reward, méthode identique des deux côtés** (`ffmpeg mpdecimate` sensibilité max sur capture 120 fps, comptage des images réellement repeintes) :
+> | | avant (17h50) | après (18h08) |
+> |---|---|---|
+> | fps médian | **30** | **60** |
+> | saccades > 200 ms | **9** (max 480 ms) | **0** |
+>
+> Toute mesure à seuil plus grossier est trompeuse ici : les traits de constellation sont très peu contrastés en début de reveal et passent sous le seuil, ce qui fait croire à un gel complet.
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)

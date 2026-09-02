@@ -13,6 +13,7 @@ import {
 import { HUB_HERO_BREATH_SPEED_INVITE } from "@/src/components/contribute/constellation/graphs/hubIdle";
 import type { ScreenAnchor } from "@/src/components/contribute/constellation/StarScreenReporter";
 import {
+  allGhostSlotLit,
   resolveConstellationTemplate,
   resolveStrokeSequence,
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
@@ -217,8 +218,13 @@ export function SanctuaryWizardStep1Sky({
       }}
       aria-hidden
     >
+      {/**
+        * Pas de `key` ici : changer de key détruit le contexte WebGL au clic
+        * Continuer (recompilation des shaders = plusieurs secondes de gel, le
+        * reward se joue pendant que l'écran est figé). L'isolation hub/ritual
+        * se fait sur la sous-scène Constellation, côté SanctuaryUniverse.
+        */}
       <SanctuaryUniverse
-        key={isHubLite ? "parcours-hub" : "parcours-ritual"}
         mode="background"
         locale={locale === "en" ? "en" : "fr"}
         constellationVisible

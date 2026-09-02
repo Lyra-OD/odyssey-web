@@ -49,17 +49,17 @@ export function useWizardStep1Reveal(
       revealTRef.current = 0;
       setRevealT(0);
       const t0 = performance.now();
-      let lastUi = 0;
 
       const tick = (now: number) => {
         // Linéaire comme le Play craft lab — pas d’ease qui comprime les traits D–F.
         const u = Math.min(1, (now - t0) / WIZARD_REWARD_REVEAL_MS);
         revealTRef.current = u;
-        // UI React throttlée ; le Canvas lit revealTRef chaque frame (ForceRenderLoop).
-        if (now - lastUi >= 100 || u >= 1) {
-          lastUi = now;
-          setRevealT(u);
-        }
+        /**
+         * Aucun setState pendant le play : le Canvas lit `revealTRef` à chaque
+         * frame et resynchronise son propre state. Publier `u` ici re-rendait
+         * tout le monolithe wizard 10×/s et recréait l'objet craftReveal, donc
+         * toute la scène 3D, pendant l'animation.
+         */
         if (u < 1) {
           rewardRafRef.current = requestAnimationFrame(tick);
         } else {
