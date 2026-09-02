@@ -85,6 +85,7 @@ import {
   hubHeroBreath,
   hubProximityActive,
   hubTapHintVisible,
+  HUB_HERO_BREATH_SPEED_INVITE,
   HUB_HERO_SIZE_BREATH,
   resolveHubBirth,
 } from "@/src/components/contribute/constellation/graphs/hubIdle";
@@ -461,7 +462,7 @@ function Constellation({
       const envelope =
         hubHeroBreath(hubSkyApproachRef.current) *
         hubFreezeFxRef.thawAppearU;
-      const t = clock.elapsedTime * 0.7;
+      const t = clock.elapsedTime * HUB_HERO_BREATH_SPEED_INVITE;
       const breathWave =
         0.5 +
         0.5 *

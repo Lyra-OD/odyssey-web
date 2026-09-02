@@ -89,5 +89,11 @@ export function hubProximityActive(approach: number): boolean {
 /** Knobs breath un peu plus vifs au hub (KEEP size/glow inchangés). */
 export const HUB_HERO_BREATH_SPEED = 1.15;
 
+/**
+ * T-invite-3 — souffle plus rapide **hub invite seulement** (hub lite / `hubPrompt`).
+ * Ne pas brancher sur reveal, craft lab, ni thaw rituel.
+ */
+export const HUB_HERO_BREATH_SPEED_INVITE = 1.5;
+
 /** Intensité pulse taille hub → HeroStar.sizeBreath (craft = 0). */
 export const HUB_HERO_SIZE_BREATH = 1.15;

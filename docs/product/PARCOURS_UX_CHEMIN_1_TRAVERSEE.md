@@ -4,11 +4,11 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T-invite-2–3** : CTA glow cyan live · breath hub invite plus rapide (1.5) · copy Une Présence.
 - 1 sept 2026 — **T-close-5e** : revert 5d · rituel sans transition CSS · thaw 2× rAF @ hold · handoff sans flash.
 - 1 sept 2026 — **T-close-5c** : thaw KEEP @ hold seulement · backdrop pont jusqu’au crossfade (plus @ 88 % collapse).
 - 1 sept 2026 — **T-close-5b** : panneau démonté @ fin collapse — ciel et filante visibles au beat hold.
 - 1 sept 2026 — **T-close-5a-b** : canvas hub monté en saisie (opacité 0 · loop off) + prefetch chunk — plus de remontage @ Esc.
-- 1 sept 2026 — **T-close-5a** : horloge rAF sans setState 60 fps · opacités via CSS vars · `skyFadeMs=180` au rituel.
 
 **Statut :** spec produit **figée** · fermeture **T-close-7** · ouverture **T-open-1–3** (miroir CSS depuis l’étoile).
 

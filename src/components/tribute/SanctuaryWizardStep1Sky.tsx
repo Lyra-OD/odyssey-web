@@ -10,7 +10,7 @@ import {
   DEFAULT_HERO_TEAL,
   DEFAULT_HERO_WHITE,
 } from "@/src/components/contribute/constellation/HeroStar";
-import { HUB_HERO_BREATH_SPEED } from "@/src/components/contribute/constellation/graphs/hubIdle";
+import { HUB_HERO_BREATH_SPEED_INVITE } from "@/src/components/contribute/constellation/graphs/hubIdle";
 import type { ScreenAnchor } from "@/src/components/contribute/constellation/StarScreenReporter";
 import {
   allGhostSlotLit,
@@ -92,9 +92,9 @@ function buildHubLiteCraftReveal(
     template: HUB_LITE_TEMPLATE,
     strokeSequence: HUB_LITE_STROKE,
     heroAtom: {
-      white: { ...DEFAULT_HERO_WHITE, breath: HUB_HERO_BREATH_SPEED },
-      teal: { ...DEFAULT_HERO_TEAL, breath: HUB_HERO_BREATH_SPEED },
-      spikes: { ...DEFAULT_HERO_SPIKES, breath: HUB_HERO_BREATH_SPEED },
+      white: { ...DEFAULT_HERO_WHITE, breath: HUB_HERO_BREATH_SPEED_INVITE },
+      teal: { ...DEFAULT_HERO_TEAL, breath: HUB_HERO_BREATH_SPEED_INVITE },
+      spikes: { ...DEFAULT_HERO_SPIKES, breath: HUB_HERO_BREATH_SPEED_INVITE },
       embedScale: 0.42,
       globalScale: DEFAULT_HERO_GLOBAL_SCALE,
     },
