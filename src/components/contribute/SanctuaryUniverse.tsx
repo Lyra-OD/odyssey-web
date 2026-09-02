@@ -217,10 +217,13 @@ type FocusSession = {
 function ForceRenderLoop({
   enabled = true,
   wakeKey,
+  /** Plafond paint — overlay ritual ~30 fps (Hero + traits, gel 2D derrière). */
+  maxFps = 60,
 }: {
   enabled?: boolean;
   /** Change → une paint (même ciel gelé) pour silhouette / prénom. */
   wakeKey?: string | number;
+  maxFps?: number;
 }) {
   const invalidate = useThree((s) => s.invalidate);
   useEffect(() => {
@@ -228,9 +231,14 @@ function ForceRenderLoop({
     if (!enabled) return;
     let raf = 0;
     let running = true;
-    const tick = () => {
+    let lastPaint = 0;
+    const minDeltaMs = 1000 / Math.max(1, maxFps);
+    const tick = (now: number) => {
       if (!running) return;
-      invalidate();
+      if (now - lastPaint >= minDeltaMs) {
+        lastPaint = now;
+        invalidate();
+      }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -238,7 +246,7 @@ function ForceRenderLoop({
       running = false;
       cancelAnimationFrame(raf);
     };
-  }, [invalidate, enabled, wakeKey]);
+  }, [invalidate, enabled, wakeKey, maxFps]);
   return null;
 }
 
@@ -292,6 +300,8 @@ function Constellation({
   hubTapHint,
   reportHeroScreen = false,
   hubBirthMode = false,
+  /** T2-reward-perf — overlay gel : Hero lite + moins de setState. */
+  heroPerfLite = false,
   slotStars = DEFAULT_SLOT_STARS,
   bridges = DEFAULT_BRIDGES,
   slotLit,
@@ -331,6 +341,8 @@ function Constellation({
   hubTapHint?: string;
   reportHeroScreen?: boolean;
   hubBirthMode?: boolean;
+  /** Overlay gel Continuer — moins de setState / Hero lite. */
+  heroPerfLite?: boolean;
   slotStars?: SlotStarsCraft;
   bridges?: BridgesCraft;
   slotLit?: Record<string, boolean>;
@@ -353,7 +365,7 @@ function Constellation({
   /** T-invite-2 — glow CTA live (prox souris + breath Hero), pas hubApproach figé. */
   const [hubCtaGlow, setHubCtaGlow] = useState(0);
   const [proximity, setProximity] = useState<ProximityField>(EMPTY_PROX);
-  /** Sync React depuis revealTRef — max ~10 Hz (évite setState chaque RAF = lag). */
+  /** Sync React depuis revealTRef — overlay ~4 Hz · sinon ~8 Hz. */
   const lastRevealReactSyncRef = useRef(0);
 
   const stars = useMemo(() => {
@@ -392,16 +404,19 @@ function Constellation({
       const v = revealTRef.current;
       const now =
         typeof performance !== "undefined" ? performance.now() : 0;
-      if (now - lastRevealReactSyncRef.current >= 100) {
+      const syncMs = heroPerfLite ? 250 : 125;
+      const syncEps = heroPerfLite ? 0.025 : 0.012;
+      if (now - lastRevealReactSyncRef.current >= syncMs) {
         lastRevealReactSyncRef.current = now;
-        setRevealT((prev) => (Math.abs(prev - v) > 0.008 ? v : prev));
+        setRevealT((prev) => (Math.abs(prev - v) > syncEps ? v : prev));
       }
     }
 
     const drawPhaseLive = resolveDrawPhase(revealTRef?.current ?? revealT);
     const allowProximity =
-      (hubBirthMode && hubProximityActive(hubSkyApproachRef.current)) ||
-      drawPhaseLive.proximity;
+      !heroPerfLite &&
+      ((hubBirthMode && hubProximityActive(hubSkyApproachRef.current)) ||
+        drawPhaseLive.proximity);
     if (!allowProximity || !pointerRef) {
       setProximity((p) => (p.max > 0 ? EMPTY_PROX : p));
     } else {
@@ -745,6 +760,7 @@ function Constellation({
                   }
                   parallax={0}
                   phase={i * 1.7}
+                  perfLite={heroPerfLite}
                 />
                 {isHero && (isFocus || reportHeroScreen) ? (
                   <StarScreenReporter active onScreen={onStarScreen} />
@@ -1037,7 +1053,11 @@ function UniverseScene({
         active={closeStreakFire || overlayOnBackdrop}
         voidHex={voidHex}
       />
-      <ForceRenderLoop enabled={skyActive} wakeKey={skyWakeKey} />
+      <ForceRenderLoop
+        enabled={skyActive}
+        wakeKey={skyWakeKey}
+        maxFps={overlayOnBackdrop ? 30 : 60}
+      />
       {/* Craft : zoom fixe (pas de molette qui recentre) */}
       <WheelZoom enabled={!craftLite} />
       <SkyWander enabled={wanderEnabled} />
@@ -1231,6 +1251,7 @@ function UniverseScene({
                 hubTapHint={hubTapHint}
                 reportHeroScreen={hubSkyCamera && showConstellation}
                 hubBirthMode={hubSkyCamera}
+                heroPerfLite={overlayOnBackdrop}
                 slotStars={slotStars}
                 bridges={bridges}
                 slotLit={slotLit}

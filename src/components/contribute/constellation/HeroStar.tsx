@@ -70,6 +70,10 @@ export type HeroStarProps = {
     /** Grain size breath (mini → peak → mote) */
     grainScale?: number;
   };
+  /**
+   * Overlay Continuer (gel 2D) — 3 layers max, pas veil/grain, breath allégé.
+   */
+  perfLite?: boolean;
 };
 
 const vertexShader = /* glsl */ `
@@ -280,6 +284,7 @@ export function HeroStar({
   birth,
   breathDrive = 1,
   sizeBreath = 0,
+  perfLite = false,
 }: HeroStarProps) {
   const geo = usePointGeometry();
   const rootRef = useRef<Group>(null);
@@ -288,6 +293,7 @@ export function HeroStar({
   const spikesRef = useRef<ShaderMaterial>(null);
   const veilRef = useRef<ShaderMaterial>(null);
   const grainRef = useRef<ShaderMaterial>(null);
+  const frameSkipRef = useRef(0);
   const tealCol = useMemo(() => new Color(tealColor), [tealColor]);
   const parallaxPointerRef = useParallaxPointerRef();
   const { pointer } = useThree();
@@ -328,12 +334,22 @@ export function HeroStar({
   );
 
   useFrame(({ clock, camera }) => {
+    if (perfLite) {
+      frameSkipRef.current += 1;
+      if (frameSkipRef.current % 2 === 1) return;
+    }
+
+    const breathRate = perfLite ? 0.45 : 1;
     const tw =
-      clock.elapsedTime * Math.max(0.05, white.breath) + phase;
+      clock.elapsedTime * Math.max(0.05, white.breath * breathRate) + phase;
     const tt =
-      clock.elapsedTime * Math.max(0.05, teal.breath) + phase + 0.4;
+      clock.elapsedTime * Math.max(0.05, teal.breath * breathRate) +
+      phase +
+      0.4;
     const ts =
-      clock.elapsedTime * Math.max(0.05, spikes.breath) + phase + 0.8;
+      clock.elapsedTime * Math.max(0.05, spikes.breath * breathRate) +
+      phase +
+      0.8;
 
     const breathAmp = Math.max(0, Math.min(1, breathDrive));
     const sizeBreathK = Math.max(0, Math.min(1.5, sizeBreath));
@@ -441,27 +457,32 @@ export function HeroStar({
       spikesB,
     );
 
-    // Veil + grain — mist breath (mini → peak → contract)
-    const vMat = veilRef.current ?? veilMat;
-    vMat.uniforms.uSize.value =
-      380 * veilScale * Math.max(0.05, globalScale) * persp(teal.depth - 0.15);
-    vMat.uniforms.uGlow.value =
-      veil > 0.015 ? 0.5 * veil * (0.75 + 0.25 * bt) : 0;
-    vMat.uniforms.uBreath.value = bt;
-    vMat.uniforms.uAmount.value = 0;
-    vMat.uniforms.uRot.value = 0;
-    if (vMat.uniforms.uTeal) vMat.uniforms.uTeal.value.copy(tealCol);
+    if (!perfLite) {
+      // Veil + grain — mist breath (mini → peak → contract)
+      const vMat = veilRef.current ?? veilMat;
+      vMat.uniforms.uSize.value =
+        380 *
+        veilScale *
+        Math.max(0.05, globalScale) *
+        persp(teal.depth - 0.15);
+      vMat.uniforms.uGlow.value =
+        veil > 0.015 ? 0.5 * veil * (0.75 + 0.25 * bt) : 0;
+      vMat.uniforms.uBreath.value = bt;
+      vMat.uniforms.uAmount.value = 0;
+      vMat.uniforms.uRot.value = 0;
+      if (vMat.uniforms.uTeal) vMat.uniforms.uTeal.value.copy(tealCol);
 
-    const gMat = grainRef.current ?? grainMat;
-    gMat.uniforms.uSize.value =
-      40 *
-      grainScale *
-      Math.max(0.05, globalScale) *
-      persp(white.depth);
-    gMat.uniforms.uGlow.value = grain > 0.015 ? 1.05 * grain : 0;
-    gMat.uniforms.uBreath.value = bw;
-    gMat.uniforms.uAmount.value = 0;
-    gMat.uniforms.uRot.value = 0;
+      const gMat = grainRef.current ?? grainMat;
+      gMat.uniforms.uSize.value =
+        40 *
+        grainScale *
+        Math.max(0.05, globalScale) *
+        persp(white.depth);
+      gMat.uniforms.uGlow.value = grain > 0.015 ? 1.05 * grain : 0;
+      gMat.uniforms.uBreath.value = bw;
+      gMat.uniforms.uAmount.value = 0;
+      gMat.uniforms.uRot.value = 0;
+    }
 
     const root = rootRef.current;
     if (root && parallax > 0.001) {
@@ -479,14 +500,16 @@ export function HeroStar({
 
   return (
     <group ref={rootRef}>
-      <points
-        geometry={geo}
-        position={[0, 0, teal.depth - 0.12]}
-        frustumCulled={false}
-        renderOrder={-1}
-      >
-        <primitive object={veilMat} ref={veilRef} attach="material" />
-      </points>
+      {!perfLite ? (
+        <points
+          geometry={geo}
+          position={[0, 0, teal.depth - 0.12]}
+          frustumCulled={false}
+          renderOrder={-1}
+        >
+          <primitive object={veilMat} ref={veilRef} attach="material" />
+        </points>
+      ) : null}
       <points
         geometry={geo}
         position={[0, 0, teal.depth]}
@@ -511,14 +534,16 @@ export function HeroStar({
       >
         <primitive object={whiteMat} ref={whiteRef} attach="material" />
       </points>
-      <points
-        geometry={geo}
-        position={[0, 0, white.depth + 0.02]}
-        frustumCulled={false}
-        renderOrder={3}
-      >
-        <primitive object={grainMat} ref={grainRef} attach="material" />
-      </points>
+      {!perfLite ? (
+        <points
+          geometry={geo}
+          position={[0, 0, white.depth + 0.02]}
+          frustumCulled={false}
+          renderOrder={3}
+        >
+          <primitive object={grainMat} ref={grainRef} attach="material" />
+        </points>
+      ) : null}
     </group>
   );
 }
