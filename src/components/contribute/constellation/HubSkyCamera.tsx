@@ -9,6 +9,8 @@ import {
   HUB_CAM_Z_END,
   HUB_LOOK_Y_LIFT,
 } from "@/src/components/contribute/constellation/graphs/revealCamera";
+import { ACTIVE_TEMPLATE } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
+import type { ConstellationTemplate } from "@/src/components/contribute/constellation/graphs/types";
 import { idleCameraRef } from "./IdleCameraDrift";
 import { skyWanderRef } from "./SkyWander";
 import {
@@ -41,18 +43,25 @@ function fogForZoom(camZ: number) {
 type HubSkyCameraProps = {
   enabled: boolean;
   graphScale?: number;
+  template?: ConstellationTemplate;
 };
 
 /**
  * Chemin 1 hub — plan « ciel seul » (test-ciel constellation masquée) puis zoom
  * vers l’étoile Hero. Remplace RevealCamera @ KEEP prénom.
  */
-export function HubSkyCamera({ enabled, graphScale = 1 }: HubSkyCameraProps) {
+export function HubSkyCamera({
+  enabled,
+  graphScale = 1,
+  template = ACTIVE_TEMPLATE,
+}: HubSkyCameraProps) {
   const startAtRef = useRef<number | null>(null);
   const look = useRef(new Vector3(0, 0, 0));
   const desired = useRef(new Vector3(0, 0, ZOOM_DEFAULT));
   const lookTarget = useRef(new Vector3(0, 0, 0));
   const fogBreathAmp = useSkyTheme().scene.idle?.fogBreathAmp ?? 0;
+  const templateRef = useRef(template);
+  templateRef.current = template;
 
   useEffect(() => {
     if (!enabled) {
@@ -87,7 +96,7 @@ export function HubSkyCamera({ enabled, graphScale = 1 }: HubSkyCameraProps) {
     );
     hubSkyApproachRef.current = u;
 
-    const hero = heroWorldPos(graphScale);
+    const hero = heroWorldPos(graphScale, templateRef.current);
     const endLookX = hero.x;
     const endLookY = hero.y + HUB_LOOK_Y_LIFT * graphScale;
     const endLookZ = hero.z;

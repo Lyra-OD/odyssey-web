@@ -200,7 +200,8 @@ export function SanctuaryWizardStep1Sky({
   return (
     <div
       className={[
-        "parcours-sky-hub-layer pointer-events-none fixed inset-0 z-0",
+        "parcours-sky-hub-layer pointer-events-none fixed inset-0",
+        isHubLite ? "z-0" : "z-[1]",
         liveLayerOpacityVar ? "parcours-sky-opacity-live" : "transition-opacity ease-out",
         panelFading ? "opacity-90" : "opacity-100",
       ].join(" ")}
@@ -212,6 +213,9 @@ export function SanctuaryWizardStep1Sky({
               transitionTimingFunction: fadeEase,
             }),
         opacity: resolvedLayerOpacity,
+        ...(isHubLite
+          ? {}
+          : { background: "transparent" }),
       }}
       aria-hidden
     >
@@ -230,7 +234,8 @@ export function SanctuaryWizardStep1Sky({
         closeStreakFire={isHubLite ? closeStreakFire : false}
         className="h-full w-full"
       />
-      {!liveLayerOpacityVar ? (
+      {/** Dégradé seulement hub — en overlay ça noircit le gel PNG. */}
+      {isHubLite && !liveLayerOpacityVar ? (
         <div
           className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/50"
           aria-hidden

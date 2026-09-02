@@ -1,19 +1,15 @@
 /**
  * Reveal camera pose from the same revealT as birth/draw.
- * Birth = même cadre optique que HubSkyCamera (Hero au centre) · draw = pull-back Leo.
+ * Birth = Hero du template actif au centre · draw = pull-back bbox silhouette.
  */
 
 import { BIRTH_SEGMENTS } from "@/src/components/contribute/constellation/graphs/birth";
 import { easeOutCubic } from "@/src/components/contribute/constellation/graphs/reveal";
+import { ACTIVE_TEMPLATE } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
+import type { ConstellationTemplate } from "@/src/components/contribute/constellation/graphs/types";
 
 /** Matches Constellation group in SanctuaryUniverse. */
 export const CONSTELLATION_GROUP_OFFSET = [-0.45, -0.7, 0] as const;
-
-/** Leo hero local (S = 0.78). */
-const HERO_LOCAL: [number, number, number] = [-0.4 * 0.78, -0.35 * 0.78, 0];
-
-/** Approx Leo silhouette centroid (local). */
-const LEO_CENTER_LOCAL: [number, number, number] = [0.5, 1.13, -0.35];
 
 /**
  * Cadre hub partagé (HubSkyCamera + RevealCamera birth).
@@ -33,7 +29,7 @@ export const REVEAL_CAM_PULL_START = BIRTH_SEGMENTS.C_END + 0.02;
 const STROKE_PULL_WEIGHT = 0.62;
 
 export type RevealCameraPose = {
-  /** 0 = naissance serrée · 1 = cadre Leo idle */
+  /** 0 = naissance serrée · 1 = cadre silhouette idle */
   pull: number;
   lookX: number;
   lookY: number;
@@ -47,35 +43,74 @@ function clamp01(t: number): number {
   return Math.min(1, Math.max(0, t));
 }
 
-export function heroWorldPos(graphScale = 1): {
+function heroLocal(
+  template: ConstellationTemplate,
+): [number, number, number] {
+  const hero = template.nodes.find((n) => n.role === "hero");
+  return hero?.position ?? [0, 0, 0];
+}
+
+export function heroWorldPos(
+  graphScale = 1,
+  template: ConstellationTemplate = ACTIVE_TEMPLATE,
+): {
   x: number;
   y: number;
   z: number;
 } {
+  const [lx, ly, lz] = heroLocal(template);
   return {
-    x: CONSTELLATION_GROUP_OFFSET[0] + HERO_LOCAL[0] * graphScale,
-    y: CONSTELLATION_GROUP_OFFSET[1] + HERO_LOCAL[1] * graphScale,
-    z: HERO_LOCAL[2] * graphScale,
+    x: CONSTELLATION_GROUP_OFFSET[0] + lx * graphScale,
+    y: CONSTELLATION_GROUP_OFFSET[1] + ly * graphScale,
+    z: lz * graphScale,
   };
 }
 
-function leoIdleLook(graphScale = 1): { x: number; y: number; z: number } {
+/**
+ * Centroïde des nœuds (monde) — cadre settle indépendant du signe (Leo/Libra/…).
+ * Légère bias Hero pour garder le nom dans le verre.
+ */
+export function silhouetteLookFromTemplate(
+  template: ConstellationTemplate = ACTIVE_TEMPLATE,
+  graphScale = 1,
+): { x: number; y: number; z: number } {
+  const nodes = template.nodes;
+  if (nodes.length < 1) {
+    return heroWorldPos(graphScale, template);
+  }
+  let sx = 0;
+  let sy = 0;
+  let sz = 0;
+  for (const n of nodes) {
+    sx += n.position[0];
+    sy += n.position[1];
+    sz += n.position[2];
+  }
+  const inv = 1 / nodes.length;
+  const cx =
+    CONSTELLATION_GROUP_OFFSET[0] + sx * inv * graphScale;
+  const cy =
+    CONSTELLATION_GROUP_OFFSET[1] + sy * inv * graphScale;
+  const cz = sz * inv * graphScale;
+  const hero = heroWorldPos(graphScale, template);
+  /** 72 % bbox + 28 % Hero — silhouette centrée, prénom pas collé au bord bas. */
   return {
-    x: CONSTELLATION_GROUP_OFFSET[0] + LEO_CENTER_LOCAL[0] * graphScale,
-    y: CONSTELLATION_GROUP_OFFSET[1] + LEO_CENTER_LOCAL[1] * graphScale,
-    z: LEO_CENTER_LOCAL[2] * graphScale,
+    x: cx * 0.72 + hero.x * 0.28,
+    y: cy * 0.72 + (hero.y + HUB_LOOK_Y_LIFT * graphScale) * 0.28,
+    z: cz * 0.72 + hero.z * 0.28,
   };
 }
 
 /**
  * Pull starts @ REVEAL_CAM_PULL_START · easeOut + blend drawU (suit le trait).
  * A–C : cadre hub (étoile centre écran · nom Html sous l’étoile).
- * D–F : pull-back silhouette Leo.
+ * D–F : pull-back bbox du template actif.
  */
 export function resolveRevealCamera(
   revealT: number,
   graphScale = 1,
   drawU = 0,
+  template: ConstellationTemplate = ACTIVE_TEMPLATE,
 ): RevealCameraPose {
   const t = clamp01(revealT);
   const cEnd = BIRTH_SEGMENTS.C_END;
@@ -98,10 +133,9 @@ export function resolveRevealCamera(
     strokePull * STROKE_PULL_WEIGHT + timePull * (1 - STROKE_PULL_WEIGHT),
   );
 
-  const hero = heroWorldPos(graphScale);
-  const idle = leoIdleLook(graphScale);
+  const hero = heroWorldPos(graphScale, template);
+  const idle = silhouetteLookFromTemplate(template, graphScale);
 
-  /** Même optique que HubSkyCamera — pas look sous le nom (bas-gauche). */
   const birthLookX = hero.x;
   const birthLookY = hero.y + HUB_LOOK_Y_LIFT * graphScale;
   const birthLookZ = hero.z;
@@ -110,7 +144,6 @@ export function resolveRevealCamera(
   const lookY = birthLookY + (idle.y - birthLookY) * pull;
   const lookZ = birthLookZ + (idle.z - birthLookZ) * pull;
 
-  /** Birth : cam XY ≈ 0 comme le hub · draw : dérive douce vers Leo. */
   const camX = 0 + idle.x * 0.08 * pull;
   const camY = 0 + idle.y * 0.05 * pull;
   const camZ =

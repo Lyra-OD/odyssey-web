@@ -34,8 +34,8 @@ export function useWizardStep1Reveal(
     setRevealT(target);
   }, [firstName, phase, options?.muteFirstNameSnap]);
 
-  /** Ciel actif seulement pendant le rituel — panneau ouvert = pause totale. */
-  const skyActive = phase === "reward" || phase === "done";
+  /** Ciel actif seulement pendant le play reward — `done` = settle figé (perf). */
+  const skyActive = phase === "reward";
 
   const playReward = useCallback((): Promise<void> => {
     cancelAnimationFrame(rewardRafRef.current);

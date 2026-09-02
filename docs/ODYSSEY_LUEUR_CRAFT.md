@@ -4,7 +4,7 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 2 sept 2026 — **T2-overlay** : gel PNG visible (pas de `scene.background`) · birth cam = hub centre.
+- 2 sept 2026 — **T2-overlay** : gel PNG · caméra **par template** (Hero + bbox) · loop settle coupée.
 - 2 sept 2026 — **T2-name** : hold prénom (~1,5–2 s) · `HERO_START` 0,42 · `C_END` 0,72.
 - 26 août 2026 — **Séparation Hero↔nom** : spring · nom descend · constellation suit le Hero (lift commun).
 - 26 août 2026 — Fin reveal → tous ghosts (wizard étape 2) · mock lit au Rejouer.
@@ -102,9 +102,10 @@ CEO craft → ensuite **0b KEEP** (fixer les defaults).
 | `B_END` | `0.50` | Fin fenêtre nom (brume + hold lisible) |
 | `HERO_START` | `0.42` | Grain/voile **après** hold prénom (~1,5–2 s à 14 s) |
 | `C_END` | `0.72` | Fin C0–C5 · début traits |
-| Cam birth Z | `5.15` (= hub settled) | Hero centre écran · aligné gel PNG |
-| Cam idle Z | `≈7.5` | Cadre Leo (pull D–F) |
-| Look birth | `HUB_LOOK_Y_LIFT` | Même optique que `HubSkyCamera` |
+| Cam birth Z | `5.15` (= hub settled) | Hero **du template** centre écran |
+| Cam idle Z | `≈7.5` | Bbox silhouette (Leo / Libra / …) |
+| Look birth | `HUB_LOOK_Y_LIFT` | Hero template + lift |
+| Look settle | `silhouetteLookFromTemplate` | Centroïde nœuds + bias Hero |
 | Offset départ Hero | **`y = −0.24`** | Milieu optique du mot (pas −0.4 = trop bas) |
 | Durée play | **14 s** | `DEFAULT_CONSTELLATION_REVEAL_MS` |
 

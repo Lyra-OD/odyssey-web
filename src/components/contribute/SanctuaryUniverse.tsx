@@ -993,6 +993,7 @@ function UniverseScene({
   useEffect(() => {
     if (closeStreakFire || overlayOnBackdrop) {
       gl.setClearColor(0x000000, 0);
+      gl.domElement.style.background = "transparent";
       return;
     }
     gl.setClearColor(new Color(voidHex), 1);
@@ -1055,12 +1056,14 @@ function UniverseScene({
       <HubSkyCamera
         enabled={hubSkyCamera && showConstellation && !focusing}
         graphScale={graphScale}
+        template={constellationTemplate}
       />
       <RevealCamera
         enabled={showConstellation && !focusing && !hubSkyCamera}
         revealT={revealTProp}
         revealTRef={revealTRef}
         graphScale={graphScale}
+        template={constellationTemplate}
       />
       <CameraRig>
         {/* Craft : remonte le ciel pour que la bande d etoiles soit en haut d ecran */}
@@ -1250,6 +1253,7 @@ function createRenderer(
     powerPreference: "low-power",
     failIfMajorPerformanceCaveat: false,
     preserveDrawingBuffer: options?.preserveDrawingBuffer ?? false,
+    premultipliedAlpha: true,
   };
   const context =
     canvas.getContext("webgl2", opts) ||
@@ -1269,6 +1273,7 @@ function createRenderer(
     antialias: false,
     powerPreference: "high-performance",
     failIfMajorPerformanceCaveat: false,
+    premultipliedAlpha: true,
   });
 }
 
@@ -1573,7 +1578,11 @@ export function SanctuaryUniverse({
       >
         <Canvas
           className={immersive ? undefined : "!pointer-events-none"}
-          style={{ pointerEvents: immersive ? "auto" : "none" }}
+          style={{
+            pointerEvents: immersive ? "auto" : "none",
+            background:
+              overlayOnBackdrop || closeStreakFire ? "transparent" : undefined,
+          }}
           frameloop="demand"
           dpr={
             craftLite || skyPaused || closeStreakFire || overlayOnBackdrop
@@ -1587,9 +1596,12 @@ export function SanctuaryUniverse({
             far: craftLite ? 120 : 40,
           }}
           gl={glFactory}
-          onCreated={({ gl }) => {
+          onCreated={({ gl, scene }) => {
             if (overlayOnBackdrop || closeStreakFire) {
               gl.setClearColor(0x000000, 0);
+              scene.background = null;
+              const el = gl.domElement as HTMLCanvasElement;
+              el.style.background = "transparent";
             } else {
               gl.setClearColor(skyTheme.scene.background, 1);
             }
