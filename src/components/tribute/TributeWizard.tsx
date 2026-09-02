@@ -847,6 +847,8 @@ export function TributeWizard({
         if (step1RewardPendingRef.current) return;
         step1RewardPendingRef.current = true;
         try {
+          /** Même gel photo que la saisie — avant remount Canvas ritual. */
+          step1Parcours.ensureFreezeCapture();
           await flush();
           await step1Reveal.playReward();
         } finally {
@@ -879,6 +881,7 @@ export function TributeWizard({
     navigateToStep,
     step1Reveal,
     step1Sky,
+    step1Parcours.ensureFreezeCapture,
     flush,
     wizardStoryboard.structureValidation,
     wizardStoryboard.duplicateSongInfo,
@@ -1094,11 +1097,7 @@ export function TributeWizard({
       <ParcoursHubBodyFlag active={step1Parcours.hubChromeHidden} />
       {step1Sky && step1Parcours.showBackdrop ? (
         <SkyBackdrop
-          src={
-            step1Parcours.showRitualWebGL
-              ? null
-              : step1Parcours.freezeCaptureUrl
-          }
+          src={step1Parcours.freezeCaptureUrl}
           opacity={hubBackdropOpacity}
           liveOpacityVar={
             step1Parcours.closeSkyOpacityLive

@@ -236,6 +236,17 @@ export function useParcoursUx({
     }, HUB_FREEZE_TOTAL_MS);
   }, [enabled, revealPhase, phase, transition, clearTimers, schedule, hubCanvasRef]);
 
+  /**
+   * Même photo que le panneau Essentiels — à appeler avant Continuer
+   * (le remount ritual détruit le canvas hub).
+   */
+  const ensureFreezeCapture = useCallback((): string | null => {
+    if (freezeCaptureUrl) return freezeCaptureUrl;
+    const captured = captureHubCanvas(hubCanvasRef?.current ?? null);
+    if (captured) setFreezeCaptureUrl(captured);
+    return captured;
+  }, [freezeCaptureUrl, hubCanvasRef]);
+
   /** P0 — typo / retour Essentiels depuis le ciel post-reveal (gel déjà là). */
   const reopenEssentials = useCallback(() => {
     if (!enabled) return;
@@ -500,6 +511,7 @@ export function useParcoursUx({
     panelExiting,
     thawReveal,
     freezeCaptureUrl,
+    ensureFreezeCapture,
     closeRitualPhase,
     closeSkyOpacityLive,
     openPanel,
