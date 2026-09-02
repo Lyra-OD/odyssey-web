@@ -642,7 +642,7 @@ body {
   background-color: rgba(255, 255, 255, 0.06);
 }
 
-/** Chemin 1 hub idle — masque chrome shell studio (logo · déconnexion · footer). */
+/** Chemin 1 hub — masque chrome shell (logo · déconnexion · footer). Langue = hors chrome (T2-lang). */
 html[data-parcours-hub-idle] .studio-shell-chrome,
 html[data-parcours-hub-idle] .studio-shell-halo {
   opacity: 0;

@@ -4,6 +4,7 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-lang** : LocaleSwitcher fixed studio — toujours visible (hub + rite), hors chrome masqué.
 - 2 sept 2026 — **T2-0** : audit Continuer / J3 / copy · T1b traité comme livré · prochaine = T2 · G2 Inviter first.
 - 31 août 2026 — **Figé** : Chemins A/B · contrat hub WebGL ↔ gel 2D · tranche T1b.
 - 31 août 2026 — G1 tranché · T1 code partiel · gate T1 partiellement passé.
@@ -75,6 +76,8 @@ Présent : `parcoursHero*` · `parcoursPanelCloseHint` · `parcoursMonolithConti
 
 `T2-copy` → `T2-1` coupe tunnel → `T2-2` backdropToWebGL → `T2-3` reveal → `T2-4` born → `T2-5` J3 carte A+B+C → `T2-6` identité settle.
 
+**Fait avant copy :** `T2-lang` ✅ — FR/EN fixed, visible hub + rite (accessibilité).
+
 Hors T2 : T3 cercle outils · T4 `vault.filmBridge` · G6 durée reveal · prologue.
 
 ---
@@ -139,7 +142,7 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 | Beat drawer Coffre→film | P0 | `VaultFilmBridgeBeat` | ⏳ | T4 |
 | Studio sans ciel WebGL | P1 | steps 4–6 | 🟡 | T5 |
 | Alignement caméra 2D↔3D | P1 | même idle Z reveal | ⏳ valider | **T2-2/3** |
-| Chrome wizard atténué au hub | P1 | `hubChromeHidden` | ✅ | T1b ✅ |
+| Chrome wizard atténué au hub | P1 | `hubChromeHidden` · **langue hors chrome** | ✅ T2-lang | T1b ✅ · T2-lang ✅ |
 
 ---
 

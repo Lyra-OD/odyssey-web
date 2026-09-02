@@ -131,6 +131,18 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100">
+      {/** T2-lang — FR/EN toujours accessible (hub + rite + wizard), hors chrome masqué. */}
+      <div className="pointer-events-none fixed right-4 top-4 z-[60] md:right-8 md:top-6">
+        <div className="pointer-events-auto">
+          <LocaleSwitcher
+            lang={lang}
+            languageLabel={dictionary.header.languageLabel}
+            langOptionFr={dictionary.header.langOptionFr}
+            langOptionEn={dictionary.header.langOptionEn}
+          />
+        </div>
+      </div>
+
       <div
         className="studio-shell-halo pointer-events-none absolute inset-0 z-0 overflow-hidden transition-opacity duration-500"
         aria-hidden
@@ -150,13 +162,7 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
         <header className="studio-shell-chrome relative mb-10 transition-opacity duration-500">
           <h1 className="sr-only">{welcomeSrOnly}</h1>
 
-          <div className="absolute right-0 top-0 z-10 flex flex-col items-end gap-3">
-            <LocaleSwitcher
-              lang={lang}
-              languageLabel={dictionary.header.languageLabel}
-              langOptionFr={dictionary.header.langOptionFr}
-              langOptionEn={dictionary.header.langOptionEn}
-            />
+          <div className="absolute right-0 top-10 z-10 flex flex-col items-end gap-3 md:top-12">
             {accessRole === "owner" ? (
               <DashboardSignOut
                 lang={lang}
