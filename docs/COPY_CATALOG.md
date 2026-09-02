@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-01 · **Entrées :** 714
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-02 · **Entrées :** 714
 
 ## `common`
 
@@ -339,8 +339,8 @@
 | `tributeWizard.stepEssentialTitle` | Étape 1 : L’essentiel | Step 1: The essentials |
 | `tributeWizard.stepEssentialDescription` | Les informations qui donnent visage à cet hommage. Avancez à votre rythme. | What gives this tribute a face and a soul. Move at your own pace. |
 | `tributeWizard.step1ConstellationReward` | Sa constellation prend forme… | Her constellation is taking shape… |
-| `tributeWizard.parcoursHeroPrompt` | Une présence. Pose son nom. | A presence. Give their name. |
-| `tributeWizard.parcoursHeroTapHint` | Toucher l’étoile pour commencer | Touch the star to begin |
+| `tributeWizard.parcoursHeroPrompt` | Une présence. | A presence. |
+| `tributeWizard.parcoursHeroTapHint` | Toucher l’étoile | Touch the star |
 | `tributeWizard.parcoursHeroOpenLabel` | Ouvrir l’essentiel — prénom et identité de l’hommage | Open essentials — name and tribute identity |
 | `tributeWizard.parcoursPanelCloseHint` | Fermer · le ciel vous attend | Close · the sky awaits |
 | `tributeWizard.parcoursMonolithContinue` | Continuer | Continue |
