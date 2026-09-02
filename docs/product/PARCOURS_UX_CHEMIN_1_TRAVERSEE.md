@@ -376,7 +376,7 @@ Les tranches **ne dépendent pas** du prologue craft pour démarrer.
 | **Caméra hub** | `HubSkyCamera` — plan test-ciel (z=7.5) → dolly Hero (~5.15) · prologue éclipse skip | T1b |
 | **Chemins A / B** | ✅ Figé | §1b |
 | **Frame ciel 2D** | Capture canvas @ clic (**Plan B livré**) · fallback JPEG | ✅ T1b+B |
-| **Entrée panneau (magie)** | Slide `parcours-panel-in` — scale/blur/stagger prévu | ⏳ après B · [`PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) §7 |
+| **Entrée panneau (magie)** | T-open-1–5 : expand depuis étoile · souffle · stagger | ✅ |
 | **Peau wizard 2–7** | Monolithe généralisé (verre · halo · CTA) | ⏳ spec [`PARCOURS_MONOLITH_RECIPE.md`](../design/PARCOURS_MONOLITH_RECIPE.md) §6 |
 | **Chemins 2+** | Hors scope | Chemin 1b Salon · invité seul · retour hub |
 

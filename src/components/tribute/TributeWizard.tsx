@@ -1534,6 +1534,7 @@ export function TributeWizard({
               </button>
             ) : null}
             <>
+              <div className="parcours-open-stagger-1">
               <h2
                 id={wizardTitleId}
                 className="font-[family-name:var(--font-label)] text-balance text-2xl font-light tracking-wide text-zinc-100 md:text-[1.65rem]"
@@ -1543,8 +1544,9 @@ export function TributeWizard({
               <p className="mt-5 text-lg font-light leading-relaxed text-zinc-400 md:text-xl">
                 {copy.stepEssentialDescription}
               </p>
+              </div>
 
-              <div className="mt-10 flex flex-col items-center">
+              <div className="parcours-open-stagger-2 mt-10 flex flex-col items-center">
                 <p className="mb-4 w-full text-center text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-500">
                   {copy.primaryPhotoLabel}
                 </p>
@@ -1605,7 +1607,7 @@ export function TributeWizard({
                 )}
               </div>
 
-              <div className="mt-12 space-y-6">
+              <div className="parcours-open-stagger-2 mt-12 space-y-6">
                 <div className="space-y-2">
                   <label
                     htmlFor="tw-first"
@@ -1693,7 +1695,7 @@ export function TributeWizard({
 
               {step1Parcours.phase === "panel.essentials" &&
               step1Reveal.phase === "typing" ? (
-                <div className="mt-10 pb-2">
+                <div className="parcours-open-stagger-3 mt-10 pb-2">
                   <button
                     type="button"
                     disabled={!canProceedEssential}

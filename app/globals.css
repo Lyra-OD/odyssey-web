@@ -134,6 +134,33 @@ body {
   }
 }
 
+/** T-open-5 — stagger contenu après que le verre émane (transform + opacity). */
+@keyframes parcours-open-stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.45rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.parcours-monolith-expand .parcours-open-stagger-1 {
+  animation: parcours-open-stagger-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 80ms;
+}
+
+.parcours-monolith-expand .parcours-open-stagger-2 {
+  animation: parcours-open-stagger-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 160ms;
+}
+
+.parcours-monolith-expand .parcours-open-stagger-3 {
+  animation: parcours-open-stagger-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 240ms;
+}
+
 /** T2 — inspire stellaire sur capture gelée (fermeture panneau). */
 .parcours-backdrop-media {
   transition:
@@ -1425,6 +1452,9 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   .parcours-monolith-expand,
   .parcours-open-star-bloom,
   .parcours-open-emanation,
+  .parcours-open-stagger-1,
+  .parcours-open-stagger-2,
+  .parcours-open-stagger-3,
   .parcours-monolith-collapse,
   .parcours-close-tracteur,
   .parcours-close-star-impact,

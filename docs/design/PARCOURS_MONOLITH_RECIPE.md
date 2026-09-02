@@ -4,11 +4,11 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T-open-5** : stagger titre→champs→CTA (80/160/240 ms) pendant émanation.
 - 2 sept 2026 — **T-open-4** : souffle CSS bloom + filante étoile→verre pendant émanation.
 - 2 sept 2026 — **T-open-3** : panneau @ `HUB_FREEZE_PANEL_AT_MS` = hold+fade (760) · ciel 2D figé avant expand.
 - 2 sept 2026 — **T-open-2** : émanation `.parcours-monolith-expand` (scale+opacity · 440 ms) · plus de slide Y.
 - 2 sept 2026 — **T-open-1** : pivot expand `--parcours-expand-origin` = ancre Hero au montage panneau.
-- 1 sept 2026 — **T-close-7** : 60 FPS close — CSS transform/opacity only · tracteur CSS · WebGL gelé jusqu'au thaw · absorb @ hold.
 
 **Liens :**
 - Spec Traversée : [`../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §2b
@@ -142,6 +142,7 @@
 | **T-open-2** | Émanation scale+opacity 440 ms (pas reverse close) | ✅ |
 | **T-open-3** | Départ panneau @ hold+fade (ciel 2D figé) · expand seulement pendant `hubFreezeTo2D` | ✅ |
 | **T-open-4** | Souffle CSS bloom + filante étoile→verre (pas canvas) | ✅ |
+| **T-open-5** | Stagger titre → champs → CTA (80 / 160 / 240 ms) | ✅ |
 
 **T-close-1 :** `hubStarVisualViewportPx` · offset hitbox Hero · rAF pendant `panelCloseToHub` · pas de setState 60 fps.
 
@@ -173,16 +174,9 @@
 
 **T-close-7 (60 FPS close) :** sérialisation stricte @ Esc — `:root.parcours-close-gpu-strict` gèle `backdrop-filter` + box-shadow animés · collapse **transform + opacity only** · tracteur CSS `.parcours-close-tracteur` · `hubSkyLive=false` jusqu'au thaw · `pulseHubCloseAbsorb` + KEEP **@ hold seulement** (plus canvas z-42 ni filante WebGL).
 
-### P1 — Entrée formulaire (magie panneau) — **après T-close-5**
-Beat actuel trop « slide générique » vs souffle freeze.
+### P1 — Entrée formulaire (magie panneau) — ✅ T-open-1–5
 
-**Pistes (sans changer le métier) :**
-1. Entrée **scale 0.96 → 1** + **blur 6px → 0** synchronisée fin fade ciel
-2. **Stagger** contenu : titre (+80 ms) → champs (+160 ms) → Continuer (+240 ms)
-3. Courbe entrée alignée `HUB_THAW_APPEAR_EASE_CSS` (famille organique)
-4. Option : retarder `parcours-panel-in` de ~80 ms après @340 ms si le ciel n’a pas fini de « se figer »
-
-**Fichiers :** `globals.css` (`parcours-panel-in` ou variante `parcours-monolith-in`) · évent. `hubFreezeTimeline.ts` si beat décalé.
+Émanation depuis l’étoile · souffle CSS · stagger contenu. Close inchangé (T-close-7).
 
 ### P2 — Factorisation shell wizard 2–7
 Après B + entrée panneau validés en démo.
