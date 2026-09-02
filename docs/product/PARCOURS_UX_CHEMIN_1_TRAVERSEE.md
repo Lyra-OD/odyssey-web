@@ -4,13 +4,13 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T2-sticky** : sticky Continuer masqué en `done` / `hub.postReveal` — seul P0 « Revenir à l’essentiel ».
 - 2 sept 2026 — **T2-perf** : 1 Canvas hub→ritual · setState reveal throttlé · section sans `bg-black` en overlay · JPEG gel au reveal.
 - 2 sept 2026 — **Suite nav** : P1 Atelier · P2 fil constellation documentés (§ dédié) — pas encore codés.
 - 2 sept 2026 — **P0** : retour Essentiels post-reveal · déconnexion sous langue.
 - 2 sept 2026 — **T2-name** : hold prénom A–B (~1,5–2 s lisibles avant Hero) · `HERO_START` 0,42 · `C_END` 0,72.
-- 2 sept 2026 — **T2-freeze** : gel 2D pendant reveal · WebGL = constellation seule (overlay alpha).
 
-**Statut :** **T2-perf** ✅ · prochaine **T2-2** · suite nav P1/P2 · P0 ✅.
+**Statut :** **T2-sticky** ✅ · prochaine **T2-reward-perf** · suite nav P1/P2 · P0 ✅.
 
 **Liens :**
 - **Audit trous (gate avant code) :** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)

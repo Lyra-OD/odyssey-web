@@ -2519,7 +2519,14 @@ export function TributeWizard({
       {currentStep !== 3 &&
       currentStep !== 6 &&
       currentStep !== 7 &&
-      !(currentStep === 1 && step1Sky && step1Reveal.phase === "typing") ? (
+      !(
+        currentStep === 1 &&
+        step1Sky &&
+        (step1Reveal.phase === "typing" ||
+          step1Reveal.phase === "done" ||
+          step1Parcours.phase === "hub.postReveal" ||
+          step1Parcours.showEditEssentials)
+      ) ? (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
           <div
             className={`mx-auto ${
@@ -2534,16 +2541,12 @@ export function TributeWizard({
               <button
                 type="button"
                 disabled={
-                  currentStep === 1 &&
-                  (step1Reveal.phase === "reward" ||
-                    step1Reveal.phase === "done")
+                  currentStep === 1 && step1Reveal.phase === "reward"
                 }
                 onClick={() => void goNext()}
                 className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-wait disabled:opacity-70"
               >
-                {currentStep === 1 &&
-                (step1Reveal.phase === "reward" ||
-                  step1Reveal.phase === "done")
+                {currentStep === 1 && step1Reveal.phase === "reward"
                   ? copy.step1ConstellationReward
                   : copy.next}
               </button>
