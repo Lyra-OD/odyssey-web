@@ -35,6 +35,8 @@ body {
 }
 
 .parcours-panel-in {
+  /** T-open-1 — pivot = projection Hero (--parcours-expand-origin). */
+  transform-origin: var(--parcours-expand-origin, 50% 45%);
   animation: parcours-panel-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 

@@ -137,6 +137,9 @@ export function hubStarCollapseTransformOrigin(
   return `${clamp(ox)}% ${clamp(oy)}%`;
 }
 
+/** T-open-1 — même géométrie que collapse : expand depuis projection Hero. */
+export const hubStarExpandTransformOrigin = hubStarCollapseTransformOrigin;
+
 /** Sync CSS vars étoile sur un élément (fermeture rAF · projection 3D). */
 export function syncHubStarCssVars(
   el: HTMLElement,

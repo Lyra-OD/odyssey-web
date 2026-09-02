@@ -13,6 +13,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -65,6 +66,7 @@ import {
   HUB_HERO_FALLBACK_ANCHOR,
   hubStarAnchorRef,
   hubStarCollapseTransformOrigin,
+  hubStarExpandTransformOrigin,
   hubStarLastKnownAnchorRef,
   rememberHubStarAnchor,
   resolveHubStarAnchorForClose,
@@ -580,6 +582,28 @@ export function TributeWizard({
     [],
   );
 
+  /** T-open-1 — pivot expand figé sur ancre Hero dès montage panneau (avant paint). */
+  useLayoutEffect(() => {
+    if (!step1Parcours.showEssentialsPanel) return;
+    if (step1Parcours.closeRitualPhase !== "idle") return;
+
+    const frame = monolithFrameRef.current;
+    const root = document.documentElement;
+    const anchor = resolveHubStarAnchorForClose();
+    syncHubStarCssVars(root, anchor);
+    if (!frame) return;
+
+    const rect = frame.getBoundingClientRect();
+    frame.style.setProperty(
+      "--parcours-expand-origin",
+      hubStarExpandTransformOrigin(anchor, rect),
+    );
+  }, [
+    step1Parcours.showEssentialsPanel,
+    step1Parcours.closeRitualPhase,
+    step1Parcours.transition,
+  ]);
+
   /** T-close-7 — régime GPU strict dès Esc (zéro backdrop-filter / box-shadow animés). */
   useEffect(() => {
     if (step1Parcours.transition !== "panelCloseToHub") return;
@@ -638,7 +662,12 @@ export function TributeWizard({
   ]);
 
   useEffect(() => {
-    if (step1Parcours.transition === "panelCloseToHub") return;
+    if (
+      step1Parcours.transition === "panelCloseToHub" ||
+      step1Parcours.transition === "hubFreezeTo2D"
+    ) {
+      return;
+    }
     const root = document.documentElement;
     root.classList.remove("parcours-close-gpu-strict");
     root.style.removeProperty("--parcours-star-x");

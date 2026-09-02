@@ -87,7 +87,7 @@
 | ID | Déclencheur | Effet perceptif |
 |----|-------------|-----------------|
 | `transition.hubFreezeTo2D` | Clic Hero | **Souffle** (flash+hold 200 ms) → crossfade ciel 560 ms → panneau verre slide (~340 ms) |
-| `transition.panelCloseToHub` | Fermer panneau | Inspire 220 ms → collapse 520 ms → thaw KEEP **pendant** collapse (@ moteur chaud) |
+| `transition.panelCloseToHub` | Fermer panneau | Inspire 220 ms → collapse 520 ms → hold 80 ms → thaw KEEP 880 ms (sérialisé T-close-7) |
 | `transition.backdropToWebGL` | Continuer | Le ciel **s'allume** → constellation |
 
 ### Implémentation (cible)

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T-open-1** : pivot expand `--parcours-expand-origin` = ancre Hero au montage panneau.
 - 1 sept 2026 — **T-close-7** : 60 FPS close — CSS transform/opacity only · tracteur CSS · WebGL gelé jusqu'au thaw · absorb @ hold.
 - 1 sept 2026 — **T-close-6c** : calque WebGL z-42 · monolithe translucide · kiss @ 255 ms (supersédé par T-close-7).
 - 1 sept 2026 — **T-close-6b** : filante arm @ useFrame · gel IdleCameraDrift · absorption @ impact.
 - 1 sept 2026 — **T-close-6a/6a′** : cible unifiée `hubStarProjectedViewport*` · pivot collapse aligné filante.
-- 1 sept 2026 — **T-close-5e** : thaw 2× rAF @ hold · handoff sans flash.
 
 **Liens :**
 - Spec Traversée : [`../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §2b
@@ -138,6 +138,7 @@
 | **T-close-3** | Halo tracteur fixed (viewport) · verre fade | ✅ |
 | **T-close-4** | Timeline unifiée `u` 0→1 + thaw overlap fluide | ✅ |
 | **T-open-mirror** | Ouverture miroir depuis l’étoile (après close OK) | ⏳ |
+| **T-open-1** | Pivot expand figé sur ancre Hero (`--parcours-expand-origin`) | ✅ |
 
 **T-close-1 :** `hubStarVisualViewportPx` · offset hitbox Hero · rAF pendant `panelCloseToHub` · pas de setState 60 fps.
 
