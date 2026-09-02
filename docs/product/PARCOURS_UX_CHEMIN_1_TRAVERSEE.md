@@ -122,7 +122,7 @@
 | **Visuel** | Cinématique éclipse → transition → **hub WebGL animé** (ciel vivant · Hero pulse) |
 | **Chemin** | **A** uniquement |
 | **Interaction** | Écran calme. **Hero** teal animé — attend qu'on vienne la réveiller |
-| **Message** (une ligne) | *« Une présence. Pose son nom. »* — le **prénom** réveille le Hero ; le formulaire demande aussi le **nom de famille** (hommage complet). |
+| **Message** (hub) | *« Une présence. »* (arc haut) · *« Toucher l’étoile »* (arc bas) — le formulaire porte prénom + nom. |
 | **Geste** | Clic Hero → **`transition.hubFreezeTo2D`** + panneau verre (**Chemin A vierge**). **Chemin B · draft rempli** → panneau direct (sans hub). |
 | **Stub si craft absent** | Skip prologue → hub WebGL lite ou PNG + Hero CSS en dernier recours |
 | **Craft cible** | [`ODYSSEY_ECLIPSE_CRAFT.md`](../ODYSSEY_ECLIPSE_CRAFT.md) · wormhole · hand-off ciel |
@@ -314,7 +314,8 @@ Détail IDs et durées : [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md).
 
 | Moment | Clé proposée | FR (canon) |
 |--------|--------------|------------|
-| Hero hub | `parcours.heroPrompt` | Une présence. Pose son nom. |
+| Hero hub | `parcours.heroPrompt` | Une présence. |
+| Hero hub tap | `parcours.heroTapHint` | Toucher l’étoile |
 | Post-reveal | `parcours.constellationBorn` | Sa constellation prend forme. |
 | **Ciel ≠ Coffre** | `parcours.skyVsVault` | Le Coffre rassemble tout. Le ciel montre l'hommage que la famille choisit d'illuminer. |
 | **Permission** | `parcours.noRush` | Prenez votre temps. Le ciel attend. |

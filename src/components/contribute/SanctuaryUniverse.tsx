@@ -48,6 +48,7 @@ import { NebulaGasTeal } from "@/src/components/contribute/constellation/NebulaG
 import { GhostStars } from "@/src/components/contribute/constellation/GhostStars";
 import { ParallaxLayer, ParallaxProvider, useParallaxPointerRef } from "@/src/components/contribute/constellation/ParallaxLayer";
 import { ParcoursCloseStreak } from "@/src/components/contribute/constellation/ParcoursCloseStreak";
+import { HubInviteArcs } from "@/src/components/tribute/HubInviteArcs";
 import { ShootingStars } from "@/src/components/contribute/constellation/ShootingStars";
 import { StarDust } from "@/src/components/contribute/constellation/StarDust";
 import {
@@ -645,10 +646,9 @@ function Constellation({
           ? 42 - 14 * nameLift + birth.nameDriftY * 4 + heroSep.nameDrop
           : 18;
         const hubInviteScale =
-          hubPrompt && isHero ? nameScale * 0.58 : nameScale;
-        const hubInviteY = isHero
-          ? 26 - 8 * nameLift + birth.nameDriftY * 2.5 + heroSep.nameDrop
-          : nameY;
+          hubPrompt && isHero ? nameScale * 0.72 : nameScale;
+        /** T-invite-2 — arcs centrés sur l’étoile (pas sous le Hero). */
+        const hubInviteY = isHero ? birth.nameDriftY * 1.2 : nameY;
         const nameYResolved = hubPrompt && isHero ? hubInviteY : nameY;
         const nameX = isHero ? birth.nameDriftX * 5 : 0;
         const nameTracking = isHero
@@ -758,38 +758,37 @@ function Constellation({
             {showHeroName || showSlotName ? (
               <Html
                 distanceFactor={
-                  isHero ? (hubPrompt ? 18 : 6.4) : 6
+                  isHero ? (hubPrompt ? 16 : 6.4) : 6
                 }
                 style={{
                   pointerEvents: "none",
-                  transform: `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameYResolved.toFixed(1)}px) scale(${(hubPrompt && isHero ? hubInviteScale : nameScale).toFixed(3)})`,
-                  transformOrigin: "50% 0%",
-                  whiteSpace: "nowrap",
+                  transform: hubPrompt && isHero
+                    ? `translate(calc(-50% + ${nameX.toFixed(2)}px), calc(-50% + ${nameYResolved.toFixed(1)}px)) scale(${hubInviteScale.toFixed(3)})`
+                    : `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameYResolved.toFixed(1)}px) scale(${nameScale.toFixed(3)})`,
+                  transformOrigin: hubPrompt && isHero ? "50% 50%" : "50% 0%",
+                  whiteSpace: hubPrompt && isHero ? undefined : "nowrap",
                   textAlign: hubPrompt && isHero ? "center" : undefined,
                   width: hubPrompt && isHero ? "max-content" : undefined,
-                  fontSize: hubPrompt && isHero ? "9.5px" : isHero ? "19px" : "11px",
-                  lineHeight: hubPrompt && isHero ? 1.35 : undefined,
-                  fontFamily:
-                    hubPrompt && isHero
-                      ? "var(--font-editorial), ui-serif, Georgia, serif"
-                      : undefined,
+                  fontSize: hubPrompt && isHero ? undefined : isHero ? "19px" : "11px",
                   letterSpacing: hubPrompt && isHero
-                    ? "0.14em"
+                    ? undefined
                     : `${nameTracking.toFixed(3)}em`,
                   fontWeight: 300,
                   opacity: nameOpacity,
                   filter:
-                    nameBlurPx > 0.35
-                      ? `blur(${nameBlurPx.toFixed(1)}px)`
-                      : undefined,
+                    hubPrompt && isHero
+                      ? undefined
+                      : nameBlurPx > 0.35
+                        ? `blur(${nameBlurPx.toFixed(1)}px)`
+                        : undefined,
                   color: isHero
                     ? hubPrompt
-                      ? "rgba(244, 244, 245, 0.88)"
+                      ? undefined
                       : `rgba(255, 252, 248, ${0.72 + 0.22 * nameClarity})`
                     : "rgba(204, 251, 241, 0.6)",
                   textShadow: isHero
                     ? hubPrompt
-                      ? `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)})`
+                      ? undefined
                       : `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)}), 0 0 ${(glowPx * 0.45).toFixed(0)}px rgba(255, 248, 240, ${
                           0.08 + 0.2 * nameGlow
                         })`
@@ -800,39 +799,17 @@ function Constellation({
                 center
               >
                 {hubPrompt && isHero ? (
-                  <span
-                    style={{
-                      display: "inline-block",
-                      whiteSpace: "nowrap",
-                      transform: "scaleX(1.06)",
-                      transformOrigin: "50% 0%",
-                    }}
-                  >
-                    {star.name}
-                    {hubTapHint && hubTapHintVisible(hubApproach) ? (
-                      <span
-                        style={{
-                          display: "block",
-                          marginTop: "0.55rem",
-                          whiteSpace: "nowrap",
-                          transform: "scaleX(1.02)",
-                          fontFamily:
-                            'var(--font-label), "Inter", ui-sans-serif, system-ui, sans-serif',
-                          fontSize: "6px",
-                          letterSpacing: "0.1em",
-                          fontWeight: 300,
-                          color: "rgba(161, 161, 170, 0.82)",
-                          textShadow: "none",
-                          opacity: Math.min(
-                            1,
-                            (hubApproach - 0.72) / 0.28,
-                          ),
-                        }}
-                      >
-                        {hubTapHint}
-                      </span>
-                    ) : null}
-                  </span>
+                  <HubInviteArcs
+                    prompt={star.name}
+                    tapHint={
+                      hubTapHint && hubTapHintVisible(hubApproach)
+                        ? hubTapHint
+                        : undefined
+                    }
+                    promptOpacity={0.55 + 0.2 * nameClarity}
+                    tapOpacity={1}
+                    tapScale={1}
+                  />
                 ) : (
                   star.name
                 )}
