@@ -72,6 +72,7 @@ import {
   resolveHubStarAnchorForClose,
   syncCloseTracteurCssVars,
   syncHubStarCssVars,
+  syncOpenEmanationCssVars,
 } from "@/src/components/tribute/hubStarAnchorRef";
 import { useWizardCheckout } from "@/src/hooks/useWizardCheckout";
 import { useWizardDraftLifecycle } from "@/src/hooks/useWizardDraftLifecycle";
@@ -598,6 +599,10 @@ export function TributeWizard({
       "--parcours-expand-origin",
       hubStarExpandTransformOrigin(anchor, rect),
     );
+    /** T-open-4 — vars souffle étoile → verre. */
+    if (step1Parcours.transition === "hubFreezeTo2D") {
+      syncOpenEmanationCssVars(root, anchor, rect);
+    }
   }, [
     step1Parcours.showEssentialsPanel,
     step1Parcours.closeRitualPhase,
@@ -681,6 +686,10 @@ export function TributeWizard({
     root.style.removeProperty("--parcours-tracteur-dy");
     root.style.removeProperty("--parcours-tracteur-angle");
     root.style.removeProperty("--parcours-tracteur-dist");
+    root.style.removeProperty("--parcours-open-emanation-dx");
+    root.style.removeProperty("--parcours-open-emanation-dy");
+    root.style.removeProperty("--parcours-open-emanation-angle");
+    root.style.removeProperty("--parcours-open-emanation-dist");
   }, [step1Parcours.transition]);
 
   useEffect(() => {
@@ -1105,6 +1114,24 @@ export function TributeWizard({
       ) : null}
       {step1Sky && step1Parcours.showCloseInspireVeil ? (
         <div className="parcours-close-inspire-veil" aria-hidden />
+      ) : null}
+      {step1Sky && step1Parcours.showOpenEmanation ? (
+        <>
+          <div
+            className="parcours-open-star-bloom"
+            style={{
+              ["--parcours-expand-ms" as string]: `${step1Parcours.panelEnterMs}ms`,
+            }}
+            aria-hidden
+          />
+          <div
+            className="parcours-open-emanation"
+            style={{
+              ["--parcours-expand-ms" as string]: `${step1Parcours.panelEnterMs}ms`,
+            }}
+            aria-hidden
+          />
+        </>
       ) : null}
       {step1Sky && step1Parcours.showCloseTracteur ? (
         <div

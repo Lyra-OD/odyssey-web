@@ -415,6 +415,10 @@ export function useParcoursUx({
     transition === "panelCloseToHub" &&
     (closeRitualPhase === "collapse" || closeRitualPhase === "hold");
 
+  /** T-open-4 — souffle CSS étoile → verre pendant émanation. */
+  const showOpenEmanation =
+    transition === "hubFreezeTo2D" && phase === "panel.essentials";
+
   /** Courbe CSS KEEP — thaw only · aller garde ease-in-out standard. */
   const skyFadeEase =
     transition === "panelCloseToHub"
@@ -456,6 +460,7 @@ export function useParcoursUx({
     showCloseInspireVeil,
     showCloseCanvasStreak,
     showCloseTracteur,
+    showOpenEmanation,
     showCloseStarImpact,
     crossfadeMs: HUB_FREEZE_FADE_MS,
     closeFadeMs: HUB_THAW_APPEAR_MS,

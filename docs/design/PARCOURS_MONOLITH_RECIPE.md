@@ -4,11 +4,11 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **T-open-4** : souffle CSS bloom + filante étoile→verre pendant émanation.
 - 2 sept 2026 — **T-open-3** : panneau @ `HUB_FREEZE_PANEL_AT_MS` = hold+fade (760) · ciel 2D figé avant expand.
 - 2 sept 2026 — **T-open-2** : émanation `.parcours-monolith-expand` (scale+opacity · 440 ms) · plus de slide Y.
 - 2 sept 2026 — **T-open-1** : pivot expand `--parcours-expand-origin` = ancre Hero au montage panneau.
 - 1 sept 2026 — **T-close-7** : 60 FPS close — CSS transform/opacity only · tracteur CSS · WebGL gelé jusqu'au thaw · absorb @ hold.
-- 1 sept 2026 — **T-close-6c** : calque WebGL z-42 · monolithe translucide · kiss @ 255 ms (supersédé par T-close-7).
 
 **Liens :**
 - Spec Traversée : [`../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §2b
@@ -141,6 +141,7 @@
 | **T-open-1** | Pivot expand figé sur ancre Hero (`--parcours-expand-origin`) | ✅ |
 | **T-open-2** | Émanation scale+opacity 440 ms (pas reverse close) | ✅ |
 | **T-open-3** | Départ panneau @ hold+fade (ciel 2D figé) · expand seulement pendant `hubFreezeTo2D` | ✅ |
+| **T-open-4** | Souffle CSS bloom + filante étoile→verre (pas canvas) | ✅ |
 
 **T-close-1 :** `hubStarVisualViewportPx` · offset hitbox Hero · rAF pendant `panelCloseToHub` · pas de setState 60 fps.
 

@@ -58,6 +58,82 @@ body {
   animation: parcours-panel-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/** T-open-4 — bloom @ étoile (transform + opacity · pas de blur). */
+.parcours-open-star-bloom {
+  pointer-events: none;
+  position: fixed;
+  left: var(--parcours-star-x, 50%);
+  top: var(--parcours-star-y, 45%);
+  z-index: 28;
+  width: min(14rem, 36vw);
+  height: min(14rem, 36vw);
+  transform: translate(-50%, -50%) scale(0.35);
+  opacity: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(232, 255, 254, 0.55) 0%,
+    rgba(0, 232, 240, 0.28) 28%,
+    rgba(0, 232, 240, 0.08) 48%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+  animation: parcours-open-star-bloom var(--parcours-expand-ms, 440ms)
+    cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes parcours-open-star-bloom {
+  0% {
+    opacity: 0.15;
+    transform: translate(-50%, -50%) scale(0.28);
+  }
+  35% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.35);
+  }
+}
+
+/** T-open-4 — filante légère étoile → verre (miroir tracteur close). */
+.parcours-open-emanation {
+  position: fixed;
+  left: var(--parcours-star-x, 50%);
+  top: var(--parcours-star-y, 45%);
+  z-index: 28;
+  width: var(--parcours-open-emanation-dist, 240px);
+  height: 2px;
+  transform-origin: 0 50%;
+  transform: rotate(var(--parcours-open-emanation-angle, 90deg)) scaleX(0);
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(232, 255, 254, 0.9) 0%,
+    rgba(0, 232, 240, 0.55) 42%,
+    rgba(0, 232, 240, 0.08) 100%
+  );
+  will-change: transform, opacity;
+  animation: parcours-open-emanation-sweep var(--parcours-expand-ms, 440ms)
+    cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes parcours-open-emanation-sweep {
+  0% {
+    transform: rotate(var(--parcours-open-emanation-angle, 90deg)) scaleX(0);
+    opacity: 0.2;
+  }
+  28% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: rotate(var(--parcours-open-emanation-angle, 90deg)) scaleX(1);
+    opacity: 0;
+  }
+}
+
 /** T2 — inspire stellaire sur capture gelée (fermeture panneau). */
 .parcours-backdrop-media {
   transition:
@@ -1347,6 +1423,8 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   .parcours-monolith-glass,
   .parcours-monolith-aura-cyan,
   .parcours-monolith-expand,
+  .parcours-open-star-bloom,
+  .parcours-open-emanation,
   .parcours-monolith-collapse,
   .parcours-close-tracteur,
   .parcours-close-star-impact,

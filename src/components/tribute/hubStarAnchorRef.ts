@@ -140,6 +140,35 @@ export function hubStarCollapseTransformOrigin(
 /** T-open-1 — même géométrie que collapse : expand depuis projection Hero. */
 export const hubStarExpandTransformOrigin = hubStarCollapseTransformOrigin;
 
+/** T-open-4 — souffle CSS : étoile → centre verre (miroir tracteur close). */
+export function syncOpenEmanationCssVars(
+  el: HTMLElement,
+  anchor: ScreenAnchor | null,
+  glassRect: DOMRect,
+): void {
+  syncHubStarCssVars(el, anchor);
+  const projected = hubStarProjectedViewportPx(anchor);
+  if (!projected || typeof window === "undefined") {
+    el.style.setProperty("--parcours-open-emanation-dx", "0px");
+    el.style.setProperty("--parcours-open-emanation-dy", "0px");
+    el.style.setProperty("--parcours-open-emanation-angle", "0deg");
+    el.style.setProperty("--parcours-open-emanation-dist", "0px");
+    return;
+  }
+  const glass = hubGlassCenterViewportPercent(glassRect);
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const gx = (glass.x / 100) * vw;
+  const gy = (glass.y / 100) * vh;
+  const dx = gx - projected.x;
+  const dy = gy - projected.y;
+  el.style.setProperty("--parcours-open-emanation-dx", `${dx}px`);
+  el.style.setProperty("--parcours-open-emanation-dy", `${dy}px`);
+  const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+  el.style.setProperty("--parcours-open-emanation-angle", `${angleDeg}deg`);
+  el.style.setProperty("--parcours-open-emanation-dist", `${Math.hypot(dx, dy)}px`);
+}
+
 /** Sync CSS vars étoile sur un élément (fermeture rAF · projection 3D). */
 export function syncHubStarCssVars(
   el: HTMLElement,
