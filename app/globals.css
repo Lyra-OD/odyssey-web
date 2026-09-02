@@ -22,7 +22,26 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/** Chemin 1 — panneau verre entre après le souffle (hubFreeze). */
+/** Chemin 1 — T-open-2 : émanation depuis l’étoile (scale + opacity · ease-out). */
+@keyframes parcours-monolith-expand {
+  0% {
+    opacity: 0;
+    transform: scale(0.04);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.parcours-monolith-expand {
+  transform-origin: var(--parcours-expand-origin, 50% 45%);
+  animation: parcours-monolith-expand var(--parcours-expand-ms, 440ms)
+    cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+/** @deprecated T-open-2 — remplacé par `.parcours-monolith-expand`. */
 @keyframes parcours-panel-in {
   from {
     opacity: 0;
@@ -35,7 +54,6 @@ body {
 }
 
 .parcours-panel-in {
-  /** T-open-1 — pivot = projection Hero (--parcours-expand-origin). */
   transform-origin: var(--parcours-expand-origin, 50% 45%);
   animation: parcours-panel-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -1328,6 +1346,7 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   .sanctuary-halo-breathe,
   .parcours-monolith-glass,
   .parcours-monolith-aura-cyan,
+  .parcours-monolith-expand,
   .parcours-monolith-collapse,
   .parcours-close-tracteur,
   .parcours-close-star-impact,

@@ -1469,9 +1469,9 @@ export function TributeWizard({
                   ? "pointer-events-none opacity-0"
                   : step1Parcours.closeRitualPhase === "collapse"
                     ? "parcours-monolith-collapse pointer-events-none"
-                    : step1Parcours.closeRitualPhase === "inspire"
+                  : step1Parcours.closeRitualPhase === "inspire"
                       ? "parcours-monolith-inspire"
-                      : "parcours-panel-in",
+                      : "parcours-monolith-expand",
               ].join(" ")}
               style={
                 step1Parcours.closeRitualPhase === "collapse"
@@ -1479,7 +1479,12 @@ export function TributeWizard({
                       ["--parcours-collapse-ms" as string]:
                         `${step1Parcours.panelExitMs}ms`,
                     }
-                  : undefined
+                  : step1Parcours.closeRitualPhase === "idle"
+                    ? {
+                        ["--parcours-expand-ms" as string]:
+                          `${step1Parcours.panelEnterMs}ms`,
+                      }
+                    : undefined
               }
             >
               <div className="parcours-monolith-atmosphere" aria-hidden>

@@ -14,6 +14,10 @@ export const HUB_FREEZE_PANEL_AT_MS = 340;
 /** Fin freeze → unmount WebGL. */
 export const HUB_FREEZE_TOTAL_MS = HUB_FREEZE_HOLD_MS + HUB_FREEZE_FADE_MS;
 
+/** T-open-2 — émanation verre depuis l’étoile (scale + opacity · pas reverse close). */
+export const HUB_OPEN_EXPAND_MS = 440;
+export const HUB_OPEN_EXPAND_EASE_CSS = "cubic-bezier(0.16, 1, 0.3, 1)";
+
 /** D — panneau sort (legacy slide · remplacé par rituel collapse T2–T3). */
 export const HUB_CLOSE_PANEL_OUT_MS = 400;
 /** T2 — inspire stellaire sur capture (brightness + flash étoile). */
