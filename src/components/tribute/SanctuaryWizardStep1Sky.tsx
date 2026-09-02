@@ -199,12 +199,17 @@ export function SanctuaryWizardStep1Sky({
   return (
     <div
       className={[
-        "pointer-events-none fixed inset-0 z-0 transition-opacity ease-out",
+        "parcours-sky-hub-layer pointer-events-none fixed inset-0 z-0",
+        liveLayerOpacityVar ? "parcours-sky-opacity-live" : "transition-opacity ease-out",
         panelFading ? "opacity-90" : "opacity-100",
       ].join(" ")}
       style={{
-        transitionDuration: `${fadeMs}ms`,
-        transitionTimingFunction: fadeEase,
+        ...(liveLayerOpacityVar
+          ? {}
+          : {
+              transitionDuration: `${fadeMs}ms`,
+              transitionTimingFunction: fadeEase,
+            }),
         opacity: resolvedLayerOpacity,
       }}
       aria-hidden
@@ -223,10 +228,12 @@ export function SanctuaryWizardStep1Sky({
         closeStreakFire={isHubLite ? closeStreakFire : false}
         className="h-full w-full"
       />
-      <div
-        className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/50"
-        aria-hidden
-      />
+      {!liveLayerOpacityVar ? (
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/50"
+          aria-hidden
+        />
+      ) : null}
     </div>
   );
 }

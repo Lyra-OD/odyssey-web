@@ -134,6 +134,8 @@ export const HUB_CLOSE_TOTAL_MS =
 export type HubFreezeFx = {
   /** 1 → 0 flash soft sur Hero (hold). */
   flash: number;
+  /** 1 → 0 pulsation absorption @ impact filante (T-close-6c). */
+  closeAbsorb: number;
   /** true = respiration figée (retenir le souffle). */
   holdBreath: boolean;
   /** 0–1 mul invite Html. */
@@ -150,6 +152,7 @@ export type HubFreezeFx = {
 /** Lu dans le Canvas (useFrame) — pas de setState. */
 export const hubFreezeFxRef: HubFreezeFx = {
   flash: 0,
+  closeAbsorb: 0,
   holdBreath: false,
   inviteMul: 1,
   thawAppearU: 1,
@@ -190,6 +193,7 @@ export function hubThawAppearEase(t: number): number {
 
 export function resetHubFreezeFx() {
   hubFreezeFxRef.flash = 0;
+  hubFreezeFxRef.closeAbsorb = 0;
   hubFreezeFxRef.holdBreath = false;
   hubFreezeFxRef.inviteMul = 1;
   hubFreezeFxRef.thawAppearU = 1;
@@ -223,6 +227,13 @@ export function softenHubCloseInspire() {
 
 /** T-close-3f — kiss étoile @ impact (sync CSS + canvas Hero). */
 export function pulseHubCloseStarKiss() {
+  hubFreezeFxRef.flash = 1;
+  hubFreezeFxRef.holdBreath = false;
+}
+
+/** T-close-6c — fusion filante → Hero (flash + scale absorb). */
+export function pulseHubCloseAbsorb() {
+  hubFreezeFxRef.closeAbsorb = 1;
   hubFreezeFxRef.flash = 1;
   hubFreezeFxRef.holdBreath = false;
 }

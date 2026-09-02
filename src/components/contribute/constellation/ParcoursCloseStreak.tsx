@@ -19,7 +19,6 @@ import {
   parcoursCloseStreakLockRef,
   resolveHubStarAnchorForClose,
 } from "@/src/components/tribute/hubStarAnchorRef";
-
 const SEGMENTS = 16;
 const LIFE_SEC = 0.58;
 /** Tête arrive @ centre Hero — puis absorption (plus de traverse). */
@@ -150,6 +149,7 @@ export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
   const flightDirRef = useRef(new Vector3());
   const baseLengthRef = useRef(0.55);
   const fireLatchRef = useRef(false);
+  const impactFiredRef = useRef(false);
 
   const line = useMemo(() => {
     const positions = new Float32Array(SEGMENTS * 3);
@@ -171,7 +171,7 @@ export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
     });
     const l = new Line(geo, mat);
     l.frustumCulled = false;
-    l.renderOrder = 24;
+    l.renderOrder = 220;
     l.visible = false;
     paintLineColors(l, TIP, MID, TAIL);
     return l;
@@ -182,6 +182,7 @@ export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
       pendingRef.current = false;
       activeRef.current = false;
       fireLatchRef.current = false;
+      impactFiredRef.current = false;
       ageRef.current = 0;
       waitFramesRef.current = 0;
       parcoursCloseStreakLockRef.current = false;
@@ -258,6 +259,9 @@ export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
 
     const approachT = Math.min(1, u / IMPACT_U);
     const eased = easeOutCubic(approachT);
+    if (u >= IMPACT_U && !impactFiredRef.current) {
+      impactFiredRef.current = true;
+    }
     if (u < IMPACT_U) {
       tmpHead.lerpVectors(startRef.current, tmpEnd, eased);
     } else {
@@ -268,7 +272,9 @@ export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
       u < IMPACT_U ? 0 : (u - IMPACT_U) / Math.max(0.001, 1 - IMPACT_U);
     const tailLen =
       baseLengthRef.current *
-      (u < IMPACT_U ? 1 : Math.max(0, 1 - easeOutCubic(absorbT) * 1.15));
+      (u < IMPACT_U
+        ? 0.78
+        : Math.max(0, 1 - easeOutCubic(absorbT) * 1.35));
 
     const dx = flightDirRef.current.x;
     const dy = flightDirRef.current.y;
@@ -286,8 +292,11 @@ export function ParcoursCloseStreak({ fire }: ParcoursCloseStreakProps) {
     pos.needsUpdate = true;
 
     const fade = cinematicFade(u, IMPACT_U);
-    const impactBoost = u >= IMPACT_U * 0.92 && u < IMPACT_U + 0.08 ? 1.22 : 1;
-    mat.opacity = (0.64 + 0.36 * fade) * Math.min(1, fade * 1.12) * impactBoost;
+    const impactBoost =
+      u >= IMPACT_U * 0.88 && u < IMPACT_U + 0.14 ? 1.55 : u < IMPACT_U ? 1.08 : 0.72;
+    mat.opacity =
+      Math.min(1, (0.72 + 0.28 * fade) * impactBoost) *
+      (u < IMPACT_U ? 1 : Math.max(0.15, 1 - absorbT * 0.85));
     line.visible = fade > 0.03 || absorbT < 0.95;
   });
 

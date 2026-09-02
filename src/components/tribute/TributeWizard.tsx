@@ -580,7 +580,16 @@ export function TributeWizard({
     [],
   );
 
-  /** T-close-2b — inspire : vars vivantes · collapse : pivot + vars figés (pas wobble). */
+  /** T-close-7 — régime GPU strict dès Esc (zéro backdrop-filter / box-shadow animés). */
+  useEffect(() => {
+    if (step1Parcours.transition !== "panelCloseToHub") return;
+    document.documentElement.classList.add("parcours-close-gpu-strict");
+    return () => {
+      document.documentElement.classList.remove("parcours-close-gpu-strict");
+    };
+  }, [step1Parcours.transition]);
+
+  /** T-close-2b — inspire : vars vivantes · collapse : pivot + tracteur figés. */
   useEffect(() => {
     if (step1Parcours.transition !== "panelCloseToHub") return;
     const root = document.documentElement;
@@ -631,12 +640,14 @@ export function TributeWizard({
   useEffect(() => {
     if (step1Parcours.transition === "panelCloseToHub") return;
     const root = document.documentElement;
+    root.classList.remove("parcours-close-gpu-strict");
     root.style.removeProperty("--parcours-star-x");
     root.style.removeProperty("--parcours-star-y");
     root.style.removeProperty("--parcours-glass-x");
     root.style.removeProperty("--parcours-glass-y");
     root.style.removeProperty("--parcours-glass-launch-x");
     root.style.removeProperty("--parcours-glass-launch-y");
+    root.style.removeProperty("--parcours-impact-delay-ms");
     root.style.removeProperty("--parcours-tracteur-dx");
     root.style.removeProperty("--parcours-tracteur-dy");
     root.style.removeProperty("--parcours-tracteur-angle");
@@ -674,9 +685,7 @@ export function TributeWizard({
   const hubWebGLLayerOpacity =
     deferHubWebGLUntilReady && !hubWebGLReady
       ? 0
-      : step1Parcours.showCloseCanvasStreak
-        ? Math.max(step1Parcours.hubWebGLOpacity, 0.72)
-        : step1Parcours.hubWebGLOpacity;
+      : step1Parcours.hubWebGLOpacity;
 
   const step1RewardPendingRef = useRef(false);
 
@@ -1068,9 +1077,18 @@ export function TributeWizard({
       {step1Sky && step1Parcours.showCloseInspireVeil ? (
         <div className="parcours-close-inspire-veil" aria-hidden />
       ) : null}
+      {step1Sky && step1Parcours.showCloseTracteur ? (
+        <div
+          className="parcours-close-tracteur"
+          style={{
+            ["--parcours-collapse-ms" as string]: `${step1Parcours.panelExitMs}ms`,
+          }}
+          aria-hidden
+        />
+      ) : null}
       {step1Sky && step1Parcours.showCloseStarImpact ? (
         <div
-          className="parcours-close-star-impact"
+          className="parcours-close-star-impact parcours-close-fusion-bloom"
           style={{
             ["--parcours-collapse-ms" as string]: `${step1Parcours.panelExitMs}ms`,
           }}
@@ -1107,7 +1125,7 @@ export function TributeWizard({
           hubPrompt={copy.parcoursHeroPrompt}
           hubTapHint={copy.parcoursHeroTapHint}
           onStarAnchorChange={onHubStarAnchor}
-          closeStreakFire={step1Parcours.showCloseCanvasStreak}
+          closeStreakFire={false}
         />
       ) : null}
       {step1Sky && step1Parcours.showRitualWebGL ? (

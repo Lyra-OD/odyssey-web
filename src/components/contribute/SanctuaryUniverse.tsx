@@ -89,6 +89,7 @@ import {
   resolveHubBirth,
 } from "@/src/components/contribute/constellation/graphs/hubIdle";
 import { hubFreezeFxRef, tickHubThawAppear } from "@/src/lib/parcours/hubFreezeTimeline";
+import { parcoursCloseStreakLockRef } from "@/src/components/tribute/hubStarAnchorRef";
 import { hubSkyApproachRef } from "@/src/components/contribute/constellation/HubSkyCamera";
 import {
   DEFAULT_LINE_WHISPER,
@@ -240,6 +241,26 @@ function ForceRenderLoop({
   return null;
 }
 
+/** T-close-6c — fond canvas transparent : Hero + filante au-dessus du verre. */
+function CloseRitualClearAlpha({
+  active,
+  voidHex,
+}: {
+  active: boolean;
+  voidHex: string;
+}) {
+  const { gl } = useThree();
+  const voidColor = useMemo(() => new Color(voidHex), [voidHex]);
+  useEffect(() => {
+    if (active) {
+      gl.setClearColor(0x000000, 0);
+    } else {
+      gl.setClearColor(voidColor, 1);
+    }
+  }, [active, gl, voidColor]);
+  return null;
+}
+
 function Constellation({
   onSelectMemory,
   focusedSoulId,
@@ -344,12 +365,20 @@ function Constellation({
 
   useFrame(({ camera }) => {
     if (hubBirthMode) {
-      const v = hubSkyApproachRef.current;
-      setHubApproach((prev) => (Math.abs(prev - v) > 0.006 ? v : prev));
+      if (!parcoursCloseStreakLockRef.current) {
+        const v = hubSkyApproachRef.current;
+        setHubApproach((prev) => (Math.abs(prev - v) > 0.006 ? v : prev));
+      }
       tickHubThawAppear();
       // Flash soft decay (rite freeze aller)
       if (hubFreezeFxRef.flash > 0.01) {
         hubFreezeFxRef.flash = Math.max(0, hubFreezeFxRef.flash - 0.028);
+      }
+      if (hubFreezeFxRef.closeAbsorb > 0.01) {
+        hubFreezeFxRef.closeAbsorb = Math.max(
+          0,
+          hubFreezeFxRef.closeAbsorb - 0.032,
+        );
       }
     }
     if (revealTRef) {
@@ -648,7 +677,11 @@ function Constellation({
                   globalScale={gScale}
                   birthFlash={
                     hubBirthMode
-                      ? Math.max(birth.heroFlash, hubFreezeFxRef.flash)
+                      ? Math.max(
+                          birth.heroFlash,
+                          hubFreezeFxRef.flash,
+                          hubFreezeFxRef.closeAbsorb * 0.95,
+                        )
                       : birth.heroFlash
                   }
                   birth={birthDrive}
@@ -661,8 +694,11 @@ function Constellation({
                   }
                   sizeBreath={
                     hubBirthMode && !hubFreezeFxRef.holdBreath
-                      ? HUB_HERO_SIZE_BREATH * breathDrive
-                      : 0
+                      ? HUB_HERO_SIZE_BREATH * breathDrive +
+                        hubFreezeFxRef.closeAbsorb * 0.42
+                      : hubFreezeFxRef.closeAbsorb > 0.02
+                        ? hubFreezeFxRef.closeAbsorb * 0.28
+                        : 0
                   }
                   parallax={0}
                   phase={i * 1.7}
@@ -943,6 +979,7 @@ function UniverseScene({
 
   return (
     <ParallaxProvider intensity={parallaxIntensity}>
+      <CloseRitualClearAlpha active={closeStreakFire} voidHex={voidHex} />
       <ForceRenderLoop enabled={skyActive} wakeKey={skyWakeKey} />
       {/* Craft : zoom fixe (pas de molette qui recentre) */}
       <WheelZoom enabled={!craftLite} />
@@ -978,7 +1015,9 @@ function UniverseScene({
         {/* Craft : remonte le ciel pour que la bande d etoiles soit en haut d ecran */}
         <group position={craftLite ? [0, 5.5, 0] : [0, 0, 0]}>
         {/* Panorama hors milkyRotate — orientation propre (Tilt / Flip). */}
-        {tier === "desktop" && isSkyLayerOn(skyLayers, "panorama") ? (
+        {tier === "desktop" &&
+        !closeStreakFire &&
+        isSkyLayerOn(skyLayers, "panorama") ? (
           <ParallaxLayer
             factor={theme.skyPanorama.parallax.factor}
             lerp={theme.skyPanorama.parallax.lerp}
@@ -991,7 +1030,7 @@ function UniverseScene({
           position={theme.scene.milkyPosition ?? [0, 0, 0]}
           rotation={[0, 0, theme.scene.milkyRotate ?? 0]}
         >
-        {isSkyLayerOn(skyLayers, "cosmicDust") ? (
+        {!closeStreakFire && isSkyLayerOn(skyLayers, "cosmicDust") ? (
         <ParallaxLayer
           factor={theme.cosmicDust.parallax.factor}
           lerp={theme.cosmicDust.parallax.lerp}
@@ -999,7 +1038,7 @@ function UniverseScene({
           <CosmicDust tier={tier} />
         </ParallaxLayer>
         ) : null}
-        {tier !== "reduced" && !craftLite && isSkyLayerOn(skyLayers, "zodiacal") ? (
+        {tier !== "reduced" && !closeStreakFire && isSkyLayerOn(skyLayers, "zodiacal") ? (
           <ParallaxLayer
             factor={theme.zodiacal.parallax.factor}
             lerp={theme.zodiacal.parallax.lerp}
@@ -1007,7 +1046,7 @@ function UniverseScene({
             <ZodiacalLight tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {tier !== "reduced" && isSkyLayerOn(skyLayers, "dustLanes") ? (
+        {tier !== "reduced" && !closeStreakFire && isSkyLayerOn(skyLayers, "dustLanes") ? (
           <ParallaxLayer
             factor={theme.milkyDustLanes.parallax.factor}
             lerp={theme.milkyDustLanes.parallax.lerp}
@@ -1015,7 +1054,7 @@ function UniverseScene({
             <MilkyDustLanes tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {isSkyLayerOn(skyLayers, "starsBand") ? (
+        {!closeStreakFire && isSkyLayerOn(skyLayers, "starsBand") ? (
           <StarDust
             tier={tier}
             showBand
@@ -1024,7 +1063,7 @@ function UniverseScene({
         ) : null}
         </group>
 
-        {tier !== "reduced" && isSkyLayerOn(skyLayers, "gasFar") ? (
+        {tier !== "reduced" && !closeStreakFire && isSkyLayerOn(skyLayers, "gasFar") ? (
           <ParallaxLayer
             factor={theme.gasFar.parallax.factor}
             lerp={theme.gasFar.parallax.lerp}
@@ -1032,7 +1071,9 @@ function UniverseScene({
             <NebulaGasFar tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {tier === "desktop" && isSkyLayerOn(skyLayers, "ghostStars") ? (
+        {tier === "desktop" &&
+        !closeStreakFire &&
+        isSkyLayerOn(skyLayers, "ghostStars") ? (
           <ParallaxLayer
             factor={theme.ghostStars.parallax.factor}
             lerp={theme.ghostStars.parallax.lerp}
@@ -1040,7 +1081,7 @@ function UniverseScene({
             <GhostStars tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {isSkyLayerOn(skyLayers, "gasRose") ? (
+        {!closeStreakFire && isSkyLayerOn(skyLayers, "gasRose") ? (
         <ParallaxLayer
           factor={theme.gasRose.parallax.factor}
           lerp={theme.gasRose.parallax.lerp}
@@ -1048,7 +1089,7 @@ function UniverseScene({
           <NebulaGasRose tier={tier} />
         </ParallaxLayer>
         ) : null}
-        {isSkyLayerOn(skyLayers, "gasMauve") ? (
+        {!closeStreakFire && isSkyLayerOn(skyLayers, "gasMauve") ? (
         <ParallaxLayer
           factor={theme.gasMauve.parallax.factor}
           lerp={theme.gasMauve.parallax.lerp}
@@ -1056,7 +1097,7 @@ function UniverseScene({
           <NebulaGasMauve tier={tier} />
         </ParallaxLayer>
         ) : null}
-        {isSkyLayerOn(skyLayers, "gasTeal") ? (
+        {!closeStreakFire && isSkyLayerOn(skyLayers, "gasTeal") ? (
         <ParallaxLayer
           factor={theme.gasTeal.parallax.factor}
           lerp={theme.gasTeal.parallax.lerp}
@@ -1064,7 +1105,10 @@ function UniverseScene({
           <NebulaGasTeal tier={tier} />
         </ParallaxLayer>
         ) : null}
-        {tier !== "reduced" && !craftLite && isSkyLayerOn(skyLayers, "aurora") ? (
+        {tier !== "reduced" &&
+        !craftLite &&
+        !closeStreakFire &&
+        isSkyLayerOn(skyLayers, "aurora") ? (
           <ParallaxLayer
             factor={theme.aurora.parallax.factor}
             lerp={theme.aurora.parallax.lerp}
@@ -1072,14 +1116,14 @@ function UniverseScene({
             <AuroraVeil tier={tier} />
           </ParallaxLayer>
         ) : null}
-        {isSkyLayerOn(skyLayers, "starsField") ? (
+        {!closeStreakFire && isSkyLayerOn(skyLayers, "starsField") ? (
           <StarDust
             tier={tier}
             showBand={false}
             showField
           />
         ) : null}
-        {!craftLite && isSkyLayerOn(skyLayers, "shootingStars") ? (
+        {!craftLite && !closeStreakFire && isSkyLayerOn(skyLayers, "shootingStars") ? (
           <ParallaxLayer
             factor={theme.shootingStars.parallax.factor}
             lerp={theme.shootingStars.parallax.lerp}
@@ -1145,8 +1189,9 @@ function createRenderer(
   canvas: HTMLCanvasElement | OffscreenCanvas,
   options?: { preserveDrawingBuffer?: boolean },
 ) {
+  const hubAlpha = options?.preserveDrawingBuffer ?? false;
   const opts: WebGLContextAttributes = {
-    alpha: false,
+    alpha: hubAlpha,
     antialias: false,
     depth: true,
     stencil: false,
@@ -1168,7 +1213,7 @@ function createRenderer(
   return new WebGLRenderer({
     canvas,
     context: context as WebGLRenderingContext,
-    alpha: false,
+    alpha: hubAlpha,
     antialias: false,
     powerPreference: "high-performance",
     failIfMajorPerformanceCaveat: false,
@@ -1468,7 +1513,7 @@ export function SanctuaryUniverse({
           className={immersive ? undefined : "!pointer-events-none"}
           style={{ pointerEvents: immersive ? "auto" : "none" }}
           frameloop="demand"
-          dpr={craftLite || skyPaused ? 1 : tierDpr(tier)}
+          dpr={craftLite || skyPaused || closeStreakFire ? 1 : tierDpr(tier)}
           camera={{
             position: [0, 0, craftLite ? 58 : 9.2],
             fov: craftLite ? 68 : 42,

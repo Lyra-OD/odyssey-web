@@ -4,16 +4,11 @@
 **Dernière MAJ :** 1 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 1 sept 2026 — **T-close-3f** : bridge impact 78 % · thaw 88 % collapse · flash Hero sync · backdrop handoff.
-- 1 sept 2026 — **T-close-3e** : verre aspire vers étoile (scale + aura) synchronisé filante.
-- 1 sept 2026 — **T-close-3d** : filante @ collapse · fondu calque 180 ms · WebGL 0.88.
-- 1 sept 2026 — **T-close-3c** : filante canvas `ParcoursCloseStreak` · retrait tracteur CSS.
-- 1 sept 2026 — **T-close-2b** : pivot collapse figé · ancre hub conservée · thaw @ hold.
-- 1 sept 2026 — **T-close-2** : voiles inspire centrés sur `--parcours-star-x/y`.
-- 1 sept 2026 — **T-close-1** : ancre étoile rAF + centre optique Hero pendant fermeture.
-- 1 sept 2026 — **Fermeture seamless** : crossfade ciel pendant collapse · flash `beginHubCloseInspire`.
-- 1 sept 2026 — **Tranches 2–3 fermeture** : inspire backdrop · collapse verre → étoile · hold avant thaw D1.
-- 1 sept 2026 — Recette initiale post-T1b monolithe (perf · DA · rollout wizard).
+- 1 sept 2026 — **T-close-7** : 60 FPS close — CSS transform/opacity only · tracteur CSS · WebGL gelé jusqu'au thaw · absorb @ hold.
+- 1 sept 2026 — **T-close-6c** : calque WebGL z-42 · monolithe translucide · kiss @ 255 ms (supersédé par T-close-7).
+- 1 sept 2026 — **T-close-6b** : filante arm @ useFrame · gel IdleCameraDrift · absorption @ impact.
+- 1 sept 2026 — **T-close-6a/6a′** : cible unifiée `hubStarProjectedViewport*` · pivot collapse aligné filante.
+- 1 sept 2026 — **T-close-5e** : thaw 2× rAF @ hold · handoff sans flash.
 
 **Liens :**
 - Spec Traversée : [`../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §2b
@@ -169,6 +164,10 @@
 **T-close-6a′ :** kiss CSS + collapse pivot + tracteur → `hubStarProjectedViewport*` (ancre 3D) · plus `hubStarVisualViewport*` (+22 % invite) pour le rituel fermeture.
 
 **T-close-6b :** filante arm @ `useFrame` · cible `hubStarWorldRef` live · départ haut verre (`--parcours-glass-launch-*`) · gel `IdleCameraDrift` · absorption @ impact (plus traverse).
+
+**T-close-6c :** ~~calque WebGL z-42~~ · **supersédé T-close-7** (saccades GPU).
+
+**T-close-7 (60 FPS close) :** sérialisation stricte @ Esc — `:root.parcours-close-gpu-strict` gèle `backdrop-filter` + box-shadow animés · collapse **transform + opacity only** · tracteur CSS `.parcours-close-tracteur` · `hubSkyLive=false` jusqu'au thaw · `pulseHubCloseAbsorb` + KEEP **@ hold seulement** (plus canvas z-42 ni filante WebGL).
 
 ### P1 — Entrée formulaire (magie panneau) — **après T-close-5**
 Beat actuel trop « slide générique » vs souffle freeze.

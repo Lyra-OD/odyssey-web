@@ -173,6 +173,9 @@ export function hubGlassLaunchViewportPercent(rect: DOMRect): ScreenAnchor {
   };
 }
 
+/** Délai kiss CSS aligné filante @ impact (~255 ms depuis début collapse). */
+export const PARCOURS_CLOSE_IMPACT_DELAY_MS = 255;
+
 /** T-close-3 — halo tracteur : verre → étoile (viewport px + %). */
 export function syncCloseTracteurCssVars(
   el: HTMLElement,
@@ -186,6 +189,10 @@ export function syncCloseTracteurCssVars(
   el.style.setProperty("--parcours-glass-y", `${glass.y}%`);
   el.style.setProperty("--parcours-glass-launch-x", `${launch.x}%`);
   el.style.setProperty("--parcours-glass-launch-y", `${launch.y}%`);
+  el.style.setProperty(
+    "--parcours-impact-delay-ms",
+    `${PARCOURS_CLOSE_IMPACT_DELAY_MS}`,
+  );
   const projected = hubStarProjectedViewportPx(anchor);
   if (projected) {
     const launchPx = hubGlassLaunchViewportPercent(glassRect);

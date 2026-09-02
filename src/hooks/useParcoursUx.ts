@@ -14,18 +14,16 @@ import {
   beginHubThawAppear,
   HUB_CAPTURE_AT_MS,
   HUB_CLOSE_COLLAPSE_MS,
-  HUB_CLOSE_IMPACT_RITUAL_U,
   HUB_CLOSE_RITUAL_MS,
   hubCloseBackdropOpacityU,
   hubClosePhaseFromU,
   hubCloseRitualU,
-  hubCloseWebGLOpacityU,
   HUB_FREEZE_FADE_MS,
   HUB_FREEZE_PANEL_AT_MS,
   HUB_FREEZE_TOTAL_MS,
   HUB_THAW_APPEAR_EASE_CSS,
   HUB_THAW_APPEAR_MS,
-  pulseHubCloseStarKiss,
+  pulseHubCloseAbsorb,
   resetHubFreezeFx,
   softenHubCloseInspire,
   softenHubFreezeFx,
@@ -55,16 +53,12 @@ export const PARCOURS_CLOSE_BACKDROP_OPACITY_VAR =
 function syncCloseRitualSkyOpacities(u: number) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
-  const phase = hubClosePhaseFromU(u);
-  let webgl = hubCloseWebGLOpacityU(u);
-  if (phase === "collapse" || phase === "hold") {
-    webgl = Math.max(webgl, 0.72);
-  }
   root.style.setProperty(
     PARCOURS_CLOSE_BACKDROP_OPACITY_VAR,
     String(hubCloseBackdropOpacityU(u)),
   );
-  root.style.setProperty(PARCOURS_CLOSE_WEBGL_OPACITY_VAR, String(webgl));
+  /** T-close-7 — WebGL gelé (opacité 0) jusqu'au thaw ; zéro calcul 3D pendant aspiration. */
+  root.style.setProperty(PARCOURS_CLOSE_WEBGL_OPACITY_VAR, "0");
 }
 
 function clearCloseRitualSkyOpacities() {
@@ -122,7 +116,6 @@ export function useParcoursUx({
   const closeRitualStartedAtRef = useRef<number | null>(null);
   const closeRitualRafRef = useRef(0);
   const closeRitualPhaseRef = useRef<ParcoursCloseRitualPhase>("idle");
-  const closeImpactFiredRef = useRef(false);
 
   const clearTimers = useCallback(() => {
     for (const t of timersRef.current) clearTimeout(t);
@@ -164,7 +157,6 @@ export function useParcoursUx({
       closeRitualURef.current = 0;
       clearCloseRitualSkyOpacities();
       closeRitualPhaseRef.current = "idle";
-      closeImpactFiredRef.current = false;
       closeRitualActiveRef.current = false;
       return;
     }
@@ -233,6 +225,7 @@ export function useParcoursUx({
   const commitCloseThaw = useCallback(() => {
     if (closeThawCommittedRef.current) return;
     closeThawCommittedRef.current = true;
+    pulseHubCloseAbsorb();
     beginHubThawAppear();
     /** React reprend les opacités avant de retirer les vars (évite le flash). */
     setThawReveal(true);
@@ -248,7 +241,6 @@ export function useParcoursUx({
       closeRitualURef.current = 0;
       clearCloseRitualSkyOpacities();
       closeRitualPhaseRef.current = "idle";
-      closeImpactFiredRef.current = false;
       closeRitualActiveRef.current = false;
     }, HUB_THAW_APPEAR_MS);
   }, [schedule]);
@@ -267,11 +259,6 @@ export function useParcoursUx({
       if (nextPhase === "collapse") softenHubCloseInspire();
       closeRitualPhaseRef.current = nextPhase;
       setCloseRitualPhase(nextPhase);
-    }
-
-    if (u >= HUB_CLOSE_IMPACT_RITUAL_U && !closeImpactFiredRef.current) {
-      closeImpactFiredRef.current = true;
-      pulseHubCloseStarKiss();
     }
 
     if (elapsed >= HUB_CLOSE_RITUAL_MS) {
@@ -296,7 +283,6 @@ export function useParcoursUx({
     clearTimers();
     stopCloseRitualRaf();
     closeThawCommittedRef.current = false;
-    closeImpactFiredRef.current = false;
     closeRitualActiveRef.current = true;
     closeRitualPhaseRef.current = "inspire";
     beginHubCloseInspire();
@@ -376,7 +362,7 @@ export function useParcoursUx({
       : transition === "panelCloseToHub"
         ? thawReveal
           ? 1
-          : hubCloseWebGLOpacityU(closeRitualURef.current)
+          : 0
         : phase === "hub.idle"
           ? 1
           : 0;
@@ -403,12 +389,12 @@ export function useParcoursUx({
         phase === "ritual.reveal" ||
         phase === "hub.postReveal");
 
-  /** Loop off en saisie · canvas monté @ opacité 0 (pre-warm) · reprise @ close (D1). */
+  /** Loop off en saisie · T-close-7 : loop on seulement @ thaw (verre disparu). */
   const hubSkyLive =
     enabled &&
     ((phase === "hub.idle" && transition === null) ||
       (transition === "hubFreezeTo2D" && freezeHolding) ||
-      transition === "panelCloseToHub");
+      (transition === "panelCloseToHub" && thawReveal));
 
   const hubChromeHidden = enabled;
 
@@ -421,7 +407,10 @@ export function useParcoursUx({
     transition === "panelCloseToHub" &&
     (closeRitualPhase === "collapse" || closeRitualPhase === "hold");
 
-  const showCloseCanvasStreak =
+  /** T-close-7 — filante canvas désactivée ; tracteur CSS + kiss uniquement. */
+  const showCloseCanvasStreak = false;
+
+  const showCloseTracteur =
     transition === "panelCloseToHub" &&
     (closeRitualPhase === "collapse" || closeRitualPhase === "hold");
 
@@ -465,6 +454,7 @@ export function useParcoursUx({
     showFreezeVeil,
     showCloseInspireVeil,
     showCloseCanvasStreak,
+    showCloseTracteur,
     showCloseStarImpact,
     crossfadeMs: HUB_FREEZE_FADE_MS,
     closeFadeMs: HUB_THAW_APPEAR_MS,
