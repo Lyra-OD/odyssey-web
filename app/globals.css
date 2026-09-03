@@ -588,6 +588,25 @@ body {
   max-height: none;
 }
 
+/** Desktop guest : plus de cage — la stèle grandit, on scrolle le calque, pas le verre. */
+@media (min-width: 768px) {
+  .parcours-monolith-shell-guest {
+    align-items: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .parcours-monolith-shell-guest .parcours-monolith-card {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .parcours-monolith-shell-guest .parcours-monolith-scroll {
+    max-height: none;
+    overflow: visible;
+  }
+}
+
 .parcours-monolith-scroll {
   max-height: 90dvh;
   overflow-y: auto;

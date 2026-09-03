@@ -328,6 +328,8 @@ export function GuestVideoRecorder({
 
       <div
         className={`relative overflow-hidden rounded-xl border bg-black/60 ${
+          embedded ? "md:mx-auto md:max-w-sm" : ""
+        } ${
           showLive || phase === "ready"
             ? `${sanctuarySelectBreathe} border-teal-400/40`
             : "border-teal-400/25"

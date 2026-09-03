@@ -16,8 +16,8 @@ export function SanctuaryMonolith({
   footer,
 }: SanctuaryMonolithProps) {
   return (
-    <div className="parcours-monolith-shell pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-4">
-      <div className="parcours-monolith-frame pointer-events-auto relative w-full max-w-xl">
+    <div className="parcours-monolith-shell parcours-monolith-shell-guest pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-4">
+      <div className="parcours-monolith-frame pointer-events-auto relative w-full max-w-xl md:my-8 md:max-w-5xl">
         <div className="parcours-monolith-atmosphere" aria-hidden>
           <div className="parcours-monolith-aura-cyan" />
         </div>
