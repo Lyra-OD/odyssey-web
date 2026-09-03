@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-03 · **Entrées :** 792
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-03 · **Entrées :** 803
 
 ## `common`
 
@@ -852,6 +852,17 @@
 | `sanctuary.checkoutPreviewBlocked` | Aperçu local : le paiement nécessite un vrai lien. | Local preview: checkout needs a real tribute link. |
 | `sanctuary.checkoutError` | Impossible d'ouvrir le paiement pour le moment. | We could not open checkout right now. |
 | `sanctuary.checkoutAmountInvalid` | Ajustez le montant Mécène avant de continuer. | Adjust the Patron amount before continuing. |
+| `sanctuary.checkoutRecap` | {label} · {price} | {label} · {price} |
+| `sanctuary.packExpand.guest_voice.inspiration` | Une voix qui reste, quand les jours passent. | A voice that remains, as the days go by. |
+| `sanctuary.packExpand.guest_voice.body` | Enregistrez quelques mots, à votre rythme. Pour le film, pour ceux qui restent. | Record a few words, in your own time. For the film, for those who remain. |
+| `sanctuary.packExpand.guest_video.inspiration` | Un regard. Une histoire. | A gaze. A story. |
+| `sanctuary.packExpand.guest_video.body` | Enregistrez-vous face caméra. Votre présence, vivante, dans le film. | Record yourself on camera. Your presence, alive, in the film. |
+| `sanctuary.packExpand.guest_heritage.inspiration` | Votre nom, au générique. | Your name, in the credits. |
+| `sanctuary.packExpand.guest_heritage.body` | Vous soutenez la production : version HD, partage, et votre nom inscrit dans le film. | You support the making: HD, share, and your name in the film. |
+| `sanctuary.packExpand.guest_candle.inspiration` | Une lumière discrète. | A quiet light. |
+| `sanctuary.packExpand.guest_candle.body` | Votre présence, sans enregistrement. Une lueur qui rejoint le Sanctuaire. | Your presence, with no recording. A glow that joins the Sanctuary. |
+| `sanctuary.packExpand.guest_patron.inspiration` | Un geste à la mesure de votre cœur. | A gift measured by the heart. |
+| `sanctuary.packExpand.guest_patron.body` | Choisissez le montant. Votre soutien aide à porter ce film plus loin. | Choose the amount. Your support helps carry this film further. |
 | `sanctuary.deposit.nameLabel` | Votre nom | Your name |
 | `sanctuary.deposit.namePlaceholder` | Prénom et nom | First and last name |
 | `sanctuary.deposit.emailLabel` | Courriel | Email |

@@ -22,14 +22,20 @@ export type ImprintPack = {
   amountSuggestedCents?: number | null;
 };
 
+export type ImprintPackExpand = {
+  inspiration: string;
+  body: string;
+};
+
 export type ImprintCatalogProps = {
   locale: "fr" | "en";
   packs: readonly ImprintPack[];
   /** Sélection locale uniquement — pas de checkout à cette étape. */
   selectedKey: string | null;
   onSelect: (key: string) => void;
-  title?: string;
-  promise?: string;
+  title: string;
+  promise: string;
+  expand: Record<string, ImprintPackExpand>;
   /** Interaction voix. Rendue dans la carte `guest_voice` ouverte. */
   voiceSlot?: ReactNode;
   /** Interaction témoignage. Rendue dans la carte `guest_video` ouverte. */
@@ -40,75 +46,11 @@ export type ImprintCatalogProps = {
   patronSlot?: ReactNode;
 };
 
-type ExpandCopy = { inspiration: string; body: string };
-
-const EXPAND: Record<"fr" | "en", Record<string, ExpandCopy>> = {
-  fr: {
-    guest_voice: {
-      inspiration: "Une voix qui reste, quand les jours passent.",
-      body: "Enregistrez quelques mots, à votre rythme. Pour le film, pour ceux qui restent.",
-    },
-    guest_video: {
-      inspiration: "Un regard. Une histoire.",
-      body: "Enregistrez-vous face caméra. Votre présence, vivante, dans le film.",
-    },
-    guest_heritage: {
-      inspiration: "Votre nom, au générique.",
-      body: "Vous soutenez la production : version HD, partage, et votre nom inscrit dans le film.",
-    },
-    guest_candle: {
-      inspiration: "Une lumière discrète.",
-      body: "Votre présence, sans enregistrement. Une lueur qui rejoint le Sanctuaire.",
-    },
-    guest_patron: {
-      inspiration: "Un geste à la mesure de votre cœur.",
-      body: "Choisissez le montant. Votre soutien aide à porter ce film plus loin.",
-    },
-  },
-  en: {
-    guest_voice: {
-      inspiration: "A voice that remains, as the days go by.",
-      body: "Record a few words, in your own time. For the film, for those who remain.",
-    },
-    guest_video: {
-      inspiration: "A gaze. A story.",
-      body: "Record yourself on camera. Your presence, alive, in the film.",
-    },
-    guest_heritage: {
-      inspiration: "Your name, in the credits.",
-      body: "You support the making: HD, share, and your name in the film.",
-    },
-    guest_candle: {
-      inspiration: "A quiet light.",
-      body: "Your presence, with no recording. A glow that joins the Sanctuary.",
-    },
-    guest_patron: {
-      inspiration: "A gift measured by the heart.",
-      body: "Choose the amount. Your support helps carry this film further.",
-    },
-  },
-};
-
-const copy = {
-  fr: {
-    title: "Laissez une empreinte durable",
-    promise: "Chaque empreinte aide à porter ce film plus loin.",
-    patronRange: (min: number, max: number) =>
-      `${formatWizardPrice(min, "fr")} – ${formatWizardPrice(max, "fr")}`,
-  },
-  en: {
-    title: "Leave a lasting imprint",
-    promise: "Every imprint helps carry this film further.",
-    patronRange: (min: number, max: number) =>
-      `${formatWizardPrice(min, "en")} – ${formatWizardPrice(max, "en")}`,
-  },
-} as const;
-
 function priceLabel(pack: ImprintPack, locale: "fr" | "en"): string {
   if (pack.key === "guest_patron") {
     const min = pack.amountMinCents ?? 15_000;
     const max = pack.amountMaxCents ?? 100_000;
-    return copy[locale].patronRange(min, max);
+    return `${formatWizardPrice(min, locale)} – ${formatWizardPrice(max, locale)}`;
   }
   return formatWizardPrice(pack.priceCents, locale);
 }
@@ -124,24 +66,22 @@ export function ImprintCatalog({
   onSelect,
   title,
   promise,
+  expand,
   voiceSlot,
   videoSlot,
   lueurSlot,
   patronSlot,
 }: ImprintCatalogProps) {
-  const t = copy[locale];
-  const heading = title ?? t.title;
-  const foot = promise ?? t.promise;
   const primary = packs.filter((p) => !p.secondary);
   const secondary = packs.filter((p) => p.secondary);
 
   return (
     <div className="w-full space-y-6 text-left">
       <h3 className="text-center font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
-        {heading}
+        {title}
       </h3>
 
-      <ul className="space-y-3" role="listbox" aria-label={heading}>
+      <ul className="space-y-3" role="listbox" aria-label={title}>
         {primary.map((pack, i) => (
           <PackRow
             key={pack.key}
@@ -150,6 +90,7 @@ export function ImprintCatalog({
             selected={selectedKey === pack.key}
             onSelect={onSelect}
             delayIndex={i}
+            expand={expand[pack.key]}
             voiceSlot={voiceSlot}
             videoSlot={videoSlot}
             lueurSlot={lueurSlot}
@@ -168,6 +109,7 @@ export function ImprintCatalog({
               selected={selectedKey === pack.key}
               onSelect={onSelect}
               delayIndex={primary.length + i}
+              expand={expand[pack.key]}
               voiceSlot={voiceSlot}
               videoSlot={videoSlot}
               lueurSlot={lueurSlot}
@@ -178,7 +120,7 @@ export function ImprintCatalog({
       ) : null}
 
       <p className="text-center text-[11px] font-light leading-relaxed text-zinc-500">
-        {foot}
+        {promise}
       </p>
     </div>
   );
@@ -190,6 +132,7 @@ function PackRow({
   selected,
   onSelect,
   delayIndex,
+  expand,
   voiceSlot,
   videoSlot,
   lueurSlot,
@@ -200,13 +143,12 @@ function PackRow({
   selected: boolean;
   onSelect: (key: string) => void;
   delayIndex: number;
+  expand?: ImprintPackExpand;
   voiceSlot?: ReactNode;
   videoSlot?: ReactNode;
   lueurSlot?: ReactNode;
   patronSlot?: ReactNode;
 }) {
-  const expand = EXPAND[locale][pack.key];
-
   let interaction: ReactNode = null;
   if (selected) {
     if (pack.key === "guest_voice" && voiceSlot) {
@@ -246,7 +188,7 @@ function PackRow({
           className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left"
         >
           <span className="min-w-0">
-            <span className="block font-label text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-100">
+            <span className="block font-label text-[11px] font-medium uppercase leading-snug tracking-[0.18em] text-zinc-100">
               {pack.label}
             </span>
           </span>

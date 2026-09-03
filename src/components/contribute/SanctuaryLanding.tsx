@@ -57,6 +57,7 @@ import {
   GUEST_PATRON_SUGGESTED_CENTS,
   guestSupportPackLabelByKey,
 } from "@/src/lib/wizard/guestSupportPacks";
+import { formatWizardPrice } from "@/src/lib/wizard/wizardPricing";
 import type { Locale } from "@/i18n.config";
 
 const GUEST_KEEP_REVEAL_REF = { current: WIZARD_BIRTH_REVEAL_END };
@@ -247,6 +248,10 @@ export function SanctuaryLanding({
   }, [locale]);
 
   const handleSelectPack = (key: string) => {
+    if (selectedPackKey === key) {
+      setSelectedPackKey(null);
+      return;
+    }
     setSelectedPackKey(key);
     if (key !== "guest_voice") {
       setVoiceMediaId(null);
@@ -342,6 +347,22 @@ export function SanctuaryLanding({
       window.history.replaceState({}, "", next);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isSanctuaryVisualPreview(token)) return;
+    if (typeof window === "undefined") return;
+    if (new URLSearchParams(window.location.search).get("packs") !== "1") {
+      return;
+    }
+    setPhase("bridge");
+    setGuestStars([{ id: "preview-lea", label: "Léa" }]);
+    setDeposit({
+      id: "preview",
+      kind: "message",
+      contributorName: "Léa",
+      contributorEmail: "lea@example.com",
+    });
+  }, [token]);
 
   useEffect(() => {
     if (isSanctuarySkyPreview(token)) {
@@ -728,6 +749,21 @@ export function SanctuaryLanding({
           header={monolithHeader}
           footer={
             <div className="space-y-3">
+              {selectedPack ? (
+                <p className="text-center font-label text-[11px] font-medium uppercase tracking-[0.2em] text-teal-200/85">
+                  {fill(t.checkoutRecap, {
+                    label: guestSupportPackLabelByKey(
+                      selectedPack.key,
+                      uiLocale,
+                      selectedPack.label,
+                    ),
+                    price:
+                      selectedPack.key === "guest_patron"
+                        ? formatWizardPrice(patronAmountCents, uiLocale)
+                        : formatWizardPrice(selectedPack.priceCents, uiLocale),
+                  })}
+                </p>
+              ) : null}
               <ImprintCheckoutCta
                 token={token}
                 locale={uiLocale}
@@ -773,6 +809,7 @@ export function SanctuaryLanding({
               selectedKey={selectedPackKey}
               onSelect={handleSelectPack}
               title={t.packsTitle}
+              expand={t.packExpand}
               promise={
                 contribFlash === "success" ? t.bridgeBodyAfterGift : t.packsPromise
               }

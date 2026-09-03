@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — T4 : sélection (toggle) · recap checkout · aperçu `?packs=1` · copy expand FR/EN.
 - 3 sept 2026 — Dépôt : échelle titre (nom > bienvenue > cyan médias) · copy *médias*.
 - 3 sept 2026 — G4 : packs + *Non merci* / checkout suivent FR/EN (sans refetch).
 - 3 sept 2026 — G5 : *Non merci* → ciel avec **leur étoile** (plus le CTA d’arrivée).
 - 3 sept 2026 — Ciel invité : **FR/EN sans recharger** le Canvas (`replaceState` + les deux copies).
-- 3 sept 2026 — Ciel invité : **drag pour se promener** · molette = s’approcher.
 
 **Statut :** **actif** — source : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · orga figé : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)
 
@@ -60,7 +60,7 @@ Phase `sky` : ciel plein écran, *Ciel de {prénom}*, CTA *Laisser un souvenir*.
 
 Le courriel n’est plus un palier après le dépôt. Il vit sur l’écran T2. Pas de `PATCH /identity` cette semaine.
 
-### T4 — Aide payante (G4) · **en cours / cadre posé**
+### T4 — Aide payante (G4) · **polish 3 sept**
 
 Le catalogue **existe**. Cadre démo :
 

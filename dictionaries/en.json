@@ -871,6 +871,29 @@
     "checkoutPreviewBlocked": "Local preview: checkout needs a real tribute link.",
     "checkoutError": "We could not open checkout right now.",
     "checkoutAmountInvalid": "Adjust the Patron amount before continuing.",
+    "checkoutRecap": "{label} · {price}",
+    "packExpand": {
+      "guest_voice": {
+        "inspiration": "A voice that remains, as the days go by.",
+        "body": "Record a few words, in your own time. For the film, for those who remain."
+      },
+      "guest_video": {
+        "inspiration": "A gaze. A story.",
+        "body": "Record yourself on camera. Your presence, alive, in the film."
+      },
+      "guest_heritage": {
+        "inspiration": "Your name, in the credits.",
+        "body": "You support the making: HD, share, and your name in the film."
+      },
+      "guest_candle": {
+        "inspiration": "A quiet light.",
+        "body": "Your presence, with no recording. A glow that joins the Sanctuary."
+      },
+      "guest_patron": {
+        "inspiration": "A gift measured by the heart.",
+        "body": "Choose the amount. Your support helps carry this film further."
+      }
+    },
     "deposit": {
       "nameLabel": "Your name",
       "namePlaceholder": "First and last name",
