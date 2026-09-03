@@ -1,10 +1,10 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 2 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 3 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 2 sept 2026 — **Parcours T2-0** : audit Continuer/J3 · prochaine T2-copy ([`product/PARCOURS_UX_GAPS.md`](product/PARCOURS_UX_GAPS.md) §0).
+- 3 sept 2026 — **Démo 10 sept** : slice invité G1→G4 ([`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md)).
 - 28 août 2026 — **Egress revert** : `demoMode.ts` retiré · poll 5 s · stub ops clôturé.
 - 28 août 2026 — Marketing **Phase 3** : `/partners` refonte (4 actes, copy B2B, form au clic, DA cyan + teal lead).
 - 26 août 2026 — Sanctuaire **J2** doc : matrice implémentation §11b [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · séparation canon / playbook démo.
@@ -70,7 +70,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 | Priorité | Quoi | Done when |
 |----------|------|-----------|
-| **Ops** | Jouer **P16** (RLS invitations) quand Supabase n’est plus *restricted* | Policies salon scope conseiller |
+| **P0** | Slice invité démo **10 sept** (ciel d’abord · étoile nommée stub · courriel · packs) | Script §0 du plan technique vert |
 | **Ops** | Stripe CLI `stripe login` + `stripe listen` local · activer `charge.refunded` endpoint prod | Webhook local sans script replay |
 | **Ops** | Factu / quota egress Supabase | 🟢 egress payé · revert DEMO_MODE **28 août** — [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) (clôturé) |
 | A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |

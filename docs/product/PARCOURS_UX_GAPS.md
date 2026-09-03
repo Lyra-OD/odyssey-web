@@ -4,13 +4,13 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 3 sept 2026 — Prochain **écrit** = storyboard **invité** (surface déjà `/contribute/[token]`, pas from scratch). Orga : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) §10.
+- 3 sept 2026 — Plan technique **démo 10 sept** : [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
+- 3 sept 2026 — Storyboard **invité** figé : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md).
 - 3 sept 2026 — Storyboard **voulu** (beats 0→J3) : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) — les trous P0 y sont accrochés, Coffre + Scanner = suite.
 - 2 sept 2026 — **Suite nav figée** : P1 Atelier · P2 fil constellation (spec, pas encore code).
 - 2 sept 2026 — **P0** : retour Essentiels (`reopenEssentials`) · déconnexion sous langue.
-- 2 sept 2026 — **T2-copy** : clés J3 A+B+C + born + CTAs (FR/EN · catalogue).
 
-**Prochain écrit (pas T2 code) :** storyboard **invité** — nièce / lien. Code déjà là : `app/[lang]/contribute/[token]` · `SanctuaryLanding` · `SanctuaryDepositForm` (photo / mot) · voix / vidéo · packs après dépôt. DA V1-16. Ne pas mélanger avec l’orga Chemin 1.
+**Invité :** storyboard [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · **code cette semaine** [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 
 **Liens :**
 - Storyboard voulu : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)

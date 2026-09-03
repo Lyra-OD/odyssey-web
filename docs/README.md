@@ -4,7 +4,7 @@
 **Dernière MAJ :** 21 août 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
-- 3 sept 2026 — Storyboard **voulu** Chemin 1 fermé (0→12) · **prochain écrit** = invité (`/contribute/[token]` déjà en prod) : [`product/PARCOURS_UX_STORYBOARD_VOULU.md`](product/PARCOURS_UX_STORYBOARD_VOULU.md) §10.
+- 3 sept 2026 — Storyboard **invité** figé + plan technique **démo 10 sept** : [`product/PARCOURS_UX_STORYBOARD_INVITE.md`](product/PARCOURS_UX_STORYBOARD_INVITE.md) · [`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 - 28 août 2026 — egress revert clôturé : [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) (stub) · archive [`_archive/DEMO_VP_EGRESS_REVERT.md`](_archive/DEMO_VP_EGRESS_REVERT.md).
 - 28 août 2026 — plan refresh marketing B2C/B2B : [`design/MARKETING_SITE_REFRESH_PLAN.md`](design/MARKETING_SITE_REFRESH_PLAN.md).
 - 21 août 2026 — regroupement **logique** (business / product / design…) · règle nouveaux docs · chemins inchangés.
@@ -152,7 +152,9 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) | canon | Quiet Luxury |
 | [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md) | produit | Ciel économique — teal · Lueurs colorées · valeur |
 | [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) | produit | Vision Sanctuaire — prologue · hub · tiroir · nav |
-| [`product/PARCOURS_UX_STORYBOARD_VOULU.md`](product/PARCOURS_UX_STORYBOARD_VOULU.md) | living | **Chemin 1** voulu (0→12 figé) · suite écrite = **invité** (§10) |
+| [`product/PARCOURS_UX_STORYBOARD_VOULU.md`](product/PARCOURS_UX_STORYBOARD_VOULU.md) | living | **Chemin 1** voulu (0→12 figé) |
+| [`product/PARCOURS_UX_STORYBOARD_INVITE.md`](product/PARCOURS_UX_STORYBOARD_INVITE.md) | living | **Invité** — storyboard voulu (G0→G5) |
+| [`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md) | living | Plan technique — démo **10 sept 2026** |
 | [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) | canon | **Chemin 1** — Traversée UX (spec impl active) |
 | [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) | canon | Beats Parcours UX · craft · stubs |
 | [`product/PARCOURS_UX_GAPS.md`](product/PARCOURS_UX_GAPS.md) | living | Audit trous Chemin 1 · gate T1 |

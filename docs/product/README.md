@@ -7,7 +7,9 @@ Canons existants (`WIZARD_ARCHITECTURE.md`, `SCANNER_COMPANION.md`, …) restent
 
 | Doc | Sujet |
 |-----|--------|
-| [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) | **Chemin 1** voulu (0→12 figé) · prochain écrit = **invité** (§10, surface `/contribute` déjà là) |
+| [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) | **Chemin 1** voulu (0→12 figé) |
+| [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) | **Invité** — storyboard voulu (G0→G5) |
+| [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md) | Plan technique — démo **10 sept 2026** (slice invité) |
 | [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) | **Chemin 1** — La Traversée (spec beats · 2D→WebGL · hub · Coffre→film) |
 | [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md) | Registre beats nommés · craft · stubs · statut impl |
 | [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md) | **Audit trous** — gate avant code T1+ |

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 3 sept 2026 — **Suite écrite** = parcours **invité** (pas from scratch : Sanctuaire `/contribute/[token]` déjà en prod).
+- 3 sept 2026 — Invité figé + plan technique démo 10 sept. [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md)
 - 3 sept 2026 — Beat 12 : **télécharger** + **rester dans le ciel** selon forfait. Plus *le film part*.
 - 3 sept 2026 — Beats 6→10 + étoile à l’**acceptation** · J3 Continuer = **Inviter**. Dépôt ≠ étoile.
 
-**Statut :** **fermé pour l’orga** — beats 0→12 · décisions §8 figées. **Prochain écrit :** storyboard **invité** (§10) — pas le plan technique Chemin 1.
+**Statut :** **fermé pour l’orga** — beats 0→12 · décisions §8 figées. **Invité figé :** [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md). **Plan technique démo 10 sept :** [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 
 **Liens :**
 - Spec impl encore active (à réaligner après ce storyboard) : [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md)
@@ -197,7 +197,7 @@ Rail métier inchangé : wizard **7** étapes. Ici = mise en scène.
 | **On voit** | Overlay léger (ciel encore là en Traversée ; formulaire en Atelier). Pas un 2ᵉ Coffre. |
 | **Copy** | *Ils reçoivent un lien. Leurs souvenirs entrent dans le Coffre — vous composez le film et le ciel ensemble.* |
 | **Geste** | Envoyer / copier le lien · **Plus tard** sans culpabilité |
-| **Étoile réelle** | Le proche **ouvre / accepte** le lien → une étoile se **greffe** au signe. Pas l’envoi seul, pas le dépôt d’une photo. Autant d’étoiles que de présences qui ont rejoint. |
+| **Étoile réelle** | Le proche **dépose** (nom + souvenir) → **une** étoile à son nom se greffe, **et** le souvenir va au Coffre. Pas l’envoi du lien. Pas une étoile par photo. Détail : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md). |
 | **Jamais** | Argent, forfait, Lueurs, « ils peuvent payer » |
 | **Trou** | `circle.guestJourney` **P0** |
 | **Placeholder** | Copy + champ lien. Filaments craft = plus tard. |
@@ -310,7 +310,7 @@ Si l’orga skip : on le dit quand même en une ligne, sinon le ciel qui ne boug
 |------|----------------------|
 | Atelier + choix sous Continuer | ✅ §1 · Beat 3 |
 | Éclipse → rituel → J3 | ✅ Beats 0–5 |
-| Dépôt ≠ étoile · étoiles = gens | ✅ §4 · Beat 5–7 |
+| Une personne = une étoile (dépôt invité) · fichiers = Coffre | ✅ §4 · Beat 6 · invité G2 |
 | Coffre = une pièce · Scanner = porte | ✅ §4 · Beat 7 |
 | `circle.guestJourney` | ✅ Beat 6 |
 | `vault.filmBridge` | ✅ Beat 7 |
@@ -343,9 +343,9 @@ Plus de questions ouvertes. Le plan technique part de là.
 | # | Décision |
 |---|---------|
 | **Ciel vs film** | Ciel = **le cercle** (étoiles-personnes). Film = **souvenirs** du Coffre. |
-| **Étoile réelle** | À l’**acceptation** du lien. Pas l’envoi. Pas le dépôt. |
+| **Étoile réelle** | Quand l’invité **dépose** (nom + souvenir) — une étoile, pas une par fichier. Pas l’envoi du lien. |
 | **J3 Continuer** | → **Inviter**. Coffre après skip ou après l’invite. |
-| **Lueurs sur le lien** | Souvenir d’abord. Lueur = 2ᵉ porte **si** Fonds allumé. |
+| **Aide film (invité)** | Après souvenir + **courriel forcé** : options payantes pour aider à concevoir le film (Lueur, voix, générique… catalogue qui s’enrichit). |
 | **Co-créateur** | Dès l’entrée studio, **plus petit** que magie / je compose. |
 | **Aperçu** | Beat court, pas un monde. |
 | **Fil P2** | Lisible 1ʳᵉ Traversée. Cliquable surtout Atelier. |
@@ -372,33 +372,15 @@ Le Chemin 1 **termine** sur **un** ciel, **une** personne, **un** film sous le H
 
 ---
 
-## 10. Suite — storyboard invité (prochain écrit)
+## 10. Suite — storyboard invité
 
-**Ne pas inventer.** La nièce a déjà une surface produit, pas seulement un lien mort.
-
-| Déjà en code | Rôle |
-|--------------|------|
-| Route [`/[lang]/contribute/[token]`](../../app/[lang]/contribute/[token]/page.tsx) | Sanctuaire **public**, sans auth. DA : V1-16 [`../DA_SCREENS.md`](../DA_SCREENS.md). |
-| [`SanctuaryLanding`](../../src/components/contribute/SanctuaryLanding.tsx) | Accueil ciel + tunnel : **dépôt d’abord**, puis catalogue empreintes. |
-| [`SanctuaryDepositForm`](../../src/components/contribute/SanctuaryDepositForm.tsx) | Formulaire vu en démo : nom, courriel, **photo** ou **mot**, consentement, « Déposer dans le Sanctuaire ». |
-| Voix / vidéo | [`GuestVoiceRecorder`](../../src/components/contribute/GuestVoiceRecorder.tsx) · [`GuestVideoRecorder`](../../src/components/contribute/GuestVideoRecorder.tsx). |
-| Après dépôt | Accusé + **packs / Lueurs** ([`ImprintCatalog`](../../src/components/contribute/ImprintCatalog.tsx)) — Quiet Luxury : gratuit d’abord, empreintes ensuite. |
-
-Craft `/contribute/test-*` = lab interne. **Pas** le parcours invité.
-
-**Ce que le storyboard invité doit trancher** (page à part, pas ce fichier) :
-
-- Ce que l’invité **voit et ressent** beat par beat (ouvrir le lien → accepter → déposer → éventuellement Lueur).
-- Écart vs Chemin 1 déjà figé ici : étoile à l’**acceptation** (pas au dépôt) · souvenir **d’abord** · Lueur seulement si boucle virale on · fichiers → **Coffre** orga.
-- Réaligner copy / tunnel actuel (dépôt → packs) sans jeter le formulaire.
-
-Vision Sanctuaire orga (ciel, wizard) : [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md) — **ne pas** confondre avec le rail invité.
+Écriture : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) (beats G0→G6 proposés). Surface déjà en prod : `/[lang]/contribute/[token]`. Vision orga : [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md) — **ne pas** confondre.
 
 ---
 
 ## 11. Hors scope de cette page
 
-- Plan technique Chemin 1 — **ensuite** (après ou en parallèle du storyboard invité, pas à la place).
+- Plan technique démo 10 sept — [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md) (slice invité, pas tout le Chemin 1).
 - Grille 25 / 50 / 100 ans — **créer** dans FREEMIUM / extras, pas ici.
 - Ciel de famille · graphe médias — §9, pas le rail 0→12.
-- Storyboard invité — **§10**, fichier suivant.
+- Storyboard invité — [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md).
