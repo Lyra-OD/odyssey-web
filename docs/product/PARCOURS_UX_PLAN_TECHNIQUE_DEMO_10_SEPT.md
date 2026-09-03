@@ -1,128 +1,142 @@
-# Parcours UX — Plan technique (démo 10 sept 2026)
+# Parcours UX — Plan démo (jeudi 10 sept 2026, matin)
 
-**Type :** living · **Vérité pour :** ce qu’on **code** cette semaine pour une démo **jeudi 10 sept 2026**. Pas le rêve 0→12 entier.  
+**Type :** living · **Vérité pour :** arriver **jeudi 10 sept au matin** avec un **concept complet, convaincant**.  
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 3 sept 2026 — T4 : desktop deux colonnes (liste | détail) · 390 accordéon.
-- 3 sept 2026 — T4 : liste packs inchangée · *Témoignage filmé* s’ouvre en entier (les autres restent plus bas).
-- 3 sept 2026 — T4 : pied checkout hors scroll (form ne passe plus sous Continuer / *Non merci*).
-- 3 sept 2026 — T6 : copy voix/vidéo/mécène/lueur hors dur · passe 390 px.
-- 3 sept 2026 — T5 : Coffre orga — tuile *Souvenir* + nom invité · signed URL admin.
+- 3 sept 2026 — **Refonte :** famille d’abord · invité = ouverture · Salon KPI = 3ᵉ acte. WOW = placeholders OK.
+- 3 sept 2026 — T4 desktop deux colonnes · 390 accordéon · pied hors scroll · témoignage ouvert en entier.
+- 3 sept 2026 — T6 copy voix/vidéo/mécène/lueur · passe 390 px.
+- 3 sept 2026 — T5 Coffre : tuile *Souvenir* + nom (code ; à rejouer si le script le demande).
+- 3 sept 2026 — T1–T4 invité : ciel d’abord · dépôt + courriel · packs.
 
-**Statut :** **actif** — source : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · orga figé : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)
-
-**Règle démo :** placeholder **documenté** > craft incomplet. Si l’humain comprend le beat, c’est jouable.
+**Statut :** **actif** · orga : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) · invité : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md)
 
 ---
 
-## 0. Ce que tu présentes jeudi (script ~6 min)
+## 0. Ce que « démo » veut dire (figé 3 sept, soir)
 
-1. **Orga** (déjà là) : étape Inviter → copier le lien. Pas de nouveau wizard.
-2. **Invité** (téléphone ou 2ᵉ onglet) : ouvre `/fr/contribute/{token}` → **ciel de X** (pas le form tout de suite).
-3. **Une saisie** : photos (max 5) **et/ou** un mot + **prénom** + **courriel obligatoire** (même écran).
-4. **Une étoile à son nom** se greffe au ciel (stub HTML 2D + filament CSS). Le fichier est dans le Coffre.
-5. **Aider la famille** : catalogue payant (voix, témoignage, Lueur, générique, mécène), même charte wizard. Skip *Non merci* → ciel.
-6. **Retour orga** : Coffre / médias du wizard — la photo invité est là.
+Les **tuyaux sont là**. Des semaines. On ne recâble pas le moteur.
 
-**Hors script jeudi :** éclipse, rituel constellation 12 signes, filaments WebGL, nouveaux SKU (vidéo dans le film), 25/50/100 ans, ciel de famille.
+On montre le **concept entier** pour qu’un inconnu **y croie** en ~8 min.
 
----
+| Priorité | Qui | Pourquoi |
+|----------|-----|----------|
+| **1 — Cœur** | **La famille** | C’est le plus important. On voit ce qu’elle *fait* : ciel, Coffre, chapitres, film, inviter. |
+| **2 — Ouverture** | **L’invité** | Comment ça s’ouvre. Convaincant, **pas** le centre. |
+| **3 — Preuve métier** | **Le Salon** | Commissions / KPI / *Mes performances*. Les écrans existent. |
 
-## 1. Déjà en prod (on ne recrée pas)
+**WOW = placeholder documenté.** Pastille 2D, filament CSS, `test-visuel` : OK si l’humain comprend le beat.  
+**Pas** : recâbler Stripe, nouveaux SKU, éclipse / 12 signes / WebGL rails.
 
-| Brique | Où |
-|--------|-----|
-| Lien public | `app/[lang]/contribute/[token]` |
-| Ciel + Hero | `SanctuaryLanding` · `SanctuaryUniverse` |
-| Formulaire photo / mot / courriel | `SanctuaryDepositForm` (monolithe indigo) |
-| Insert Coffre | `POST /api/contribute/[token]/deposit` → `media_assets` `contributor_type=guest` |
-| Liste médias orga | `GET /api/projects/[id]/media` (pas de filtre anti-guest) |
-| Packs + Stripe | `ImprintCatalog` · `ImprintCheckoutCta` · `guestSupportPacks.ts` |
-| Cercle (noms, API) | `GET /api/contribute/[token]` → `circle[]` — overlay 2D `GuestStarPills` |
+Parké (on y revient après jeudi si besoin) : lead sous *Aider la famille…* · Lueur au même rang que les autres packs.
 
 ---
 
-## 2. Trous à boucher (ordre)
+## 1. Script jeudi matin (~8 min)
 
-### T1 — Ciel d’abord (G1) · **fait**
+### Acte A — La famille (le cœur, ~4 min)
 
-Phase `sky` : ciel plein écran, *Ciel de {prénom}*, CTA *Laisser un souvenir*. Puis phase `deposit`.
+1. Atelier wizard (7 étapes, déjà là) : **Essentiels** → ciel / Hero (WOW stub OK).
+2. **Inviter** : copier le lien. Une phrase : le cercle va nourrir le Coffre.
+3. **Coffre** : les souvenirs se rangent. Scanner si ça tient, sinon on le nomme et on passe.
+4. **Chansons → Livre ouvert** : on compose un film avec le Coffre. Magie ou « je compose » — on *voit* le studio.
+5. **Aperçu / envoi** : *regardez le film* (filigrane / stub OK). On comprend qu’un film existe.
 
-### T2 — Dépôt + étoile (G2) · **fait** (restyle 3 sept)
+Si un beat craft manque : **placeholder**, on avance. Ne pas ouvrir le WebGL.
 
-- **Même charte que le wizard orga** : `SanctuaryMonolith` (`parcours-monolith-glass`, halo cyan, CTA `connexionSubmitButtonClass`). Pas de carte `bg-white/[0.03]`.
-- **Un écran** : nom + photos ET/OU mot + **courriel obligatoire** + consentement. Plafond **5 photos**.
-- Au succès : phase `graft` — stub **HTML 2D** : pastille + prénom + filament CSS depuis le Hero. Illusion de greffe à la constellation. **WebGL sur rails = Phase 2.**
-- Une personne = une étoile (même token / même nom : pas une étoile par photo).
+### Acte B — L’invité (l’ouverture, ~2 min)
 
-### T3 — Courriel séparé · **annulé**
+Même lien, téléphone ou 2ᵉ onglet (ou `?packs=1` / `test-visuel` si le token n’est pas prêt) :
 
-Le courriel n’est plus un palier après le dépôt. Il vit sur l’écran T2. Pas de `PATCH /identity` cette semaine.
+1. **Ciel de X** (pas le form d’abord).
+2. Une saisie : photos et/ou mot + prénom + courriel.
+3. Une étoile à son nom (stub 2D).
+4. Packs *Aider la famille* ou *Non merci* → ciel.
 
-### T4 — Aide payante (G4) · **polish 3 sept**
+### Acte C — Le Salon (preuve, ~2 min)
 
-Le catalogue **existe**. Cadre démo :
-
-- Seulement après la greffe (T2).
-- Titre : *Aider la famille à concevoir le film* (clés FR+EN).
-- Skip *Non merci* → ciel (G5) avec leur étoile.
-- Même monolithe indigo que le dépôt. Pied checkout **hors** du scroll (colonne flex) — le catalogue ne passe pas sous Continuer / *Non merci*.
-- **Témoignage filmé :** s’ouvre en entier (cadre 3/4) ; le catalogue reste, les autres packs passent plus bas. Pas de mode *Autres options*.
-- **Desktop (`md+`) :** deux colonnes — liste à gauche, pack ouvert à droite. Plus de cage `90dvh`. Le 390 garde l’accordéon + pied hors scroll.
-- **Tenant démo :** `viral_loop_enabled` **ON** ([`../ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](../ops/VIRAL_LOOP_PILOT_RUNBOOK.md)) sinon les packs / Fonds ne se voient pas en checkout. Pas de nouveaux SKU.
-
-### T5 — Coffre orga (preuve) · **fait** (3 sept)
-
-Pas de filtre anti-guest sur `GET /media`. Correctif : vignette signée (admin) + badge *Souvenir* + nom du déposant. À rejouer en vrai sur un token démo (photo `upload_status=uploaded`).
-
-### T6 — Copy + mobile · **fait** (3 sept)
-
-Copy voix / vidéo / mécène / lueur dans FR+EN. Catalogue régénéré. Passe 390 px (titres, padding monolithe). Ciel : FR/EN **ne remonte pas** le Canvas (`onSwitch` + `replaceState`).
+Compte partenaire : **commissions**, KPI, *Mes performances*. Chiffres **visibles** (vrais ou fixture crédible). Une phrase : le cercle qui aide, le salon qui voit.
 
 ---
 
-## 3. Calendrier (3 → 10 sept)
+## 2. Déjà branché (on ne reconstruit pas)
 
-| Jour | Livrable |
-|------|----------|
-| **Jeu 3** | Plan · T1/T2 restyle + courriel écran 1 · T4 cadre packs |
-| **Ven 4** | T4 polish (sélection, checkout preview) · T5 Coffre vérifié |
-| **Sam 5** | *(ex-T3)* filet T4 + mobile 390 px |
-| **Dim 6** | Copy FR+EN · token démo flag ON |
-| **Lun 7** | Répétition script |
-| **Mar 8** | Bugs |
-| **Mer 9** | Filet |
-| **Jeu 10** | Démo |
-
-Si on décroche : **garder le stub 2D** (pastille CSS + filament). Ne pas ouvrir le WebGL rails.
+| Surface | État |
+|---------|------|
+| Wizard famille 7 étapes, autosave, Soft Cap, Dossier, checkout | Branché |
+| Ciel / Hero / Inviter / Coffre / chapitres / Livre ouvert | Branché (craft incomplet = stub) |
+| Lien invité, dépôt → Coffre, packs → Stripe | Branché (vrai token + flag) |
+| Invité UI : ciel d’abord, 390 + desktop 2 colonnes, pied hors scroll | Branché |
+| Salon `/salon/commissions` · `/salon/mes-performances` | Branché (API) |
+| Greffe étoile WebGL, éclipse, 12 signes | **Pas** cette semaine |
+| `test-visuel` | Aperçu UX, pas de paiement réel |
 
 ---
 
-## 4. Hors cette semaine
+## 3. Travail restant (ordre)
 
-- Chemin 1 beats 0–5 (éclipse, freeze, 12 signes).
-- Filaments / Lueur dans le graphe WebGL (Phase 2).
-- Mini-clip 30 s, nouveaux SKU G4.
-- Réécrire `PARCOURS_UX_CHEMIN_1_TRAVERSEE.md` ligne à ligne.
-- API `PATCH /api/contribute/[token]/identity` (T3 annulé).
+### F1 — Famille : un fil qui se *voit* · **ven 4 – sam 5**
+
+Marcher le wizard **comme la démo**. Noter uniquement ce qui **casse le concept** (écran mort, copy hors voix, trou entre deux étapes). Corriger ça. Pas de nouvelle mécanique.
+
+Cibles : Essentiels → ciel → Inviter → Coffre → chansons → Livre ouvert → aperçu.  
+Stub OK. Si le Livre ouvert ou l’aperçu est laid : **un** placeholder propre, pas un rewrite.
+
+### F2 — Famille : WOW tenable · **sam 5**
+
+Le ciel famille + la greffe / le Hero doivent **impressionner 20 secondes**. Stub 2D / reveal déjà là : on polish le *rythme*, on n’ouvre pas les rails.
+
+### G — Invité : filet · **dim 6** (léger)
+
+Le rail est fait. Une passe 390 + desktop deux colonnes. Pas de nouveau pack. Lead / Lueur égale = **parké**.
+
+### S — Salon : chiffres qui se voient · **lun 7**
+
+Les pages existent. Il faut un **compte de démo** dont les KPI ne sont pas à zéro (tenant réel ou fixture). Même prénom / même hommage que l’acte A si possible.
+
+### R — Répétition · **mar 8 – mer 9**
+
+Enchaîner A → B → C **deux fois**. Chrono. Une carte « si X casse, on dit Y et on saute ».  
+Mercredi = filet bugs seulement.
+
+### Jeu 10 matin
+
+On **montre**. On ne code plus.
 
 ---
 
-## 5. Fichiers (T1–T4)
+## 4. Calendrier (4 → 10 sept matin)
 
-- `src/components/contribute/SanctuaryLanding.tsx` — phases `sky` → `deposit` → `graft` → `bridge`
-- `src/components/contribute/SanctuaryMonolith.tsx` — charte wizard
-- `src/components/contribute/SanctuaryDepositForm.tsx` — photos ET/OU mot + courriel
-- `src/components/contribute/GuestStarPills.tsx` — stub 2D + filament
-- `src/components/contribute/ImprintCatalog.tsx` · `ImprintCheckoutCta.tsx` — T4
-- `dictionaries/fr.json` + `en.json` · `node scripts/export-copy-catalog.mjs`
-- Tests : `tests/business/guest-deposit-souvenir.test.ts`
+| Quand | Qui / quoi | Livrable |
+|-------|------------|----------|
+| **Ven 4** | F1 | Fil famille filmé ou noté · 3 trous max à fixer |
+| **Sam 5** | F1 + F2 | Trous famille + 20 s WOW ciel |
+| **Dim 6** | G | Filet invité 390 / desktop · script écrit (A/B/C) |
+| **Lun 7** | S | Salon avec KPI visibles |
+| **Mar 8** | R | 1ʳᵉ répétition complète |
+| **Mer 9** | R | Bugs + 2ᵉ répétition · stop code 20 h |
+| **Jeu 10 matin** | — | Démo |
+
+Si on décroche : **couper l’acte C** (Salon). Jamais couper l’acte A. L’acte B tient déjà.
 
 ---
 
-## 6. Critère « démo OK »
+## 5. Hors jeudi matin
 
-Un inconnu avec le lien : voit X → dépose (photo/mot **et** courriel) **sur le même écran** → **voit son prénom se greffer au ciel** → voit des options payantes (ou skip) → l’orga retrouve le fichier dans le Coffre.
+- Éclipse, freeze, 12 signes, filaments WebGL.
+- Nouveaux SKU, mini-clip 30 s, 25/50/100 ans.
+- Lead packs + forfaits égaux (parké).
+- Réécrire `PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`.
+- `PATCH /identity` (T3 annulé).
 
-Le Stripe live d’un pack = bonus, pas bloquant si le pont s’ouvre.
+---
+
+## 6. Critère « jeudi matin OK »
+
+Un inconnu voit **ce que la famille fait** (ciel, Coffre, film) et **croit** au produit.
+
+Bonus : l’invité ouvre le ciel et laisse un souvenir.  
+Bonus : le Salon montre des chiffres.
+
+Stripe live et token flag = **pas** le goulot. Le goulot = **l’acte famille se voit**.

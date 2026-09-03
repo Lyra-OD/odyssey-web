@@ -4,7 +4,7 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 3 sept 2026 — **Démo 10 sept** : slice invité G1→G4 ([`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md)).
+- 3 sept 2026 — **Démo 10 sept matin** : concept convaincant, **famille d’abord** ([`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md)).
 - 28 août 2026 — **Egress revert** : `demoMode.ts` retiré · poll 5 s · stub ops clôturé.
 - 28 août 2026 — Marketing **Phase 3** : `/partners` refonte (4 actes, copy B2B, form au clic, DA cyan + teal lead).
 - 26 août 2026 — Sanctuaire **J2** doc : matrice implémentation §11b [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · séparation canon / playbook démo.
