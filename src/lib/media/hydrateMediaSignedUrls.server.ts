@@ -21,6 +21,7 @@ type MediaAssetRow = {
   source: string;
   owner_user_id: string;
   tenant_id: string;
+  contributor_name?: string | null;
 };
 
 function signedUrlForPath(
@@ -93,6 +94,7 @@ export async function hydrateMediaRowsWithSignedUrls(
       source: row.source,
       ownerUserId: row.owner_user_id,
       tenantId: row.tenant_id,
+      contributorName: row.contributor_name?.trim() || null,
     };
   });
 }

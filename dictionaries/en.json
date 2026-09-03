@@ -414,6 +414,7 @@
     "scannerWaitingPhone": "Waiting for phone",
     "scannerPhotosReceived": "{count} photo(s) received",
     "queueViaScanner": "Via Scanner",
+    "queueViaGuest": "Memory",
     "scannerRestorePreview": "AI restoration preview",
     "scannerRestoreTitle": "AI restoration",
     "scannerRestoreHint": "Preview on this photo. The final restoration is delivered after payment.",

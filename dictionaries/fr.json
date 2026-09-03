@@ -414,6 +414,7 @@
     "scannerWaitingPhone": "En attente du téléphone",
     "scannerPhotosReceived": "{count} photo(s) reçue(s)",
     "queueViaScanner": "Via Scanner",
+    "queueViaGuest": "Souvenir",
     "scannerRestorePreview": "Aperçu restauration IA",
     "scannerRestoreTitle": "Restauration IA",
     "scannerRestoreHint": "Aperçu sur cette photo. La restauration finale est livrée après paiement.",

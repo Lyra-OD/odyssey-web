@@ -35,6 +35,8 @@ export type MediaQueueGridCopy = {
   retry: string;
   /** Badge tuile — médias arrivés via Scanner Compagnon. */
   viaScanner?: string;
+  /** Badge tuile — souvenir déposé par un invité. */
+  viaGuest?: string;
   /** Ouvre l’aperçu restauration IA (tuiles Scanner). */
   restorePreview?: string;
   /** Message affiché quand item.error === MEDIA_QUOTA_EXCEEDED_ERROR (support `{max}`). */
@@ -277,7 +279,11 @@ export function MediaQueueGrid({
                 </span>
               </div>
 
-              {item.source === "scanner_companion" && copy.viaScanner ? (
+              {item.source?.startsWith("guest_") && copy.viaGuest ? (
+                <span className="absolute left-1.5 top-1.5 rounded-sm border border-teal-400/35 bg-black/55 px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-[0.16em] text-teal-200/90">
+                  {copy.viaGuest}
+                </span>
+              ) : item.source === "scanner_companion" && copy.viaScanner ? (
                 <span className="absolute left-1.5 top-1.5 rounded-sm border border-teal-400/35 bg-black/55 px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-[0.16em] text-teal-200/90">
                   {copy.viaScanner}
                 </span>

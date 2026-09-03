@@ -4,6 +4,7 @@ import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { hydrateMediaRowsWithSignedUrls } from "@/src/lib/media/hydrateMediaSignedUrls.server";
 import type { HydratedMediaListResponse } from "@/src/lib/media/mediaTypes";
 import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
+import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
 
 type MediaAssetRow = {
@@ -17,6 +18,7 @@ type MediaAssetRow = {
   source: string;
   owner_user_id: string;
   tenant_id: string;
+  contributor_name: string | null;
 };
 
 /**
@@ -39,7 +41,7 @@ export async function GET(
   const { data: rows, error: fetchError } = await access.supabase
     .from("media_assets")
     .select(
-      "id, project_id, storage_path, mime_type, size_bytes, order_index, upload_status, source, owner_user_id, tenant_id",
+      "id, project_id, storage_path, mime_type, size_bytes, order_index, upload_status, source, owner_user_id, tenant_id, contributor_name",
     )
     .eq("project_id", projectId)
     .eq("upload_status", "uploaded")
@@ -54,7 +56,10 @@ export async function GET(
   }
 
   const assets = (rows ?? []) as MediaAssetRow[];
-  const items = await hydrateMediaRowsWithSignedUrls(access.supabase, assets);
+  const items = await hydrateMediaRowsWithSignedUrls(
+    getSupabaseAdminClient(),
+    assets,
+  );
 
   const body: HydratedMediaListResponse = { items };
   return NextResponse.json(body);

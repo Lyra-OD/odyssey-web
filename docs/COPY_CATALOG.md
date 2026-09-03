@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-03 · **Entrées :** 803
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-03 · **Entrées :** 804
 
 ## `common`
 
@@ -390,6 +390,7 @@
 | `tributeWizard.scannerWaitingPhone` | En attente du téléphone | Waiting for phone |
 | `tributeWizard.scannerPhotosReceived` | {count} photo(s) reçue(s) | {count} photo(s) received |
 | `tributeWizard.queueViaScanner` | Via Scanner | Via Scanner |
+| `tributeWizard.queueViaGuest` | Souvenir | Memory |
 | `tributeWizard.scannerRestorePreview` | Aperçu restauration IA | AI restoration preview |
 | `tributeWizard.scannerRestoreTitle` | Restauration IA | AI restoration |
 | `tributeWizard.scannerRestoreHint` | Aperçu sur cette photo. La restauration finale est livrée après paiement. | Preview on this photo. The final restoration is delivered after payment. |

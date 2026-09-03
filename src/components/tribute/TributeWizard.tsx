@@ -2047,6 +2047,7 @@ export function TributeWizard({
                             remove: copy.queueRemove,
                             retry: copy.queueRetry,
                             viaScanner: copy.queueViaScanner,
+                            viaGuest: copy.queueViaGuest,
                             restorePreview: copy.scannerRestorePreview,
                             quotaExceededError:
                               copy.uploadLimitExceededItemError.replace(

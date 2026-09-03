@@ -50,6 +50,7 @@ export type MediaGridItem = {
   ownerUserId?: string;
   tenantId?: string;
   source?: MediaUploadSource | string;
+  contributorName?: string | null;
 };
 
 /** Backward-compatible alias used by upload hooks and services. */
@@ -90,6 +91,7 @@ export type HydratedMediaApiItem = {
   source: string;
   ownerUserId: string;
   tenantId: string;
+  contributorName?: string | null;
 };
 
 export type HydratedMediaListResponse = {
@@ -166,12 +168,13 @@ export function hydratedApiItemToGridItem(
     storagePath: item.storagePath,
     mimeType: item.mimeType,
     sizeBytes: item.sizeBytes,
-    displayName: item.displayName,
+    displayName: item.contributorName?.trim() || item.displayName,
     previewUrl: item.previewUrl,
     fullPreviewUrl: item.fullPreviewUrl,
     ownerUserId: item.ownerUserId,
     tenantId: item.tenantId,
     source: item.source,
+    contributorName: item.contributorName ?? null,
   };
 }
 

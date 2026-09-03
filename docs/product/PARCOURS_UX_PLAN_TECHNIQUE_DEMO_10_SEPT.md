@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — T5 : Coffre orga — tuile *Souvenir* + nom invité · signed URL admin.
 - 3 sept 2026 — T4 : sélection (toggle) · recap checkout · aperçu `?packs=1` · copy expand FR/EN.
 - 3 sept 2026 — Dépôt : échelle titre (nom > bienvenue > cyan médias) · copy *médias*.
 - 3 sept 2026 — G4 : packs + *Non merci* / checkout suivent FR/EN (sans refetch).
 - 3 sept 2026 — G5 : *Non merci* → ciel avec **leur étoile** (plus le CTA d’arrivée).
-- 3 sept 2026 — Ciel invité : **FR/EN sans recharger** le Canvas (`replaceState` + les deux copies).
 
 **Statut :** **actif** — source : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · orga figé : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)
 
@@ -70,9 +70,9 @@ Le catalogue **existe**. Cadre démo :
 - Même monolithe indigo que le dépôt.
 - **Tenant démo :** `viral_loop_enabled` **ON** ([`../ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](../ops/VIRAL_LOOP_PILOT_RUNBOOK.md)) sinon les packs / Fonds ne se voient pas en checkout. Pas de nouveaux SKU.
 
-### T5 — Coffre orga (preuve) · **P0 démo**
+### T5 — Coffre orga (preuve) · **fait** (3 sept)
 
-Vérifier en vrai : photo guest `upload_status=uploaded` visible étape médias. Si un filtre UI les cache → 1 correctif, pas une nouvelle pièce.
+Pas de filtre anti-guest sur `GET /media`. Correctif : vignette signée (admin) + badge *Souvenir* + nom du déposant. À rejouer en vrai sur un token démo (photo `upload_status=uploaded`).
 
 ### T6 — Copy + mobile · **P1** (FR/EN ciel **fait**)
 
