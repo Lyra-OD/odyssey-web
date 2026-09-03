@@ -1,10 +1,10 @@
 # Carte documentation Odyssey
 
 **Type :** living · **Vérité pour :** index des docs, types, « ne pas copier ».  
-**Dernière MAJ :** 21 août 2026 · **Carte :** ce fichier.
+**Dernière MAJ :** 3 sept 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
-- 3 sept 2026 — Storyboard **invité** figé + plan technique **démo 10 sept** : [`product/PARCOURS_UX_STORYBOARD_INVITE.md`](product/PARCOURS_UX_STORYBOARD_INVITE.md) · [`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
+- 3 sept 2026 — Invité T1/T2 charte wizard + courriel écran 1 · T3 annulé · T4 packs : [`product/PARCOURS_UX_STORYBOARD_INVITE.md`](product/PARCOURS_UX_STORYBOARD_INVITE.md) · [`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 - 28 août 2026 — egress revert clôturé : [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) (stub) · archive [`_archive/DEMO_VP_EGRESS_REVERT.md`](_archive/DEMO_VP_EGRESS_REVERT.md).
 - 28 août 2026 — plan refresh marketing B2C/B2B : [`design/MARKETING_SITE_REFRESH_PLAN.md`](design/MARKETING_SITE_REFRESH_PLAN.md).
 - 21 août 2026 — regroupement **logique** (business / product / design…) · règle nouveaux docs · chemins inchangés.

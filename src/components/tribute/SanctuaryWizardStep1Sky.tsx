@@ -19,6 +19,7 @@ import {
 } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import type { ConstellationRevealCraft } from "@/src/components/contribute/SanctuaryUniverse";
 import { SKY_HUB_LITE_LAYERS, SKY_RITUAL_LAYERS } from "@/src/components/contribute/constellation/skyCraftLayers";
+import type { HubFrameCapture } from "@/src/lib/parcours/hubFreezeCapture";
 import { birthDateToZodiacSign } from "@/src/lib/contribute/zodiacSign";
 import { WIZARD_IDLE_REVEAL_T } from "@/src/lib/contribute/wizardBirthReveal";
 import type { Locale } from "@/i18n.config";
@@ -61,8 +62,8 @@ type SanctuaryWizardStep1SkyProps = {
   hubPrompt?: string;
   hubTapHint?: string;
   onStarAnchorChange?: (anchor: ScreenAnchor | null) => void;
-  /** Hub — canvas pour capture gel Plan B. */
-  onHubCanvasMount?: (canvas: HTMLCanvasElement | null) => void;
+  /** Hub — render+encode d'une frame pour le gel (Plan B). */
+  onHubCaptureMount?: (capture: HubFrameCapture | null) => void;
   closeStreakFire?: boolean;
 };
 
@@ -125,7 +126,7 @@ export function SanctuaryWizardStep1Sky({
   hubPrompt,
   hubTapHint,
   onStarAnchorChange,
-  onHubCanvasMount,
+  onHubCaptureMount,
   closeStreakFire = false,
 }: SanctuaryWizardStep1SkyProps) {
   const isHubLite = variant === "hub-lite";
@@ -236,7 +237,7 @@ export function SanctuaryWizardStep1Sky({
         craftReveal={craftReveal}
         onCanvasReady={isHubLite ? handleCanvasReady : undefined}
         onStarAnchorChange={isHubLite ? onStarAnchorChange : undefined}
-        onHubCanvasMount={isHubLite ? onHubCanvasMount : undefined}
+        onHubCaptureMount={isHubLite ? onHubCaptureMount : undefined}
         closeStreakFire={isHubLite ? closeStreakFire : false}
         className="h-full w-full"
       />

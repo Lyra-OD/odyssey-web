@@ -4,6 +4,9 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — Ciel invité : Hero KEEP + breath · caméra **sur l’axe** (prénom sous le cœur, plus décalé).
+- 3 sept 2026 — T1/T2 restyle wizard (monolithe indigo) · courriel **dès l’écran 1** · T3 **annulé** · T4 packs dans le même monolithe.
+- 3 sept 2026 — T2 : photos **ET/OU** mot (plus de XOR). Plafond 5 photos inchangé.
 - 3 sept 2026 — Ouverture : slice **invité G1→G4** + Coffre orga. Stub étoile. Packs déjà là.
 
 **Statut :** **actif** — source : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · orga figé : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)
@@ -16,13 +19,12 @@
 
 1. **Orga** (déjà là) : étape Inviter → copier le lien. Pas de nouveau wizard.
 2. **Invité** (téléphone ou 2ᵉ onglet) : ouvre `/fr/contribute/{token}` → **ciel de X** (pas le form tout de suite).
-3. Laisse **une photo** (ou un mot) + **son prénom**.
-4. **Une étoile à son nom** s’allume (stub OK). Le fichier est dans le projet.
-5. **Courriel obligatoire** (*nouvelles du film*).
-6. **Aider la famille** : catalogue payant existant (voix, témoignage, Lueur, générique, mécène). Skip OK.
-7. **Retour orga** : Coffre / médias du wizard — la photo invité est là.
+3. **Une saisie** : photos (max 5) **et/ou** un mot + **prénom** + **courriel obligatoire** (même écran).
+4. **Une étoile à son nom** se greffe au ciel (stub HTML 2D + filament CSS). Le fichier est dans le Coffre.
+5. **Aider la famille** : catalogue payant (voix, témoignage, Lueur, générique, mécène), même charte wizard. Skip *Non merci* → ciel.
+6. **Retour orga** : Coffre / médias du wizard — la photo invité est là.
 
-**Hors script jeudi :** éclipse, rituel constellation 12 signes, filaments craft, nouveaux SKU (vidéo dans le film), 25/50/100 ans, ciel de famille.
+**Hors script jeudi :** éclipse, rituel constellation 12 signes, filaments WebGL, nouveaux SKU (vidéo dans le film), 25/50/100 ans, ciel de famille.
 
 ---
 
@@ -32,49 +34,39 @@
 |--------|-----|
 | Lien public | `app/[lang]/contribute/[token]` |
 | Ciel + Hero | `SanctuaryLanding` · `SanctuaryUniverse` |
-| Formulaire photo / mot | `SanctuaryDepositForm` |
+| Formulaire photo / mot / courriel | `SanctuaryDepositForm` (monolithe indigo) |
 | Insert Coffre | `POST /api/contribute/[token]/deposit` → `media_assets` `contributor_type=guest` |
 | Liste médias orga | `GET /api/projects/[id]/media` (pas de filtre anti-guest) |
 | Packs + Stripe | `ImprintCatalog` · `ImprintCheckoutCta` · `guestSupportPacks.ts` |
-| Cercle (noms, API) | `GET /api/contribute/[token]` → `circle[]` — **pas encore collé au ciel** |
+| Cercle (noms, API) | `GET /api/contribute/[token]` → `circle[]` — overlay 2D `GuestStarPills` |
 
 ---
 
 ## 2. Trous à boucher (ordre)
 
-### T1 — Ciel d’abord (G1) · **P0 démo**
+### T1 — Ciel d’abord (G1) · **fait**
 
-`SanctuaryLanding` aujourd’hui : welcome + formulaire dès `ready`.
+Phase `sky` : ciel plein écran, *Ciel de {prénom}*, CTA *Laisser un souvenir*. Puis phase `deposit`.
 
-- Phase `sky` : ciel plein écran, prénom de X, CTA *Laisser un souvenir* (bouton ; toucher Hero = bonus si ça tient).
-- Puis phase `deposit`.
+### T2 — Dépôt + étoile (G2) · **fait** (restyle 3 sept)
 
-Copy → `dictionaries` FR+EN, pas les strings actuelles du `.tsx`.
+- **Même charte que le wizard orga** : `SanctuaryMonolith` (`parcours-monolith-glass`, halo cyan, CTA `connexionSubmitButtonClass`). Pas de carte `bg-white/[0.03]`.
+- **Un écran** : nom + photos ET/OU mot + **courriel obligatoire** + consentement. Plafond **5 photos**.
+- Au succès : phase `graft` — stub **HTML 2D** : pastille + prénom + filament CSS depuis le Hero. Illusion de greffe à la constellation. **WebGL sur rails = Phase 2.**
+- Une personne = une étoile (même token / même nom : pas une étoile par photo).
 
-### T2 — Dépôt puis étoile (G2) · **P0 démo**
+### T3 — Courriel séparé · **annulé**
 
-- Formulaire **sans** courriel. Nom requis (signe l’étoile).
-- **5 photos XOR 1 mot** (UI + API : si une photo existe pour ce token, refuser un mot, et l’inverse). Plafond photos 5 inchangé.
-- Au succès : **stub étoile** — un nœud plus petit que le Hero + **prénom** (Html / label). Pas de filament craft.
-- Une personne = une étoile (même token / même nom : on **n’ajoute pas** une étoile par photo).
+Le courriel n’est plus un palier après le dépôt. Il vit sur l’écran T2. Pas de `PATCH /identity` cette semaine.
 
-Donnée : réutiliser `circle` du GET (déjà dérivé des dépôts). Brancher sur le canvas ou un overlay 2D si WebGL est trop risqué cette semaine.
+### T4 — Aide payante (G4) · **en cours / cadre posé**
 
-### T3 — Courriel forcé (G3) · **P0 démo**
+Le catalogue **existe**. Cadre démo :
 
-Nouveau palier **après** le premier dépôt, **avant** les packs.
-
-- Motif : *nouvelles du film* + case consentement (déjà dans le form — la **déplacer** ici).
-- Bloquant pour passer à G4.
-- Persister `contributor_email` sur les `media_assets` de ce token (aujourd’hui l’email part **avec** le dépôt, optionnel). Nouveau `PATCH /api/contribute/[token]/identity` (ou champ post-dépôt) — ne pas perdre le souvenir si le PATCH échoue : retry, pas rollback fichier.
-
-### T4 — Aide payante (G4) · **P0 démo**
-
-Le catalogue **existe**. On change l’**ordre** et le **cadre** :
-
-- Seulement après T3.
-- Titre : aider la famille à concevoir le film (clés FR+EN).
-- Skip → ciel (G5) avec leur étoile.
+- Seulement après la greffe (T2).
+- Titre : *Aider la famille à concevoir le film* (clés FR+EN).
+- Skip *Non merci* → ciel (G5) avec leur étoile.
+- Même monolithe indigo que le dépôt.
 - **Tenant démo :** `viral_loop_enabled` **ON** ([`../ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](../ops/VIRAL_LOOP_PILOT_RUNBOOK.md)) sinon les packs / Fonds ne se voient pas en checkout. Pas de nouveaux SKU.
 
 ### T5 — Coffre orga (preuve) · **P0 démo**
@@ -83,7 +75,7 @@ Vérifier en vrai : photo guest `upload_status=uploaded` visible étape médias.
 
 ### T6 — Copy + mobile · **P1**
 
-Clés Sanctuaire hors dur dans `SanctuaryLanding` / `SanctuaryDepositForm`. Catalogue. Passe 390 px (le script est téléphone).
+Clés Sanctuaire hors dur. Catalogue. Passe 390 px (le script est téléphone).
 
 ---
 
@@ -91,42 +83,43 @@ Clés Sanctuaire hors dur dans `SanctuaryLanding` / `SanctuaryDepositForm`. Cata
 
 | Jour | Livrable |
 |------|----------|
-| **Jeu 3** | Plan · T1 commencé (ciel d’abord) |
-| **Ven 4** | T1 fini · T2 dépôt XOR + stub étoile |
-| **Sam 5** | T3 courriel + PATCH identity |
-| **Dim 6** | T4 cadre packs · T5 Coffre vérifié |
-| **Lun 7** | Copy FR+EN · mobile · token démo flag ON |
-| **Mar 8** | Répétition script · bugs |
+| **Jeu 3** | Plan · T1/T2 restyle + courriel écran 1 · T4 cadre packs |
+| **Ven 4** | T4 polish (sélection, checkout preview) · T5 Coffre vérifié |
+| **Sam 5** | *(ex-T3)* filet T4 + mobile 390 px |
+| **Dim 6** | Copy FR+EN · token démo flag ON |
+| **Lun 7** | Répétition script |
+| **Mar 8** | Bugs |
 | **Mer 9** | Filet |
 | **Jeu 10** | Démo |
 
-Si on décroche : **couper T2 craft** (étoile = pastille CSS + nom, zéro WebGL extra) avant de couper T3.
+Si on décroche : **garder le stub 2D** (pastille CSS + filament). Ne pas ouvrir le WebGL rails.
 
 ---
 
 ## 4. Hors cette semaine
 
 - Chemin 1 beats 0–5 (éclipse, freeze, 12 signes).
-- Filaments / Lueur dans le graphe.
+- Filaments / Lueur dans le graphe WebGL (Phase 2).
 - Mini-clip 30 s, nouveaux SKU G4.
 - Réécrire `PARCOURS_UX_CHEMIN_1_TRAVERSEE.md` ligne à ligne.
+- API `PATCH /api/contribute/[token]/identity` (T3 annulé).
 
 ---
 
-## 5. Fichiers probables (pas de big bang)
+## 5. Fichiers (T1–T4)
 
-- `src/components/contribute/SanctuaryLanding.tsx` — phases
-- `src/components/contribute/SanctuaryDepositForm.tsx` — sans email
-- `app/api/contribute/[token]/deposit/route.ts` — XOR + email optionnel au POST
-- `app/api/contribute/[token]/identity/route.ts` — **nouveau**
-- Overlay étoile : `SanctuaryUniverse` **ou** Html au-dessus (préférer Html pour jeudi)
+- `src/components/contribute/SanctuaryLanding.tsx` — phases `sky` → `deposit` → `graft` → `bridge`
+- `src/components/contribute/SanctuaryMonolith.tsx` — charte wizard
+- `src/components/contribute/SanctuaryDepositForm.tsx` — photos ET/OU mot + courriel
+- `src/components/contribute/GuestStarPills.tsx` — stub 2D + filament
+- `src/components/contribute/ImprintCatalog.tsx` · `ImprintCheckoutCta.tsx` — T4
 - `dictionaries/fr.json` + `en.json` · `node scripts/export-copy-catalog.mjs`
-- Tests : dépôt XOR · identity PATCH · landing phases (vitest, pas E2E obligatoire)
+- Tests : `tests/business/guest-deposit-souvenir.test.ts`
 
 ---
 
 ## 6. Critère « démo OK »
 
-Un inconnu avec le lien : voit X → dépose → **voit son prénom dans le ciel** → **doit** donner un courriel → voit des options payantes → l’orga retrouve le fichier dans le Coffre.
+Un inconnu avec le lien : voit X → dépose (photo/mot **et** courriel) **sur le même écran** → **voit son prénom se greffer au ciel** → voit des options payantes (ou skip) → l’orga retrouve le fichier dans le Coffre.
 
 Le Stripe live d’un pack = bonus, pas bloquant si le pont s’ouvre.

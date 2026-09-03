@@ -28,6 +28,8 @@ export type ImprintCatalogProps = {
   /** Sélection locale uniquement — pas de checkout à cette étape. */
   selectedKey: string | null;
   onSelect: (key: string) => void;
+  title?: string;
+  promise?: string;
   /** Interaction voix. Rendue dans la carte `guest_voice` ouverte. */
   voiceSlot?: ReactNode;
   /** Interaction témoignage. Rendue dans la carte `guest_video` ouverte. */
@@ -120,22 +122,26 @@ export function ImprintCatalog({
   packs,
   selectedKey,
   onSelect,
+  title,
+  promise,
   voiceSlot,
   videoSlot,
   lueurSlot,
   patronSlot,
 }: ImprintCatalogProps) {
   const t = copy[locale];
+  const heading = title ?? t.title;
+  const foot = promise ?? t.promise;
   const primary = packs.filter((p) => !p.secondary);
   const secondary = packs.filter((p) => p.secondary);
 
   return (
     <div className="w-full space-y-6 text-left">
-      <h3 className="text-center font-label text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/75">
-        {t.title}
+      <h3 className="text-center font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
+        {heading}
       </h3>
 
-      <ul className="space-y-3" role="listbox" aria-label={t.title}>
+      <ul className="space-y-3" role="listbox" aria-label={heading}>
         {primary.map((pack, i) => (
           <PackRow
             key={pack.key}
@@ -172,7 +178,7 @@ export function ImprintCatalog({
       ) : null}
 
       <p className="text-center text-[11px] font-light leading-relaxed text-zinc-500">
-        {t.promise}
+        {foot}
       </p>
     </div>
   );
@@ -228,7 +234,7 @@ function PackRow({
         className={`rounded-xl border transition-[border-color,box-shadow,background-color] duration-300 ${
           selected
             ? `${sanctuarySelectBreathe} border-teal-400/40 bg-teal-400/[0.06]`
-            : "border-white/10 bg-white/[0.02] hover:border-teal-400/25 hover:bg-teal-400/[0.03]"
+            : "border-white/10 bg-white/[0.04] hover:border-teal-400/25 hover:bg-teal-400/[0.05]"
         }`}
       >
         <button

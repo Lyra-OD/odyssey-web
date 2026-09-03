@@ -4,11 +4,11 @@
 **Dernière MAJ :** 2 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 2 sept 2026 — **Cadre canonique** ([`frame.ts`](../src/components/contribute/constellation/graphs/frame.ts)) : chaque signe recentré sur sa boîte · recul caméra calculé sur la **portion déjà tracée**, plus de `Z` fixe.
+- 2 sept 2026 — **Étoile sous le trait** : le nœud d'arrivée s'allume dans les 28 % finaux du trait (`DEFAULT_NODE_LANDING_START`), plus avant.
 - 2 sept 2026 — **T2-overlay** : gel PNG · caméra **par template** (Hero + bbox) · loop settle coupée.
 - 2 sept 2026 — **T2-name** : hold prénom (~1,5–2 s) · `HERO_START` 0,42 · `C_END` 0,72.
 - 26 août 2026 — **Séparation Hero↔nom** : spring · nom descend · constellation suit le Hero (lift commun).
-- 26 août 2026 — Fin reveal → tous ghosts (wizard étape 2) · mock lit au Rejouer.
-- 26 août 2026 — Draw **D–F** + barre beats lab · `C_END` (traits après naissance).
 
 **Preview :** `/fr/contribute/test-lueur` (dev only)  
 **Ciel :** [`SANCTUARY_SKY_CRAFT.md`](SANCTUARY_SKY_CRAFT.md) · **Orb carte :** [`SANCTUARY_LUEUR_ORB.md`](SANCTUARY_LUEUR_ORB.md)  
@@ -196,6 +196,31 @@ Beat lab = `resolveDrawPhase(revealT).beat ?? resolveBirth(revealT).beat` (`D` /
 | **E** | Slots s’éveillent ✅ | Pull-back continue |
 | **F** | Traits s’atténuent + breath étoiles ✅ | Cadre idle Leo |
 
+### 4.2 Cadre canonique d’un signe (règle avant les 12)
+
+**Fichier :** [`frame.ts`](../src/components/contribute/constellation/graphs/frame.ts)
+
+Le Lion a révélé le piège : son Hero (Regulus) est dans le **coin** inférieur
+gauche de sa figure. La caméra visant le Hero pendant le tracé, la moitié de la
+constellation sortait de l’écran. Dessiner dix signes de plus sans règle, c’est
+reproduire ce bug dix fois.
+
+| Règle | Comment |
+|-------|---------|
+| Figure recentrée | `normalizeTemplateFrame()` — boîte englobante ramenée à l’origine |
+| Échelle commune | Un seul facteur (`FRAME_TARGET_HALF_WIDTH / HEIGHT`) — silhouette **non déformée** |
+| Hero pas recentré | Il garde sa place *dans* la figure : Lion, Scorpion ont une étoile principale excentrée, la centrer trahirait le signe |
+| Recul caméra | `fitCameraZ()` sur `drawnBounds()` — la **portion déjà tracée**, pas la figure complète |
+
+Cadrer la figure complète dès le premier trait imposerait un dézoom brutal sur
+une constellation encore invisible. Cadrer le tracé fait grandir le cadre au
+rythme du dessin.
+
+**Un nouveau signe n’a donc rien à accorder à la main** : on dessine les 9 nœuds
+et les traits, la normalisation et la caméra suivent.
+
+**Tests :** [`constellation-frame.test.ts`](../tests/business/constellation-frame.test.ts)
+
 ### Hors scope A→F (plus tard)
 Palette Champ / SKU · seuils Lueurs — [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md) §7.
 
@@ -203,6 +228,8 @@ Palette Champ / SKU · seuils Lueurs — [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_S
 
 | Item | Statut | Note |
 |------|--------|------|
+| **10 signes zodiaque manquants** | ⏳ | Seuls `leo.ts` et `libra.ts` existent · les 10 autres retombent sur le Lion, donc **changer de mois ne change rien** à l’écran. Cadre posé (§4.2), reste à dessiner |
+| **Double Hero au reveal** | 🔎 | Deux atomes Hero identiques à l’écran (un seul nœud `role: "hero"`, sous-scène remontée par `key`) — sonde temporaire `[HERO-PROBE]` dans `SanctuaryUniverse.tsx`, à retirer une fois tranché |
 | Origine traits → centre visuel Hero | ⏳ | graph vs embed — pas de hack anchor |
 | Fin reveal → tous ghosts | ✅ | `allGhostSlotLit()` quand `revealT` ≥ 1 · Rejouer restore mock lit |
 | **WOW signature** CEO | ⏳ | Pas posée — attente direction perso |

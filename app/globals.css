@@ -608,6 +608,27 @@ body {
   }
 }
 
+@keyframes guest-star-filament-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.guest-star-filament {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: guest-star-filament-draw 0.95s cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
+}
+
+.guest-star-filament-settled {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
 .parcours-monolith-aura-cyan {
   position: absolute;
   left: 50%;

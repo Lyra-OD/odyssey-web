@@ -39,14 +39,14 @@ hub.idle (WebGL live)
     ↓ clic — fin HUB_FREEZE_HOLD_MS (200 ms)
 captureCanvas() → blob/data URL
     ↓ HUB_FREEZE_FADE_MS (560 ms)
-panel.essentials : backdrop = capture dynamique (fallback hub-freeze-v1.jpg)
+panel.essentials : backdrop = capture dynamique (sans capture = void)
     ↓ WebGL unmount / opacity 0 · loop off
 saisie fluide
     ↓ fermer — thaw D (inchangé)
 hub.idle
 ```
 
-**Une seule vérité image gelée :** `hubFreezeCaptureRef.url` (session) · fallback fichier statique si capture échoue.
+**Une seule vérité image gelée :** `hubFreezeCaptureRef.url` (session) · capture échouée = **void**, pas d’image d’archive.
 
 ---
 
@@ -56,7 +56,7 @@ hub.idle
 |---------|--------|
 | `src/lib/parcours/hubFreezeCapture.ts` | **NEW** — ref capture, `captureHubFrame(gl)`, revoke URL |
 | `src/lib/parcours/hubFreezeTimeline.ts` | Hook `onCaptureReady` beat · export `HUB_CAPTURE_AT_MS = HUB_FREEZE_HOLD_MS` |
-| `src/components/contribute/SanctuaryUniverse.tsx` | `preserveDrawingBuffer: true` **hub-lite only** via `createRenderer` param |
+| `src/components/contribute/SanctuaryUniverse.tsx` | **jamais** `preserveDrawingBuffer` (coût par frame) — expose `onHubCaptureMount` : `gl.render` + encode même tâche |
 | `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | Passer ref GL / callback capture au parcours |
 | `src/hooks/useParcoursUx.ts` | Schedule capture @ hold end · `backdropSrc` dynamique |
 | `src/components/contribute/SkyBackdrop.tsx` | Prop `src?: string` (override `SKY_BACKDROP_IMAGE_SRC`) |
@@ -101,15 +101,15 @@ export function revokeHubFreezeCapture() { /* revokeObjectURL if blob */ }
 
 Dans `openPanel` schedule @ `HUB_FREEZE_HOLD_MS` :
 
-1. `captureHubCanvas(canvas)` via ref exposée par `SanctuaryWizardStep1Sky`
+1. `captureHubFrame(capture)` via ref exposée par `SanctuaryWizardStep1Sky`
 2. `setCaptureUrl(url ?? null)` state dans hook ou ref
 3. Puis enchaîner fade existant
 
-`SkyBackdrop` reçoit `src={captureUrl ?? SKY_BACKDROP_IMAGE_SRC}`.
+`SkyBackdrop` reçoit `src={captureUrl}` — `null` = void, pas d’image.
 
 ### Étape 4 — Fallback + cleanup (30 min)
 
-- Capture fail → log dev · fallback `hub-freeze-v1.jpg`
+- Capture fail → log dev · **void** (aucune image d’archive)
 - `revokeHubFreezeCapture()` on : close panel, unmount step 1, openPanel again
 - Pas de fuite mémoire data URL (réutiliser ou revoke)
 

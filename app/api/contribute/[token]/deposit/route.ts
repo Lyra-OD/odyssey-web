@@ -97,6 +97,7 @@ function extensionForMime(mime: string): string {
  * Hors Soft Cap famille (voir odyssey_p10_2_guest_sanctuary.sql).
  * Plafond 5 photos / token (P10.3 + guestPhotoQuota).
  * Plafond 10 messages / token (anti-spam).
+ * Photos ET/OU mot : deux `kind` distincts, pas de XOR — l’UI peut enchaîner les deux.
  * Plafond 5 voix / token (re-takes Phase 3b).
  * Plafond 5 vidéos / token (re-takes témoignage Phase 3b).
  */

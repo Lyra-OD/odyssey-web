@@ -40,8 +40,18 @@ export type ResolveStrokeDrawOptions = {
 
 export const DEFAULT_HERO_SHARE = 0.24;
 export const DEFAULT_STROKE_OVERLAP = 0.42;
+/**
+ * Part du trait à parcourir avant que l'étoile d'arrivée commence à s'allumer.
+ * L'étoile doit naître **sous** le trait qui l'atteint : plus bas, elle est
+ * déjà visible pendant que le trait est encore en route (et avec l'overlap,
+ * plusieurs étoiles s'allument dans le vide en même temps).
+ */
+export const DEFAULT_NODE_LANDING_START = 0.72;
 /** Slow play: birth alone ~10s, then strokes. */
 export const DEFAULT_CONSTELLATION_REVEAL_MS = 14000;
+
+/** Invité (démo) — traits visibles tout de suite, sans le 14 s lab. */
+export const GUEST_CONSTELLATION_REVEAL_MS = 2800;
 
 /**
  * Hero alone first (unless heroShare === 0), then overlapping strokes.
@@ -111,7 +121,10 @@ export function resolveStrokeDraw(
     nodeAppear[stroke.from] = Math.max(nodeAppear[stroke.from] ?? 0, 1);
     nodeAppear[stroke.to] = Math.max(
       nodeAppear[stroke.to] ?? 0,
-      easeOutCubic(Math.max(0, (local - 0.2) / 0.8)),
+      easeOutCubic(
+        Math.max(0, (local - DEFAULT_NODE_LANDING_START) /
+          (1 - DEFAULT_NODE_LANDING_START)),
+      ),
     );
     if (local > bestLocal && local < 0.99) {
       bestLocal = local;

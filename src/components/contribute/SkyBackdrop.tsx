@@ -1,8 +1,5 @@
 "use client";
 
-/** Frame 2D Chemin 1 — gel hub (≠ panorama lab `milky-way-v1`). */
-export const SKY_BACKDROP_IMAGE_SRC = "/craft/sky/hub-freeze-v1.jpg";
-
 export type SkyBackdropCloseRitual =
   | "idle"
   | "inspire"
@@ -11,7 +8,7 @@ export type SkyBackdropCloseRitual =
 
 type SkyBackdropProps = {
   className?: string;
-  /** Override gel — Plan B capture data URL · défaut = JPEG statique. */
+  /** Gel — capture data URL de la session · null = void (aucune image d'archive). */
   src?: string | null;
   /** 0–1 — fondu crossfade hub WebGL ↔ gel 2D (T1b). */
   opacity?: number;
@@ -38,7 +35,6 @@ export function SkyBackdrop({
   easing = "cubic-bezier(0.4, 0, 0.2, 1)",
   closeRitual = "idle",
 }: SkyBackdropProps) {
-  const imageSrc = src ?? SKY_BACKDROP_IMAGE_SRC;
   const ritualClass =
     closeRitual === "inspire"
       ? "parcours-backdrop-ritual-inspire"
@@ -63,19 +59,22 @@ export function SkyBackdrop({
       }}
       aria-hidden
     >
-      <div className="parcours-backdrop-media absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={imageSrc}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-center"
-          draggable={false}
-        />
-        <div
-          className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/45"
-          aria-hidden
-        />
-      </div>
+      {/** Sans capture on reste sur le void : jamais le ciel d'une autre session. */}
+      {src ? (
+        <div className="parcours-backdrop-media absolute inset-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={src}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover object-center"
+            draggable={false}
+          />
+          <div
+            className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/45"
+            aria-hidden
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

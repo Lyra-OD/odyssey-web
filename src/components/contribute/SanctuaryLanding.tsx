@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
@@ -19,7 +19,12 @@ import {
   SanctuaryDepositForm,
   type SanctuaryDepositResult,
 } from "@/src/components/contribute/SanctuaryDepositForm";
+import { GuestStarPills } from "@/src/components/contribute/GuestStarPills";
+import { SanctuaryMonolith } from "@/src/components/contribute/SanctuaryMonolith";
+import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
+import { formatCircleDisplayName } from "@/src/lib/contribute/circle";
 import { LocaleSwitcher } from "@/src/components/i18n/LocaleSwitcher";
+import type { AppDictionary } from "@/lib/dictionaries";
 import {
   isSanctuarySkyPreview,
   isSanctuaryVisualPreview,
@@ -32,16 +37,26 @@ import {
   SANCTUARY_HALO_UV,
   SANCTUARY_LAST_IMPRINT_KEY,
   sanctuaryGhostButton,
-  sanctuarySecondaryButton,
 } from "@/src/lib/contribute/sanctuaryChrome";
 import { SANCTUARY_GUEST_PHOTO_MAX } from "@/src/lib/contribute/sanctuaryLimits";
 import {
-  DURATION_BREATH,
   DURATION_RITUAL,
   EASE_OUT_LUXE,
 } from "@/src/lib/motion/easing";
+import { SKY_GUEST_DEMO_LAYERS } from "@/src/components/contribute/constellation/skyCraftLayers";
+import type { ConstellationRevealCraft } from "@/src/components/contribute/SanctuaryUniverse";
+import {
+  DEFAULT_HERO_GLOBAL_SCALE,
+  DEFAULT_HERO_SPIKES,
+  DEFAULT_HERO_TEAL,
+  DEFAULT_HERO_WHITE,
+} from "@/src/components/contribute/constellation/HeroStar";
+import { HUB_HERO_BREATH_SPEED_INVITE } from "@/src/components/contribute/constellation/graphs/hubIdle";
+import { WIZARD_BIRTH_REVEAL_END } from "@/src/lib/contribute/wizardBirthReveal";
 import { GUEST_PATRON_SUGGESTED_CENTS } from "@/src/lib/wizard/guestSupportPacks";
 import type { Locale } from "@/i18n.config";
+
+const GUEST_KEEP_REVEAL_REF = { current: WIZARD_BIRTH_REVEAL_END };
 
 const SanctuaryUniverse = dynamic(
   () =>
@@ -54,9 +69,12 @@ const SanctuaryUniverse = dynamic(
   },
 );
 
+export type SanctuaryCopy = AppDictionary["sanctuary"];
+
 export type SanctuaryLandingProps = {
   token: string;
   locale: Locale;
+  copy: SanctuaryCopy;
 };
 
 type TributePayload = {
@@ -64,6 +82,25 @@ type TributePayload = {
   lastName: string | null;
   displayName?: string;
 };
+
+function fill(template: string, vars: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (_, key: string) =>
+    String(vars[key] ?? ""),
+  );
+}
+
+function tributeSkyName(
+  tribute: TributePayload,
+  locale: Locale,
+): string {
+  const first = tribute.firstName?.trim();
+  if (first) return first;
+  return tributeDisplayName(tribute, locale);
+}
+
+function starIdFromName(name: string): string {
+  return name.trim().toLowerCase();
+}
 
 type LoadState =
   | { status: "loading" }
@@ -76,11 +113,8 @@ type LoadState =
       guestPhotoMax: number;
     };
 
-/** Dépôt (formulaire / accusé inline) → catalogue empreintes. */
-type Phase = "deposit" | "bridge";
-
-/** Dans la phase dépôt : formulaire actif, ou panneau après succès. */
-type DepositLane = "form" | "ack";
+/** Ciel d'abord → dépôt (courriel inclus) → greffe étoile → offres. */
+type Phase = "sky" | "deposit" | "graft" | "bridge";
 
 function tributeDisplayName(
   tribute: TributePayload,
@@ -93,68 +127,6 @@ function tributeDisplayName(
   if (parts.length > 0) return parts.join(" ");
   return locale === "en" ? "a loved one" : "un être cher";
 }
-
-const copy = {
-  fr: {
-    brandWordmark: "Odyssey",
-    kicker: "Sanctuaire",
-    poweredBy: "Propulsé par",
-    welcome: (name: string) => `Bienvenue dans le Sanctuaire de ${name}.`,
-    subtitle:
-      "La famille rassemble les souvenirs pour en faire une œuvre intemporelle.",
-    depositLead: "Laissez d'abord une empreinte : une photo ou un mot.",
-    loading: "Ouverture du Sanctuaire…",
-    errorTitle: "Lien indisponible",
-    errorBody:
-      "Ce Sanctuaire est introuvable ou n'est plus accessible. Demandez un nouveau lien à la famille.",
-    ackTitle: "Votre souvenir a été déposé.",
-    ackBody:
-      "Vous pouvez en ajouter d'autres, en toute sérénité, jusqu'à cinq photos.",
-    photoCounter: (n: number, max: number) => `${n} / ${max} souvenirs`,
-    addAnother: "Ajouter un autre souvenir",
-    continueToImprints: "Continuer",
-    photoLimitReached:
-      "Vous avez offert cinq photos. Un geste déjà généreux. Poursuivez si vous le souhaitez.",
-    bridgeTitle: "Votre empreinte a été ajoutée.",
-    bridgeBody:
-      "Souhaitez-vous soutenir la production de ce film hommage, avec le geste qui vous ressemble ?",
-    bridgeBodyAfterGift:
-      "Si le cœur vous en dit, vous pouvez offrir un autre geste, sans obligation.",
-    contribSuccess: "Merci. Votre soutien a bien été enregistré.",
-    contribCancel: "Paiement annulé. Vous pouvez choisir une autre empreinte.",
-    lueurSettle: "Votre lueur rejoint le Sanctuaire…",
-    seeSky: "Voir le ciel",
-  },
-  en: {
-    brandWordmark: "Odyssey",
-    kicker: "Sanctuary",
-    poweredBy: "Powered by",
-    welcome: (name: string) => `Welcome to ${name}'s Sanctuary.`,
-    subtitle: "The family is gathering memories to weave a timeless work.",
-    depositLead: "First, leave a mark: a photo or a few words.",
-    loading: "Opening the Sanctuary…",
-    errorTitle: "Link unavailable",
-    errorBody:
-      "This Sanctuary could not be found or is no longer available. Ask the family for a new link.",
-    ackTitle: "Your memory has been placed.",
-    ackBody: "You may add more, gently, up to five photos.",
-    photoCounter: (n: number, max: number) =>
-      `${n} / ${max} memor${n === 1 ? "y" : "ies"}`,
-    addAnother: "Add another memory",
-    continueToImprints: "Continue",
-    photoLimitReached:
-      "You have offered five photos. Already a generous gift. Continue whenever you wish.",
-    bridgeTitle: "Your mark has been placed.",
-    bridgeBody:
-      "Would you like to support the making of this tribute film, with a gift that feels right?",
-    bridgeBodyAfterGift:
-      "If you wish, you may offer another gesture, with no obligation.",
-    contribSuccess: "Thank you. Your support has been recorded.",
-    contribCancel: "Payment cancelled. You can choose another imprint.",
-    lueurSettle: "Your glow joins the Sanctuary…",
-    seeSky: "See the sky",
-  },
-} as const;
 
 /** Preview `test-ciel` — même reveal que onglet Constellation (`/test-lueur`). */
 function SkyPreviewExperience({ locale }: { locale: Locale }) {
@@ -208,15 +180,17 @@ function SkyPreviewExperience({ locale }: { locale: Locale }) {
 /**
  * Shell client du Sanctuaire — dépôt (multi photos) → catalogue → checkout.
  */
-export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
-  const t = copy[locale];
+export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingProps) {
   const [load, setLoad] = useState<LoadState>({ status: "loading" });
   const [deposit, setDeposit] = useState<SanctuaryDepositResult | null>(null);
-  const [phase, setPhase] = useState<Phase>("deposit");
-  const [depositLane, setDepositLane] = useState<DepositLane>("form");
+  const [phase, setPhase] = useState<Phase>("sky");
+  const [guestStars, setGuestStars] = useState<
+    { id: string; label: string }[]
+  >([]);
+  const [graftingStarId, setGraftingStarId] = useState<string | null>(null);
+  const pendingStarNameRef = useRef<string | null>(null);
   const [photoCount, setPhotoCount] = useState(0);
   const [photoMax, setPhotoMax] = useState(SANCTUARY_GUEST_PHOTO_MAX);
-  const [formKey, setFormKey] = useState(0);
   const [selectedPackKey, setSelectedPackKey] = useState<string | null>(null);
   const [voiceMediaId, setVoiceMediaId] = useState<string | null>(null);
   const [videoMediaId, setVideoMediaId] = useState<string | null>(null);
@@ -255,30 +229,32 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
       ? load.packs.find((p) => p.key === selectedPackKey)
       : undefined;
 
-  const canAddAnotherPhoto = photoCount < photoMax;
-  const showDepositAck =
-    phase === "deposit" &&
-    (depositLane === "ack" || !canAddAnotherPhoto);
-  const showDepositForm =
-    phase === "deposit" && depositLane === "form" && canAddAnotherPhoto;
+  const remainingPhotoSlots = Math.max(0, photoMax - photoCount);
+
+  const upsertGuestStar = (rawName: string) => {
+    const label = formatCircleDisplayName(rawName) ?? rawName.trim();
+    if (!label) return;
+    const id = starIdFromName(rawName);
+    setGraftingStarId(id);
+    setGuestStars((prev) => {
+      if (prev.some((s) => s.id === id)) return prev;
+      return [...prev, { id, label }];
+    });
+  };
 
   const handleDeposited = (result: SanctuaryDepositResult) => {
     setDeposit(result);
+    pendingStarNameRef.current = result.contributorName;
     if (result.kind === "photo") {
       setPhotoCount((n) => Math.min(n + 1, photoMax));
     }
   };
 
   const handleDepositFlowComplete = () => {
-    setDepositLane("ack");
+    const raw = pendingStarNameRef.current ?? deposit?.contributorName;
+    if (raw) upsertGuestStar(raw);
+    setPhase("graft");
   };
-
-  const handleAddAnother = () => {
-    setDepositLane("form");
-    setFormKey((k) => k + 1);
-  };
-
-  const remainingPhotoSlots = Math.max(0, photoMax - photoCount);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -339,7 +315,6 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
       });
       setPhotoCount(0);
       setPhotoMax(SANCTUARY_GUEST_PHOTO_MAX);
-      setDepositLane("form");
       return;
     }
 
@@ -355,6 +330,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
           packs?: ImprintPack[];
           guestPhotoCount?: number;
           guestPhotoMax?: number;
+          circle?: { displayName?: string }[];
           error?: string;
         };
         if (cancelled) return;
@@ -369,7 +345,16 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
         const count = Math.max(0, body.guestPhotoCount ?? 0);
         setPhotoMax(max);
         setPhotoCount(count);
-        setDepositLane(count >= max ? "ack" : "form");
+        const fromCircle = (body.circle ?? [])
+          .map((m) => {
+            const label = (m.displayName ?? "").trim();
+            if (!label) return null;
+            return { id: starIdFromName(label), label };
+          })
+          .filter((s): s is { id: string; label: string } => s !== null);
+        if (fromCircle.length > 0) {
+          setGuestStars(fromCircle);
+        }
         setLoad({
           status: "ready",
           tribute: body.tribute,
@@ -395,16 +380,294 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
     );
   }
 
+  const skyFirst = load.status === "ready" && phase === "sky";
+  const grafting = load.status === "ready" && phase === "graft";
+  const showMonolith =
+    load.status === "ready" &&
+    (phase === "deposit" || phase === "bridge") &&
+    !skyOpen &&
+    !lueurSettling;
+  const universeImmersive =
+    skyFirst || grafting || skyOpen || load.status === "loading" || lueurSettling;
+  const hideLegacySheet =
+    skyFirst ||
+    grafting ||
+    skyOpen ||
+    showMonolith ||
+    lueurSettling ||
+    load.status === "loading";
+
+  const localeSwitcher = (
+    <LocaleSwitcher
+      lang={locale}
+      languageLabel={t.languageLabel}
+      langOptionFr={t.langOptionFr}
+      langOptionEn={t.langOptionEn}
+    />
+  );
+
+  const guestHeroName =
+    load.status === "ready" ? tributeSkyName(load.tribute, locale) : undefined;
+  const guestCraftReveal = useMemo((): ConstellationRevealCraft => {
+    GUEST_KEEP_REVEAL_REF.current = WIZARD_BIRTH_REVEAL_END;
+    return {
+      controlled: true,
+      revealT: WIZARD_BIRTH_REVEAL_END,
+      revealTRef: GUEST_KEEP_REVEAL_REF,
+      hubHeroOnly: true,
+      heroName: guestHeroName,
+      skyActive: true,
+      heroAtom: {
+        white: { ...DEFAULT_HERO_WHITE, breath: HUB_HERO_BREATH_SPEED_INVITE },
+        teal: { ...DEFAULT_HERO_TEAL, breath: HUB_HERO_BREATH_SPEED_INVITE },
+        spikes: { ...DEFAULT_HERO_SPIKES, breath: HUB_HERO_BREATH_SPEED_INVITE },
+        embedScale: 0.42,
+        globalScale: DEFAULT_HERO_GLOBAL_SCALE,
+      },
+    };
+  }, [guestHeroName]);
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100 antialiased">
       <SanctuaryUniverse
-        mode={skyOpen ? "immersive" : "background"}
+        mode={universeImmersive ? "immersive" : "background"}
         className={
-          skyOpen ? "fixed inset-0 z-50" : "absolute inset-0 z-0"
+          universeImmersive ? "fixed inset-0 z-40" : "absolute inset-0 z-0"
         }
-        onClose={skyOpen ? () => setSkyOpen(false) : undefined}
+        constellationVisible
+        skyCraftChrome={false}
+        wanderChrome={false}
+        skyLayers={SKY_GUEST_DEMO_LAYERS}
+        craftReveal={guestCraftReveal}
+        skipConstellationReveal
+        parallaxIntensity={0}
+        wizardRewardFullPerf={universeImmersive}
+        onClose={
+          skyOpen && !skyFirst && !grafting ? () => setSkyOpen(false) : undefined
+        }
         locale={locale}
       />
+
+      <GuestStarPills
+        stars={showMonolith ? [] : guestStars}
+        ariaLabelFor={(name) => fill(t.guestStarAria, { name })}
+        graftingId={grafting ? graftingStarId : null}
+        className={
+          skyFirst || grafting || skyOpen || lueurSettling ? "z-[45]" : "z-[25]"
+        }
+      />
+
+      {load.status === "loading" ? (
+        <p className="fixed inset-0 z-[46] flex items-center justify-center text-sm font-light text-zinc-500">
+          {t.loading}
+        </p>
+      ) : null}
+
+      {skyFirst ? (
+        <div className="fixed inset-0 z-[46] flex flex-col">
+          <div className="flex justify-end px-4 pt-4 md:px-8 md:pt-8">
+            <LocaleSwitcher
+              lang={locale}
+              languageLabel={t.languageLabel}
+              langOptionFr={t.langOptionFr}
+              langOptionEn={t.langOptionEn}
+            />
+          </div>
+          <div className="flex-1" />
+          <div className="flex flex-col items-center gap-6 px-6 pb-16 text-center">
+            <p className="text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
+              {t.kicker}
+            </p>
+            <h1 className="font-editorial text-[1.85rem] font-medium tracking-tight text-zinc-50 md:text-4xl">
+              {fill(t.skyOf, {
+                name: tributeSkyName(load.tribute, locale),
+              })}
+            </h1>
+            <button
+              type="button"
+              onClick={() => setPhase("deposit")}
+              className={`parcours-monolith-continue ${connexionSubmitButtonClass} max-w-xs touch-manipulation`}
+            >
+              {t.skyCta}
+            </button>
+            <p className="text-[8px] font-medium uppercase tracking-[0.44em] text-white/26">
+              {t.poweredBy} {t.brandWordmark}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      {grafting ? (
+        <div className="fixed inset-0 z-[46] flex flex-col">
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[42vh] bg-gradient-to-t from-black/70 via-black/25 to-transparent"
+            aria-hidden
+          />
+          <div className="flex justify-end px-4 pt-4 md:px-8 md:pt-8">
+            {localeSwitcher}
+          </div>
+          <div className="flex-1" />
+          <div className="relative flex flex-col items-center gap-5 px-6 pb-16 text-center">
+            <h2 className="font-editorial text-[1.65rem] font-medium tracking-tight text-zinc-50 md:text-3xl">
+              {t.graftTitle}
+            </h2>
+            <p className="max-w-sm text-sm font-light leading-relaxed text-white/70 md:text-base">
+              {t.graftBody}
+            </p>
+            <button
+              type="button"
+              onClick={() => setPhase("bridge")}
+              className={`parcours-monolith-continue ${connexionSubmitButtonClass} max-w-xs touch-manipulation`}
+            >
+              {t.graftCta}
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {lueurSettling ? (
+        <div
+          className="fixed inset-0 z-[50] flex flex-col items-center justify-center gap-5"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="sanctuary-lueur-settle">
+            <SanctuaryLueurOrb
+              variant="single"
+              size="ritual"
+              aria-label={t.lueurLabel}
+            />
+          </div>
+          <p className="text-center font-editorial text-lg text-teal-100/90">
+            {t.lueurSettle}
+          </p>
+        </div>
+      ) : null}
+
+      {showMonolith && load.status === "ready" && phase === "deposit" ? (
+        <SanctuaryMonolith header={localeSwitcher}>
+          <div className="space-y-8">
+            <div className="text-center">
+              <h1 className="font-editorial text-[1.65rem] font-medium leading-snug tracking-tight text-zinc-50 md:text-3xl">
+                {fill(t.welcome, {
+                  name: tributeDisplayName(load.tribute, locale),
+                })}
+              </h1>
+              <p className="mx-auto mt-4 max-w-md text-sm font-light leading-relaxed text-white/55 md:text-base">
+                {t.subtitle}
+              </p>
+              <p className="mt-6 text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/75">
+                {t.depositLead}
+              </p>
+              {photoCount > 0 ? (
+                <p
+                  className="mt-3 text-[11px] font-medium uppercase tracking-[0.28em] text-teal-400/80"
+                  aria-live="polite"
+                >
+                  {fill(t.photoCounter, {
+                    n: photoCount,
+                    max: photoMax,
+                  })}
+                </p>
+              ) : null}
+            </div>
+            <SanctuaryDepositForm
+              token={token}
+              locale={locale}
+              copy={t.deposit}
+              remainingPhotoSlots={remainingPhotoSlots}
+              initialName={deposit?.contributorName ?? ""}
+              initialEmail={deposit?.contributorEmail ?? ""}
+              onDeposited={handleDeposited}
+              onFlowComplete={handleDepositFlowComplete}
+            />
+          </div>
+        </SanctuaryMonolith>
+      ) : null}
+
+      {showMonolith && load.status === "ready" && phase === "bridge" ? (
+        <SanctuaryMonolith header={localeSwitcher}>
+          <div className="space-y-8">
+            {contribFlash ? (
+              <p
+                className={`text-center text-sm font-light ${
+                  contribFlash === "success" ? "text-teal-300/90" : "text-zinc-400"
+                }`}
+                role="status"
+              >
+                {contribFlash === "success" ? t.contribSuccess : t.contribCancel}
+              </p>
+            ) : null}
+            <ImprintCatalog
+              locale={locale}
+              packs={load.packs}
+              selectedKey={selectedPackKey}
+              onSelect={handleSelectPack}
+              title={t.packsTitle}
+              promise={
+                contribFlash === "success" ? t.bridgeBodyAfterGift : t.packsPromise
+              }
+              voiceSlot={
+                <GuestVoiceRecorder
+                  token={token}
+                  locale={locale}
+                  contributorName={deposit?.contributorName ?? ""}
+                  contributorEmail={deposit?.contributorEmail}
+                  mediaId={voiceMediaId}
+                  onMediaIdChange={setVoiceMediaId}
+                  embedded
+                />
+              }
+              videoSlot={
+                <GuestVideoRecorder
+                  token={token}
+                  locale={locale}
+                  contributorName={deposit?.contributorName ?? ""}
+                  contributorEmail={deposit?.contributorEmail}
+                  mediaId={videoMediaId}
+                  onMediaIdChange={setVideoMediaId}
+                  embedded
+                />
+              }
+              lueurSlot={<SanctuaryLueurPanel locale={locale} />}
+              patronSlot={
+                <PatronAmountField
+                  locale={locale}
+                  open
+                  embedded
+                  amountCents={patronAmountCents}
+                  onChange={setPatronAmountCents}
+                  amountMinCents={patronPack?.amountMinCents}
+                  amountMaxCents={patronPack?.amountMaxCents}
+                  amountSuggestedCents={patronPack?.amountSuggestedCents}
+                />
+              }
+            />
+            <ImprintCheckoutCta
+              token={token}
+              locale={locale}
+              productKey={selectedPackKey}
+              patronAmountCents={patronAmountCents}
+              patronMinCents={patronPack?.amountMinCents}
+              patronMaxCents={patronPack?.amountMaxCents}
+              contributorName={deposit?.contributorName ?? ""}
+              contributorEmail={deposit?.contributorEmail}
+              fixedPriceCents={selectedPack?.priceCents}
+              mediaId={
+                selectedPackKey === "guest_video" ? videoMediaId : voiceMediaId
+              }
+              copy={t}
+            />
+            <button
+              type="button"
+              onClick={() => setPhase("sky")}
+              className={`${sanctuaryGhostButton} w-full`}
+            >
+              {t.skipSupport}
+            </button>
+          </div>
+        </SanctuaryMonolith>
+      ) : null}
 
       <div
         className="pointer-events-none absolute inset-0 z-[1] overflow-hidden"
@@ -423,7 +686,7 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
 
       <div
         className={`relative z-10 mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-10 pt-12 md:px-8 md:pt-16 ${
-          skyOpen ? "pointer-events-none invisible" : ""
+          hideLegacySheet ? "pointer-events-none invisible" : ""
         }`}
       >
         <header className="relative mb-10">
@@ -437,9 +700,9 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
             </button>
             <LocaleSwitcher
               lang={locale}
-              languageLabel={locale === "en" ? "Language" : "Langue"}
-              langOptionFr="FR"
-              langOptionEn="EN"
+              languageLabel={t.languageLabel}
+              langOptionFr={t.langOptionFr}
+              langOptionEn={t.langOptionEn}
             />
           </div>
           <div className="mx-auto flex max-w-[16rem] scale-[0.82] origin-top justify-center sm:max-w-[18rem] sm:scale-[0.88]">
@@ -454,53 +717,8 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
           </p>
         </header>
 
-        {lueurSettling ? (
-          <div
-            className="mb-10 flex flex-col items-center gap-5"
-            role="status"
-            aria-live="polite"
-          >
-            <div className="sanctuary-lueur-settle">
-              <SanctuaryLueurOrb
-                variant="single"
-                size="ritual"
-                aria-label={locale === "fr" ? "Lueur" : "Glow"}
-              />
-            </div>
-            <p className="text-center font-editorial text-lg text-teal-100/90">
-              {t.lueurSettle}
-            </p>
-          </div>
-        ) : null}
-
-        {contribFlash && !lueurSettling ? (
-          <p
-            className={`mb-8 text-center text-sm font-light ${
-              contribFlash === "success"
-                ? "text-teal-300/90"
-                : "text-zinc-400"
-            }`}
-            role="status"
-          >
-            {contribFlash === "success" ? t.contribSuccess : t.contribCancel}
-          </p>
-        ) : null}
-
         <div className="flex-1">
           <AnimatePresence mode="wait">
-            {load.status === "loading" ? (
-              <motion.p
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: DURATION_BREATH, ease: EASE_OUT_LUXE }}
-                className="text-center text-sm font-light text-zinc-500"
-              >
-                {t.loading}
-              </motion.p>
-            ) : null}
-
             {load.status === "error" ? (
               <motion.div
                 key="error"
@@ -515,190 +733,6 @@ export function SanctuaryLanding({ token, locale }: SanctuaryLandingProps) {
                 <p className="mt-4 text-sm font-light leading-relaxed text-white/55">
                   {load.message}
                 </p>
-              </motion.div>
-            ) : null}
-
-            {load.status === "ready" && phase === "deposit" ? (
-              <motion.div
-                key="deposit"
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
-                className="space-y-10"
-              >
-                <div className="text-center">
-                  <h1 className="font-editorial text-[1.65rem] font-medium leading-snug tracking-tight text-zinc-50 md:text-3xl">
-                    {t.welcome(tributeDisplayName(load.tribute, locale))}
-                  </h1>
-                  <p className="mx-auto mt-5 max-w-md text-sm font-light leading-relaxed text-white/50 md:text-base">
-                    {t.subtitle}
-                  </p>
-                  {showDepositForm ? (
-                    <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/75">
-                      {t.depositLead}
-                    </p>
-                  ) : null}
-                  {photoCount > 0 ? (
-                    <p
-                      className="mt-4 text-[11px] font-medium uppercase tracking-[0.28em] text-teal-400/80"
-                      aria-live="polite"
-                    >
-                      {t.photoCounter(photoCount, photoMax)}
-                    </p>
-                  ) : null}
-                </div>
-
-                {showDepositAck ? (
-                  <div
-                    className="space-y-6 rounded-sm border border-white/10 bg-white/[0.03] px-5 py-7 backdrop-blur-sm md:px-8"
-                    role="status"
-                  >
-                    <div className="space-y-3 text-center">
-                      <div
-                        className="mx-auto h-px w-12 bg-teal-400/35"
-                        aria-hidden
-                      />
-                      {canAddAnotherPhoto ? (
-                        <>
-                          <p className="font-editorial text-xl font-medium tracking-tight text-zinc-50 md:text-2xl">
-                            {t.ackTitle}
-                          </p>
-                          <p className="text-sm font-light leading-relaxed text-white/55">
-                            {t.ackBody}
-                          </p>
-                        </>
-                      ) : (
-                        <p className="text-sm font-light leading-relaxed text-white/55 md:text-base">
-                          {t.photoLimitReached}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="flex flex-col gap-3">
-                      {canAddAnotherPhoto ? (
-                        <button
-                          type="button"
-                          onClick={handleAddAnother}
-                          className={`${sanctuarySecondaryButton} w-full`}
-                        >
-                          {t.addAnother}
-                        </button>
-                      ) : null}
-                      <button
-                        type="button"
-                        onClick={() => setPhase("bridge")}
-                        className={`${sanctuaryGhostButton} w-full`}
-                      >
-                        {t.continueToImprints}
-                      </button>
-                    </div>
-                  </div>
-                ) : null}
-
-                {showDepositForm ? (
-                  <div className="rounded-sm border border-white/10 bg-white/[0.03] px-5 py-8 backdrop-blur-sm md:px-8">
-                    <SanctuaryDepositForm
-                      key={formKey}
-                      token={token}
-                      locale={locale}
-                      remainingPhotoSlots={remainingPhotoSlots}
-                      initialName={deposit?.contributorName ?? ""}
-                      initialEmail={deposit?.contributorEmail ?? ""}
-                      onDeposited={handleDeposited}
-                      onFlowComplete={handleDepositFlowComplete}
-                    />
-                  </div>
-                ) : null}
-              </motion.div>
-            ) : null}
-
-            {load.status === "ready" && phase === "bridge" ? (
-              <motion.div
-                key="bridge"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
-                className="space-y-8"
-              >
-                <div className="space-y-6 text-center">
-                  <div
-                    className="mx-auto h-px w-16 bg-teal-400/35"
-                    aria-hidden
-                  />
-                  <h2 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
-                    {t.bridgeTitle}
-                  </h2>
-                  <p className="mx-auto max-w-md text-sm font-light leading-relaxed text-white/55 md:text-base">
-                    {contribFlash === "success"
-                      ? t.bridgeBodyAfterGift
-                      : t.bridgeBody}
-                  </p>
-                  {photoCount > 0 ? (
-                    <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-white/40">
-                      {t.photoCounter(photoCount, photoMax)}
-                    </p>
-                  ) : null}
-                </div>
-
-                <ImprintCatalog
-                  locale={locale}
-                  packs={load.packs}
-                  selectedKey={selectedPackKey}
-                  onSelect={handleSelectPack}
-                  voiceSlot={
-                    <GuestVoiceRecorder
-                      token={token}
-                      locale={locale}
-                      contributorName={deposit?.contributorName ?? ""}
-                      contributorEmail={deposit?.contributorEmail}
-                      mediaId={voiceMediaId}
-                      onMediaIdChange={setVoiceMediaId}
-                      embedded
-                    />
-                  }
-                  videoSlot={
-                    <GuestVideoRecorder
-                      token={token}
-                      locale={locale}
-                      contributorName={deposit?.contributorName ?? ""}
-                      contributorEmail={deposit?.contributorEmail}
-                      mediaId={videoMediaId}
-                      onMediaIdChange={setVideoMediaId}
-                      embedded
-                    />
-                  }
-                  lueurSlot={<SanctuaryLueurPanel locale={locale} />}
-                  patronSlot={
-                    <PatronAmountField
-                      locale={locale}
-                      open
-                      embedded
-                      amountCents={patronAmountCents}
-                      onChange={setPatronAmountCents}
-                      amountMinCents={patronPack?.amountMinCents}
-                      amountMaxCents={patronPack?.amountMaxCents}
-                      amountSuggestedCents={patronPack?.amountSuggestedCents}
-                    />
-                  }
-                />
-
-                <ImprintCheckoutCta
-                  token={token}
-                  locale={locale}
-                  productKey={selectedPackKey}
-                  patronAmountCents={patronAmountCents}
-                  patronMinCents={patronPack?.amountMinCents}
-                  patronMaxCents={patronPack?.amountMaxCents}
-                  contributorName={deposit?.contributorName ?? ""}
-                  contributorEmail={deposit?.contributorEmail}
-                  fixedPriceCents={selectedPack?.priceCents}
-                  mediaId={
-                    selectedPackKey === "guest_video"
-                      ? videoMediaId
-                      : voiceMediaId
-                  }
-                />
               </motion.div>
             ) : null}
           </AnimatePresence>

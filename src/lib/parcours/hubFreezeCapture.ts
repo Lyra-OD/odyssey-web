@@ -1,17 +1,28 @@
-/** Session capture gel hub (Plan B) — une URL active · fallback JPEG statique si null. */
+/** Session capture gel hub (Plan B) — une URL active · null = void (jamais un autre ciel). */
 export const hubFreezeCaptureRef = { url: null as string | null };
 
-export function captureHubCanvas(canvas: HTMLCanvasElement | null): string | null {
-  if (!canvas || canvas.width === 0 || canvas.height === 0) return null;
+/**
+ * Rendu synchrone + encodage, fourni par le Canvas hub.
+ * Le contexte WebGL tourne sans `preserveDrawingBuffer` : le back buffer n'est
+ * lisible que dans la tâche qui vient de peindre, d'où le couple render+encode.
+ */
+export type HubFrameCapture = () => string | null;
+
+/** JPEG et pas PNG : l'encodage est synchrone et le PNG plein écran gèle le thread. */
+export function encodeHubFrame(canvas: HTMLCanvasElement): string | null {
+  if (canvas.width === 0 || canvas.height === 0) return null;
+  const url = canvas.toDataURL("image/jpeg", 0.82);
+  return url.startsWith("data:image/jpeg") ? url : null;
+}
+
+export function captureHubFrame(
+  capture: HubFrameCapture | null,
+): string | null {
+  if (!capture) return null;
   try {
     revokeHubFreezeCapture();
-    /**
-     * JPEG et pas PNG : l'encodage est synchrone et bloque le thread principal.
-     * En PNG plein écran ça coûte plusieurs secondes de gel + une data URL de
-     * plusieurs Mo que le compositeur doit ensuite redécoder.
-     */
-    const url = canvas.toDataURL("image/jpeg", 0.82);
-    if (!url.startsWith("data:image/jpeg")) return null;
+    const url = capture();
+    if (!url) return null;
     hubFreezeCaptureRef.url = url;
     return url;
   } catch (err) {
@@ -24,11 +35,4 @@ export function captureHubCanvas(canvas: HTMLCanvasElement | null): string | nul
 
 export function revokeHubFreezeCapture() {
   hubFreezeCaptureRef.url = null;
-}
-
-export function resolveHubFreezeBackdropSrc(
-  captureUrl: string | null,
-  fallbackSrc: string,
-): string {
-  return captureUrl ?? fallbackSrc;
 }

@@ -43,5 +43,15 @@ export const sanctuaryCardSurface =
 export const sanctuarySecondaryButton =
   "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-sm border border-teal-400/30 bg-teal-400/[0.06] px-4 font-label text-[11px] font-medium uppercase tracking-[0.22em] text-teal-100 transition-colors hover:border-teal-400/45";
 
+/** Champs alignés wizard orga (monolithe indigo). */
+export const sanctuaryWizardLabel =
+  "flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-500";
+
+export const sanctuaryWizardField =
+  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.14)]";
+
+export const sanctuaryWizardTextarea =
+  "w-full min-h-[7.5rem] resize-y rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-base font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.14)]";
+
 export const sanctuaryGhostButton =
   "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-sm border border-white/12 bg-white/[0.03] px-4 font-label text-[11px] font-medium uppercase tracking-[0.22em] text-zinc-300 transition-colors hover:border-teal-400/25 hover:text-teal-100";

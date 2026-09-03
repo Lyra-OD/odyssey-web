@@ -41,6 +41,29 @@ export const SKY_HUB_LITE_LAYERS: Record<SkyCraftLayerId, boolean> = {
 };
 
 /**
+ * Invité démo 10 sept — fluidité : bande VL + champ lointain + filantes + Hero.
+ * Pas de gaz, poussière, panorama, Leo, aurore.
+ */
+export const SKY_GUEST_DEMO_LAYERS: Record<SkyCraftLayerId, boolean> = {
+  fond: true,
+  fog: false,
+  panorama: false,
+  gasFar: false,
+  ghostStars: false,
+  gasRose: false,
+  gasMauve: false,
+  gasTeal: false,
+  cosmicDust: false,
+  dustLanes: false,
+  zodiacal: false,
+  aurora: false,
+  starsBand: true,
+  starsField: true,
+  shootingStars: true,
+  constellation: true,
+};
+
+/**
  * T2-freeze — rituel Continuer : constellation seule au-dessus du gel 2D.
  * Zéro gaz / dust / filantes (perf) · fond off = clear alpha.
  */

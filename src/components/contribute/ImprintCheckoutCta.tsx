@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
+import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
 import { isPatronAmountValid } from "@/src/components/contribute/PatronAmountField";
 import { isSanctuaryVisualPreview } from "@/src/lib/contribute/sanctuaryPreview";
-import {
-  SANCTUARY_LAST_IMPRINT_KEY,
-  sanctuarySubmitButton,
-} from "@/src/lib/contribute/sanctuaryChrome";
+import { SANCTUARY_LAST_IMPRINT_KEY } from "@/src/lib/contribute/sanctuaryChrome";
 import { parseApiJson } from "@/src/lib/http/parseApiJson";
 import { formatWizardPrice } from "@/src/lib/wizard/wizardPricing";
+import type { AppDictionary } from "@/lib/dictionaries";
 
 export type ImprintCheckoutCtaProps = {
   token: string;
@@ -26,34 +25,8 @@ export type ImprintCheckoutCtaProps = {
   fixedPriceCents?: number | null;
   /** Requis si productKey === guest_voice | guest_video */
   mediaId?: string | null;
+  copy: AppDictionary["sanctuary"];
 };
-
-const copy = {
-  fr: {
-    cta: (price: string) => `Continuer · ${price}`,
-    ctaPatron: (price: string) => `Devenir Mécène · ${price}`,
-    selectFirst: "Choisissez une empreinte pour continuer.",
-    voiceRequired: "Enregistrez et validez votre voix avant de continuer.",
-    videoRequired: "Enregistrez et validez votre témoignage avant de continuer.",
-    paying: "Redirection sécurisée…",
-    previewBlocked:
-      "Aperçu local : le paiement Stripe nécessite un vrai lien Sanctuaire.",
-    errorGeneric: "Impossible d'ouvrir le paiement pour le moment.",
-    amountInvalid: "Ajustez le montant Mécène avant de continuer.",
-  },
-  en: {
-    cta: (price: string) => `Continue · ${price}`,
-    ctaPatron: (price: string) => `Become a Patron · ${price}`,
-    selectFirst: "Choose an imprint to continue.",
-    voiceRequired: "Record and keep your voice before continuing.",
-    videoRequired: "Record and keep your testimony before continuing.",
-    paying: "Secure redirect…",
-    previewBlocked:
-      "Local preview: Stripe checkout needs a real Sanctuary link.",
-    errorGeneric: "We could not open checkout right now.",
-    amountInvalid: "Adjust the Patron amount before continuing.",
-  },
-} as const;
 
 /**
  * CTA checkout empreinte — POST /api/contribute/[token]/checkout → redirect Stripe.
@@ -69,8 +42,8 @@ export function ImprintCheckoutCta({
   contributorEmail,
   fixedPriceCents,
   mediaId,
+  copy: t,
 }: ImprintCheckoutCtaProps) {
-  const t = copy[locale];
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,37 +67,40 @@ export function ImprintCheckoutCta({
     ? formatWizardPrice(patronAmountCents, locale)
     : formatWizardPrice(fixedPriceCents ?? 0, locale);
 
+  const withPrice = (template: string) =>
+    template.replace("{price}", priceLabel);
+
   const label =
     !productKey
-      ? t.selectFirst
+      ? t.checkoutSelectFirst
       : isVoice && !mediaId
-        ? t.voiceRequired
+        ? t.checkoutVoiceRequired
         : isVideo && !mediaId
-          ? t.videoRequired
+          ? t.checkoutVideoRequired
           : isPatron
-            ? t.ctaPatron(priceLabel)
-            : t.cta(priceLabel);
+            ? withPrice(t.checkoutCtaPatron)
+            : withPrice(t.checkoutCta);
 
   const handleCheckout = async () => {
     setError(null);
     if (!productKey) {
-      setError(t.selectFirst);
+      setError(t.checkoutSelectFirst);
       return;
     }
     if (isPatron && !patronOk) {
-      setError(t.amountInvalid);
+      setError(t.checkoutAmountInvalid);
       return;
     }
     if (isVoice && !mediaId) {
-      setError(t.voiceRequired);
+      setError(t.checkoutVoiceRequired);
       return;
     }
     if (isVideo && !mediaId) {
-      setError(t.videoRequired);
+      setError(t.checkoutVideoRequired);
       return;
     }
     if (isSanctuaryVisualPreview(token)) {
-      setError(t.previewBlocked);
+      setError(t.checkoutPreviewBlocked);
       return;
     }
 
@@ -157,10 +133,10 @@ export function ImprintCheckoutCta({
       if (!res.ok || !body.ok || !body.url) {
         setError(
           body.error === "voice_recording_required"
-            ? t.voiceRequired
+            ? t.checkoutVoiceRequired
             : body.error === "video_recording_required"
-              ? t.videoRequired
-              : t.errorGeneric,
+              ? t.checkoutVideoRequired
+              : t.checkoutError,
         );
         return;
       }
@@ -171,7 +147,7 @@ export function ImprintCheckoutCta({
       }
       window.location.assign(body.url);
     } catch {
-      setError(t.errorGeneric);
+      setError(t.checkoutError);
     } finally {
       setSubmitting(false);
     }
@@ -183,13 +159,13 @@ export function ImprintCheckoutCta({
         type="button"
         disabled={!canSubmit}
         onClick={() => void handleCheckout()}
-        className={`${sanctuarySubmitButton} inline-flex min-h-[52px] w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-40`}
+        className={`parcours-monolith-continue ${connexionSubmitButtonClass} min-h-[52px] touch-manipulation`}
       >
         {submitting ? (
-          <>
+          <span className="inline-flex items-center gap-2">
             <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
-            {t.paying}
-          </>
+            {t.checkoutPaying}
+          </span>
         ) : (
           label
         )}

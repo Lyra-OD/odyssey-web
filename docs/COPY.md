@@ -30,7 +30,8 @@ Figma Vague 1 : coller le FR du catalogue, noter la **clé** en commentaire de f
 | `header` `hero` `pricing` `process` `manifesto` `contact` `partnersPage` | Site marketing |
 | `auth` `login` | Connexions Studio / Salon |
 | `tributeWizard` | Wizard famille 7 étapes |
-| `scan` (si présent) | Scanner Compagnon |
+| `scan` (si présent) · `scannerCapture` | Scanner Compagnon |
+| `sanctuary` | Sanctuaire invité `/contribute/{token}` |
 | `salon` `hq` | Espaces partenaire / Odyssey HQ |
 | `common` `seo` | Chrome, balises |
 

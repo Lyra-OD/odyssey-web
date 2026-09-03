@@ -4,8 +4,9 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from "react"
 
 import type { WizardStep1RevealPhase } from "@/src/hooks/useWizardStep1Reveal";
 import {
-  captureHubCanvas,
+  captureHubFrame,
   revokeHubFreezeCapture,
+  type HubFrameCapture,
 } from "@/src/lib/parcours/hubFreezeCapture";
 import { prefetchSanctuaryUniverse } from "@/src/lib/parcours/prefetchSanctuaryUniverse";
 import {
@@ -73,8 +74,8 @@ type UseParcoursUxOptions = {
   enabled: boolean;
   revealPhase: WizardStep1RevealPhase;
   virginHub: boolean;
-  /** Canvas hub-lite — capture Plan B @ clic Hero. */
-  hubCanvasRef?: RefObject<HTMLCanvasElement | null>;
+  /** Hub-lite — render+encode d'une frame, capture Plan B @ clic Hero. */
+  hubCaptureRef?: RefObject<HubFrameCapture | null>;
   /** D1 — thaw close seulement quand le moteur a peint un frame chaud. */
   hubWebGLReady?: boolean;
   /** P0 — soft close post-reveal → resettler constellation (revealT=1). */
@@ -93,7 +94,7 @@ export function useParcoursUx({
   enabled,
   revealPhase,
   virginHub,
-  hubCanvasRef,
+  hubCaptureRef,
   hubWebGLReady = false,
   onSoftCloseEssentials,
 }: UseParcoursUxOptions) {
@@ -219,7 +220,7 @@ export function useParcoursUx({
       softenHubFreezeFx();
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          const captured = captureHubCanvas(hubCanvasRef?.current ?? null);
+          const captured = captureHubFrame(hubCaptureRef?.current ?? null);
           setFreezeCaptureUrl(captured);
           setFreezeHolding(false);
         });
@@ -234,7 +235,7 @@ export function useParcoursUx({
       setTransition(null);
       resetHubFreezeFx();
     }, HUB_FREEZE_TOTAL_MS);
-  }, [enabled, revealPhase, phase, transition, clearTimers, schedule, hubCanvasRef]);
+  }, [enabled, revealPhase, phase, transition, clearTimers, schedule, hubCaptureRef]);
 
   /**
    * Même photo que le panneau Essentiels — à appeler avant Continuer
@@ -242,10 +243,10 @@ export function useParcoursUx({
    */
   const ensureFreezeCapture = useCallback((): string | null => {
     if (freezeCaptureUrl) return freezeCaptureUrl;
-    const captured = captureHubCanvas(hubCanvasRef?.current ?? null);
+    const captured = captureHubFrame(hubCaptureRef?.current ?? null);
     if (captured) setFreezeCaptureUrl(captured);
     return captured;
-  }, [freezeCaptureUrl, hubCanvasRef]);
+  }, [freezeCaptureUrl, hubCaptureRef]);
 
   /** P0 — typo / retour Essentiels depuis le ciel post-reveal (gel déjà là). */
   const reopenEssentials = useCallback(() => {

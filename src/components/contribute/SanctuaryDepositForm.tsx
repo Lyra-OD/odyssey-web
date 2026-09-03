@@ -1,25 +1,22 @@
 "use client";
 
 import { useId, useRef, useState, type FormEvent } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { ImagePlus, Loader2, Type, X } from "lucide-react";
+import { motion } from "framer-motion";
+import { ImagePlus, Loader2, X } from "lucide-react";
 
 import { isSanctuaryVisualPreview } from "@/src/lib/contribute/sanctuaryPreview";
+import { guestDepositHasSouvenir } from "@/src/lib/contribute/guestDepositSouvenir";
 import {
-  editorialFieldLabel,
-} from "@/src/lib/editorialFormClasses";
-import {
-  sanctuaryFieldInput,
   sanctuaryHoverDashed,
-  sanctuarySelectBreathe,
-  sanctuarySubmitButton,
-  sanctuaryFieldTextarea,
+  sanctuaryWizardField,
+  sanctuaryWizardLabel,
+  sanctuaryWizardTextarea,
 } from "@/src/lib/contribute/sanctuaryChrome";
-import {
-  DURATION_BREATH,
-  DURATION_RITUAL,
-  EASE_OUT_LUXE,
-} from "@/src/lib/motion/easing";
+import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
+import { DURATION_RITUAL, EASE_OUT_LUXE } from "@/src/lib/motion/easing";
+import type { AppDictionary } from "@/lib/dictionaries";
+
+export type SanctuaryDepositCopy = AppDictionary["sanctuary"]["deposit"];
 
 export type SanctuaryDepositResult = {
   id: string;
@@ -31,122 +28,47 @@ export type SanctuaryDepositResult = {
 export type SanctuaryDepositFormProps = {
   token: string;
   locale: "fr" | "en";
+  copy: SanctuaryDepositCopy;
   onDeposited: (result: SanctuaryDepositResult) => void;
-  /** Après un dépôt message ou un lot photo (au moins 1 succès) — panneau ack. */
+  /** Après un dépôt message et/ou un lot photo (au moins 1 succès) — greffe étoile. */
   onFlowComplete?: () => void;
-  /** Slots photo restants avant le plafond (ex. 5 − déjà déposées). */
   remainingPhotoSlots: number;
-  /** Préremplissage après un dépôt précédent (enchaînement multi-photos). */
   initialName?: string;
   initialEmail?: string;
 };
 
-type DepositKind = "photo" | "message";
-
-const copy = {
-  fr: {
-    kindPhoto: "Une photo",
-    kindMessage: "Un mot",
-    kindHint: "Choisissez la forme de votre souvenir.",
-    nameLabel: "Votre nom",
-    namePlaceholder: "Prénom et nom",
-    emailLabel: "Courriel",
-    emailHint: "Recommandé pour recevoir les suites de l'hommage",
-    emailPlaceholder: "votre@courriel.com",
-    messageLabel: "Votre mot",
-    messagePlaceholder: "Quelques lignes pour immortaliser un souvenir…",
-    photoLabel: "Vos photos",
-    photoHint: (slots: number) =>
-      slots <= 1
-        ? "JPEG, PNG ou WebP, jusqu'à 12 Mo · 1 place restante"
-        : `JPEG, PNG ou WebP, jusqu'à 12 Mo · jusqu'à ${slots} photos`,
-    photoChoose: "Choisir des images",
-    photoChange: "Modifier la sélection",
-    photoRemove: "Retirer",
-    photoTruncated: (kept: number) =>
-      `Seules ${kept} photo${kept > 1 ? "s" : ""} ont été retenues : le plafond de cet hommage est atteint.`,
-    consent:
-      "J'accepte de recevoir occasionnellement des messages d'Odyssey liés à cet hommage.",
-    submit: "Déposer dans le Sanctuaire",
-    submitting: "Ajout au Sanctuaire…",
-    submittingProgress: (current: number, total: number) =>
-      `Ajout ${current} / ${total}…`,
-    errorGeneric: "Impossible d'ajouter ce souvenir pour le moment.",
-    errorFile: "Veuillez choisir au moins une image valide.",
-    errorName: "Votre nom est requis.",
-    errorMessage: "Écrivez quelques mots, ou choisissez une photo.",
-    errorPhotoLimit:
-      "Vous avez déjà offert cinq photos pour cet hommage. Merci.",
-    errorPartialLimit:
-      "Certaines photos ont été déposées. Le plafond de souvenirs est atteint.",
-  },
-  en: {
-    kindPhoto: "A photo",
-    kindMessage: "A few words",
-    kindHint: "Choose how you wish to leave your memory.",
-    nameLabel: "Your name",
-    namePlaceholder: "First and last name",
-    emailLabel: "Email",
-    emailHint: "Recommended to receive updates on the tribute",
-    emailPlaceholder: "you@email.com",
-    messageLabel: "Your words",
-    messagePlaceholder: "A few lines to immortalize a memory…",
-    photoLabel: "Your photos",
-    photoHint: (slots: number) =>
-      slots <= 1
-        ? "JPEG, PNG or WebP, up to 12 MB · 1 slot left"
-        : `JPEG, PNG or WebP, up to 12 MB · up to ${slots} photos`,
-    photoChoose: "Choose images",
-    photoChange: "Change selection",
-    photoRemove: "Remove",
-    photoTruncated: (kept: number) =>
-      `Only ${kept} photo${kept > 1 ? "s" : ""} could be kept: this tribute’s limit is reached.`,
-    consent:
-      "I agree to occasionally receive Odyssey messages related to this tribute.",
-    submit: "Place in the Sanctuary",
-    submitting: "Adding to the Sanctuary…",
-    submittingProgress: (current: number, total: number) =>
-      `Adding ${current} / ${total}…`,
-    errorGeneric: "We could not add this memory right now.",
-    errorFile: "Please choose at least one valid image.",
-    errorName: "Your name is required.",
-    errorMessage: "Write a few words, or choose a photo.",
-    errorPhotoLimit:
-      "You have already offered five photos for this tribute. Thank you.",
-    errorPartialLimit:
-      "Some photos were placed. The memory limit for this tribute is reached.",
-  },
-} as const;
+function fill(template: string, vars: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (_, key: string) =>
+    String(vars[key] ?? ""),
+  );
+}
 
 /**
- * Étape 1 Sanctuaire — dépôt gratuit (photo(s) ou mot).
- * Tokens : editorial form + motion Breath/Ritual · Quiet Luxury.
+ * Dépôt gratuit — photos ET/OU mot + courriel (même écran).
  */
 export function SanctuaryDepositForm({
   token,
-  locale,
+  copy: t,
   onDeposited,
   onFlowComplete,
   remainingPhotoSlots,
   initialName = "",
   initialEmail = "",
 }: SanctuaryDepositFormProps) {
-  const t = copy[locale];
   const nameId = useId();
   const emailId = useId();
+  const consentId = useId();
   const messageId = useId();
   const fileId = useId();
-  const consentId = useId();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const slots = Math.max(0, remainingPhotoSlots);
 
-  const [kind, setKind] = useState<DepositKind>("photo");
   const [name, setName] = useState(initialName);
   const [email, setEmail] = useState(initialEmail);
+  const [consentMarketing, setConsentMarketing] = useState(false);
   const [message, setMessage] = useState("");
   const [files, setFiles] = useState<File[]>([]);
-  const [consentMarketing, setConsentMarketing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [progress, setProgress] = useState<{
     current: number;
@@ -164,7 +86,7 @@ export function SanctuaryDepositForm({
 
     const images = Array.from(list).filter((f) => f.type.startsWith("image/"));
     if (images.length === 0) {
-      setError(t.errorFile);
+      setError(t.errorNeedSouvenir);
       return;
     }
 
@@ -172,7 +94,7 @@ export function SanctuaryDepositForm({
     setFiles(capped);
     setError(null);
     if (images.length > slots) {
-      setInfo(t.photoTruncated(capped.length));
+      setInfo(fill(t.photoTruncated, { kept: capped.length }));
     } else {
       setInfo(null);
     }
@@ -195,7 +117,7 @@ export function SanctuaryDepositForm({
     const form = new FormData();
     form.set("kind", "photo");
     form.set("contributorName", trimmedName);
-    if (emailTrimmed) form.set("contributorEmail", emailTrimmed);
+    form.set("contributorEmail", emailTrimmed);
     form.set("consentMarketing", consentMarketing ? "true" : "false");
     form.set("file", file);
 
@@ -216,15 +138,48 @@ export function SanctuaryDepositForm({
       return { ok: false, limit: false };
     }
 
-    return {
-      ok: true,
-      deposit: {
-        ...body.deposit,
-        contributorEmail:
-          body.deposit.contributorEmail ??
-          (emailTrimmed ? emailTrimmed : null),
+    return { ok: true, deposit: body.deposit };
+  };
+
+  const depositMessage = async (
+    trimmedName: string,
+    emailTrimmed: string,
+    messageText: string,
+  ): Promise<boolean> => {
+    if (isSanctuaryVisualPreview(token)) {
+      await new Promise((r) => setTimeout(r, 320));
+      onDeposited({
+        id: `preview-${Date.now()}`,
+        kind: "message",
+        contributorName: trimmedName,
+        contributorEmail: emailTrimmed,
+      });
+      return true;
+    }
+
+    const res = await fetch(
+      `/api/contribute/${encodeURIComponent(token)}/deposit`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "message",
+          messageText,
+          contributorName: trimmedName,
+          contributorEmail: emailTrimmed,
+          consentMarketing,
+        }),
       },
+    );
+    const body = (await res.json().catch(() => ({}))) as {
+      ok?: boolean;
+      deposit?: SanctuaryDepositResult;
     };
+    if (!res.ok || !body.ok || !body.deposit) {
+      return false;
+    }
+    onDeposited(body.deposit);
+    return true;
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -238,88 +193,55 @@ export function SanctuaryDepositForm({
       return;
     }
 
-    if (kind === "message" && !message.trim()) {
-      setError(t.errorMessage);
+    const emailTrimmed = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed)) {
+      setError(t.errorEmail);
       return;
     }
-    if (kind === "photo") {
-      if (files.length === 0) {
-        setError(t.errorFile);
-        return;
-      }
-      if (slots <= 0) {
-        setError(t.errorPhotoLimit);
-        return;
-      }
+
+    const batch = files.slice(0, slots);
+    if (
+      !guestDepositHasSouvenir({
+        photoCount: batch.length,
+        messageText: message,
+      })
+    ) {
+      setError(t.errorNeedSouvenir);
+      return;
     }
 
-    const emailTrimmed = email.trim();
-    const batch = files.slice(0, slots);
+    const messageText = message.trim();
+    const photoTotal = batch.length;
+    const stepTotal = (messageText ? 1 : 0) + photoTotal;
 
     setSubmitting(true);
-    setProgress(null);
+    setProgress(stepTotal > 1 ? { current: 1, total: stepTotal } : null);
     try {
-      if (kind === "message") {
-        if (isSanctuaryVisualPreview(token)) {
-          await new Promise((r) => setTimeout(r, 480));
-          onDeposited({
-            id: `preview-${Date.now()}`,
-            kind: "message",
-            contributorName: trimmedName,
-            ...(emailTrimmed ? { contributorEmail: emailTrimmed } : {}),
-          });
-          finishFlow();
-          return;
-        }
-
-        const res = await fetch(
-          `/api/contribute/${encodeURIComponent(token)}/deposit`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              kind: "message",
-              messageText: message.trim(),
-              contributorName: trimmedName,
-              ...(emailTrimmed ? { contributorEmail: emailTrimmed } : {}),
-              consentMarketing,
-            }),
-          },
-        );
-        const body = (await res.json().catch(() => ({}))) as {
-          ok?: boolean;
-          deposit?: SanctuaryDepositResult;
-          error?: string;
-        };
-        if (!res.ok || !body.ok || !body.deposit) {
+      let step = 0;
+      if (messageText) {
+        step += 1;
+        setProgress({ current: step, total: stepTotal });
+        const ok = await depositMessage(trimmedName, emailTrimmed, messageText);
+        if (!ok) {
           setError(t.errorGeneric);
           return;
         }
-        onDeposited({
-          ...body.deposit,
-          contributorEmail:
-            body.deposit.contributorEmail ??
-            (emailTrimmed ? emailTrimmed : null),
-        });
-        finishFlow();
-        return;
       }
 
-      // --- Photos : boucle séquentielle ---
       let successCount = 0;
       let hitLimit = false;
-
       for (let i = 0; i < batch.length; i++) {
-        setProgress({ current: i + 1, total: batch.length });
+        step += 1;
+        setProgress({ current: step, total: stepTotal });
         const file = batch[i]!;
 
         if (isSanctuaryVisualPreview(token)) {
-          await new Promise((r) => setTimeout(r, 320));
+          await new Promise((r) => setTimeout(r, 280));
           onDeposited({
             id: `preview-${Date.now()}-${i}`,
             kind: "photo",
             contributorName: trimmedName,
-            ...(emailTrimmed ? { contributorEmail: emailTrimmed } : {}),
+            contributorEmail: emailTrimmed,
           });
           successCount += 1;
           continue;
@@ -335,20 +257,18 @@ export function SanctuaryDepositForm({
           hitLimit = true;
           break;
         }
-        setError(
-          successCount > 0 ? t.errorPartialLimit : t.errorGeneric,
-        );
-        if (successCount > 0) finishFlow();
+        setError(successCount > 0 || messageText ? t.errorPartialLimit : t.errorGeneric);
+        if (successCount > 0 || messageText) finishFlow();
         return;
       }
 
       if (hitLimit) {
-        setError(successCount > 0 ? t.errorPartialLimit : t.errorPhotoLimit);
-        if (successCount > 0) finishFlow();
+        setError(successCount > 0 || messageText ? t.errorPartialLimit : t.errorPhotoLimit);
+        if (successCount > 0 || messageText) finishFlow();
         return;
       }
 
-      if (successCount > 0) {
+      if (successCount > 0 || messageText) {
         finishFlow();
       }
     } catch {
@@ -361,10 +281,13 @@ export function SanctuaryDepositForm({
 
   const submitLabel =
     submitting && progress
-      ? t.submittingProgress(progress.current, progress.total)
+      ? fill(t.submittingProgress, progress)
       : submitting
         ? t.submitting
         : t.submit;
+
+  const photoHint =
+    slots <= 1 ? t.photoHintOne : fill(t.photoHintMany, { slots });
 
   return (
     <motion.form
@@ -373,136 +296,11 @@ export function SanctuaryDepositForm({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
-      className="space-y-10"
+      className="space-y-8"
       noValidate
     >
-      <div>
-        <p className={editorialFieldLabel}>{t.kindHint}</p>
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          {(
-            [
-              { id: "photo" as const, label: t.kindPhoto, Icon: ImagePlus },
-              { id: "message" as const, label: t.kindMessage, Icon: Type },
-            ] as const
-          ).map(({ id, label, Icon }) => {
-            const active = kind === id;
-            return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => {
-                  setKind(id);
-                  setError(null);
-                  setInfo(null);
-                }}
-                className={`flex min-h-[52px] items-center justify-center gap-2 rounded-sm border px-3 py-3 text-left transition-colors duration-300 ${
-                  active
-                    ? `${sanctuarySelectBreathe} border-teal-400/40 bg-teal-400/[0.06] text-zinc-100`
-                    : "border-white/10 bg-white/[0.02] text-zinc-400 hover:border-teal-400/25 hover:text-zinc-200"
-                }`}
-              >
-                <Icon className="h-4 w-4 shrink-0 opacity-80" strokeWidth={1.5} aria-hidden />
-                <span className="font-label text-[11px] uppercase tracking-[0.22em]">
-                  {label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <AnimatePresence mode="wait">
-        {kind === "photo" ? (
-          <motion.div
-            key="photo"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: DURATION_BREATH, ease: EASE_OUT_LUXE }}
-          >
-            <label htmlFor={fileId} className={editorialFieldLabel}>
-              {t.photoLabel}
-            </label>
-            <p className="mt-2 text-xs font-light text-zinc-500">
-              {t.photoHint(slots)}
-            </p>
-            <input
-              ref={fileRef}
-              id={fileId}
-              type="file"
-              multiple
-              accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-              className="sr-only"
-              onChange={(e) => onFileChange(e.target.files)}
-            />
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              disabled={slots <= 0 || submitting}
-              className={`mt-4 flex w-full items-center justify-center gap-2 rounded-sm border border-dashed border-white/15 bg-white/[0.02] px-4 py-8 text-sm font-light text-zinc-300 transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${sanctuaryHoverDashed}`}
-            >
-              <ImagePlus className="h-5 w-5 text-zinc-500" strokeWidth={1.4} aria-hidden />
-              {files.length > 0 ? t.photoChange : t.photoChoose}
-            </button>
-
-            {files.length > 0 ? (
-              <ul className="mt-5 space-y-2 border-t border-white/8 pt-4" aria-live="polite">
-                {files.map((f, index) => (
-                  <li
-                    key={`${f.name}-${f.size}-${index}`}
-                    className="flex items-center justify-between gap-3 text-sm font-light text-zinc-400"
-                  >
-                    <span className="min-w-0 truncate tracking-wide">
-                      {f.name}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => removeFileAt(index)}
-                      disabled={submitting}
-                      className="inline-flex shrink-0 items-center gap-1 text-[10px] uppercase tracking-[0.22em] text-zinc-500 transition-colors hover:text-zinc-300 disabled:opacity-40"
-                      aria-label={`${t.photoRemove} ${f.name}`}
-                    >
-                      <X className="h-3 w-3" strokeWidth={1.5} aria-hidden />
-                      {t.photoRemove}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-
-            {info ? (
-              <p className="mt-3 text-xs font-light text-white/45" role="status">
-                {info}
-              </p>
-            ) : null}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="message"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: DURATION_BREATH, ease: EASE_OUT_LUXE }}
-          >
-            <label htmlFor={messageId} className={editorialFieldLabel}>
-              {t.messageLabel}
-            </label>
-            {/* Phase 3b+ : Aide IA optionnelle — amorces à éditer (voir MONETIZATION_CATALOG §C) */}
-            <textarea
-              id={messageId}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={4}
-              maxLength={500}
-              placeholder={t.messagePlaceholder}
-              className={sanctuaryFieldTextarea}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div>
-        <label htmlFor={nameId} className={editorialFieldLabel}>
+      <div className="space-y-2">
+        <label htmlFor={nameId} className={sanctuaryWizardLabel}>
           {t.nameLabel}
         </label>
         <input
@@ -513,29 +311,101 @@ export function SanctuaryDepositForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder={t.namePlaceholder}
-          className={sanctuaryFieldInput}
+          className={sanctuaryWizardField}
         />
       </div>
 
-      <div>
-        <label htmlFor={emailId} className={editorialFieldLabel}>
+      {slots > 0 ? (
+        <div className="space-y-2">
+          <label htmlFor={fileId} className={sanctuaryWizardLabel}>
+            {t.photoLabel}
+          </label>
+          <p className="text-sm font-light text-zinc-500">{photoHint}</p>
+          <input
+            ref={fileRef}
+            id={fileId}
+            type="file"
+            multiple
+            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+            className="sr-only"
+            onChange={(e) => onFileChange(e.target.files)}
+          />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={submitting}
+            className={`flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/15 bg-white/[0.04] px-4 py-8 text-sm font-light text-zinc-300 transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${sanctuaryHoverDashed}`}
+          >
+            <ImagePlus className="h-5 w-5 text-zinc-500" strokeWidth={1.4} aria-hidden />
+            {files.length > 0 ? t.photoChange : t.photoChoose}
+          </button>
+
+          {files.length > 0 ? (
+            <ul className="space-y-2 border-t border-white/10 pt-4" aria-live="polite">
+              {files.map((f, index) => (
+                <li
+                  key={`${f.name}-${f.size}-${index}`}
+                  className="flex items-center justify-between gap-3 text-sm font-light text-zinc-400"
+                >
+                  <span className="min-w-0 truncate tracking-wide">{f.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeFileAt(index)}
+                    disabled={submitting}
+                    className="inline-flex shrink-0 items-center gap-1 text-[10px] uppercase tracking-[0.22em] text-zinc-500 transition-colors hover:text-zinc-300 disabled:opacity-40"
+                    aria-label={`${t.photoRemove} ${f.name}`}
+                  >
+                    <X className="h-3 w-3" strokeWidth={1.5} aria-hidden />
+                    {t.photoRemove}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          {info ? (
+            <p className="text-xs font-light text-white/45" role="status">
+              {info}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
+      <div className="space-y-2">
+        <label htmlFor={messageId} className={sanctuaryWizardLabel}>
+          {t.messageLabel}
+        </label>
+        <textarea
+          id={messageId}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          rows={4}
+          maxLength={500}
+          placeholder={t.messagePlaceholder}
+          className={sanctuaryWizardTextarea}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor={emailId} className={sanctuaryWizardLabel}>
           {t.emailLabel}
         </label>
-        <p className="mt-2 text-xs font-light text-zinc-500">{t.emailHint}</p>
+        <p className="text-sm font-light text-zinc-500">{t.emailHint}</p>
         <input
           id={emailId}
           type="email"
           autoComplete="email"
+          required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t.emailPlaceholder}
-          className={sanctuaryFieldInput}
+          className={sanctuaryWizardField}
         />
       </div>
 
       <label
         htmlFor={consentId}
-        className="flex cursor-pointer items-start gap-3 text-xs font-light leading-relaxed text-zinc-500"
+        className="flex cursor-pointer items-start gap-3 text-sm font-light leading-relaxed text-zinc-400"
       >
         <input
           id={consentId}
@@ -548,21 +418,21 @@ export function SanctuaryDepositForm({
       </label>
 
       {error ? (
-        <p className="text-sm font-light text-amber-200/90" role="alert">
+        <p className="text-sm font-light text-rose-400/90" role="alert">
           {error}
         </p>
       ) : null}
 
       <button
         type="submit"
-        disabled={submitting || (kind === "photo" && slots <= 0)}
-        className={`${sanctuarySubmitButton} inline-flex min-h-[48px] w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50`}
+        disabled={submitting}
+        className={`parcours-monolith-continue ${connexionSubmitButtonClass} min-h-[52px] touch-manipulation`}
       >
         {submitting ? (
-          <>
+          <span className="inline-flex items-center gap-2">
             <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
             {submitLabel}
-          </>
+          </span>
         ) : (
           t.submit
         )}

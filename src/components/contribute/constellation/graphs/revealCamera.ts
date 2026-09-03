@@ -4,6 +4,13 @@
  */
 
 import { BIRTH_SEGMENTS } from "@/src/components/contribute/constellation/graphs/birth";
+import {
+  drawnBounds,
+  fitCameraZ,
+  offsetBounds,
+  templateBounds,
+} from "@/src/components/contribute/constellation/graphs/frame";
+import type { LeoStrokeStep } from "@/src/components/contribute/constellation/graphs/leo";
 import { easeOutCubic } from "@/src/components/contribute/constellation/graphs/reveal";
 import { ACTIVE_TEMPLATE } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import type { ConstellationTemplate } from "@/src/components/contribute/constellation/graphs/types";
@@ -41,6 +48,16 @@ export type RevealCameraPose = {
 
 function clamp01(t: number): number {
   return Math.min(1, Math.max(0, t));
+}
+
+/** Passe une boîte locale dans le repère monde (offset groupe + échelle). */
+function toWorld(bounds: ReturnType<typeof templateBounds>, graphScale: number) {
+  return offsetBounds(
+    bounds,
+    CONSTELLATION_GROUP_OFFSET[0],
+    CONSTELLATION_GROUP_OFFSET[1],
+    graphScale,
+  );
 }
 
 function heroLocal(
@@ -106,11 +123,22 @@ export function silhouetteLookFromTemplate(
  * A–C : cadre hub (étoile centre écran · nom Html sous l’étoile).
  * D–F : pull-back bbox du template actif.
  */
+export type RevealCameraView = {
+  /** Champ vertical de la caméra, en degrés. */
+  fov: number;
+  /** Largeur / hauteur du viewport. */
+  aspect: number;
+};
+
 export function resolveRevealCamera(
   revealT: number,
   graphScale = 1,
   drawU = 0,
   template: ConstellationTemplate = ACTIVE_TEMPLATE,
+  view?: RevealCameraView,
+  /** Ordre des traits — permet de cadrer la portion déjà tracée. */
+  sequence?: readonly LeoStrokeStep[],
+  strokeOverlap?: number,
 ): RevealCameraPose {
   const t = clamp01(revealT);
   const cEnd = BIRTH_SEGMENTS.C_END;
@@ -146,8 +174,29 @@ export function resolveRevealCamera(
 
   const camX = 0 + idle.x * 0.08 * pull;
   const camY = 0 + idle.y * 0.05 * pull;
-  const camZ =
+  const paced =
     REVEAL_CAM_BIRTH_Z + (REVEAL_CAM_IDLE_Z - REVEAL_CAM_BIRTH_Z) * pull;
+
+  /**
+   * Le recul suit le dessin : on recule juste assez pour contenir ce qui est
+   * déjà tracé. Sans ça la constellation déborde pendant tout le tracé, le
+   * temps que le rythme du pull rattrape le trait.
+   */
+  const camZ = (() => {
+    if (!view || strokeU <= 0) return paced;
+    const local = sequence
+      ? drawnBounds(template, sequence, strokeU, strokeOverlap)
+      : templateBounds(template);
+    const needed = fitCameraZ(
+      toWorld(local, graphScale),
+      lookX,
+      lookY,
+      view.fov,
+      view.aspect,
+    );
+    if (!Number.isFinite(needed) || needed <= 0) return paced;
+    return Math.max(paced, needed);
+  })();
 
   return { pull, lookX, lookY, lookZ, camX, camY, camZ };
 }

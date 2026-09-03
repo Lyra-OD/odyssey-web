@@ -3,6 +3,7 @@ import {
   LEO_TEMPLATE,
   type LeoStrokeStep,
 } from "@/src/components/contribute/constellation/graphs/leo";
+import { normalizeTemplateFrame } from "@/src/components/contribute/constellation/graphs/frame";
 import {
   LIBRA_STROKE_SEQUENCE,
   LIBRA_TEMPLATE,
@@ -19,18 +20,26 @@ import type { ZodiacSign } from "@/src/lib/contribute/zodiacSign";
 /** Craft layout id — Leo graph replaces orb-cloud-reset-v1. */
 export const CONSTELLATION_LAYOUT_ID = "leo-graph-v1";
 
+/**
+ * Gabarits publiés — chacun recentré et ramené au cadre canonique
+ * (`frame.ts`), pour que la caméra reveal cadre tous les signes de la même
+ * façon, quelle que soit la place de leur étoile principale.
+ */
+const LEO = normalizeTemplateFrame(LEO_TEMPLATE);
+const LIBRA = normalizeTemplateFrame(LIBRA_TEMPLATE);
+
 /** Default craft template (labs) — Leo jusqu’à résolution zodiaque. */
-export const ACTIVE_TEMPLATE: ConstellationTemplate = LEO_TEMPLATE;
+export const ACTIVE_TEMPLATE: ConstellationTemplate = LEO;
 
 /**
  * Template silhouette wizard / reveal.
- * Libra livré · autres signes → Leo fallback.
+ * Libra livré · autres signes → Leo fallback (10 signes à dessiner).
  */
 export function resolveConstellationTemplate(
   sign: ZodiacSign | null,
 ): ConstellationTemplate {
-  if (sign === "libra") return LIBRA_TEMPLATE;
-  return LEO_TEMPLATE;
+  if (sign === "libra") return LIBRA;
+  return LEO;
 }
 
 export function resolveStrokeSequence(

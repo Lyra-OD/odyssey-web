@@ -56,6 +56,10 @@ import {
 } from "@/src/components/contribute/constellation/StarScreenReporter";
 import { WheelZoom } from "@/src/components/contribute/constellation/WheelZoom";
 import {
+  encodeHubFrame,
+  type HubFrameCapture,
+} from "@/src/lib/parcours/hubFreezeCapture";
+import {
   ConstellationLeash,
   SkyWander,
   skyWanderWasDrag,
@@ -255,6 +259,40 @@ function ForceRenderLoop({
   return null;
 }
 
+/**
+ * DIAGNOSTIC TEMPORAIRE — traque du double Hero (2 sept 2026).
+ * Compte les instances Constellation vivantes : deux instances simultanées
+ * expliqueraient deux atomes Hero à l'écran. À retirer une fois tranché.
+ */
+const liveConstellations = new Map<string, string>();
+
+function useConstellationInstanceProbe(templateId: string, hubMode: boolean) {
+  const idRef = useRef<string>("");
+  if (!idRef.current) {
+    idRef.current = `${templateId}|${hubMode ? "hub" : "ritual"}|${Math.random()
+      .toString(36)
+      .slice(2, 7)}`;
+  }
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    const id = idRef.current;
+    liveConstellations.set(id, templateId);
+    const w = window as unknown as Record<string, unknown>;
+    w.__odysseyConstellations = liveConstellations;
+    console.warn(
+      `[HERO-PROBE] mount ${id} — instances vivantes : ${liveConstellations.size}`,
+      Array.from(liveConstellations.keys()),
+    );
+    return () => {
+      liveConstellations.delete(id);
+      console.warn(
+        `[HERO-PROBE] unmount ${id} — instances vivantes : ${liveConstellations.size}`,
+        Array.from(liveConstellations.keys()),
+      );
+    };
+  }, [templateId]);
+}
+
 /** T-close-6c / T2-freeze — fond canvas transparent au-dessus du gel 2D. */
 function CloseRitualClearAlpha({
   active,
@@ -307,6 +345,8 @@ function Constellation({
   hubBirthMode = false,
   /** T2-reward-perf — overlay gel : Hero lite + moins de setState. */
   heroPerfLite = false,
+  /** Sync React des traits — 32 ms = fluide (invité / reward), 125 ms = lab. */
+  revealSyncMs,
   hubHeroOnly = false,
   slotStars = DEFAULT_SLOT_STARS,
   bridges = DEFAULT_BRIDGES,
@@ -349,6 +389,8 @@ function Constellation({
   hubBirthMode?: boolean;
   /** Overlay gel Continuer — moins de setState / Hero lite. */
   heroPerfLite?: boolean;
+  /** Intervalle de sync revealT React (ms). */
+  revealSyncMs?: number;
   /** Hub / saisie — traits et slots masqués. */
   hubHeroOnly?: boolean;
   slotStars?: SlotStarsCraft;
@@ -364,11 +406,15 @@ function Constellation({
   };
   const EMPTY_PROX: ProximityField = { stars: {}, edges: {}, max: 0 };
 
+  useConstellationInstanceProbe(template.id, hubBirthMode);
+
   const pointerRef = useParallaxPointerRef();
   const proxTmp = useRef(new Vector3());
   const ndcA = useRef(new Vector3());
   const ndcB = useRef(new Vector3());
-  const [revealT, setRevealT] = useState(revealTProp);
+  const [revealT, setRevealT] = useState(
+    () => revealTRef?.current ?? revealTProp,
+  );
   const [hubApproach, setHubApproach] = useState(0);
   /** T-invite-2 — glow CTA live (prox souris + breath Hero), pas hubApproach figé. */
   const [hubCtaGlow, setHubCtaGlow] = useState(0);
@@ -412,8 +458,8 @@ function Constellation({
       const v = revealTRef.current;
       const now =
         typeof performance !== "undefined" ? performance.now() : 0;
-      const syncMs = heroPerfLite ? 250 : 125;
-      const syncEps = heroPerfLite ? 0.025 : 0.012;
+      const syncMs = revealSyncMs ?? (heroPerfLite ? 250 : 125);
+      const syncEps = heroPerfLite ? 0.025 : revealSyncMs != null ? 0.004 : 0.012;
       if (now - lastRevealReactSyncRef.current >= syncMs) {
         lastRevealReactSyncRef.current = now;
         setRevealT((prev) => (Math.abs(prev - v) > syncEps ? v : prev));
@@ -626,7 +672,9 @@ function Constellation({
           ? hubFreezeFxRef.holdBreath
             ? 0
             : hubHeroBreath(hubApproach) * hubFreezeFxRef.thawAppearU
-          : drawPhase.constellationBreath;
+          : hubHeroOnly && birth.heroKeep
+            ? 1
+            : drawPhase.constellationBreath;
         const starProx = proximity.stars[star.id] ?? 0;
         const proxRelight = 1 + starProx * PROXIMITY_RELIGHT;
         const slotBreathMul =
@@ -764,9 +812,11 @@ function Constellation({
                     hubBirthMode && !hubFreezeFxRef.holdBreath
                       ? HUB_HERO_SIZE_BREATH * breathDrive +
                         hubFreezeFxRef.closeAbsorb * 0.42
-                      : hubFreezeFxRef.closeAbsorb > 0.02
-                        ? hubFreezeFxRef.closeAbsorb * 0.28
-                        : 0
+                      : hubHeroOnly && birth.heroKeep
+                        ? HUB_HERO_SIZE_BREATH
+                        : hubFreezeFxRef.closeAbsorb > 0.02
+                          ? hubFreezeFxRef.closeAbsorb * 0.28
+                          : 0
                   }
                   parallax={0}
                   phase={i * 1.7}
@@ -834,8 +884,11 @@ function Constellation({
                   transform: `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameYResolved.toFixed(1)}px) scale(${(hubPrompt && isHero ? hubInviteScale : nameScale).toFixed(3)})`,
                   transformOrigin: "50% 0%",
                   whiteSpace: "nowrap",
-                  textAlign: hubPrompt && isHero ? "center" : undefined,
-                  width: hubPrompt && isHero ? "max-content" : undefined,
+                  textAlign: "center",
+                  width: "max-content",
+                  marginRight: isHero
+                    ? `-${nameTracking.toFixed(3)}em`
+                    : undefined,
                   fontSize: hubPrompt && isHero ? "9.5px" : isHero ? "19px" : "11px",
                   lineHeight: hubPrompt && isHero ? 1.35 : undefined,
                   fontFamily:
@@ -954,6 +1007,8 @@ function UniverseScene({
   closeStreakFire = false,
   overlayOnBackdrop = false,
   wizardRewardFullPerf = false,
+  constellationRevealMs = DEFAULT_CONSTELLATION_REVEAL_MS,
+  skipConstellationReveal = false,
 }: {
   tier: ReturnType<typeof useVisualTier>;
   parallaxIntensity: number;
@@ -976,6 +1031,8 @@ function UniverseScene({
   overlayOnBackdrop?: boolean;
   /** T1 — reward wizard : pleine puissance render (60 fps, Hero full). */
   wizardRewardFullPerf?: boolean;
+  constellationRevealMs?: number;
+  skipConstellationReveal?: boolean;
 }) {
   const theme = useSkyTheme();
   // Pendant closing, on garde le tracking pour suivre l’étoile au retour
@@ -989,7 +1046,7 @@ function UniverseScene({
           ? 0.95
           : 0;
 
-  const autoRevealRef = useRef(0);
+  const autoRevealRef = useRef(skipConstellationReveal ? 1 : 0);
   const controlled = craftReveal?.controlled === true;
   const heroShare = craftReveal?.heroShare ?? DEFAULT_HERO_SHARE;
   const strokeOverlap = craftReveal?.strokeOverlap ?? DEFAULT_STROKE_OVERLAP;
@@ -1050,19 +1107,26 @@ function UniverseScene({
       autoRevealRef.current = 0;
       return;
     }
+    if (skipConstellationReveal) {
+      autoRevealRef.current = 1;
+      return;
+    }
     let raf = 0;
     const start = performance.now();
+    const spanMs = Math.max(80, constellationRevealMs);
     const tick = (now: number) => {
-      const raw = Math.min(
-        1,
-        (now - start) / DEFAULT_CONSTELLATION_REVEAL_MS,
-      );
+      const raw = Math.min(1, (now - start) / spanMs);
       autoRevealRef.current = raw;
       if (raw < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [showConstellation, controlled]);
+  }, [
+    showConstellation,
+    controlled,
+    constellationRevealMs,
+    skipConstellationReveal,
+  ]);
 
   const revealTProp = controlled ? (craftReveal?.revealT ?? 0) : 0;
   const revealTRef = controlled
@@ -1113,6 +1177,9 @@ function UniverseScene({
         revealTRef={revealTRef}
         graphScale={graphScale}
         template={constellationTemplate}
+        strokeSequence={strokeSequence}
+        strokeOverlap={strokeOverlap}
+        lockLookAxis={hubHeroOnly}
       />
       <CameraRig>
         {/* Craft : remonte le ciel pour que la bande d etoiles soit en haut d ecran */}
@@ -1274,6 +1341,7 @@ function UniverseScene({
                 reportHeroScreen={hubSkyCamera && showConstellation}
                 hubBirthMode={hubSkyCamera}
                 heroPerfLite={!wizardRewardFullPerf && overlayOnBackdrop}
+                revealSyncMs={wizardRewardFullPerf ? 32 : undefined}
                 hubHeroOnly={hubHeroOnly}
                 slotStars={slotStars}
                 bridges={bridges}
@@ -1292,10 +1360,9 @@ function UniverseScene({
 
 function createRenderer(
   canvas: HTMLCanvasElement | OffscreenCanvas,
-  options?: { preserveDrawingBuffer?: boolean; alpha?: boolean },
+  options?: { alpha?: boolean },
 ) {
-  const useAlpha =
-    options?.alpha === true || options?.preserveDrawingBuffer === true;
+  const useAlpha = options?.alpha === true;
   const opts: WebGLContextAttributes = {
     alpha: useAlpha,
     antialias: false,
@@ -1307,7 +1374,12 @@ function createRenderer(
      */
     powerPreference: "high-performance",
     failIfMajorPerformanceCaveat: false,
-    preserveDrawingBuffer: options?.preserveDrawingBuffer ?? false,
+    /**
+     * Jamais `preserveDrawingBuffer` : garder le buffer après composition
+     * interdit le swap rapide et impose une copie plein écran à chaque frame.
+     * Le gel hub passe par un render+encode dans la même tâche (HubFrameCapture).
+     */
+    preserveDrawingBuffer: false,
     premultipliedAlpha: true,
   };
   const context =
@@ -1370,8 +1442,8 @@ export type SanctuaryUniverseProps = {
   hubSkyCamera?: boolean;
   /** Projection étoile Hero → overlay clic (hub). */
   onStarAnchorChange?: (anchor: ScreenAnchor | null) => void;
-  /** Hub Traversée — canvas WebGL pour capture gel (Plan B). */
-  onHubCanvasMount?: (canvas: HTMLCanvasElement | null) => void;
+  /** Hub Traversée — render+encode d'une frame pour le gel (Plan B). */
+  onHubCaptureMount?: (capture: HubFrameCapture | null) => void;
   closeStreakFire?: boolean;
   /**
    * T2-freeze — clear alpha : constellation au-dessus du SkyBackdrop gelé.
@@ -1383,6 +1455,12 @@ export type SanctuaryUniverseProps = {
    * Actif seulement pendant `phase === "reward"` (skyActive).
    */
   wizardRewardFullPerf?: boolean;
+  /** Durée du reveal auto (sans craftReveal contrôlé). Lab = 14 s. */
+  constellationRevealMs?: number;
+  /** Ciel déjà vu — graphe settled, pas de replay A→F. */
+  skipConstellationReveal?: boolean;
+  /** Bouton « Se promener » — off sur l’invité (chrome craft). */
+  wanderChrome?: boolean;
 };
 
 export function SanctuaryUniverse({
@@ -1400,10 +1478,13 @@ export function SanctuaryUniverse({
   onCanvasReady,
   hubSkyCamera = false,
   onStarAnchorChange,
-  onHubCanvasMount,
+  onHubCaptureMount,
   closeStreakFire = false,
   overlayOnBackdrop = false,
   wizardRewardFullPerf = false,
+  constellationRevealMs = DEFAULT_CONSTELLATION_REVEAL_MS,
+  skipConstellationReveal = false,
+  wanderChrome = true,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -1424,18 +1505,15 @@ export function SanctuaryUniverse({
    */
   const glFactory = useCallback(
     (canvas: HTMLCanvasElement | OffscreenCanvas) =>
-      createRenderer(canvas, {
-        preserveDrawingBuffer: mode === "background",
-        alpha: mode === "background",
-      }),
+      createRenderer(canvas, { alpha: mode === "background" }),
     [mode],
   );
 
   useEffect(() => {
     return () => {
-      if (hubCaptureBuffer) onHubCanvasMount?.(null);
+      if (hubCaptureBuffer) onHubCaptureMount?.(null);
     };
-  }, [hubCaptureBuffer, onHubCanvasMount]);
+  }, [hubCaptureBuffer, onHubCaptureMount]);
 
   const [focus, setFocus] = useState<FocusSession | null>(null);
   const [constellationOn, setConstellationOn] = useState(true);
@@ -1570,7 +1648,8 @@ export function SanctuaryUniverse({
           ? "Tap a star · scroll to zoom"
           : "Touche une étoile · molette pour zoomer";
 
-  const showChrome = immersive && !focus;
+  const showChrome =
+    immersive && !focus && Boolean(onClose || skyCraftChrome || wanderChrome);
   const portalOpen = focus?.phase === "open";
   const portalExiting = focus?.phase === "closing";
 
@@ -1616,6 +1695,7 @@ export function SanctuaryUniverse({
             {constellationLabel}
           </button>
           ) : null}
+          {wanderChrome ? (
           <button
             type="button"
             onClick={toggleWander}
@@ -1624,6 +1704,7 @@ export function SanctuaryUniverse({
           >
             {wanderLabel}
           </button>
+          ) : null}
         </div>
       ) : null}
 
@@ -1661,7 +1742,7 @@ export function SanctuaryUniverse({
             far: craftLite ? 120 : 40,
           }}
           gl={glFactory}
-          onCreated={({ gl, scene }) => {
+          onCreated={({ gl, scene, camera }) => {
             if (overlayOnBackdrop || closeStreakFire) {
               gl.setClearColor(0x000000, 0);
               scene.background = null;
@@ -1671,7 +1752,10 @@ export function SanctuaryUniverse({
               gl.setClearColor(skyTheme.scene.background, 1);
             }
             if (hubCaptureBuffer) {
-              onHubCanvasMount?.(gl.domElement as HTMLCanvasElement);
+              onHubCaptureMount?.(() => {
+                gl.render(scene, camera);
+                return encodeHubFrame(gl.domElement as HTMLCanvasElement);
+              });
             }
             if (onCanvasReady) {
               requestAnimationFrame(() => {
@@ -1699,6 +1783,8 @@ export function SanctuaryUniverse({
                 closeStreakFire={closeStreakFire}
                 overlayOnBackdrop={overlayOnBackdrop}
                 wizardRewardFullPerf={wizardRewardFullPerf}
+                constellationRevealMs={constellationRevealMs}
+                skipConstellationReveal={skipConstellationReveal}
               />
             </SkyThemeProvider>
           </Suspense>

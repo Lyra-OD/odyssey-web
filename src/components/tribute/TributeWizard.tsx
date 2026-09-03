@@ -58,6 +58,7 @@ import {
 } from "@/src/hooks/useParcoursUx";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
 import { SkyBackdrop } from "@/src/components/contribute/SkyBackdrop";
+import type { HubFrameCapture } from "@/src/lib/parcours/hubFreezeCapture";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
 import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
 import { SanctuaryHubHero } from "@/src/components/tribute/SanctuaryHubHero";
@@ -561,11 +562,11 @@ export function TributeWizard({
   const step1Reveal = useWizardStep1Reveal(firstName, {
     muteFirstNameSnap: step1Sky,
   });
-  const hubCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const hubCaptureRef = useRef<HubFrameCapture | null>(null);
   const monolithFrameRef = useRef<HTMLDivElement | null>(null);
   const monolithShellRef = useRef<HTMLDivElement | null>(null);
-  const onHubCanvasMount = useCallback((canvas: HTMLCanvasElement | null) => {
-    hubCanvasRef.current = canvas;
+  const onHubCaptureMount = useCallback((capture: HubFrameCapture | null) => {
+    hubCaptureRef.current = capture;
   }, []);
   const [hubWebGLReady, setHubWebGLReady] = useState(false);
   const onHubWebGLReady = useCallback(() => setHubWebGLReady(true), []);
@@ -573,7 +574,7 @@ export function TributeWizard({
     enabled: step1Sky,
     revealPhase: step1Reveal.phase,
     virginHub: step1VirginHub,
-    hubCanvasRef,
+    hubCaptureRef,
     hubWebGLReady,
     onSoftCloseEssentials: step1Reveal.settlePostReveal,
   });
@@ -704,12 +705,12 @@ export function TributeWizard({
       setHubWebGLReady(false);
       hubStarAnchorRef.current = null;
       hubStarLastKnownAnchorRef.current = { ...HUB_HERO_FALLBACK_ANCHOR };
-      hubCanvasRef.current = null;
+      hubCaptureRef.current = null;
       return;
     }
     if (!step1Parcours.showHubWebGL) {
       setHubWebGLReady(false);
-      hubCanvasRef.current = null;
+      hubCaptureRef.current = null;
     }
   }, [
     step1Sky,
@@ -1202,7 +1203,7 @@ export function TributeWizard({
           fadeMs={step1Parcours.skyFadeMs}
           fadeEase={step1Parcours.skyFadeEase}
           onHubReady={onHubWebGLReady}
-          onHubCanvasMount={onHubCanvasMount}
+          onHubCaptureMount={onHubCaptureMount}
           hubPrompt={
             step1Parcours.showRitualWebGL
               ? undefined
