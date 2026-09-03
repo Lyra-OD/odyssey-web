@@ -53,7 +53,10 @@ import {
 } from "@/src/components/contribute/constellation/HeroStar";
 import { HUB_HERO_BREATH_SPEED_INVITE } from "@/src/components/contribute/constellation/graphs/hubIdle";
 import { WIZARD_BIRTH_REVEAL_END } from "@/src/lib/contribute/wizardBirthReveal";
-import { GUEST_PATRON_SUGGESTED_CENTS } from "@/src/lib/wizard/guestSupportPacks";
+import {
+  GUEST_PATRON_SUGGESTED_CENTS,
+  guestSupportPackLabelByKey,
+} from "@/src/lib/wizard/guestSupportPacks";
 import type { Locale } from "@/i18n.config";
 
 const GUEST_KEEP_REVEAL_REF = { current: WIZARD_BIRTH_REVEAL_END };
@@ -395,7 +398,10 @@ export function SanctuaryLanding({
     );
   }
 
-  const skyFirst = load.status === "ready" && phase === "sky";
+  const onSky = load.status === "ready" && phase === "sky";
+  const hasJoined = guestStars.length > 0 || deposit !== null;
+  const skyFirst = onSky && !hasJoined;
+  const skyReturn = onSky && hasJoined;
   const grafting = load.status === "ready" && phase === "graft";
   const showMonolith =
     load.status === "ready" &&
@@ -403,16 +409,16 @@ export function SanctuaryLanding({
     !skyOpen &&
     !lueurSettling;
   const universeImmersive =
-    skyFirst || grafting || skyOpen || load.status === "loading" || lueurSettling;
+    onSky || grafting || skyOpen || load.status === "loading" || lueurSettling;
   const hideLegacySheet =
-    skyFirst ||
+    onSky ||
     grafting ||
     skyOpen ||
     showMonolith ||
     lueurSettling ||
     load.status === "loading";
   const lockPageScroll =
-    skyFirst ||
+    onSky ||
     grafting ||
     skyOpen ||
     lueurSettling ||
@@ -487,7 +493,7 @@ export function SanctuaryLanding({
         parallaxIntensity={0}
         wizardRewardFullPerf={universeImmersive}
         onClose={
-          skyOpen && !skyFirst && !grafting ? () => setSkyOpen(false) : undefined
+          skyOpen && !onSky && !grafting ? () => setSkyOpen(false) : undefined
         }
         locale={uiLocale}
       />
@@ -497,7 +503,7 @@ export function SanctuaryLanding({
         ariaLabelFor={(name) => fill(t.guestStarAria, { name })}
         graftingId={grafting ? graftingStarId : null}
         className={
-          skyFirst || grafting || skyOpen || lueurSettling ? "z-[45]" : "z-[25]"
+          onSky || grafting || skyOpen || lueurSettling ? "z-[45]" : "z-[25]"
         }
       />
 
@@ -540,6 +546,30 @@ export function SanctuaryLanding({
             <p className="text-[8px] font-medium uppercase tracking-[0.44em] text-white/26">
               {t.poweredBy} {t.brandWordmark}
             </p>
+          </div>
+        </div>
+      ) : null}
+
+      {skyReturn ? (
+        <div className="pointer-events-none fixed inset-0 z-[46] flex flex-col">
+          <div className="flex justify-end px-4 pt-4 md:px-8 md:pt-8">
+            <div className="pointer-events-auto">{localeSwitcher}</div>
+          </div>
+          <div className="flex-1" />
+          <div className="flex flex-col items-center gap-5 px-6 pb-16 text-center">
+            {remainingPhotoSlots > 0 ? (
+              <button
+                type="button"
+                onClick={() => setPhase("deposit")}
+                className={`pointer-events-auto ${sanctuaryGhostButton} max-w-xs px-6 py-3 text-[11px] uppercase tracking-[0.28em]`}
+              >
+                {t.addAnother}
+              </button>
+            ) : (
+              <p className="max-w-sm text-sm font-light text-white/55">
+                {t.photoLimitReached}
+              </p>
+            )}
           </div>
         </div>
       ) : null}
@@ -633,7 +663,35 @@ export function SanctuaryLanding({
       ) : null}
 
       {showMonolith && load.status === "ready" && phase === "bridge" ? (
-        <SanctuaryMonolith header={localeSwitcher}>
+        <SanctuaryMonolith
+          header={localeSwitcher}
+          footer={
+            <div className="space-y-3">
+              <ImprintCheckoutCta
+                token={token}
+                locale={uiLocale}
+                productKey={selectedPackKey}
+                patronAmountCents={patronAmountCents}
+                patronMinCents={patronPack?.amountMinCents}
+                patronMaxCents={patronPack?.amountMaxCents}
+                contributorName={deposit?.contributorName ?? ""}
+                contributorEmail={deposit?.contributorEmail}
+                fixedPriceCents={selectedPack?.priceCents}
+                mediaId={
+                  selectedPackKey === "guest_video" ? videoMediaId : voiceMediaId
+                }
+                copy={t}
+              />
+              <button
+                type="button"
+                onClick={() => setPhase("sky")}
+                className={`${sanctuaryGhostButton} w-full`}
+              >
+                {t.skipSupport}
+              </button>
+            </div>
+          }
+        >
           <div className="space-y-8">
             {contribFlash ? (
               <p
@@ -647,7 +705,10 @@ export function SanctuaryLanding({
             ) : null}
             <ImprintCatalog
               locale={uiLocale}
-              packs={load.packs}
+              packs={load.packs.map((p) => ({
+                ...p,
+                label: guestSupportPackLabelByKey(p.key, uiLocale, p.label),
+              }))}
               selectedKey={selectedPackKey}
               onSelect={handleSelectPack}
               title={t.packsTitle}
@@ -690,28 +751,6 @@ export function SanctuaryLanding({
                 />
               }
             />
-            <ImprintCheckoutCta
-              token={token}
-              locale={uiLocale}
-              productKey={selectedPackKey}
-              patronAmountCents={patronAmountCents}
-              patronMinCents={patronPack?.amountMinCents}
-              patronMaxCents={patronPack?.amountMaxCents}
-              contributorName={deposit?.contributorName ?? ""}
-              contributorEmail={deposit?.contributorEmail}
-              fixedPriceCents={selectedPack?.priceCents}
-              mediaId={
-                selectedPackKey === "guest_video" ? videoMediaId : voiceMediaId
-              }
-              copy={t}
-            />
-            <button
-              type="button"
-              onClick={() => setPhase("sky")}
-              className={`${sanctuaryGhostButton} w-full`}
-            >
-              {t.skipSupport}
-            </button>
           </div>
         </SanctuaryMonolith>
       ) : null}

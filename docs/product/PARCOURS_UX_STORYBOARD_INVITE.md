@@ -4,6 +4,7 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — G5 : skip *Non merci* → ciel avec leur étoile (CTA *Ajouter un autre souvenir* si &lt; 5).
 - 3 sept 2026 — Courriel **sur le même écran** que photo/mot (G3 absorbé dans G2). Puis greffe étoile, puis aide payante.
 - 3 sept 2026 — Photos **ET/OU** mot (plus de XOR).
 - 3 sept 2026 — **Figé CEO :** dépôt → **1 étoile** (leur nom + souvenir) **et** Coffre · courriel **forcé** · puis **aide payante**.
@@ -90,6 +91,7 @@ Le ciel avec **leur** étoile. Même lien pour ajouter une photo (si &lt; 5) ou 
 | Courriel sur l’écran 1, forcé | Aligné (ex-T3 absorbé) |
 | Stub 2D + filament depuis le Hero | Aligné démo ; WebGL Phase 2 |
 | Packs après greffe, cadre « aider la famille », skip | T4 |
+| Skip *Non merci* → ciel + leur étoile (G5) | Aligné |
 
 ---
 

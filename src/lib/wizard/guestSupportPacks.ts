@@ -130,6 +130,16 @@ export function guestSupportPackLabel(
   return locale === "en" ? pack.labelEn : pack.labelFr;
 }
 
+/** Relabel a pack already loaded (FR/EN sans refetch). */
+export function guestSupportPackLabelByKey(
+  key: string,
+  locale: "fr" | "en",
+  fallback: string,
+): string {
+  const pack = GUEST_SUPPORT_PACKS.find((p) => p.key === key);
+  return pack ? guestSupportPackLabel(pack, locale) : fallback;
+}
+
 /**
  * Résout le montant facturable d'un pack.
  * - Packs fixes : `priceCents`
