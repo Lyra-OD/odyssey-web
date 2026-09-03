@@ -1,16 +1,17 @@
 # Parcours UX — Audit des trous (Chemin 1)
 
 **Type :** living · **Vérité pour :** inventaire exhaustif des écarts avant implémentation Traversée — pédagogie · code · craft · copy · DA · décisions.  
-**Dernière MAJ :** 2 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — Storyboard **voulu** (beats 0→J3) : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) — les trous P0 y sont accrochés, Coffre + Scanner = suite.
 - 2 sept 2026 — **Suite nav figée** : P1 Atelier · P2 fil constellation (spec, pas encore code).
 - 2 sept 2026 — **P0** : retour Essentiels (`reopenEssentials`) · déconnexion sous langue.
 - 2 sept 2026 — **T2-copy** : clés J3 A+B+C + born + CTAs (FR/EN · catalogue).
 - 2 sept 2026 — **T2-lang** : LocaleSwitcher fixed studio — toujours visible (hub + rite), hors chrome masqué.
-- 2 sept 2026 — **T2-0** : audit Continuer / J3 / copy · T1b traité comme livré · prochaine = T2 · G2 Inviter first.
 
 **Liens :**
+- Storyboard voulu : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)
 - Spec Traversée : [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md)
 - Registre beats : [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md)
 - Vision Sanctuaire : [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md) §11b

@@ -4,13 +4,11 @@
 **Dernière MAJ :** 21 août 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 3 sept 2026 — Storyboard **voulu** Chemin 1 (avant plan technique) : [`product/PARCOURS_UX_STORYBOARD_VOULU.md`](product/PARCOURS_UX_STORYBOARD_VOULU.md).
 - 28 août 2026 — egress revert clôturé : [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) (stub) · archive [`_archive/DEMO_VP_EGRESS_REVERT.md`](_archive/DEMO_VP_EGRESS_REVERT.md).
 - 28 août 2026 — plan refresh marketing B2C/B2B : [`design/MARKETING_SITE_REFRESH_PLAN.md`](design/MARKETING_SITE_REFRESH_PLAN.md).
 - 21 août 2026 — regroupement **logique** (business / product / design…) · règle nouveaux docs · chemins inchangés.
 - 21 août 2026 — dossier [`TEMP/`](TEMP/README.md) : rush démo Patrice / brouillons.
-- 19 août 2026 — GTM B2C + plan session : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
-- 19 août 2026 — DA Vague 1 : [`DA_SCREENS.md`](DA_SCREENS.md) (frames Figma ↔ URLs).
-- 19 août 2026 — copy écran : `COPY.md` + catalogue généré.
 
 Hiérarchie développeur (ordre de lecture code) : [`CONVENTIONS.md`](CONVENTIONS.md).  
 Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
@@ -154,6 +152,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) | canon | Quiet Luxury |
 | [`SANCTUARY_SKY_LUEURS.md`](SANCTUARY_SKY_LUEURS.md) | produit | Ciel économique — teal · Lueurs colorées · valeur |
 | [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) | produit | Vision Sanctuaire — prologue · hub · tiroir · nav |
+| [`product/PARCOURS_UX_STORYBOARD_VOULU.md`](product/PARCOURS_UX_STORYBOARD_VOULU.md) | living | **Chemin 1** — storyboard **voulu** (avant plan technique) |
 | [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) | canon | **Chemin 1** — Traversée UX (spec impl active) |
 | [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) | canon | Beats Parcours UX · craft · stubs |
 | [`product/PARCOURS_UX_GAPS.md`](product/PARCOURS_UX_GAPS.md) | living | Audit trous Chemin 1 · gate T1 |
