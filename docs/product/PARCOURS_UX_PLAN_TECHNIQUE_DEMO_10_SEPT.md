@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — Dépôt : échelle titre (nom > bienvenue > cyan médias) · copy *médias*.
 - 3 sept 2026 — G4 : packs + *Non merci* / checkout suivent FR/EN (sans refetch).
 - 3 sept 2026 — G5 : *Non merci* → ciel avec **leur étoile** (plus le CTA d’arrivée).
 - 3 sept 2026 — Ciel invité : **FR/EN sans recharger** le Canvas (`replaceState` + les deux copies).
 - 3 sept 2026 — Ciel invité : **drag pour se promener** · molette = s’approcher.
-- 3 sept 2026 — Ciel invité : **pas de scroll page** · overlay G1 laisse passer souris/molette.
 
 **Statut :** **actif** — source : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · orga figé : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)
 

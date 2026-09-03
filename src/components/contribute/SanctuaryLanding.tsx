@@ -93,6 +93,34 @@ function fill(template: string, vars: Record<string, string | number>): string {
   );
 }
 
+function GuestOdysseyHomeMark({
+  locale,
+  wordmark,
+  ariaLabel,
+  className = "",
+}: {
+  locale: Locale;
+  wordmark: string;
+  ariaLabel: string;
+  className?: string;
+}) {
+  return (
+    <a
+      href={`/${locale}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={ariaLabel}
+      className={`pointer-events-auto inline-flex justify-center ${className}`}
+    >
+      <OdysseyConnexionMark
+        wordmark={wordmark}
+        animate
+        className="pointer-events-none [&_.odyssey-connexion-mark]:!text-[35px] [&_.odyssey-connexion-mark]:!tracking-[0.52em] sm:[&_.odyssey-connexion-mark]:!tracking-[0.52em] md:[&_.odyssey-connexion-mark]:!tracking-[0.52em] lg:[&_.odyssey-connexion-mark]:!text-[35px] lg:[&_.odyssey-connexion-mark]:!tracking-[0.52em]"
+      />
+    </a>
+  );
+}
+
 function tributeSkyName(
   tribute: TributePayload,
   locale: Locale,
@@ -447,6 +475,48 @@ export function SanctuaryLanding({
     />
   );
 
+  const guestBrandMark = (
+    <GuestOdysseyHomeMark
+      locale={uiLocale}
+      wordmark={t.brandWordmark}
+      ariaLabel={t.logoHomeAria}
+    />
+  );
+
+  const skyTopChrome = (
+    <div className="relative flex items-start justify-end px-4 pt-4 md:px-8 md:pt-8">
+      <div className="pointer-events-auto absolute left-1/2 top-4 -translate-x-1/2">
+        {guestBrandMark}
+      </div>
+      <div className="pointer-events-auto relative z-[1]">{localeSwitcher}</div>
+    </div>
+  );
+
+  const monolithHeader = (
+    <div className="relative flex items-start justify-end pt-4 pr-[5px]">
+      <div className="absolute left-1/2 top-4 -translate-x-1/2">
+        {guestBrandMark}
+      </div>
+      <div className="flex w-[4.75rem] flex-col items-center gap-1.5">
+        <LocaleSwitcher
+          lang={uiLocale}
+          languageLabel={t.languageLabel}
+          langOptionFr={t.langOptionFr}
+          langOptionEn={t.langOptionEn}
+          onSwitch={setUiLocale}
+          className="justify-center !tracking-[0.22em]"
+        />
+        <button
+          type="button"
+          onClick={() => setPhase("sky")}
+          className="inline-flex w-full items-center justify-center rounded-sm border border-white/15 bg-black/40 px-3 py-1.5 font-label text-[10px] font-light uppercase tracking-[0.22em] text-teal-50/70 backdrop-blur-sm transition-colors hover:border-teal-400/55 hover:bg-teal-400/10 hover:text-teal-200"
+        >
+          {t.closeSky}
+        </button>
+      </div>
+    </div>
+  );
+
   const guestHeroName =
     load.status === "ready"
       ? tributeSkyName(load.tribute, uiLocale)
@@ -515,17 +585,7 @@ export function SanctuaryLanding({
 
       {skyFirst ? (
         <div className="pointer-events-none fixed inset-0 z-[46] flex flex-col">
-          <div className="flex justify-end px-4 pt-4 md:px-8 md:pt-8">
-            <div className="pointer-events-auto">
-              <LocaleSwitcher
-                lang={uiLocale}
-                languageLabel={t.languageLabel}
-                langOptionFr={t.langOptionFr}
-                langOptionEn={t.langOptionEn}
-                onSwitch={setUiLocale}
-              />
-            </div>
-          </div>
+          {skyTopChrome}
           <div className="flex-1" />
           <div className="flex flex-col items-center gap-6 px-6 pb-16 text-center">
             <p className="text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
@@ -552,9 +612,7 @@ export function SanctuaryLanding({
 
       {skyReturn ? (
         <div className="pointer-events-none fixed inset-0 z-[46] flex flex-col">
-          <div className="flex justify-end px-4 pt-4 md:px-8 md:pt-8">
-            <div className="pointer-events-auto">{localeSwitcher}</div>
-          </div>
+          {skyTopChrome}
           <div className="flex-1" />
           <div className="flex flex-col items-center gap-5 px-6 pb-16 text-center">
             {remainingPhotoSlots > 0 ? (
@@ -580,9 +638,7 @@ export function SanctuaryLanding({
             className="pointer-events-none absolute inset-x-0 bottom-0 h-[42vh] bg-gradient-to-t from-black/70 via-black/25 to-transparent"
             aria-hidden
           />
-          <div className="flex justify-end px-4 pt-4 md:px-8 md:pt-8">
-            <div className="pointer-events-auto">{localeSwitcher}</div>
-          </div>
+          {skyTopChrome}
           <div className="flex-1" />
           <div className="relative flex flex-col items-center gap-5 px-6 pb-16 text-center">
             <h2 className="font-editorial text-[1.65rem] font-medium tracking-tight text-zinc-50 md:text-3xl">
@@ -622,18 +678,23 @@ export function SanctuaryLanding({
       ) : null}
 
       {showMonolith && load.status === "ready" && phase === "deposit" ? (
-        <SanctuaryMonolith header={localeSwitcher}>
+        <SanctuaryMonolith header={monolithHeader}>
           <div className="space-y-8">
             <div className="text-center">
-              <h1 className="font-editorial text-[1.65rem] font-medium leading-snug tracking-tight text-zinc-50 md:text-3xl">
-                {fill(t.welcome, {
-                  name: tributeDisplayName(load.tribute, uiLocale),
-                })}
+              <h1 className="font-editorial tracking-tight text-zinc-50">
+                <span className="block text-[30px] font-light leading-none tracking-[0.08em]">
+                  {t.welcomeLead}
+                </span>
+                <span className="mt-[18px] block whitespace-nowrap text-[35px] font-medium leading-none tracking-[0.08em]">
+                  {fill(t.welcomeName, {
+                    name: tributeDisplayName(load.tribute, uiLocale),
+                  })}
+                </span>
               </h1>
-              <p className="mx-auto mt-4 max-w-md text-sm font-light leading-relaxed text-white/55 md:text-base">
+              <p className="mx-auto mt-[46px] max-w-md text-[18px] font-light leading-none text-white/70">
                 {t.subtitle}
               </p>
-              <p className="mt-6 text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/75">
+              <p className="mt-8 text-[14px] font-medium uppercase tracking-[0.22em] text-teal-400/90">
                 {t.depositLead}
               </p>
               {photoCount > 0 ? (
@@ -664,7 +725,7 @@ export function SanctuaryLanding({
 
       {showMonolith && load.status === "ready" && phase === "bridge" ? (
         <SanctuaryMonolith
-          header={localeSwitcher}
+          header={monolithHeader}
           footer={
             <div className="space-y-3">
               <ImprintCheckoutCta

@@ -22,7 +22,7 @@ export function SanctuaryMonolith({
           <div className="parcours-monolith-aura-cyan" />
         </div>
         <div className="parcours-monolith-scroll parcours-monolith-glass relative z-[1] w-full px-6 py-7 md:px-8 md:py-9">
-          {header ? <div className="mb-6 flex justify-end">{header}</div> : null}
+          {header ? <div className="mb-4">{header}</div> : null}
           {children}
           {footer ? (
             <div className="sticky bottom-0 z-10 -mx-6 mt-4 border-t border-white/10 bg-[rgba(8,6,28,0.96)] px-6 pb-7 pt-3 md:-mx-8 md:px-8 md:pb-9">

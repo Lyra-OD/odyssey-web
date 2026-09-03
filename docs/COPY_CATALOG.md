@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-03 · **Entrées :** 789
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-03 · **Entrées :** 792
 
 ## `common`
 
@@ -814,18 +814,21 @@
 | `sanctuary.skyOf` | Ciel de {name} | {name}'s sky |
 | `sanctuary.skyCta` | Laisser un souvenir | Leave a memory |
 | `sanctuary.guestStarAria` | Étoile de {name} | Star for {name} |
-| `sanctuary.welcome` | Bienvenue dans le ciel de {name}. | Welcome to {name}'s sky. |
+| `sanctuary.closeSky` | Fermer | Close |
+| `sanctuary.logoHomeAria` | Odyssey — accueil | Odyssey — home |
+| `sanctuary.welcomeLead` | Bienvenue dans le ciel de | Welcome to |
+| `sanctuary.welcomeName` | {name}. | {name}'s sky. |
 | `sanctuary.subtitle` | Laissez un souvenir — il ira dans le Coffre. | Leave a memory — it will go into the Vault. |
-| `sanctuary.depositLead` | Photos, un mot, ou les deux. | Photos, a few words, or both. |
+| `sanctuary.depositLead` | Médias (photos/vidéos), un mot, ou les deux. | Media (photos/videos), a few words, or both. |
 | `sanctuary.loading` | Ouverture du ciel… | Opening the sky… |
 | `sanctuary.errorTitle` | Lien indisponible | Link unavailable |
 | `sanctuary.errorBody` | Ce ciel est introuvable ou n'est plus accessible. Demandez un nouveau lien à la famille. | This sky could not be found or is no longer available. Ask the family for a new link. |
 | `sanctuary.ackTitle` | C'est dans le Coffre. | It's in the Vault. |
-| `sanctuary.ackBody` | Vous pouvez encore ajouter des photos, jusqu'à cinq, et un mot. | You may still add photos, up to five, and a few words. |
+| `sanctuary.ackBody` | Vous pouvez encore ajouter des médias, jusqu'à cinq, et un mot. | You may still add media, up to five, and a few words. |
 | `sanctuary.photoCounter` | {n} / {max} souvenirs | {n} / {max} memories |
 | `sanctuary.addAnother` | Ajouter un autre souvenir | Add another memory |
 | `sanctuary.continueToImprints` | Continuer | Continue |
-| `sanctuary.photoLimitReached` | Vous avez offert cinq photos. Un geste déjà généreux. | You have offered five photos. Already a generous gift. |
+| `sanctuary.photoLimitReached` | Vous avez offert cinq médias. Un geste déjà généreux. | You have offered five media files. Already a generous gift. |
 | `sanctuary.bridgeTitle` | Votre souvenir a été déposé. | Your memory has been placed. |
 | `sanctuary.bridgeBody` | Souhaitez-vous aider la famille à concevoir ce film, avec le geste qui vous ressemble ? | Would you like to help the family make this film, with a gift that feels right? |
 | `sanctuary.bridgeBodyAfterGift` | Si le cœur vous en dit, vous pouvez offrir un autre geste, sans obligation. | If you wish, you may offer another gesture, with no obligation. |
@@ -858,21 +861,21 @@
 | `sanctuary.deposit.consent` | J'accepte de recevoir des nouvelles de cet hommage. | I agree to receive news about this tribute. |
 | `sanctuary.deposit.messageLabel` | Votre mot | Your words |
 | `sanctuary.deposit.messagePlaceholder` | Quelques lignes pour accompagner votre souvenir… | A few lines to go with your memory… |
-| `sanctuary.deposit.photoLabel` | Vos photos | Your photos |
+| `sanctuary.deposit.photoLabel` | Vos médias (photos/vidéos) | Your media (photos/videos) |
 | `sanctuary.deposit.photoHintOne` | JPEG, PNG ou WebP, jusqu'à 12 Mo · 1 place restante | JPEG, PNG or WebP, up to 12 MB · 1 slot left |
-| `sanctuary.deposit.photoHintMany` | JPEG, PNG ou WebP, jusqu'à 12 Mo · jusqu'à {slots} photos | JPEG, PNG or WebP, up to 12 MB · up to {slots} photos |
-| `sanctuary.deposit.photoChoose` | Choisir des images | Choose images |
+| `sanctuary.deposit.photoHintMany` | JPEG, PNG ou WebP, jusqu'à 12 Mo · jusqu'à {slots} médias | JPEG, PNG or WebP, up to 12 MB · up to {slots} media |
+| `sanctuary.deposit.photoChoose` | Choisir des médias | Choose media |
 | `sanctuary.deposit.photoChange` | Modifier la sélection | Change selection |
 | `sanctuary.deposit.photoRemove` | Retirer | Remove |
-| `sanctuary.deposit.photoTruncated` | Seules {kept} photos ont été retenues : le plafond de cet hommage est atteint. | Only {kept} photos could be kept: this tribute’s limit is reached. |
+| `sanctuary.deposit.photoTruncated` | Seuls {kept} médias ont été retenus : le plafond de cet hommage est atteint. | Only {kept} media files could be kept: this tribute’s limit is reached. |
 | `sanctuary.deposit.submit` | Déposer dans le Coffre | Place in the Vault |
 | `sanctuary.deposit.submitting` | Ajout au Coffre… | Adding to the Vault… |
 | `sanctuary.deposit.submittingProgress` | Ajout {current} / {total}… | Adding {current} / {total}… |
 | `sanctuary.deposit.errorGeneric` | Impossible d'ajouter ce souvenir pour le moment. | We could not add this memory right now. |
-| `sanctuary.deposit.errorNeedSouvenir` | Ajoutez au moins une photo ou un mot. | Add at least one photo or a few words. |
+| `sanctuary.deposit.errorNeedSouvenir` | Ajoutez au moins un média ou un mot. | Add at least one media file or a few words. |
 | `sanctuary.deposit.errorName` | Votre nom est requis. | Your name is required. |
-| `sanctuary.deposit.errorPhotoLimit` | Vous avez déjà offert cinq photos pour cet hommage. Merci. | You have already offered five photos for this tribute. Thank you. |
-| `sanctuary.deposit.errorPartialLimit` | Certains souvenirs ont été déposés. Le plafond de photos est atteint. | Some memories were placed. The photo limit for this tribute is reached. |
+| `sanctuary.deposit.errorPhotoLimit` | Vous avez déjà offert cinq médias pour cet hommage. Merci. | You have already offered five media files for this tribute. Thank you. |
+| `sanctuary.deposit.errorPartialLimit` | Certains souvenirs ont été déposés. Le plafond de médias est atteint. | Some memories were placed. The media limit for this tribute is reached. |
 
 ## `partnerships`
 
