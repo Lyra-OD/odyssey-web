@@ -19,6 +19,7 @@ import {
 import { isSanctuaryVisualPreview } from "@/src/lib/contribute/sanctuaryPreview";
 import { SANCTUARY_GUEST_VOICE_MAX_SECONDS } from "@/src/lib/contribute/sanctuaryLimits";
 import { parseApiJson } from "@/src/lib/http/parseApiJson";
+import type { AppDictionary } from "@/lib/dictionaries";
 
 export type GuestVoiceRecorderProps = {
   token: string;
@@ -28,6 +29,7 @@ export type GuestVoiceRecorderProps = {
   /** media_assets.id une fois uploadé. */
   mediaId: string | null;
   onMediaIdChange: (mediaId: string | null) => void;
+  copy: AppDictionary["sanctuary"]["voice"];
   /** Dans une carte empreinte : pas de chrome / titre (copy déjà au-dessus). */
   embedded?: boolean;
 };
@@ -39,53 +41,6 @@ type Phase =
   | "uploading"
   | "ready"
   | "error";
-
-const copy = {
-  fr: {
-    title: "Enregistrez votre voix",
-    lead: "Quelques mots pour le film. Vous pourrez réécouter et recommencer avant de payer.",
-    start: "Enregistrer",
-    stop: "Arrêter",
-    play: "Écouter",
-    pause: "Pause",
-    retake: "Recommencer",
-    keep: "Garder cet enregistrement",
-    ready: "Voix prête. Vous pouvez continuer vers le paiement.",
-    uploading: "Envoi de votre voix…",
-    needName: "Indiquez d’abord votre prénom dans le dépôt souvenir, ou ici.",
-    nameLabel: "Votre prénom",
-    namePlaceholder: "Prénom",
-    micDenied:
-      "Micro inaccessible. Autorisez le micro dans le navigateur, puis réessayez.",
-    unsupported: "Votre navigateur ne permet pas l’enregistrement audio.",
-    uploadFailed: "Impossible d’envoyer l’enregistrement. Réessayez.",
-    previewBlocked: "Aperçu local : l’enregistrement nécessite un vrai lien.",
-    waveLive: "Forme d’onde en direct",
-    wavePlayback: "Forme d’onde de votre enregistrement",
-  },
-  en: {
-    title: "Record your voice",
-    lead: "A few words for the film. You can listen and re-record before paying.",
-    start: "Record",
-    stop: "Stop",
-    play: "Listen",
-    pause: "Pause",
-    retake: "Re-record",
-    keep: "Keep this recording",
-    ready: "Voice ready. You may continue to payment.",
-    uploading: "Sending your voice…",
-    needName: "Add your first name from the memory deposit, or here.",
-    nameLabel: "Your first name",
-    namePlaceholder: "First name",
-    micDenied:
-      "Microphone unavailable. Allow mic access in the browser, then try again.",
-    unsupported: "Your browser cannot record audio.",
-    uploadFailed: "We could not upload the recording. Please try again.",
-    previewBlocked: "Local preview: recording needs a real Sanctuary link.",
-    waveLive: "Live waveform",
-    wavePlayback: "Waveform of your recording",
-  },
-} as const;
 
 function pickRecorderMime(): string | undefined {
   if (typeof MediaRecorder === "undefined") return undefined;
@@ -116,9 +71,9 @@ export function GuestVoiceRecorder({
   contributorEmail,
   mediaId,
   onMediaIdChange,
+  copy: t,
   embedded = false,
 }: GuestVoiceRecorderProps) {
-  const t = copy[locale];
   const maxSec = SANCTUARY_GUEST_VOICE_MAX_SECONDS;
   const [phase, setPhase] = useState<Phase>(mediaId ? "ready" : "idle");
   const [error, setError] = useState<string | null>(null);

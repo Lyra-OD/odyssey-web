@@ -703,10 +703,10 @@ export function SanctuaryLanding({
           <div className="space-y-8">
             <div className="text-center">
               <h1 className="font-editorial tracking-tight text-zinc-50">
-                <span className="block text-[30px] font-light leading-none tracking-[0.08em]">
+                <span className="block text-[26px] font-light leading-none tracking-[0.06em] sm:text-[30px] sm:tracking-[0.08em]">
                   {t.welcomeLead}
                 </span>
-                <span className="mt-[18px] block whitespace-nowrap text-[35px] font-medium leading-none tracking-[0.08em]">
+                <span className="mt-3 block text-[30px] font-medium leading-snug tracking-[0.06em] sm:mt-[18px] sm:whitespace-nowrap sm:text-[35px] sm:leading-none sm:tracking-[0.08em]">
                   {fill(t.welcomeName, {
                     name: tributeDisplayName(load.tribute, uiLocale),
                   })}
@@ -715,7 +715,7 @@ export function SanctuaryLanding({
               <p className="mx-auto mt-[46px] max-w-md text-[18px] font-light leading-none text-white/70">
                 {t.subtitle}
               </p>
-              <p className="mt-8 text-[14px] font-medium uppercase tracking-[0.22em] text-teal-400/90">
+              <p className="mt-8 text-[12px] font-medium uppercase tracking-[0.12em] text-teal-400/90 sm:text-[14px] sm:tracking-[0.22em]">
                 {t.depositLead}
               </p>
               {photoCount > 0 ? (
@@ -821,6 +821,7 @@ export function SanctuaryLanding({
                   contributorEmail={deposit?.contributorEmail}
                   mediaId={voiceMediaId}
                   onMediaIdChange={setVoiceMediaId}
+                  copy={t.voice}
                   embedded
                 />
               }
@@ -832,15 +833,17 @@ export function SanctuaryLanding({
                   contributorEmail={deposit?.contributorEmail}
                   mediaId={videoMediaId}
                   onMediaIdChange={setVideoMediaId}
+                  copy={t.video}
                   embedded
                 />
               }
-              lueurSlot={<SanctuaryLueurPanel locale={uiLocale} />}
+              lueurSlot={<SanctuaryLueurPanel copy={t.lueurPanel} />}
               patronSlot={
                 <PatronAmountField
                   locale={uiLocale}
                   open
                   embedded
+                  copy={t.patron}
                   amountCents={patronAmountCents}
                   onChange={setPatronAmountCents}
                   amountMinCents={patronPack?.amountMinCents}

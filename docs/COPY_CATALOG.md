@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-03 · **Entrées :** 804
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-03 · **Entrées :** 848
 
 ## `common`
 
@@ -864,6 +864,50 @@
 | `sanctuary.packExpand.guest_candle.body` | Votre présence, sans enregistrement. Une lueur qui rejoint le Sanctuaire. | Your presence, with no recording. A glow that joins the Sanctuary. |
 | `sanctuary.packExpand.guest_patron.inspiration` | Un geste à la mesure de votre cœur. | A gift measured by the heart. |
 | `sanctuary.packExpand.guest_patron.body` | Choisissez le montant. Votre soutien aide à porter ce film plus loin. | Choose the amount. Your support helps carry this film further. |
+| `sanctuary.voice.title` | Enregistrez votre voix | Record your voice |
+| `sanctuary.voice.lead` | Quelques mots pour le film. Vous pourrez réécouter et recommencer avant de payer. | A few words for the film. You can listen and re-record before paying. |
+| `sanctuary.voice.start` | Enregistrer | Record |
+| `sanctuary.voice.stop` | Arrêter | Stop |
+| `sanctuary.voice.play` | Écouter | Listen |
+| `sanctuary.voice.pause` | Pause | Pause |
+| `sanctuary.voice.retake` | Recommencer | Re-record |
+| `sanctuary.voice.keep` | Garder cet enregistrement | Keep this recording |
+| `sanctuary.voice.ready` | Voix prête. Vous pouvez continuer vers le paiement. | Voice ready. You may continue to payment. |
+| `sanctuary.voice.uploading` | Envoi de votre voix… | Sending your voice… |
+| `sanctuary.voice.needName` | Indiquez d’abord votre prénom dans le dépôt souvenir, ou ici. | Add your first name from the memory deposit, or here. |
+| `sanctuary.voice.nameLabel` | Votre prénom | Your first name |
+| `sanctuary.voice.namePlaceholder` | Prénom | First name |
+| `sanctuary.voice.micDenied` | Micro inaccessible. Autorisez le micro dans le navigateur, puis réessayez. | Microphone unavailable. Allow mic access in the browser, then try again. |
+| `sanctuary.voice.unsupported` | Votre navigateur ne permet pas l’enregistrement audio. | Your browser cannot record audio. |
+| `sanctuary.voice.uploadFailed` | Impossible d’envoyer l’enregistrement. Réessayez. | We could not upload the recording. Please try again. |
+| `sanctuary.voice.previewBlocked` | Aperçu local : l’enregistrement nécessite un vrai lien. | Local preview: recording needs a real Sanctuary link. |
+| `sanctuary.voice.waveLive` | Forme d’onde en direct | Live waveform |
+| `sanctuary.voice.wavePlayback` | Forme d’onde de votre enregistrement | Waveform of your recording |
+| `sanctuary.video.title` | Enregistrez votre témoignage | Record your testimony |
+| `sanctuary.video.lead` | Quelques secondes face caméra. Vous pourrez revoir et recommencer avant de payer. | A few seconds on camera. You can review and re-record before paying. |
+| `sanctuary.video.start` | Filmer | Film |
+| `sanctuary.video.stop` | Arrêter | Stop |
+| `sanctuary.video.play` | Revoir | Watch |
+| `sanctuary.video.pause` | Pause | Pause |
+| `sanctuary.video.retake` | Recommencer | Re-record |
+| `sanctuary.video.keep` | Garder ce témoignage | Keep this testimony |
+| `sanctuary.video.ready` | Témoignage prêt. Vous pouvez continuer vers le paiement. | Testimony ready. You may continue to payment. |
+| `sanctuary.video.uploading` | Envoi de votre témoignage… | Sending your testimony… |
+| `sanctuary.video.needName` | Indiquez d’abord votre prénom dans le dépôt souvenir, ou ici. | Add your first name from the memory deposit, or here. |
+| `sanctuary.video.nameLabel` | Votre prénom | Your first name |
+| `sanctuary.video.namePlaceholder` | Prénom | First name |
+| `sanctuary.video.camDenied` | Caméra inaccessible. Autorisez la caméra et le micro dans le navigateur, puis réessayez. | Camera unavailable. Allow camera and microphone in the browser, then try again. |
+| `sanctuary.video.unsupported` | Votre navigateur ne permet pas l’enregistrement vidéo. | Your browser cannot record video. |
+| `sanctuary.video.uploadFailed` | Impossible d’envoyer le témoignage. Réessayez. | We could not upload the testimony. Please try again. |
+| `sanctuary.video.previewBlocked` | Aperçu local : l’enregistrement nécessite un vrai lien. | Local preview: recording needs a real Sanctuary link. |
+| `sanctuary.video.frameLive` | Aperçu caméra en direct | Live camera preview |
+| `sanctuary.video.framePlayback` | Aperçu de votre témoignage | Preview of your testimony |
+| `sanctuary.patron.label` | Votre contribution | Your contribution |
+| `sanctuary.patron.hint` | Entre {min} et {max} · suggestion {suggested} | Between {min} and {max} · suggested {suggested} |
+| `sanctuary.patron.invalid` | Choisissez un montant entre {min} et {max}. | Choose an amount between {min} and {max}. |
+| `sanctuary.patron.useSuggested` | Utiliser la suggestion | Use suggested amount |
+| `sanctuary.lueurPanel.aria` | Lueur du Sanctuaire | Sanctuary glow |
+| `sanctuary.lueurPanel.whisper` | Elle rejoint ceux qui restent. | It joins those who remain. |
 | `sanctuary.deposit.nameLabel` | Votre nom | Your name |
 | `sanctuary.deposit.namePlaceholder` | Prénom et nom | First and last name |
 | `sanctuary.deposit.emailLabel` | Courriel | Email |

@@ -1,25 +1,14 @@
 "use client";
 
 import { SanctuaryLueurOrb } from "@/src/components/contribute/SanctuaryLueurOrb";
+import type { AppDictionary } from "@/lib/dictionaries";
 
 export type SanctuaryLueurPanelProps = {
-  locale: "fr" | "en";
+  copy: AppDictionary["sanctuary"]["lueurPanel"];
 };
 
-const copy = {
-  fr: {
-    aria: "Lueur du Sanctuaire",
-    whisper: "Elle rejoint ceux qui restent.",
-  },
-  en: {
-    aria: "Sanctuary glow",
-    whisper: "It joins those who remain.",
-  },
-} as const;
-
 /** Slot carte empreinte Lueur — présence vivante, pas de capture. */
-export function SanctuaryLueurPanel({ locale }: SanctuaryLueurPanelProps) {
-  const t = copy[locale];
+export function SanctuaryLueurPanel({ copy: t }: SanctuaryLueurPanelProps) {
   return (
     <div className="flex w-full flex-col items-center gap-2">
       <SanctuaryLueurOrb

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — T6 : copy voix/vidéo/mécène/lueur hors dur · passe 390 px.
 - 3 sept 2026 — T5 : Coffre orga — tuile *Souvenir* + nom invité · signed URL admin.
 - 3 sept 2026 — T4 : sélection (toggle) · recap checkout · aperçu `?packs=1` · copy expand FR/EN.
 - 3 sept 2026 — Dépôt : échelle titre (nom > bienvenue > cyan médias) · copy *médias*.
 - 3 sept 2026 — G4 : packs + *Non merci* / checkout suivent FR/EN (sans refetch).
-- 3 sept 2026 — G5 : *Non merci* → ciel avec **leur étoile** (plus le CTA d’arrivée).
 
 **Statut :** **actif** — source : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · orga figé : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)
 
@@ -74,9 +74,9 @@ Le catalogue **existe**. Cadre démo :
 
 Pas de filtre anti-guest sur `GET /media`. Correctif : vignette signée (admin) + badge *Souvenir* + nom du déposant. À rejouer en vrai sur un token démo (photo `upload_status=uploaded`).
 
-### T6 — Copy + mobile · **P1** (FR/EN ciel **fait**)
+### T6 — Copy + mobile · **fait** (3 sept)
 
-Clés Sanctuaire hors dur. Catalogue. Passe 390 px (le script est téléphone). Sur le ciel invité, FR/EN **ne remonte pas** le Canvas (`onSwitch` + `replaceState`).
+Copy voix / vidéo / mécène / lueur dans FR+EN. Catalogue régénéré. Passe 390 px (titres, padding monolithe). Ciel : FR/EN **ne remonte pas** le Canvas (`onSwitch` + `replaceState`).
 
 ---
 

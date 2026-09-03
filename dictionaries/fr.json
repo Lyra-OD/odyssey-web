@@ -895,6 +895,58 @@
         "body": "Choisissez le montant. Votre soutien aide à porter ce film plus loin."
       }
     },
+    "voice": {
+      "title": "Enregistrez votre voix",
+      "lead": "Quelques mots pour le film. Vous pourrez réécouter et recommencer avant de payer.",
+      "start": "Enregistrer",
+      "stop": "Arrêter",
+      "play": "Écouter",
+      "pause": "Pause",
+      "retake": "Recommencer",
+      "keep": "Garder cet enregistrement",
+      "ready": "Voix prête. Vous pouvez continuer vers le paiement.",
+      "uploading": "Envoi de votre voix…",
+      "needName": "Indiquez d’abord votre prénom dans le dépôt souvenir, ou ici.",
+      "nameLabel": "Votre prénom",
+      "namePlaceholder": "Prénom",
+      "micDenied": "Micro inaccessible. Autorisez le micro dans le navigateur, puis réessayez.",
+      "unsupported": "Votre navigateur ne permet pas l’enregistrement audio.",
+      "uploadFailed": "Impossible d’envoyer l’enregistrement. Réessayez.",
+      "previewBlocked": "Aperçu local : l’enregistrement nécessite un vrai lien.",
+      "waveLive": "Forme d’onde en direct",
+      "wavePlayback": "Forme d’onde de votre enregistrement"
+    },
+    "video": {
+      "title": "Enregistrez votre témoignage",
+      "lead": "Quelques secondes face caméra. Vous pourrez revoir et recommencer avant de payer.",
+      "start": "Filmer",
+      "stop": "Arrêter",
+      "play": "Revoir",
+      "pause": "Pause",
+      "retake": "Recommencer",
+      "keep": "Garder ce témoignage",
+      "ready": "Témoignage prêt. Vous pouvez continuer vers le paiement.",
+      "uploading": "Envoi de votre témoignage…",
+      "needName": "Indiquez d’abord votre prénom dans le dépôt souvenir, ou ici.",
+      "nameLabel": "Votre prénom",
+      "namePlaceholder": "Prénom",
+      "camDenied": "Caméra inaccessible. Autorisez la caméra et le micro dans le navigateur, puis réessayez.",
+      "unsupported": "Votre navigateur ne permet pas l’enregistrement vidéo.",
+      "uploadFailed": "Impossible d’envoyer le témoignage. Réessayez.",
+      "previewBlocked": "Aperçu local : l’enregistrement nécessite un vrai lien.",
+      "frameLive": "Aperçu caméra en direct",
+      "framePlayback": "Aperçu de votre témoignage"
+    },
+    "patron": {
+      "label": "Votre contribution",
+      "hint": "Entre {min} et {max} · suggestion {suggested}",
+      "invalid": "Choisissez un montant entre {min} et {max}.",
+      "useSuggested": "Utiliser la suggestion"
+    },
+    "lueurPanel": {
+      "aria": "Lueur du Sanctuaire",
+      "whisper": "Elle rejoint ceux qui restent."
+    },
     "deposit": {
       "nameLabel": "Votre nom",
       "namePlaceholder": "Prénom et nom",

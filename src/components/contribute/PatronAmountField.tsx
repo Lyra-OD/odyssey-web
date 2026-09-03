@@ -14,6 +14,7 @@ import {
   GUEST_PATRON_MIN_CENTS,
   GUEST_TXN_MAX_CENTS,
 } from "@/src/lib/wizard/guestSupportPacks";
+import type { AppDictionary } from "@/lib/dictionaries";
 
 export type PatronAmountFieldProps = {
   locale: "fr" | "en";
@@ -27,26 +28,8 @@ export type PatronAmountFieldProps = {
   open: boolean;
   /** Dans une carte empreinte : pas de double chrome / anim (le parent ouvre déjà). */
   embedded?: boolean;
+  copy: AppDictionary["sanctuary"]["patron"];
 };
-
-const copy = {
-  fr: {
-    label: "Votre contribution",
-    hint: (min: number, max: number, suggested: number) =>
-      `Entre ${formatWizardPrice(min, "fr")} et ${formatWizardPrice(max, "fr")} · suggestion ${formatWizardPrice(suggested, "fr")}`,
-    invalid: (min: number, max: number) =>
-      `Choisissez un montant entre ${formatWizardPrice(min, "fr")} et ${formatWizardPrice(max, "fr")}.`,
-    useSuggested: "Utiliser la suggestion",
-  },
-  en: {
-    label: "Your contribution",
-    hint: (min: number, max: number, suggested: number) =>
-      `Between ${formatWizardPrice(min, "en")} and ${formatWizardPrice(max, "en")} · suggested ${formatWizardPrice(suggested, "en")}`,
-    invalid: (min: number, max: number) =>
-      `Choose an amount between ${formatWizardPrice(min, "en")} and ${formatWizardPrice(max, "en")}.`,
-    useSuggested: "Use suggested amount",
-  },
-} as const;
 
 function centsToDollarsInput(cents: number): string {
   if (!Number.isFinite(cents) || cents <= 0) return "";
@@ -75,8 +58,8 @@ export function PatronAmountField({
   amountSuggestedCents,
   open,
   embedded = false,
+  copy: t,
 }: PatronAmountFieldProps) {
-  const t = copy[locale];
   const inputId = useId();
 
   const min = amountMinCents ?? GUEST_PATRON_MIN_CENTS;
@@ -134,11 +117,16 @@ export function PatronAmountField({
         id={`${inputId}-hint`}
         className="mt-3 text-[11px] font-light leading-relaxed text-zinc-500"
       >
-        {t.hint(min, max, suggested)}
+        {t.hint
+          .replace("{min}", formatWizardPrice(min, locale))
+          .replace("{max}", formatWizardPrice(max, locale))
+          .replace("{suggested}", formatWizardPrice(suggested, locale))}
       </p>
       {!valid && amountCents > 0 ? (
         <p className="mt-2 text-sm font-light text-amber-200/90" role="alert">
-          {t.invalid(min, max)}
+          {t.invalid
+            .replace("{min}", formatWizardPrice(min, locale))
+            .replace("{max}", formatWizardPrice(max, locale))}
         </p>
       ) : null}
       {amountCents !== suggested ? (

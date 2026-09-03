@@ -895,6 +895,58 @@
         "body": "Choose the amount. Your support helps carry this film further."
       }
     },
+    "voice": {
+      "title": "Record your voice",
+      "lead": "A few words for the film. You can listen and re-record before paying.",
+      "start": "Record",
+      "stop": "Stop",
+      "play": "Listen",
+      "pause": "Pause",
+      "retake": "Re-record",
+      "keep": "Keep this recording",
+      "ready": "Voice ready. You may continue to payment.",
+      "uploading": "Sending your voice…",
+      "needName": "Add your first name from the memory deposit, or here.",
+      "nameLabel": "Your first name",
+      "namePlaceholder": "First name",
+      "micDenied": "Microphone unavailable. Allow mic access in the browser, then try again.",
+      "unsupported": "Your browser cannot record audio.",
+      "uploadFailed": "We could not upload the recording. Please try again.",
+      "previewBlocked": "Local preview: recording needs a real Sanctuary link.",
+      "waveLive": "Live waveform",
+      "wavePlayback": "Waveform of your recording"
+    },
+    "video": {
+      "title": "Record your testimony",
+      "lead": "A few seconds on camera. You can review and re-record before paying.",
+      "start": "Film",
+      "stop": "Stop",
+      "play": "Watch",
+      "pause": "Pause",
+      "retake": "Re-record",
+      "keep": "Keep this testimony",
+      "ready": "Testimony ready. You may continue to payment.",
+      "uploading": "Sending your testimony…",
+      "needName": "Add your first name from the memory deposit, or here.",
+      "nameLabel": "Your first name",
+      "namePlaceholder": "First name",
+      "camDenied": "Camera unavailable. Allow camera and microphone in the browser, then try again.",
+      "unsupported": "Your browser cannot record video.",
+      "uploadFailed": "We could not upload the testimony. Please try again.",
+      "previewBlocked": "Local preview: recording needs a real Sanctuary link.",
+      "frameLive": "Live camera preview",
+      "framePlayback": "Preview of your testimony"
+    },
+    "patron": {
+      "label": "Your contribution",
+      "hint": "Between {min} and {max} · suggested {suggested}",
+      "invalid": "Choose an amount between {min} and {max}.",
+      "useSuggested": "Use suggested amount"
+    },
+    "lueurPanel": {
+      "aria": "Sanctuary glow",
+      "whisper": "It joins those who remain."
+    },
     "deposit": {
       "nameLabel": "Your name",
       "namePlaceholder": "First and last name",

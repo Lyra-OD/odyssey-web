@@ -13,6 +13,7 @@ import {
 import { isSanctuaryVisualPreview } from "@/src/lib/contribute/sanctuaryPreview";
 import { SANCTUARY_GUEST_VIDEO_MAX_SECONDS } from "@/src/lib/contribute/sanctuaryLimits";
 import { parseApiJson } from "@/src/lib/http/parseApiJson";
+import type { AppDictionary } from "@/lib/dictionaries";
 
 export type GuestVideoRecorderProps = {
   token: string;
@@ -22,6 +23,7 @@ export type GuestVideoRecorderProps = {
   /** media_assets.id une fois uploadé. */
   mediaId: string | null;
   onMediaIdChange: (mediaId: string | null) => void;
+  copy: AppDictionary["sanctuary"]["video"];
   /** Dans une carte empreinte : pas de chrome / titre (copy déjà au-dessus). */
   embedded?: boolean;
 };
@@ -33,53 +35,6 @@ type Phase =
   | "uploading"
   | "ready"
   | "error";
-
-const copy = {
-  fr: {
-    title: "Enregistrez votre témoignage",
-    lead: "Quelques secondes face caméra. Vous pourrez revoir et recommencer avant de payer.",
-    start: "Filmer",
-    stop: "Arrêter",
-    play: "Revoir",
-    pause: "Pause",
-    retake: "Recommencer",
-    keep: "Garder ce témoignage",
-    ready: "Témoignage prêt. Vous pouvez continuer vers le paiement.",
-    uploading: "Envoi de votre témoignage…",
-    needName: "Indiquez d’abord votre prénom dans le dépôt souvenir, ou ici.",
-    nameLabel: "Votre prénom",
-    namePlaceholder: "Prénom",
-    camDenied:
-      "Caméra inaccessible. Autorisez la caméra et le micro dans le navigateur, puis réessayez.",
-    unsupported: "Votre navigateur ne permet pas l’enregistrement vidéo.",
-    uploadFailed: "Impossible d’envoyer le témoignage. Réessayez.",
-    previewBlocked: "Aperçu local : l’enregistrement nécessite un vrai lien.",
-    frameLive: "Aperçu caméra en direct",
-    framePlayback: "Aperçu de votre témoignage",
-  },
-  en: {
-    title: "Record your testimony",
-    lead: "A few seconds on camera. You can review and re-record before paying.",
-    start: "Film",
-    stop: "Stop",
-    play: "Watch",
-    pause: "Pause",
-    retake: "Re-record",
-    keep: "Keep this testimony",
-    ready: "Testimony ready. You may continue to payment.",
-    uploading: "Sending your testimony…",
-    needName: "Add your first name from the memory deposit, or here.",
-    nameLabel: "Your first name",
-    namePlaceholder: "First name",
-    camDenied:
-      "Camera unavailable. Allow camera and microphone in the browser, then try again.",
-    unsupported: "Your browser cannot record video.",
-    uploadFailed: "We could not upload the testimony. Please try again.",
-    previewBlocked: "Local preview: recording needs a real Sanctuary link.",
-    frameLive: "Live camera preview",
-    framePlayback: "Preview of your testimony",
-  },
-} as const;
 
 function pickVideoRecorderMime(): string | undefined {
   if (typeof MediaRecorder === "undefined") return undefined;
@@ -109,9 +64,9 @@ export function GuestVideoRecorder({
   contributorEmail,
   mediaId,
   onMediaIdChange,
+  copy: t,
   embedded = false,
 }: GuestVideoRecorderProps) {
-  const t = copy[locale];
   const maxSec = SANCTUARY_GUEST_VIDEO_MAX_SECONDS;
   const [phase, setPhase] = useState<Phase>(mediaId ? "ready" : "idle");
   const [error, setError] = useState<string | null>(null);
