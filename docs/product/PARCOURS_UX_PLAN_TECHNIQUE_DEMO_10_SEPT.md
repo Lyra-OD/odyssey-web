@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — **Feuille walk ven 4** · parallèle Traversée = non · J3 seulement si Continuer est un trou.
+- 3 sept 2026 — Approche technique : **surface, pas tuyaux** · marcher → 3 trous · stub documenté.
 - 3 sept 2026 — **Refonte :** famille d’abord · invité = ouverture · Salon KPI = 3ᵉ acte. WOW = placeholders OK.
 - 3 sept 2026 — T4 desktop deux colonnes · 390 accordéon · pied hors scroll · témoignage ouvert en entier.
 - 3 sept 2026 — T6 copy voix/vidéo/mécène/lueur · passe 390 px.
-- 3 sept 2026 — T5 Coffre : tuile *Souvenir* + nom (code ; à rejouer si le script le demande).
-- 3 sept 2026 — T1–T4 invité : ciel d’abord · dépôt + courriel · packs.
 
 **Statut :** **actif** · orga : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) · invité : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md)
 
@@ -30,6 +30,24 @@ On montre le **concept entier** pour qu’un inconnu **y croie** en ~8 min.
 **Pas** : recâbler Stripe, nouveaux SKU, éclipse / 12 signes / WebGL rails.
 
 Parké (on y revient après jeudi si besoin) : lead sous *Aider la famille…* · Lueur au même rang que les autres packs.
+
+### Approche technique (nouvelle — figée 3 sept soir)
+
+**Avant :** on construisait encore des tuyaux (T1–T6 invité, APIs, flags).  
+**Maintenant :** le moteur est là. On **fait voir** ce qui existe. On ne recâble pas.
+
+| Règle | Ça veut dire |
+|-------|----------------|
+| **Un wizard** | Les 7 étapes famille = la colonne. Pas de 8ᵉ étape, pas de nouvelle route. |
+| **Surface, pas tuyau** | Layout, rythme, copy, trou entre deux écrans. Interdit : nouvelle API, nouveau SKU, WebGL rails, Stripe replay. |
+| **Stub = livrable** | Pastille 2D, filament CSS, aperçu filigrané, `test-visuel`. Documenté > craft incomplet. |
+| **Marcher → 3 trous** | On joue le fil. On ne fixe **que** ce qui casse le concept. Le reste attend. |
+| **Deux peaux, un code** | 390 = carte. Desktop = ça s’étale (invité : 2 colonnes déjà). Même état. |
+| **Couper par le bas** | Si le temps manque : acte C (Salon), jamais l’acte A (famille). |
+
+Traversée 0→12 (éclipse, J3, 12 signes) = **canon**, pas le plan jeudi. On ne réécrit pas `PARCOURS_UX_CHEMIN_1_TRAVERSEE.md` cette semaine.
+
+**Parallèle (figé 3 sept soir) :** on ne fait **pas** démo + Traversée à fond. Jusqu’au 10 = voie A. J3 / éclipse / signes = **off**, sauf si le walk ven 4 montre que Continuer mène nulle part — alors **une** J3 stub, pas le rite.
 
 ---
 
@@ -82,6 +100,60 @@ Marcher le wizard **comme la démo**. Noter uniquement ce qui **casse le concept
 
 Cibles : Essentiels → ciel → Inviter → Coffre → chansons → Livre ouvert → aperçu.  
 Stub OK. Si le Livre ouvert ou l’aperçu est laid : **un** placeholder propre, pas un rewrite.
+
+#### Ven 4 — journée (concrète)
+
+**But du jour :** un inconnu comprend *ce que la famille fait*. Pas un nouveau tuyau. Pas l’invité. Pas le Salon.
+
+| Quand | Quoi |
+|-------|------|
+| **Matin** | Ouvrir `/fr/studio` (compte démo déjà là). Marcher **une fois**, comme jeudi : Essentiels → ciel / Hero → Inviter (copier le lien) → Coffre → chansons → Livre ouvert → aperçu. Desktop d’abord. |
+| **Midi** | Noter **seulement** ce qui casse le concept. Max **3** trous. Le reste = samedi ou on ignore. |
+| **Après-midi** | Fixer ces 3 (ou moins). Stub propre > rewrite. |
+| **Fin de journée** | Une phrase : *est-ce que l’acte A se raconte ?* Oui / non + les 3 lignes. |
+
+**Casse le concept :** écran mort, on ne sait plus où on est, le Coffre / le film / Inviter est invisible, copy hors voix (timeline, checkout, jetons).  
+**Ne casse pas :** craft incomplet, J3 absente, éclipse absente, Scanner moche — on **dit** le beat et on passe.
+
+**Interdit ven 4 :** packs invité, lead *Aider la famille*, Salon KPI, WebGL rails, nouveaux SKU.
+
+**Livrable :** liste de 0–3 trous (corrigés ou datés samedi) + « acte A tenable / pas encore ».
+
+#### Feuille walk — ven 4 matin
+
+Une passe. Desktop. On joue **comme jeudi**, on ne répare pas en marchant.
+
+| | |
+|--|--|
+| **Où** | Local : `http://localhost:3000/fr/studio` · login si besoin : `/fr/studio/connexion`. Compte démo déjà là. |
+| **Comment** | Une fois, sans revenir en arrière pour « améliorer ». Noter à voix haute. Max **3** lignes à la fin. |
+| **Durée cible** | ~8–12 min (l’acte A jeudi = ~4 min ; là on a le droit de chercher). |
+
+Stepper à l’écran : **Essentiels · Cercle · Coffre-fort · Musique · Le film · Aperçu · Finaliser**.
+
+| # | Beat (script A) | On doit *voir* | ☐ |
+|---|-----------------|----------------|---|
+| 1 | Essentiels → ciel / Hero | On sait pour qui c’est. Le ciel / Hero existe (stub OK). | |
+| 2 | Inviter | On copie un lien. Une phrase : le cercle nourrit le Coffre. | |
+| 3 | Coffre | Les souvenirs se rangent. Scanner : on le nomme si moche, on passe. | |
+| 4 | Musique → Le film | On compose avec le Coffre. Magie ou « je compose » — le studio se voit. | |
+| 5 | Aperçu | Un film existe (filigrane / stub OK). | |
+| — | Finaliser | **Hors walk.** Stripe n’est pas le goulot jeudi. | |
+
+**Casse (on note) :** écran mort · on ne sait plus où on est · Coffre / film / Inviter invisible · copy hors voix (timeline, checkout, jetons).  
+**Ne casse pas (on dit le beat, on passe) :** craft incomplet · pas d’éclipse · pas de J3 · Scanner moche · aperçu laid.
+
+**Interdit pendant le walk :** packs invité, Salon, WebGL, nouveau SKU, « tant qu’à y être ».
+
+**Fin de matinée — 3 lignes max :**
+
+1. …
+2. …
+3. …
+
+**Acte A se raconte ?** oui / pas encore.
+
+Si Continuer (après le ciel) mène **nulle part** : c’est un trou. Alors seulement on parle d’une J3 stub — pas avant.
 
 ### F2 — Famille : WOW tenable · **sam 5**
 
