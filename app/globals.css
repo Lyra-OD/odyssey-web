@@ -576,6 +576,18 @@ body {
   );
 }
 
+/** Guest : verre = colonne (scroll + pied hors overflow). Wizard orga : scroll = verre. */
+.parcours-monolith-card {
+  display: flex;
+  flex-direction: column;
+  max-height: 90dvh;
+  overflow: hidden;
+}
+
+.parcours-monolith-card > .parcours-monolith-scroll {
+  max-height: none;
+}
+
 .parcours-monolith-scroll {
   max-height: 90dvh;
   overflow-y: auto;

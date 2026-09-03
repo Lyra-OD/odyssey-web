@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — T4 : liste packs inchangée · *Témoignage filmé* s’ouvre en entier (les autres restent plus bas).
+- 3 sept 2026 — T4 : pied checkout hors scroll (form ne passe plus sous Continuer / *Non merci*).
 - 3 sept 2026 — T6 : copy voix/vidéo/mécène/lueur hors dur · passe 390 px.
 - 3 sept 2026 — T5 : Coffre orga — tuile *Souvenir* + nom invité · signed URL admin.
 - 3 sept 2026 — T4 : sélection (toggle) · recap checkout · aperçu `?packs=1` · copy expand FR/EN.
-- 3 sept 2026 — Dépôt : échelle titre (nom > bienvenue > cyan médias) · copy *médias*.
-- 3 sept 2026 — G4 : packs + *Non merci* / checkout suivent FR/EN (sans refetch).
 
 **Statut :** **actif** — source : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · orga figé : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)
 
@@ -67,7 +67,8 @@ Le catalogue **existe**. Cadre démo :
 - Seulement après la greffe (T2).
 - Titre : *Aider la famille à concevoir le film* (clés FR+EN).
 - Skip *Non merci* → ciel (G5) avec leur étoile.
-- Même monolithe indigo que le dépôt.
+- Même monolithe indigo que le dépôt. Pied checkout **hors** du scroll (colonne flex) — le catalogue ne passe pas sous Continuer / *Non merci*.
+- **Témoignage filmé :** s’ouvre en entier (cadre 3/4) ; le catalogue reste, les autres packs passent plus bas. Pas de mode *Autres options*.
 - **Tenant démo :** `viral_loop_enabled` **ON** ([`../ops/VIRAL_LOOP_PILOT_RUNBOOK.md`](../ops/VIRAL_LOOP_PILOT_RUNBOOK.md)) sinon les packs / Fonds ne se voient pas en checkout. Pas de nouveaux SKU.
 
 ### T5 — Coffre orga (preuve) · **fait** (3 sept)

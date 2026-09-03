@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 type SanctuaryMonolithProps = {
   children: ReactNode;
   header?: ReactNode;
-  /** Pied collé (ex. checkout + *Non merci*) — reste visible sans scroller. */
+  /** Pied hors scroll (ex. checkout + *Non merci*) — visible, le form ne passe pas dessous. */
   footer?: ReactNode;
 };
 
@@ -21,11 +21,13 @@ export function SanctuaryMonolith({
         <div className="parcours-monolith-atmosphere" aria-hidden>
           <div className="parcours-monolith-aura-cyan" />
         </div>
-        <div className="parcours-monolith-scroll parcours-monolith-glass relative z-[1] w-full px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-9">
-          {header ? <div className="mb-4">{header}</div> : null}
-          {children}
+        <div className="parcours-monolith-glass parcours-monolith-card relative z-[1] w-full">
+          <div className="parcours-monolith-scroll min-h-0 flex-1 px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-9">
+            {header ? <div className="mb-4">{header}</div> : null}
+            {children}
+          </div>
           {footer ? (
-            <div className="sticky bottom-0 z-10 -mx-4 mt-4 border-t border-white/10 bg-[rgba(8,6,28,0.96)] px-4 pb-5 pt-3 sm:-mx-6 sm:px-6 sm:pb-7 md:-mx-8 md:px-8 md:pb-9">
+            <div className="shrink-0 border-t border-white/10 px-4 pb-5 pt-3 sm:px-6 sm:pb-7 md:px-8 md:pb-9">
               {footer}
             </div>
           ) : null}

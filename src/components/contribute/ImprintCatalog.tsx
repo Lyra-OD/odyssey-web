@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { sanctuarySelectBreathe } from "@/src/lib/contribute/sanctuaryChrome";
@@ -53,6 +53,24 @@ function priceLabel(pack: ImprintPack, locale: "fr" | "en"): string {
     return `${formatWizardPrice(min, locale)} – ${formatWizardPrice(max, locale)}`;
   }
   return formatWizardPrice(pack.priceCents, locale);
+}
+
+function scrollPackIntoView(el: HTMLElement) {
+  const scroller = el.closest(".parcours-monolith-scroll");
+  if (!(scroller instanceof HTMLElement)) return;
+  const extra = 8;
+  const elRect = el.getBoundingClientRect();
+  const scRect = scroller.getBoundingClientRect();
+  const view = scroller.clientHeight;
+  const maxScroll = Math.max(0, scroller.scrollHeight - view);
+  const next =
+    elRect.height > view
+      ? scroller.scrollTop + (elRect.bottom - scRect.bottom) + extra
+      : scroller.scrollTop + (elRect.top - scRect.top) - extra;
+  scroller.scrollTo({
+    top: Math.max(0, Math.min(next, maxScroll)),
+    behavior: "smooth",
+  });
 }
 
 /**
@@ -149,6 +167,17 @@ function PackRow({
   lueurSlot?: ReactNode;
   patronSlot?: ReactNode;
 }) {
+  const rowRef = useRef<HTMLLIElement>(null);
+  const openFull = pack.key === "guest_video";
+
+  useEffect(() => {
+    if (!selected || !openFull) return;
+    const id = window.setTimeout(() => {
+      if (rowRef.current) scrollPackIntoView(rowRef.current);
+    }, DURATION_RITUAL * 1000 + 40);
+    return () => window.clearTimeout(id);
+  }, [selected, openFull]);
+
   let interaction: ReactNode = null;
   if (selected) {
     if (pack.key === "guest_voice" && voiceSlot) {
@@ -164,6 +193,7 @@ function PackRow({
 
   return (
     <motion.li
+      ref={rowRef}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
