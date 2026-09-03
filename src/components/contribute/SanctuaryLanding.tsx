@@ -462,6 +462,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
         constellationVisible
         skyCraftChrome={false}
         wanderChrome={false}
+        skyWander
         skyLayers={SKY_GUEST_DEMO_LAYERS}
         craftReveal={guestCraftReveal}
         skipConstellationReveal

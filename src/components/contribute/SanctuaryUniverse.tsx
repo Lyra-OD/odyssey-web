@@ -54,7 +54,10 @@ import {
   StarScreenReporter,
   type ScreenAnchor,
 } from "@/src/components/contribute/constellation/StarScreenReporter";
-import { WheelZoom } from "@/src/components/contribute/constellation/WheelZoom";
+import {
+  GUEST_ZOOM_MIN,
+  WheelZoom,
+} from "@/src/components/contribute/constellation/WheelZoom";
 import {
   encodeHubFrame,
   type HubFrameCapture,
@@ -1144,8 +1147,10 @@ function UniverseScene({
         wakeKey={skyWakeKey}
         maxFps={wizardRewardFullPerf ? 60 : overlayOnBackdrop ? 24 : 60}
       />
-      {/* Craft : zoom fixe (pas de molette qui recentre) */}
-      <WheelZoom enabled={!craftLite} />
+      <WheelZoom
+        enabled={!craftLite}
+        min={hubHeroOnly ? GUEST_ZOOM_MIN : undefined}
+      />
       <SkyWander enabled={wanderEnabled} />
       <IdleCameraDrift />
       {overlayOnBackdrop || closeStreakFire ? null : (
@@ -1461,6 +1466,8 @@ export type SanctuaryUniverseProps = {
   skipConstellationReveal?: boolean;
   /** Bouton « Se promener » — off sur l’invité (chrome craft). */
   wanderChrome?: boolean;
+  /** Invité : drag ciel sans bouton lab. */
+  skyWander?: boolean;
 };
 
 export function SanctuaryUniverse({
@@ -1485,6 +1492,7 @@ export function SanctuaryUniverse({
   constellationRevealMs = DEFAULT_CONSTELLATION_REVEAL_MS,
   skipConstellationReveal = false,
   wanderChrome = true,
+  skyWander = false,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -1772,7 +1780,7 @@ export function SanctuaryUniverse({
                 showConstellation={
                   constellationVisible ?? (immersive && constellationOn)
                 }
-                wanderEnabled={immersive && wanderOn}
+                wanderEnabled={immersive && (wanderOn || skyWander)}
                 onSelectMemory={beginFocus}
                 focus={focus}
                 onStarScreen={onStarScreen}

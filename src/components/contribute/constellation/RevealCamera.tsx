@@ -9,6 +9,13 @@ import { resolveRevealCamera } from "@/src/components/contribute/constellation/g
 import type { LeoStrokeStep } from "@/src/components/contribute/constellation/graphs/leo";
 import { ACTIVE_TEMPLATE } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import type { ConstellationTemplate } from "@/src/components/contribute/constellation/graphs/types";
+import { idleCameraRef } from "@/src/components/contribute/constellation/IdleCameraDrift";
+import { skyWanderRef } from "@/src/components/contribute/constellation/SkyWander";
+import {
+  cameraZoomRef,
+  GUEST_ZOOM_MIN,
+  ZOOM_MAX,
+} from "@/src/components/contribute/constellation/WheelZoom";
 
 /** FocusCamera yields while this is true. */
 export const revealCameraDriveRef = { active: false };
@@ -49,6 +56,7 @@ export function RevealCamera({
   const lookTarget = useMemo(() => new Vector3(), []);
   const lastT = useRef(revealT);
   const booted = useRef(false);
+  const zoomSeeded = useRef(false);
   const templateRef = useRef(template);
   templateRef.current = template;
   const sequenceRef = useRef(strokeSequence);
@@ -58,6 +66,7 @@ export function RevealCamera({
     if (!enabled) {
       revealCameraDriveRef.active = false;
       booted.current = false;
+      zoomSeeded.current = false;
       return;
     }
 
@@ -83,12 +92,26 @@ export function RevealCamera({
     const restart = t < 0.025 && prev > 0.08;
     lastT.current = t;
 
-    desired.set(
-      lockLookAxis ? pose.lookX : pose.camX,
-      lockLookAxis ? pose.lookY : pose.camY,
-      pose.camZ,
-    );
-    lookTarget.set(pose.lookX, pose.lookY, pose.lookZ);
+    /** Invité : pan cam+look ensemble (axe gardé) — sinon wander/idle sont ignorés. */
+    const panX = lockLookAxis ? skyWanderRef.x + idleCameraRef.x : 0;
+    const panY = lockLookAxis ? skyWanderRef.y + idleCameraRef.y : 0;
+    const baseX = lockLookAxis ? pose.lookX : pose.camX;
+    const baseY = lockLookAxis ? pose.lookY : pose.camY;
+    if (lockLookAxis && !zoomSeeded.current) {
+      cameraZoomRef.current = pose.camZ;
+      zoomSeeded.current = true;
+    }
+    const camZ = lockLookAxis
+      ? Math.min(
+          ZOOM_MAX,
+          Math.max(
+            GUEST_ZOOM_MIN,
+            cameraZoomRef.current + idleCameraRef.zoomOffset,
+          ),
+        )
+      : pose.camZ;
+    desired.set(baseX + panX, baseY + panY, camZ);
+    lookTarget.set(pose.lookX + panX, pose.lookY + panY, pose.lookZ);
 
     /** Premier frame : snap. Sinon KEEP invité (t=0.72) lerp depuis l’origine → Hero à gauche. */
     if (!booted.current || jumped || restart || t < 0.02) {
@@ -96,7 +119,9 @@ export function RevealCamera({
       cam.position.copy(desired);
       look.current.copy(lookTarget);
     } else {
-      const follow = 0.032 + pose.pull * 0.048 + (pose.pull < 0.35 ? 0.022 : 0);
+      const follow = lockLookAxis
+        ? 0.16
+        : 0.032 + pose.pull * 0.048 + (pose.pull < 0.35 ? 0.022 : 0);
       cam.position.lerp(desired, follow);
       look.current.lerp(lookTarget, follow * 1.08);
     }
@@ -104,8 +129,8 @@ export function RevealCamera({
 
     const fog = state.scene.fog instanceof Fog ? state.scene.fog : null;
     if (fog) {
-      const near = pose.camZ * 0.55;
-      const far = pose.camZ + 10 + pose.pull * 6;
+      const near = camZ * 0.55;
+      const far = camZ + 10 + pose.pull * 6;
       fog.near += (near - fog.near) * 0.06;
       fog.far += (far - fog.far) * 0.06;
     }

@@ -12,22 +12,30 @@ export const ZOOM_DEFAULT = 7.5;
 export const ZOOM_MIN = 4.4;
 /** Moins extrême — couple fog/bande plus confortable */
 export const ZOOM_MAX = 10.8;
+/** Invité KEEP déjà à 5.15 — min craft trop haut pour s’approcher. */
+export const GUEST_ZOOM_MIN = 3.2;
 
 type WheelZoomProps = {
   enabled: boolean;
+  min?: number;
+  max?: number;
 };
 
 /**
  * Zoom molette uniquement — met à jour cameraZoomRef.
  * FocusCamera applique la distance hors focus.
  */
-export function WheelZoom({ enabled }: WheelZoomProps) {
+export function WheelZoom({
+  enabled,
+  min = ZOOM_MIN,
+  max = ZOOM_MAX,
+}: WheelZoomProps) {
   const gl = useThree((s) => s.gl);
 
   useEffect(() => {
     cameraZoomRef.current = Math.min(
-      ZOOM_MAX,
-      Math.max(ZOOM_MIN, cameraZoomRef.current),
+      max,
+      Math.max(min, cameraZoomRef.current),
     );
 
     const el = gl.domElement;
@@ -42,13 +50,13 @@ export function WheelZoom({ enabled }: WheelZoomProps) {
       e.preventDefault();
       markSkyActivity();
       cameraZoomRef.current = Math.min(
-        ZOOM_MAX,
-        Math.max(ZOOM_MIN, cameraZoomRef.current + e.deltaY * 0.012),
+        max,
+        Math.max(min, cameraZoomRef.current + e.deltaY * 0.012),
       );
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [enabled, gl]);
+  }, [enabled, gl, min, max]);
 
   return null;
 }

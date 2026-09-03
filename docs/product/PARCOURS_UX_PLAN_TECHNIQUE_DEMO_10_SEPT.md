@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — Ciel invité : **drag pour se promener** · molette = s’approcher (RevealCamera suit le zoom).
 - 3 sept 2026 — Ciel invité : **pas de scroll page** · overlay G1 laisse passer souris/molette (CTA + langue cliquables).
 - 3 sept 2026 — Ciel invité : Hero KEEP + breath · caméra **sur l’axe** (prénom sous le cœur).
 - 3 sept 2026 — T1/T2 restyle wizard (monolithe indigo) · courriel **dès l’écran 1** · T3 **annulé** · T4 packs dans le même monolithe.
 - 3 sept 2026 — T2 : photos **ET/OU** mot (plus de XOR). Plafond 5 photos inchangé.
-- 3 sept 2026 — Ouverture : slice **invité G1→G4** + Coffre orga. Stub étoile. Packs déjà là.
 
 **Statut :** **actif** — source : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · orga figé : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)
 
