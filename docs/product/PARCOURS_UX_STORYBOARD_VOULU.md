@@ -4,16 +4,20 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 3 sept 2026 — Choix Traversée / Atelier **sous Continuer étape 1** (pas au login) · Coffre = **une** pièce, Scanner = une porte.
-- 3 sept 2026 — Ouverture : beats 0→J3 dictés · Atelier parallèle · mobile (2 mises en page si besoin) · suite = Coffre + Scanner compagnon.
+- 3 sept 2026 — **Suite écrite** = parcours **invité** (pas from scratch : Sanctuaire `/contribute/[token]` déjà en prod).
+- 3 sept 2026 — Beat 12 : **télécharger** + **rester dans le ciel** selon forfait. Plus *le film part*.
+- 3 sept 2026 — Beats 6→10 + étoile à l’**acceptation** · J3 Continuer = **Inviter**. Dépôt ≠ étoile.
 
-**Statut :** **en cours d’écriture** — on continue ici **avant** le plan technique.
+**Statut :** **fermé pour l’orga** — beats 0→12 · décisions §8 figées. **Prochain écrit :** storyboard **invité** (§10) — pas le plan technique Chemin 1.
 
 **Liens :**
 - Spec impl encore active (à réaligner après ce storyboard) : [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md)
 - Trous à ne pas oublier : [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
 - Beats nommés : [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md)
 - Scanner : [`../SCANNER_COMPANION.md`](../SCANNER_COMPANION.md)
+- Collab : [`../WIZARD_EDITOR_COLLAB.md`](../WIZARD_EDITOR_COLLAB.md)
+- Livre Ouvert / magie : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md)
+- Fonds (mécanique, pas la copy écran) : [`../IMPLEMENTATION_CASCADE_VFINAL.md`](../IMPLEMENTATION_CASCADE_VFINAL.md)
 - Mobile wizard (postures, pas 2 apps) : [`../MOBILE_WIZARD_STRATEGY.md`](../MOBILE_WIZARD_STRATEGY.md)
 
 **Règle :** un craft incomplet = **placeholder** documenté. Ça **ne bloque pas** le beat suivant.
@@ -151,8 +155,9 @@ La Traversée doit se **vivre** sur téléphone, pas seulement « rentrer ».
 | **Quand** | Juste après le dessin, **sur** la constellation encore chaude |
 | **On voit** | Hold 1–2 s. Puis un **filament** part du Hero (ou d’un nœud du signe). Une **étoile plus petite** naît au bout — **pas** un 2ᵉ Hero. C’est un **exemple**, pas un invité réel. |
 | **Copy (ordre)** | 1. *Plus le cercle partage, plus le ciel s’allume.* 2. *Ils déposent des souvenirs. Vous composez le ciel et le film.* |
+| **Clarification** | « Le ciel s’allume » = **des gens** se greffent (étoiles). « Déposent » = fichiers dans le **Coffre**, pas une étoile par photo. |
 | **Permission** | *Prenez votre temps. Le ciel attend.* |
-| **Geste** | **Inviter** dominant · **Continuer** plus doux · skip toujours possible |
+| **Geste** | **Inviter** dominant · **Continuer** plus doux → **Beat 6 Inviter** (G2). Skip invite ensuite → Beat 7 Coffre. |
 | **Jamais** | Argent, RevShare, forfait sur cet écran (famille) |
 | **Pourquoi les deux phrases** | Sans la 2ᵉ, l’orga croit *1 souvenir = 1 étoile*. Ciel ≠ Coffre. |
 | **Placeholder greffe** | Un trait + un point. Filaments craft = plus tard. Tant qu’on ne laisse pas croire que c’est déjà quelqu’un de la famille. |
@@ -166,7 +171,7 @@ La Traversée doit se **vivre** sur téléphone, pas seulement « rentrer ».
 
 **Simplifier :** pas un Coffre *et* un Scanner ailleurs. Une surface = **le Coffre**. Le Scanner est **une porte** dedans.
 
-Le ciel **ne reçoit pas** les fichiers. Il s’allume **parce que** quelque chose est dans le Coffre (et que l’orga compose). Sinon on recrée le trou Ciel ≠ Coffre avec un troisième tiroir.
+- 3 sept 2026 — **Figé :** un souvenir dans le Coffre **n’allume pas** une étoile. Les étoiles = **les gens** qu’on invite (greffe). Le Coffre = tiroir.
 
 | Porte | Qui | Où ça atterrit |
 |--------|-----|----------------|
@@ -174,62 +179,226 @@ Le ciel **ne reçoit pas** les fichiers. Il s’allume **parce que** quelque cho
 | **Scanner compagnon** (QR, téléphone, papier, pas d’app) | Orga ou salon | **Le même Coffre** |
 | Lien invité | Famille, amis | **Le même Coffre** |
 
-Inviter n’est **pas** un second Coffre : c’est le cercle (J3 + étape 2). Les souvenirs des proches **entrent** ici.
+Inviter n’est **pas** un second Coffre : c’est le cercle (J3 + Beat 6). Les **souvenirs** des proches **entrent** ici. Leur **présence** (étoile) se greffe au ciel — pas le fichier.
 
 Copy déjà au catalogue : *Les photos arrivent dans le coffre* (`tributeWizard.scannerHint`).
 
-Visuel du tiroir, porte double, premier dépôt : **prochaine écriture détaillée** (beats ci-dessous).
+---
+
+## 5. Beats 6 → 12
+
+Rail métier inchangé : wizard **7** étapes. Ici = mise en scène.
+
+### Beat 6 — Inviter (cercle)
+
+| | |
+|--|--|
+| **Quand** | CTA **Inviter** depuis J3, ou étape 2. Skip OK. |
+| **On voit** | Overlay léger (ciel encore là en Traversée ; formulaire en Atelier). Pas un 2ᵉ Coffre. |
+| **Copy** | *Ils reçoivent un lien. Leurs souvenirs entrent dans le Coffre — vous composez le film et le ciel ensemble.* |
+| **Geste** | Envoyer / copier le lien · **Plus tard** sans culpabilité |
+| **Étoile réelle** | Le proche **ouvre / accepte** le lien → une étoile se **greffe** au signe. Pas l’envoi seul, pas le dépôt d’une photo. Autant d’étoiles que de présences qui ont rejoint. |
+| **Jamais** | Argent, forfait, Lueurs, « ils peuvent payer » |
+| **Trou** | `circle.guestJourney` **P0** |
+| **Placeholder** | Copy + champ lien. Filaments craft = plus tard. |
+
+Si l’orga skip : on le dit quand même en une ligne, sinon le ciel qui ne bouge pas a l’air cassé.
 
 ---
 
-## 5. Suite — pas encore storyboardée beat par beat
+### Beat 7 — Le Coffre (tiroir)
 
-| Beat | Intention (une ligne) | Trou GAPS |
-|------|----------------------|-----------|
-| **Inviter (étape 2)** | Overlay léger sur le ciel (ou Atelier). Skip OK. | Après 1ʳᵉ invite ou skip : *Ils reçoivent un lien…* (`circle.guestJourney`) |
-| **Coffre (étape 3)** | Tiroir précieux. *Ici se rangent les souvenirs. Plus tard, vous en ferez un film.* Dedans : déposer **et** Scanner. Porte double : inviter encore **ou** déposer. | `vault.filmBridge` **P0** |
-| **Scanner compagnon** | **Dans** le Coffre, pas une étape à part. QR → téléphone → photos papier → **ce** Coffre. | [`SCANNER_COMPANION.md`](../SCANNER_COMPANION.md) |
-| **Premier dépôt** | **Là**, une vraie étoile se greffe (pas l’exemple J3). Skip « Plus tard » = pas de culpabilisation. | `media.firstDeposit` |
-| **Studio 4–6** | Plus de ciel immersif. *Maintenant, vous donnez une forme au film.* | `studio.filmBridge` |
-| **Envoi** | *Le film part, le ciel reste.* | `parcours.filmLeavesSkyStays` |
-| **Fil haut (P2)** | Nœuds Essentiels · Cercle · Coffre · Film — lisibles 1ʳᵉ Traversée, cliquables surtout en Atelier. | GAPS P2 |
-
-**Greffe réelle des invités :** autant de nœuds que de proches qui partagent — ils se **greffent** à la constellation du signe. L’exemple J3 n’est que la leçon.
+| | |
+|--|--|
+| **Quand** | Étape 3 — après Inviter ou skip |
+| **On voit** | Un **tiroir** qui s’ouvre (CSS OK). Dedans : grille des souvenirs + **Scanner compagnon** (QR, même pièce). |
+| **Copy** | *Ici se rangent les souvenirs. Plus tard, vous en ferez un film.* |
+| **Gestes** | Déposer (fichiers) · Scanner (téléphone, papier, pas d’app) · souvenirs d’invités qui arrivent ici · **Plus tard** obligatoire et bienveillant |
+| **Pas** | Une étoile qui naît à chaque dépôt. Le tiroir se **remplit**, le ciel ne change pas. |
+| **Porte double** | Inviter encore (nourrir le cercle) **ou** rester dans le tiroir |
+| **Trou** | `vault.filmBridge` **P0** |
+| **Scanner** | [`SCANNER_COMPANION.md`](../SCANNER_COMPANION.md) · *Les photos arrivent dans le coffre* |
+| **Mobile** | Posture **Capture** (canon mobile) — le téléphone *est* le Scanner, pas un wizard compressé |
 
 ---
 
-## 6. Checklist trous — rien n’est oublié
+### Beat 8 — Les chansons (pont vers le film)
 
-À recocher quand le beat a un visuel dans **ce** doc.
+*Avant le studio. Sans ça, l’étape 5 tombe du ciel.*
+
+| | |
+|--|--|
+| **Quand** | Étape 4 — **après** le Coffre, **avant** le Livre Ouvert |
+| **Ordre figé** | Musique → montage. La capacité d’un chapitre dépend de la **durée** de la chanson. [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md) |
+| **On comprend** | On va **faire un film**. Les images viennent du Coffre. Chaque **chanson** = un **chapitre**. La 1ʳᵉ chanson accueille **X** souvenirs (calcul pacing déjà là). |
+| **On voit** | Choix de chansons · chapitres qui s’ouvrent · bandeau *X médias dans ce chapitre* — pas un tableur |
+| **Copy (à caler FR+EN)** | Sens : *Vous composez un film avec les souvenirs du Coffre et les chansons que vous choisissez.* |
+| **Trou** | Bandeau éducatif étape 4 existe en UI · **manque** d’être un beat parcours (`studio.filmBridge` commence ici, pas seulement à l’entrée 5) |
+| **Plus tard Coffre** | On peut n’avoir presque rien dans le tiroir. Les chapitres existent quand même ; on complète plus tard. |
+
+---
+
+### Beat 9 — Le studio (Livre Ouvert)
+
+| | |
+|--|--|
+| **Quand** | Étape 5 — **après** les chansons |
+| **Ciel** | Plus d’immersif. Focus récit. |
+| **Copy** | *Maintenant, vous donnez une forme au film — à partir de ce que le Coffre contient.* |
+| **Trois portes** (même écran d’entrée) | 1. **Composition magique** — Odyssey range les souvenirs. 2. **Je compose**. 3. **Inviter un co-créateur** — visible **dès l’entrée**, plus petit que 1 et 2. Paiement = titulaire. [`WIZARD_EDITOR_COLLAB.md`](../WIZARD_EDITOR_COLLAB.md) |
+| **Onboarding** | Gate magie / manuel déjà spec ([`STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md) § deux entrées). Le co-créateur = 3ᵉ porte, pas un 2ᵉ Coffre. |
+| **Trou** | `studio.filmBridge` **P1** · collab livré côté contrat, **à raconter** dans le parcours |
+| **Soft Cap** | Silence dans le **Coffre**. Conversation forfait / extras **après** le film (magie ou aperçu), pas au tiroir. [`NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) |
+
+**Aperçu (étape 6, figé) :** pas un monde nouveau. Une ligne : *Regardez le film.* Puis extras / envoi. Filigrane selon canal.
+
+---
+
+### Beat 10 — Le cercle peut porter l’hommage
+
+*Socio-financement. Ici, pas à J3, pas dans le Coffre, pas sur Inviter-souvenirs.*
+
+| | |
+|--|--|
+| **Quand** | Après qu’iels ont compris le **film** (sortie studio / avant ou dans l’envoi) |
+| **Ton** | Une phrase famille. Pas un pitch. Pas RevShare. Pas « payez ». |
+| **Copy (sens, clés à créer)** | *Le cercle peut aussi porter l’hommage — une Lueur, un Livre, un film plus vaste. Vous pouvez n’avoir rien à régler.* |
+| **Ce que c’est** | Les proches mettent de l’argent **sur l’hommage** (crédit produit : forfait plus haut, Lueurs, Livre). Jamais un virement dans la poche de l’orga. À l’envoi, le reste peut être **0 $**. |
+| **Lien invité** | **Souvenir d’abord.** *Allumer une Lueur* (porter l’hommage) = **2ᵉ porte**, seulement si le Fonds est allumé. V1 sans flag = souvenir seul. |
+| **Jamais** | % salon, RevShare, « caisse », argent sur J3 |
+| **Mécanique** | [`IMPLEMENTATION_CASCADE_VFINAL.md`](../IMPLEMENTATION_CASCADE_VFINAL.md) · flag `viral_loop_enabled` — le beat existe même si le flag est off (copy + stub) |
+| **Canal salon** | *C’est un cadeau du salon…* = `channel.souvenirGift` — **pas** Chemin 1 B2C pur. Ne pas mélanger. |
+
+---
+
+### Beat 11 — Les extras (le panier se recolle)
+
+*Ce n’est pas une 8ᵉ étape wizard. C’est l’étape 7 : Extensions + maths. On a pu **proposer** des extras en chemin ; ici on **arrête les comptes**.*
+
+| | |
+|--|--|
+| **Quand** | Après l’aperçu, **avant** (ou **avec**) l’envoi — `CheckoutStep` · pas un 8ᵉ step |
+| **Principe** | Proposé **là où ça a du sens** (Scanner → retouche IA, chanson officielle → licence, etc.). **Payé / inclus une seule fois.** Le panier est la vérité. |
+| **On voit** | Liste claire : déjà dans le forfait (*Déjà inclus*) · déjà choisi en chemin (ex. retouche au Scanner) · encore optionnel (Livre, Jeton, Voix, Coffre 50 ans…). |
+| **Exemple Scanner** | Au scan : aperçu Avant/Après + *Ajouter la restauration IA*. Ça **coche** `aiRetouch` (ou montre qu’Éternité l’inclut). Aux extras : la ligne est là, **pas** une 2ᵉ proposition surprise. Grille : [`FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) §2 — **ne pas recopier les prix ici**. |
+| **Autres déclencheurs en chemin** | Chanson catalogue depuis Souvenir → licence **ou** forfait plus haut. Soft Cap après la magie → Héritage. Fonds / Lueurs / Livre → même panier. |
+| **Maths** | Forfait voulu + extras − déjà inclus − crédit du cercle (Fonds) = **reste**. Peut être **0 $**. Pas de double facturation. |
+| **Copy (sens)** | *Voici ce que contient l’hommage.* Pas « checkout ». Pas jetons. |
+| **Trou** | Étape 7 existe · **manque** le récit « on recolle ce qu’on a déjà proposé » |
+
+---
+
+### Beat 12 — Le film est là (et on peut le télécharger)
+
+*Pas un adieu. Le film **prend place sous le Hero**. On peut aussi **le télécharger**. Il **reste** dans le ciel **selon le forfait / extra**.*
+
+| | |
+|--|--|
+| **Quand** | Étape 7, après les extras |
+| **Intention** | 1. **Télécharger** le film (fichier à soi). 2. Il **reste** sous l’étoile : on y revient, la descendance aussi, **tant que** la durée du forfait / extra le permet. Ce n’est pas « ça part et le ciel est vide ». |
+| **Copy (sens, clés FR+EN au code)** | *Vous pouvez le télécharger. Il reste dans le ciel, sous l’étoile, selon votre hommage.* **Interdit :** *Le film part, le ciel reste.* (`parcours.filmLeavesSkyStays` à remplacer, ne plus l’utiliser.) |
+| **Durée dans le ciel** | Selon forfait / extra. Aujourd’hui : Éternité + Coffre-fort ≈ **50 ans** ([`FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) §2). **À confirmer et créer :** **25 / 50 / 100 ans** (et/ou X par année). |
+| **Chiffre** | Reste à payer, y compris **0 $**, discret. Rider même à 0 $. |
+| **Après** | Hub : Hero + constellation + **le film sous l’étoile** (lire / revoir). Téléchargement = extra geste, pas la fin de l’histoire. |
+| **Trou** | Copy + durée paliers · le téléchargement existe déjà côté livrable — le **récit** manquait |
+
+---
+
+## 6. Checklist trous
 
 | Trou | Dans ce storyboard ? |
 |------|----------------------|
-| Atelier parallèle + bascule | ✅ §1 |
-| Choix **sous Continuer** étape 1 (pas au login) | ✅ §1 + Beat 3 |
-| Chemin B → Atelier par défaut | ✅ §1 |
-| Éclipse 1× · placeholder | ✅ Beat 0 |
-| Une présence / toucher | ✅ Beat 1 |
-| Panneau depuis l’étoile · fermer → ciel | ✅ Beat 2 |
-| Rituel nom + Hero + constellation | ✅ Beat 4 |
-| J3 Inviter + Ciel ≠ Coffre + permission | ✅ Beat 5 |
-| Coffre = une pièce · Scanner = une porte | ✅ §4 (visuel tiroir ⏳) |
-| Mobile 2 mises en page | ✅ §2 |
-| `circle.guestJourney` | ⏳ suite Inviter |
-| `vault.filmBridge` visuel tiroir | ⏳ prochaine écriture |
-| `media.firstDeposit` | ⏳ après Coffre |
-| Studio / envoi / fil P2 | ⏳ plus loin |
-| Salon `channel.souvenirGift` | Hors Chemin 1 B2C — ne pas mélanger |
+| Atelier + choix sous Continuer | ✅ §1 · Beat 3 |
+| Éclipse → rituel → J3 | ✅ Beats 0–5 |
+| Dépôt ≠ étoile · étoiles = gens | ✅ §4 · Beat 5–7 |
+| Coffre = une pièce · Scanner = porte | ✅ §4 · Beat 7 |
+| `circle.guestJourney` | ✅ Beat 6 |
+| `vault.filmBridge` | ✅ Beat 7 |
+| Pont film / chansons / X médias | ✅ Beat 8 |
+| Studio magie / je compose / co-créateur | ✅ Beat 9 (co-créateur dès l’entrée, plus petit) |
+| Aperçu | ✅ Beat 9 (court) |
+| Soft Cap après le film, pas le tiroir | ✅ Beat 9 |
+| Ciel = gens · film = Coffre | ✅ Beat 5 + §8 |
+| Cercle porte l’hommage · 0 $ | ✅ Beat 10 |
+| Lueurs sur lien invité | ✅ si Fonds allumé seulement |
+| **Extras / panier qui recolle** | ✅ Beat 11 |
+| **Télécharger + rester selon forfait** | ✅ Beat 12 |
+| Durée 25 / 50 / 100 ans | ⏳ **à confirmer** (grille) — pas inventé ici |
+| Horizon famille / graphe | ✅ §9 — **pas** Chemin 1 |
+| Fil P2 | ✅ Beat 12 |
+| `media.firstDeposit` (étoile au dépôt) | ❌ **retiré** |
 
 ---
 
 ## 7. Une phrase (voulue)
 
-**Première connexion → éclipse (ou stub) → une présence → toucher l’étoile → le wizard naît de l’étoile → Continuer *(ou Composer sans le ciel)* → le ciel s’allume (nom, Hero, signe) → une branche enseigne qu’inviter fait grandir le ciel et remplit **le** Coffre (Scanner = une porte) pour le film → le ciel reste.**
+**… → extras → télécharger **et** le film **reste sous le Hero** (durée = forfait). Ciel de famille / graphe = plus tard.**
 
 ---
 
-## 8. Hors scope de cette page
+## 8. Décisions figées (3 sept 2026)
 
-- Plan technique (fichiers, Canvas, gel) — **après** ce storyboard.
-- Prix, forfaits, RevShare — jamais dans les beats famille.
-- Modifier [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) ligne à ligne — seulement quand ce storyboard est assez complet pour le remplacer ou le réécrire.
+Plus de questions ouvertes. Le plan technique part de là.
+
+| # | Décision |
+|---|---------|
+| **Ciel vs film** | Ciel = **le cercle** (étoiles-personnes). Film = **souvenirs** du Coffre. |
+| **Étoile réelle** | À l’**acceptation** du lien. Pas l’envoi. Pas le dépôt. |
+| **J3 Continuer** | → **Inviter**. Coffre après skip ou après l’invite. |
+| **Lueurs sur le lien** | Souvenir d’abord. Lueur = 2ᵉ porte **si** Fonds allumé. |
+| **Co-créateur** | Dès l’entrée studio, **plus petit** que magie / je compose. |
+| **Aperçu** | Beat court, pas un monde. |
+| **Fil P2** | Lisible 1ʳᵉ Traversée. Cliquable surtout Atelier. |
+| **Soft Cap / 50 photos** | Silence dans le Coffre. Conversation **après** le film. |
+| **Extras** | Proposés **en contexte**. **Recollés** à l’étape extras. Une ligne, pas deux factures. *Déjà inclus* si le forfait les contient. |
+| **Télécharger vs ciel** | On **peut** télécharger. Le film **reste** sous le Hero **selon** le forfait / extra. Jamais *le film part*. |
+| **Prix** | Jamais recopiés ici — [`FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) §2. |
+
+---
+
+## 9. Horizon — pas Chemin 1 (pour ne pas l’oublier)
+
+Le Chemin 1 **termine** sur **un** ciel, **une** personne, **un** film sous le Hero. Ce qui suit est le rêve — **d’autres phases**. Ne pas le coder maintenant. Ne pas le promettre à l’écran V1.
+
+| Phase | Intention | Déjà dans les docs ? |
+|-------|-----------|----------------------|
+| **Sanctuaire dans le temps** | Revenir au film sous l’étoile, petits-enfants compris. Durée = forfait / extra (50 ans actuel · **25 / 50 / 100** à créer). | Écrin / Coffre-fort [`SANCTUARY_STRATEGY.md`](../SANCTUARY_STRATEGY.md) · `digitalVault` |
+| **Ciel de famille** | Plusieurs constellations (plusieurs êtres) dans **un** univers. On se **promène** comme un arbre généalogique dans l’espace — sanctuaire **média** des films des siens. Jumelage des ciels. | Vision, pas spec Chemin 1 |
+| **Graphe** | Scanner / lire **tous** les médias reçus → graphe (qui, liens, visages…). | [`VISION_PHASE_2.md`](../VISION_PHASE_2.md) § graphe / LYRA — **plus tard** |
+
+**Pourquoi plus tard :** un ciel de famille sans un premier ciel **juste** (une personne, un film, on y revient) serait un univers vide. Le graphe sans Coffre rempli n’a rien à lire.
+
+**Chemin 1 prépare déjà ça :** étoiles = **gens** (pas photos) · Coffre = **tous** les souvenirs · film **sous** le Hero = l’ancre où la descendance revient. Le jumelage et le graphe s’accrocheront là.
+
+---
+
+## 10. Suite — storyboard invité (prochain écrit)
+
+**Ne pas inventer.** La nièce a déjà une surface produit, pas seulement un lien mort.
+
+| Déjà en code | Rôle |
+|--------------|------|
+| Route [`/[lang]/contribute/[token]`](../../app/[lang]/contribute/[token]/page.tsx) | Sanctuaire **public**, sans auth. DA : V1-16 [`../DA_SCREENS.md`](../DA_SCREENS.md). |
+| [`SanctuaryLanding`](../../src/components/contribute/SanctuaryLanding.tsx) | Accueil ciel + tunnel : **dépôt d’abord**, puis catalogue empreintes. |
+| [`SanctuaryDepositForm`](../../src/components/contribute/SanctuaryDepositForm.tsx) | Formulaire vu en démo : nom, courriel, **photo** ou **mot**, consentement, « Déposer dans le Sanctuaire ». |
+| Voix / vidéo | [`GuestVoiceRecorder`](../../src/components/contribute/GuestVoiceRecorder.tsx) · [`GuestVideoRecorder`](../../src/components/contribute/GuestVideoRecorder.tsx). |
+| Après dépôt | Accusé + **packs / Lueurs** ([`ImprintCatalog`](../../src/components/contribute/ImprintCatalog.tsx)) — Quiet Luxury : gratuit d’abord, empreintes ensuite. |
+
+Craft `/contribute/test-*` = lab interne. **Pas** le parcours invité.
+
+**Ce que le storyboard invité doit trancher** (page à part, pas ce fichier) :
+
+- Ce que l’invité **voit et ressent** beat par beat (ouvrir le lien → accepter → déposer → éventuellement Lueur).
+- Écart vs Chemin 1 déjà figé ici : étoile à l’**acceptation** (pas au dépôt) · souvenir **d’abord** · Lueur seulement si boucle virale on · fichiers → **Coffre** orga.
+- Réaligner copy / tunnel actuel (dépôt → packs) sans jeter le formulaire.
+
+Vision Sanctuaire orga (ciel, wizard) : [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md) — **ne pas** confondre avec le rail invité.
+
+---
+
+## 11. Hors scope de cette page
+
+- Plan technique Chemin 1 — **ensuite** (après ou en parallèle du storyboard invité, pas à la place).
+- Grille 25 / 50 / 100 ans — **créer** dans FREEMIUM / extras, pas ici.
+- Ciel de famille · graphe médias — §9, pas le rail 0→12.
+- Storyboard invité — **§10**, fichier suivant.

@@ -4,11 +4,13 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — Prochain **écrit** = storyboard **invité** (surface déjà `/contribute/[token]`, pas from scratch). Orga : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) §10.
 - 3 sept 2026 — Storyboard **voulu** (beats 0→J3) : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) — les trous P0 y sont accrochés, Coffre + Scanner = suite.
 - 2 sept 2026 — **Suite nav figée** : P1 Atelier · P2 fil constellation (spec, pas encore code).
 - 2 sept 2026 — **P0** : retour Essentiels (`reopenEssentials`) · déconnexion sous langue.
 - 2 sept 2026 — **T2-copy** : clés J3 A+B+C + born + CTAs (FR/EN · catalogue).
-- 2 sept 2026 — **T2-lang** : LocaleSwitcher fixed studio — toujours visible (hub + rite), hors chrome masqué.
+
+**Prochain écrit (pas T2 code) :** storyboard **invité** — nièce / lien. Code déjà là : `app/[lang]/contribute/[token]` · `SanctuaryLanding` · `SanctuaryDepositForm` (photo / mot) · voix / vidéo · packs après dépôt. DA V1-16. Ne pas mélanger avec l’orga Chemin 1.
 
 **Liens :**
 - Storyboard voulu : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md)
