@@ -396,6 +396,25 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
     showMonolith ||
     lueurSettling ||
     load.status === "loading";
+  const lockPageScroll =
+    skyFirst ||
+    grafting ||
+    skyOpen ||
+    lueurSettling ||
+    load.status === "loading";
+
+  useEffect(() => {
+    if (!lockPageScroll) return;
+    const root = document.documentElement;
+    const prevRoot = root.style.overflow;
+    const prevBody = document.body.style.overflow;
+    root.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      root.style.overflow = prevRoot;
+      document.body.style.overflow = prevBody;
+    };
+  }, [lockPageScroll]);
 
   const localeSwitcher = (
     <LocaleSwitcher
@@ -428,7 +447,13 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
   }, [guestHeroName]);
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100 antialiased">
+    <main
+      className={`relative bg-[#020202] text-zinc-100 antialiased ${
+        lockPageScroll
+          ? "h-dvh overflow-hidden overscroll-none"
+          : "min-h-screen overflow-x-hidden"
+      }`}
+    >
       <SanctuaryUniverse
         mode={universeImmersive ? "immersive" : "background"}
         className={
@@ -464,14 +489,16 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
       ) : null}
 
       {skyFirst ? (
-        <div className="fixed inset-0 z-[46] flex flex-col">
+        <div className="pointer-events-none fixed inset-0 z-[46] flex flex-col">
           <div className="flex justify-end px-4 pt-4 md:px-8 md:pt-8">
-            <LocaleSwitcher
-              lang={locale}
-              languageLabel={t.languageLabel}
-              langOptionFr={t.langOptionFr}
-              langOptionEn={t.langOptionEn}
-            />
+            <div className="pointer-events-auto">
+              <LocaleSwitcher
+                lang={locale}
+                languageLabel={t.languageLabel}
+                langOptionFr={t.langOptionFr}
+                langOptionEn={t.langOptionEn}
+              />
+            </div>
           </div>
           <div className="flex-1" />
           <div className="flex flex-col items-center gap-6 px-6 pb-16 text-center">
@@ -486,7 +513,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
             <button
               type="button"
               onClick={() => setPhase("deposit")}
-              className={`parcours-monolith-continue ${connexionSubmitButtonClass} max-w-xs touch-manipulation`}
+              className={`pointer-events-auto parcours-monolith-continue ${connexionSubmitButtonClass} max-w-xs touch-manipulation`}
             >
               {t.skyCta}
             </button>
@@ -498,13 +525,13 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
       ) : null}
 
       {grafting ? (
-        <div className="fixed inset-0 z-[46] flex flex-col">
+        <div className="pointer-events-none fixed inset-0 z-[46] flex flex-col">
           <div
             className="pointer-events-none absolute inset-x-0 bottom-0 h-[42vh] bg-gradient-to-t from-black/70 via-black/25 to-transparent"
             aria-hidden
           />
           <div className="flex justify-end px-4 pt-4 md:px-8 md:pt-8">
-            {localeSwitcher}
+            <div className="pointer-events-auto">{localeSwitcher}</div>
           </div>
           <div className="flex-1" />
           <div className="relative flex flex-col items-center gap-5 px-6 pb-16 text-center">
@@ -517,7 +544,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
             <button
               type="button"
               onClick={() => setPhase("bridge")}
-              className={`parcours-monolith-continue ${connexionSubmitButtonClass} max-w-xs touch-manipulation`}
+              className={`pointer-events-auto parcours-monolith-continue ${connexionSubmitButtonClass} max-w-xs touch-manipulation`}
             >
               {t.graftCta}
             </button>
@@ -684,10 +711,9 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/25 to-transparent" />
       </div>
 
+      {!hideLegacySheet ? (
       <div
-        className={`relative z-10 mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-10 pt-12 md:px-8 md:pt-16 ${
-          hideLegacySheet ? "pointer-events-none invisible" : ""
-        }`}
+        className="relative z-10 mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-10 pt-12 md:px-8 md:pt-16"
       >
         <header className="relative mb-10">
           <div className="absolute right-0 top-0 z-10 flex items-center gap-3">
@@ -747,6 +773,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
           </p>
         </footer>
       </div>
+      ) : null}
     </main>
   );
 }
