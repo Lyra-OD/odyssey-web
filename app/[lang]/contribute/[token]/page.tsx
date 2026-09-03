@@ -39,6 +39,10 @@ export default async function ContributeSanctuaryPage({ params }: PageProps) {
   const token = typeof rawToken === "string" ? rawToken.trim() : "";
   const dictionary = await getDictionary(lang);
   const copy = dictionary.sanctuary;
+  const [dictFr, dictEn] = await Promise.all([
+    lang === "fr" ? Promise.resolve(dictionary) : getDictionary("fr"),
+    lang === "en" ? Promise.resolve(dictionary) : getDictionary("en"),
+  ]);
 
   if (!token) {
     return (
@@ -61,5 +65,12 @@ export default async function ContributeSanctuaryPage({ params }: PageProps) {
     );
   }
 
-  return <SanctuaryLanding token={token} locale={lang} copy={copy} />;
+  return (
+    <SanctuaryLanding
+      token={token}
+      locale={lang}
+      copyFr={dictFr.sanctuary}
+      copyEn={dictEn.sanctuary}
+    />
+  );
 }

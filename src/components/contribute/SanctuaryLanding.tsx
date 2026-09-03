@@ -74,7 +74,8 @@ export type SanctuaryCopy = AppDictionary["sanctuary"];
 export type SanctuaryLandingProps = {
   token: string;
   locale: Locale;
-  copy: SanctuaryCopy;
+  copyFr: SanctuaryCopy;
+  copyEn: SanctuaryCopy;
 };
 
 type TributePayload = {
@@ -180,7 +181,12 @@ function SkyPreviewExperience({ locale }: { locale: Locale }) {
 /**
  * Shell client du Sanctuaire — dépôt (multi photos) → catalogue → checkout.
  */
-export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingProps) {
+export function SanctuaryLanding({
+  token,
+  locale,
+  copyFr,
+  copyEn,
+}: SanctuaryLandingProps) {
   const [load, setLoad] = useState<LoadState>({ status: "loading" });
   const [deposit, setDeposit] = useState<SanctuaryDepositResult | null>(null);
   const [phase, setPhase] = useState<Phase>("sky");
@@ -202,6 +208,12 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
   >(null);
   const [lueurSettling, setLueurSettling] = useState(false);
   const [skyOpen, setSkyOpen] = useState(false);
+  const [uiLocale, setUiLocale] = useState(locale);
+  const t = uiLocale === "en" ? copyEn : copyFr;
+
+  useEffect(() => {
+    setUiLocale(locale);
+  }, [locale]);
 
   const handleSelectPack = (key: string) => {
     setSelectedPackKey(key);
@@ -337,7 +349,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
         if (!res.ok || !body.ok || !body.tribute) {
           setLoad({
             status: "error",
-            message: t.errorBody,
+            message: (locale === "en" ? copyEn : copyFr).errorBody,
           });
           return;
         }
@@ -364,7 +376,10 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
         });
       } catch {
         if (!cancelled) {
-          setLoad({ status: "error", message: t.errorBody });
+          setLoad({
+            status: "error",
+            message: (locale === "en" ? copyEn : copyFr).errorBody,
+          });
         }
       }
     };
@@ -372,7 +387,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
     return () => {
       cancelled = true;
     };
-  }, [token, locale, t.errorBody]);
+  }, [token, locale, copyFr, copyEn]);
 
   if (isSanctuarySkyPreview(token)) {
     return (
@@ -418,15 +433,18 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
 
   const localeSwitcher = (
     <LocaleSwitcher
-      lang={locale}
+      lang={uiLocale}
       languageLabel={t.languageLabel}
       langOptionFr={t.langOptionFr}
       langOptionEn={t.langOptionEn}
+      onSwitch={setUiLocale}
     />
   );
 
   const guestHeroName =
-    load.status === "ready" ? tributeSkyName(load.tribute, locale) : undefined;
+    load.status === "ready"
+      ? tributeSkyName(load.tribute, uiLocale)
+      : undefined;
   const guestCraftReveal = useMemo((): ConstellationRevealCraft => {
     GUEST_KEEP_REVEAL_REF.current = WIZARD_BIRTH_REVEAL_END;
     return {
@@ -471,7 +489,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
         onClose={
           skyOpen && !skyFirst && !grafting ? () => setSkyOpen(false) : undefined
         }
-        locale={locale}
+        locale={uiLocale}
       />
 
       <GuestStarPills
@@ -494,10 +512,11 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
           <div className="flex justify-end px-4 pt-4 md:px-8 md:pt-8">
             <div className="pointer-events-auto">
               <LocaleSwitcher
-                lang={locale}
+                lang={uiLocale}
                 languageLabel={t.languageLabel}
                 langOptionFr={t.langOptionFr}
                 langOptionEn={t.langOptionEn}
+                onSwitch={setUiLocale}
               />
             </div>
           </div>
@@ -508,7 +527,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
             </p>
             <h1 className="font-editorial text-[1.85rem] font-medium tracking-tight text-zinc-50 md:text-4xl">
               {fill(t.skyOf, {
-                name: tributeSkyName(load.tribute, locale),
+                name: tributeSkyName(load.tribute, uiLocale),
               })}
             </h1>
             <button
@@ -578,7 +597,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
             <div className="text-center">
               <h1 className="font-editorial text-[1.65rem] font-medium leading-snug tracking-tight text-zinc-50 md:text-3xl">
                 {fill(t.welcome, {
-                  name: tributeDisplayName(load.tribute, locale),
+                  name: tributeDisplayName(load.tribute, uiLocale),
                 })}
               </h1>
               <p className="mx-auto mt-4 max-w-md text-sm font-light leading-relaxed text-white/55 md:text-base">
@@ -601,7 +620,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
             </div>
             <SanctuaryDepositForm
               token={token}
-              locale={locale}
+              locale={uiLocale}
               copy={t.deposit}
               remainingPhotoSlots={remainingPhotoSlots}
               initialName={deposit?.contributorName ?? ""}
@@ -627,7 +646,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
               </p>
             ) : null}
             <ImprintCatalog
-              locale={locale}
+              locale={uiLocale}
               packs={load.packs}
               selectedKey={selectedPackKey}
               onSelect={handleSelectPack}
@@ -638,7 +657,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
               voiceSlot={
                 <GuestVoiceRecorder
                   token={token}
-                  locale={locale}
+                  locale={uiLocale}
                   contributorName={deposit?.contributorName ?? ""}
                   contributorEmail={deposit?.contributorEmail}
                   mediaId={voiceMediaId}
@@ -649,7 +668,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
               videoSlot={
                 <GuestVideoRecorder
                   token={token}
-                  locale={locale}
+                  locale={uiLocale}
                   contributorName={deposit?.contributorName ?? ""}
                   contributorEmail={deposit?.contributorEmail}
                   mediaId={videoMediaId}
@@ -657,10 +676,10 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
                   embedded
                 />
               }
-              lueurSlot={<SanctuaryLueurPanel locale={locale} />}
+              lueurSlot={<SanctuaryLueurPanel locale={uiLocale} />}
               patronSlot={
                 <PatronAmountField
-                  locale={locale}
+                  locale={uiLocale}
                   open
                   embedded
                   amountCents={patronAmountCents}
@@ -673,7 +692,7 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
             />
             <ImprintCheckoutCta
               token={token}
-              locale={locale}
+              locale={uiLocale}
               productKey={selectedPackKey}
               patronAmountCents={patronAmountCents}
               patronMinCents={patronPack?.amountMinCents}
@@ -726,10 +745,11 @@ export function SanctuaryLanding({ token, locale, copy: t }: SanctuaryLandingPro
               {t.seeSky}
             </button>
             <LocaleSwitcher
-              lang={locale}
+              lang={uiLocale}
               languageLabel={t.languageLabel}
               langOptionFr={t.langOptionFr}
               langOptionEn={t.langOptionEn}
+              onSwitch={setUiLocale}
             />
           </div>
           <div className="mx-auto flex max-w-[16rem] scale-[0.82] origin-top justify-center sm:max-w-[18rem] sm:scale-[0.88]">

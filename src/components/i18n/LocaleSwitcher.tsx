@@ -15,6 +15,11 @@ export type LocaleSwitcherLabels = {
 type LocaleSwitcherProps = LocaleSwitcherLabels & {
   lang: Locale;
   className?: string;
+  /**
+   * Si fourni : change la langue sans `router.push` (le Canvas reste monté).
+   * L’URL est mise à jour via `history.replaceState`.
+   */
+  onSwitch?: (next: Locale) => void;
 };
 
 const inactiveLocaleClass =
@@ -50,6 +55,7 @@ export function LocaleSwitcher({
   langOptionFr,
   langOptionEn,
   className = "",
+  onSwitch,
 }: LocaleSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -59,9 +65,18 @@ export function LocaleSwitcher({
     const search =
       typeof window !== "undefined" ? window.location.search : "";
     const hash = typeof window !== "undefined" ? window.location.hash : "";
-    router.push(
-      buildLocaleSwitchedHref(pathname ?? "/", nextLang, search, hash),
+    const href = buildLocaleSwitchedHref(
+      pathname ?? "/",
+      nextLang,
+      search,
+      hash,
     );
+    if (onSwitch) {
+      onSwitch(nextLang);
+      window.history.replaceState(null, "", href);
+      return;
+    }
+    router.push(href);
   };
 
   return (
