@@ -1,14 +1,14 @@
 # Parcours UX — Chemin 1 : La Traversée d'Odyssey
 
 **Type :** canon · **Vérité pour :** premier chemin UX (organisateur · première visite) — beats, surfaces, transitions, placeholders craft.  
-**Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 4 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 4 sept 2026 — **T1-reward horloge** : Continuer wizard **10 s** remappées (~6,5 s nom+nuage · ~1,5 s Hero · ~2 s traits). Lab `/test-lueur` linéaire 14 s inchangé.
 - 3 sept 2026 — Expérience **voulue** (storyboard, avant plan technique) : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md). Ce canon reste la spec **impl** jusqu’au réalignement.
 - 2 sept 2026 — **T1-invite-off** : l'invite hub (`hubPrompt` / `hubTapHint`) est verrouillée sur `hubSkyCamera` — plus aucun texte du hub par-dessus la constellation en reward / postReveal. Copy Option C : « Une présence. » / « Toucher l'étoile ».
 - 2 sept 2026 — **T1-perf-runtime** : GPU `high-performance` (le ciel tournait en `low-power` depuis le 29 juil.) · gel capturé en JPEG (le PNG bloquait le thread) · **plus de remount WebGL** au Continuer (reset ciblé sur la sous-scène Constellation) · `revealT` hors re-render React pendant le play.
 - 2 sept 2026 — **T1-hotfix** : hubHeroOnly (zéro traits Léo avant Continuer).
-- 2 sept 2026 — **T1-reward** : Continuer 8 s · 60 fps + Hero full.
 
 **Statut :** **T1-perf-runtime** ✅ · tester **uniquement** `http://localhost:3000` · suite nav P1/P2 · P0 ✅.
 

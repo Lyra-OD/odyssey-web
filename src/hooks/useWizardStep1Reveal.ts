@@ -7,6 +7,7 @@ import {
   firstNameToBirthRevealT,
   WIZARD_REWARD_DWELL_MS,
   WIZARD_REWARD_REVEAL_MS,
+  mapWizardRewardWallToRevealT,
 } from "@/src/lib/contribute/wizardBirthReveal";
 
 export type WizardStep1RevealPhase = "typing" | "reward" | "done";
@@ -45,22 +46,22 @@ export function useWizardStep1Reveal(
     }
     return new Promise((resolve) => {
       setPhase("reward");
-      // Même play que le lab craft : timeline complète 0→1 (pas depuis idle 0.56).
+      // Timeline complète 0→1 (pas depuis idle 0.56). Horloge wizard remappée.
       revealTRef.current = 0;
       setRevealT(0);
       const t0 = performance.now();
 
       const tick = (now: number) => {
-        // Linéaire comme le Play craft lab — pas d’ease qui comprime les traits D–F.
-        const u = Math.min(1, (now - t0) / WIZARD_REWARD_REVEAL_MS);
-        revealTRef.current = u;
+        const wall = Math.min(1, (now - t0) / WIZARD_REWARD_REVEAL_MS);
+        const reveal = mapWizardRewardWallToRevealT(wall);
+        revealTRef.current = reveal;
         /**
          * Aucun setState pendant le play : le Canvas lit `revealTRef` à chaque
-         * frame et resynchronise son propre state. Publier `u` ici re-rendait
-         * tout le monolithe wizard 10×/s et recréait l'objet craftReveal, donc
-         * toute la scène 3D, pendant l'animation.
+         * frame et resynchronise son propre state. Publier le reveal ici
+         * re-rendait tout le monolithe wizard 10×/s et recréait l'objet
+         * craftReveal, donc toute la scène 3D, pendant l'animation.
          */
-        if (u < 1) {
+        if (wall < 1) {
           rewardRafRef.current = requestAnimationFrame(tick);
         } else {
           revealTRef.current = 1;
