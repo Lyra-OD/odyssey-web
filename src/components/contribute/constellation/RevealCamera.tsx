@@ -5,7 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { Fog, PerspectiveCamera, Vector3 } from "three";
 
 import { resolveBirth } from "@/src/components/contribute/constellation/graphs/birth";
-import { resolveRevealCamera } from "@/src/components/contribute/constellation/graphs/revealCamera";
+import { resolveRevealCamera, WIZARD_REVEAL_BIRTH_Z } from "@/src/components/contribute/constellation/graphs/revealCamera";
 import type { LeoStrokeStep } from "@/src/components/contribute/constellation/graphs/leo";
 import { ACTIVE_TEMPLATE } from "@/src/components/contribute/constellation/graphs/resolveConstellation";
 import type { ConstellationTemplate } from "@/src/components/contribute/constellation/graphs/types";
@@ -86,6 +86,7 @@ export function RevealCamera({
       perspective,
       sequenceRef.current,
       strokeOverlap,
+      lockLookAxis ? undefined : WIZARD_REVEAL_BIRTH_Z,
     );
     const prev = lastT.current;
     const jumped = Math.abs(t - prev) > 0.18;

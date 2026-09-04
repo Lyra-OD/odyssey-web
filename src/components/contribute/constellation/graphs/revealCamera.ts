@@ -25,8 +25,13 @@ export const CONSTELLATION_GROUP_OFFSET = [-0.45, -0.7, 0] as const;
 export const HUB_LOOK_Y_LIFT = 0.22;
 export const HUB_CAM_Z_END = 5.15;
 
-/** Birth Z = hub settled — cohérent avec le gel PNG / Continuer. */
+/** Birth Z = hub settled — cohérent avec le gel PNG / Continuer. Invité KEEP. */
 export const REVEAL_CAM_BIRTH_Z = HUB_CAM_Z_END;
+/**
+ * Wizard rituel — plan plus serré (nom + naissance plus gros).
+ * Ne pas baisser `REVEAL_CAM_BIRTH_Z` : l’invité et le hub restent à 5.15.
+ */
+export const WIZARD_REVEAL_BIRTH_Z = 3.2;
 export const REVEAL_CAM_IDLE_Z = 7.5;
 
 /** Pull-back begins just after first stroke leaves Hero (traits @ C_END). */
@@ -139,6 +144,7 @@ export function resolveRevealCamera(
   /** Ordre des traits — permet de cadrer la portion déjà tracée. */
   sequence?: readonly LeoStrokeStep[],
   strokeOverlap?: number,
+  birthCamZ: number = REVEAL_CAM_BIRTH_Z,
 ): RevealCameraPose {
   const t = clamp01(revealT);
   const cEnd = BIRTH_SEGMENTS.C_END;
@@ -175,7 +181,7 @@ export function resolveRevealCamera(
   const camX = 0 + idle.x * 0.08 * pull;
   const camY = 0 + idle.y * 0.05 * pull;
   const paced =
-    REVEAL_CAM_BIRTH_Z + (REVEAL_CAM_IDLE_Z - REVEAL_CAM_BIRTH_Z) * pull;
+    birthCamZ + (REVEAL_CAM_IDLE_Z - birthCamZ) * pull;
 
   /**
    * Le recul suit le dessin : on recule juste assez pour contenir ce qui est
