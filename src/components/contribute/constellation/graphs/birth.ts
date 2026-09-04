@@ -53,6 +53,12 @@ const SEG = {
   C_END: 0.72,
 } as const;
 
+/** Part de B consacrée à la brume (le reste = hold lisible). */
+const NAME_MIST_FRAC = 0.58;
+/** Fin brume → mot lisible (`revealT`). */
+export const BIRTH_NAME_MIST_END =
+  SEG.A_END + (SEG.B_END - SEG.A_END) * NAME_MIST_FRAC;
+
 /**
  * Grain/voile commencent après hold prénom (~1,5–2 s à 14 s play).
  * Avant : 0.24 → l’étoile mangeait le nom trop tôt.
@@ -127,8 +133,8 @@ export function resolveBirth(revealT: number): BirthPhases {
   const t = clamp01(revealT);
 
   const mistStart = SEG.A_END;
-  /** Brume → mot un peu plus long ; reste du B = hold lisible avant Hero. */
-  const mistEnd = SEG.A_END + (SEG.B_END - SEG.A_END) * 0.58;
+  /** Brume → mot lisible ; reste du B = hold avant Hero. */
+  const mistEnd = BIRTH_NAME_MIST_END;
 
   const nameClarity =
     t < mistStart

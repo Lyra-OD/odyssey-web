@@ -129,6 +129,10 @@ import {
 const APPROACH_MS = 680;
 const CLOSE_SETTLE_MS = 980;
 
+/** Prénom Hero rituel / lab (hub invite reste 9,5 px). Recette 19 → 24. */
+const HERO_NAME_FONT_PX = 24;
+const HERO_NAME_SIZE_U = HERO_NAME_FONT_PX / 19;
+
 /** Lab craft — drive Leo reveal from outside (scrub / play-pause). */
 export type ConstellationRevealCraft = {
   controlled: true;
@@ -748,13 +752,14 @@ function Constellation({
             )
           : 0.6;
         const nameBlurPx = isHero
-          ? Math.max(0, (1 - nameClarity) * 16)
+          ? Math.max(0, (1 - nameClarity) * 16 * HERO_NAME_SIZE_U)
           : 0;
         const nameScale =
           (isHero ? 0.78 + 0.22 * nameScaleCh : 1) *
           (isHero ? heroSep.nameScale : 1);
         const nameY = isHero
-          ? 42 - 14 * nameLift + birth.nameDriftY * 4 + heroSep.nameDrop
+          ? (42 - 14 * nameLift + birth.nameDriftY * 4 + heroSep.nameDrop) *
+            HERO_NAME_SIZE_U
           : 18;
         const hubInviteScale =
           hubPrompt && isHero ? nameScale * 0.63 : nameScale;
@@ -764,7 +769,8 @@ function Constellation({
         const nameYResolved = hubPrompt && isHero ? hubInviteY : nameY;
         /** Hub : +px = texte vers la droite (sous le cœur). Sens inverse du coup trop fort à gauche. */
         const nameX = isHero
-          ? birth.nameDriftX * 5 + (hubPrompt ? 4 : 0)
+          ? birth.nameDriftX * 5 * (hubPrompt ? 1 : HERO_NAME_SIZE_U) +
+            (hubPrompt ? 4 : 0)
           : 0;
         const nameTracking = isHero
           ? hubPrompt
@@ -773,7 +779,7 @@ function Constellation({
           : 0.2;
         const glowPx = hubPrompt && isHero
           ? 10 + 18 * nameGlow + 4 * nameClarity
-          : 14 + 30 * nameGlow + 8 * nameClarity;
+          : (14 + 30 * nameGlow + 8 * nameClarity) * HERO_NAME_SIZE_U;
         const glowA = hubPrompt && isHero
           ? 0.06 + 0.22 * nameGlow
           : 0.12 + 0.4 * nameGlow;
@@ -892,12 +898,11 @@ function Constellation({
                   marginRight: isHero
                     ? `-${nameTracking.toFixed(3)}em`
                     : undefined,
-                  fontSize: hubPrompt && isHero ? "9.5px" : isHero ? "19px" : "11px",
+                  fontSize: hubPrompt && isHero ? "9.5px" : isHero ? `${HERO_NAME_FONT_PX}px` : "11px",
                   lineHeight: hubPrompt && isHero ? 1.35 : undefined,
-                  fontFamily:
-                    hubPrompt && isHero
-                      ? "var(--font-editorial), ui-serif, Georgia, serif"
-                      : undefined,
+                  fontFamily: isHero
+                    ? "var(--font-editorial), ui-serif, Georgia, serif"
+                    : undefined,
                   letterSpacing: hubPrompt && isHero
                     ? "0.14em"
                     : `${nameTracking.toFixed(3)}em`,

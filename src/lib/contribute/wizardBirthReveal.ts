@@ -1,4 +1,7 @@
-import { BIRTH_SEGMENTS } from "@/src/components/contribute/constellation/graphs/birth";
+import {
+  BIRTH_NAME_MIST_END,
+  BIRTH_SEGMENTS,
+} from "@/src/components/contribute/constellation/graphs/birth";
 
 /** Fin beats naissance A–C (`birth.ts` SEG.C_END). */
 export const WIZARD_BIRTH_REVEAL_END = BIRTH_SEGMENTS.C_END;
@@ -6,33 +9,32 @@ export const WIZARD_BIRTH_REVEAL_END = BIRTH_SEGMENTS.C_END;
 /** Hero KEEP en attente du prénom (juste avant traits). */
 export const WIZARD_IDLE_REVEAL_T = 0.56;
 
+/** Play linéaire d’avant — hold, étoile, traits (pas la brume). */
+const WIZARD_LEGACY_LINEAR_MS = 8000;
+/** Brume du nom seule (~2,4 s à 8 s linéaires → ici plus lente). */
+const WIZARD_NAME_MIST_MS = 4400;
+
 /**
  * Durée play Continuer wizard — découplée du craft lab (14 s).
- * Horloge non linéaire : plus de temps sur le nuage / la naissance ; traits pas compressés.
+ * Brume étirée ; ensuite même rythme que le play 8 s linéaire.
  */
-export const WIZARD_REWARD_REVEAL_MS = 10000;
+export const WIZARD_REWARD_REVEAL_MS =
+  WIZARD_NAME_MIST_MS +
+  WIZARD_LEGACY_LINEAR_MS * (1 - BIRTH_NAME_MIST_END);
 
 /**
  * Wall 0→1 → revealT 0→1. Wizard seulement (le lab reste linéaire 14 s).
- * ~6.5 s nom+nuage · ~1.5 s fin Hero · ~2 s traits.
+ * ~4,4 s brume jusqu’au mot lisible · ensuite hold + Hero + traits au rythme 8 s.
  */
 export function mapWizardRewardWallToRevealT(wallU: number): number {
   const u = Math.min(1, Math.max(0, wallU));
-  const nameEnd = BIRTH_SEGMENTS.B_END;
-  const birthEnd = BIRTH_SEGMENTS.C_END;
-  /** Fractions d’horloge (doivent sommer à 1). */
-  const WALL_NAME = 0.65;
-  const WALL_HERO = 0.15;
-  const WALL_STROKES = 0.2;
-  if (u <= WALL_NAME) {
-    return (u / WALL_NAME) * nameEnd;
+  const mistEnd = BIRTH_NAME_MIST_END;
+  const wallMist = WIZARD_NAME_MIST_MS / WIZARD_REWARD_REVEAL_MS;
+  if (u <= wallMist) {
+    return (u / Math.max(1e-6, wallMist)) * mistEnd;
   }
-  if (u <= WALL_NAME + WALL_HERO) {
-    const v = (u - WALL_NAME) / WALL_HERO;
-    return nameEnd + v * (birthEnd - nameEnd);
-  }
-  const v = (u - WALL_NAME - WALL_HERO) / WALL_STROKES;
-  return birthEnd + v * (1 - birthEnd);
+  const v = (u - wallMist) / Math.max(1e-6, 1 - wallMist);
+  return mistEnd + v * (1 - mistEnd);
 }
 
 /** Pause admiration après constellation complète, avant étape 2. */
