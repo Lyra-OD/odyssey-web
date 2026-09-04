@@ -794,6 +794,8 @@
     "headerYears": "{birth} – {death}",
     "headerNameFallback": "Nom à compléter",
     "validationEssential": "Indiquez le prénom, le nom et les deux dates pour continuer.",
+    "validationFieldMissing": "À indiquer.",
+    "datePickerOpenAria": "Ouvrir le calendrier",
     "autosaveSaving": "Enregistrement…",
     "autosaveSaved": "Enregistré à l'instant",
     "autosaveError": "Hors ligne"

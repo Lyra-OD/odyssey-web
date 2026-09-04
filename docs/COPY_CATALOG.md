@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-03 · **Entrées :** 848
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-04 · **Entrées :** 850
 
 ## `common`
 
@@ -768,6 +768,8 @@
 | `tributeWizard.headerYears` | {birth} – {death} | {birth} – {death} |
 | `tributeWizard.headerNameFallback` | Nom à compléter | Name to complete |
 | `tributeWizard.validationEssential` | Indiquez le prénom, le nom et les deux dates pour continuer. | Please enter first name, last name, and both dates to continue. |
+| `tributeWizard.validationFieldMissing` | À indiquer. | Still needed. |
+| `tributeWizard.datePickerOpenAria` | Ouvrir le calendrier | Open the calendar |
 | `tributeWizard.autosaveSaving` | Enregistrement… | Saving… |
 | `tributeWizard.autosaveSaved` | Enregistré à l'instant | Saved just now |
 | `tributeWizard.autosaveError` | Hors ligne | Offline |

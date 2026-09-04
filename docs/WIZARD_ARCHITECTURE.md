@@ -1,18 +1,14 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 31 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 4 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 4 sept 2026 — **Formulaires** : CTA toujours cliquable · submit incomplet = message dico + highlight + focus + shake (off si `prefers-reduced-motion`) · dates année 4 chiffres. Essentiels d’abord ; même loi Invité / Coffre / Salon quand on y touche.
 - 31 août 2026 — **T1b gel perf** : `hubSkyLive` stop loop + unmount WebGL sous panneau.
 - 31 août 2026 — **T1b caméra hub** : `HubSkyCamera` (plan test-ciel → dolly Hero).
 - 31 août 2026 — **Figé** : hub WebGL lite ↔ gel 2D (§2b Traversée) · Chemins A/B · T1b cible.
 - 31 août 2026 — **T1 Traversée** : `SkyBackdrop` · `useParcoursUx` · `SanctuaryHubHero` · panneau open/close.
-- 31 août 2026 — Parcours UX Chemin 1 : spec Traversée · lien step 1 backdrop 2D + rituel séparé.
-- 31 août 2026 — J2 produit : Plus tard étape 3 · snap birth · pause WebGL · Libra/Leo · Continuer = play craft 0→1 (14 s) + dwell.
-- 26 août 2026 — **J2** Sanctuaire étape 1 : orchestrator + flow overlay ciel (fichiers · reveal · gate validation).
-- 25 août 2026 — parcours Sanctuaire : étapes 1–3 figées (identité · invite seul · Plus tard Coffre).
-- 17 août 2026 — invitation Salon Souvenir-only (plus de cartes forfait).
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -417,9 +413,20 @@ Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WAT
 - **Cible T2 :** `backdropToWebGL` au Continuer · hub J3 post-reveal.
 - **Chemins :** A (première traversée · prologue) vs B (retour · draft rempli → panneau direct) — [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §1b.
 - **Activation :** `step1Sky = !isEditor && currentStep === 1` dans `TributeWizard.tsx`.
-- **Validation :** `canProceedEssential` — prénom, **nom**, naissance, décès (écart D1 CEO : voir journey §11b).
-- **Continuer :** `flush()` → `playReward()` (0→1 craft + dwell) → **cible** hub J3 · **aujourd'hui** étape 2 direct.
+- **Validation :** prénom, **nom**, naissance, décès. CTA **toujours cliquable** — au submit incomplet : message dico + highlight + focus + shake (off si `prefers-reduced-motion`). Dates : année 4 chiffres (`min` 1800 / `max` 9999), calendrier visible.
+- **Continuer :** `flush()` → `playReward()` (horloge wizard) → **cible** hub J3 · **aujourd'hui** étape 2 encore coincée après le rituel.
 - **Craft :** reveal A→F · [`ODYSSEY_LUEUR_CRAFT.md`](ODYSSEY_LUEUR_CRAFT.md).
+
+### Formulaires (canon)
+
+Un formulaire Odyssey se comporte comme Apple / Google, pas comme un bouton mort.
+
+- CTA **toujours cliquable**.
+- Erreur au **submit**, pas à chaque lettre. Ça part quand le champ est bon.
+- Dates : année **4 chiffres**. Calendrier **visible**.
+- 390 et desktop, mêmes règles.
+
+Invité, Coffre, Salon : **même loi** quand on y touche. Pas un 2ᵉ standard.
 
 ---
 

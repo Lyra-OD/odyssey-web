@@ -530,6 +530,46 @@ body {
   isolation: isolate;
 }
 
+@keyframes parcours-form-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-7px);
+  }
+  40% {
+    transform: translateX(7px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+.parcours-form-shake {
+  animation: parcours-form-shake 400ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parcours-form-shake {
+    animation: none;
+  }
+}
+
+.parcours-date-input {
+  accent-color: #2dd4bf;
+  color-scheme: dark;
+}
+
+.parcours-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
 @keyframes parcours-monolith-edge-glow {
   0%,
   100% {
@@ -1508,6 +1548,7 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   .parcours-open-stagger-2,
   .parcours-open-stagger-3,
   .parcours-monolith-collapse,
+  .parcours-form-shake,
   .parcours-close-tracteur,
   .parcours-close-star-impact,
   .sanctuary-select-breathe,

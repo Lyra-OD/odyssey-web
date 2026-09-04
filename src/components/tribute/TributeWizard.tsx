@@ -138,6 +138,100 @@ import type { Locale } from "@/i18n.config";
 
 export type TributeWizardCopy = AppDictionary["tributeWizard"];
 
+const WIZARD_DATE_INPUT_MIN = "1800-01-01";
+const WIZARD_DATE_INPUT_MAX = "9999-12-31";
+
+const essentialsLabelClass =
+  "flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-500";
+
+function essentialsTextFieldClass(invalid: boolean): string {
+  return [
+    "w-full rounded-xl border bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600",
+    invalid
+      ? "border-rose-400/75 focus:border-rose-400/90 focus:shadow-[0_0_24px_rgba(251,113,133,0.18)]"
+      : "border-white/10 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.14)]",
+  ].join(" ");
+}
+
+function essentialsDateFieldClass(invalid: boolean): string {
+  return [
+    "parcours-date-input w-full rounded-xl border bg-white/[0.04] px-4 py-3 pr-12 text-base font-light text-zinc-200 outline-none transition-[border,box-shadow]",
+    invalid
+      ? "border-rose-400/75 focus:border-rose-400/90 focus:shadow-[0_0_24px_rgba(251,113,133,0.18)]"
+      : "border-white/10 focus:border-teal-400/25 focus:shadow-[0_0_20px_rgba(6,182,212,0.12)]",
+  ].join(" ");
+}
+
+function openNativeDatePicker(input: HTMLInputElement | null) {
+  if (!input) return;
+  const picker = input as HTMLInputElement & { showPicker?: () => void };
+  try {
+    if (typeof picker.showPicker === "function") {
+      picker.showPicker();
+      return;
+    }
+  } catch {
+    /* showPicker indisponible (Safari, etc.) */
+  }
+  input.focus();
+}
+
+function EssentialsDateField({
+  id,
+  label,
+  value,
+  onChange,
+  invalid,
+  missingLabel,
+  openAria,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  invalid: boolean;
+  missingLabel: string;
+  openAria: string;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const errId = `${id}-err`;
+  return (
+    <div className="space-y-2">
+      <label htmlFor={id} className={essentialsLabelClass}>
+        <Calendar className="h-3.5 w-3.5 text-zinc-600" aria-hidden />
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          ref={inputRef}
+          id={id}
+          type="date"
+          min={WIZARD_DATE_INPUT_MIN}
+          max={WIZARD_DATE_INPUT_MAX}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          aria-invalid={invalid || undefined}
+          aria-describedby={invalid ? errId : undefined}
+          className={essentialsDateFieldClass(invalid)}
+        />
+        <button
+          type="button"
+          aria-label={openAria}
+          className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-teal-300/90 touch-manipulation"
+          onClick={() => openNativeDatePicker(inputRef.current)}
+        >
+          <Calendar className="h-5 w-5" strokeWidth={1.6} aria-hidden />
+        </button>
+      </div>
+      {invalid ? (
+        <p id={errId} className="text-sm font-light text-rose-400/90">
+          {missingLabel}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 const TOTAL_STEPS = 7;
@@ -240,6 +334,8 @@ export function TributeWizard({
     return resolved;
   });
   const [essentialError, setEssentialError] = useState(false);
+  const [essentialsShakeGen, setEssentialsShakeGen] = useState(0);
+  const [essentialsShake, setEssentialsShake] = useState(false);
   const [chaptersStructureError, setChaptersStructureError] = useState(false);
 
   const [selectedSocial, setSelectedSocial] = useState<SocialId | null>(
@@ -826,6 +922,17 @@ export function TributeWizard({
     birthDate.length > 0 &&
     deathDate.length > 0;
 
+  useEffect(() => {
+    if (essentialError && canProceedEssential) setEssentialError(false);
+  }, [essentialError, canProceedEssential]);
+
+  useEffect(() => {
+    if (!essentialsShakeGen) return;
+    setEssentialsShake(true);
+    const timer = window.setTimeout(() => setEssentialsShake(false), 400);
+    return () => window.clearTimeout(timer);
+  }, [essentialsShakeGen]);
+
   const navigateToStep = useCallback(
     async (step: Step) => {
       if (step === currentStep) return;
@@ -840,6 +947,17 @@ export function TributeWizard({
     if (currentStep === 1) {
       if (!canProceedEssential) {
         setEssentialError(true);
+        setEssentialsShakeGen((n) => n + 1);
+        const firstId = !firstName.trim()
+          ? "tw-first"
+          : !lastName.trim()
+            ? "tw-last"
+            : !birthDate
+              ? "tw-birth"
+              : "tw-death";
+        requestAnimationFrame(() => {
+          document.getElementById(firstId)?.focus();
+        });
         return;
       }
       setEssentialError(false);
@@ -879,6 +997,10 @@ export function TributeWizard({
     accessRole,
     currentStep,
     canProceedEssential,
+    firstName,
+    lastName,
+    birthDate,
+    deathDate,
     navigateToStep,
     step1Reveal,
     step1Sky,
@@ -1519,6 +1641,7 @@ export function TributeWizard({
               ref={monolithFrameRef}
               className={[
                 "parcours-monolith-frame pointer-events-auto relative w-full max-w-xl",
+                essentialsShake ? "parcours-form-shake" : "",
                 step1Reveal.phase === "reward" ||
                 step1Reveal.phase === "done"
                   ? "pointer-events-none opacity-0"
@@ -1648,10 +1771,7 @@ export function TributeWizard({
 
               <div className="parcours-open-stagger-2 mt-12 space-y-6">
                 <div className="space-y-2">
-                  <label
-                    htmlFor="tw-first"
-                    className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-500"
-                  >
+                  <label htmlFor="tw-first" className={essentialsLabelClass}>
                     <User className="h-3.5 w-3.5 text-zinc-600" aria-hidden />
                     {copy.firstNameLabel}
                   </label>
@@ -1660,15 +1780,30 @@ export function TributeWizard({
                     value={firstName}
                     onChange={(e) => handleFirstNameChange(e.target.value)}
                     autoComplete="given-name"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.14)]"
+                    aria-invalid={
+                      essentialError && !firstName.trim() ? true : undefined
+                    }
+                    aria-describedby={
+                      essentialError && !firstName.trim()
+                        ? "tw-first-err"
+                        : undefined
+                    }
+                    className={essentialsTextFieldClass(
+                      essentialError && !firstName.trim(),
+                    )}
                     placeholder={copy.firstNameLabel}
                   />
+                  {essentialError && !firstName.trim() ? (
+                    <p
+                      id="tw-first-err"
+                      className="text-sm font-light text-rose-400/90"
+                    >
+                      {copy.validationFieldMissing}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="space-y-2">
-                  <label
-                    htmlFor="tw-last"
-                    className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-500"
-                  >
+                  <label htmlFor="tw-last" className={essentialsLabelClass}>
                     <User className="h-3.5 w-3.5 text-zinc-600" aria-hidden />
                     {copy.lastNameLabel}
                   </label>
@@ -1677,54 +1812,53 @@ export function TributeWizard({
                     value={lastName}
                     onChange={(e) => handleLastNameChange(e.target.value)}
                     autoComplete="family-name"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.14)]"
+                    aria-invalid={
+                      essentialError && !lastName.trim() ? true : undefined
+                    }
+                    aria-describedby={
+                      essentialError && !lastName.trim()
+                        ? "tw-last-err"
+                        : undefined
+                    }
+                    className={essentialsTextFieldClass(
+                      essentialError && !lastName.trim(),
+                    )}
                     placeholder={copy.lastNameLabel}
                   />
+                  {essentialError && !lastName.trim() ? (
+                    <p
+                      id="tw-last-err"
+                      className="text-sm font-light text-rose-400/90"
+                    >
+                      {copy.validationFieldMissing}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="tw-birth"
-                      className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-500"
-                    >
-                      <Calendar
-                        className="h-3.5 w-3.5 text-zinc-600"
-                        aria-hidden
-                      />
-                      {copy.birthDateLabel}
-                    </label>
-                    <input
-                      id="tw-birth"
-                      type="date"
-                      value={birthDate}
-                      onChange={(e) => handleBirthDateChange(e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-base font-light text-zinc-200 outline-none focus:border-teal-400/25 focus:shadow-[0_0_20px_rgba(6,182,212,0.12)]"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="tw-death"
-                      className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-500"
-                    >
-                      <Calendar
-                        className="h-3.5 w-3.5 text-zinc-600"
-                        aria-hidden
-                      />
-                      {copy.deathDateLabel}
-                    </label>
-                    <input
-                      id="tw-death"
-                      type="date"
-                      value={deathDate}
-                      onChange={(e) => handleDeathDateChange(e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-base font-light text-zinc-200 outline-none focus:border-teal-400/25 focus:shadow-[0_0_20px_rgba(6,182,212,0.12)]"
-                    />
-                  </div>
+                  <EssentialsDateField
+                    id="tw-birth"
+                    label={copy.birthDateLabel}
+                    value={birthDate}
+                    onChange={handleBirthDateChange}
+                    invalid={essentialError && !birthDate}
+                    missingLabel={copy.validationFieldMissing}
+                    openAria={copy.datePickerOpenAria}
+                  />
+                  <EssentialsDateField
+                    id="tw-death"
+                    label={copy.deathDateLabel}
+                    value={deathDate}
+                    onChange={handleDeathDateChange}
+                    invalid={essentialError && !deathDate}
+                    missingLabel={copy.validationFieldMissing}
+                    openAria={copy.datePickerOpenAria}
+                  />
                 </div>
               </div>
 
               {essentialError ? (
                 <p
+                  id="tw-essential-alert"
                   className="mt-6 text-center text-sm font-light text-rose-400/90"
                   role="alert"
                 >
@@ -1737,7 +1871,6 @@ export function TributeWizard({
                 <div className="parcours-open-stagger-3 mt-10 pb-2">
                   <button
                     type="button"
-                    disabled={!canProceedEssential}
                     onClick={() => void goNext()}
                     className={`parcours-monolith-continue ${connexionSubmitButtonClass} min-h-[52px] touch-manipulation`}
                   >

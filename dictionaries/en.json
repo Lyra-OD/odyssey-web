@@ -794,6 +794,8 @@
     "headerYears": "{birth} – {death}",
     "headerNameFallback": "Name to complete",
     "validationEssential": "Please enter first name, last name, and both dates to continue.",
+    "validationFieldMissing": "Still needed.",
+    "datePickerOpenAria": "Open the calendar",
     "autosaveSaving": "Saving…",
     "autosaveSaved": "Saved just now",
     "autosaveError": "Offline"
