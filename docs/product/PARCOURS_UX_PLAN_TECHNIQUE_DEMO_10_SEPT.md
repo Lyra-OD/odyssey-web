@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 sept 2026 — **Script parlé** ~8 min (A / B / C) · si X casse, on dit Y.
 - 3 sept 2026 — **Feuille walk ven 4** · parallèle Traversée = non · J3 seulement si Continuer est un trou.
 - 3 sept 2026 — Approche technique : **surface, pas tuyaux** · marcher → 3 trous · stub documenté.
 - 3 sept 2026 — **Refonte :** famille d’abord · invité = ouverture · Salon KPI = 3ᵉ acte. WOW = placeholders OK.
 - 3 sept 2026 — T4 desktop deux colonnes · 390 accordéon · pied hors scroll · témoignage ouvert en entier.
-- 3 sept 2026 — T6 copy voix/vidéo/mécène/lueur · passe 390 px.
 
 **Statut :** **actif** · orga : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) · invité : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md)
 
@@ -62,6 +62,69 @@ Traversée 0→12 (éclipse, J3, 12 signes) = **canon**, pas le plan jeudi. On n
 5. **Aperçu / envoi** : *regardez le film* (filigrane / stub OK). On comprend qu’un film existe.
 
 Si un beat craft manque : **placeholder**, on avance. Ne pas ouvrir le WebGL.
+
+### Script parlé (à dire, pas à coder)
+
+On montre. On ne justifie pas le craft. Voix : souvenirs, film, chapitre, Coffre.  
+Jamais : timeline, checkout, jetons, « on va recâbler ».
+
+**Onglets prêts avant d’entrer :** `/fr/studio` · le lien invité (ou `/fr/contribute/test-visuel?packs=1`) · `/fr/salon/commissions` + `/fr/salon/mes-performances` si l’acte C tient.
+
+---
+
+**Acte A — ~4 min** · `/fr/studio`
+
+| Temps | On montre | On dit |
+|-------|-----------|--------|
+| 0:00 | Essentiels, ciel / Hero | *« Une famille ouvre l’atelier. Elle dit pour qui c’est. Le ciel s’allume — c’est le sien. »* |
+| 0:45 | Cercle · *Copier le lien* | *« Elle n’est pas seule. Un lien : les proches déposent un souvenir. Ça entre dans le Coffre. Elle compose le film. »* |
+| 1:30 | Coffre-fort | *« Tous les souvenirs au même endroit. Photos d’ici, du téléphone, des invités. »* Scanner moche : *« Le téléphone pose aussi dans ce Coffre. »* On passe. |
+| 2:15 | Musique → Le film | *« Chaque chapitre a une chanson. Ensuite, le studio : Odyssey range, ou elle compose. On *voit* le film se former. »* Magie si elle ouvre, sinon *Je compose*. |
+| 3:15 | Aperçu | *« Voici le film. Pas un diaporama — un film, avec ce que le Coffre contient. »* Filigrane OK. |
+
+**On ne va pas à Finaliser.** Stripe n’est pas le sujet.
+
+Si un écran meurt : *« Ici, elle [beat]. On avance. »* On ne debug pas.
+
+---
+
+**Acte B — ~2 min** · même lien, 2ᵉ onglet (sinon `test-visuel?packs=1`)
+
+| Temps | On montre | On dit |
+|-------|-----------|--------|
+| 4:00 | Ciel de X | *« Le proche ouvre le lien. Il voit le ciel — pas un formulaire. »* |
+| 4:20 | Dépôt (photos et/ou mot + nom + courriel) | *« Il laisse un souvenir. Prénom, courriel. C’est dans le Coffre de la famille. »* |
+| 4:50 | Étoile (stub 2D OK) | *« Et il est dans le ciel : une étoile à son nom. Une personne, une étoile. »* |
+| 5:20 | *Aider la famille…* ou *Non merci* | *« S’il veut, il aide à concevoir le film. S’il ne veut pas : Non merci. Il reste dans le ciel. »* On skip. On ne paie pas. |
+
+Pas de token : `test-visuel`. Une phrase : *« Même geste. Aperçu, sans paiement. »*
+
+---
+
+**Acte C — ~2 min** · coupable si le temps manque
+
+| Temps | On montre | On dit |
+|-------|-----------|--------|
+| 6:00 | `/fr/salon/commissions` | *« Le salon voit le cercle : qui ouvre, qui dépose, ce qui revient. »* |
+| 6:40 | `/fr/salon/mes-performances` | *« Chaque conseiller a ses chiffres. Pas une boîte noire. »* |
+
+Chiffres à zéro : **on coupe C**. On ne s’excuse pas deux minutes sur un tableau vide.  
+*« Le salon mesure l’ouverture. On vous le montre la prochaine fois. »*
+
+---
+
+**Si X casse**
+
+| X | On dit | On fait |
+|---|--------|---------|
+| Ciel / Hero mort | *« Le ciel de la famille. »* | Stub, on avance vers Inviter. |
+| Lien invité mort | *« Ils reçoivent ce lien. »* | `test-visuel?packs=1`. |
+| Coffre vide | *« Ici se rangent les souvenirs. »* | On ne charge pas 20 photos en live. |
+| Livre / aperçu laid | *« Elle compose le film ici. »* | Un écran, on ne rewrite pas. |
+| Salon à zéro | (phrase ci-dessus) | Couper C. |
+| Tout se casse | *« La famille fait un film avec le Coffre et le cercle. »* | Stop. On ne code pas. |
+
+Fin à **8:00**. On ne « montre encore un truc ».
 
 ### Acte B — L’invité (l’ouverture, ~2 min)
 
