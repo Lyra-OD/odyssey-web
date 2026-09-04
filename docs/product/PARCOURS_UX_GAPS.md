@@ -4,10 +4,10 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 4 sept 2026 — **P1 partiel** : porte Beat 3 (`parcoursGoToInvites`) · lien langue Atelier encore ⏳.
 - 3 sept 2026 — Plan technique **démo 10 sept** : [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 - 3 sept 2026 — Storyboard **invité** figé : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md).
 - 3 sept 2026 — Storyboard **voulu** (beats 0→J3) : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) — les trous P0 y sont accrochés, Coffre + Scanner = suite.
-- 2 sept 2026 — **Suite nav figée** : P1 Atelier · P2 fil constellation (spec, pas encore code).
 - 2 sept 2026 — **P0** : retour Essentiels (`reopenEssentials`) · déconnexion sous langue.
 
 **Invité :** storyboard [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · **code cette semaine** [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
@@ -109,7 +109,9 @@ UI J3 = **T2-5** (brancher ces clés).
 | **Traversée** (défaut 1ʳᵉ visite) | Wow · émotion · 1er Continuer | Hub · gel · reveal · J3 · beats |
 | **Atelier** | Édition / retour / skip cinéma | Formulaires / monolithe · ciel léger ou figé · **navigation libre** entre étapes déjà ouvertes |
 
-**Entrées possibles (à trancher au code) :**
+**Livré partiel (4 sept) :** porte sous Continuer (`parcoursGoToInvites` → étape 2, zéro rite). Même gate que Continuer.
+
+**Entrées encore ⏳ :**
 - Lien discret sous la langue : *Passer à l’atelier* / *Reprendre la Traversée*
 - Auto-Atelier si le draft a déjà un prénom sauvé (lié G7 état parcours)
 

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 4 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 4 sept 2026 — **Porte Beat 3** : Continuer · *ou* · `parcoursGoToInvites` (cyan éteint) → étape 2.
 - 4 sept 2026 — **T1-hub hits** : deux zones · glow *Toucher* = prox souris **et** hover plaque · molette = `window` (les trois coexistent).
 - 4 sept 2026 — **T1-hub invite** : *Une Présence* Editorial · *Toucher l’étoile* Inter + glow.
 - 4 sept 2026 — **T1-reward nom** : Continuer — brume ~4,4 s puis hold / étoile / traits au rythme 8 s. Prénom Hero **Editorial 24 px** (Y, brume, glow ×24/19). Lab play 14 s linéaire.
 - 3 sept 2026 — Expérience **voulue** (storyboard, avant plan technique) : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md). Ce canon reste la spec **impl** jusqu’au réalignement.
-- 2 sept 2026 — **T1-invite-off** : l'invite hub (`hubPrompt` / `hubTapHint`) est verrouillée sur `hubSkyCamera` — plus aucun texte du hub par-dessus la constellation en reward / postReveal.
 
 **Statut :** **T1-perf-runtime** ✅ · tester **uniquement** `http://localhost:3000` · suite nav P1/P2 · P0 ✅.
 
@@ -324,6 +324,7 @@ Détail IDs et durées : [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md).
 | Moment | Clé `tributeWizard.*` | FR (canon écran) | Code |
 |--------|----------------------|------------------|------|
 | Hero hub | `parcoursHeroPrompt` / `TapHint` | Une Présence · Toucher l’étoile | ✅ |
+| Porte Beat 3 | `parcoursGoToInvites` / `parcoursChoiceOr` | Poursuivre sans les animations du ciel · ou | ✅ |
 | Post-reveal | `parcoursConstellationBorn` | Sa constellation prend forme. | ✅ T2-copy |
 | **Cercle A (titre J3)** | `parcoursCircleShare` | Plus le cercle partage, plus le ciel s’allume. | ✅ T2-copy |
 | **Sous-ligne B** | `parcoursSkyVsVault` | Ils déposent des souvenirs. Vous composez le ciel et le film. | ✅ T2-copy |

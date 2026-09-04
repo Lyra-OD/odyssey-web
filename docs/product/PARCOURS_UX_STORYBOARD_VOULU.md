@@ -4,6 +4,7 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 4 sept 2026 — **Porte Beat 3** : Continuer · *ou* · *Poursuivre sans les animations du ciel* → étape 2.
 - 3 sept 2026 — Invité figé + plan technique démo 10 sept. [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md)
 - 3 sept 2026 — Beat 12 : **télécharger** + **rester dans le ciel** selon forfait. Plus *le film part*.
 - 3 sept 2026 — Beats 6→10 + étoile à l’**acceptation** · J3 Continuer = **Inviter**. Dépôt ≠ étoile.
@@ -53,7 +54,7 @@ Certaines personnes ne comprendront pas (ou ne voudront pas) le rite. On leur do
 **Porte du rituel (Beat 3) :**
 
 - **Continuer** (défaut) = Beat 4 : ciel, nom, Hero, constellation, puis J3.
-- Ligne discrète dessous : *Composer sans le ciel* → Atelier (étapes suivantes, zéro rite).
+- Ligne discrète dessous, après *ou* : *Poursuivre sans les animations du ciel* → Atelier étape 2 (pas de Beat 4–5).
 
 Copy écran : clés FR+EN à créer au moment du code (`dictionaries/`) — pas de phrase en dur dans le `.tsx`.
 
@@ -126,7 +127,7 @@ La Traversée doit se **vivre** sur téléphone, pas seulement « rentrer ».
 | **Derrière** | Ciel figé, encore là — on sait qu’on est dans un lieu |
 | **Rythme** | Aucune pression |
 | **Toujours** | Lien chrome *Passer à l’atelier* |
-| **Porte du rituel** | Après validation : **Continuer** (défaut) → Beat 4. Ligne discrète : *Composer sans le ciel* → Atelier (pas de Beat 4–5). |
+| **Porte du rituel** | Après validation : **Continuer** (défaut) → Beat 4. *ou* · *Poursuivre sans les animations du ciel* → étape 2 (pas de Beat 4–5). |
 | **Pas** | Un écran « Choisissez votre parcours » |
 
 ---
@@ -135,7 +136,7 @@ La Traversée doit se **vivre** sur téléphone, pas seulement « rentrer ».
 
 | | |
 |--|--|
-| **Quand** | **Continuer** (pas *Composer sans le ciel*) |
+| **Quand** | **Continuer** (pas *Poursuivre sans les animations du ciel*) |
 | **Ordre visuel** | 1. Le panneau se referme, l’étoile reprend sa place. 2. Le ciel **se rallume**. 3. Le **prénom** naît. 4. L’**étoile Hero** naît. 5. La **constellation du signe** se dessine (date de naissance, silhouette réelle du zodiaque). |
 | **Durée** | ~8–14 s (à caler après T2) |
 | **Émotion** | **Le** moment. Le ciel s’allume pour cette personne. |

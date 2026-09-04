@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
-import { LocaleSwitcher } from "@/src/components/i18n/LocaleSwitcher";
-import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
-import { TributeWizard } from "@/src/components/tribute/TributeWizard";
+import { StudioLocaleFrame } from "@/src/components/tribute/StudioLocaleFrame";
 import { appRoutes } from "@/src/lib/appRoutes";
 import {
   SANCTUARY_HALO_TEAL,
@@ -35,7 +33,11 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
   const planOverride =
     process.env.NODE_ENV !== "production" ? rawPlan : undefined;
   const lang: Locale = routeLang === "en" ? "en" : "fr";
-  const dictionary = await getDictionary(lang);
+  const [dictionaryFr, dictionaryEn] = await Promise.all([
+    getDictionary("fr"),
+    getDictionary("en"),
+  ]);
+  const dictionary = lang === "en" ? dictionaryEn : dictionaryFr;
 
   const supabase = await createClient();
   const {
@@ -131,25 +133,6 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#020202] text-zinc-100">
-      {/** T2-lang + P0′ — langue + déconnexion toujours accessibles (hors chrome masqué). */}
-      <div className="pointer-events-none fixed right-4 top-4 z-[60] md:right-8 md:top-6">
-        <div className="pointer-events-auto flex flex-col items-end gap-2">
-          <LocaleSwitcher
-            lang={lang}
-            languageLabel={dictionary.header.languageLabel}
-            langOptionFr={dictionary.header.langOptionFr}
-            langOptionEn={dictionary.header.langOptionEn}
-          />
-          {accessRole === "owner" ? (
-            <DashboardSignOut
-              lang={lang}
-              label={dictionary.dashboard.signOut}
-              className="border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] tracking-[0.22em] text-white/55 shadow-none hover:border-white/16 hover:bg-white/[0.08] hover:text-white/80"
-            />
-          ) : null}
-        </div>
-      </div>
-
       <div
         className="studio-shell-halo pointer-events-none absolute inset-0 z-0 overflow-hidden transition-opacity duration-500"
         aria-hidden
@@ -185,10 +168,24 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
           </p>
         </header>
 
-        <TributeWizard
-          copy={dictionary.tributeWizard}
-          initialDraft={draftProject}
+        <StudioLocaleFrame
           locale={lang}
+          copyFr={dictionaryFr.tributeWizard}
+          copyEn={dictionaryEn.tributeWizard}
+          labelsFr={{
+            languageLabel: dictionaryFr.header.languageLabel,
+            langOptionFr: dictionaryFr.header.langOptionFr,
+            langOptionEn: dictionaryFr.header.langOptionEn,
+            signOut: dictionaryFr.dashboard.signOut,
+          }}
+          labelsEn={{
+            languageLabel: dictionaryEn.header.languageLabel,
+            langOptionFr: dictionaryEn.header.langOptionFr,
+            langOptionEn: dictionaryEn.header.langOptionEn,
+            signOut: dictionaryEn.dashboard.signOut,
+          }}
+          showSignOut={accessRole === "owner"}
+          initialDraft={draftProject}
           isPartner={isPartner}
           planOverride={accessRole === "owner" ? planOverride : undefined}
           accessRole={accessRole}

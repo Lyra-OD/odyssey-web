@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-04 · **Entrées :** 850
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-04 · **Entrées :** 855
 
 ## `common`
 
@@ -336,8 +336,8 @@
 | `tributeWizard.stepperExtensions` | Extensions | Extensions |
 | `tributeWizard.stepperPreview` | Aperçu | Preview |
 | `tributeWizard.stepperCheckout` | Finaliser | Review |
-| `tributeWizard.stepEssentialTitle` | Étape 1 : L’essentiel | Step 1: The essentials |
-| `tributeWizard.stepEssentialDescription` | Les informations qui donnent visage à cet hommage. Avancez à votre rythme. | What gives this tribute a face and a soul. Move at your own pace. |
+| `tributeWizard.stepEssentialTitle` | L’essentiel | The Essentials |
+| `tributeWizard.stepEssentialDescription` | Quelques repères pour ancrer son souvenir. Prenez tout votre temps. | A few quiet details to anchor their memory. Take all the time you need. |
 | `tributeWizard.step1ConstellationReward` | Sa constellation prend forme… | Her constellation is taking shape… |
 | `tributeWizard.parcoursHeroPrompt` | Une Présence | A Presence |
 | `tributeWizard.parcoursHeroTapHint` | Toucher l’étoile | Touch the star |
@@ -345,6 +345,8 @@
 | `tributeWizard.parcoursPanelCloseHint` | Fermer · le ciel vous attend | Close · the sky awaits |
 | `tributeWizard.parcoursEditEssentials` | Revenir à l’essentiel | Return to essentials |
 | `tributeWizard.parcoursMonolithContinue` | Continuer | Continue |
+| `tributeWizard.parcoursGoToInvites` | Poursuivre sans les animations du ciel | Continue without the sky ritual |
+| `tributeWizard.parcoursChoiceOr` | ou | or |
 | `tributeWizard.parcoursConstellationBorn` | Sa constellation prend forme. | Their constellation takes shape. |
 | `tributeWizard.parcoursCircleShare` | Plus le cercle partage, plus le ciel s’allume. | The more the circle shares, the more the sky lights up. |
 | `tributeWizard.parcoursSkyVsVault` | Ils déposent des souvenirs. Vous composez le ciel et le film. | They leave memories. You shape the sky and the film. |
@@ -353,12 +355,15 @@
 | `tributeWizard.parcoursContinueCta` | Continuer | Continue |
 | `tributeWizard.firstNameLabel` | Prénom | First name |
 | `tributeWizard.lastNameLabel` | Nom | Last name |
+| `tributeWizard.firstNamePlaceholder` | ex. Madeleine | e.g. Eleanor |
+| `tributeWizard.lastNamePlaceholder` | ex. Tremblay | e.g. Vance |
 | `tributeWizard.birthDateLabel` | Date de naissance | Date of birth |
-| `tributeWizard.deathDateLabel` | Date de décès | Date of passing |
-| `tributeWizard.primaryPhotoLabel` | Photo principale | Main photograph |
-| `tributeWizard.primaryPhotoHint` | Un portrait ou une image qui reflète au mieux cette personne. | A portrait or picture that reflects them lovingly. |
-| `tributeWizard.avatarPickPhoto` | Choisir une photo | Choose a photo |
-| `tributeWizard.avatarChangePhoto` | Modifier la photo | Change photo |
+| `tributeWizard.deathDateLabel` | Date du départ | Date of passing |
+| `tributeWizard.dateInputEmptyHint` | JJ / MM / AAAA | DD / MM / YYYY |
+| `tributeWizard.primaryPhotoLabel` | Le portrait | Portrait |
+| `tributeWizard.primaryPhotoHint` | Une photo où l’on reconnaît son regard, un sourire ou un instant précieux. | A photo that captures their gaze, a smile, or a cherished moment. |
+| `tributeWizard.avatarPickPhoto` | Déposer un portrait | Add a portrait |
+| `tributeWizard.avatarChangePhoto` | Modifier le portrait | Change the portrait |
 | `tributeWizard.stepInviteTitle` | Étape 2 : Inviter le cercle | Step 2: Invite the circle |
 | `tributeWizard.stepInviteDescription` | Partagez un lien privé. Vos proches déposent un souvenir, puis peuvent laisser une empreinte pour soutenir le film. | Share a private link. Loved ones leave a memory, then may leave an imprint to support the film. |
 | `tributeWizard.skipInvite` | Continuer sans inviter pour l’instant | Continue without inviting for now |

@@ -570,6 +570,19 @@ body {
   height: 0;
 }
 
+/** Voile JJ / MM / AAAA — cache le format natif tant que le champ est vide. */
+.parcours-date-input-empty:not(:focus) {
+  color: transparent;
+}
+.parcours-date-input-empty:not(:focus)::-webkit-datetime-edit,
+.parcours-date-input-empty:not(:focus)::-webkit-datetime-edit-fields-wrapper,
+.parcours-date-input-empty:not(:focus)::-webkit-datetime-edit-text,
+.parcours-date-input-empty:not(:focus)::-webkit-datetime-edit-month-field,
+.parcours-date-input-empty:not(:focus)::-webkit-datetime-edit-day-field,
+.parcours-date-input-empty:not(:focus)::-webkit-datetime-edit-year-field {
+  color: transparent;
+}
+
 @keyframes parcours-monolith-edge-glow {
   0%,
   100% {

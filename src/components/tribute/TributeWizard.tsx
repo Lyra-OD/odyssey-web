@@ -184,6 +184,7 @@ function EssentialsDateField({
   invalid,
   missingLabel,
   openAria,
+  emptyHint,
 }: {
   id: string;
   label: string;
@@ -192,9 +193,12 @@ function EssentialsDateField({
   invalid: boolean;
   missingLabel: string;
   openAria: string;
+  emptyHint: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [focused, setFocused] = useState(false);
   const errId = `${id}-err`;
+  const showEmptyHint = !value && !focused;
   return (
     <div className="space-y-2">
       <label htmlFor={id} className={essentialsLabelClass}>
@@ -210,10 +214,22 @@ function EssentialsDateField({
           max={WIZARD_DATE_INPUT_MAX}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           aria-invalid={invalid || undefined}
           aria-describedby={invalid ? errId : undefined}
-          className={essentialsDateFieldClass(invalid)}
+          className={`${essentialsDateFieldClass(invalid)}${
+            showEmptyHint ? " parcours-date-input-empty" : ""
+          }`}
         />
+        {showEmptyHint ? (
+          <span
+            className="pointer-events-none absolute inset-y-0 left-4 right-12 flex items-center text-base font-light text-zinc-600"
+            aria-hidden
+          >
+            {emptyHint}
+          </span>
+        ) : null}
         <button
           type="button"
           aria-label={openAria}
@@ -829,6 +845,7 @@ export function TributeWizard({
       : step1Parcours.hubWebGLOpacity;
 
   const step1RewardPendingRef = useRef(false);
+  const skipRitualPendingRef = useRef(false);
 
   // Réaffecté à chaque rendu maintenant que les champs Essentiels vivent dans
   // `useWizardEssentials` (voir l'amorçage hydraté plus haut).
@@ -943,23 +960,26 @@ export function TributeWizard({
     [accessRole, currentStep, flush],
   );
 
+  const rejectEssentialsIfIncomplete = useCallback((): boolean => {
+    if (canProceedEssential) return false;
+    setEssentialError(true);
+    setEssentialsShakeGen((n) => n + 1);
+    const firstId = !firstName.trim()
+      ? "tw-first"
+      : !lastName.trim()
+        ? "tw-last"
+        : !birthDate
+          ? "tw-birth"
+          : "tw-death";
+    requestAnimationFrame(() => {
+      document.getElementById(firstId)?.focus();
+    });
+    return true;
+  }, [canProceedEssential, firstName, lastName, birthDate, deathDate]);
+
   const goNext = useCallback(async () => {
     if (currentStep === 1) {
-      if (!canProceedEssential) {
-        setEssentialError(true);
-        setEssentialsShakeGen((n) => n + 1);
-        const firstId = !firstName.trim()
-          ? "tw-first"
-          : !lastName.trim()
-            ? "tw-last"
-            : !birthDate
-              ? "tw-birth"
-              : "tw-death";
-        requestAnimationFrame(() => {
-          document.getElementById(firstId)?.focus();
-        });
-        return;
-      }
+      if (rejectEssentialsIfIncomplete()) return;
       setEssentialError(false);
       /** T2-1 — Continuer joue le reveal puis reste en `hub.postReveal` (pas d’auto step 2). */
       if (step1Sky && step1Reveal.phase !== "done") {
@@ -996,11 +1016,7 @@ export function TributeWizard({
   }, [
     accessRole,
     currentStep,
-    canProceedEssential,
-    firstName,
-    lastName,
-    birthDate,
-    deathDate,
+    rejectEssentialsIfIncomplete,
     navigateToStep,
     step1Reveal,
     step1Sky,
@@ -1009,6 +1025,20 @@ export function TributeWizard({
     wizardStoryboard.duplicateSongInfo,
     wizardStoryboard.duplicateSongsAcknowledged,
   ]);
+
+  /** Beat 3 — porte : étape 2 sans rituel (même gate que Continuer). */
+  const goToInvitesWithoutRitual = useCallback(async () => {
+    if (currentStep !== 1) return;
+    if (rejectEssentialsIfIncomplete()) return;
+    if (skipRitualPendingRef.current) return;
+    skipRitualPendingRef.current = true;
+    setEssentialError(false);
+    try {
+      await navigateToStep(2);
+    } finally {
+      skipRitualPendingRef.current = false;
+    }
+  }, [currentStep, rejectEssentialsIfIncomplete, navigateToStep]);
 
   const goBack = useCallback(async () => {
     if (currentStep <= 1) return;
@@ -1791,7 +1821,7 @@ export function TributeWizard({
                     className={essentialsTextFieldClass(
                       essentialError && !firstName.trim(),
                     )}
-                    placeholder={copy.firstNameLabel}
+                    placeholder={copy.firstNamePlaceholder}
                   />
                   {essentialError && !firstName.trim() ? (
                     <p
@@ -1823,7 +1853,7 @@ export function TributeWizard({
                     className={essentialsTextFieldClass(
                       essentialError && !lastName.trim(),
                     )}
-                    placeholder={copy.lastNameLabel}
+                    placeholder={copy.lastNamePlaceholder}
                   />
                   {essentialError && !lastName.trim() ? (
                     <p
@@ -1843,6 +1873,7 @@ export function TributeWizard({
                     invalid={essentialError && !birthDate}
                     missingLabel={copy.validationFieldMissing}
                     openAria={copy.datePickerOpenAria}
+                    emptyHint={copy.dateInputEmptyHint}
                   />
                   <EssentialsDateField
                     id="tw-death"
@@ -1852,6 +1883,7 @@ export function TributeWizard({
                     invalid={essentialError && !deathDate}
                     missingLabel={copy.validationFieldMissing}
                     openAria={copy.datePickerOpenAria}
+                    emptyHint={copy.dateInputEmptyHint}
                   />
                 </div>
               </div>
@@ -1875,6 +1907,21 @@ export function TributeWizard({
                     className={`parcours-monolith-continue ${connexionSubmitButtonClass} min-h-[52px] touch-manipulation`}
                   >
                     {copy.parcoursMonolithContinue}
+                  </button>
+                  <p
+                    className="mt-5 flex items-center gap-3 text-[11px] font-light uppercase tracking-[0.28em] text-teal-400/45"
+                    role="separator"
+                  >
+                    <span className="h-px flex-1 bg-teal-400/20" aria-hidden />
+                    {copy.parcoursChoiceOr}
+                    <span className="h-px flex-1 bg-teal-400/20" aria-hidden />
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => void goToInvitesWithoutRitual()}
+                    className="mt-4 w-full min-h-[44px] rounded-lg border border-teal-400/25 bg-transparent px-3 py-2.5 text-center text-sm font-light tracking-wide text-teal-300/70 transition-colors hover:border-teal-400/45 hover:text-teal-200/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+                  >
+                    {copy.parcoursGoToInvites}
                   </button>
                 </div>
               ) : null}
