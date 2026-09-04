@@ -64,26 +64,12 @@ export const SKY_GUEST_DEMO_LAYERS: Record<SkyCraftLayerId, boolean> = {
 };
 
 /**
- * T2-freeze — rituel Continuer : constellation seule au-dessus du gel 2D.
- * Zéro gaz / dust / filantes (perf) · fond off = clear alpha.
+ * Rituel Continuer — ciel léger (même recette que l’invité démo) :
+ * fond + bande + champ lointain + filantes + constellation.
+ * JPEG éteint pendant le play. Pas de gaz / poussière.
  */
 export const SKY_RITUAL_LAYERS: Record<SkyCraftLayerId, boolean> = {
-  fond: false,
-  fog: false,
-  panorama: false,
-  gasFar: false,
-  ghostStars: false,
-  gasRose: false,
-  gasMauve: false,
-  gasTeal: false,
-  cosmicDust: false,
-  dustLanes: false,
-  zodiacal: false,
-  aurora: false,
-  starsBand: false,
-  starsField: false,
-  shootingStars: false,
-  constellation: true,
+  ...SKY_GUEST_DEMO_LAYERS,
 };
 
 /** Lab `/test-sky` — constellation off par défaut (fond seul). */

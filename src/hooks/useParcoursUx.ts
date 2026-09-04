@@ -434,18 +434,21 @@ export function useParcoursUx({
             ? 1
             : 0;
 
-  /** T2-freeze — gel 2D reste visible pendant reveal / J3 (constellation en overlay). */
+  /**
+   * Gel 2D = saisie seulement. Au rituel : fondu → 0 (le JPEG contient déjà le Hero).
+   * Naissance = WebGL vivant, pas overlay sur la photo.
+   */
   const backdropOpacity =
     transition === "panelCloseToHub"
       ? thawReveal
         ? 0
         : hubCloseBackdropOpacityU(closeRitualURef.current)
-      : phase === "panel.essentials" ||
-          phase === "ritual.reveal" ||
-          phase === "hub.postReveal" ||
-          (transition === "hubFreezeTo2D" && !freezeHolding)
-        ? 1
-        : 0;
+      : phase === "ritual.reveal" || phase === "hub.postReveal"
+        ? 0
+        : phase === "panel.essentials" ||
+            (transition === "hubFreezeTo2D" && !freezeHolding)
+          ? 1
+          : 0;
 
   const showHubHero =
     enabled && phase === "hub.idle" && transition === null;

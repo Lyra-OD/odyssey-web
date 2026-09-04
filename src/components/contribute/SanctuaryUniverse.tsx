@@ -1149,7 +1149,7 @@ function UniverseScene({
       />
       <WheelZoom
         enabled={!craftLite}
-        min={hubHeroOnly ? GUEST_ZOOM_MIN : undefined}
+        min={hubHeroOnly || wanderEnabled ? GUEST_ZOOM_MIN : undefined}
       />
       <SkyWander enabled={wanderEnabled} />
       <IdleCameraDrift />
@@ -1731,9 +1731,9 @@ export function SanctuaryUniverse({
         )}
       >
         <Canvas
-          className={immersive ? undefined : "!pointer-events-none"}
+          className={immersive || skyWander ? undefined : "!pointer-events-none"}
           style={{
-            pointerEvents: immersive ? "auto" : "none",
+            pointerEvents: immersive || skyWander ? "auto" : "none",
             background:
               overlayOnBackdrop || closeStreakFire ? "transparent" : undefined,
           }}
@@ -1780,7 +1780,7 @@ export function SanctuaryUniverse({
                 showConstellation={
                   constellationVisible ?? (immersive && constellationOn)
                 }
-                wanderEnabled={immersive && (wanderOn || skyWander)}
+                wanderEnabled={Boolean(skyWander) || (immersive && wanderOn)}
                 onSelectMemory={beginFocus}
                 focus={focus}
                 onStarScreen={onStarScreen}

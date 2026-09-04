@@ -34,8 +34,8 @@ export function useWizardStep1Reveal(
     setRevealT(target);
   }, [firstName, phase, options?.muteFirstNameSnap]);
 
-  /** Ciel actif seulement pendant le play reward — `done` = settle figé (perf). */
-  const skyActive = phase === "reward";
+  /** Play + admiration : ciel vivant (parallax, filantes). Formulaire = gel JPEG. */
+  const skyActive = phase === "reward" || phase === "done";
 
   const playReward = useCallback((): Promise<void> => {
     cancelAnimationFrame(rewardRafRef.current);

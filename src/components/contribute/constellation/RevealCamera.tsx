@@ -92,24 +92,27 @@ export function RevealCamera({
     const restart = t < 0.025 && prev > 0.08;
     lastT.current = t;
 
-    /** Invité : pan cam+look ensemble (axe gardé) — sinon wander/idle sont ignorés. */
-    const panX = lockLookAxis ? skyWanderRef.x + idleCameraRef.x : 0;
-    const panY = lockLookAxis ? skyWanderRef.y + idleCameraRef.y : 0;
+    /** Après le play (t=1) : idle + wander — le ciel reste vivant. Invité : lockLookAxis. */
+    const settled = t >= 0.999;
+    const mixIdle = lockLookAxis || settled;
+    const panX = mixIdle ? skyWanderRef.x + idleCameraRef.x : 0;
+    const panY = mixIdle ? skyWanderRef.y + idleCameraRef.y : 0;
     const baseX = lockLookAxis ? pose.lookX : pose.camX;
     const baseY = lockLookAxis ? pose.lookY : pose.camY;
-    if (lockLookAxis && !zoomSeeded.current) {
+    if ((lockLookAxis || settled) && !zoomSeeded.current) {
       cameraZoomRef.current = pose.camZ;
       zoomSeeded.current = true;
     }
-    const camZ = lockLookAxis
-      ? Math.min(
-          ZOOM_MAX,
-          Math.max(
-            GUEST_ZOOM_MIN,
-            cameraZoomRef.current + idleCameraRef.zoomOffset,
-          ),
-        )
-      : pose.camZ;
+    const camZ =
+      lockLookAxis || settled
+        ? Math.min(
+            ZOOM_MAX,
+            Math.max(
+              GUEST_ZOOM_MIN,
+              cameraZoomRef.current + idleCameraRef.zoomOffset,
+            ),
+          )
+        : pose.camZ;
     desired.set(baseX + panX, baseY + panY, camZ);
     lookTarget.set(pose.lookX + panX, pose.lookY + panY, pose.lookZ);
 

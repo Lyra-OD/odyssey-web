@@ -577,7 +577,7 @@ export function SanctuaryLanding({
         constellationVisible
         skyCraftChrome={false}
         wanderChrome={false}
-        skyWander
+        skyWander={universeImmersive}
         skyLayers={SKY_GUEST_DEMO_LAYERS}
         craftReveal={guestCraftReveal}
         skipConstellationReveal

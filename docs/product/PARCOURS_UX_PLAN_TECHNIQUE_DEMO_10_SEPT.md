@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 4 sept 2026 — **Walk trou 1 (A)** : gel JPEG fondu au rituel · ciel léger (bande + lointain + filantes) · naissance Hero.
 - 3 sept 2026 — **Script parlé** ~8 min (A / B / C) · si X casse, on dit Y.
 - 3 sept 2026 — **Feuille walk ven 4** · parallèle Traversée = non · J3 seulement si Continuer est un trou.
 - 3 sept 2026 — Approche technique : **surface, pas tuyaux** · marcher → 3 trous · stub documenté.
 - 3 sept 2026 — **Refonte :** famille d’abord · invité = ouverture · Salon KPI = 3ᵉ acte. WOW = placeholders OK.
-- 3 sept 2026 — T4 desktop deux colonnes · 390 accordéon · pied hors scroll · témoignage ouvert en entier.
 
 **Statut :** **actif** · orga : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) · invité : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md)
 

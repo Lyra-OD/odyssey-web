@@ -1216,6 +1216,7 @@ export function TributeWizard({
           }
           onStarAnchorChange={onHubStarAnchor}
           closeStreakFire={false}
+          skyWander={step1Reveal.phase === "done"}
         />
       ) : null}
       {step1Sky && step1Parcours.showEditEssentials ? (

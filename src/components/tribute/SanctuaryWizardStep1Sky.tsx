@@ -65,6 +65,8 @@ type SanctuaryWizardStep1SkyProps = {
   /** Hub — render+encode d'une frame pour le gel (Plan B). */
   onHubCaptureMount?: (capture: HubFrameCapture | null) => void;
   closeStreakFire?: boolean;
+  /** Après le rituel — drag / molette comme l’invité. */
+  skyWander?: boolean;
 };
 
 const HUB_IDLE_REVEAL_REF = { current: WIZARD_IDLE_REVEAL_T } as MutableRefObject<number>;
@@ -128,6 +130,7 @@ export function SanctuaryWizardStep1Sky({
   onStarAnchorChange,
   onHubCaptureMount,
   closeStreakFire = false,
+  skyWander = false,
 }: SanctuaryWizardStep1SkyProps) {
   const isHubLite = variant === "hub-lite";
   const handleCanvasReady = useCallback(() => {
@@ -178,7 +181,7 @@ export function SanctuaryWizardStep1Sky({
       tipStrength: 1.2,
       tipStyle: "orb",
       tipColor: "#5eead4",
-      heroParallax: 0,
+      heroParallax: 1,
     };
   }, [
     firstName,
@@ -200,8 +203,9 @@ export function SanctuaryWizardStep1Sky({
   return (
     <div
       className={[
-        "parcours-sky-hub-layer pointer-events-none fixed inset-0",
+        "parcours-sky-hub-layer fixed inset-0",
         isHubLite ? "z-0" : "z-[1]",
+        skyWander ? "pointer-events-auto" : "pointer-events-none",
         liveLayerOpacityVar ? "parcours-sky-opacity-live" : "transition-opacity ease-out",
         panelFading ? "opacity-90" : "opacity-100",
       ].join(" ")}
@@ -232,8 +236,10 @@ export function SanctuaryWizardStep1Sky({
         craftLite={false}
         hubSkyCamera={isHubLite}
         skyLayers={isHubLite ? SKY_HUB_LITE_LAYERS : SKY_RITUAL_LAYERS}
-        overlayOnBackdrop={!isHubLite}
+        overlayOnBackdrop={false}
         wizardRewardFullPerf={!isHubLite && skyActive}
+        skyWander={skyWander}
+        wanderChrome={false}
         craftReveal={craftReveal}
         onCanvasReady={isHubLite ? handleCanvasReady : undefined}
         onStarAnchorChange={isHubLite ? onStarAnchorChange : undefined}
