@@ -97,7 +97,10 @@ import {
   resolveHubBirth,
 } from "@/src/components/contribute/constellation/graphs/hubIdle";
 import { hubFreezeFxRef, tickHubThawAppear } from "@/src/lib/parcours/hubFreezeTimeline";
-import { parcoursCloseStreakLockRef } from "@/src/components/tribute/hubStarAnchorRef";
+import {
+  hubInviteHoverRef,
+  parcoursCloseStreakLockRef,
+} from "@/src/components/tribute/hubStarAnchorRef";
 import { hubSkyApproachRef } from "@/src/components/contribute/constellation/HubSkyCamera";
 import {
   DEFAULT_LINE_WHISPER,
@@ -129,9 +132,11 @@ import {
 const APPROACH_MS = 680;
 const CLOSE_SETTLE_MS = 980;
 
-/** Prénom Hero rituel / lab (hub invite reste 9,5 px). Recette 19 → 24. */
+/** Prénom Hero rituel / lab. Recette 19 → 24. */
 const HERO_NAME_FONT_PX = 24;
 const HERO_NAME_SIZE_U = HERO_NAME_FONT_PX / 19;
+/** Hub idle — CSS px ; drei `distanceFactor` 18 agrandit déjà. Pas 24. */
+const HUB_PROMPT_FONT_PX = 11;
 
 /** Lab craft — drive Leo reveal from outside (scrub / play-pause). */
 export type ConstellationRevealCraft = {
@@ -423,8 +428,10 @@ function Constellation({
     () => revealTRef?.current ?? revealTProp,
   );
   const [hubApproach, setHubApproach] = useState(0);
-  /** T-invite-2 — glow CTA live (prox souris + breath Hero), pas hubApproach figé. */
+  /** T-invite-2 — glow CTA live (prox souris + hover plaque + breath). */
   const [hubCtaGlow, setHubCtaGlow] = useState(0);
+  const hubCtaHoverSmoothRef = useRef(0);
+  const hubHeroProxRef = useRef(0);
   const [proximity, setProximity] = useState<ProximityField>(EMPTY_PROX);
   /** Sync React depuis revealTRef — overlay ~4 Hz · sinon ~8 Hz. */
   const lastRevealReactSyncRef = useRef(0);
@@ -443,7 +450,6 @@ function Constellation({
   const positions = useMemo(() => constellationPositions(stars), [stars]);
 
   useFrame(({ camera, clock }) => {
-    let heroProxFrame = 0;
     if (hubBirthMode) {
       if (!parcoursCloseStreakLockRef.current) {
         const v = hubSkyApproachRef.current;
@@ -508,7 +514,6 @@ function Constellation({
         starsMap[star.id] = prox;
         maxProx = Math.max(maxProx, prox);
       }
-      heroProxFrame = starsMap.hero ?? 0;
 
       const edgesMap: Record<string, number> = {};
       for (const [a, b] of template.edges) {
@@ -541,8 +546,44 @@ function Constellation({
       );
     }
 
-    /** CTA « Toucher l’étoile » : glow cyan = prox + souffle Hero (lisible). */
+    /** CTA hub : prox Hero même en perf lite (1 projection, pas le champ complet). */
+    let heroCtaProx = 0;
+    if (
+      hubBirthMode &&
+      pointerRef &&
+      hubProximityActive(hubSkyApproachRef.current)
+    ) {
+      const heroStar = stars.find((s) => s.role === "hero");
+      const pos = heroStar
+        ? (positions[heroStar.id] ?? heroStar.position)
+        : null;
+      if (pos) {
+        const gx = CONSTELLATION_GROUP_OFFSET[0];
+        const gy = CONSTELLATION_GROUP_OFFSET[1];
+        proxTmp.current.set(
+          gx + pos[0] * graphScale,
+          gy + pos[1] * graphScale,
+          pos[2] * graphScale,
+        );
+        proxTmp.current.project(camera);
+        const ptr = pointerRef.current;
+        heroCtaProx = ndcFieldStrength(
+          proxTmp.current.x - ptr.x,
+          proxTmp.current.y - ptr.y,
+          PROXIMITY_FIELD_RADIUS * 1.45,
+        );
+      }
+    }
+    hubHeroProxRef.current = heroCtaProx;
+
+    /** CTA « Toucher l’étoile » : max(prox souris, hover plaque) + souffle. */
     if (hubBirthMode && hubTapHintVisible(hubSkyApproachRef.current)) {
+      hubCtaHoverSmoothRef.current +=
+        (hubInviteHoverRef.current - hubCtaHoverSmoothRef.current) * 0.22;
+      const drive = Math.min(
+        1,
+        Math.max(hubCtaHoverSmoothRef.current, heroCtaProx),
+      );
       const envelope =
         hubHeroBreath(hubSkyApproachRef.current) *
         hubFreezeFxRef.thawAppearU;
@@ -553,14 +594,16 @@ function Constellation({
           (0.68 * Math.sin(t) + 0.32 * Math.sin(t * 0.41 + 0.4));
       const live = Math.min(
         1,
-        0.22 * envelope +
-          0.62 * heroProxFrame +
-          0.48 * breathWave * envelope * (0.35 + 0.65 * heroProxFrame),
+        0.18 * envelope +
+          0.72 * drive +
+          0.42 * breathWave * envelope * (0.28 + 0.72 * drive),
       );
       setHubCtaGlow((prev) =>
-        Math.abs(prev - live) > 0.028 ? live : prev,
+        Math.abs(prev - live) > 0.02 ? live : prev,
       );
     } else {
+      hubCtaHoverSmoothRef.current = 0;
+      hubHeroProxRef.current = 0;
       setHubCtaGlow((prev) => (prev > 0 ? 0 : prev));
     }
   });
@@ -682,7 +725,9 @@ function Constellation({
           : hubHeroOnly && birth.heroKeep
             ? 1
             : drawPhase.constellationBreath;
-        const starProx = proximity.stars[star.id] ?? 0;
+        const starProx =
+          (proximity.stars[star.id] ?? 0) ||
+          (hubBirthMode && star.role === "hero" ? hubHeroProxRef.current : 0);
         const proxRelight = 1 + starProx * PROXIMITY_RELIGHT;
         const slotBreathMul =
           slotStars.breath * (0.08 + 0.92 * breathDrive) * (1 + starProx * 0.9);
@@ -761,8 +806,6 @@ function Constellation({
           ? (42 - 14 * nameLift + birth.nameDriftY * 4 + heroSep.nameDrop) *
             HERO_NAME_SIZE_U
           : 18;
-        const hubInviteScale =
-          hubPrompt && isHero ? nameScale * 0.63 : nameScale;
         const hubInviteY = isHero
           ? 26 - 8 * nameLift + birth.nameDriftY * 2.5 + heroSep.nameDrop
           : nameY;
@@ -783,7 +826,7 @@ function Constellation({
         const glowA = hubPrompt && isHero
           ? 0.06 + 0.22 * nameGlow
           : 0.12 + 0.4 * nameGlow;
-        /** T-invite-2 — glow CTA = cyan Hero × prox souris + breath live. */
+        /** T-invite-2 — glow CTA = cyan × (prox souris ∪ hover plaque) + breath. */
         const tapGlowU = hubPrompt && isHero ? hubCtaGlow : 0;
         const tapGlowPx = 10 + 36 * tapGlowU;
         const tapGlowA = 0.2 + 0.75 * tapGlowU;
@@ -890,7 +933,7 @@ function Constellation({
                 }
                 style={{
                   pointerEvents: "none",
-                  transform: `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameYResolved.toFixed(1)}px) scale(${(hubPrompt && isHero ? hubInviteScale : nameScale).toFixed(3)})`,
+                  transform: `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameYResolved.toFixed(1)}px) scale(${(hubPrompt && isHero ? nameScale * 0.63 : nameScale).toFixed(3)})`,
                   transformOrigin: "50% 0%",
                   whiteSpace: "nowrap",
                   textAlign: "center",
@@ -898,15 +941,15 @@ function Constellation({
                   marginRight: isHero
                     ? `-${nameTracking.toFixed(3)}em`
                     : undefined,
-                  fontSize: hubPrompt && isHero ? "9.5px" : isHero ? `${HERO_NAME_FONT_PX}px` : "11px",
-                  lineHeight: hubPrompt && isHero ? 1.35 : undefined,
+                  fontSize: hubPrompt && isHero ? `${HUB_PROMPT_FONT_PX}px` : isHero ? `${HERO_NAME_FONT_PX}px` : "11px",
+                  lineHeight: hubPrompt && isHero ? 1.2 : undefined,
                   fontFamily: isHero
                     ? "var(--font-editorial), ui-serif, Georgia, serif"
                     : undefined,
                   letterSpacing: hubPrompt && isHero
-                    ? "0.14em"
+                    ? "0.04em"
                     : `${nameTracking.toFixed(3)}em`,
-                  fontWeight: 300,
+                  fontWeight: hubPrompt && isHero ? 400 : 300,
                   opacity: nameOpacity,
                   filter:
                     nameBlurPx > 0.35
@@ -1154,6 +1197,7 @@ function UniverseScene({
       />
       <WheelZoom
         enabled={!craftLite}
+        listenOnWindow={hubSkyCamera}
         min={hubHeroOnly || wanderEnabled ? GUEST_ZOOM_MIN : undefined}
       />
       <SkyWander enabled={wanderEnabled} />

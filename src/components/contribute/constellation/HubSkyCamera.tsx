@@ -15,6 +15,7 @@ import { idleCameraRef } from "./IdleCameraDrift";
 import { skyWanderRef } from "./SkyWander";
 import {
   cameraZoomRef,
+  GUEST_ZOOM_MIN,
   ZOOM_DEFAULT,
   ZOOM_MAX,
   ZOOM_MIN,
@@ -56,6 +57,7 @@ export function HubSkyCamera({
   template = ACTIVE_TEMPLATE,
 }: HubSkyCameraProps) {
   const startAtRef = useRef<number | null>(null);
+  const zoomSeeded = useRef(false);
   const look = useRef(new Vector3(0, 0, 0));
   const desired = useRef(new Vector3(0, 0, ZOOM_DEFAULT));
   const lookTarget = useRef(new Vector3(0, 0, 0));
@@ -66,6 +68,7 @@ export function HubSkyCamera({
   useEffect(() => {
     if (!enabled) {
       hubSkyCameraDriveRef.active = false;
+      zoomSeeded.current = false;
       // Pause — ne pas rembobiner le dolly (thaw après panneau = même zoom).
       return;
     }
@@ -115,7 +118,23 @@ export function HubSkyCamera({
     const lookX = skyLookX + (endLookX - skyLookX) * u;
     const lookY = skyLookY + (endLookY - skyLookY) * u;
     const lookZ = endLookZ * u;
-    const camZ = skyZ + (HUB_CAM_Z_END - skyZ) * u;
+    const settled = u >= HUB_SETTLED_U;
+    if (settled && !zoomSeeded.current) {
+      cameraZoomRef.current = HUB_CAM_Z_END;
+      zoomSeeded.current = true;
+    }
+    if (!settled) {
+      zoomSeeded.current = false;
+    }
+    const camZ = settled
+      ? Math.min(
+          ZOOM_MAX,
+          Math.max(
+            GUEST_ZOOM_MIN,
+            cameraZoomRef.current + idle.zoomOffset,
+          ),
+        )
+      : skyZ + (HUB_CAM_Z_END - skyZ) * u;
 
     desired.current.set(wx + idle.x, wy + idle.y, camZ);
     lookTarget.current.set(lookX, lookY, lookZ);
@@ -126,7 +145,9 @@ export function HubSkyCamera({
     look.current.lerp(lookTarget.current, follow * 1.05);
     cam.lookAt(look.current);
 
-    cameraZoomRef.current = camZ;
+    if (!settled) {
+      cameraZoomRef.current = camZ;
+    }
 
     const fog = state.scene.fog instanceof Fog ? state.scene.fog : null;
     if (fog) {

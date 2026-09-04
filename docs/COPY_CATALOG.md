@@ -339,7 +339,7 @@
 | `tributeWizard.stepEssentialTitle` | Étape 1 : L’essentiel | Step 1: The essentials |
 | `tributeWizard.stepEssentialDescription` | Les informations qui donnent visage à cet hommage. Avancez à votre rythme. | What gives this tribute a face and a soul. Move at your own pace. |
 | `tributeWizard.step1ConstellationReward` | Sa constellation prend forme… | Her constellation is taking shape… |
-| `tributeWizard.parcoursHeroPrompt` | Une présence. | A presence. |
+| `tributeWizard.parcoursHeroPrompt` | Une Présence | A Presence |
 | `tributeWizard.parcoursHeroTapHint` | Toucher l’étoile | Touch the star |
 | `tributeWizard.parcoursHeroOpenLabel` | Ouvrir l’essentiel — prénom et identité de l’hommage | Open essentials — name and tribute identity |
 | `tributeWizard.parcoursPanelCloseHint` | Fermer · le ciel vous attend | Close · the sky awaits |

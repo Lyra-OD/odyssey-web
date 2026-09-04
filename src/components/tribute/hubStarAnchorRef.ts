@@ -47,8 +47,36 @@ export function resolveHubStarAnchorForClose(): ScreenAnchor {
   return hubStarAnchorRef.current ?? hubStarLastKnownAnchorRef.current;
 }
 
-/** Aligné `SanctuaryHubHero` — hit `13.5rem` · `-translate-y-[28%]`. */
+/**
+ * Fermeture rituel — offset optique (pas les hits clic).
+ * Les hits hub = `HUB_STAR_HIT_REM` + plaque invite.
+ */
 export const HUB_HERO_HIT_HEIGHT_REM = 13.5;
+
+/** Hit étoile — cercle centré sur l’ancre. */
+export const HUB_STAR_HIT_REM = 5.75;
+
+/** Hit invite — sous l’étoile, couvre *Une Présence* + *Toucher l’étoile*. */
+export const HUB_INVITE_HIT_HEIGHT_REM = 15;
+export const HUB_INVITE_HIT_OFFSET_REM = 1.75;
+
+/**
+ * 0 | 1 — souris sur hit étoile ou invite.
+ * Écrit DOM (`SanctuaryHubHero`), lu Canvas (glow CTA). Compteur = overlap des 2 zones.
+ */
+export const hubInviteHoverRef = { current: 0 };
+
+let hubInviteHoverCount = 0;
+
+export function noteHubInviteHover(delta: 1 | -1): void {
+  hubInviteHoverCount = Math.max(0, hubInviteHoverCount + delta);
+  hubInviteHoverRef.current = hubInviteHoverCount > 0 ? 1 : 0;
+}
+
+export function resetHubInviteHover(): void {
+  hubInviteHoverCount = 0;
+  hubInviteHoverRef.current = 0;
+}
 
 const HUB_STAR_OPTICAL_Y_RATIO = 0.22;
 

@@ -19,16 +19,29 @@ type WheelZoomProps = {
   enabled: boolean;
   min?: number;
   max?: number;
+  /**
+   * Hub : canvas `pointer-events: none` + plaques clic au-dessus.
+   * Écouter `window` pour que la molette traverse les hits.
+   */
+  listenOnWindow?: boolean;
 };
+
+function skyWheelBlocked(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false;
+  return Boolean(
+    target.closest("input, textarea, select, [data-no-sky-wheel]"),
+  );
+}
 
 /**
  * Zoom molette uniquement — met à jour cameraZoomRef.
- * FocusCamera applique la distance hors focus.
+ * FocusCamera / HubSkyCamera (settled) appliquent la distance.
  */
 export function WheelZoom({
   enabled,
   min = ZOOM_MIN,
   max = ZOOM_MAX,
+  listenOnWindow = false,
 }: WheelZoomProps) {
   const gl = useThree((s) => s.gl);
 
@@ -38,7 +51,6 @@ export function WheelZoom({
       Math.max(min, cameraZoomRef.current),
     );
 
-    const el = gl.domElement;
     const onWheel = (e: WheelEvent) => {
       if (!enabled) return;
       if (
@@ -47,6 +59,7 @@ export function WheelZoom({
       ) {
         return;
       }
+      if (listenOnWindow && skyWheelBlocked(e.target)) return;
       e.preventDefault();
       markSkyActivity();
       cameraZoomRef.current = Math.min(
@@ -54,9 +67,16 @@ export function WheelZoom({
         Math.max(min, cameraZoomRef.current + e.deltaY * 0.012),
       );
     };
+
+    if (listenOnWindow) {
+      window.addEventListener("wheel", onWheel, { passive: false });
+      return () => window.removeEventListener("wheel", onWheel);
+    }
+
+    const el = gl.domElement;
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [enabled, gl, min, max]);
+  }, [enabled, gl, min, max, listenOnWindow]);
 
   return null;
 }
