@@ -1733,7 +1733,7 @@ export function TributeWizard({
               >
                 {copy.stepEssentialTitle}
               </h2>
-              <p className="mt-5 text-lg font-light leading-relaxed text-zinc-400 md:text-xl">
+              <p className="mt-5 whitespace-pre-line text-lg font-light leading-relaxed text-zinc-400 md:text-xl">
                 {copy.stepEssentialDescription}
               </p>
               </div>
@@ -1777,7 +1777,7 @@ export function TributeWizard({
                     />
                   )}
                 </button>
-                <p className="mt-4 max-w-sm text-center text-sm font-light text-zinc-500">
+                <p className="mt-4 max-w-sm whitespace-pre-line text-center text-sm font-light text-zinc-500">
                   {copy.primaryPhotoHint}
                 </p>
                 {avatarPreview ? (
