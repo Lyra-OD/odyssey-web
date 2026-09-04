@@ -47,7 +47,7 @@ export function SkyBackdrop({
   return (
     <div
       className={[
-        "pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#020202] transition-opacity",
+        "pointer-events-none fixed inset-0 z-[1] overflow-hidden bg-[#020202] transition-opacity",
         !liveOpacityVar && opacity < 0.02 ? "opacity-0" : "opacity-100",
         ritualClass,
         className,

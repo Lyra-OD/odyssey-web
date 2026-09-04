@@ -236,7 +236,8 @@ export function SanctuaryWizardStep1Sky({
         craftLite={false}
         hubSkyCamera={isHubLite}
         skyLayers={isHubLite ? SKY_HUB_LITE_LAYERS : SKY_RITUAL_LAYERS}
-        overlayOnBackdrop={false}
+        /** Hub : transparent au-dessus du JPEG. Rituel : opaque, ciel vivant. */
+        overlayOnBackdrop={isHubLite}
         wizardRewardFullPerf={!isHubLite && skyActive}
         skyWander={skyWander}
         wanderChrome={false}

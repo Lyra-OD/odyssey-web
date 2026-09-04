@@ -4,11 +4,11 @@
 **Dernière MAJ :** 4 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 4 sept 2026 — **T1-freeze hub** : gel JPEG au-dessus du canvas hub (overlay transparent). Rituel Continuer reste WebGL vivant, JPEG à 0.
 - 4 sept 2026 — **T1-reward nom** : Continuer — brume ~4,4 s puis hold / étoile / traits au rythme 8 s. Prénom Hero **Editorial 24 px** (Y, brume, glow ×24/19). Hub invite 9,5 px inchangé. Lab play 14 s linéaire.
 - 3 sept 2026 — Expérience **voulue** (storyboard, avant plan technique) : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md). Ce canon reste la spec **impl** jusqu’au réalignement.
 - 2 sept 2026 — **T1-invite-off** : l'invite hub (`hubPrompt` / `hubTapHint`) est verrouillée sur `hubSkyCamera` — plus aucun texte du hub par-dessus la constellation en reward / postReveal. Copy Option C : « Une présence. » / « Toucher l'étoile ».
 - 2 sept 2026 — **T1-perf-runtime** : GPU `high-performance` (le ciel tournait en `low-power` depuis le 29 juil.) · gel capturé en JPEG (le PNG bloquait le thread) · **plus de remount WebGL** au Continuer (reset ciblé sur la sous-scène Constellation) · `revealT` hors re-render React pendant le play.
-- 2 sept 2026 — **T1-hotfix** : hubHeroOnly (zéro traits Léo avant Continuer).
 
 **Statut :** **T1-perf-runtime** ✅ · tester **uniquement** `http://localhost:3000` · suite nav P1/P2 · P0 ✅.
 
