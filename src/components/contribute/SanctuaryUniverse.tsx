@@ -137,6 +137,8 @@ const HERO_NAME_FONT_PX = 24;
 const HERO_NAME_SIZE_U = HERO_NAME_FONT_PX / 19;
 /** Hub idle — CSS px ; drei `distanceFactor` 18 agrandit déjà. Pas 24. */
 const HUB_PROMPT_FONT_PX = 11;
+/** Hub — bande plus bas et à gauche (cache le bout visible à l’écran). */
+const HUB_MILKY_NUDGE: [number, number, number] = [-2.8, -2.2, 0];
 
 /** Lab craft — drive Leo reveal from outside (scrub / play-pause). */
 export type ConstellationRevealCraft = {
@@ -1184,6 +1186,15 @@ function UniverseScene({
     ? craftReveal?.revealTRef
     : autoRevealRef;
 
+  const milkyBase = theme.scene.milkyPosition ?? [0, 0, 0];
+  const milkyPosition: [number, number, number] = hubSkyCamera
+    ? [
+        milkyBase[0] + HUB_MILKY_NUDGE[0],
+        milkyBase[1] + HUB_MILKY_NUDGE[1],
+        milkyBase[2] + HUB_MILKY_NUDGE[2],
+      ]
+    : milkyBase;
+
   return (
     <ParallaxProvider intensity={parallaxIntensity}>
       <CloseRitualClearAlpha
@@ -1251,7 +1262,7 @@ function UniverseScene({
         ) : null}
         {/* Groupe milky procédural (pas panorama) — knobs lab cible « milky » */}
         <group
-          position={theme.scene.milkyPosition ?? [0, 0, 0]}
+          position={milkyPosition}
           rotation={[0, 0, theme.scene.milkyRotate ?? 0]}
         >
         {!closeStreakFire && isSkyLayerOn(skyLayers, "cosmicDust") ? (
@@ -1556,6 +1567,8 @@ export function SanctuaryUniverse({
   const immersive = mode === "immersive" && !craftLite;
   const skyPaused = craftReveal?.skyActive === false;
   const hubCaptureBuffer = hubSkyCamera && mode === "background";
+  const overlayLiveRef = useRef(overlayOnBackdrop || closeStreakFire);
+  overlayLiveRef.current = overlayOnBackdrop || closeStreakFire;
   /**
    * glFactory stable pour mode background — hub→ritual ne remonte PAS le Canvas
    * (sinon cold shaders = lag Continuer).
@@ -1810,8 +1823,23 @@ export function SanctuaryUniverse({
             }
             if (hubCaptureBuffer) {
               onHubCaptureMount?.(() => {
+                const fill = new Color(
+                  skyTheme.scene.background || "#020202",
+                );
+                const prevBg = scene.background;
+                scene.background = fill;
+                gl.setClearColor(fill, 1);
                 gl.render(scene, camera);
-                return encodeHubFrame(gl.domElement as HTMLCanvasElement);
+                const url = encodeHubFrame(
+                  gl.domElement as HTMLCanvasElement,
+                );
+                if (overlayLiveRef.current) {
+                  gl.setClearColor(0x000000, 0);
+                  scene.background = null;
+                } else {
+                  scene.background = prevBg;
+                }
+                return url;
               });
             }
             if (onCanvasReady) {

@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { useCallback, useMemo, type MutableRefObject } from "react";
 
-import { SkyBackdrop } from "@/src/components/contribute/SkyBackdrop";
 import {
   DEFAULT_HERO_GLOBAL_SCALE,
   DEFAULT_HERO_SPIKES,
@@ -31,7 +30,7 @@ const SanctuaryUniverse = dynamic(
     ),
   {
     ssr: false,
-    loading: () => <SkyBackdrop opacity={1} />,
+    loading: () => <div className="fixed inset-0 z-0 bg-[#020202]" />,
   },
 );
 
@@ -236,8 +235,8 @@ export function SanctuaryWizardStep1Sky({
         craftLite={false}
         hubSkyCamera={isHubLite}
         skyLayers={isHubLite ? SKY_HUB_LITE_LAYERS : SKY_RITUAL_LAYERS}
-        /** Hub : transparent au-dessus du JPEG. Rituel : opaque, ciel vivant. */
-        overlayOnBackdrop={isHubLite}
+        // Overlay seulement après le gel : idle + capture restent opaques.
+        overlayOnBackdrop={isHubLite && !skyActive}
         wizardRewardFullPerf={!isHubLite && skyActive}
         skyWander={skyWander}
         wanderChrome={false}

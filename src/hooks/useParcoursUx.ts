@@ -419,9 +419,11 @@ export function useParcoursUx({
       transition !== null ||
       panelExiting);
 
+  const hasFreezePhoto = Boolean(freezeCaptureUrl);
+
   const hubWebGLOpacity =
     transition === "hubFreezeTo2D"
-      ? freezeHolding
+      ? freezeHolding || !hasFreezePhoto
         ? 1
         : 0
       : transition === "panelCloseToHub"
@@ -432,7 +434,9 @@ export function useParcoursUx({
           ? 1
           : showRitualWebGL
             ? 1
-            : 0;
+            : hasFreezePhoto
+              ? 0
+              : 1;
 
   /**
    * Gel 2D = saisie seulement. Au rituel : fondu → 0 (le JPEG contient déjà le Hero).
@@ -445,8 +449,9 @@ export function useParcoursUx({
         : hubCloseBackdropOpacityU(closeRitualURef.current)
       : phase === "ritual.reveal" || phase === "hub.postReveal"
         ? 0
-        : phase === "panel.essentials" ||
-            (transition === "hubFreezeTo2D" && !freezeHolding)
+        : (phase === "panel.essentials" ||
+              (transition === "hubFreezeTo2D" && !freezeHolding)) &&
+            hasFreezePhoto
           ? 1
           : 0;
 
@@ -466,7 +471,9 @@ export function useParcoursUx({
   const hubSkyLive =
     enabled &&
     ((phase === "hub.idle" && transition === null) ||
-      (transition === "hubFreezeTo2D" && freezeHolding) ||
+      (transition === "hubFreezeTo2D" &&
+        (freezeHolding || !hasFreezePhoto)) ||
+      (phase === "panel.essentials" && !hasFreezePhoto) ||
       (transition === "panelCloseToHub" && thawReveal));
 
   const hubChromeHidden = enabled;
