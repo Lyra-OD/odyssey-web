@@ -62,6 +62,7 @@ import type { HubFrameCapture } from "@/src/lib/parcours/hubFreezeCapture";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
 import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
 import { SanctuaryHubHero } from "@/src/components/tribute/SanctuaryHubHero";
+import { SanctuaryHubPostReveal } from "@/src/components/tribute/SanctuaryHubPostReveal";
 import { ParcoursHubBodyFlag } from "@/src/components/tribute/ParcoursHubBodyFlag";
 import {
   HUB_HERO_FALLBACK_ANCHOR,
@@ -1062,6 +1063,23 @@ export function TributeWizard({
     }
   }, [currentStep, rejectEssentialsIfIncomplete, navigateToStep]);
 
+  /**
+   * Carte J3 (post-reveal) — CTA soft « Continuer » : bypass direct vers le
+   * Coffre (Étape 3), sans passer par l'écran Inviter. G2 « Inviter first ·
+   * Continuer soft · skip toujours possible ».
+   */
+  const skipToVaultPendingRef = useRef(false);
+  const goToVaultFromReveal = useCallback(async () => {
+    if (currentStep !== 1) return;
+    if (skipToVaultPendingRef.current) return;
+    skipToVaultPendingRef.current = true;
+    try {
+      await navigateToStep(3);
+    } finally {
+      skipToVaultPendingRef.current = false;
+    }
+  }, [currentStep, navigateToStep]);
+
   const goBack = useCallback(async () => {
     if (currentStep <= 1) return;
     const prev = (currentStep - 1) as Step;
@@ -1395,15 +1413,19 @@ export function TributeWizard({
         />
       ) : null}
       {step1Sky && step1Parcours.showEditEssentials ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-8 z-40 flex justify-center px-4 md:bottom-10">
-          <button
-            type="button"
-            onClick={handleEditEssentials}
-            className="pointer-events-auto rounded-lg px-3 py-2 text-sm font-light tracking-wide text-white/55 transition-colors hover:text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
-          >
-            {copy.parcoursEditEssentials}
-          </button>
-        </div>
+        <SanctuaryHubPostReveal
+          copy={{
+            circleShare: copy.parcoursCircleShare,
+            skyVsVault: copy.parcoursSkyVsVault,
+            noRush: copy.parcoursNoRush,
+            inviteCta: copy.parcoursInviteCta,
+            continueCta: copy.parcoursContinueCta,
+            editEssentials: copy.parcoursEditEssentials,
+          }}
+          onInvite={() => void goToInvitesWithoutRitual()}
+          onContinue={() => void goToVaultFromReveal()}
+          onEditEssentials={handleEditEssentials}
+        />
       ) : null}
     <div
       className={`relative mx-auto w-full ${

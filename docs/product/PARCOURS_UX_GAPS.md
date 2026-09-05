@@ -1,9 +1,10 @@
 # Parcours UX — Audit des trous (Chemin 1)
 
 **Type :** living · **Vérité pour :** inventaire exhaustif des écarts avant implémentation Traversée — pédagogie · code · craft · copy · DA · décisions.  
-**Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 5 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — **T2-5 codé** : carte J3 (`SanctuaryHubPostReveal`) — titre A + sous-ligne B + Inviter (dominant, Étape 2) + Continuer (soft, bypass Étape 3) + footer C. Clés copy déjà cataloguées, aucune nouvelle.
 - 4 sept 2026 — **P1 partiel** : porte Beat 3 (`parcoursGoToInvites`) · lien langue Atelier encore ⏳.
 - 3 sept 2026 — Plan technique **démo 10 sept** : [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 - 3 sept 2026 — Storyboard **invité** figé : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md).
@@ -45,7 +46,7 @@ Audit **lecture seule** avant code T2. Ne pas confondre « phase parcours nommé
 | Clic Continuer monolithe | `goNext` → `flush` → `playReward()` | OK départ |
 | Play A→F | `useWizardStep1Reveal.playReward` · `revealT` 0→1 · durée = craft lab · dwell **3,5 s** | OK craft |
 | Phases parcours | `reward` → `ritual.reveal` · `done` → `hub.postReveal` | Phases **set** |
-| UI J3 | **Absente** | Canon : dwell + carte · code : **rien** |
+| UI J3 | **✅ codée** (5 sept) | `SanctuaryHubPostReveal` — dwell CSS 400 ms + carte titre A/sous-ligne B/footer C |
 | Après dwell | `goNext` **return** après `playReward` (T2-1 ✅) | Plus de tunnel step 2 · UI J3 = T2-5 |
 | `transition.backdropToWebGL` | **Pas de chorégraphie nommée** | Switch `showRitualWebGL` + `skyActive` via phase reward — pas de crossfade gel→ritual documenté |
 | Caméra | Hub = `hubSkyCamera` (dolly) · Ritual = RevealCamera / défaut constellation | **Deux modes** — alignement 2D↔3D à valider visuellement (P1) |
@@ -162,9 +163,9 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 |----|----------|-------------------|-----|-------------|-------------|
 | `parcours.heroPrompt` | P0 | Une Présence · Toucher l’étoile | Hub idle · clic Hero | ✅ | ✅ |
 | `parcours.constellationBorn` | P1 | Sa constellation prend forme. | Post-reveal | ✅ | ⏳ T2-4 |
-| **`hub.skyVsVault`** | **P0** | Sous-ligne B (raccourci dépôt→ciel/film) | Hub post-reveal (J3) | ✅ | ⏳ T2-copy+5 |
-| **Cercle A** | **P0** | Plus le cercle partage, plus le ciel s’allume. | Titre carte J3 | ✅ | ⏳ T2-copy+5 |
-| **`hub.noRush`** | **P1** | Prenez votre temps. Le ciel attend. | Footer J3 | ✅ | ⏳ T2-copy+5 |
+| **`hub.skyVsVault`** | **P0** | Sous-ligne B (raccourci dépôt→ciel/film) | Hub post-reveal (J3) | ✅ | ✅ T2-5 (5 sept) |
+| **Cercle A** | **P0** | Plus le cercle partage, plus le ciel s’allume. | Titre carte J3 | ✅ | ✅ T2-5 (5 sept) |
+| **`hub.noRush`** | **P1** | Prenez votre temps. Le ciel attend. | Footer J3 | ✅ | ✅ T2-5 (5 sept) |
 | `parcours.circleShare` | P1 | (= titre A — réutiliser clé) | Étape 2 / overlay invite | ✅ | ⏳ T3 |
 | **`circle.guestJourney`** | **P0** | Ils reçoivent un lien… | Après 1ère invite ou skip step 2 | ✅ | ⏳ T3 |
 | **`vault.filmBridge`** | **P0** | Ici se rangent les souvenirs… | Avant étape 3 · drawer | ✅ | ⏳ T4 |
@@ -191,7 +192,7 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 | Panneau verre open/close | P0 | monolithe | ✅ T-open / T-close | T1b ✅ |
 | Skip prologue → hub | P1 | `hasSeenPrologue` | ⏳ | T6 |
 | Transition image 2D → WebGL | P0 | `backdropToWebGL` | 🟡 switch phase · **pas** choré | **T2-2** |
-| Hub post-reveal J3 | P0 | carte Inviter / Continuer + dwell | ⏳ tunnel step 2 | **T2-1 + T2-5** |
+| Hub post-reveal J3 | P0 | carte Inviter / Continuer + dwell | ✅ `SanctuaryHubPostReveal` (5 sept) | **T2-1 + T2-5 ✅** |
 | Overlay invite sur ciel | P1 | `panel.invite` | 🟡 step 2 classique | T3 |
 | Beat drawer Coffre→film | P0 | `VaultFilmBridgeBeat` | ⏳ | T4 |
 | Studio sans ciel WebGL | P1 | steps 4–6 | 🟡 | T5 |
@@ -206,7 +207,7 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 |-------|----------|---------------|-------------|--------|
 | Saisie étape 1 | P0 | Gel 2D · zéro WebGL sous champs | ✅ capture + opacity 0 | — |
 | Retour draft rempli | P0 | Chemin B → panneau direct | 🟡 `virginHub` | Polish T1 |
-| Après reveal | P0 | Hub J3 dwell | **T2-1 ✅** reste step 1 · UI carte = T2-5 | **T2-5** |
+| Après reveal | P0 | Hub J3 dwell | **T2-1 ✅** · **T2-5 ✅** carte `SanctuaryHubPostReveal` | — |
 | Nom de famille requis | ✅ | G1 | `canProceedEssential` | — |
 | Zodiac ritual | P2 | date → silhouette | ✅ | — |
 | Perf WebGL + formulaire | P0 | Traversée | ✅ gel saisie | — |
@@ -228,7 +229,7 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | Trou | Priorité | Action |
 |------|----------|--------|
-| Clés J3 absentes | P0 | **T2-copy ✅** — brancher UI en T2-4/5 |
+| Clés J3 absentes | P0 | **T2-copy ✅** · branchées UI **T2-5 ✅** (5 sept) |
 | Voix « film » vs jargon | P1 | A+B+C figés · pas RevShare famille |
 | `export-copy-catalog.mjs` | P1 | Même commit que clés |
 
@@ -273,7 +274,7 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | Trou | Mitigation |
 |------|------------|
-| J3 absent | **T2** — sinon oral + Figma |
+| J3 absent | **✅ T2-5 codé (5 sept)** — carte Inviter/Continuer live |
 | Coffre→film | T4 si vente montage |
 | Perf | Pas WebGL sous form — déjà |
 
@@ -294,9 +295,9 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 
 | Catégorie | P0 restants T2 | Lesquels |
 |-----------|----------------|----------|
-| **Infra / flux** | 2 | `backdropToWebGL` choré · J3 (coupe tunnel + UI) |
-| **Pédagogie J3** | 2 | Titre A + sous-ligne B (`skyVsVault`) |
-| **Copy** | 1 | Clés J3 absentes |
+| **Infra / flux** | 1 | `backdropToWebGL` choré (J3 UI ✅ codée 5 sept) |
+| **Pédagogie J3** | 0 | Titre A + sous-ligne B (`skyVsVault`) ✅ codés 5 sept |
+| **Copy** | 0 | Clés J3 câblées 5 sept |
 | **Craft** | 0 | A→F déjà là |
 
 **Conclusion :** T1b **livré**. Prochaine implémentation = **T2** (copy → tunnel → transition → reveal → J3). Hors scope T2 : T3 invite volume · T4 Coffre→film.
