@@ -691,6 +691,13 @@ function Constellation({
         const pos = positions[star.id] ?? star.position;
         const isHero = star.role === "hero";
         if (hubHeroOnly && !isHero) return null;
+        /**
+         * Légende Hero « hub » — Famille (test-ciel, `hubPrompt`) ET Invité
+         * (même caméra `HubSkyCamera`, même angle) partagent `hubHeroOnly`.
+         * Même typo/centrage pour les deux ; seul `hubPrompt` garde son
+         * `inviteMul` (pulse CTA Famille — pas de fx invité).
+         */
+        const hubCaption = isHero && hubHeroOnly;
 
         const appearRaw = draw.nodeAppear[star.id] ?? 0;
         const appear = slotWakeAppear(appearRaw, drawPhase.beat);
@@ -811,21 +818,21 @@ function Constellation({
         const hubInviteY = isHero
           ? 26 - 8 * nameLift + birth.nameDriftY * 2.5 + heroSep.nameDrop
           : nameY;
-        const nameYResolved = hubPrompt && isHero ? hubInviteY : nameY;
+        const nameYResolved = hubCaption ? hubInviteY : nameY;
         /** Hub : +px = texte vers la droite (sous le cœur). Sens inverse du coup trop fort à gauche. */
         const nameX = isHero
-          ? birth.nameDriftX * 5 * (hubPrompt ? 1 : HERO_NAME_SIZE_U) +
-            (hubPrompt ? 4 : 0)
+          ? birth.nameDriftX * 5 * (hubCaption ? 1 : HERO_NAME_SIZE_U) +
+            (hubCaption ? 4 : 0)
           : 0;
         const nameTracking = isHero
-          ? hubPrompt
+          ? hubCaption
             ? 0.14
             : 0.36 - 0.14 * nameTrack + 0.025 * nameGlow
           : 0.2;
-        const glowPx = hubPrompt && isHero
+        const glowPx = hubCaption
           ? 10 + 18 * nameGlow + 4 * nameClarity
           : (14 + 30 * nameGlow + 8 * nameClarity) * HERO_NAME_SIZE_U;
-        const glowA = hubPrompt && isHero
+        const glowA = hubCaption
           ? 0.06 + 0.22 * nameGlow
           : 0.12 + 0.4 * nameGlow;
         /** T-invite-2 — glow CTA = cyan × (prox souris ∪ hover plaque) + breath. */
@@ -931,11 +938,11 @@ function Constellation({
             {showHeroName || showSlotName ? (
               <Html
                 distanceFactor={
-                  isHero ? (hubPrompt ? 18 : 6.4) : 6
+                  isHero ? (hubCaption ? 18 : 6.4) : 6
                 }
                 style={{
                   pointerEvents: "none",
-                  transform: `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameYResolved.toFixed(1)}px) scale(${(hubPrompt && isHero ? nameScale * 0.63 : nameScale).toFixed(3)})`,
+                  transform: `translate(calc(-50% + ${nameX.toFixed(2)}px), ${nameYResolved.toFixed(1)}px) scale(${(hubCaption ? nameScale * 0.63 : nameScale).toFixed(3)})`,
                   transformOrigin: "50% 0%",
                   whiteSpace: "nowrap",
                   textAlign: "center",
@@ -943,27 +950,27 @@ function Constellation({
                   marginRight: isHero
                     ? `-${nameTracking.toFixed(3)}em`
                     : undefined,
-                  fontSize: hubPrompt && isHero ? `${HUB_PROMPT_FONT_PX}px` : isHero ? `${HERO_NAME_FONT_PX}px` : "11px",
-                  lineHeight: hubPrompt && isHero ? 1.2 : undefined,
+                  fontSize: hubCaption ? `${HUB_PROMPT_FONT_PX}px` : isHero ? `${HERO_NAME_FONT_PX}px` : "11px",
+                  lineHeight: hubCaption ? 1.2 : undefined,
                   fontFamily: isHero
                     ? "var(--font-editorial), ui-serif, Georgia, serif"
                     : undefined,
-                  letterSpacing: hubPrompt && isHero
+                  letterSpacing: hubCaption
                     ? "0.04em"
                     : `${nameTracking.toFixed(3)}em`,
-                  fontWeight: hubPrompt && isHero ? 400 : 300,
+                  fontWeight: hubCaption ? 400 : 400,
                   opacity: nameOpacity,
                   filter:
                     nameBlurPx > 0.35
                       ? `blur(${nameBlurPx.toFixed(1)}px)`
                       : undefined,
                   color: isHero
-                    ? hubPrompt
+                    ? hubCaption
                       ? "rgba(244, 244, 245, 0.88)"
                       : `rgba(255, 252, 248, ${0.72 + 0.22 * nameClarity})`
                     : "rgba(204, 251, 241, 0.6)",
                   textShadow: isHero
-                    ? hubPrompt
+                    ? hubCaption
                       ? `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)})`
                       : `0 0 ${glowPx.toFixed(0)}px rgba(94, 234, 212, ${glowA.toFixed(2)}), 0 0 ${(glowPx * 0.45).toFixed(0)}px rgba(255, 248, 240, ${
                           0.08 + 0.2 * nameGlow
@@ -974,7 +981,7 @@ function Constellation({
                 wrapperClass="!pointer-events-none"
                 center
               >
-                {hubPrompt && isHero ? (
+                {hubCaption ? (
                   <span
                     style={{
                       display: "inline-block",

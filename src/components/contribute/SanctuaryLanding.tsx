@@ -710,7 +710,7 @@ export function SanctuaryLanding({
           <div className="space-y-8">
             <div className="text-center">
               <h1 className="font-editorial tracking-tight text-zinc-50">
-                <span className="block text-[26px] font-light leading-none tracking-[0.06em] sm:text-[30px] sm:tracking-[0.08em]">
+                <span className="block text-[26px] font-normal leading-none tracking-[0.06em] sm:text-[30px] sm:tracking-[0.08em]">
                   {t.welcomeLead}
                 </span>
                 <span className="mt-3 block text-[30px] font-medium leading-snug tracking-[0.06em] sm:mt-[18px] sm:whitespace-nowrap sm:text-[35px] sm:leading-none sm:tracking-[0.08em]">
