@@ -4,11 +4,11 @@
 **Dernière MAJ :** 5 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — **Étape 2 (Inviter)** : anti-pattern D2 retiré — `CollabInviteInlineCard` n’apparaît plus sous `SanctuaryInviteStep` (gardée en Étape 5/Studio) · priorité CTA corrigée — **Copier le message** prend le pas sur **Copier le lien** en desktop, `Partager` reste primaire en mobile.
 - 5 sept 2026 — **Carte J3** (`SanctuaryHubPostReveal`) : post-reveal affiche titre A + sous-ligne B + **Inviter** (dominant → Étape 2) + **Continuer** (soft → bypass direct Étape 3, Coffre) + footer C + lien *Revenir à l’essentiel*. G2 « Inviter first » enfin codé — remplace le simple lien *Modifier*.
 - 5 sept 2026 — **Essentiels, 3 correctifs** : molette bloquée sous le panneau (`overlayOnBackdrop` + `data-no-sky-wheel`) · retour hub-lite forcé si draft vidé (« incomplet = nulle part ») · `focus` souvenir jamais refermé ne bloque plus les caméras (`resetFocusKey`).
 - 4 sept 2026 — Studio : switch FR/EN live (les deux copies, ciel non remonté) — plus le cache RSC de `/en/studio`.
 - 4 sept 2026 — **Essentiels** : *L’essentiel* · portrait · Date du départ · voile JJ/MM/AAAA · porte *Poursuivre sans les animations du ciel*.
-- 4 sept 2026 — **Hub idle** : deux hits (étoile · invite) · glow *Toucher* = prox souris + hover plaque · molette ciel = `window`.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 

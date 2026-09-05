@@ -1978,7 +1978,6 @@ export function TributeWizard({
           ) : null}
 
           {currentStep === 2 ? (
-            <>
             <SanctuaryInviteStep
               projectId={uploadProjectId}
               locale={locale}
@@ -2012,13 +2011,6 @@ export function TributeWizard({
                 poweredBy: copy.invitePoweredBy,
               }}
             />
-            <CollabInviteInlineCard
-              projectId={uploadProjectId}
-              locale={locale}
-              accessRole={accessRole}
-              copy={collabInviteCopy}
-            />
-            </>
           ) : null}
 
           {currentStep === 3 ? (

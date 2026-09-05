@@ -335,24 +335,12 @@ export function SanctuaryInviteContent({
             ) : null}
             <button
               type="button"
-              onClick={() => void copyText(shareUrl, "link")}
+              onClick={() => void copyText(shareMessage, "message")}
               className={
                 canNativeShare
                   ? sanctuarySecondaryButton
                   : `${sanctuarySubmitButton} inline-flex min-h-[48px] w-full items-center justify-center gap-2`
               }
-            >
-              {linkCopied ? (
-                <Check className="h-3.5 w-3.5" aria-hidden />
-              ) : (
-                <Copy className="h-3.5 w-3.5" aria-hidden />
-              )}
-              {linkCopied ? copy.copied : copy.copyLink}
-            </button>
-            <button
-              type="button"
-              onClick={() => void copyText(shareMessage, "message")}
-              className={sanctuaryGhostButton}
             >
               {messageCopied ? (
                 <Check className="h-3.5 w-3.5" aria-hidden />
@@ -360,6 +348,18 @@ export function SanctuaryInviteContent({
                 <Copy className="h-3.5 w-3.5" aria-hidden />
               )}
               {messageCopied ? copy.messageCopied : copy.copyMessage}
+            </button>
+            <button
+              type="button"
+              onClick={() => void copyText(shareUrl, "link")}
+              className={sanctuaryGhostButton}
+            >
+              {linkCopied ? (
+                <Check className="h-3.5 w-3.5" aria-hidden />
+              ) : (
+                <Copy className="h-3.5 w-3.5" aria-hidden />
+              )}
+              {linkCopied ? copy.copied : copy.copyLink}
             </button>
           </div>
 

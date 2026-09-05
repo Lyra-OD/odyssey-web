@@ -4,12 +4,11 @@
 **Dernière MAJ :** 5 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — **Étape 2 sécurisée pour la démo** : anti-pattern D2 retiré (`CollabInviteInlineCard` hors step 2, gardée en step 5/Studio) · priorité CTA corrigée (Copier le message > Copier le lien en desktop, conforme §5c). Refonte overlay J4/deux-peaux (T3) reste **en pause** post-démo.
 - 5 sept 2026 — **T2-5 codé** : carte J3 (`SanctuaryHubPostReveal`) — titre A + sous-ligne B + Inviter (dominant, Étape 2) + Continuer (soft, bypass Étape 3) + footer C. Clés copy déjà cataloguées, aucune nouvelle.
 - 4 sept 2026 — **P1 partiel** : porte Beat 3 (`parcoursGoToInvites`) · lien langue Atelier encore ⏳.
 - 3 sept 2026 — Plan technique **démo 10 sept** : [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 - 3 sept 2026 — Storyboard **invité** figé : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md).
-- 3 sept 2026 — Storyboard **voulu** (beats 0→J3) : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) — les trous P0 y sont accrochés, Coffre + Scanner = suite.
-- 2 sept 2026 — **P0** : retour Essentiels (`reopenEssentials`) · déconnexion sous langue.
 
 **Invité :** storyboard [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) · **code cette semaine** [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 
@@ -193,7 +192,7 @@ Beats **copy + UI court** — pas de WebGL obligatoire sauf rituel noté.
 | Skip prologue → hub | P1 | `hasSeenPrologue` | ⏳ | T6 |
 | Transition image 2D → WebGL | P0 | `backdropToWebGL` | 🟡 switch phase · **pas** choré | **T2-2** |
 | Hub post-reveal J3 | P0 | carte Inviter / Continuer + dwell | ✅ `SanctuaryHubPostReveal` (5 sept) | **T2-1 + T2-5 ✅** |
-| Overlay invite sur ciel | P1 | `panel.invite` | 🟡 step 2 classique | T3 |
+| Overlay invite sur ciel | P1 | `panel.invite` | 🟡 step 2 classique (✅ D2 retiré, CTA réordonnés 5 sept — overlay lui-même en pause post-démo) | T3 |
 | Beat drawer Coffre→film | P0 | `VaultFilmBridgeBeat` | ⏳ | T4 |
 | Studio sans ciel WebGL | P1 | steps 4–6 | 🟡 | T5 |
 | Alignement caméra 2D↔3D | P1 | même idle Z reveal | ⏳ valider | **T2-2/3** |

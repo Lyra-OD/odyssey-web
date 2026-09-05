@@ -1,14 +1,14 @@
 # Odyssey — Parcours Sanctuaire (User X · première visite)
 
 **Type :** produit · **Vérité pour :** prologue cinéma · hub ciel · séparation wizard · tiroir média · navigation.  
-**Dernière MAJ :** 31 août 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 5 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — **Étape 2 conforme §5c** : `CollabInviteInlineCard` retirée (anti-pattern D2, co-org reste Studio-only) · priorité CTA corrigée — **Copier le message** prend le pas sur **Copier le lien** en desktop.
 - 31 août 2026 — **Figé** : hub WebGL animé ↔ gel 2D (clic Hero · fermer · Continuer) · Chemins A/B — [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §1b §2b.
 - 31 août 2026 — **G1 tranché** : prénom (Hero) + **nom de famille obligatoire** (hommage) + 2 dates — aligné code `canProceedEssential`.
 - 31 août 2026 — Chemin 1 Traversée + audit trous [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md) · impl active vs §4.
 - 31 août 2026 — T1 placeholder : `SkyBackdrop` · hub Hero · `useParcoursUx` — cible T1b hub WebGL lite.
-- 26 août 2026 — §11b **matrice implémentation** (vérité code J1–J9) · écart D1 documenté · playbook démo = hors ce doc.
 
 **Liens :**
 - **Chemin 1 (spec impl)** : [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md) · **trous** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
@@ -212,7 +212,7 @@ Compteur doux en hub / chrome plus tard (P1) : *« 3 personnes ont rejoint le Sa
 - ❌ Co-organisateurs sur cette étape
 - ❌ Mention Lueurs / prix dans le message initial
 
-**Code actuel :** `SanctuaryInviteStep` + `SanctuaryInviteContent` (`src/components/tribute/SanctuaryInvitePanel.tsx`) — retirer `CollabInviteInlineCard` du step 2 dans `TributeWizard.tsx` à l’implémentation J4/J6.
+**Code actuel :** `SanctuaryInviteStep` + `SanctuaryInviteContent` (`src/components/tribute/SanctuaryInvitePanel.tsx`) — ✅ `CollabInviteInlineCard` retirée du step 2 dans `TributeWizard.tsx` (5 sept 2026, gardée en step 5/Studio) · ✅ ordre CTA aligné (Partager → Copier le message → Copier le lien).
 
 ---
 
