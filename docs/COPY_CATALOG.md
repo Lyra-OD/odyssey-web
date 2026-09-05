@@ -173,13 +173,13 @@
 | `process.title` | LE PROCESSUS ODYSSEY | THE ODYSSEY PROCESS |
 | `process.emotionalKicker` | Leur vie en cinéma | The cinema of their life |
 | `process.sectionSubtitle` | Trois temps, un hommage | Three beats, one tribute |
-| `process.timelineHint` | Coffre, Cercle, Cinéma — sans montage de votre part. | Vault, Circle, Cinema — no editing on your part. |
+| `process.timelineHint` | Coffre à souvenirs, Cercle, Cinéma — sans montage de votre part. | Memory Chest, Circle, Cinema — no editing on your part. |
 | `process.subtitle` | Vous déposez les souvenirs. Les proches enrichissent l'hommage. Notre moteur tisse le film. | You gather the memories. Loved ones enrich the tribute. Our engine weaves the film. |
-| `process.step1Label` | Coffre | Vault |
+| `process.step1Label` | Coffre à souvenirs | Memory Chest |
 | `process.step2Label` | Cercle | Circle |
 | `process.step3Label` | Cinéma | Cinema |
 | `process.steps[0].labelKey` | step1Label | step1Label |
-| `process.steps[0].title` | Le Coffre | The Vault |
+| `process.steps[0].title` | Le Coffre à souvenirs | The Memory Chest |
 | `process.steps[0].body` | Rassemblez les souvenirs de toute une vie — photos, voix, histoires — en un seul lieu sûr. | Gather a lifetime of memories — photos, voices, stories — in one safe place. |
 | `process.steps[1].labelKey` | step2Label | step2Label |
 | `process.steps[1].title` | Le Cercle | The Circle |
@@ -326,11 +326,11 @@
 | `tributeWizard.phaseComposeLabel` | Composer | Craft |
 | `tributeWizard.phaseReceiveLabel` | Recevoir | Receive |
 | `tributeWizard.editorModeBanner` | Mode Co-Créateur | Co-Creator Mode |
-| `tributeWizard.editorModeHint` | Vous enrichissez le Coffre, la musique et le film. Le titulaire finalisera le parcours. | You’re enriching the Vault, the music, and the film. The account holder will finish the journey. |
+| `tributeWizard.editorModeHint` | Vous enrichissez le Coffre à souvenirs, la musique et le film. Le titulaire finalisera le parcours. | You’re enriching the Memory Chest, the music, and the film. The account holder will finish the journey. |
 | `tributeWizard.editorCraftComplete` | Votre contribution est enregistrée. Le titulaire poursuivra l’hommage. | Your contribution is saved. The account holder will continue the tribute. |
 | `tributeWizard.stepperEssentials` | Essentiels | Essentials |
 | `tributeWizard.stepperSources` | Cercle | Circle |
-| `tributeWizard.stepperVault` | Coffre-fort | Vault |
+| `tributeWizard.stepperVault` | Coffre à souvenirs | Memory Chest |
 | `tributeWizard.stepperChapters` | Musique | Music |
 | `tributeWizard.stepperMontage` | Le film | The film |
 | `tributeWizard.stepperExtensions` | Extensions | Extensions |
@@ -377,14 +377,14 @@
 | `tributeWizard.socialGooglePhotos` | Google Photos | Google Photos |
 | `tributeWizard.socialQuickLoginNote` | Connexion rapide lorsque votre navigateur est déjà ouvert sur ces services. | Quick connection when your browser is already signed in to these services. |
 | `tributeWizard.skipSources` | Passer cette étape | Skip this step |
-| `tributeWizard.stepMediaTitle` | Le Coffre-fort | The Vault |
+| `tributeWizard.stepMediaTitle` | Le Coffre à souvenirs | The Memory Chest |
 | `tributeWizard.stepMediaDescription` | Déposez ici tous vos souvenirs : photos et vidéos. Le film s’assemblera ensuite, sous vos yeux. | Drop all your memories here: photos and videos. The film will come together next, before your eyes. |
 | `tributeWizard.stepMediaLater` | Plus tard | Later |
 | `tributeWizard.scannerEyebrow` | Scanner Compagnon | Companion Scanner |
 | `tributeWizard.scannerTitle` | Numérisez vos albums papier | Digitize your paper albums |
 | `tributeWizard.scannerDescription` | Scannez le QR avec votre téléphone. Aucune application. | Scan the QR with your phone. No app required. |
 | `tributeWizard.scannerBadge` | QR | QR |
-| `tributeWizard.scannerHint` | Les photos arrivent dans le coffre | Photos land in the vault |
+| `tributeWizard.scannerHint` | Les photos arrivent dans le coffre | Photos land in the Memory Chest |
 | `tributeWizard.scannerInstructions` | Appareil photo · aucune installation | Camera · no install needed |
 | `tributeWizard.scannerGenerating` | Préparation du QR… | Preparing QR… |
 | `tributeWizard.scannerCopyLink` | Copier le lien | Copy link |
@@ -437,7 +437,7 @@
 | `tributeWizard.stepMontageTitle` | Le film de sa vie | The Film of Their Life |
 | `tributeWizard.stepMontageDescription` | Mettez en lumière les moments précieux de son histoire. Le film s’assemble sous vos yeux. | Bring the precious moments of their story to light. The film assembles before your eyes. |
 | `tributeWizard.montageLoading` | Chargement de vos souvenirs… | Loading your memories… |
-| `tributeWizard.montageEmpty` | Aucun souvenir pour l’instant. Revenez au Coffre-fort pour en déposer. | No memories yet. Return to the Vault to add some. |
+| `tributeWizard.montageEmpty` | Aucun souvenir pour l’instant. Revenez au Coffre à souvenirs pour en déposer. | No memories yet. Return to the Memory Chest to add some. |
 | `tributeWizard.montageFocalHint` | Cliquez sur l’image pour placer le point de focus | Click the image to set the focal point |
 | `tributeWizard.montageShortcutSelect` | {modifier} + Clic pour sélectionner | {modifier} + Click to select |
 | `tributeWizard.montageShortcutSelectAll` | {modifier} + A pour tout sélectionner | {modifier} + A to select all |
@@ -523,7 +523,7 @@
 | `tributeWizard.collabTriggerCta` | Inviter | Invite |
 | `tributeWizard.collabOpenAria` | Inviter un Co-Créateur au Studio | Invite a Co-Creator to the Studio |
 | `tributeWizard.collabTitle` | Inviter un Co-Créateur | Invite a Co-Creator |
-| `tributeWizard.collabDescription` | Partagez un lien privé pour enrichir le Coffre, la musique et le film, sans accès au paiement. | Share a private link to enrich the Vault, the music, and the film, with no access to payment. |
+| `tributeWizard.collabDescription` | Partagez un lien privé pour enrichir le Coffre à souvenirs, la musique et le film, sans accès au paiement. | Share a private link to enrich the Memory Chest, the music, and the film, with no access to payment. |
 | `tributeWizard.collabGenerateCta` | Créer le lien | Create link |
 | `tributeWizard.collabGenerating` | Création du lien… | Creating link… |
 | `tributeWizard.collabCopyLink` | Copier le lien | Copy link |
@@ -746,7 +746,7 @@
 | `tributeWizard.softCapMediaBannerTitle` | Votre toile s’ouvre vers l’Écrin Héritage | Your canvas opens toward Heritage |
 | `tributeWizard.softCapMediaBannerBody` | Elle peut accueillir jusqu’à 125 souvenirs. Aucune carte aujourd’hui : vous ne réglez qu’au moment de l’export. | It can hold up to 125 memories. No card today: you only pay at export. |
 | `tributeWizard.checkoutExcessMediaNotice` | Votre hommage contient {count} souvenir(s) au-delà du Souvenir offert. | This tribute has {count} memories beyond the complimentary Keepsake. |
-| `tributeWizard.checkoutGoToMediaLink` | Retourner au Coffre pour retirer des photos | Return to the Vault to remove photos |
+| `tributeWizard.checkoutGoToMediaLink` | Retourner au Coffre à souvenirs pour retirer des photos | Return to the Memory Chest to remove photos |
 | `tributeWizard.checkoutRemoveOption` | Retirer | Remove |
 | `tributeWizard.checkoutFundCreditLabel` | Fonds Commémoratif | Memorial Fund |
 | `tributeWizard.checkoutFundCreditHint` | Crédit du cercle disponible : {credit} | Circle credit available: {credit} |
@@ -788,11 +788,11 @@
 | `scannerCapture.subtitle` | Ajoutez des photos au coffre de {name}. | Add photos to {name}’s vault. |
 | `scannerCapture.cameraCta` | Prendre une photo | Take a photo |
 | `scannerCapture.galleryCta` | Choisir dans la galerie | Choose from gallery |
-| `scannerCapture.sending` | Envoi vers le coffre… | Sending to the vault… |
+| `scannerCapture.sending` | Envoi vers le coffre… | Sending to the Memory Chest… |
 | `scannerCapture.added` | Photo ajoutée ✓ | Photo added ✓ |
 | `scannerCapture.nextHint` | Vous pouvez en envoyer plusieurs. Retournez ensuite à l’ordinateur. | You can send several. Then return to your computer. |
 | `scannerCapture.invalidTitle` | Session expirée | Session expired |
-| `scannerCapture.invalidBody` | Ce QR n’est plus valide. Générez-en un nouveau depuis l’étape Coffre. | This QR is no longer valid. Generate a new one from the Vault step. |
+| `scannerCapture.invalidBody` | Ce QR n’est plus valide. Générez-en un nouveau depuis l’étape Coffre à souvenirs. | This QR is no longer valid. Generate a new one from the Memory Chest step. |
 | `scannerCapture.errorGeneric` | Envoi impossible. Réessayez. | Could not send. Please try again. |
 | `scannerCapture.quota` | Le coffre a atteint la limite de souvenirs de votre forfait. | The vault has reached your package memory limit. |
 | `scannerCapture.tooLarge` | Photo trop lourde (12 Mo max). | Photo too large (12 MB max). |
@@ -827,12 +827,12 @@
 | `sanctuary.logoHomeAria` | Odyssey — accueil | Odyssey — home |
 | `sanctuary.welcomeLead` | Bienvenue dans le ciel de | Welcome to |
 | `sanctuary.welcomeName` | {name}. | {name}'s sky. |
-| `sanctuary.subtitle` | Laissez un souvenir — il ira dans le Coffre. | Leave a memory — it will go into the Vault. |
+| `sanctuary.subtitle` | Laissez un souvenir — il ira dans le Coffre à souvenirs. | Leave a memory — it will go into the Memory Chest. |
 | `sanctuary.depositLead` | Médias (photos/vidéos), un mot, ou les deux. | Media (photos/videos), a few words, or both. |
 | `sanctuary.loading` | Ouverture du ciel… | Opening the sky… |
 | `sanctuary.errorTitle` | Lien indisponible | Link unavailable |
 | `sanctuary.errorBody` | Ce ciel est introuvable ou n'est plus accessible. Demandez un nouveau lien à la famille. | This sky could not be found or is no longer available. Ask the family for a new link. |
-| `sanctuary.ackTitle` | C'est dans le Coffre. | It's in the Vault. |
+| `sanctuary.ackTitle` | C'est dans le Coffre à souvenirs. | It's in the Memory Chest. |
 | `sanctuary.ackBody` | Vous pouvez encore ajouter des médias, jusqu'à cinq, et un mot. | You may still add media, up to five, and a few words. |
 | `sanctuary.photoCounter` | {n} / {max} souvenirs | {n} / {max} memories |
 | `sanctuary.addAnother` | Ajouter un autre souvenir | Add another memory |
@@ -932,8 +932,8 @@
 | `sanctuary.deposit.photoChange` | Modifier la sélection | Change selection |
 | `sanctuary.deposit.photoRemove` | Retirer | Remove |
 | `sanctuary.deposit.photoTruncated` | Seuls {kept} médias ont été retenus : le plafond de cet hommage est atteint. | Only {kept} media files could be kept: this tribute’s limit is reached. |
-| `sanctuary.deposit.submit` | Déposer dans le Coffre | Place in the Vault |
-| `sanctuary.deposit.submitting` | Ajout au Coffre… | Adding to the Vault… |
+| `sanctuary.deposit.submit` | Déposer dans le Coffre à souvenirs | Place in the Memory Chest |
+| `sanctuary.deposit.submitting` | Ajout au Coffre à souvenirs… | Adding to the Memory Chest… |
 | `sanctuary.deposit.submittingProgress` | Ajout {current} / {total}… | Adding {current} / {total}… |
 | `sanctuary.deposit.errorGeneric` | Impossible d'ajouter ce souvenir pour le moment. | We could not add this memory right now. |
 | `sanctuary.deposit.errorNeedSouvenir` | Ajoutez au moins un média ou un mot. | Add at least one media file or a few words. |
