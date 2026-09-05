@@ -4,11 +4,11 @@
 **Dernière MAJ :** 5 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — `MontageOnboardingGate` : la carte Composition Magique passe de l’ambre au **violet maison** (`violet-400`, celui des chapitres) et vire au **cyan** au survol comme à l’appui — le cyan `teal-400` est déjà la couleur du choix retenu partout ailleurs (`sanctuaryChrome`). Le lien « confier à un proche » prend un cyan discret (`teal-200/55`) : teinté, toujours en retrait des deux cartes.
 - 5 sept 2026 — `MontageOnboardingGate` en feuille ancrée en bas sur smartphone (choix empilés, densité réduite, fond du Studio flouté derrière) ; dialogue centré sur aplat opaque conservé à partir de `md`.
 - 5 sept 2026 — DnD mobile renforcé : appui long tactile, poignées plus confortables et grilles chapitres plus aérées en smartphone.
 - 19 août 2026 — S5-L : copy « Le film de sa vie » (plus de timeline / acte / banque / Gérer).
 - 17 août 2026 — en-tête type + carte.
-- juillet 2026 — PR-1/2/3 livrés (`fdeb7da` → `41235e8`).
 
 Document canonique de l'Étape 5 du wizard hommage. Complète [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (ticket S5) et [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) (§ Step 5).
 

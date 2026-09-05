@@ -62,12 +62,14 @@ export function MontageOnboardingGate({
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 md:gap-4">
+          {/* Violet au repos, cyan dès qu'on la vise ou qu'on l'appuie : le cyan
+              est la couleur du choix retenu partout ailleurs (`sanctuaryChrome`). */}
           <button
             type="button"
             onClick={onChooseMagic}
-            className="group relative overflow-hidden rounded-2xl border border-amber-400/20 bg-gradient-to-b from-amber-400/[0.08] to-transparent px-5 py-5 text-left transition-all duration-300 hover:border-amber-400/35 hover:shadow-[0_0_48px_rgba(251,191,36,0.08)] md:px-6 md:py-8"
+            className="group relative overflow-hidden rounded-2xl border border-violet-400/25 bg-gradient-to-b from-violet-400/[0.10] to-transparent px-5 py-5 text-left transition-all duration-300 hover:border-teal-400/40 hover:from-teal-400/[0.10] hover:shadow-[0_0_48px_rgba(45,212,191,0.12)] active:border-teal-400/55 active:from-teal-400/[0.14] active:shadow-[0_0_48px_rgba(45,212,191,0.16)] md:px-6 md:py-8"
           >
-            <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full border border-amber-400/25 bg-amber-400/10 text-amber-300 md:mb-4">
+            <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full border border-violet-400/30 bg-violet-400/10 text-violet-300 transition-colors duration-300 group-hover:border-teal-400/40 group-hover:bg-teal-400/[0.10] group-hover:text-teal-300 group-active:border-teal-400/55 group-active:text-teal-200 md:mb-4">
               <Wand2 className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             </span>
             <span className="block font-[family-name:var(--font-label)] text-base font-semibold text-white md:text-lg">
@@ -99,7 +101,7 @@ export function MontageOnboardingGate({
           <button
             type="button"
             onClick={onChooseDelegate}
-            className="mx-auto block px-2 py-2 text-xs font-light tracking-[0.08em] text-zinc-500 underline decoration-white/10 underline-offset-4 transition-colors hover:text-teal-100/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35 md:py-0"
+            className="mx-auto block px-2 py-2 text-xs font-light tracking-[0.08em] text-teal-200/55 underline decoration-teal-400/20 underline-offset-4 transition-colors hover:text-teal-100/90 hover:decoration-teal-400/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35 md:py-0"
           >
             {copy.delegate}
           </button>
