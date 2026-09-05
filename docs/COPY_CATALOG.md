@@ -477,7 +477,7 @@
 | `tributeWizard.montageNeedOneIncluded` | Gardez au moins un souvenir dans le film pour continuer. | Keep at least one memory in the film to continue. |
 | `tributeWizard.stickyConsumerTotal` | Total : {amount} $ | Total: {amount} $ |
 | `tributeWizard.stickyPartnerTokenCost` | Coût : {tokens} jeton(s) | Cost: {tokens} token(s) |
-| `tributeWizard.stickyDraftLabel` | Brouillon · export plus tard | Draft · export later |
+| `tributeWizard.stickyDraftLabel` | À poursuivre plus tard | Continue later |
 | `tributeWizard.basePackageEssential` | Souvenir | Keepsake |
 | `tributeWizard.basePackageEssentialDesc` | Montage narratif complet et livraison digitale. | Full narrative edit and digital delivery. |
 | `tributeWizard.basePackageSignature` | Héritage | Legacy |
@@ -720,11 +720,11 @@
 | `tributeWizard.checkoutTotalLabel` | Total | Total |
 | `tributeWizard.checkoutSecureNote` | Paiement sécurisé par Stripe · vos données bancaires ne transitent jamais par nos serveurs. | Secure payment by Stripe · your card details never touch our servers. |
 | `tributeWizard.checkoutPayCta` | Préserver cet hommage · {total} | Preserve this tribute · {total} |
-| `tributeWizard.checkoutPartnerRecap` | Le salon est rémunéré sur cet hommage. Aucun jeton. | The salon is paid on this tribute. No tokens. |
+| `tributeWizard.checkoutPartnerRecap` | Le salon est rémunéré sur cet hommage. Aucun supplément partenaire. | The salon is compensated on this tribute. No partner surcharge. |
 | `tributeWizard.checkoutPartnerPayCta` | Valider · {tokens} jeton(s) | Confirm · {tokens} token(s) |
 | `tributeWizard.checkoutPaying` | Ouverture du paiement sécurisé… | Opening secure checkout… |
 | `tributeWizard.checkoutPayError` | Impossible d’ouvrir le paiement sécurisé pour le moment. | We could not open secure checkout right now. |
-| `tributeWizard.checkoutMissingProject` | Enregistrez d’abord votre brouillon avant de payer. | Save your draft before paying. |
+| `tributeWizard.checkoutMissingProject` | Enregistrez d’abord votre hommage avant de poursuivre. | Save your tribute first before continuing. |
 | `tributeWizard.checkoutStayFreeCta` | Rester sur le Souvenir offert | Stay on the complimentary Keepsake |
 | `tributeWizard.checkoutStayFreeHint` | Vous avez commencé un Écrin plus vaste. Rester sur le Souvenir offert, c’est choisir en toute sérénité de vous concentrer sur l’essentiel inclus, sans jugement, à votre rythme. | You’ve begun a wider Heritage casket. Staying on the complimentary Keepsake simply means resting, with calm, on what is already included, no judgment, at your own pace. |
 | `tributeWizard.checkoutAmputationHint` | Si besoin, nous recentrerons simplement les souvenirs et la musique sur ce qui est inclus dans le Souvenir offert. | If needed, we’ll gently recenter memories and music on what the complimentary Keepsake includes. |
@@ -857,9 +857,9 @@
 | `sanctuary.checkoutSelectFirst` | Choisissez une option pour continuer. | Choose an option to continue. |
 | `sanctuary.checkoutVoiceRequired` | Enregistrez et validez votre voix avant de continuer. | Record and keep your voice before continuing. |
 | `sanctuary.checkoutVideoRequired` | Enregistrez et validez votre témoignage avant de continuer. | Record and keep your testimony before continuing. |
-| `sanctuary.checkoutPaying` | Redirection sécurisée… | Secure redirect… |
-| `sanctuary.checkoutPreviewBlocked` | Aperçu local : le paiement nécessite un vrai lien. | Local preview: checkout needs a real tribute link. |
-| `sanctuary.checkoutError` | Impossible d'ouvrir le paiement pour le moment. | We could not open checkout right now. |
+| `sanctuary.checkoutPaying` | Ouverture du règlement sécurisé… | Opening secure payment… |
+| `sanctuary.checkoutPreviewBlocked` | Aperçu local : cette étape nécessite un vrai lien d’hommage. | Local preview: this step requires a real tribute link. |
+| `sanctuary.checkoutError` | Impossible d’ouvrir le règlement sécurisé pour le moment. | We could not open secure payment right now. |
 | `sanctuary.checkoutAmountInvalid` | Ajustez le montant Mécène avant de continuer. | Adjust the Patron amount before continuing. |
 | `sanctuary.checkoutRecap` | {label} · {price} | {label} · {price} |
 | `sanctuary.packExpand.guest_voice.inspiration` | Une voix qui reste, quand les jours passent. | A voice that remains, as the days go by. |
