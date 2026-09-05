@@ -578,6 +578,13 @@ export function SanctuaryLanding({
         skyCraftChrome={false}
         wanderChrome={false}
         skyWander={universeImmersive}
+        /**
+         * Même moteur caméra que la famille (dolly hub + molette `window` +
+         * bande décalée) — mais posé direct sur l’étoile, jamais de replay
+         * du dolly 2,8 s (le ciel invité n’a pas de rituel « naissance »).
+         */
+        hubSkyCamera={universeImmersive}
+        hubSkyCameraStartSettled
         skyLayers={SKY_GUEST_DEMO_LAYERS}
         craftReveal={guestCraftReveal}
         skipConstellationReveal

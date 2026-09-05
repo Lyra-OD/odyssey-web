@@ -1057,6 +1057,7 @@ function UniverseScene({
   craftReveal,
   skyLayers,
   hubSkyCamera = false,
+  hubSkyCameraStartSettled = false,
   closeStreakFire = false,
   overlayOnBackdrop = false,
   wizardRewardFullPerf = false,
@@ -1078,6 +1079,8 @@ function UniverseScene({
   skyLayers?: SkyCraftLayerMap;
   /** Chemin 1 hub — plan test-ciel puis dolly Hero (pas RevealCamera KEEP). */
   hubSkyCamera?: boolean;
+  /** Invité — posé direct sur l’étoile, sans dolly. Sans effet si `!hubSkyCamera`. */
+  hubSkyCameraStartSettled?: boolean;
   /** T-close-3c — filante verre → étoile @ hold. */
   closeStreakFire?: boolean;
   /** T2-freeze — clear alpha au-dessus du gel 2D. */
@@ -1235,6 +1238,7 @@ function UniverseScene({
         enabled={hubSkyCamera && showConstellation && !focusing}
         graphScale={graphScale}
         template={constellationTemplate}
+        startSettled={hubSkyCameraStartSettled}
       />
       <RevealCamera
         enabled={showConstellation && !focusing && !hubSkyCamera}
@@ -1505,6 +1509,11 @@ export type SanctuaryUniverseProps = {
   onCanvasReady?: () => void;
   /** Chemin 1 hub idle — plan ciel test-ciel + dolly Hero. */
   hubSkyCamera?: boolean;
+  /**
+   * Invité — arrive déjà posé sur l’étoile, sans le dolly d’approche 2,8 s
+   * (Famille KEEP le dolly au tout premier hub). Sans effet si `!hubSkyCamera`.
+   */
+  hubSkyCameraStartSettled?: boolean;
   /** Projection étoile Hero → overlay clic (hub). */
   onStarAnchorChange?: (anchor: ScreenAnchor | null) => void;
   /** Hub Traversée — render+encode d'une frame pour le gel (Plan B). */
@@ -1544,6 +1553,7 @@ export function SanctuaryUniverse({
   skyLayers,
   onCanvasReady,
   hubSkyCamera = false,
+  hubSkyCameraStartSettled = false,
   onStarAnchorChange,
   onHubCaptureMount,
   closeStreakFire = false,
@@ -1865,6 +1875,7 @@ export function SanctuaryUniverse({
                 craftReveal={craftReveal}
                 skyLayers={skyLayers}
                 hubSkyCamera={hubSkyCamera}
+                hubSkyCameraStartSettled={hubSkyCameraStartSettled}
                 closeStreakFire={closeStreakFire}
                 overlayOnBackdrop={overlayOnBackdrop}
                 wizardRewardFullPerf={wizardRewardFullPerf}

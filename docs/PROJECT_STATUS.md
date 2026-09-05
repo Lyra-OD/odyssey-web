@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 3 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 5 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — Ciel **Invité** aligné sur le ciel **Famille** : même caméra (`HubSkyCamera`, posée direct sur l’étoile, sans dolly), molette globale (`window`), bande Voie lactée à la même place.
 - 3 sept 2026 — **Démo 10 sept matin** : concept convaincant, **famille d’abord** ([`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md)).
 - 28 août 2026 — **Egress revert** : `demoMode.ts` retiré · poll 5 s · stub ops clôturé.
 - 28 août 2026 — Marketing **Phase 3** : `/partners` refonte (4 actes, copy B2B, form au clic, DA cyan + teal lead).
 - 26 août 2026 — Sanctuaire **J2** doc : matrice implémentation §11b [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · séparation canon / playbook démo.
-- 26 août 2026 — CI : job **`next build`** en parallèle de `npm test` (attrape les erreurs TS avant Vercel).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

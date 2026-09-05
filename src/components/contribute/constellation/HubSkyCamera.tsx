@@ -45,6 +45,11 @@ type HubSkyCameraProps = {
   enabled: boolean;
   graphScale?: number;
   template?: ConstellationTemplate;
+  /**
+   * Invité — arrivée déjà posée sur l’étoile, jamais de replay du dolly
+   * 2,8 s (même si `hubSkyApproachRef` global est encore à 0). Famille KEEP.
+   */
+  startSettled?: boolean;
 };
 
 /**
@@ -55,6 +60,7 @@ export function HubSkyCamera({
   enabled,
   graphScale = 1,
   template = ACTIVE_TEMPLATE,
+  startSettled = false,
 }: HubSkyCameraProps) {
   const startAtRef = useRef<number | null>(null);
   const zoomSeeded = useRef(false);
@@ -73,17 +79,22 @@ export function HubSkyCamera({
       return;
     }
     hubSkyCameraDriveRef.active = true;
-    const settled = hubSkyApproachRef.current >= HUB_SETTLED_U;
+    const settled =
+      startSettled || hubSkyApproachRef.current >= HUB_SETTLED_U;
     if (settled) {
+      if (startSettled) hubSkyApproachRef.current = HUB_SETTLED_U;
       startAtRef.current =
         (typeof performance !== "undefined" ? performance.now() : Date.now()) -
         HUB_APPROACH_MS;
+      // Re-seed forcé : le prochain useFrame pose direct cameraZoomRef à
+      // HUB_CAM_Z_END (pas de zoom hérité d'une autre session/onglet).
+      zoomSeeded.current = false;
     } else {
       startAtRef.current = null;
       cameraZoomRef.current = ZOOM_DEFAULT;
       hubSkyApproachRef.current = 0;
     }
-  }, [enabled]);
+  }, [enabled, startSettled]);
 
   useFrame((state) => {
     if (!enabled) {
