@@ -695,10 +695,10 @@
 | `tributeWizard.musicUploadTooLarge` | Fichier trop volumineux (max. 40 Mo). | File too large (max 40 MB). |
 | `tributeWizard.musicUploadNeedsAttestation` | Acceptez d’abord l’attestation de droits musique. | Please accept the music rights attestation first. |
 | `tributeWizard.extensionsFooterTotalFormula` | Total de votre hommage : {base} + {options} = {total} | Tribute total: {base} + {options} = {total} |
-| `tributeWizard.extensionsFooterContinueCta` | Voir l'aperçu | See preview |
-| `tributeWizard.stepPreviewTitle` | Aperçu de votre film | Preview your film |
-| `tributeWizard.stepPreviewDescription` | Votre hommage est presque prêt. Voici un aperçu de l'émotion qui vous attend. | Your tribute is almost ready. Here is a glimpse of the emotion awaiting you. |
-| `tributeWizard.previewLoadingMedia` | Préparation de votre aperçu… | Preparing your preview… |
+| `tributeWizard.extensionsFooterContinueCta` | Voir le film | See the film |
+| `tributeWizard.stepPreviewTitle` | Voir le film | See the film |
+| `tributeWizard.stepPreviewDescription` | Votre hommage prend forme. Voici ce qui vous attend. | Your tribute is taking shape. Here is what awaits you. |
+| `tributeWizard.previewLoadingMedia` | Nous préparons votre film… | We’re preparing your film… |
 | `tributeWizard.previewPayCta` | J'adore, passer au paiement | I love it. Proceed to payment |
 | `tributeWizard.previewPayCtaSoftCap` | Préserver l’Écrin Héritage | Preserve the Heritage casket |
 | `tributeWizard.previewSoftCapNote` | Votre histoire dépasse déjà le Souvenir offert. L’Écrin Héritage accueille jusqu’à 125 souvenirs, musique officielle incluse. 179 $, réglé seulement à l’export. | Your story already exceeds the complimentary Keepsake. The Heritage casket holds up to 125 memories with official music included. $179, paid only at export. |
@@ -707,23 +707,23 @@
 | `tributeWizard.previewValueAiRetouch` | , une retouche IA | , AI retouching |
 | `tributeWizard.previewValueLicense` |  et une licence musicale officielle | , and an official music license |
 | `tributeWizard.previewTeaserLoading` | Chargement de la piste… | Loading track… |
-| `tributeWizard.previewTeaserEmpty` | Ajoutez des photos au film pour générer un aperçu. | Add photos to the film to generate a preview. |
+| `tributeWizard.previewTeaserEmpty` | Ajoutez des photos au film pour en révéler un premier souffle. | Add photos to the film to reveal its first breath. |
 | `tributeWizard.previewTeaserNowPlaying` | Bande son du chapitre | Chapter soundtrack |
 | `tributeWizard.previewTeaserPlay` | Lecture | Play |
 | `tributeWizard.previewTeaserPause` | Pause | Pause |
-| `tributeWizard.stepCheckoutTitle` | Finaliser et payer | Review and pay |
-| `tributeWizard.stepCheckoutDescription` | Ajoutez un geste de pérennité si vous le souhaitez, vérifiez votre sélection, puis payez en sécurité. | Add a lasting gesture if you wish, review your selection, then pay securely. |
+| `tributeWizard.stepCheckoutTitle` | Préserver cet hommage | Preserve this tribute |
+| `tributeWizard.stepCheckoutDescription` | Ajoutez, si vous le souhaitez, un geste de pérennité, puis confirmez votre hommage en toute sérénité. | Add a lasting gesture if you wish, then confirm your tribute with peace of mind. |
 | `tributeWizard.checkoutAddonsTitle` | Gestes de pérennité | Gestures of permanence |
 | `tributeWizard.checkoutAddonsDescription` | Options Quiet Luxury, au moment où l’hommage devient éternel. Aucune obligation. | Quiet Luxury options, at the moment the tribute becomes eternal. Entirely optional. |
-| `tributeWizard.checkoutRecapTitle` | Récapitulatif | Summary |
-| `tributeWizard.checkoutBaseLabel` | Hommage Odyssey | Odyssey tribute |
+| `tributeWizard.checkoutRecapTitle` | Votre hommage | Your tribute |
+| `tributeWizard.checkoutBaseLabel` | Hommage choisi | Chosen tribute |
 | `tributeWizard.checkoutTotalLabel` | Total | Total |
 | `tributeWizard.checkoutSecureNote` | Paiement sécurisé par Stripe · vos données bancaires ne transitent jamais par nos serveurs. | Secure payment by Stripe · your card details never touch our servers. |
-| `tributeWizard.checkoutPayCta` | Finaliser et Payer {total} | Review and Pay {total} |
+| `tributeWizard.checkoutPayCta` | Préserver cet hommage · {total} | Preserve this tribute · {total} |
 | `tributeWizard.checkoutPartnerRecap` | Le salon est rémunéré sur cet hommage. Aucun jeton. | The salon is paid on this tribute. No tokens. |
 | `tributeWizard.checkoutPartnerPayCta` | Valider · {tokens} jeton(s) | Confirm · {tokens} token(s) |
-| `tributeWizard.checkoutPaying` | Redirection vers Stripe… | Redirecting to Stripe… |
-| `tributeWizard.checkoutPayError` | Impossible de lancer le paiement. Réessayez dans un instant. | Unable to start checkout. Please try again shortly. |
+| `tributeWizard.checkoutPaying` | Ouverture du paiement sécurisé… | Opening secure checkout… |
+| `tributeWizard.checkoutPayError` | Impossible d’ouvrir le paiement sécurisé pour le moment. | We could not open secure checkout right now. |
 | `tributeWizard.checkoutMissingProject` | Enregistrez d’abord votre brouillon avant de payer. | Save your draft before paying. |
 | `tributeWizard.checkoutStayFreeCta` | Rester sur le Souvenir offert | Stay on the complimentary Keepsake |
 | `tributeWizard.checkoutStayFreeHint` | Vous avez commencé un Écrin plus vaste. Rester sur le Souvenir offert, c’est choisir en toute sérénité de vous concentrer sur l’essentiel inclus, sans jugement, à votre rythme. | You’ve begun a wider Heritage casket. Staying on the complimentary Keepsake simply means resting, with calm, on what is already included, no judgment, at your own pace. |
@@ -750,10 +750,10 @@
 | `tributeWizard.checkoutRemoveOption` | Retirer | Remove |
 | `tributeWizard.checkoutFundCreditLabel` | Fonds Commémoratif | Memorial Fund |
 | `tributeWizard.checkoutFundCreditHint` | Crédit du cercle disponible : {credit} | Circle credit available: {credit} |
-| `tributeWizard.checkoutRemainingDueLabel` | Reste à payer | Amount due |
+| `tributeWizard.checkoutRemainingDueLabel` | À prévoir aujourd’hui | Due today |
 | `tributeWizard.checkoutRiderLabel` | J’autorise l’export de cet hommage et j’accepte les conditions Odyssey. | I authorize export of this tribute and accept Odyssey’s terms. |
 | `tributeWizard.checkoutRiderHint` | Requis même lorsque le Fonds couvre l’intégralité. Acte d’amour, pas une case marketing. | Required even when the Fund covers everything. An act of care, not a marketing checkbox. |
-| `tributeWizard.checkoutPayCtaFree` | Finaliser · 0 $ | Complete · $0 |
+| `tributeWizard.checkoutPayCtaFree` | Préserver cet hommage · 0 $ | Preserve this tribute · $0 |
 | `tributeWizard.skipStep` | Passer cette étape | Skip this step |
 | `tributeWizard.stepAmbianceTitle` | Étape 5 : L’ambiance musicale | Step 5: Musical ambiance |
 | `tributeWizard.stepAmbianceDescription` | Choisissez l’atmosphère qui portera cet hommage. | Choose the tone that will carry this tribute. |
