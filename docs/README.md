@@ -219,6 +219,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | Fichier | Type | Vérité pour |
 |---------|------|-------------|
 | [`TEMP/README.md`](TEMP/README.md) | ops | Règles TEMP |
+| [`TEMP/PLAN_DND_MOBILE_STUDIO_5_SEPT_2026.md`](TEMP/PLAN_DND_MOBILE_STUDIO_5_SEPT_2026.md) | temp | **5 sept** — plan et exécution du correctif tactile DnD mobile du Studio |
 | [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) | temp | Rush démo Patrice + courriel Paul |
 | [`TEMP/NDA_UNILATERAL_BROUILLON_QC.md`](TEMP/NDA_UNILATERAL_BROUILLON_QC.md) | temp | NDA — guide **A / B / C / D** |
 | [`TEMP/NDA_A_VALIDEE_LEGALE.md`](TEMP/NDA_A_VALIDEE_LEGALE.md) | temp | NDA **A** validée légale |

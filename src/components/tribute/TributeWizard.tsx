@@ -17,6 +17,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 import { PreviewStep } from "@/src/components/tribute/PreviewStep";
 import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
@@ -283,6 +284,7 @@ export function TributeWizard({
   isPartner: isPartnerProp = false,
   planOverride,
   accessRole = "owner",
+  mobileUtilityTrailing = null,
 }: {
   copy: TributeWizardCopy;
   initialDraft?: WizardInitialDraft | null;
@@ -294,6 +296,8 @@ export function TributeWizard({
   planOverride?: string;
   /** Owner = parcours complet · Editor = étapes {3,4,5} sans commerce. */
   accessRole?: WizardAccessRole;
+  /** Action utilitaire mobile affichée dans la même ligne que "Retour". */
+  mobileUtilityTrailing?: ReactNode;
 }) {
   const isEditor = accessRole === "editor";
   const hydrated = coerceWizardState(initialDraft?.wizard_state);
@@ -1459,14 +1463,30 @@ export function TributeWizard({
       ) : null}
 
       {currentStep > (isEditor ? 3 : 1) ? (
-        <button
-          type="button"
-          onClick={() => void goBack()}
-          className="mb-6 inline-flex items-center gap-2 rounded-lg px-1 py-1 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-100"
-        >
-          <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
-          {copy.back}
-        </button>
+        <>
+          <div className="mb-6 flex items-center justify-between gap-3 md:hidden">
+            <button
+              type="button"
+              onClick={() => void goBack()}
+              className="inline-flex items-center gap-2 rounded-lg px-1 py-1 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-100"
+            >
+              <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
+              {copy.back}
+            </button>
+            {mobileUtilityTrailing ? (
+              <div className="shrink-0">{mobileUtilityTrailing}</div>
+            ) : null}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => void goBack()}
+            className="mb-6 hidden items-center gap-2 rounded-lg px-1 py-1 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-100 md:inline-flex"
+          >
+            <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
+            {copy.back}
+          </button>
+        </>
       ) : null}
 
       {!step1Parcours.hubChromeHidden ? (

@@ -4,6 +4,7 @@
 **Dernière MAJ :** 5 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — Studio mobile : DnD tactile fiabilisé avant démo jeudi (appui long, poignées mobiles plus confortables, grille chapitres aérée).
 - 5 sept 2026 — **Démo famille sécurisée (passes P1→P5)** : reveal du ciel rallongé jusqu’à la contemplation avant J3 · Coffre mobile rehiérarchisé (dépôt principal puis Scanner puis collections) · Musique allégée au premier regard · Studio épuré (plus de doublon Co-Créateur) · prévisualisation renforcée même avec peu de matière · derniers micro-textes/CTA secondaires harmonisés.
 - 5 sept 2026 — Panneau **Essentiels** (Famille) : molette qui fuyait au ciel derrière le formulaire corrigée · fermeture après effacement des données revient bien à l’étoile unique · souvenir cliqué puis jamais refermé ne fige plus le ciel en noir.
 - 5 sept 2026 — Ciel **Invité** aligné sur le ciel **Famille** : même caméra (`HubSkyCamera`, posée direct sur l’étoile, sans dolly), molette globale (`window`), bande Voie lactée à la même place.

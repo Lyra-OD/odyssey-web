@@ -201,7 +201,7 @@ function MontageMediaCardSurface({
       {showDragHandle && dragHandleProps ? (
         <button
           type="button"
-          className={`absolute right-2 top-2 z-[20] flex h-8 w-8 cursor-grab touch-none items-center justify-center rounded-full border border-white/15 bg-black/45 text-white/70 opacity-70 backdrop-blur-md transition-all duration-200 hover:border-white/25 hover:bg-black/60 hover:text-white active:cursor-grabbing group-hover/card:opacity-100 ${theme.badgeText} group-hover/card:opacity-100`}
+          className={`absolute right-2 top-2 z-[20] flex h-10 w-10 cursor-grab touch-none items-center justify-center rounded-full border border-white/15 bg-black/60 text-white/80 opacity-100 shadow-[0_8px_24px_rgba(0,0,0,0.28)] backdrop-blur-md transition-all duration-200 hover:border-white/25 hover:bg-black/70 hover:text-white active:cursor-grabbing sm:h-8 sm:w-8 sm:opacity-70 ${theme.badgeText} sm:group-hover/card:opacity-100`}
           aria-label={copy.dragHandle}
           {...dragHandleProps.attributes}
           {...restHandleListeners}
@@ -211,7 +211,7 @@ function MontageMediaCardSurface({
           }}
           onClick={(event) => event.stopPropagation()}
         >
-          <GripVertical className="h-4 w-4" strokeWidth={2} aria-hidden />
+          <GripVertical className="h-[18px] w-[18px] sm:h-4 sm:w-4" strokeWidth={2} aria-hidden />
         </button>
       ) : null}
 

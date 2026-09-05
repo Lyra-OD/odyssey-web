@@ -1,9 +1,10 @@
 # Étape 5 — Le Livre Ouvert (Table de Montage)
 
 **Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L copy ✅ · S5-J/K ⏳.  
-**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 5 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — DnD mobile renforcé : appui long tactile, poignées plus confortables et grilles chapitres plus aérées en smartphone.
 - 19 août 2026 — S5-L : copy « Le film de sa vie » (plus de timeline / acte / banque / Gérer).
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — PR-1/2/3 livrés (`fdeb7da` → `41235e8`).
@@ -110,11 +111,11 @@ StoryboardMontageStep.tsx          ← orchestrateur (DnDContext, magic, fetch m
 | `StoryboardChapterStack.tsx` | Liste empilée des chapitres | ✅ actif |
 | `StoryboardChapterBlock.tsx` | Article chapitre (drop zone, highlight magic) | ✅ actif |
 | `ChapterNarrativeHeader.tsx` | Titre + métadonnées chanson | ✅ actif |
-| `ChapterCanvasGrid.tsx` | Grille 6 col. / 3 col. mobile | ✅ actif |
+| `ChapterCanvasGrid.tsx` | Grille 6 col. / 2 col. mobile | ✅ actif |
 | `CanvasGhostSlot.tsx` | Emplacements vides capacité | ✅ actif |
 | `ChapterActionCluster.tsx` | Boutons d'action chapitre | ✅ actif |
 | `MediaBankColumn.tsx` | Colonne banque + CTA Composition Magique | ✅ actif |
-| `BankDraggableMediaTile.tsx` | Tuile banque draggable | ✅ actif |
+| `BankDraggableMediaTile.tsx` | Tuile banque draggable, poignée tactile mobile | ✅ actif |
 | `MontageOnboardingGate.tsx` | Onboarding magie / manuel | ✅ actif |
 | `MagicCinematicOverlay.tsx` | Overlay cinématographique | ✅ actif |
 | `ChapterRefinementDrawer.tsx` | Tiroir Gérer (surplus, tri) | ✅ actif |

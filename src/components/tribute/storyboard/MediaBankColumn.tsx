@@ -113,7 +113,7 @@ export function MediaBankColumn({
             {copy.empty}
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3.5 sm:gap-4">
             {items.map((item) => (
               <BankDraggableMediaTile
                 key={item.assetId}

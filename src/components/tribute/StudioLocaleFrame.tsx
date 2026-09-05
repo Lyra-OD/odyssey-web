@@ -54,8 +54,8 @@ export function StudioLocaleFrame({
 
   return (
     <>
-      <div className="pointer-events-none fixed right-4 top-4 z-[60] md:right-8 md:top-6">
-        <div className="pointer-events-auto flex flex-col items-end gap-2">
+      <div className="pointer-events-none fixed right-3 top-2 z-[60] md:right-8 md:top-6">
+        <div className="pointer-events-auto flex flex-col items-end gap-1 md:gap-2">
           <LocaleSwitcher
             lang={uiLocale}
             languageLabel={labels.languageLabel}
@@ -67,7 +67,7 @@ export function StudioLocaleFrame({
             <DashboardSignOut
               lang={uiLocale}
               label={labels.signOut}
-              className="border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] tracking-[0.22em] text-white/55 shadow-none hover:border-white/16 hover:bg-white/[0.08] hover:text-white/80"
+              className="hidden md:inline-flex md:rounded-lg md:border-white/10 md:bg-white/[0.04] md:px-3 md:py-1.5 md:text-[10px] md:tracking-[0.22em] md:text-white/55"
             />
           ) : null}
         </div>
@@ -80,6 +80,15 @@ export function StudioLocaleFrame({
         isPartner={isPartner}
         planOverride={planOverride}
         accessRole={accessRole}
+        mobileUtilityTrailing={
+          showSignOut ? (
+            <DashboardSignOut
+              lang={uiLocale}
+              label={labels.signOut}
+              className="min-h-0 rounded-md border-white/8 bg-white/[0.03] px-2.5 py-1 text-[9px] font-medium tracking-[0.18em] text-white/45 shadow-none hover:border-white/14 hover:bg-white/[0.06] hover:text-white/70"
+            />
+          ) : null
+        }
       />
     </>
   );

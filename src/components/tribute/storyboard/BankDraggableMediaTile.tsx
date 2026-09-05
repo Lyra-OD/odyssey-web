@@ -2,9 +2,10 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { Check, Film, Image as ImageIcon } from "lucide-react";
+import { Check, Film, GripVertical, Image as ImageIcon } from "lucide-react";
 
 import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
+import { useFinePointer } from "@/src/hooks/useFinePointer";
 import { getUnassignedCardTheme } from "@/src/lib/wizard/chapterTheme";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import {
@@ -37,6 +38,7 @@ export function BankDraggableMediaTile({
   onShiftSelect,
 }: Props) {
   const theme = getUnassignedCardTheme();
+  const finePointer = useFinePointer();
 
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -55,6 +57,10 @@ export function BankDraggableMediaTile({
   };
 
   const isGhost = isDragging || (isGroupDragging && isSelected);
+  const cardDragListeners = finePointer ? listeners : undefined;
+  const cardDragAttributes = finePointer ? attributes : undefined;
+  const handleDragListeners = finePointer ? undefined : listeners;
+  const handleDragAttributes = finePointer ? undefined : attributes;
 
   const preview = item.previewUrl ? (
     <StoragePreviewImage
@@ -78,11 +84,11 @@ export function BankDraggableMediaTile({
     <div
       ref={setNodeRef}
       style={style}
-      className={`group/tile relative aspect-video w-full touch-none ${
+      className={`group/tile relative aspect-video w-full ${
         isGhost ? "z-10 opacity-40" : ""
-      }`}
-      {...listeners}
-      {...attributes}
+      } ${finePointer ? "touch-none" : ""}`}
+      {...cardDragListeners}
+      {...cardDragAttributes}
     >
       <div
         className={`relative h-full w-full overflow-hidden rounded-xl ring-1 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 ${
@@ -96,7 +102,9 @@ export function BankDraggableMediaTile({
       >
         <button
           type="button"
-          className="absolute inset-0 z-[1] block h-full w-full cursor-grab active:cursor-grabbing"
+          className={`absolute inset-0 z-[1] block h-full w-full ${
+            finePointer ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
+          }`}
           aria-label={`${copy.clickToEdit} · ${item.displayName}`}
           onClick={(event) => {
             if (event.shiftKey) {
@@ -111,6 +119,23 @@ export function BankDraggableMediaTile({
           {preview}
         </button>
 
+        {handleDragAttributes && handleDragListeners ? (
+          <button
+            type="button"
+            className="absolute right-2 top-2 z-[20] flex h-10 w-10 cursor-grab touch-none items-center justify-center rounded-full border border-white/15 bg-black/60 text-white/80 opacity-100 shadow-[0_8px_24px_rgba(0,0,0,0.28)] backdrop-blur-md transition-all duration-200 hover:border-white/25 hover:bg-black/70 hover:text-white active:cursor-grabbing sm:h-8 sm:w-8 sm:opacity-70 sm:group-hover/tile:opacity-100"
+            aria-label={copy.dragHandle}
+            {...handleDragAttributes}
+            {...handleDragListeners}
+            onPointerDown={(event) => {
+              handleDragListeners.onPointerDown?.(event);
+              event.stopPropagation();
+            }}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <GripVertical className="h-[18px] w-[18px] sm:h-4 sm:w-4" strokeWidth={2} aria-hidden />
+          </button>
+        ) : null}
+
         <button
           type="button"
           onClick={(event) => {
@@ -119,10 +144,10 @@ export function BankDraggableMediaTile({
           }}
           aria-pressed={isSelected}
           aria-label={toggleSelectAria}
-          className={`absolute right-2 top-2 z-[20] flex h-6 w-6 items-center justify-center rounded-full border transition-all duration-200 ${
+          className={`absolute left-2 top-2 z-[20] flex h-6 w-6 items-center justify-center rounded-full border transition-all duration-200 sm:left-auto sm:right-2 ${
             isSelected
               ? "border-amber-400/60 bg-amber-400 text-[#020202] opacity-100"
-              : "border-white/20 bg-black/50 text-transparent opacity-0 group-hover/tile:opacity-100"
+              : "border-white/20 bg-black/50 text-transparent opacity-70 sm:opacity-0 sm:group-hover/tile:opacity-100"
           }`}
         >
           <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />

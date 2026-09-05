@@ -3,6 +3,7 @@
 import {
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -13,6 +14,7 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useCallback, useRef, useState } from "react";
 
 import { useMontageAutoScroll } from "@/src/hooks/useMontageAutoScroll";
+import { useFinePointer } from "@/src/hooks/useFinePointer";
 import { reorderStoryboardChapters } from "@/src/lib/wizard/storyboardHelpers";
 import {
   STORYBOARD_BANK_DROPPABLE_ID,
@@ -66,11 +68,19 @@ export function useMontageDnd({
   } | null>(null);
 
   const autoScroll = useMontageAutoScroll();
+  const finePointer = useFinePointer();
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: { distance: 8 },
+  });
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: { delay: 180, tolerance: 8 },
+  });
+  const keyboardSensor = useSensor(KeyboardSensor, {
+    coordinateGetter: sortableKeyboardCoordinates,
+  });
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    ...(finePointer ? [pointerSensor] : [touchSensor]),
+    keyboardSensor,
   );
 
   const handleDragStart = useCallback(
