@@ -1462,9 +1462,20 @@ export function TributeWizard({
         </div>
       ) : null}
 
-      {currentStep > (isEditor ? 3 : 1) ? (
-        <>
-          <div className="mb-6 flex items-center justify-between gap-3 md:hidden">
+      {/* Rituel du ciel : le wizard n'a pas de chrome, les contrôles restent
+          flottants — un rang court en haut à droite, sous le lockup de marque. */}
+      {step1Parcours.hubChromeHidden && mobileUtilityTrailing ? (
+        <div className="fixed right-3 top-2 z-[60] flex items-center gap-2.5 md:hidden">
+          {mobileUtilityTrailing}
+        </div>
+      ) : null}
+
+      {/* Partout ailleurs : barre utilitaire mobile — navigation + langue +
+          session dans le même rang. Desktop : contrôles flottants inchangés. */}
+      {!step1Parcours.hubChromeHidden &&
+      (currentStep > (isEditor ? 3 : 1) || mobileUtilityTrailing) ? (
+        <div className="sticky top-0 z-[55] -mx-6 mb-4 flex h-12 items-center justify-between gap-3 border-b border-white/10 bg-black/40 px-6 backdrop-blur-xl md:hidden">
+          {currentStep > (isEditor ? 3 : 1) ? (
             <button
               type="button"
               onClick={() => void goBack()}
@@ -1473,20 +1484,26 @@ export function TributeWizard({
               <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
               {copy.back}
             </button>
-            {mobileUtilityTrailing ? (
-              <div className="shrink-0">{mobileUtilityTrailing}</div>
-            ) : null}
-          </div>
+          ) : (
+            <span aria-hidden />
+          )}
+          {mobileUtilityTrailing ? (
+            <div className="flex shrink-0 items-center gap-3">
+              {mobileUtilityTrailing}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
 
-          <button
-            type="button"
-            onClick={() => void goBack()}
-            className="mb-6 hidden items-center gap-2 rounded-lg px-1 py-1 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-100 md:inline-flex"
-          >
-            <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
-            {copy.back}
-          </button>
-        </>
+      {currentStep > (isEditor ? 3 : 1) ? (
+        <button
+          type="button"
+          onClick={() => void goBack()}
+          className="mb-6 hidden items-center gap-2 rounded-lg px-1 py-1 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-100 md:inline-flex"
+        >
+          <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
+          {copy.back}
+        </button>
       ) : null}
 
       {!step1Parcours.hubChromeHidden ? (
@@ -1506,7 +1523,12 @@ export function TributeWizard({
           avant que l'identité du défunt ne soit renseignée ; le bloc
           avatar/nom ne rejoint l'en-tête qu'à partir de l'Étape 2. */}
       <header
-        className={`sticky top-0 z-50 -mx-6 mb-8 border-b border-white/10 bg-black/40 px-6 py-3.5 backdrop-blur-xl transition-opacity duration-500 md:-mx-10 md:px-10 ${
+        className={`sticky z-50 -mx-6 mb-8 border-b border-white/10 bg-black/40 px-6 py-3.5 backdrop-blur-xl transition-opacity duration-500 md:top-0 md:-mx-10 md:px-10 ${
+          !step1Parcours.hubChromeHidden &&
+          (currentStep > (isEditor ? 3 : 1) || mobileUtilityTrailing)
+            ? "top-12"
+            : "top-0"
+        } ${
           step1Parcours.hubChromeHidden
             ? "pointer-events-none opacity-0"
             : ""

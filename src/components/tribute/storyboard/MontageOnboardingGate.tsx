@@ -32,7 +32,7 @@ export function MontageOnboardingGate({
 }: Props) {
   return (
     <motion.div
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-[#020202] px-6"
+      className="fixed inset-0 z-[70] flex items-end justify-center bg-[#020202]/85 backdrop-blur-md md:items-center md:bg-[#020202] md:px-6 md:backdrop-blur-none"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -41,11 +41,18 @@ export function MontageOnboardingGate({
       aria-modal="true"
       aria-labelledby="montage-onboarding-title"
     >
-        <div className="w-full max-w-2xl space-y-10 text-center">
-        <div className="space-y-4">
+      {/* Mobile : feuille ancrée en bas (bottom sheet natif). Desktop : dialogue
+          centré inchangé. */}
+      <div className="max-h-[92vh] w-full max-w-2xl space-y-6 overflow-y-auto rounded-t-3xl border-t border-white/10 bg-[#08080a] px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4 text-center shadow-[0_-24px_60px_rgba(0,0,0,0.55)] md:max-h-none md:space-y-10 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0 md:shadow-none">
+        <span
+          className="mx-auto block h-1 w-10 rounded-full bg-white/15 md:hidden"
+          aria-hidden
+        />
+
+        <div className="space-y-3 md:space-y-4">
           <h2
             id="montage-onboarding-title"
-            className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl"
+            className="font-[family-name:var(--font-label)] text-balance text-2xl font-semibold tracking-tight text-white md:text-4xl"
           >
             {copy.title}
           </h2>
@@ -54,19 +61,19 @@ export function MontageOnboardingGate({
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2 md:gap-4">
           <button
             type="button"
             onClick={onChooseMagic}
-            className="group relative overflow-hidden rounded-2xl border border-amber-400/20 bg-gradient-to-b from-amber-400/[0.08] to-transparent px-6 py-8 text-left transition-all duration-300 hover:border-amber-400/35 hover:shadow-[0_0_48px_rgba(251,191,36,0.08)]"
+            className="group relative overflow-hidden rounded-2xl border border-amber-400/20 bg-gradient-to-b from-amber-400/[0.08] to-transparent px-5 py-5 text-left transition-all duration-300 hover:border-amber-400/35 hover:shadow-[0_0_48px_rgba(251,191,36,0.08)] md:px-6 md:py-8"
           >
-            <span className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-amber-400/25 bg-amber-400/10 text-amber-300">
+            <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full border border-amber-400/25 bg-amber-400/10 text-amber-300 md:mb-4">
               <Wand2 className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             </span>
-            <span className="block font-[family-name:var(--font-label)] text-lg font-semibold text-white">
+            <span className="block font-[family-name:var(--font-label)] text-base font-semibold text-white md:text-lg">
               {copy.magic}
             </span>
-            <span className="mt-2 block text-sm font-light leading-relaxed text-zinc-400">
+            <span className="mt-1.5 block text-[13px] font-light leading-relaxed text-zinc-400 md:mt-2 md:text-sm">
               {copy.magicHint}
             </span>
           </button>
@@ -74,15 +81,15 @@ export function MontageOnboardingGate({
           <button
             type="button"
             onClick={onChooseManual}
-            className="group rounded-2xl border border-white/[0.08] bg-white/[0.02] px-6 py-8 text-left transition-all duration-300 hover:border-white/15 hover:bg-white/[0.04]"
+            className="group rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 py-5 text-left transition-all duration-300 hover:border-white/15 hover:bg-white/[0.04] md:px-6 md:py-8"
           >
-            <span className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400">
+            <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 md:mb-4">
               <Sparkles className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             </span>
-            <span className="block font-[family-name:var(--font-label)] text-lg font-semibold text-white">
+            <span className="block font-[family-name:var(--font-label)] text-base font-semibold text-white md:text-lg">
               {copy.manual}
             </span>
-            <span className="mt-2 block text-sm font-light leading-relaxed text-zinc-500">
+            <span className="mt-1.5 block text-[13px] font-light leading-relaxed text-zinc-500 md:mt-2 md:text-sm">
               {copy.manualHint}
             </span>
           </button>
@@ -92,7 +99,7 @@ export function MontageOnboardingGate({
           <button
             type="button"
             onClick={onChooseDelegate}
-            className="mx-auto block text-xs font-light tracking-[0.08em] text-zinc-500 underline decoration-white/10 underline-offset-4 transition-colors hover:text-teal-100/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+            className="mx-auto block px-2 py-2 text-xs font-light tracking-[0.08em] text-zinc-500 underline decoration-white/10 underline-offset-4 transition-colors hover:text-teal-100/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35 md:py-0"
           >
             {copy.delegate}
           </button>

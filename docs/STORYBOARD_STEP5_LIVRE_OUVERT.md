@@ -4,6 +4,7 @@
 **Dernière MAJ :** 5 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — `MontageOnboardingGate` en feuille ancrée en bas sur smartphone (choix empilés, densité réduite, fond du Studio flouté derrière) ; dialogue centré sur aplat opaque conservé à partir de `md`.
 - 5 sept 2026 — DnD mobile renforcé : appui long tactile, poignées plus confortables et grilles chapitres plus aérées en smartphone.
 - 19 août 2026 — S5-L : copy « Le film de sa vie » (plus de timeline / acte / banque / Gérer).
 - 17 août 2026 — en-tête type + carte.
