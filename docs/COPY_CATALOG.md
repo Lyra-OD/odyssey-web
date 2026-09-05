@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-04 · **Entrées :** 855
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-05 · **Entrées :** 855
 
 ## `common`
 
@@ -364,7 +364,7 @@
 | `tributeWizard.primaryPhotoHint` | Une photo où l’on reconnaît son regard, un sourire ou un instant précieux. | A photo that captures their gaze, a smile, or a cherished moment. |
 | `tributeWizard.avatarPickPhoto` | Déposer un portrait | Add a portrait |
 | `tributeWizard.avatarChangePhoto` | Modifier le portrait | Change the portrait |
-| `tributeWizard.stepInviteTitle` | Étape 2 : Inviter le cercle | Step 2: Invite the circle |
+| `tributeWizard.stepInviteTitle` | Inviter le cercle | Invite the circle |
 | `tributeWizard.stepInviteDescription` | Partagez un lien privé. Vos proches déposent un souvenir, puis peuvent laisser une empreinte pour soutenir le film. | Share a private link. Loved ones leave a memory, then may leave an imprint to support the film. |
 | `tributeWizard.skipInvite` | Continuer sans inviter pour l’instant | Continue without inviting for now |
 | `tributeWizard.stepSourcesTitle` | Étape 2 : Les sources | Step 2: Sources |
@@ -377,7 +377,7 @@
 | `tributeWizard.socialGooglePhotos` | Google Photos | Google Photos |
 | `tributeWizard.socialQuickLoginNote` | Connexion rapide lorsque votre navigateur est déjà ouvert sur ces services. | Quick connection when your browser is already signed in to these services. |
 | `tributeWizard.skipSources` | Passer cette étape | Skip this step |
-| `tributeWizard.stepMediaTitle` | Étape 3 : Le Coffre-fort | Step 3: The Vault |
+| `tributeWizard.stepMediaTitle` | Le Coffre-fort | The Vault |
 | `tributeWizard.stepMediaDescription` | Déposez ici tous vos souvenirs : photos et vidéos. Le film s’assemblera ensuite, sous vos yeux. | Drop all your memories here: photos and videos. The film will come together next, before your eyes. |
 | `tributeWizard.stepMediaLater` | Plus tard | Later |
 | `tributeWizard.scannerEyebrow` | Scanner Compagnon | Companion Scanner |
@@ -434,7 +434,7 @@
 | `tributeWizard.projectDraftIdle` | Espace de stockage en attente d’initialisation. | Storage space waiting to be initialised. |
 | `tributeWizard.projectDraftErrorTitle` | Impossible de préparer votre espace de stockage. | We could not prepare your storage space. |
 | `tributeWizard.projectDraftRetry` | Réessayer | Retry |
-| `tributeWizard.stepMontageTitle` | Étape 5 : Le film de sa vie | Step 5: The Film of Their Life |
+| `tributeWizard.stepMontageTitle` | Le film de sa vie | The Film of Their Life |
 | `tributeWizard.stepMontageDescription` | Mettez en lumière les moments précieux de son histoire. Le film s’assemble sous vos yeux. | Bring the precious moments of their story to light. The film assembles before your eyes. |
 | `tributeWizard.montageLoading` | Chargement de vos souvenirs… | Loading your memories… |
 | `tributeWizard.montageEmpty` | Aucun souvenir pour l’instant. Revenez au Coffre-fort pour en déposer. | No memories yet. Return to the Vault to add some. |
@@ -623,7 +623,7 @@
 | `tributeWizard.soundPreviewPremiumBadge` | Preview | Preview |
 | `tributeWizard.soundCatalogAccessStandard` | Vous avez accès au catalogue Standard. Pour des droits étendus (Premium), ajoutez l’option Licence Premium (39$) à l’étape Extensions. | You have access to the Standard catalog. For extended rights (Premium), add the Premium License option ($39) in Extensions. |
 | `tributeWizard.soundCatalogAccessPremium` | Catalogue Premium débloqué. Titres à droits étendus pour votre hommage. | Premium catalog unlocked. Extended-rights tracks for your tribute. |
-| `tributeWizard.stepChaptersTitle` | Étape 4 : Vos chapitres musicaux | Step 4: Your music chapters |
+| `tributeWizard.stepChaptersTitle` | Vos chapitres musicaux | Your music chapters |
 | `tributeWizard.stepChaptersDescription` | Choisissez une chanson pour chaque chapitre de votre film. Sa durée réelle détermine l’espace disponible pour vos souvenirs. | Choose a song for each chapter of your film. Its real duration sets the available space for your memories. |
 | `tributeWizard.chapterEducationBanner` | Pour une expérience cinématographique optimale, nous recommandons de choisir des pistes d’au moins 3 à 4 minutes. | For the best cinematic experience, we recommend choosing tracks of at least 3 to 4 minutes. |
 | `tributeWizard.chapterShortTrackWarning` | Piste courte : peu de place pour vos souvenirs une fois l’intro et l’outro réservées. Privilégiez une piste de 3 à 4 minutes si possible. | Short track: little room left for your memories once the intro and outro are reserved. Prefer a 3-4 minute track if possible. |
