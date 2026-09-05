@@ -39,7 +39,6 @@ import {
   SanctuaryInviteTrigger,
 } from "@/src/components/tribute/SanctuaryInvitePanel";
 import {
-  CollabInviteInlineCard,
   CollabInvitePanel,
   CollabInviteTrigger,
   collabInviteCopyFromDictionary,
@@ -1378,7 +1377,9 @@ export function TributeWizard({
           }
           silhouetteIdle={false}
           panelFading={
-            step1Reveal.phase === "reward" || step1Reveal.phase === "done"
+            step1Reveal.phase === "reward" ||
+            step1Reveal.phase === "dwell" ||
+            step1Reveal.phase === "done"
           }
           variant={
             step1Parcours.showRitualWebGL ? "ritual" : "hub-lite"
@@ -1409,7 +1410,9 @@ export function TributeWizard({
           }
           onStarAnchorChange={onHubStarAnchor}
           closeStreakFire={false}
-          skyWander={step1Reveal.phase === "done"}
+          skyWander={
+            step1Reveal.phase === "dwell" || step1Reveal.phase === "done"
+          }
         />
       ) : null}
       {step1Sky && step1Parcours.showEditEssentials ? (
@@ -1719,6 +1722,7 @@ export function TributeWizard({
                 "parcours-monolith-frame pointer-events-auto relative w-full max-w-xl",
                 essentialsShake ? "parcours-form-shake" : "",
                 step1Reveal.phase === "reward" ||
+                step1Reveal.phase === "dwell" ||
                 step1Reveal.phase === "done"
                   ? "pointer-events-none opacity-0"
                   : step1Parcours.closeRitualPhase === "collapse"
@@ -2025,41 +2029,6 @@ export function TributeWizard({
                 {copy.stepMediaDescription}
               </p>
 
-              {uploadProjectId ? (
-                <ScannerCompanionPanel
-                  className="mt-8"
-                  projectId={uploadProjectId}
-                  locale={locale}
-                  copy={{
-                    eyebrow: copy.scannerEyebrow,
-                    title: copy.scannerTitle,
-                    description: copy.scannerDescription,
-                    badge: copy.scannerBadge,
-                    hint: copy.scannerHint,
-                    instructions: copy.scannerInstructions,
-                    generating: copy.scannerGenerating,
-                    copyLink: copy.scannerCopyLink,
-                    copied: copy.scannerCopied,
-                    qrAlt: copy.scannerQrAlt,
-                    errorGeneric: copy.scannerErrorGeneric,
-                    unavailable: copy.scannerUnavailable,
-                    waitingPhone: copy.scannerWaitingPhone,
-                    photosReceived: copy.scannerPhotosReceived,
-                  }}
-                />
-              ) : (
-                <ScannerCompanionPlaceholder
-                  className="mt-8"
-                  copy={{
-                    eyebrow: copy.scannerEyebrow,
-                    title: copy.scannerTitle,
-                    description: copy.scannerDescription,
-                    badge: copy.scannerBadge,
-                    hint: copy.scannerHint,
-                  }}
-                />
-              )}
-
               {projectDraftError ? (
                 <div className="mt-6 rounded-xl border border-fuchsia-500/45 bg-fuchsia-950/10 p-4 shadow-[0_0_24px_rgba(255,0,255,0.22)] backdrop-blur-md">
                   <p className="text-sm font-medium text-fuchsia-200/95">
@@ -2294,6 +2263,41 @@ export function TributeWizard({
                 </MediaDropzoneAdapter>
               )}
 
+              <section className="mt-12 border-t border-white/[0.06] pt-10">
+                {uploadProjectId ? (
+                  <ScannerCompanionPanel
+                    projectId={uploadProjectId}
+                    locale={locale}
+                    copy={{
+                      eyebrow: copy.scannerEyebrow,
+                      title: copy.scannerTitle,
+                      description: copy.scannerDescription,
+                      badge: copy.scannerBadge,
+                      hint: copy.scannerHint,
+                      instructions: copy.scannerInstructions,
+                      generating: copy.scannerGenerating,
+                      copyLink: copy.scannerCopyLink,
+                      copied: copy.scannerCopied,
+                      qrAlt: copy.scannerQrAlt,
+                      errorGeneric: copy.scannerErrorGeneric,
+                      unavailable: copy.scannerUnavailable,
+                      waitingPhone: copy.scannerWaitingPhone,
+                      photosReceived: copy.scannerPhotosReceived,
+                    }}
+                  />
+                ) : (
+                  <ScannerCompanionPlaceholder
+                    copy={{
+                      eyebrow: copy.scannerEyebrow,
+                      title: copy.scannerTitle,
+                      description: copy.scannerDescription,
+                      badge: copy.scannerBadge,
+                      hint: copy.scannerHint,
+                    }}
+                  />
+                )}
+              </section>
+
               <VaultOnlineSourcesSection
                 className="mt-12 mb-28"
                 selected={selectedSocial}
@@ -2315,7 +2319,7 @@ export function TributeWizard({
                     <button
                       type="button"
                       onClick={() => void goBack()}
-                      className="font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/10 bg-white/[0.06] px-4 text-base font-normal text-zinc-200 shadow-[0_0_20px_rgba(255,255,255,0.04)] transition-colors hover:bg-white/[0.09]"
+                      className="font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-base font-normal text-zinc-400 transition-colors hover:border-white/12 hover:bg-white/[0.05] hover:text-zinc-200"
                     >
                       {copy.back}
                     </button>
@@ -2440,7 +2444,6 @@ export function TributeWizard({
           ) : null}
 
           {currentStep === 5 ? (
-            <>
             <StoryboardMontageStep
               packageId={currentPackageId}
               projectId={uploadProjectId}
@@ -2551,13 +2554,6 @@ export function TributeWizard({
               }}
               onOpenCollab={() => setIsCollabInviteOpen(true)}
             />
-            <CollabInviteInlineCard
-              projectId={uploadProjectId}
-              locale={locale}
-              accessRole={accessRole}
-              copy={collabInviteCopy}
-            />
-            </>
           ) : null}
 
           {currentStep === 6 ? (

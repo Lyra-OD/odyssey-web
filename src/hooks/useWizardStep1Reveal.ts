@@ -10,7 +10,7 @@ import {
   mapWizardRewardWallToRevealT,
 } from "@/src/lib/contribute/wizardBirthReveal";
 
-export type WizardStep1RevealPhase = "typing" | "reward" | "done";
+export type WizardStep1RevealPhase = "typing" | "reward" | "dwell" | "done";
 
 /**
  * Architecture « vrai final » :
@@ -36,7 +36,8 @@ export function useWizardStep1Reveal(
   }, [firstName, phase, options?.muteFirstNameSnap]);
 
   /** Play + admiration : ciel vivant (parallax, filantes). Formulaire = gel JPEG. */
-  const skyActive = phase === "reward" || phase === "done";
+  const skyActive =
+    phase === "reward" || phase === "dwell" || phase === "done";
 
   const playReward = useCallback((): Promise<void> => {
     cancelAnimationFrame(rewardRafRef.current);
@@ -66,9 +67,10 @@ export function useWizardStep1Reveal(
         } else {
           revealTRef.current = 1;
           setRevealT(1);
-          setPhase("done");
+          setPhase("dwell");
           dwellTimerRef.current = setTimeout(() => {
             dwellTimerRef.current = null;
+            setPhase("done");
             resolve();
           }, WIZARD_REWARD_DWELL_MS);
         }
@@ -121,6 +123,10 @@ export function useWizardStep1Reveal(
     settlePostReveal,
     hideHeroName,
     skyActive,
-    showGhostSlots: phase === "reward" || phase === "done" || revealT >= 0.55,
+    showGhostSlots:
+      phase === "reward" ||
+      phase === "dwell" ||
+      phase === "done" ||
+      revealT >= 0.55,
   };
 }

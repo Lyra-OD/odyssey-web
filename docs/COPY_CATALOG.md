@@ -333,7 +333,7 @@
 | `tributeWizard.stepperVault` | Coffre à souvenirs | Memory Chest |
 | `tributeWizard.stepperChapters` | Musique | Music |
 | `tributeWizard.stepperMontage` | Le film | The film |
-| `tributeWizard.stepperExtensions` | Extensions | Extensions |
+| `tributeWizard.stepperExtensions` | Gestes | Gestures |
 | `tributeWizard.stepperPreview` | Aperçu | Preview |
 | `tributeWizard.stepperCheckout` | Finaliser | Review |
 | `tributeWizard.stepEssentialTitle` | L’essentiel | The Essentials |
@@ -379,7 +379,7 @@
 | `tributeWizard.skipSources` | Passer cette étape pour l’instant | Skip this step for now |
 | `tributeWizard.stepMediaTitle` | Le Coffre à souvenirs | The Memory Chest |
 | `tributeWizard.stepMediaDescription` | Déposez ici tous vos souvenirs : photos et vidéos. Le film s’assemblera ensuite, sous vos yeux. | Drop all your memories here: photos and videos. The film will come together next, before your eyes. |
-| `tributeWizard.stepMediaLater` | Plus tard | Later |
+| `tributeWizard.stepMediaLater` | Continuer plus tard | Continue later |
 | `tributeWizard.scannerEyebrow` | Scanner Compagnon | Companion Scanner |
 | `tributeWizard.scannerTitle` | Numérisez vos albums papier | Digitize your paper albums |
 | `tributeWizard.scannerDescription` | Scannez le QR avec votre téléphone. Aucune application. | Scan the QR with your phone. No app required. |
@@ -391,7 +391,7 @@
 | `tributeWizard.scannerCopied` | Lien copié | Link copied |
 | `tributeWizard.scannerQrAlt` | QR Code Scanner Compagnon | Companion Scanner QR code |
 | `tributeWizard.scannerErrorGeneric` | Impossible de créer la session. Réessayez. | Could not create the session. Please try again. |
-| `tributeWizard.scannerUnavailable` | Scanner indisponible (table scan_sessions manquante). | Scanner unavailable (scan_sessions table missing). |
+| `tributeWizard.scannerUnavailable` | Scanner indisponible pour le moment. | Scanner unavailable for the moment. |
 | `tributeWizard.scannerWaitingPhone` | En attente du téléphone | Waiting for phone |
 | `tributeWizard.scannerPhotosReceived` | {count} photo(s) reçue(s) | {count} photo(s) received |
 | `tributeWizard.queueViaScanner` | Via Scanner | Via Scanner |
@@ -414,7 +414,7 @@
 | `tributeWizard.uploadFilesCount` | {count} fichier(s) ajouté(s) | {count} file(s) added |
 | `tributeWizard.uploadLimitCount` | {count} / {max} souvenirs inclus dans votre forfait | {count} / {max} memories included in your package |
 | `tributeWizard.uploadBreakdown` | ({uploaded} envoyés • {uploading} en cours • {failed} échecs) | ({uploaded} uploaded • {uploading} in progress • {failed} failed) |
-| `tributeWizard.uploadInProgress` | Envoi en cours… | Upload in progress… |
+| `tributeWizard.uploadInProgress` | Vos souvenirs arrivent… | Your memories are arriving… |
 | `tributeWizard.uploadAtLeastOne` | Ajoutez au moins un souvenir pour ouvrir le film de sa vie. | Add at least one memory to open the film of their life. |
 | `tributeWizard.uploadLimitReachedTitle` | Limite de votre forfait atteinte | Package limit reached |
 | `tributeWizard.uploadLimitReachedHint` | Votre forfait inclut {max} souvenirs maximum. Passez à un forfait supérieur pour en ajouter davantage. | Your package includes up to {max} memories. Upgrade to a higher package to add more. |
@@ -431,8 +431,8 @@
 | `tributeWizard.queueRemove` | Supprimer | Remove |
 | `tributeWizard.queueRetry` | Réessayer | Retry |
 | `tributeWizard.projectDraftLoading` | Préparation de votre espace privé… | Preparing your private space… |
-| `tributeWizard.projectDraftIdle` | Espace de stockage en attente d’initialisation. | Storage space waiting to be initialised. |
-| `tributeWizard.projectDraftErrorTitle` | Impossible de préparer votre espace de stockage. | We could not prepare your storage space. |
+| `tributeWizard.projectDraftIdle` | Nous préparons votre Coffre à souvenirs. | We are preparing your Memory Chest. |
+| `tributeWizard.projectDraftErrorTitle` | Nous n’arrivons pas encore à préparer votre Coffre à souvenirs. | We could not prepare your Memory Chest just yet. |
 | `tributeWizard.projectDraftRetry` | Réessayer | Retry |
 | `tributeWizard.stepMontageTitle` | Le film de sa vie | The Film of Their Life |
 | `tributeWizard.stepMontageDescription` | Mettez en lumière les moments précieux de son histoire. Le film s’assemble sous vos yeux. | Bring the precious moments of their story to light. The film assembles before your eyes. |
@@ -622,8 +622,8 @@
 | `tributeWizard.soundChangeCta` | Changer de chanson | Change song |
 | `tributeWizard.soundLicensedNote` | Titres cleared Stingray · droits cérémonie inclus. | Stingray-cleared tracks · ceremony rights included. |
 | `tributeWizard.soundPreviewPremiumBadge` | Preview | Preview |
-| `tributeWizard.soundCatalogAccessStandard` | Vous avez accès au catalogue Standard. Pour des droits étendus (Premium), ajoutez l’option Licence Premium (39$) à l’étape Extensions. | You have access to the Standard catalog. For extended rights (Premium), add the Premium License option ($39) in Extensions. |
-| `tributeWizard.soundCatalogAccessPremium` | Catalogue Premium débloqué. Titres à droits étendus pour votre hommage. | Premium catalog unlocked. Extended-rights tracks for your tribute. |
+| `tributeWizard.soundCatalogAccessStandard` | Le catalogue Standard vous accompagne déjà. Pour ouvrir des droits étendus, vous pourrez choisir la Licence Premium (39$) dans Gestes de mémoire. | The Standard catalog is already with you. To open extended rights, you may choose the Premium License ($39) in Memory gestures. |
+| `tributeWizard.soundCatalogAccessPremium` | Catalogue Premium ouvert. Des titres à droits étendus pour porter votre hommage. | Premium catalog open. Extended-rights tracks to carry your tribute. |
 | `tributeWizard.stepChaptersTitle` | Vos chapitres musicaux | Your music chapters |
 | `tributeWizard.stepChaptersDescription` | Choisissez une chanson pour chaque chapitre de votre film. Sa durée réelle détermine l’espace disponible pour vos souvenirs. | Choose a song for each chapter of your film. Its real duration sets the available space for your memories. |
 | `tributeWizard.chapterEducationBanner` | Pour une expérience cinématographique optimale, nous recommandons de choisir des pistes d’au moins 3 à 4 minutes. | For the best cinematic experience, we recommend choosing tracks of at least 3 to 4 minutes. |
@@ -644,8 +644,8 @@
 | `tributeWizard.chapterStatsSongsValue` | {min} à {max} chansons | {min} to {max} songs |
 | `tributeWizard.chapterDuplicateWarning` | Vous avez sélectionné la même chanson dans plusieurs chapitres. Vérifiez que c’est bien votre intention avant de continuer. | You've selected the same song in more than one chapter. Make sure this is intentional before continuing. |
 | `tributeWizard.chapterDuplicateAckLabel` | Je confirme vouloir utiliser la même chanson plusieurs fois dans le film. | I confirm I want to use the same song more than once in my film. |
-| `tributeWizard.stepExtensionsTitle` | Étape 6 : Extensions de Souvenir | Step 6: Memory extensions |
-| `tributeWizard.stepExtensionsDescription` | Composez votre coffret de luxe. Chaque option est un geste de soin envers votre hommage. | Curate your luxury keepsake. Each option is a gesture of care for your tribute. |
+| `tributeWizard.stepExtensionsTitle` | Gestes de mémoire | Memory gestures |
+| `tributeWizard.stepExtensionsDescription` | Choisissez, si vous le souhaitez, ce qui prolongera votre hommage avec soin. | Choose, if you wish, what will carry your tribute a little further with care. |
 | `tributeWizard.extensionAiRetouchTitle` | Retouche IA Premium | Premium AI retouch |
 | `tributeWizard.extensionAiRetouchDescription` | Je rajeunis et embellis vos photos automatiquement. | I automatically refresh and beautify your photos. |
 | `tributeWizard.extensionMusicLicenseTitle` | Licence Musique Premium Stingray | Stingray Premium Music License |
@@ -699,10 +699,10 @@
 | `tributeWizard.stepPreviewTitle` | Voir le film | See the film |
 | `tributeWizard.stepPreviewDescription` | Votre hommage prend forme. Voici ce qui vous attend. | Your tribute is taking shape. Here is what awaits you. |
 | `tributeWizard.previewLoadingMedia` | Nous préparons votre film… | We’re preparing your film… |
-| `tributeWizard.previewPayCta` | J'adore, passer au paiement | I love it. Proceed to payment |
+| `tributeWizard.previewPayCta` | J’adore, préserver cet hommage | I love it. Preserve this tribute |
 | `tributeWizard.previewPayCtaSoftCap` | Préserver l’Écrin Héritage | Preserve the Heritage casket |
 | `tributeWizard.previewSoftCapNote` | Votre histoire dépasse déjà le Souvenir offert. L’Écrin Héritage accueille jusqu’à 125 souvenirs, musique officielle incluse. 179 $, réglé seulement à l’export. | Your story already exceeds the complimentary Keepsake. The Heritage casket holds up to 125 memories with official music included. $179, paid only at export. |
-| `tributeWizard.previewEditLink` | Retourner modifier | Go back and edit |
+| `tributeWizard.previewEditLink` | Revenir ajuster | Go back and refine |
 | `tributeWizard.previewValueNote` | Votre film complet durera environ {minutes} minutes, avec une qualité professionnelle | Your complete film will run about {minutes} minutes, with professional quality |
 | `tributeWizard.previewValueAiRetouch` | , une retouche IA | , AI retouching |
 | `tributeWizard.previewValueLicense` |  et une licence musicale officielle | , and an official music license |
@@ -725,7 +725,7 @@
 | `tributeWizard.checkoutPaying` | Ouverture du paiement sécurisé… | Opening secure checkout… |
 | `tributeWizard.checkoutPayError` | Impossible d’ouvrir le paiement sécurisé pour le moment. | We could not open secure checkout right now. |
 | `tributeWizard.checkoutMissingProject` | Enregistrez d’abord votre hommage avant de poursuivre. | Save your tribute first before continuing. |
-| `tributeWizard.checkoutStayFreeCta` | Rester sur le Souvenir offert | Stay on the complimentary Keepsake |
+| `tributeWizard.checkoutStayFreeCta` | Rester dans le Souvenir pour l’instant | Stay with Keepsake for now |
 | `tributeWizard.checkoutStayFreeHint` | Vous avez commencé un Écrin plus vaste. Rester sur le Souvenir offert, c’est choisir en toute sérénité de vous concentrer sur l’essentiel inclus, sans jugement, à votre rythme. | You’ve begun a wider Heritage casket. Staying on the complimentary Keepsake simply means resting, with calm, on what is already included, no judgment, at your own pace. |
 | `tributeWizard.checkoutAmputationHint` | Si besoin, nous recentrerons simplement les souvenirs et la musique sur ce qui est inclus dans le Souvenir offert. | If needed, we’ll gently recenter memories and music on what the complimentary Keepsake includes. |
 | `tributeWizard.softCapMediaUnlockTitle` | Ces souvenirs demandent un écrin plus vaste | These memories ask for a wider casket |
@@ -746,7 +746,7 @@
 | `tributeWizard.softCapMediaBannerTitle` | Votre toile s’ouvre vers l’Écrin Héritage | Your canvas opens toward Heritage |
 | `tributeWizard.softCapMediaBannerBody` | Elle peut accueillir jusqu’à 125 souvenirs. Aucune carte aujourd’hui : vous ne réglez qu’au moment de l’export. | It can hold up to 125 memories. No card today: you only pay at export. |
 | `tributeWizard.checkoutExcessMediaNotice` | Votre hommage contient {count} souvenir(s) au-delà du Souvenir offert. | This tribute has {count} memories beyond the complimentary Keepsake. |
-| `tributeWizard.checkoutGoToMediaLink` | Retourner au Coffre à souvenirs pour retirer des photos | Return to the Memory Chest to remove photos |
+| `tributeWizard.checkoutGoToMediaLink` | Revenir au Coffre à souvenirs | Return to the Memory Chest |
 | `tributeWizard.checkoutRemoveOption` | Retirer | Remove |
 | `tributeWizard.checkoutFundCreditLabel` | Fonds Commémoratif | Memorial Fund |
 | `tributeWizard.checkoutFundCreditHint` | Crédit du cercle disponible : {credit} | Circle credit available: {credit} |
@@ -776,9 +776,9 @@
 | `tributeWizard.validationEssential` | Indiquez le prénom, le nom et les deux dates pour continuer. | Please enter first name, last name, and both dates to continue. |
 | `tributeWizard.validationFieldMissing` | À indiquer. | Still needed. |
 | `tributeWizard.datePickerOpenAria` | Ouvrir le calendrier | Open the calendar |
-| `tributeWizard.autosaveSaving` | Enregistrement… | Saving… |
-| `tributeWizard.autosaveSaved` | Enregistré à l'instant | Saved just now |
-| `tributeWizard.autosaveError` | Hors ligne | Offline |
+| `tributeWizard.autosaveSaving` | Nous gardons votre avancée… | We’re saving your progress… |
+| `tributeWizard.autosaveSaved` | Enregistré avec soin | Saved with care |
+| `tributeWizard.autosaveError` | Hors ligne pour l’instant | Offline for now |
 
 ## `scannerCapture`
 

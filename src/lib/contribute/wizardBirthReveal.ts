@@ -10,7 +10,7 @@ export const WIZARD_BIRTH_REVEAL_END = BIRTH_SEGMENTS.C_END;
 export const WIZARD_IDLE_REVEAL_T = 0.56;
 
 /** Play linéaire d’avant — hold, étoile, traits (pas la brume). */
-const WIZARD_LEGACY_LINEAR_MS = 8000;
+const WIZARD_LEGACY_LINEAR_MS = 14500;
 /** Brume du nom seule (~2,4 s à 8 s linéaires → ici plus lente). */
 const WIZARD_NAME_MIST_MS = 4400;
 
@@ -37,7 +37,7 @@ export function mapWizardRewardWallToRevealT(wallU: number): number {
   return mistEnd + v * (1 - mistEnd);
 }
 
-/** Pause admiration après constellation complète, avant étape 2. */
+/** Pause admiration après constellation complète, avant carte J3 / suite. */
 export const WIZARD_REWARD_DWELL_MS = 3500;
 
 /** ~8 caractères = naissance complète A–C. */

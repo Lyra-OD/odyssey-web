@@ -75,7 +75,7 @@ export function SanctuaryHubPostReveal({
           <button
             type="button"
             onClick={onContinue}
-            className="text-sm font-light text-zinc-400 underline-offset-4 transition-colors hover:text-zinc-100 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+            className="text-xs font-light tracking-[0.08em] text-zinc-400 underline decoration-white/10 underline-offset-4 transition-colors hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
           >
             {copy.continueCta}
           </button>
@@ -86,7 +86,7 @@ export function SanctuaryHubPostReveal({
         <button
           type="button"
           onClick={onEditEssentials}
-          className="mt-3 rounded-lg px-2 py-1 text-xs font-light tracking-wide text-white/40 transition-colors hover:text-white/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+          className="mt-3 rounded-lg px-2 py-1 text-[11px] font-light tracking-[0.12em] text-white/35 transition-colors hover:text-white/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
         >
           {copy.editEssentials}
         </button>

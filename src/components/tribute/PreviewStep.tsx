@@ -136,28 +136,42 @@ export function PreviewStep({
         </p>
       </header>
 
-      {isLoading ? (
-        <div className="flex aspect-video items-center justify-center rounded-2xl border border-white/10 bg-white/[0.02]">
-          <p className="text-sm font-light text-zinc-500">{copy.loadingMedia}</p>
-        </div>
-      ) : (
-        <CinematicTeaser
-          slides={slides}
-          tracks={actTracks}
-          projectId={projectId}
-          copy={{
-            loading: copy.teaserLoading,
-            empty: copy.teaserEmpty,
-            nowPlaying: copy.teaserNowPlaying,
-            play: copy.teaserPlay,
-            pause: copy.teaserPause,
-          }}
-        />
-      )}
+      <section className="space-y-5">
+        {isLoading ? (
+          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+            <div
+              className="pointer-events-none absolute inset-0"
+              aria-hidden
+              style={{
+                background:
+                  "radial-gradient(ellipse 80% 70% at 50% 18%, rgba(34,211,238,0.14) 0%, transparent 55%), linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.24) 100%)",
+              }}
+            />
+            <div className="flex aspect-video min-h-[18rem] items-center justify-center px-6 text-center">
+              <p className="max-w-md text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+                {copy.loadingMedia}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <CinematicTeaser
+            slides={slides}
+            tracks={actTracks}
+            projectId={projectId}
+            copy={{
+              loading: copy.teaserLoading,
+              empty: copy.teaserEmpty,
+              nowPlaying: copy.teaserNowPlaying,
+              play: copy.teaserPlay,
+              pause: copy.teaserPause,
+            }}
+          />
+        )}
 
-      <p className="text-center text-sm font-light leading-relaxed text-zinc-400 md:text-left">
-        {valueNote}
-      </p>
+        <p className="text-center text-sm font-light leading-relaxed text-zinc-400 md:text-left">
+          {valueNote}
+        </p>
+      </section>
 
       {softCapActive && copy.softCapNote ? (
         <div
@@ -186,7 +200,7 @@ export function PreviewStep({
         <button
           type="button"
           onClick={onEdit}
-          className="text-sm font-light text-zinc-500 underline decoration-zinc-700 underline-offset-4 transition-colors hover:text-zinc-300"
+          className="text-xs font-light tracking-wide text-zinc-500 underline decoration-zinc-800 underline-offset-4 transition-colors hover:text-zinc-300"
         >
           {copy.editLink}
         </button>

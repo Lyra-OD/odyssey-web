@@ -351,7 +351,7 @@ export function CheckoutStep({
           type="button"
           onClick={onGoToMedia}
           disabled={isPaying}
-          className="w-full rounded-xl px-4 py-2 text-center text-xs font-light text-white/45 underline decoration-white/20 underline-offset-4 transition hover:text-white/75 disabled:opacity-50"
+          className="w-full rounded-xl px-4 py-2 text-center text-xs font-light text-white/40 underline decoration-white/15 underline-offset-4 transition hover:text-white/65 disabled:opacity-50"
         >
           {copy.goToMediaLink}
         </button>
@@ -362,7 +362,7 @@ export function CheckoutStep({
           type="button"
           onClick={onStayFree}
           disabled={isPaying}
-          className="w-full rounded-xl px-4 py-3 text-center text-sm text-white/55 transition hover:text-white/85 disabled:opacity-50"
+          className="w-full rounded-xl px-4 py-2 text-center text-sm font-light text-white/45 transition hover:text-white/75 disabled:opacity-50"
         >
           {copy.stayFreeCta}
         </button>

@@ -371,32 +371,6 @@ export function StoryboardChaptersStep({
         <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
           {copy.description}
         </p>
-        <StoryboardChapterStats
-          mediaCount={projectMediaCount}
-          maxMediaItems={maxMediaItems}
-          minSongsRequired={minSongsRequired}
-          maxSongs={maxSongs}
-          copy={{
-            mediaLabel: copy.statsMediaLabel,
-            mediaValue: copy.statsMediaValue,
-            songsLabel: copy.statsSongsLabel,
-            songsValue: copy.statsSongsValue,
-          }}
-        />
-        <p
-          className="max-w-2xl rounded-xl border border-teal-400/20 bg-teal-500/[0.05] px-4 py-3 text-sm font-light leading-relaxed text-teal-100/85"
-          role="note"
-        >
-          {copy.educationBanner}
-        </p>
-        <p
-          className="max-w-2xl rounded-xl border border-indigo-400/20 bg-indigo-500/[0.06] px-4 py-3 text-sm font-light leading-relaxed text-indigo-100/90"
-          role="status"
-        >
-          {catalogTier === "premium"
-            ? copy.catalogAccessPremium
-            : copy.catalogAccessStandard}
-        </p>
         <p className="text-xs font-light text-zinc-500">
           {copy.progress
             .replace("{count}", String(selectedCount))
@@ -572,6 +546,35 @@ export function StoryboardChaptersStep({
           />
         </div>
       ) : null}
+
+      <div className="max-w-2xl space-y-3">
+        <StoryboardChapterStats
+          mediaCount={projectMediaCount}
+          maxMediaItems={maxMediaItems}
+          minSongsRequired={minSongsRequired}
+          maxSongs={maxSongs}
+          copy={{
+            mediaLabel: copy.statsMediaLabel,
+            mediaValue: copy.statsMediaValue,
+            songsLabel: copy.statsSongsLabel,
+            songsValue: copy.statsSongsValue,
+          }}
+        />
+        <p
+          className="rounded-xl border border-teal-400/20 bg-teal-500/[0.05] px-4 py-3 text-sm font-light leading-relaxed text-teal-100/85"
+          role="note"
+        >
+          {copy.educationBanner}
+        </p>
+        <p
+          className="rounded-xl border border-indigo-400/20 bg-indigo-500/[0.06] px-4 py-3 text-sm font-light leading-relaxed text-indigo-100/90"
+          role="status"
+        >
+          {catalogTier === "premium"
+            ? copy.catalogAccessPremium
+            : copy.catalogAccessStandard}
+        </p>
+      </div>
 
       <p className="text-center text-xs font-light text-zinc-600">{copy.licensedNote}</p>
     </div>

@@ -242,8 +242,20 @@ export function CinematicTeaser({
 
   if (!slides.length) {
     return (
-      <div className="flex aspect-video items-center justify-center rounded-2xl border border-white/10 bg-white/[0.02]">
-        <p className="text-sm font-light text-zinc-500">{copy.empty}</p>
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+        <div
+          className="pointer-events-none absolute inset-0"
+          aria-hidden
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 70% at 50% 20%, rgba(34,211,238,0.12) 0%, transparent 55%), linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.24) 100%)",
+          }}
+        />
+        <div className="flex aspect-video min-h-[18rem] items-center justify-center px-6 text-center">
+          <p className="max-w-md text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+            {copy.empty}
+          </p>
+        </div>
       </div>
     );
   }

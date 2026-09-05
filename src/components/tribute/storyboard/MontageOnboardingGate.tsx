@@ -92,7 +92,7 @@ export function MontageOnboardingGate({
           <button
             type="button"
             onClick={onChooseDelegate}
-            className="mx-auto block text-sm font-light text-zinc-500 underline-offset-4 transition-colors hover:text-teal-100/90 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+            className="mx-auto block text-xs font-light tracking-[0.08em] text-zinc-500 underline decoration-white/10 underline-offset-4 transition-colors hover:text-teal-100/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
           >
             {copy.delegate}
           </button>

@@ -4,7 +4,6 @@ import { Smartphone } from "lucide-react";
 
 import {
   sanctuaryCardSurface,
-  sanctuarySelectedSurface,
 } from "@/src/lib/contribute/sanctuaryChrome";
 
 export type ScannerCompanionPlaceholderCopy = {
@@ -30,7 +29,7 @@ export function ScannerCompanionPlaceholder({
 }: Props) {
   return (
     <aside
-      className={`relative overflow-hidden px-5 py-6 md:px-7 md:py-7 ${sanctuaryCardSurface} ${sanctuarySelectedSurface} ${className}`}
+      className={`relative overflow-hidden px-5 py-6 md:px-7 md:py-7 ${sanctuaryCardSurface} ${className}`}
       aria-label={copy.title}
     >
       <div

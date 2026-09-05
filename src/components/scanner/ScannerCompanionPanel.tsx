@@ -8,7 +8,6 @@ import { parseApiJson } from "@/src/lib/http/parseApiJson";
 import {
   sanctuaryCardSurface,
   sanctuaryGhostButton,
-  sanctuarySelectedSurface,
 } from "@/src/lib/contribute/sanctuaryChrome";
 import type { Locale } from "@/i18n.config";
 
@@ -153,7 +152,7 @@ export function ScannerCompanionPanel({
 
   return (
     <aside
-      className={`relative overflow-hidden px-5 py-6 md:px-7 md:py-7 ${sanctuaryCardSurface} ${sanctuarySelectedSurface} ${className}`}
+      className={`relative overflow-hidden px-5 py-6 md:px-7 md:py-7 ${sanctuaryCardSurface} ${className}`}
       aria-label={copy.title}
     >
       <div
