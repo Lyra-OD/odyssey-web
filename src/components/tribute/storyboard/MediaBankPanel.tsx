@@ -69,14 +69,14 @@ function BankMediaTile({
       aria-label={toggleAria}
       className={`relative aspect-video w-full overflow-hidden rounded-xl transition-all duration-200 ease-out ${
         isSelected
-          ? "scale-[0.97] ring-2 ring-amber-400/70 shadow-[0_0_20px_rgba(251,191,36,0.12)]"
-          : "ring-1 ring-white/10 hover:ring-amber-400/25"
+          ? "scale-[0.97] ring-2 ring-teal-400/70 shadow-[0_0_20px_rgba(45,212,191,0.14)]"
+          : "ring-1 ring-white/10 hover:ring-teal-400/25"
       }`}
     >
       {content}
       {isSelected ? (
         <span
-          className="pointer-events-none absolute inset-0 bg-amber-400/[0.08]"
+          className="pointer-events-none absolute inset-0 bg-teal-400/[0.08]"
           aria-hidden
         />
       ) : null}

@@ -190,7 +190,7 @@ function MontageMediaCardSurface({
           aria-label={toggleSelectAria}
           className={`absolute right-2 top-2 z-[20] flex h-6 w-6 items-center justify-center rounded-full border transition-all duration-200 ${
             isSelected
-              ? "border-amber-400/60 bg-amber-400 text-[#020202] opacity-100"
+              ? "border-teal-400/60 bg-teal-400 text-[#020202] opacity-100"
               : "border-white/20 bg-black/50 text-transparent opacity-0 group-hover/card:opacity-100"
           }`}
         >
@@ -343,7 +343,7 @@ export function MontageMediaCard({
       className={`relative w-full rounded-xl transition-[box-shadow,transform] duration-200 ${
         isSelected
           ? selectable
-            ? "ring-2 ring-amber-400/70 shadow-[0_0_20px_rgba(251,191,36,0.12)]"
+            ? "ring-2 ring-teal-400/70 shadow-[0_0_20px_rgba(45,212,191,0.14)]"
             : "ring-2 ring-teal-400 shadow-[0_0_24px_rgba(45,212,191,0.28)]"
           : ""
       } ${dragFromWholeCard ? "cursor-grab touch-none active:cursor-grabbing" : ""}`}

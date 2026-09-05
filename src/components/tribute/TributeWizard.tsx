@@ -57,6 +57,7 @@ import {
   useParcoursUx,
 } from "@/src/hooks/useParcoursUx";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
+import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
 import { SkyBackdrop } from "@/src/components/contribute/SkyBackdrop";
 import type { HubFrameCapture } from "@/src/lib/parcours/hubFreezeCapture";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
@@ -2382,7 +2383,7 @@ export function TributeWizard({
                     <button
                       type="button"
                       onClick={() => void goBack()}
-                      className="font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-base font-normal text-zinc-400 transition-colors hover:border-white/12 hover:bg-white/[0.05] hover:text-zinc-200"
+                      className={`font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-base font-normal text-zinc-400 transition-colors hover:border-white/12 hover:bg-white/[0.05] hover:text-zinc-200 ${sanctuaryFocusRing}`}
                     >
                       {copy.back}
                     </button>
@@ -2392,7 +2393,7 @@ export function TributeWizard({
                     type="button"
                     onClick={() => void goNext()}
                     disabled={step3UploadRunning}
-                    className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+                    className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${sanctuaryFocusRing}`}
                   >
                     {projectMediaCount > 0 ? copy.next : copy.stepMediaLater}
                   </button>
@@ -2814,7 +2815,7 @@ export function TributeWizard({
               <button
                 type="button"
                 onClick={() => void goNext()}
-                className="connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50"
+                className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 ${sanctuaryFocusRing}`}
               >
                 {copy.next}
               </button>

@@ -2,6 +2,8 @@
 
 import { Loader2, Lock } from "lucide-react";
 
+import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
+
 import {
   MontageExtensionsStep,
   type MontageExtensionsStepCopy,
@@ -329,7 +331,7 @@ export function CheckoutStep({
         type="button"
         onClick={onPay}
         disabled={payDisabled}
-        className="font-[family-name:var(--font-label)] flex min-h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-teal-400/45 bg-gradient-to-r from-teal-600/35 via-teal-500/30 to-cyan-400/25 px-6 text-lg font-semibold text-white shadow-[0_0_56px_rgba(45,212,191,0.3),0_0_40px_rgba(34,211,238,0.2)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_64px_rgba(45,212,191,0.4),0_0_48px_rgba(34,211,238,0.28)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+        className={`font-[family-name:var(--font-label)] flex min-h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-teal-400/45 bg-gradient-to-r from-teal-600/35 via-teal-500/30 to-cyan-400/25 px-6 text-lg font-semibold text-white shadow-[0_0_56px_rgba(45,212,191,0.3),0_0_40px_rgba(34,211,238,0.2)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_64px_rgba(45,212,191,0.4),0_0_48px_rgba(34,211,238,0.28)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 ${sanctuaryFocusRing}`}
       >
         {isPaying ? (
           <>

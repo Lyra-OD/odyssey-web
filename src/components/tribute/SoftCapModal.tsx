@@ -3,6 +3,8 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
 
+import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
+
 export type SoftCapVariant = "mediaUnlock" | "mediaMagic" | "musicDual";
 
 export type SoftCapModalCopy = {
@@ -92,7 +94,7 @@ export function SoftCapModal({
         <button
           type="button"
           onClick={onDismiss}
-          className="absolute right-3 top-3 rounded-full p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white"
+          className={`absolute right-3 top-3 rounded-full p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white ${sanctuaryFocusRing}`}
           aria-label={copy.ctaDismiss}
         >
           <X className="h-4 w-4" />
@@ -118,7 +120,7 @@ export function SoftCapModal({
                 <button
                   type="button"
                   onClick={onAcceptLicense}
-                  className="rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-left transition hover:border-amber-200/35 hover:bg-amber-200/[0.06]"
+                  className={`rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-left transition hover:border-amber-200/35 hover:bg-amber-200/[0.06] ${sanctuaryFocusRing}`}
                 >
                   <span className="block text-sm font-medium text-white">
                     {copy.ctaLicense}
@@ -130,7 +132,7 @@ export function SoftCapModal({
                 <button
                   type="button"
                   onClick={onAcceptHeritage}
-                  className="rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-3 text-left text-[#1a1410] transition hover:brightness-105"
+                  className={`rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-3 text-left text-[#1a1410] transition hover:brightness-105 ${sanctuaryFocusRing}`}
                 >
                   <span className="block text-sm font-semibold">
                     {copy.ctaHeritage}
@@ -145,7 +147,7 @@ export function SoftCapModal({
                 <button
                   type="button"
                   onClick={onAcceptHeritage}
-                  className="rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-3 text-center text-sm font-semibold text-[#1a1410] transition hover:brightness-105"
+                  className={`rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-3 text-center text-sm font-semibold text-[#1a1410] transition hover:brightness-105 ${sanctuaryFocusRing}`}
                 >
                   {copy.ctaContinue}
                 </button>
@@ -157,7 +159,7 @@ export function SoftCapModal({
               <button
                 type="button"
                 onClick={onAcceptHeritage}
-                className="rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-3 text-left transition hover:brightness-105"
+                className={`rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-3 text-left transition hover:brightness-105 ${sanctuaryFocusRing}`}
               >
                 <span className="block text-sm font-semibold text-[#1a1410]">
                   {copy.ctaHeritage}
@@ -178,7 +180,7 @@ export function SoftCapModal({
                 <button
                   type="button"
                   onClick={onInviteCollab}
-                  className="w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-2.5 text-center text-sm font-medium text-white/85 transition hover:border-amber-200/35 hover:bg-amber-200/[0.06] hover:text-white"
+                  className={`w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-2.5 text-center text-sm font-medium text-white/85 transition hover:border-amber-200/35 hover:bg-amber-200/[0.06] hover:text-white ${sanctuaryFocusRing}`}
                 >
                   {copy.ctaCollab}
                 </button>
@@ -188,7 +190,7 @@ export function SoftCapModal({
             <button
               type="button"
               onClick={onDismiss}
-              className="rounded-xl px-4 py-2.5 text-center text-sm text-white/55 transition hover:text-white/80"
+              className={`rounded-xl px-4 py-2.5 text-center text-sm text-white/55 transition hover:text-white/80 ${sanctuaryFocusRing}`}
             >
               {copy.ctaDismiss}
             </button>

@@ -16,6 +16,7 @@ import {
   SANCTUARY_HALO_TEAL,
   SANCTUARY_HALO_UV,
   sanctuaryCardSurface,
+  sanctuaryFocusRing,
   sanctuaryGhostButton,
   sanctuaryHoverDashed,
   sanctuarySecondaryButton,
@@ -438,7 +439,7 @@ export function SanctuaryInviteStep({
 
       <button
         type="button"
-        className={`mt-8 w-full rounded-sm border border-dashed border-white/15 bg-white/[0.02] py-4 text-center text-base font-light text-zinc-400 transition-colors hover:text-teal-100/90 ${sanctuaryHoverDashed}`}
+        className={`mt-8 w-full rounded-sm border border-dashed border-white/15 bg-white/[0.02] py-4 text-center text-base font-light text-zinc-400 transition-colors hover:text-teal-100/90 ${sanctuaryHoverDashed} ${sanctuaryFocusRing}`}
         onClick={onSkip}
       >
         {skipLabel}

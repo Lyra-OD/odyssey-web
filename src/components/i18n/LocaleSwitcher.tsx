@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import type { Locale } from "@/i18n.config";
 import { SalonCyanGlowText } from "@/src/components/salon/SalonCyanGlowText";
+import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
 import { buildLocaleSwitchedHref } from "@/src/lib/i18n/buildLocaleSwitchedHref";
 
 export type LocaleSwitcherLabels = {
@@ -22,8 +23,7 @@ type LocaleSwitcherProps = LocaleSwitcherLabels & {
   onSwitch?: (next: Locale) => void;
 };
 
-const inactiveLocaleClass =
-  "text-zinc-500 transition-colors hover:text-[var(--salon-cyan-dim)]";
+const inactiveLocaleClass = `rounded-sm text-zinc-500 transition-colors hover:text-[var(--salon-cyan-dim)] ${sanctuaryFocusRing}`;
 
 function LocaleOption({
   label,
@@ -43,7 +43,11 @@ function LocaleOption({
   }
 
   return (
-    <button type="button" onClick={onClick} className="relative transition-colors">
+    <button
+      type="button"
+      onClick={onClick}
+      className={`relative rounded-sm transition-colors ${sanctuaryFocusRing}`}
+    >
       <SalonCyanGlowText>{label}</SalonCyanGlowText>
     </button>
   );

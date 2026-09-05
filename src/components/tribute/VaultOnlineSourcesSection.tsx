@@ -3,7 +3,10 @@
 import { Cloud, Image as ImageIcon, Music2, Share2 } from "lucide-react";
 
 import type { SocialId } from "@/src/lib/wizard/wizardState";
-import { sanctuaryHoverDashed } from "@/src/lib/contribute/sanctuaryChrome";
+import {
+  sanctuaryHoverDashed,
+  sanctuarySelectedSurface,
+} from "@/src/lib/contribute/sanctuaryChrome";
 
 export type VaultOnlineSourcesCopy = {
   title: string;
@@ -68,7 +71,7 @@ export function VaultOnlineSourcesSection({
               onClick={() => onSelect(id)}
               className={`group relative overflow-hidden rounded-sm border px-4 py-3.5 text-left transition-[border,background,box-shadow] md:py-4 ${
                 isSelected
-                  ? "border-teal-400/40 bg-teal-400/[0.06] shadow-[0_0_24px_rgba(45,212,191,0.12)]"
+                  ? sanctuarySelectedSurface
                   : `border-white/10 bg-white/[0.02] ${sanctuaryHoverDashed}`
               }`}
             >

@@ -62,8 +62,9 @@ export function MontageOnboardingGate({
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 md:gap-4">
-          {/* Violet au repos, cyan dès qu'on la vise ou qu'on l'appuie : le cyan
-              est la couleur du choix retenu partout ailleurs (`sanctuaryChrome`). */}
+          {/* Les deux cartes portent le même poids : aucune n'est recommandée.
+              Violet au repos (ambiance), cyan dès qu'on vise ou qu'on appuie —
+              le cyan est la couleur du choix retenu (`sanctuaryChrome`). */}
           <button
             type="button"
             onClick={onChooseMagic}
@@ -83,15 +84,15 @@ export function MontageOnboardingGate({
           <button
             type="button"
             onClick={onChooseManual}
-            className="group rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 py-5 text-left transition-all duration-300 hover:border-white/15 hover:bg-white/[0.04] md:px-6 md:py-8"
+            className="group relative overflow-hidden rounded-2xl border border-violet-400/25 bg-gradient-to-b from-violet-400/[0.10] to-transparent px-5 py-5 text-left transition-all duration-300 hover:border-teal-400/40 hover:from-teal-400/[0.10] hover:shadow-[0_0_48px_rgba(45,212,191,0.12)] active:border-teal-400/55 active:from-teal-400/[0.14] active:shadow-[0_0_48px_rgba(45,212,191,0.16)] md:px-6 md:py-8"
           >
-            <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 md:mb-4">
+            <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full border border-violet-400/30 bg-violet-400/10 text-violet-300 transition-colors duration-300 group-hover:border-teal-400/40 group-hover:bg-teal-400/[0.10] group-hover:text-teal-300 group-active:border-teal-400/55 group-active:text-teal-200 md:mb-4">
               <Sparkles className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             </span>
             <span className="block font-[family-name:var(--font-label)] text-base font-semibold text-white md:text-lg">
               {copy.manual}
             </span>
-            <span className="mt-1.5 block text-[13px] font-light leading-relaxed text-zinc-500 md:mt-2 md:text-sm">
+            <span className="mt-1.5 block text-[13px] font-light leading-relaxed text-zinc-400 md:mt-2 md:text-sm">
               {copy.manualHint}
             </span>
           </button>

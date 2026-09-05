@@ -61,6 +61,14 @@ export type MontageExtensionsStepCopy = {
   recapLineLabels: Record<Exclude<ExtensionLineKey, "base">, string>;
 };
 
+/**
+ * Une option retenue se signale en cyan, comme partout ailleurs dans le
+ * parcours. La teinte propre à chaque option reste sur son icône : elle dit
+ * de quel produit il s'agit, pas s'il est choisi.
+ */
+const EXTENSION_SELECTED_RING =
+  "border-teal-400/40 bg-teal-400/[0.04] shadow-[0_0_40px_rgba(45,212,191,0.18),0_0_24px_rgba(34,211,238,0.08)]";
+
 type ExtensionCardConfig = {
   key: keyof WizardExtensionsState;
   icon?: LucideIcon;
@@ -178,8 +186,7 @@ export function MontageExtensionsStep({
       description: copy.aiRetouchDescription,
       priceCents: extensionCents("aiRetouch"),
       accent: "text-teal-300",
-      selectedRing:
-        "border-teal-400/40 bg-teal-400/[0.04] shadow-[0_0_40px_rgba(45,212,191,0.18),0_0_24px_rgba(34,211,238,0.08)]",
+      selectedRing: EXTENSION_SELECTED_RING,
       iconBg: "bg-teal-400/10 text-teal-300",
     },
     {
@@ -189,8 +196,7 @@ export function MontageExtensionsStep({
       description: musicLicenseDescription,
       priceCents: extensionCents("musicLicense"),
       accent: "text-indigo-300",
-      selectedRing:
-        "border-indigo-400/40 bg-indigo-400/[0.04] shadow-[0_0_40px_rgba(129,140,248,0.18),0_0_24px_rgba(45,212,191,0.06)]",
+      selectedRing: EXTENSION_SELECTED_RING,
       iconBg: "bg-indigo-400/10 text-indigo-300",
     },
     {
@@ -200,8 +206,7 @@ export function MontageExtensionsStep({
       description: copy.storyVoiceDescription,
       priceCents: extensionCents("storyVoice"),
       accent: "text-rose-300",
-      selectedRing:
-        "border-rose-400/35 bg-rose-400/[0.04] shadow-[0_0_36px_rgba(251,113,133,0.14)]",
+      selectedRing: EXTENSION_SELECTED_RING,
       iconBg: "bg-rose-400/10 text-rose-300",
     },
     {
@@ -212,8 +217,7 @@ export function MontageExtensionsStep({
       description: sanctuaryTokenDescription,
       priceCents: extensionCents("sanctuaryToken"),
       accent: "text-zinc-200",
-      selectedRing:
-        "border-white/30 bg-white/[0.04] shadow-[0_0_36px_rgba(255,255,255,0.1),0_0_20px_rgba(45,212,191,0.1)]",
+      selectedRing: EXTENSION_SELECTED_RING,
       iconBg: "bg-white/[0.08] text-zinc-300",
     },
     {
@@ -223,8 +227,7 @@ export function MontageExtensionsStep({
       description: copy.memoryBookDescription,
       priceCents: extensionCents("memoryBook"),
       accent: "text-amber-200",
-      selectedRing:
-        "border-amber-400/35 bg-amber-400/[0.04] shadow-[0_0_36px_rgba(251,191,36,0.12)]",
+      selectedRing: EXTENSION_SELECTED_RING,
       iconBg: "bg-amber-400/10 text-amber-200",
     },
     {
@@ -234,8 +237,7 @@ export function MontageExtensionsStep({
       description: copy.digitalVaultDescription,
       priceCents: extensionCents("digitalVault"),
       accent: "text-teal-200",
-      selectedRing:
-        "border-teal-400/40 bg-teal-400/[0.04] shadow-[0_0_40px_rgba(45,212,191,0.2),0_0_24px_rgba(34,211,238,0.08)]",
+      selectedRing: EXTENSION_SELECTED_RING,
       iconBg: "bg-teal-400/10 text-teal-200",
     },
   ];

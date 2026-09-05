@@ -4,12 +4,12 @@
 **Dernière MAJ :** 28 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 sept. 2026 — §2.1bis « choisir = teal, partout » : sélection des souvenirs et des options payantes passée en teal (l'ambre garde le domaine, pas l'état) · `sanctuaryFocusRing` inclus dans les tokens boutons.
 - 28 août 2026 — `/partners` : H1 `OdysseyLuminousText` variant `soft` · lead form + CTA démo = `sanctuarySubmitButton` (teal Studio).
 - 28 août 2026 — §3.1bis blanc lumineux `odyssey-connexion-mark` : grammaire emblème (wordmark + accroches courtes, pas le corps).
 - 28 août 2026 — stratégie bicolore DA : **Cyan Connexion** (#00E8F0) marketing + login · **Teal Sanctuaire** (#2DD4BF) wizard + Studio · §2 réécrit.
 - 19 août 2026 — contrat DA : frames Vague 1 = [`DA_SCREENS.md`](DA_SCREENS.md).
 - 17 août 2026 — KPI Salon : chiffres en `--salon-cyan` · invitation Salon email + CTA Souvenir.
-- 11 août 2026 — marque Éclipse + die-cut ODYSSEY §4.2.
 
 Guide visuel et produit pour l’ensemble du site Next.js (Studio B2C, Salon B2B2C, pages marketing). Complète [`CONVENTIONS.md`](CONVENTIONS.md) et [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).  
 Inventaire frames Figma (Vague 1 famille) : [`DA_SCREENS.md`](DA_SCREENS.md). Tokens ici ; **layout écran par écran** = Figma signé, pas ce fichier.
@@ -66,6 +66,16 @@ Couleur d'**interaction produit** (sélection, focus, états actifs, respiration
 | Respiration | `.sanctuary-halo-breathe` · `.sanctuary-select-breathe` | Halo d'ambiance · **élément sélectionné** (1 / zone) |
 
 **Règle :** dès l'entrée Studio (wizard, montage, Sanctuaire), privilégier le **teal**. Le cyan reste sur la porte ; le teal accueille la famille.
+
+**Choisir = teal, partout.** Un élément retenu (souvenir, réseau, option payante, carte de composition) se signale en teal, jamais dans la teinte de son domaine. Les couleurs de domaine — ambre pour la banque de souvenirs, violet pour l'ambiance, palette de chapitre, teinte propre à chaque option payante — restent sur l'**identité** de l'élément (icône, en-tête), pas sur son **état**.
+
+| Token `sanctuaryChrome` | Rôle |
+|---|---|
+| `sanctuarySelectedSurface` | Carte / toggle retenu (surface) |
+| `sanctuarySelectedRing` | Vignette retenue (anneau sur une image) |
+| `sanctuaryFocusRing` | Anneau de focus clavier — **une seule valeur** pour tout le parcours ; déjà inclus dans `sanctuarySubmitButton`, `sanctuaryGhostButton`, `sanctuarySecondaryButton` |
+
+**Exception assumée :** le CTA du monolithe Étape 1 garde `--salon-cyan` via `connexionSubmitButtonClass` — son halo externe impose cette teinte, voir [`design/PARCOURS_MONOLITH_RECIPE.md`](design/PARCOURS_MONOLITH_RECIPE.md) §3.
 
 ### 2.1ter Violet UV — héritage (hors marketing public)
 

@@ -93,7 +93,7 @@ export function BankDraggableMediaTile({
       <div
         className={`relative h-full w-full overflow-hidden rounded-xl ring-1 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 ${
           isSelected
-            ? "ring-2 ring-amber-400/70 shadow-[0_0_20px_rgba(251,191,36,0.12)]"
+            ? "ring-2 ring-teal-400/70 shadow-[0_0_20px_rgba(45,212,191,0.14)]"
             : "ring-white/10 hover:ring-white/20"
         } ${isGhost ? "scale-[0.97]" : ""}`}
         style={{
@@ -146,7 +146,7 @@ export function BankDraggableMediaTile({
           aria-label={toggleSelectAria}
           className={`absolute left-2 top-2 z-[20] flex h-6 w-6 items-center justify-center rounded-full border transition-all duration-200 sm:left-auto sm:right-2 ${
             isSelected
-              ? "border-amber-400/60 bg-amber-400 text-[#020202] opacity-100"
+              ? "border-teal-400/60 bg-teal-400 text-[#020202] opacity-100"
               : "border-white/20 bg-black/50 text-transparent opacity-70 sm:opacity-0 sm:group-hover/tile:opacity-100"
           }`}
         >
