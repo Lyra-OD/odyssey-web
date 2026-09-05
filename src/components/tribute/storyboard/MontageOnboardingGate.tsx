@@ -12,18 +12,23 @@ export type MontageOnboardingGateCopy = {
   magicHint: string;
   manual: string;
   manualHint: string;
+  /** Lien discret — 3ᵉ option, déléguer au Co-Créateur (divulgation progressive). */
+  delegate: string;
 };
 
 type Props = {
   copy: MontageOnboardingGateCopy;
   onChooseMagic: () => void;
   onChooseManual: () => void;
+  /** Ouvre le panneau Co-Créateur existant — pas un 3ᵉ choix à égalité. */
+  onChooseDelegate?: () => void;
 };
 
 export function MontageOnboardingGate({
   copy,
   onChooseMagic,
   onChooseManual,
+  onChooseDelegate,
 }: Props) {
   return (
     <motion.div
@@ -82,6 +87,16 @@ export function MontageOnboardingGate({
             </span>
           </button>
         </div>
+
+        {onChooseDelegate ? (
+          <button
+            type="button"
+            onClick={onChooseDelegate}
+            className="mx-auto block text-sm font-light text-zinc-500 underline-offset-4 transition-colors hover:text-teal-100/90 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+          >
+            {copy.delegate}
+          </button>
+        ) : null}
       </div>
     </motion.div>
   );

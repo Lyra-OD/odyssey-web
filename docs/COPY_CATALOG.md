@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-05 · **Entrées :** 855
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-05 · **Entrées :** 856
 
 ## `common`
 
@@ -337,7 +337,7 @@
 | `tributeWizard.stepperPreview` | Aperçu | Preview |
 | `tributeWizard.stepperCheckout` | Finaliser | Review |
 | `tributeWizard.stepEssentialTitle` | L’essentiel | The Essentials |
-| `tributeWizard.stepEssentialDescription` | Quelques repères pour ancrer son souvenir. Prenez tout votre temps. | A few quiet details to anchor their memory. Take all the time you need. |
+| `tributeWizard.stepEssentialDescription` | Quelques repères pour ancrer son souvenir. Prenez tout votre temps. Ces souvenirs deviendront un film digne du grand cinéma, pas un simple diaporama. | A few quiet details to anchor their memory. Take all the time you need. These memories will be crafted into a cinematic tribute, not a simple slideshow. |
 | `tributeWizard.step1ConstellationReward` | Sa constellation prend forme… | Her constellation is taking shape… |
 | `tributeWizard.parcoursHeroPrompt` | Une Présence | A Presence |
 | `tributeWizard.parcoursHeroTapHint` | Toucher l’étoile | Touch the star |
@@ -365,7 +365,7 @@
 | `tributeWizard.avatarPickPhoto` | Déposer un portrait | Add a portrait |
 | `tributeWizard.avatarChangePhoto` | Modifier le portrait | Change the portrait |
 | `tributeWizard.stepInviteTitle` | Inviter le cercle | Invite the circle |
-| `tributeWizard.stepInviteDescription` | Partagez un lien privé. Vos proches déposent un souvenir, puis peuvent laisser une empreinte pour soutenir le film. | Share a private link. Loved ones leave a memory, then may leave an imprint to support the film. |
+| `tributeWizard.stepInviteDescription` | Partagez un lien privé. Vos proches y déposent leurs photos et vidéos. Ils peuvent aussi participer librement au financement de cet hommage. | Share a private link. Your loved ones can share their photos and videos. They may also choose to contribute to the funding of this tribute. |
 | `tributeWizard.skipInvite` | Continuer sans inviter pour l’instant | Continue without inviting for now |
 | `tributeWizard.stepSourcesTitle` | Étape 2 : Les sources | Step 2: Sources |
 | `tributeWizard.stepSourcesDescription` | Souhaitez-vous rassembler des souvenirs depuis vos réseaux ou vos albums en ligne ? | Would you like to gather memories from social networks or online albums? |
@@ -487,7 +487,7 @@
 | `tributeWizard.basePackageLegendaryDesc` | Service Gants Blancs, finition 4K et prise en charge premium. | White Gloves service, 4K finish, and premium handling. |
 | `tributeWizard.basePackageLegendary` | Légendaire | Legendary |
 | `tributeWizard.headerPackageLabel` | Votre forfait | Your package |
-| `tributeWizard.headerNarrativeSummary` | Votre hommage durera environ {minutes} minutes et accueillera jusqu’à {mediaMax} souvenirs. | Your tribute will run for about {minutes} minutes and hold up to {mediaMax} memories. |
+| `tributeWizard.headerNarrativeSummary` | Votre hommage durera environ {minutes} minutes de film et accueillera jusqu’à {mediaMax} souvenirs. | Your tribute will feature approximately {minutes} minutes of film and hold up to {mediaMax} memories. |
 | `tributeWizard.headerDowngradeWarning` | Repasser à {package} retirera {count} chanson(s) déjà choisie(s). Cette action est irréversible. | Switching to {package} will remove {count} already-chosen song(s). This action can't be undone. |
 | `tributeWizard.headerDowngradeConfirmCta` | Confirmer | Confirm |
 | `tributeWizard.headerDowngradeCancelCta` | Annuler | Cancel |
@@ -502,7 +502,7 @@
 | `tributeWizard.inviteTriggerCta` | Immortaliser | Immortalize |
 | `tributeWizard.inviteOpenAria` | Inviter le cercle au Sanctuaire | Invite the circle to the Sanctuary |
 | `tributeWizard.inviteTitle` | Inviter au Sanctuaire | Invite to the Sanctuary |
-| `tributeWizard.inviteDescription` | Partagez un lien privé. Vos proches y déposent un souvenir, puis peuvent laisser une empreinte pour soutenir le film. | Share a private link. Loved ones leave a memory, then may leave an imprint to support the film. |
+| `tributeWizard.inviteDescription` | Partagez un lien privé. Vos proches y déposent leurs photos et vidéos. Ils peuvent aussi participer librement au financement de cet hommage. | Share a private link. Your loved ones can share their photos and videos. They may also choose to contribute to the funding of this tribute. |
 | `tributeWizard.inviteGenerateCta` | Créer le lien | Create link |
 | `tributeWizard.inviteGenerating` | Création du lien… | Creating link… |
 | `tributeWizard.inviteShareCta` | Partager | Share |
@@ -573,6 +573,7 @@
 | `tributeWizard.montageOnboardingMagicHint` | Nous plaçons vos souvenirs dans chaque chapitre, au rythme de vos chansons. | We place your memories in each chapter, paced to your songs. |
 | `tributeWizard.montageOnboardingManual` | Je compose moi-même | I'll compose myself |
 | `tributeWizard.montageOnboardingManualHint` | Partez d'une page blanche et glissez vos souvenirs à votre rythme. | Start from a blank canvas and drag your memories at your own pace. |
+| `tributeWizard.montageOnboardingDelegate` | Ou confiez la réalisation à un proche de confiance | Or entrust the creation to a trusted loved one |
 | `tributeWizard.montageMagicPreparing` | Nous préparons votre film… | We're preparing your film… |
 | `tributeWizard.montageMagicMessage` | Nous tissons votre histoire… | We're weaving your story… |
 | `tributeWizard.montageMagicToast` | Voici une première proposition. Ajustez à votre guise. | Here's a first proposal. Adjust as you wish. |

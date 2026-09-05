@@ -99,6 +99,8 @@ type Props = {
   onStoryboardChange: (next: WizardStoryboardState) => void;
   onMagicPerformingChange?: (performing: boolean) => void;
   onMagicSequenceComplete?: () => void;
+  /** Lien discret « déléguer » de la porte d’onboarding → panneau Co-Créateur existant. */
+  onOpenCollab?: () => void;
   copy: StoryboardMontageStepCopy;
 };
 
@@ -120,6 +122,7 @@ export function StoryboardMontageStep({
   onStoryboardChange,
   onMagicPerformingChange,
   onMagicSequenceComplete,
+  onOpenCollab,
   copy,
 }: Props) {
   const [mediaItems, setMediaItems] = useState<MontageMediaItem[]>([]);
@@ -574,6 +577,7 @@ export function StoryboardMontageStep({
             copy={copy.onboarding}
             onChooseMagic={handleChooseMagic}
             onChooseManual={handleChooseManual}
+            onChooseDelegate={onOpenCollab}
           />
         ) : null}
       </AnimatePresence>

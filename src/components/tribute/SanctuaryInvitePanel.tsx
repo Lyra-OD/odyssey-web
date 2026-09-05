@@ -421,7 +421,7 @@ export function SanctuaryInviteStep({
         >
           {stepTitle}
         </h2>
-        <p className="mx-auto mt-5 max-w-md text-sm font-light leading-relaxed text-white/50 md:text-base">
+        <p className="mx-auto mt-5 max-w-md whitespace-pre-line text-sm font-light leading-relaxed text-white/50 md:text-base">
           {stepDescription}
         </p>
       </div>
@@ -532,7 +532,7 @@ export function SanctuaryInvitePanel({
                 <h2 className="mt-3 font-editorial text-2xl font-medium tracking-tight text-zinc-50">
                   {copy.title}
                 </h2>
-                <p className="mt-4 text-sm font-light leading-relaxed text-white/50">
+                <p className="mt-4 whitespace-pre-line text-sm font-light leading-relaxed text-white/50">
                   {copy.description}
                 </p>
               </div>

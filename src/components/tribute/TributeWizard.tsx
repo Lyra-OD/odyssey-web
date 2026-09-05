@@ -2543,11 +2543,13 @@ export function TributeWizard({
                   magicHint: copy.montageOnboardingMagicHint,
                   manual: copy.montageOnboardingManual,
                   manualHint: copy.montageOnboardingManualHint,
+                  delegate: copy.montageOnboardingDelegate,
                 },
                 magicComposition: {
                   message: copy.montageMagicMessage,
                 },
               }}
+              onOpenCollab={() => setIsCollabInviteOpen(true)}
             />
             <CollabInviteInlineCard
               projectId={uploadProjectId}
