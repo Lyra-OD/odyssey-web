@@ -367,16 +367,16 @@
 | `tributeWizard.stepInviteTitle` | Inviter le cercle | Invite the circle |
 | `tributeWizard.stepInviteDescription` | Partagez un lien privé. Vos proches y déposent leurs photos et vidéos. Ils peuvent aussi participer librement au financement de cet hommage. | Share a private link. Your loved ones can share their photos and videos. They may also choose to contribute to the funding of this tribute. |
 | `tributeWizard.skipInvite` | Continuer sans inviter pour l’instant | Continue without inviting for now |
-| `tributeWizard.stepSourcesTitle` | Étape 2 : Les sources | Step 2: Sources |
-| `tributeWizard.stepSourcesDescription` | Souhaitez-vous rassembler des souvenirs depuis vos réseaux ou vos albums en ligne ? | Would you like to gather memories from social networks or online albums? |
-| `tributeWizard.vaultOnlineTitle` | Déjà en ligne ? | Already online? |
-| `tributeWizard.vaultOnlineDescription` | Rassemblez aussi des souvenirs depuis vos réseaux ou albums en ligne (optionnel). | Also gather memories from your social networks or online albums (optional). |
+| `tributeWizard.stepSourcesTitle` | Les collections en ligne | Online collections |
+| `tributeWizard.stepSourcesDescription` | Souhaitez-vous rassembler aussi des souvenirs déjà présents dans vos albums et réseaux en ligne ? | Would you also like to gather memories already living in your online albums and social spaces? |
+| `tributeWizard.vaultOnlineTitle` | Déjà ailleurs ? | Already elsewhere? |
+| `tributeWizard.vaultOnlineDescription` | Rassemblez aussi des souvenirs déjà présents dans vos albums ou réseaux en ligne. | Also gather memories already living in your online albums or social spaces. |
 | `tributeWizard.socialFacebook` | Facebook | Facebook |
 | `tributeWizard.socialInstagram` | Instagram | Instagram |
 | `tributeWizard.socialTikTok` | TikTok | TikTok |
 | `tributeWizard.socialGooglePhotos` | Google Photos | Google Photos |
 | `tributeWizard.socialQuickLoginNote` | Connexion rapide lorsque votre navigateur est déjà ouvert sur ces services. | Quick connection when your browser is already signed in to these services. |
-| `tributeWizard.skipSources` | Passer cette étape | Skip this step |
+| `tributeWizard.skipSources` | Passer cette étape pour l’instant | Skip this step for now |
 | `tributeWizard.stepMediaTitle` | Le Coffre à souvenirs | The Memory Chest |
 | `tributeWizard.stepMediaDescription` | Déposez ici tous vos souvenirs : photos et vidéos. Le film s’assemblera ensuite, sous vos yeux. | Drop all your memories here: photos and videos. The film will come together next, before your eyes. |
 | `tributeWizard.stepMediaLater` | Plus tard | Later |
@@ -384,7 +384,7 @@
 | `tributeWizard.scannerTitle` | Numérisez vos albums papier | Digitize your paper albums |
 | `tributeWizard.scannerDescription` | Scannez le QR avec votre téléphone. Aucune application. | Scan the QR with your phone. No app required. |
 | `tributeWizard.scannerBadge` | QR | QR |
-| `tributeWizard.scannerHint` | Les photos arrivent dans le coffre | Photos land in the Memory Chest |
+| `tributeWizard.scannerHint` | Les photos arrivent dans le Coffre à souvenirs | Photos arrive in the Memory Chest |
 | `tributeWizard.scannerInstructions` | Appareil photo · aucune installation | Camera · no install needed |
 | `tributeWizard.scannerGenerating` | Préparation du QR… | Preparing QR… |
 | `tributeWizard.scannerCopyLink` | Copier le lien | Copy link |
@@ -785,16 +785,16 @@
 | Clé | FR | EN |
 |-----|----|----|
 | `scannerCapture.title` | Scanner Compagnon | Companion Scanner |
-| `scannerCapture.subtitle` | Ajoutez des photos au coffre de {name}. | Add photos to {name}’s vault. |
+| `scannerCapture.subtitle` | Ajoutez des photos au Coffre à souvenirs de {name}. | Add photos to {name}’s Memory Chest. |
 | `scannerCapture.cameraCta` | Prendre une photo | Take a photo |
 | `scannerCapture.galleryCta` | Choisir dans la galerie | Choose from gallery |
-| `scannerCapture.sending` | Envoi vers le coffre… | Sending to the Memory Chest… |
+| `scannerCapture.sending` | Envoi vers le Coffre à souvenirs… | Sending to the Memory Chest… |
 | `scannerCapture.added` | Photo ajoutée ✓ | Photo added ✓ |
 | `scannerCapture.nextHint` | Vous pouvez en envoyer plusieurs. Retournez ensuite à l’ordinateur. | You can send several. Then return to your computer. |
 | `scannerCapture.invalidTitle` | Session expirée | Session expired |
 | `scannerCapture.invalidBody` | Ce QR n’est plus valide. Générez-en un nouveau depuis l’étape Coffre à souvenirs. | This QR is no longer valid. Generate a new one from the Memory Chest step. |
 | `scannerCapture.errorGeneric` | Envoi impossible. Réessayez. | Could not send. Please try again. |
-| `scannerCapture.quota` | Le coffre a atteint la limite de souvenirs de votre forfait. | The vault has reached your package memory limit. |
+| `scannerCapture.quota` | Le Coffre à souvenirs a atteint la limite de votre forfait. | The Memory Chest has reached your package limit. |
 | `scannerCapture.tooLarge` | Photo trop lourde (12 Mo max). | Photo too large (12 MB max). |
 | `scannerCapture.unsupported` | Format non supporté. JPEG, PNG, WebP ou HEIC. | Unsupported format. JPEG, PNG, WebP, or HEIC. |
 | `scannerCapture.cropHint` | Cadrez le tirage dans le cadre. Nous recadrons légèrement les bords. | Align the print in the frame. We slightly crop the edges. |
