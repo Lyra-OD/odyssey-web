@@ -407,6 +407,8 @@
     "scannerEyebrow": "Companion Scanner",
     "scannerTitle": "Digitize your paper albums",
     "scannerDescription": "Scan the QR with your phone. No app required.",
+    "scannerMobileDescription": "Photograph your paper albums. No app required.",
+    "scannerOpenCapture": "Open the camera",
     "scannerBadge": "QR",
     "scannerHint": "Photos arrive in the Memory Chest",
     "scannerInstructions": "Camera · no install needed",
@@ -802,6 +804,7 @@
     "validationEssential": "Please enter first name, last name, and both dates to continue.",
     "validationFieldMissing": "Still needed.",
     "datePickerOpenAria": "Open the calendar",
+    "dateClearAria": "Clear the date",
     "autosaveSaving": "We’re saving your progress…",
     "autosaveSaved": "Saved with care",
     "autosaveError": "Offline for now"

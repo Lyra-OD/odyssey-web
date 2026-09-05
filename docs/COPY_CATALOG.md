@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-05 · **Entrées :** 856
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-05 · **Entrées :** 859
 
 ## `common`
 
@@ -383,6 +383,8 @@
 | `tributeWizard.scannerEyebrow` | Scanner Compagnon | Companion Scanner |
 | `tributeWizard.scannerTitle` | Numérisez vos albums papier | Digitize your paper albums |
 | `tributeWizard.scannerDescription` | Scannez le QR avec votre téléphone. Aucune application. | Scan the QR with your phone. No app required. |
+| `tributeWizard.scannerMobileDescription` | Photographiez vos albums papier. Aucune application. | Photograph your paper albums. No app required. |
+| `tributeWizard.scannerOpenCapture` | Ouvrir l’appareil photo | Open the camera |
 | `tributeWizard.scannerBadge` | QR | QR |
 | `tributeWizard.scannerHint` | Les photos arrivent dans le Coffre à souvenirs | Photos arrive in the Memory Chest |
 | `tributeWizard.scannerInstructions` | Appareil photo · aucune installation | Camera · no install needed |
@@ -776,6 +778,7 @@
 | `tributeWizard.validationEssential` | Indiquez le prénom, le nom et les deux dates pour continuer. | Please enter first name, last name, and both dates to continue. |
 | `tributeWizard.validationFieldMissing` | À indiquer. | Still needed. |
 | `tributeWizard.datePickerOpenAria` | Ouvrir le calendrier | Open the calendar |
+| `tributeWizard.dateClearAria` | Effacer la date | Clear the date |
 | `tributeWizard.autosaveSaving` | Nous gardons votre avancée… | We’re saving your progress… |
 | `tributeWizard.autosaveSaved` | Enregistré avec soin | Saved with care |
 | `tributeWizard.autosaveError` | Hors ligne pour l’instant | Offline for now |

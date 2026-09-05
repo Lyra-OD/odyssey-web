@@ -1,13 +1,13 @@
 # Odyssey — Scanner Compagnon (Killer App)
 
 **Type :** canon · **Vérité pour :** spec scanner. Phase A+B (QR, galerie, aperçu IA → `aiRetouch`) 🟡 · job IA serveur ⏳ — ne pas montrer comme Killer App livrée.  
-**Dernière MAJ :** 17 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 5 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — Sur téléphone, le QR disparaît : `ScannerCompanionPanel` détecte le pointeur grossier (`useFinePointer`) et propose « Ouvrir l’appareil photo », qui ouvre `/[lang]/scan/[token]` dans un nouvel onglet — le Studio reste vivant derrière. Le QR et « En attente du téléphone » restent le comportement desktop → téléphone.
 - 17 août 2026 — Phase B : aperçu Avant/Après + CTA add-on `aiRetouch` / Éternité. Recadrage inset (pas OpenCV). Pas de job IA serveur.
 - 17 août 2026 — Phase A : QR étape 3 · `/scan/[token]` galerie/caméra · `source=scanner_companion` · poll grille. HEIC accepté (iPhone).
 - 17 août 2026 — en-tête type + carte.
-- juillet 2026 — spec B2B2C v2 + stubs P6.
 
 Document canonique pour le **Scanner Compagnon Web** : ingestion mobile de photos papier via QR Code, restauration IA en temps réel, et pont de conversion vers les forfaits **Éternité (349 $)** et **Légendaire / Gants Blancs (499 $)**.
 

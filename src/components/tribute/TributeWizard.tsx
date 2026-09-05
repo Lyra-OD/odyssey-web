@@ -154,9 +154,10 @@ function essentialsTextFieldClass(invalid: boolean): string {
   ].join(" ");
 }
 
-function essentialsDateFieldClass(invalid: boolean): string {
+function essentialsDateFieldClass(invalid: boolean, hasValue: boolean): string {
   return [
-    "parcours-date-input w-full rounded-xl border bg-white/[0.04] px-4 py-3 pr-12 text-base font-light text-zinc-200 outline-none transition-[border,box-shadow]",
+    "parcours-date-input w-full rounded-xl border bg-white/[0.04] px-4 py-3 text-base font-light text-zinc-200 outline-none transition-[border,box-shadow]",
+    hasValue ? "pr-[5.25rem]" : "pr-12",
     invalid
       ? "border-rose-400/75 focus:border-rose-400/90 focus:shadow-[0_0_24px_rgba(251,113,133,0.18)]"
       : "border-white/10 focus:border-teal-400/25 focus:shadow-[0_0_20px_rgba(6,182,212,0.12)]",
@@ -174,7 +175,9 @@ function openNativeDatePicker(input: HTMLInputElement | null) {
   } catch {
     /* showPicker indisponible (Safari, etc.) */
   }
+  // Safari iOS < 16 : `focus()` seul n'ouvre pas le sélecteur, il faut le clic.
   input.focus();
+  input.click();
 }
 
 function EssentialsDateField({
@@ -185,6 +188,7 @@ function EssentialsDateField({
   invalid,
   missingLabel,
   openAria,
+  clearAria,
   emptyHint,
 }: {
   id: string;
@@ -194,6 +198,7 @@ function EssentialsDateField({
   invalid: boolean;
   missingLabel: string;
   openAria: string;
+  clearAria: string;
   emptyHint: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -219,7 +224,7 @@ function EssentialsDateField({
           onBlur={() => setFocused(false)}
           aria-invalid={invalid || undefined}
           aria-describedby={invalid ? errId : undefined}
-          className={`${essentialsDateFieldClass(invalid)}${
+          className={`${essentialsDateFieldClass(invalid, Boolean(value))}${
             showEmptyHint ? " parcours-date-input-empty" : ""
           }`}
         />
@@ -230,6 +235,18 @@ function EssentialsDateField({
           >
             {emptyHint}
           </span>
+        ) : null}
+        {/* L'effacement du sélecteur natif n'émet pas de `change` de façon
+            fiable sur iOS et Android : on garde notre propre chemin de reset. */}
+        {value ? (
+          <button
+            type="button"
+            aria-label={clearAria}
+            className="absolute inset-y-0 right-11 flex w-10 items-center justify-center text-zinc-500 transition-colors hover:text-zinc-200 touch-manipulation"
+            onClick={() => onChange("")}
+          >
+            <X className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+          </button>
         ) : null}
         <button
           type="button"
@@ -1965,6 +1982,7 @@ export function TributeWizard({
                     invalid={essentialError && !birthDate}
                     missingLabel={copy.validationFieldMissing}
                     openAria={copy.datePickerOpenAria}
+                    clearAria={copy.dateClearAria}
                     emptyHint={copy.dateInputEmptyHint}
                   />
                   <EssentialsDateField
@@ -1975,6 +1993,7 @@ export function TributeWizard({
                     invalid={essentialError && !deathDate}
                     missingLabel={copy.validationFieldMissing}
                     openAria={copy.datePickerOpenAria}
+                    clearAria={copy.dateClearAria}
                     emptyHint={copy.dateInputEmptyHint}
                   />
                 </div>
@@ -2314,6 +2333,8 @@ export function TributeWizard({
                       eyebrow: copy.scannerEyebrow,
                       title: copy.scannerTitle,
                       description: copy.scannerDescription,
+                      mobileDescription: copy.scannerMobileDescription,
+                      openCapture: copy.scannerOpenCapture,
                       badge: copy.scannerBadge,
                       hint: copy.scannerHint,
                       instructions: copy.scannerInstructions,

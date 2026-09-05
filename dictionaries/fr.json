@@ -407,6 +407,8 @@
     "scannerEyebrow": "Scanner Compagnon",
     "scannerTitle": "Numérisez vos albums papier",
     "scannerDescription": "Scannez le QR avec votre téléphone. Aucune application.",
+    "scannerMobileDescription": "Photographiez vos albums papier. Aucune application.",
+    "scannerOpenCapture": "Ouvrir l’appareil photo",
     "scannerBadge": "QR",
     "scannerHint": "Les photos arrivent dans le Coffre à souvenirs",
     "scannerInstructions": "Appareil photo · aucune installation",
@@ -802,6 +804,7 @@
     "validationEssential": "Indiquez le prénom, le nom et les deux dates pour continuer.",
     "validationFieldMissing": "À indiquer.",
     "datePickerOpenAria": "Ouvrir le calendrier",
+    "dateClearAria": "Effacer la date",
     "autosaveSaving": "Nous gardons votre avancée…",
     "autosaveSaved": "Enregistré avec soin",
     "autosaveError": "Hors ligne pour l’instant"

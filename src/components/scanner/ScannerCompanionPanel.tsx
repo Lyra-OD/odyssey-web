@@ -1,9 +1,10 @@
 "use client";
 
-import { Copy, Loader2, Smartphone } from "lucide-react";
+import { Camera, Copy, Loader2, Smartphone } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import QRCode from "qrcode";
 
+import { useFinePointer } from "@/src/hooks/useFinePointer";
 import { parseApiJson } from "@/src/lib/http/parseApiJson";
 import {
   sanctuaryCardSurface,
@@ -15,6 +16,9 @@ export type ScannerCompanionPanelCopy = {
   eyebrow: string;
   title: string;
   description: string;
+  /** Sur téléphone, le QR n'a pas de sens : on photographie directement. */
+  mobileDescription: string;
+  openCapture: string;
   badge: string;
   hint: string;
   instructions: string;
@@ -83,6 +87,7 @@ export function ScannerCompanionPanel({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const finePointer = useFinePointer();
 
   const mintSession = useCallback(async () => {
     setLoading(true);
@@ -165,8 +170,12 @@ export function ScannerCompanionPanel({
       />
 
       <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
+        {/* Le QR ne sert qu'à passer d'un écran à un téléphone : sur téléphone,
+            il demanderait de scanner l'écran qu'on tient déjà en main. */}
         <div
-          className="mx-auto flex h-[7.25rem] w-[7.25rem] shrink-0 items-center justify-center overflow-hidden rounded-sm border border-teal-400/35 bg-[#020202]/80 sm:mx-0"
+          className={`mx-auto h-[7.25rem] w-[7.25rem] shrink-0 items-center justify-center overflow-hidden rounded-sm border border-teal-400/35 bg-[#020202]/80 sm:mx-0 ${
+            finePointer ? "flex" : "hidden"
+          }`}
         >
           {qrDataUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -198,13 +207,24 @@ export function ScannerCompanionPanel({
             {copy.title}
           </h3>
           <p className="mt-3 text-sm font-light leading-relaxed text-white/50 md:text-[0.95rem]">
-            {copy.description}
+            {finePointer ? copy.description : copy.mobileDescription}
           </p>
           <p className="mt-3 text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-500">
             {error ? error : loading ? copy.generating : copy.instructions}
           </p>
           {scanUrl && !error ? (
             <div className="mt-4 flex flex-col items-center gap-2 sm:flex-row">
+              {finePointer ? null : (
+                <a
+                  href={scanUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-teal-400/35 bg-teal-400/[0.08] px-4 text-sm font-medium text-teal-100 transition-colors hover:border-teal-400/50 hover:bg-teal-400/[0.12] sm:w-auto"
+                >
+                  <Camera className="h-4 w-4" strokeWidth={1.5} aria-hidden />
+                  {copy.openCapture}
+                </a>
+              )}
               <button
                 type="button"
                 onClick={() => void copyLink()}
@@ -213,9 +233,11 @@ export function ScannerCompanionPanel({
                 <Copy className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden />
                 {copied ? copy.copied : copy.copyLink}
               </button>
-              <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-600">
-                {copy.waitingPhone}
-              </span>
+              {finePointer ? (
+                <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-600">
+                  {copy.waitingPhone}
+                </span>
+              ) : null}
             </div>
           ) : null}
         </div>
