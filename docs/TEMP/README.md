@@ -25,6 +25,7 @@ Ne pas laisser pourrir 6 mois sans date dans le titre.
 
 | Fichier | Usage |
 |---------|--------|
+| [`PLAN_F2_REVEAL_RYTHME_20S.md`](PLAN_F2_REVEAL_RYTHME_20S.md) | **5 sept** — ⏸️ en attente de GO — constantes à ajuster pour un reveal ciel post-formulaire de ~20 s (WOW) |
 | [`SESSION_LUNDI_31_AOUT_WIZARD_DEMO.md`](SESSION_LUNDI_31_AOUT_WIZARD_DEMO.md) | Session wizard / démo |
 | [`PLAN_B_HUB_CAPTURE_CANVAS.md`](PLAN_B_HUB_CAPTURE_CANVAS.md) | **1 sept** — plan chirurgical capture canvas gel hub (B) |
 | [`NOTES_COPY_WIZARD_HUB.md`](NOTES_COPY_WIZARD_HUB.md) | **31 août** — notes session copy hub étape 1 |
