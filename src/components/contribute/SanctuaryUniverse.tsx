@@ -1217,7 +1217,7 @@ function UniverseScene({
         maxFps={wizardRewardFullPerf ? 60 : overlayOnBackdrop ? 24 : 60}
       />
       <WheelZoom
-        enabled={!craftLite}
+        enabled={!craftLite && !overlayOnBackdrop}
         listenOnWindow={hubSkyCamera}
         min={hubHeroOnly || wanderEnabled ? GUEST_ZOOM_MIN : undefined}
       />
@@ -1544,6 +1544,13 @@ export type SanctuaryUniverseProps = {
   wanderChrome?: boolean;
   /** Invité : drag ciel sans bouton lab. */
   skyWander?: boolean;
+  /**
+   * Anomalie 2b — bump (nombre qui change) pour forcer la fermeture d'un
+   * `focus` (souvenir) resté ouvert avant de réafficher Essentiels.
+   * Un focus jamais refermé bloque `HubSkyCamera`/`RevealCamera` en
+   * permanence (`focusing` reste vrai) → ciel figé/noir au retour.
+   */
+  resetFocusKey?: number;
 };
 
 export function SanctuaryUniverse({
@@ -1570,6 +1577,7 @@ export function SanctuaryUniverse({
   skipConstellationReveal = false,
   wanderChrome = true,
   skyWander = false,
+  resetFocusKey,
 }: SanctuaryUniverseProps) {
   const detectedTier = useVisualTier();
   /** Craft : force mobile = moins de layers (cheat perf). */
@@ -1681,6 +1689,20 @@ export function SanctuaryUniverse({
       delete document.body.dataset.skyFocus;
     }
   }, [immersive]);
+
+  /**
+   * Anomalie 2b — un souvenir cliqué en `hub.postReveal` (constellation
+   * interactive) et jamais explicitement refermé laisse `focus` non-null
+   * pour toujours : `focusing` reste vrai, `HubSkyCamera`/`RevealCamera`
+   * restent désactivés, `FocusCamera` cadre en gros plan sur ce souvenir
+   * — ciel figé/noir au retour. `resetFocusKey` (bump à l'ouverture du
+   * panneau Essentiels) force la fermeture avant tout.
+   */
+  useEffect(() => {
+    if (resetFocusKey === undefined) return;
+    setFocus(null);
+    delete document.body.dataset.skyFocus;
+  }, [resetFocusKey]);
 
   useEffect(() => {
     return () => {

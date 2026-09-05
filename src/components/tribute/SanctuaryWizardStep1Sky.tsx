@@ -66,6 +66,8 @@ type SanctuaryWizardStep1SkyProps = {
   closeStreakFire?: boolean;
   /** Après le rituel — drag / molette comme l’invité. */
   skyWander?: boolean;
+  /** Anomalie 2b — bump pour forcer la fermeture d'un focus resté ouvert. */
+  resetFocusKey?: number;
 };
 
 const HUB_IDLE_REVEAL_REF = { current: WIZARD_IDLE_REVEAL_T } as MutableRefObject<number>;
@@ -130,6 +132,7 @@ export function SanctuaryWizardStep1Sky({
   onHubCaptureMount,
   closeStreakFire = false,
   skyWander = false,
+  resetFocusKey,
 }: SanctuaryWizardStep1SkyProps) {
   const isHubLite = variant === "hub-lite";
   const handleCanvasReady = useCallback(() => {
@@ -245,6 +248,7 @@ export function SanctuaryWizardStep1Sky({
         onStarAnchorChange={isHubLite ? onStarAnchorChange : undefined}
         onHubCaptureMount={isHubLite ? onHubCaptureMount : undefined}
         closeStreakFire={isHubLite ? closeStreakFire : false}
+        resetFocusKey={resetFocusKey}
         className="h-full w-full"
       />
       {/** Dégradé seulement hub — en overlay ça noircit le gel PNG. */}

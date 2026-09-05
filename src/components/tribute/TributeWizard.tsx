@@ -682,14 +682,35 @@ export function TributeWizard({
   }, []);
   const [hubWebGLReady, setHubWebGLReady] = useState(false);
   const onHubWebGLReady = useCallback(() => setHubWebGLReady(true), []);
+  /**
+   * Anomalie 2 — « Incomplet = nulle part » : les 4 champs essentiels
+   * doivent TOUS être remplis, sinon le draft est traité comme vide (retour
+   * hub-lite forcé à la fermeture, cf. closePanel dans useParcoursUx).
+   */
+  const hasEssentialsData = Boolean(
+    firstName.trim() &&
+      lastName.trim() &&
+      birthDate.trim() &&
+      deathDate.trim(),
+  );
   const step1Parcours = useParcoursUx({
     enabled: step1Sky,
     revealPhase: step1Reveal.phase,
     virginHub: step1VirginHub,
+    hasEssentialsData,
     hubCaptureRef,
     hubWebGLReady,
     onSoftCloseEssentials: step1Reveal.settlePostReveal,
   });
+  /**
+   * Anomalie 2b — bump à chaque (ré)ouverture d'Essentiels pour forcer la
+   * fermeture d'un `focus` (souvenir) resté ouvert dans SanctuaryUniverse.
+   */
+  const [resetFocusKey, setResetFocusKey] = useState(0);
+  const handleOpenPanel = useCallback(() => {
+    setResetFocusKey((k) => k + 1);
+    step1Parcours.openPanel();
+  }, [step1Parcours]);
   const onHubStarAnchor = useCallback(
     (anchor: { x: number; y: number } | null) => {
       rememberHubStarAnchor(anchor);
@@ -699,6 +720,7 @@ export function TributeWizard({
 
   /** P0 — typo : rouvrir Essentiels depuis le ciel post-reveal. */
   const handleEditEssentials = useCallback(() => {
+    setResetFocusKey((k) => k + 1);
     step1Reveal.resumeTyping();
     step1Parcours.reopenEssentials();
   }, [step1Reveal, step1Parcours]);
@@ -1320,7 +1342,7 @@ export function TributeWizard({
       {step1Parcours.showHubHero ? (
         <SanctuaryHubHero
           openLabel={copy.parcoursHeroOpenLabel}
-          onOpen={step1Parcours.openPanel}
+          onOpen={handleOpenPanel}
         />
       ) : null}
       {step1Sky && step1Parcours.showSkyWebGL ? (
@@ -1356,6 +1378,7 @@ export function TributeWizard({
           fadeEase={step1Parcours.skyFadeEase}
           onHubReady={onHubWebGLReady}
           onHubCaptureMount={onHubCaptureMount}
+          resetFocusKey={resetFocusKey}
           hubPrompt={
             step1Parcours.showRitualWebGL
               ? undefined
@@ -1669,6 +1692,7 @@ export function TributeWizard({
             >
             <div
               ref={monolithFrameRef}
+              data-no-sky-wheel
               className={[
                 "parcours-monolith-frame pointer-events-auto relative w-full max-w-xl",
                 essentialsShake ? "parcours-form-shake" : "",

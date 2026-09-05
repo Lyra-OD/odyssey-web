@@ -80,6 +80,13 @@ type UseParcoursUxOptions = {
   hubWebGLReady?: boolean;
   /** P0 — soft close post-reveal → resettler constellation (revealT=1). */
   onSoftCloseEssentials?: () => void;
+  /**
+   * Anomalie 2 — « Incomplet = nulle part » : true seulement si TOUS les
+   * champs essentiels requis sont remplis. Si l'utilisateur efface le
+   * draft après un Continuer, `closePanel` doit ignorer l'historique de
+   * session (`hasCompletedRevealRef`) et forcer le hard close → hub.idle.
+   */
+  hasEssentialsData?: boolean;
 };
 
 function resolveInitialPhase(
@@ -97,6 +104,7 @@ export function useParcoursUx({
   hubCaptureRef,
   hubWebGLReady = false,
   onSoftCloseEssentials,
+  hasEssentialsData = true,
 }: UseParcoursUxOptions) {
   const [phase, setPhase] = useState<ParcoursPhase>(() =>
     resolveInitialPhase(enabled, virginHub),
@@ -323,7 +331,7 @@ export function useParcoursUx({
     if (transition) return;
 
     /** Soft close — constellation déjà née : revenir au ciel sans hub.idle. */
-    if (hasCompletedRevealRef.current) {
+    if (hasCompletedRevealRef.current && hasEssentialsData) {
       clearTimers();
       setPanelExiting(false);
       setFreezeHolding(false);
@@ -334,6 +342,17 @@ export function useParcoursUx({
       setPhase("hub.postReveal");
       onSoftCloseEssentials?.();
       return;
+    }
+
+    /**
+     * Anomalie 2 — « Incomplet = nulle part » : le draft a été vidé après un
+     * Continuer. On ignore l'historique de session et on repart en hard
+     * close → hub.idle (étoile unique), comme si le rituel n'avait jamais
+     * eu lieu.
+     */
+    if (hasCompletedRevealRef.current && !hasEssentialsData) {
+      hasCompletedRevealRef.current = false;
+      setHasCompletedReveal(false);
     }
 
     clearTimers();
@@ -357,6 +376,7 @@ export function useParcoursUx({
     revealPhase,
     phase,
     transition,
+    hasEssentialsData,
     clearTimers,
     stopCloseRitualRaf,
     driveCloseRitual,

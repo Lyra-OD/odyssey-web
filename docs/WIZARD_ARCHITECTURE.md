@@ -1,14 +1,14 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 4 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 5 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 sept 2026 — **Essentiels, 3 correctifs** : molette bloquée sous le panneau (`overlayOnBackdrop` + `data-no-sky-wheel`) · retour hub-lite forcé si draft vidé (« incomplet = nulle part ») · `focus` souvenir jamais refermé ne bloque plus les caméras (`resetFocusKey`).
 - 4 sept 2026 — Studio : switch FR/EN live (les deux copies, ciel non remonté) — plus le cache RSC de `/en/studio`.
 - 4 sept 2026 — **Essentiels** : *L’essentiel* · portrait · Date du départ · voile JJ/MM/AAAA · porte *Poursuivre sans les animations du ciel*.
 - 4 sept 2026 — **Hub idle** : deux hits (étoile · invite) · glow *Toucher* = prox souris + hover plaque · molette ciel = `window`.
 - 4 sept 2026 — **Formulaires** : CTA toujours cliquable · submit incomplet = message dico + highlight + focus + shake (off si `prefers-reduced-motion`) · dates année 4 chiffres. Essentiels d’abord ; même loi Invité / Coffre / Salon quand on y touche.
-- 31 août 2026 — **T1b gel perf** : `hubSkyLive` stop loop + unmount WebGL sous panneau.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
