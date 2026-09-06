@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-05 · **Entrées :** 859
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-06 · **Entrées :** 863
 
 ## `common`
 
@@ -436,6 +436,8 @@
 | `tributeWizard.projectDraftIdle` | Nous préparons votre Coffre à souvenirs. | We are preparing your Memory Chest. |
 | `tributeWizard.projectDraftErrorTitle` | Nous n’arrivons pas encore à préparer votre Coffre à souvenirs. | We could not prepare your Memory Chest just yet. |
 | `tributeWizard.projectDraftRetry` | Réessayer | Retry |
+| `tributeWizard.sessionExpiredTitle` | Votre session a expiré pendant la préparation. Vos souvenirs sont en sécurité — reconnectez-vous pour continuer. | Your session expired while preparing this. Your memories are safe — reconnect to continue. |
+| `tributeWizard.sessionExpiredReconnectCta` | Se reconnecter | Reconnect |
 | `tributeWizard.stepMontageTitle` | Le film de sa vie | The Film of Their Life |
 | `tributeWizard.stepMontageDescription` | Mettez en lumière les moments précieux de son histoire. Le film s’assemble sous vos yeux. | Bring the precious moments of their story to light. The film assembles before your eyes. |
 | `tributeWizard.montageLoading` | Chargement de vos souvenirs… | Loading your memories… |
@@ -516,7 +518,9 @@
 | `tributeWizard.inviteQrAlt` | QR code du Sanctuaire | Sanctuary QR code |
 | `tributeWizard.inviteCloseAria` | Fermer le panneau d’invitation | Close invite panel |
 | `tributeWizard.inviteErrorGeneric` | Impossible de créer le lien pour le moment. | We could not create the link right now. |
+| `tributeWizard.inviteErrorSessionExpired` | Votre session a expiré. Reconnectez-vous pour créer le lien. | Your session has expired. Reconnect to create the link. |
 | `tributeWizard.inviteNeedProject` | Enregistrez d’abord l’essentiel pour activer l’invitation. | Save the essentials first to enable inviting. |
+| `tributeWizard.inviteReconnectCta` | Se reconnecter | Reconnect |
 | `tributeWizard.inviteShareMessage` | Aidez-nous à immortaliser {name}. Laissez une empreinte dans le Sanctuaire : {url} | Help us immortalize {name}. Leave a mark in the Sanctuary: {url} |
 | `tributeWizard.inviteBrandWordmark` | Odyssey | Odyssey |
 | `tributeWizard.inviteKicker` | Sanctuaire | Sanctuary |

@@ -23,6 +23,7 @@ import { PreviewStep } from "@/src/components/tribute/PreviewStep";
 import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
 import { SoftCapModal, SoftCapMediaCountSync } from "@/src/components/tribute/SoftCapModal";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
+import { appRoutes } from "@/src/lib/appRoutes";
 import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
 import { StoryboardMontageStep } from "@/src/components/tribute/StoryboardMontageStep";
 import { StoryboardChaptersStep } from "@/src/components/tribute/StoryboardChaptersStep";
@@ -580,6 +581,12 @@ export function TributeWizard({
     null,
   );
   const [projectDraftLoading, setProjectDraftLoading] = useState(false);
+  /**
+   * Session Supabase morte côté serveur détectée par le poll média (401
+   * "unauthenticated") — le compte est valide, seul le refresh token a
+   * expiré. Voir src/lib/supabase/authRefreshLock.ts.
+   */
+  const [mediaSessionExpired, setMediaSessionExpired] = useState(false);
 
   // Amorcé avec les valeurs hydratées (pas l'état `firstName` live, qui
   // n'existe pas encore avant `useWizardEssentials` — voir plus bas).
@@ -930,6 +937,41 @@ export function TributeWizard({
     projectDraftLoading,
     setProjectDraftLoading,
   });
+
+  /**
+   * Déclencheur « Inviter le cercle » du menu — avant, un `projectId`
+   * manquant le laissait juste désactivé, sans explication ni recours.
+   * On retente la création du brouillon à la demande (déjà dédoublonnée
+   * dans `ensureDraft`) avant d'ouvrir le panneau ; s'il manque encore le
+   * prénom, le panneau affichera `copy.needProject` — un message existant,
+   * déjà correct pour ce cas.
+   */
+  const handleOpenSanctuaryInvite = useCallback(() => {
+    if (uploadProjectId) {
+      setIsSanctuaryInviteOpen(true);
+      return;
+    }
+    void ensureDraft({ firstName, lastName, birthDate, deathDate })
+      .then((draft) => {
+        if (draft?.id) {
+          setUploadProjectId(draft.id);
+          setUploadUserId(draft.user_id ?? null);
+          setUploadTenantId(draft.tenant_id ?? null);
+        }
+      })
+      .catch(() => {
+        /* Échec silencieux ici — le panneau affichera needProject. */
+      })
+      .finally(() => setIsSanctuaryInviteOpen(true));
+  }, [uploadProjectId, ensureDraft, firstName, lastName, birthDate, deathDate]);
+
+  const reconnectHref = useMemo(
+    () =>
+      appRoutes.studioConnexionWithParams(locale, {
+        next: typeof window !== "undefined" ? window.location.pathname : undefined,
+      }),
+    [locale],
+  );
 
   const deceasedDisplayName = useMemo(() => {
     const fn = firstName.trim();
@@ -1600,8 +1642,8 @@ export function TributeWizard({
               className="sm:items-end sm:text-right"
             />
             <SanctuaryInviteTrigger
-              onOpen={() => setIsSanctuaryInviteOpen(true)}
-              disabled={!uploadProjectId || currentStep === 2}
+              onOpen={handleOpenSanctuaryInvite}
+              disabled={currentStep === 2}
               copy={{
                 triggerLabel: copy.inviteTriggerLabel,
                 triggerCta: copy.inviteTriggerCta,
@@ -1682,6 +1724,8 @@ export function TributeWizard({
           qrAlt: copy.inviteQrAlt,
           closeAria: copy.inviteCloseAria,
           errorGeneric: copy.inviteErrorGeneric,
+          errorSessionExpired: copy.inviteErrorSessionExpired,
+          reconnectCta: copy.inviteReconnectCta,
           needProject: copy.inviteNeedProject,
           shareMessage: copy.inviteShareMessage,
           brandWordmark: copy.inviteBrandWordmark,
@@ -2070,6 +2114,8 @@ export function TributeWizard({
                 qrAlt: copy.inviteQrAlt,
                 closeAria: copy.inviteCloseAria,
                 errorGeneric: copy.inviteErrorGeneric,
+                errorSessionExpired: copy.inviteErrorSessionExpired,
+                reconnectCta: copy.inviteReconnectCta,
                 needProject: copy.inviteNeedProject,
                 shareMessage: copy.inviteShareMessage,
                 brandWordmark: copy.inviteBrandWordmark,
@@ -2112,6 +2158,20 @@ export function TributeWizard({
                 </div>
               ) : null}
 
+              {mediaSessionExpired ? (
+                <div className="mt-6 rounded-xl border border-fuchsia-500/45 bg-fuchsia-950/10 p-4 shadow-[0_0_24px_rgba(255,0,255,0.22)] backdrop-blur-md">
+                  <p className="text-sm font-medium text-fuchsia-200/95">
+                    {copy.sessionExpiredTitle}
+                  </p>
+                  <a
+                    href={reconnectHref}
+                    className="mt-3 inline-flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-light text-zinc-200 transition-colors hover:border-white/20 hover:bg-white/[0.08]"
+                  >
+                    {copy.sessionExpiredReconnectCta}
+                  </a>
+                </div>
+              ) : null}
+
               {!uploadProjectId ? (
                 <div
                   className="mt-10 flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-white/12 bg-white/[0.03] px-6 py-16 text-center text-sm font-light text-zinc-400 backdrop-blur-xl"
@@ -2132,6 +2192,11 @@ export function TributeWizard({
                   maxFiles={effectiveMaxMediaItems}
                   maxFileSizeBytes={300 * 1024 * 1024}
                   overflowRejectionMessage={copy.uploadLimitOverflowRejection}
+                  onUploadError={(error) => {
+                    if (error.message === "unauthenticated") {
+                      setMediaSessionExpired(true);
+                    }
+                  }}
                 >
                   {(dz) => {
                     const totalQueued = dz.items.length;

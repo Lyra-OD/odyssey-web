@@ -353,7 +353,14 @@ export function useMassMediaUpload(
         });
         hydrateFromServer(apiItems);
       } catch (error) {
-        if (!options?.silent) {
+        // Le poll silencieux avale les erreurs transitoires (best-effort),
+        // mais une session morte (401 "unauthenticated") n'a rien de
+        // transitoire : elle doit remonter pour que l'appelant arrête le
+        // poll et prévienne l'utilisateur, plutôt que de retenter en boucle
+        // contre un compte devenu inaccessible.
+        const isAuthError =
+          error instanceof Error && error.message === "unauthenticated";
+        if (!options?.silent || isAuthError) {
           throw error;
         }
       } finally {

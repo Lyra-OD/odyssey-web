@@ -347,12 +347,19 @@ export function MediaDropzoneAdapter({
     const timer = window.setInterval(() => {
       void upload
         .loadProjectMedia(projectId, { force: true, silent: true })
-        .catch(() => {
-          /* poll best-effort — pas d’overlay Next sur 401 */
+        .catch((error) => {
+          // Best-effort pour les erreurs transitoires — mais une session
+          // morte ne se rattrapera pas au prochain tick : on arrête le
+          // poll et on prévient l'appelant au lieu de marteler en boucle
+          // un compte devenu inaccessible.
+          if (error instanceof Error && error.message === "unauthenticated") {
+            window.clearInterval(timer);
+            onUploadError?.(error);
+          }
         });
     }, pollIntervalMs);
     return () => window.clearInterval(timer);
-  }, [pollIntervalMs, projectId, upload.loadProjectMedia]);
+  }, [pollIntervalMs, projectId, upload.loadProjectMedia, onUploadError]);
 
   useEffect(() => {
     // Détection de fin d'exécution pour notifier une seule fois le résumé.

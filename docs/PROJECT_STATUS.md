@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 5 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 6 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 6 sept 2026 — **« Inviter le cercle » ne créait pas de lien** malgré un compte valide : reproduit en live, la vraie cause était une session Supabase qui mourait en plein usage (course sur le refresh token, pas un souci de compte/tenant). Fix : verrou anti-course sur `getUser()` (middleware + routes API), 401 rendus explicites avec reconnexion en un clic (panneau Inviter + poll média), et le déclencheur du menu retente la création du brouillon au lieu de rester désactivé sans explication.
 - 5 sept 2026 — Mobile : sur téléphone le Scanner Compagnon propose « Ouvrir l’appareil photo » au lieu d’un QR à flasher avec l’écran qu’on tient en main · chaque date de l’Essentiel gagne un « Effacer » fiable sur iPhone comme sur Android.
 - 5 sept 2026 — Mobile : barre utilitaire haute (Retour · langue · Déconnexion) qui ne chevauche plus le lockup de marque · choix de composition (Étape 5) présenté en feuille ancrée en bas, posée sur le Studio flouté. Desktop inchangé.
 - 5 sept 2026 — Studio mobile : DnD tactile fiabilisé avant démo jeudi (appui long, poignées mobiles plus confortables, grille chapitres aérée).
 - 5 sept 2026 — **Démo famille sécurisée (passes P1→P5)** : reveal du ciel rallongé jusqu’à la contemplation avant J3 · Coffre mobile rehiérarchisé (dépôt principal puis Scanner puis collections) · Musique allégée au premier regard · Studio épuré (plus de doublon Co-Créateur) · prévisualisation renforcée même avec peu de matière · derniers micro-textes/CTA secondaires harmonisés.
-- 5 sept 2026 — Panneau **Essentiels** (Famille) : molette qui fuyait au ciel derrière le formulaire corrigée · fermeture après effacement des données revient bien à l’étoile unique · souvenir cliqué puis jamais refermé ne fige plus le ciel en noir.
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

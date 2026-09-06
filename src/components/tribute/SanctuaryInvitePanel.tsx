@@ -2,10 +2,11 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, Loader2, Share2, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
 
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
+import { appRoutes } from "@/src/lib/appRoutes";
 import { parseApiJson } from "@/src/lib/http/parseApiJson";
 import {
   DURATION_BREATH,
@@ -42,6 +43,8 @@ export type SanctuaryInvitePanelCopy = {
   qrAlt: string;
   closeAria: string;
   errorGeneric: string;
+  errorSessionExpired: string;
+  reconnectCta: string;
   needProject: string;
   /** Contient `{name}` et `{url}`. */
   shareMessage: string;
@@ -190,6 +193,7 @@ export function SanctuaryInviteContent({
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [messageCopied, setMessageCopied] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
@@ -200,6 +204,14 @@ export function SanctuaryInviteContent({
     );
   }, []);
 
+  const reconnectHref = useMemo(
+    () =>
+      appRoutes.studioConnexionWithParams(locale, {
+        next: typeof window !== "undefined" ? window.location.pathname : undefined,
+      }),
+    [locale],
+  );
+
   const generateLink = useCallback(async () => {
     if (!projectId) {
       setError(copy.needProject);
@@ -207,6 +219,7 @@ export function SanctuaryInviteContent({
     }
     setLoading(true);
     setError(null);
+    setSessionExpired(false);
     try {
       const res = await fetch(`/api/projects/${projectId}/contribute-link`, {
         method: "POST",
@@ -219,7 +232,15 @@ export function SanctuaryInviteContent({
         error?: string;
       }>(res);
       if (!res.ok || !body.ok || !body.shareUrl) {
-        setError(copy.errorGeneric);
+        // 401 = compte valide mais session morte côté serveur (refresh
+        // token expiré) — un message générique laisserait croire à un bug
+        // du lien lui-même. Voir src/lib/supabase/authRefreshLock.ts.
+        if (res.status === 401) {
+          setSessionExpired(true);
+          setError(copy.errorSessionExpired);
+        } else {
+          setError(copy.errorGeneric);
+        }
         return;
       }
       setShareUrl(body.shareUrl);
@@ -234,7 +255,13 @@ export function SanctuaryInviteContent({
     } finally {
       setLoading(false);
     }
-  }, [projectId, locale, copy.errorGeneric, copy.needProject]);
+  }, [
+    projectId,
+    locale,
+    copy.errorGeneric,
+    copy.errorSessionExpired,
+    copy.needProject,
+  ]);
 
   useEffect(() => {
     if (!autoGenerate || !projectId || shareUrl || loading) return;
@@ -376,9 +403,14 @@ export function SanctuaryInviteContent({
       )}
 
       {error ? (
-        <p className="text-sm font-light text-amber-200/90" role="alert">
-          {error}
-        </p>
+        <div role="alert" className="space-y-3">
+          <p className="text-sm font-light text-amber-200/90">{error}</p>
+          {sessionExpired ? (
+            <a href={reconnectHref} className={sanctuarySecondaryButton}>
+              {copy.reconnectCta}
+            </a>
+          ) : null}
+        </div>
       ) : null}
     </div>
   );

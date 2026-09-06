@@ -1,5 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  supabaseAuthCookieSignature,
+  withAuthRefreshLock,
+} from "@/src/lib/supabase/authRefreshLock";
 
 /**
  * Refreshes the Supabase auth session and propagates cookies on the response.
@@ -36,9 +40,13 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
+  // Anti-course refresh token — voir src/lib/supabase/authRefreshLock.ts.
+  // Fusionne cet appel avec celui d'une éventuelle route API concurrente
+  // qui partage exactement les mêmes cookies de session.
+  const signature = supabaseAuthCookieSignature(request.cookies.getAll());
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await withAuthRefreshLock(signature, () => supabase.auth.getUser());
 
   return { response: supabaseResponse, supabase, user };
 }

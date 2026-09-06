@@ -32,10 +32,13 @@ export async function fetchProjectMediaCached(
     return cached.items;
   }
 
-  if (!force) {
-    const pending = inflight.get(projectId);
-    if (pending) return pending;
-  }
+  // Dédoublonnage systématique — y compris en `force` (le poll média
+  // l'utilise) : sans ça, deux appels qui se chevauchent (poll + action
+  // manuelle) partent chacun leur propre requête authentifiée, ce qui
+  // multiplie les `getUser()` concurrents pile au moment où l'access
+  // token expire (voir src/lib/supabase/authRefreshLock.ts).
+  const pending = inflight.get(projectId);
+  if (pending) return pending;
 
   const request = (async () => {
     const res = await fetch(`/api/projects/${projectId}/media`);
@@ -52,9 +55,7 @@ export async function fetchProjectMediaCached(
     return body.items;
   })();
 
-  if (!force) {
-    inflight.set(projectId, request);
-  }
+  inflight.set(projectId, request);
 
   try {
     return await request;
