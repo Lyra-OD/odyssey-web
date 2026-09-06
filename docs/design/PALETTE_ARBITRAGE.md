@@ -143,3 +143,13 @@ Cible : **un fichier de tokens nommés par rôle**, et l'interdiction d'écrire 
 **Explicitement hors scope de cette décision :**
 - [`../../src/lib/wizard/montageActTheme.ts`](../../src/lib/wizard/montageActTheme.ts) (thème `spark`/`epic`/`legacy`) — colore les **actes narratifs du Studio**, un système à part qui partage l'ambre avec `spark` par coïncidence, pas par lien de sens avec Composition Magique. Non touché.
 - Les autres `amber-*` du wizard/studio (alertes, plafonds) — inchangés.
+
+## 8. Backlog — audit couleurs complet (après la démo du 10 sept)
+
+Demande du 6 sept : revoir **toutes les couleurs, partout dans l'app**, pas seulement l'Étape 5. Volontairement **reporté après la démo du 10 sept** — trop risqué de tout rouvrir juste avant.
+
+Ce qu'il faudra couvrir :
+- **[`../../src/lib/wizard/chapterTheme.ts`](../../src/lib/wizard/chapterTheme.ts)** — le vrai système actif qui colore les chapitres du Studio (onglets + cartes média), cycle de **10 teintes** par index de chapitre : `amber → teal → fuchsia → violet → cyan → emerald → rose → sky → orange → lime`. Point d'attention trouvé le 6 sept : le **chapitre 1 est en ambre**, une teinte très proche de la nouvelle **paille** de Composition Magique (~54° vs ~43° sur la roue) — risque de confusion visuelle entre « chapitre 1 » et « Composition Magique » alors qu'ils n'ont aucun rapport de sens. À trancher : réordonner le cycle (sortir l'ambre de la position 1) et/ou remplacer certaines teintes du cycle.
+- **[`../../src/lib/wizard/montageActTheme.ts`](../../src/lib/wizard/montageActTheme.ts)** — **code mort** (vérifié le 6 sept : `getMontageActTheme` et `MONTAGE_ACT_THEME` ne sont importés nulle part dans `app/` ni `src/components`). Il a été remplacé par `chapterTheme.ts` quand le nombre de chapitres est devenu dynamique. À trancher : supprimer le fichier, ou le laisser en l'état si un usage futur est prévu.
+- Tous les autres `amber-*` / hex non nommés restants dans le wizard/Studio (alertes, plafonds, badges) — leur sémantique doit être revalidée une fois la teinte chaude (paille) fixée pour Composition Magique, pour vérifier qu'aucun ne raconte accidentellement la même chose.
+- Reprendre le canvas [`wizard-palette-audit.canvas.tsx`](~/.cursor/projects/Users-erik-Desktop-odyssey-frontend/canvases/wizard-palette-audit.canvas.tsx) pour visualiser le cycle de 10 teintes de `chapterTheme.ts` à côté de paille/violet/teal avant de trancher.
