@@ -61,7 +61,14 @@ export async function POST(
   }
 
   const { token, tokenHash } = generateContributeToken();
-  const admin = getSupabaseAdminClient();
+
+  let admin;
+  try {
+    admin = getSupabaseAdminClient();
+  } catch (error) {
+    console.error("[contribute-link]", error);
+    return NextResponse.json({ error: "internal" }, { status: 500 });
+  }
 
   const { error: insertError } = await admin
     .from("project_access_tokens")

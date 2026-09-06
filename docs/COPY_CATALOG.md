@@ -503,7 +503,7 @@
 | `tributeWizard.dossierCurrentBadge` | Forfait actuel | Current package |
 | `tributeWizard.dossierSwitchCta` | Passer à {package} | Switch to {package} |
 | `tributeWizard.inviteTriggerLabel` | Cercle | Circle |
-| `tributeWizard.inviteTriggerCta` | Immortaliser | Immortalize |
+| `tributeWizard.inviteTriggerCta` | Inviter famille et amis | Invite family & friends |
 | `tributeWizard.inviteOpenAria` | Inviter le cercle au Sanctuaire | Invite the circle to the Sanctuary |
 | `tributeWizard.inviteTitle` | Inviter au Sanctuaire | Invite to the Sanctuary |
 | `tributeWizard.inviteDescription` | Partagez un lien privé. Vos proches y déposent leurs photos et vidéos. Ils peuvent aussi participer librement au financement de cet hommage. | Share a private link. Your loved ones can share their photos and videos. They may also choose to contribute to the funding of this tribute. |
@@ -525,8 +525,8 @@
 | `tributeWizard.inviteBrandWordmark` | Odyssey | Odyssey |
 | `tributeWizard.inviteKicker` | Sanctuaire | Sanctuary |
 | `tributeWizard.invitePoweredBy` | Propulsé par | Powered by |
-| `tributeWizard.collabTriggerLabel` | Co-Créateur | Co-Creator |
-| `tributeWizard.collabTriggerCta` | Inviter | Invite |
+| `tributeWizard.collabTriggerLabel` | Aide création | Creation help |
+| `tributeWizard.collabTriggerCta` | Confier la réalisation | Entrust the creation |
 | `tributeWizard.collabOpenAria` | Inviter un Co-Créateur au Studio | Invite a Co-Creator to the Studio |
 | `tributeWizard.collabTitle` | Inviter un Co-Créateur | Invite a Co-Creator |
 | `tributeWizard.collabDescription` | Partagez un lien privé pour enrichir le Coffre à souvenirs, la musique et le film, sans accès au paiement. | Share a private link to enrich the Memory Chest, the music, and the film, with no access to payment. |

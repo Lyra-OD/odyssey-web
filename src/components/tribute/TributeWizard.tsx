@@ -1600,32 +1600,49 @@ export function TributeWizard({
           }`}
         >
           {currentStep >= 2 ? (
-            <div className="flex items-center gap-4">
-              <div
-                className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/10 shadow-[0_0_20px_rgba(6,182,212,0.15)] ring-1 ring-white/5"
-                aria-hidden={!avatarPreview}
-              >
-                {avatarPreview ? (
-                  <img
-                    alt=""
-                    key={avatarPreview}
-                    src={avatarPreview}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-white/[0.06]">
-                    <User className="h-5 w-5 text-zinc-500" strokeWidth={1.2} />
-                  </div>
-                )}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-4">
+                <div
+                  className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/10 shadow-[0_0_20px_rgba(6,182,212,0.15)] ring-1 ring-white/5"
+                  aria-hidden={!avatarPreview}
+                >
+                  {avatarPreview ? (
+                    <img
+                      alt=""
+                      key={avatarPreview}
+                      src={avatarPreview}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-white/[0.06]">
+                      <User className="h-5 w-5 text-zinc-500" strokeWidth={1.2} />
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-editorial truncate text-lg font-medium leading-tight tracking-[0.02em] text-zinc-100 md:text-xl">
+                    {deceasedDisplayName}
+                  </p>
+                  <p className="font-[family-name:var(--font-label)] mt-0.5 text-xs font-normal tracking-[0.18em] text-zinc-500 uppercase">
+                    {yearsDisplay}
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-editorial truncate text-lg font-medium leading-tight tracking-[0.02em] text-zinc-100 md:text-xl">
-                  {deceasedDisplayName}
-                </p>
-                <p className="font-[family-name:var(--font-label)] mt-0.5 text-xs font-normal tracking-[0.18em] text-zinc-500 uppercase">
-                  {yearsDisplay}
-                </p>
-              </div>
+              {/* Inviter le cercle — déplacé sous le nom (au lieu du 3e
+                  bloc empilé à droite) : c'est l'action la plus importante
+                  de cet en-tête, elle mérite la position la plus visible. */}
+              {!isEditor ? (
+                <SanctuaryInviteTrigger
+                  onOpen={handleOpenSanctuaryInvite}
+                  disabled={currentStep === 2}
+                  copy={{
+                    triggerLabel: copy.inviteTriggerLabel,
+                    triggerCta: copy.inviteTriggerCta,
+                    triggerOpenAria: copy.inviteOpenAria,
+                  }}
+                  className={`ml-14${currentStep === 2 ? " hidden" : ""}`}
+                />
+              ) : null}
             </div>
           ) : null}
 
@@ -1640,16 +1657,6 @@ export function TributeWizard({
                 openAria: copy.dossierOpenAria,
               }}
               className="sm:items-end sm:text-right"
-            />
-            <SanctuaryInviteTrigger
-              onOpen={handleOpenSanctuaryInvite}
-              disabled={currentStep === 2}
-              copy={{
-                triggerLabel: copy.inviteTriggerLabel,
-                triggerCta: copy.inviteTriggerCta,
-                triggerOpenAria: copy.inviteOpenAria,
-              }}
-              className={`sm:items-end sm:text-right${currentStep === 2 ? " hidden" : ""}`}
             />
             <CollabInviteTrigger
               accessRole={accessRole}
