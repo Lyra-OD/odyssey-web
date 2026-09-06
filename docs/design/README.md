@@ -13,6 +13,7 @@ Exports marque : [`../brand/odyssey-eclipse/`](../brand/odyssey-eclipse/README.m
 - Cheatsheet DA (1 page) : [`DA_CHEATSHEET.md`](DA_CHEATSHEET.md)
 - Plan refresh marketing B2C/B2B : [`MARKETING_SITE_REFRESH_PLAN.md`](MARKETING_SITE_REFRESH_PLAN.md)
 - Recette monolithe Traversée (verre · halo · CTA) : [`PARCOURS_MONOLITH_RECIPE.md`](PARCOURS_MONOLITH_RECIPE.md)
+- Arbitrage palette en cours (mesures + options ouvertes) : [`PALETTE_ARBITRAGE.md`](PALETTE_ARBITRAGE.md)
 
 ## Ne pas mettre ici
 

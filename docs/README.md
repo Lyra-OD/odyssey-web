@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 5 sept 2026 — arbitrage palette en cours (3 bleu-verts mesurés, couleur chaude à trancher) : [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md).
 - 3 sept 2026 — Démo 10 sept matin : **famille d’abord** · invité = ouverture · Salon KPI = 3ᵉ acte : [`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 - 28 août 2026 — egress revert clôturé : [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) (stub) · archive [`_archive/DEMO_VP_EGRESS_REVERT.md`](_archive/DEMO_VP_EGRESS_REVERT.md).
 - 28 août 2026 — plan refresh marketing B2C/B2B : [`design/MARKETING_SITE_REFRESH_PLAN.md`](design/MARKETING_SITE_REFRESH_PLAN.md).
 - 21 août 2026 — regroupement **logique** (business / product / design…) · règle nouveaux docs · chemins inchangés.
-- 21 août 2026 — dossier [`TEMP/`](TEMP/README.md) : rush démo Patrice / brouillons.
 
 Hiérarchie développeur (ordre de lecture code) : [`CONVENTIONS.md`](CONVENTIONS.md).  
 Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
@@ -175,6 +175,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`design/DA_VERCEL_ACCESS.md`](design/DA_VERCEL_ACCESS.md) | playbook | Liens prod Vercel + checklist compte DA |
 | [`design/MARKETING_SITE_REFRESH_PLAN.md`](design/MARKETING_SITE_REFRESH_PLAN.md) | playbook | Audit landing + plan B2C/B2B (4 phases) |
 | [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) | canon | Palette, Halo-Éclipse |
+| [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md) | décision en cours | Mesures des couleurs · couleur chaude à trancher |
 | [`COPY.md`](COPY.md) | canon | Copy écran · source JSON |
 | [`COPY_CATALOG.md`](COPY_CATALOG.md) | living | Liste FR/EN générée — **pas à la main** |
 | *Nouveaux* | → | [`design/`](design/README.md) |

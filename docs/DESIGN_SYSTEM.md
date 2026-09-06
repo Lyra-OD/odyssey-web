@@ -4,6 +4,7 @@
 **Dernière MAJ :** 28 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 sept. 2026 — arbitrage palette ouvert : 3 bleu-verts mesurés, magenta = échec (le rose disparaît), teinte chaude à déplacer de 43° vers ~75° → [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md).
 - 5 sept. 2026 — §2.1bis « choisir = teal, partout » : sélection des souvenirs et des options payantes passée en teal (l'ambre garde le domaine, pas l'état) · `sanctuaryFocusRing` inclus dans les tokens boutons.
 - 28 août 2026 — `/partners` : H1 `OdysseyLuminousText` variant `soft` · lead form + CTA démo = `sanctuarySubmitButton` (teal Studio).
 - 28 août 2026 — §3.1bis blanc lumineux `odyssey-connexion-mark` : grammaire emblème (wordmark + accroches courtes, pas le corps).
@@ -126,6 +127,8 @@ Pour éviter un site 100 % violet + noir, une **couleur tertiaire chaude** appor
 **Alternative** (plus nature) : `sage-memorial` `#7A9E87` — validation, confirmation invitation, badges « actif ».
 
 **Règle d’or tertiaire :** jamais sur le co-branding header ; maximum **5–10 %** de la surface écran ; jamais en compétition avec le violet des forfaits marketing.
+
+> **En cours de révision.** Le champagne est documenté ici depuis des mois et compte **zéro usage** dans le code. La teinte chaude du produit (aujourd’hui l’ambre, 43°) est en cours d’arbitrage vers ~75°, l’angle qui referme la roue : mesures, candidats et décisions ouvertes dans [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md).
 
 ### 2.5 Couleur partenaire (contextuelle)
 
