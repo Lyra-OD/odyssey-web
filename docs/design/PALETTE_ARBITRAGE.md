@@ -1,10 +1,11 @@
 # Odyssey — Arbitrage palette : les couleurs qu'il reste à décider
 
 **Type :** décision en cours · **Vérité pour :** mesures des couleurs, options ouvertes, ce qui est déjà tranché.
-**Dernière MAJ :** 5 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 6 sept 2026 · **Carte :** [`../README.md`](../README.md)
 **Canon palette :** [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md) §2 — **ce fichier ne remplace pas le canon**, il prépare sa prochaine version.
 
 **Changelog** (max 5)
+- 6 sept 2026 — **décision figée** pour l'Étape 5 : paille `#E4D96F` pour Composition Magique, violet pour Je compose moi-même, teal/cyan inchangé pour sélection/hover/focus et halos. Voir §7. Code (tokens + composant) prévu le 7 sept.
 - 5 sept 2026 — création : trois bleu-verts mesurés, trois couleurs d'alerte, roue des teintes et quatre candidats pour la couleur chaude.
 
 > **Reprise :** canvas interactif (roue des teintes, aperçus des cartes, comparatifs) →
@@ -121,8 +122,24 @@ Cible : **un fichier de tokens nommés par rôle**, et l'interdiction d'écrire 
 - Unifier le CTA du monolithe — ce n'est pas une dérive mais la signature de marque ; le halo impose `--salon-cyan` (voir [`PARCOURS_MONOLITH_RECIPE.md`](PARCOURS_MONOLITH_RECIPE.md) §3).
 - Retirer le magenta `#ff00ff` — c'est la signature UV du réticule Studio, pas un accent perdu.
 
-**À décider demain matin :**
-1. La valeur exacte de la couleur chaude (~75°), à l'écran.
-2. Si elle reprend le domaine des souvenirs à l'ambre.
-3. Si la carte « Je compose moi-même » prend cette couleur ou reste violette.
-4. Créer le fichier de tokens sémantiques, puis migrer (`rose-400` → magenta en premier).
+**Décidé le 5-6 sept (à l'écran, dans le canvas) :**
+1. ~~La valeur exacte de la couleur chaude (~75°)~~ → tranché sur un critère différent de l'angle : **paille `#E4D96F`**, retenue parce que Composition Magique évoque déjà cette teinte dans le livre/l'objet, pas parce qu'elle referme la roue des teintes. Elle tombe d'ailleurs dans la « zone ambre » du §4 (angle ≈ 54°) — écart assumé, la cohérence narrative a pesé plus lourd que la géométrie.
+2. Elle **ne** reprend **pas** tout le domaine « souvenirs » côté ambre pour l'instant — scope volontairement réduit aux deux cartes de l'Étape 5 (voir §7). Pas d'audit large des `amber-*` restants dans ce chantier.
+3. La carte « Je compose moi-même » **devient violette** (au lieu de rester à égalité violet/violet avec l'autre carte) : les deux cartes avaient la même couleur au repos, ce qui ne distinguait pas visuellement les deux voies avant sélection.
+4. Fichier de tokens sémantiques : oui, mais scope réduit (§7) — pas la migration `rose-400` → magenta en même temps, laissée pour un chantier séparé.
+
+## 7. Décision finale — Étape 5 (6 sept 2026)
+
+| Carte | Couleur au repos | Sélection / hover / focus | Halo |
+|---|---|---|---|
+| Composition Magique | **paille `#E4D96F`** | teal/cyan (inchangé) | `SANCTUARY_HALO_UV` / `SANCTUARY_HALO_TEAL` (inchangés) |
+| Je compose moi-même | **violet** | teal/cyan (inchangé) | inchangés |
+
+**Implémentation prévue (7 sept) :**
+- `#E4D96F` déclarée en variable CSS nommée `--wizard-magic-wheat` dans `app/globals.css` — même patron que `--salon-cyan` — jamais un hex brut dans un `className`.
+- Tokens dédiés dans [`../../src/lib/contribute/sanctuaryChrome.ts`](../../src/lib/contribute/sanctuaryChrome.ts) référençant cette variable.
+- Application dans [`../../src/components/tribute/storyboard/MontageOnboardingGate.tsx`](../../src/components/tribute/storyboard/MontageOnboardingGate.tsx) uniquement.
+
+**Explicitement hors scope de cette décision :**
+- [`../../src/lib/wizard/montageActTheme.ts`](../../src/lib/wizard/montageActTheme.ts) (thème `spark`/`epic`/`legacy`) — colore les **actes narratifs du Studio**, un système à part qui partage l'ambre avec `spark` par coïncidence, pas par lien de sens avec Composition Magique. Non touché.
+- Les autres `amber-*` du wizard/studio (alertes, plafonds) — inchangés.

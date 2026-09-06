@@ -1,10 +1,10 @@
 # Carte documentation Odyssey
 
 **Type :** living · **Vérité pour :** index des docs, types, « ne pas copier ».  
-**Dernière MAJ :** 3 sept 2026 · **Carte :** ce fichier.
+**Dernière MAJ :** 6 sept 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
-- 5 sept 2026 — arbitrage palette en cours (3 bleu-verts mesurés, couleur chaude à trancher) : [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md).
+- 6 sept 2026 — palette Étape 5 figée (paille Composition Magique / violet Je compose moi-même, teal/cyan inchangé) — code prévu le 7 sept : [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md).
 - 3 sept 2026 — Démo 10 sept matin : **famille d’abord** · invité = ouverture · Salon KPI = 3ᵉ acte : [`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 - 28 août 2026 — egress revert clôturé : [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) (stub) · archive [`_archive/DEMO_VP_EGRESS_REVERT.md`](_archive/DEMO_VP_EGRESS_REVERT.md).
 - 28 août 2026 — plan refresh marketing B2C/B2B : [`design/MARKETING_SITE_REFRESH_PLAN.md`](design/MARKETING_SITE_REFRESH_PLAN.md).
