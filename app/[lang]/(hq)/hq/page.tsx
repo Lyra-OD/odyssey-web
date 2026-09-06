@@ -51,20 +51,25 @@ export default async function HqHomePage({ params }: PageProps) {
       <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-zinc-400">
         {overviewCopy.subtitle}
       </p>
+      {/*
+       * Résilience d'affichage (6 sept 2026) : `overview`/`salonRows` sont
+       * déjà initialisés à des zéros sûrs (EMPTY_HQ_NETWORK_OVERVIEW / [])
+       * avant le try/catch ci-dessus — donc même en cas d'erreur backend,
+       * on affiche toujours les cartes (à 0) plutôt que de les remplacer
+       * entièrement par un texte, ce qui donnait l'impression d'un écran
+       * cassé plutôt que d'un réseau vide.
+       */}
       {loadError ? (
         <p className="mt-8 text-sm font-light text-red-400/90" role="alert">
           {overviewCopy.error}
         </p>
-      ) : (
-        <>
-          <HqOverviewDashboard
-            lang={lang}
-            labels={overviewCopy}
-            overview={overview}
-          />
-          <HqSalonTable lang={lang} labels={salonsCopy} initialRows={salonRows} />
-        </>
-      )}
+      ) : null}
+      <HqOverviewDashboard
+        lang={lang}
+        labels={overviewCopy}
+        overview={overview}
+      />
+      <HqSalonTable lang={lang} labels={salonsCopy} initialRows={salonRows} />
     </div>
   );
 }

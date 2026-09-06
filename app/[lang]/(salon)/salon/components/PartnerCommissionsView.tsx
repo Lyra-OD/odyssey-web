@@ -143,12 +143,21 @@ export function PartnerCommissionsView({ lang }: PartnerCommissionsViewProps) {
         </p>
       </div>
 
+      {/*
+       * Résilience d'affichage (6 sept 2026) : mêmes fallbacks à 0
+       * (EMPTY_COMMISSION_BALANCE / EMPTY_COMMISSION_PILOTAGE) déjà
+       * présents ci-dessous — on affiche toujours les cartes et on relègue
+       * l'erreur à un bandeau discret au lieu de tout masquer.
+       */}
       {isFetching && !dashboard ? (
         <p className="text-sm font-light text-zinc-500">{copy.loading}</p>
-      ) : loadError ? (
-        <p className="text-sm font-light text-zinc-500">{copy.loadError}</p>
       ) : (
         <>
+          {loadError ? (
+            <p className="text-sm font-light text-amber-300/80" role="alert">
+              {copy.loadError}
+            </p>
+          ) : null}
           <CommissionKpiCards
             lang={lang}
             balance={dashboard?.balance ?? EMPTY_COMMISSION_BALANCE}

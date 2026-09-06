@@ -140,12 +140,22 @@ export function PartnerMyPerformanceView({
         </p>
       </div>
 
+      {/*
+       * Résilience d'affichage (6 sept 2026) : `kpis` reste toujours
+       * alimenté par EMPTY_PERFORMANCE_KPIS par défaut — on affiche donc
+       * toujours les cartes (à 0) et on relègue l'erreur à un bandeau
+       * discret au-dessus, au lieu de tout remplacer par un texte qui
+       * donnait l'impression d'un compte vide plutôt que d'un souci réseau.
+       */}
       {isFetching && rows.length === 0 && !loadError ? (
         <p className="text-sm font-light text-zinc-500">{copy.loading}</p>
-      ) : loadError ? (
-        <p className="text-sm font-light text-zinc-500">{copy.loadError}</p>
       ) : (
         <>
+          {loadError ? (
+            <p className="text-sm font-light text-amber-300/80" role="alert">
+              {copy.loadError}
+            </p>
+          ) : null}
           <PerformanceKpiCards lang={lang} kpis={kpis} />
           <PerformanceFollowUpList
             lang={lang}
