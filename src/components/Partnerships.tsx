@@ -59,7 +59,7 @@ export function Partnerships({
               lang={lang}
               text={t.body}
               preset="card"
-              className="font-label mx-auto mt-6 max-w-2xl text-sm leading-[1.9] text-zinc-400 md:text-base"
+              className="font-label mx-auto mt-7 max-w-2xl text-sm leading-[2] text-zinc-400 md:text-base"
             />
 
             <motion.div
@@ -67,7 +67,7 @@ export function Partnerships({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={CINEMATIC_VIEWPORT}
               transition={{ duration: 0.75, ease: LOCOMOTIVE_EASE, delay: 0.12 }}
-              className="mt-12 flex justify-center"
+              className="mt-16 flex justify-center md:mt-20"
             >
               <Link
                 href={`/${lang}/partners`}

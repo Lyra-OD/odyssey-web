@@ -361,7 +361,7 @@ export function Hero({
 
       {/* LAYER 3–4 : PITCH + CTA (colonne — bouton sous les slides) */}
       <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center px-6 text-center pointer-events-none">
-        <div className="mb-8 flex min-h-[3.5rem] w-full max-w-[92vw] items-center justify-center sm:mb-10 sm:min-h-[4.5rem] md:mb-12 md:min-h-[5.5rem]">
+        <div className="mb-6 flex min-h-[3rem] w-full max-w-[92vw] items-center justify-center sm:mb-8 sm:min-h-[4rem] md:mb-10 md:min-h-[4.5rem]">
           <AnimatePresence mode="wait">
             {isNarrativeMode && (
               <motion.div
@@ -385,7 +385,7 @@ export function Hero({
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.6, ease: LOCOMOTIVE_EASE, delay: 0.9 }}
-          className="pointer-events-auto flex flex-col items-center gap-4"
+          className="pointer-events-auto flex max-w-xl flex-col items-center gap-4 md:-translate-y-3"
         >
           <Link
             href={appRoutes.studioInscription(lang)}
@@ -458,7 +458,7 @@ function HeroLuminousText({
 
 function HeroLuminousSubline({ children }: { children: ReactNode }) {
   return (
-    <p className="font-label max-w-md text-[10px] leading-relaxed tracking-[0.22em] md:text-[11px] md:tracking-[0.26em]">
+    <p className="font-label max-w-lg text-[10px] leading-relaxed tracking-[0.2em] text-white/88 md:text-[11px] md:tracking-[0.24em]">
       <HeroLuminousText>{children}</HeroLuminousText>
     </p>
   );
@@ -470,12 +470,12 @@ function PitchLine({ phrase, phase }: { phrase: string; phase: number }) {
   return (
     <h2
       className={[
-        "vibrant-halo max-w-[90vw] text-[4.5vw] font-bold uppercase leading-[1.15] sm:max-w-[88vw] sm:text-[4vw] md:max-w-[85vw] md:text-[3.25vw]",
+        "vibrant-halo max-w-[90vw] text-[4.2vw] font-bold uppercase leading-[1.15] sm:max-w-[88vw] sm:text-[3.7vw] md:max-w-[82vw] md:text-[2.8vw]",
         isSignature
-          ? "tracking-[0.44em] sm:tracking-[0.56em] md:tracking-[0.72em]"
-          : "tracking-[0.38em] sm:tracking-[0.48em] md:tracking-[0.58em]",
+          ? "tracking-[0.4em] sm:tracking-[0.5em] md:tracking-[0.64em]"
+          : "tracking-[0.34em] sm:tracking-[0.42em] md:tracking-[0.5em]",
       ].join(" ")}
-      style={{ opacity: isHook ? 0.68 : 0.5 }}
+      style={{ opacity: isHook ? 0.58 : 0.42 }}
     >
       {phrase}
     </h2>
