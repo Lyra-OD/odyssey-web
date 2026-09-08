@@ -1,14 +1,14 @@
 # Parcours UX — Plan démo (jeudi 10 sept 2026, matin)
 
 **Type :** living · **Vérité pour :** arriver **jeudi 10 sept au matin** avec un **concept complet, convaincant**.  
-**Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 8 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 8 sept 2026 — **Lot 5** : vérification anti-régression de bout en bout. Build de prod propre (aucune erreur TS/route sur les 4 lots). Parité structurelle FR/EN : 0 clé manquante dans les 2 sens sur l'ensemble des dictionnaires. Chaque clé touchée (Lots 1-4) relue côte à côte FR/EN et retracée jusqu'à son point de câblage réel dans le composant (`SanctuaryHubIntro`, `SanctuaryHubPostReveal`, `SanctuaryInvitePanel`/`SanctuaryInviteStep`, `SanctuaryLanding`, `ImprintCatalog`, `PackageDossierPanel`) : aucun résidu « cercle », aucune clé orpheline, aucune référence morte. Catalogue copy régénéré (867 clés). Lints ciblés propres sur tous les fichiers touchés. Doc vivante mise à jour ([`PROJECT_STATUS.md`](../PROJECT_STATUS.md), [`README.md`](../README.md)).
 - 8 sept 2026 — **Lot 4** : Dossier forfaits (`PackageDossierPanel`) — corrige 2 taglines périmées qui contredisaient les lignes canon affichées juste dessous dans le même panneau (Éternité promettait « clef USB » = feature morte, remplacée par le Jeton NFC ; « MP3 personnel (salon) » alors que la ligne Diffusion Salon dit Catalogue Stingray pour ce forfait). Taglines Héritage/Éternité/Légendaire réécrites sur les vrais champs `PACKAGE_MANIFEST` (4K, IA, scanner, Gants Blancs, compteurs). Glyphe « non inclus » `·` → `—` (lisibilité). Aucune ligne du Dossier, aucun prix, aucun `product_key` touché — la grille marketing (Pricing.tsx) et le forfait Souvenir 0$ restent hors scope (décision précédente).
 - 8 sept 2026 — **Lot 3** : accueil invité — `sanctuary.skyContextBody` (contexte « pourquoi on vous invite ») câblé sur le tout premier écran ciel, entre le titre et le CTA. Carte 1 (dépôt, un seul écran) et Carte 2 (Don, secondaire avec « Non merci ») confirmées déjà conformes depuis le Lot 1 — aucun autre changement de structure.
 - 8 sept 2026 — **Lot 2** : carte post-reveal simplifiée (CTA unique « Continuer vers le Coffre », plus de bouton Inviter) · panneau Inviter s'ouvre seul après le premier dépôt (`projectMediaCount` 0→1, garde one-shot par ref) · nouvel overlay HTML `SanctuaryHubIntro` (pitch 3 phrases, hub.idle vierge seulement, avant tout contact avec l'étoile).
 - 8 sept 2026 — **Plan anti-bug lot par lot** (`plan_démo_anti-bug`) : séquencement Option B (dépôt avant Inviter, réutilise `handleOpenSanctuaryInvite`), don invité simplifié (« Don » sans expliquer pourquoi), corrections copy (cercle→entourage, promesses vidéo fausses côté invité gratuit). Chantier = **surface / copy / rythme uniquement**, aucun nouveau tuyau.
-- 4 sept 2026 — **Walk trou 1 (A)** : gel JPEG fondu au rituel · ciel léger (bande + lointain + filantes) · naissance Hero.
 
 **Statut :** **actif** · orga : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) · invité : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md)
 

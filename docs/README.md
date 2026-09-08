@@ -4,11 +4,11 @@
 **Dernière MAJ :** 8 sept 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 8 sept 2026 — parcours démo (famille + invité) resserré en 5 lots additifs : intro pitch en overlay, invitation famille en Option B (dépôt d'abord), « Cercle » → « Entourage », écran invité clarifié, taglines forfaits corrigées : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 - 8 sept 2026 — accueil clarifié puis resserré en mode agence : `Process` réancré sur `Leur vie en cinéma` / `Trois temps, un hommage`, `Pricing` poussé plus loin vers un triptyque éditorial, et lien final partenaires corrigé en version locale-aware : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 - 8 sept 2026 — page Partenaires réécrite sans changer le design : ton plus crédible et premium pour maisons funéraires, promesse `moins de 60 secondes en salon, zéro montage`, générosité partagée déplacée au bon niveau du discours : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 - 8 sept 2026 — dépôt de mot texte invité (Sanctuaire) réparé — bucket Storage n'autorisait pas `text/plain`, 100 % des mots échouaient : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 - 6 sept 2026 — palette Étape 5 figée (paille Composition Magique / violet Je compose moi-même, teal/cyan inchangé) — code prévu le 7 sept : [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md).
-- 3 sept 2026 — Démo 10 sept matin : **famille d’abord** · invité = ouverture · Salon KPI = 3ᵉ acte : [`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
 
 Hiérarchie développeur (ordre de lecture code) : [`CONVENTIONS.md`](CONVENTIONS.md).  
 Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
