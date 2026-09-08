@@ -488,10 +488,10 @@
 | `tributeWizard.basePackageEssential` | Souvenir | Keepsake |
 | `tributeWizard.basePackageEssentialDesc` | Montage narratif complet et livraison digitale. | Full narrative edit and digital delivery. |
 | `tributeWizard.basePackageSignature` | Héritage | Legacy |
-| `tributeWizard.basePackageSignatureDesc` | Catalogue musical Standard inclus · clip Social 9:16. | Standard music catalog included · 9:16 Social clip. |
+| `tributeWizard.basePackageSignatureDesc` | Catalogue musical inclus · un clip pensé pour vos réseaux sociaux · Coffre numérique 50 ans. | Music catalog included · a clip made for your social feeds · Digital vault, 50 years. |
 | `tributeWizard.basePackageHeritage` | Éternité | Eternity |
-| `tributeWizard.basePackageHeritageDesc` | Catalogue Premium · MP3 personnel (salon) · licence, clef USB et coffre-fort inclus. | Premium catalog · personal MP3 (salon) · license, collector USB, and digital vault included. |
-| `tributeWizard.basePackageLegendaryDesc` | Service Gants Blancs, finition 4K et prise en charge premium. | White Gloves service, 4K finish, and premium handling. |
+| `tributeWizard.basePackageHeritageDesc` | Export 4K · restauration IA de vos photos · Compagnon scanner inclus. | 4K export · AI photo restoration · Scanner Companion included. |
+| `tributeWizard.basePackageLegendaryDesc` | Numérisation Gants Blancs incluse · rendu ultra-prioritaire · 250 médias, 10 chansons. | White-glove digitization included · ultra-priority rendering · 250 media, 10 songs. |
 | `tributeWizard.basePackageLegendary` | Légendaire | Legendary |
 | `tributeWizard.headerPackageLabel` | Votre forfait | Your package |
 | `tributeWizard.headerNarrativeSummary` | Votre hommage durera environ {minutes} minutes de film et accueillera jusqu’à {mediaMax} souvenirs. | Your tribute will feature approximately {minutes} minutes of film and hold up to {mediaMax} memories. |
@@ -567,7 +567,7 @@
 | `tributeWizard.dossierRowScannerLabel` | Compagnon scanner | Scanner companion |
 | `tributeWizard.dossierRowWhiteGloveLabel` | Numérisation Gants Blancs | White-glove digitization |
 | `tributeWizard.dossierRowIncluded` | Inclus | Included |
-| `tributeWizard.dossierRowNotIncluded` | · | · |
+| `tributeWizard.dossierRowNotIncluded` | — | — |
 | `tributeWizard.cartLabelWithOptions` | Total de votre hommage : {base} + {options} | Tribute total: {base} + {options} |
 | `tributeWizard.cartLabelBaseOnly` | Total de votre hommage : {base} | Tribute total: {base} |
 | `tributeWizard.cartTotalFormula` | {base} + {options} = {total} | {base} + {options} = {total} |
