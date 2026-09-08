@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 8 sept 2026 — **Lot 2** : carte post-reveal simplifiée (CTA unique « Continuer vers le Coffre », plus de bouton Inviter) · panneau Inviter s'ouvre seul après le premier dépôt (`projectMediaCount` 0→1, garde one-shot par ref) · nouvel overlay HTML `SanctuaryHubIntro` (pitch 3 phrases, hub.idle vierge seulement, avant tout contact avec l'étoile).
 - 8 sept 2026 — **Plan anti-bug lot par lot** (`plan_démo_anti-bug`) : séquencement Option B (dépôt avant Inviter, réutilise `handleOpenSanctuaryInvite`), don invité simplifié (« Don » sans expliquer pourquoi), corrections copy (cercle→entourage, promesses vidéo fausses côté invité gratuit). Chantier = **surface / copy / rythme uniquement**, aucun nouveau tuyau.
 - 4 sept 2026 — **Walk trou 1 (A)** : gel JPEG fondu au rituel · ciel léger (bande + lointain + filantes) · naissance Hero.
 - 3 sept 2026 — **Script parlé** ~8 min (A / B / C) · si X casse, on dit Y.
 - 3 sept 2026 — **Feuille walk ven 4** · parallèle Traversée = non · J3 seulement si Continuer est un trou.
-- 3 sept 2026 — Approche technique : **surface, pas tuyaux** · marcher → 3 trous · stub documenté.
 
 **Statut :** **actif** · orga : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) · invité : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md)
 
@@ -56,8 +56,8 @@ Traversée 0→12 (éclipse, J3, 12 signes) = **canon**, pas le plan jeudi. On n
 ### Acte A — La famille (le cœur, ~4 min)
 
 1. Atelier wizard (7 étapes, déjà là) : **Essentiels** → ciel / Hero (WOW stub OK).
-2. **Inviter** : copier le lien. Une phrase : le cercle va nourrir le Coffre.
-3. **Coffre** : les souvenirs se rangent. Scanner si ça tient, sinon on le nomme et on passe.
+2. **Coffre** : premier souvenir déposé → le panneau **Inviter** s’ouvre seul (Option B, 8 sept). Une phrase : l’entourage va nourrir le Coffre.
+3. **Coffre (suite)** : les souvenirs se rangent. Scanner si ça tient, sinon on le nomme et on passe.
 4. **Chansons → Livre ouvert** : on compose un film avec le Coffre. Magie ou « je compose » — on *voit* le studio.
 5. **Aperçu / envoi** : *regardez le film* (filigrane / stub OK). On comprend qu’un film existe.
 
@@ -77,8 +77,8 @@ Jamais : timeline, checkout, jetons, « on va recâbler ».
 | Temps | On montre | On dit |
 |-------|-----------|--------|
 | 0:00 | Essentiels, ciel / Hero | *« Une famille ouvre l’atelier. Elle dit pour qui c’est. Le ciel s’allume — c’est le sien. »* |
-| 0:45 | Cercle · *Copier le lien* | *« Elle n’est pas seule. Un lien : les proches déposent un souvenir. Ça entre dans le Coffre. Elle compose le film. »* |
-| 1:30 | Coffre-fort | *« Tous les souvenirs au même endroit. Photos d’ici, du téléphone, des invités. »* Scanner moche : *« Le téléphone pose aussi dans ce Coffre. »* On passe. |
+| 0:45 | Coffre-fort · premier souvenir déposé | *« Elle dépose un premier souvenir. »* Le panneau Inviter s’ouvre alors tout seul : *« Elle n’est pas seule — Odyssey lui propose d’inviter ses proches. Un lien : ils déposent un souvenir, ça entre dans le même Coffre. »* |
+| 1:30 | Coffre-fort (suite) | *« Tous les souvenirs au même endroit. Photos d’ici, du téléphone, des invités. »* Scanner moche : *« Le téléphone pose aussi dans ce Coffre. »* On passe. |
 | 2:15 | Musique → Le film | *« Chaque chapitre a une chanson. Ensuite, le studio : Odyssey range, ou elle compose. On *voit* le film se former. »* Magie si elle ouvre, sinon *Je compose*. |
 | 3:15 | Aperçu | *« Voici le film. Pas un diaporama — un film, avec ce que le Coffre contient. »* Filigrane OK. |
 

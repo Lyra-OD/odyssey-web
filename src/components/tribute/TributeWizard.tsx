@@ -64,6 +64,7 @@ import type { HubFrameCapture } from "@/src/lib/parcours/hubFreezeCapture";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
 import { SanctuaryWizardStep1Sky } from "@/src/components/tribute/SanctuaryWizardStep1Sky";
 import { SanctuaryHubHero } from "@/src/components/tribute/SanctuaryHubHero";
+import { SanctuaryHubIntro } from "@/src/components/tribute/SanctuaryHubIntro";
 import { SanctuaryHubPostReveal } from "@/src/components/tribute/SanctuaryHubPostReveal";
 import { ParcoursHubBodyFlag } from "@/src/components/tribute/ParcoursHubBodyFlag";
 import {
@@ -551,6 +552,14 @@ export function TributeWizard({
   const [isPackageDossierOpen, setIsPackageDossierOpen] = useState(false);
   const [isSanctuaryInviteOpen, setIsSanctuaryInviteOpen] = useState(false);
   const [isCollabInviteOpen, setIsCollabInviteOpen] = useState(false);
+  /**
+   * Option B (8 sept 2026) — le panneau Inviter ne s'ouvre qu'une fois,
+   * jamais deux. `true` dès qu'il a été ouvert (manuellement via le
+   * déclencheur d'en-tête, ou automatiquement après le premier dépôt) :
+   * voir `handleOpenSanctuaryInvite` et l'effet plus bas sur
+   * `projectMediaCount`.
+   */
+  const hasOpenedSanctuaryInviteRef = useRef(false);
 
   const openPackageDossier = useCallback(() => {
     setIsPackageDossierOpen(true);
@@ -947,6 +956,7 @@ export function TributeWizard({
    * déjà correct pour ce cas.
    */
   const handleOpenSanctuaryInvite = useCallback(() => {
+    hasOpenedSanctuaryInviteRef.current = true;
     if (uploadProjectId) {
       setIsSanctuaryInviteOpen(true);
       return;
@@ -1018,6 +1028,22 @@ export function TributeWizard({
       aborted = true;
     };
   }, [uploadProjectId, currentStep]);
+
+  /**
+   * Option B (8 sept 2026) — séquencement « dépôt d'abord, invitation
+   * ensuite ». Dès le premier souvenir posé dans le Coffre (Étape 3,
+   * `projectMediaCount` passe à ≥ 1), on ouvre le panneau Inviter existant
+   * (même `handleOpenSanctuaryInvite` que le déclencheur d'en-tête) — une
+   * seule fois par session, jamais si la famille l'a déjà ouvert elle-même.
+   * Additif : ne change ni le stepper, ni l'API, ni la navigation d'étape.
+   */
+  useEffect(() => {
+    if (isEditor) return;
+    if (currentStep !== 3) return;
+    if (hasOpenedSanctuaryInviteRef.current) return;
+    if (projectMediaCount < 1) return;
+    handleOpenSanctuaryInvite();
+  }, [isEditor, currentStep, projectMediaCount, handleOpenSanctuaryInvite]);
 
   const canProceedEssential =
     firstName.trim().length > 0 &&
@@ -1420,6 +1446,15 @@ export function TributeWizard({
           aria-hidden
         />
       ) : null}
+      {step1Parcours.showHubHero && step1VirginHub ? (
+        <SanctuaryHubIntro
+          copy={{
+            title: copy.parcoursIntroTitle,
+            subtitle: copy.parcoursIntroSubtitle,
+            body: copy.parcoursIntroBody,
+          }}
+        />
+      ) : null}
       {step1Parcours.showHubHero ? (
         <SanctuaryHubHero
           openLabel={copy.parcoursHeroOpenLabel}
@@ -1485,11 +1520,9 @@ export function TributeWizard({
             circleShare: copy.parcoursCircleShare,
             skyVsVault: copy.parcoursSkyVsVault,
             noRush: copy.parcoursNoRush,
-            inviteCta: copy.parcoursInviteCta,
             continueCta: copy.parcoursContinueCta,
             editEssentials: copy.parcoursEditEssentials,
           }}
-          onInvite={() => void goToInvitesWithoutRitual()}
           onContinue={() => void goToVaultFromReveal()}
           onEditEssentials={handleEditEssentials}
         />

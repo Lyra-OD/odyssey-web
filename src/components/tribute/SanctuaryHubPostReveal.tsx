@@ -11,16 +11,18 @@ type SanctuaryHubPostRevealCopy = {
   skyVsVault: string;
   /** Footer C. */
   noRush: string;
-  inviteCta: string;
   continueCta: string;
   editEssentials: string;
 };
 
 type SanctuaryHubPostRevealProps = {
   copy: SanctuaryHubPostRevealCopy;
-  /** CTA dominant — Étape 2 (Inviter). */
-  onInvite: () => void;
-  /** CTA soft — bypass direct Étape 3 (Coffre). */
+  /**
+   * CTA unique — direct Étape 3 (Coffre). Option B (8 sept 2026) : on ne
+   * pousse plus « Inviter » ici. La famille dépose d'abord un souvenir ;
+   * l'invitation s'ouvre ensuite d'elle-même (cf. `TributeWizard` — effet
+   * sur `projectMediaCount` 0→1, réutilise `handleOpenSanctuaryInvite`).
+   */
   onContinue: () => void;
   /** Lien discret — rouvre Essentiels. */
   onEditEssentials: () => void;
@@ -30,13 +32,13 @@ type SanctuaryHubPostRevealProps = {
 const DWELL_MS = 400;
 
 /**
- * Carte J3 — post-reveal (hub.postReveal). Pédagogie ciel/coffre + poussée
- * Inviter (G2 « Inviter first · Continuer soft · skip toujours possible »).
+ * Carte J3 — post-reveal (hub.postReveal). Pédagogie ciel/coffre, CTA
+ * unique vers le Coffre. Option B (8 sept 2026) : plus de bouton Inviter
+ * ici — la séquence devient « dépôt d'abord, invitation ensuite ».
  * HTML pur, pas de WebGL — même famille que `SanctuaryHubHero`.
  */
 export function SanctuaryHubPostReveal({
   copy,
-  onInvite,
   onContinue,
   onEditEssentials,
 }: SanctuaryHubPostRevealProps) {
@@ -64,18 +66,11 @@ export function SanctuaryHubPostReveal({
         <p className="mt-2 text-xs font-light leading-relaxed text-zinc-400 md:text-sm">
           {copy.skyVsVault}
         </p>
-        <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <button
-            type="button"
-            onClick={onInvite}
-            className={`${connexionSubmitButtonClass} min-h-[48px] w-full touch-manipulation sm:w-auto sm:px-8`}
-          >
-            {copy.inviteCta}
-          </button>
+        <div className="mt-5 flex justify-center">
           <button
             type="button"
             onClick={onContinue}
-            className="text-xs font-light tracking-[0.08em] text-zinc-400 underline decoration-white/10 underline-offset-4 transition-colors hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+            className={`${connexionSubmitButtonClass} min-h-[48px] w-full touch-manipulation sm:w-auto sm:px-8`}
           >
             {copy.continueCta}
           </button>
