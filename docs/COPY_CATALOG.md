@@ -57,14 +57,14 @@
 |-----|----|----|
 | `partnersPage.title` | Le Sanctuaire Souvenir propulsé par Odyssey | The Souvenir Sanctuary powered by Odyssey |
 | `partnersPage.kicker` | Une nouvelle norme d'hommage pour les maisons funéraires | A new standard of remembrance for funeral homes |
-| `partnersPage.introProblem` | Les familles recherchent des célébrations authentiques, mais fuient les approches commerciales insistantes. Vos conseillers, quant à eux, n'ont ni le temps de s'improviser monteurs vidéo, ni le désir de pousser des ventes additionnelles. | Families are looking for authentic celebrations, yet they shy away from pushy commercial approaches. Your counselors, for their part, have neither the time to become video editors nor the desire to push additional sales. |
-| `partnersPage.introResolution` | Odyssey résout ce paradoxe : vous offrez l'espace, notre moteur cinématographique s'occupe du reste. | Odyssey resolves this paradox: you offer the space, our cinematic engine takes care of the rest. |
+| `partnersPage.introProblem` | Les familles recherchent des célébrations authentiques, mais refusent les approches commerciales insistantes. Vos conseillers n'ont ni le temps de devenir monteurs vidéo, ni le désir de pousser des ventes additionnelles. | Families are looking for authentic celebrations, yet they refuse pushy commercial approaches. Your counselors have neither the time to become video editors nor the desire to push additional sales. |
+| `partnersPage.introResolution` | Odyssey résout ce paradoxe : vous offrez l'espace, notre moteur cinématographique prend le relais. | Odyssey resolves this paradox: you offer the space, our cinematic engine takes over. |
 | `partnersPage.promiseTitle` | La promesse : moins de 60 secondes en salon, zéro montage | The promise: under 60 seconds in the arrangement room, zero editing |
-| `partnersPage.promiseBody` | Votre conseiller n'a que trois champs à remplir pour activer l'hommage ou remettre une carte d'accès personnalisée à la famille. Dès cet instant, Odyssey prend le relais : guidage de la famille, collecte des médias auprès des proches et génération automatique d'un film commémoratif cinématographique. Zéro logiciel à installer. Zéro formation lourde. Zéro charge mentale pour votre équipe. | Your counselor only has three fields to fill in to activate the tribute or hand a personalized access card to the family. From that moment on, Odyssey takes over: family guidance, media collection from loved ones, and automatic generation of a cinematic memorial film. No software to install. No heavy training. No mental overhead for your team. |
+| `partnersPage.promiseBody` | Votre conseiller n'a que trois champs à remplir pour activer l'hommage ou remettre une carte d'accès à la famille. Dès cet instant, Odyssey prend le relais : guidage de la famille, collecte des souvenirs auprès des proches et génération automatique d'un film commémoratif cinématographique. Zéro logiciel. Zéro formation lourde. Zéro charge mentale pour votre équipe. | Your counselor only has three fields to fill in to activate the tribute or hand an access card to the family. From that moment on, Odyssey takes over: family guidance, memory collection from loved ones, and automatic generation of a cinematic memorial film. No software. No heavy training. No mental overhead for your team. |
 | `partnersPage.growthEngineTitle` | Pourquoi les salons l'adoptent | Why partners adopt it |
 | `partnersPage.growthEngineItems[0].title` | Simplicité opérationnelle absolue | Absolute operational simplicity |
 | `partnersPage.growthEngineItems[0].body` | L'intervention en salle d'arrangement prend moins d'une minute. Vos conseillers n'ont aucun montage à réaliser, aucun fichier lourd à manipuler et aucune modération à gérer. L'expérience s'intègre sans heurts dans vos routines existantes. | The intervention in the arrangement room takes less than a minute. Your counselors have no editing to do, no heavy files to handle, and no moderation to manage. The experience fits smoothly into your existing routines. |
-| `partnersPage.growthEngineItems[1].title` | Rayonnement naturel et digne | Natural and dignified brand presence |
+| `partnersPage.growthEngineItems[1].title` | Rayonnement digne et naturel | Dignified, natural brand presence |
 | `partnersPage.growthEngineItems[1].body` | En invitant son entourage à déposer anecdotes, photos et vidéos, la famille expose naturellement votre maison funéraire à des dizaines de proches. C'est une présence chaleureuse, authentique et respectueuse auprès des générations futures. | By inviting relatives to share stories, photos, and videos, the family naturally introduces your funeral home to dozens of loved ones. It is a warm, authentic, and respectful presence across generations. |
 | `partnersPage.growthEngineItems[2].title` | Générosité partagée, sans vente sous pression | Shared generosity, without pressured selling |
 | `partnersPage.growthEngineItems[2].body` | L'entourage élargi peut contribuer librement pour enrichir l'hommage, prolonger sa conservation ou offrir des objets de mémoire. Le poids ne repose plus uniquement sur la famille immédiate : il peut devenir un geste collectif, simple et volontaire. Lorsqu'un achat est réalisé, votre établissement reçoit automatiquement sa part, en toute transparence. | The wider circle can freely contribute to enrich the tribute, extend its preservation, or offer tangible keepsakes. The weight no longer rests solely on the immediate family: it can become a simple, voluntary collective gesture. When a purchase is made, your establishment automatically receives its share, with full transparency. |
@@ -95,18 +95,18 @@
 | `hero.branding.line2` | Films | Films |
 | `hero.login` | Connexion | Login |
 | `hero.primaryCta` | Créer un hommage | Create a Tribute |
-| `hero.ctaSubline` | Commencez gratuitement. Formats premium et socio-financement à partir de 179 $. | Start free. Premium formats and community funding from $179. |
-| `hero.pitch.hooks[0]` | Le cinéma de leur vie | The cinema of their life |
+| `hero.ctaSubline` | Déposez les premiers souvenirs. L'Entourage fait grandir l'hommage. Odyssey en compose le film. | Place the first memories. Loved ones help the tribute grow. Odyssey shapes the film. |
+| `hero.pitch.hooks[0]` | Déposez les premiers souvenirs. Le film commence là. | Place the first memories. The film begins there. |
 | `hero.pitch.hooks[1]` | Leur vie mérite un grand écran. | Their life deserves the big screen. |
 | `hero.pitch.hooks[2]` | Un hommage digne du grand écran. | A tribute fit for the big screen. |
-| `hero.pitch.steps[0]` | Trois étapes. Un héritage filmé. | Three steps. A legacy, filmed. |
-| `hero.pitch.steps[1]` | Trois étapes. Un film à jamais. | Three steps. A film for keeps. |
-| `hero.pitch.steps[2]` | Trois étapes. Une présence qui reste. | Three steps. A presence that stays. |
-| `hero.pitch.steps[3]` | Trois étapes. Un souvenir qui vit. | Three steps. Memory that lives on. |
+| `hero.pitch.steps[0]` | Trois temps. Un hommage qui prend vie. | Three beats. A tribute comes to life. |
+| `hero.pitch.steps[1]` | Vous ouvrez le Coffre. L'Entourage répond. | You open the Chest. Loved ones answer. |
+| `hero.pitch.steps[2]` | Le film apparaît. | The film appears. |
+| `hero.pitch.steps[3]` | Aucun montage technique. | No technical editing. |
 | `hero.pitch.steps[4]` | Trois temps. Pour toujours. | Three beats. Forever. |
 | `hero.pitch.steps[5]` | Trois étapes. Un hommage à la hauteur. | Three steps. A tribute that honors them. |
-| `hero.pitch.memory[0]` | La mémoire, montée comme un film. | Memory, told like a film. |
-| `hero.pitch.memory[1]` | Souvenirs en images, comme au cinéma. | Memories in stills, like cinema. |
+| `hero.pitch.memory[0]` | Nous transformons vos souvenirs en film. | We transform your memories into film. |
+| `hero.pitch.memory[1]` | Des souvenirs tissés comme au cinéma. | Memories woven like cinema. |
 | `hero.pitch.memory[2]` | Leur histoire, racontée comme un film. | Their story, told like a film. |
 | `hero.pitch.signatures[0]` | Odyssey, l'émotion en cinéma. | Odyssey, emotion in cinema. |
 | `hero.pitch.signatures[1]` | Odyssey, la mémoire en lumière. | Odyssey, memory in the light. |
@@ -120,33 +120,33 @@
 
 | Clé | FR | EN |
 |-----|----|----|
-| `pricing.title` | Ma vie en cinéma | My Life in Cinema |
-| `pricing.sectionSubtitle` | Ma vie en cinéma | My Life in Cinema |
-| `pricing.subtitle` | Choisissez la portée de l'hommage que vous voulez créer. Chaque formule honore leur histoire à votre rythme. | Choose how deeply you want to honor their story. Each tier lets you move at your own pace. |
-| `pricing.tierTitles.essential` | Essentiel | Essential |
-| `pricing.tierTitles.tribute` | Hommage | Tribute |
-| `pricing.tierTitles.legacy` | Héritage | Legacy |
+| `pricing.title` | Préserver cet hommage | Preserve this tribute |
+| `pricing.sectionSubtitle` | L'hommage à sa mesure | A tribute in its full measure |
+| `pricing.subtitle` | Choisissez l'ampleur de l'hommage. Plus l'Entourage partage, plus il s'enrichit en souvenirs, en voix et en présence. | Choose the scale of the tribute. The more loved ones share, the richer it becomes in memories, voices, and presence. |
+| `pricing.tierTitles.essential` | Héritage | Legacy |
+| `pricing.tierTitles.tribute` | Éternité | Eternity |
+| `pricing.tierTitles.legacy` | Légendaire | Legendary |
 | `pricing.tiers[0].key` | essential | essential |
-| `pricing.tiers[0].price` | 49$ | $49 |
-| `pricing.tiers[0].style` | Épuré et constant | Clean and steady |
-| `pricing.tiers[0].features[0]` | Film guidé pas à pas | Guided film, step by step |
-| `pricing.tiers[0].features[1]` | Couleurs équilibrées, sobre | Balanced, understated color |
-| `pricing.tiers[0].features[2]` | Livré en 48 h | Delivered in 48 hours |
+| `pricing.tiers[0].price` | 179 $ | $179 |
+| `pricing.tiers[0].style` | Le premier hommage complet | The first complete tribute |
+| `pricing.tiers[0].features[0]` | Film complet en 1080p | Full film in 1080p |
+| `pricing.tiers[0].features[1]` | Catalogue Stingray officiel inclus | Official Stingray catalog included |
+| `pricing.tiers[0].features[2]` | Jusqu'à 125 souvenirs | Up to 125 memories |
 | `pricing.tiers[1].key` | tribute | tribute |
-| `pricing.tiers[1].price` | 99$ | $99 |
-| `pricing.tiers[1].style` | Rythme sensible, musique au cœur | Sensitive pacing, music at the heart |
-| `pricing.tiers[1].features[0]` | Moments choisis parmi vos proches | Weaving in moments from loved ones |
-| `pricing.tiers[1].features[1]` | Musique harmonisée avec les images | Music aligned with the images |
-| `pricing.tiers[1].features[2]` | Livré en 24 h | Delivered in 24 hours |
+| `pricing.tiers[1].price` | 349 $ | $349 |
+| `pricing.tiers[1].style` | Plus de profondeur, plus de transmission | More depth, more transmission |
+| `pricing.tiers[1].features[0]` | Master 4K | 4K master |
+| `pricing.tiers[1].features[1]` | IA complète incluse | Full AI included |
+| `pricing.tiers[1].features[2]` | Coffre 50 ans inclus | 50-year vault included |
 | `pricing.tiers[2].key` | legacy | legacy |
-| `pricing.tiers[2].price` | 199$ | $199 |
-| `pricing.tiers[2].style` | Récit profond, façon documentaire | Deep narrative, documentary feel |
-| `pricing.tiers[2].features[0]` | Accent sur les passages essentiels | Focus on the passages that matter most |
-| `pricing.tiers[2].features[1]` | Respect des rites et des croyances | Respect for rites and beliefs |
-| `pricing.tiers[2].features[2]` | Livraison prioritaire en 12 h | Priority delivery in 12 hours |
+| `pricing.tiers[2].price` | 499 $ | $499 |
+| `pricing.tiers[2].style` | L'ancre Quiet Luxury | The Quiet Luxury anchor |
+| `pricing.tiers[2].features[0]` | L'hommage le plus ample | The most expansive tribute |
+| `pricing.tiers[2].features[1]` | 4K et prestations premium | 4K and premium treatment |
+| `pricing.tiers[2].features[2]` | Pensé pour les familles qui veulent aller au plus loin | For families who want to go the farthest |
 | `pricing.cta` | SÉLECTIONNER | SELECT |
 | `pricing.recommendedBadge` | RECOMMANDÉ | RECOMMENDED |
-| `pricing.recommended` | Recommandé | Recommended |
+| `pricing.recommended` | Le plus choisi | Most chosen |
 
 ## `packages`
 
@@ -164,29 +164,29 @@
 | Clé | FR | EN |
 |-----|----|----|
 | `manifesto.title` | Manifeste | Manifesto |
-| `manifesto.body` | Chaque vie est une œuvre qui mérite son propre cinéma. Odyssey n'est pas un outil, c'est un sanctuaire visuel. Dans le fracas du deuil, nous orchestrons le silence, la lumière et le souvenir pour créer un lien indestructible. Nous ne faisons pas que des vidéos ; nous rendons à la mémoire sa dignité souveraine. | Every life is a masterpiece that deserves its own cinema. Odyssey is not a tool; it is a visual sanctuary. In the noise of grief, we orchestrate silence, light, and memory to create an unbreakable bond. We don't just make videos; we restore the sovereign dignity of remembrance. |
+| `manifesto.body` | Chaque vie mérite un hommage qui ne ressemble à aucun autre. Odyssey transforme les souvenirs, les voix et les images en un film sensible, cinématographique et digne de ceux qui restent. | Every life deserves a tribute unlike any other. Odyssey transforms memories, voices, and images into a sensitive, cinematic film worthy of those who remain. |
 
 ## `process`
 
 | Clé | FR | EN |
 |-----|----|----|
 | `process.title` | LE PROCESSUS ODYSSEY | THE ODYSSEY PROCESS |
-| `process.emotionalKicker` | Leur vie en cinéma | The cinema of their life |
+| `process.emotionalKicker` | Leur vie en cinéma | Their life in cinema |
 | `process.sectionSubtitle` | Trois temps, un hommage | Three beats, one tribute |
-| `process.timelineHint` | Coffre à souvenirs, Cercle, Cinéma — sans montage de votre part. | Memory Chest, Circle, Cinema — no editing on your part. |
-| `process.subtitle` | Vous déposez les souvenirs. Les proches enrichissent l'hommage. Notre moteur tisse le film. | You gather the memories. Loved ones enrich the tribute. Our engine weaves the film. |
+| `process.timelineHint` | Déposer, inviter, révéler — sans montage technique. | Gather, invite, reveal — with no technical editing. |
+| `process.subtitle` | Vous ouvrez le Coffre. L'Entourage répond. Le film apparaît. | You open the Chest. Loved ones answer. The film appears. |
 | `process.step1Label` | Coffre à souvenirs | Memory Chest |
-| `process.step2Label` | Cercle | Circle |
+| `process.step2Label` | Entourage | Loved Ones |
 | `process.step3Label` | Cinéma | Cinema |
 | `process.steps[0].labelKey` | step1Label | step1Label |
 | `process.steps[0].title` | Le Coffre à souvenirs | The Memory Chest |
-| `process.steps[0].body` | Rassemblez les souvenirs de toute une vie — photos, voix, histoires — en un seul lieu sûr. | Gather a lifetime of memories — photos, voices, stories — in one safe place. |
+| `process.steps[0].body` | Déposez les photos, vidéos, voix et repères essentiels de sa vie dans un lieu simple et sûr. | Place the photos, videos, voices, and essential markers of their life in one simple, safe place. |
 | `process.steps[1].labelKey` | step2Label | step2Label |
-| `process.steps[1].title` | Le Cercle | The Circle |
-| `process.steps[1].body` | Invitez l'entourage à contribuer. Chacun dépose un fragment de mémoire dans le Sanctuaire. | Invite loved ones to contribute. Each person adds a fragment of memory to the Sanctuary. |
+| `process.steps[1].title` | L'Entourage | The Loved Ones |
+| `process.steps[1].body` | Invitez les proches à ajouter leurs fragments de mémoire, chacun à son rythme, depuis leur téléphone. | Invite loved ones to add their fragments of memory, each at their own rhythm, from their phone. |
 | `process.steps[2].labelKey` | step3Label | step3Label |
 | `process.steps[2].title` | Le Cinéma | The Cinema |
-| `process.steps[2].body` | Notre moteur tisse le film, sans aucun montage de votre part — digne du grand écran. | Our engine weaves the film with no editing on your part — worthy of the big screen. |
+| `process.steps[2].body` | Notre moteur compose l'hommage en film cinématographique, sans logiciel complexe ni montage manuel. | Our engine shapes the tribute into a cinematic film, with no complex software and no manual editing. |
 
 ## `auth`
 
@@ -953,7 +953,7 @@
 | Clé | FR | EN |
 |-----|----|----|
 | `partnerships.kicker` | Pour les professionnels | For funeral professionals |
-| `partnerships.title` | Un standard cinématographique pour les maisons funéraires exigeantes. | A cinematic standard for high-trust funeral homes. |
-| `partnerships.body` | Offrez à chaque famille une expérience de mémoire premium, fluide et respectueuse du temps du deuil. Les familles choisissent quant à elles leur hommage et leur formule dans la section offres ci-dessus. | Offer every family a premium remembrance experience that is elegant, reliable, and respectful of grief. Families choose their tribute and tier in the pricing section above. |
+| `partnerships.title` | Une nouvelle norme d'hommage pour les maisons funéraires exigeantes. | A new standard of tribute for high-trust funeral homes. |
+| `partnerships.body` | Une activation simple pour vos équipes, une expérience digne pour les familles et un espace partenaire clair pour accompagner l'engagement de l'Entourage. | Simple activation for your teams, a dignified experience for families, and a clear partner space to support engagement from loved ones. |
 | `partnerships.cta` | Devenir une Maison Partenaire | Join as a Partner House |
 

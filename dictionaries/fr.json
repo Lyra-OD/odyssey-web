@@ -41,10 +41,10 @@
   "partnersPage": {
     "title": "Le Sanctuaire Souvenir\npropulsé par Odyssey",
     "kicker": "Une nouvelle norme d'hommage pour les maisons funéraires",
-    "introProblem": "Les familles recherchent des célébrations authentiques, mais fuient les approches commerciales insistantes. Vos conseillers, quant à eux, n'ont ni le temps de s'improviser monteurs vidéo, ni le désir de pousser des ventes additionnelles.",
-    "introResolution": "Odyssey résout ce paradoxe : vous offrez l'espace, notre moteur cinématographique s'occupe du reste.",
+    "introProblem": "Les familles recherchent des célébrations authentiques, mais refusent les approches commerciales insistantes. Vos conseillers n'ont ni le temps de devenir monteurs vidéo, ni le désir de pousser des ventes additionnelles.",
+    "introResolution": "Odyssey résout ce paradoxe : vous offrez l'espace, notre moteur cinématographique prend le relais.",
     "promiseTitle": "La promesse : moins de 60 secondes en salon,\nzéro montage",
-    "promiseBody": "Votre conseiller n'a que trois champs à remplir pour activer l'hommage ou remettre une carte d'accès personnalisée à la famille. Dès cet instant, Odyssey prend le relais : guidage de la famille, collecte des médias auprès des proches et génération automatique d'un film commémoratif cinématographique. Zéro logiciel à installer. Zéro formation lourde. Zéro charge mentale pour votre équipe.",
+    "promiseBody": "Votre conseiller n'a que trois champs à remplir pour activer l'hommage ou remettre une carte d'accès à la famille. Dès cet instant, Odyssey prend le relais : guidage de la famille, collecte des souvenirs auprès des proches et génération automatique d'un film commémoratif cinématographique. Zéro logiciel. Zéro formation lourde. Zéro charge mentale pour votre équipe.",
     "growthEngineTitle": "Pourquoi les salons l'adoptent",
     "growthEngineItems": [
       {
@@ -52,7 +52,7 @@
         "body": "L'intervention en salle d'arrangement prend moins d'une minute. Vos conseillers n'ont aucun montage à réaliser, aucun fichier lourd à manipuler et aucune modération à gérer. L'expérience s'intègre sans heurts dans vos routines existantes."
       },
       {
-        "title": "Rayonnement naturel et digne",
+        "title": "Rayonnement digne et naturel",
         "body": "En invitant son entourage à déposer anecdotes, photos et vidéos, la famille expose naturellement votre maison funéraire à des dizaines de proches. C'est une présence chaleureuse, authentique et respectueuse auprès des générations futures."
       },
       {
@@ -92,24 +92,24 @@
     },
     "login": "Connexion",
     "primaryCta": "Créer un hommage",
-    "ctaSubline": "Commencez gratuitement. Formats premium et socio-financement à partir de 179 $.",
+    "ctaSubline": "Déposez les premiers souvenirs. L'Entourage fait grandir l'hommage. Odyssey en compose le film.",
     "pitch": {
       "hooks": [
-        "Le cinéma de leur vie",
+        "Déposez les premiers souvenirs. Le film commence là.",
         "Leur vie mérite un grand écran.",
         "Un hommage digne du grand écran."
       ],
       "steps": [
-        "Trois étapes. Un héritage filmé.",
-        "Trois étapes. Un film à jamais.",
-        "Trois étapes. Une présence qui reste.",
-        "Trois étapes. Un souvenir qui vit.",
+        "Trois temps. Un hommage qui prend vie.",
+        "Vous ouvrez le Coffre. L'Entourage répond.",
+        "Le film apparaît.",
+        "Aucun montage technique.",
         "Trois temps. Pour toujours.",
         "Trois étapes. Un hommage à la hauteur."
       ],
       "memory": [
-        "La mémoire, montée comme un film.",
-        "Souvenirs en images, comme au cinéma.",
+        "Nous transformons vos souvenirs en film.",
+        "Des souvenirs tissés comme au cinéma.",
         "Leur histoire, racontée comme un film."
       ],
       "signatures": [
@@ -126,50 +126,50 @@
     }
   },
   "pricing": {
-    "title": "Ma vie en cinéma",
-    "sectionSubtitle": "Ma vie en cinéma",
-    "subtitle": "Choisissez la portée de l'hommage que vous voulez créer. Chaque formule honore leur histoire à votre rythme.",
+    "title": "Préserver cet hommage",
+    "sectionSubtitle": "L'hommage à sa mesure",
+    "subtitle": "Choisissez l'ampleur de l'hommage. Plus l'Entourage partage, plus il s'enrichit en souvenirs, en voix et en présence.",
     "tierTitles": {
-      "essential": "Essentiel",
-      "tribute": "Hommage",
-      "legacy": "Héritage"
+      "essential": "Héritage",
+      "tribute": "Éternité",
+      "legacy": "Légendaire"
     },
     "tiers": [
       {
         "key": "essential",
-        "price": "49$",
-        "style": "Épuré et constant",
+        "price": "179 $",
+        "style": "Le premier hommage complet",
         "features": [
-          "Film guidé pas à pas",
-          "Couleurs équilibrées, sobre",
-          "Livré en 48 h"
+          "Film complet en 1080p",
+          "Catalogue Stingray officiel inclus",
+          "Jusqu'à 125 souvenirs"
         ]
       },
       {
         "key": "tribute",
-        "price": "99$",
-        "style": "Rythme sensible, musique au cœur",
+        "price": "349 $",
+        "style": "Plus de profondeur, plus de transmission",
         "features": [
-          "Moments choisis parmi vos proches",
-          "Musique harmonisée avec les images",
-          "Livré en 24 h"
+          "Master 4K",
+          "IA complète incluse",
+          "Coffre 50 ans inclus"
         ],
         "popular": true
       },
       {
         "key": "legacy",
-        "price": "199$",
-        "style": "Récit profond, façon documentaire",
+        "price": "499 $",
+        "style": "L'ancre Quiet Luxury",
         "features": [
-          "Accent sur les passages essentiels",
-          "Respect des rites et des croyances",
-          "Livraison prioritaire en 12 h"
+          "L'hommage le plus ample",
+          "4K et prestations premium",
+          "Pensé pour les familles qui veulent aller au plus loin"
         ]
       }
     ],
     "cta": "SÉLECTIONNER",
     "recommendedBadge": "RECOMMANDÉ",
-    "recommended": "Recommandé"
+    "recommended": "Le plus choisi"
   },
   "packages": {
     "names": {
@@ -185,32 +185,32 @@
   },
   "manifesto": {
     "title": "Manifeste",
-    "body": "Chaque vie est une œuvre qui mérite son propre cinéma. Odyssey n'est pas un outil, c'est un sanctuaire visuel. Dans le fracas du deuil, nous orchestrons le silence, la lumière et le souvenir pour créer un lien indestructible. Nous ne faisons pas que des vidéos ; nous rendons à la mémoire sa dignité souveraine."
+    "body": "Chaque vie mérite un hommage qui ne ressemble à aucun autre. Odyssey transforme les souvenirs, les voix et les images en un film sensible, cinématographique et digne de ceux qui restent."
   },
   "process": {
     "title": "LE PROCESSUS ODYSSEY",
     "emotionalKicker": "Leur vie en cinéma",
     "sectionSubtitle": "Trois temps, un hommage",
-    "timelineHint": "Coffre à souvenirs, Cercle, Cinéma — sans montage de votre part.",
-    "subtitle": "Vous déposez les souvenirs. Les proches enrichissent l'hommage. Notre moteur tisse le film.",
+    "timelineHint": "Déposer, inviter, révéler — sans montage technique.",
+    "subtitle": "Vous ouvrez le Coffre. L'Entourage répond. Le film apparaît.",
     "step1Label": "Coffre à souvenirs",
-    "step2Label": "Cercle",
+    "step2Label": "Entourage",
     "step3Label": "Cinéma",
     "steps": [
       {
         "labelKey": "step1Label",
         "title": "Le Coffre à souvenirs",
-        "body": "Rassemblez les souvenirs de toute une vie — photos, voix, histoires — en un seul lieu sûr."
+        "body": "Déposez les photos, vidéos, voix et repères essentiels de sa vie dans un lieu simple et sûr."
       },
       {
         "labelKey": "step2Label",
-        "title": "Le Cercle",
-        "body": "Invitez l'entourage à contribuer. Chacun dépose un fragment de mémoire dans le Sanctuaire."
+        "title": "L'Entourage",
+        "body": "Invitez les proches à ajouter leurs fragments de mémoire, chacun à son rythme, depuis leur téléphone."
       },
       {
         "labelKey": "step3Label",
         "title": "Le Cinéma",
-        "body": "Notre moteur tisse le film, sans aucun montage de votre part — digne du grand écran."
+        "body": "Notre moteur compose l'hommage en film cinématographique, sans logiciel complexe ni montage manuel."
       }
     ]
   },
@@ -991,8 +991,8 @@
   },
   "partnerships": {
     "kicker": "Pour les professionnels",
-    "title": "Un standard cinématographique pour les maisons funéraires exigeantes.",
-    "body": "Offrez à chaque famille une expérience de mémoire premium, fluide et respectueuse du temps du deuil. Les familles choisissent quant à elles leur hommage et leur formule dans la section offres ci-dessus.",
+    "title": "Une nouvelle norme d'hommage pour les maisons funéraires exigeantes.",
+    "body": "Une activation simple pour vos équipes, une expérience digne pour les familles et un espace partenaire clair pour accompagner l'engagement de l'Entourage.",
     "cta": "Devenir une Maison Partenaire"
   }
 }

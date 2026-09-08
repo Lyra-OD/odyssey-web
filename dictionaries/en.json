@@ -41,10 +41,10 @@
   "partnersPage": {
     "title": "The Souvenir Sanctuary\npowered by Odyssey",
     "kicker": "A new standard of remembrance for funeral homes",
-    "introProblem": "Families are looking for authentic celebrations, yet they shy away from pushy commercial approaches. Your counselors, for their part, have neither the time to become video editors nor the desire to push additional sales.",
-    "introResolution": "Odyssey resolves this paradox: you offer the space, our cinematic engine takes care of the rest.",
+    "introProblem": "Families are looking for authentic celebrations, yet they refuse pushy commercial approaches. Your counselors have neither the time to become video editors nor the desire to push additional sales.",
+    "introResolution": "Odyssey resolves this paradox: you offer the space, our cinematic engine takes over.",
     "promiseTitle": "The promise: under 60 seconds in the arrangement room,\nzero editing",
-    "promiseBody": "Your counselor only has three fields to fill in to activate the tribute or hand a personalized access card to the family. From that moment on, Odyssey takes over: family guidance, media collection from loved ones, and automatic generation of a cinematic memorial film. No software to install. No heavy training. No mental overhead for your team.",
+    "promiseBody": "Your counselor only has three fields to fill in to activate the tribute or hand an access card to the family. From that moment on, Odyssey takes over: family guidance, memory collection from loved ones, and automatic generation of a cinematic memorial film. No software. No heavy training. No mental overhead for your team.",
     "growthEngineTitle": "Why partners adopt it",
     "growthEngineItems": [
       {
@@ -52,7 +52,7 @@
         "body": "The intervention in the arrangement room takes less than a minute. Your counselors have no editing to do, no heavy files to handle, and no moderation to manage. The experience fits smoothly into your existing routines."
       },
       {
-        "title": "Natural and dignified brand presence",
+        "title": "Dignified, natural brand presence",
         "body": "By inviting relatives to share stories, photos, and videos, the family naturally introduces your funeral home to dozens of loved ones. It is a warm, authentic, and respectful presence across generations."
       },
       {
@@ -92,24 +92,24 @@
     },
     "login": "Login",
     "primaryCta": "Create a Tribute",
-    "ctaSubline": "Start free. Premium formats and community funding from $179.",
+    "ctaSubline": "Place the first memories. Loved ones help the tribute grow. Odyssey shapes the film.",
     "pitch": {
       "hooks": [
-        "The cinema of their life",
+        "Place the first memories. The film begins there.",
         "Their life deserves the big screen.",
         "A tribute fit for the big screen."
       ],
       "steps": [
-        "Three steps. A legacy, filmed.",
-        "Three steps. A film for keeps.",
-        "Three steps. A presence that stays.",
-        "Three steps. Memory that lives on.",
+        "Three beats. A tribute comes to life.",
+        "You open the Chest. Loved ones answer.",
+        "The film appears.",
+        "No technical editing.",
         "Three beats. Forever.",
         "Three steps. A tribute that honors them."
       ],
       "memory": [
-        "Memory, told like a film.",
-        "Memories in stills, like cinema.",
+        "We transform your memories into film.",
+        "Memories woven like cinema.",
         "Their story, told like a film."
       ],
       "signatures": [
@@ -126,50 +126,50 @@
     }
   },
   "pricing": {
-    "title": "My Life in Cinema",
-    "sectionSubtitle": "My Life in Cinema",
-    "subtitle": "Choose how deeply you want to honor their story. Each tier lets you move at your own pace.",
+    "title": "Preserve this tribute",
+    "sectionSubtitle": "A tribute in its full measure",
+    "subtitle": "Choose the scale of the tribute. The more loved ones share, the richer it becomes in memories, voices, and presence.",
     "tierTitles": {
-      "essential": "Essential",
-      "tribute": "Tribute",
-      "legacy": "Legacy"
+      "essential": "Legacy",
+      "tribute": "Eternity",
+      "legacy": "Legendary"
     },
     "tiers": [
       {
         "key": "essential",
-        "price": "$49",
-        "style": "Clean and steady",
+        "price": "$179",
+        "style": "The first complete tribute",
         "features": [
-          "Guided film, step by step",
-          "Balanced, understated color",
-          "Delivered in 48 hours"
+          "Full film in 1080p",
+          "Official Stingray catalog included",
+          "Up to 125 memories"
         ]
       },
       {
         "key": "tribute",
-        "price": "$99",
-        "style": "Sensitive pacing, music at the heart",
+        "price": "$349",
+        "style": "More depth, more transmission",
         "features": [
-          "Weaving in moments from loved ones",
-          "Music aligned with the images",
-          "Delivered in 24 hours"
+          "4K master",
+          "Full AI included",
+          "50-year vault included"
         ],
         "popular": true
       },
       {
         "key": "legacy",
-        "price": "$199",
-        "style": "Deep narrative, documentary feel",
+        "price": "$499",
+        "style": "The Quiet Luxury anchor",
         "features": [
-          "Focus on the passages that matter most",
-          "Respect for rites and beliefs",
-          "Priority delivery in 12 hours"
+          "The most expansive tribute",
+          "4K and premium treatment",
+          "For families who want to go the farthest"
         ]
       }
     ],
     "cta": "SELECT",
     "recommendedBadge": "RECOMMENDED",
-    "recommended": "Recommended"
+    "recommended": "Most chosen"
   },
   "packages": {
     "names": {
@@ -185,32 +185,32 @@
   },
   "manifesto": {
     "title": "Manifesto",
-    "body": "Every life is a masterpiece that deserves its own cinema. Odyssey is not a tool; it is a visual sanctuary. In the noise of grief, we orchestrate silence, light, and memory to create an unbreakable bond. We don't just make videos; we restore the sovereign dignity of remembrance."
+    "body": "Every life deserves a tribute unlike any other. Odyssey transforms memories, voices, and images into a sensitive, cinematic film worthy of those who remain."
   },
   "process": {
     "title": "THE ODYSSEY PROCESS",
-    "emotionalKicker": "The cinema of their life",
+    "emotionalKicker": "Their life in cinema",
     "sectionSubtitle": "Three beats, one tribute",
-    "timelineHint": "Memory Chest, Circle, Cinema — no editing on your part.",
-    "subtitle": "You gather the memories. Loved ones enrich the tribute. Our engine weaves the film.",
+    "timelineHint": "Gather, invite, reveal — with no technical editing.",
+    "subtitle": "You open the Chest. Loved ones answer. The film appears.",
     "step1Label": "Memory Chest",
-    "step2Label": "Circle",
+    "step2Label": "Loved Ones",
     "step3Label": "Cinema",
     "steps": [
       {
         "labelKey": "step1Label",
         "title": "The Memory Chest",
-        "body": "Gather a lifetime of memories — photos, voices, stories — in one safe place."
+        "body": "Place the photos, videos, voices, and essential markers of their life in one simple, safe place."
       },
       {
         "labelKey": "step2Label",
-        "title": "The Circle",
-        "body": "Invite loved ones to contribute. Each person adds a fragment of memory to the Sanctuary."
+        "title": "The Loved Ones",
+        "body": "Invite loved ones to add their fragments of memory, each at their own rhythm, from their phone."
       },
       {
         "labelKey": "step3Label",
         "title": "The Cinema",
-        "body": "Our engine weaves the film with no editing on your part — worthy of the big screen."
+        "body": "Our engine shapes the tribute into a cinematic film, with no complex software and no manual editing."
       }
     ]
   },
@@ -991,8 +991,8 @@
   },
   "partnerships": {
     "kicker": "For funeral professionals",
-    "title": "A cinematic standard for high-trust funeral homes.",
-    "body": "Offer every family a premium remembrance experience that is elegant, reliable, and respectful of grief. Families choose their tribute and tier in the pricing section above.",
+    "title": "A new standard of tribute for high-trust funeral homes.",
+    "body": "Simple activation for your teams, a dignified experience for families, and a clear partner space to support engagement from loved ones.",
     "cta": "Join as a Partner House"
   }
 }

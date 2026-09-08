@@ -4,11 +4,11 @@
 **Dernière MAJ :** 8 sept 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 8 sept 2026 — accueil clarifié sans casser la DA cinéma : home recentrée B2C, `Pricing` réinséré après `Process` avec la grille directe **179 / 349 / 499**, Entourage/proches au cœur du message, bloc pros relégué en preuve secondaire : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 - 8 sept 2026 — page Partenaires réécrite sans changer le design : ton plus crédible et premium pour maisons funéraires, promesse `moins de 60 secondes en salon, zéro montage`, générosité partagée déplacée au bon niveau du discours : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 - 8 sept 2026 — dépôt de mot texte invité (Sanctuaire) réparé — bucket Storage n'autorisait pas `text/plain`, 100 % des mots échouaient : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 - 6 sept 2026 — palette Étape 5 figée (paille Composition Magique / violet Je compose moi-même, teal/cyan inchangé) — code prévu le 7 sept : [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md).
 - 3 sept 2026 — Démo 10 sept matin : **famille d’abord** · invité = ouverture · Salon KPI = 3ᵉ acte : [`product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](product/PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md).
-- 28 août 2026 — egress revert clôturé : [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) (stub) · archive [`_archive/DEMO_VP_EGRESS_REVERT.md`](_archive/DEMO_VP_EGRESS_REVERT.md).
 - 28 août 2026 — plan refresh marketing B2C/B2B : [`design/MARKETING_SITE_REFRESH_PLAN.md`](design/MARKETING_SITE_REFRESH_PLAN.md).
 - 21 août 2026 — regroupement **logique** (business / product / design…) · règle nouveaux docs · chemins inchangés.
 
