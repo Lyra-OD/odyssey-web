@@ -33,6 +33,7 @@ import {
 } from "@/src/lib/contribute/guestVideoQuota";
 import { ensureUserAssetsAllowsGuestVoiceAudio } from "@/src/lib/media/ensureUserAssetsGuestVoiceMime";
 import { ensureUserAssetsAllowsGuestVideo } from "@/src/lib/media/ensureUserAssetsGuestVideoMime";
+import { ensureUserAssetsAllowsGuestMessage } from "@/src/lib/media/ensureUserAssetsAllowsGuestMessage";
 import { STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
 import {
   assertContributeRateLimit,
@@ -349,6 +350,13 @@ export async function POST(
       const message = err instanceof Error ? err.message : "quota_check_failed";
       return NextResponse.json({ error: message }, { status: 500 });
     }
+    try {
+      await ensureUserAssetsAllowsGuestMessage();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "storage_mime_allowlist_failed";
+      return NextResponse.json({ error: message }, { status: 503 });
+    }
   }
 
   const assetId = randomUUID();
@@ -367,7 +375,7 @@ export async function POST(
     sizeBytes = uploadBody.byteLength;
     mimeType = "text/plain";
     source = "guest_message";
-    contentTypeUpload = "text/plain; charset=utf-8";
+    contentTypeUpload = "text/plain";
   } else if (kind === "voice") {
     const ext = extensionForMime(mimeType ?? "audio/webm");
     storagePath = `${basePath}/${assetId}.${ext}`;

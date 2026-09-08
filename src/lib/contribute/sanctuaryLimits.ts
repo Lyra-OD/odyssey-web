@@ -21,6 +21,9 @@ export const SANCTUARY_GUEST_PHOTO_MAX = 5;
  */
 export const SANCTUARY_GUEST_MESSAGE_MAX = 10;
 
+/** MIME accepté pour dépôt `guest_message` (mot texte stocké en `.txt`). */
+export const SANCTUARY_GUEST_MESSAGE_MIME_TYPES = ["text/plain"] as const;
+
 /**
  * Sessions Stripe checkout `pending` max simultanées par token contribute.
  * Limite le spam de sessions / coût API Stripe.
