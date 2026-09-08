@@ -39,37 +39,37 @@
     }
   },
   "partnersPage": {
-    "title": "The Souvenir Sanctuary for your families",
+    "title": "The Souvenir Sanctuary\npowered by Odyssey",
     "kicker": "A new standard of remembrance for funeral homes",
-    "introProblem": "Families want authentic celebrations but shy away from high-pressure commercial approaches. Your counselors have neither the time for video editing nor the appetite to push add-on sales.",
-    "introResolution": "Odyssey resolves this paradox: we turn technology into a pure gesture of empathy.",
-    "promiseTitle": "The promise: you offer, we create",
-    "promiseBody": "Your counselors grant access to the Sanctuary in one click. The family invites their circle to contribute memories. Our cinematic engine weaves those fragments into a tribute film—automatically. Zero editing for them, zero effort for you.",
-    "growthEngineTitle": "The Growth Engine",
+    "introProblem": "Families are looking for authentic celebrations, yet they shy away from pushy commercial approaches. Your counselors, for their part, have neither the time to become video editors nor the desire to push additional sales.",
+    "introResolution": "Odyssey resolves this paradox: you offer the space, our cinematic engine takes care of the rest.",
+    "promiseTitle": "The promise: under 60 seconds in the arrangement room,\nzero editing",
+    "promiseBody": "Your counselor only has three fields to fill in to activate the tribute or hand a personalized access card to the family. From that moment on, Odyssey takes over: family guidance, media collection from loved ones, and automatic generation of a cinematic memorial film. No software to install. No heavy training. No mental overhead for your team.",
+    "growthEngineTitle": "Why partners adopt it",
     "growthEngineItems": [
       {
-        "title": "Emotional viral acquisition",
-        "body": "By inviting their circle to contribute, the family naturally exposes your brand to dozens of loved ones. It is the most dignified, organic visibility for your funeral home."
+        "title": "Absolute operational simplicity",
+        "body": "The intervention in the arrangement room takes less than a minute. Your counselors have no editing to do, no heavy files to handle, and no moderation to manage. The experience fits smoothly into your existing routines."
       },
       {
-        "title": "Integrated community funding",
-        "body": "The extended circle can contribute financially to unlock premium formats, extended archives, or tangible keepsakes (commemorative books, physical copies). The financial burden leaves the immediate family and becomes a collective act of generosity."
+        "title": "Natural and dignified brand presence",
+        "body": "By inviting relatives to share stories, photos, and videos, the family naturally introduces your funeral home to dozens of loved ones. It is a warm, authentic, and respectful presence across generations."
       },
       {
-        "title": "Automatic shared revenue",
-        "body": "Whenever the community enriches the tribute or orders a keepsake, your firm shares in the revenue generated. Everything is tracked in real time on your partner dashboard."
+        "title": "Shared generosity, without pressured selling",
+        "body": "The wider circle can freely contribute to enrich the tribute, extend its preservation, or offer tangible keepsakes. The weight no longer rests solely on the immediate family: it can become a simple, voluntary collective gesture. When a purchase is made, your establishment automatically receives its share, with full transparency."
       },
       {
-        "title": "Post-ceremony retention (grief follow-up)",
-        "body": "The relationship no longer ends on the day of the service. Automated commemorative communications (anniversary reminders, milestone dates) extend your firm's presence over months and years."
+        "title": "A bond that lasts beyond the ceremony",
+        "body": "The relationship with the family does not end on the day of the service. Through discreet, automated commemorative milestones, the Sanctuary extends your funeral home's caring presence over the months and years that follow."
       },
       {
-        "title": "Zero friction",
-        "body": "No software to install, no equipment to buy, no complex training."
+        "title": "Security, compliance, and peace of mind",
+        "body": "Strict respect for privacy and Law 25, full family control over their memories, and a dedicated partner portal to track activations, engagement, and commissions pending or paid."
       }
     ],
     "demoTitle": "Book your demonstration",
-    "demoIntro": "In 30 minutes, discover the family's emotional journey on mobile, your future partner space, and the transparent mechanics of your commissions.",
+    "demoIntro": "Discover the experience in 30 minutes: see a family's mobile journey, the speed of activation by your counselors, and the clear mechanics of your partner space.",
     "form": {
       "organization": "Organization",
       "contactName": "Contact name",
