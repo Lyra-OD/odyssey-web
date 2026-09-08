@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 8 sept 2026 — **Plan anti-bug lot par lot** (`plan_démo_anti-bug`) : séquencement Option B (dépôt avant Inviter, réutilise `handleOpenSanctuaryInvite`), don invité simplifié (« Don » sans expliquer pourquoi), corrections copy (cercle→entourage, promesses vidéo fausses côté invité gratuit). Chantier = **surface / copy / rythme uniquement**, aucun nouveau tuyau.
 - 4 sept 2026 — **Walk trou 1 (A)** : gel JPEG fondu au rituel · ciel léger (bande + lointain + filantes) · naissance Hero.
 - 3 sept 2026 — **Script parlé** ~8 min (A / B / C) · si X casse, on dit Y.
 - 3 sept 2026 — **Feuille walk ven 4** · parallèle Traversée = non · J3 seulement si Continuer est un trou.
 - 3 sept 2026 — Approche technique : **surface, pas tuyaux** · marcher → 3 trous · stub documenté.
-- 3 sept 2026 — **Refonte :** famille d’abord · invité = ouverture · Salon KPI = 3ᵉ acte. WOW = placeholders OK.
 
 **Statut :** **actif** · orga : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) · invité : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md)
 
@@ -95,7 +95,7 @@ Si un écran meurt : *« Ici, elle [beat]. On avance. »* On ne debug pas.
 | 4:00 | Ciel de X | *« Le proche ouvre le lien. Il voit le ciel — pas un formulaire. »* |
 | 4:20 | Dépôt (photos et/ou mot + nom + courriel) | *« Il laisse un souvenir. Prénom, courriel. C’est dans le Coffre de la famille. »* |
 | 4:50 | Étoile (stub 2D OK) | *« Et il est dans le ciel : une étoile à son nom. Une personne, une étoile. »* |
-| 5:20 | *Aider la famille…* ou *Non merci* | *« S’il veut, il aide à concevoir le film. S’il ne veut pas : Non merci. Il reste dans le ciel. »* On skip. On ne paie pas. |
+| 5:20 | *Don* ou *Non merci* | *« S’il veut, chaque don aide la famille. S’il ne veut pas : Non merci. Il reste dans le ciel. »* On skip. On ne paie pas. |
 
 Pas de token : `test-visuel`. Une phrase : *« Même geste. Aperçu, sans paiement. »*
 
@@ -133,7 +133,7 @@ Même lien, téléphone ou 2ᵉ onglet (ou `?packs=1` / `test-visuel` si le toke
 1. **Ciel de X** (pas le form d’abord).
 2. Une saisie : photos et/ou mot + prénom + courriel.
 3. Une étoile à son nom (stub 2D).
-4. Packs *Aider la famille* ou *Non merci* → ciel.
+4. Packs *Don* ou *Non merci* → ciel.
 
 ### Acte C — Le Salon (preuve, ~2 min)
 

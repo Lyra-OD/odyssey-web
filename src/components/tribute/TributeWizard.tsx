@@ -939,7 +939,7 @@ export function TributeWizard({
   });
 
   /**
-   * Déclencheur « Inviter le cercle » du menu — avant, un `projectId`
+   * Déclencheur « Inviter l’entourage » du menu — avant, un `projectId`
    * manquant le laissait juste désactivé, sans explication ni recours.
    * On retente la création du brouillon à la demande (déjà dédoublonnée
    * dans `ensureDraft`) avant d'ouvrir le panneau ; s'il manque encore le
@@ -1628,7 +1628,7 @@ export function TributeWizard({
                   </p>
                 </div>
               </div>
-              {/* Inviter le cercle — déplacé sous le nom (au lieu du 3e
+              {/* Inviter l’entourage — déplacé sous le nom (au lieu du 3e
                   bloc empilé à droite) : c'est l'action la plus importante
                   de cet en-tête, elle mérite la position la plus visible. */}
               {!isEditor ? (

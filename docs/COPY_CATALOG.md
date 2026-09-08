@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-08 · **Entrées :** 863
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-08 · **Entrées :** 867
 
 ## `common`
 
@@ -329,7 +329,7 @@
 | `tributeWizard.editorModeHint` | Vous enrichissez le Coffre à souvenirs, la musique et le film. Le titulaire finalisera le parcours. | You’re enriching the Memory Chest, the music, and the film. The account holder will finish the journey. |
 | `tributeWizard.editorCraftComplete` | Votre contribution est enregistrée. Le titulaire poursuivra l’hommage. | Your contribution is saved. The account holder will continue the tribute. |
 | `tributeWizard.stepperEssentials` | Essentiels | Essentials |
-| `tributeWizard.stepperSources` | Cercle | Circle |
+| `tributeWizard.stepperSources` | Entourage | Loved Ones |
 | `tributeWizard.stepperVault` | Coffre à souvenirs | Memory Chest |
 | `tributeWizard.stepperChapters` | Musique | Music |
 | `tributeWizard.stepperMontage` | Le film | The film |
@@ -348,11 +348,14 @@
 | `tributeWizard.parcoursGoToInvites` | Poursuivre sans les animations du ciel | Continue without the sky ritual |
 | `tributeWizard.parcoursChoiceOr` | ou | or |
 | `tributeWizard.parcoursConstellationBorn` | Sa constellation prend forme. | Their constellation takes shape. |
-| `tributeWizard.parcoursCircleShare` | Plus le cercle partage, plus le ciel s’allume. | The more the circle shares, the more the sky lights up. |
-| `tributeWizard.parcoursSkyVsVault` | Ils déposent des souvenirs. Vous composez le ciel et le film. | They leave memories. You shape the sky and the film. |
+| `tributeWizard.parcoursCircleShare` | Chaque souvenir déposé fait grandir le ciel. | Every memory placed makes the sky grow. |
+| `tributeWizard.parcoursSkyVsVault` | Déposez vos souvenirs. Le ciel s’illumine à mesure. | Place your memories. The sky lights up as you go. |
 | `tributeWizard.parcoursNoRush` | Prenez votre temps. Le ciel attend. | Take your time. The sky can wait. |
 | `tributeWizard.parcoursInviteCta` | Inviter | Invite |
-| `tributeWizard.parcoursContinueCta` | Continuer | Continue |
+| `tributeWizard.parcoursContinueCta` | Continuer vers le Coffre | Continue to the Chest |
+| `tributeWizard.parcoursIntroTitle` | Leur vie en cinéma | Their life, in cinema |
+| `tributeWizard.parcoursIntroSubtitle` | Trois temps, un hommage. | Three moments, one tribute. |
+| `tributeWizard.parcoursIntroBody` | Vous déposez vos souvenirs. Votre entourage enrichit l’histoire. Notre moteur tisse le film. Transformez ces fragments de vie en un hommage digne du grand écran. Un souvenir inoubliable. | You place the memories. Your loved ones enrich the story. Our engine weaves the film. Turn these fragments of a life into a tribute worthy of the big screen. A memory to remember. |
 | `tributeWizard.firstNameLabel` | Prénom | First name |
 | `tributeWizard.lastNameLabel` | Nom | Last name |
 | `tributeWizard.firstNamePlaceholder` | ex. Madeleine | e.g. Eleanor |
@@ -364,9 +367,9 @@
 | `tributeWizard.primaryPhotoHint` | Une photo où l’on reconnaît son regard, un sourire ou un instant précieux. | A photo that captures their gaze, a smile, or a cherished moment. |
 | `tributeWizard.avatarPickPhoto` | Déposer un portrait | Add a portrait |
 | `tributeWizard.avatarChangePhoto` | Modifier le portrait | Change the portrait |
-| `tributeWizard.stepInviteTitle` | Inviter le cercle | Invite the circle |
-| `tributeWizard.stepInviteDescription` | Partagez un lien privé. Vos proches y déposent leurs photos et vidéos. Ils peuvent aussi participer librement au financement de cet hommage. | Share a private link. Your loved ones can share their photos and videos. They may also choose to contribute to the funding of this tribute. |
-| `tributeWizard.skipInvite` | Continuer sans inviter pour l’instant | Continue without inviting for now |
+| `tributeWizard.stepInviteTitle` | L’histoire s’écrit ensemble | The story is written together |
+| `tributeWizard.stepInviteDescription` | Ne portez pas ce projet seul.  Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès sécurisé, vous permettez à vos proches d’ajouter directement leurs souvenirs dans votre Coffre. Vous gardez le contrôle total : vous seul déciderez ce qui entre dans le film final. | Don’t carry this alone.  Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this secure access, you let them add their pieces of the story directly to your Chest. You keep full control: only you decide what makes it into the final film. |
+| `tributeWizard.skipInvite` | Continuer seul pour le moment | Continue alone for now |
 | `tributeWizard.stepSourcesTitle` | Les collections en ligne | Online collections |
 | `tributeWizard.stepSourcesDescription` | Souhaitez-vous rassembler aussi des souvenirs déjà présents dans vos albums et réseaux en ligne ? | Would you also like to gather memories already living in your online albums and social spaces? |
 | `tributeWizard.vaultOnlineTitle` | Déjà ailleurs ? | Already elsewhere? |
@@ -502,12 +505,12 @@
 | `tributeWizard.dossierBackToCurrentCta` | Retour à mon forfait | Back to my package |
 | `tributeWizard.dossierCurrentBadge` | Forfait actuel | Current package |
 | `tributeWizard.dossierSwitchCta` | Passer à {package} | Switch to {package} |
-| `tributeWizard.inviteTriggerLabel` | Cercle | Circle |
+| `tributeWizard.inviteTriggerLabel` | Entourage | Loved Ones |
 | `tributeWizard.inviteTriggerCta` | Inviter famille et amis | Invite family & friends |
-| `tributeWizard.inviteOpenAria` | Inviter le cercle au Sanctuaire | Invite the circle to the Sanctuary |
-| `tributeWizard.inviteTitle` | Inviter au Sanctuaire | Invite to the Sanctuary |
-| `tributeWizard.inviteDescription` | Partagez un lien privé. Vos proches y déposent leurs photos et vidéos. Ils peuvent aussi participer librement au financement de cet hommage. | Share a private link. Your loved ones can share their photos and videos. They may also choose to contribute to the funding of this tribute. |
-| `tributeWizard.inviteGenerateCta` | Créer le lien | Create link |
+| `tributeWizard.inviteOpenAria` | Inviter mon entourage au Sanctuaire | Invite your loved ones to the Sanctuary |
+| `tributeWizard.inviteTitle` | L’histoire s’écrit ensemble | The story is written together |
+| `tributeWizard.inviteDescription` | Ne portez pas ce projet seul.  Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès sécurisé, vous permettez à vos proches d’ajouter directement leurs souvenirs dans votre Coffre. Vous gardez le contrôle total : vous seul déciderez ce qui entre dans le film final. | Don’t carry this alone.  Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this secure access, you let them add their pieces of the story directly to your Chest. You keep full control: only you decide what makes it into the final film. |
+| `tributeWizard.inviteGenerateCta` | Inviter mes proches | Invite my loved ones |
 | `tributeWizard.inviteGenerating` | Création du lien… | Creating link… |
 | `tributeWizard.inviteShareCta` | Partager | Share |
 | `tributeWizard.inviteCopyLink` | Copier le lien | Copy link |
@@ -521,7 +524,7 @@
 | `tributeWizard.inviteErrorSessionExpired` | Votre session a expiré. Reconnectez-vous pour créer le lien. | Your session has expired. Reconnect to create the link. |
 | `tributeWizard.inviteNeedProject` | Enregistrez d’abord l’essentiel pour activer l’invitation. | Save the essentials first to enable inviting. |
 | `tributeWizard.inviteReconnectCta` | Se reconnecter | Reconnect |
-| `tributeWizard.inviteShareMessage` | Aidez-nous à immortaliser {name}. Laissez une empreinte dans le Sanctuaire : {url} | Help us immortalize {name}. Leave a mark in the Sanctuary: {url} |
+| `tributeWizard.inviteShareMessage` | Nous rassemblons les souvenirs de {name} pour en faire un film d’hommage. Ajoutez le vôtre : {url} | We’re gathering {name}’s memories into a tribute film. Add yours here: {url} |
 | `tributeWizard.inviteBrandWordmark` | Odyssey | Odyssey |
 | `tributeWizard.inviteKicker` | Sanctuaire | Sanctuary |
 | `tributeWizard.invitePoweredBy` | Propulsé par | Powered by |
@@ -828,14 +831,15 @@
 | `sanctuary.langOptionFr` | FR | FR |
 | `sanctuary.langOptionEn` | EN | EN |
 | `sanctuary.skyOf` | Ciel de {name} | {name}'s sky |
+| `sanctuary.skyContextBody` | Pour célébrer sa vie, sa famille rassemble ses plus beaux souvenirs pour créer un film d’hommage. | To celebrate their life, the family is gathering their most cherished memories to create a tribute film. |
 | `sanctuary.skyCta` | Laisser un souvenir | Leave a memory |
 | `sanctuary.guestStarAria` | Étoile de {name} | Star for {name} |
 | `sanctuary.closeSky` | Fermer | Close |
 | `sanctuary.logoHomeAria` | Odyssey — accueil | Odyssey — home |
 | `sanctuary.welcomeLead` | Bienvenue dans le ciel de | Welcome to |
 | `sanctuary.welcomeName` | {name}. | {name}'s sky. |
-| `sanctuary.subtitle` | Laissez un souvenir — il ira dans le Coffre à souvenirs. | Leave a memory — it will go into the Memory Chest. |
-| `sanctuary.depositLead` | Médias (photos/vidéos), un mot, ou les deux. | Media (photos/videos), a few words, or both. |
+| `sanctuary.subtitle` | Laissez un souvenir. Il sera conservé précieusement dans le Coffre privé, et seule la famille y aura accès. | Leave a memory. It will be kept safe in the private Chest, seen only by the family. |
+| `sanctuary.depositLead` | Une photo, un mot, ou les deux. | A photo, a few words, or both. |
 | `sanctuary.loading` | Ouverture du ciel… | Opening the sky… |
 | `sanctuary.errorTitle` | Lien indisponible | Link unavailable |
 | `sanctuary.errorBody` | Ce ciel est introuvable ou n'est plus accessible. Demandez un nouveau lien à la famille. | This sky could not be found or is no longer available. Ask the family for a new link. |
@@ -857,8 +861,8 @@
 | `sanctuary.graftBody` | Votre étoile rejoint la constellation. | Your star joins the constellation. |
 | `sanctuary.graftCta` | Continuer | Continue |
 | `sanctuary.skipSupport` | Non merci | No thank you |
-| `sanctuary.packsTitle` | Aider la famille à concevoir le film | Help the family make this film |
-| `sanctuary.packsPromise` | Un geste, si le cœur vous en dit — sans obligation. | A gesture, if it feels right — with no obligation. |
+| `sanctuary.packsTitle` | Don | Donate |
+| `sanctuary.packsPromise` | Chaque don aide la famille. | Every gift helps the family. |
 | `sanctuary.checkoutCta` | Continuer · {price} | Continue · {price} |
 | `sanctuary.checkoutCtaPatron` | Devenir Mécène · {price} | Become a Patron · {price} |
 | `sanctuary.checkoutSelectFirst` | Choisissez une option pour continuer. | Choose an option to continue. |
@@ -932,7 +936,7 @@
 | `sanctuary.deposit.consent` | J'accepte de recevoir des nouvelles de cet hommage. | I agree to receive news about this tribute. |
 | `sanctuary.deposit.messageLabel` | Votre mot | Your words |
 | `sanctuary.deposit.messagePlaceholder` | Quelques lignes pour accompagner votre souvenir… | A few lines to go with your memory… |
-| `sanctuary.deposit.photoLabel` | Vos médias (photos/vidéos) | Your media (photos/videos) |
+| `sanctuary.deposit.photoLabel` | Vos photos | Your photos |
 | `sanctuary.deposit.photoHintOne` | JPEG, PNG ou WebP, jusqu'à 12 Mo · 1 place restante | JPEG, PNG or WebP, up to 12 MB · 1 slot left |
 | `sanctuary.deposit.photoHintMany` | JPEG, PNG ou WebP, jusqu'à 12 Mo · jusqu'à {slots} médias | JPEG, PNG or WebP, up to 12 MB · up to {slots} media |
 | `sanctuary.deposit.photoChoose` | Choisir des médias | Choose media |

@@ -429,7 +429,7 @@ type StepProps = {
 };
 
 /**
- * Étape Wizard « Inviter le cercle » — chrome teal (mark / Propulsé = page Studio).
+ * Étape Wizard « Inviter l’entourage » — chrome teal (mark / Propulsé = page Studio).
  */
 export function SanctuaryInviteStep({
   projectId,
