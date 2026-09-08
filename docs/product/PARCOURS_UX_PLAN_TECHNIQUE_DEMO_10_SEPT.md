@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 8 sept 2026 — **Lot 3** : accueil invité — `sanctuary.skyContextBody` (contexte « pourquoi on vous invite ») câblé sur le tout premier écran ciel, entre le titre et le CTA. Carte 1 (dépôt, un seul écran) et Carte 2 (Don, secondaire avec « Non merci ») confirmées déjà conformes depuis le Lot 1 — aucun autre changement de structure.
 - 8 sept 2026 — **Lot 2** : carte post-reveal simplifiée (CTA unique « Continuer vers le Coffre », plus de bouton Inviter) · panneau Inviter s'ouvre seul après le premier dépôt (`projectMediaCount` 0→1, garde one-shot par ref) · nouvel overlay HTML `SanctuaryHubIntro` (pitch 3 phrases, hub.idle vierge seulement, avant tout contact avec l'étoile).
 - 8 sept 2026 — **Plan anti-bug lot par lot** (`plan_démo_anti-bug`) : séquencement Option B (dépôt avant Inviter, réutilise `handleOpenSanctuaryInvite`), don invité simplifié (« Don » sans expliquer pourquoi), corrections copy (cercle→entourage, promesses vidéo fausses côté invité gratuit). Chantier = **surface / copy / rythme uniquement**, aucun nouveau tuyau.
 - 4 sept 2026 — **Walk trou 1 (A)** : gel JPEG fondu au rituel · ciel léger (bande + lointain + filantes) · naissance Hero.
 - 3 sept 2026 — **Script parlé** ~8 min (A / B / C) · si X casse, on dit Y.
-- 3 sept 2026 — **Feuille walk ven 4** · parallèle Traversée = non · J3 seulement si Continuer est un trou.
 
 **Statut :** **actif** · orga : [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) · invité : [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md)
 

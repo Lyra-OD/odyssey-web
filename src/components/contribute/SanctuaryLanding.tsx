@@ -624,6 +624,9 @@ export function SanctuaryLanding({
                 name: tributeSkyName(load.tribute, uiLocale),
               })}
             </h1>
+            <p className="max-w-sm text-sm font-light leading-relaxed text-white/70 md:text-base">
+              {t.skyContextBody}
+            </p>
             <button
               type="button"
               onClick={() => setPhase("deposit")}
