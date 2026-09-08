@@ -45,9 +45,8 @@ export function tierCardSurfaceClass(
   isSelected: boolean,
 ): string {
   return [
-    "relative cursor-pointer overflow-hidden rounded-sm border bg-white/[0.02] p-7 backdrop-blur-md outline-none will-change-transform",
-    !isUltraviolet && "hover:border-purple-500/35",
-    "focus-visible:ring-2 focus-visible:ring-purple-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+    "relative overflow-hidden border border-white/10 bg-white/[0.02] p-7 backdrop-blur-md will-change-transform",
+    isUltraviolet ? "bg-white/[0.035]" : "bg-white/[0.018]",
     isSelected ? "z-10" : "z-0",
   ]
     .filter(Boolean)
@@ -56,26 +55,26 @@ export function tierCardSurfaceClass(
 
 export function tierCardTitleClass(isSelected: boolean): string {
   return isSelected
-    ? "font-label text-[11px] font-bold uppercase tracking-[0.46em] text-violet-100"
-    : "font-label text-[11px] font-bold uppercase tracking-[0.46em] text-zinc-300";
+    ? "font-label text-[10px] font-semibold uppercase tracking-[0.42em] text-violet-100/90"
+    : "font-label text-[10px] font-semibold uppercase tracking-[0.42em] text-zinc-400";
 }
 
 export function tierCardPriceClass(isSelected: boolean): string {
   return isSelected
-    ? "font-editorial text-5xl font-medium tracking-tight text-white drop-shadow-[0_0_28px_rgba(167,139,250,0.35)]"
+    ? "font-editorial text-6xl font-medium tracking-tight text-white drop-shadow-[0_0_24px_rgba(167,139,250,0.22)]"
     : "font-editorial text-5xl font-medium tracking-tight text-white";
 }
 
 export function tierCardStyleClass(isSelected: boolean): string {
   return isSelected
-    ? "font-label text-[10px] font-bold uppercase tracking-[0.36em] text-violet-300/90"
-    : "font-label text-[10px] font-bold uppercase tracking-[0.36em] text-zinc-500";
+    ? "font-label text-xs leading-relaxed text-violet-100/75"
+    : "font-label text-xs leading-relaxed text-zinc-400";
 }
 
 export function tierCardFeatureClass(isSelected: boolean): string {
   return isSelected
-    ? "font-label text-xs font-medium uppercase tracking-[0.22em] text-violet-100/85"
-    : "font-label text-xs font-medium uppercase tracking-[0.22em] text-zinc-400";
+    ? "font-label text-sm leading-relaxed text-violet-100/88"
+    : "font-label text-sm leading-relaxed text-zinc-300";
 }
 
 export function tierCardCtaClass(isSelected: boolean): string {

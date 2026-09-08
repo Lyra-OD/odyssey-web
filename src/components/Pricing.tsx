@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
 import type { AppDictionary } from "../../lib/dictionaries";
 import type { Locale } from "../../i18n.config";
 import {
@@ -11,9 +11,6 @@ import {
 } from "../lib/editorialSkin";
 import { LOCOMOTIVE_EASE, CINEMATIC_VIEWPORT } from "../lib/cinematicMotion";
 import {
-  getTierCardMotionState,
-  TIER_CARD_SELECT_TRANSITION,
-  tierCardCtaClass,
   tierCardFeatureClass,
   tierCardPriceClass,
   tierCardStyleClass,
@@ -21,7 +18,7 @@ import {
   tierCardTitleClass,
   UV_RADIAL,
 } from "../lib/pricingTierCardSkin";
-import { playProcessStepHoverChime } from "../lib/processHoverChime";
+import { appRoutes } from "@/src/lib/appRoutes";
 import { CinematicWordReveal } from "./CinematicWordReveal";
 
 const KICKER_DURATION = 0.85;
@@ -34,25 +31,12 @@ export function Pricing({
   dictionary: AppDictionary["pricing"];
 }) {
   const t = dictionary;
-  const prefersReducedMotion = useReducedMotion();
-  const [selectedTierKey, setSelectedTierKey] = useState<string | null>(null);
-
-  useEffect(() => {
-    setSelectedTierKey(null);
-  }, [lang]);
-
-  const hasSelection = selectedTierKey !== null;
-
-  const selectTier = useCallback((key: string) => {
-    setSelectedTierKey(key);
-    playProcessStepHoverChime();
-  }, []);
 
   return (
-    <section id="pricing" className={`px-5 py-24 md:px-12 md:py-32 ${editorialSectionShell}`}>
+    <section id="pricing" className={`px-5 py-24 md:px-12 md:py-36 ${editorialSectionShell}`}>
       <div className="mx-auto w-full max-w-[1400px] md:max-w-[92rem]">
         <div key={lang}>
-          <div className={`mb-14 md:mb-18 ${editorialColumn} md:max-w-[76rem] lg:max-w-[92rem] ${editorialAccentRule}`}>
+          <div className={`mb-16 md:mb-24 ${editorialColumn} md:max-w-[76rem] lg:max-w-[92rem] ${editorialAccentRule}`}>
             <motion.p
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -64,32 +48,41 @@ export function Pricing({
             </motion.p>
             <CinematicWordReveal
               lang={lang}
-              text={t.subtitle}
+              text={t.title}
               preset="section"
-              className="font-editorial mt-5 text-3xl tracking-tight text-white md:text-4xl"
+              className="font-editorial mt-5 max-w-2xl text-3xl tracking-tight text-white md:text-4xl"
             />
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={CINEMATIC_VIEWPORT}
+              transition={{ duration: 0.9, ease: LOCOMOTIVE_EASE, delay: 0.08 }}
+              className="font-label mt-7 max-w-2xl text-sm leading-[1.9] text-zinc-400 md:text-base"
+            >
+              {t.subtitle}
+            </motion.p>
           </div>
 
-          <div className="relative py-3 md:py-6">
-            <div className="grid grid-cols-1 gap-6 overflow-visible md:grid-cols-3 md:gap-8">
+          <div className="relative py-6 md:py-10">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-[5%] right-[5%] top-0 hidden h-px bg-gradient-to-r from-transparent via-white/15 to-transparent md:block"
+            />
+            <div className="grid grid-cols-1 gap-6 overflow-visible md:grid-cols-[0.94fr_minmax(24rem,1.12fr)_0.94fr] md:items-start md:gap-8">
               {t.tiers.map((tier, index) => {
                 const isPopular = "popular" in tier && Boolean(tier.popular);
-                const isSelected = selectedTierKey === tier.key;
-                /** Middle column default state (no user pick yet) — same UV language as “recommended” */
-                const isDefaultPopularGlow = isPopular && !hasSelection;
-                const { isUltraviolet, showRadialBlur, animate } =
-                  getTierCardMotionState(
-                    isSelected,
-                    isDefaultPopularGlow,
-                    prefersReducedMotion,
-                  );
+                const isFeatured = isPopular;
+                const chapterNumber = String(index + 1).padStart(2, "0");
+                const articleOffsetClass =
+                  index === 0
+                    ? "md:translate-y-10"
+                    : index === 2
+                      ? "md:translate-y-16"
+                      : "";
 
                 return (
                   <motion.article
                     key={tier.key}
-                    role="button"
-                    tabIndex={0}
-                    aria-pressed={isSelected}
                     aria-label={`${t.tierTitles[tier.key as keyof typeof t.tierTitles]} · ${tier.price}`}
                     initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
                     whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -99,57 +92,47 @@ export function Pricing({
                       opacity: { duration: 1.08, ease: LOCOMOTIVE_EASE },
                       filter: { duration: 1.08, ease: LOCOMOTIVE_EASE },
                       y: { duration: 1.08, ease: LOCOMOTIVE_EASE },
-                      scale: TIER_CARD_SELECT_TRANSITION,
-                      borderColor: TIER_CARD_SELECT_TRANSITION,
-                      backgroundColor: TIER_CARD_SELECT_TRANSITION,
-                      boxShadow: TIER_CARD_SELECT_TRANSITION,
                     }}
-                    animate={animate}
-                    style={{ transformOrigin: "center center" }}
-                    className={tierCardSurfaceClass(isUltraviolet, isSelected)}
-                    onClick={() => selectTier(tier.key)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        selectTier(tier.key);
-                      }
-                    }}
+                    className={`${tierCardSurfaceClass(isFeatured, isFeatured)} ${articleOffsetClass} min-h-[31rem] px-7 py-9 md:px-9 md:py-10`}
                   >
-                    {showRadialBlur && (
+                    {isFeatured && (
                       <div
                         aria-hidden
-                        className={[
-                          "pointer-events-none absolute -inset-24 blur-3xl",
-                          isSelected ? "opacity-95" : "opacity-80",
-                        ].join(" ")}
+                        className="pointer-events-none absolute -inset-24 opacity-60 blur-3xl"
                         style={{ background: UV_RADIAL }}
                       />
                     )}
 
-                    {isPopular && (
+                    <header className="relative border-b border-white/10 pb-8">
                       <motion.div
-                        initial={{ opacity: 0, x: 12 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={CINEMATIC_VIEWPORT}
                         transition={{
-                          duration: 0.7,
+                          duration: 0.65,
                           ease: LOCOMOTIVE_EASE,
-                          delay: 0.15 + index * 0.05,
+                          delay: 0.08 + index * 0.04,
                         }}
-                        className="absolute right-5 top-5 border border-purple-500/40 bg-black/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.32em] text-white"
+                        className="mb-8 flex items-center justify-between gap-4"
                       >
-                        {t.recommended}
+                        <span className="font-label text-[10px] uppercase tracking-[0.38em] text-zinc-500">
+                          {chapterNumber}
+                        </span>
+                        {isPopular ? (
+                          <span className="font-label text-[10px] uppercase tracking-[0.38em] text-violet-100/80">
+                            {t.recommended}
+                          </span>
+                        ) : (
+                          <span className="h-px flex-1 bg-white/10" aria-hidden />
+                        )}
                       </motion.div>
-                    )}
-
-                    <header className="relative">
                       <CinematicWordReveal
                         lang={lang}
                         text={t.tierTitles[tier.key as keyof typeof t.tierTitles]}
                         preset="card"
-                        className={tierCardTitleClass(isSelected)}
+                        className={tierCardTitleClass(isFeatured)}
                       />
-                      <div className="mt-5 flex items-baseline gap-3">
+                      <div className="mt-7">
                         <motion.div
                           initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
                           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -159,27 +142,27 @@ export function Pricing({
                             ease: LOCOMOTIVE_EASE,
                             delay: 0.12 + index * 0.05,
                           }}
-                          className={tierCardPriceClass(isSelected)}
+                          className={tierCardPriceClass(isFeatured)}
                         >
                           {tier.price}
                         </motion.div>
                         <motion.div
-                          initial={{ opacity: 0 }}
-                          whileInView={{ opacity: 1 }}
+                          initial={{ opacity: 0, y: 10 }}
+                          whileInView={{ opacity: 1, y: 0 }}
                           viewport={CINEMATIC_VIEWPORT}
                           transition={{
-                            duration: 0.6,
+                            duration: 0.75,
                             ease: LOCOMOTIVE_EASE,
                             delay: 0.28 + index * 0.05,
                           }}
-                          className={tierCardStyleClass(isSelected)}
+                          className={`${tierCardStyleClass(isFeatured)} mt-5 max-w-[15rem]`}
                         >
                           {tier.style}
                         </motion.div>
                       </div>
                     </header>
 
-                    <ul className="relative mt-8 space-y-3">
+                    <ul className="relative mt-10 space-y-5">
                       {tier.features.map((feature, featureIndex) => (
                         <motion.li
                           key={feature}
@@ -191,7 +174,7 @@ export function Pricing({
                             ease: LOCOMOTIVE_EASE,
                             delay: 0.22 + index * 0.06 + featureIndex * 0.07,
                           }}
-                          className={tierCardFeatureClass(isSelected)}
+                          className={`${tierCardFeatureClass(isFeatured)} border-t border-white/8 pt-5`}
                         >
                           {feature}
                         </motion.li>
@@ -207,11 +190,14 @@ export function Pricing({
                         ease: LOCOMOTIVE_EASE,
                         delay: 0.45 + index * 0.08,
                       }}
-                      className="relative mt-10"
+                      className="relative mt-14 border-t border-white/10 pt-6"
                     >
-                      <span className={tierCardCtaClass(isSelected)}>
+                      <Link
+                        href={appRoutes.studioInscription(lang)}
+                        className="flex w-full items-center justify-center px-2 py-2 font-label text-[10px] uppercase tracking-[0.42em] text-zinc-300 transition-colors duration-300 hover:text-white"
+                      >
                         {t.cta}
-                      </span>
+                      </Link>
                     </motion.div>
                   </motion.article>
                 );

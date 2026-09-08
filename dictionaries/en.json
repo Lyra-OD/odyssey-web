@@ -138,38 +138,38 @@
       {
         "key": "essential",
         "price": "$179",
-        "style": "The first complete tribute",
+        "style": "1080p · 125 memories",
         "features": [
-          "Full film in 1080p",
+          "Up to 5 songs",
           "Official Stingray catalog included",
-          "Up to 125 memories"
-        ]
-      },
-      {
-        "key": "tribute",
-        "price": "$349",
-        "style": "More depth, more transmission",
-        "features": [
-          "4K master",
-          "Full AI included",
-          "50-year vault included"
+          "9:16 social clip enabled"
         ],
         "popular": true
       },
       {
+        "key": "tribute",
+        "price": "$349",
+        "style": "4K · 175 memories",
+        "features": [
+          "Up to 7 songs",
+          "Full AI included",
+          "Scanner Companion included"
+        ]
+      },
+      {
         "key": "legacy",
         "price": "$499",
-        "style": "The Quiet Luxury anchor",
+        "style": "4K · 250 memories",
         "features": [
-          "The most expansive tribute",
-          "4K and premium treatment",
-          "For families who want to go the farthest"
+          "Up to 10 songs",
+          "Ultra render priority",
+          "White-glove digitization included"
         ]
       }
     ],
     "cta": "SELECT",
     "recommendedBadge": "RECOMMENDED",
-    "recommended": "Most chosen"
+    "recommended": "Entry point"
   },
   "packages": {
     "names": {
@@ -191,8 +191,8 @@
     "title": "THE ODYSSEY PROCESS",
     "emotionalKicker": "Their life in cinema",
     "sectionSubtitle": "Three beats, one tribute",
-    "timelineHint": "Gather, invite, reveal — with no technical editing.",
-    "subtitle": "You open the Chest. Loved ones answer. The film appears.",
+    "timelineHint": "Memory Chest, Loved Ones, Cinema — with no editing on your part.",
+    "subtitle": "You place the memories. Loved ones enrich the tribute. Our engine weaves the film.",
     "step1Label": "Memory Chest",
     "step2Label": "Loved Ones",
     "step3Label": "Cinema",
@@ -993,6 +993,6 @@
     "kicker": "For funeral professionals",
     "title": "A new standard of tribute for high-trust funeral homes.",
     "body": "Simple activation for your teams, a dignified experience for families, and a clear partner space to support engagement from loved ones.",
-    "cta": "Join as a Partner House"
+    "cta": "Discover the partner space"
   }
 }

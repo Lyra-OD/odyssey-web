@@ -38,7 +38,7 @@ export function Navbar({
       { href: `${localeRoot}`, label: nav.home },
       { href: `${localeRoot}#manifesto`, label: nav.manifesto },
       { href: `${localeRoot}#process`, label: nav.process },
-      { href: `${localeRoot}/partners`, label: nav.partners },
+      { href: `${localeRoot}#partners`, label: nav.partners },
       { href: `${localeRoot}/contact`, label: nav.contact },
     ] as const;
   }, [lang, t.nav]);

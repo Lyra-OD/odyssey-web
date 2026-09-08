@@ -128,25 +128,25 @@
 | `pricing.tierTitles.legacy` | Légendaire | Legendary |
 | `pricing.tiers[0].key` | essential | essential |
 | `pricing.tiers[0].price` | 179 $ | $179 |
-| `pricing.tiers[0].style` | Le premier hommage complet | The first complete tribute |
-| `pricing.tiers[0].features[0]` | Film complet en 1080p | Full film in 1080p |
+| `pricing.tiers[0].style` | 1080p · 125 souvenirs | 1080p · 125 memories |
+| `pricing.tiers[0].features[0]` | Jusqu'à 5 chansons | Up to 5 songs |
 | `pricing.tiers[0].features[1]` | Catalogue Stingray officiel inclus | Official Stingray catalog included |
-| `pricing.tiers[0].features[2]` | Jusqu'à 125 souvenirs | Up to 125 memories |
+| `pricing.tiers[0].features[2]` | Clip social 9:16 activé | 9:16 social clip enabled |
 | `pricing.tiers[1].key` | tribute | tribute |
 | `pricing.tiers[1].price` | 349 $ | $349 |
-| `pricing.tiers[1].style` | Plus de profondeur, plus de transmission | More depth, more transmission |
-| `pricing.tiers[1].features[0]` | Master 4K | 4K master |
+| `pricing.tiers[1].style` | 4K · 175 souvenirs | 4K · 175 memories |
+| `pricing.tiers[1].features[0]` | Jusqu'à 7 chansons | Up to 7 songs |
 | `pricing.tiers[1].features[1]` | IA complète incluse | Full AI included |
-| `pricing.tiers[1].features[2]` | Coffre 50 ans inclus | 50-year vault included |
+| `pricing.tiers[1].features[2]` | Scanner compagnon inclus | Scanner Companion included |
 | `pricing.tiers[2].key` | legacy | legacy |
 | `pricing.tiers[2].price` | 499 $ | $499 |
-| `pricing.tiers[2].style` | L'ancre Quiet Luxury | The Quiet Luxury anchor |
-| `pricing.tiers[2].features[0]` | L'hommage le plus ample | The most expansive tribute |
-| `pricing.tiers[2].features[1]` | 4K et prestations premium | 4K and premium treatment |
-| `pricing.tiers[2].features[2]` | Pensé pour les familles qui veulent aller au plus loin | For families who want to go the farthest |
+| `pricing.tiers[2].style` | 4K · 250 souvenirs | 4K · 250 memories |
+| `pricing.tiers[2].features[0]` | Jusqu'à 10 chansons | Up to 10 songs |
+| `pricing.tiers[2].features[1]` | Rendu ultra-prioritaire | Ultra render priority |
+| `pricing.tiers[2].features[2]` | Numérisation patrimoniale incluse | White-glove digitization included |
 | `pricing.cta` | SÉLECTIONNER | SELECT |
 | `pricing.recommendedBadge` | RECOMMANDÉ | RECOMMENDED |
-| `pricing.recommended` | Le plus choisi | Most chosen |
+| `pricing.recommended` | Point d'entrée | Entry point |
 
 ## `packages`
 
@@ -173,8 +173,8 @@
 | `process.title` | LE PROCESSUS ODYSSEY | THE ODYSSEY PROCESS |
 | `process.emotionalKicker` | Leur vie en cinéma | Their life in cinema |
 | `process.sectionSubtitle` | Trois temps, un hommage | Three beats, one tribute |
-| `process.timelineHint` | Déposer, inviter, révéler — sans montage technique. | Gather, invite, reveal — with no technical editing. |
-| `process.subtitle` | Vous ouvrez le Coffre. L'Entourage répond. Le film apparaît. | You open the Chest. Loved ones answer. The film appears. |
+| `process.timelineHint` | Coffre à souvenirs, Entourage, Cinéma — sans montage de votre part. | Memory Chest, Loved Ones, Cinema — with no editing on your part. |
+| `process.subtitle` | Vous déposez les souvenirs. Les proches enrichissent l'hommage. Notre moteur tisse le film. | You place the memories. Loved ones enrich the tribute. Our engine weaves the film. |
 | `process.step1Label` | Coffre à souvenirs | Memory Chest |
 | `process.step2Label` | Entourage | Loved Ones |
 | `process.step3Label` | Cinéma | Cinema |
@@ -955,5 +955,5 @@
 | `partnerships.kicker` | Pour les professionnels | For funeral professionals |
 | `partnerships.title` | Une nouvelle norme d'hommage pour les maisons funéraires exigeantes. | A new standard of tribute for high-trust funeral homes. |
 | `partnerships.body` | Une activation simple pour vos équipes, une expérience digne pour les familles et un espace partenaire clair pour accompagner l'engagement de l'Entourage. | Simple activation for your teams, a dignified experience for families, and a clear partner space to support engagement from loved ones. |
-| `partnerships.cta` | Devenir une Maison Partenaire | Join as a Partner House |
+| `partnerships.cta` | Découvrir l'espace partenaires | Discover the partner space |
 

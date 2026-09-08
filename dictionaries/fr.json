@@ -138,38 +138,38 @@
       {
         "key": "essential",
         "price": "179 $",
-        "style": "Le premier hommage complet",
+        "style": "1080p · 125 souvenirs",
         "features": [
-          "Film complet en 1080p",
+          "Jusqu'à 5 chansons",
           "Catalogue Stingray officiel inclus",
-          "Jusqu'à 125 souvenirs"
-        ]
-      },
-      {
-        "key": "tribute",
-        "price": "349 $",
-        "style": "Plus de profondeur, plus de transmission",
-        "features": [
-          "Master 4K",
-          "IA complète incluse",
-          "Coffre 50 ans inclus"
+          "Clip social 9:16 activé"
         ],
         "popular": true
       },
       {
+        "key": "tribute",
+        "price": "349 $",
+        "style": "4K · 175 souvenirs",
+        "features": [
+          "Jusqu'à 7 chansons",
+          "IA complète incluse",
+          "Scanner compagnon inclus"
+        ]
+      },
+      {
         "key": "legacy",
         "price": "499 $",
-        "style": "L'ancre Quiet Luxury",
+        "style": "4K · 250 souvenirs",
         "features": [
-          "L'hommage le plus ample",
-          "4K et prestations premium",
-          "Pensé pour les familles qui veulent aller au plus loin"
+          "Jusqu'à 10 chansons",
+          "Rendu ultra-prioritaire",
+          "Numérisation patrimoniale incluse"
         ]
       }
     ],
     "cta": "SÉLECTIONNER",
     "recommendedBadge": "RECOMMANDÉ",
-    "recommended": "Le plus choisi"
+    "recommended": "Point d'entrée"
   },
   "packages": {
     "names": {
@@ -191,8 +191,8 @@
     "title": "LE PROCESSUS ODYSSEY",
     "emotionalKicker": "Leur vie en cinéma",
     "sectionSubtitle": "Trois temps, un hommage",
-    "timelineHint": "Déposer, inviter, révéler — sans montage technique.",
-    "subtitle": "Vous ouvrez le Coffre. L'Entourage répond. Le film apparaît.",
+    "timelineHint": "Coffre à souvenirs, Entourage, Cinéma — sans montage de votre part.",
+    "subtitle": "Vous déposez les souvenirs. Les proches enrichissent l'hommage. Notre moteur tisse le film.",
     "step1Label": "Coffre à souvenirs",
     "step2Label": "Entourage",
     "step3Label": "Cinéma",
@@ -993,6 +993,6 @@
     "kicker": "Pour les professionnels",
     "title": "Une nouvelle norme d'hommage pour les maisons funéraires exigeantes.",
     "body": "Une activation simple pour vos équipes, une expérience digne pour les familles et un espace partenaire clair pour accompagner l'engagement de l'Entourage.",
-    "cta": "Devenir une Maison Partenaire"
+    "cta": "Découvrir l'espace partenaires"
   }
 }
