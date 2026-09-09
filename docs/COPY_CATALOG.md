@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-09 · **Entrées :** 873
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-09 · **Entrées :** 880
 
 ## `common`
 
@@ -229,8 +229,8 @@
 | `auth.loading` | Envoi… | Sending… |
 | `auth.backToSite` | Retour au site | Back to site |
 | `auth.forgotPasswordLink` | Mot de passe oublié ? | Forgot password? |
-| `auth.forgotPasswordTitle` | Réinitialiser le mot de passe | Reset your password |
-| `auth.forgotPasswordDescription` | Indiquez votre courriel. Nous vous enverrons un lien pour choisir un nouveau mot de passe. | Enter your email. We will send you a link to choose a new password. |
+| `auth.forgotPasswordTitle` | Mot de passe oublié | Forgot your password? |
+| `auth.forgotPasswordDescription` | Indiquez votre courriel. Nous vous enverrons un lien pour en choisir un nouveau. | Enter your email. We’ll send a link to choose a new one. |
 | `auth.forgotPasswordSubmit` | Envoyer le lien | Send reset link |
 | `auth.forgotPasswordSent` | Si un compte existe pour ce courriel, un lien de réinitialisation vient d’être envoyé. Consultez votre boîte mail. | If an account exists for this email, a reset link has been sent. Check your inbox. |
 | `auth.resetPasswordTitle` | Nouveau mot de passe | New password |
@@ -259,6 +259,13 @@
 | `auth.errors.rateLimit` | Trop de tentatives. Patientez un instant puis réessayez. | Too many attempts. Wait a moment and try again. |
 | `auth.errors.generic` | Une erreur est survenue. Réessayez. | Something went wrong. Please try again. |
 | `auth.errors.resetSessionExpired` | Ce lien a expiré ou n’est plus valide. Demandez un nouveau lien. | This link has expired or is no longer valid. Request a new link. |
+| `auth.magicLinkLink` | Recevoir un lien de connexion | Get a sign-in link |
+| `auth.magicLinkTitle` | Connexion sans mot de passe | Sign in without a password |
+| `auth.magicLinkDescription` | Indiquez votre courriel. Nous vous enverrons un lien — un clic suffit pour accéder à votre espace. | Enter your email. We’ll send a link — one click opens your space. |
+| `auth.magicLinkSubmit` | Envoyer le lien | Send the link |
+| `auth.magicLinkSent` | Si un compte existe pour ce courriel, un lien de connexion vient d’être envoyé. Consultez votre boîte mail (et les indésirables). | If an account exists for this email, a sign-in link has been sent. Check your inbox (and spam). |
+| `auth.magicLinkBack` | Retour à la connexion | Back to sign in |
+| `auth.forgotPreferMagic` | Préfèrez un lien de connexion ? | Prefer a sign-in link? |
 
 ## `dashboard`
 

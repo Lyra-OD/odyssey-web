@@ -249,8 +249,8 @@
     "loading": "Sending…",
     "backToSite": "Back to site",
     "forgotPasswordLink": "Forgot password?",
-    "forgotPasswordTitle": "Reset your password",
-    "forgotPasswordDescription": "Enter your email. We will send you a link to choose a new password.",
+    "forgotPasswordTitle": "Forgot your password?",
+    "forgotPasswordDescription": "Enter your email. We’ll send a link to choose a new one.",
     "forgotPasswordSubmit": "Send reset link",
     "forgotPasswordSent": "If an account exists for this email, a reset link has been sent. Check your inbox.",
     "resetPasswordTitle": "New password",
@@ -280,7 +280,14 @@
       "rateLimit": "Too many attempts. Wait a moment and try again.",
       "generic": "Something went wrong. Please try again.",
       "resetSessionExpired": "This link has expired or is no longer valid. Request a new link."
-    }
+    },
+    "magicLinkLink": "Get a sign-in link",
+    "magicLinkTitle": "Sign in without a password",
+    "magicLinkDescription": "Enter your email. We’ll send a link — one click opens your space.",
+    "magicLinkSubmit": "Send the link",
+    "magicLinkSent": "If an account exists for this email, a sign-in link has been sent. Check your inbox (and spam).",
+    "magicLinkBack": "Back to sign in",
+    "forgotPreferMagic": "Prefer a sign-in link?"
   },
   "dashboard": {
     "title": "Dashboard Odyssey",

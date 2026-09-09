@@ -249,8 +249,8 @@
     "loading": "Envoi…",
     "backToSite": "Retour au site",
     "forgotPasswordLink": "Mot de passe oublié ?",
-    "forgotPasswordTitle": "Réinitialiser le mot de passe",
-    "forgotPasswordDescription": "Indiquez votre courriel. Nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+    "forgotPasswordTitle": "Mot de passe oublié",
+    "forgotPasswordDescription": "Indiquez votre courriel. Nous vous enverrons un lien pour en choisir un nouveau.",
     "forgotPasswordSubmit": "Envoyer le lien",
     "forgotPasswordSent": "Si un compte existe pour ce courriel, un lien de réinitialisation vient d’être envoyé. Consultez votre boîte mail.",
     "resetPasswordTitle": "Nouveau mot de passe",
@@ -280,7 +280,14 @@
       "rateLimit": "Trop de tentatives. Patientez un instant puis réessayez.",
       "generic": "Une erreur est survenue. Réessayez.",
       "resetSessionExpired": "Ce lien a expiré ou n’est plus valide. Demandez un nouveau lien."
-    }
+    },
+    "magicLinkLink": "Recevoir un lien de connexion",
+    "magicLinkTitle": "Connexion sans mot de passe",
+    "magicLinkDescription": "Indiquez votre courriel. Nous vous enverrons un lien — un clic suffit pour accéder à votre espace.",
+    "magicLinkSubmit": "Envoyer le lien",
+    "magicLinkSent": "Si un compte existe pour ce courriel, un lien de connexion vient d’être envoyé. Consultez votre boîte mail (et les indésirables).",
+    "magicLinkBack": "Retour à la connexion",
+    "forgotPreferMagic": "Préfèrez un lien de connexion ?"
   },
   "dashboard": {
     "title": "Dashboard Odyssey",

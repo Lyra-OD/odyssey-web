@@ -143,7 +143,7 @@ function connexionResetPasswordPath(
   return `${base}?mode=reset-password`;
 }
 
-type FormMode = "signIn" | "signUp" | "forgotPassword" | "resetPassword";
+type FormMode = "signIn" | "signUp" | "forgotPassword" | "resetPassword" | "magicLink";
 
 type StrengthTier = "idle" | "weak" | "medium" | "strong";
 
@@ -207,6 +207,7 @@ export function LoginForm({
   const [loading, setLoading] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
   const [passwordResetSent, setPasswordResetSent] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [resendConfirmationSent, setResendConfirmationSent] = useState(false);
   const [exitFade, setExitFade] = useState(false);
   const [shakeGeneration, setShakeGeneration] = useState(0);
@@ -229,6 +230,7 @@ export function LoginForm({
   const isSignUp = allowSignUp && mode === "signUp";
   const isForgotPassword = mode === "forgotPassword";
   const isResetPassword = mode === "resetPassword";
+  const isMagicLink = mode === "magicLink";
   const showEmailNotConfirmedResend =
     mode === "signIn" && error === t.errors.emailNotConfirmed;
   const passwordsMatch = password === passwordConfirm;
@@ -401,9 +403,36 @@ export function LoginForm({
     setResendConfirmationSent(true);
   }
 
+  async function handleMagicLink(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setMagicLinkSent(false);
+    const trimmed = email.trim();
+    if (!trimmed) return;
+    setLoading(true);
+    const { error: otpError } = await supabase.auth.signInWithOtp({
+      email: trimmed,
+      options: {
+        emailRedirectTo: buildAuthCallbackUrl(lang, postAuthPath),
+        shouldCreateUser: false,
+      },
+    });
+    setLoading(false);
+    if (otpError) {
+      raiseError(mapAuthError(otpError, t.errors));
+      return;
+    }
+    setMagicLinkSent(true);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (isMagicLink) {
+      await handleMagicLink(e);
+      return;
+    }
 
     if (isForgotPassword) {
       await handleForgotPassword(e);
@@ -500,26 +529,30 @@ export function LoginForm({
   const homeHref = `/${lang}`;
   const haloNormal = isSignUp ? HALO_SIGN_UP : HALO_SIGN_IN;
   const haloBackground = error ? HALO_ERROR : haloNormal;
-  const headline = isForgotPassword
-    ? t.forgotPasswordTitle
-    : isResetPassword
-      ? t.resetPasswordTitle
-      : isSignUp
-        ? t.createAccess
-        : audience === "salon"
-          ? t.salonAccess
-          : audience === "hq"
-            ? t.hqAccess
-            : t.studioAccess;
-  const subtitle = isForgotPassword
-    ? t.forgotPasswordDescription
-    : isResetPassword
-      ? t.resetPasswordDescription
-      : audience === "salon" && mode === "signIn"
-        ? t.salonSubtitle
-        : audience === "hq" && mode === "signIn"
-          ? t.hqSubtitle
-          : null;
+  const headline = isMagicLink
+    ? t.magicLinkTitle
+    : isForgotPassword
+      ? t.forgotPasswordTitle
+      : isResetPassword
+        ? t.resetPasswordTitle
+        : isSignUp
+          ? t.createAccess
+          : audience === "salon"
+            ? t.salonAccess
+            : audience === "hq"
+              ? t.hqAccess
+              : t.studioAccess;
+  const subtitle = isMagicLink
+    ? t.magicLinkDescription
+    : isForgotPassword
+      ? t.forgotPasswordDescription
+      : isResetPassword
+        ? t.resetPasswordDescription
+        : audience === "salon" && mode === "signIn"
+          ? t.salonSubtitle
+          : audience === "hq" && mode === "signIn"
+            ? t.hqSubtitle
+            : null;
 
   const tabActiveRingSignIn =
     "bg-white/[0.08] text-zinc-100 shadow-[0_0_24px_-8px_rgba(139,92,246,0.45)]";
@@ -549,7 +582,7 @@ export function LoginForm({
         ? "bg-yellow-400/90"
         : "bg-red-500/90";
 
-  if (verificationSent || passwordResetSent) {
+  if (verificationSent || passwordResetSent || magicLinkSent) {
     return (
       <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#020202] px-6 py-16">
         <div className="absolute right-5 top-5 z-20 md:right-8 md:top-8">
@@ -573,7 +606,7 @@ export function LoginForm({
             Odyssey
           </p>
           <p className="max-w-md text-base font-light leading-[1.75] tracking-[0.02em] text-white/75 md:text-lg">
-            {passwordResetSent ? t.forgotPasswordSent : t.confirmationMessage}
+            {magicLinkSent ? t.magicLinkSent : passwordResetSent ? t.forgotPasswordSent : t.confirmationMessage}
           </p>
           <p className="mt-10">
             <button
@@ -581,6 +614,7 @@ export function LoginForm({
               onClick={() => {
                 setPasswordResetSent(false);
                 setVerificationSent(false);
+                setMagicLinkSent(false);
                 switchMode("signIn");
               }}
               className="text-[11px] uppercase tracking-[0.35em] text-white/35 underline decoration-white/15 underline-offset-4 transition-colors hover:text-white/55"
@@ -769,7 +803,7 @@ export function LoginForm({
               </>
             ) : null}
 
-            {!isForgotPassword ? (
+            {!isForgotPassword && !isMagicLink ? (
             <div className="space-y-2">
               <label
                 htmlFor="auth-password"
@@ -825,7 +859,15 @@ export function LoginForm({
                 </div>
               ) : null}
               {mode === "signIn" ? (
-                <p className="text-right">
+                <div className="flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    disabled={loading}
+                    onClick={() => { setMode("magicLink"); setError(null); }}
+                    className="text-[11px] font-light text-white/40 underline decoration-white/15 underline-offset-2 transition-colors hover:text-white/60 disabled:opacity-40"
+                  >
+                    {t.magicLinkLink}
+                  </button>
                   <button
                     type="button"
                     disabled={loading}
@@ -834,7 +876,7 @@ export function LoginForm({
                   >
                     {t.forgotPasswordLink}
                   </button>
-                </p>
+                </div>
               ) : null}
             </div>
             ) : null}
@@ -975,6 +1017,8 @@ export function LoginForm({
                   className="h-4 w-4 shrink-0 animate-spin opacity-85"
                   aria-hidden
                 />
+              ) : isMagicLink ? (
+                t.magicLinkSubmit
               ) : isForgotPassword ? (
                 t.forgotPasswordSubmit
               ) : isResetPassword ? (
@@ -986,15 +1030,28 @@ export function LoginForm({
               )}
             </button>
 
-            {isForgotPassword || isResetPassword ? (
+            {isForgotPassword || isResetPassword || isMagicLink ? (
               <p className="text-center">
                 <button
                   type="button"
                   disabled={loading}
-                  onClick={() => switchMode("signIn")}
+                  onClick={() => { setMode("signIn"); setError(null); }}
                   className="text-[11px] font-light text-white/40 underline decoration-white/15 underline-offset-2 transition-colors hover:text-white/60 disabled:opacity-40"
                 >
-                  {t.backToSignIn}
+                  {isMagicLink ? t.magicLinkBack : t.backToSignIn}
+                </button>
+              </p>
+            ) : null}
+
+            {isForgotPassword ? (
+              <p className="text-center">
+                <button
+                  type="button"
+                  disabled={loading}
+                  onClick={() => { setMode("magicLink"); setError(null); }}
+                  className="text-[11px] font-light text-white/35 underline decoration-white/15 underline-offset-2 transition-colors hover:text-white/55 disabled:opacity-40"
+                >
+                  {t.forgotPreferMagic}
                 </button>
               </p>
             ) : null}
