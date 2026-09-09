@@ -5,6 +5,7 @@
 **Canon palette :** [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md) §2 — **ce fichier ne remplace pas le canon**, il prépare sa prochaine version.
 
 **Changelog** (max 5)
+- 9 sept 2026 — **décision livrée en code** : paille `#E4D96F` (`--wizard-magic-wheat`) sur Création assistée ; violet sur Création manuelle ; hover/active teal. Tokens dans `sanctuaryChrome.ts` · [`MontageOnboardingGate.tsx`](../../src/components/tribute/storyboard/MontageOnboardingGate.tsx).
 - 6 sept 2026 — **décision figée** pour l'Étape 5 : paille `#E4D96F` pour Composition Magique, violet pour Je compose moi-même, teal/cyan inchangé pour sélection/hover/focus et halos. Voir §7. Code (tokens + composant) prévu le 7 sept.
 - 5 sept 2026 — création : trois bleu-verts mesurés, trois couleurs d'alerte, roue des teintes et quatre candidats pour la couleur chaude.
 

@@ -1451,7 +1451,8 @@ export function TributeWizard({
           copy={{
             title: copy.parcoursIntroTitle,
             subtitle: copy.parcoursIntroSubtitle,
-            body: copy.parcoursIntroBody,
+            promise: copy.parcoursIntroPromise,
+            next: copy.parcoursIntroNext,
           }}
         />
       ) : null}
@@ -1752,7 +1753,9 @@ export function TributeWizard({
           triggerCta: copy.inviteTriggerCta,
           triggerOpenAria: copy.inviteOpenAria,
           title: copy.inviteTitle,
-          description: copy.inviteDescription,
+          lead: copy.inviteLead,
+          body: copy.inviteBody,
+          footnote: copy.inviteFootnote,
           generateCta: copy.inviteGenerateCta,
           generating: copy.inviteGenerating,
           shareCta: copy.inviteShareCta,
@@ -2136,7 +2139,9 @@ export function TributeWizard({
               tributeName={deceasedDisplayName}
               titleId={wizardTitleId}
               stepTitle={copy.stepInviteTitle}
-              stepDescription={copy.stepInviteDescription}
+              stepLead={copy.stepInviteLead}
+              stepBody={copy.stepInviteBody}
+              stepFootnote={copy.stepInviteFootnote}
               skipLabel={copy.skipInvite}
               onSkip={() => void goNext()}
               copy={{
@@ -2144,7 +2149,9 @@ export function TributeWizard({
                 triggerCta: copy.inviteTriggerCta,
                 triggerOpenAria: copy.inviteOpenAria,
                 title: copy.inviteTitle,
-                description: copy.inviteDescription,
+                lead: copy.inviteLead,
+                body: copy.inviteBody,
+                footnote: copy.inviteFootnote,
                 generateCta: copy.inviteGenerateCta,
                 generating: copy.inviteGenerating,
                 shareCta: copy.inviteShareCta,

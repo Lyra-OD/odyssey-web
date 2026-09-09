@@ -26,6 +26,8 @@ export type CollabInvitePanelCopy = {
   triggerOpenAria: string;
   title: string;
   description: string;
+  /** Note grisée — gratuit + sécurisé (pas de mention paiement). */
+  footnote: string;
   generateCta: string;
   generating: string;
   copyLink: string;
@@ -459,6 +461,10 @@ export function CollabInvitePanel({
                 </div>
               </div>
 
+              <p className="mt-5 text-center text-xs font-light leading-relaxed text-zinc-500">
+                {copy.footnote}
+              </p>
+
               <CollabInvitePoweredBy copy={copy} />
             </div>
           </motion.aside>
@@ -475,6 +481,7 @@ export function collabInviteCopyFromDictionary(copy: {
   collabOpenAria: string;
   collabTitle: string;
   collabDescription: string;
+  collabFootnote: string;
   collabGenerateCta: string;
   collabGenerating: string;
   collabCopyLink: string;
@@ -496,6 +503,7 @@ export function collabInviteCopyFromDictionary(copy: {
     triggerOpenAria: copy.collabOpenAria,
     title: copy.collabTitle,
     description: copy.collabDescription,
+    footnote: copy.collabFootnote,
     generateCta: copy.collabGenerateCta,
     generating: copy.collabGenerating,
     copyLink: copy.collabCopyLink,

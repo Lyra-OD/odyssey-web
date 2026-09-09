@@ -30,7 +30,12 @@ export type SanctuaryInvitePanelCopy = {
   triggerCta: string;
   triggerOpenAria: string;
   title: string;
-  description: string;
+  /** Accroche émotionnelle (sous le titre). */
+  lead: string;
+  /** Corps — pourquoi inviter. */
+  body: string;
+  /** Rassurance grisée, en bas. */
+  footnote: string;
   generateCta: string;
   generating: string;
   /** CTA Web Share API (mobile) ; fallback = copyLink. */
@@ -422,7 +427,9 @@ type StepProps = {
   tributeName: string;
   titleId: string;
   stepTitle: string;
-  stepDescription: string;
+  stepLead: string;
+  stepBody: string;
+  stepFootnote: string;
   skipLabel: string;
   onSkip: () => void;
   copy: SanctuaryInvitePanelCopy;
@@ -437,7 +444,9 @@ export function SanctuaryInviteStep({
   tributeName,
   titleId,
   stepTitle,
-  stepDescription,
+  stepLead,
+  stepBody,
+  stepFootnote,
   skipLabel,
   onSkip,
   copy,
@@ -454,8 +463,11 @@ export function SanctuaryInviteStep({
         >
           {stepTitle}
         </h2>
-        <p className="mx-auto mt-5 max-w-md whitespace-pre-line text-sm font-light leading-relaxed text-white/50 md:text-base">
-          {stepDescription}
+        <p className="mx-auto mt-5 max-w-md text-base font-light leading-relaxed text-zinc-200 md:text-lg">
+          {stepLead}
+        </p>
+        <p className="mx-auto mt-3 max-w-md text-sm font-light leading-relaxed text-white/50 md:text-base">
+          {stepBody}
         </p>
       </div>
 
@@ -468,6 +480,10 @@ export function SanctuaryInviteStep({
           copy={copy}
         />
       </div>
+
+      <p className="mx-auto mt-5 max-w-md text-center text-xs font-light leading-relaxed text-zinc-500">
+        {stepFootnote}
+      </p>
 
       <button
         type="button"
@@ -565,8 +581,11 @@ export function SanctuaryInvitePanel({
                 <h2 className="mt-3 font-editorial text-2xl font-medium tracking-tight text-zinc-50">
                   {copy.title}
                 </h2>
-                <p className="mt-4 whitespace-pre-line text-sm font-light leading-relaxed text-white/50">
-                  {copy.description}
+                <p className="mt-4 text-base font-light leading-relaxed text-zinc-200">
+                  {copy.lead}
+                </p>
+                <p className="mt-3 text-sm font-light leading-relaxed text-white/50">
+                  {copy.body}
                 </p>
               </div>
 
@@ -580,6 +599,10 @@ export function SanctuaryInvitePanel({
                   />
                 </div>
               </div>
+
+              <p className="mt-5 text-center text-xs font-light leading-relaxed text-zinc-500">
+                {copy.footnote}
+              </p>
 
               <SanctuaryInvitePoweredBy copy={copy} />
             </div>

@@ -133,6 +133,23 @@ function tributeSkyName(
   return tributeDisplayName(tribute, locale);
 }
 
+/**
+ * Titre ciel invité — FR : « En mémoire de/d’ » (élision voyelle),
+ * EN : « In loving memory of ».
+ */
+function inMemoryOfTitle(name: string, locale: Locale): string {
+  const trimmed = name.trim();
+  if (locale === "en") {
+    return trimmed
+      ? `In loving memory of ${trimmed}`
+      : "In loving memory";
+  }
+  if (!trimmed) return "En mémoire";
+  const first = trimmed.charAt(0).normalize("NFD")[0]?.toLowerCase() ?? "";
+  const elide = "aeiouy".includes(first);
+  return elide ? `En mémoire d’${trimmed}` : `En mémoire de ${trimmed}`;
+}
+
 function starIdFromName(name: string): string {
   return name.trim().toLowerCase();
 }
@@ -610,12 +627,16 @@ export function SanctuaryLanding({
               {t.kicker}
             </p>
             <h1 className="font-editorial text-[1.85rem] font-medium tracking-tight text-zinc-50 md:text-4xl">
-              {fill(t.skyOf, {
-                name: tributeSkyName(load.tribute, uiLocale),
-              })}
+              {inMemoryOfTitle(
+                tributeSkyName(load.tribute, uiLocale),
+                uiLocale,
+              )}
             </h1>
             <p className="max-w-sm text-sm font-light leading-relaxed text-white/70 md:text-base">
               {t.skyContextBody}
+            </p>
+            <p className="max-w-sm text-xs font-light leading-relaxed text-white/40 md:text-sm">
+              {t.skyPrivacyNote}
             </p>
           </div>
           <div className="flex-1" />

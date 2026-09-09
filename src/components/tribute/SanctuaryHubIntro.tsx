@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 type SanctuaryHubIntroCopy = {
   title: string;
   subtitle: string;
-  body: string;
+  promise: string;
+  next: string;
 };
 
 type SanctuaryHubIntroProps = {
@@ -47,8 +48,11 @@ export function SanctuaryHubIntro({ copy }: SanctuaryHubIntroProps) {
         <p className="mt-1.5 text-xs font-light uppercase tracking-[0.24em] text-teal-400/60 md:text-sm">
           {copy.subtitle}
         </p>
-        <p className="mx-auto mt-4 max-w-md text-sm font-light leading-relaxed text-zinc-400 md:text-base">
-          {copy.body}
+        <p className="mx-auto mt-6 max-w-md whitespace-pre-line text-sm font-light leading-relaxed text-zinc-300 md:text-base">
+          {copy.promise}
+        </p>
+        <p className="mx-auto mt-5 max-w-md whitespace-pre-line text-sm font-light leading-relaxed text-zinc-500 md:text-[0.9375rem]">
+          {copy.next}
         </p>
       </div>
     </div>

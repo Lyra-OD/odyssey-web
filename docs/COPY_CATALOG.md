@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-09 · **Entrées :** 880
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-09 · **Entrées :** 889
 
 ## `common`
 
@@ -355,7 +355,7 @@
 | `tributeWizard.stepperPreview` | Aperçu | Preview |
 | `tributeWizard.stepperCheckout` | Finaliser | Review |
 | `tributeWizard.stepEssentialTitle` | L’essentiel | The Essentials |
-| `tributeWizard.stepEssentialDescription` | Quelques repères pour ancrer son souvenir. Prenez tout votre temps. Ces souvenirs deviendront un film digne du grand cinéma, pas un simple diaporama. | A few quiet details to anchor their memory. Take all the time you need. These memories will be crafted into a cinematic tribute, not a simple slideshow. |
+| `tributeWizard.stepEssentialDescription` | Prenez tout votre temps. Ces quelques repères nous aideront à tisser le film de sa vie. | Take all the time you need. These details will help us craft the story of their life. |
 | `tributeWizard.step1ConstellationReward` | Sa constellation prend forme… | Her constellation is taking shape… |
 | `tributeWizard.parcoursHeroPrompt` | Une Présence | A Presence |
 | `tributeWizard.parcoursHeroTapHint` | Toucher l’étoile | Touch the star |
@@ -371,9 +371,10 @@
 | `tributeWizard.parcoursNoRush` | Prenez votre temps. Le ciel attend. | Take your time. The sky can wait. |
 | `tributeWizard.parcoursInviteCta` | Inviter | Invite |
 | `tributeWizard.parcoursContinueCta` | Continuer vers le Coffre | Continue to the Chest |
-| `tributeWizard.parcoursIntroTitle` | Leur vie en cinéma | Their life, in cinema |
-| `tributeWizard.parcoursIntroSubtitle` | Trois temps, un hommage. | Three moments, one tribute. |
-| `tributeWizard.parcoursIntroBody` | Vous déposez vos souvenirs. Votre entourage enrichit l’histoire. Nous assemblons le film. Ensuite : ajoutez une photo dans votre Coffre, puis invitez vos proches si vous le souhaitez. | You place the memories. Your loved ones enrich the story. We assemble the film. Next: add a photo to your Chest, then invite loved ones if you wish. |
+| `tributeWizard.parcoursIntroTitle` | Le film de leur vie | The story of their life |
+| `tributeWizard.parcoursIntroSubtitle` | Trois temps, un hommage. | Three steps, one tribute. |
+| `tributeWizard.parcoursIntroPromise` | Vous déposez vos souvenirs. Votre entourage enrichit l’histoire. Nous assemblons le film. | You gather your memories. Your loved ones enrich the story. We craft the film. |
+| `tributeWizard.parcoursIntroNext` | Ensuite : ajoutez une première photo dans votre Coffre, puis invitez vos proches si vous le souhaitez. | Next: add a first photo to your Chest, then invite your loved ones if you wish. |
 | `tributeWizard.firstNameLabel` | Prénom | First name |
 | `tributeWizard.lastNameLabel` | Nom | Last name |
 | `tributeWizard.firstNamePlaceholder` | ex. Madeleine | e.g. Eleanor |
@@ -382,16 +383,19 @@
 | `tributeWizard.deathDateLabel` | Date du départ | Date of passing |
 | `tributeWizard.dateInputEmptyHint` | JJ / MM / AAAA | DD / MM / YYYY |
 | `tributeWizard.primaryPhotoLabel` | Le portrait | Portrait |
-| `tributeWizard.primaryPhotoHint` | Une photo où l’on reconnaît son regard, un sourire ou un instant précieux. | A photo that captures their gaze, a smile, or a cherished moment. |
-| `tributeWizard.avatarPickPhoto` | Déposer un portrait | Add a portrait |
+| `tributeWizard.primaryPhotoHint` | Choisissez une photo où l’on reconnaît son regard ou son sourire. | Choose a photo that captures their smile or their gaze. |
+| `tributeWizard.avatarPickPhoto` | Ajouter un portrait | Add a portrait |
 | `tributeWizard.avatarChangePhoto` | Modifier le portrait | Change the portrait |
-| `tributeWizard.stepInviteTitle` | L’histoire s’écrit ensemble | The story is written together |
-| `tributeWizard.stepInviteDescription` | Rien n’est envoyé tant que vous ne créez pas le lien.  Ne portez pas ce projet seul.  Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès sécurisé, vous permettez à vos proches d’ajouter directement leurs souvenirs dans votre Coffre. Vous gardez le contrôle total : vous seul déciderez ce qui entre dans le film final. | Nothing is sent until you create the link.  Don’t carry this alone.  Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this secure access, you let them add their pieces of the story directly to your Chest. You keep full control: only you decide what makes it into the final film. |
+| `tributeWizard.stepInviteTitle` | L’histoire s’écrit ensemble | Their story is written together |
+| `tributeWizard.stepInviteLead` | Ne portez pas ce projet seul. | Don’t carry this alone. |
+| `tributeWizard.stepInviteBody` | Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès, vous permettez à vos proches d’ajouter leurs souvenirs dans votre Coffre. Vous seul décidez ce qui entre dans le film. | Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this access, you let them add their memories to your Chest. Only you decide what makes it into the film. |
+| `tributeWizard.stepInviteFootnote` | Rien n’est envoyé tant que vous ne créez pas le lien. | Nothing is sent until you create the link. |
+| `tributeWizard.stepInviteDescription` | Ne portez pas ce projet seul.  Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès, vous permettez à vos proches d’ajouter leurs souvenirs dans votre Coffre. Vous seul décidez ce qui entre dans le film. | Don’t carry this alone.  Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this access, you let them add their memories to your Chest. Only you decide what makes it into the film. |
 | `tributeWizard.skipInvite` | Continuer seul pour le moment | Continue alone for now |
 | `tributeWizard.stepSourcesTitle` | Les collections en ligne | Online collections |
 | `tributeWizard.stepSourcesDescription` | Souhaitez-vous rassembler aussi des souvenirs déjà présents dans vos albums et réseaux en ligne ? | Would you also like to gather memories already living in your online albums and social spaces? |
-| `tributeWizard.vaultOnlineTitle` | Déjà ailleurs ? | Already elsewhere? |
-| `tributeWizard.vaultOnlineDescription` | Rassemblez aussi des souvenirs déjà présents dans vos albums ou réseaux en ligne. | Also gather memories already living in your online albums or social spaces. |
+| `tributeWizard.vaultOnlineTitle` | Importer depuis vos réseaux | Import from your networks |
+| `tributeWizard.vaultOnlineDescription` | Retrouvez facilement les souvenirs déjà partagés sur vos comptes personnels. | Easily retrieve memories already shared on your personal accounts. |
 | `tributeWizard.socialFacebook` | Facebook | Facebook |
 | `tributeWizard.socialInstagram` | Instagram | Instagram |
 | `tributeWizard.socialTikTok` | TikTok | TikTok |
@@ -399,15 +403,15 @@
 | `tributeWizard.socialQuickLoginNote` | Connexion rapide lorsque votre navigateur est déjà ouvert sur ces services. | Quick connection when your browser is already signed in to these services. |
 | `tributeWizard.skipSources` | Passer cette étape pour l’instant | Skip this step for now |
 | `tributeWizard.stepMediaTitle` | Le Coffre à souvenirs | The Memory Chest |
-| `tributeWizard.stepMediaDescription` | Déposez ici tous vos souvenirs : photos et vidéos. Le film s’assemblera ensuite, sous vos yeux. | Drop all your memories here: photos and videos. The film will come together next, before your eyes. |
+| `tributeWizard.stepMediaDescription` | Rassemblez ici vos photos et vidéos les plus précieuses. Prenez le temps de choisir les moments qui comptent. | Gather your most precious photos and videos here. Take your time selecting the moments that matter. |
 | `tributeWizard.stepMediaLater` | Continuer plus tard | Continue later |
-| `tributeWizard.scannerEyebrow` | Scanner Compagnon | Companion Scanner |
-| `tributeWizard.scannerTitle` | Numérisez vos albums papier | Digitize your paper albums |
+| `tributeWizard.scannerEyebrow` | Numérisation | Digitize |
+| `tributeWizard.scannerTitle` | Numérisez vos photos papier | Digitize your paper photos |
 | `tributeWizard.scannerDescription` | Scannez le QR avec votre téléphone. Aucune application. | Scan the QR with your phone. No app required. |
 | `tributeWizard.scannerMobileDescription` | Photographiez vos albums papier. Aucune application. | Photograph your paper albums. No app required. |
 | `tributeWizard.scannerOpenCapture` | Ouvrir l’appareil photo | Open the camera |
 | `tributeWizard.scannerBadge` | QR | QR |
-| `tributeWizard.scannerHint` | Les photos arrivent dans le Coffre à souvenirs | Photos arrive in the Memory Chest |
+| `tributeWizard.scannerHint` | Scannez ce code avec votre téléphone pour capturer vos anciens albums, en toute simplicité. | Scan this code with your phone to easily capture your old albums. |
 | `tributeWizard.scannerInstructions` | Appareil photo · aucune installation | Camera · no install needed |
 | `tributeWizard.scannerGenerating` | Préparation du QR… | Preparing QR… |
 | `tributeWizard.scannerCopyLink` | Copier le lien | Copy link |
@@ -431,7 +435,7 @@
 | `tributeWizard.scannerRestoreAfter` | Après | After |
 | `tributeWizard.scannerRestoreClose` | Fermer l’aperçu | Close preview |
 | `tributeWizard.scannerRestoreWatermark` | Odyssey | Odyssey |
-| `tributeWizard.uploadPrompt` | Cliquez ou glissez vos fichiers ici | Click or drag your files here |
+| `tributeWizard.uploadPrompt` | Cliquez ou glissez vos fichiers ici. Nous en prendrons le plus grand soin. | Click or drag your files here. We will handle them with the utmost care. |
 | `tributeWizard.uploadSubtext` | Photos et vidéos. Nous les traitons avec le plus grand soin. | Photos and videos. We handle them with care. |
 | `tributeWizard.uploadAria` | Ajouter des fichiers depuis votre appareil | Add files from your device |
 | `tributeWizard.uploadFilesCount` | {count} fichier(s) ajouté(s) | {count} file(s) added |
@@ -459,8 +463,8 @@
 | `tributeWizard.projectDraftRetry` | Réessayer | Retry |
 | `tributeWizard.sessionExpiredTitle` | Votre session a expiré pendant la préparation. Vos souvenirs sont en sécurité — reconnectez-vous pour continuer. | Your session expired while preparing this. Your memories are safe — reconnect to continue. |
 | `tributeWizard.sessionExpiredReconnectCta` | Se reconnecter | Reconnect |
-| `tributeWizard.stepMontageTitle` | Le film de sa vie | The Film of Their Life |
-| `tributeWizard.stepMontageDescription` | Mettez en lumière les moments précieux de son histoire. Le film s’assemble sous vos yeux. | Bring the precious moments of their story to light. The film assembles before your eyes. |
+| `tributeWizard.stepMontageTitle` | Le film de sa vie | The film of their life |
+| `tributeWizard.stepMontageDescription` | Mettez en lumière les moments précieux de son histoire. Ajustez l’ordre des souvenirs selon votre cœur. | Bring the precious moments of their story into the light. Arrange the memories as your heart guides you. |
 | `tributeWizard.montageLoading` | Chargement de vos souvenirs… | Loading your memories… |
 | `tributeWizard.montageEmpty` | Aucun souvenir pour l’instant. Revenez au Coffre à souvenirs pour en déposer. | No memories yet. Return to the Memory Chest to add some. |
 | `tributeWizard.montageFocalHint` | Cliquez sur l’image pour placer le point de focus | Click the image to set the focal point |
@@ -526,8 +530,11 @@
 | `tributeWizard.inviteTriggerLabel` | Entourage | Loved Ones |
 | `tributeWizard.inviteTriggerCta` | Inviter famille et amis | Invite family & friends |
 | `tributeWizard.inviteOpenAria` | Inviter mon entourage au Sanctuaire | Invite your loved ones to the Sanctuary |
-| `tributeWizard.inviteTitle` | L’histoire s’écrit ensemble | The story is written together |
-| `tributeWizard.inviteDescription` | Rien n’est envoyé tant que vous ne créez pas le lien.  Ne portez pas ce projet seul.  Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès sécurisé, vous permettez à vos proches d’ajouter directement leurs souvenirs dans votre Coffre. Vous gardez le contrôle total : vous seul déciderez ce qui entre dans le film final. | Nothing is sent until you create the link.  Don’t carry this alone.  Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this secure access, you let them add their pieces of the story directly to your Chest. You keep full control: only you decide what makes it into the final film. |
+| `tributeWizard.inviteTitle` | L’histoire s’écrit ensemble | Their story is written together |
+| `tributeWizard.inviteLead` | Ne portez pas ce projet seul. | Don’t carry this alone. |
+| `tributeWizard.inviteBody` | Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès, vous permettez à vos proches d’ajouter leurs souvenirs dans votre Coffre. Vous seul décidez ce qui entre dans le film. | Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this access, you let them add their memories to your Chest. Only you decide what makes it into the film. |
+| `tributeWizard.inviteFootnote` | Rien n’est envoyé tant que vous ne créez pas le lien. | Nothing is sent until you create the link. |
+| `tributeWizard.inviteDescription` | Ne portez pas ce projet seul.  Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès, vous permettez à vos proches d’ajouter leurs souvenirs dans votre Coffre. Vous seul décidez ce qui entre dans le film. | Don’t carry this alone.  Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this access, you let them add their memories to your Chest. Only you decide what makes it into the film. |
 | `tributeWizard.inviteGenerateCta` | Inviter mes proches | Invite my loved ones |
 | `tributeWizard.inviteGenerating` | Création du lien… | Creating link… |
 | `tributeWizard.inviteShareCta` | Partager | Share |
@@ -547,22 +554,23 @@
 | `tributeWizard.inviteKicker` | Sanctuaire | Sanctuary |
 | `tributeWizard.invitePoweredBy` | Propulsé par | Powered by |
 | `tributeWizard.collabTriggerLabel` | Aide création | Creation help |
-| `tributeWizard.collabTriggerCta` | Confier la réalisation | Entrust the creation |
-| `tributeWizard.collabOpenAria` | Inviter un Co-Créateur au Studio | Invite a Co-Creator to the Studio |
-| `tributeWizard.collabTitle` | Inviter un Co-Créateur | Invite a Co-Creator |
-| `tributeWizard.collabDescription` | Partagez un lien privé pour enrichir le Coffre à souvenirs, la musique et le film, sans accès au paiement. | Share a private link to enrich the Memory Chest, the music, and the film, with no access to payment. |
+| `tributeWizard.collabTriggerCta` | Inviter un proche | Invite a loved one |
+| `tributeWizard.collabOpenAria` | Inviter un proche à vous aider au Studio | Invite a loved one to help in the Studio |
+| `tributeWizard.collabTitle` | Inviter un proche à vous aider | Invite a loved one to help |
+| `tributeWizard.collabDescription` | Partagez cet accès privilégié avec une personne de confiance. Elle pourra vous accompagner dans le choix des souvenirs et de la musique. | Share this privileged access with someone you trust. They can assist you in selecting memories and music. |
+| `tributeWizard.collabFootnote` | Ce lien est entièrement gratuit et sécurisé. | This link is completely free and secure. |
 | `tributeWizard.collabGenerateCta` | Créer le lien | Create link |
 | `tributeWizard.collabGenerating` | Création du lien… | Creating link… |
 | `tributeWizard.collabCopyLink` | Copier le lien | Copy link |
 | `tributeWizard.collabCopied` | Lien copié | Link copied |
 | `tributeWizard.collabRegenerateCta` | Régénérer le lien | Regenerate link |
-| `tributeWizard.collabCloseAria` | Fermer le panneau Co-Créateur | Close Co-Creator panel |
+| `tributeWizard.collabCloseAria` | Fermer le panneau d’invitation | Close invite panel |
 | `tributeWizard.collabErrorGeneric` | Impossible de créer le lien pour le moment. | We could not create the link right now. |
 | `tributeWizard.collabNeedProject` | Enregistrez d’abord l’essentiel pour activer l’invitation. | Save the essentials first to enable inviting. |
 | `tributeWizard.collabWarnInvalidate` | Un nouveau lien invalide le précédent. | A new link invalidates the previous one. |
 | `tributeWizard.collabWarnOneShot` | Ce lien ne s’ouvre qu’une fois. | This link opens only once. |
 | `tributeWizard.collabTtlHint` | Valide 14 jours. | Valid for 14 days. |
-| `tributeWizard.collabKicker` | Mode Co-Créateur | Co-Creator Mode |
+| `tributeWizard.collabKicker` | Aide précieuse | Gentle help |
 | `tributeWizard.dossierSavingsBadge` | Économisez {savings} $ | Save ${savings} |
 | `tributeWizard.dossierRowMediaLabel` | Médias inclus | Media included |
 | `tributeWizard.dossierRowMediaValue` | Jusqu’à {count} | Up to {count} |
@@ -594,13 +602,13 @@
 | `tributeWizard.mediaBankColumnEmpty` | Chaque souvenir a trouvé son chapitre. | Every memory has found its chapter. |
 | `tributeWizard.montageChapterGridEmptyHint` | Ce chapitre est prêt. Mettez en scène un premier souvenir ici. | This chapter is ready. Set the scene with a first memory here. |
 | `tributeWizard.montageChapterBeyondRhythmHint` | {count} souvenirs au-delà du rythme · Composer | {count} memories beyond the rhythm · Compose |
-| `tributeWizard.montageOnboardingTitle` | Comment souhaitez-vous composer votre film ? | How would you like to compose your film? |
-| `tributeWizard.montageOnboardingDescription` | Choisissez une entrée en douceur. Vous pourrez toujours ajuster chaque chapitre ensuite. | Choose a gentle start. You can always refine each chapter afterward. |
-| `tributeWizard.montageOnboardingMagic` | Composition Magique | Magic Composition |
-| `tributeWizard.montageOnboardingMagicHint` | Nous plaçons vos souvenirs dans chaque chapitre, au rythme de vos chansons. | We place your memories in each chapter, paced to your songs. |
-| `tributeWizard.montageOnboardingManual` | Je compose moi-même | I'll compose myself |
-| `tributeWizard.montageOnboardingManualHint` | Partez d'une page blanche et glissez vos souvenirs à votre rythme. | Start from a blank canvas and drag your memories at your own pace. |
-| `tributeWizard.montageOnboardingDelegate` | Ou confiez la réalisation à un proche de confiance | Or entrust the creation to a trusted loved one |
+| `tributeWizard.montageOnboardingTitle` | Comment souhaitez-vous créer ce film ? | How would you like to create this film? |
+| `tributeWizard.montageOnboardingDescription` | Laissez-nous vous guider pour un premier jet, ou prenez entièrement les rênes. | Let us guide you for the first draft, or take full control. |
+| `tributeWizard.montageOnboardingMagic` | Création assistée | Assisted creation |
+| `tributeWizard.montageOnboardingMagicHint` | Notre moteur dispose délicatement vos souvenirs sur le rythme de la musique. | Our engine delicately arranges your memories to the rhythm of the music. |
+| `tributeWizard.montageOnboardingManual` | Création manuelle | Manual creation |
+| `tributeWizard.montageOnboardingManualHint` | Placez vous-même chaque souvenir, à votre propre rythme. | Place each memory yourself, at your own pace. |
+| `tributeWizard.montageOnboardingDelegate` | Ou invitez un proche de confiance à vous aider | Or invite a trusted loved one to help |
 | `tributeWizard.montageMagicPreparing` | Nous préparons votre film… | We're preparing your film… |
 | `tributeWizard.montageMagicMessage` | Nous tissons votre histoire… | We're weaving your story… |
 | `tributeWizard.montageMagicToast` | Voici une première proposition. Ajustez à votre guise. | Here's a first proposal. Adjust as you wish. |
@@ -651,14 +659,14 @@
 | `tributeWizard.soundPreviewPremiumBadge` | Preview | Preview |
 | `tributeWizard.soundCatalogAccessStandard` | Le catalogue Standard vous accompagne déjà. Pour ouvrir des droits étendus, vous pourrez choisir la Licence Premium (39$) dans Gestes de mémoire. | The Standard catalog is already with you. To open extended rights, you may choose the Premium License ($39) in Memory gestures. |
 | `tributeWizard.soundCatalogAccessPremium` | Catalogue Premium ouvert. Des titres à droits étendus pour porter votre hommage. | Premium catalog open. Extended-rights tracks to carry your tribute. |
-| `tributeWizard.stepChaptersTitle` | Vos chapitres musicaux | Your music chapters |
-| `tributeWizard.stepChaptersDescription` | Choisissez une chanson pour chaque chapitre de votre film. Sa durée réelle détermine l’espace disponible pour vos souvenirs. | Choose a song for each chapter of your film. Its real duration sets the available space for your memories. |
+| `tributeWizard.stepChaptersTitle` | La musique de sa vie | The music of their life |
+| `tributeWizard.stepChaptersDescription` | La musique donne une âme au film. Choisissez les mélodies qui l’accompagnaient le mieux. | Music gives the film its soul. Choose the melodies that accompanied them best. |
 | `tributeWizard.chapterEducationBanner` | Pour une expérience cinématographique optimale, nous recommandons de choisir des pistes d’au moins 3 à 4 minutes. | For the best cinematic experience, we recommend choosing tracks of at least 3 to 4 minutes. |
 | `tributeWizard.chapterShortTrackWarning` | Piste courte : peu de place pour vos souvenirs une fois l’intro et l’outro réservées. Privilégiez une piste de 3 à 4 minutes si possible. | Short track: little room left for your memories once the intro and outro are reserved. Prefer a 3-4 minute track if possible. |
 | `tributeWizard.chaptersProgress` | {count} chapitre(s) sur {total} avec une chanson choisie | {count} of {total} chapters with a chosen song |
 | `tributeWizard.chapterTitleFallback` | Chapitre {index} | Chapter {index} |
 | `tributeWizard.chapterEmptyLabel` | À choisir | To choose |
-| `tributeWizard.chapterAddCta` | + Ajouter un chapitre musical | + Add a music chapter |
+| `tributeWizard.chapterAddCta` | + Ajouter une mélodie | + Add a melody |
 | `tributeWizard.chapterRemoveCta` | Retirer ce chapitre | Remove this chapter |
 | `tributeWizard.chapterMaxReachedHint` | Nombre maximal de chapitres atteint pour votre forfait ({max}). | Maximum number of chapters reached for your plan ({max}). |
 | `tributeWizard.chapterCapacityRecommended` | ≈ {count} souvenirs recommandés | ≈ {count} memories recommended |
@@ -767,8 +775,8 @@
 | `tributeWizard.softCapCtaDismiss` | Continuer sur le Souvenir pour l’instant | Continue on Keepsake for now |
 | `tributeWizard.softCapPriceHeritage` | 179 $ · réglé seulement à l’export · 125 souvenirs · 1080p | $179 · pay only at export · 125 memories · 1080p |
 | `tributeWizard.softCapPriceLicense` | 39 $ · catalogue officiel, restez sur Souvenir | $39 · official catalog, stay on Keepsake |
-| `tributeWizard.softCapCollabHint` | Ou invitez un proche à déposer des souvenirs, sans accès au paiement. | Or invite a loved one to add memories, with no access to payment. |
-| `tributeWizard.softCapCollabCta` | Inviter un Co-Créateur | Invite a Co-Creator |
+| `tributeWizard.softCapCollabHint` | Ou invitez un proche à déposer des souvenirs. | Or invite a loved one to add memories. |
+| `tributeWizard.softCapCollabCta` | Inviter un proche | Invite a loved one |
 | `tributeWizard.softCapMediaUnlockCta` | Préparer l’Écrin Héritage | Prepare the Heritage casket |
 | `tributeWizard.softCapMediaBannerTitle` | Votre toile s’ouvre vers l’Écrin Héritage | Your canvas opens toward Heritage |
 | `tributeWizard.softCapMediaBannerBody` | Elle peut accueillir jusqu’à 125 souvenirs. Aucune carte aujourd’hui : vous ne réglez qu’au moment de l’export. | It can hold up to 125 memories. No card today: you only pay at export. |
@@ -848,9 +856,10 @@
 | `sanctuary.languageLabel` | Langue | Language |
 | `sanctuary.langOptionFr` | FR | FR |
 | `sanctuary.langOptionEn` | EN | EN |
-| `sanctuary.skyOf` | Mémoire de {name} | {name}'s Memory |
-| `sanctuary.skyContextBody` | Pour célébrer sa vie, sa famille rassemble des souvenirs pour un film d’hommage. C’est gratuit. Seule la famille verra votre dépôt. | To celebrate their life, the family is gathering memories for a tribute film. It’s free. Only the family will see what you leave. |
-| `sanctuary.skyCta` | Laisser un souvenir | Leave a memory |
+| `sanctuary.skyOf` | En mémoire de {name} | In loving memory of {name} |
+| `sanctuary.skyContextBody` | Sa famille rassemble des souvenirs pour un film d’hommage. Votre photo enrichira cette histoire. | Their family is gathering memories for a tribute film. Your photo will enrich this story. |
+| `sanctuary.skyPrivacyNote` | Seul le cercle familial y a accès. | Only the family circle can see it. |
+| `sanctuary.skyCta` | Partager un souvenir | Share a memory |
 | `sanctuary.guestStarAria` | Étoile de {name} | Star for {name} |
 | `sanctuary.closeSky` | Fermer | Close |
 | `sanctuary.logoHomeAria` | Odyssey — accueil | Odyssey — home |
