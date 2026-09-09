@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { DocumentLang } from "@/src/components/DocumentLang";
+import { OdysseyHelpLifeline } from "@/src/components/OdysseyHelpLifeline";
 import { i18n, type Locale } from "@/i18n.config";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSiteUrl } from "@/lib/siteUrl";
@@ -79,6 +80,7 @@ export default async function LangLayout({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {children}
+      <OdysseyHelpLifeline locale={htmlLang} copy={dictionary.helpLifeline} />
     </>
   );
 }

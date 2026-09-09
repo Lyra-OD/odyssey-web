@@ -71,8 +71,6 @@ export default async function ContributeSanctuaryPage({ params }: PageProps) {
       locale={lang}
       copyFr={dictFr.sanctuary}
       copyEn={dictEn.sanctuary}
-      helpLifelineFr={dictFr.helpLifeline}
-      helpLifelineEn={dictEn.helpLifeline}
     />
   );
 }
