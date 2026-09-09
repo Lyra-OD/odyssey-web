@@ -58,9 +58,9 @@ Contribution invité async : les proches achètent des **empreintes** dont le Ne
 | Route | Auth | Rôle |
 |-------|------|------|
 | **`POST /api/projects/[id]/contribute-link`** | Owner projet | Génère un lien invité opaque (`purpose=guest_contribute`, TTL 30 j) |
-| **`GET /api/contribute/[token]`** | Token invité (public) | Contexte page contributeur |
+| **`GET /api/contribute/[token]`** | Token invité (public) + cookie `odyssey_guest` | Hommage + packs. `circle: []` (pas de PII des autres). Quota photos = **cette session**. |
 | **`POST /api/contribute/[token]/checkout`** | Token invité (public) | Session Stripe `guest_support` |
-| **`POST /api/contribute/[token]/deposit`** | Token invité (public) | Dépôt gratuit (1 photo \| 1 mot) · jusqu’à **5 photos** / token (quota) |
+| **`POST /api/contribute/[token]/deposit`** | Token invité (public) + cookie `odyssey_guest` | Dépôt gratuit (photos et/ou mot) · **5 photos / session** (pas / lien) |
 | **`/[lang]/contribute/[token]`** | Token invité (public) | **UI Sanctuaire livrée** (Phase 3a) |
 
 ### Co-Créateur (Phases A–C ✅)

@@ -74,6 +74,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | 27 | `odyssey_p15_partner_leads.sql` | **Migration** | **HQ D** — leads formulaire `/partners` (service_role only) |
 | 28 | `odyssey_p16_fix_invitations_rls.sql` | **Patch** | **Salon P0-03** — RLS invitations : conseiller = ses lignes · admin = tenant |
 | 29 | `odyssey_p17_project_status_submitted.sql` | **Patch** | **Checkout** — enum `project_status` + valeur `submitted` (webhook / panier 0 $) |
+| 30 | `odyssey_p18_guest_session_photo_quota.sql` | **Patch** | **Sanctuaire** — plafond 5 photos / **session** invité (même lien, appareils distincts). **À jouer** sinon le trigger P10.3 rebloque tout le monde. |
 | — | `odyssey_p6_1_waterfall_qa_assert.sql` | **QA** | Assert waterfall pur S1–S3 + clawback S5 (lecture seule). |
 | — | `odyssey_p6_qa_revshare_accrual.sql` | **QA** | Accrual RevShare E2E (solde +30 % net · idempotence · 0 jeton) — transactionnel ROLLBACK. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
@@ -278,6 +279,19 @@ WHERE slug = 'partner-qa-demo';
 | `trg_media_assets_guest_photo_quota` | Défense en profondeur (race-safe) |
 
 App : `src/lib/contribute/guestPhotoQuota.ts` + `POST .../deposit` → 403 `guest_photo_limit_reached`.
+
+---
+
+## P18 — Plafond 5 photos / session invité
+
+**Fichier :** `odyssey_p18_guest_session_photo_quota.sql`  
+**Prérequis :** P10.3. **Idempotent** (`CREATE OR REPLACE`). Soft Cap famille **non modifié**.
+
+Remplace le COUNT P10.3 (par token) : le chemin
+`…/contribute/{tokenId}/{sessionId}/…` est compté **par session**.
+Chemins legacy (un seul UUID) : comportement P10.3 inchangé.
+
+**À jouer** dans le SQL Editor avant de tester deux invités sur le même lien.
 
 ---
 

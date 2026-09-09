@@ -2,14 +2,11 @@ import { NextResponse } from "next/server";
 
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { resolveContributeToken } from "@/src/lib/contribute/accessToken";
-import {
-  circleRoleLabel,
-  formatCircleDisplayName,
-  mergeCircleEntries,
-  roleFromProductKey,
-  type CircleRole,
-} from "@/src/lib/contribute/circle";
 import { countGuestPhotosForContributeToken } from "@/src/lib/contribute/guestPhotoQuota";
+import {
+  attachGuestSessionCookieIfMinted,
+  resolveOrMintGuestSession,
+} from "@/src/lib/contribute/guestSessionCookie";
 import {
   formatTributeDisplayName,
   resolveTributeNames,
@@ -24,8 +21,9 @@ export const runtime = "nodejs";
 
 /**
  * GET /api/contribute/[token]
- * Contexte public Sanctuaire : hommage, catalogue empreintes, cercle des proches.
- * Pas de jauge $ (Quiet Luxury) — les montants fonds restent côté famille.
+ * Contexte public Sanctuaire : hommage + catalogue. Pas de PII des autres
+ * invités (prénoms / courriels). `circle` reste [] — étoiles = mon dépôt.
+ * `circleCount` = preuve anonyme (« le ciel se remplit »). Pas de jauge $.
  */
 export async function GET(
   req: Request,
@@ -38,6 +36,11 @@ export async function GET(
   if (!tokenRow) {
     return NextResponse.json({ error: "invalid_or_expired_link" }, { status: 404 });
   }
+
+  const guestSession = resolveOrMintGuestSession({
+    cookieHeader: req.headers.get("cookie"),
+    tokenId: tokenRow.id,
+  });
 
   const admin = getSupabaseAdminClient();
 
@@ -52,74 +55,22 @@ export async function GET(
     last_name: (project?.last_name as string | null) ?? null,
   });
 
-  const [{ data: guestMedia }, { data: paidCheckouts }, guestPhotoCount] =
-    await Promise.all([
-      admin
-        .from("media_assets")
-        .select("contributor_name, contributor_email, created_at, source")
-        .eq("project_id", tokenRow.project_id)
-        .eq("contributor_type", "guest")
-        .order("created_at", { ascending: false })
-        .limit(40),
-      admin
-        .from("guest_micro_checkouts")
-        .select(
-          "contributor_name, contributor_email, product_key, completed_at, created_at",
-        )
-        .eq("project_id", tokenRow.project_id)
-        .eq("status", "completed")
-        .order("completed_at", { ascending: false })
-        .limit(40),
-      countGuestPhotosForContributeToken(admin, {
-        projectId: tokenRow.project_id,
-        accessTokenId: tokenRow.id,
-      }).catch(() => 0),
-    ]);
+  const [guestPhotoCount, circleHead] = await Promise.all([
+    countGuestPhotosForContributeToken(admin, {
+      projectId: tokenRow.project_id,
+      accessTokenId: tokenRow.id,
+      sessionId: guestSession.payload.sessionId,
+    }).catch(() => 0),
+    admin
+      .from("media_assets")
+      .select("id", { count: "exact", head: true })
+      .eq("project_id", tokenRow.project_id)
+      .eq("contributor_type", "guest"),
+  ]);
 
-  const rawEntries: {
-    displayName: string;
-    role: CircleRole;
-    at: number;
-  }[] = [];
+  const circleCount = circleHead.count ?? 0;
 
-  for (const row of guestMedia ?? []) {
-    const displayName = formatCircleDisplayName(
-      row.contributor_name as string | null,
-      row.contributor_email as string | null,
-    );
-    if (!displayName) continue;
-    rawEntries.push({
-      displayName,
-      role: "present",
-      at: new Date((row.created_at as string) ?? 0).getTime(),
-    });
-  }
-
-  for (const row of paidCheckouts ?? []) {
-    const displayName = formatCircleDisplayName(
-      row.contributor_name as string | null,
-      row.contributor_email as string | null,
-    );
-    if (!displayName) continue;
-    const at = new Date(
-      (row.completed_at as string | null) ??
-        (row.created_at as string | null) ??
-        0,
-    ).getTime();
-    rawEntries.push({
-      displayName,
-      role: roleFromProductKey(row.product_key as string | null),
-      at,
-    });
-  }
-
-  const circle = mergeCircleEntries(rawEntries).map((m) => ({
-    displayName: m.displayName,
-    role: m.role,
-    roleLabel: circleRoleLabel(m.role, locale),
-  }));
-
-  return NextResponse.json({
+  const response = NextResponse.json({
     ok: true,
     tribute: {
       firstName: tribute.firstName,
@@ -128,8 +79,8 @@ export async function GET(
     },
     guestPhotoCount,
     guestPhotoMax: SANCTUARY_GUEST_PHOTO_MAX,
-    circle,
-    circleCount: circle.length,
+    circle: [],
+    circleCount,
     packs: listActiveGuestSupportPacks().map((pack) => ({
       key: pack.key,
       label: guestSupportPackLabel(pack, locale),
@@ -140,4 +91,6 @@ export async function GET(
       amountSuggestedCents: pack.amountSuggestedCents ?? null,
     })),
   });
+  attachGuestSessionCookieIfMinted(response, guestSession);
+  return response;
 }

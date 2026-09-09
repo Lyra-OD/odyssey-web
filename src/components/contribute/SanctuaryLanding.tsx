@@ -394,7 +394,6 @@ export function SanctuaryLanding({
           packs?: ImprintPack[];
           guestPhotoCount?: number;
           guestPhotoMax?: number;
-          circle?: { displayName?: string }[];
           error?: string;
         };
         if (cancelled) return;
@@ -409,16 +408,6 @@ export function SanctuaryLanding({
         const count = Math.max(0, body.guestPhotoCount ?? 0);
         setPhotoMax(max);
         setPhotoCount(count);
-        const fromCircle = (body.circle ?? [])
-          .map((m) => {
-            const label = (m.displayName ?? "").trim();
-            if (!label) return null;
-            return { id: starIdFromName(label), label };
-          })
-          .filter((s): s is { id: string; label: string } => s !== null);
-        if (fromCircle.length > 0) {
-          setGuestStars(fromCircle);
-        }
         setLoad({
           status: "ready",
           tribute: body.tribute,

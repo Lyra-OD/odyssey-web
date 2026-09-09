@@ -1,17 +1,22 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { guestContributeStoragePrefix } from "@/src/lib/contribute/guestPhotoQuota";
 import { SANCTUARY_GUEST_VIDEO_MAX_PER_TOKEN } from "@/src/lib/contribute/sanctuaryLimits";
 
 export const GUEST_VIDEO_LIMIT_ERROR = "guest_video_limit_reached";
 
 /**
- * Compte les dépôts `guest_video` pour ce token (path Storage contribute/{tokenId}/).
+ * Compte les dépôts `guest_video` pour cette session invité.
  */
 export async function countGuestVideoDeposits(
   admin: SupabaseClient,
-  params: { projectId: string; accessTokenId: string },
+  params: { projectId: string; accessTokenId: string; sessionId: string },
 ): Promise<number> {
-  const prefix = `projects/${params.projectId}/contribute/${params.accessTokenId}/`;
+  const prefix = guestContributeStoragePrefix(
+    params.projectId,
+    params.accessTokenId,
+    params.sessionId,
+  );
   const { count, error } = await admin
     .from("media_assets")
     .select("id", { count: "exact", head: true })
@@ -29,6 +34,7 @@ export async function canAcceptGuestVideoDeposit(
   params: {
     projectId: string;
     accessTokenId: string;
+    sessionId: string;
     max?: number;
   },
 ): Promise<{ ok: true; count: number } | { ok: false; count: number }> {

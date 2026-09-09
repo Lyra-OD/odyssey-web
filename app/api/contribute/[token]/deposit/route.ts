@@ -5,7 +5,12 @@ import { randomUUID } from "crypto";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { resolveContributeToken } from "@/src/lib/contribute/accessToken";
 import {
+  attachGuestSessionCookieIfMinted,
+  resolveOrMintGuestSession,
+} from "@/src/lib/contribute/guestSessionCookie";
+import {
   canAcceptGuestPhotoDeposit,
+  guestContributeStoragePrefix,
   GUEST_PHOTO_LIMIT_ERROR,
   isGuestPhotoLimitDbError,
 } from "@/src/lib/contribute/guestPhotoQuota";
@@ -96,11 +101,11 @@ function extensionForMime(mime: string): string {
  *
  * Insert admin `media_assets` : contributor_type=guest, review_status=pending_review.
  * Hors Soft Cap famille (voir odyssey_p10_2_guest_sanctuary.sql).
- * Plafond 5 photos / token (P10.3 + guestPhotoQuota).
- * Plafond 10 messages / token (anti-spam).
+ * Plafond 5 photos / session invité (P10.3 + guestPhotoQuota).
+ * Plafond 10 messages / session (anti-spam).
  * Photos ET/OU mot : deux `kind` distincts, pas de XOR — l’UI peut enchaîner les deux.
- * Plafond 5 voix / token (re-takes Phase 3b).
- * Plafond 5 vidéos / token (re-takes témoignage Phase 3b).
+ * Plafond 5 voix / session (re-takes Phase 3b).
+ * Plafond 5 vidéos / session (re-takes témoignage Phase 3b).
  */
 export async function POST(
   req: Request,
@@ -111,13 +116,28 @@ export async function POST(
     return NextResponse.json({ error: "invalid_or_expired_link" }, { status: 404 });
   }
 
+  const guestSession = resolveOrMintGuestSession({
+    cookieHeader: req.headers.get("cookie"),
+    tokenId: tokenRow.id,
+  });
+  const sessionId = guestSession.payload.sessionId;
+
+  const jsonWithSession = (
+    body: unknown,
+    init?: { status?: number; headers?: HeadersInit },
+  ) => {
+    const response = NextResponse.json(body, init);
+    attachGuestSessionCookieIfMinted(response, guestSession);
+    return response;
+  };
+
   const rate = await assertContributeRateLimit({
     action: "contribute_deposit",
     tokenHash: tokenRow.id,
     clientIp: clientIpFromRequest(req),
   });
   if (!rate.ok) {
-    return NextResponse.json(
+    return jsonWithSession(
       { error: "rate_limited" },
       {
         status: 429,
@@ -138,7 +158,7 @@ export async function POST(
     .maybeSingle();
 
   if (projectError || !project?.user_id) {
-    return NextResponse.json({ error: "project_not_found" }, { status: 404 });
+    return jsonWithSession({ error: "project_not_found" }, { status: 404 });
   }
 
   const ownerUserId = project.user_id as string;
@@ -146,7 +166,7 @@ export async function POST(
     (tokenRow.tenant_id as string | null) ??
     (project.tenant_id as string | null);
   if (!tenantId) {
-    return NextResponse.json({ error: "tenant_missing" }, { status: 400 });
+    return jsonWithSession({ error: "tenant_missing" }, { status: 400 });
   }
 
   let kind: "photo" | "message" | "voice" | "video";
@@ -162,7 +182,7 @@ export async function POST(
     try {
       form = await req.formData();
     } catch {
-      return NextResponse.json({ error: "invalid_form" }, { status: 400 });
+      return jsonWithSession({ error: "invalid_form" }, { status: 400 });
     }
 
     const kindRaw = String(form.get("kind") ?? "photo");
@@ -172,18 +192,18 @@ export async function POST(
       kindRaw !== "voice" &&
       kindRaw !== "video"
     ) {
-      return NextResponse.json({ error: "invalid_kind" }, { status: 400 });
+      return jsonWithSession({ error: "invalid_kind" }, { status: 400 });
     }
     kind = kindRaw;
     contributorName = String(form.get("contributorName") ?? "").trim();
     if (!contributorName) {
-      return NextResponse.json({ error: "contributor_name_required" }, { status: 400 });
+      return jsonWithSession({ error: "contributor_name_required" }, { status: 400 });
     }
     const emailRaw = form.get("contributorEmail");
     if (typeof emailRaw === "string" && emailRaw.trim()) {
       const emailParsed = z.string().email().safeParse(emailRaw.trim());
       if (!emailParsed.success) {
-        return NextResponse.json({ error: "invalid_email" }, { status: 400 });
+        return jsonWithSession({ error: "invalid_email" }, { status: 400 });
       }
       contributorEmail = emailParsed.data;
     }
@@ -192,45 +212,45 @@ export async function POST(
     if (kind === "message") {
       messageText = String(form.get("messageText") ?? "").trim();
       if (!messageText || messageText.length > MAX_MESSAGE_CHARS) {
-        return NextResponse.json({ error: "invalid_message" }, { status: 400 });
+        return jsonWithSession({ error: "invalid_message" }, { status: 400 });
       }
     } else if (kind === "voice") {
       const file = form.get("file");
       if (!(file instanceof File)) {
-        return NextResponse.json({ error: "file_required" }, { status: 400 });
+        return jsonWithSession({ error: "file_required" }, { status: 400 });
       }
       mimeType = (file.type || "audio/webm").split(";")[0].trim().toLowerCase();
       if (!ALLOWED_VOICE_TYPES.has(mimeType)) {
-        return NextResponse.json({ error: "unsupported_media_type" }, { status: 400 });
+        return jsonWithSession({ error: "unsupported_media_type" }, { status: 400 });
       }
       if (file.size <= 0 || file.size > SANCTUARY_GUEST_VOICE_MAX_BYTES) {
-        return NextResponse.json({ error: "file_too_large" }, { status: 400 });
+        return jsonWithSession({ error: "file_too_large" }, { status: 400 });
       }
       fileBytes = await file.arrayBuffer();
     } else if (kind === "video") {
       const file = form.get("file");
       if (!(file instanceof File)) {
-        return NextResponse.json({ error: "file_required" }, { status: 400 });
+        return jsonWithSession({ error: "file_required" }, { status: 400 });
       }
       mimeType = (file.type || "video/webm").split(";")[0].trim().toLowerCase();
       if (!ALLOWED_VIDEO_TYPES.has(mimeType)) {
-        return NextResponse.json({ error: "unsupported_media_type" }, { status: 400 });
+        return jsonWithSession({ error: "unsupported_media_type" }, { status: 400 });
       }
       if (file.size <= 0 || file.size > SANCTUARY_GUEST_VIDEO_MAX_BYTES) {
-        return NextResponse.json({ error: "file_too_large" }, { status: 400 });
+        return jsonWithSession({ error: "file_too_large" }, { status: 400 });
       }
       fileBytes = await file.arrayBuffer();
     } else {
       const file = form.get("file");
       if (!(file instanceof File)) {
-        return NextResponse.json({ error: "file_required" }, { status: 400 });
+        return jsonWithSession({ error: "file_required" }, { status: 400 });
       }
       mimeType = file.type || "image/jpeg";
       if (!ALLOWED_IMAGE_TYPES.has(mimeType)) {
-        return NextResponse.json({ error: "unsupported_media_type" }, { status: 400 });
+        return jsonWithSession({ error: "unsupported_media_type" }, { status: 400 });
       }
       if (file.size <= 0 || file.size > MAX_PHOTO_BYTES) {
-        return NextResponse.json({ error: "file_too_large" }, { status: 400 });
+        return jsonWithSession({ error: "file_too_large" }, { status: 400 });
       }
       fileBytes = await file.arrayBuffer();
     }
@@ -239,11 +259,11 @@ export async function POST(
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+      return jsonWithSession({ error: "invalid_json" }, { status: 400 });
     }
     const parsed = JsonBodySchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json(
+      return jsonWithSession(
         { error: "invalid_body", details: parsed.error.flatten() },
         { status: 400 },
       );
@@ -261,9 +281,10 @@ export async function POST(
       const quota = await canAcceptGuestPhotoDeposit(admin, {
         projectId: tokenRow.project_id,
         accessTokenId: tokenRow.id,
+        sessionId,
       });
       if (!quota.ok) {
-        return NextResponse.json(
+        return jsonWithSession(
           {
             error: GUEST_PHOTO_LIMIT_ERROR,
             max: SANCTUARY_GUEST_PHOTO_MAX,
@@ -274,16 +295,17 @@ export async function POST(
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "quota_check_failed";
-      return NextResponse.json({ error: message }, { status: 500 });
+      return jsonWithSession({ error: message }, { status: 500 });
     }
   } else if (kind === "voice") {
     try {
       const quota = await canAcceptGuestVoiceDeposit(admin, {
         projectId: tokenRow.project_id,
         accessTokenId: tokenRow.id,
+        sessionId,
       });
       if (!quota.ok) {
-        return NextResponse.json(
+        return jsonWithSession(
           {
             error: GUEST_VOICE_LIMIT_ERROR,
             max: SANCTUARY_GUEST_VOICE_MAX_PER_TOKEN,
@@ -294,23 +316,24 @@ export async function POST(
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "quota_check_failed";
-      return NextResponse.json({ error: message }, { status: 500 });
+      return jsonWithSession({ error: message }, { status: 500 });
     }
     try {
       await ensureUserAssetsAllowsGuestVoiceAudio();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "storage_mime_allowlist_failed";
-      return NextResponse.json({ error: message }, { status: 503 });
+      return jsonWithSession({ error: message }, { status: 503 });
     }
   } else if (kind === "video") {
     try {
       const quota = await canAcceptGuestVideoDeposit(admin, {
         projectId: tokenRow.project_id,
         accessTokenId: tokenRow.id,
+        sessionId,
       });
       if (!quota.ok) {
-        return NextResponse.json(
+        return jsonWithSession(
           {
             error: GUEST_VIDEO_LIMIT_ERROR,
             max: SANCTUARY_GUEST_VIDEO_MAX_PER_TOKEN,
@@ -321,23 +344,24 @@ export async function POST(
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "quota_check_failed";
-      return NextResponse.json({ error: message }, { status: 500 });
+      return jsonWithSession({ error: message }, { status: 500 });
     }
     try {
       await ensureUserAssetsAllowsGuestVideo();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "storage_mime_allowlist_failed";
-      return NextResponse.json({ error: message }, { status: 503 });
+      return jsonWithSession({ error: message }, { status: 503 });
     }
   } else {
     try {
       const quota = await canAcceptGuestMessageDeposit(admin, {
         projectId: tokenRow.project_id,
         accessTokenId: tokenRow.id,
+        sessionId,
       });
       if (!quota.ok) {
-        return NextResponse.json(
+        return jsonWithSession(
           {
             error: GUEST_MESSAGE_LIMIT_ERROR,
             max: SANCTUARY_GUEST_MESSAGE_MAX,
@@ -348,19 +372,23 @@ export async function POST(
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "quota_check_failed";
-      return NextResponse.json({ error: message }, { status: 500 });
+      return jsonWithSession({ error: message }, { status: 500 });
     }
     try {
       await ensureUserAssetsAllowsGuestMessage();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "storage_mime_allowlist_failed";
-      return NextResponse.json({ error: message }, { status: 503 });
+      return jsonWithSession({ error: message }, { status: 503 });
     }
   }
 
   const assetId = randomUUID();
-  const basePath = `projects/${tokenRow.project_id}/contribute/${tokenRow.id}`;
+  const basePath = guestContributeStoragePrefix(
+    tokenRow.project_id,
+    tokenRow.id,
+    sessionId,
+  ).replace(/\/$/, "");
 
   let storagePath: string;
   let sizeBytes: number;
@@ -408,7 +436,7 @@ export async function POST(
     });
 
   if (uploadError) {
-    return NextResponse.json(
+    return jsonWithSession(
       { error: "storage_upload_failed", message: uploadError.message },
       { status: 400 },
     );
@@ -443,12 +471,12 @@ export async function POST(
   if (insertError || !inserted?.id) {
     await admin.storage.from(BUCKET).remove([storagePath]);
     if (isGuestPhotoLimitDbError(insertError?.message)) {
-      return NextResponse.json(
+      return jsonWithSession(
         { error: GUEST_PHOTO_LIMIT_ERROR },
         { status: 403 },
       );
     }
-    return NextResponse.json(
+    return jsonWithSession(
       { error: "media_insert_failed", message: insertError?.message },
       { status: 400 },
     );
@@ -478,7 +506,7 @@ export async function POST(
     await admin.from("consent_records").insert(consentRows);
   }
 
-  return NextResponse.json({
+  return jsonWithSession({
     ok: true,
     deposit: {
       id: inserted.id as string,

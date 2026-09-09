@@ -1,6 +1,6 @@
 /**
  * Quota messages Sanctuaire (invité) — anti-spam dépôt texte.
- * Miroir de guestPhotoQuota (source=guest_message).
+ * Miroir de guestPhotoQuota (source=guest_message, session invité).
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -19,11 +19,12 @@ export function isGuestMessageQuotaExceeded(
 
 export async function countGuestMessagesForContributeToken(
   admin: SupabaseClient,
-  params: { projectId: string; accessTokenId: string },
+  params: { projectId: string; accessTokenId: string; sessionId: string },
 ): Promise<number> {
   const prefix = guestContributeStoragePrefix(
     params.projectId,
     params.accessTokenId,
+    params.sessionId,
   );
 
   const { count, error } = await admin
@@ -43,7 +44,7 @@ export async function countGuestMessagesForContributeToken(
 
 export async function canAcceptGuestMessageDeposit(
   admin: SupabaseClient,
-  params: { projectId: string; accessTokenId: string },
+  params: { projectId: string; accessTokenId: string; sessionId: string },
 ): Promise<{ ok: true; count: number } | { ok: false; count: number }> {
   const count = await countGuestMessagesForContributeToken(admin, params);
   if (isGuestMessageQuotaExceeded(count)) {

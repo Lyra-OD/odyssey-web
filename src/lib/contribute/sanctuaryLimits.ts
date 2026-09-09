@@ -10,13 +10,13 @@
 export const SANCTUARY_FREE_DEPOSIT_SLOTS = 1;
 
 /**
- * Photos max par invité (lien public), hors Soft Cap famille.
+ * Photos max par session invité (même lien, appareil distinct), hors Soft Cap famille.
  * Inclut la photo du dépôt gratuit si choisie.
  */
 export const SANCTUARY_GUEST_PHOTO_MAX = 5;
 
 /**
- * Messages texte max par token contribute (anti-spam storage).
+ * Messages texte max par session invité (anti-spam storage).
  * Distinct du plafond photos.
  */
 export const SANCTUARY_GUEST_MESSAGE_MAX = 10;

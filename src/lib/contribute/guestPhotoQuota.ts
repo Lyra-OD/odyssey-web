@@ -9,12 +9,13 @@ import { SANCTUARY_GUEST_PHOTO_MAX } from "@/src/lib/contribute/sanctuaryLimits"
 
 export const GUEST_PHOTO_LIMIT_ERROR = "guest_photo_limit_reached" as const;
 
-/** Préfixe storage des dépôts liés à un access_token contribute. */
+/** Préfixe storage des dépôts d’une session invité (porte + appareil). */
 export function guestContributeStoragePrefix(
   projectId: string,
   accessTokenId: string,
+  sessionId: string,
 ): string {
-  return `projects/${projectId}/contribute/${accessTokenId}/`;
+  return `projects/${projectId}/contribute/${accessTokenId}/${sessionId}/`;
 }
 
 export function isGuestPhotoQuotaExceeded(
@@ -25,16 +26,17 @@ export function isGuestPhotoQuotaExceeded(
 }
 
 /**
- * Compte les photos invité (`source=guest_photo`) pour ce token contribute.
- * Scopé projet + chemin token — n’affecte pas le Soft Cap famille.
+ * Compte les photos invité (`source=guest_photo`) pour cette session.
+ * Scopé projet + chemin token/session — n’affecte pas le Soft Cap famille.
  */
 export async function countGuestPhotosForContributeToken(
   admin: SupabaseClient,
-  params: { projectId: string; accessTokenId: string },
+  params: { projectId: string; accessTokenId: string; sessionId: string },
 ): Promise<number> {
   const prefix = guestContributeStoragePrefix(
     params.projectId,
     params.accessTokenId,
+    params.sessionId,
   );
 
   const { count, error } = await admin
@@ -55,7 +57,7 @@ export async function countGuestPhotosForContributeToken(
 /** True si une nouvelle photo est autorisée. */
 export async function canAcceptGuestPhotoDeposit(
   admin: SupabaseClient,
-  params: { projectId: string; accessTokenId: string },
+  params: { projectId: string; accessTokenId: string; sessionId: string },
 ): Promise<{ ok: true; count: number } | { ok: false; count: number }> {
   const count = await countGuestPhotosForContributeToken(admin, params);
   if (isGuestPhotoQuotaExceeded(count)) {
