@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-08 · **Entrées :** 867
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-09 · **Entrées :** 873
 
 ## `common`
 
@@ -38,11 +38,22 @@
 | `header.menuClose` | Fermer le menu | Close menu |
 | `header.mainNavAria` | Navigation principale | Main navigation |
 
+## `helpLifeline`
+
+| Clé | FR | EN |
+|-----|----|----|
+| `helpLifeline.label` | Besoin d'aide ? | Need help? |
+| `helpLifeline.phoneDisplay` | 514-244-9969 | 514-244-9969 |
+| `helpLifeline.phoneAria` | Appeler le 514-244-9969 | Call 514-244-9969 |
+| `helpLifeline.writeUs` | Nous écrire | Write to us |
+| `helpLifeline.writeUsAria` | Ouvrir la page Contact | Open the Contact page |
+
 ## `contact`
 
 | Clé | FR | EN |
 |-----|----|----|
 | `contact.title` | Nous écrire | Write to us |
+| `contact.phoneLine` | Par téléphone : 514-244-9969 | By phone: 514-244-9969 |
 | `contact.subtitle` | Une question sur un hommage, un projet en cours ou un doute avant de commander ? Décrivez votre situation. Nous vous répondons avec attention. | Questions about a tribute, an ongoing project, or uncertainty before ordering? Tell us where you stand. We respond thoughtfully. |
 | `contact.form.name` | Nom | Name |
 | `contact.form.email` | Courriel | Email |

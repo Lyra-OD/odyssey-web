@@ -58,6 +58,8 @@ export const appRoutes = {
   login: (lang: Locale) => `/${lang}/login`,
   /** Page marketing « devenir partenaire » (≠ salon). */
   partnersMarketing: (lang: Locale) => `/${lang}/partners`,
+  /** Page de contact / aide. */
+  contact: (lang: Locale) => `/${lang}/contact`,
   inviteAccept: (lang: Locale) => `/${lang}/invite/accept`,
   tributeWelcome: (lang: Locale) => `/${lang}/tribute/welcome`,
   /** Redeem lien Co-Créateur → cookie httpOnly → Studio. */

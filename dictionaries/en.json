@@ -26,8 +26,16 @@
     "menuClose": "Close menu",
     "mainNavAria": "Main navigation"
   },
+  "helpLifeline": {
+    "label": "Need help?",
+    "phoneDisplay": "514-244-9969",
+    "phoneAria": "Call 514-244-9969",
+    "writeUs": "Write to us",
+    "writeUsAria": "Open the Contact page"
+  },
   "contact": {
     "title": "Write to us",
+    "phoneLine": "By phone: 514-244-9969",
     "subtitle": "Questions about a tribute, an ongoing project, or uncertainty before ordering? Tell us where you stand. We respond thoughtfully.",
     "form": {
       "name": "Name",

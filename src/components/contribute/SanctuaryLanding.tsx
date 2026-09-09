@@ -25,6 +25,7 @@ import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlow
 import { formatCircleDisplayName } from "@/src/lib/contribute/circle";
 import { LocaleSwitcher } from "@/src/components/i18n/LocaleSwitcher";
 import type { AppDictionary } from "@/lib/dictionaries";
+import { OdysseyHelpLifeline } from "@/src/components/OdysseyHelpLifeline";
 import {
   isSanctuarySkyPreview,
   isSanctuaryVisualPreview,
@@ -80,6 +81,8 @@ export type SanctuaryLandingProps = {
   locale: Locale;
   copyFr: SanctuaryCopy;
   copyEn: SanctuaryCopy;
+  helpLifelineFr?: AppDictionary["helpLifeline"];
+  helpLifelineEn?: AppDictionary["helpLifeline"];
 };
 
 type TributePayload = {
@@ -218,6 +221,8 @@ export function SanctuaryLanding({
   locale,
   copyFr,
   copyEn,
+  helpLifelineFr,
+  helpLifelineEn,
 }: SanctuaryLandingProps) {
   const [load, setLoad] = useState<LoadState>({ status: "loading" });
   const [deposit, setDeposit] = useState<SanctuaryDepositResult | null>(null);
@@ -944,6 +949,15 @@ export function SanctuaryLanding({
           </p>
         </footer>
       </div>
+      ) : null}
+
+      {/* Chip d'aide permanente — toutes phases, bas-gauche, z-[47] (dessus sky z-[46]). */}
+      {load.status === "ready" && helpLifelineFr ? (
+        <OdysseyHelpLifeline
+          locale={uiLocale}
+          copy={uiLocale === "en" && helpLifelineEn ? helpLifelineEn : helpLifelineFr}
+          zClass="z-[47]"
+        />
       ) : null}
     </main>
   );

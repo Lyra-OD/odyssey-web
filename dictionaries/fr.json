@@ -26,8 +26,16 @@
     "menuClose": "Fermer le menu",
     "mainNavAria": "Navigation principale"
   },
+  "helpLifeline": {
+    "label": "Besoin d'aide ?",
+    "phoneDisplay": "514-244-9969",
+    "phoneAria": "Appeler le 514-244-9969",
+    "writeUs": "Nous écrire",
+    "writeUsAria": "Ouvrir la page Contact"
+  },
   "contact": {
     "title": "Nous écrire",
+    "phoneLine": "Par téléphone : 514-244-9969",
     "subtitle": "Une question sur un hommage, un projet en cours ou un doute avant de commander ? Décrivez votre situation. Nous vous répondons avec attention.",
     "form": {
       "name": "Nom",

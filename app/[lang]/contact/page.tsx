@@ -37,6 +37,16 @@ export default async function ContactPage({ params }: PageProps) {
           <p className="font-label mt-8 text-sm leading-relaxed text-zinc-400 md:text-base">
             {t.subtitle}
           </p>
+          {t.phoneLine ? (
+            <p className="mt-4 text-sm font-light text-zinc-300">
+              <a
+                href="tel:+15142449969"
+                className="underline decoration-white/20 underline-offset-2 transition-colors hover:text-teal-300"
+              >
+                {t.phoneLine}
+              </a>
+            </p>
+          ) : null}
 
           <form className="mt-14 space-y-10" noValidate>
             <label className="block">

@@ -122,6 +122,7 @@ export default async function TributeWelcomePage({
 
         <TributeWizard
           copy={dictionary.tributeWizard}
+          helpLifeline={dictionary.helpLifeline}
           initialDraft={project}
           locale={lang}
           isPartner={false}
