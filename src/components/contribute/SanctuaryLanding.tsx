@@ -113,11 +113,13 @@ function GuestOdysseyHomeMark({
       aria-label={ariaLabel}
       className={`pointer-events-auto inline-flex justify-center ${className}`}
     >
-      <OdysseyConnexionMark
-        wordmark={wordmark}
-        animate
-        className="pointer-events-none [&_.odyssey-connexion-mark]:!text-[35px] [&_.odyssey-connexion-mark]:!tracking-[0.52em] sm:[&_.odyssey-connexion-mark]:!tracking-[0.52em] md:[&_.odyssey-connexion-mark]:!tracking-[0.52em] lg:[&_.odyssey-connexion-mark]:!text-[35px] lg:[&_.odyssey-connexion-mark]:!tracking-[0.52em]"
-      />
+      <div className="mx-auto flex max-w-[16rem] origin-top scale-[0.82] justify-center sm:max-w-[18rem] sm:scale-[0.88]">
+        <OdysseyConnexionMark
+          wordmark={wordmark}
+          animate
+          className="pointer-events-none mb-0"
+        />
+      </div>
     </a>
   );
 }
@@ -494,8 +496,8 @@ export function SanctuaryLanding({
   );
 
   const skyTopChrome = (
-    <div className="relative flex items-start justify-end px-4 pt-4 md:px-8 md:pt-8">
-      <div className="pointer-events-auto absolute left-1/2 top-4 -translate-x-1/2">
+    <div className="relative flex items-start justify-end px-4 pt-10 md:px-8 md:pt-14">
+      <div className="pointer-events-auto absolute left-1/2 top-10 -translate-x-1/2 md:top-14">
         {guestBrandMark}
       </div>
       <div className="pointer-events-auto relative z-[1]">{localeSwitcher}</div>
@@ -503,8 +505,8 @@ export function SanctuaryLanding({
   );
 
   const monolithHeader = (
-    <div className="relative flex items-start justify-end pt-4 pr-[5px]">
-      <div className="absolute left-1/2 top-4 -translate-x-1/2">
+    <div className="relative flex items-start justify-end pt-10 pr-[5px] md:pt-14">
+      <div className="absolute left-1/2 top-10 -translate-x-1/2 md:top-14">
         {guestBrandMark}
       </div>
       <div className="flex w-[4.75rem] flex-col items-center gap-1.5">
@@ -603,8 +605,7 @@ export function SanctuaryLanding({
       {skyFirst ? (
         <div className="pointer-events-none fixed inset-0 z-[46] flex flex-col">
           {skyTopChrome}
-          <div className="flex-1" />
-          <div className="flex flex-col items-center gap-6 px-6 pb-16 text-center">
+          <div className="flex flex-col items-center gap-3 px-6 pt-4 text-center md:gap-4 md:pt-6">
             <p className="text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
               {t.kicker}
             </p>
@@ -616,6 +617,9 @@ export function SanctuaryLanding({
             <p className="max-w-sm text-sm font-light leading-relaxed text-white/70 md:text-base">
               {t.skyContextBody}
             </p>
+          </div>
+          <div className="flex-1" />
+          <div className="flex flex-col items-center gap-4 px-6 pb-16 text-center">
             <button
               type="button"
               onClick={() => setPhase("deposit")}

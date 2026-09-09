@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import type { Locale } from "@/i18n.config";
 import { SalonCyanGlowText } from "@/src/components/salon/SalonCyanGlowText";
+import { useUiLocaleOptional } from "@/src/components/i18n/UiLocaleContext";
 import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
 import { buildLocaleSwitchedHref } from "@/src/lib/i18n/buildLocaleSwitchedHref";
 
@@ -63,6 +64,7 @@ export function LocaleSwitcher({
 }: LocaleSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const uiLocale = useUiLocaleOptional();
 
   const switchTo = (nextLang: Locale) => {
     if (nextLang === lang) return;
@@ -75,6 +77,7 @@ export function LocaleSwitcher({
       search,
       hash,
     );
+    uiLocale?.setLocale(nextLang);
     if (onSwitch) {
       onSwitch(nextLang);
       window.history.replaceState(null, "", href);

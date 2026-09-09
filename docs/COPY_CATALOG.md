@@ -848,19 +848,19 @@
 | `sanctuary.languageLabel` | Langue | Language |
 | `sanctuary.langOptionFr` | FR | FR |
 | `sanctuary.langOptionEn` | EN | EN |
-| `sanctuary.skyOf` | Ciel de {name} | {name}'s sky |
+| `sanctuary.skyOf` | Mémoire de {name} | {name}'s Memory |
 | `sanctuary.skyContextBody` | Pour célébrer sa vie, sa famille rassemble des souvenirs pour un film d’hommage. C’est gratuit. Seule la famille verra votre dépôt. | To celebrate their life, the family is gathering memories for a tribute film. It’s free. Only the family will see what you leave. |
 | `sanctuary.skyCta` | Laisser un souvenir | Leave a memory |
 | `sanctuary.guestStarAria` | Étoile de {name} | Star for {name} |
 | `sanctuary.closeSky` | Fermer | Close |
 | `sanctuary.logoHomeAria` | Odyssey — accueil | Odyssey — home |
-| `sanctuary.welcomeLead` | Bienvenue dans le ciel de | Welcome to |
-| `sanctuary.welcomeName` | {name}. | {name}'s sky. |
+| `sanctuary.welcomeLead` | Bienvenue dans la mémoire de | Welcome to |
+| `sanctuary.welcomeName` | {name}. | {name}'s memory. |
 | `sanctuary.subtitle` | Laissez une photo ou un mot. Conservé dans le Coffre privé — seule la famille y a accès. | Leave a photo or a few words. Kept in the private Chest — only the family can see it. |
 | `sanctuary.depositLead` | Une photo, un mot, ou les deux. | A photo, a few words, or both. |
-| `sanctuary.loading` | Ouverture du ciel… | Opening the sky… |
+| `sanctuary.loading` | Ouverture du Sanctuaire… | Opening the Sanctuary… |
 | `sanctuary.errorTitle` | Lien indisponible | Link unavailable |
-| `sanctuary.errorBody` | Ce ciel est introuvable ou n'est plus accessible. Demandez un nouveau lien à la famille. | This sky could not be found or is no longer available. Ask the family for a new link. |
+| `sanctuary.errorBody` | Ce Sanctuaire est introuvable ou n'est plus accessible. Demandez un nouveau lien à la famille. | This Sanctuary could not be found or is no longer available. Ask the family for a new link. |
 | `sanctuary.ackTitle` | C'est dans le Coffre à souvenirs. | It's in the Memory Chest. |
 | `sanctuary.ackBody` | Vous pouvez encore ajouter des médias, jusqu'à cinq, et un mot. | You may still add media, up to five, and a few words. |
 | `sanctuary.photoCounter` | {n} / {max} souvenirs | {n} / {max} memories |
@@ -872,11 +872,11 @@
 | `sanctuary.bridgeBodyAfterGift` | Si le cœur vous en dit, vous pouvez offrir un autre geste, sans obligation. | If you wish, you may offer another gesture, with no obligation. |
 | `sanctuary.contribSuccess` | Merci. Votre soutien a bien été enregistré. | Thank you. Your support has been recorded. |
 | `sanctuary.contribCancel` | Paiement annulé. Vous pouvez choisir une autre option. | Payment cancelled. You can choose another option. |
-| `sanctuary.lueurSettle` | Votre lueur rejoint le ciel… | Your glow joins the sky… |
+| `sanctuary.lueurSettle` | Votre lueur rejoint la mémoire… | Your glow joins the memory… |
 | `sanctuary.lueurLabel` | Lueur | Glow |
-| `sanctuary.seeSky` | Voir le ciel | See the sky |
+| `sanctuary.seeSky` | Voir le Sanctuaire | See the Sanctuary |
 | `sanctuary.graftTitle` | Merci. Votre souvenir est bien arrivé. | Thank you. Your memory has arrived. |
-| `sanctuary.graftBody` | Il est dans le Coffre de la famille. Votre étoile rejoint maintenant le ciel. | It’s in the family’s Chest. Your star now joins the sky. |
+| `sanctuary.graftBody` | Il est dans le Coffre de la famille. Votre étoile rejoint maintenant la mémoire. | It’s in the family’s Chest. Your star now joins the memory. |
 | `sanctuary.graftCta` | Continuer | Continue |
 | `sanctuary.skipSupport` | Non merci, continuer | No thanks, continue |
 | `sanctuary.packsTitle` | Don | Donate |

@@ -8,25 +8,38 @@ import { Phone } from "lucide-react";
 import { appRoutes } from "@/src/lib/appRoutes";
 import type { AppDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
+import { useUiLocaleOptional } from "@/src/components/i18n/UiLocaleContext";
 
 export type HelpLifelineCopy = AppDictionary["helpLifeline"];
 
 type Props = {
+  /** Locale URL initiale (fallback si hors contexte). */
   locale: Locale;
-  copy: HelpLifelineCopy;
+  copyFr: HelpLifelineCopy;
+  copyEn: HelpLifelineCopy;
   className?: string;
 };
 
 /**
  * Chip d'aide permanente — bas-gauche, fixe, toujours visible.
  * Utilise un React Portal (document.body) pour échapper à tout stacking
- * context parent (transforms, filters, overflow, z-index internes au wizard).
- * Baby-boomers : téléphone cliquable + lien Contact.
+ * context parent. Suit `UiLocaleContext` quand le LocaleSwitcher switch
+ * sans remount layout (Sanctuaire / Studio).
  */
-export function OdysseyHelpLifeline({ locale, copy, className = "" }: Props) {
-  // SSR-safe : on ne monte le portal qu'une fois côté client.
+export function OdysseyHelpLifeline({
+  locale: routeLocale,
+  copyFr,
+  copyEn,
+  className = "",
+}: Props) {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const ui = useUiLocaleOptional();
+  const locale = ui?.locale ?? routeLocale;
+  const copy = locale === "en" ? copyEn : copyFr;
 
   const digits = copy.phoneDisplay.replace(/\D/g, "");
   const telHref = digits.length === 10 ? `tel:+1${digits}` : `tel:+${digits}`;
@@ -45,7 +58,11 @@ export function OdysseyHelpLifeline({ locale, copy, className = "" }: Props) {
           aria-label={copy.phoneAria}
           className="inline-flex items-center gap-1.5 text-[11px] font-light text-zinc-300 transition-colors hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/40"
         >
-          <Phone className="h-3 w-3 shrink-0 text-teal-400/70" strokeWidth={1.75} aria-hidden />
+          <Phone
+            className="h-3 w-3 shrink-0 text-teal-400/70"
+            strokeWidth={1.75}
+            aria-hidden
+          />
           {copy.phoneDisplay}
         </a>
         <Link

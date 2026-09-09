@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { DocumentLang } from "@/src/components/DocumentLang";
 import { OdysseyHelpLifeline } from "@/src/components/OdysseyHelpLifeline";
+import { UiLocaleProvider } from "@/src/components/i18n/UiLocaleContext";
 import { i18n, type Locale } from "@/i18n.config";
 import { getDictionary } from "@/lib/dictionaries";
 import { getSiteUrl } from "@/lib/siteUrl";
@@ -49,7 +50,11 @@ export default async function LangLayout({
 }: LayoutProps) {
   const { lang: routeLang } = await params;
   const htmlLang: Locale = routeLang === "en" ? "en" : "fr";
-  const dictionary = await getDictionary(htmlLang);
+  const [dictionary, dictionaryFr, dictionaryEn] = await Promise.all([
+    getDictionary(htmlLang),
+    getDictionary("fr"),
+    getDictionary("en"),
+  ]);
   const siteUrl = getSiteUrl();
   const jsonLd = {
     "@context": "https://schema.org",
@@ -79,8 +84,14 @@ export default async function LangLayout({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {children}
-      <OdysseyHelpLifeline locale={htmlLang} copy={dictionary.helpLifeline} />
+      <UiLocaleProvider initialLocale={htmlLang}>
+        {children}
+        <OdysseyHelpLifeline
+          locale={htmlLang}
+          copyFr={dictionaryFr.helpLifeline}
+          copyEn={dictionaryEn.helpLifeline}
+        />
+      </UiLocaleProvider>
     </>
   );
 }
