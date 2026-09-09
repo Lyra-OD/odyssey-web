@@ -842,14 +842,14 @@
 | `sanctuary.langOptionFr` | FR | FR |
 | `sanctuary.langOptionEn` | EN | EN |
 | `sanctuary.skyOf` | Ciel de {name} | {name}'s sky |
-| `sanctuary.skyContextBody` | Pour célébrer sa vie, sa famille rassemble ses plus beaux souvenirs pour créer un film d’hommage. | To celebrate their life, the family is gathering their most cherished memories to create a tribute film. |
+| `sanctuary.skyContextBody` | Pour célébrer sa vie, sa famille rassemble des souvenirs pour un film d’hommage. C’est gratuit. Seule la famille verra votre dépôt. | To celebrate their life, the family is gathering memories for a tribute film. It’s free. Only the family will see what you leave. |
 | `sanctuary.skyCta` | Laisser un souvenir | Leave a memory |
 | `sanctuary.guestStarAria` | Étoile de {name} | Star for {name} |
 | `sanctuary.closeSky` | Fermer | Close |
 | `sanctuary.logoHomeAria` | Odyssey — accueil | Odyssey — home |
 | `sanctuary.welcomeLead` | Bienvenue dans le ciel de | Welcome to |
 | `sanctuary.welcomeName` | {name}. | {name}'s sky. |
-| `sanctuary.subtitle` | Laissez un souvenir. Il sera conservé précieusement dans le Coffre privé, et seule la famille y aura accès. | Leave a memory. It will be kept safe in the private Chest, seen only by the family. |
+| `sanctuary.subtitle` | Laissez une photo ou un mot. Conservé dans le Coffre privé — seule la famille y a accès. | Leave a photo or a few words. Kept in the private Chest — only the family can see it. |
 | `sanctuary.depositLead` | Une photo, un mot, ou les deux. | A photo, a few words, or both. |
 | `sanctuary.loading` | Ouverture du ciel… | Opening the sky… |
 | `sanctuary.errorTitle` | Lien indisponible | Link unavailable |
@@ -868,12 +868,12 @@
 | `sanctuary.lueurSettle` | Votre lueur rejoint le ciel… | Your glow joins the sky… |
 | `sanctuary.lueurLabel` | Lueur | Glow |
 | `sanctuary.seeSky` | Voir le ciel | See the sky |
-| `sanctuary.graftTitle` | Vous êtes dans le ciel. | You are in the sky. |
-| `sanctuary.graftBody` | Votre étoile rejoint la constellation. | Your star joins the constellation. |
+| `sanctuary.graftTitle` | Merci. Votre souvenir est bien arrivé. | Thank you. Your memory has arrived. |
+| `sanctuary.graftBody` | Il est dans le Coffre de la famille. Votre étoile rejoint maintenant le ciel. | It’s in the family’s Chest. Your star now joins the sky. |
 | `sanctuary.graftCta` | Continuer | Continue |
-| `sanctuary.skipSupport` | Non merci | No thank you |
+| `sanctuary.skipSupport` | Non merci, continuer | No thanks, continue |
 | `sanctuary.packsTitle` | Don | Donate |
-| `sanctuary.packsPromise` | Chaque don aide la famille. | Every gift helps the family. |
+| `sanctuary.packsPromise` | Optionnel — seulement si vous le souhaitez. Chaque don aide la famille. | Optional — only if you wish. Every gift helps the family. |
 | `sanctuary.checkoutCta` | Continuer · {price} | Continue · {price} |
 | `sanctuary.checkoutCtaPatron` | Devenir Mécène · {price} | Become a Patron · {price} |
 | `sanctuary.checkoutSelectFirst` | Choisissez une option pour continuer. | Choose an option to continue. |
