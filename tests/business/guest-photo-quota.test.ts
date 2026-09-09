@@ -29,6 +29,26 @@ describe("guest photo quota (Sanctuaire)", () => {
     );
   });
 
+  it("deux sessions sur le même lien n’ont pas de préfixe commun (LIKE isolé)", () => {
+    const projectId = "11111111-1111-4111-8111-111111111111";
+    const tokenId = "22222222-2222-4222-8222-222222222222";
+    const alice = guestContributeStoragePrefix(
+      projectId,
+      tokenId,
+      "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    );
+    const bob = guestContributeStoragePrefix(
+      projectId,
+      tokenId,
+      "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    );
+    expect(alice).not.toBe(bob);
+    expect(bob.startsWith(alice)).toBe(false);
+    expect(alice.startsWith(bob)).toBe(false);
+    const legacy = `projects/${projectId}/contribute/${tokenId}/old.jpg`;
+    expect(legacy.startsWith(alice)).toBe(false);
+  });
+
   it("détecte l’erreur SQL guest_photo_limit_reached", () => {
     expect(
       isGuestPhotoLimitDbError(
