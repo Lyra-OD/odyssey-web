@@ -31,7 +31,6 @@ export default async function StudioConnexionPage({ params }: PageProps) {
       <OdysseyHelpLifeline
         locale={lang}
         copy={dictionary.helpLifeline}
-        zClass="z-[100]"
       />
     </>
   );

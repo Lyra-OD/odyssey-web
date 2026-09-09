@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Phone } from "lucide-react";
 
@@ -12,37 +14,29 @@ export type HelpLifelineCopy = AppDictionary["helpLifeline"];
 type Props = {
   locale: Locale;
   copy: HelpLifelineCopy;
-  /**
-   * z-index Tailwind class à passer selon la surface :
-   *   - famille (hors rituel) : "z-[59]"  — sous invite z-[60] / dossier z-[61]
-   *   - invité               : "z-[47]"  — dessus sky overlay z-[46]
-   */
-  zClass?: string;
-  /** Offset bas via classe Tailwind si un footer sticky réduit l'espace. */
   className?: string;
 };
 
 /**
- * Chip d'aide permanente — affiché bas-gauche, fixe, discret.
- * Baby-boomers : téléphone cliquable + lien Contact toujours accessible.
- * Rendu conditionnel par l'appelant (ex. masqué pendant le rituel ciel).
+ * Chip d'aide permanente — bas-gauche, fixe, toujours visible.
+ * Utilise un React Portal (document.body) pour échapper à tout stacking
+ * context parent (transforms, filters, overflow, z-index internes au wizard).
+ * Baby-boomers : téléphone cliquable + lien Contact.
  */
-export function OdysseyHelpLifeline({
-  locale,
-  copy,
-  zClass = "z-[59]",
-  className = "",
-}: Props) {
-  // Dériver le href tel: depuis l'affichage (strip non-digits, ajoute +1 si 10 chiffres NA)
-  const digits = copy.phoneDisplay.replace(/\D/g, "");
-  const telHref =
-    digits.length === 10 ? `tel:+1${digits}` : `tel:+${digits}`;
+export function OdysseyHelpLifeline({ locale, copy, className = "" }: Props) {
+  // SSR-safe : on ne monte le portal qu'une fois côté client.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
-  return (
+  const digits = copy.phoneDisplay.replace(/\D/g, "");
+  const telHref = digits.length === 10 ? `tel:+1${digits}` : `tel:+${digits}`;
+
+  const chip = (
     <div
-      className={`pointer-events-none fixed bottom-5 left-4 ${zClass} ${className}`}
+      className={`pointer-events-none fixed bottom-5 left-4 z-[9999] ${className}`}
+      aria-label={copy.label}
     >
-      <div className="pointer-events-auto inline-flex flex-col items-start gap-1 rounded-xl border border-white/10 bg-black/60 px-3 py-2.5 backdrop-blur-md">
+      <div className="pointer-events-auto inline-flex flex-col items-start gap-1 rounded-xl border border-white/10 bg-black/70 px-3 py-2.5 backdrop-blur-md">
         <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-white/35">
           {copy.label}
         </p>
@@ -64,4 +58,7 @@ export function OdysseyHelpLifeline({
       </div>
     </div>
   );
+
+  if (!mounted) return null;
+  return createPortal(chip, document.body);
 }

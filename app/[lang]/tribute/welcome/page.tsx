@@ -133,7 +133,6 @@ export default async function TributeWelcomePage({
       <OdysseyHelpLifeline
         locale={lang}
         copy={dictionary.helpLifeline}
-        zClass="z-[100]"
       />
     </main>
   );

@@ -956,7 +956,7 @@ export function SanctuaryLanding({
         <OdysseyHelpLifeline
           locale={uiLocale}
           copy={uiLocale === "en" && helpLifelineEn ? helpLifelineEn : helpLifelineFr}
-          zClass="z-[47]"
+          
         />
       ) : null}
     </main>
