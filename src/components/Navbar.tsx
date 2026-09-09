@@ -103,7 +103,7 @@ export function Navbar({
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: MOBILE_PANEL_EASE }}
-      className="font-label fixed left-0 right-0 top-0 z-50 border-b border-zinc-900/80 bg-black/70 backdrop-blur-md"
+      className="font-label fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-[#020202]/80 backdrop-blur-md"
       style={{
         paddingLeft: "max(0px, env(safe-area-inset-left))",
         paddingRight: "max(0px, env(safe-area-inset-right))",
@@ -155,7 +155,7 @@ export function Navbar({
               key={href + label}
               href={href}
               className="inline-block origin-center text-[10px] uppercase tracking-[0.3em] text-zinc-400 transition-colors duration-300 hover:text-[var(--salon-cyan)] touch-manipulation"
-              whileHover={{ scale: 1.08 }}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               transition={menuSpring}
             >
@@ -166,7 +166,7 @@ export function Navbar({
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-4 md:gap-8">
           <div
-            className="group/lang flex items-center gap-1 border border-zinc-800 bg-zinc-950/80 p-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] transition-colors duration-300 hover:border-[var(--salon-cyan)]/35 touch-manipulation"
+            className="group/lang flex items-center gap-1 border border-white/10 bg-zinc-950/80 p-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] transition-colors duration-300 hover:border-[var(--salon-cyan)]/35 touch-manipulation"
             role="group"
             aria-label={t.languageLabel}
           >
@@ -182,8 +182,8 @@ export function Navbar({
                   ? "text-[var(--salon-cyan)] hover:text-[var(--salon-cyan)]"
                   : "text-zinc-600 hover:text-[var(--salon-cyan-dim)]"
               }`}
-              animate={{ scale: lang === "fr" ? 1.1 : 1 }}
-              whileHover={lang === "fr" ? { scale: 1.12 } : { scale: 1.06 }}
+              animate={{ scale: lang === "fr" ? 1.04 : 1 }}
+              whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.95 }}
               transition={menuSpring}
             >
@@ -200,8 +200,8 @@ export function Navbar({
                   ? "text-[var(--salon-cyan)] hover:text-[var(--salon-cyan)]"
                   : "text-zinc-600 hover:text-[var(--salon-cyan-dim)]"
               }`}
-              animate={{ scale: lang === "en" ? 1.1 : 1 }}
-              whileHover={lang === "en" ? { scale: 1.12 } : { scale: 1.06 }}
+              animate={{ scale: lang === "en" ? 1.04 : 1 }}
+              whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.95 }}
               transition={menuSpring}
             >
@@ -256,7 +256,7 @@ export function Navbar({
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.28, ease: MOBILE_PANEL_EASE }}
-            className="overflow-hidden border-t border-zinc-900/60 bg-black/85 backdrop-blur-lg md:hidden"
+            className="overflow-hidden border-t border-white/10 bg-[#020202]/85 backdrop-blur-xl md:hidden"
           >
             <nav
               id="mobile-primary-nav"
@@ -268,7 +268,7 @@ export function Navbar({
                   key={`m-${href}-${label}`}
                   href={href}
                   onClick={closeMobile}
-                  className="border-b border-zinc-900/70 py-3.5 text-[11px] uppercase tracking-[0.28em] text-zinc-300 transition-colors last:border-b-0 active:bg-zinc-950/80 touch-manipulation"
+                  className="border-b border-zinc-900/70 py-4 text-[11px] uppercase tracking-[0.28em] text-zinc-300 transition-colors last:border-b-0 hover:text-[var(--salon-cyan)] active:bg-zinc-950/80 active:text-teal-200 touch-manipulation"
                   whileTap={{ scale: 0.99 }}
                 >
                   {label}
@@ -285,7 +285,7 @@ export function Navbar({
               <MotionLink
                 href={appRoutes.studioConnexion(lang)}
                 onClick={closeMobile}
-                className="mt-2 flex min-h-[48px] items-center gap-2 border border-zinc-800 bg-zinc-950/60 px-3 py-3 text-[11px] font-medium uppercase tracking-[0.22em] text-zinc-300 touch-manipulation"
+                className="mt-2 flex min-h-[48px] items-center gap-2 border border-zinc-800 bg-zinc-950/60 px-3 py-3 text-[11px] font-medium uppercase tracking-[0.22em] text-zinc-300 transition-colors hover:text-teal-300 touch-manipulation"
                 whileTap={{ scale: 0.99 }}
               >
                 <LogIn className="h-4 w-4 shrink-0 text-zinc-500" strokeWidth={1.5} aria-hidden />

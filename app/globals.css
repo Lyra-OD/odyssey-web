@@ -771,8 +771,8 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 }
 
 ::selection {
-  background: rgba(88, 28, 135, 0.85);
-  color: #fff;
+  background-color: rgba(13, 148, 136, 0.3); /* sanctuary-teal léger */
+  color: inherit;
 }
 
 @keyframes login-form-shake {
@@ -1699,3 +1699,4 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 @media (prefers-reduced-motion: reduce) {
   .wizard-step-enter { animation: none; }
 }
+

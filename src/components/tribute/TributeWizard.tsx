@@ -2491,7 +2491,7 @@ export function TributeWizard({
                 }}
               />
 
-              <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
+              <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
                 <div className="mx-auto flex max-w-xl gap-3">
                   {!isEditor ? (
                     <button
@@ -2915,7 +2915,7 @@ export function TributeWizard({
       currentStep !== 6 &&
       currentStep !== 7 &&
       !(currentStep === 1 && step1Sky) ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
           <div
             className={`mx-auto ${
               currentStep >= 5 ? "max-w-3xl" : "max-w-xl"
