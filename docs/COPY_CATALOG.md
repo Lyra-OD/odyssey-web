@@ -359,14 +359,14 @@
 | `tributeWizard.parcoursGoToInvites` | Poursuivre sans les animations du ciel | Continue without the sky ritual |
 | `tributeWizard.parcoursChoiceOr` | ou | or |
 | `tributeWizard.parcoursConstellationBorn` | Sa constellation prend forme. | Their constellation takes shape. |
-| `tributeWizard.parcoursCircleShare` | Chaque souvenir déposé fait grandir le ciel. | Every memory placed makes the sky grow. |
-| `tributeWizard.parcoursSkyVsVault` | Déposez vos souvenirs. Le ciel s’illumine à mesure. | Place your memories. The sky lights up as you go. |
+| `tributeWizard.parcoursCircleShare` | Chaque photo déposée fait grandir le ciel. | Every photo you add makes the sky grow. |
+| `tributeWizard.parcoursSkyVsVault` | Étape suivante : ajoutez vos premières photos dans le Coffre. | Next step: add your first photos to the Chest. |
 | `tributeWizard.parcoursNoRush` | Prenez votre temps. Le ciel attend. | Take your time. The sky can wait. |
 | `tributeWizard.parcoursInviteCta` | Inviter | Invite |
 | `tributeWizard.parcoursContinueCta` | Continuer vers le Coffre | Continue to the Chest |
 | `tributeWizard.parcoursIntroTitle` | Leur vie en cinéma | Their life, in cinema |
 | `tributeWizard.parcoursIntroSubtitle` | Trois temps, un hommage. | Three moments, one tribute. |
-| `tributeWizard.parcoursIntroBody` | Vous déposez vos souvenirs. Votre entourage enrichit l’histoire. Notre moteur tisse le film. Transformez ces fragments de vie en un hommage digne du grand écran. Un souvenir inoubliable. | You place the memories. Your loved ones enrich the story. Our engine weaves the film. Turn these fragments of a life into a tribute worthy of the big screen. A memory to remember. |
+| `tributeWizard.parcoursIntroBody` | Vous déposez vos souvenirs. Votre entourage enrichit l’histoire. Nous assemblons le film. Ensuite : ajoutez une photo dans votre Coffre, puis invitez vos proches si vous le souhaitez. | You place the memories. Your loved ones enrich the story. We assemble the film. Next: add a photo to your Chest, then invite loved ones if you wish. |
 | `tributeWizard.firstNameLabel` | Prénom | First name |
 | `tributeWizard.lastNameLabel` | Nom | Last name |
 | `tributeWizard.firstNamePlaceholder` | ex. Madeleine | e.g. Eleanor |
@@ -379,7 +379,7 @@
 | `tributeWizard.avatarPickPhoto` | Déposer un portrait | Add a portrait |
 | `tributeWizard.avatarChangePhoto` | Modifier le portrait | Change the portrait |
 | `tributeWizard.stepInviteTitle` | L’histoire s’écrit ensemble | The story is written together |
-| `tributeWizard.stepInviteDescription` | Ne portez pas ce projet seul.  Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès sécurisé, vous permettez à vos proches d’ajouter directement leurs souvenirs dans votre Coffre. Vous gardez le contrôle total : vous seul déciderez ce qui entre dans le film final. | Don’t carry this alone.  Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this secure access, you let them add their pieces of the story directly to your Chest. You keep full control: only you decide what makes it into the final film. |
+| `tributeWizard.stepInviteDescription` | Rien n’est envoyé tant que vous ne créez pas le lien.  Ne portez pas ce projet seul.  Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès sécurisé, vous permettez à vos proches d’ajouter directement leurs souvenirs dans votre Coffre. Vous gardez le contrôle total : vous seul déciderez ce qui entre dans le film final. | Nothing is sent until you create the link.  Don’t carry this alone.  Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this secure access, you let them add their pieces of the story directly to your Chest. You keep full control: only you decide what makes it into the final film. |
 | `tributeWizard.skipInvite` | Continuer seul pour le moment | Continue alone for now |
 | `tributeWizard.stepSourcesTitle` | Les collections en ligne | Online collections |
 | `tributeWizard.stepSourcesDescription` | Souhaitez-vous rassembler aussi des souvenirs déjà présents dans vos albums et réseaux en ligne ? | Would you also like to gather memories already living in your online albums and social spaces? |
@@ -520,7 +520,7 @@
 | `tributeWizard.inviteTriggerCta` | Inviter famille et amis | Invite family & friends |
 | `tributeWizard.inviteOpenAria` | Inviter mon entourage au Sanctuaire | Invite your loved ones to the Sanctuary |
 | `tributeWizard.inviteTitle` | L’histoire s’écrit ensemble | The story is written together |
-| `tributeWizard.inviteDescription` | Ne portez pas ce projet seul.  Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès sécurisé, vous permettez à vos proches d’ajouter directement leurs souvenirs dans votre Coffre. Vous gardez le contrôle total : vous seul déciderez ce qui entre dans le film final. | Don’t carry this alone.  Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this secure access, you let them add their pieces of the story directly to your Chest. You keep full control: only you decide what makes it into the final film. |
+| `tributeWizard.inviteDescription` | Rien n’est envoyé tant que vous ne créez pas le lien.  Ne portez pas ce projet seul.  Votre entourage possède probablement des photos et des anecdotes magnifiques que vous n’avez jamais vues. En partageant cet accès sécurisé, vous permettez à vos proches d’ajouter directement leurs souvenirs dans votre Coffre. Vous gardez le contrôle total : vous seul déciderez ce qui entre dans le film final. | Nothing is sent until you create the link.  Don’t carry this alone.  Your loved ones probably have beautiful photos and stories you’ve never seen. By sharing this secure access, you let them add their pieces of the story directly to your Chest. You keep full control: only you decide what makes it into the final film. |
 | `tributeWizard.inviteGenerateCta` | Inviter mes proches | Invite my loved ones |
 | `tributeWizard.inviteGenerating` | Création du lien… | Creating link… |
 | `tributeWizard.inviteShareCta` | Partager | Share |
