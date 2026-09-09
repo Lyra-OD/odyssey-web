@@ -87,7 +87,6 @@ import {
 } from "@/src/hooks/useWizardEssentials";
 import { useWizardSoftCap } from "@/src/hooks/useWizardSoftCap";
 import type { AppDictionary } from "@/lib/dictionaries";
-import { OdysseyHelpLifeline } from "@/src/components/OdysseyHelpLifeline";
 import {
   coerceWizardState,
   emptyMontageState,
@@ -300,7 +299,6 @@ function yearFromDateInput(iso: string): string {
 
 export function TributeWizard({
   copy,
-  helpLifeline,
   initialDraft = null,
   locale = "fr",
   isPartner: isPartnerProp = false,
@@ -309,7 +307,6 @@ export function TributeWizard({
   mobileUtilityTrailing = null,
 }: {
   copy: TributeWizardCopy;
-  helpLifeline?: AppDictionary["helpLifeline"];
   initialDraft?: WizardInitialDraft | null;
   locale?: Locale;
   /** Compte funérarium / partenaire B2B (jetons). */
@@ -1812,15 +1809,6 @@ export function TributeWizard({
           }}
         />
         </div>
-
-        {/* Chip d'aide permanente — masqué pendant le rituel ciel (hubChromeHidden). */}
-        {helpLifeline && !step1Parcours.hubChromeHidden ? (
-          <OdysseyHelpLifeline
-            locale={locale}
-            copy={helpLifeline}
-            zClass="z-[59]"
-          />
-        ) : null}
 
         {!isEditor && !step1Parcours.hubChromeHidden ? (
         <StickyPriceBar

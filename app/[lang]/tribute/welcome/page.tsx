@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { InviteAcceptError } from "@/app/[lang]/invite/accept/InviteAcceptError";
 import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
 import { TributeWizard } from "@/src/components/tribute/TributeWizard";
+import { OdysseyHelpLifeline } from "@/src/components/OdysseyHelpLifeline";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
 import { appRoutes } from "@/src/lib/appRoutes";
@@ -122,12 +123,18 @@ export default async function TributeWelcomePage({
 
         <TributeWizard
           copy={dictionary.tributeWizard}
-          helpLifeline={dictionary.helpLifeline}
           initialDraft={project}
           locale={lang}
           isPartner={false}
         />
       </div>
+      {/* Chip aide — rendu au niveau page (hors wizard) pour éviter
+          tout piège de stacking context interne. Toujours visible. */}
+      <OdysseyHelpLifeline
+        locale={lang}
+        copy={dictionary.helpLifeline}
+        zClass="z-[100]"
+      />
     </main>
   );
 }

@@ -2,6 +2,7 @@ import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
 import { AuthConnexionPage } from "@/src/components/auth/AuthConnexionPage";
 import { StudioConnexionBrand } from "@/src/components/auth/StudioConnexionBrand";
+import { OdysseyHelpLifeline } from "@/src/components/OdysseyHelpLifeline";
 
 type PageProps = {
   params: Promise<{ lang: string }>;
@@ -13,18 +14,25 @@ export default async function StudioConnexionPage({ params }: PageProps) {
   const dictionary = await getDictionary(lang);
 
   return (
-    <AuthConnexionPage
-      lang={lang}
-      copy={dictionary.auth}
-      audience="studio"
-      localeSwitcher={{
-        languageLabel: dictionary.header.languageLabel,
-        langOptionFr: dictionary.header.langOptionFr,
-        langOptionEn: dictionary.header.langOptionEn,
-      }}
-      brandSlot={
-        <StudioConnexionBrand wordmark={dictionary.header.logoFallback} />
-      }
-    />
+    <>
+      <AuthConnexionPage
+        lang={lang}
+        copy={dictionary.auth}
+        audience="studio"
+        localeSwitcher={{
+          languageLabel: dictionary.header.languageLabel,
+          langOptionFr: dictionary.header.langOptionFr,
+          langOptionEn: dictionary.header.langOptionEn,
+        }}
+        brandSlot={
+          <StudioConnexionBrand wordmark={dictionary.header.logoFallback} />
+        }
+      />
+      <OdysseyHelpLifeline
+        locale={lang}
+        copy={dictionary.helpLifeline}
+        zClass="z-[100]"
+      />
+    </>
   );
 }
