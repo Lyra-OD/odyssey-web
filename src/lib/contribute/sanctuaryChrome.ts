@@ -65,3 +65,27 @@ export const sanctuaryWizardTextarea =
   "w-full min-h-[7.5rem] resize-y rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-base font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.14)]";
 
 export const sanctuaryGhostButton = `inline-flex min-h-[44px] items-center justify-center gap-2 rounded-sm border border-white/12 bg-white/[0.03] px-4 font-label text-[11px] font-medium uppercase tracking-[0.22em] text-zinc-300 transition-colors hover:border-teal-400/25 hover:text-teal-100 ${sanctuaryFocusRing}`;
+
+/**
+ * Gate composition — Création assistée au repos (paille).
+ * Hover / active restent teal (`sanctuaryChrome`). Voir PALETTE_ARBITRAGE §7.
+ */
+export const sanctuaryMagicWheatCardRest =
+  "border-[color:var(--wizard-magic-wheat-border)] bg-gradient-to-b from-[color:var(--wizard-magic-wheat-fill)] to-transparent";
+
+export const sanctuaryMagicWheatIconRest =
+  "border-[color:var(--wizard-magic-wheat-icon-border)] bg-[color:var(--wizard-magic-wheat-icon-fill)] text-[color:var(--wizard-magic-wheat)]";
+
+/** Création manuelle au repos — violet (ambiance). */
+export const sanctuaryManualVioletCardRest =
+  "border-violet-400/25 bg-gradient-to-b from-violet-400/[0.10] to-transparent";
+
+export const sanctuaryManualVioletIconRest =
+  "border-violet-400/30 bg-violet-400/10 text-violet-300";
+
+/** Hover / active partagés des deux cartes gate (choix = teal). */
+export const sanctuaryMontageGateCardInteractive =
+  "hover:border-teal-400/40 hover:from-teal-400/[0.10] hover:shadow-[0_0_48px_rgba(45,212,191,0.12)] active:border-teal-400/55 active:from-teal-400/[0.14] active:shadow-[0_0_48px_rgba(45,212,191,0.16)]";
+
+export const sanctuaryMontageGateIconInteractive =
+  "group-hover:border-teal-400/40 group-hover:bg-teal-400/[0.10] group-hover:text-teal-300 group-active:border-teal-400/55 group-active:text-teal-200";

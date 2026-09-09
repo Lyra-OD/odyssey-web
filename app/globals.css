@@ -758,6 +758,12 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 :root {
   --salon-cyan: #00e8f0;
   --salon-cyan-dim: rgba(0, 232, 240, 0.4);
+  /* Étape 5 — Création assistée au repos (PALETTE_ARBITRAGE §7). */
+  --wizard-magic-wheat: #e4d96f;
+  --wizard-magic-wheat-border: rgba(228, 217, 111, 0.25);
+  --wizard-magic-wheat-fill: rgba(228, 217, 111, 0.1);
+  --wizard-magic-wheat-icon-border: rgba(228, 217, 111, 0.3);
+  --wizard-magic-wheat-icon-fill: rgba(228, 217, 111, 0.1);
 }
 
 .font-brand {

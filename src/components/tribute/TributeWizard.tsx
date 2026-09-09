@@ -1825,7 +1825,9 @@ export function TributeWizard({
         />
         ) : null}
 
-        {currentStep === 5 && !isPartner && !isEditor ? (
+        {/* Pas de Total $ pendant le craft (1–5) — empathie Quiet Luxury.
+            Visible seulement à partir de Recevoir / Preview (6+). */}
+        {currentStep >= 6 && !isPartner && !isEditor ? (
           <div className="mb-8">
             <WizardCartSummary
               locale={locale}

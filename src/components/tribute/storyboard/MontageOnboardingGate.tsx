@@ -3,6 +3,14 @@
 import { motion } from "framer-motion";
 import { Sparkles, Wand2 } from "lucide-react";
 
+import {
+  sanctuaryMagicWheatCardRest,
+  sanctuaryMagicWheatIconRest,
+  sanctuaryManualVioletCardRest,
+  sanctuaryManualVioletIconRest,
+  sanctuaryMontageGateCardInteractive,
+  sanctuaryMontageGateIconInteractive,
+} from "@/src/lib/contribute/sanctuaryChrome";
 import { EASE_OUT_LUXE } from "@/src/lib/motion/easing";
 
 export type MontageOnboardingGateCopy = {
@@ -62,15 +70,16 @@ export function MontageOnboardingGate({
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 md:gap-4">
-          {/* Les deux cartes portent le même poids : aucune n'est recommandée.
-              Violet au repos (ambiance), cyan dès qu'on vise ou qu'on appuie —
-              le cyan est la couleur du choix retenu (`sanctuaryChrome`). */}
+          {/* Même poids : aucune recommandée. Assistée = paille, manuelle =
+              violet au repos ; teal dès hover/active (PALETTE_ARBITRAGE §7). */}
           <button
             type="button"
             onClick={onChooseMagic}
-            className="group relative overflow-hidden rounded-2xl border border-violet-400/25 bg-gradient-to-b from-violet-400/[0.10] to-transparent px-5 py-5 text-left transition-all duration-300 hover:border-teal-400/40 hover:from-teal-400/[0.10] hover:shadow-[0_0_48px_rgba(45,212,191,0.12)] active:border-teal-400/55 active:from-teal-400/[0.14] active:shadow-[0_0_48px_rgba(45,212,191,0.16)] md:px-6 md:py-8"
+            className={`group relative overflow-hidden rounded-2xl border px-5 py-5 text-left transition-all duration-300 md:px-6 md:py-8 ${sanctuaryMagicWheatCardRest} ${sanctuaryMontageGateCardInteractive}`}
           >
-            <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full border border-violet-400/30 bg-violet-400/10 text-violet-300 transition-colors duration-300 group-hover:border-teal-400/40 group-hover:bg-teal-400/[0.10] group-hover:text-teal-300 group-active:border-teal-400/55 group-active:text-teal-200 md:mb-4">
+            <span
+              className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-300 md:mb-4 ${sanctuaryMagicWheatIconRest} ${sanctuaryMontageGateIconInteractive}`}
+            >
               <Wand2 className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             </span>
             <span className="block font-[family-name:var(--font-label)] text-base font-semibold text-white md:text-lg">
@@ -84,9 +93,11 @@ export function MontageOnboardingGate({
           <button
             type="button"
             onClick={onChooseManual}
-            className="group relative overflow-hidden rounded-2xl border border-violet-400/25 bg-gradient-to-b from-violet-400/[0.10] to-transparent px-5 py-5 text-left transition-all duration-300 hover:border-teal-400/40 hover:from-teal-400/[0.10] hover:shadow-[0_0_48px_rgba(45,212,191,0.12)] active:border-teal-400/55 active:from-teal-400/[0.14] active:shadow-[0_0_48px_rgba(45,212,191,0.16)] md:px-6 md:py-8"
+            className={`group relative overflow-hidden rounded-2xl border px-5 py-5 text-left transition-all duration-300 md:px-6 md:py-8 ${sanctuaryManualVioletCardRest} ${sanctuaryMontageGateCardInteractive}`}
           >
-            <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full border border-violet-400/30 bg-violet-400/10 text-violet-300 transition-colors duration-300 group-hover:border-teal-400/40 group-hover:bg-teal-400/[0.10] group-hover:text-teal-300 group-active:border-teal-400/55 group-active:text-teal-200 md:mb-4">
+            <span
+              className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-300 md:mb-4 ${sanctuaryManualVioletIconRest} ${sanctuaryMontageGateIconInteractive}`}
+            >
               <Sparkles className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             </span>
             <span className="block font-[family-name:var(--font-label)] text-base font-semibold text-white md:text-lg">

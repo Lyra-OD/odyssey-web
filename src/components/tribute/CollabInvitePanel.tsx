@@ -398,7 +398,9 @@ export function CollabInvitePanel({
     <AnimatePresence>
       {isOpen ? (
         <motion.div
-          className="fixed inset-0 z-[60] flex justify-end"
+          /* Au-dessus de MontageOnboardingGate (z-70) — sinon le tiroir
+             s’ouvre derrière la gate et paraît « cassé ». */
+          className="fixed inset-0 z-[80] flex justify-end"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
