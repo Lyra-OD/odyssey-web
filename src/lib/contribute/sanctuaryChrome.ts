@@ -22,7 +22,7 @@ export const sanctuaryFieldTextarea =
 export const sanctuaryFocusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/40";
 
-export const sanctuarySubmitButton = `connexion-submit-breathe font-label border border-teal-400/35 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.4em] text-white transition-colors hover:border-teal-300/55 hover:text-teal-50 touch-manipulation ${sanctuaryFocusRing}`;
+export const sanctuarySubmitButton = `connexion-submit-breathe font-label border border-teal-400/35 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.4em] text-white transition-colors hover:border-teal-300/55 hover:text-teal-50 touch-manipulation transition-[colors,box-shadow,transform] hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`;
 
 /** Carte / toggle sélectionné (surface statique). */
 export const sanctuarySelectedSurface =

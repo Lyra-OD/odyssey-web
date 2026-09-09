@@ -4,11 +4,11 @@
 **Dernière MAJ :** 9 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 9 sept 2026 — **Lot 7 : Polish de démo** (Scrollbars, Glow CTA, Animations d'étape, Z-index fixes).
 - 9 sept 2026 — **Lot 6 Accessibilité contraste Wizard** : labels/hints `zinc-400`, descriptions `zinc-300`, placeholders `zinc-500`, bordures inputs `white/15` — Quiet Luxury lisible senior. Classes Tailwind seulement.
 - 9 sept 2026 — **Connexion plus rapide + tel Canada** : délais cinéma formulaire ~1,3 s (était ~3,25 s) ; placeholder inscription `+1 (514) 555-1234`.
 - 9 sept 2026 — **Quiet Luxury Lots 1–5** : masquer Total $ hors craft ; tiroir collab `z-[80]` ; paille `#E4D96F` Création assistée ; copy wizard + hub + landing invité. Catalog régénéré.
 - 9 sept 2026 — **Landing invité resserrée** : logo Studio ; « Mémoire de {name} » ; chip aide bilingue (`UiLocaleContext`).
-- 9 sept 2026 — **Isolation invités** : cookie `odyssey_guest` + Storage `contribute/{token}/{session}/`. ⚠️ SQL **P18** : [`odyssey_p18_guest_session_photo_quota.sql`](sql/odyssey_p18_guest_session_photo_quota.sql).
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 

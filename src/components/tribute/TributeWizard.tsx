@@ -1529,7 +1529,7 @@ export function TributeWizard({
         />
       ) : null}
     <div
-      className={`relative mx-auto w-full ${
+      className={`wizard-shell relative mx-auto w-full ${
         currentStep === 6
           ? "max-w-4xl"
           : currentStep >= 4
@@ -1849,8 +1849,8 @@ export function TributeWizard({
         <div
           className={
             currentStep === 1 && step1Parcours.showEssentialsPanel
-              ? "min-h-0 pb-0"
-              : "min-h-[min(48vh,26rem)] pb-40"
+              ? "wizard-step-enter min-h-0 pb-0"
+              : "wizard-step-enter min-h-[min(48vh,26rem)] pb-32 pb-[max(7rem,env(safe-area-inset-bottom))]"
           }
         >
           {currentStep === 1 && step1Parcours.showEssentialsPanel ? (
@@ -2491,7 +2491,7 @@ export function TributeWizard({
                 }}
               />
 
-              <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
+              <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
                 <div className="mx-auto flex max-w-xl gap-3">
                   {!isEditor ? (
                     <button
@@ -2507,7 +2507,7 @@ export function TributeWizard({
                     type="button"
                     onClick={() => void goNext()}
                     disabled={step3UploadRunning}
-                    className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${sanctuaryFocusRing}`}
+                    className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none transition-[colors,box-shadow,transform] hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`}
                   >
                     {projectMediaCount > 0 ? copy.next : copy.stepMediaLater}
                   </button>
@@ -2915,7 +2915,7 @@ export function TributeWizard({
       currentStep !== 6 &&
       currentStep !== 7 &&
       !(currentStep === 1 && step1Sky) ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl md:px-8">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/90 px-4 py-4 backdrop-blur-xl shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
           <div
             className={`mx-auto ${
               currentStep >= 5 ? "max-w-3xl" : "max-w-xl"
@@ -2929,7 +2929,7 @@ export function TributeWizard({
               <button
                 type="button"
                 onClick={() => void goNext()}
-                className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 ${sanctuaryFocusRing}`}
+                className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 transition-[colors,box-shadow,transform] hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`}
               >
                 {copy.next}
               </button>

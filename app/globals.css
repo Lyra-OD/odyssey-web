@@ -1673,3 +1673,29 @@ html[data-parcours-hub-idle] .studio-shell-halo {
     animation: none;
   }
 }
+
+/* Lot 7 Phase A — polish démo : scrollbar fine, focus natif, fade étape */
+.wizard-shell {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.14) transparent;
+}
+.wizard-shell::-webkit-scrollbar { width: 6px; height: 6px; }
+.wizard-shell::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.14);
+  border-radius: 999px;
+}
+.wizard-shell::-webkit-scrollbar-track { background: transparent; }
+
+.wizard-shell *:focus { outline: none; }
+.wizard-shell *:focus-visible { outline: none; }
+
+@keyframes wizard-step-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.wizard-step-enter {
+  animation: wizard-step-fade-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wizard-step-enter { animation: none; }
+}
