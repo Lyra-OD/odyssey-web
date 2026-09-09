@@ -22,9 +22,10 @@ type Props = {
 
 /**
  * Chip d'aide permanente — bas-gauche, fixe, toujours visible.
- * Utilise un React Portal (document.body) pour échapper à tout stacking
- * context parent. Suit `UiLocaleContext` quand le LocaleSwitcher switch
- * sans remount layout (Sanctuaire / Studio).
+ * Mobile : pastille téléphone au-dessus du footer sticky Next (`bottom-24`).
+ * Desktop (`md+`) : chip complet (label + tel + écrire) à `bottom-5`.
+ * Portal `document.body` pour échapper au stacking context parent.
+ * Suit `UiLocaleContext` quand le LocaleSwitcher switch sans remount layout.
  */
 export function OdysseyHelpLifeline({
   locale: routeLocale,
@@ -46,10 +47,20 @@ export function OdysseyHelpLifeline({
 
   const chip = (
     <div
-      className={`pointer-events-none fixed bottom-5 left-4 z-[9999] ${className}`}
+      className={`pointer-events-none fixed bottom-24 left-4 z-[9999] md:bottom-5 ${className}`}
       aria-label={copy.label}
     >
-      <div className="pointer-events-auto inline-flex flex-col items-start gap-1 rounded-xl border border-white/10 bg-black/70 px-3 py-2.5 backdrop-blur-md">
+      {/* Mobile — pastille téléphone (évite le chevauchement Next). */}
+      <a
+        href={telHref}
+        aria-label={copy.phoneAria}
+        className="pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/70 text-teal-400/80 backdrop-blur-md transition-colors hover:border-teal-400/30 hover:text-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/40 md:hidden"
+      >
+        <Phone className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+      </a>
+
+      {/* Desktop — chip complet. */}
+      <div className="pointer-events-auto hidden flex-col items-start gap-1 rounded-xl border border-white/10 bg-black/70 px-3 py-2.5 backdrop-blur-md md:inline-flex">
         <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-white/35">
           {copy.label}
         </p>

@@ -54,7 +54,7 @@ export function WizardPhaseProgress({
   );
 
   return (
-    <nav className="mb-8 w-full" aria-label={copy.ariaLabel}>
+    <nav className="mb-4 w-full md:mb-8" aria-label={copy.ariaLabel}>
       <p className="sr-only" aria-live="polite">
         {replaceTokens(copy.stepAnnouncement, {
           current: String(currentStep),
@@ -62,19 +62,19 @@ export function WizardPhaseProgress({
         })}
       </p>
 
-      <ol className="flex items-center justify-center gap-2 sm:gap-3">
+      <ol className="flex items-center justify-center gap-1.5 sm:gap-3">
         {phases.map((phase, index) => {
           const isActive = currentStep >= phase.firstStep && currentStep <= phase.lastStep;
           const isCompleted = currentStep > phase.lastStep;
           const isLast = index === phases.length - 1;
 
           return (
-            <li key={phase.id} className="flex items-center gap-2 sm:gap-3">
+            <li key={phase.id} className="flex items-center gap-1.5 sm:gap-3">
               <button
                 type="button"
                 onClick={() => onPhaseClick(phase.firstStep)}
                 aria-current={isActive ? "step" : undefined}
-                className={`rounded-full px-1 py-1 text-[11px] font-light uppercase tracking-[0.18em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/40 sm:text-xs ${
+                className={`rounded-full px-1 py-0.5 text-[10px] font-light uppercase tracking-[0.18em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/40 sm:py-1 sm:text-xs ${
                   isActive
                     ? "text-teal-200"
                     : isCompleted
@@ -84,20 +84,20 @@ export function WizardPhaseProgress({
               >
                 {phase.label}
               </button>
-              {!isLast ? <span className="h-px w-6 bg-white/10 sm:w-10" aria-hidden /> : null}
+              {!isLast ? <span className="h-px w-4 bg-white/10 sm:w-10" aria-hidden /> : null}
             </li>
           );
         })}
       </ol>
 
-      <div className="mt-3 h-px w-full overflow-hidden rounded-full bg-white/[0.06]">
+      <div className="mt-2 h-px w-full overflow-hidden rounded-full bg-white/[0.06] md:mt-3">
         <div
           className="h-full bg-gradient-to-r from-teal-400/80 via-teal-300/70 to-cyan-400/50 transition-[width] duration-500 ease-out"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
 
-      <p className="mt-2.5 text-center text-[11px] font-light text-zinc-400">
+      <p className="mt-2 text-center text-[10px] font-light text-zinc-400 md:mt-2.5 md:text-[11px]">
         {replaceTokens(copy.stepProgressLabel, {
           current: String(currentStep),
           label: currentStepLabel,

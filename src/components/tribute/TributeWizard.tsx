@@ -1534,7 +1534,7 @@ export function TributeWizard({
           ? "max-w-4xl"
           : currentStep >= 4
             ? "max-w-3xl"
-            : "max-w-xl"
+            : "max-w-xl md:max-w-2xl"
       } ${step1Sky ? "z-10" : ""} ${
         currentStep === 1 && step1Parcours.showEssentialsPanel
           ? "mt-0"
@@ -1628,14 +1628,16 @@ export function TributeWizard({
             : ""
         }`}
       >
+        {/* Mobile + desktop : même split — identité à gauche, Package /
+            Creation help empilés à droite (plus de grille 2 cols mobile). */}
         <div
-          className={`mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 ${
-            currentStep >= 2 ? "sm:justify-between" : "sm:justify-end"
+          className={`mx-auto flex max-w-5xl flex-row items-start gap-3 md:items-center md:gap-4 ${
+            currentStep >= 2 ? "justify-between" : "justify-end"
           }`}
         >
           {currentStep >= 2 ? (
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-4">
+            <div className="min-w-0 flex-1 flex flex-col gap-3">
+              <div className="flex items-center gap-3 md:gap-4">
                 <div
                   className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/10 shadow-[0_0_20px_rgba(6,182,212,0.15)] ring-1 ring-white/5"
                   aria-hidden={!avatarPreview}
@@ -1662,9 +1664,7 @@ export function TributeWizard({
                   </p>
                 </div>
               </div>
-              {/* Inviter l’entourage — déplacé sous le nom (au lieu du 3e
-                  bloc empilé à droite) : c'est l'action la plus importante
-                  de cet en-tête, elle mérite la position la plus visible. */}
+              {/* Inviter l’entourage — sous le nom (colonne gauche). */}
               {!isEditor ? (
                 <SanctuaryInviteTrigger
                   onOpen={handleOpenSanctuaryInvite}
@@ -1674,13 +1674,13 @@ export function TributeWizard({
                     triggerCta: copy.inviteTriggerCta,
                     triggerOpenAria: copy.inviteOpenAria,
                   }}
-                  className={`ml-14${currentStep === 2 ? " hidden" : ""}`}
+                  className={`ml-14 min-w-0${currentStep === 2 ? " hidden" : ""}`}
                 />
               ) : null}
             </div>
           ) : null}
 
-          <div className="flex flex-col items-stretch gap-4 sm:w-60 sm:shrink-0 sm:items-end">
+          <div className="flex w-[42%] max-w-[11rem] shrink-0 flex-col items-end gap-2 md:w-60 md:max-w-none md:gap-4">
             {!isEditor ? (
               <>
             <PackageDossierTrigger
@@ -1690,7 +1690,7 @@ export function TributeWizard({
                 label: copy.headerPackageLabel,
                 openAria: copy.dossierOpenAria,
               }}
-              className="sm:items-end sm:text-right"
+              className="max-w-full items-end text-right"
             />
             <CollabInviteTrigger
               accessRole={accessRole}
@@ -1701,12 +1701,12 @@ export function TributeWizard({
                 triggerCta: copy.collabTriggerCta,
                 triggerOpenAria: copy.collabOpenAria,
               }}
-              className="sm:items-end sm:text-right"
+              className="max-w-full items-end text-right"
             />
               </>
             ) : null}
-            {/* Masqué sur mobile — l'en-tête sticky y reste volontairement compact (2 lignes max) ; le détail complet reste consultable dans le Dossier. */}
-            <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-400 sm:block sm:text-right">
+            {/* Masqué sur mobile — détail consultable dans le Dossier. */}
+            <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-400 md:block md:text-right">
               {copy.headerNarrativeSummary
                 .replace("{minutes}", String(wizardStoryboard.estimatedTotalMinutes))
                 .replace("{mediaMax}", String(currentMaxMediaItems))}
@@ -1868,7 +1868,7 @@ export function TributeWizard({
               ref={monolithFrameRef}
               data-no-sky-wheel
               className={[
-                "parcours-monolith-frame pointer-events-auto relative w-full max-w-xl",
+                "parcours-monolith-frame pointer-events-auto relative w-full max-w-xl md:max-w-2xl lg:max-w-3xl",
                 essentialsShake ? "parcours-form-shake" : "",
                 step1Reveal.phase === "reward" ||
                 step1Reveal.phase === "dwell" ||
