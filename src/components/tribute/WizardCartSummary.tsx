@@ -65,7 +65,7 @@ export function WizardCartSummary({
       </p>
       {cart.optionsCents > 0 ? (
         <p
-          className={`mt-1 ${compact ? "text-[11px]" : "text-xs"} font-light text-zinc-500`}
+          className={`mt-1 ${compact ? "text-[11px]" : "text-xs"} font-light text-zinc-400`}
         >
           {copy.totalFormula
             .replace("{base}", base)

@@ -81,13 +81,13 @@ export function MediaBankColumn({
             <button
               type="button"
               onClick={allSelected ? onDeselectAll : onSelectAll}
-              className="text-[11px] font-light text-zinc-500 underline decoration-white/15 underline-offset-4 transition-colors hover:text-zinc-300"
+              className="text-[11px] font-light text-zinc-400 underline decoration-white/15 underline-offset-4 transition-colors hover:text-zinc-300"
             >
               {allSelected ? copy.deselectAll : copy.selectAll}
             </button>
           ) : null}
         </div>
-        <p className="text-xs font-light text-zinc-500">
+        <p className="text-xs font-light text-zinc-400">
           {selectedMediaIds.length > 0
             ? copy.selectedCount.replace(
                 "{count}",
@@ -109,7 +109,7 @@ export function MediaBankColumn({
 
       <div ref={setNodeRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
         {items.length === 0 ? (
-          <p className="py-8 text-center text-sm font-light text-zinc-600">
+          <p className="py-8 text-center text-sm font-light text-zinc-400">
             {copy.empty}
           </p>
         ) : (

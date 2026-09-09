@@ -974,22 +974,22 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   animation: salon-cinema-wordmark-in 1.05s cubic-bezier(0.16, 1, 0.3, 1) 2.5s both;
 }
 
-/* Acte IV — titre + formulaire */
+/* Acte IV — titre + formulaire (rythme accéléré sept 2026 : form ~1,3 s) */
 .salon-title-reveal {
-  animation: salon-title-reveal-in 0.95s cubic-bezier(0.22, 1, 0.36, 1) 2.85s both;
+  animation: salon-title-reveal-in 0.95s cubic-bezier(0.22, 1, 0.36, 1) 1s both;
 }
 
 .salon-subtitle-reveal {
-  animation: salon-title-reveal-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 3.05s both;
+  animation: salon-title-reveal-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.15s both;
 }
 
 .salon-form-reveal {
-  animation: salon-form-reveal-in 1s cubic-bezier(0.22, 1, 0.36, 1) 3.25s both;
+  animation: salon-form-reveal-in 1s cubic-bezier(0.22, 1, 0.36, 1) 1.3s both;
 }
 
 /* Acte V — pied de page connexion (après le formulaire) */
 .salon-footer-reveal {
-  animation: salon-title-reveal-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 4.35s both;
+  animation: salon-title-reveal-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.9s both;
 }
 
 /* Header salon — même langage, séquence plus courte (~1,8 s) à chaque chargement */

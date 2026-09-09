@@ -36,7 +36,7 @@ export function StoryboardChapterStats({
       <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
         <ImageIcon className="h-4 w-4 shrink-0 text-teal-300/80" strokeWidth={1.5} aria-hidden />
         <div className="min-w-0">
-          <p className="truncate text-[10px] font-medium uppercase tracking-widest text-zinc-500">
+          <p className="truncate text-[10px] font-medium uppercase tracking-widest text-zinc-400">
             {copy.mediaLabel}
           </p>
           <p className="truncate text-sm font-medium text-zinc-100">
@@ -50,7 +50,7 @@ export function StoryboardChapterStats({
       <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
         <Music2 className="h-4 w-4 shrink-0 text-teal-300/80" strokeWidth={1.5} aria-hidden />
         <div className="min-w-0">
-          <p className="truncate text-[10px] font-medium uppercase tracking-widest text-zinc-500">
+          <p className="truncate text-[10px] font-medium uppercase tracking-widest text-zinc-400">
             {copy.songsLabel}
           </p>
           <p className="truncate text-sm font-medium text-zinc-100">

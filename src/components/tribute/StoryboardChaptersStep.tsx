@@ -371,7 +371,7 @@ export function StoryboardChaptersStep({
         <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
           {copy.description}
         </p>
-        <p className="text-xs font-light text-zinc-500">
+        <p className="text-xs font-light text-zinc-400">
           {copy.progress
             .replace("{count}", String(selectedCount))
             .replace("{total}", String(storyboard.chapters.length))}
@@ -426,7 +426,7 @@ export function StoryboardChaptersStep({
                     </div>
                   ) : (
                     <Music2
-                      className="h-7 w-7 text-zinc-600"
+                      className="h-7 w-7 text-zinc-400"
                       strokeWidth={1.2}
                       aria-hidden
                     />
@@ -434,7 +434,7 @@ export function StoryboardChaptersStep({
                 </div>
                 <p
                   className={`mt-3 truncate text-sm font-medium ${
-                    song ? "text-zinc-100" : "text-zinc-500"
+                    song ? "text-zinc-100" : "text-zinc-400"
                   }`}
                 >
                   {song?.title ?? copy.chapterEmptyLabel}
@@ -445,7 +445,7 @@ export function StoryboardChaptersStep({
                   {fallbackLabel}
                 </p>
                 {song ? (
-                  <p className="mt-0.5 truncate text-xs font-light text-zinc-500">
+                  <p className="mt-0.5 truncate text-xs font-light text-zinc-400">
                     {song.artist ?? ""}
                   </p>
                 ) : null}
@@ -481,7 +481,7 @@ export function StoryboardChaptersStep({
           <button
             type="button"
             onClick={handleAddChapter}
-            className="flex min-h-[9.5rem] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 bg-white/[0.01] text-sm font-light text-zinc-500 transition-colors hover:border-white/25 hover:bg-white/[0.03] hover:text-zinc-300"
+            className="flex min-h-[9.5rem] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 bg-white/[0.01] text-sm font-light text-zinc-400 transition-colors hover:border-white/25 hover:bg-white/[0.03] hover:text-zinc-300"
           >
             <Plus className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             {copy.addChapterCta}
@@ -490,7 +490,7 @@ export function StoryboardChaptersStep({
       </div>
 
       {!canAddChapter ? (
-        <p className="text-center text-xs font-light text-zinc-600">
+        <p className="text-center text-xs font-light text-zinc-400">
           {copy.maxReachedHint.replace("{max}", String(maxSongs))}
         </p>
       ) : null}
@@ -576,7 +576,7 @@ export function StoryboardChaptersStep({
         </p>
       </div>
 
-      <p className="text-center text-xs font-light text-zinc-600">{copy.licensedNote}</p>
+      <p className="text-center text-xs font-light text-zinc-400">{copy.licensedNote}</p>
     </div>
   );
 }

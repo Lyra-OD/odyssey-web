@@ -92,7 +92,7 @@ export function ChapterCanvasGrid({
   return (
     <div className="relative">
       {isEmpty ? (
-        <p className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] -translate-y-1/2 text-center text-sm font-light text-zinc-600">
+        <p className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] -translate-y-1/2 text-center text-sm font-light text-zinc-400">
           {copy.emptyHint}
         </p>
       ) : null}

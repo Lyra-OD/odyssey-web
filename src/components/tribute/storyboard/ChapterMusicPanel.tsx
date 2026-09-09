@@ -264,12 +264,12 @@ export function ChapterMusicPanel({
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-white/[0.06]">
-                <Music2 className="h-8 w-8 text-zinc-500" strokeWidth={1.2} />
+                <Music2 className="h-8 w-8 text-zinc-400" strokeWidth={1.2} />
               </div>
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-400">
               {chapterLabel}
             </p>
             <p className="mt-1 font-[family-name:var(--font-label)] text-xl font-medium text-white">
@@ -342,7 +342,7 @@ export function ChapterMusicPanel({
               aria-label={copy.listenCta}
               className="h-1 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-teal-400 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-teal-300"
             />
-            <div className="flex justify-between text-[10px] tabular-nums text-zinc-500">
+            <div className="flex justify-between text-[10px] tabular-nums text-zinc-400">
               <span>{formatTime(progress.current)}</span>
               <span>{formatTime(progress.duration)}</span>
             </div>
@@ -382,7 +382,7 @@ export function ChapterMusicPanel({
               className={`inline-flex min-h-[40px] items-center justify-center rounded-lg px-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors ${
                 sourceMode === "catalog"
                   ? "bg-teal-400/15 text-teal-100"
-                  : "text-zinc-500 hover:text-zinc-300"
+                  : "text-zinc-400 hover:text-zinc-300"
               }`}
             >
               {copy.sourceCatalog}
@@ -395,13 +395,13 @@ export function ChapterMusicPanel({
               className={`inline-flex min-h-[40px] items-center justify-center rounded-lg px-3 text-xs font-medium uppercase tracking-[0.14em] transition-colors ${
                 sourceMode === "personal"
                   ? "bg-teal-400/15 text-teal-100"
-                  : "text-zinc-500 hover:text-zinc-300"
+                  : "text-zinc-400 hover:text-zinc-300"
               }`}
             >
               {copy.sourcePersonal}
             </button>
           </div>
-          <p className="text-xs font-light text-zinc-600">{copy.sourceHint}</p>
+          <p className="text-xs font-light text-zinc-400">{copy.sourceHint}</p>
         </div>
       ) : null}
 
@@ -413,7 +413,7 @@ export function ChapterMusicPanel({
             </label>
             <div className="relative">
               <Search
-                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500"
+                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
                 aria-hidden
               />
               <input
@@ -423,16 +423,16 @@ export function ChapterMusicPanel({
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={copy.searchPlaceholder}
                 autoComplete="off"
-                className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-3.5 pl-11 pr-11 text-sm font-light text-zinc-100 outline-none transition-[border,box-shadow] placeholder:text-zinc-600 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.12)]"
+                className="w-full rounded-xl border border-white/15 bg-white/[0.04] py-3.5 pl-11 pr-11 text-sm font-light text-zinc-100 outline-none transition-[border,box-shadow] placeholder:text-zinc-400 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.12)]"
               />
               {isSearching ? (
                 <Loader2
-                  className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-zinc-500"
+                  className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-zinc-400"
                   aria-hidden
                 />
               ) : null}
             </div>
-            <p className="mt-2 text-xs font-light text-zinc-600">{copy.searchHint}</p>
+            <p className="mt-2 text-xs font-light text-zinc-400">{copy.searchHint}</p>
             {searchError || serviceError ? (
               <p className="mt-3 text-sm font-light text-amber-200/90" role="alert">
                 {searchError ?? serviceError}
@@ -442,7 +442,7 @@ export function ChapterMusicPanel({
 
           <ul className="space-y-3" aria-live="polite">
             {results.length === 0 && !isSearching && !searchError ? (
-              <li className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-6 text-center text-sm font-light text-zinc-500">
+              <li className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-6 text-center text-sm font-light text-zinc-400">
                 {copy.noResults}
               </li>
             ) : null}
@@ -476,7 +476,7 @@ export function ChapterMusicPanel({
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center">
-                            <Music2 className="h-5 w-5 text-zinc-500" strokeWidth={1.2} />
+                            <Music2 className="h-5 w-5 text-zinc-400" strokeWidth={1.2} />
                           </div>
                         )}
                       </div>
@@ -484,7 +484,7 @@ export function ChapterMusicPanel({
                         <p className="truncate text-sm font-medium text-zinc-100">
                           {track.title}
                         </p>
-                        <p className="truncate text-xs font-light text-zinc-500">
+                        <p className="truncate text-xs font-light text-zinc-400">
                           {track.artist} · {track.duration}
                         </p>
                       </div>
@@ -530,7 +530,7 @@ export function ChapterMusicPanel({
                         aria-label={copy.listenCta}
                         className="h-1 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-teal-400 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-teal-300"
                       />
-                      <div className="flex justify-between text-[10px] tabular-nums text-zinc-500">
+                      <div className="flex justify-between text-[10px] tabular-nums text-zinc-400">
                         <span>{formatTime(progress.current)}</span>
                         <span>{formatTime(progress.duration)}</span>
                       </div>
@@ -552,7 +552,7 @@ export function ChapterMusicPanel({
                 <p className="font-[family-name:var(--font-label)] text-sm font-medium text-zinc-100">
                   {copy.uploadPersonalTitle}
                 </p>
-                <p className="mt-1 text-xs font-light leading-relaxed text-zinc-500">
+                <p className="mt-1 text-xs font-light leading-relaxed text-zinc-400">
                   {copy.uploadPersonalHint}
                 </p>
               </div>

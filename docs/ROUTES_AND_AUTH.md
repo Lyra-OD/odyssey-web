@@ -139,7 +139,7 @@ Alias anglais : `?partner=<slug>` (même comportement).
 | Logo | — | `brand_logo_url` (URL HTTPS publique) |
 
 **Comportement :**
-- Slug valide + tenant trouvé → logo (même PNG que le dashboard) + « Propulsé par Odyssey » aligné à droite + séquence cinéma CSS (~3,3 s).
+- Slug valide + tenant trouvé → logo (même PNG que le dashboard) + « Propulsé par Odyssey » aligné à droite + séquence cinéma CSS (formulaire ~1,3 s).
 - Pas de paramètre, slug invalide ou tenant inconnu → lockup Odyssey standard (pas d’erreur visible).
 - Après login brandé, le slug `?partenaire=` est mémorisé (`localStorage`) — fallback logo header si le tenant met du temps à charger.
 

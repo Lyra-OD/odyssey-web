@@ -82,7 +82,7 @@ export function SanctuaryInviteTrigger({
       aria-label={copy.triggerOpenAria}
       className={`group inline-flex flex-col items-start gap-0.5 text-left disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
     >
-      <span className="text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-500">
+      <span className="text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-400">
         {copy.triggerLabel}
       </span>
       <span className="inline-flex items-center gap-1.5 font-editorial text-base font-medium text-zinc-100">
@@ -90,7 +90,7 @@ export function SanctuaryInviteTrigger({
           {copy.triggerCta}
         </span>
         <Share2
-          className="h-3.5 w-3.5 text-zinc-500 transition-colors duration-200 group-hover:text-teal-300"
+          className="h-3.5 w-3.5 text-zinc-400 transition-colors duration-200 group-hover:text-teal-300"
           strokeWidth={1.5}
           aria-hidden
         />
@@ -400,7 +400,7 @@ export function SanctuaryInviteContent({
             type="button"
             onClick={() => void generateLink()}
             disabled={loading}
-            className="w-full text-center text-[10px] uppercase tracking-[0.28em] text-zinc-600 transition-colors hover:text-teal-300/80 disabled:opacity-40"
+            className="w-full text-center text-[10px] uppercase tracking-[0.28em] text-zinc-400 transition-colors hover:text-teal-300/80 disabled:opacity-40"
           >
             {loading ? copy.generating : copy.generateCta}
           </button>
@@ -466,7 +466,7 @@ export function SanctuaryInviteStep({
         <p className="mx-auto mt-5 max-w-md text-base font-light leading-relaxed text-zinc-200 md:text-lg">
           {stepLead}
         </p>
-        <p className="mx-auto mt-3 max-w-md text-sm font-light leading-relaxed text-white/50 md:text-base">
+        <p className="mx-auto mt-3 max-w-md text-sm font-light leading-relaxed text-zinc-300 md:text-base">
           {stepBody}
         </p>
       </div>
@@ -481,7 +481,7 @@ export function SanctuaryInviteStep({
         />
       </div>
 
-      <p className="mx-auto mt-5 max-w-md text-center text-xs font-light leading-relaxed text-zinc-500">
+      <p className="mx-auto mt-5 max-w-md text-center text-xs font-light leading-relaxed text-zinc-400">
         {stepFootnote}
       </p>
 
@@ -566,7 +566,7 @@ export function SanctuaryInvitePanel({
               <button
                 type="button"
                 onClick={close}
-                className="absolute right-5 top-6 z-20 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-teal-400/[0.08] hover:text-teal-100 md:right-7 md:top-8"
+                className="absolute right-5 top-6 z-20 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-teal-400/[0.08] hover:text-teal-100 md:right-7 md:top-8"
                 aria-label={copy.closeAria}
               >
                 <X className="h-4 w-4" strokeWidth={1.5} aria-hidden />
@@ -584,7 +584,7 @@ export function SanctuaryInvitePanel({
                 <p className="mt-4 text-base font-light leading-relaxed text-zinc-200">
                   {copy.lead}
                 </p>
-                <p className="mt-3 text-sm font-light leading-relaxed text-white/50">
+                <p className="mt-3 text-sm font-light leading-relaxed text-zinc-300">
                   {copy.body}
                 </p>
               </div>
@@ -600,7 +600,7 @@ export function SanctuaryInvitePanel({
                 </div>
               </div>
 
-              <p className="mt-5 text-center text-xs font-light leading-relaxed text-zinc-500">
+              <p className="mt-5 text-center text-xs font-light leading-relaxed text-zinc-400">
                 {copy.footnote}
               </p>
 

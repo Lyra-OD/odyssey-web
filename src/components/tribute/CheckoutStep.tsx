@@ -187,7 +187,7 @@ export function CheckoutStep({
       ) : null}
 
       <section className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6">
-        <h3 className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500">
+        <h3 className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
           {copy.recapTitle}
         </h3>
         <ul className="mt-5 space-y-3">
@@ -242,7 +242,7 @@ export function CheckoutStep({
                 </span>
               </div>
               {copy.fundCreditHint && fundCreditCents > 0 ? (
-                <p className="text-[11px] font-light leading-relaxed text-zinc-500">
+                <p className="text-[11px] font-light leading-relaxed text-zinc-400">
                   {copy.fundCreditHint.replace(
                     "{credit}",
                     formatWizardPrice(fundCreditCents, locale),
@@ -308,7 +308,7 @@ export function CheckoutStep({
               {copy.riderLabel}
             </span>
             {copy.riderHint ? (
-              <span className="mt-1.5 block text-[11px] font-light leading-relaxed text-zinc-500">
+              <span className="mt-1.5 block text-[11px] font-light leading-relaxed text-zinc-400">
                 {copy.riderHint}
               </span>
             ) : null}
@@ -316,7 +316,7 @@ export function CheckoutStep({
         </label>
       ) : null}
 
-      <p className="flex items-center gap-2 text-xs font-light text-zinc-500">
+      <p className="flex items-center gap-2 text-xs font-light text-zinc-400">
         <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden />
         {copy.secureNote}
       </p>
@@ -353,7 +353,7 @@ export function CheckoutStep({
           type="button"
           onClick={onGoToMedia}
           disabled={isPaying}
-          className="w-full rounded-xl px-4 py-2 text-center text-xs font-light text-white/40 underline decoration-white/15 underline-offset-4 transition hover:text-white/65 disabled:opacity-50"
+          className="w-full rounded-xl px-4 py-2 text-center text-xs font-light text-zinc-300 underline decoration-white/15 underline-offset-4 transition hover:text-white/65 disabled:opacity-50"
         >
           {copy.goToMediaLink}
         </button>
@@ -364,7 +364,7 @@ export function CheckoutStep({
           type="button"
           onClick={onStayFree}
           disabled={isPaying}
-          className="w-full rounded-xl px-4 py-2 text-center text-sm font-light text-white/45 transition hover:text-white/75 disabled:opacity-50"
+          className="w-full rounded-xl px-4 py-2 text-center text-sm font-light text-zinc-300 transition hover:text-white/75 disabled:opacity-50"
         >
           {copy.stayFreeCta}
         </button>

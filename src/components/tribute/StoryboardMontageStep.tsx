@@ -427,7 +427,7 @@ export function StoryboardMontageStep({
       </header>
 
       {isLoadingMedia ? (
-        <p className="text-sm font-light text-zinc-500" role="status">
+        <p className="text-sm font-light text-zinc-400" role="status">
           {copy.loading}
         </p>
       ) : null}

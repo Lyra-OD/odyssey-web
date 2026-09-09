@@ -223,7 +223,7 @@
 | `auth.displayName` | Nom affiché | Display name |
 | `auth.displayNamePlaceholder` | Votre nom | Jane Doe |
 | `auth.phone` | Téléphone | Phone |
-| `auth.phonePlaceholder` | +33 6 12 34 56 78 | +1 (555) 000-0000 |
+| `auth.phonePlaceholder` | +1 (514) 555-1234 | +1 (514) 555-1234 |
 | `auth.submitSignIn` | Se connecter | Sign in |
 | `auth.submitSignUp` | Créer un compte | Create account |
 | `auth.loading` | Envoi… | Sending… |

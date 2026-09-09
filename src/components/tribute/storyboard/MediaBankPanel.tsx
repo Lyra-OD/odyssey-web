@@ -53,11 +53,11 @@ function BankMediaTile({
     />
   ) : item.isVideo ? (
     <div className="flex h-full w-full items-center justify-center bg-[#020202]">
-      <Film className="h-7 w-7 text-zinc-600" strokeWidth={1.1} />
+      <Film className="h-7 w-7 text-zinc-400" strokeWidth={1.1} />
     </div>
   ) : (
     <div className="flex h-full w-full items-center justify-center bg-[#020202]">
-      <ImageIcon className="h-7 w-7 text-zinc-600" strokeWidth={1.1} />
+      <ImageIcon className="h-7 w-7 text-zinc-400" strokeWidth={1.1} />
     </div>
   );
 
@@ -197,7 +197,7 @@ export function MediaBankPanel({
                     <button
                       type="button"
                       onClick={allSelected ? handleDeselectAll : handleSelectAll}
-                      className="text-xs font-light text-zinc-500 underline decoration-white/15 underline-offset-4 transition-colors hover:text-amber-300/90"
+                      className="text-xs font-light text-zinc-400 underline decoration-white/15 underline-offset-4 transition-colors hover:text-amber-300/90"
                     >
                       {allSelected ? copy.deselectAll : copy.selectAll}
                     </button>
@@ -211,7 +211,7 @@ export function MediaBankPanel({
                 type="button"
                 onClick={close}
                 aria-label={copy.closeAria}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
               >
                 <X className="h-4 w-4" strokeWidth={1.5} aria-hidden />
               </button>
@@ -219,7 +219,7 @@ export function MediaBankPanel({
 
             <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 md:px-8">
               {items.length === 0 ? (
-                <p className="py-16 text-center text-sm font-light text-zinc-500">
+                <p className="py-16 text-center text-sm font-light text-zinc-400">
                   {copy.empty}
                 </p>
               ) : (
@@ -244,7 +244,7 @@ export function MediaBankPanel({
                   type="button"
                   onClick={handleAssign}
                   disabled={selectedIds.length === 0}
-                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/[0.08] px-6 py-2.5 text-sm font-medium text-amber-100 transition-all duration-200 hover:border-amber-400/45 hover:bg-amber-400/[0.14] disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/[0.03] disabled:text-zinc-600"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-amber-400/30 bg-amber-400/[0.08] px-6 py-2.5 text-sm font-medium text-amber-100 transition-all duration-200 hover:border-amber-400/45 hover:bg-amber-400/[0.14] disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/[0.03] disabled:text-zinc-400"
                 >
                   {assignLabel}
                 </button>

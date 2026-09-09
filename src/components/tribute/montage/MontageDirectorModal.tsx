@@ -182,7 +182,7 @@ export function MontageDirectorModal({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.1, ease: EASE_OUT_LUXE }}
       >
-        <p className="pointer-events-auto text-[11px] font-medium tabular-nums tracking-[0.2em] text-zinc-500">
+        <p className="pointer-events-auto text-[11px] font-medium tabular-nums tracking-[0.2em] text-zinc-400">
           {counterLabel}
         </p>
         <motion.button
@@ -243,7 +243,7 @@ export function MontageDirectorModal({
               </AnimatePresence>
             </div>
           ) : (
-            <div className="flex aspect-video w-full max-w-2xl items-center justify-center text-zinc-600">
+            <div className="flex aspect-video w-full max-w-2xl items-center justify-center text-zinc-400">
               {item.isVideo ? (
                 <Film className="h-14 w-14" strokeWidth={1} />
               ) : (
@@ -254,7 +254,7 @@ export function MontageDirectorModal({
         </motion.div>
 
         <motion.p
-          className="mt-5 text-center text-[11px] font-light tracking-wide text-zinc-600"
+          className="mt-5 text-center text-[11px] font-light tracking-wide text-zinc-400"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.4 }}
@@ -306,7 +306,7 @@ export function MontageDirectorModal({
                   aria-selected={active}
                   onClick={() => onAssignChapter(item.assetId, chapter.id)}
                   className={`relative shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium tracking-wide transition-colors duration-200 ${
-                    active ? "text-teal-400" : "text-zinc-500 hover:text-zinc-300"
+                    active ? "text-teal-400" : "text-zinc-400 hover:text-zinc-300"
                   }`}
                 >
                   {active ? (

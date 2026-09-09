@@ -200,7 +200,7 @@ OdysseyConnexionMark (blanc pur lumineux, Montserrat espacé)
   → « Retour au site » (Acte V — dernier reveal)
 ```
 
-**Signature Halo-Éclipse** en fond : voir **§4.1**. Animations cinéma sur connexion (`salon-cinema-*`, `odyssey-connexion-mark-*` dans `globals.css`).
+**Signature Halo-Éclipse** en fond : voir **§4.1**. Animations cinéma sur connexion (`salon-*-reveal`, `odyssey-connexion-mark-*` dans `globals.css`) — formulaire visible ~**1,3 s** (accéléré sept 2026 ; était ~3,25 s).
 
 ### 3.4 Connexion Salon (avec logo partenaire)
 
@@ -294,7 +294,7 @@ Composant **`OdysseyConnexionMark`** — distinct de `OdysseyBrandLockup` (navba
 | Couleur | **Blanc pur `#FFFFFF`** + glow blanc lumineux — **seul** élément « soleil » de la page |
 | Reste du form | Blanc cassé (`zinc-200` titres, `zinc-300` inputs) pour hiérarchie |
 | Animation | Acte I — `odyssey-connexion-mark-reveal` (~1,85 s) |
-| Pied de page | « Retour au site » — Acte V (`salon-footer-reveal`, après le formulaire) |
+| Pied de page | « Retour au site » — Acte V (`salon-footer-reveal`, delay ~1,9 s) |
 
 Salon **avec** logo partenaire : `PartnerBrandLockup` inchangé ; Odyssey reste « Propulsé par » discret.
 
@@ -442,7 +442,7 @@ Skin : `src/lib/salonTierCardSkin.ts` (stagger, champ email, CTA). Upsell = wiza
 
 | Zone | Animations | Réduction mouvement |
 |------|------------|---------------------|
-| Connexion salon | Séquence ~3,3 s (`salon-cinema-*`) | `prefers-reduced-motion: reduce` |
+| Connexion salon | Séquence form ~1,3 s (`salon-*-reveal`) | `prefers-reduced-motion: reduce` |
 | Connexion studio | Même reveal titre / formulaire | idem |
 | Header dashboard salon | Séquence ~1,8 s (`salon-dashboard-*`) à chaque reload / changement tenant | idem |
 | Contenu salon (invitation) | Stagger entrée (`SALON_INVITE_STAGGER_*`) | `useReducedMotion` |

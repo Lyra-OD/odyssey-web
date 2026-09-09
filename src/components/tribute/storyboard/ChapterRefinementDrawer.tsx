@@ -140,7 +140,7 @@ export function ChapterRefinementDrawer({
                   />
                 </div>
                 {songLine ? (
-                  <p className="truncate text-sm font-light text-zinc-500">
+                  <p className="truncate text-sm font-light text-zinc-400">
                     {songLine}
                   </p>
                 ) : null}
@@ -149,7 +149,7 @@ export function ChapterRefinementDrawer({
                 type="button"
                 onClick={onClose}
                 aria-label={copy.closeAria}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
               >
                 <X className="h-4 w-4" strokeWidth={1.5} aria-hidden />
               </button>
@@ -205,7 +205,7 @@ export function ChapterRefinementDrawer({
                 <section className="mt-10 space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="h-px flex-1 bg-white/[0.06]" />
-                    <p className="shrink-0 text-xs font-light text-zinc-500">
+                    <p className="shrink-0 text-xs font-light text-zinc-400">
                       {copy.capacityDivider.replace(
                         "{count}",
                         recommendedCapacity === null
@@ -221,7 +221,7 @@ export function ChapterRefinementDrawer({
                       className={`h-1.5 w-1.5 rounded-full ${theme.dot} opacity-30`}
                       aria-hidden
                     />
-                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
                       {copy.beyondCapacity}
                     </p>
                   </div>

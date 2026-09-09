@@ -299,7 +299,7 @@ export function CinematicTeaser({
       </div>
 
       <div className="border-t border-white/10 bg-[#0a0a0a]/95 px-4 py-4 backdrop-blur-xl md:px-6">
-        <p className="mb-3 truncate text-xs font-light text-zinc-500">
+        <p className="mb-3 truncate text-xs font-light text-zinc-400">
           {tracks[currentSlide.actKey]
             ? `${tracks[currentSlide.actKey]?.title} · ${tracks[currentSlide.actKey]?.artist}`
             : copy.nowPlaying}
@@ -341,7 +341,7 @@ export function CinematicTeaser({
                 }}
               />
             </button>
-            <div className="mt-2 flex justify-between text-[11px] tabular-nums text-zinc-500">
+            <div className="mt-2 flex justify-between text-[11px] tabular-nums text-zinc-400">
               <span>{formatTime(elapsed)}</span>
               <span>{formatTime(totalDuration)}</span>
             </div>

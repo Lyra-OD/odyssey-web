@@ -201,7 +201,7 @@ export function PreviewStep({
         <button
           type="button"
           onClick={onEdit}
-          className="text-xs font-light tracking-wide text-zinc-500 underline decoration-zinc-800 underline-offset-4 transition-colors hover:text-zinc-300"
+          className="text-xs font-light tracking-wide text-zinc-400 underline decoration-zinc-800 underline-offset-4 transition-colors hover:text-zinc-300"
         >
           {copy.editLink}
         </button>

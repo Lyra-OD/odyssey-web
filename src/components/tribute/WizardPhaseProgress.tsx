@@ -79,7 +79,7 @@ export function WizardPhaseProgress({
                     ? "text-teal-200"
                     : isCompleted
                       ? "text-zinc-400 hover:text-zinc-200"
-                      : "text-zinc-600 hover:text-zinc-400"
+                      : "text-zinc-400 hover:text-zinc-300"
                 }`}
               >
                 {phase.label}
@@ -97,7 +97,7 @@ export function WizardPhaseProgress({
         />
       </div>
 
-      <p className="mt-2.5 text-center text-[11px] font-light text-zinc-500">
+      <p className="mt-2.5 text-center text-[11px] font-light text-zinc-400">
         {replaceTokens(copy.stepProgressLabel, {
           current: String(currentStep),
           label: currentStepLabel,

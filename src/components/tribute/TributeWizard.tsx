@@ -146,14 +146,14 @@ const WIZARD_DATE_INPUT_MIN = "1800-01-01";
 const WIZARD_DATE_INPUT_MAX = "9999-12-31";
 
 const essentialsLabelClass =
-  "flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-500";
+  "flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-400";
 
 function essentialsTextFieldClass(invalid: boolean): string {
   return [
-    "w-full rounded-xl border bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-600",
+    "w-full rounded-xl border bg-white/[0.04] px-4 py-3.5 text-lg font-light text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none transition-[border,box-shadow] placeholder:text-zinc-500",
     invalid
       ? "border-rose-400/75 focus:border-rose-400/90 focus:shadow-[0_0_24px_rgba(251,113,133,0.18)]"
-      : "border-white/10 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.14)]",
+      : "border-white/15 focus:border-teal-400/35 focus:shadow-[0_0_24px_rgba(45,212,191,0.14)]",
   ].join(" ");
 }
 
@@ -163,7 +163,7 @@ function essentialsDateFieldClass(invalid: boolean, hasValue: boolean): string {
     hasValue ? "pr-[5.25rem]" : "pr-12",
     invalid
       ? "border-rose-400/75 focus:border-rose-400/90 focus:shadow-[0_0_24px_rgba(251,113,133,0.18)]"
-      : "border-white/10 focus:border-teal-400/25 focus:shadow-[0_0_20px_rgba(6,182,212,0.12)]",
+      : "border-white/15 focus:border-teal-400/25 focus:shadow-[0_0_20px_rgba(6,182,212,0.12)]",
   ].join(" ");
 }
 
@@ -211,7 +211,7 @@ function EssentialsDateField({
   return (
     <div className="space-y-2">
       <label htmlFor={id} className={essentialsLabelClass}>
-        <Calendar className="h-3.5 w-3.5 text-zinc-600" aria-hidden />
+        <Calendar className="h-3.5 w-3.5 text-zinc-400" aria-hidden />
         {label}
       </label>
       <div className="relative">
@@ -233,7 +233,7 @@ function EssentialsDateField({
         />
         {showEmptyHint ? (
           <span
-            className="pointer-events-none absolute inset-y-0 left-4 right-12 flex items-center text-base font-light text-zinc-600"
+            className="pointer-events-none absolute inset-y-0 left-4 right-12 flex items-center text-base font-light text-zinc-400"
             aria-hidden
           >
             {emptyHint}
@@ -245,7 +245,7 @@ function EssentialsDateField({
           <button
             type="button"
             aria-label={clearAria}
-            className="absolute inset-y-0 right-11 flex w-10 items-center justify-center text-zinc-500 transition-colors hover:text-zinc-200 touch-manipulation"
+            className="absolute inset-y-0 right-11 flex w-10 items-center justify-center text-zinc-400 transition-colors hover:text-zinc-200 touch-manipulation"
             onClick={() => onChange("")}
           >
             <X className="h-4 w-4" strokeWidth={1.75} aria-hidden />
@@ -1550,7 +1550,7 @@ export function TributeWizard({
           <p className="text-center text-[10px] font-medium uppercase tracking-[0.4em] text-teal-400/50">
             {copy.editorModeBanner}
           </p>
-          <p className="mt-2 text-center text-sm font-light text-white/45">
+          <p className="mt-2 text-center text-sm font-light text-zinc-300">
             {copy.editorModeHint}
           </p>
         </div>
@@ -1649,7 +1649,7 @@ export function TributeWizard({
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-white/[0.06]">
-                      <User className="h-5 w-5 text-zinc-500" strokeWidth={1.2} />
+                      <User className="h-5 w-5 text-zinc-400" strokeWidth={1.2} />
                     </div>
                   )}
                 </div>
@@ -1657,7 +1657,7 @@ export function TributeWizard({
                   <p className="font-editorial truncate text-lg font-medium leading-tight tracking-[0.02em] text-zinc-100 md:text-xl">
                     {deceasedDisplayName}
                   </p>
-                  <p className="font-[family-name:var(--font-label)] mt-0.5 text-xs font-normal tracking-[0.18em] text-zinc-500 uppercase">
+                  <p className="font-[family-name:var(--font-label)] mt-0.5 text-xs font-normal tracking-[0.18em] text-zinc-400 uppercase">
                     {yearsDisplay}
                   </p>
                 </div>
@@ -1706,7 +1706,7 @@ export function TributeWizard({
               </>
             ) : null}
             {/* Masqué sur mobile — l'en-tête sticky y reste volontairement compact (2 lignes max) ; le détail complet reste consultable dans le Dossier. */}
-            <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-500 sm:block sm:text-right">
+            <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-400 sm:block sm:text-right">
               {copy.headerNarrativeSummary
                 .replace("{minutes}", String(wizardStoryboard.estimatedTotalMinutes))
                 .replace("{mediaMax}", String(currentMaxMediaItems))}
@@ -1917,7 +1917,7 @@ export function TributeWizard({
                 <button
                   type="button"
                   onClick={step1Parcours.closePanel}
-                  className="absolute right-4 top-4 z-[2] rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
+                  className="absolute right-4 top-4 z-[2] rounded-lg p-2 text-zinc-400 transition-colors hover:bg-white/5 hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/35"
                   aria-label={copy.parcoursPanelCloseHint}
                 >
                   <X className="h-5 w-5" strokeWidth={1.5} aria-hidden />
@@ -1938,7 +1938,7 @@ export function TributeWizard({
               </div>
 
               <div className="parcours-open-stagger-2 mt-10 flex flex-col items-center">
-                <p className="mb-4 w-full text-center text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-500">
+                <p className="mb-4 w-full text-center text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-400">
                   {copy.primaryPhotoLabel}
                 </p>
                 <input
@@ -1970,13 +1970,13 @@ export function TributeWizard({
                     />
                   ) : (
                     <Camera
-                      className="relative z-[1] h-11 w-11 text-zinc-500"
+                      className="relative z-[1] h-11 w-11 text-zinc-400"
                       strokeWidth={1.1}
                       aria-hidden
                     />
                   )}
                 </button>
-                <p className="mt-4 max-w-sm whitespace-pre-line text-center text-sm font-light text-zinc-500">
+                <p className="mt-4 max-w-sm whitespace-pre-line text-center text-sm font-light text-zinc-400">
                   {copy.primaryPhotoHint}
                 </p>
                 {avatarPreview ? (
@@ -2001,7 +2001,7 @@ export function TributeWizard({
               <div className="parcours-open-stagger-2 mt-12 space-y-6">
                 <div className="space-y-2">
                   <label htmlFor="tw-first" className={essentialsLabelClass}>
-                    <User className="h-3.5 w-3.5 text-zinc-600" aria-hidden />
+                    <User className="h-3.5 w-3.5 text-zinc-400" aria-hidden />
                     {copy.firstNameLabel}
                   </label>
                   <input
@@ -2033,7 +2033,7 @@ export function TributeWizard({
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="tw-last" className={essentialsLabelClass}>
-                    <User className="h-3.5 w-3.5 text-zinc-600" aria-hidden />
+                    <User className="h-3.5 w-3.5 text-zinc-400" aria-hidden />
                     {copy.lastNameLabel}
                   </label>
                   <input
@@ -2110,7 +2110,7 @@ export function TributeWizard({
                     {copy.parcoursMonolithContinue}
                   </button>
                   <p
-                    className="mt-5 flex items-center gap-3 text-[11px] font-light uppercase tracking-[0.28em] text-teal-400/45"
+                    className="mt-5 flex items-center gap-3 text-[11px] font-light uppercase tracking-[0.28em] text-teal-300"
                     role="separator"
                   >
                     <span className="h-px flex-1 bg-teal-400/20" aria-hidden />
@@ -2292,7 +2292,7 @@ export function TributeWizard({
                           </span>
                           <span
                             id="wizard-step3-dropzone-hint"
-                            className="relative mt-2 text-sm font-light text-zinc-500"
+                            className="relative mt-2 text-sm font-light text-zinc-400"
                           >
                             {copy.uploadSubtext}
                           </span>
@@ -2426,7 +2426,7 @@ export function TributeWizard({
                           }}
                         />
 
-                        <p className="mt-4 text-sm font-light text-zinc-500">
+                        <p className="mt-4 text-sm font-light text-zinc-400">
                           {dz.isRunning
                             ? copy.uploadInProgress
                             : dz.totals.uploaded === 0

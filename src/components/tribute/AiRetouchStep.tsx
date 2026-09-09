@@ -71,7 +71,7 @@ export function AiRetouchStep({
               <h3 className="mt-2 font-[family-name:var(--font-label)] text-xl font-medium text-zinc-100 md:text-2xl">
                 {copy.cardTitle}
               </h3>
-              <p className="mt-2 max-w-lg text-sm font-light text-zinc-500">
+              <p className="mt-2 max-w-lg text-sm font-light text-zinc-400">
                 {copy.cardSubtitle}
               </p>
             </div>
@@ -103,7 +103,7 @@ export function AiRetouchStep({
                 </span>
               </li>
             ))}
-            <li className="pt-1 text-xs font-light text-zinc-500">
+            <li className="pt-1 text-xs font-light text-zinc-400">
               {copy.qualityNote}
             </li>
           </ul>

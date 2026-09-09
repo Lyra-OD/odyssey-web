@@ -53,10 +53,10 @@ export function VaultOnlineSourcesSection({
       <p className="text-[10px] font-medium uppercase tracking-[0.36em] text-teal-400/70">
         {copy.title}
       </p>
-      <p className="mt-3 text-sm font-light leading-relaxed text-white/45 md:text-base">
+      <p className="mt-3 text-sm font-light leading-relaxed text-zinc-300 md:text-base">
         {copy.description}
       </p>
-      <p className="mt-2 text-xs font-light leading-relaxed text-zinc-600">
+      <p className="mt-2 text-xs font-light leading-relaxed text-zinc-400">
         {copy.note}
       </p>
 

@@ -94,7 +94,7 @@ export function SoftCapModal({
         <button
           type="button"
           onClick={onDismiss}
-          className={`absolute right-3 top-3 rounded-full p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white ${sanctuaryFocusRing}`}
+          className={`absolute right-3 top-3 rounded-full p-1.5 text-zinc-300 transition hover:bg-white/10 hover:text-white ${sanctuaryFocusRing}`}
           aria-label={copy.ctaDismiss}
         >
           <X className="h-4 w-4" />
@@ -125,7 +125,7 @@ export function SoftCapModal({
                   <span className="block text-sm font-medium text-white">
                     {copy.ctaLicense}
                   </span>
-                  <span className="mt-0.5 block text-xs text-white/50">
+                  <span className="mt-0.5 block text-xs text-zinc-300">
                     {copy.priceLicense}
                   </span>
                 </button>
@@ -151,7 +151,7 @@ export function SoftCapModal({
                 >
                   {copy.ctaContinue}
                 </button>
-                <p className="text-center text-[11px] text-white/40">
+                <p className="text-center text-[11px] text-zinc-300">
                   {copy.priceHeritage}
                 </p>
               </>
@@ -173,7 +173,7 @@ export function SoftCapModal({
             {showCollab ? (
               <div className="space-y-2 border-t border-white/10 pt-3">
                 {copy.collabHint ? (
-                  <p className="text-center text-[11px] leading-relaxed text-white/45">
+                  <p className="text-center text-[11px] leading-relaxed text-zinc-300">
                     {copy.collabHint}
                   </p>
                 ) : null}

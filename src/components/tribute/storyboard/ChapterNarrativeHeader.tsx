@@ -78,7 +78,7 @@ export function ChapterNarrativeHeader({
           {chapterDragHandle ? (
             <button
               type="button"
-              className={`mt-0.5 flex h-8 w-8 shrink-0 cursor-grab touch-none items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-zinc-500 transition-colors hover:border-white/20 hover:text-zinc-300 active:cursor-grabbing ${theme.text}`}
+              className={`mt-0.5 flex h-8 w-8 shrink-0 cursor-grab touch-none items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-zinc-400 transition-colors hover:border-white/20 hover:text-zinc-300 active:cursor-grabbing ${theme.text}`}
               aria-label={chapterReorderAria}
               {...chapterDragHandle.attributes}
               {...restHandleListeners}
@@ -140,7 +140,7 @@ export function ChapterNarrativeHeader({
       </div>
 
       {songLine ? (
-        <p className="truncate pl-4 text-sm font-light text-zinc-500 md:pl-12">
+        <p className="truncate pl-4 text-sm font-light text-zinc-400 md:pl-12">
           {songLine}
         </p>
       ) : null}

@@ -58,7 +58,7 @@ export function PackageDossierTrigger({
       aria-label={copy.openAria}
       className={`group inline-flex flex-col items-start gap-0.5 text-left ${className}`}
     >
-      <span className="text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-500">
+      <span className="text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-400">
         {copy.label}
       </span>
       <span className="inline-flex items-center gap-1.5 font-editorial text-base font-medium text-zinc-100">
@@ -66,7 +66,7 @@ export function PackageDossierTrigger({
           {packageLabel}
         </span>
         <ArrowUpRight
-          className="h-3.5 w-3.5 text-zinc-500 transition-colors duration-200 group-hover:text-zinc-300"
+          className="h-3.5 w-3.5 text-zinc-400 transition-colors duration-200 group-hover:text-zinc-300"
           strokeWidth={1.5}
           aria-hidden
         />
@@ -93,7 +93,7 @@ function DossierRows({ rows }: { rows: readonly PackageDossierRow[] }) {
           key={row.id}
           className="flex items-baseline justify-between gap-4 py-3"
         >
-          <dt className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500">
+          <dt className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-400">
             {row.label}
           </dt>
           <dd className="shrink-0 text-right text-sm font-light text-zinc-200">
@@ -212,7 +212,7 @@ export function PackageDossierPanel({
                 type="button"
                 onClick={close}
                 aria-label={copy.closeAria}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
               >
                 <X className="h-4 w-4" strokeWidth={1.5} aria-hidden />
               </button>
@@ -231,7 +231,7 @@ export function PackageDossierPanel({
                     <button
                       type="button"
                       onClick={() => setPreviewPackage(null)}
-                      className="inline-flex items-center gap-2 text-xs font-light text-zinc-500 transition-colors hover:text-zinc-300"
+                      className="inline-flex items-center gap-2 text-xs font-light text-zinc-400 transition-colors hover:text-zinc-300"
                     >
                       <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden />
                       {copy.backToCurrentCta}
@@ -250,7 +250,7 @@ export function PackageDossierPanel({
                         </div>
                       ) : null}
                     </div>
-                    <p className="mt-2 text-sm font-light leading-relaxed text-zinc-500">
+                    <p className="mt-2 text-sm font-light leading-relaxed text-zinc-400">
                       {taglineFor(previewOption.id)}
                     </p>
 
@@ -321,18 +321,18 @@ export function PackageDossierPanel({
                         </div>
                       ) : null}
                     </div>
-                    <p className="mt-2 text-sm font-light leading-relaxed text-zinc-500">
+                    <p className="mt-2 text-sm font-light leading-relaxed text-zinc-400">
                       {taglineFor(currentPackage)}
                     </p>
 
-                    <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-500">
+                    <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-400">
                       {copy.inclusionsTitle}
                     </p>
                     <DossierRows rows={rowsFor(currentPackage)} />
 
                     {otherOptions.length > 0 ? (
                       <div className="mt-8">
-                        <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-500">
+                        <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-400">
                           {copy.discoverTitle}
                         </p>
                         <div className="mt-3 flex flex-wrap gap-2.5">

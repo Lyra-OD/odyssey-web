@@ -309,7 +309,7 @@ export function MontageExtensionsStep({
                 <p className="font-[family-name:var(--font-label)] text-lg font-medium text-zinc-100">
                   {copy.heritagePackTitle}
                 </p>
-                <p className="mt-1 max-w-xl text-sm font-light text-zinc-500">
+                <p className="mt-1 max-w-xl text-sm font-light text-zinc-400">
                   {copy.heritagePackDescription}
                 </p>
                 <p className="mt-2 text-xs font-light text-amber-200/80">
@@ -324,7 +324,7 @@ export function MontageExtensionsStep({
                   locale,
                 )}
               </p>
-              <p className="text-xs text-zinc-500 line-through">
+              <p className="text-xs text-zinc-400 line-through">
                 {formatWizardPrice(heritagePackIndividualTotalCents(), locale)}
               </p>
               <p className="mt-1 text-[11px] font-medium text-teal-400/90">
@@ -398,7 +398,7 @@ export function MontageExtensionsStep({
         >
           <h3
             id="extensions-recap-heading"
-            className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500"
+            className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
           >
             {copy.recapTitle}
           </h3>
@@ -436,7 +436,7 @@ export function MontageExtensionsStep({
               })}
             </ul>
           ) : (
-            <p className="mt-3 text-sm font-light text-zinc-600">
+            <p className="mt-3 text-sm font-light text-zinc-400">
               {copy.recapEmpty}
             </p>
           )}
