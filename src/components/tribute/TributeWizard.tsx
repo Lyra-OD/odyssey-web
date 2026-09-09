@@ -1849,7 +1849,7 @@ export function TributeWizard({
         <div
           className={
             currentStep === 1 && step1Parcours.showEssentialsPanel
-              ? "wizard-step-enter min-h-0 pb-0"
+              ? "min-h-0 pb-0"
               : "wizard-step-enter min-h-[min(48vh,26rem)] pb-32 pb-[max(7rem,env(safe-area-inset-bottom))]"
           }
         >
