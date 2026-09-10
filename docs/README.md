@@ -102,7 +102,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | Waterfall / 30 % Net | [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) | QA_P6, BUSINESS_CASE (sauf citation datée) |
 | Wizard (7 étapes) | [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) | Anciens « 8 steps » |
 | Jetons / wallets salon | — (purgés P8) | `_archive/`, SQL P4 historique |
-| « Phase 2 » cinéma | [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md) | [`VISION_PHASE_2.md`](VISION_PHASE_2.md) (CPL / Lyra / MRR) |
+| « Phase 2 » cinéma | [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md) | [`VISION_PHASE_2.md`](VISION_PHASE_2.md) (CPL / Lyra / MRR / **Marketplace P3**) |
 | Lyra (ampleur) | [`Manifesto-V10.4.md`](Manifesto-V10.4.md) | Pitch Patrice (récit salon seulement) |
 | Features livrées | [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Snapshots juillet, briefs |
 
@@ -137,6 +137,8 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`business/BUSINESS_CASE_V3_PITCH_SEP2026.md`](business/BUSINESS_CASE_V3_PITCH_SEP2026.md) | business | Business case pitch sept. 2026 (réalisme · $/famille) |
 | [`business/REVENUE_GROWTH_STRATEGY_SEP2026.md`](business/REVENUE_GROWTH_STRATEGY_SEP2026.md) | business | Leviers ventes / marge · priorisation 30/90 j |
 | [`business/VIRAL_EXPLAINED_SIMPLY.md`](business/VIRAL_EXPLAINED_SIMPLY.md) | business | Viral / Fonds en simple · exemples · phrases pitch |
+| [`business/NARRATIVE_VP_ATHOS_SEP2026.md`](business/NARRATIVE_VP_ATHOS_SEP2026.md) | business | Pitch VP / réseau funéraire (Phase 1) |
+| [`business/INVESTOR_NARRATIVE_SANJI_SEP2026.md`](business/INVESTOR_NARRATIVE_SANJI_SEP2026.md) | business | Pitch investisseur / Sanji (wedge + Lyra upside) |
 | [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) | playbook | Canal direct |
 | [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) | snapshot | Projections juil. 2026 — **figé** (ne pas corriger) |
 | [`PARTNER_BRIEF_JON_JUL2026.md`](PARTNER_BRIEF_JON_JUL2026.md) | snapshot | Brief Jon, figé |
@@ -205,7 +207,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 
 | Fichier | Type | Vérité pour |
 |---------|------|-------------|
-| [`VISION_PHASE_2.md`](VISION_PHASE_2.md) | vision | CPL / MRR / Lyra produit |
+| [`VISION_PHASE_2.md`](VISION_PHASE_2.md) | vision | CPL / MRR / Lyra · **Phase 3 Marketplace agrégateur** |
 | [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md) | vision | Moteur cinéma — **autre** Phase 2 |
 | *Nouveaux* | → | [`vision/`](vision/README.md) |
 
