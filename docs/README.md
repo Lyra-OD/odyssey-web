@@ -134,8 +134,10 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`MEETING_PATRICE_VP.md`](MEETING_PATRICE_VP.md) | playbook | Rencontre VP 60 min |
 | [`business/URGEL_ADOPTION_AND_PILOT.md`](business/URGEL_ADOPTION_AND_PILOT.md) | business | Adoption conseillers · pilote Urgel |
 | [`business/PATRICE_MURDER_BOARD_PITCH.md`](business/PATRICE_MURDER_BOARD_PITCH.md) | business | Pré-mortem · objections · revenu/famille |
+| [`business/BUSINESS_CASE_V3_PITCH_SEP2026.md`](business/BUSINESS_CASE_V3_PITCH_SEP2026.md) | business | Business case pitch sept. 2026 (réalisme · $/famille) |
+| [`business/REVENUE_GROWTH_STRATEGY_SEP2026.md`](business/REVENUE_GROWTH_STRATEGY_SEP2026.md) | business | Leviers ventes / marge · priorisation 30/90 j |
 | [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) | playbook | Canal direct |
-| [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) | snapshot | Projections juil. 2026 — **figé** |
+| [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) | snapshot | Projections juil. 2026 — **figé** (ne pas corriger) |
 | [`PARTNER_BRIEF_JON_JUL2026.md`](PARTNER_BRIEF_JON_JUL2026.md) | snapshot | Brief Jon, figé |
 | [`PARTNER_REPORT_JUL2026.md`](PARTNER_REPORT_JUL2026.md) | snapshot | Rapport partenaire, figé |
 | *Nouveaux* | → | [`business/`](business/README.md) |
