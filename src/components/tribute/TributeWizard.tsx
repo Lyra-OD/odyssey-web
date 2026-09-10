@@ -139,11 +139,16 @@ import {
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
 import { useWizardStoryboard } from "@/src/hooks/useWizardStoryboard";
 import type { Locale } from "@/i18n.config";
+import {
+  WIZARD_DATE_FLOOR,
+  essentialsBirthIssue,
+  essentialsDeathIssue,
+  wizardBirthMaxISO,
+  wizardDeathMaxISO,
+  wizardDeathMinISO,
+} from "@/src/lib/wizard/wizardDateBounds";
 
 export type TributeWizardCopy = AppDictionary["tributeWizard"];
-
-const WIZARD_DATE_INPUT_MIN = "1800-01-01";
-const WIZARD_DATE_INPUT_MAX = "9999-12-31";
 
 const essentialsLabelClass =
   "flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.28em] text-zinc-400";
@@ -188,8 +193,10 @@ function EssentialsDateField({
   label,
   value,
   onChange,
+  min,
+  max,
   invalid,
-  missingLabel,
+  errorLabel,
   openAria,
   clearAria,
   emptyHint,
@@ -198,8 +205,10 @@ function EssentialsDateField({
   label: string;
   value: string;
   onChange: (value: string) => void;
+  min: string;
+  max: string;
   invalid: boolean;
-  missingLabel: string;
+  errorLabel: string;
   openAria: string;
   clearAria: string;
   emptyHint: string;
@@ -219,8 +228,8 @@ function EssentialsDateField({
           ref={inputRef}
           id={id}
           type="date"
-          min={WIZARD_DATE_INPUT_MIN}
-          max={WIZARD_DATE_INPUT_MAX}
+          min={min}
+          max={max}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
@@ -262,7 +271,7 @@ function EssentialsDateField({
       </div>
       {invalid ? (
         <p id={errId} className="text-sm font-light text-rose-400/90">
-          {missingLabel}
+          {errorLabel}
         </p>
       ) : null}
     </div>
@@ -699,7 +708,8 @@ export function TributeWizard({
   });
 
   const step1Sky = !isEditor && currentStep === 1;
-  /** Hub Hero seulement si identité jamais saisie (draft vierge à l'arrivée). */
+  /** Entrée hub : snapshot mount (draft hydraté vierge). Affichage intro =
+   *  `showHubHero && !hasEssentialsData` (draft live), pas ce flag. */
   const [step1VirginHub] = useState(() => {
     const e = hydrated.essentials;
     return (
@@ -1045,11 +1055,14 @@ export function TributeWizard({
     handleOpenSanctuaryInvite();
   }, [isEditor, currentStep, projectMediaCount, handleOpenSanctuaryInvite]);
 
+  const birthDateIssue = essentialsBirthIssue(birthDate);
+  const deathDateIssue = essentialsDeathIssue(birthDate, deathDate);
+
   const canProceedEssential =
     firstName.trim().length > 0 &&
     lastName.trim().length > 0 &&
-    birthDate.length > 0 &&
-    deathDate.length > 0;
+    birthDateIssue === null &&
+    deathDateIssue === null;
 
   useEffect(() => {
     if (essentialError && canProceedEssential) setEssentialError(false);
@@ -1080,14 +1093,20 @@ export function TributeWizard({
       ? "tw-first"
       : !lastName.trim()
         ? "tw-last"
-        : !birthDate
+        : birthDateIssue
           ? "tw-birth"
           : "tw-death";
     requestAnimationFrame(() => {
       document.getElementById(firstId)?.focus();
     });
     return true;
-  }, [canProceedEssential, firstName, lastName, birthDate, deathDate]);
+  }, [
+    canProceedEssential,
+    firstName,
+    lastName,
+    birthDateIssue,
+    deathDateIssue,
+  ]);
 
   const goNext = useCallback(async () => {
     if (currentStep === 1) {
@@ -1446,7 +1465,9 @@ export function TributeWizard({
           aria-hidden
         />
       ) : null}
-      {step1Parcours.showHubHero && step1VirginHub ? (
+      {/* Intro pitch : hub.idle + draft incomplet (live). `step1VirginHub`
+          reste mount-only pour l’entrée Chemin A/B via useParcoursUx. */}
+      {step1Parcours.showHubHero && !hasEssentialsData ? (
         <SanctuaryHubIntro
           copy={{
             title: copy.parcoursIntroTitle,
@@ -2069,8 +2090,14 @@ export function TributeWizard({
                     label={copy.birthDateLabel}
                     value={birthDate}
                     onChange={handleBirthDateChange}
-                    invalid={essentialError && !birthDate}
-                    missingLabel={copy.validationFieldMissing}
+                    min={WIZARD_DATE_FLOOR}
+                    max={wizardBirthMaxISO()}
+                    invalid={Boolean(essentialError && birthDateIssue)}
+                    errorLabel={
+                      birthDateIssue === "birthTooRecent"
+                        ? copy.validationBirthTooRecent
+                        : copy.validationFieldMissing
+                    }
                     openAria={copy.datePickerOpenAria}
                     clearAria={copy.dateClearAria}
                     emptyHint={copy.dateInputEmptyHint}
@@ -2080,8 +2107,16 @@ export function TributeWizard({
                     label={copy.deathDateLabel}
                     value={deathDate}
                     onChange={handleDeathDateChange}
-                    invalid={essentialError && !deathDate}
-                    missingLabel={copy.validationFieldMissing}
+                    min={wizardDeathMinISO(birthDate)}
+                    max={wizardDeathMaxISO()}
+                    invalid={Boolean(essentialError && deathDateIssue)}
+                    errorLabel={
+                      deathDateIssue === "deathBeforeBirth"
+                        ? copy.validationDeathBeforeBirth
+                        : deathDateIssue === "deathTooFar"
+                          ? copy.validationDeathTooFar
+                          : copy.validationFieldMissing
+                    }
                     openAria={copy.datePickerOpenAria}
                     clearAria={copy.dateClearAria}
                     emptyHint={copy.dateInputEmptyHint}

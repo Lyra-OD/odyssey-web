@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-09 · **Entrées :** 889
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-10 · **Entrées :** 892
 
 ## `common`
 
@@ -810,6 +810,9 @@
 | `tributeWizard.headerNameFallback` | Nom à compléter | Name to complete |
 | `tributeWizard.validationEssential` | Indiquez le prénom, le nom et les deux dates pour continuer. | Please enter first name, last name, and both dates to continue. |
 | `tributeWizard.validationFieldMissing` | À indiquer. | Still needed. |
+| `tributeWizard.validationBirthTooRecent` | La naissance doit être avant aujourd’hui. | Birth date must be before today. |
+| `tributeWizard.validationDeathBeforeBirth` | Le départ ne peut pas précéder la naissance. | Departure cannot be before birth. |
+| `tributeWizard.validationDeathTooFar` | Le départ ne peut pas dépasser deux ans à partir d’aujourd’hui. | Departure cannot be more than two years from today. |
 | `tributeWizard.datePickerOpenAria` | Ouvrir le calendrier | Open the calendar |
 | `tributeWizard.dateClearAria` | Effacer la date | Clear the date |
 | `tributeWizard.autosaveSaving` | Nous gardons votre avancée… | We’re saving your progress… |

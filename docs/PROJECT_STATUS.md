@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 9 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 10 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 10 sept 2026 — **Dates Essentiel** : naissance ≤ hier ; départ ≥ naissance et ≤ aujourd’hui + 2 ans (MAID) ; copy FR/EN dédiée.
+- 10 sept 2026 — **Intro hub Étape 1** : pitch lié au draft live incomplet (clear + close → « Le film de leur vie » revient).
 - 9 sept 2026 — **Chrome mobile Wizard** : sticky header split L/R comme desktop (Package + Creation help à droite) ; chip Need Help pastille au-dessus du footer Next.
 - 9 sept 2026 — **Fix Étape 1 Essentiel** : retirer `wizard-step-enter` du monolithe (containing block) ; Soft Glass monolithe (`0.45/0.55/0.50`) pour laisser voir le ciel.
 - 9 sept 2026 — **Lot 8 : Détails d'orfèvre** — sélection teal, `theme-color` `#020202`, glass footer wizard, Navbar Quiet Luxury (motion calmé, panneau mobile blur).
-- 9 sept 2026 — **Lot 7 : Polish de démo** (Scrollbars, Glow CTA, Animations d'étape, Z-index fixes).
-- 9 sept 2026 — **Lot 6 Accessibilité contraste Wizard** : labels/hints `zinc-400`, descriptions `zinc-300`, placeholders `zinc-500`, bordures inputs `white/15` — Quiet Luxury lisible senior. Classes Tailwind seulement.
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 
