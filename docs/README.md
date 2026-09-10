@@ -139,6 +139,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`business/VIRAL_EXPLAINED_SIMPLY.md`](business/VIRAL_EXPLAINED_SIMPLY.md) | business | Viral / Fonds en simple · exemples · phrases pitch |
 | [`business/NARRATIVE_VP_ATHOS_SEP2026.md`](business/NARRATIVE_VP_ATHOS_SEP2026.md) | business | Pitch VP / réseau funéraire (Phase 1) |
 | [`business/INVESTOR_NARRATIVE_SANJI_SEP2026.md`](business/INVESTOR_NARRATIVE_SANJI_SEP2026.md) | business | Pitch investisseur / Sanji (wedge + Lyra upside) |
+| [`business/ODYSSEY_STRATEGIC_VISION_INVESTMENT_NARRATIVE.md`](business/ODYSSEY_STRATEGIC_VISION_INVESTMENT_NARRATIVE.md) | business | One-pager EN PDF — Strategic Vision & Investment Narrative |
 | [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) | playbook | Canal direct |
 | [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) | snapshot | Projections juil. 2026 — **figé** (ne pas corriger) |
 | [`PARTNER_BRIEF_JON_JUL2026.md`](PARTNER_BRIEF_JON_JUL2026.md) | snapshot | Brief Jon, figé |
