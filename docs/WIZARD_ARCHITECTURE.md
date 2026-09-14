@@ -1,14 +1,14 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 9 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 10 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 10 sept 2026 — **Dates Essentiel** : naissance `max` = hier ; départ `min` = naissance (ou 1800), `max` = aujourd’hui + 2 ans (horizon MAID) ; validation CTA + copy dédiée ([`wizardDateBounds.ts`](../src/lib/wizard/wizardDateBounds.ts)).
+- 10 sept 2026 — **Intro hub Étape 1** : pitch `SanctuaryHubIntro` lié au draft live incomplet (`!hasEssentialsData`), plus au snapshot `virginHub` mount — clear + close ramène « Le film de leur vie ».
 - 9 sept 2026 — **Chrome mobile Wizard** : sticky header — split gauche/droite dès mobile (identité + Loved ones | Package + Creation help empilés) ; chip `OdysseyHelpLifeline` pastille `bottom-24` mobile / chip complet `md:bottom-5`.
 - 5 sept 2026 — **Mobile, Étapes 1 et 3** : chaque champ de date de l’Essentiel gagne un « Effacer » applicatif — l’effacement du sélecteur natif n’émet pas de `change` de façon fiable entre iOS et Android, on ne dépend plus de lui ; le repli de `showPicker()` ajoute un `click()` (Safari iOS < 16 n’ouvrait rien). Le Scanner Compagnon remplace son QR par « Ouvrir l’appareil photo » sur pointeur grossier ([`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).
 - 5 sept 2026 — **Barre utilitaire mobile** : `TributeWizard` reçoit un emplacement `mobileUtilityTrailing` (langue + Déconnexion, injectés par `StudioLocaleFrame`) posé à **deux endroits** selon l’état du chrome — rang flottant court en haut à droite pendant le rituel du ciel (Étape 1, `hubChromeHidden`), sinon barre en haut du parcours aux côtés de `Retour` (l’en-tête se cale dessous, `top-12`). Le cluster flottant haut-droite devient desktop-only : plus de bouton de session au-dessus du lockup de marque. ⚠️ `position: sticky` est **inerte** sur `/studio` — `<main>` porte `overflow-x-hidden`, donc `overflow-y` calcule `auto` et devient le scrollport ; l’en-tête « sticky » du wizard ne collait déjà pas.
-- 5 sept 2026 — **Polish démo mobile (P1→P5)** : reveal Étape 1 allongé jusqu’à une vraie contemplation avant J3 (`dwell` visible + `WIZARD_LEGACY_LINEAR_MS` étiré) · Étape 3 rehiérarchisée (dépôt principal > Scanner Compagnon > collections en ligne) · Étape 4 allégée au-dessus de la ligne de flottaison (choix d’une chanson avant stats/bandeaux) · Étape 5 épurée (retrait de la redondance `CollabInviteInlineCard`) · Étape 6 renforcée en états faibles (chargement / teaser léger) · CTA secondaires et micro-textes harmonisés pour un ton plus « luxe silencieux ».
-- 5 sept 2026 — **Divulgation progressive (3 concepts)** : Étape 1 dit maintenant *« film digne du grand cinéma, pas un simple diaporama »* (+ header *« … minutes de film »`) · Étape 2 abandonne le mot « empreinte » pour *« photos et vidéos »* + *« financement de cet hommage »* explicite · Étape 5 (`MontageOnboardingGate`) gagne un lien discret *« Ou confiez la réalisation à un proche de confiance »* → ouvre le panneau Co-Créateur déjà existant (`onOpenCollab`), sans 3ᵉ carte à égalité avec Magie/Manuel.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -413,7 +413,7 @@ Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WAT
 - **Cible T2 :** `backdropToWebGL` au Continuer · hub J3 post-reveal.
 - **Chemins :** A (première traversée · prologue) vs B (retour · draft rempli → panneau direct) — [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §1b.
 - **Activation :** `step1Sky = !isEditor && currentStep === 1` dans `TributeWizard.tsx`.
-- **Validation :** prénom, **nom**, naissance, décès. CTA **toujours cliquable** — au submit incomplet : message dico + highlight + focus + shake (off si `prefers-reduced-motion`). Dates : année 4 chiffres (`min` 1800 / `max` 9999), calendrier visible.
+- **Validation :** prénom, **nom**, naissance, décès. CTA **toujours cliquable** — au submit incomplet / hors plage : message dico + highlight + focus + shake (off si `prefers-reduced-motion`). Dates : plancher `1800-01-01` · **naissance** `max` = hier · **départ** `min` = naissance (si saisie) · `max` = aujourd’hui + 2 ans (horizon MAID) — [`wizardDateBounds.ts`](../src/lib/wizard/wizardDateBounds.ts).
 - **Continuer :** `flush()` → `playReward()` (horloge wizard) → reste `hub.postReveal` (J3 pas encore).
 - **Porte :** ligne `parcoursGoToInvites` → étape 2, même validation, zéro rituel.
 - **Craft :** reveal A→F · [`ODYSSEY_LUEUR_CRAFT.md`](ODYSSEY_LUEUR_CRAFT.md).

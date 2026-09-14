@@ -171,7 +171,7 @@ async function fadeThenNavigate(
   setExitFade: (v: boolean) => void,
 ) {
   setExitFade(true);
-  await new Promise((r) => setTimeout(r, 520));
+  await new Promise((r) => setTimeout(r, 300));
   router.push(path);
   router.refresh();
 }
@@ -655,7 +655,7 @@ export function LoginForm({
       </div>
 
       <div
-        className={`fixed inset-0 z-[200] bg-black transition-opacity duration-500 ease-in-out ${exitFade ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`fixed inset-0 z-[200] bg-black transition-opacity duration-300 ease-in-out ${exitFade ? "opacity-100" : "pointer-events-none opacity-0"}`}
         aria-hidden={!exitFade}
       />
 

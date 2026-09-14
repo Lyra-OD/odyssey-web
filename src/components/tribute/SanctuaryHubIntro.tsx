@@ -17,11 +17,10 @@ type SanctuaryHubIntroProps = {
 const DWELL_MS = 300;
 
 /**
- * Pitch d'intro — hub.idle **vierge seulement** (avant tout contact avec
- * l'étoile), rendu par l'appelant en même temps que `SanctuaryHubHero`.
- * HTML pur, pas de WebGL. `pointer-events-none` de bout en bout : ne doit
- * jamais intercepter le clic sur l'étoile (hit-zone gérée par
- * `SanctuaryHubHero`, positionnée indépendamment via `hubStarAnchorRef`).
+ * Pitch d'intro — hub.idle avec draft Essentiel **incomplet** (live),
+ * monté par l'appelant avec `SanctuaryHubHero`. HTML pur, pas de WebGL.
+ * `pointer-events-none` : ne doit jamais intercepter le clic sur l'étoile
+ * (`SanctuaryHubHero` + `hubStarAnchorRef`).
  */
 export function SanctuaryHubIntro({ copy }: SanctuaryHubIntroProps) {
   const [visible, setVisible] = useState(false);
