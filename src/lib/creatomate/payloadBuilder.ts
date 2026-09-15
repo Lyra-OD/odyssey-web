@@ -218,10 +218,35 @@ function buildMediaElements(
   introDur: number,
 ): CreatomateElement[] {
   const fade = cinematicTheme.media.transitionFadeSec;
+  const kb = cinematicTheme.media.kenBurns;
   const elements: CreatomateElement[] = [];
 
   plan.clips.forEach((clip, index) => {
     const time = introDur + clip.timeSec;
+    const fadeIn = Math.min(fade, clip.durationSec / 3);
+    const animations: Record<string, unknown>[] = [
+      {
+        time: 0,
+        duration: fadeIn,
+        easing: "quadratic-out",
+        type: "fade",
+        transition: index > 0,
+      },
+    ];
+
+    // Ken Burns — photos seulement (vidéos gardent leur mouvement natif).
+    if (clip.kind === "image") {
+      const startScale = index % 2 === 0 ? kb.startScaleA : kb.startScaleB;
+      animations.push({
+        easing: "linear",
+        type: "scale",
+        fade: false,
+        scope: "element",
+        start_scale: startScale,
+        duration: clip.durationSec,
+      });
+    }
+
     const base: CreatomateElement = {
       id: `media-${clip.mediaId}-${index}`,
       track: 1,
@@ -232,15 +257,7 @@ function buildMediaElements(
       fit: cinematicTheme.media.fit,
       x_alignment: focalToPercent(clip.focalX),
       y_alignment: focalToPercent(clip.focalY),
-      animations: [
-        {
-          time: 0,
-          duration: Math.min(fade, clip.durationSec / 3),
-          easing: "quadratic-out",
-          type: "fade",
-          transition: index > 0,
-        },
-      ],
+      animations,
     };
 
     if (clip.kind === "video") {
@@ -275,10 +292,18 @@ function buildMusicElements(
   let segIndex = 0;
 
   for (const bed of bedStems) {
+    // film_global : lit sous intro + contenu (recette craft / bed unique).
+    const isGlobal = bed.placement === "film_global";
+    const contentOffsetSec = isGlobal ? 0 : introDur;
+    const chapterContentStartSec = isGlobal ? 0 : bed.timeSec;
+    const chapterContentDurationSec = isGlobal
+      ? introDur + bed.durationSec
+      : bed.durationSec;
+
     const segments: MusicSegment[] = buildDuckedMusicSegments({
-      contentOffsetSec: introDur,
-      chapterContentStartSec: bed.timeSec,
-      chapterContentDurationSec: bed.durationSec,
+      contentOffsetSec,
+      chapterContentStartSec,
+      chapterContentDurationSec,
       duckIntervals: plan.duckIntervals,
       bedVolume: music.bedVolume,
       attackSec: music.duckAttackSec,
@@ -295,8 +320,8 @@ function buildMusicElements(
         source: bed.url,
         trim_start: bed.trimStartSec + seg.trimStartSec,
         volume: seg.volume,
-        audio_fade_in: seg.fadeInSec,
-        audio_fade_out: seg.fadeOutSec,
+        audio_fade_in: Math.max(seg.fadeInSec, music.chapterFadeInSec * 0.35),
+        audio_fade_out: Math.max(seg.fadeOutSec, music.chapterFadeOutSec * 0.35),
       });
     }
   }

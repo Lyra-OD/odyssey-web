@@ -13,5 +13,6 @@ Labs existants (`ODYSSEY_*`, `SANCTUARY_SKY*`, …) restent à la **racine** pou
 | Doc | Lab URL |
 |-----|---------|
 | [`SKY_DEPTH_CRAFT.md`](SKY_DEPTH_CRAFT.md) | `/contribute/test-sky` (+ backup `/test-sky-legacy`) |
+| [`CREATOMATE_RECIPE.md`](CREATOMATE_RECIPE.md) | Export drain + `output_url` |
 
 Index : [`../README.md`](../README.md) § craft.

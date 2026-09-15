@@ -259,6 +259,9 @@ describe("payloadBuilder RenderScript", () => {
           e.track === cinematicTheme.music.creatomateTracks.bed,
       ),
     ).toBe(true);
+    const photo = elements.find((e) => e.type === "image");
+    const photoAnims = (photo?.animations as Array<Record<string, unknown>>) ?? [];
+    expect(photoAnims.some((a) => a.type === "scale")).toBe(true);
   });
 });
 

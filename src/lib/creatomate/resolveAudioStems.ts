@@ -114,5 +114,39 @@ export async function resolveAudioStems(
     }));
 
   // Phase 2 dormants : ghost / foreground volontairement absents ici.
-  return enforceOneBedLaw([...bedStems, ...syncStems]);
+  let stems = enforceOneBedLaw([...bedStems, ...syncStems]);
+
+  /**
+   * Craft / staging — si aucun bed (Stingray master absent, pas d’upload),
+   * `CREATOMATE_CRAFT_BED_URL` pose un lit royalty_free film_global.
+   * Jamais en prod sans intention ops (URL publique temporaire OK).
+   */
+  const craftBedUrl = process.env.CREATOMATE_CRAFT_BED_URL?.trim();
+  const hasBed = stems.some((s) => s.layer === "bed");
+  if (craftBedUrl && !hasBed && params.allowStingrayMaster) {
+    const contentDurationSec = params.clips.reduce(
+      (max, c) => Math.max(max, c.timeSec + c.durationSec),
+      0,
+    );
+    if (contentDurationSec > 0 && /^https?:\/\//i.test(craftBedUrl)) {
+      stems = enforceOneBedLaw([
+        ...stems,
+        {
+          id: "craft-bed-global",
+          layer: "bed",
+          provenance: "royalty_free",
+          placement: "film_global",
+          url: craftBedUrl,
+          timeSec: 0,
+          durationSec: contentDurationSec,
+          trimStartSec: 0,
+          chapterId: null,
+          mediaId: null,
+          duckPriority: AUDIO_LAYER_DUCK_PRIORITY.bed,
+        },
+      ]);
+    }
+  }
+
+  return stems;
 }
