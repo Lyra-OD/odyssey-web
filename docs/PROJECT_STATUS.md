@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 10 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 15 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 15 sept 2026 — **Creatomate smoke réel** : POST `/v1/renders` objet `{ source }` · webhook `?secret=` · filtre médias image/vidéo · `border_radius` vmin · GET export expose `output_url`.
 - 10 sept 2026 — **Dates Essentiel** : naissance ≤ hier ; départ ≥ naissance et ≤ aujourd’hui + 2 ans (MAID) ; copy FR/EN dédiée.
 - 10 sept 2026 — **Intro hub Étape 1** : pitch lié au draft live incomplet (clear + close → « Le film de leur vie » revient).
 - 9 sept 2026 — **Chrome mobile Wizard** : sticky header split L/R comme desktop (Package + Creation help à droite) ; chip Need Help pastille au-dessus du footer Next.
 - 9 sept 2026 — **Fix Étape 1 Essentiel** : retirer `wizard-step-enter` du monolithe (containing block) ; Soft Glass monolithe (`0.45/0.55/0.50`) pour laisser voir le ciel.
-- 9 sept 2026 — **Lot 8 : Détails d'orfèvre** — sélection teal, `theme-color` `#020202`, glass footer wizard, Navbar Quiet Luxury (motion calmé, panneau mobile blur).
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 
@@ -25,7 +25,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Soft Cap + entitlements + gate export + MP3/ToS — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Héritage **1080p** · 4K dès Éternité · Phase 6 QA ⏳ |
 | **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual / **`charge.refunded`**. QA replay `checkout.session.completed` ✅ (P17 `submitted`). |
 | **RevShare** | 🟢 UI | Spec + SQL P6/P8 + webhook ✅ · UI Salon + `GET /api/partner/commissions` 🟢 · payout ops ⏳ |
-| **Export Creatomate** | 🟡 P0 / master ⏳ | **P0 livré** (gate, P9/P9.1, `src/lib/creatomate/`, drain, webhook fail-closed). **Pas** « documented only ». Master Stingray / rendu cinéma ⏳ |
+| **Export Creatomate** | 🟡 P0 smoke ✅ / cinéma ⏳ | Gate + worker + webhook **smoke réel OK** (15 sept). Suite = recette DA + bed musique (master Stingray / upload). |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
 | **UX mobile** | 🟡 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L** copy ✅ · S5-J/K ⏳ |
@@ -56,7 +56,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Odyssey HQ | 🟢 A–D | Formulaire `/partners` + alerte HQ · CRM / onboarding auto ⏳ — [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) |
 | Fonds / packs invité | 🟢 gated | Code 3a livré · visible si `viral_loop_enabled` sur le tenant |
 | Scanner Compagnon | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
-| **Export / render** | 🟡 | P0 🟢 · master / cinéma ⏳ — **pas** 🔴 |
+| **Export / render** | 🟡 | Smoke Creatomate ✅ · recette DA + musique ⏳ |
 | `app-backend/` | ⚪ | Hors périmètre Next |
 
 **Schéma vivant (post-P8) :** commissions `partner_commission_*` · Soft Cap quota · entitlements · invitations · fonds. **Pas** `partner_token_wallets`. Ordre SQL : [`sql/README.md`](sql/README.md).

@@ -21,6 +21,19 @@ function isVideoMime(mime: string | null, path: string): boolean {
   return /\.(mp4|mov|webm|m4v)$/i.test(path);
 }
 
+function isImageMime(mime: string | null, path: string): boolean {
+  if (mime?.startsWith("image/")) return true;
+  return /\.(jpe?g|png|gif|webp|heic|heif|avif)$/i.test(path);
+}
+
+/** Créatomate n’accepte que image/vidéo — ignore .txt et autres. */
+function isCreatomateRenderableMedia(
+  mime: string | null,
+  path: string,
+): boolean {
+  return isVideoMime(mime, path) || isImageMime(mime, path);
+}
+
 /**
  * Charge les media_assets du projet présents dans le storyboard,
  * signe les chemins (TTL 4 h), applique videoTrims + focalPoints.
@@ -58,7 +71,9 @@ export async function resolveStoryboardMediaAssets(
     const id = row.id as string;
     const path = String(row.storage_path ?? "");
     if (!path) continue;
-    pathById.set(id, { path, mime: (row.mime_type as string | null) ?? null });
+    const mime = (row.mime_type as string | null) ?? null;
+    if (!isCreatomateRenderableMedia(mime, path)) continue;
+    pathById.set(id, { path, mime });
     paths.push(path);
   }
 

@@ -220,11 +220,12 @@ flowchart TD
 ### Phase 5 — Export & add-ons — ✅ FAIT (Creatomate P0)
 
 19. ✅ Gate export : `assertExportAllowed` + `POST /api/projects/[id]/export` + table P9 `project_export_jobs` (+ P9.1 webhook columns).
-19b. ✅ Worker : `src/lib/creatomate/` (storyboard dynamique, résolution 1080p/4K, Audio Stem Graph, One Bed Law) · drain mock **ou** submit Creatomate · webhook **fail-closed**.
+19b. ✅ Worker : `src/lib/creatomate/` (storyboard dynamique, résolution 1080p/4K, Audio Stem Graph, One Bed Law) · drain mock **ou** submit Creatomate · webhook **fail-closed** (`?secret=`).
+19c. ✅ **Smoke réel** (15 sept 2026) : POST `/v1/renders` body objet `{ source }` · filtre médias image/vidéo · `output_url` exposé au GET export.
 20. ✅ Checkout : attestation MP3/WAV obligatoire si `source=upload`.
 21. ✅ Webhook / freemium_free : `enqueueQuietLuxuryFulfillment` (NFC · Voix · Livre → `wizard_state.quietLuxuryFulfillment`).
 22. ✅ UI add-ons : `storyVoice` · `sanctuaryToken` (NFC) · `memoryBook` · labels i18n.
-23. ⏳ Master Stingray prod (`STINGRAY_MASTER_URL_TEMPLATE`) + claim NFC / Gelato / TTS = follow-ups.
+23. ⏳ Recette DA convaincante + bed musique · Master Stingray prod (`STINGRAY_MASTER_URL_TEMPLATE`) · claim NFC / Gelato / TTS.
 
 ### Phase 6 — QA & cutover
 
@@ -240,5 +241,5 @@ Mettre à jour ce fichier quand la grille, les SKUs (`musicLicense` / `storyVoic
 
 ---
 
-*Vision CEO figée — juillet 2026 (rév. **grille 179/349/499** · Sanctuaire empreintes · gratuit sans Stingray licencié). Phases 0–5 livrées (Creatomate = stub) ; Phase 3a Sanctuaire UI ✅ · Collab ✅. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
+*Vision CEO figée — juillet 2026 (rév. **grille 179/349/499** · Sanctuaire empreintes · gratuit sans Stingray licencié). Phases 0–5 livrées (Creatomate smoke réel ✅ · recette DA ⏳) ; Phase 3a Sanctuaire UI ✅ · Collab ✅. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
 *Appliquer SQL P9 sur Supabase : [`sql/odyssey_p9_project_export_jobs.sql`](sql/odyssey_p9_project_export_jobs.sql).*

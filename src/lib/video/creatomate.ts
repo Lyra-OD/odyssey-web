@@ -41,7 +41,8 @@ export function isCreatomateConfigured(): boolean {
 
 /**
  * POST /v1/renders — body déjà assemblé par payloadBuilder
- * (tableau d’une entrée RenderScript).
+ * (`source` RenderScript + webhook_url / metadata).
+ * Creatomate attend un **objet** (pas un tableau) ; la réponse reste un tableau.
  */
 export async function createOdysseyRender(
   renderBody: Record<string, unknown>,
@@ -59,7 +60,7 @@ export async function createOdysseyRender(
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify([renderBody]),
+      body: JSON.stringify(renderBody),
     });
   } catch (err) {
     return {
@@ -92,11 +93,33 @@ export async function createOdysseyRender(
   return { ok: true, render: first };
 }
 
+/**
+ * URL webhook envoyée à Creatomate.
+ * Append `?secret=` (ou `&secret=`) depuis CREATOMATE_WEBHOOK_SECRET —
+ * Creatomate ne pose pas de header d’auth sur le callback.
+ */
 export function resolveCreatomateWebhookUrl(): string | null {
+  const secret = process.env.CREATOMATE_WEBHOOK_SECRET?.trim();
   const explicit = process.env.CREATOMATE_WEBHOOK_URL?.trim();
-  if (explicit) return explicit.replace(/\/$/, "");
-
   const site = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (!site) return null;
-  return `${site}/api/webhooks/creatomate`;
+
+  let base: string | null = null;
+  if (explicit) {
+    base = explicit.replace(/\/$/, "");
+  } else if (site) {
+    base = `${site}/api/webhooks/creatomate`;
+  }
+  if (!base) return null;
+  if (!secret) return base;
+
+  try {
+    const url = new URL(base);
+    if (!url.searchParams.has("secret")) {
+      url.searchParams.set("secret", secret);
+    }
+    return url.toString();
+  } catch {
+    const joiner = base.includes("?") ? "&" : "?";
+    return `${base}${joiner}secret=${encodeURIComponent(secret)}`;
+  }
 }

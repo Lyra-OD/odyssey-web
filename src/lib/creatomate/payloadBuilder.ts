@@ -46,7 +46,8 @@ function buildSignatureIntro(plan: OdysseyRenderPlan): CreatomateElement[] {
     x: "50%",
     y: "42%",
     fill_color: colors.softLight,
-    border_radius: "50%",
+    // Creatomate: border_radius = px|vw|vh|vmin|vmax (pas %).
+    border_radius: "50 vmin",
     animations: [
       {
         time: 0,

@@ -73,14 +73,16 @@ Contribution invité async : les proches achètent des **empreintes** dont le Ne
 
 Canon : [`WIZARD_EDITOR_COLLAB.md`](WIZARD_EDITOR_COLLAB.md).
 
-### Export Creatomate (gate ✅ · worker P0 ✅ · master Stingray ⏳)
+### Export Creatomate (gate ✅ · worker smoke ✅ · recette DA / master ⏳)
 
 | Route | Auth | Rôle |
 |-------|------|------|
 | **`POST /api/projects/[id]/export`** | Owner | Gate entitlements → enqueue `project_export_jobs` |
-| **`GET /api/projects/[id]/export`** | Owner | Dernier job (status / message / output) |
+| **`GET /api/projects/[id]/export`** | Owner | Dernier job (status / message / `output_url` / `external_render_id`) |
 | **`POST /api/internal/export/drain`** | Bearer `EXPORT_DRAIN_SECRET` | Worker : mock **ou** submit Creatomate (`src/lib/creatomate/`) |
-| **`POST /api/webhooks/creatomate`** | HMAC `CREATOMATE_WEBHOOK_SECRET` | Callback render — **fail-closed** si secret absent/invalide |
+| **`POST /api/webhooks/creatomate`** | `CREATOMATE_WEBHOOK_SECRET` | Callback render — **fail-closed** : Bearer, header `x-creatomate-webhook-secret`, ou query `?secret=` (Creatomate n’envoie pas de header) |
+
+Env : `CREATOMATE_API_KEY` · `CREATOMATE_WEBHOOK_URL` (tunnel local OK) · `CREATOMATE_WEBHOOK_SECRET` (injecté automatiquement en `?secret=` sur l’URL envoyée à Creatomate) · `EXPORT_DRAIN_SECRET`.
 
 **Sécurité contribute :** token opaque SHA-256, client admin (bypass RLS) ; cap **1000 $/transaction** ; plafond **5 photos** / token ; quotas message / checkout pending ; accrual au webhook.
 

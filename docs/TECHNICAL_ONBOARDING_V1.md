@@ -162,7 +162,7 @@ Ne plus seed / QA sur `partner_token_wallets` (DROP P8).
 | 2 SQL P8 | ✅ | Appliqué Supabase |
 | 3 Checkout / webhook | ✅ | Soft Cap cart + entitlements |
 | 4 Soft Cap UX | ✅ | Médias · magie · musique dual · stay free |
-| **5** | ✅ partiel | Gate export · MP3+ToS · add-ons · **Creatomate P0** (`src/lib/creatomate/`) · master Stingray ⏳ |
+| **5** | ✅ partiel | Gate export · MP3+ToS · add-ons · **Creatomate smoke réel** (`src/lib/creatomate/`) · recette DA + master Stingray ⏳ |
 | **6** | ⏳ | QA Soft Cap dual · pas de double facturation · RevShare 39 $ |
 | **3a Sanctuaire** | ✅ UI | Contribute multi-photos · enforce 5 · Inviter · Fonds · flag OFF |
 | **Collab** | ✅ | Phases A–C — mint/redeem/UI |
@@ -201,7 +201,7 @@ Ne plus seed / QA sur `partner_token_wallets` (DROP P8).
 
 ## 10. Prochaine priorité produit
 
-**Phase 5 ✅** — gate export stub (`POST /api/projects/[id]/export` + P9) · MP3/ToS · fulfillment Quiet Luxury stub · **worker Creatomate réel = follow-up**.  
+**Phase 5 ✅** — gate export (`POST /api/projects/[id]/export` + P9) · MP3/ToS · fulfillment Quiet Luxury stub · **worker Creatomate smoke réel ✅** (15 sept) · suite = recette DA + bed musique / master Stingray.  
 **Phase 6** — QA Soft Cap / RevShare / cutover.
 
 Puis **Phase 6** QA / cutover.
