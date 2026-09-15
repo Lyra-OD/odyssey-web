@@ -1,0 +1,88 @@
+{
+  "output_format": "mp4",
+  "width": 1280,
+  "height": 720,
+  "duration": 10.02,
+  "elements": [
+    {
+      "id": "1a10ff60-d3de-4761-81bb-ed089d35857b",
+      "name": "Text-MN2",
+      "type": "text",
+      "track": 1,
+      "time": 1.02,
+      "x": "33.125%",
+      "y": "54.5833%",
+      "x_anchor": "0%",
+      "y_anchor": "0%",
+      "text": "{{birthYear}} - {{deathYear}}",
+      "font_weight": "100",
+      "font_size": "6 vmin",
+      "letter_spacing": "500%",
+      "fill_color": "#e6e6e6",
+      "animations": [
+        {
+          "time": 0,
+          "duration": 7.39,
+          "easing": "quadratic-out",
+          "type": "text-appear",
+          "split": "letter"
+        },
+        {
+          "time": "end",
+          "duration": 2.66,
+          "easing": "quadratic-out",
+          "reversed": true,
+          "type": "text-appear",
+          "split": "line"
+        }
+      ]
+    },
+    {
+      "id": "9d348d8c-ec17-450a-a7c3-5d59141c6908",
+      "name": "Text-936",
+      "type": "text",
+      "track": 2,
+      "time": 0,
+      "x": "0%",
+      "y": "33.8889%",
+      "width": "100%",
+      "x_anchor": "0%",
+      "y_anchor": "0%",
+      "x_alignment": "50%",
+      "y_alignment": "50%",
+      "text": "{{displayName}}",
+      "font_family": "Playfair Display",
+      "font_weight": "500",
+      "font_size": "11.1998 vmin",
+      "letter_spacing": "50%",
+      "fill_color": "#d1d1d1",
+      "opacity": "95%",
+      "color_filter": "brighten",
+      "color_filter_value": 25,
+      "animations": [
+        {
+          "time": 0,
+          "duration": 0.5,
+          "easing": "quadratic-out",
+          "type": "fade"
+        },
+        {
+          "time": 0,
+          "duration": 2.11,
+          "transition": true,
+          "type": "scale",
+          "start_scale": "101%",
+          "end_scale": "115%"
+        },
+        {
+          "time": "end",
+          "duration": 2.6,
+          "easing": "quadratic-out",
+          "reversed": true,
+          "type": "text-appear",
+          "split": "letter"
+        }
+      ]
+    }
+  ]
+}

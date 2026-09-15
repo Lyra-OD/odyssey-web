@@ -1,0 +1,52 @@
+{
+  "output_format": "mp4",
+  "width": 1280,
+  "height": 720,
+  "duration": 10,
+  "elements": [
+    {
+      "id": "atom-media-video-composition",
+      "name": "Composition-Video",
+      "type": "composition",
+      "track": 1,
+      "time": 0.08,
+      "fill_color": "#000000",
+      "color_filter": "contrast",
+      "color_filter_value": 1.2,
+      "color_overlay": "rgba(244,173,0,0.06)",
+      "elements": [
+        {
+          "id": "atom-media-video-clip",
+          "name": "Video-Clip",
+          "type": "video",
+          "track": 1,
+          "time": 0,
+          "source": "{{mediaUrl}}",
+          "trim_start": "{{trimStartSec}}",
+          "duration": 10,
+          "fit": "cover",
+          "smart_crop": true,
+          "volume": "85%",
+          "audio_fade_in": 0.35,
+          "audio_fade_out": 0.45,
+          "dynamic": ["smart_crop"],
+          "animations": [
+            {
+              "time": 0,
+              "duration": 1,
+              "easing": "quadratic-out",
+              "type": "fade"
+            },
+            {
+              "time": "end",
+              "duration": 1,
+              "easing": "quadratic-out",
+              "reversed": true,
+              "type": "fade"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

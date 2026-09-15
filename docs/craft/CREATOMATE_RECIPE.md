@@ -1,39 +1,49 @@
-# Creatomate — Recette DA (craft)
+# Creatomate — Recette atomes (plan demain)
 
-**Type :** craft · **Vérité pour :** itérer un rendu Quiet Luxury convaincant.  
-**Dernière MAJ :** 15 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Type :** craft · **Vérité pour :** ADN Creatomate figé en atomes UI → assembleur Odyssey.  
+**Dernière MAJ :** 15 sept 2026 · **Carte :** [`../README.md`](../README.md) · **Atomes :** [`atoms/`](atoms/)
 
 **Changelog** (max 5)
-- 15 sept 2026 — smoke réel ✅ · Ken Burns photos · craft bed `CREATOMATE_CRAFT_BED_URL` · mix assoupli.
+- 15 sept 2026 — pivot **atomes** (intro / photo / vidéo / outro) ; labs curl v1.x = archive d’échec DA ; assembleur = todo demain.
 
 ## Objectif
 
-Un MP4 où l’on **ose** envoyer le lien à une tante : souffle d’intro, photos qui respirent, lit musical discret, outro Odyssey.
+Film Quiet Luxury : intro nom+années → N photos/vidéos → outro **carte mémoire** (pas de logo Odyssey). Médias dynamiques ; look sculpté dans l’éditeur Creatomate.
 
-## Boucle locale
+## État ce soir (15 sept)
 
-1. Tunnel + `CREATOMATE_*` / `EXPORT_DRAIN_SECRET` (voir [`../ROUTES_AND_AUTH.md`](../ROUTES_AND_AUTH.md)).
-2. Entitlements payés sur le projet (SQL staging ou checkout test).
-3. Médias **image/vidéo** dans le storyboard (pas de `.txt`).
-4. Musique — **une** des options :
-   - **Upload famille** MP3 (Étape musique + ToS) → bed `upload` (priorité One Bed Law) ;
-   - **Stingray master** via `STINGRAY_MASTER_URL_TEMPLATE` (prod) ;
-   - **Craft** : `CREATOMATE_CRAFT_BED_URL=https://…mp3` si aucun bed (staging only).
-5. `POST /export` → `POST /drain` → ouvrir `output_url`.
-
-## Levier DA (code)
-
-| Param | Fichier | Effet |
+| Atome | Fichier | Statut |
 |-------|---------|--------|
-| Ken Burns | `cinematicTheme.media.kenBurns` | Zoom lent photos |
-| Durée photo / fade | `media.photoDurationSec` · `transitionFadeSec` | Respiration |
-| Volume / duck | `music.*` | Lit sous les clips |
-| Intro / outro | `intro` · `outro` | Signature Odyssey |
+| Intro | [`atoms/intro.json`](atoms/intro.json) | Figé — `{{displayName}}` · `{{birthYear}} - {{deathYear}}` |
+| Média photo | [`atoms/media-photo.json`](atoms/media-photo.json) | Figé — `{{mediaUrl}}` · smart_crop · Ken Burns 101→107 |
+| Média vidéo | [`atoms/media-video.json`](atoms/media-video.json) | Figé dérivé — trim 10 s · pas de Ken Burns agressif |
+| Outro | [`atoms/outro.json`](atoms/outro.json) | Figé — carte mémoire · typo = intro · **pas** ODYSSEY |
 
-Canon moteur Phase 2 : [`../ROADMAP_PHASE2.md`](../ROADMAP_PHASE2.md).
+Binding intro (ne pas inverser) : **Text-936** = nom · **Text-MN2** = années seules.
 
-## Interdit craft
+Labs curl (`lab/v1.1`–`v1.3`) = référence d’échec (typo floue, muddy) — ne plus itérer ainsi.
 
-- Utiliser l’URL **preview** Stingray comme master export.
-- Committer une clé Creatomate ou un secret webhook.
-- Laisser `CREATOMATE_CRAFT_BED_URL` en prod sans décision ops.
+## À terminer demain
+
+1. **Assembleur** dans [`src/lib/creatomate/payloadBuilder.ts`](../../src/lib/creatomate/payloadBuilder.ts) (ou module `atoms/` dédié) :
+   - Charger / cloner les JSON atomes.
+   - Intro une fois (slots nom + années depuis wizard).
+   - Pour chaque clip storyboard : photo **ou** vidéo → URL signée (+ `trim_start` si vidéo) → décaler `time` + fade overlap ~1 s.
+   - Outro carte mémoire (mêmes slots).
+   - Bed musique global (stems existants) — hors atomes UI.
+2. **Années** : helper qui extrait `YYYY` depuis dates wizard (pas jour/mois).
+3. **Test** : export drain sandbox Creatomate (Default Project / free trial) avec 2–3 photos + 1 vidéo trim + MP3 upload.
+4. Doc : une puce Changelog [`PROJECT_STATUS.md`](../PROJECT_STATUS.md) quand l’assembleur est branché.
+
+## Décisions produit figées
+
+- Transition MVP = **fondu** unique (photo↔photo, vidéo↔vidéo, mixte).
+- Vidéo = fenêtre **10 s** (`VIDEO_TRIM_DURATION_SEC`) — pas le fichier entier.
+- Outro = hommage payé → **pas** de wordmark Odyssey.
+- VFX AE (light leaks) = plus tard, pas bloquant demain.
+
+## Interdit
+
+- Clé API / secrets dans les atomes ou le chat.
+- Preview Stingray comme master export.
+- Re-sculpter toute la timeline dans l’UI (seulement atomes).

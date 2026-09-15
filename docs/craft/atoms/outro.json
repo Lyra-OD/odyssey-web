@@ -1,0 +1,95 @@
+{
+  "id": "outro-composition",
+  "type": "composition",
+  "track": 1,
+  "time": "end",
+  "duration": 6.0,
+  "fill_color": "#000000",
+  "animations": [
+    {
+      "time": 0,
+      "duration": 1.5,
+      "type": "fade"
+    }
+  ],
+  "elements": [
+    {
+      "id": "outro-eyebrow",
+      "type": "text",
+      "text": "À la mémoire de",
+      "font_weight": "100",
+      "font_size": "4.5 vmin",
+      "letter_spacing": "500%",
+      "fill_color": "#e6e6e6",
+      "x": "50%",
+      "y": "36%",
+      "x_alignment": "50%",
+      "y_alignment": "50%",
+      "width": "100%",
+      "animations": [
+        {
+          "time": 0.3,
+          "duration": 1.2,
+          "type": "fade",
+          "easing": "quadratic-out"
+        }
+      ]
+    },
+    {
+      "id": "outro-name",
+      "type": "text",
+      "text": "{{displayName}}",
+      "font_family": "Playfair Display",
+      "font_weight": "500",
+      "font_size": "11.1998 vmin",
+      "letter_spacing": "50%",
+      "fill_color": "#d1d1d1",
+      "opacity": "95%",
+      "color_filter": "brighten",
+      "color_filter_value": 25,
+      "x": "0%",
+      "y": "48%",
+      "width": "100%",
+      "x_alignment": "50%",
+      "y_alignment": "50%",
+      "animations": [
+        {
+          "time": 0.5,
+          "duration": 1.5,
+          "type": "fade",
+          "easing": "quadratic-out"
+        },
+        {
+          "time": 0.5,
+          "duration": 5.5,
+          "type": "scale",
+          "start_scale": "102%",
+          "end_scale": "100%",
+          "fade": false
+        }
+      ]
+    },
+    {
+      "id": "outro-dates",
+      "type": "text",
+      "text": "{{birthYear}} – {{deathYear}}",
+      "font_weight": "100",
+      "font_size": "6 vmin",
+      "letter_spacing": "500%",
+      "fill_color": "#e6e6e6",
+      "x": "50%",
+      "y": "62%",
+      "x_alignment": "50%",
+      "y_alignment": "50%",
+      "width": "100%",
+      "animations": [
+        {
+          "time": 0.7,
+          "duration": 1.2,
+          "type": "fade",
+          "easing": "quadratic-out"
+        }
+      ]
+    }
+  ]
+}
