@@ -17,6 +17,7 @@ import type {
   WizardStoryboardState,
 } from "@/src/lib/wizard/wizardState";
 import { cinematicTheme } from "@/src/lib/creatomate/cinematicTheme";
+import { yearFromDate } from "@/src/lib/creatomate/yearFromDate";
 
 function formatDatesLine(
   birthDate?: string,
@@ -41,6 +42,10 @@ export function essentialsFromWizard(state: WizardStateV1): RenderEssentials {
       state.essentials?.birthDate,
       state.essentials?.deathDate,
     ),
+    birthYear: yearFromDate(state.essentials?.birthDate),
+    deathYear: yearFromDate(state.essentials?.deathDate),
+    /** Rempli côté processExportJob après signature Storage. */
+    portraitUrl: null,
   };
 }
 

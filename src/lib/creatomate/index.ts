@@ -17,6 +17,10 @@ export {
   essentialsFromWizard,
 } from "@/src/lib/creatomate/buildPlan";
 export {
+  yearFromDate,
+  formatYearsLine,
+} from "@/src/lib/creatomate/yearFromDate";
+export {
   buildTimelineClips,
   buildDuckedMusicSegments,
 } from "@/src/lib/creatomate/timeline";

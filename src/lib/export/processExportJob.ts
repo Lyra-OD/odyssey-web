@@ -6,7 +6,10 @@ import {
 } from "@/src/lib/creatomate/buildPlan";
 import { buildCreatomateRenderBody } from "@/src/lib/creatomate/payloadBuilder";
 import { resolveAudioStems } from "@/src/lib/creatomate/resolveAudioStems";
-import { resolveStoryboardMediaAssets } from "@/src/lib/creatomate/resolveMediaAssets";
+import {
+  resolveStoryboardMediaAssets,
+  signStoragePathForCreatomate,
+} from "@/src/lib/creatomate/resolveMediaAssets";
 import { buildTimelineClips } from "@/src/lib/creatomate/timeline";
 import {
   createOdysseyRender,
@@ -175,13 +178,22 @@ async function submitCreatomateJob(
       allowStingrayMaster: job.allow_stingray_master,
     });
 
+    const essentials = essentialsFromWizard(wizard);
+    const avatarPath = wizard.essentials?.avatarPath?.trim();
+    if (avatarPath) {
+      essentials.portraitUrl = await signStoragePathForCreatomate(
+        admin,
+        avatarPath,
+      );
+    }
+
     const plan = buildOdysseyRenderPlan({
       jobId: job.id,
       webhookUrl,
       paidPackage,
       storyboard,
       mediaById,
-      essentials: essentialsFromWizard(wizard),
+      essentials,
       audioStems,
     });
     const renderBody = buildCreatomateRenderBody(plan);
