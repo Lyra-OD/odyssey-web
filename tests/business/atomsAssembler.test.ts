@@ -32,7 +32,7 @@ function basePlan(
 describe("assembleIntroAtom", () => {
   it("charge intro.json et bind nom / années / portrait démo", () => {
     const { elements, durationSec } = assembleIntroAtom(basePlan());
-    expect(durationSec).toBe(35);
+    expect(durationSec).toBe(27);
     expect(elements.some((e) => e.name === "Composition-Portrait")).toBe(true);
 
     const flat: Array<Record<string, unknown>> = [];

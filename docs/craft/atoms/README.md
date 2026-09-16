@@ -7,7 +7,7 @@
 
 | Fichier | Statut | Slots dynamiques |
 |---------|--------|------------------|
-| [`intro.json`](intro.json) | Figé UI · **35 s** | `{{displayName}}` · `{{birthYear}} - {{deathYear}}` · `{{portraitUrl}}` |
+| [`intro.json`](intro.json) | Figé UI · **27 s** | `{{displayName}}` · `{{birthYear}} - {{deathYear}}` · `{{portraitUrl}}` |
 | [`media-photo.json`](media-photo.json) | Figé UI | `{{mediaUrl}}` |
 | [`media-video.json`](media-video.json) | Dérivé photo | `{{mediaUrl}}` · `{{trimStartSec}}` |
 | [`outro.json`](outro.json) | Carte mémoire | `{{displayName}}` · `{{birthYear}}` · `{{deathYear}}` |
@@ -22,7 +22,7 @@
   Source figée = URL démo `woman.jpg` pour l’éditeur Creatomate.  
   **Assembleur** remplace `source` par l’URL réelle du portrait.
 
-Intro actuelle : portrait dès **0 s** (~15 s) → noir → nom+années (dates Composition-2BS à **y 44 %**, plus près du nom) → noir. Pas de bloc noir d’ouverture.
+Intro actuelle : portrait **0→10 s** → noir **2 s** → nom+années (~12→22) → noir fin. Pas de bloc noir d’ouverture.
 
 ## Outro — pas de wordmark Odyssey
 

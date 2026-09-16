@@ -254,7 +254,7 @@ describe("payloadBuilder RenderScript", () => {
     const source = buildCreatomateSource(plan);
     expect(source.width).toBe(3840);
     expect(source.height).toBe(2160);
-    expect(source.duration).toBeGreaterThanOrEqual(35);
+    expect(source.duration).toBeGreaterThanOrEqual(27);
     const elements = source.elements as Array<Record<string, unknown>>;
 
     const findByName = (
