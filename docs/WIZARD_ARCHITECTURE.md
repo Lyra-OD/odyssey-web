@@ -1,14 +1,14 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 10 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 16 sept 2026 — **N1 fil** : `wizard_state.furthestStep` mémorise le plus loin atteint ; clic phase / stepper ne saute plus au-delà (prépare constellation C).
 - 10 sept 2026 — **Dates Essentiel** : naissance `max` = hier ; départ `min` = naissance (ou 1800), `max` = aujourd’hui + 2 ans (horizon MAID) ; validation CTA + copy dédiée ([`wizardDateBounds.ts`](../src/lib/wizard/wizardDateBounds.ts)).
 - 10 sept 2026 — **Intro hub Étape 1** : pitch `SanctuaryHubIntro` lié au draft live incomplet (`!hasEssentialsData`), plus au snapshot `virginHub` mount — clear + close ramène « Le film de leur vie ».
 - 9 sept 2026 — **Chrome mobile Wizard** : sticky header — split gauche/droite dès mobile (identité + Loved ones | Package + Creation help empilés) ; chip `OdysseyHelpLifeline` pastille `bottom-24` mobile / chip complet `md:bottom-5`.
 - 5 sept 2026 — **Mobile, Étapes 1 et 3** : chaque champ de date de l’Essentiel gagne un « Effacer » applicatif — l’effacement du sélecteur natif n’émet pas de `change` de façon fiable entre iOS et Android, on ne dépend plus de lui ; le repli de `showPicker()` ajoute un `click()` (Safari iOS < 16 n’ouvrait rien). Le Scanner Compagnon remplace son QR par « Ouvrir l’appareil photo » sur pointeur grossier ([`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).
-- 5 sept 2026 — **Barre utilitaire mobile** : `TributeWizard` reçoit un emplacement `mobileUtilityTrailing` (langue + Déconnexion, injectés par `StudioLocaleFrame`) posé à **deux endroits** selon l’état du chrome — rang flottant court en haut à droite pendant le rituel du ciel (Étape 1, `hubChromeHidden`), sinon barre en haut du parcours aux côtés de `Retour` (l’en-tête se cale dessous, `top-12`). Le cluster flottant haut-droite devient desktop-only : plus de bouton de session au-dessus du lockup de marque. ⚠️ `position: sticky` est **inerte** sur `/studio` — `<main>` porte `overflow-x-hidden`, donc `overflow-y` calcule `auto` et devient le scrollport ; l’en-tête « sticky » du wizard ne collait déjà pas.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -208,13 +208,15 @@ sequenceDiagram
 
   User->>Stepper: Click step N
   Stepper->>TW: onStepClick(N)
+  Note over TW: ignore if N > furthestStep
   TW->>AS: flush()
-  AS->>API: wizard_state + wizard_step
+  AS->>API: wizard_state + wizard_step (+ furthestStep)
   API-->>AS: last_saved_at
-  TW->>TW: setCurrentStep(N)
+  TW->>TW: setCurrentStep(N) · bump furthestStep
 ```
 
 - **Back** button (top-left, steps 2+): same `flush()` then decrement step.
+- **furthestStep** (dans `wizard_state`) : max step jamais atteint ; ne diminue pas au retour. Prépare le fil constellation (N2).
 - Text fields use `queueSave("text")` — 800ms debounce.
 - Step changes and explicit actions use `queueSave("immediate")` or `flush()`.
 

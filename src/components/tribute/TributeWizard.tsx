@@ -298,6 +298,7 @@ type WizardFieldsSnapshot = {
   extensions: WizardExtensionsState;
   actTracks: WizardActTracks;
   musicRightsAttestation?: WizardStateV1["musicRightsAttestation"];
+  furthestStep: number;
 };
 
 function yearFromDateInput(iso: string): string {
@@ -381,6 +382,22 @@ export function TributeWizard({
       }
     }
     return resolved;
+  });
+  /** Plus loin atteint — allume / autorise le fil (N2 constellation). */
+  const [furthestStep, setFurthestStep] = useState(() => {
+    const resolved = resolveInitialWizardStep(
+      initialDraft?.wizard_step,
+      hydrated,
+      TOTAL_STEPS,
+    );
+    const boot =
+      accessRole === "editor" &&
+      !isWizardStepAllowedForRole("editor", resolved)
+        ? 3
+        : resolved;
+    const saved =
+      typeof hydrated.furthestStep === "number" ? hydrated.furthestStep : 1;
+    return Math.max(saved, boot, isEditor ? 3 : 1);
   });
   const [essentialError, setEssentialError] = useState(false);
   const [essentialsShakeGen, setEssentialsShakeGen] = useState(0);
@@ -624,6 +641,7 @@ export function TributeWizard({
     extensions,
     actTracks,
     musicRightsAttestation,
+    furthestStep,
   });
 
   const buildWizardState = useCallback((): WizardStateV1 => {
@@ -654,6 +672,7 @@ export function TributeWizard({
       montage: s.montage,
       storyboard: s.storyboard,
       extensions: s.extensions,
+      furthestStep: s.furthestStep,
       ...(s.musicRightsAttestation
         ? { musicRightsAttestation: s.musicRightsAttestation }
         : {}),
@@ -935,6 +954,7 @@ export function TributeWizard({
     extensions,
     actTracks,
     musicRightsAttestation,
+    furthestStep,
   };
 
   useWizardDraftLifecycle({
@@ -1081,6 +1101,7 @@ export function TributeWizard({
       if (!isWizardStepAllowedForRole(accessRole, step)) return;
       await flush();
       setCurrentStep(step);
+      setFurthestStep((prev) => Math.max(prev, step));
     },
     [accessRole, currentStep, flush],
   );
@@ -1199,9 +1220,10 @@ export function TributeWizard({
     (step: number) => {
       // Éditeur : le progress remappe 1/2/3 → Wizard 3/4/5.
       const wizardStep = (isEditor ? step + 2 : step) as Step;
+      if (wizardStep > furthestStep) return;
       void navigateToStep(wizardStep);
     },
-    [isEditor, navigateToStep],
+    [furthestStep, isEditor, navigateToStep],
   );
 
   const handleSocialSelect = useCallback(

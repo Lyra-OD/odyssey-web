@@ -230,6 +230,11 @@ export type WizardStateV1 = {
    * Legacy runtime bridge — lecture uniquement pendant la transition.
    */
   musicalAmbiance?: WizardLegacyMusicalAmbianceState;
+  /**
+   * Plus loin atteint dans le parcours (1–7). Sert au fil constellation :
+   * étoiles visitables / allumées. Ne diminue jamais (retour en arrière OK).
+   */
+  furthestStep?: number;
 };
 
 export type WizardStatePersistedV2 = Omit<
@@ -996,6 +1001,11 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
     ? legacyMusicalAmbianceFromStoryboard(storyboard) ?? legacyMusicalAmbiance
     : legacyMusicalAmbiance;
 
+  const furthestStep =
+    typeof obj.furthestStep === "number"
+      ? clampWizardStep(obj.furthestStep, 7)
+      : undefined;
+
   const state: WizardStateV1 = {
     version: WIZARD_STATE_VERSION,
     ...(isPartner ? { isPartner: true } : {}),
@@ -1017,6 +1027,7 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
     ...(runtimeMusicalAmbiance
       ? { musicalAmbiance: runtimeMusicalAmbiance }
       : {}),
+    ...(furthestStep !== undefined ? { furthestStep } : {}),
   };
 
   return state;
@@ -1048,6 +1059,9 @@ export function buildPersistedWizardState(
     ...(state.socialSources ? { socialSources: state.socialSources } : {}),
     ...(storyboard ? { storyboard } : {}),
     ...(state.extensions ? { extensions: state.extensions } : {}),
+    ...(typeof state.furthestStep === "number"
+      ? { furthestStep: clampWizardStep(state.furthestStep, 7) }
+      : {}),
   };
 }
 
