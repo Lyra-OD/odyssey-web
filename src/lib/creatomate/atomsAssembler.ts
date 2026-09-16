@@ -1,13 +1,16 @@
 /**
  * Assembleur atomes Creatomate — charge les JSON craft, bind slots, offset timeline.
- * Étape 2 : intro seule. Étape 3 : médias + outro.
  */
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { cinematicTheme } from "@/src/lib/creatomate/cinematicTheme";
 import { formatYearsLine } from "@/src/lib/creatomate/yearFromDate";
-import type { OdysseyRenderPlan } from "@/src/lib/creatomate/types";
+import type {
+  OdysseyRenderPlan,
+  TimelineMediaClip,
+} from "@/src/lib/creatomate/types";
 
 export type CreatomateElement = Record<string, unknown>;
 
@@ -25,6 +28,11 @@ export const DEMO_PORTRAIT_URL =
 export function loadAtomSource(filename: string): AtomSourceDoc {
   const raw = readFileSync(join(ATOMS_DIR, filename), "utf8");
   return JSON.parse(raw) as AtomSourceDoc;
+}
+
+export function loadAtomElement(filename: string): CreatomateElement {
+  const raw = readFileSync(join(ATOMS_DIR, filename), "utf8");
+  return JSON.parse(raw) as CreatomateElement;
 }
 
 export function deepCloneAtom<T>(value: T): T {
@@ -55,6 +63,14 @@ export function offsetRootTimes(
     const base = typeof t === "number" ? t : 0;
     el.time = base + offsetSec;
   }
+}
+
+function suffixElementIds(elements: CreatomateElement[], suffix: string): void {
+  walkElements(elements, (el) => {
+    if (typeof el.id === "string" && el.id.length > 0) {
+      el.id = `${el.id}${suffix}`;
+    }
+  });
 }
 
 export function resolvePortraitUrl(plan: OdysseyRenderPlan): string {
@@ -92,20 +108,130 @@ function bindIntroElements(
   });
 }
 
+function bindMediaElements(
+  elements: CreatomateElement[],
+  clip: TimelineMediaClip,
+): void {
+  walkElements(elements, (el) => {
+    if (el.name === "Image-FQ3") {
+      el.source = clip.url;
+      return;
+    }
+    if (el.name === "Video-Clip") {
+      el.source = clip.url;
+      el.trim_start = clip.trimStartSec;
+      if (!clip.hasAudio) {
+        el.volume = "0%";
+      }
+    }
+  });
+}
+
+function bindOutroElement(
+  outro: CreatomateElement,
+  plan: OdysseyRenderPlan,
+): void {
+  const years =
+    formatYearsLine(plan.essentials.birthYear, plan.essentials.deathYear) ??
+    "";
+  const nested = Array.isArray(outro.elements)
+    ? (outro.elements as CreatomateElement[])
+    : [];
+  walkElements(nested, (el) => {
+    if (el.id === "outro-name" || el.name === "outro-name") {
+      el.text = plan.essentials.displayName;
+      return;
+    }
+    if (el.id === "outro-dates" || el.name === "outro-dates") {
+      el.text = years;
+    }
+  });
+}
+
 export type AssembledIntro = {
   elements: CreatomateElement[];
   durationSec: number;
 };
 
+export type AssembledFilm = {
+  elements: CreatomateElement[];
+  durationSec: number;
+  introDurationSec: number;
+};
+
 /**
  * Intro magazine atomique (docs/craft/atoms/intro.json).
- * Médias / outro restent hors scope (étape 3).
  */
 export function assembleIntroAtom(plan: OdysseyRenderPlan): AssembledIntro {
   const doc = loadAtomSource("intro.json");
   const elements = deepCloneAtom(doc.elements ?? []);
   bindIntroElements(elements, plan);
   const durationSec =
-    typeof doc.duration === "number" && doc.duration > 0 ? doc.duration : 35;
+    typeof doc.duration === "number" && doc.duration > 0 ? doc.duration : 27;
   return { elements, durationSec };
+}
+
+function assembleMediaClipAtom(clip: TimelineMediaClip, index: number): {
+  elements: CreatomateElement[];
+  durationSec: number;
+} {
+  const filename =
+    clip.kind === "video" ? "media-video.json" : "media-photo.json";
+  const doc = loadAtomSource(filename);
+  const elements = deepCloneAtom(doc.elements ?? []);
+  bindMediaElements(elements, clip);
+  suffixElementIds(elements, `-c${index}`);
+  const fallback = clip.kind === "video" ? 10 : 6.98;
+  const durationSec =
+    typeof doc.duration === "number" && doc.duration > 0
+      ? doc.duration
+      : fallback;
+  return { elements, durationSec };
+}
+
+function assembleOutroAtom(
+  plan: OdysseyRenderPlan,
+  startSec: number,
+): CreatomateElement {
+  const outro = deepCloneAtom(loadAtomElement("outro.json"));
+  bindOutroElement(outro, plan);
+  outro.time = startSec;
+  if (typeof outro.duration !== "number") {
+    outro.duration = 6;
+  }
+  return outro;
+}
+
+/**
+ * Film complet : intro + N clips photo/vidéo + outro carte mémoire.
+ */
+export function assembleAtomFilm(plan: OdysseyRenderPlan): AssembledFilm {
+  const fade = cinematicTheme.media.transitionFadeSec;
+  const intro = assembleIntroAtom(plan);
+  const elements: CreatomateElement[] = [...intro.elements];
+  let cursor = intro.durationSec;
+
+  for (let i = 0; i < plan.clips.length; i++) {
+    cursor = Math.max(0, cursor - fade);
+    const clip = plan.clips[i]!;
+    const media = assembleMediaClipAtom(clip, i);
+    offsetRootTimes(media.elements, cursor);
+    elements.push(...media.elements);
+    cursor += media.durationSec;
+  }
+
+  cursor = Math.max(0, cursor - fade);
+  const outro = assembleOutroAtom(plan, cursor);
+  elements.push(outro);
+  const outroDur =
+    typeof outro.duration === "number" && outro.duration > 0
+      ? outro.duration
+      : 6;
+  cursor += outroDur;
+
+  return {
+    elements,
+    durationSec: cursor,
+    introDurationSec: intro.durationSec,
+  };
 }

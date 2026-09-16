@@ -281,7 +281,19 @@ describe("payloadBuilder RenderScript", () => {
     const portrait = findByName(elements, "Image-VZZ");
     expect(String(portrait?.source)).toMatch(/^https:\/\//);
 
-    expect(elements.some((e) => e.id === "outro-wordmark")).toBe(true);
+    expect(elements.some((e) => e.id === "outro-composition")).toBe(true);
+    expect(elements.some((e) => e.id === "outro-wordmark")).toBe(false);
+    const outroNameById = (() => {
+      for (const e of elements) {
+        if (e.id === "outro-composition" && Array.isArray(e.elements)) {
+          return (e.elements as Array<Record<string, unknown>>).find(
+            (c) => c.id === "outro-name",
+          );
+        }
+      }
+      return undefined;
+    })();
+    expect(outroNameById?.text).toBe("Marie Dupont");
     expect(
       elements.some(
         (e) =>
@@ -289,12 +301,10 @@ describe("payloadBuilder RenderScript", () => {
           e.track === cinematicTheme.music.creatomateTracks.bed,
       ),
     ).toBe(true);
-    const mediaImages = elements.filter(
-      (e) => e.type === "image" && e.name !== "Image-VZZ",
-    );
-    expect(mediaImages.length).toBeGreaterThan(0);
+    const fq3 = findByName(elements, "Image-FQ3");
+    expect(fq3?.source).toBe("https://example.com/m1.jpg");
     const photoAnims =
-      (mediaImages[0]?.animations as Array<Record<string, unknown>>) ?? [];
+      (fq3?.animations as Array<Record<string, unknown>>) ?? [];
     expect(photoAnims.some((a) => a.type === "scale")).toBe(true);
   });
 });

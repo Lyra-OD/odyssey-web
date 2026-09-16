@@ -22,6 +22,7 @@ export {
 } from "@/src/lib/creatomate/yearFromDate";
 export {
   assembleIntroAtom,
+  assembleAtomFilm,
   resolvePortraitUrl,
   DEMO_PORTRAIT_URL,
 } from "@/src/lib/creatomate/atomsAssembler";

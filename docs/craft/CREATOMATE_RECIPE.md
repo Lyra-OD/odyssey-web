@@ -1,45 +1,31 @@
-# Creatomate — Recette atomes (plan demain)
+# Creatomate — Recette atomes (assembleur)
 
 **Type :** craft · **Vérité pour :** ADN Creatomate figé en atomes UI → assembleur Odyssey.  
 **Dernière MAJ :** 16 sept 2026 · **Carte :** [`../README.md`](../README.md) · **Atomes :** [`atoms/`](atoms/)
 
 **Changelog** (max 5)
-- 16 sept 2026 — **Étape 2** : intro atome branchée dans `payloadBuilder` (`assembleIntroAtom`) · médias/outro encore TS.
-- 16 sept 2026 — **Étape 1** : `birthYear` / `deathYear` / `portraitUrl` signé (essentials).
-- 16 sept 2026 — intro **35 s** magazine figée UI.
+- 16 sept 2026 — **Étape 3** : `assembleAtomFilm` — intro + N photo/vidéo + outro carte mémoire · plus de wordmark Odyssey TS.
+- 16 sept 2026 — **Étape 2** : intro atome branchée · intro resserrée **27 s** (portrait 10 s, noir pont 2 s).
+- 16 sept 2026 — **Étape 1** : `birthYear` / `deathYear` / `portraitUrl` signé.
 - 15 sept 2026 — pivot **atomes** ; labs curl v1.x = archive d’échec DA.
 
 ## Objectif
 
-Film Quiet Luxury : intro portrait+nom+années → N photos/vidéos → outro **carte mémoire** (pas de logo Odyssey). Médias dynamiques ; look sculpté dans l’éditeur Creatomate.
+Film Quiet Luxury : intro portrait+nom+années → N photos/vidéos → outro **carte mémoire** (pas de logo Odyssey).
 
-## État (16 sept)
+## État
 
-| Atome | Fichier | Statut |
-|-------|---------|--------|
-| Intro | [`atoms/intro.json`](atoms/intro.json) | **Branché** runtime via [`atomsAssembler.ts`](../../src/lib/creatomate/atomsAssembler.ts) |
-| Média photo | [`atoms/media-photo.json`](atoms/media-photo.json) | Figé — assembleur **étape 3** |
-| Média vidéo | [`atoms/media-video.json`](atoms/media-video.json) | Figé — assembleur **étape 3** |
-| Outro | [`atoms/outro.json`](atoms/outro.json) | Figé — assembleur **étape 3** (encore wordmark TS) |
+| Atome | Fichier | Runtime |
+|-------|---------|---------|
+| Intro | [`atoms/intro.json`](atoms/intro.json) | `assembleAtomFilm` |
+| Média photo | [`atoms/media-photo.json`](atoms/media-photo.json) | idem · `Image-FQ3` |
+| Média vidéo | [`atoms/media-video.json`](atoms/media-video.json) | idem · `Video-Clip` + `trim_start` |
+| Outro | [`atoms/outro.json`](atoms/outro.json) | composition · **pas** ODYSSEY |
 
-Binding intro (ne pas inverser) : **Text-CFQ** = nom · **Text-F5F** = années · **Image-VZZ** = photo de profil.
+Code : [`src/lib/creatomate/atomsAssembler.ts`](../../src/lib/creatomate/atomsAssembler.ts) · branché dans [`payloadBuilder.ts`](../../src/lib/creatomate/payloadBuilder.ts).
 
-## Reste (étape 3)
+Overlap fade : `cinematicTheme.media.transitionFadeSec` (0.9 s). Bed audio inchangé.
 
-1. Clips photo/vidéo atomes + fade overlap.
-2. Outro carte mémoire (retirer wordmark Odyssey TS).
-3. Test drain sandbox 2 photos + 1 vidéo + bed.
-4. Doc STATUS quand film complet.
+## Test manuel
 
-## Décisions produit figées
-
-- Transition MVP = **fondu** unique (photo↔photo, vidéo↔vidéo, mixte).
-- Vidéo = fenêtre **10 s** (`VIDEO_TRIM_DURATION_SEC`) — pas le fichier entier.
-- Outro = hommage payé → **pas** de wordmark Odyssey.
-- VFX AE (light leaks) = plus tard, pas bloquant demain.
-
-## Interdit
-
-- Clé API / secrets dans les atomes ou le chat.
-- Preview Stingray comme master export.
-- Re-sculpter toute la timeline dans l’UI (seulement atomes).
+Export drain sandbox : avatar + 2 photos + 1 vidéo trim + bed MP3.
