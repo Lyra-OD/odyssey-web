@@ -107,6 +107,13 @@ function MontageMediaCardSurface({
     onPointerDown: dndPointerDown,
     ...restHandleListeners
   } = handleListeners ?? {};
+  // dnd-kit pose déjà role/tabIndex/aria-pressed — ne pas les dupliquer (TS2783 / build).
+  const {
+    role: _dragRole,
+    tabIndex: _dragTabIndex,
+    ["aria-pressed"]: _dragAriaPressed,
+    ...safeWholeCardAttributes
+  } = wholeCardDrag?.attributes ?? {};
 
   return (
     <div
@@ -134,7 +141,7 @@ function MontageMediaCardSurface({
           }`}
           aria-label={`${copy.clickToEdit} · ${item.displayName}`}
           aria-pressed={isSelected}
-          {...(wholeCardDrag?.attributes ?? {})}
+          {...safeWholeCardAttributes}
           {...(wholeCardDrag?.listeners ?? {})}
           onClick={(event) => {
             if (event.defaultPrevented) return;

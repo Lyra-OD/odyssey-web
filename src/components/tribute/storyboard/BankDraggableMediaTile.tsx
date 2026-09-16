@@ -63,6 +63,12 @@ export function BankDraggableMediaTile({
     : undefined;
   const handleDragListeners = finePointer ? undefined : listeners;
   const handleDragAttributes = finePointer ? undefined : attributes;
+  // dnd-kit pose déjà role/tabIndex — ne pas les dupliquer (TS2783 / build).
+  const {
+    role: _dragRole,
+    tabIndex: _dragTabIndex,
+    ...safeWholeCardAttributes
+  } = wholeCardDrag?.attributes ?? {};
 
   const preview = (
     <MediaAssetThumb
@@ -101,7 +107,7 @@ export function BankDraggableMediaTile({
               : "cursor-pointer"
           }`}
           aria-label={`${copy.clickToEdit} · ${item.displayName}`}
-          {...(wholeCardDrag?.attributes ?? {})}
+          {...safeWholeCardAttributes}
           {...(wholeCardDrag?.listeners ?? {})}
           onClick={(event) => {
             if (event.shiftKey) {
