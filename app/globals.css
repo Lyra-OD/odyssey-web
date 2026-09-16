@@ -1804,6 +1804,13 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   stroke: rgba(153, 246, 228, 0.95);
   animation: wizard-trail-filament-pulse 2.4s ease-in-out infinite;
 }
+.wizard-trail-segment {
+  background: rgba(45, 212, 191, 0.45);
+}
+.wizard-trail-segment-live {
+  background: rgba(153, 246, 228, 0.85);
+  box-shadow: 0 0 8px rgba(45, 212, 191, 0.35);
+}
 
 @keyframes wizard-trail-breath {
   0%,

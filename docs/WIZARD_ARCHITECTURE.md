@@ -4,10 +4,11 @@
 **Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 16 sept 2026 — **N2f + N4** : polish rangée boomer-proof (★ 26/36, orbe, titres plus lisibles, voile soft) ; sticky prix craft retiré (total dès 6+).
-- 16 sept 2026 — **N2 fil** : constellation C (7 points) — ancres Essentiel · Coffre · Musique · Composer · Son film ; plus de Déposer/Composer/Recevoir ni « Étape N ».
-- 16 sept 2026 — **N1 fil** : `wizard_state.furthestStep` mémorise le plus loin atteint ; clic ne saute plus au-delà.
-- 10 sept 2026 — **Dates Essentiel** : naissance `max` = hier ; départ `min` = naissance (ou 1800), `max` = aujourd’hui + 2 ans (horizon MAID) ; validation CTA + copy dédiée ([`wizardDateBounds.ts`](../src/lib/wizard/wizardDateBounds.ts)).
+- 16 sept 2026 — **Fil** : ligne **droite** (zig retiré) ; largeur `max-w-xl` ; segments demi-gap dans le flex (longueur correcte).
+- 16 sept 2026 — **N2f + N4** : polish rangée boomer-proof ; sticky prix craft retiré (total dès 6+).
+- 16 sept 2026 — **N2 fil** : constellation C — ancres Essentiel · Coffre · Musique · Composer · Son film.
+- 16 sept 2026 — **N1 fil** : `wizard_state.furthestStep` ; clic ne saute plus au-delà.
+- 10 sept 2026 — **Dates Essentiel** : naissance `max` = hier ; départ `min` = naissance (ou 1800), `max` = aujourd’hui + 2 ans.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 

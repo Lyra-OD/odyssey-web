@@ -28,16 +28,6 @@ type Props = {
   copy: WizardConstellationTrailCopy;
 };
 
-/** Bande : assez haute pour ★ + orbe, zig modéré (boomer-proof). */
-const BAND_H = 96;
-
-/** Zig modéré inégal — personnalité sans chaos. */
-const ZIG_Y = [8, -12, 5, -14, 7, -10, 4] as const;
-
-function zigY(index: number): number {
-  return ZIG_Y[index % ZIG_Y.length]!;
-}
-
 function replaceTokens(template: string, tokens: Record<string, string>): string {
   return Object.entries(tokens).reduce(
     (acc, [key, value]) => acc.replace(`{${key}}`, value),
@@ -46,7 +36,7 @@ function replaceTokens(template: string, tokens: Record<string, string>): string
 }
 
 function TrailStarGlyph({ current }: { current: boolean }) {
-  const size = current ? 36 : 26;
+  const size = current ? 34 : 24;
   return (
     <svg
       className={
@@ -68,8 +58,8 @@ function TrailStarGlyph({ current }: { current: boolean }) {
 }
 
 /**
- * Fil rangée boomer-proof : ordre gauche→droite clair, ★ grosses,
- * ici + orbe, titres T2 (fort ici / whisper ancres passées).
+ * Fil rangée droite boomer-proof : même hauteur, segments horizontaux
+ * demi-gap (longueur correcte), largeur max-w-xl.
  */
 export function WizardPhaseProgress({
   stars,
@@ -79,7 +69,6 @@ export function WizardPhaseProgress({
   copy,
 }: Props) {
   const reduceMotion = useReducedMotion();
-  const midY = BAND_H / 2;
 
   const currentStar = stars.find((star) => star.step === currentStep);
   const hereLabel =
@@ -92,7 +81,7 @@ export function WizardPhaseProgress({
 
   return (
     <nav
-      className="wizard-trail-sky relative mb-8 w-full md:mb-11"
+      className="wizard-trail-sky relative mb-7 w-full md:mb-10"
       aria-label={copy.ariaLabel}
     >
       {hereLabel ? (
@@ -101,39 +90,7 @@ export function WizardPhaseProgress({
         </p>
       ) : null}
 
-      <ol className="relative mx-auto flex w-full max-w-4xl items-center justify-center px-2 sm:max-w-5xl sm:px-4">
-        <svg
-          className="pointer-events-none absolute inset-x-0 top-0 w-full overflow-visible"
-          style={{ height: BAND_H }}
-          viewBox={`0 0 ${Math.max(stars.length, 1)} ${BAND_H}`}
-          preserveAspectRatio="none"
-          aria-hidden
-        >
-          {stars.map((star, index) => {
-            if (index === 0) return null;
-            const prev = stars[index - 1]!;
-            if (prev.step > furthestStep || star.step > furthestStep) {
-              return null;
-            }
-            const live = star.step === currentStep;
-            return (
-              <line
-                key={`seg-${prev.step}-${star.step}`}
-                className={
-                  live
-                    ? "wizard-trail-filament wizard-trail-filament-live"
-                    : "wizard-trail-filament"
-                }
-                x1={index - 0.5}
-                y1={midY + zigY(index - 1)}
-                x2={index + 0.5}
-                y2={midY + zigY(index)}
-                vectorEffect="non-scaling-stroke"
-              />
-            );
-          })}
-        </svg>
-
+      <ol className="mx-auto flex w-full max-w-md px-3 sm:max-w-lg md:max-w-xl">
         {stars.map((star, index) => {
           const isBorn = star.step <= furthestStep;
           const isCurrent = isBorn && star.step === currentStep;
@@ -141,17 +98,35 @@ export function WizardPhaseProgress({
           const showStrongTitle = isCurrent && hasAnchor;
           const showWhisperTitle = isBorn && !isCurrent && hasAnchor;
           const goLabel = star.anchorLabel?.trim() || star.ariaName;
-          const y = zigY(index);
+
+          const prevBorn =
+            index > 0 && stars[index - 1]!.step <= furthestStep;
+          const nextBorn =
+            index < stars.length - 1 &&
+            stars[index + 1]!.step <= furthestStep;
+          const leftOn = isBorn && prevBorn;
+          const rightOn = isBorn && nextBorn;
+          const leftLive = leftOn && isCurrent;
+          const rightLive =
+            rightOn && stars[index + 1]!.step === currentStep;
 
           return (
             <li
               key={star.step}
-              className="group/trail relative z-[1] flex min-w-0 flex-1 flex-col items-center"
+              className="group/trail flex min-w-0 flex-1 flex-col items-stretch"
             >
-              <div
-                className="flex w-full items-center justify-center"
-                style={{ height: BAND_H, transform: `translateY(${y}px)` }}
-              >
+              <div className="flex h-14 items-center sm:h-16">
+                <span
+                  className={`h-px flex-1 ${
+                    leftOn
+                      ? leftLive
+                        ? "wizard-trail-segment wizard-trail-segment-live"
+                        : "wizard-trail-segment"
+                      : "bg-transparent"
+                  }`}
+                  aria-hidden
+                />
+
                 {isBorn ? (
                   <motion.button
                     type="button"
@@ -161,19 +136,19 @@ export function WizardPhaseProgress({
                       label: goLabel,
                     })}
                     aria-current={isCurrent ? "step" : undefined}
-                    className={`wizard-trail-hit relative flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50 ${
-                      isCurrent ? "h-16 w-16" : "h-14 w-14"
+                    className={`wizard-trail-hit relative z-[1] flex shrink-0 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50 ${
+                      isCurrent ? "h-14 w-14" : "h-12 w-12"
                     }`}
                     initial={
                       reduceMotion ? false : { opacity: 0, scale: 0.2 }
                     }
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{
-                      duration: 0.48,
+                      duration: 0.45,
                       ease: [0.16, 1, 0.3, 1],
                       delay: reduceMotion
                         ? 0
-                        : Math.max(0, (bornCount - 1) * 0.025),
+                        : Math.max(0, (bornCount - 1) * 0.02),
                     }}
                   >
                     {isCurrent ? (
@@ -191,23 +166,36 @@ export function WizardPhaseProgress({
                     <TrailStarGlyph current={isCurrent} />
                   </motion.button>
                 ) : (
-                  <span className="h-14 w-14" aria-hidden />
+                  <span className="h-12 w-12 shrink-0" aria-hidden />
                 )}
+
+                <span
+                  className={`h-px flex-1 ${
+                    rightOn
+                      ? rightLive
+                        ? "wizard-trail-segment wizard-trail-segment-live"
+                        : "wizard-trail-segment"
+                      : "bg-transparent"
+                  }`}
+                  aria-hidden
+                />
               </div>
 
               <span
-                className={`mt-1.5 min-h-[1.35rem] max-w-[7rem] truncate text-center sm:max-w-[8rem] ${
+                className={`mt-1 min-h-[1.25rem] px-0.5 text-center ${
                   showStrongTitle
-                    ? "font-[family-name:var(--font-label)] text-base font-normal tracking-wide text-white sm:text-lg"
+                    ? "font-[family-name:var(--font-label)] text-sm font-normal tracking-wide text-white sm:text-base"
                     : showWhisperTitle
-                      ? "text-xs font-light tracking-wide text-zinc-400 transition-colors group-hover/trail:text-zinc-200 sm:text-sm"
-                      : "text-transparent text-xs"
+                      ? "text-[11px] font-light tracking-wide text-zinc-400 sm:text-xs"
+                      : "text-transparent text-[11px]"
                 }`}
                 aria-hidden
               >
-                {showStrongTitle || showWhisperTitle
-                  ? star.anchorLabel
-                  : "\u00a0"}
+                <span className="mx-auto block max-w-full truncate">
+                  {showStrongTitle || showWhisperTitle
+                    ? star.anchorLabel
+                    : "\u00a0"}
+                </span>
               </span>
             </li>
           );
