@@ -28,8 +28,12 @@ type Props = {
   copy: WizardConstellationTrailCopy;
 };
 
-/** Décalages verticaux organiques (px) — zig, pas une barre droite. */
-const ZIG_Y = [0, -7, 5, -6, 4, -5, 3] as const;
+/**
+ * Zig organique (px) — même lecture que :
+ *   ·         ★         ·
+ * ·     ·           ·       ·
+ */
+const ZIG_Y = [6, -8, 4, -7, 5, -6, 3] as const;
 
 function zigY(index: number): number {
   return ZIG_Y[index % ZIG_Y.length]!;
@@ -42,10 +46,28 @@ function replaceTokens(template: string, tokens: Record<string, string>): string
   );
 }
 
+function TrailStarGlyph({ current }: { current: boolean }) {
+  return (
+    <svg
+      className={
+        current ? "wizard-trail-star wizard-trail-star-current" : "wizard-trail-star"
+      }
+      viewBox="0 0 24 24"
+      width={current ? 14 : 11}
+      height={current ? 14 : 11}
+      aria-hidden
+    >
+      <path
+        d="M12 2.2 13.15 9.2 20 10.35 13.15 11.5 12 18.5 10.85 11.5 4 10.35 10.85 9.2 Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 /**
- * Fil constellation WOW (règle C) : uniquement les étoiles déjà nées
- * (`≤ furthestStep`). Zig organique, filaments, halo sur l’ici, naissance
- * à chaque avancée. Pas de points futurs (décourageants).
+ * Fil constellation : grille fixe (espace calme), zig, traits droits,
+ * étoiles nées seulement visibles, halo animé sur l’étape courante.
  */
 export function WizardPhaseProgress({
   stars,
@@ -56,14 +78,14 @@ export function WizardPhaseProgress({
 }: Props) {
   const reduceMotion = useReducedMotion();
 
-  const visibleStars = useMemo(
-    () => stars.filter((star) => star.step <= furthestStep),
-    [stars, furthestStep],
-  );
-
-  const currentStar = visibleStars.find((star) => star.step === currentStep);
+  const currentStar = stars.find((star) => star.step === currentStep);
   const hereLabel =
     currentStar?.anchorLabel?.trim() || currentStar?.ariaName || "";
+
+  const bornCount = useMemo(
+    () => stars.filter((star) => star.step <= furthestStep).length,
+    [stars, furthestStep],
+  );
 
   return (
     <nav className="mb-5 w-full md:mb-9" aria-label={copy.ariaLabel}>
@@ -73,98 +95,112 @@ export function WizardPhaseProgress({
         </p>
       ) : null}
 
-      <ol className="mx-auto flex max-w-lg items-center justify-center px-2 sm:max-w-xl">
-        {visibleStars.map((star, index) => {
-          const isCurrent = star.step === currentStep;
-          const showAnchor = Boolean(star.anchorLabel?.trim());
+      <ol className="relative mx-auto flex max-w-xl items-center justify-center px-1 sm:max-w-2xl">
+        {/* Filaments droits entre étoiles nées consécutives (sous les boutons). */}
+        <svg
+          className="pointer-events-none absolute inset-x-0 top-0 h-10 w-full overflow-visible"
+          viewBox={`0 0 ${Math.max(stars.length, 1)} 40`}
+          preserveAspectRatio="none"
+          aria-hidden
+        >
+          {stars.map((star, index) => {
+            if (index === 0) return null;
+            const prev = stars[index - 1]!;
+            if (prev.step > furthestStep || star.step > furthestStep) {
+              return null;
+            }
+            const x0 = index - 0.5;
+            const x1 = index + 0.5;
+            const y0 = 20 + zigY(index - 1);
+            const y1 = 20 + zigY(index);
+            const live = star.step === currentStep;
+            return (
+              <line
+                key={`seg-${prev.step}-${star.step}`}
+                className={
+                  live
+                    ? "wizard-trail-filament wizard-trail-filament-live"
+                    : "wizard-trail-filament"
+                }
+                x1={x0}
+                y1={y0}
+                x2={x1}
+                y2={y1}
+                vectorEffect="non-scaling-stroke"
+              />
+            );
+          })}
+        </svg>
+
+        {stars.map((star, index) => {
+          const isBorn = star.step <= furthestStep;
+          const isCurrent = isBorn && star.step === currentStep;
+          const showAnchor = isBorn && Boolean(star.anchorLabel?.trim());
           const goLabel = star.anchorLabel?.trim() || star.ariaName;
           const y = zigY(index);
-          const prevY = index > 0 ? zigY(index - 1) : y;
 
           return (
-            <li key={star.step} className="flex min-w-0 flex-1 items-center">
-              {index > 0 ? (
-                <div
-                  className="relative h-10 min-w-[0.75rem] flex-1 sm:min-w-[1.25rem]"
-                  aria-hidden
-                >
-                  <svg
-                    className="absolute inset-0 h-full w-full overflow-visible"
-                    viewBox="0 0 100 40"
-                    preserveAspectRatio="none"
-                  >
-                    <path
-                      className={
-                        star.step === currentStep
-                          ? "wizard-trail-filament wizard-trail-filament-live"
-                          : "wizard-trail-filament"
-                      }
-                      d={`M 0 ${20 + prevY * 0.85} Q 50 ${
-                        20 + ((prevY + y) / 2) * 0.85 - 5
-                      } 100 ${20 + y * 0.85}`}
-                      fill="none"
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  </svg>
-                </div>
-              ) : null}
-
-              <motion.div
-                className="relative flex shrink-0 flex-col items-center"
-                initial={
-                  reduceMotion
-                    ? false
-                    : { opacity: 0, scale: 0.15, y }
-                }
-                animate={{ opacity: 1, scale: 1, y }}
-                transition={{
-                  duration: 0.48,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
+            <li
+              key={star.step}
+              className="relative z-[1] flex min-w-0 flex-1 flex-col items-center"
+            >
+              <div
+                className="flex h-10 w-full items-center justify-center"
+                style={{ transform: `translateY(${y}px)` }}
               >
-                <button
-                  type="button"
-                  onClick={() => onStepClick(star.step)}
-                  title={goLabel}
-                  aria-label={replaceTokens(copy.goToStepAria, {
-                    label: goLabel,
-                  })}
-                  aria-current={isCurrent ? "step" : undefined}
-                  className="relative z-[1] flex h-9 w-9 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/45"
-                >
-                  {isCurrent ? (
-                    <>
-                      <span className="wizard-trail-halo" aria-hidden />
-                      <span className="wizard-trail-dust" aria-hidden>
-                        <i />
-                        <i />
-                        <i />
-                      </span>
-                    </>
-                  ) : null}
-                  <span
-                    className={
-                      isCurrent
-                        ? "wizard-trail-core wizard-trail-core-current"
-                        : "wizard-trail-core"
+                {isBorn ? (
+                  <motion.button
+                    type="button"
+                    onClick={() => onStepClick(star.step)}
+                    title={goLabel}
+                    aria-label={replaceTokens(copy.goToStepAria, {
+                      label: goLabel,
+                    })}
+                    aria-current={isCurrent ? "step" : undefined}
+                    className="relative flex h-9 w-9 items-center justify-center rounded-full text-teal-300/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/45"
+                    initial={
+                      reduceMotion
+                        ? false
+                        : { opacity: 0, scale: 0.2 }
                     }
-                    aria-hidden
-                  />
-                </button>
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      duration: 0.45,
+                      ease: [0.16, 1, 0.3, 1],
+                      delay: reduceMotion
+                        ? 0
+                        : Math.max(0, (bornCount - 1) * 0.02),
+                    }}
+                  >
+                    {isCurrent ? (
+                      <>
+                        <span className="wizard-trail-halo" aria-hidden />
+                        <span className="wizard-trail-dust" aria-hidden>
+                          <i />
+                          <i />
+                          <i />
+                        </span>
+                      </>
+                    ) : null}
+                    <TrailStarGlyph current={isCurrent} />
+                  </motion.button>
+                ) : (
+                  <span className="h-9 w-9" aria-hidden />
+                )}
+              </div>
 
-                <span
-                  className={`mt-1 max-w-[4.5rem] truncate text-center text-[9px] font-light uppercase tracking-[0.16em] sm:max-w-[5.5rem] sm:text-[10px] ${
-                    showAnchor
-                      ? isCurrent
-                        ? "text-teal-200/95"
-                        : "text-zinc-500"
-                      : "text-transparent"
-                  }`}
-                  aria-hidden
-                >
-                  {showAnchor ? star.anchorLabel : "\u00a0"}
-                </span>
-              </motion.div>
+              <span
+                className={`mt-1 h-4 max-w-[4.5rem] truncate text-center text-[9px] font-light uppercase tracking-[0.16em] sm:max-w-[5.5rem] sm:text-[10px] ${
+                  showAnchor
+                    ? isCurrent
+                      ? "text-teal-200/95"
+                      : "text-zinc-500"
+                    : "text-transparent"
+                }`}
+                aria-hidden
+              >
+                {showAnchor ? star.anchorLabel : "\u00a0"}
+              </span>
             </li>
           );
         })}
