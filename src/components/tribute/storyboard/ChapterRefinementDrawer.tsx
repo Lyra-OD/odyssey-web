@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { createPortal } from "react-dom";
 import {
   SortableContext,
   rectSortingStrategy,
@@ -17,6 +18,8 @@ import { EASE_OUT_LUXE } from "@/src/lib/motion/easing";
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import {
+  STORYBOARD_CHAPTER_GRID_ATTR,
+  STORYBOARD_CHAPTER_GRID_SURFACE_ATTR,
   STORYBOARD_MEDIA_DND_TYPE,
   storyboardChapterDroppableId,
   type StoryboardMediaDragData,
@@ -87,13 +90,13 @@ export function ChapterRefinementDrawer({
     source: { kind: "chapter" as const, chapterId },
   } satisfies Partial<StoryboardMediaDragData>;
 
-  return (
+  const panel = (
     <AnimatePresence>
       {isOpen ? (
         <>
           <motion.div
             key="refine-backdrop"
-            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-md"
+            className="fixed inset-0 z-[69] bg-black/50 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -106,7 +109,7 @@ export function ChapterRefinementDrawer({
             role="dialog"
             aria-modal="true"
             aria-label={copy.title}
-            className="fixed z-[61] flex flex-col overflow-hidden rounded-t-2xl border border-white/10 bg-[#020202]/95 shadow-[0_24px_80px_rgba(0,0,0,0.55)] backdrop-blur-2xl inset-x-0 bottom-0 top-[5vh] md:inset-4 md:rounded-2xl"
+            className="fixed z-[70] flex flex-col overflow-hidden rounded-t-2xl border border-white/10 bg-[#020202]/95 shadow-[0_24px_80px_rgba(0,0,0,0.55)] backdrop-blur-2xl inset-x-0 bottom-0 top-[5vh] md:inset-2 md:rounded-2xl"
             initial={{ y: 24, opacity: 0.6, scale: 0.98 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 24, opacity: 0.6, scale: 0.98 }}
@@ -175,7 +178,13 @@ export function ChapterRefinementDrawer({
                 items={sortableIds}
                 strategy={rectSortingStrategy}
               >
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                <div
+                  {...{
+                    [STORYBOARD_CHAPTER_GRID_ATTR]: chapterId,
+                    [STORYBOARD_CHAPTER_GRID_SURFACE_ATTR]: "composer",
+                  }}
+                  className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4"
+                >
                   {inCapacityItems.map((item, index) => (
                     <MontageMediaCard
                       key={item.assetId}
@@ -282,4 +291,7 @@ export function ChapterRefinementDrawer({
       ) : null}
     </AnimatePresence>
   );
+
+  if (typeof document === "undefined") return panel;
+  return createPortal(panel, document.body);
 }

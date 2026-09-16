@@ -7,6 +7,7 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
+  type DragMoveEvent,
   type DragOverEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
@@ -24,16 +25,17 @@ import {
   orderChapterSelection,
   parseStoryboardChapterSortableId,
   parseStoryboardChapterDroppableId,
+  pointerFromDndDelta,
+  measureChapterGridInsert,
   resolveDropTarget,
-  resolveInsertIndex,
   type MediaSelectionScope,
   type StoryboardChapterBlockDragData,
   type StoryboardDragSource,
+  type StoryboardInsertPreview,
   type StoryboardMediaDragData,
 } from "@/src/lib/wizard/storyboardDnd";
 import {
   assignManyMediaToChapter,
-  reorderChapterMedia,
   unassignManyMediaFromChapters,
 } from "@/src/lib/wizard/storyboardMedia";
 import type { WizardStoryboardState } from "@/src/lib/wizard/wizardState";
@@ -62,15 +64,26 @@ export function useMontageDnd({
   const [dragOverChapterIndex, setDragOverChapterIndex] = useState<
     number | null
   >(null);
+  const [insertPreview, setInsertPreview] =
+    useState<StoryboardInsertPreview | null>(null);
   const dragPayloadRef = useRef<{
     mediaIds: string[];
     source: StoryboardDragSource;
   } | null>(null);
+  const insertPreviewRef = useRef<StoryboardInsertPreview | null>(null);
+
+  const writeInsertPreview = useCallback(
+    (next: StoryboardInsertPreview | null) => {
+      insertPreviewRef.current = next;
+      setInsertPreview(next);
+    },
+    [],
+  );
 
   const autoScroll = useMontageAutoScroll();
   const finePointer = useFinePointer();
   const pointerSensor = useSensor(PointerSensor, {
-    activationConstraint: { distance: 8 },
+    activationConstraint: { distance: 10 },
   });
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: { delay: 180, tolerance: 8 },
@@ -127,17 +140,19 @@ export function useMontageDnd({
 
       dragPayloadRef.current = { mediaIds, source };
       setActiveDragIds(mediaIds);
+      writeInsertPreview(null);
     },
-    [selectedMediaIds, selectionScope, storyboard],
+    [selectedMediaIds, selectionScope, storyboard, writeInsertPreview],
   );
 
-  const handleDragOver = useCallback(
-    (event: DragOverEvent) => {
+  const syncChapterHover = useCallback(
+    (event: DragOverEvent | DragMoveEvent) => {
       const { over } = event;
       if (!over) {
         setDropTargetChapterId(null);
         setDropTargetBank(false);
         setDragOverChapterIndex(null);
+        writeInsertPreview(null);
         return;
       }
 
@@ -148,25 +163,69 @@ export function useMontageDnd({
         setDropTargetBank(true);
         setDropTargetChapterId(null);
         setDragOverChapterIndex(null);
+        writeInsertPreview(null);
         return;
       }
 
       setDropTargetBank(false);
       setDropTargetChapterId(target.chapterId);
-      const index = storyboard.chapters.findIndex(
+      const chapterIndex = storyboard.chapters.findIndex(
         (chapter) => chapter.id === target.chapterId,
       );
-      setDragOverChapterIndex(index >= 0 ? index : null);
+      setDragOverChapterIndex(chapterIndex >= 0 ? chapterIndex : null);
+
+      const pointer = pointerFromDndDelta(event.activatorEvent, event.delta);
+      if (!pointer) {
+        writeInsertPreview({ chapterId: target.chapterId, index: 0, line: null });
+        return;
+      }
+
+      const moving = new Set(dragPayloadRef.current?.mediaIds ?? []);
+      const measured = measureChapterGridInsert(
+        target.chapterId,
+        pointer,
+        moving,
+      );
+      const nextPreview = {
+        chapterId: target.chapterId,
+        index: measured.index,
+        line: measured.line,
+      };
+      const prev = insertPreviewRef.current;
+      if (
+        prev?.chapterId !== nextPreview.chapterId ||
+        prev?.index !== nextPreview.index ||
+        prev?.line?.left !== nextPreview.line?.left ||
+        prev?.line?.top !== nextPreview.line?.top
+      ) {
+        writeInsertPreview(nextPreview);
+      }
     },
-    [storyboard],
+    [storyboard, writeInsertPreview],
+  );
+
+  const handleDragOver = useCallback(
+    (event: DragOverEvent) => {
+      syncChapterHover(event);
+    },
+    [syncChapterHover],
+  );
+
+  const handleDragMove = useCallback(
+    (event: DragMoveEvent) => {
+      if (!dropTargetChapterId && !event.over) return;
+      syncChapterHover(event);
+    },
+    [dropTargetChapterId, syncChapterHover],
   );
 
   const clearDropTargets = useCallback(() => {
     setDropTargetChapterId(null);
     setDropTargetBank(false);
     setDragOverChapterIndex(null);
+    writeInsertPreview(null);
     dragPayloadRef.current = null;
-  }, []);
+  }, [writeInsertPreview]);
 
   const handleDragCancel = useCallback(() => {
     setActiveDragIds([]);
@@ -254,36 +313,13 @@ export function useMontageDnd({
         return;
       }
 
-      if (
-        source.kind === "chapter" &&
-        source.chapterId === targetChapterId &&
-        mediaIds.length === 1 &&
-        resolvedTarget.overMediaId &&
-        targetChapter.mediaIds.includes(resolvedTarget.overMediaId) &&
-        resolvedTarget.overMediaId !== mediaIds[0]
-      ) {
-        onStoryboardChange(
-          reorderChapterMedia(
-            storyboard,
-            targetChapterId,
-            mediaIds[0],
-            resolvedTarget.overMediaId,
-          ),
-        );
-        clearMediaSelection();
-        clearDropTargets();
-        return;
-      }
-
       const movingSet = new Set(mediaIds);
       const baseIds = targetChapter.mediaIds.filter((id) => !movingSet.has(id));
-      const insertIndex = resolveInsertIndex(
-        baseIds,
-        resolvedTarget.overMediaId &&
-          baseIds.includes(resolvedTarget.overMediaId)
-          ? resolvedTarget.overMediaId
-          : null,
-      );
+      const preview = insertPreviewRef.current;
+      const insertIndex =
+        preview && preview.chapterId === targetChapterId
+          ? Math.max(0, Math.min(preview.index, baseIds.length))
+          : baseIds.length;
 
       onStoryboardChange(
         assignManyMediaToChapter(
@@ -313,8 +349,10 @@ export function useMontageDnd({
     dropTargetChapterId,
     dropTargetBank,
     dragOverChapterIndex,
+    insertPreview,
     handleDragStart,
     handleDragOver,
+    handleDragMove,
     handleDragEnd,
     handleDragCancel,
   };

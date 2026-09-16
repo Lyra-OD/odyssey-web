@@ -1,14 +1,14 @@
 # Étape 5 — Le Livre Ouvert (Table de Montage)
 
 **Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L copy ✅ · S5-J/K ⏳.  
-**Dernière MAJ :** 5 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 16 sept 2026 — Drag : barre d’insertion **dans le gap** (Livre + Composer) ; overlay au-dessus de Composer.
+- 16 sept 2026 — Desktop : shell Étape 5 `max-w-7xl` ; modal directeur / tiroir composition portés au `document.body` ; fade d’étape **sans** `transform` (dnd-kit). Clic souvenir = salle de visionnement ; glisser ≠ ouvrir.
 - 5 sept 2026 — `MontageOnboardingGate` : les **deux** cartes portent le même violet au repos et virent au cyan au survol comme à l’appui. Aucune des deux n’est recommandée — la différence se joue sur l’icône et la phrase. La sélection des souvenirs (banque, vignettes) passe elle aussi au cyan : voir [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) §2.1bis « choisir = teal, partout ».
 - 5 sept 2026 — `MontageOnboardingGate` en feuille ancrée en bas sur smartphone (choix empilés, densité réduite, fond du Studio flouté derrière) ; dialogue centré sur aplat opaque conservé à partir de `md`.
 - 5 sept 2026 — DnD mobile renforcé : appui long tactile, poignées plus confortables et grilles chapitres plus aérées en smartphone.
-- 19 août 2026 — S5-L : copy « Le film de sa vie » (plus de timeline / acte / banque / Gérer).
-- 17 août 2026 — en-tête type + carte.
 
 Document canonique de l'Étape 5 du wizard hommage. Complète [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (ticket S5) et [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) (§ Step 5).
 
@@ -116,7 +116,7 @@ StoryboardMontageStep.tsx          ← orchestrateur (DnDContext, magic, fetch m
 | `CanvasGhostSlot.tsx` | Emplacements vides capacité | ✅ actif |
 | `ChapterActionCluster.tsx` | Boutons d'action chapitre | ✅ actif |
 | `MediaBankColumn.tsx` | Colonne banque + CTA Composition Magique | ✅ actif |
-| `BankDraggableMediaTile.tsx` | Tuile banque draggable, poignée tactile mobile | ✅ actif |
+| `BankDraggableMediaTile.tsx` | Tuile banque draggable — desktop = carte entière, mobile = poignée | ✅ actif |
 | `MontageOnboardingGate.tsx` | Onboarding magie / manuel | ✅ actif |
 | `MagicCinematicOverlay.tsx` | Overlay cinématographique | ✅ actif |
 | `ChapterRefinementDrawer.tsx` | Tiroir Gérer (surplus, tri) | ✅ actif |

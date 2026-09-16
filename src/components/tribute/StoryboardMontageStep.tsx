@@ -18,6 +18,7 @@ import {
   MontageMultiDragOverlay,
   type MontageMediaCardCopy,
 } from "@/src/components/tribute/montage/MontageMediaCard";
+import { CanvasInsertLine } from "@/src/components/tribute/storyboard/CanvasInsertLine";
 import type { ChapterActionClusterCopy } from "@/src/components/tribute/storyboard/ChapterActionCluster";
 import {
   ChapterRefinementDrawer,
@@ -290,8 +291,10 @@ export function StoryboardMontageStep({
     dropTargetChapterId,
     dropTargetBank,
     dragOverChapterIndex,
+    insertPreview,
     handleDragStart,
     handleDragOver,
+    handleDragMove,
     handleDragEnd,
     handleDragCancel,
   } = useMontageDnd({
@@ -310,7 +313,37 @@ export function StoryboardMontageStep({
     [activeDragIds, mediaById],
   );
 
+  const ignoreDirectorClickRef = useRef(false);
+
+  const releaseDirectorClick = useCallback(() => {
+    window.setTimeout(() => {
+      ignoreDirectorClickRef.current = false;
+    }, 80);
+  }, []);
+
+  const handleDragStartGuarded = useCallback(
+    (...args: Parameters<typeof handleDragStart>) => {
+      ignoreDirectorClickRef.current = true;
+      handleDragStart(...args);
+    },
+    [handleDragStart],
+  );
+
+  const handleDragEndGuarded = useCallback(
+    (...args: Parameters<typeof handleDragEnd>) => {
+      handleDragEnd(...args);
+      releaseDirectorClick();
+    },
+    [handleDragEnd, releaseDirectorClick],
+  );
+
+  const handleDragCancelGuarded = useCallback(() => {
+    handleDragCancel();
+    releaseDirectorClick();
+  }, [handleDragCancel, releaseDirectorClick]);
+
   const handleMediaClick = useCallback((assetId: string) => {
+    if (ignoreDirectorClickRef.current) return;
     setDirectorAssetId(assetId);
   }, []);
 
@@ -437,10 +470,11 @@ export function StoryboardMontageStep({
         sensors={sensors}
         collisionDetection={storyboardCollisionDetection}
         autoScroll={autoScroll}
-        onDragStart={handleDragStart}
+        onDragStart={handleDragStartGuarded}
         onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-        onDragCancel={handleDragCancel}
+        onDragMove={handleDragMove}
+        onDragEnd={handleDragEndGuarded}
+        onDragCancel={handleDragCancelGuarded}
       >
         {storyboard.chapters.length > 0 ? (
           <div
@@ -509,7 +543,15 @@ export function StoryboardMontageStep({
           </div>
         ) : null}
 
+        {insertPreview?.line ? (
+          <CanvasInsertLine
+            chapterIndex={dragOverChapterIndex ?? overlaySourceChapterIndex}
+            line={insertPreview.line}
+          />
+        ) : null}
+
         <DragOverlay
+          style={{ zIndex: 200 }}
           dropAnimation={{
             duration: 280,
             easing: "cubic-bezier(0.16, 1, 0.3, 1)",

@@ -148,7 +148,7 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/25 to-transparent" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-6 pb-10 pt-12 md:px-10 md:pt-16">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col px-6 pb-10 pt-12 md:px-10 md:pt-16">
         <header className="studio-shell-chrome relative mb-10 transition-opacity duration-500">
           <h1 className="sr-only">{welcomeSrOnly}</h1>
 

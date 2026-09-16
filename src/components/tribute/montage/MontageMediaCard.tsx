@@ -49,6 +49,11 @@ type SurfaceProps = {
     attributes: DraggableAttributes;
     listeners: SyntheticListenerMap | undefined;
   };
+  /** Desktop : PointerSensor sur le bouton aperçu (évite le conflit parent/bouton). */
+  wholeCardDrag?: {
+    attributes: DraggableAttributes;
+    listeners: SyntheticListenerMap | undefined;
+  };
   onCardClick?: (assetId: string, event: React.MouseEvent) => void;
   onRemove?: (assetId: string) => void;
 };
@@ -92,6 +97,7 @@ function MontageMediaCardSurface({
   onToggleSelect,
   toggleSelectAria = "",
   dragHandleProps,
+  wholeCardDrag,
   onCardClick,
   onRemove,
 }: SurfaceProps) {
@@ -118,19 +124,35 @@ function MontageMediaCardSurface({
       }
     >
           {onCardClick ? (
-        <button
-          type="button"
-          className={`absolute inset-0 z-[1] block h-full w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${theme.focusRing}`}
+        <div
+          role="button"
+          tabIndex={0}
+          className={`absolute inset-0 z-[1] block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${theme.focusRing} ${
+            wholeCardDrag
+              ? "cursor-grab touch-none active:cursor-grabbing"
+              : "cursor-pointer"
+          }`}
           aria-label={`${copy.clickToEdit} · ${item.displayName}`}
           aria-pressed={isSelected}
-          onClick={(event) => onCardClick(item.assetId, event)}
+          {...(wholeCardDrag?.attributes ?? {})}
+          {...(wholeCardDrag?.listeners ?? {})}
+          onClick={(event) => {
+            if (event.defaultPrevented) return;
+            onCardClick(item.assetId, event);
+          }}
+          onKeyDown={(event) => {
+            if (wholeCardDrag) return;
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();
+            onCardClick(item.assetId, event as unknown as React.MouseEvent);
+          }}
         >
           <MediaAssetThumb
             isVideo={item.isVideo}
             src={item.previewUrl}
             fallbackSrc={item.fullPreviewUrl}
           />
-        </button>
+        </div>
       ) : (
         <MediaAssetThumb
           isVideo={item.isVideo}
@@ -160,6 +182,7 @@ function MontageMediaCardSurface({
       {selectable && onToggleSelect && !isOverlay ? (
         <button
           type="button"
+          onPointerDown={(event) => event.stopPropagation()}
           onClick={(event) => {
             event.stopPropagation();
             onToggleSelect(event);
@@ -198,6 +221,7 @@ function MontageMediaCardSurface({
           type="button"
           className="absolute bottom-2 left-2 z-[20] flex h-7 w-7 items-center justify-center rounded-full border border-red-500/15 bg-black/45 text-red-400/70 opacity-0 backdrop-blur-md transition-all duration-200 hover:border-red-500/30 hover:text-red-400/90 group-hover/card:opacity-100"
           aria-label={isDuplicate ? copy.deleteDuplicate : copy.remove}
+          onPointerDown={(event) => event.stopPropagation()}
           onClick={(event) => {
             event.stopPropagation();
             onRemove(item.assetId);
@@ -300,18 +324,19 @@ export function MontageMediaCard({
   });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: isDragging ? undefined : CSS.Transform.toString(transform),
+    transition: isDragging ? undefined : transition,
   };
   const isGhost = isDragging || isGroupDragging;
   const finePointer = useFinePointer();
   const dragFromWholeCard = finePointer;
 
-  const cardDragListeners = dragFromWholeCard ? listeners : undefined;
-  const cardDragAttributes = dragFromWholeCard ? attributes : undefined;
   const handleDragProps = dragFromWholeCard
     ? undefined
     : { attributes, listeners };
+  const wholeCardDrag = dragFromWholeCard
+    ? { attributes, listeners }
+    : undefined;
 
   return (
     <div
@@ -324,9 +349,7 @@ export function MontageMediaCard({
             ? "ring-2 ring-teal-400/70 shadow-[0_0_20px_rgba(45,212,191,0.14)]"
             : "ring-2 ring-teal-400 shadow-[0_0_24px_rgba(45,212,191,0.28)]"
           : ""
-      } ${dragFromWholeCard ? "cursor-grab touch-none active:cursor-grabbing" : ""}`}
-      {...cardDragAttributes}
-      {...cardDragListeners}
+      }`}
     >
       {magicEntrance ? (
         <div
@@ -360,23 +383,26 @@ export function MontageMediaCard({
             onRemove={onRemove}
             showDragHandle={!dragFromWholeCard}
             dragHandleProps={handleDragProps}
+            wholeCardDrag={wholeCardDrag}
           />
         </div>
       ) : (
       <motion.div
-        layout
+        layout={!dragFromWholeCard}
         variants={montageCardVariants}
         initial="hidden"
         animate="visible"
         whileHover={
-          isGhost
+          isGhost || dragFromWholeCard
             ? undefined
             : {
                 scale: 1.03,
                 boxShadow: theme.cardHoverShadow,
               }
         }
-        whileTap={isGhost ? undefined : { scale: 0.98 }}
+        whileTap={
+          isGhost || dragFromWholeCard ? undefined : { scale: 0.98 }
+        }
         transition={{ duration: 0.3, ease: EASE_OUT_LUXE }}
       >
         <MontageMediaCardSurface
@@ -398,6 +424,7 @@ export function MontageMediaCard({
           onRemove={onRemove}
           showDragHandle={!dragFromWholeCard}
           dragHandleProps={handleDragProps}
+          wholeCardDrag={wholeCardDrag}
         />
       </motion.div>
       )}
@@ -433,14 +460,14 @@ export function MontageMediaCardDragOverlay({
     <div
       className={
         elevated
-          ? "w-36 rotate-[2deg] scale-105 sm:w-44"
+          ? "w-52 rotate-[3deg] scale-110 sm:w-64 sm:scale-125"
           : "w-full"
       }
       style={
         elevated
           ? {
-              filter: "drop-shadow(0 24px 48px rgba(0,0,0,0.55))",
-              boxShadow: theme.cardHoverShadow,
+              filter: "drop-shadow(0 32px 64px rgba(0,0,0,0.65))",
+              boxShadow: theme.overlayShadow,
             }
           : { boxShadow: theme.cardHoverShadow }
       }
@@ -482,7 +509,7 @@ export function MontageMultiDragOverlay({
 
   return (
     <div
-      className="relative w-[min(100%,11rem)] pb-9 sm:w-44"
+      className="relative w-[min(100%,16rem)] pb-9 sm:w-64"
       style={{ filter: "drop-shadow(0 24px 48px rgba(0,0,0,0.55))" }}
     >
       {stack.map((item, stackIndex) => (

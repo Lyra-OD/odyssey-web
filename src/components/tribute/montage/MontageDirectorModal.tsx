@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronLeft,
@@ -157,10 +158,11 @@ export function MontageDirectorModal({
           .replace("{total}", String(navigationOrder.length));
 
   const slideOffset = slideDirection === 0 ? 0 : slideDirection * 20;
+  const previewMaxH = "max-h-[min(86vh,56rem)]";
 
-  return (
+  const dialog = (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-[#020202]/98 backdrop-blur-3xl"
+      className="fixed inset-0 z-[80] flex flex-col bg-[#020202]/98 backdrop-blur-3xl"
       role="dialog"
       aria-modal="true"
       aria-label={item.displayName}
@@ -198,15 +200,15 @@ export function MontageDirectorModal({
         </motion.button>
       </motion.div>
 
-      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center px-4 pb-28 pt-16 md:px-8">
+      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center px-4 pb-28 pt-16 md:px-10 lg:px-16">
         <motion.div
-          className="relative w-full max-w-[min(96vw,1200px)]"
+          className="relative flex h-[min(86vh,56rem)] w-full max-w-[min(96vw,90rem)] items-center justify-center"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, ease: EASE_OUT_LUXE }}
         >
           {(item.fullPreviewUrl ?? item.previewUrl) ? (
-            <div className="relative mx-auto inline-block max-h-[min(78vh,900px)] max-w-full">
+            <div className={`relative mx-auto inline-block ${previewMaxH} max-w-full`}>
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={item.assetId}
@@ -220,7 +222,7 @@ export function MontageDirectorModal({
                   <MediaVideoPreview
                     src={item.fullPreviewUrl ?? item.previewUrl ?? ""}
                     controls
-                    className={`block max-h-[min(78vh,900px)] max-w-full object-contain ${
+                    className={`block ${previewMaxH} w-auto max-w-full object-contain ${
                       isExcluded ? "opacity-40 grayscale" : ""
                     }`}
                   />
@@ -235,7 +237,7 @@ export function MontageDirectorModal({
                     onClick={(e) => {
                       onSetFocalPoint(item.assetId, focalFromImageClick(e));
                     }}
-                    className={`block max-h-[min(78vh,900px)] max-w-full cursor-crosshair object-contain ${
+                    className={`block ${previewMaxH} w-auto max-w-full cursor-crosshair object-contain ${
                       isExcluded ? "opacity-40 grayscale" : ""
                     }`}
                     layout={false}
@@ -381,4 +383,7 @@ export function MontageDirectorModal({
       </div>
     </motion.div>
   );
+
+  if (typeof document === "undefined") return dialog;
+  return createPortal(dialog, document.body);
 }

@@ -52,13 +52,15 @@ export function BankDraggableMediaTile({
       } satisfies StoryboardMediaDragData,
     });
 
+  // Overlay suit le curseur : la tuile source reste en place (évite le double fantôme).
   const style = {
-    transform: CSS.Translate.toString(transform),
+    transform: isDragging ? undefined : CSS.Translate.toString(transform),
   };
 
   const isGhost = isDragging || (isGroupDragging && isSelected);
-  const cardDragListeners = finePointer ? listeners : undefined;
-  const cardDragAttributes = finePointer ? attributes : undefined;
+  const wholeCardDrag = finePointer
+    ? { attributes, listeners }
+    : undefined;
   const handleDragListeners = finePointer ? undefined : listeners;
   const handleDragAttributes = finePointer ? undefined : attributes;
 
@@ -76,12 +78,12 @@ export function BankDraggableMediaTile({
       style={style}
       className={`group/tile relative aspect-video w-full ${
         isGhost ? "z-10 opacity-40" : ""
-      } ${finePointer ? "touch-none" : ""}`}
-      {...cardDragListeners}
-      {...cardDragAttributes}
+      }`}
     >
       <div
-        className={`relative h-full w-full overflow-hidden rounded-xl ring-1 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 ${
+        className={`relative h-full w-full overflow-hidden rounded-xl ring-1 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isGhost ? "" : "hover:-translate-y-0.5"
+        } ${
           isSelected
             ? "ring-2 ring-teal-400/70 shadow-[0_0_20px_rgba(45,212,191,0.14)]"
             : "ring-white/10 hover:ring-white/20"
@@ -90,12 +92,17 @@ export function BankDraggableMediaTile({
           boxShadow: isSelected ? theme.cardHoverShadow : undefined,
         }}
       >
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           className={`absolute inset-0 z-[1] block h-full w-full ${
-            finePointer ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
+            wholeCardDrag
+              ? "cursor-grab touch-none active:cursor-grabbing"
+              : "cursor-pointer"
           }`}
           aria-label={`${copy.clickToEdit} · ${item.displayName}`}
+          {...(wholeCardDrag?.attributes ?? {})}
+          {...(wholeCardDrag?.listeners ?? {})}
           onClick={(event) => {
             if (event.shiftKey) {
               event.stopPropagation();
@@ -105,9 +112,15 @@ export function BankDraggableMediaTile({
             if (event.defaultPrevented) return;
             onOpenDirector(item.assetId);
           }}
+          onKeyDown={(event) => {
+            if (wholeCardDrag) return;
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();
+            onOpenDirector(item.assetId);
+          }}
         >
           {preview}
-        </button>
+        </div>
 
         {handleDragAttributes && handleDragListeners ? (
           <button
@@ -128,6 +141,7 @@ export function BankDraggableMediaTile({
 
         <button
           type="button"
+          onPointerDown={(event) => event.stopPropagation()}
           onClick={(event) => {
             event.stopPropagation();
             onToggleSelect(item.assetId);

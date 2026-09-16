@@ -122,6 +122,7 @@ export function StoryboardChapterBlock({
 
   const { setNodeRef: setDropRef } = useDroppable({
     id: storyboardChapterDroppableId(chapter.id),
+    disabled: !sortableEnabled,
   });
 
   const chapterStyle = {

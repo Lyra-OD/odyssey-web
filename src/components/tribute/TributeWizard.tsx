@@ -1551,11 +1551,13 @@ export function TributeWizard({
       ) : null}
     <div
       className={`wizard-shell relative mx-auto w-full ${
-        currentStep === 6
-          ? "max-w-4xl"
-          : currentStep >= 4
-            ? "max-w-3xl"
-            : "max-w-xl md:max-w-2xl"
+        currentStep === 5
+          ? "max-w-7xl"
+          : currentStep === 6
+            ? "max-w-4xl"
+            : currentStep >= 4
+              ? "max-w-3xl"
+              : "max-w-xl md:max-w-2xl"
       } ${step1Sky ? "z-10" : ""} ${
         currentStep === 1 && step1Parcours.showEssentialsPanel
           ? "mt-0"
@@ -2953,7 +2955,7 @@ export function TributeWizard({
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
           <div
             className={`mx-auto ${
-              currentStep >= 5 ? "max-w-3xl" : "max-w-xl"
+              currentStep === 5 ? "max-w-7xl" : "max-w-xl"
             }`}
           >
             {currentStep === 5 && isEditor ? (

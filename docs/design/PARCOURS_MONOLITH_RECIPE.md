@@ -105,7 +105,8 @@
 | 1 Essentials | overlay fixed · max-w-xl | fort (recette actuelle) |
 | 2 Invite | in-flow · max-w-xl | fort |
 | 3 Coffre | large · scroll | moyen |
-| 4–5 Studio | max-w-3xl | **allégé** (DnD dense) |
+| 4 Studio musique | max-w-3xl | allégé |
+| 5 Livre Ouvert | max-w-7xl | table de montage + DnD |
 | 6–7 Preview / checkout | max-w-xl–3xl | calme |
 
 **Prochaine factorisation :** composant `WizardMonolithShell` (frame + atmosphere + glass + slot footer CTA) · ciel persistant T2 en fond.
