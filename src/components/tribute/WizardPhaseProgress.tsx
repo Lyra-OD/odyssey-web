@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export type WizardTrailStar = {
   /** Numéro d'étape wizard réel (1–7, ou 3–5 pour Co-Créateur). */
@@ -28,6 +28,8 @@ type Props = {
   copy: WizardConstellationTrailCopy;
 };
 
+const ROW_H = 64;
+
 function replaceTokens(template: string, tokens: Record<string, string>): string {
   return Object.entries(tokens).reduce(
     (acc, [key, value]) => acc.replace(`{${key}}`, value),
@@ -35,31 +37,8 @@ function replaceTokens(template: string, tokens: Record<string, string>): string
   );
 }
 
-function TrailStarGlyph({ current }: { current: boolean }) {
-  const size = current ? 34 : 24;
-  return (
-    <svg
-      className={
-        current
-          ? "wizard-trail-star wizard-trail-star-current"
-          : "wizard-trail-star wizard-trail-star-born"
-      }
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      aria-hidden
-    >
-      <path
-        d="M12 1.2 13.4 8.6 21 10.2 13.4 11.8 12 19.2 10.6 11.8 3 10.2 10.6 8.6 Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
 /**
- * Fil rangée droite boomer-proof : même hauteur, segments horizontaux
- * demi-gap (longueur correcte), largeur max-w-xl.
+ * Fil colonnes — hit unique nœud+titre ; ici plus gros ; passés plus petits.
  */
 export function WizardPhaseProgress({
   stars,
@@ -69,19 +48,55 @@ export function WizardPhaseProgress({
   copy,
 }: Props) {
   const reduceMotion = useReducedMotion();
+  const [flashStep, setFlashStep] = useState<number | null>(null);
+
+  useEffect(() => {
+    setFlashStep(currentStep);
+    if (reduceMotion) return;
+    const t = window.setTimeout(() => setFlashStep(null), 420);
+    return () => window.clearTimeout(t);
+  }, [currentStep, reduceMotion]);
 
   const currentStar = stars.find((star) => star.step === currentStep);
   const hereLabel =
     currentStar?.anchorLabel?.trim() || currentStar?.ariaName || "";
 
-  const bornCount = useMemo(
-    () => stars.filter((star) => star.step <= furthestStep).length,
-    [stars, furthestStep],
-  );
+  const n = Math.max(stars.length, 1);
+
+  const lastBornIndex = useMemo(() => {
+    let last = -1;
+    stars.forEach((star, index) => {
+      if (star.step <= furthestStep) last = index;
+    });
+    return last;
+  }, [stars, furthestStep]);
+
+  const bornCount = lastBornIndex + 1;
+  const currentIndex = stars.findIndex((star) => star.step === currentStep);
+
+  const filamentPoints = useMemo(() => {
+    if (lastBornIndex < 1) return "";
+    const pts: string[] = [];
+    for (let i = 0; i <= lastBornIndex; i++) {
+      pts.push(`${i + 0.5},0.5`);
+    }
+    return pts.join(" ");
+  }, [lastBornIndex]);
+
+  const bridgePoints = useMemo(() => {
+    if (currentIndex < 1) return "";
+    if (currentIndex > lastBornIndex) return "";
+    return `${currentIndex - 0.5},0.5 ${currentIndex + 0.5},0.5`;
+  }, [currentIndex, lastBornIndex]);
+
+  const futureGlowStyle =
+    currentIndex >= 0
+      ? { left: `${((currentIndex + 0.5) / n) * 100}%` }
+      : undefined;
 
   return (
     <nav
-      className="wizard-trail-sky relative mb-7 w-full md:mb-10"
+      className="wizard-trail relative mb-7 w-full overflow-visible md:mb-10"
       aria-label={copy.ariaLabel}
     >
       {hereLabel ? (
@@ -90,43 +105,109 @@ export function WizardPhaseProgress({
         </p>
       ) : null}
 
-      <ol className="mx-auto flex w-full max-w-md px-3 sm:max-w-lg md:max-w-xl">
-        {stars.map((star, index) => {
-          const isBorn = star.step <= furthestStep;
-          const isCurrent = isBorn && star.step === currentStep;
-          const hasAnchor = Boolean(star.anchorLabel?.trim());
-          const showStrongTitle = isCurrent && hasAnchor;
-          const showWhisperTitle = isBorn && !isCurrent && hasAnchor;
-          const goLabel = star.anchorLabel?.trim() || star.ariaName;
+      {futureGlowStyle ? (
+        <span
+          className="wizard-trail-future-glow"
+          style={futureGlowStyle}
+          aria-hidden
+        />
+      ) : null}
 
-          const prevBorn =
-            index > 0 && stars[index - 1]!.step <= furthestStep;
-          const nextBorn =
-            index < stars.length - 1 &&
-            stars[index + 1]!.step <= furthestStep;
-          const leftOn = isBorn && prevBorn;
-          const rightOn = isBorn && nextBorn;
-          const leftLive = leftOn && isCurrent;
-          const rightLive =
-            rightOn && stars[index + 1]!.step === currentStep;
-
-          return (
-            <li
-              key={star.step}
-              className="group/trail flex min-w-0 flex-1 flex-col items-stretch"
+      <div className="wizard-trail-band relative z-[1] w-full overflow-visible">
+        {/* Filament aligné sur la rangée des nœuds */}
+        <div className="wizard-trail-row relative w-full" style={{ height: ROW_H }}>
+          {lastBornIndex >= 1 ? (
+            <svg
+              className="pointer-events-none absolute inset-0 z-[1] h-full w-full overflow-visible"
+              viewBox={`0 0 ${n} 1`}
+              preserveAspectRatio="none"
+              aria-hidden
             >
-              <div className="flex h-14 items-center sm:h-16">
-                <span
-                  className={`h-px flex-1 ${
-                    leftOn
-                      ? leftLive
-                        ? "wizard-trail-segment wizard-trail-segment-live"
-                        : "wizard-trail-segment"
-                      : "bg-transparent"
-                  }`}
-                  aria-hidden
+              <polyline
+                className="wizard-trail-filament"
+                points={filamentPoints}
+                fill="none"
+                vectorEffect="non-scaling-stroke"
+              />
+              {bridgePoints ? (
+                <polyline
+                  className="wizard-trail-bridge"
+                  points={bridgePoints}
+                  fill="none"
+                  vectorEffect="non-scaling-stroke"
                 />
+              ) : null}
+            </svg>
+          ) : null}
+        </div>
 
+        {/* Une colonne = nœud + titre (hit unique pour hover cohérent) */}
+        <ol
+          className="relative z-[2] -mt-[64px] flex w-full"
+          style={{ minHeight: ROW_H }}
+        >
+          {stars.map((star, index) => {
+            const isBorn = star.step <= furthestStep;
+            const isCurrent = isBorn && star.step === currentStep;
+            const isFlashing = flashStep === star.step;
+            const hasAnchor = Boolean(star.anchorLabel?.trim());
+            const showStrongTitle = isCurrent && hasAnchor;
+            const showWhisperTitle = isBorn && !isCurrent && hasAnchor;
+            const goLabel = star.anchorLabel?.trim() || star.ariaName;
+            const heightMod = index % 3;
+
+            const labelClass = showStrongTitle
+              ? "wizard-trail-label wizard-trail-label-current"
+              : showWhisperTitle
+                ? "wizard-trail-label wizard-trail-label-past"
+                : "wizard-trail-label wizard-trail-label-empty";
+
+            const node = isBorn ? (
+              <span
+                className={[
+                  "wizard-trail-node",
+                  isCurrent
+                    ? "wizard-trail-node-current"
+                    : "wizard-trail-node-born",
+                  !isCurrent && heightMod === 1
+                    ? "wizard-trail-node-short"
+                    : "",
+                  !isCurrent && heightMod === 2
+                    ? "wizard-trail-node-tall"
+                    : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                style={{ height: ROW_H }}
+                aria-hidden
+              >
+                {isCurrent ? (
+                  <>
+                    <span className="wizard-trail-orb" />
+                    <span className="wizard-trail-dust">
+                      {Array.from({ length: 26 }, (_, i) => (
+                        <i key={i} />
+                      ))}
+                    </span>
+                  </>
+                ) : null}
+                {isFlashing ? (
+                  <span className="wizard-trail-select-ring" />
+                ) : null}
+                <span className="wizard-trail-beam wizard-trail-beam-v" />
+                <span className="wizard-trail-beam wizard-trail-beam-h" />
+                <span className="wizard-trail-beam wizard-trail-beam-d" />
+                <span className="wizard-trail-core" />
+              </span>
+            ) : (
+              <span style={{ height: ROW_H }} className="block w-full" aria-hidden />
+            );
+
+            return (
+              <li
+                key={star.step}
+                className="relative flex min-w-0 flex-1 flex-col items-center"
+              >
                 {isBorn ? (
                   <motion.button
                     type="button"
@@ -136,11 +217,9 @@ export function WizardPhaseProgress({
                       label: goLabel,
                     })}
                     aria-current={isCurrent ? "step" : undefined}
-                    className={`wizard-trail-hit relative z-[1] flex shrink-0 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50 ${
-                      isCurrent ? "h-14 w-14" : "h-12 w-12"
-                    }`}
+                    className="wizard-trail-hit relative flex w-full flex-col items-center focus-visible:outline-none"
                     initial={
-                      reduceMotion ? false : { opacity: 0, scale: 0.2 }
+                      reduceMotion ? false : { opacity: 0, scale: 0.25 }
                     }
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{
@@ -148,59 +227,29 @@ export function WizardPhaseProgress({
                       ease: [0.16, 1, 0.3, 1],
                       delay: reduceMotion
                         ? 0
-                        : Math.max(0, (bornCount - 1) * 0.02),
+                        : Math.max(0, (bornCount - 1) * 0.03),
                     }}
                   >
-                    {isCurrent ? (
-                      <>
-                        <span className="wizard-trail-orb" aria-hidden />
-                        <span className="wizard-trail-halo" aria-hidden />
-                        <span className="wizard-trail-dust" aria-hidden>
-                          <i />
-                          <i />
-                          <i />
-                          <i />
-                        </span>
-                      </>
-                    ) : null}
-                    <TrailStarGlyph current={isCurrent} />
+                    {node}
+                    <span className={labelClass} aria-hidden>
+                      {showStrongTitle || showWhisperTitle
+                        ? star.anchorLabel
+                        : "\u00a0"}
+                    </span>
                   </motion.button>
                 ) : (
-                  <span className="h-12 w-12 shrink-0" aria-hidden />
+                  <div className="flex w-full flex-col items-center" aria-hidden>
+                    {node}
+                    <span className="wizard-trail-label wizard-trail-label-empty">
+                      {"\u00a0"}
+                    </span>
+                  </div>
                 )}
-
-                <span
-                  className={`h-px flex-1 ${
-                    rightOn
-                      ? rightLive
-                        ? "wizard-trail-segment wizard-trail-segment-live"
-                        : "wizard-trail-segment"
-                      : "bg-transparent"
-                  }`}
-                  aria-hidden
-                />
-              </div>
-
-              <span
-                className={`mt-1 min-h-[1.25rem] px-0.5 text-center ${
-                  showStrongTitle
-                    ? "font-[family-name:var(--font-label)] text-sm font-normal tracking-wide text-white sm:text-base"
-                    : showWhisperTitle
-                      ? "text-[11px] font-light tracking-wide text-zinc-400 sm:text-xs"
-                      : "text-transparent text-[11px]"
-                }`}
-                aria-hidden
-              >
-                <span className="mx-auto block max-w-full truncate">
-                  {showStrongTitle || showWhisperTitle
-                    ? star.anchorLabel
-                    : "\u00a0"}
-                </span>
-              </span>
-            </li>
-          );
-        })}
-      </ol>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </nav>
   );
 }

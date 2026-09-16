@@ -1700,63 +1700,154 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   .wizard-step-enter { animation: none; }
 }
 
-/* Fil constellation wizard — rangée boomer-proof + présence */
-.wizard-trail-sky {
-  padding-block: 0.35rem 0.15rem;
+/* Fil constellation wizard — colonnes de lumière (mono-teal, pas de poussière) */
+.wizard-trail {
+  overflow: visible;
+  padding-block: 0.35rem 0.1rem;
+}
+.wizard-trail-band {
+  padding-inline: 0.35rem 0.5rem;
+  overflow: visible;
+}
+/* Glow vers le futur — ancré sur l’ici, fade soft à droite */
+.wizard-trail-future-glow {
+  pointer-events: none;
+  position: absolute;
+  top: 10%;
+  z-index: 0;
+  height: 70%;
+  width: min(58%, 22rem);
+  transform: translateX(-6%);
   background: radial-gradient(
-    ellipse 70% 85% at 50% 40%,
-    rgba(45, 212, 191, 0.06) 0%,
-    transparent 68%
+    ellipse 90% 75% at 12% 50%,
+    rgba(45, 212, 191, 0.16) 0%,
+    rgba(45, 212, 191, 0.06) 42%,
+    transparent 72%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 14%,
+    #000 58%,
+    transparent 100%
   );
 }
+.wizard-trail-row {
+  overflow: visible;
+}
+.wizard-trail-filament {
+  stroke: rgba(45, 212, 191, 0.5);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(45, 212, 191, 0.35));
+}
+/* F3-B — pont précédent→ici : pulse d’opacité soft (pas de dash/laser) */
+.wizard-trail-bridge {
+  stroke: rgba(94, 234, 212, 0.75);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 5px rgba(45, 212, 191, 0.4));
+  animation: wizard-trail-bridge-pulse 3.2s ease-in-out infinite;
+}
 .wizard-trail-hit {
-  transition: color 200ms ease, transform 200ms ease;
+  overflow: visible;
+  width: 100%;
+  max-width: 5.5rem;
+  border-radius: 0.5rem;
 }
-.wizard-trail-hit:hover .wizard-trail-star-born {
+.wizard-trail-hit:focus-visible {
+  box-shadow: 0 0 0 1.5px rgba(45, 212, 191, 0.45);
+}
+/* F4 — hover vivant : nœud + titre */
+.wizard-trail-hit .wizard-trail-node {
+  transition: filter 0.3s ease;
+}
+.wizard-trail-hit:hover .wizard-trail-node {
+  filter: brightness(1.12);
+  animation: wizard-trail-hover-drift 2.6s ease-in-out infinite;
+}
+.wizard-trail-hit:hover .wizard-trail-core {
+  box-shadow:
+    0 0 10px rgba(45, 212, 191, 0.65),
+    0 0 18px rgba(45, 212, 191, 0.3);
+}
+.wizard-trail-hit:hover .wizard-trail-beam {
+  opacity: 1;
+  filter: brightness(1.15);
+}
+.wizard-trail-hit:hover .wizard-trail-label-past,
+.wizard-trail-hit:hover .wizard-trail-label-current {
   color: rgb(153, 246, 228);
-  filter: drop-shadow(0 0 16px rgba(45, 212, 191, 0.7));
-  transform: scale(1.1);
+  text-shadow: 0 0 12px rgba(45, 212, 191, 0.45);
+  transform: scale(1.08);
 }
-.wizard-trail-star {
-  position: relative;
-  z-index: 2;
-  display: block;
-  color: rgba(94, 234, 212, 0.95);
-  filter: drop-shadow(0 0 12px rgba(45, 212, 191, 0.55));
-  transition: filter 200ms ease, transform 200ms ease, color 200ms ease;
+.wizard-trail-label {
+  margin-top: 0.35rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  text-transform: uppercase;
+  transition:
+    color 0.3s ease,
+    text-shadow 0.3s ease,
+    transform 0.3s ease;
 }
-.wizard-trail-star-current {
+.wizard-trail-label-current {
+  font-family: var(--font-label), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
   color: rgb(255, 255, 255);
-  filter: drop-shadow(0 0 20px rgba(45, 212, 191, 1));
+}
+@media (min-width: 640px) {
+  .wizard-trail-label-current {
+    font-size: 0.9375rem;
+  }
+}
+.wizard-trail-label-past {
+  font-size: 0.5625rem;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  color: rgb(113, 113, 122);
+}
+@media (min-width: 640px) {
+  .wizard-trail-label-past {
+    font-size: 0.625rem;
+  }
+}
+.wizard-trail-label-empty {
+  font-size: 0.5625rem;
+  color: transparent;
+  min-height: 1.1rem;
+}
+.wizard-trail-node {
+  position: relative;
+  display: flex;
+  width: 1.75rem;
+  align-items: center;
+  justify-content: center;
 }
 .wizard-trail-orb {
   pointer-events: none;
   position: absolute;
-  inset: 0.2rem;
+  left: 50%;
+  top: 50%;
   z-index: 0;
+  height: 2.6rem;
+  width: 2.6rem;
+  transform: translate(-50%, -50%);
   border-radius: 9999px;
   background: radial-gradient(
     circle,
-    rgba(45, 212, 191, 0.62) 0%,
-    rgba(34, 211, 238, 0.28) 42%,
-    transparent 70%
+    rgba(45, 212, 191, 0.28) 0%,
+    rgba(45, 212, 191, 0.1) 48%,
+    transparent 72%
   );
-  animation: wizard-trail-breath 3.6s ease-in-out infinite;
-}
-.wizard-trail-halo {
-  pointer-events: none;
-  position: absolute;
-  inset: -0.45rem;
-  z-index: 0;
-  border-radius: 9999px;
-  background: radial-gradient(
-    circle,
-    rgba(45, 212, 191, 0.32) 0%,
-    rgba(34, 211, 238, 0.1) 50%,
-    transparent 74%
-  );
-  animation: wizard-trail-breath 3.6s ease-in-out infinite;
-  animation-delay: 0.35s;
+  animation: wizard-trail-breath-orb 3.4s ease-in-out infinite;
 }
 .wizard-trail-dust {
   pointer-events: none;
@@ -1767,59 +1858,391 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 .wizard-trail-dust i {
   position: absolute;
   display: block;
-  height: 3px;
-  width: 3px;
+  height: 1.5px;
+  width: 1.5px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(94, 234, 212, 0.85);
   opacity: 0;
-  animation: wizard-trail-dust 2.8s ease-in-out infinite;
+  animation: wizard-trail-dust 3.2s ease-in-out infinite;
 }
 .wizard-trail-dust i:nth-child(1) {
-  left: 8%;
-  top: 12%;
+  left: 14%;
+  top: 24%;
   animation-delay: 0s;
 }
 .wizard-trail-dust i:nth-child(2) {
-  right: 6%;
-  top: 18%;
-  animation-delay: 0.55s;
+  right: 16%;
+  top: 22%;
+  animation-delay: 0.28s;
 }
 .wizard-trail-dust i:nth-child(3) {
-  left: 34%;
-  bottom: 8%;
-  animation-delay: 1.1s;
+  left: 32%;
+  top: 12%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 0.55s;
 }
 .wizard-trail-dust i:nth-child(4) {
-  right: 24%;
+  right: 28%;
+  top: 38%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 0.82s;
+}
+.wizard-trail-dust i:nth-child(5) {
+  left: 22%;
   bottom: 20%;
-  height: 2px;
-  width: 2px;
+  animation-delay: 1.1s;
+}
+.wizard-trail-dust i:nth-child(6) {
+  right: 20%;
+  bottom: 24%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 1.4s;
+}
+.wizard-trail-dust i:nth-child(7) {
+  left: 46%;
+  top: 10%;
+  height: 1px;
+  width: 1px;
   animation-delay: 1.7s;
 }
-.wizard-trail-filament {
-  stroke: rgba(45, 212, 191, 0.55);
-  stroke-width: 1.75;
+.wizard-trail-dust i:nth-child(8) {
+  left: 42%;
+  bottom: 14%;
+  animation-delay: 2s;
 }
-.wizard-trail-filament-live {
-  stroke: rgba(153, 246, 228, 0.95);
-  animation: wizard-trail-filament-pulse 2.4s ease-in-out infinite;
+.wizard-trail-dust i:nth-child(9) {
+  right: 38%;
+  top: 20%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 2.3s;
 }
-.wizard-trail-segment {
-  background: rgba(45, 212, 191, 0.45);
+.wizard-trail-dust i:nth-child(10) {
+  left: 20%;
+  top: 46%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 2.65s;
 }
-.wizard-trail-segment-live {
-  background: rgba(153, 246, 228, 0.85);
-  box-shadow: 0 0 8px rgba(45, 212, 191, 0.35);
+.wizard-trail-dust i:nth-child(11) {
+  left: 36%;
+  top: 16%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 0.12s;
+}
+.wizard-trail-dust i:nth-child(12) {
+  right: 30%;
+  top: 28%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 0.4s;
+}
+.wizard-trail-dust i:nth-child(13) {
+  left: 26%;
+  top: 36%;
+  animation-delay: 0.68s;
+}
+.wizard-trail-dust i:nth-child(14) {
+  right: 22%;
+  top: 44%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 0.95s;
+}
+.wizard-trail-dust i:nth-child(15) {
+  left: 40%;
+  bottom: 28%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 1.25s;
+}
+.wizard-trail-dust i:nth-child(16) {
+  right: 34%;
+  bottom: 18%;
+  animation-delay: 1.55s;
+}
+.wizard-trail-dust i:nth-child(17) {
+  left: 18%;
+  bottom: 34%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 1.85s;
+}
+.wizard-trail-dust i:nth-child(18) {
+  right: 18%;
+  top: 34%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 2.15s;
+}
+.wizard-trail-dust i:nth-child(19) {
+  left: 48%;
+  bottom: 24%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 2.4s;
+}
+.wizard-trail-dust i:nth-child(20) {
+  right: 42%;
+  bottom: 32%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 0.2s;
+}
+.wizard-trail-dust i:nth-child(21) {
+  left: 30%;
+  top: 44%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 0.75s;
+}
+.wizard-trail-dust i:nth-child(22) {
+  right: 26%;
+  bottom: 40%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 1.35s;
+}
+.wizard-trail-dust i:nth-child(23) {
+  left: 44%;
+  top: 32%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 1.95s;
+}
+.wizard-trail-dust i:nth-child(24) {
+  right: 36%;
+  top: 16%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 2.5s;
+}
+.wizard-trail-dust i:nth-child(25) {
+  left: 24%;
+  bottom: 42%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 0.5s;
+}
+.wizard-trail-dust i:nth-child(26) {
+  right: 28%;
+  bottom: 26%;
+  height: 1px;
+  width: 1px;
+  animation-delay: 2.8s;
+}
+/* Beam vertical soft — glow haut/bas autour du fil */
+/* Beam soft — vertical / horizontal / diagonale (F5 : un cran plus gros) */
+.wizard-trail-beam {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 0;
+  width: 1.75px;
+  height: 28px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to bottom,
+    rgba(45, 212, 191, 0) 0%,
+    rgba(45, 212, 191, 0.28) 30%,
+    rgba(94, 234, 212, 0.65) 50%,
+    rgba(45, 212, 191, 0.28) 70%,
+    rgba(45, 212, 191, 0) 100%
+  );
+  box-shadow: 0 0 6px rgba(45, 212, 191, 0.22);
+  transform: translate(-50%, -50%);
+}
+.wizard-trail-beam::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: -3px -4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to bottom,
+    rgba(45, 212, 191, 0) 0%,
+    rgba(45, 212, 191, 0.12) 35%,
+    rgba(45, 212, 191, 0.22) 50%,
+    rgba(45, 212, 191, 0.12) 65%,
+    rgba(45, 212, 191, 0) 100%
+  );
+  filter: blur(2.5px);
+}
+.wizard-trail-beam-v {
+  transform: translate(-50%, -50%);
+}
+.wizard-trail-beam-h {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0.85;
+}
+.wizard-trail-beam-d {
+  height: 24px;
+  transform: translate(-50%, -50%) rotate(42deg);
+  opacity: 0.7;
+}
+.wizard-trail-core {
+  position: relative;
+  z-index: 2;
+  display: block;
+  height: 6.5px;
+  width: 6.5px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(94, 234, 212, 0.9) 0%,
+    rgba(45, 212, 191, 0.45) 55%,
+    rgba(45, 212, 191, 0) 100%
+  );
+  box-shadow: 0 0 7px rgba(45, 212, 191, 0.45);
+}
+.wizard-trail-node-short .wizard-trail-beam-v,
+.wizard-trail-node-short .wizard-trail-beam-h {
+  height: 22px;
+}
+.wizard-trail-node-short .wizard-trail-beam-d {
+  height: 18px;
+}
+.wizard-trail-node-tall .wizard-trail-beam-v,
+.wizard-trail-node-tall .wizard-trail-beam-h {
+  height: 32px;
+}
+.wizard-trail-node-tall .wizard-trail-beam-d {
+  height: 28px;
+}
+.wizard-trail-node-born {
+  opacity: 0.78;
+}
+.wizard-trail-node-current {
+  opacity: 1;
+}
+.wizard-trail-node-current .wizard-trail-beam-v,
+.wizard-trail-node-current .wizard-trail-beam-h {
+  height: 44px;
+  width: 2.5px;
+  background: linear-gradient(
+    to bottom,
+    rgba(45, 212, 191, 0) 0%,
+    rgba(45, 212, 191, 0.4) 24%,
+    rgba(94, 234, 212, 0.9) 50%,
+    rgba(45, 212, 191, 0.4) 76%,
+    rgba(45, 212, 191, 0) 100%
+  );
+  box-shadow:
+    0 0 10px rgba(45, 212, 191, 0.4),
+    0 0 20px rgba(45, 212, 191, 0.18);
+  animation: wizard-trail-breath-beam 3.4s ease-in-out infinite;
+}
+.wizard-trail-node-current .wizard-trail-beam-d {
+  height: 38px;
+  width: 2px;
+  opacity: 0.9;
+  animation: wizard-trail-breath-beam 3.4s ease-in-out infinite;
+  animation-delay: 0.25s;
+}
+.wizard-trail-node-current .wizard-trail-beam::before {
+  inset: -6px -8px;
+  opacity: 0.8;
+}
+.wizard-trail-node-current .wizard-trail-core {
+  height: 11px;
+  width: 11px;
+  box-shadow:
+    0 0 12px rgba(45, 212, 191, 0.65),
+    0 0 22px rgba(45, 212, 191, 0.28);
+  animation: wizard-trail-breath-core 3.4s ease-in-out infinite;
+}
+.wizard-trail-select-ring {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  height: 2rem;
+  width: 2rem;
+  margin-left: -1rem;
+  margin-top: -1rem;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(94, 234, 212, 0.55);
+  box-shadow: 0 0 16px rgba(45, 212, 191, 0.45);
+  animation: wizard-trail-select 0.42s ease-out forwards;
 }
 
-@keyframes wizard-trail-breath {
+@keyframes wizard-trail-breath-core {
   0%,
   100% {
     transform: scale(1);
-    opacity: 0.78;
+    box-shadow:
+      0 0 8px rgba(45, 212, 191, 0.5),
+      0 0 14px rgba(45, 212, 191, 0.2);
+    opacity: 0.92;
   }
   50% {
-    transform: scale(1.5);
+    transform: scale(1.55);
+    box-shadow:
+      0 0 16px rgba(45, 212, 191, 0.85),
+      0 0 28px rgba(45, 212, 191, 0.4);
+    opacity: 1;
+  }
+}
+@keyframes wizard-trail-breath-beam {
+  0%,
+  100% {
+    filter: brightness(1);
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scaleY(1);
+  }
+  50% {
+    filter: brightness(1.25);
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleY(1.28);
+  }
+}
+.wizard-trail-node-current .wizard-trail-beam-h {
+  animation-name: wizard-trail-breath-beam-h;
+}
+.wizard-trail-node-current .wizard-trail-beam-d {
+  animation-name: wizard-trail-breath-beam-d;
+}
+@keyframes wizard-trail-breath-beam-h {
+  0%,
+  100% {
+    filter: brightness(1);
+    opacity: 0.72;
+    transform: translate(-50%, -50%) rotate(90deg) scaleY(1);
+  }
+  50% {
+    filter: brightness(1.25);
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(90deg) scaleY(1.28);
+  }
+}
+@keyframes wizard-trail-breath-beam-d {
+  0%,
+  100% {
+    filter: brightness(1);
+    opacity: 0.65;
+    transform: translate(-50%, -50%) rotate(42deg) scaleY(1);
+  }
+  50% {
+    filter: brightness(1.2);
+    opacity: 0.95;
+    transform: translate(-50%, -50%) rotate(42deg) scaleY(1.22);
+  }
+}
+
+@keyframes wizard-trail-breath-orb {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.35);
     opacity: 1;
   }
 }
@@ -1827,42 +2250,81 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   0%,
   100% {
     opacity: 0;
-    transform: translateY(0) scale(0.6);
+    transform: translateY(0) scale(0.5);
   }
   40% {
-    opacity: 1;
-    transform: translateY(-6px) scale(1);
+    opacity: 0.7;
+    transform: translateY(-3px) scale(1);
   }
   70% {
-    opacity: 0.28;
-  }
-}
-@keyframes wizard-trail-filament-pulse {
-  0%,
-  100% {
-    stroke-opacity: 0.5;
-  }
-  50% {
-    stroke-opacity: 1;
+    opacity: 0.18;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .wizard-trail-node-current .wizard-trail-core,
+  .wizard-trail-node-current .wizard-trail-beam-v,
+  .wizard-trail-node-current .wizard-trail-beam-h,
+  .wizard-trail-node-current .wizard-trail-beam-d,
   .wizard-trail-orb,
-  .wizard-trail-halo,
   .wizard-trail-dust i,
-  .wizard-trail-filament-live {
+  .wizard-trail-bridge {
     animation: none;
   }
-  .wizard-trail-orb,
-  .wizard-trail-halo {
-    opacity: 0.9;
+  .wizard-trail-select-ring {
+    animation: none;
+    opacity: 0.55;
   }
   .wizard-trail-dust i {
-    opacity: 0.45;
+    opacity: 0.4;
   }
-  .wizard-trail-hit:hover .wizard-trail-star-born {
+  .wizard-trail-orb {
+    opacity: 0.85;
+    transform: translate(-50%, -50%);
+  }
+  .wizard-trail-bridge {
+    opacity: 0.8;
+  }
+  .wizard-trail-hit:hover .wizard-trail-node {
+    animation: none;
+    transform: scale(1.12);
+  }
+  .wizard-trail-hit:hover .wizard-trail-label-past,
+  .wizard-trail-hit:hover .wizard-trail-label-current {
     transform: none;
+  }
+}
+
+@keyframes wizard-trail-select {
+  0% {
+    opacity: 1;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+@keyframes wizard-trail-bridge-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+@keyframes wizard-trail-hover-drift {
+  0%,
+  100% {
+    transform: scale(1.14) translate(0, 0);
+  }
+  35% {
+    transform: scale(1.17) translate(1.5px, -1.5px);
+  }
+  70% {
+    transform: scale(1.14) translate(-1.5px, 1px);
   }
 }
 

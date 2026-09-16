@@ -4,8 +4,8 @@
 **Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 16 sept 2026 — **Fil reset** : colonnes mono-teal + breath/poussière/glow futur ; pont pulse précédent→ici ; hover ; mini-caps ; F5 tailles + naissance + flash.
 - 16 sept 2026 — **N3 nav** : barre bas unique Retour|Suivant (étapes 2–5) ; Retour seul en 6–7 ; plus de Retour haut / footer step 3 dupliqué.
-- 16 sept 2026 — **Fil** : ligne **droite** (zig retiré) ; largeur `max-w-xl` ; segments demi-gap dans le flex (longueur correcte).
 - 16 sept 2026 — **N2f + N4** : polish rangée boomer-proof ; sticky prix craft retiré (total dès 6+).
 - 16 sept 2026 — **N2 fil** : constellation C — ancres Essentiel · Coffre · Musique · Composer · Son film.
 - 16 sept 2026 — **N1 fil** : `wizard_state.furthestStep` ; clic ne saute plus au-delà.
@@ -31,7 +31,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 | `src/components/contribute/SanctuaryUniverse.tsx` | Scène WebGL partagée (lab + wizard) — Hero, constellation, lift séparation Hero↔nom |
 | `src/components/contribute/useHeroNameSeparation.ts` | Spring séparation Hero ↔ nom (craft J2) |
 | `src/hooks/useWizardStoryboard.ts` | Domaine storyboard pur — resync chapitres, doublons, validation structurelle, estimation durée ; autosave reste dans `TributeWizard` via `persistStoryboardRef` |
-| `src/components/tribute/WizardPhaseProgress.tsx` | Fil constellation WOW — étoiles nées seulement (`furthestStep`), zig organique, filaments, halo ; ancres Essentiel · Coffre · Musique · Composer · Son film |
+| `src/components/tribute/WizardPhaseProgress.tsx` | Fil colonnes — pleine largeur, mono-teal, breath/poussière/glow futur, pont pulse, hover, naissance/flash ; ancres mini-caps |
 | `src/components/tribute/PackageDossierPanel.tsx` | Global off-canvas package selector (« Le Dossier ») — editorial trigger, exhaustive inclusions from `PACKAGE_MANIFEST`, cross-fade comparison, inline downgrade guard. Visible from Step 1 onward, replaces the per-step `WizardBasePackagePicker` and the short-lived `StoryboardPackageSwitcher` dropdown |
 | `src/lib/wizard/packageDossier.ts` | Resolves a package's exhaustive inclusion rows from `PACKAGE_MANIFEST` for the Dossier |
 | `src/components/StickyPriceBar.tsx` | Sticky total Soft Cap (`resolveWizardDisplayCart`) |
