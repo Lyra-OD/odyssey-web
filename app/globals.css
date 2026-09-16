@@ -1754,7 +1754,6 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 .wizard-trail-hit {
   overflow: visible;
   width: 100%;
-  max-width: 5.5rem;
   border-radius: 0.5rem;
 }
 .wizard-trail-hit:focus-visible {
@@ -1785,9 +1784,6 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 }
 .wizard-trail-label {
   margin-top: 0.35rem;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   text-align: center;
   text-transform: uppercase;
@@ -1797,21 +1793,24 @@ html[data-parcours-hub-idle] .studio-shell-halo {
     transform 0.3s ease;
 }
 .wizard-trail-label-current {
+  /* Ici : pas d’ellipsis — « Composer » doit rester lisible */
+  overflow: visible;
   font-family: var(--font-label), ui-sans-serif, system-ui, sans-serif;
   font-size: 0.8125rem;
   font-weight: 400;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
   color: rgb(255, 255, 255);
 }
 @media (min-width: 640px) {
   .wizard-trail-label-current {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
   }
 }
 .wizard-trail-label-past {
+  overflow: visible;
   font-size: 0.5625rem;
   font-weight: 300;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   color: rgb(113, 113, 122);
 }
 @media (min-width: 640px) {
