@@ -832,7 +832,7 @@
     "tracksReorderHint": "Drag to change the listening order.",
     "finishCta": "Finish and create the tribute",
     "back": "Back",
-    "next": "Next step",
+    "next": "Next",
     "completedMessage": "Your choices are saved. We will prepare your tribute with care.",
     "headerYears": "{birth} – {death}",
     "headerNameFallback": "Name to complete",

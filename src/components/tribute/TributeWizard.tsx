@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ArrowLeft,
   Calendar,
   Camera,
   Image as ImageIcon,
@@ -1618,40 +1617,13 @@ export function TributeWizard({
         </div>
       ) : null}
 
-      {/* Partout ailleurs : barre utilitaire mobile — navigation + langue +
-          session dans le même rang. Desktop : contrôles flottants inchangés. */}
-      {!step1Parcours.hubChromeHidden &&
-      (currentStep > (isEditor ? 3 : 1) || mobileUtilityTrailing) ? (
-        <div className="sticky top-0 z-[55] -mx-6 mb-4 flex h-12 items-center justify-between gap-3 border-b border-white/10 bg-black/40 px-6 backdrop-blur-xl md:hidden">
-          {currentStep > (isEditor ? 3 : 1) ? (
-            <button
-              type="button"
-              onClick={() => void goBack()}
-              className="inline-flex items-center gap-2 rounded-lg px-1 py-1 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-100"
-            >
-              <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
-              {copy.back}
-            </button>
-          ) : (
-            <span aria-hidden />
-          )}
-          {mobileUtilityTrailing ? (
-            <div className="flex shrink-0 items-center gap-3">
-              {mobileUtilityTrailing}
-            </div>
-          ) : null}
+      {/* Mobile : langue / session seulement — Retour vit dans la barre bas (N3). */}
+      {!step1Parcours.hubChromeHidden && mobileUtilityTrailing ? (
+        <div className="sticky top-0 z-[55] -mx-6 mb-4 flex h-12 items-center justify-end gap-3 border-b border-white/10 bg-black/40 px-6 backdrop-blur-xl md:hidden">
+          <div className="flex shrink-0 items-center gap-3">
+            {mobileUtilityTrailing}
+          </div>
         </div>
-      ) : null}
-
-      {currentStep > (isEditor ? 3 : 1) ? (
-        <button
-          type="button"
-          onClick={() => void goBack()}
-          className="mb-6 hidden items-center gap-2 rounded-lg px-1 py-1 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-100 md:inline-flex"
-        >
-          <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
-          {copy.back}
-        </button>
       ) : null}
 
       {!step1Parcours.hubChromeHidden ? (
@@ -1672,8 +1644,7 @@ export function TributeWizard({
           avatar/nom ne rejoint l'en-tête qu'à partir de l'Étape 2. */}
       <header
         className={`sticky z-50 -mx-6 mb-8 border-b border-white/10 bg-black/40 px-6 py-3.5 backdrop-blur-xl transition-opacity duration-500 md:top-0 md:-mx-10 md:px-10 ${
-          !step1Parcours.hubChromeHidden &&
-          (currentStep > (isEditor ? 3 : 1) || mobileUtilityTrailing)
+          !step1Parcours.hubChromeHidden && mobileUtilityTrailing
             ? "top-12"
             : "top-0"
         } ${
@@ -2558,29 +2529,6 @@ export function TributeWizard({
                   googlePhotos: copy.socialGooglePhotos,
                 }}
               />
-
-              <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
-                <div className="mx-auto flex max-w-xl gap-3">
-                  {!isEditor ? (
-                    <button
-                      type="button"
-                      onClick={() => void goBack()}
-                      className={`font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-base font-normal text-zinc-400 transition-colors hover:border-white/12 hover:bg-white/[0.05] hover:text-zinc-200 ${sanctuaryFocusRing}`}
-                    >
-                      {copy.back}
-                    </button>
-                  ) : null}
-
-                  <button
-                    type="button"
-                    onClick={() => void goNext()}
-                    disabled={step3UploadRunning}
-                    className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none transition-[colors,box-shadow,transform] hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`}
-                  >
-                    {projectMediaCount > 0 ? copy.next : copy.stepMediaLater}
-                  </button>
-                </div>
-              </div>
             </>
           ) : null}
 
@@ -2979,28 +2927,45 @@ export function TributeWizard({
       />
       ) : null}
 
-      {currentStep !== 3 &&
-      currentStep !== 6 &&
-      currentStep !== 7 &&
-      !(currentStep === 1 && step1Sky) ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
+      {/* N3 — barre bas unique : Retour | Suivant (2–5) ; Retour seul (6–7). */}
+      {!step1Parcours.hubChromeHidden && currentStep >= 2 ? (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
           <div
-            className={`mx-auto ${
+            className={`mx-auto flex gap-3 ${
               currentStep === 5 ? "max-w-7xl" : "max-w-xl"
             }`}
           >
-            {currentStep === 5 && isEditor ? (
-              <p className="text-center text-sm font-light text-white/55">
-                {copy.editorCraftComplete}
-              </p>
-            ) : currentStep <= 5 ? (
+            {currentStep > (isEditor ? 3 : 1) ? (
               <button
                 type="button"
-                onClick={() => void goNext()}
-                className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 transition-[colors,box-shadow,transform] hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`}
+                onClick={() => void goBack()}
+                className={`font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-base font-normal text-zinc-400 transition-colors hover:border-white/12 hover:bg-white/[0.05] hover:text-zinc-200 ${sanctuaryFocusRing}`}
               >
-                {copy.next}
+                {copy.back}
               </button>
+            ) : null}
+
+            {currentStep <= 5 ? (
+              currentStep === 5 && isEditor ? (
+                <p className="flex min-h-[52px] flex-[1.35] items-center justify-center text-center text-sm font-light text-white/55">
+                  {copy.editorCraftComplete}
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => void goNext()}
+                  disabled={currentStep === 3 && step3UploadRunning}
+                  className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${
+                    currentStep > (isEditor ? 3 : 1)
+                      ? "flex-[1.35]"
+                      : "w-full"
+                  } ${sanctuaryFocusRing}`}
+                >
+                  {currentStep === 3 && projectMediaCount === 0
+                    ? copy.stepMediaLater
+                    : copy.next}
+                </button>
+              )
             ) : null}
           </div>
         </div>

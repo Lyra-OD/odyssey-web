@@ -811,7 +811,7 @@
 | `tributeWizard.tracksReorderHint` | Glissez pour modifier l’ordre d’écoute. | Drag to change the listening order. |
 | `tributeWizard.finishCta` | Terminer et créer l’hommage | Finish and create the tribute |
 | `tributeWizard.back` | Retour | Back |
-| `tributeWizard.next` | Étape suivante | Next step |
+| `tributeWizard.next` | Suivant | Next |
 | `tributeWizard.completedMessage` | Votre parcours est enregistré. Nous préparerons votre hommage avec tendresse. | Your choices are saved. We will prepare your tribute with care. |
 | `tributeWizard.headerYears` | {birth} – {death} | {birth} – {death} |
 | `tributeWizard.headerNameFallback` | Nom à compléter | Name to complete |

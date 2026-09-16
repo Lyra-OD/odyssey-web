@@ -832,7 +832,7 @@
     "tracksReorderHint": "Glissez pour modifier l’ordre d’écoute.",
     "finishCta": "Terminer et créer l’hommage",
     "back": "Retour",
-    "next": "Étape suivante",
+    "next": "Suivant",
     "completedMessage": "Votre parcours est enregistré. Nous préparerons votre hommage avec tendresse.",
     "headerYears": "{birth} – {death}",
     "headerNameFallback": "Nom à compléter",

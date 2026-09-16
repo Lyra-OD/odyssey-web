@@ -4,11 +4,11 @@
 **Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 16 sept 2026 — **N3 nav** : barre bas unique Retour|Suivant (étapes 2–5) ; Retour seul en 6–7 ; plus de Retour haut / footer step 3 dupliqué.
 - 16 sept 2026 — **Fil** : ligne **droite** (zig retiré) ; largeur `max-w-xl` ; segments demi-gap dans le flex (longueur correcte).
 - 16 sept 2026 — **N2f + N4** : polish rangée boomer-proof ; sticky prix craft retiré (total dès 6+).
 - 16 sept 2026 — **N2 fil** : constellation C — ancres Essentiel · Coffre · Musique · Composer · Son film.
 - 16 sept 2026 — **N1 fil** : `wizard_state.furthestStep` ; clic ne saute plus au-delà.
-- 10 sept 2026 — **Dates Essentiel** : naissance `max` = hier ; départ `min` = naissance (ou 1800), `max` = aujourd’hui + 2 ans.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -24,7 +24,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 
 | File | Role |
 |------|------|
-| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (package Dossier + fil constellation) |
+| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (Dossier + fil) ; barre bas N3 Retour|Suivant |
 | `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | **Step 1 (J2)** — ciel fullscreen + panneau verre ; `SanctuaryUniverse` background · birth live · reveal contrôlé |
 | `src/hooks/useWizardStep1Reveal.ts` | Phase reveal étape 1 (`idle` → `birth` → `reward` → `done`) · orchestration `playReward()` |
 | `src/lib/wizard/wizardBirthReveal.ts` | Courbes / beats C0–C2 pour naissance Hero au prénom (pont craft → wizard) |
