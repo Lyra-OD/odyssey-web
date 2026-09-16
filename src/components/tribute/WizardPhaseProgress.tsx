@@ -28,15 +28,11 @@ type Props = {
   copy: WizardConstellationTrailCopy;
 };
 
-/** Bande haute — le fil doit remplir l’espace, pas un timbre-poste. */
-const BAND_H = 112;
+/** Bande : assez haute pour ★ + orbe, zig modéré (boomer-proof). */
+const BAND_H = 96;
 
-/**
- * Zig fort et inégal (px).
- *   ·         ★         ·
- * ·     ·           ·       ·
- */
-const ZIG_Y = [18, -26, 10, -30, 14, -22, 8] as const;
+/** Zig modéré inégal — personnalité sans chaos. */
+const ZIG_Y = [8, -12, 5, -14, 7, -10, 4] as const;
 
 function zigY(index: number): number {
   return ZIG_Y[index % ZIG_Y.length]!;
@@ -49,9 +45,8 @@ function replaceTokens(template: string, tokens: Record<string, string>): string
   );
 }
 
-/** Étincelle longue — lisible comme ★, pas pastille. */
 function TrailStarGlyph({ current }: { current: boolean }) {
-  const size = current ? 32 : 22;
+  const size = current ? 36 : 26;
   return (
     <svg
       className={
@@ -73,8 +68,8 @@ function TrailStarGlyph({ current }: { current: boolean }) {
 }
 
 /**
- * Constellation WOW : grille fixe large, zig fort, ★ cliquables,
- * titre fort = ici seulement ; ancres passées en whisper.
+ * Fil rangée boomer-proof : ordre gauche→droite clair, ★ grosses,
+ * ici + orbe, titres T2 (fort ici / whisper ancres passées).
  */
 export function WizardPhaseProgress({
   stars,
@@ -96,7 +91,10 @@ export function WizardPhaseProgress({
   );
 
   return (
-    <nav className="mb-8 w-full md:mb-12" aria-label={copy.ariaLabel}>
+    <nav
+      className="wizard-trail-sky relative mb-8 w-full md:mb-11"
+      aria-label={copy.ariaLabel}
+    >
       {hereLabel ? (
         <p className="sr-only" aria-live="polite">
           {replaceTokens(copy.hereAria, { label: hereLabel })}
@@ -140,7 +138,6 @@ export function WizardPhaseProgress({
           const isBorn = star.step <= furthestStep;
           const isCurrent = isBorn && star.step === currentStep;
           const hasAnchor = Boolean(star.anchorLabel?.trim());
-          /** T2 corrigé : titre fort = ici ; whisper = ancres déjà nées. */
           const showStrongTitle = isCurrent && hasAnchor;
           const showWhisperTitle = isBorn && !isCurrent && hasAnchor;
           const goLabel = star.anchorLabel?.trim() || star.ariaName;
@@ -165,18 +162,18 @@ export function WizardPhaseProgress({
                     })}
                     aria-current={isCurrent ? "step" : undefined}
                     className={`wizard-trail-hit relative flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50 ${
-                      isCurrent ? "h-14 w-14" : "h-12 w-12"
+                      isCurrent ? "h-16 w-16" : "h-14 w-14"
                     }`}
                     initial={
-                      reduceMotion ? false : { opacity: 0, scale: 0.15 }
+                      reduceMotion ? false : { opacity: 0, scale: 0.2 }
                     }
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{
-                      duration: 0.5,
+                      duration: 0.48,
                       ease: [0.16, 1, 0.3, 1],
                       delay: reduceMotion
                         ? 0
-                        : Math.max(0, (bornCount - 1) * 0.03),
+                        : Math.max(0, (bornCount - 1) * 0.025),
                     }}
                   >
                     {isCurrent ? (
@@ -194,17 +191,17 @@ export function WizardPhaseProgress({
                     <TrailStarGlyph current={isCurrent} />
                   </motion.button>
                 ) : (
-                  <span className="h-12 w-12" aria-hidden />
+                  <span className="h-14 w-14" aria-hidden />
                 )}
               </div>
 
               <span
-                className={`mt-1 min-h-[1.25rem] max-w-[6.5rem] truncate text-center font-light sm:max-w-[7.5rem] ${
+                className={`mt-1.5 min-h-[1.35rem] max-w-[7rem] truncate text-center sm:max-w-[8rem] ${
                   showStrongTitle
-                    ? "font-[family-name:var(--font-label)] text-sm tracking-wide text-teal-50 sm:text-base"
+                    ? "font-[family-name:var(--font-label)] text-base font-normal tracking-wide text-white sm:text-lg"
                     : showWhisperTitle
-                      ? "text-[11px] tracking-[0.06em] text-zinc-500 transition-colors group-hover/trail:text-zinc-300 sm:text-xs"
-                      : "text-transparent text-[11px]"
+                      ? "text-xs font-light tracking-wide text-zinc-400 transition-colors group-hover/trail:text-zinc-200 sm:text-sm"
+                      : "text-transparent text-xs"
                 }`}
                 aria-hidden
               >

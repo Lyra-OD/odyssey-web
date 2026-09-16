@@ -1700,51 +1700,59 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   .wizard-step-enter { animation: none; }
 }
 
-/* Fil constellation wizard — WOW échelle + orbe + T2 corrigé */
+/* Fil constellation wizard — rangée boomer-proof + présence */
+.wizard-trail-sky {
+  padding-block: 0.35rem 0.15rem;
+  background: radial-gradient(
+    ellipse 70% 85% at 50% 40%,
+    rgba(45, 212, 191, 0.06) 0%,
+    transparent 68%
+  );
+}
 .wizard-trail-hit {
   transition: color 200ms ease, transform 200ms ease;
 }
 .wizard-trail-hit:hover .wizard-trail-star-born {
   color: rgb(153, 246, 228);
-  filter: drop-shadow(0 0 14px rgba(45, 212, 191, 0.65));
-  transform: scale(1.14);
+  filter: drop-shadow(0 0 16px rgba(45, 212, 191, 0.7));
+  transform: scale(1.1);
 }
 .wizard-trail-star {
   position: relative;
   z-index: 2;
   display: block;
-  color: rgba(94, 234, 212, 0.92);
-  filter: drop-shadow(0 0 10px rgba(45, 212, 191, 0.5));
+  color: rgba(94, 234, 212, 0.95);
+  filter: drop-shadow(0 0 12px rgba(45, 212, 191, 0.55));
   transition: filter 200ms ease, transform 200ms ease, color 200ms ease;
 }
 .wizard-trail-star-current {
-  color: rgb(236, 254, 255);
-  filter: drop-shadow(0 0 18px rgba(45, 212, 191, 0.95));
+  color: rgb(255, 255, 255);
+  filter: drop-shadow(0 0 20px rgba(45, 212, 191, 1));
 }
 .wizard-trail-orb {
   pointer-events: none;
   position: absolute;
-  inset: 0.35rem;
+  inset: 0.2rem;
   z-index: 0;
   border-radius: 9999px;
   background: radial-gradient(
     circle,
-    rgba(45, 212, 191, 0.55) 0%,
-    rgba(34, 211, 238, 0.22) 45%,
-    transparent 72%
+    rgba(45, 212, 191, 0.62) 0%,
+    rgba(34, 211, 238, 0.28) 42%,
+    transparent 70%
   );
   animation: wizard-trail-breath 3.6s ease-in-out infinite;
 }
 .wizard-trail-halo {
   pointer-events: none;
   position: absolute;
-  inset: -0.35rem;
+  inset: -0.45rem;
   z-index: 0;
   border-radius: 9999px;
   background: radial-gradient(
     circle,
-    rgba(45, 212, 191, 0.35) 0%,
-    rgba(34, 211, 238, 0.12) 48%,
+    rgba(45, 212, 191, 0.32) 0%,
+    rgba(34, 211, 238, 0.1) 50%,
     transparent 74%
   );
   animation: wizard-trail-breath 3.6s ease-in-out infinite;
@@ -1753,16 +1761,16 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 .wizard-trail-dust {
   pointer-events: none;
   position: absolute;
-  inset: -0.45rem;
+  inset: -0.55rem;
   z-index: 3;
 }
 .wizard-trail-dust i {
   position: absolute;
   display: block;
-  height: 2.5px;
-  width: 2.5px;
+  height: 3px;
+  width: 3px;
   border-radius: 9999px;
-  background: rgba(236, 254, 255, 0.95);
+  background: rgba(255, 255, 255, 0.95);
   opacity: 0;
   animation: wizard-trail-dust 2.8s ease-in-out infinite;
 }
@@ -1789,11 +1797,11 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   animation-delay: 1.7s;
 }
 .wizard-trail-filament {
-  stroke: rgba(45, 212, 191, 0.5);
-  stroke-width: 1.5;
+  stroke: rgba(45, 212, 191, 0.55);
+  stroke-width: 1.75;
 }
 .wizard-trail-filament-live {
-  stroke: rgba(94, 234, 212, 0.9);
+  stroke: rgba(153, 246, 228, 0.95);
   animation: wizard-trail-filament-pulse 2.4s ease-in-out infinite;
 }
 
@@ -1801,10 +1809,10 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   0%,
   100% {
     transform: scale(1);
-    opacity: 0.75;
+    opacity: 0.78;
   }
   50% {
-    transform: scale(1.55);
+    transform: scale(1.5);
     opacity: 1;
   }
 }
@@ -1825,7 +1833,7 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 @keyframes wizard-trail-filament-pulse {
   0%,
   100% {
-    stroke-opacity: 0.45;
+    stroke-opacity: 0.5;
   }
   50% {
     stroke-opacity: 1;
