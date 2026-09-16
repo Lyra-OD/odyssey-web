@@ -2,85 +2,182 @@
   "output_format": "mp4",
   "width": 1280,
   "height": 720,
-  "duration": 10.02,
+  "duration": 35,
+  "fill_color": "#000000",
   "elements": [
     {
-      "id": "1a10ff60-d3de-4761-81bb-ed089d35857b",
-      "name": "Text-MN2",
-      "type": "text",
+      "id": "d0bd6a19-2e36-4f51-8011-3c72e00bd9df",
+      "name": "Composition-2BS",
+      "type": "composition",
       "track": 1,
-      "time": 1.02,
-      "x": "33.125%",
-      "y": "54.5833%",
-      "x_anchor": "0%",
-      "y_anchor": "0%",
-      "text": "{{birthYear}} - {{deathYear}}",
-      "font_weight": "100",
-      "font_size": "6 vmin",
-      "letter_spacing": "500%",
-      "fill_color": "#e6e6e6",
-      "animations": [
+      "time": 20.01,
+      "duration": 10.112,
+      "y": "44.1667%",
+      "elements": [
         {
+          "id": "e6292521-79e9-4cce-b976-ceb0a781b1fa",
+          "name": "Text-F5F",
+          "type": "text",
+          "track": 1,
           "time": 0,
-          "duration": 7.39,
-          "easing": "quadratic-out",
-          "type": "text-appear",
-          "split": "letter"
-        },
-        {
-          "time": "end",
-          "duration": 2.66,
-          "easing": "quadratic-out",
-          "reversed": true,
-          "type": "text-appear",
-          "split": "line"
+          "y": "65%",
+          "text": "{{birthYear}} - {{deathYear}}",
+          "font_weight": "100",
+          "font_size": "5.33 vmin",
+          "font_size_minimum": "1.5 vmin",
+          "font_size_maximum": "99.7 vmin",
+          "letter_spacing": "500%",
+          "fill_color": "#ffffff",
+          "animations": [
+            {
+              "time": 2.999,
+              "duration": 2.31,
+              "easing": "quadratic-out",
+              "type": "text-appear",
+              "split": "letter"
+            },
+            {
+              "time": "end",
+              "duration": 2.04,
+              "easing": "quadratic-out",
+              "reversed": true,
+              "type": "text-appear",
+              "split": "letter"
+            }
+          ]
         }
       ]
     },
     {
-      "id": "9d348d8c-ec17-450a-a7c3-5d59141c6908",
-      "name": "Text-936",
-      "type": "text",
+      "id": "b0b09b96-03a8-4a56-aae8-cf4e4d6fd70d",
+      "name": "Shape-W6C",
+      "type": "shape",
       "track": 2,
-      "time": 0,
-      "x": "0%",
-      "y": "33.8889%",
+      "time": 15.01,
+      "duration": 5,
       "width": "100%",
-      "x_anchor": "0%",
-      "y_anchor": "0%",
+      "height": "102.9167%",
+      "x_anchor": "50%",
+      "y_anchor": "50%",
+      "path": "M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z",
+      "fill_color": "#000000"
+    },
+    {
+      "id": "a1c8e2f0-4b7d-4e9a-9c3f-portrait-comp01",
+      "name": "Composition-Portrait",
+      "type": "composition",
+      "track": 3,
+      "time": 0,
+      "duration": 15.01,
+      "fill_color": "#000000",
+      "color_filter": "contrast",
+      "color_filter_value": 125,
+      "color_overlay": "rgba(0,0,0,0.28)",
+      "elements": [
+        {
+          "id": "8fc4f268-5af8-40ca-8024-15709d288f31",
+          "name": "Image-VZZ",
+          "type": "image",
+          "track": 1,
+          "time": 0,
+          "source": "https://cdn.creatomate.com/demo/woman.jpg",
+          "smart_crop": true,
+          "color_filter": "grayscale",
+          "color_filter_value": 100,
+          "dynamic": ["smart_crop"],
+          "animations": [
+            {
+              "time": 0,
+              "duration": 15.01,
+              "easing": "linear",
+              "type": "scale",
+              "start_scale": "104%",
+              "end_scale": "118%"
+            },
+            {
+              "time": 0,
+              "duration": 0.5,
+              "easing": "quadratic-out",
+              "type": "fade"
+            },
+            {
+              "time": "end",
+              "duration": 1.1,
+              "easing": "quadratic-out",
+              "reversed": true,
+              "type": "fade"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7232dc91-1b46-4c88-a14d-84f2edd28c43",
+      "name": "Text-CFQ",
+      "type": "text",
+      "track": 4,
+      "time": 20.01,
+      "duration": 10.03,
+      "y": "36.6667%",
+      "width": "92%",
+      "height": "20%",
       "x_alignment": "50%",
       "y_alignment": "50%",
       "text": "{{displayName}}",
       "font_family": "Playfair Display",
-      "font_weight": "500",
-      "font_size": "11.1998 vmin",
-      "letter_spacing": "50%",
-      "fill_color": "#d1d1d1",
-      "opacity": "95%",
-      "color_filter": "brighten",
-      "color_filter_value": 25,
+      "font_weight": "600",
+      "font_size": null,
+      "font_size_minimum": "5 vmin",
+      "font_size_maximum": "11 vmin",
+      "letter_spacing": "160%",
+      "text_wrap": true,
+      "fill_color": "#ffffff",
       "animations": [
         {
           "time": 0,
-          "duration": 0.5,
+          "duration": 1,
           "easing": "quadratic-out",
           "type": "fade"
         },
         {
           "time": 0,
-          "duration": 2.11,
+          "duration": 2.999,
           "transition": true,
           "type": "scale",
-          "start_scale": "101%",
-          "end_scale": "115%"
+          "start_scale": "102%",
+          "end_scale": "112%"
         },
         {
           "time": "end",
-          "duration": 2.6,
+          "duration": 1.35,
           "easing": "quadratic-out",
           "reversed": true,
           "type": "text-appear",
-          "split": "letter"
+          "split": "letter",
+          "overlap": "0%"
+        }
+      ]
+    },
+    {
+      "id": "b8768c51-f679-4bd5-ab33-fb808a8233a6",
+      "name": "Shape-9BT",
+      "type": "shape",
+      "track": 7,
+      "time": 30,
+      "duration": 5,
+      "width": "100%",
+      "height": "102.9167%",
+      "x_anchor": "50%",
+      "y_anchor": "50%",
+      "path": "M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z",
+      "fill_color": "#000000",
+      "animations": [
+        {
+          "time": "end",
+          "duration": 1,
+          "easing": "quadratic-out",
+          "reversed": true,
+          "type": "fade"
         }
       ]
     }
