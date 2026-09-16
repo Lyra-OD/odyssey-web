@@ -1700,33 +1700,42 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   .wizard-step-enter { animation: none; }
 }
 
-/* Fil constellation wizard — WOW Quiet Luxury (N2b / N2c) */
+/* Fil constellation wizard — WOW Quiet Luxury (N2d) */
+.wizard-trail-hit {
+  transition: color 200ms ease, transform 200ms ease;
+}
+.wizard-trail-hit:hover .wizard-trail-star-born {
+  color: rgb(153, 246, 228);
+  filter: drop-shadow(0 0 10px rgba(45, 212, 191, 0.55));
+  transform: scale(1.12);
+}
 .wizard-trail-star {
   display: block;
-  color: rgba(45, 212, 191, 0.78);
-  filter: drop-shadow(0 0 5px rgba(45, 212, 191, 0.35));
+  color: rgba(45, 212, 191, 0.88);
+  filter: drop-shadow(0 0 7px rgba(45, 212, 191, 0.42));
+  transition: filter 200ms ease, transform 200ms ease, color 200ms ease;
 }
 .wizard-trail-star-current {
-  color: rgb(165, 243, 252);
-  filter: drop-shadow(0 0 10px rgba(45, 212, 191, 0.75));
+  color: rgb(207, 250, 254);
+  filter: drop-shadow(0 0 14px rgba(45, 212, 191, 0.85));
 }
 .wizard-trail-halo {
   pointer-events: none;
   position: absolute;
-  inset: 0.1rem;
+  inset: -0.15rem;
   border-radius: 9999px;
   background: radial-gradient(
     circle,
-    rgba(45, 212, 191, 0.38) 0%,
-    rgba(34, 211, 238, 0.14) 42%,
-    transparent 70%
+    rgba(45, 212, 191, 0.45) 0%,
+    rgba(34, 211, 238, 0.18) 40%,
+    transparent 72%
   );
   animation: wizard-trail-breath 3.6s ease-in-out infinite;
 }
 .wizard-trail-dust {
   pointer-events: none;
   position: absolute;
-  inset: 0;
+  inset: -0.2rem;
 }
 .wizard-trail-dust i {
   position: absolute;
@@ -1734,31 +1743,38 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   height: 2px;
   width: 2px;
   border-radius: 9999px;
-  background: rgba(165, 243, 252, 0.9);
+  background: rgba(207, 250, 254, 0.95);
   opacity: 0;
   animation: wizard-trail-dust 2.8s ease-in-out infinite;
 }
 .wizard-trail-dust i:nth-child(1) {
-  left: 14%;
-  top: 18%;
+  left: 10%;
+  top: 14%;
   animation-delay: 0s;
 }
 .wizard-trail-dust i:nth-child(2) {
-  right: 12%;
-  top: 24%;
-  animation-delay: 0.7s;
+  right: 8%;
+  top: 20%;
+  animation-delay: 0.55s;
 }
 .wizard-trail-dust i:nth-child(3) {
-  left: 40%;
-  bottom: 14%;
-  animation-delay: 1.35s;
+  left: 36%;
+  bottom: 10%;
+  animation-delay: 1.1s;
+}
+.wizard-trail-dust i:nth-child(4) {
+  right: 28%;
+  bottom: 22%;
+  height: 1.5px;
+  width: 1.5px;
+  animation-delay: 1.7s;
 }
 .wizard-trail-filament {
-  stroke: rgba(45, 212, 191, 0.32);
-  stroke-width: 1;
+  stroke: rgba(45, 212, 191, 0.42);
+  stroke-width: 1.25;
 }
 .wizard-trail-filament-live {
-  stroke: rgba(45, 212, 191, 0.62);
+  stroke: rgba(94, 234, 212, 0.78);
   animation: wizard-trail-filament-pulse 2.4s ease-in-out infinite;
 }
 
@@ -1766,10 +1782,10 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   0%,
   100% {
     transform: scale(1);
-    opacity: 0.7;
+    opacity: 0.72;
   }
   50% {
-    transform: scale(1.4);
+    transform: scale(1.48);
     opacity: 1;
   }
 }
@@ -1781,7 +1797,7 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   }
   40% {
     opacity: 0.95;
-    transform: translateY(-4px) scale(1);
+    transform: translateY(-5px) scale(1);
   }
   70% {
     opacity: 0.25;
@@ -1790,10 +1806,10 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 @keyframes wizard-trail-filament-pulse {
   0%,
   100% {
-    stroke-opacity: 0.35;
+    stroke-opacity: 0.4;
   }
   50% {
-    stroke-opacity: 0.9;
+    stroke-opacity: 1;
   }
 }
 
@@ -1808,6 +1824,9 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   }
   .wizard-trail-dust i {
     opacity: 0.45;
+  }
+  .wizard-trail-hit:hover .wizard-trail-star-born {
+    transform: none;
   }
 }
 

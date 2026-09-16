@@ -4,7 +4,7 @@
 **Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 16 sept 2026 — **N2c fil** : vraies ★ (plus pastilles), traits **droits**, grille 7 places fixe (futurs = vide), zig type schéma ; halo animé conservé sur l’ici.
+- 16 sept 2026 — **N2d fil** : zig plus fort / inégal ; ★ nées ~14px + hover ; ici ~19px + halo ; bande plus haute ; traits droits plus présents.
 - 16 sept 2026 — **N2 fil** : constellation C (7 points) — ancres Essentiel · Coffre · Musique · Composer · Son film ; plus de Déposer/Composer/Recevoir ni « Étape N ».
 - 16 sept 2026 — **N1 fil** : `wizard_state.furthestStep` mémorise le plus loin atteint ; clic ne saute plus au-delà.
 - 10 sept 2026 — **Dates Essentiel** : naissance `max` = hier ; départ `min` = naissance (ou 1800), `max` = aujourd’hui + 2 ans (horizon MAID) ; validation CTA + copy dédiée ([`wizardDateBounds.ts`](../src/lib/wizard/wizardDateBounds.ts)).
