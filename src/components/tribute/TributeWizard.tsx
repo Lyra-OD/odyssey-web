@@ -1866,23 +1866,24 @@ export function TributeWizard({
         />
         </div>
 
-        {!isEditor && !step1Parcours.hubChromeHidden ? (
+        {/* Quiet Luxury : pas de sticky prix pendant le craft (1–5).
+            Total $ / jetons seulement à partir de Preview (6+). */}
+        {!isEditor &&
+        !step1Parcours.hubChromeHidden &&
+        currentStep >= 6 ? (
         <StickyPriceBar
           extensions={extensions}
           basePackage={basePackage}
           grantedPackage={grantedPackage}
           isPartner={isPartner}
-          draftMode={currentStep < 6}
           copy={{
             consumerTotalLabel: copy.stickyConsumerTotal,
             partnerTokenCostLabel: copy.stickyPartnerTokenCost,
-            draftLabel: copy.stickyDraftLabel,
           }}
         />
         ) : null}
 
-        {/* Pas de Total $ pendant le craft (1–5) — empathie Quiet Luxury.
-            Visible seulement à partir de Recevoir / Preview (6+). */}
+        {/* Cart détail B2C — aussi à partir de Preview / Recevoir. */}
         {currentStep >= 6 && !isPartner && !isEditor ? (
           <div className="mb-8">
             <WizardCartSummary
