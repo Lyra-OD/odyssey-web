@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { MontageFocalReticle } from "@/src/components/tribute/montage/MontageFocalReticle";
+import { MediaVideoPreview } from "@/src/components/media/MediaVideoPreview";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import type { MontageFocalPoint } from "@/src/lib/wizard/wizardState";
 
@@ -215,7 +216,16 @@ export function MontageDirectorModal({
                   exit={{ opacity: 0, x: -slideOffset, scale: 0.98 }}
                   transition={{ duration: 0.35, ease: EASE_OUT_LUXE }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                {item.isVideo ? (
+                  <MediaVideoPreview
+                    src={item.fullPreviewUrl ?? item.previewUrl ?? ""}
+                    controls
+                    className={`block max-h-[min(78vh,900px)] max-w-full object-contain ${
+                      isExcluded ? "opacity-40 grayscale" : ""
+                    }`}
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <motion.img
                     src={item.fullPreviewUrl ?? item.previewUrl ?? ""}
                     alt={item.displayName}
@@ -230,8 +240,9 @@ export function MontageDirectorModal({
                     }`}
                     layout={false}
                   />
+                )}
                   <AnimatePresence>
-                    {focalPoint ? (
+                    {!item.isVideo && focalPoint ? (
                       <MontageFocalReticle
                         key={`${item.assetId}-focal`}
                         point={focalPoint}
@@ -259,7 +270,7 @@ export function MontageDirectorModal({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.4 }}
         >
-          {copy.focalHint}
+          {item.isVideo ? null : copy.focalHint}
         </motion.p>
       </div>
 

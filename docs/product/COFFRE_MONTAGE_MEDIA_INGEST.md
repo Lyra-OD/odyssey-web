@@ -5,6 +5,7 @@
 **Démo :** vendredi 18 sept 2026 — voir § Étapes chirurgicales.
 
 **Changelog** (max 5)
+- 16 sept 2026 — **S1** : preview vidéo = `<video>` (Coffre, banque, cartes, directeur) — plus d’`<img>` sur MP4.
 - 16 sept 2026 — audit + recos + ingest client (trim 10 s à l’upload) · plan démo vendredi.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
@@ -92,7 +93,7 @@ Objectif démo : **déposer une vidéo, la voir dans le Coffre, la glisser dans 
 
 | # | Commit visé | Fichiers | Done when |
 |---|-------------|----------|-----------|
-| **S1** | Preview vidéo unifiée | `StoragePreviewImage` / tuiles banque / `MontageMediaCard` / `MontageDirectorModal` / `MediaQueueGrid` | Jamais `<img>` sur URL `video/*`. Coffre + banque + directeur : poster **ou** `<video muted playsInline preload=metadata>` |
+| **S1** | Preview vidéo unifiée | `MediaAssetThumb` / `MediaVideoPreview` | **Fait** — jamais `<img>` sur URL `video/*` |
 | **S2** | Desktop DnD | `useFinePointer` init synchrone `matchMedia` | Souris dès le 1er paint = PointerSensor, pas de poignées mobile flash |
 | **S3** | Banque à jour + drop | `StoryboardMontageStep` fetch `force` à l’entrée étape 5 ; fallback `.mp4`/`.mov` dropzone | Vidéo Coffre apparaît à gauche au montage ; iPhone/Finder sans MIME acceptés |
 | **S4** | Ops (pas de code) | Supabase file size limit | Une vidéo test ~80–150 Mo passe **ou** on démo avec un fichier &lt; limite actuelle |

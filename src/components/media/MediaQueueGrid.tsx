@@ -17,6 +17,7 @@ import {
   type UploadQueueItem,
 } from "@/src/lib/uploads/mediaUploadService";
 import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
+import { MediaVideoPreview } from "@/src/components/media/MediaVideoPreview";
 import {
   getItemDisplayName,
   getItemMimeType,
@@ -122,7 +123,8 @@ function useImagePreviews(items: UploadQueueItem[]): Map<string, string> {
         return;
       }
       if (map.has(item.id)) return;
-      if (!item.file || !isPreviewableImage(item)) return;
+      if (!item.file) return;
+      if (!isPreviewableImage(item) && !isVideoItem(item)) return;
       try {
         map.set(item.id, URL.createObjectURL(item.file));
       } catch {
@@ -186,8 +188,10 @@ export function MediaQueueGrid({
       aria-label="Files queued for upload"
     >
       {sortedItems.map((item) => {
-        const showPreview = isPreviewableImage(item) && previews.has(item.id);
         const previewUrl = previews.get(item.id);
+        const showImagePreview =
+          isPreviewableImage(item) && Boolean(previewUrl);
+        const showVideoPreview = isVideoItem(item) && Boolean(previewUrl);
         const displayName = getItemDisplayName(item);
         const isHeic =
           /\.(heic|heif)$/i.test(displayName) ||
@@ -225,7 +229,12 @@ export function MediaQueueGrid({
             }`}
           >
             <div className="relative aspect-square w-full overflow-hidden bg-black/40">
-              {showPreview && previewUrl ? (
+              {showVideoPreview && previewUrl ? (
+                <MediaVideoPreview
+                  src={previewUrl}
+                  className="pointer-events-none h-full w-full object-cover"
+                />
+              ) : showImagePreview && previewUrl ? (
                 isRemoteMediaItem(item) ? (
                   <StoragePreviewImage
                     src={previewUrl}

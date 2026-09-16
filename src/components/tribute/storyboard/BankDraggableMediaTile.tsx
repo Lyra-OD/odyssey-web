@@ -2,9 +2,9 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { Check, Film, GripVertical, Image as ImageIcon } from "lucide-react";
+import { Check, GripVertical } from "lucide-react";
 
-import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
+import { MediaAssetThumb } from "@/src/components/media/MediaAssetThumb";
 import { useFinePointer } from "@/src/hooks/useFinePointer";
 import { getUnassignedCardTheme } from "@/src/lib/wizard/chapterTheme";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
@@ -62,22 +62,12 @@ export function BankDraggableMediaTile({
   const handleDragListeners = finePointer ? undefined : listeners;
   const handleDragAttributes = finePointer ? undefined : attributes;
 
-  const preview = item.previewUrl ? (
-    <StoragePreviewImage
+  const preview = (
+    <MediaAssetThumb
+      isVideo={item.isVideo}
       src={item.previewUrl}
       fallbackSrc={item.fullPreviewUrl}
-      alt=""
-      className="pointer-events-none h-full w-full object-cover"
-      draggable={false}
     />
-  ) : item.isVideo ? (
-    <div className="pointer-events-none flex h-full w-full items-center justify-center bg-[#020202]">
-      <Film className="h-7 w-7 text-zinc-600" strokeWidth={1.1} />
-    </div>
-  ) : (
-    <div className="pointer-events-none flex h-full w-full items-center justify-center bg-[#020202]">
-      <ImageIcon className="h-7 w-7 text-zinc-600" strokeWidth={1.1} />
-    </div>
   );
 
   return (

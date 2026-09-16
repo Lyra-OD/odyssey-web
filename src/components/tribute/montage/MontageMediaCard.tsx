@@ -6,9 +6,9 @@ import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { motion } from "framer-motion";
-import { Film, GripVertical, Check, Image as ImageIcon, Trash2 } from "lucide-react";
+import { GripVertical, Check, Trash2 } from "lucide-react";
 
-import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
+import { MediaAssetThumb } from "@/src/components/media/MediaAssetThumb";
 import { useFinePointer } from "@/src/hooks/useFinePointer";
 import {
   getChapterCardTheme,
@@ -117,7 +117,7 @@ function MontageMediaCardSurface({
         isOverlay ? { boxShadow: theme.overlayShadow } : undefined
       }
     >
-      {onCardClick ? (
+          {onCardClick ? (
         <button
           type="button"
           className={`absolute inset-0 z-[1] block h-full w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${theme.focusRing}`}
@@ -125,40 +125,18 @@ function MontageMediaCardSurface({
           aria-pressed={isSelected}
           onClick={(event) => onCardClick(item.assetId, event)}
         >
-          {item.previewUrl ? (
-            <StoragePreviewImage
-              src={item.previewUrl}
-              fallbackSrc={item.fullPreviewUrl}
-              alt=""
-              className="pointer-events-none h-full w-full object-cover"
-              draggable={false}
-            />
-          ) : item.isVideo ? (
-            <div className="pointer-events-none flex h-full w-full items-center justify-center bg-[#020202]">
-              <Film className="h-7 w-7 text-zinc-600" strokeWidth={1.1} />
-            </div>
-          ) : (
-            <div className="pointer-events-none flex h-full w-full items-center justify-center bg-[#020202]">
-              <ImageIcon className="h-7 w-7 text-zinc-600" strokeWidth={1.1} />
-            </div>
-          )}
+          <MediaAssetThumb
+            isVideo={item.isVideo}
+            src={item.previewUrl}
+            fallbackSrc={item.fullPreviewUrl}
+          />
         </button>
-      ) : item.previewUrl ? (
-        <StoragePreviewImage
+      ) : (
+        <MediaAssetThumb
+          isVideo={item.isVideo}
           src={item.previewUrl}
           fallbackSrc={item.fullPreviewUrl}
-          alt=""
-          className="h-full w-full object-cover"
-          draggable={false}
         />
-      ) : item.isVideo ? (
-        <div className="flex h-full w-full items-center justify-center bg-[#020202]">
-          <Film className="h-7 w-7 text-zinc-600" strokeWidth={1.1} />
-        </div>
-      ) : (
-        <div className="flex h-full w-full items-center justify-center bg-[#020202]">
-          <ImageIcon className="h-7 w-7 text-zinc-600" strokeWidth={1.1} />
-        </div>
       )}
 
       {variant === "chapter" ? (
