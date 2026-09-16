@@ -5,6 +5,7 @@
 **Démo :** vendredi 18 sept 2026 — voir § Étapes chirurgicales.
 
 **Changelog** (max 5)
+- 16 sept 2026 — **S2** : `useFinePointer` synchrone (`useSyncExternalStore`) — DnD desktop dès le 1er paint.
 - 16 sept 2026 — **S1** : preview vidéo = `<video>` (Coffre, banque, cartes, directeur) — plus d’`<img>` sur MP4.
 - 16 sept 2026 — audit + recos + ingest client (trim 10 s à l’upload) · plan démo vendredi.
 
@@ -94,7 +95,7 @@ Objectif démo : **déposer une vidéo, la voir dans le Coffre, la glisser dans 
 | # | Commit visé | Fichiers | Done when |
 |---|-------------|----------|-----------|
 | **S1** | Preview vidéo unifiée | `MediaAssetThumb` / `MediaVideoPreview` | **Fait** — jamais `<img>` sur URL `video/*` |
-| **S2** | Desktop DnD | `useFinePointer` init synchrone `matchMedia` | Souris dès le 1er paint = PointerSensor, pas de poignées mobile flash |
+| **S2** | Desktop DnD | `useFinePointer` via `useSyncExternalStore` | **Fait** — souris dès le 1er paint client |
 | **S3** | Banque à jour + drop | `StoryboardMontageStep` fetch `force` à l’entrée étape 5 ; fallback `.mp4`/`.mov` dropzone | Vidéo Coffre apparaît à gauche au montage ; iPhone/Finder sans MIME acceptés |
 | **S4** | Ops (pas de code) | Supabase file size limit | Une vidéo test ~80–150 Mo passe **ou** on démo avec un fichier &lt; limite actuelle |
 
