@@ -21,6 +21,11 @@ export {
   formatYearsLine,
 } from "@/src/lib/creatomate/yearFromDate";
 export {
+  assembleIntroAtom,
+  resolvePortraitUrl,
+  DEMO_PORTRAIT_URL,
+} from "@/src/lib/creatomate/atomsAssembler";
+export {
   buildTimelineClips,
   buildDuckedMusicSegments,
 } from "@/src/lib/creatomate/timeline";

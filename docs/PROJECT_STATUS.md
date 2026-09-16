@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 15 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 15 sept 2026 — **Creatomate atomes** : intro / photo / vidéo / outro figés (`docs/craft/atoms/`) · plan assembleur demain ([`craft/CREATOMATE_RECIPE.md`](craft/CREATOMATE_RECIPE.md)).
+- 16 sept 2026 — **Creatomate étape 2** : intro atome magazine branchée (`assembleIntroAtom`) · médias/outro TS · étape 3 = clips + carte mémoire ([`craft/CREATOMATE_RECIPE.md`](craft/CREATOMATE_RECIPE.md)).
+- 16 sept 2026 — **Creatomate étape 1** : essentials `birthYear` / `deathYear` / `portraitUrl` signé.
+- 15 sept 2026 — **Creatomate atomes** : intro / photo / vidéo / outro figés (`docs/craft/atoms/`).
 - 15 sept 2026 — **Creatomate** : smoke réel ✅ · labs curl v1.x (échec DA typo) · pivot atomes UI.
 - 10 sept 2026 — **Dates Essentiel** : naissance ≤ hier ; départ ≥ naissance et ≤ aujourd’hui + 2 ans (MAID) ; copy FR/EN dédiée.
-- 10 sept 2026 — **Intro hub Étape 1** : pitch lié au draft live incomplet (clear + close → « Le film de leur vie » revient).
-- 9 sept 2026 — **Chrome mobile Wizard** : sticky header split L/R comme desktop (Package + Creation help à droite) ; chip Need Help pastille au-dessus du footer Next.
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 
@@ -25,7 +25,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Soft Cap + entitlements + gate export + MP3/ToS — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Héritage **1080p** · 4K dès Éternité · Phase 6 QA ⏳ |
 | **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual / **`charge.refunded`**. QA replay `checkout.session.completed` ✅ (P17 `submitted`). |
 | **RevShare** | 🟢 UI | Spec + SQL P6/P8 + webhook ✅ · UI Salon + `GET /api/partner/commissions` 🟢 · payout ops ⏳ |
-| **Export Creatomate** | 🟡 atomes ✅ / assembleur ⏳ | Atomes UI figés (`docs/craft/atoms/`). **Demain** : brancher `payloadBuilder` (voir [`craft/CREATOMATE_RECIPE.md`](craft/CREATOMATE_RECIPE.md)). |
+| **Export Creatomate** | 🟡 intro atome ✅ / clips+outro ⏳ | Intro magazine runtime. **Étape 3** : médias atomes + outro carte mémoire ([`craft/CREATOMATE_RECIPE.md`](craft/CREATOMATE_RECIPE.md)). |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
 | **UX mobile** | 🟡 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L** copy ✅ · S5-J/K ⏳ |

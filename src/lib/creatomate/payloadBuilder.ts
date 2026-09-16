@@ -1,8 +1,9 @@
 /**
  * Assemble le RenderScript Creatomate (source JSON dynamique).
- * Unités esthétiques : vmin / % uniquement (voir cinematicTheme).
+ * Intro = atome craft ; médias / outro = builders TS (étape 3 = atomes).
  */
 
+import { assembleIntroAtom } from "@/src/lib/creatomate/atomsAssembler";
 import { cinematicTheme } from "@/src/lib/creatomate/cinematicTheme";
 import {
   buildDuckedMusicSegments,
@@ -15,140 +16,6 @@ type CreatomateElement = Record<string, unknown>;
 function focalToPercent(v: number): string {
   const clamped = Math.min(1, Math.max(0, v));
   return `${(clamped * 100).toFixed(2)}%`;
-}
-
-function buildSignatureIntro(plan: OdysseyRenderPlan): CreatomateElement[] {
-  const t = cinematicTheme.intro;
-  const typo = cinematicTheme.typography;
-  const colors = cinematicTheme.colors;
-  const elements: CreatomateElement[] = [];
-
-  // Acte A — void + grain + soft light
-  elements.push({
-    id: "intro-void",
-    type: "shape",
-    track: 1,
-    time: 0,
-    duration: t.durationSec,
-    width: "100%",
-    height: "100%",
-    fill_color: colors.void,
-  });
-
-  elements.push({
-    id: "intro-soft-light",
-    type: "shape",
-    track: 2,
-    time: 0.15,
-    duration: t.durationSec - 0.3,
-    width: "70%",
-    height: "55%",
-    x: "50%",
-    y: "42%",
-    fill_color: colors.softLight,
-    // Creatomate: border_radius = px|vw|vh|vmin|vmax (pas %).
-    border_radius: "50 vmin",
-    animations: [
-      {
-        time: 0,
-        duration: t.softLightFadeSec,
-        easing: "quadratic-out",
-        type: "fade",
-      },
-    ],
-  });
-
-  // Acte B — nom (scale 104→100 + fade)
-  elements.push({
-    id: "intro-name",
-    type: "text",
-    track: 3,
-    time: t.nameStartDelaySec,
-    duration: t.durationSec - t.nameStartDelaySec - 0.15,
-    text: plan.essentials.displayName,
-    font_family: typo.name.fontFamily,
-    font_weight: typo.name.fontWeight,
-    font_size: typo.name.fontSizeVmin,
-    fill_color: colors.name,
-    width: typo.name.width,
-    height: "30%",
-    x: "50%",
-    y: t.nameY,
-    x_alignment: "50%",
-    y_alignment: "50%",
-    animations: [
-      {
-        time: 0,
-        duration: t.nameFadeSec,
-        easing: "quadratic-out",
-        type: "fade",
-      },
-      {
-        easing: "linear",
-        type: "scale",
-        fade: false,
-        scope: "element",
-        start_scale: t.startScale,
-        duration: t.scaleDurationSec,
-      },
-    ],
-  });
-
-  if (plan.essentials.datesLine) {
-    elements.push({
-      id: "intro-dates",
-      type: "text",
-      track: 3,
-      time: t.nameStartDelaySec + t.datesDelayAfterNameSec,
-      duration:
-        t.durationSec -
-        t.nameStartDelaySec -
-        t.datesDelayAfterNameSec -
-        0.15,
-      text: plan.essentials.datesLine,
-      font_family: typo.dates.fontFamily,
-      font_weight: typo.dates.fontWeight,
-      font_size: typo.dates.fontSizeVmin,
-      fill_color: colors.dates,
-      width: typo.dates.width,
-      height: "12%",
-      x: "50%",
-      y: t.datesY,
-      x_alignment: "50%",
-      y_alignment: "50%",
-      animations: [
-        {
-          time: 0,
-          duration: t.datesFadeSec,
-          easing: "quadratic-out",
-          type: "fade",
-        },
-      ],
-    });
-  }
-
-  // Acte C — fondu de sortie vers le contenu
-  elements.push({
-    id: "intro-exit-veil",
-    type: "shape",
-    track: 4,
-    time: t.durationSec - t.exitFadeSec,
-    duration: t.exitFadeSec,
-    width: "100%",
-    height: "100%",
-    fill_color: colors.void,
-    animations: [
-      {
-        time: 0,
-        duration: t.exitFadeSec,
-        easing: "quadratic-in",
-        type: "fade",
-        reversed: true,
-      },
-    ],
-  });
-
-  return elements;
 }
 
 function buildSignatureOutro(startSec: number): CreatomateElement[] {
@@ -331,12 +198,13 @@ function buildMusicElements(
 }
 
 /**
- * Source Creatomate complète (intro → médias → outro + ducking).
+ * Source Creatomate complète (intro atome → médias TS → outro TS + ducking).
  */
 export function buildCreatomateSource(
   plan: OdysseyRenderPlan,
 ): Record<string, unknown> {
-  const introDur = cinematicTheme.intro.durationSec;
+  const intro = assembleIntroAtom(plan);
+  const introDur = intro.durationSec;
   const outroDur = cinematicTheme.outro.durationSec;
   const contentEnd = introDur + Math.max(plan.clips.reduce(
     (max, c) => Math.max(max, c.timeSec + c.durationSec),
@@ -346,7 +214,7 @@ export function buildCreatomateSource(
   const totalDuration = outroStart + outroDur;
 
   const elements: CreatomateElement[] = [
-    ...buildSignatureIntro(plan),
+    ...intro.elements,
     ...buildMediaElements(plan, introDur),
     ...buildMusicElements(plan, introDur),
     ...buildSignatureOutro(outroStart),
@@ -358,7 +226,7 @@ export function buildCreatomateSource(
     width: plan.resolution.width,
     height: plan.resolution.height,
     duration: totalDuration,
-    snapshot_time: Math.min(1.2, introDur / 2),
+    snapshot_time: Math.min(8, introDur / 2),
     elements,
   };
 }

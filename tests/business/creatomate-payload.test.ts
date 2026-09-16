@@ -254,9 +254,33 @@ describe("payloadBuilder RenderScript", () => {
     const source = buildCreatomateSource(plan);
     expect(source.width).toBe(3840);
     expect(source.height).toBe(2160);
+    expect(source.duration).toBeGreaterThanOrEqual(35);
     const elements = source.elements as Array<Record<string, unknown>>;
-    const nameEl = elements.find((e) => e.id === "intro-name");
-    expect(String(nameEl?.font_size)).toMatch(/vmin/);
+
+    const findByName = (
+      els: Array<Record<string, unknown>>,
+      name: string,
+    ): Record<string, unknown> | undefined => {
+      for (const e of els) {
+        if (e.name === name) return e;
+        const nested = e.elements as Array<Record<string, unknown>> | undefined;
+        if (nested) {
+          const hit = findByName(nested, name);
+          if (hit) return hit;
+        }
+      }
+      return undefined;
+    };
+
+    expect(elements.some((e) => e.name === "Composition-Portrait")).toBe(true);
+    const nameEl = findByName(elements, "Text-CFQ");
+    expect(nameEl?.text).toBe("Marie Dupont");
+    expect(nameEl?.font_family).toBe("Playfair Display");
+    const yearsEl = findByName(elements, "Text-F5F");
+    expect(yearsEl?.text).toBe("1948 - 2024");
+    const portrait = findByName(elements, "Image-VZZ");
+    expect(String(portrait?.source)).toMatch(/^https:\/\//);
+
     expect(elements.some((e) => e.id === "outro-wordmark")).toBe(true);
     expect(
       elements.some(
@@ -265,8 +289,12 @@ describe("payloadBuilder RenderScript", () => {
           e.track === cinematicTheme.music.creatomateTracks.bed,
       ),
     ).toBe(true);
-    const photo = elements.find((e) => e.type === "image");
-    const photoAnims = (photo?.animations as Array<Record<string, unknown>>) ?? [];
+    const mediaImages = elements.filter(
+      (e) => e.type === "image" && e.name !== "Image-VZZ",
+    );
+    expect(mediaImages.length).toBeGreaterThan(0);
+    const photoAnims =
+      (mediaImages[0]?.animations as Array<Record<string, unknown>>) ?? [];
     expect(photoAnims.some((a) => a.type === "scale")).toBe(true);
   });
 });
