@@ -30,11 +30,11 @@ const DEFAULT_ACCEPT: Accept = {
 
 /**
  * Extensions tolérées même quand le navigateur renvoie un MIME vide.
- * Chrome / Firefox / Edge ne reconnaissent pas HEIC/HEIF nativement et
- * renvoient `file.type = ""` pour ces fichiers — sans ce validator,
- * react-dropzone les rejette silencieusement comme `file-invalid-type`.
+ * Chrome / Firefox / Edge : HEIC/HEIF nativement inconnus ; iPhone / Finder
+ * peuvent aussi livrer `.mp4`/`.mov` avec `file.type === ""`. Sans ce
+ * validator, react-dropzone les rejette comme `file-invalid-type`.
  */
-const EXTENSION_FALLBACK = /\.(heic|heif)$/i;
+const EXTENSION_FALLBACK = /\.(heic|heif|mp4|mov)$/i;
 
 const customFileValidator = (file: File): { code: string; message: string } | null => {
   // Si le navigateur a fourni un MIME, on laisse react-dropzone décider via `accept`.

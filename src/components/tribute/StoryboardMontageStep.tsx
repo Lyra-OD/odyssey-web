@@ -139,7 +139,7 @@ export function StoryboardMontageStep({
     if (!projectId) return;
     let aborted = false;
     setIsLoadingMedia(true);
-    void fetchProjectMedia(projectId)
+    void fetchProjectMedia(projectId, { force: true })
       .then((items) => {
         if (aborted) return;
         const montageItems = mediaApiToMontageItems(items);
