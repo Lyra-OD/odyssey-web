@@ -4,11 +4,11 @@
 **Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 16 sept 2026 — **N1 fil** : `wizard_state.furthestStep` mémorise le plus loin atteint ; clic phase / stepper ne saute plus au-delà (prépare constellation C).
+- 16 sept 2026 — **N2 fil** : constellation C (7 points) — ancres Essentiel · Coffre · Musique · Composer · Son film ; plus de Déposer/Composer/Recevoir ni « Étape N ».
+- 16 sept 2026 — **N1 fil** : `wizard_state.furthestStep` mémorise le plus loin atteint ; clic ne saute plus au-delà.
 - 10 sept 2026 — **Dates Essentiel** : naissance `max` = hier ; départ `min` = naissance (ou 1800), `max` = aujourd’hui + 2 ans (horizon MAID) ; validation CTA + copy dédiée ([`wizardDateBounds.ts`](../src/lib/wizard/wizardDateBounds.ts)).
 - 10 sept 2026 — **Intro hub Étape 1** : pitch `SanctuaryHubIntro` lié au draft live incomplet (`!hasEssentialsData`), plus au snapshot `virginHub` mount — clear + close ramène « Le film de leur vie ».
 - 9 sept 2026 — **Chrome mobile Wizard** : sticky header — split gauche/droite dès mobile (identité + Loved ones | Package + Creation help empilés) ; chip `OdysseyHelpLifeline` pastille `bottom-24` mobile / chip complet `md:bottom-5`.
-- 5 sept 2026 — **Mobile, Étapes 1 et 3** : chaque champ de date de l’Essentiel gagne un « Effacer » applicatif — l’effacement du sélecteur natif n’émet pas de `change` de façon fiable entre iOS et Android, on ne dépend plus de lui ; le repli de `showPicker()` ajoute un `click()` (Safari iOS < 16 n’ouvrait rien). Le Scanner Compagnon remplace son QR par « Ouvrir l’appareil photo » sur pointeur grossier ([`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -24,14 +24,14 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 
 | File | Role |
 |------|------|
-| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (package Dossier + phase progress) |
+| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (package Dossier + fil constellation) |
 | `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | **Step 1 (J2)** — ciel fullscreen + panneau verre ; `SanctuaryUniverse` background · birth live · reveal contrôlé |
 | `src/hooks/useWizardStep1Reveal.ts` | Phase reveal étape 1 (`idle` → `birth` → `reward` → `done`) · orchestration `playReward()` |
 | `src/lib/wizard/wizardBirthReveal.ts` | Courbes / beats C0–C2 pour naissance Hero au prénom (pont craft → wizard) |
 | `src/components/contribute/SanctuaryUniverse.tsx` | Scène WebGL partagée (lab + wizard) — Hero, constellation, lift séparation Hero↔nom |
 | `src/components/contribute/useHeroNameSeparation.ts` | Spring séparation Hero ↔ nom (craft J2) |
 | `src/hooks/useWizardStoryboard.ts` | Domaine storyboard pur — resync chapitres, doublons, validation structurelle, estimation durée ; autosave reste dans `TributeWizard` via `persistStoryboardRef` |
-| `src/components/tribute/WizardPhaseProgress.tsx` | Minimalist 3-phase progress indicator (Déposer / Composer / Recevoir) — replaces the old 8-circle `WizardStepper` |
+| `src/components/tribute/WizardPhaseProgress.tsx` | Fil constellation C (7 points / 3 en Co-Créateur) — ancres Essentiel · Coffre · Musique · Composer · Son film ; `furthestStep` allume et autorise le clic |
 | `src/components/tribute/PackageDossierPanel.tsx` | Global off-canvas package selector (« Le Dossier ») — editorial trigger, exhaustive inclusions from `PACKAGE_MANIFEST`, cross-fade comparison, inline downgrade guard. Visible from Step 1 onward, replaces the per-step `WizardBasePackagePicker` and the short-lived `StoryboardPackageSwitcher` dropdown |
 | `src/lib/wizard/packageDossier.ts` | Resolves a package's exhaustive inclusion rows from `PACKAGE_MANIFEST` for the Dossier |
 | `src/components/StickyPriceBar.tsx` | Sticky total Soft Cap (`resolveWizardDisplayCart`) |
@@ -112,7 +112,7 @@ Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans 
 
 | Decision | Why |
 |----------|-----|
-| **Le Dossier** (off-canvas vs dropdown) | Reduce visual cognitive load (8 circles → 3 phases); avoid cheap e-commerce dropdown; package consultable from any step without polluting step body |
+| **Le Dossier** (off-canvas vs dropdown) | Reduce visual cognitive load ; package consultable from any step without polluting step body. Fil = constellation C (pas 8 cercles, pas 3 phases Déposer/Composer/Recevoir) |
 | **DEFAULT_B2C_BASE_PACKAGE = "heritage"** (fallback) | Ancien ancrage Éternité ; **supplanté Cascade V-Final** : init via `ChannelProfile` (B2B2C → `essential`, B2C → `signature` / Héritage **179 $**) |
 | **Step 4 ↔ 5 reorder** | Chapter media capacity depends on `durationSec` — music choice must precede media assignment |
 | **Clean Slate Step 5** | `SoundSignatureStep` showed functional UI but inputs were silently ignored by `coerceWizardState()` — misleading UX, not mere tech debt |

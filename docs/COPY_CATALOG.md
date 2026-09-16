@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-10 · **Entrées :** 892
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-16 · **Entrées :** 899
 
 ## `common`
 
@@ -343,6 +343,13 @@
 | `tributeWizard.phaseGatherLabel` | Déposer | Gather |
 | `tributeWizard.phaseComposeLabel` | Composer | Craft |
 | `tributeWizard.phaseReceiveLabel` | Recevoir | Receive |
+| `tributeWizard.trailEssentiel` | Essentiel | Essentials |
+| `tributeWizard.trailCoffre` | Coffre | Chest |
+| `tributeWizard.trailMusique` | Musique | Music |
+| `tributeWizard.trailComposer` | Composer | Craft |
+| `tributeWizard.trailSonFilm` | Son film | Their film |
+| `tributeWizard.trailGoToAria` | Aller à {label} | Go to {label} |
+| `tributeWizard.trailHereAria` | Vous êtes ici · {label} | You are here · {label} |
 | `tributeWizard.editorModeBanner` | Mode Co-Créateur | Co-Creator Mode |
 | `tributeWizard.editorModeHint` | Vous enrichissez le Coffre à souvenirs, la musique et le film. Le titulaire finalisera le parcours. | You’re enriching the Memory Chest, the music, and the film. The account holder will finish the journey. |
 | `tributeWizard.editorCraftComplete` | Votre contribution est enregistrée. Le titulaire poursuivra l’hommage. | Your contribution is saved. The account holder will continue the tribute. |

@@ -1217,13 +1217,11 @@ export function TributeWizard({
   }, [accessRole, currentStep, navigateToStep]);
 
   const handleStepperClick = useCallback(
-    (step: number) => {
-      // Éditeur : le progress remappe 1/2/3 → Wizard 3/4/5.
-      const wizardStep = (isEditor ? step + 2 : step) as Step;
+    (wizardStep: number) => {
       if (wizardStep > furthestStep) return;
-      void navigateToStep(wizardStep);
+      void navigateToStep(wizardStep as Step);
     },
-    [furthestStep, isEditor, navigateToStep],
+    [furthestStep, navigateToStep],
   );
 
   const handleSocialSelect = useCallback(
@@ -1368,46 +1366,57 @@ export function TributeWizard({
   const musicBrowseTier =
     isEditor || softCapMusicBrowse ? "premium" : musicCatalogTier;
 
-  const stepperSteps = useMemo(
-    () => [
-      { id: 1, label: copy.stepperEssentials },
-      { id: 2, label: copy.stepperSources },
-      { id: 3, label: copy.stepperVault },
-      { id: 4, label: copy.stepperChapters },
-      { id: 5, label: copy.stepperMontage },
-      { id: 6, label: copy.stepperPreview },
-      { id: 7, label: copy.stepperCheckout },
-    ],
-    [copy],
-  );
-
-  // Stepper en 3 "phases" cinématiques (Déposer / Composer / Recevoir) plutôt
-  // que 8 cercles linéaires — réduit la charge cognitive tout en gardant la
-  // notion d'avancement (voir refonte en-tête global).
-  // Co-Créateur : phases craft uniquement (pas de « Recevoir » / checkout).
-  // Les numéros de phase sont locaux (1…N) ; onPhaseClick remap vers étapes Wizard.
-  const wizardPhases = useMemo(() => {
+  /** Fil constellation — ancres Essentiel / Coffre / Musique / Composer / Son film. */
+  const trailStars = useMemo(() => {
     if (isEditor) {
       return [
-        { id: 1, label: copy.phaseGatherLabel, firstStep: 1, lastStep: 1 },
-        { id: 2, label: copy.phaseComposeLabel, firstStep: 2, lastStep: 3 },
+        {
+          step: 3,
+          anchorLabel: copy.trailCoffre,
+          ariaName: copy.stepperVault,
+        },
+        {
+          step: 4,
+          anchorLabel: copy.trailMusique,
+          ariaName: copy.stepperChapters,
+        },
+        {
+          step: 5,
+          anchorLabel: copy.trailComposer,
+          ariaName: copy.stepperMontage,
+        },
       ];
     }
     return [
-      { id: 1, label: copy.phaseGatherLabel, firstStep: 1, lastStep: 3 },
-      { id: 2, label: copy.phaseComposeLabel, firstStep: 4, lastStep: 5 },
-      { id: 3, label: copy.phaseReceiveLabel, firstStep: 6, lastStep: 7 },
+      {
+        step: 1,
+        anchorLabel: copy.trailEssentiel,
+        ariaName: copy.stepperEssentials,
+      },
+      { step: 2, ariaName: copy.stepperSources },
+      {
+        step: 3,
+        anchorLabel: copy.trailCoffre,
+        ariaName: copy.stepperVault,
+      },
+      {
+        step: 4,
+        anchorLabel: copy.trailMusique,
+        ariaName: copy.stepperChapters,
+      },
+      {
+        step: 5,
+        anchorLabel: copy.trailComposer,
+        ariaName: copy.stepperMontage,
+      },
+      { step: 6, ariaName: copy.stepperPreview },
+      {
+        step: 7,
+        anchorLabel: copy.trailSonFilm,
+        ariaName: copy.stepperCheckout,
+      },
     ];
   }, [copy, isEditor]);
-  const currentStepLabel = useMemo(
-    () => stepperSteps.find((step) => step.id === currentStep)?.label ?? "",
-    [stepperSteps, currentStep],
-  );
-  const progressTotalSteps = isEditor ? 3 : TOTAL_STEPS;
-  /** Éditeur : remap étapes Wizard 3/4/5 → progression locale 1/2/3. */
-  const progressCurrentStep = isEditor
-    ? (Math.min(5, Math.max(3, currentStep)) - 2)
-    : currentStep;
 
   const collabInviteCopy = useMemo(
     () => collabInviteCopyFromDictionary(copy),
@@ -1845,15 +1854,14 @@ export function TributeWizard({
           }
         >
         <WizardPhaseProgress
-          phases={wizardPhases}
-          currentStep={progressCurrentStep}
-          totalSteps={progressTotalSteps}
-          currentStepLabel={currentStepLabel}
-          onPhaseClick={handleStepperClick}
+          stars={trailStars}
+          currentStep={currentStep}
+          furthestStep={furthestStep}
+          onStepClick={handleStepperClick}
           copy={{
             ariaLabel: copy.progressAria,
-            stepAnnouncement: copy.stepLabel,
-            stepProgressLabel: copy.stepProgressLabel,
+            goToStepAria: copy.trailGoToAria,
+            hereAria: copy.trailHereAria,
           }}
         />
         </div>
