@@ -1,5 +1,8 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
+import { useMemo } from "react";
+
 export type WizardTrailStar = {
   /** Numéro d'étape wizard réel (1–7, ou 3–5 pour Co-Créateur). */
   step: number;
@@ -25,6 +28,13 @@ type Props = {
   copy: WizardConstellationTrailCopy;
 };
 
+/** Décalages verticaux organiques (px) — zig, pas une barre droite. */
+const ZIG_Y = [0, -7, 5, -6, 4, -5, 3] as const;
+
+function zigY(index: number): number {
+  return ZIG_Y[index % ZIG_Y.length]!;
+}
+
 function replaceTokens(template: string, tokens: Record<string, string>): string {
   return Object.entries(tokens).reduce(
     (acc, [key, value]) => acc.replace(`{${key}}`, value),
@@ -33,9 +43,9 @@ function replaceTokens(template: string, tokens: Record<string, string>): string
 }
 
 /**
- * Fil d’Ariane constellation (règle C) : points = étapes réelles,
- * visités allumés + cliquables, futurs éteints. Titres seulement aux ancres.
- * Remplace l’ancien indicateur 3-phases Déposer / Composer / Recevoir.
+ * Fil constellation WOW (règle C) : uniquement les étoiles déjà nées
+ * (`≤ furthestStep`). Zig organique, filaments, halo sur l’ici, naissance
+ * à chaque avancée. Pas de points futurs (décourageants).
  */
 export function WizardPhaseProgress({
   stars,
@@ -44,89 +54,109 @@ export function WizardPhaseProgress({
   onStepClick,
   copy,
 }: Props) {
-  const currentStar = stars.find((star) => star.step === currentStep);
+  const reduceMotion = useReducedMotion();
+
+  const visibleStars = useMemo(
+    () => stars.filter((star) => star.step <= furthestStep),
+    [stars, furthestStep],
+  );
+
+  const currentStar = visibleStars.find((star) => star.step === currentStep);
   const hereLabel =
     currentStar?.anchorLabel?.trim() || currentStar?.ariaName || "";
 
   return (
-    <nav className="mb-4 w-full md:mb-8" aria-label={copy.ariaLabel}>
+    <nav className="mb-5 w-full md:mb-9" aria-label={copy.ariaLabel}>
       {hereLabel ? (
         <p className="sr-only" aria-live="polite">
           {replaceTokens(copy.hereAria, { label: hereLabel })}
         </p>
       ) : null}
 
-      <ol className="mx-auto flex max-w-xl items-start justify-center px-1 sm:max-w-2xl">
-        {stars.map((star, index) => {
+      <ol className="mx-auto flex max-w-lg items-center justify-center px-2 sm:max-w-xl">
+        {visibleStars.map((star, index) => {
           const isCurrent = star.step === currentStep;
-          const isReached = star.step <= furthestStep;
-          const isFuture = !isReached;
-          const isLast = index === stars.length - 1;
-          const showAnchor =
-            Boolean(star.anchorLabel?.trim()) && (isReached || isCurrent);
+          const showAnchor = Boolean(star.anchorLabel?.trim());
           const goLabel = star.anchorLabel?.trim() || star.ariaName;
-          const segmentLit = star.step < furthestStep;
+          const y = zigY(index);
+          const prevY = index > 0 ? zigY(index - 1) : y;
 
           return (
-            <li key={star.step} className="flex min-w-0 flex-1 items-start">
-              <div className="flex w-full flex-col items-center">
-                <div className="flex h-7 w-full items-center">
-                  <span
-                    className={`h-px flex-1 ${
-                      index === 0
-                        ? "bg-transparent"
-                        : stars[index - 1]!.step <= furthestStep
-                          ? "bg-teal-400/30"
-                          : "bg-white/10"
-                    }`}
-                    aria-hidden
-                  />
-
-                  <button
-                    type="button"
-                    disabled={isFuture}
-                    onClick={() => {
-                      if (isFuture) return;
-                      onStepClick(star.step);
-                    }}
-                    title={isReached ? goLabel : undefined}
-                    aria-label={replaceTokens(copy.goToStepAria, {
-                      label: goLabel,
-                    })}
-                    aria-current={isCurrent ? "step" : undefined}
-                    className={`relative z-[1] flex h-7 w-7 shrink-0 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/40 disabled:cursor-default ${
-                      isFuture ? "" : "cursor-pointer"
-                    }`}
+            <li key={star.step} className="flex min-w-0 flex-1 items-center">
+              {index > 0 ? (
+                <div
+                  className="relative h-10 min-w-[0.75rem] flex-1 sm:min-w-[1.25rem]"
+                  aria-hidden
+                >
+                  <svg
+                    className="absolute inset-0 h-full w-full overflow-visible"
+                    viewBox="0 0 100 40"
+                    preserveAspectRatio="none"
                   >
-                    <span
-                      className={`block rounded-full transition-[box-shadow,background-color,transform] duration-300 ${
-                        isCurrent
-                          ? "h-2.5 w-2.5 scale-110 bg-teal-300 shadow-[0_0_12px_rgba(45,212,191,0.65),0_0_4px_rgba(34,211,238,0.45)]"
-                          : isReached
-                            ? "h-2 w-2 bg-teal-400/75 hover:bg-teal-300"
-                            : "h-1.5 w-1.5 bg-white/15"
-                      }`}
-                      aria-hidden
+                    <path
+                      className={
+                        star.step === currentStep
+                          ? "wizard-trail-filament wizard-trail-filament-live"
+                          : "wizard-trail-filament"
+                      }
+                      d={`M 0 ${20 + prevY * 0.85} Q 50 ${
+                        20 + ((prevY + y) / 2) * 0.85 - 5
+                      } 100 ${20 + y * 0.85}`}
+                      fill="none"
+                      vectorEffect="non-scaling-stroke"
                     />
-                  </button>
+                  </svg>
+                </div>
+              ) : null}
 
+              <motion.div
+                className="relative flex shrink-0 flex-col items-center"
+                initial={
+                  reduceMotion
+                    ? false
+                    : { opacity: 0, scale: 0.15, y }
+                }
+                animate={{ opacity: 1, scale: 1, y }}
+                transition={{
+                  duration: 0.48,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => onStepClick(star.step)}
+                  title={goLabel}
+                  aria-label={replaceTokens(copy.goToStepAria, {
+                    label: goLabel,
+                  })}
+                  aria-current={isCurrent ? "step" : undefined}
+                  className="relative z-[1] flex h-9 w-9 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/45"
+                >
+                  {isCurrent ? (
+                    <>
+                      <span className="wizard-trail-halo" aria-hidden />
+                      <span className="wizard-trail-dust" aria-hidden>
+                        <i />
+                        <i />
+                        <i />
+                      </span>
+                    </>
+                  ) : null}
                   <span
-                    className={`h-px flex-1 ${
-                      isLast
-                        ? "bg-transparent"
-                        : segmentLit
-                          ? "bg-teal-400/30"
-                          : "bg-white/10"
-                    }`}
+                    className={
+                      isCurrent
+                        ? "wizard-trail-core wizard-trail-core-current"
+                        : "wizard-trail-core"
+                    }
                     aria-hidden
                   />
-                </div>
+                </button>
 
                 <span
-                  className={`mt-1.5 h-4 max-w-[4.25rem] truncate text-center text-[9px] font-light uppercase tracking-[0.14em] sm:max-w-[5.25rem] sm:text-[10px] ${
+                  className={`mt-1 max-w-[4.5rem] truncate text-center text-[9px] font-light uppercase tracking-[0.16em] sm:max-w-[5.5rem] sm:text-[10px] ${
                     showAnchor
                       ? isCurrent
-                        ? "text-teal-200/90"
+                        ? "text-teal-200/95"
                         : "text-zinc-500"
                       : "text-transparent"
                   }`}
@@ -134,7 +164,7 @@ export function WizardPhaseProgress({
                 >
                   {showAnchor ? star.anchorLabel : "\u00a0"}
                 </span>
-              </div>
+              </motion.div>
             </li>
           );
         })}

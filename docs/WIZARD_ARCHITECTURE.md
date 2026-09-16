@@ -4,11 +4,11 @@
 **Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 16 sept 2026 — **N2b fil** : constellation WOW — zig organique, futurs cachés, filaments + halo/breath + poussière sur l’étoile courante.
 - 16 sept 2026 — **N2 fil** : constellation C (7 points) — ancres Essentiel · Coffre · Musique · Composer · Son film ; plus de Déposer/Composer/Recevoir ni « Étape N ».
 - 16 sept 2026 — **N1 fil** : `wizard_state.furthestStep` mémorise le plus loin atteint ; clic ne saute plus au-delà.
 - 10 sept 2026 — **Dates Essentiel** : naissance `max` = hier ; départ `min` = naissance (ou 1800), `max` = aujourd’hui + 2 ans (horizon MAID) ; validation CTA + copy dédiée ([`wizardDateBounds.ts`](../src/lib/wizard/wizardDateBounds.ts)).
 - 10 sept 2026 — **Intro hub Étape 1** : pitch `SanctuaryHubIntro` lié au draft live incomplet (`!hasEssentialsData`), plus au snapshot `virginHub` mount — clear + close ramène « Le film de leur vie ».
-- 9 sept 2026 — **Chrome mobile Wizard** : sticky header — split gauche/droite dès mobile (identité + Loved ones | Package + Creation help empilés) ; chip `OdysseyHelpLifeline` pastille `bottom-24` mobile / chip complet `md:bottom-5`.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -31,7 +31,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 | `src/components/contribute/SanctuaryUniverse.tsx` | Scène WebGL partagée (lab + wizard) — Hero, constellation, lift séparation Hero↔nom |
 | `src/components/contribute/useHeroNameSeparation.ts` | Spring séparation Hero ↔ nom (craft J2) |
 | `src/hooks/useWizardStoryboard.ts` | Domaine storyboard pur — resync chapitres, doublons, validation structurelle, estimation durée ; autosave reste dans `TributeWizard` via `persistStoryboardRef` |
-| `src/components/tribute/WizardPhaseProgress.tsx` | Fil constellation C (7 points / 3 en Co-Créateur) — ancres Essentiel · Coffre · Musique · Composer · Son film ; `furthestStep` allume et autorise le clic |
+| `src/components/tribute/WizardPhaseProgress.tsx` | Fil constellation WOW — étoiles nées seulement (`furthestStep`), zig organique, filaments, halo ; ancres Essentiel · Coffre · Musique · Composer · Son film |
 | `src/components/tribute/PackageDossierPanel.tsx` | Global off-canvas package selector (« Le Dossier ») — editorial trigger, exhaustive inclusions from `PACKAGE_MANIFEST`, cross-fade comparison, inline downgrade guard. Visible from Step 1 onward, replaces the per-step `WizardBasePackagePicker` and the short-lived `StoryboardPackageSwitcher` dropdown |
 | `src/lib/wizard/packageDossier.ts` | Resolves a package's exhaustive inclusion rows from `PACKAGE_MANIFEST` for the Dossier |
 | `src/components/StickyPriceBar.tsx` | Sticky total Soft Cap (`resolveWizardDisplayCart`) |
