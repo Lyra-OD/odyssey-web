@@ -1,7 +1,7 @@
 # product/ — nouveaux docs produit (wizard, Sanctuaire, Scanner)
 
 **Type :** ops · **Vérité pour :** où naissent les **nouveaux** docs produit.  
-**Dernière MAJ :** 3 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 16 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 Canons existants (`WIZARD_ARCHITECTURE.md`, `SCANNER_COMPANION.md`, …) restent à la **racine** — ne pas déplacer sans stubs.
 
@@ -14,6 +14,7 @@ Canons existants (`WIZARD_ARCHITECTURE.md`, `SCANNER_COMPANION.md`, …) restent
 | [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md) | Registre beats nommés · craft · stubs · statut impl |
 | [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md) | **Audit trous** — gate avant code T1+ |
 | [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md) | Vision Sanctuaire — prologue · hub · tiroir · navigation |
+| [`COFFRE_MONTAGE_MEDIA_INGEST.md`](COFFRE_MONTAGE_MEDIA_INGEST.md) | Audit Coffre / Livre Ouvert · ingest client · démo **18 sept** |
 
 ## Mettre ici
 

@@ -164,6 +164,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) | canon | **Chemin 1** — Traversée UX (spec impl active) |
 | [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) | canon | Beats Parcours UX · craft · stubs |
 | [`product/PARCOURS_UX_GAPS.md`](product/PARCOURS_UX_GAPS.md) | living | Audit trous Chemin 1 · gate T1 |
+| [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) | living | Coffre + montage : audit vidéo / DnD desktop · ingest trim 10 s · **démo 18 sept** |
 | [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md) | canon | Add-on NFC |
 | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) | canon | Scanner Phase A+B |
 | [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) | canon | Boucle / Fonds |

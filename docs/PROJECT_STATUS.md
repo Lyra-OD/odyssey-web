@@ -4,11 +4,11 @@
 **Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 16 sept 2026 — **Coffre / montage** : audit vidéo + DnD desktop · ingest trim client après démo · [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) · **démo 18 sept = P0 preview**.
 - 16 sept 2026 — **Creatomate étape 3** : film atomique complet (intro + clips + outro carte mémoire, sans Odyssey) · [`craft/CREATOMATE_RECIPE.md`](craft/CREATOMATE_RECIPE.md).
 - 16 sept 2026 — **Creatomate étape 2** : intro magazine runtime · resserrée 27 s.
 - 16 sept 2026 — **Creatomate étape 1** : essentials `birthYear` / `deathYear` / `portraitUrl` signé.
 - 15 sept 2026 — **Creatomate atomes** : intro / photo / vidéo / outro figés (`docs/craft/atoms/`).
-- 15 sept 2026 — **Creatomate** : smoke réel ✅ · labs curl v1.x (échec DA typo) · pivot atomes UI.
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 
