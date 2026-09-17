@@ -49,7 +49,7 @@ Test d’or :
 
 1. **Fond du Sanctuaire** — ciel WebGL derrière l’UI, **non interactif** (`pointer-events: none`), caméra calme.
 2. **Voir le ciel** — plein écran **interactif** (drag, focus / révélation). Sortie claire (fermer / Esc).
-3. **Invité mobile / tactile** — **pas de WebGL**. Image locale `public/craft/sky/guest-still-v3.jpg` (`GuestSkyStill`). `SanctuaryLanding` n’importe plus `HeroStar` / Three en statique (defaults légers + `SanctuarySkyPreview` en `dynamic`). Desktop inchangé.
+3. **Invité mobile / tactile** — **pas de WebGL**. Image locale `public/craft/sky/guest-still-v3.jpg` (`GuestSkyStill`). `SanctuaryLanding` : shell ciel dès le premier paint (comme Scanner) ; dépôt / voix / vidéo / catalogue en `dynamic` ; pas d’import `HeroStar` / Three. Desktop inchangé.
 
 Le dépôt formulaire reste le chemin sûr ; le ciel est la **récompense**, pas un prérequis.
 

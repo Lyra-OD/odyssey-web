@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
 import { SanctuaryLanding } from "@/src/components/contribute/SanctuaryLanding";
+import { GUEST_SKY_STILL_SRC } from "@/src/lib/contribute/guestSkyStill";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
 
@@ -31,7 +32,7 @@ export async function generateMetadata({
 
 /**
  * Page publique Sanctuaire (Boucle Virale) — token opaque, sans auth.
- * Tunnel Quiet Luxury : dépôt gratuit d'abord, empreintes ensuite.
+ * Tunnel Quiet Luxury : dépôt gratuit d’abord, empreintes ensuite.
  */
 export default async function ContributeSanctuaryPage({ params }: PageProps) {
   const { lang: routeLang, token: rawToken } = await params;
@@ -66,11 +67,15 @@ export default async function ContributeSanctuaryPage({ params }: PageProps) {
   }
 
   return (
-    <SanctuaryLanding
-      token={token}
-      locale={lang}
-      copyFr={dictFr.sanctuary}
-      copyEn={dictEn.sanctuary}
-    />
+    <>
+      {/* Premier paint mobile : still avant le JS client. */}
+      <link rel="preload" as="image" href={GUEST_SKY_STILL_SRC} />
+      <SanctuaryLanding
+        token={token}
+        locale={lang}
+        copyFr={dictFr.sanctuary}
+        copyEn={dictEn.sanctuary}
+      />
+    </>
   );
 }

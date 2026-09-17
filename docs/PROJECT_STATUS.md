@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — Sanctuaire invité : shell ciel immédiat (comme Scanner) + chunks dépôt en `dynamic` — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
 - 17 sept 2026 — Sanctuaire invité mobile : still DA `guest-still-v3` + **Landing sans import Three** — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
 - 17 sept 2026 — Invité **mobile / tactile** : ciel = image, **zéro WebGL** (clics + premier paint). Desktop garde le canvas.
 - 17 sept 2026 — D0 freeze docs : canons = runtime (7 étapes, S5-L partiel, Preview pont hybride, démo **18 sept**) — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md).
 - 17 sept 2026 — Autosave silent fail : Zod accepte `furthestStep` (PATCH 400 depuis cba61d5) · log `invalid_body` en dev — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
-- 17 sept 2026 — Bandeau Soft Cap aperçu : dire les faits (photos / licence / Héritage) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) (plan plus tard).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

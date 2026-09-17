@@ -2,26 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
-import {
-  ImprintCatalog,
-  type ImprintPack,
-} from "@/src/components/contribute/ImprintCatalog";
-import { ImprintCheckoutCta } from "@/src/components/contribute/ImprintCheckoutCta";
-import { GuestVoiceRecorder } from "@/src/components/contribute/GuestVoiceRecorder";
-import { GuestVideoRecorder } from "@/src/components/contribute/GuestVideoRecorder";
-import { SanctuaryLueurOrb } from "@/src/components/contribute/SanctuaryLueurOrb";
-import { SanctuaryLueurPanel } from "@/src/components/contribute/SanctuaryLueurPanel";
-import { PatronAmountField } from "@/src/components/contribute/PatronAmountField";
-import {
-  SanctuaryDepositForm,
-  type SanctuaryDepositResult,
-} from "@/src/components/contribute/SanctuaryDepositForm";
+import type { ImprintPack } from "@/src/components/contribute/ImprintCatalog";
+import type { SanctuaryDepositResult } from "@/src/components/contribute/SanctuaryDepositForm";
 import { GuestSkyStill } from "@/src/components/contribute/GuestSkyStill";
 import { GuestStarPills } from "@/src/components/contribute/GuestStarPills";
-import { SanctuaryMonolith } from "@/src/components/contribute/SanctuaryMonolith";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
 import { formatCircleDisplayName } from "@/src/lib/contribute/circle";
 import { LocaleSwitcher } from "@/src/components/i18n/LocaleSwitcher";
@@ -39,10 +25,6 @@ import {
   sanctuaryGhostButton,
 } from "@/src/lib/contribute/sanctuaryChrome";
 import { SANCTUARY_GUEST_PHOTO_MAX } from "@/src/lib/contribute/sanctuaryLimits";
-import {
-  DURATION_RITUAL,
-  EASE_OUT_LUXE,
-} from "@/src/lib/motion/easing";
 import { SKY_GUEST_DEMO_LAYERS } from "@/src/components/contribute/constellation/skyCraftLayers";
 import type { ConstellationRevealCraft } from "@/src/components/contribute/SanctuaryUniverse";
 import {
@@ -84,6 +66,53 @@ const SanctuarySkyPreview = dynamic(
     ssr: false,
     loading: () => <div className="h-screen w-full bg-black" />,
   },
+);
+
+/** Deposit / bridge — hors du premier paint (comme le Scanner : shell d’abord). */
+const SanctuaryMonolith = dynamic(() =>
+  import("@/src/components/contribute/SanctuaryMonolith").then(
+    (m) => m.SanctuaryMonolith,
+  ),
+);
+const SanctuaryDepositForm = dynamic(() =>
+  import("@/src/components/contribute/SanctuaryDepositForm").then(
+    (m) => m.SanctuaryDepositForm,
+  ),
+);
+const ImprintCatalog = dynamic(() =>
+  import("@/src/components/contribute/ImprintCatalog").then(
+    (m) => m.ImprintCatalog,
+  ),
+);
+const ImprintCheckoutCta = dynamic(() =>
+  import("@/src/components/contribute/ImprintCheckoutCta").then(
+    (m) => m.ImprintCheckoutCta,
+  ),
+);
+const GuestVoiceRecorder = dynamic(() =>
+  import("@/src/components/contribute/GuestVoiceRecorder").then(
+    (m) => m.GuestVoiceRecorder,
+  ),
+);
+const GuestVideoRecorder = dynamic(() =>
+  import("@/src/components/contribute/GuestVideoRecorder").then(
+    (m) => m.GuestVideoRecorder,
+  ),
+);
+const SanctuaryLueurOrb = dynamic(() =>
+  import("@/src/components/contribute/SanctuaryLueurOrb").then(
+    (m) => m.SanctuaryLueurOrb,
+  ),
+);
+const SanctuaryLueurPanel = dynamic(() =>
+  import("@/src/components/contribute/SanctuaryLueurPanel").then(
+    (m) => m.SanctuaryLueurPanel,
+  ),
+);
+const PatronAmountField = dynamic(() =>
+  import("@/src/components/contribute/PatronAmountField").then(
+    (m) => m.PatronAmountField,
+  ),
 );
 
 export type SanctuaryCopy = AppDictionary["sanctuary"];
@@ -235,6 +264,13 @@ export function SanctuaryLanding({
   useEffect(() => {
     setSkyStill(shouldUseGuestSkyStill());
   }, []);
+
+  /** Prefetch dépôt pendant le ciel — clic CTA sans attendre le chunk. */
+  useEffect(() => {
+    if (phase !== "sky") return;
+    void import("@/src/components/contribute/SanctuaryMonolith");
+    void import("@/src/components/contribute/SanctuaryDepositForm");
+  }, [phase]);
 
   const handleSelectPack = (key: string) => {
     if (selectedPackKey === key) {
@@ -423,10 +459,12 @@ export function SanctuaryLanding({
     return <SanctuarySkyPreview locale={locale} />;
   }
 
-  const onSky = load.status === "ready" && phase === "sky";
+  const onSky =
+    (load.status === "ready" || load.status === "loading") && phase === "sky";
   const hasJoined = guestStars.length > 0 || deposit !== null;
   const skyFirst = onSky && !hasJoined;
-  const skyReturn = onSky && hasJoined;
+  const skyReady = load.status === "ready";
+  const skyReturn = skyReady && phase === "sky" && hasJoined;
   const grafting = load.status === "ready" && phase === "graft";
   const showMonolith =
     load.status === "ready" &&
@@ -587,12 +625,6 @@ export function SanctuaryLanding({
         }
       />
 
-      {load.status === "loading" ? (
-        <p className="pointer-events-none fixed inset-0 z-[46] flex items-center justify-center text-sm font-light text-zinc-500">
-          {t.loading}
-        </p>
-      ) : null}
-
       {skyFirst ? (
         <div className="pointer-events-none fixed inset-0 z-[46] flex flex-col">
           {skyTopChrome}
@@ -600,16 +632,30 @@ export function SanctuaryLanding({
             <p className="text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
               {t.kicker}
             </p>
-            <h1 className="font-editorial text-[1.85rem] font-medium tracking-tight text-zinc-50 md:text-4xl">
-              {inMemoryOfTitle(
-                tributeSkyName(load.tribute, uiLocale),
-                uiLocale,
-              )}
+            <h1
+              className={`font-editorial text-[1.85rem] font-medium tracking-tight text-zinc-50 transition-opacity duration-300 md:text-4xl ${
+                skyReady ? "opacity-100" : "opacity-40"
+              }`}
+            >
+              {skyReady
+                ? inMemoryOfTitle(
+                    tributeSkyName(load.tribute, uiLocale),
+                    uiLocale,
+                  )
+                : inMemoryOfTitle("", uiLocale)}
             </h1>
-            <p className="max-w-sm text-sm font-light leading-relaxed text-white/70 md:text-base">
+            <p
+              className={`max-w-sm text-sm font-light leading-relaxed text-white/70 transition-opacity duration-300 md:text-base ${
+                skyReady ? "opacity-100" : "opacity-0"
+              }`}
+            >
               {t.skyContextBody}
             </p>
-            <p className="max-w-sm text-xs font-light leading-relaxed text-white/40 md:text-sm">
+            <p
+              className={`max-w-sm text-xs font-light leading-relaxed text-white/40 transition-opacity duration-300 md:text-sm ${
+                skyReady ? "opacity-100" : "opacity-0"
+              }`}
+            >
               {t.skyPrivacyNote}
             </p>
           </div>
@@ -617,10 +663,11 @@ export function SanctuaryLanding({
           <div className="flex flex-col items-center gap-4 px-6 pb-16 text-center">
             <button
               type="button"
+              disabled={!skyReady}
               onClick={() => setPhase("deposit")}
               className={`pointer-events-auto parcours-monolith-continue ${connexionSubmitButtonClass} max-w-xs touch-manipulation`}
             >
-              {t.skyCta}
+              {skyReady ? t.skyCta : t.loading}
             </button>
             <p className="text-[8px] font-medium uppercase tracking-[0.44em] text-white/26">
               {t.poweredBy} {t.brandWordmark}
@@ -903,24 +950,16 @@ export function SanctuaryLanding({
         </header>
 
         <div className="flex-1">
-          <AnimatePresence mode="wait">
-            {load.status === "error" ? (
-              <motion.div
-                key="error"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
-                className="text-center"
-              >
-                <h1 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
-                  {t.errorTitle}
-                </h1>
-                <p className="mt-4 text-sm font-light leading-relaxed text-white/55">
-                  {load.message}
-                </p>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+          {load.status === "error" ? (
+            <div className="text-center">
+              <h1 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
+                {t.errorTitle}
+              </h1>
+              <p className="mt-4 text-sm font-light leading-relaxed text-white/55">
+                {load.message}
+              </p>
+            </div>
+          ) : null}
         </div>
 
         <footer className="mt-16 flex flex-col items-center gap-1 pb-2 pt-8 text-center">
