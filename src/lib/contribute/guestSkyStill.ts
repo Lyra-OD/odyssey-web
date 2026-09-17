@@ -1,5 +1,5 @@
-/** Capture hub recadrée (étoile teal, sans copy gravée) — premier paint mobile. */
-export const GUEST_SKY_STILL_SRC = "/craft/sky/guest-still-v1.jpg";
+/** Capture Hero lab (portrait, sans copy) — premier paint mobile. */
+export const GUEST_SKY_STILL_SRC = "/craft/sky/guest-still-v2.jpg";
 
 /**
  * Téléphone / iPad / reduced-motion : pas de WebGL.
