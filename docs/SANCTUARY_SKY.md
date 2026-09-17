@@ -1,6 +1,6 @@
 # Odyssey — Ciel du Sanctuaire (étoiles-mémoire)
 
-**Statut : vision figée · 29 juillet 2026** · **MAJ invité mobile :** 17 sept 2026 (ciel still, zéro WebGL) · **MAJ craft silhouette :** 24 août 2026 (`leo-graph-v1`) · **parcours User X :** 25 août 2026  
+**Statut : vision figée · 29 juillet 2026** · **MAJ invité :** 17 sept 2026 (HTML ciel immédiat + WebGL progressif) · **MAJ craft silhouette :** 24 août 2026 (`leo-graph-v1`) · **parcours User X :** 25 août 2026  
 **Base technique sécurisée :** commit `6ded642` (WebGL galaxy / `LueurNode` / `test-ciel`)
 
 Document canonique de l’expérience **ciel** du Sanctuaire invité et du **pont** vers le film famille.  
@@ -49,7 +49,7 @@ Test d’or :
 
 1. **Fond du Sanctuaire** — ciel WebGL derrière l’UI, **non interactif** (`pointer-events: none`), caméra calme.
 2. **Voir le ciel** — plein écran **interactif** (drag, focus / révélation). Sortie claire (fermer / Esc).
-3. **Invité mobile / tactile** — **pas de WebGL**. Image locale `public/craft/sky/guest-still-v3.jpg` (`GuestSkyStill`). `SanctuaryLanding` : shell ciel dès le premier paint (comme Scanner) ; dépôt / voix / vidéo / catalogue en `dynamic` ; pas d’import `HeroStar` / Three. Desktop inchangé.
+3. **Invité** — premier HTML = still `guest-still-v3.jpg` (comme Scanner). Le rituel (`SanctuaryLanding`) et le WebGL partent **après** le paint. Desktop : canvas dès idle court. Mobile : canvas en amélioration sur le ciel (`requestIdleCallback`) ; dépôt = still (pas de Three pendant le formulaire). `prefers-reduced-motion` = still seulement. Fallback `WebGLErrorBoundary` → still.
 
 Le dépôt formulaire reste le chemin sûr ; le ciel est la **récompense**, pas un prérequis.
 

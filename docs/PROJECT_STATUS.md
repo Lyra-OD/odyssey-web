@@ -4,9 +4,9 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — Sanctuaire invité : HTML ciel immédiat + WebGL **après** le paint (mobile idle ; dépôt = still) — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
 - 17 sept 2026 — Sanctuaire invité : shell ciel immédiat (comme Scanner) + chunks dépôt en `dynamic` — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
 - 17 sept 2026 — Sanctuaire invité mobile : still DA `guest-still-v3` + **Landing sans import Three** — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
-- 17 sept 2026 — Invité **mobile / tactile** : ciel = image, **zéro WebGL** (clics + premier paint). Desktop garde le canvas.
 - 17 sept 2026 — D0 freeze docs : canons = runtime (7 étapes, S5-L partiel, Preview pont hybride, démo **18 sept**) — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md).
 - 17 sept 2026 — Autosave silent fail : Zod accepte `furthestStep` (PATCH 400 depuis cba61d5) · log `invalid_body` en dev — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 
@@ -28,7 +28,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **RevShare** | 🟢 UI | Spec + SQL P6/P8 + webhook ✅ · UI Salon + `GET /api/partner/commissions` 🟢 · payout ops ⏳ |
 | **Export Creatomate** | 🟢 assembleur atomes | Intro + N clips + outro carte mémoire (`assembleAtomFilm`) · bed audio · wordmark Odyssey retiré. |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
-| **UX mobile** | 🟡 | Wizard : [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md). **Sanctuaire invité** : still `guest-still-v3` (pas de WebGL) |
+| **UX mobile** | 🟡 | Wizard : [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md). **Sanctuaire invité** : HTML still immédiat, WebGL en amélioration |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** (titre d’étape OK ; titres chapitre défaut encore Étincelle / Épopée / Héritage) · S5-J/K ⏳ |
 | **Scanner** | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Marque Éclipse** | 🟢 | Play A–B KEEP · mark + exports · brancher UI ⚪ · wormhole = lab |

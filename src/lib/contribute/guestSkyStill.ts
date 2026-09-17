@@ -1,19 +1,20 @@
-/** Capture DA portrait — premier paint mobile (plein champ). */
+/** Capture DA portrait — premier paint (plein champ) avant le canvas. */
 export const GUEST_SKY_STILL_SRC = "/craft/sky/guest-still-v3.jpg";
 
-/**
- * Téléphone / iPad / reduced-motion : pas de WebGL.
- * SSR et premier paint client = still (jamais de canvas avant d’être sûr).
- * Inclut UA mobile : Safari « site bureau » peut mentir sur pointer/width.
- */
-export function shouldUseGuestSkyStill(): boolean {
+/** Reduced-motion : jamais de canvas. */
+export function shouldKeepGuestSkyStill(): boolean {
   if (typeof window === "undefined") return true;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    return true;
-  }
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/**
+ * Mobile / tactile : WebGL après le premier paint (idle), pas dans le JS critique.
+ * Desktop : canvas dès que le rituel est chargé.
+ */
+export function shouldDeferGuestWebgl(): boolean {
+  if (typeof window === "undefined") return true;
   if (window.matchMedia("(pointer: coarse)").matches) return true;
   if (window.innerWidth < 768) return true;
   const ua = navigator.userAgent || "";
-  if (/iPhone|iPod|iPad|Android|Mobile/i.test(ua)) return true;
-  return false;
+  return /iPhone|iPod|iPad|Android|Mobile/i.test(ua);
 }

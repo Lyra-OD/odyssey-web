@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
-import { SanctuaryLanding } from "@/src/components/contribute/SanctuaryLanding";
+import { SanctuaryGuestEntry } from "@/src/components/contribute/SanctuaryGuestEntry";
 import { GUEST_SKY_STILL_SRC } from "@/src/lib/contribute/guestSkyStill";
+import { loadSanctuaryContext } from "@/src/lib/contribute/loadSanctuaryContext";
+import {
+  isSanctuarySkyPreview,
+  isSanctuaryVisualPreview,
+} from "@/src/lib/contribute/sanctuaryPreview";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
 
@@ -18,10 +24,7 @@ export async function generateMetadata({
   const { lang: routeLang } = await params;
   const lang: Locale = routeLang === "en" ? "en" : "fr";
   return {
-    title:
-      lang === "en"
-        ? "Sanctuary · Odyssey"
-        : "Sanctuaire · Odyssey",
+    title: lang === "en" ? "Sanctuary · Odyssey" : "Sanctuaire · Odyssey",
     description:
       lang === "en"
         ? "Leave a memory in this tribute sanctuary."
@@ -31,8 +34,8 @@ export async function generateMetadata({
 }
 
 /**
- * Page publique Sanctuaire (Boucle Virale) — token opaque, sans auth.
- * Tunnel Quiet Luxury : dépôt gratuit d’abord, empreintes ensuite.
+ * Page publique Sanctuaire — HTML ciel d’abord (comme Scanner).
+ * Le rituel / WebGL part après le premier paint.
  */
 export default async function ContributeSanctuaryPage({ params }: PageProps) {
   const { lang: routeLang, token: rawToken } = await params;
@@ -48,33 +51,40 @@ export default async function ContributeSanctuaryPage({ params }: PageProps) {
   if (!token) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-[#020202] px-6 text-zinc-100">
-        <div className="mx-auto flex max-w-[16rem] scale-[0.82] origin-center justify-center">
+        <div className="mx-auto flex max-w-[16rem] origin-center scale-[0.82] justify-center">
           <OdysseyConnexionMark wordmark={copy.brandWordmark} animate />
         </div>
         <p className="mt-10 text-center text-sm font-light text-white/55">
           {copy.errorBody}
         </p>
-        <footer className="mt-16 flex flex-col items-center gap-1 text-center">
-          <p className="text-[8px] font-medium uppercase tracking-[0.44em] text-white/26">
-            {copy.poweredBy}
-          </p>
-          <p className="font-brand text-[10px] font-medium uppercase tracking-[0.28em] text-white/36">
-            {copy.brandWordmark}
-          </p>
-        </footer>
       </main>
     );
   }
 
+  const cookieHeader = cookies()
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ");
+  const preview =
+    isSanctuaryVisualPreview(token) || isSanctuarySkyPreview(token);
+  const loaded = preview
+    ? { ok: false as const }
+    : await loadSanctuaryContext({
+        token,
+        locale: lang,
+        cookieHeader,
+      });
+
   return (
     <>
-      {/* Premier paint mobile : still avant le JS client. */}
       <link rel="preload" as="image" href={GUEST_SKY_STILL_SRC} />
-      <SanctuaryLanding
+      <SanctuaryGuestEntry
         token={token}
         locale={lang}
         copyFr={dictFr.sanctuary}
         copyEn={dictEn.sanctuary}
+        initial={loaded.ok ? loaded.data : null}
+        errorMessage={loaded.ok || preview ? null : copy.errorBody}
       />
     </>
   );

@@ -40,7 +40,17 @@ import {
   guestSupportPackLabelByKey,
 } from "@/src/lib/wizard/guestSupportPacks";
 import { formatWizardPrice } from "@/src/lib/wizard/wizardPricing";
-import { shouldUseGuestSkyStill } from "@/src/lib/contribute/guestSkyStill";
+import {
+  shouldDeferGuestWebgl,
+  shouldKeepGuestSkyStill,
+} from "@/src/lib/contribute/guestSkyStill";
+import {
+  inMemoryOfTitle,
+  tributeDisplayName,
+  tributeSkyName,
+} from "@/src/lib/contribute/inMemoryTitle";
+import type { SanctuaryGuestPayload } from "@/src/lib/contribute/sanctuaryGuestPayload";
+import { WebGLErrorBoundary } from "@/src/components/contribute/constellation/webglGate";
 import type { Locale } from "@/i18n.config";
 
 const GUEST_KEEP_REVEAL_REF = { current: WIZARD_BIRTH_REVEAL_END };
@@ -52,7 +62,7 @@ const SanctuaryUniverse = dynamic(
     ),
   {
     ssr: false,
-    loading: () => <div className="h-screen w-full bg-black" />,
+    loading: () => <GuestSkyStill />,
   },
 );
 
@@ -64,7 +74,7 @@ const SanctuarySkyPreview = dynamic(
     ),
   {
     ssr: false,
-    loading: () => <div className="h-screen w-full bg-black" />,
+    loading: () => <GuestSkyStill />,
   },
 );
 
@@ -117,17 +127,16 @@ const PatronAmountField = dynamic(() =>
 
 export type SanctuaryCopy = AppDictionary["sanctuary"];
 
+/** Ciel d'abord → dépôt (courriel inclus) → greffe étoile → offres. */
+type Phase = "sky" | "deposit" | "graft" | "bridge";
+
 export type SanctuaryLandingProps = {
   token: string;
   locale: Locale;
   copyFr: SanctuaryCopy;
   copyEn: SanctuaryCopy;
-};
-
-type TributePayload = {
-  firstName: string | null;
-  lastName: string | null;
-  displayName?: string;
+  initial?: SanctuaryGuestPayload | null;
+  initialPhase?: Phase;
 };
 
 function fill(template: string, vars: Record<string, string | number>): string {
@@ -166,32 +175,6 @@ function GuestOdysseyHomeMark({
   );
 }
 
-function tributeSkyName(
-  tribute: TributePayload,
-  locale: Locale,
-): string {
-  const first = tribute.firstName?.trim();
-  if (first) return first;
-  return tributeDisplayName(tribute, locale);
-}
-
-/**
- * Titre ciel invité — FR : « En mémoire de/d’ » (élision voyelle),
- * EN : « In loving memory of ».
- */
-function inMemoryOfTitle(name: string, locale: Locale): string {
-  const trimmed = name.trim();
-  if (locale === "en") {
-    return trimmed
-      ? `In loving memory of ${trimmed}`
-      : "In loving memory";
-  }
-  if (!trimmed) return "En mémoire";
-  const first = trimmed.charAt(0).normalize("NFD")[0]?.toLowerCase() ?? "";
-  const elide = "aeiouy".includes(first);
-  return elide ? `En mémoire d’${trimmed}` : `En mémoire de ${trimmed}`;
-}
-
 function starIdFromName(name: string): string {
   return name.trim().toLowerCase();
 }
@@ -201,26 +184,11 @@ type LoadState =
   | { status: "error"; message: string }
   | {
       status: "ready";
-      tribute: TributePayload;
+      tribute: SanctuaryGuestPayload["tribute"];
       packs: ImprintPack[];
       guestPhotoCount: number;
       guestPhotoMax: number;
     };
-
-/** Ciel d'abord → dépôt (courriel inclus) → greffe étoile → offres. */
-type Phase = "sky" | "deposit" | "graft" | "bridge";
-
-function tributeDisplayName(
-  tribute: TributePayload,
-  locale: "fr" | "en",
-): string {
-  if (tribute.displayName?.trim()) return tribute.displayName.trim();
-  const parts = [tribute.firstName, tribute.lastName]
-    .map((p) => (p ?? "").trim())
-    .filter(Boolean);
-  if (parts.length > 0) return parts.join(" ");
-  return locale === "en" ? "a loved one" : "un être cher";
-}
 
 /**
  * Shell client du Sanctuaire — dépôt (multi photos) → catalogue → checkout.
@@ -230,17 +198,33 @@ export function SanctuaryLanding({
   locale,
   copyFr,
   copyEn,
+  initial = null,
+  initialPhase,
 }: SanctuaryLandingProps) {
-  const [load, setLoad] = useState<LoadState>({ status: "loading" });
+  const [load, setLoad] = useState<LoadState>(() =>
+    initial
+      ? {
+          status: "ready",
+          tribute: initial.tribute,
+          packs: initial.packs,
+          guestPhotoCount: initial.guestPhotoCount,
+          guestPhotoMax: initial.guestPhotoMax,
+        }
+      : { status: "loading" },
+  );
   const [deposit, setDeposit] = useState<SanctuaryDepositResult | null>(null);
-  const [phase, setPhase] = useState<Phase>("sky");
+  const [phase, setPhase] = useState<Phase>(initialPhase ?? "sky");
   const [guestStars, setGuestStars] = useState<
     { id: string; label: string }[]
   >([]);
   const [graftingStarId, setGraftingStarId] = useState<string | null>(null);
   const pendingStarNameRef = useRef<string | null>(null);
-  const [photoCount, setPhotoCount] = useState(0);
-  const [photoMax, setPhotoMax] = useState(SANCTUARY_GUEST_PHOTO_MAX);
+  const [photoCount, setPhotoCount] = useState(
+    initial?.guestPhotoCount ?? 0,
+  );
+  const [photoMax, setPhotoMax] = useState(
+    initial?.guestPhotoMax ?? SANCTUARY_GUEST_PHOTO_MAX,
+  );
   const [selectedPackKey, setSelectedPackKey] = useState<string | null>(null);
   const [voiceMediaId, setVoiceMediaId] = useState<string | null>(null);
   const [videoMediaId, setVideoMediaId] = useState<string | null>(null);
@@ -253,7 +237,7 @@ export function SanctuaryLanding({
   const [lueurSettling, setLueurSettling] = useState(false);
   const [skyOpen, setSkyOpen] = useState(false);
   const [uiLocale, setUiLocale] = useState(locale);
-  /** Premier paint = still — le chunk WebGL ne part jamais sur téléphone. */
+  /** Premier paint = still. WebGL = amélioration (idle sur mobile). */
   const [skyStill, setSkyStill] = useState(true);
   const t = uiLocale === "en" ? copyEn : copyFr;
 
@@ -262,14 +246,29 @@ export function SanctuaryLanding({
   }, [locale]);
 
   useEffect(() => {
-    setSkyStill(shouldUseGuestSkyStill());
-  }, []);
+    if (initialPhase) setPhase(initialPhase);
+  }, [initialPhase]);
 
-  /** Prefetch dépôt pendant le ciel — clic CTA sans attendre le chunk. */
   useEffect(() => {
-    if (phase !== "sky") return;
-    void import("@/src/components/contribute/SanctuaryMonolith");
-    void import("@/src/components/contribute/SanctuaryDepositForm");
+    if (shouldKeepGuestSkyStill()) {
+      setSkyStill(true);
+      return;
+    }
+    if (shouldDeferGuestWebgl() && phase !== "sky") {
+      setSkyStill(true);
+      return;
+    }
+    const enable = () => setSkyStill(false);
+    if (shouldDeferGuestWebgl()) {
+      const ric = window.requestIdleCallback;
+      if (typeof ric === "function") {
+        const id = ric(() => enable(), { timeout: 2000 });
+        return () => window.cancelIdleCallback(id);
+      }
+      const timer = window.setTimeout(enable, 400);
+      return () => window.clearTimeout(timer);
+    }
+    enable();
   }, [phase]);
 
   const handleSelectPack = (key: string) => {
@@ -394,6 +393,10 @@ export function SanctuaryLanding({
       return;
     }
 
+    if (initial) {
+      return;
+    }
+
     if (isSanctuaryVisualPreview(token)) {
       setLoad({
         status: "ready",
@@ -415,7 +418,7 @@ export function SanctuaryLanding({
         );
         const body = (await res.json().catch(() => ({}))) as {
           ok?: boolean;
-          tribute?: TributePayload;
+          tribute?: SanctuaryGuestPayload["tribute"];
           packs?: ImprintPack[];
           guestPhotoCount?: number;
           guestPhotoMax?: number;
@@ -453,7 +456,7 @@ export function SanctuaryLanding({
     return () => {
       cancelled = true;
     };
-  }, [token, locale, copyFr, copyEn]);
+  }, [token, locale, copyFr, copyEn, initial]);
 
   if (isSanctuarySkyPreview(token)) {
     return <SanctuarySkyPreview locale={locale} />;
@@ -588,6 +591,7 @@ export function SanctuaryLanding({
       {skyStill ? (
         <GuestSkyStill />
       ) : (
+        <WebGLErrorBoundary fallback={<GuestSkyStill />}>
         <SanctuaryUniverse
           mode={universeImmersive ? "immersive" : "background"}
           className={
@@ -614,6 +618,7 @@ export function SanctuaryLanding({
           }
           locale={uiLocale}
         />
+        </WebGLErrorBoundary>
       )}
 
       <GuestStarPills
