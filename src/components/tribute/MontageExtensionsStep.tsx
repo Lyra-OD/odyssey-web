@@ -134,16 +134,17 @@ function ExtensionVisual({
 }) {
   if (card.imageUrl) {
     return (
-      <div className="relative h-28 w-full overflow-hidden rounded-xl border border-white/10 bg-black/20">
+      <div className="relative h-36 w-full overflow-hidden rounded-xl border border-white/10 bg-black/30">
         <Image
           src={card.imageUrl}
           alt={card.imageAlt ?? ""}
           fill
-          className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+          className="object-cover object-[center_33%] transition-transform duration-500 group-hover:scale-[1.03]"
           sizes="(max-width: 640px) 100vw, 320px"
           unoptimized
+          priority
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
       </div>
     );
   }

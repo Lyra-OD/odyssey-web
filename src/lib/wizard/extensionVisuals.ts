@@ -26,17 +26,13 @@ export const EXTENSION_VISUALS: Record<
     alt: "Voix de l'Histoire",
   },
   sanctuaryToken: {
-    cardImage:
-      "https://images.unsplash.com/photo-1597872200969-2b65d56550b8?w=640&h=480&fit=crop&q=85",
-    thumbnail:
-      "https://images.unsplash.com/photo-1597872200969-2b65d56550b8?w=160&h=160&fit=crop&q=80",
+    cardImage: "/wizard/sanctuary-token.jpg",
+    thumbnail: "/wizard/sanctuary-token.jpg",
     alt: "Jeton du Sanctuaire NFC",
   },
   collectorUsb: {
-    cardImage:
-      "https://images.unsplash.com/photo-1597872200969-2b65d56550b8?w=640&h=480&fit=crop&q=85",
-    thumbnail:
-      "https://images.unsplash.com/photo-1597872200969-2b65d56550b8?w=160&h=160&fit=crop&q=80",
+    cardImage: "/wizard/sanctuary-token.jpg",
+    thumbnail: "/wizard/sanctuary-token.jpg",
     alt: "Jeton du Sanctuaire NFC",
   },
   digitalVault: {
