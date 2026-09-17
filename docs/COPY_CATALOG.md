@@ -742,10 +742,10 @@
 | `tributeWizard.stepPreviewDescription` | Votre hommage prend forme. Voici ce qui vous attend. | Your tribute is taking shape. Here is what awaits you. |
 | `tributeWizard.previewLoadingMedia` | Nous préparons votre film… | We’re preparing your film… |
 | `tributeWizard.previewPayCta` | J’adore, préserver cet hommage | I love it. Preserve this tribute |
-| `tributeWizard.previewPayCtaSoftCap` | Préserver l’Écrin Héritage | Preserve the Heritage casket |
+| `tributeWizard.previewPayCtaSoftCap` | Préserver Héritage | Preserve Heritage |
 | `tributeWizard.preservePackageCta` | Préserver {package} | Preserve {package} |
 | `tributeWizard.preservePackagePayCta` | Préserver {package} · {total} | Preserve {package} · {total} |
-| `tributeWizard.previewSoftCapNote` | Votre histoire dépasse déjà le Souvenir offert. L’Écrin Héritage accueille jusqu’à 125 souvenirs, musique officielle incluse. 179 $, réglé seulement à l’export. | Your story already exceeds the complimentary Keepsake. The Heritage casket holds up to 125 memories with official music included. $179, paid only at export. |
+| `tributeWizard.previewSoftCapNote` | Votre histoire dépasse déjà le Souvenir offert. Héritage accueille jusqu’à 125 souvenirs, musique officielle incluse. 179 $, réglé seulement à l’export. | Your story already exceeds the complimentary Keepsake. Heritage holds up to 125 memories with official music included. $179, paid only at export. |
 | `tributeWizard.previewEditLink` | Revenir ajuster | Go back and refine |
 | `tributeWizard.previewValueNote` | Votre film complet durera environ {minutes} minutes, avec une qualité professionnelle | Your complete film will run about {minutes} minutes, with professional quality |
 | `tributeWizard.previewValueAiRetouch` | , une retouche IA | , AI retouching |
@@ -770,24 +770,24 @@
 | `tributeWizard.checkoutPayError` | Impossible d’ouvrir le paiement sécurisé pour le moment. | We could not open secure checkout right now. |
 | `tributeWizard.checkoutMissingProject` | Enregistrez d’abord votre hommage avant de poursuivre. | Save your tribute first before continuing. |
 | `tributeWizard.checkoutStayFreeCta` | Rester dans le Souvenir pour l’instant | Stay with Keepsake for now |
-| `tributeWizard.checkoutStayFreeHint` | Vous avez commencé un Écrin plus vaste. Rester sur le Souvenir offert, c’est choisir en toute sérénité de vous concentrer sur l’essentiel inclus, sans jugement, à votre rythme. | You’ve begun a wider Heritage casket. Staying on the complimentary Keepsake simply means resting, with calm, on what is already included, no judgment, at your own pace. |
+| `tributeWizard.checkoutStayFreeHint` | Vous avez commencé un hommage plus vaste. Rester sur le Souvenir offert, c’est choisir en toute sérénité de vous concentrer sur l’essentiel inclus, sans jugement, à votre rythme. | You’ve begun a wider tribute. Staying on the complimentary Keepsake simply means resting, with calm, on what is already included, no judgment, at your own pace. |
 | `tributeWizard.checkoutAmputationHint` | Si besoin, nous recentrerons simplement les souvenirs et la musique sur ce qui est inclus dans le Souvenir offert. | If needed, we’ll gently recenter memories and music on what the complimentary Keepsake includes. |
-| `tributeWizard.softCapMediaUnlockTitle` | Ces souvenirs demandent un écrin plus vaste | These memories ask for a wider casket |
-| `tributeWizard.softCapMediaUnlockBody` | Vous pouvez continuer sans carte. Quand vous serez prêts, l’Écrin Héritage accueillera jusqu’à 125 souvenirs en 1080p, musique officielle incluse. | You may continue with no card. When you’re ready, the Heritage casket will hold up to 125 memories in 1080p, with official music included. |
+| `tributeWizard.softCapMediaUnlockTitle` | Ces souvenirs demandent plus d’espace | These memories need more room |
+| `tributeWizard.softCapMediaUnlockBody` | Vous pouvez continuer sans carte. Quand vous serez prêts, Héritage accueillera jusqu’à 125 souvenirs en 1080p, musique officielle incluse. | You may continue with no card. When you’re ready, Heritage will hold up to 125 memories in 1080p, with official music included. |
 | `tributeWizard.softCapMediaMagicTitle` | Votre histoire tisse déjà {count} souvenirs | Your story already weaves {count} memories |
-| `tributeWizard.softCapMediaMagicBody` | Pour qu’aucun moment ne reste dans l’ombre, ouvrez l’Écrin Héritage : large toile, export 1080p, musique digne de la cérémonie. | So no moment is left in the dark, open the Heritage casket: a wider canvas, 1080p export, music worthy of the ceremony. |
+| `tributeWizard.softCapMediaMagicBody` | Pour qu’aucun moment ne reste dans l’ombre, ouvrez Héritage : large toile, export 1080p, musique digne de la cérémonie. | So no moment is left in the dark, open Heritage: a wider canvas, 1080p export, music worthy of the ceremony. |
 | `tributeWizard.softCapMusicTitle` | Cette mélodie porte déjà leur voix | This melody already carries their voice |
-| `tributeWizard.softCapMusicBody` | Gardez cette piste officielle. Licence seule, ou Écrin Héritage (musique incluse, toile élargie, 1080p). | Keep this official track. Music License alone, or the Heritage casket (music included, wider canvas, 1080p). |
-| `tributeWizard.softCapCtaHeritage` | Ouvrir l’Écrin Héritage | Open the Heritage casket |
+| `tributeWizard.softCapMusicBody` | Gardez cette piste officielle. Licence seule, ou Héritage (musique incluse, toile élargie, 1080p). | Keep this official track. Music License alone, or Heritage (music included, wider canvas, 1080p). |
+| `tributeWizard.softCapCtaHeritage` | Ouvrir Héritage | Open Heritage |
 | `tributeWizard.softCapCtaLicense` | Garder la musique · Licence 39 $ | Keep the music · License $39 |
-| `tributeWizard.softCapCtaContinue` | Garder toute l’histoire dans l’Écrin | Keep the whole story in the casket |
+| `tributeWizard.softCapCtaContinue` | Garder toute l’histoire dans Héritage | Keep the whole story in Heritage |
 | `tributeWizard.softCapCtaDismiss` | Continuer sur le Souvenir pour l’instant | Continue on Keepsake for now |
 | `tributeWizard.softCapPriceHeritage` | 179 $ · réglé seulement à l’export · 125 souvenirs · 1080p | $179 · pay only at export · 125 memories · 1080p |
 | `tributeWizard.softCapPriceLicense` | 39 $ · catalogue officiel, restez sur Souvenir | $39 · official catalog, stay on Keepsake |
 | `tributeWizard.softCapCollabHint` | Ou invitez un proche à déposer des souvenirs. | Or invite a loved one to add memories. |
 | `tributeWizard.softCapCollabCta` | Inviter un proche | Invite a loved one |
-| `tributeWizard.softCapMediaUnlockCta` | Préparer l’Écrin Héritage | Prepare the Heritage casket |
-| `tributeWizard.softCapMediaBannerTitle` | Votre toile s’ouvre vers l’Écrin Héritage | Your canvas opens toward Heritage |
+| `tributeWizard.softCapMediaUnlockCta` | Préparer Héritage | Prepare Heritage |
+| `tributeWizard.softCapMediaBannerTitle` | Votre toile s’ouvre vers Héritage | Your canvas opens toward Heritage |
 | `tributeWizard.softCapMediaBannerBody` | Elle peut accueillir jusqu’à 125 souvenirs. Aucune carte aujourd’hui : vous ne réglez qu’au moment de l’export. | It can hold up to 125 memories. No card today: you only pay at export. |
 | `tributeWizard.checkoutExcessMediaNotice` | Votre hommage contient {count} souvenir(s) au-delà du Souvenir offert. | This tribute has {count} memories beyond the complimentary Keepsake. |
 | `tributeWizard.checkoutGoToMediaLink` | Revenir au Coffre à souvenirs | Return to the Memory Chest |

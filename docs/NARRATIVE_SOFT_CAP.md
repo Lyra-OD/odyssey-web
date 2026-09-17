@@ -1,9 +1,10 @@
 # Soft Cap — Expansion Narrative
 
 **Type :** canon · **Vérité pour :** granted / intended, dual musique, amputation.  
-**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — Copy écran : plus d’« Écrin » ; Soft Cap parle du forfait **Héritage**. Logique granted/intended inchangée.
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — spec Soft Cap Freemium V1.
 
@@ -60,7 +61,7 @@ Sélection d’une piste du **catalogue Stingray officiel** depuis Souvenir :
 | Option | Effet state | Panier virtuel | Ce qui se débloque |
 |--------|-------------|----------------|--------------------|
 | **Licence Musique Premium Stingray — 39 $** | `intended` reste `essential` | `extensions.musicLicense = true` | Catalogue officiel uniquement (reste 50 médias / 1080p) |
-| **Écrin Héritage — 179 $** | `intendedPackage = signature` | Forfait Héritage ; **pas** de line item Licence | Musique officielle **incluse** + **1080p** + 125 médias (Master **4K** = Éternité+) |
+| **Héritage — 179 $** | `intendedPackage = signature` | Forfait Héritage ; **pas** de line item Licence | Musique officielle **incluse** + **1080p** + 125 médias (Master **4K** = Éternité+) |
 
 Helper d’accès catalogue (Phase 1) :
 
