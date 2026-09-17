@@ -55,6 +55,14 @@ export function useWizardCheckout({
       resolveWizardDisplayCart(extensions, intendedPackage, grantedPackage),
     [extensions, intendedPackage, grantedPackage],
   );
+  const fundAppliedCents =
+    viralLoopEnabled && displayCart.totalCents > 0
+      ? Math.min(
+          Math.max(0, fundCreditCents),
+          Math.max(displayCart.totalCents - Math.max(0, ownerFloorCents), 0),
+        )
+      : 0;
+  const remainingDueCents = Math.max(displayCart.totalCents - fundAppliedCents, 0);
   const showCheckoutStayFree =
     packageCents(grantedPackage) === 0 && displayCart.totalCents > 0;
 
@@ -181,6 +189,7 @@ export function useWizardCheckout({
     setRiderAccepted,
     showCheckoutStayFree,
     excessMediaCount,
+    remainingDueCents,
     handlePay,
   };
 }

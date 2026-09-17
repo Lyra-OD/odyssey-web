@@ -1309,6 +1309,7 @@ export function TributeWizard({
     setRiderAccepted,
     showCheckoutStayFree,
     handlePay,
+    remainingDueCents,
   } = useWizardCheckout({
     uploadProjectId,
     locale,
@@ -1326,6 +1327,20 @@ export function TributeWizard({
     projectMediaCount,
     copy,
   });
+
+  const packageLabel = packageDisplayNameFor(intendedPackage);
+  const preservePackageCta = copy.preservePackageCta.replace(
+    "{package}",
+    packageLabel,
+  );
+  const preservePackagePayCta = copy.preservePackagePayCta
+    .replace("{package}", packageLabel)
+    .replace(
+      "{total}",
+      formatWizardPrice(remainingDueCents, locale === "en" ? "en" : "fr"),
+    );
+  const n3PayDisabled =
+    isPaying || isEditor || (!isPartner && !riderAccepted);
 
   const {
     softCapMusicBrowse,
@@ -2770,8 +2785,8 @@ export function TributeWizard({
                 title: copy.stepPreviewTitle,
                 description: copy.stepPreviewDescription,
                 loadingMedia: copy.previewLoadingMedia,
-                payCta: copy.previewPayCta,
-                payCtaSoftCap: copy.previewPayCtaSoftCap,
+                payCta: preservePackageCta,
+                payCtaSoftCap: preservePackageCta,
                 softCapNote: copy.previewSoftCapNote,
                 editLink: copy.previewEditLink,
                 valueNote: copy.previewValueNote,
@@ -2847,7 +2862,10 @@ export function TributeWizard({
                 recapLineLabels: extensionRecapLineLabels,
                 totalLabel: copy.checkoutTotalLabel,
                 secureNote: copy.checkoutSecureNote,
-                payCta: copy.checkoutPayCta,
+                payCta: copy.preservePackagePayCta.replace(
+                  "{package}",
+                  packageLabel,
+                ),
                 partnerPayCta: copy.checkoutPartnerPayCta,
                 partnerRecapLabel: copy.checkoutPartnerRecap,
                 paying: copy.checkoutPaying,
@@ -2863,7 +2881,12 @@ export function TributeWizard({
                 remainingDueLabel: copy.checkoutRemainingDueLabel,
                 riderLabel: copy.checkoutRiderLabel,
                 riderHint: copy.checkoutRiderHint,
-                payCtaFree: copy.checkoutPayCtaFree,
+                payCtaFree: copy.preservePackagePayCta
+                  .replace("{package}", packageLabel)
+                  .replace(
+                    "{total}",
+                    formatWizardPrice(0, locale === "en" ? "en" : "fr"),
+                  ),
               }}
             />
           ) : null}
@@ -2927,12 +2950,16 @@ export function TributeWizard({
       />
       ) : null}
 
-      {/* N3 — barre bas unique : Retour | Suivant (2–5) ; Retour seul (6–7). */}
+      {/* N3 — 2–5 Retour|Suivant ; 6 Retour|Préserver {forfait} ; 7 Retour|Préserver {forfait}·prix */}
       {!step1Parcours.hubChromeHidden && currentStep >= 2 ? (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
           <div
             className={`mx-auto flex gap-3 ${
-              currentStep === 5 ? "max-w-7xl" : "max-w-xl"
+              currentStep === 5
+                ? "max-w-7xl"
+                : currentStep >= 6
+                  ? "max-w-2xl"
+                  : "max-w-xl"
             }`}
           >
             {currentStep > (isEditor ? 3 : 1) ? (
@@ -2966,6 +2993,23 @@ export function TributeWizard({
                     : copy.next}
                 </button>
               )
+            ) : currentStep === 6 && !isEditor ? (
+              <button
+                type="button"
+                onClick={() => void handleProceedToPayment()}
+                className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`}
+              >
+                {preservePackageCta}
+              </button>
+            ) : currentStep === 7 && !isEditor ? (
+              <button
+                type="button"
+                onClick={() => void handlePay()}
+                disabled={n3PayDisabled}
+                className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${sanctuaryFocusRing}`}
+              >
+                {isPaying ? copy.checkoutPaying : preservePackagePayCta}
+              </button>
             ) : null}
           </div>
         </div>

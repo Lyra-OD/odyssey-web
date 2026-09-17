@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-16 · **Entrées :** 899
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-17 · **Entrées :** 901
 
 ## `common`
 
@@ -743,6 +743,8 @@
 | `tributeWizard.previewLoadingMedia` | Nous préparons votre film… | We’re preparing your film… |
 | `tributeWizard.previewPayCta` | J’adore, préserver cet hommage | I love it. Preserve this tribute |
 | `tributeWizard.previewPayCtaSoftCap` | Préserver l’Écrin Héritage | Preserve the Heritage casket |
+| `tributeWizard.preservePackageCta` | Préserver {package} | Preserve {package} |
+| `tributeWizard.preservePackagePayCta` | Préserver {package} · {total} | Preserve {package} · {total} |
 | `tributeWizard.previewSoftCapNote` | Votre histoire dépasse déjà le Souvenir offert. L’Écrin Héritage accueille jusqu’à 125 souvenirs, musique officielle incluse. 179 $, réglé seulement à l’export. | Your story already exceeds the complimentary Keepsake. The Heritage casket holds up to 125 memories with official music included. $179, paid only at export. |
 | `tributeWizard.previewEditLink` | Revenir ajuster | Go back and refine |
 | `tributeWizard.previewValueNote` | Votre film complet durera environ {minutes} minutes, avec une qualité professionnelle | Your complete film will run about {minutes} minutes, with professional quality |

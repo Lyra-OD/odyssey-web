@@ -764,6 +764,8 @@
     "previewLoadingMedia": "Nous préparons votre film…",
     "previewPayCta": "J’adore, préserver cet hommage",
     "previewPayCtaSoftCap": "Préserver l’Écrin Héritage",
+    "preservePackageCta": "Préserver {package}",
+    "preservePackagePayCta": "Préserver {package} · {total}",
     "previewSoftCapNote": "Votre histoire dépasse déjà le Souvenir offert. L’Écrin Héritage accueille jusqu’à 125 souvenirs, musique officielle incluse. 179 $, réglé seulement à l’export.",
     "previewEditLink": "Revenir ajuster",
     "previewValueNote": "Votre film complet durera environ {minutes} minutes, avec une qualité professionnelle",

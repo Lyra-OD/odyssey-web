@@ -1,14 +1,14 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — **N3 6–7** : Retour|Préserver {forfait} en aperçu ; Retour|Préserver {forfait}·prix au checkout (forfait = panier, pas Héritage en dur).
 - 16 sept 2026 — **Fil reset** : colonnes mono-teal + breath/poussière/glow futur ; pont pulse précédent→ici ; hover ; mini-caps ; F5 tailles + naissance + flash.
-- 16 sept 2026 — **N3 nav** : barre bas unique Retour|Suivant (étapes 2–5) ; Retour seul en 6–7 ; plus de Retour haut / footer step 3 dupliqué.
+- 16 sept 2026 — **N3 nav** : barre bas unique Retour|Suivant (étapes 2–5) ; plus de Retour haut / footer step 3 dupliqué.
 - 16 sept 2026 — **N2f + N4** : polish rangée boomer-proof ; sticky prix craft retiré (total dès 6+).
 - 16 sept 2026 — **N2 fil** : constellation C — ancres Essentiel · Coffre · Musique · Composer · Son film.
-- 16 sept 2026 — **N1 fil** : `wizard_state.furthestStep` ; clic ne saute plus au-delà.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -24,7 +24,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 
 | File | Role |
 |------|------|
-| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (Dossier + fil) ; barre bas N3 Retour|Suivant |
+| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (Dossier + fil) ; barre bas N3 : 2–5 Retour\|Suivant · 6 Préserver {forfait} · 7 Préserver {forfait}·prix |
 | `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | **Step 1 (J2)** — ciel fullscreen + panneau verre ; `SanctuaryUniverse` background · birth live · reveal contrôlé |
 | `src/hooks/useWizardStep1Reveal.ts` | Phase reveal étape 1 (`idle` → `birth` → `reward` → `done`) · orchestration `playReward()` |
 | `src/lib/wizard/wizardBirthReveal.ts` | Courbes / beats C0–C2 pour naissance Hero au prénom (pont craft → wizard) |
