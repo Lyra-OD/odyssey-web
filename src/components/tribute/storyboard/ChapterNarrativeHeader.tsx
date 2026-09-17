@@ -134,6 +134,7 @@ export function ChapterNarrativeHeader({
           capacity={capacity}
           assignedCount={assignedCount}
           showAssigned
+          toneClassName={theme.text}
           copy={capacityCopy}
           className="shrink-0"
         />

@@ -10,15 +10,14 @@ import {
   type MontageMediaItem,
 } from "@/src/lib/wizard/montageHelpers";
 import {
-  buildTeaserSlides,
-  estimateFilmDurationMinutes,
+  buildTeaserFromStoryboard,
+  estimateStoryboardFilmDurationMinutes,
 } from "@/src/lib/wizard/teaserHelpers";
 import { hasPremiumMusicCatalogAccess } from "@/src/lib/wizard/wizardPricing";
 import type {
-  WizardActTracks,
   WizardBasePackage,
   WizardExtensionsState,
-  WizardMontageState,
+  WizardStoryboardState,
 } from "@/src/lib/wizard/wizardState";
 
 export type PreviewStepCopy = {
@@ -39,13 +38,13 @@ export type PreviewStepCopy = {
   teaserNowPlaying: string;
   teaserPlay: string;
   teaserPause: string;
+  chapterTitleFallback: string;
 };
 
 type Props = {
   copy: PreviewStepCopy;
   projectId: string | null;
-  montage: WizardMontageState;
-  actTracks: WizardActTracks;
+  storyboard: WizardStoryboardState;
   extensions: WizardExtensionsState;
   basePackage?: WizardBasePackage;
   /** Affiche l’ancre Soft Cap (freemium Souvenir + engagement ou dépassement). */
@@ -70,11 +69,24 @@ function buildValueNote(
   return note;
 }
 
+function teaserIdentity(storyboard: WizardStoryboardState): string {
+  return storyboard.chapters
+    .map((chapter) => {
+      const songKey =
+        chapter.song?.source === "stingray"
+          ? chapter.song.trackId
+          : chapter.song?.source === "upload"
+            ? chapter.song.storagePath
+            : "";
+      return `${chapter.id}:${songKey}:${chapter.mediaIds.join(",")}`;
+    })
+    .join("|");
+}
+
 export function PreviewStep({
   copy,
   projectId,
-  montage,
-  actTracks,
+  storyboard,
   extensions,
   basePackage = "signature",
   softCapActive = false,
@@ -86,20 +98,27 @@ export function PreviewStep({
     () => new Map(),
   );
 
-  const slides = useMemo(
-    () => buildTeaserSlides(montage, mediaById),
-    [montage, mediaById],
+  const { slides, tracks } = useMemo(
+    () =>
+      buildTeaserFromStoryboard(
+        storyboard,
+        mediaById,
+        copy.chapterTitleFallback,
+      ),
+    [copy.chapterTitleFallback, mediaById, storyboard],
   );
 
   const durationMinutes = useMemo(
-    () => estimateFilmDurationMinutes(montage),
-    [montage],
+    () => estimateStoryboardFilmDurationMinutes(storyboard),
+    [storyboard],
   );
 
   const valueNote = useMemo(
     () => buildValueNote(copy, durationMinutes, extensions, basePackage),
     [basePackage, copy, durationMinutes, extensions],
   );
+
+  const teaserKey = useMemo(() => teaserIdentity(storyboard), [storyboard]);
 
   useEffect(() => {
     if (!projectId) {
@@ -156,16 +175,17 @@ export function PreviewStep({
           </div>
         ) : (
           <CinematicTeaser
+            key={teaserKey}
             slides={slides}
-            tracks={actTracks}
+            tracks={tracks}
             projectId={projectId}
             copy={{
               loading: copy.teaserLoading,
-              empty: copy.teaserEmpty,
               nowPlaying: copy.teaserNowPlaying,
               play: copy.teaserPlay,
               pause: copy.teaserPause,
             }}
+            emptyLabel={copy.teaserEmpty}
           />
         )}
 

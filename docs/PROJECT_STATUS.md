@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 16 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — **Bandeau Soft Cap aperçu** : dire les faits (photos / licence / Héritage) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) (plan plus tard).
+- 17 sept 2026 — **Aperçu mix BA** : décision notée — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) (plan plus tard).
 - 16 sept 2026 — **Coffre / montage** : audit vidéo + DnD desktop · ingest trim client après démo · [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) · **démo 18 sept = P0 preview**.
 - 16 sept 2026 — **Creatomate étape 3** : film atomique complet (intro + clips + outro carte mémoire, sans Odyssey) · [`craft/CREATOMATE_RECIPE.md`](craft/CREATOMATE_RECIPE.md).
 - 16 sept 2026 — **Creatomate étape 2** : intro magazine runtime · resserrée 27 s.
-- 16 sept 2026 — **Creatomate étape 1** : essentials `birthYear` / `deathYear` / `portraitUrl` signé.
-- 15 sept 2026 — **Creatomate atomes** : intro / photo / vidéo / outro figés (`docs/craft/atoms/`).
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 
@@ -70,6 +70,8 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Priorité | Quoi | Done when |
 |----------|------|-----------|
 | **P0** | Slice invité démo **10 sept** (ciel d’abord · étoile nommée stub · courriel · packs) | Script §0 du plan technique vert |
+| **Later** | Étape 6 **mix BA** (bande-annonce + voir un chapitre) — pas le teaser-film actuel | Plan dédié · [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) |
+| **Later** | Étape 6 bandeau Soft Cap **« pourquoi »** (faits, pas alerte générique) | Plan dédié · [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) |
 | **Ops** | Stripe CLI `stripe login` + `stripe listen` local · activer `charge.refunded` endpoint prod | Webhook local sans script replay |
 | **Ops** | Factu / quota egress Supabase | 🟢 egress payé · revert DEMO_MODE **28 août** — [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) (clôturé) |
 | A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |
@@ -81,7 +83,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 **Ne plus faire :** débit jetons, wholesale 40 $, coexistence `is_freemium=false`, saga checkout « v1 jetons ».
 
-**Dette acceptée :** Preview/Checkout lisent encore le pont `actTracks` jusqu’à S8/S9 · mark Éclipse pas partout · intro ciel OFF · étape 1 code exige **nom** vs D1 CEO (prénom + 2 dates) — [`SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b.
+**Dette acceptée :** étape 6 = teaser-pont (pas le film) jusqu’au mix BA [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) · mark Éclipse pas partout · intro ciel OFF · étape 1 code exige **nom** vs D1 CEO (prénom + 2 dates) — [`SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b.
 
 **Différé :** Stripe Connect auto-payout · Scanner Phase B · Gants Blancs ops · Lyra produit · verticales pets UI.
 

@@ -1,14 +1,14 @@
 # Carte documentation Odyssey
 
 **Type :** living · **Vérité pour :** index des docs, types, « ne pas copier ».  
-**Dernière MAJ :** 8 sept 2026 · **Carte :** ce fichier.
+**Dernière MAJ :** 17 sept 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 17 sept 2026 — spec bandeau Soft Cap aperçu « pourquoi » (décision, plan plus tard) : [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
+- 17 sept 2026 — spec aperçu mix BA (décision, plan plus tard) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
 - 9 sept 2026 — isolation invités : même lien WhatsApp, quota et ciel personnels (cookie `odyssey_guest` + SQL P18) : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 - 8 sept 2026 — parcours démo (famille + invité) resserré en 5 lots additifs : intro pitch en overlay, invitation famille en Option B (dépôt d'abord), « Cercle » → « Entourage », écran invité clarifié, taglines forfaits corrigées : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 - 8 sept 2026 — accueil clarifié puis resserré en mode agence : `Process` réancré sur `Leur vie en cinéma` / `Trois temps, un hommage`, `Pricing` poussé plus loin vers un triptyque éditorial, et lien final partenaires corrigé en version locale-aware : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
-- 8 sept 2026 — page Partenaires réécrite sans changer le design : ton plus crédible et premium pour maisons funéraires, promesse `moins de 60 secondes en salon, zéro montage`, générosité partagée déplacée au bon niveau du discours : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
-- 8 sept 2026 — dépôt de mot texte invité (Sanctuaire) réparé — bucket Storage n'autorisait pas `text/plain`, 100 % des mots échouaient : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 
 Hiérarchie développeur (ordre de lecture code) : [`CONVENTIONS.md`](CONVENTIONS.md).  
 Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
@@ -165,6 +165,8 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) | canon | Beats Parcours UX · craft · stubs |
 | [`product/PARCOURS_UX_GAPS.md`](product/PARCOURS_UX_GAPS.md) | living | Audit trous Chemin 1 · gate T1 |
 | [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) | living | Coffre + montage : audit vidéo / DnD desktop · ingest trim 10 s · **démo 18 sept** |
+| [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) | canon | Étape 6 aperçu — mix BA (décision, plan plus tard) |
+| [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) | canon | Étape 6 bandeau Soft Cap — faits / pourquoi (plan plus tard) |
 | [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md) | canon | Add-on NFC |
 | [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) | canon | Scanner Phase A+B |
 | [`IMPLEMENTATION_CASCADE_VFINAL.md`](IMPLEMENTATION_CASCADE_VFINAL.md) | canon | Boucle / Fonds |

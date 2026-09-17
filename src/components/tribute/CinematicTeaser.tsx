@@ -5,17 +5,16 @@ import { Loader2, Pause, Play } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { buildMusicPreviewProxyUrl } from "@/src/lib/music/stingrayTrackId";
-import type { WizardActTracks } from "@/src/lib/wizard/wizardState";
 import {
-  groupSlidesByAct,
+  groupSlidesByTrack,
   TEASER_DEFAULT_SLIDE_MS,
   TEASER_FADE_MS,
   type TeaserSlide,
+  type TeaserTracks,
 } from "@/src/lib/wizard/teaserHelpers";
 
 export type CinematicTeaserCopy = {
   loading: string;
-  empty: string;
   nowPlaying: string;
   play: string;
   pause: string;
@@ -23,10 +22,11 @@ export type CinematicTeaserCopy = {
 
 type Props = {
   slides: TeaserSlide[];
-  tracks: WizardActTracks;
+  tracks: TeaserTracks;
   copy: CinematicTeaserCopy;
   autoPlay?: boolean;
   projectId?: string | null;
+  emptyLabel: string;
 };
 
 function formatTime(seconds: number): string {
@@ -42,10 +42,14 @@ export function CinematicTeaser({
   copy,
   autoPlay = true,
   projectId = null,
+  emptyLabel,
 }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const slideStartRef = useRef<number>(Date.now());
   const rafRef = useRef<number | null>(null);
+  const playingRef = useRef(false);
+  const playGenRef = useRef(0);
+  const currentIndexRef = useRef(0);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -54,7 +58,9 @@ export function CinematicTeaser({
   const [totalDuration, setTotalDuration] = useState(0);
   const [hasAutoStarted, setHasAutoStarted] = useState(false);
 
-  const actGroups = useMemo(() => groupSlidesByAct(slides), [slides]);
+  currentIndexRef.current = currentIndex;
+
+  const actGroups = useMemo(() => groupSlidesByTrack(slides), [slides]);
 
   const slideDurations = useMemo(() => {
     const durations = new Map<number, number>();
@@ -90,117 +96,164 @@ export function CinematicTeaser({
     const audio = new Audio();
     audio.preload = "auto";
     audioRef.current = audio;
-
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-
-    audio.addEventListener("play", onPlay);
-    audio.addEventListener("pause", onPause);
-
     return () => {
+      playGenRef.current += 1;
+      playingRef.current = false;
       audio.pause();
-      audio.removeEventListener("play", onPlay);
-      audio.removeEventListener("pause", onPause);
+      audio.removeAttribute("src");
+      audio.load();
       audioRef.current = null;
     };
   }, []);
 
-  const playMusicForSlide = useCallback(
-    async (slideIndex: number) => {
-      const slide = slides[slideIndex];
-      const track = slide ? tracks[slide.actKey] : undefined;
-      const audio = audioRef.current;
-      if (!slide || !track?.trackId || !audio) return;
-
-      setIsAudioLoading(true);
-      try {
-        const url =
-          track.trackId && projectId
-            ? buildMusicPreviewProxyUrl(track.trackId, projectId)
-            : track.previewUrl?.trim() ||
-              (track.trackId
-                ? buildMusicPreviewProxyUrl(track.trackId)
-                : "");
-        if (!url) {
-          console.error("URL audio manquante pour", track.title);
-          return;
-        }
-        audio.pause();
-        audio.currentTime = 0;
-        audio.src = url;
-        audio.load();
-        await audio.play();
-      } catch {
-        /* preview best-effort */
-      } finally {
-        setIsAudioLoading(false);
-      }
-    },
-    [slides, tracks, projectId],
-  );
-
-  const stopPlayback = useCallback(() => {
-    audioRef.current?.pause();
-    setIsPlaying(false);
+  const cancelTick = useCallback(() => {
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
   }, []);
 
+  const playMusicForSlide = useCallback(
+    async (slideIndex: number) => {
+      const gen = ++playGenRef.current;
+      const slide = slides[slideIndex];
+      const track = slide ? tracks[slide.trackKey] : undefined;
+      const audio = audioRef.current;
+      if (!slide || !track || !audio) return;
+
+      setIsAudioLoading(true);
+      try {
+        let url = "";
+        if (track.trackId) {
+          url = projectId
+            ? buildMusicPreviewProxyUrl(track.trackId, projectId)
+            : buildMusicPreviewProxyUrl(track.trackId);
+        } else if (track.storagePath && projectId) {
+          const res = await fetch(
+            `/api/projects/${projectId}/music?path=${encodeURIComponent(track.storagePath)}`,
+          );
+          const body = (await res.json().catch(() => ({}))) as {
+            signedUrl?: string;
+          };
+          url = body.signedUrl?.trim() ?? "";
+        }
+        if (gen !== playGenRef.current || !playingRef.current) return;
+        if (!url) return;
+
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = url;
+        audio.load();
+        await audio.play();
+        if (gen !== playGenRef.current || !playingRef.current) {
+          audio.pause();
+        }
+      } catch {
+        /* preview best-effort */
+      } finally {
+        if (gen === playGenRef.current) setIsAudioLoading(false);
+      }
+    },
+    [slides, tracks, projectId],
+  );
+
+  const pausedSlideElapsedRef = useRef(0);
+
+  const stopPlayback = useCallback(() => {
+    playGenRef.current += 1;
+    playingRef.current = false;
+    setIsPlaying(false);
+    cancelTick();
+    audioRef.current?.pause();
+  }, [cancelTick]);
+
+  const pausePlayback = useCallback(() => {
+    const index = currentIndexRef.current;
+    const slideMs = slideDurations.get(index) ?? TEASER_DEFAULT_SLIDE_MS;
+    pausedSlideElapsedRef.current = Math.min(
+      Date.now() - slideStartRef.current,
+      slideMs,
+    );
+    stopPlayback();
+  }, [slideDurations, stopPlayback]);
+
   const tickProgress = useCallback(() => {
-    const slideMs = slideDurations.get(currentIndex) ?? TEASER_DEFAULT_SLIDE_MS;
+    if (!playingRef.current) return;
+    const index = currentIndexRef.current;
+    const slideMs = slideDurations.get(index) ?? TEASER_DEFAULT_SLIDE_MS;
     const slideElapsed = Date.now() - slideStartRef.current;
     let priorMs = 0;
-    for (let i = 0; i < currentIndex; i += 1) {
+    for (let i = 0; i < index; i += 1) {
       priorMs += slideDurations.get(i) ?? TEASER_DEFAULT_SLIDE_MS;
     }
     setElapsed((priorMs + Math.min(slideElapsed, slideMs)) / 1000);
 
     if (slideElapsed >= slideMs) {
-      const next = currentIndex + 1;
+      const next = index + 1;
       if (next >= slides.length) {
+        pausedSlideElapsedRef.current = 0;
         stopPlayback();
         setCurrentIndex(0);
         setElapsed(0);
         return;
       }
       setCurrentIndex(next);
+      currentIndexRef.current = next;
       slideStartRef.current = Date.now();
       const nextSlide = slides[next];
-      const prevSlide = slides[currentIndex];
-      if (nextSlide?.actKey !== prevSlide?.actKey) {
+      const prevSlide = slides[index];
+      if (nextSlide?.trackKey !== prevSlide?.trackKey) {
         void playMusicForSlide(next);
       }
     }
 
-    if (isPlaying) {
+    if (playingRef.current) {
       rafRef.current = requestAnimationFrame(tickProgress);
     }
-  }, [
-    currentIndex,
-    isPlaying,
-    playMusicForSlide,
-    slideDurations,
-    slides,
-    stopPlayback,
-  ]);
+  }, [playMusicForSlide, slideDurations, slides, stopPlayback]);
 
   const startPlayback = useCallback(async () => {
     if (!slides.length) return;
-    slideStartRef.current = Date.now();
+    playingRef.current = true;
     setIsPlaying(true);
-    await playMusicForSlide(currentIndex);
+    pausedSlideElapsedRef.current = 0;
+    slideStartRef.current = Date.now();
+    await playMusicForSlide(currentIndexRef.current);
+    if (!playingRef.current) return;
+    cancelTick();
     rafRef.current = requestAnimationFrame(tickProgress);
-  }, [currentIndex, playMusicForSlide, slides.length, tickProgress]);
+  }, [cancelTick, playMusicForSlide, slides.length, tickProgress]);
 
-  const togglePlayback = useCallback(() => {
-    if (isPlaying) {
-      stopPlayback();
+  const resumePlayback = useCallback(async () => {
+    if (!slides.length) return;
+    playingRef.current = true;
+    setIsPlaying(true);
+    slideStartRef.current = Date.now() - pausedSlideElapsedRef.current;
+    const audio = audioRef.current;
+    try {
+      if (audio?.src) {
+        await audio.play();
+      } else {
+        await playMusicForSlide(currentIndexRef.current);
+      }
+    } catch {
+      /* best-effort */
+    }
+    if (!playingRef.current) {
+      audio?.pause();
       return;
     }
-    void startPlayback();
-  }, [isPlaying, startPlayback, stopPlayback]);
+    cancelTick();
+    rafRef.current = requestAnimationFrame(tickProgress);
+  }, [cancelTick, playMusicForSlide, slides.length, tickProgress]);
+
+  const togglePlayback = useCallback(() => {
+    if (playingRef.current) {
+      pausePlayback();
+      return;
+    }
+    void resumePlayback();
+  }, [pausePlayback, resumePlayback]);
 
   useEffect(() => {
     if (autoPlay && slides.length && !hasAutoStarted) {
@@ -208,15 +261,6 @@ export function CinematicTeaser({
       void startPlayback();
     }
   }, [autoPlay, hasAutoStarted, slides.length, startPlayback]);
-
-  useEffect(() => {
-    if (isPlaying) {
-      rafRef.current = requestAnimationFrame(tickProgress);
-    }
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [currentIndex, isPlaying, tickProgress]);
 
   useEffect(() => () => stopPlayback(), [stopPlayback]);
 
@@ -235,9 +279,10 @@ export function CinematicTeaser({
       targetIndex = i;
     }
     setCurrentIndex(targetIndex);
+    currentIndexRef.current = targetIndex;
     slideStartRef.current = Date.now();
     setElapsed(targetMs / 1000);
-    if (isPlaying) void playMusicForSlide(targetIndex);
+    if (playingRef.current) void playMusicForSlide(targetIndex);
   };
 
   if (!slides.length) {
@@ -253,22 +298,25 @@ export function CinematicTeaser({
         />
         <div className="flex aspect-video min-h-[18rem] items-center justify-center px-6 text-center">
           <p className="max-w-md text-sm font-light leading-relaxed text-zinc-400 md:text-base">
-            {copy.empty}
+            {emptyLabel}
           </p>
         </div>
       </div>
     );
   }
 
-  const currentSlide = slides[currentIndex];
+  const safeIndex = Math.min(currentIndex, slides.length - 1);
+  const currentSlide = slides[safeIndex];
+  if (!currentSlide) return null;
   const progressRatio = totalDuration > 0 ? elapsed / totalDuration : 0;
+  const nowPlaying = tracks[currentSlide.trackKey];
 
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_24px_80px_rgba(0,0,0,0.55)]">
       <div className="relative aspect-video w-full bg-[#050505]">
         <AnimatePresence mode="wait">
           <motion.div
-            key={`${currentIndex}-${currentSlide.imageUrl}`}
+            key={`${safeIndex}-${currentSlide.imageUrl}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -300,8 +348,8 @@ export function CinematicTeaser({
 
       <div className="border-t border-white/10 bg-[#0a0a0a]/95 px-4 py-4 backdrop-blur-xl md:px-6">
         <p className="mb-3 truncate text-xs font-light text-zinc-400">
-          {tracks[currentSlide.actKey]
-            ? `${tracks[currentSlide.actKey]?.title} · ${tracks[currentSlide.actKey]?.artist}`
+          {nowPlaying
+            ? [nowPlaying.title, nowPlaying.artist].filter(Boolean).join(" · ")
             : copy.nowPlaying}
         </p>
 
@@ -328,7 +376,7 @@ export function CinematicTeaser({
                 handleSeek(Math.min(1, Math.max(0, ratio)));
               }}
               className="group relative h-1.5 w-full cursor-pointer rounded-full bg-white/10"
-              aria-label={copy.play}
+              aria-label={copy.nowPlaying}
             >
               <span
                 className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 transition-all duration-150"

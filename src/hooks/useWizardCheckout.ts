@@ -99,7 +99,17 @@ export function useWizardCheckout({
     };
   }, [currentStep, uploadProjectId, isPartner, isEditor]);
 
+  const [payArmed, setPayArmed] = useState(false);
+
+  useEffect(() => {
+    setPayArmed(false);
+    if (currentStep !== 7) return;
+    const timer = window.setTimeout(() => setPayArmed(true), 700);
+    return () => window.clearTimeout(timer);
+  }, [currentStep]);
+
   const handlePay = useCallback(async () => {
+    if (currentStep !== 7 || !payArmed) return;
     if (!uploadProjectId) {
       setPayError(copy.checkoutMissingProject);
       return;
@@ -176,7 +186,7 @@ export function useWizardCheckout({
     } finally {
       setIsPaying(false);
     }
-  }, [uploadProjectId, locale, flush, copy]);
+  }, [currentStep, payArmed, uploadProjectId, locale, flush, copy]);
 
   return {
     isPaying,
@@ -190,6 +200,7 @@ export function useWizardCheckout({
     showCheckoutStayFree,
     excessMediaCount,
     remainingDueCents,
+    payArmed,
     handlePay,
   };
 }

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — **Bandeau Soft Cap aperçu** : faits à planifier — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
+- 17 sept 2026 — **Aperçu mix BA** (décision, pas de code) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
+- 17 sept 2026 — **Preview live** : teaser storyboard ; pause réellement coupe l’audio ; Payer armé 700 ms (anti ghost-click Stripe).
 - 17 sept 2026 — **Copy Soft Cap** : plus d’Écrin / casket ; forfait nommé (Héritage). N3 Préserver {forfait} inchangé.
 - 17 sept 2026 — **N3 6–7** : Retour|Préserver {forfait} en aperçu ; Retour|Préserver {forfait}·prix au checkout (forfait = panier, pas Héritage en dur).
-- 16 sept 2026 — **Fil reset** : colonnes mono-teal + breath/poussière/glow futur ; pont pulse précédent→ici ; hover ; mini-caps ; F5 tailles + naissance + flash.
-- 16 sept 2026 — **N3 nav** : barre bas unique Retour|Suivant (étapes 2–5) ; plus de Retour haut / footer step 3 dupliqué.
-- 16 sept 2026 — **N2f + N4** : polish rangée boomer-proof ; sticky prix craft retiré (total dès 6+).
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -118,7 +118,7 @@ Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans 
 | **Clean Slate Step 5** | `SoundSignatureStep` showed functional UI but inputs were silently ignored by `coerceWizardState()` — misleading UX, not mere tech debt |
 | **`useWizardStoryboard`** | Isolate chapter domain from `TributeWizard` (~1780 lines) before `dnd-kit`; hook stays pure (no autosave) |
 | **montage/* triage** | Purge 3-act logic (`MontageStep`, act columns); keep pure UI (`MontageDirectorModal`, `MontageMediaCard`, `MontageFocalReticle`) retyped for chapters |
-| **`actTracks` kept read-only** | Preview/Checkout still depend on legacy bridge — removal would regress Steps 7–8 before `S8`/`S9` |
+| **`actTracks` kept read-only** | Preview still uses the live legacy bridge until `S8`/`S9` |
 | **EMFILE / `ulimit -n 65536`** | Next.js Watchpack failed silently → 404 on all routes in dev; restart `npm run dev` with raised fd limit |
 
 ### Major architecture change — from 3 acts to song-based storyboard
@@ -191,7 +191,7 @@ Package selection is no longer step-bound: the Dossier trigger (`PackageDossierP
 | 3 | `stepperVault` | Dropzone + upload queue + **Scanner Compagnon QR** (cible) | `media_assets` rows; reload `GET /api/projects/[id]/media` · voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | 4 | `stepperChapters` | **Chapitres musicaux dynamiques** (`StoryboardChaptersStep`, live — ✅ `S6`) | `storyboard.chapters[].song` (canonique, plus de bridge) |
 | 5 | `stepperSound` | **Livre Ouvert** — `StoryboardMontageStep` (DnD, magie, actions chapitre) | `storyboard` (canonique) |
-| 6 | `stepperPreview` | Copy + `CinematicTeaser` | Aperçu |
+| 6 | `stepperPreview` | Copy + `CinematicTeaser` (pont) | Aperçu — **cible mix BA** [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) |
 | 7 | `stepperCheckout` | Cart Soft Cap + **Extensions** Quiet Luxury + pay CTA | `POST /api/checkout` |
 
 ---
@@ -305,20 +305,27 @@ Additional chapters beyond index 2 are temporarily projected into `unassignedIds
 - **Magic composition:** `buildMagicTimeline` → `playMagicTimeline` — batch per chapter + CSS cascade; overlay `MagicCinematicOverlay` (scrim Option B + capsule Bouton Noir, **design locked**).
 - **Autosave:** suspended during magic via `magicPerformingRef` in `TributeWizard`; `queueSave("immediate")` on `onMagicSequenceComplete`.
 - **Delivered (PR-1/2/3):** layout, FilmMap, DnD, multi-select, auto-fill / clear / refine drawer, magic sequence, QA fixes (drop target, ghost selection).
+- **Chrome S4 :** halo **bloc entier** + compteur = couleur du chapitre (`chapterShellClass`) — repos lisible, pas un trait blanc.
 - **Remaining (S5-J/K):** chapter audio during montage, organic focus mode — see Step 5 doc §10–11. **S5-L** copy ✅ (« Le film de sa vie »).
 - **Legacy orphan files:** `MontageTimeline.tsx`, `MontageChapterTabs.tsx` — candidate removal in S10 cleanup.
 
 ---
 
-## Step 7 — Cinematic preview
+## Step 6 — Aperçu (pont actuel · cible mix BA)
 
 | File | Role |
 |------|------|
-| `PreviewStep.tsx` | Marketing copy, CTA to checkout, link to edit earlier steps |
-| `CinematicTeaser.tsx` | Photo crossfade per slide + audio from selected track |
-| `teaserHelpers.ts` | Slide list, duration estimate, temporary bridge grouping |
+| `PreviewStep.tsx` | Copy, teaser, CTA checkout, lien modifier |
+| `CinematicTeaser.tsx` | Diaporama + audio chapitre (pause réelle) |
+| `teaserHelpers.ts` | Slides / pistes depuis le storyboard live |
 
-Audio `src` uses `track.previewUrl` (typically `/api/music/preview?trackId=…`). Until `S8`, preview still consumes the legacy bridge rebuilt from `storyboard`.
+**Aujourd’hui :** teaser storyboard (chapitres, musiques, ordre). Ce n’est **pas** le master Creatomate.
+
+**Cible (décision, plan plus tard) :** mix **bande-annonce + voir un chapitre**, copy honnête — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md). Ne pas pousser le diaporama 16:9 comme s’il était le film.
+
+Payer (étape 7) est armé ~700 ms pour éviter un ghost-click depuis l’aperçu.
+
+Bandeau jaune Soft Cap : phrase générique aujourd’hui. **Cible (plan plus tard)** : reçu des faits — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
 
 ---
 

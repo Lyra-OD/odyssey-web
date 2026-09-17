@@ -64,6 +64,8 @@ type Props = {
   viralLoopEnabled?: boolean;
   riderAccepted?: boolean;
   onRiderChange?: (accepted: boolean) => void;
+  /** Bloque Payer le temps que l’étape 7 soit réellement affichée (anti ghost-click). */
+  payLocked?: boolean;
   onPay: () => void;
   onStayFree?: () => void;
   onGoToMedia?: () => void;
@@ -88,6 +90,7 @@ export function CheckoutStep({
   viralLoopEnabled = false,
   riderAccepted = false,
   onRiderChange,
+  payLocked = false,
   onPay,
   onStayFree,
   onGoToMedia,
@@ -114,7 +117,9 @@ export function CheckoutStep({
   const showFundLines = viralLoopEnabled;
   const riderRequired = !isPartner;
   const payDisabled =
-    isPaying || (riderRequired && onRiderChange != null && !riderAccepted);
+    isPaying ||
+    payLocked ||
+    (riderRequired && onRiderChange != null && !riderAccepted);
 
   if (isPartner) {
     return (
@@ -146,7 +151,7 @@ export function CheckoutStep({
         <button
           type="button"
           onClick={onPay}
-          disabled={isPaying || tokenCost === undefined}
+          disabled={isPaying || payLocked || tokenCost === undefined}
           className="font-[family-name:var(--font-label)] flex min-h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-teal-400/45 bg-gradient-to-r from-teal-600/35 via-teal-500/30 to-cyan-400/25 px-6 text-lg font-semibold text-white shadow-[0_0_56px_rgba(45,212,191,0.3),0_0_40px_rgba(34,211,238,0.2)] transition-all duration-300 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPaying ? (

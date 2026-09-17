@@ -88,10 +88,11 @@ import { useWizardSoftCap } from "@/src/hooks/useWizardSoftCap";
 import type { AppDictionary } from "@/lib/dictionaries";
 import {
   coerceWizardState,
-  emptyMontageState,
   emptyStoryboardState,
   resolveInitialWizardStep,
   WIZARD_STATE_VERSION,
+  legacyMontageFromStoryboard,
+  legacyMusicalAmbianceFromStoryboard,
   type SocialId,
   type WizardInitialDraft,
   type WizardMontageState,
@@ -406,12 +407,6 @@ export function TributeWizard({
   const [selectedSocial, setSelectedSocial] = useState<SocialId | null>(
     hydrated.socialSources?.selected ?? null,
   );
-  // `montage` reste un pont legacy en lecture seule pour Preview/Checkout —
-  // il n'est plus manipulé par une UI depuis le passage à `storyboard`
-  // (Étape 4). Sera retiré lors du ticket cleanup-legacy.
-  const [montage] = useState<WizardMontageState>(
-    () => hydrated.montage ?? emptyMontageState(),
-  );
   const [projectMediaCount, setProjectMediaCount] = useState(0);
   const [step3UploadRunning, setStep3UploadRunning] = useState(false);
   const [isPartner] = useState(isPartnerInitial);
@@ -469,6 +464,17 @@ export function TributeWizard({
     projectMediaCount,
     onChange: handleStoryboardDomainChange,
   });
+  // Pont Preview : re-dérivé du storyboard live (plus de freeze au hydrate).
+  const montage = useMemo(
+    () => legacyMontageFromStoryboard(wizardStoryboard.storyboard),
+    [wizardStoryboard.storyboard],
+  );
+  const actTracks = useMemo(
+    () =>
+      legacyMusicalAmbianceFromStoryboard(wizardStoryboard.storyboard)?.tracks ??
+      emptyActTracks(),
+    [wizardStoryboard.storyboard],
+  );
   const packageDisplayNameFor = useCallback(
     (pkg: WizardBasePackage): string => {
       switch (pkg) {
@@ -589,13 +595,6 @@ export function TributeWizard({
   const openPackageDossier = useCallback(() => {
     setIsPackageDossierOpen(true);
   }, []);
-  // `actTracks` reste un pont legacy en lecture seule pour PreviewStep/
-  // CheckoutStep — il n'est plus manipulé par une UI depuis la neutralisation
-  // de SoundSignatureStep (ex-Étape 5, cul-de-sac fonctionnel remplacé par
-  // StoryboardMontageStep). Sera retiré lors du ticket cleanup-legacy.
-  const [actTracks] = useState<WizardActTracks>(
-    () => hydrated.musicalAmbiance?.tracks ?? emptyActTracks(),
-  );
   const wizardTitleId = useId();
 
   // Identifiants DB nécessaires pour passer RLS Storage + insert media_assets.
@@ -1310,6 +1309,7 @@ export function TributeWizard({
     showCheckoutStayFree,
     handlePay,
     remainingDueCents,
+    payArmed,
   } = useWizardCheckout({
     uploadProjectId,
     locale,
@@ -1340,7 +1340,13 @@ export function TributeWizard({
       formatWizardPrice(remainingDueCents, locale === "en" ? "en" : "fr"),
     );
   const n3PayDisabled =
-    isPaying || isEditor || (!isPartner && !riderAccepted);
+    isPaying || isEditor || !payArmed || (!isPartner && !riderAccepted);
+  const [n3Cooling, setN3Cooling] = useState(false);
+  useEffect(() => {
+    setN3Cooling(true);
+    const timer = window.setTimeout(() => setN3Cooling(false), 500);
+    return () => window.clearTimeout(timer);
+  }, [currentStep]);
 
   const {
     softCapMusicBrowse,
@@ -2768,8 +2774,7 @@ export function TributeWizard({
           {currentStep === 6 ? (
             <PreviewStep
               projectId={uploadProjectId}
-              montage={montage}
-              actTracks={actTracks}
+              storyboard={wizardStoryboard.storyboard}
               extensions={extensions}
               basePackage={basePackage}
               softCapActive={
@@ -2797,6 +2802,7 @@ export function TributeWizard({
                 teaserNowPlaying: copy.previewTeaserNowPlaying,
                 teaserPlay: copy.previewTeaserPlay,
                 teaserPause: copy.previewTeaserPause,
+                chapterTitleFallback: copy.chapterTitleFallback,
               }}
             />
           ) : null}
@@ -2816,6 +2822,7 @@ export function TributeWizard({
               viralLoopEnabled={viralLoopEnabled}
               riderAccepted={riderAccepted}
               onRiderChange={setRiderAccepted}
+              payLocked={!payArmed}
               excessMediaCount={
                 isFreemiumGrant && projectMediaCount > grantedMediaMax
                   ? projectMediaCount - grantedMediaMax
@@ -2952,7 +2959,11 @@ export function TributeWizard({
 
       {/* N3 — 2–5 Retour|Suivant ; 6 Retour|Préserver {forfait} ; 7 Retour|Préserver {forfait}·prix */}
       {!step1Parcours.hubChromeHidden && currentStep >= 2 ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
+        <div
+          className={`fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8 ${
+            n3Cooling ? "pointer-events-none" : ""
+          }`}
+        >
           <div
             className={`mx-auto flex gap-3 ${
               currentStep === 5

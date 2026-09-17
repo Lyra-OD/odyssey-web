@@ -136,6 +136,7 @@ export function ChapterRefinementDrawer({
                       inCapacityItems.length + beyondCapacityItems.length
                     }
                     showAssigned
+                    toneClassName={theme.text}
                     copy={{
                       recommended: copy.capacityRecommended,
                       pending: copy.capacityPending,

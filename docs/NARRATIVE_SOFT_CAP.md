@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — Bandeau aperçu : dire les **faits** (photos / licence / Héritage) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) (plan plus tard). Logique granted/intended inchangée.
 - 17 sept 2026 — Copy écran : plus d’« Écrin » ; Soft Cap parle du forfait **Héritage**. Logique granted/intended inchangée.
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — spec Soft Cap Freemium V1.
@@ -46,7 +47,7 @@ Règles :
 
 - Soft Cap **à 50** : auto-modale filet + bandeau étape Médias avec CTA — copy courte, pas de prix froid.
 - Soft Cap **post-Composition Magique** = moment d’aversion à la perte principal (Phase 4 UX) — exige que `intended` soit encore Souvenir.
-- Soft Cap **Preview** : ancre valeur Héritage avant checkout si engagement Soft Cap ou dépassement quota cadeau.
+- Soft Cap **Preview** : ancre valeur Héritage avant checkout si engagement Soft Cap ou dépassement quota cadeau. **Copy actuelle** = phrase générique. **Cible (plus tard)** : dire *pourquoi* (n souvenirs, licence, Héritage déjà ouvert) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
 - Si `intended` est déjà `signature`+, ne pas re-spammer la modale.
 
 ---

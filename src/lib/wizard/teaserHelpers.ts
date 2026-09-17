@@ -1,83 +1,96 @@
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
-import {
-  countIncludedMedia,
-  MONTAGE_ACT_IDS,
-  type MontageActId,
-  type WizardMontageState,
-} from "@/src/lib/wizard/wizardState";
-import type { WizardActTrackKey } from "@/src/lib/wizard/stingrayCatalog";
+import type { WizardStoryboardState } from "@/src/lib/wizard/wizardState";
 
 export type TeaserSlide = {
   imageUrl: string;
-  actId: MontageActId;
-  actKey: WizardActTrackKey;
+  trackKey: string;
   label: string;
 };
 
-const ACT_TO_TRACK: Record<MontageActId, WizardActTrackKey> = {
-  spark: "acte1",
-  epic: "acte2",
-  legacy: "acte3",
+export type TeaserTrack = {
+  title: string;
+  artist: string;
+  trackId?: string;
+  storagePath?: string;
 };
 
-const ACT_LABELS: Record<MontageActId, string> = {
-  spark: "Étincelle",
-  epic: "Épopée",
-  legacy: "Héritage",
-};
+export type TeaserTracks = Record<string, TeaserTrack>;
 
-/** 2 premières photos incluses par acte (I → III). */
-export function buildTeaserSlides(
-  montage: WizardMontageState,
+/** Teaser : quelques photos par chapitre, tous les chapitres. */
+const PHOTOS_PER_CHAPTER = 3;
+
+export function buildTeaserFromStoryboard(
+  storyboard: WizardStoryboardState,
   mediaById: Map<string, MontageMediaItem>,
-): TeaserSlide[] {
-  const excluded = new Set(montage.excludedIds);
+  chapterTitleFallback: string,
+): { slides: TeaserSlide[]; tracks: TeaserTracks } {
+  const excluded = new Set(storyboard.excludedIds);
   const slides: TeaserSlide[] = [];
+  const tracks: TeaserTracks = {};
 
-  for (const actId of MONTAGE_ACT_IDS) {
-    const ids = (montage.acts[actId] ?? [])
+  storyboard.chapters.forEach((chapter, index) => {
+    const label =
+      chapter.label?.trim() ||
+      chapterTitleFallback.replace("{index}", String(index + 1));
+    const trackKey = chapter.id;
+    const song = chapter.song;
+
+    if (song?.source === "stingray") {
+      tracks[trackKey] = {
+        title: song.title,
+        artist: song.artist,
+        trackId: song.trackId,
+      };
+    } else if (song?.source === "upload") {
+      tracks[trackKey] = {
+        title: song.title,
+        artist: song.artist?.trim() || "",
+        storagePath: song.storagePath,
+      };
+    }
+
+    const ids = chapter.mediaIds
       .filter((id) => !excluded.has(id))
-      .slice(0, 2);
+      .slice(0, PHOTOS_PER_CHAPTER);
 
     for (const id of ids) {
       const item = mediaById.get(id);
-      if (!item?.previewUrl || item.isVideo) continue;
+      const imageUrl = item?.previewUrl ?? item?.fullPreviewUrl;
+      if (!imageUrl) continue;
       slides.push({
-        imageUrl: item.previewUrl,
-        actId,
-        actKey: ACT_TO_TRACK[actId],
-        label: ACT_LABELS[actId],
+        imageUrl,
+        trackKey,
+        label,
       });
     }
-  }
+  });
 
-  return slides;
+  return { slides, tracks };
 }
 
-/** Estimation front-end — durée du film complet (minutes). */
-export function estimateFilmDurationMinutes(montage: WizardMontageState): number {
-  const included = countIncludedMedia(montage);
+export function estimateStoryboardFilmDurationMinutes(
+  storyboard: WizardStoryboardState,
+): number {
+  const excluded = new Set(storyboard.excludedIds);
+  let included = 0;
+  for (const chapter of storyboard.chapters) {
+    included += chapter.mediaIds.filter((id) => !excluded.has(id)).length;
+  }
   const seconds = 90 + included * 6;
   return Math.max(3, Math.round(seconds / 60));
 }
 
-export function slidesForAct(
+export function groupSlidesByTrack(
   slides: TeaserSlide[],
-  actKey: WizardActTrackKey,
-): TeaserSlide[] {
-  return slides.filter((slide) => slide.actKey === actKey);
-}
-
-export function groupSlidesByAct(
-  slides: TeaserSlide[],
-): { actKey: WizardActTrackKey; slides: TeaserSlide[] }[] {
-  const order: WizardActTrackKey[] = ["acte1", "acte2", "acte3"];
-  return order
-    .map((actKey) => ({
-      actKey,
-      slides: slides.filter((s) => s.actKey === actKey),
-    }))
-    .filter((group) => group.slides.length > 0);
+): { trackKey: string; slides: TeaserSlide[] }[] {
+  const order: string[] = [];
+  for (const slide of slides) {
+    if (!order.includes(slide.trackKey)) order.push(slide.trackKey);
+  }
+  return order.map((trackKey) => ({
+    trackKey,
+    slides: slides.filter((s) => s.trackKey === trackKey),
+  }));
 }
 
 export const TEASER_FADE_MS = 900;

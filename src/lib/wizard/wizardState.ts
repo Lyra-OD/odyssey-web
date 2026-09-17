@@ -766,7 +766,7 @@ function selectedTrackFromStoryboardSong(
   };
 }
 
-function legacyMontageFromStoryboard(
+export function legacyMontageFromStoryboard(
   storyboard: WizardStoryboardState,
 ): WizardMontageState {
   const base = emptyMontageState();
@@ -801,7 +801,7 @@ function legacyMontageFromStoryboard(
   };
 }
 
-function legacyMusicalAmbianceFromStoryboard(
+export function legacyMusicalAmbianceFromStoryboard(
   storyboard: WizardStoryboardState,
 ): WizardLegacyMusicalAmbianceState | undefined {
   const tracks: WizardActTracks = {};
