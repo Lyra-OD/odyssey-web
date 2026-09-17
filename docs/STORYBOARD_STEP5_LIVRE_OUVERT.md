@@ -1,14 +1,14 @@
 # Étape 5 — Le Livre Ouvert (Table de Montage)
 
-**Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L copy ✅ · S5-J/K ⏳.  
+**Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L **partiel** · S5-J/K ⏳.  
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — **D0 freeze** : S5-L partiel (titres 3 actes encore à l’écran) ; §11 commerce = Freemium V1, saga jetons morte.
 - 17 sept 2026 — Composition Magique (banque) : paille `#E4D96F` (`--wizard-magic-wheat`), plus d’amber.
 - 17 sept 2026 — Composer + Musique : halo **bloc entier** couleur chapitre (repos = même force que la carte ouverte ; drop/magie = ring +).
 - 17 sept 2026 — S8 preview → mix BA (décision) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
 - 16 sept 2026 — Drag : barre d’insertion **dans le gap** (Livre + Composer) ; overlay au-dessus de Composer.
-- 16 sept 2026 — Desktop : shell Étape 5 `max-w-7xl` ; modal directeur / tiroir composition portés au `document.body` ; fade d’étape **sans** `transform` (dnd-kit). Clic souvenir = salle de visionnement ; glisser ≠ ouvrir.
 
 Document canonique de l'Étape 5 du wizard hommage. Complète [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (ticket S5) et [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) (§ Step 5).
 
@@ -283,9 +283,9 @@ Namespace principal : `dictionaries/fr.json` / `en.json` — clés `montage*`, `
 | `MontageChapterTabs.tsx` | Idem |
 | `MediaBankPanel.tsx`, `MediaBankTrigger.tsx` | Idem (ancien tiroir) |
 | Duplication timing TS/CSS | Documenter ; envisager variables CSS `--magic-*` centralisées |
-| `TributeWizard.tsx` ~1800 lignes | Découpage futur (identité, forfait) |
+| `TributeWizard.tsx` ~3030 lignes | Découpage futur (identité, forfait) — pas un ticket S5 |
 | Tests unitaires | `storyboardMagicTimeline.ts` — 0 test aujourd'hui |
-| Pont `actTracks` Preview/Checkout | S8/S9/S10 — ne pas toucher |
+| Pont hybride Preview/Checkout | Étape 6 lit le storyboard live ; autosave + Stripe gardent `montage` / `act_tracks` jusqu’à S9 |
 
 ---
 
@@ -318,14 +318,14 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 
 **Fichiers probables :** `StoryboardChapterBlock.tsx`, état `focusChapterId` dans `StoryboardMontageStep`.
 
-### 10.3 Vocabulaire narratif (S5-L) — ✅
+### 10.3 Vocabulaire narratif (S5-L) — 🟡 partiel
 
-**Intention :** parler de mémoire, pas de logiciel. Titre vivant : **Le film de sa vie**.
+**Intention :** parler de mémoire, pas de logiciel. Titre vivant d’étape : **Le film de sa vie**.
 
-| Fait | Reste |
-|------|-------|
-| Titre / sous-titre, colonne, tiroir, vide, Composer | Clés techniques `acte1` (ne pas afficher) |
-| Purge UI « acte / timeline / banque / Gérer » | — |
+| Fait | Reste (S5-L2) |
+|------|----------------|
+| Titre / sous-titre d’étape, colonne souvenirs, tiroir « Composer », états vides | Titres chapitre **défaut** encore Étincelle / Épopée / Héritage (`montageActSparkLabel` via `resolveMontageChapterTabLabel`) |
+| Purge UI « Gérer » → « Composer » | Clés techniques `acte1` (ne pas afficher) |
 
 ### 10.4 Matière & toucher — 🟡 partiel
 
@@ -362,7 +362,7 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 |--------|---------|---------------|
 | **S5-J** | Audio chapitre pendant montage | 0,5–1 j |
 | **S5-K** | Mode Focus organique | 0,5–1 j |
-| **S5-L** | Copy narrative + polish matière | ✅ copy 19 août 2026 |
+| **S5-L** | Copy narrative + polish matière | 🟡 partiel — S5-L2 titres chapitre défaut |
 | **Tests** | Unitaires `storyboardMagicTimeline.ts` | 0,5 j |
 | **Cleanup** | Suppression fichiers orphelins `storyboard/` | 0,25 j |
 
@@ -371,16 +371,22 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 | Ticket | Contenu |
 |--------|---------|
 | **S7** | Validation pacing visible Étape 5 (warnings par chapitre) |
-| **S8** | Remplacé par **mix BA** — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) (plan plus tard ; plus un teaser-film 3 actes) |
+| **S8** | Remplacé par **mix BA** — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) (plan plus tard). Runtime actuel : aperçu **storyboard live**, pas un teaser 3 actes |
 | **S9** | Checkout metadata `storyboard` canonique |
 | **S10** | Purge `actTracks`, `montageHelpers`, composants legacy |
 
-### Parallèle — commerce & infra
+### Commerce & infra (hors front Étape 5)
 
-- Saga checkout v2 freemium
-- Webhook RevShare 30 %
-- Scanner Compagnon Phase A
-- CI / tests automatisés (Jest/Vitest + Playwright)
+Le **modèle commerce actuel est Freemium V1** : Soft Cap, checkout Stripe, RevShare 30 % Net Distribuable (`partner_commission_*`). Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md).
+
+**La saga checkout v1 par jetons est morte** (purge P8). Ne plus la planifier, ni une « saga checkout v2 jetons ».
+
+Hors ce document (ne pas les traiter comme le chantier Livre Ouvert) :
+
+- Phase 6 QA export / webhook `charge.refunded` prod
+- Scanner Compagnon (QR livré ; job IA serveur ⏳) — [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)
+- Mix BA aperçu — plan plus tard
+- CI Vitest + `next build` (déjà verts sur `main`)
 
 ---
 

@@ -4,10 +4,10 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — **D0 freeze** : 7 étapes (plus de « 7–8 ») ; Preview = storyboard live + pont hybride ; S5-L partiel.
 - 17 sept 2026 — **Autosave Zod** : `furthestStep` accepté (fin du 400 silent fail) ; plafond montage 250 ; log `invalid_body` en dev.
 - 17 sept 2026 — **Titres d’étape 1–7** : une spec — 24/26 · medium · mini-caps · lead 16/18 zinc-300. Boutons d’action mini-caps.
 - 17 sept 2026 — **Composition Magique** banque : paille `#E4D96F` (`--wizard-magic-wheat`).
-- 17 sept 2026 — **Bandeau Soft Cap aperçu** : faits à planifier — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
 - 17 sept 2026 — **Aperçu mix BA** (décision, pas de code) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
@@ -106,7 +106,7 @@ Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans 
 | `limits.maxMediaItems` | Soft Cap filet à 50 ✅ · quotas `intended` |
 | `resolveTransactionMode()` | Famille : **dollars Soft Cap** ; Salon : commissions |
 
-**Today:** `InvitationComposer` (Salon `/[lang]/salon`) offers **Keepsake only** — email + CTA, no package cards. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is now `storyboard`; Step 4 reads/writes `storyboard.chapters[].song` via `useWizardStoryboard`. **Step 5** is the live **Livre Ouvert** montage UI (`StoryboardMontageStep`) — DnD, actions chapitre, onboarding gate, and **Composition Magique** (see [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)). `SoundSignatureStep` was removed during Clean Slate. Steps 7–8 still use a temporary legacy bridge (`actTracks`) for Preview/Checkout until `S8`/`S9`.
+**Today:** `InvitationComposer` (Salon `/[lang]/salon`) offers **Keepsake only** — email + CTA, no package cards. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is `storyboard`. **Steps 4–5** read/write `storyboard` directly. **Step 6 (Aperçu)** reads the **live storyboard** (`PreviewStep` + `buildTeaserFromStoryboard`) — N chapters, not a 3-act teaser — via a **temporary hybrid bridge** (autosave still PATCHes `montage` + `musicalAmbiance`; checkout still sends compact `act_tracks`). `SoundSignatureStep` was removed during Clean Slate. **There is no step 8.**
 
 ### Design decisions — why (juillet 2026)
 
@@ -116,9 +116,9 @@ Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans 
 | **DEFAULT_B2C_BASE_PACKAGE = "heritage"** (fallback) | Ancien ancrage Éternité ; **supplanté Cascade V-Final** : init via `ChannelProfile` (B2B2C → `essential`, B2C → `signature` / Héritage **179 $**) |
 | **Step 4 ↔ 5 reorder** | Chapter media capacity depends on `durationSec` — music choice must precede media assignment |
 | **Clean Slate Step 5** | `SoundSignatureStep` showed functional UI but inputs were silently ignored by `coerceWizardState()` — misleading UX, not mere tech debt |
-| **`useWizardStoryboard`** | Isolate chapter domain from `TributeWizard` (~1780 lines) before `dnd-kit`; hook stays pure (no autosave) |
+| **`useWizardStoryboard`** | Isolate chapter domain from `TributeWizard` (~3030 lines today) ; hook stays pure (no autosave) |
 | **montage/* triage** | Purge 3-act logic (`MontageStep`, act columns); keep pure UI (`MontageDirectorModal`, `MontageMediaCard`, `MontageFocalReticle`) retyped for chapters |
-| **`actTracks` kept read-only** | Preview still uses the live legacy bridge until `S8`/`S9` |
+| **Pont hybride Preview/Checkout** | Étape 6 lit le **storyboard live**. Autosave + Stripe gardent encore le miroir `montage` / `act_tracks` jusqu’à S9 |
 | **EMFILE / `ulimit -n 65536`** | Next.js Watchpack failed silently → 404 on all routes in dev; restart `npm run dev` with raised fd limit |
 
 ### Major architecture change — from 3 acts to song-based storyboard
@@ -150,12 +150,14 @@ The new canonical model solves this by moving to a **song-based storyboard**:
 - direct path to MP3 uploads and Stingray chapters in the same model
 - future pacing logic can use `durationSec / targetSecondsPerMedia`
 
-**Current transition state**
+**Current transition state (hybrid, temporary)**
 
-- `storyboard` is now persisted as the canonical V2 shape
-- `wizardState.ts` rebuilds temporary `montage` + `musicalAmbiance` legacy views at runtime for Preview/Checkout
-- Steps 4–5 use canonical `storyboard` directly (`StoryboardChaptersStep` + `StoryboardMontageStep` Livre Ouvert)
-- Steps 7–8 still render through the legacy bridge until `S8`/`S9`
+- `storyboard` is persisted as the canonical V2 shape
+- **Steps 4–5** use `storyboard` directly (`StoryboardChaptersStep` + `StoryboardMontageStep` Livre Ouvert)
+- **Step 6 (Aperçu)** reads the **live storyboard** (`buildTeaserFromStoryboard`) — all chapters, each with its song. **Not** a 3-act teaser. **Not** the Creatomate master
+- `wizardState.ts` still rebuilds `montage` + `musicalAmbiance` at runtime ; `buildWizardState()` still **PATCHes** those legacy views beside `storyboard`
+- **Step 7 (Checkout)** still serializes compact Stripe `act_tracks` in addition to `storyboard` — until S9
+- **No step 8** (`TOTAL_STEPS = 7`)
 
 ### i18n (marketing names)
 
@@ -263,7 +265,7 @@ sequenceDiagram
 }
 ```
 
-**Runtime bridge during transition:** `coerceWizardState()` still reconstructs temporary `montage` and `musicalAmbiance` views from `storyboard` so the existing UI keeps working while Storyboard UI tickets ship.
+**Runtime bridge (temporary hybrid):** `coerceWizardState()` still rebuilds `montage` and `musicalAmbiance` from `storyboard` for the autosave PATCH and Stripe `act_tracks`. **Preview UI does not render 3 acts** — it consumes `storyboard` via `teaserHelpers.ts`.
 
 **Legacy package id:** `prestige` is coerced to `signature` on read (`pricingConfig.ts`).
 
@@ -277,7 +279,7 @@ sequenceDiagram
 
 ## Storyboard transition bridge
 
-To preserve backward compatibility while the UI still renders 3 legacy slots, the first three storyboard chapters are projected as follows:
+Autosave / checkout still project the first three storyboard chapters onto the legacy 3-act shell (so old JSON and Stripe `act_tracks` stay valid). **The Preview and Livre Ouvert UIs do not show this shell.**
 
 | Canonical storyboard chapter | Legacy montage bridge | Legacy music bridge |
 |------------------------------|-----------------------|---------------------|
@@ -285,7 +287,7 @@ To preserve backward compatibility while the UI still renders 3 legacy slots, th
 | `chapters[1]` | `epic` | `acte2` |
 | `chapters[2]` | `legacy` | `acte3` |
 
-Additional chapters beyond index 2 are temporarily projected into `unassignedIds` on the runtime montage bridge so the old UI does not silently lose media.
+Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage mirror only** — the live storyboard keeps them as chapters.
 
 ---
 
@@ -312,20 +314,22 @@ Additional chapters beyond index 2 are temporarily projected into `unassignedIds
 - **Chrome S4 :** halo **bloc entier** + compteur = couleur du chapitre (`chapterShellClass`) — repos lisible, pas un trait blanc.
 - **Chrome S5 :** CTA Composition Magique banque = paille `--wizard-magic-wheat` (plus d’amber). Overlay capsule inchangée.
 - **Chrome S6 :** titres 1–7 = `wizardStepTitle` (24/26 · medium · mini-caps) + `wizardStepLead` (16/18 · zinc-300). Boutons d’action mini-caps.
-- **Remaining (S5-J/K):** chapter audio during montage, organic focus mode — see Step 5 doc §10–11. **S5-L** copy ✅ (« Le film de sa vie »).
+- **Remaining (S5-J/K):** chapter audio during montage, organic focus mode — see Step 5 doc §10–11. **S5-L partiel** : titre d’étape « Le film de sa vie » ✅ ; titres chapitre **défaut** encore Étincelle / Épopée / Héritage (S5-L2).
 - **Legacy orphan files:** `MontageTimeline.tsx`, `MontageChapterTabs.tsx` — candidate removal in S10 cleanup.
 
 ---
 
-## Step 6 — Aperçu (pont actuel · cible mix BA)
+## Step 6 — Aperçu (pont hybride · cible mix BA)
 
 | File | Role |
 |------|------|
 | `PreviewStep.tsx` | Copy, teaser, CTA checkout, lien modifier |
 | `CinematicTeaser.tsx` | Diaporama + audio chapitre (pause réelle) |
-| `teaserHelpers.ts` | Slides / pistes depuis le storyboard live |
+| `teaserHelpers.ts` | Slides / pistes depuis le **storyboard live** |
 
-**Aujourd’hui :** teaser storyboard (chapitres, musiques, ordre). Ce n’est **pas** le master Creatomate.
+**Aujourd’hui :** l’aperçu **lit le storyboard live** (tous les chapitres, chaque piste, ordre Livre Ouvert). Ce n’est **pas** un teaser 3 actes. Ce n’est **pas** le master Creatomate.
+
+**Pont hybride (dette temporaire) :** le PATCH autosave envoie encore `montage` + `musicalAmbiance` à côté de `storyboard` ; `POST /api/checkout` envoie encore `act_tracks` compact. À retirer quand S9 (metadata `storyboard`) est stable.
 
 **Cible (décision, plan plus tard) :** mix **bande-annonce + voir un chapitre**, copy honnête — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md). Ne pas pousser le diaporama 16:9 comme s’il était le film.
 
