@@ -57,7 +57,7 @@ import {
   useParcoursUx,
 } from "@/src/hooks/useParcoursUx";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
-import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
+import { sanctuaryFocusRing, wizardMiniCapsAction, wizardStepLead, wizardStepTitle } from "@/src/lib/contribute/sanctuaryChrome";
 import { SkyBackdrop } from "@/src/components/contribute/SkyBackdrop";
 import type { HubFrameCapture } from "@/src/lib/parcours/hubFreezeCapture";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
@@ -1974,11 +1974,11 @@ export function TributeWizard({
               <div className="parcours-open-stagger-1">
               <h2
                 id={wizardTitleId}
-                className="font-[family-name:var(--font-label)] text-balance text-2xl font-light tracking-wide text-zinc-100 md:text-[1.65rem]"
+                className={wizardStepTitle}
               >
                 {copy.stepEssentialTitle}
               </h2>
-              <p className="mt-5 whitespace-pre-line text-lg font-light leading-relaxed text-zinc-400 md:text-xl">
+              <p className={`mt-5 whitespace-pre-line ${wizardStepLead}`}>
                 {copy.stepEssentialDescription}
               </p>
               </div>
@@ -2238,11 +2238,11 @@ export function TributeWizard({
             <>
               <h2
                 id={wizardTitleId}
-                className="font-[family-name:var(--font-label)] text-balance text-2xl font-light tracking-wide text-zinc-100 md:text-[1.65rem]"
+                className={wizardStepTitle}
               >
                 {copy.stepMediaTitle}
               </h2>
-              <p className="mt-5 text-lg font-light leading-relaxed text-zinc-400 md:text-xl">
+              <p className={`mt-5 ${wizardStepLead}`}>
                 {copy.stepMediaDescription}
               </p>
 
@@ -2977,7 +2977,7 @@ export function TributeWizard({
               <button
                 type="button"
                 onClick={() => void goBack()}
-                className={`font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-base font-normal text-zinc-400 transition-colors hover:border-white/12 hover:bg-white/[0.05] hover:text-zinc-200 ${sanctuaryFocusRing}`}
+                className={`${wizardMiniCapsAction} min-h-[52px] flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-base font-medium text-zinc-400 transition-colors hover:border-white/12 hover:bg-white/[0.05] hover:text-zinc-200 ${sanctuaryFocusRing}`}
               >
                 {copy.back}
               </button>
@@ -2993,7 +2993,7 @@ export function TributeWizard({
                   type="button"
                   onClick={() => void goNext()}
                   disabled={currentStep === 3 && step3UploadRunning}
-                  className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${
+                  className={`connexion-submit-breathe ${wizardMiniCapsAction} min-h-[52px] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-medium text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${
                     currentStep > (isEditor ? 3 : 1)
                       ? "flex-[1.35]"
                       : "w-full"
@@ -3008,7 +3008,7 @@ export function TributeWizard({
               <button
                 type="button"
                 onClick={() => void handleProceedToPayment()}
-                className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`}
+                className={`connexion-submit-breathe ${wizardMiniCapsAction} min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-medium text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`}
               >
                 {preservePackageCta}
               </button>
@@ -3017,7 +3017,7 @@ export function TributeWizard({
                 type="button"
                 onClick={() => void handlePay()}
                 disabled={n3PayDisabled}
-                className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${sanctuaryFocusRing}`}
+                className={`connexion-submit-breathe ${wizardMiniCapsAction} min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-medium text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${sanctuaryFocusRing}`}
               >
                 {isPaying ? copy.checkoutPaying : preservePackagePayCta}
               </button>

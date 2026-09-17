@@ -2,7 +2,7 @@
 
 import { Loader2, Lock } from "lucide-react";
 
-import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
+import { sanctuaryFocusRing, wizardMiniCapsAction, wizardStepLead, wizardStepTitle } from "@/src/lib/contribute/sanctuaryChrome";
 
 import {
   MontageExtensionsStep,
@@ -125,10 +125,10 @@ export function CheckoutStep({
     return (
       <div className="space-y-10 pb-44">
         <header className="space-y-3">
-          <h2 className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl">
+          <h2 className={wizardStepTitle}>
             {copy.title}
           </h2>
-          <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+          <p className={`max-w-2xl ${wizardStepLead}`}>
             {copy.description}
           </p>
         </header>
@@ -172,10 +172,10 @@ export function CheckoutStep({
   return (
     <div className="space-y-10 pb-44">
       <header className="space-y-3">
-        <h2 className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl">
+        <h2 className={wizardStepTitle}>
           {copy.title}
         </h2>
-        <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+        <p className={`max-w-2xl ${wizardStepLead}`}>
           {copy.description}
         </p>
       </header>
@@ -336,7 +336,7 @@ export function CheckoutStep({
         type="button"
         onClick={onPay}
         disabled={payDisabled}
-        className={`font-[family-name:var(--font-label)] flex min-h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-teal-400/45 bg-gradient-to-r from-teal-600/35 via-teal-500/30 to-cyan-400/25 px-6 text-lg font-semibold text-white shadow-[0_0_56px_rgba(45,212,191,0.3),0_0_40px_rgba(34,211,238,0.2)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_64px_rgba(45,212,191,0.4),0_0_48px_rgba(34,211,238,0.28)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 ${sanctuaryFocusRing}`}
+        className={`${wizardMiniCapsAction} flex min-h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-teal-400/45 bg-gradient-to-r from-teal-600/35 via-teal-500/30 to-cyan-400/25 px-6 text-lg font-semibold text-white shadow-[0_0_56px_rgba(45,212,191,0.3),0_0_40px_rgba(34,211,238,0.2)] transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_64px_rgba(45,212,191,0.4),0_0_48px_rgba(34,211,238,0.28)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 ${sanctuaryFocusRing}`}
       >
         {isPaying ? (
           <>

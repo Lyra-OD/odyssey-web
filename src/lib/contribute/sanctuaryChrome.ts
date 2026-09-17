@@ -66,6 +66,21 @@ export const sanctuaryWizardTextarea =
 
 export const sanctuaryGhostButton = `inline-flex min-h-[44px] items-center justify-center gap-2 rounded-sm border border-white/12 bg-white/[0.03] px-4 font-label text-[11px] font-medium uppercase tracking-[0.22em] text-zinc-300 transition-colors hover:border-teal-400/25 hover:text-teal-100 ${sanctuaryFocusRing}`;
 
+/** Mini-caps CSS — copy dictionnaire inchangé. */
+export const wizardMiniCapsTitle =
+  "font-[family-name:var(--font-label)] font-medium uppercase tracking-[0.08em]";
+
+/** Titres d’étape 1–7 — 24 mobile / 26 desktop. */
+export const wizardStepTitle = `${wizardMiniCapsTitle} text-balance text-2xl text-white md:text-[1.625rem]`;
+
+/** Phrase sous le H2 — distincte du corps (400 · zinc-300 · 16/18). */
+export const wizardStepLead =
+  "text-base font-normal leading-relaxed text-zinc-300 md:text-lg";
+
+/** Boutons d’action (N3, CTA, magie, Composer forts). Pas whispers / liens. */
+export const wizardMiniCapsAction =
+  "font-[family-name:var(--font-label)] uppercase tracking-[0.12em]";
+
 /**
  * Gate composition — Création assistée au repos (paille).
  * Hover / active restent teal (`sanctuaryChrome`). Voir PALETTE_ARBITRAGE §7.

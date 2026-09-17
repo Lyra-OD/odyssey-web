@@ -14,6 +14,7 @@ import {
   waitForAudioReady,
 } from "@/src/lib/wizard/musicPreview";
 import { chapterShellClass, getChapterTheme } from "@/src/lib/wizard/chapterTheme";
+import { wizardMiniCapsAction, wizardStepLead, wizardStepTitle } from "@/src/lib/contribute/sanctuaryChrome";
 import type { StingrayTrackApiPayload } from "@/src/lib/wizard/stingrayCatalog";
 import {
   chapterRecommendedCapacity,
@@ -369,10 +370,10 @@ export function StoryboardChaptersStep({
   return (
     <div className="space-y-8 pb-10">
       <header className="space-y-3">
-        <h2 className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl">
+        <h2 className={wizardStepTitle}>
           {copy.title}
         </h2>
-        <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+        <p className={`max-w-2xl ${wizardStepLead}`}>
           {copy.description}
         </p>
         <p className="text-xs font-light text-zinc-400">
@@ -484,7 +485,7 @@ export function StoryboardChaptersStep({
           <button
             type="button"
             onClick={handleAddChapter}
-            className="flex min-h-[9.5rem] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 bg-white/[0.01] text-sm font-light text-zinc-400 transition-colors hover:border-white/25 hover:bg-white/[0.03] hover:text-zinc-300"
+            className={`flex min-h-[9.5rem] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 bg-white/[0.01] text-sm font-medium text-zinc-400 transition-colors hover:border-white/25 hover:bg-white/[0.03] hover:text-zinc-300 ${wizardMiniCapsAction}`}
           >
             <Plus className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             {copy.addChapterCta}

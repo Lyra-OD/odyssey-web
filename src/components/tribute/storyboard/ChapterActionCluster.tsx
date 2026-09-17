@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
+import { sanctuaryFocusRing, wizardMiniCapsAction } from "@/src/lib/contribute/sanctuaryChrome";
 
 export type ChapterActionClusterCopy = {
   autoFill: string;
@@ -32,7 +32,7 @@ export function ChapterActionCluster({
 }: Props) {
   const [confirmClear, setConfirmClear] = useState(false);
 
-  const buttonClass = `inline-flex min-h-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] px-3 text-xs font-light text-zinc-300 transition-colors duration-200 hover:border-white/20 hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-40 ${sanctuaryFocusRing}`;
+  const buttonClass = `inline-flex min-h-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] px-3 text-xs font-medium text-zinc-300 transition-colors duration-200 hover:border-white/20 hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-40 ${wizardMiniCapsAction} ${sanctuaryFocusRing}`;
 
   const handleClear = () => {
     if (!confirmClear) {

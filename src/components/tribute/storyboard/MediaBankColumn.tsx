@@ -8,6 +8,7 @@ import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import {
   sanctuaryMagicWheatButton,
   sanctuaryMagicWheatDrop,
+  wizardMiniCapsAction,
 } from "@/src/lib/contribute/sanctuaryChrome";
 import { STORYBOARD_BANK_DROPPABLE_ID } from "@/src/lib/wizard/storyboardDnd";
 
@@ -103,7 +104,7 @@ export function MediaBankColumn({
           type="button"
           disabled={!hasUnassignedMedia || isMagicRunning}
           onClick={onMagicComposition}
-          className={`w-full rounded-lg border px-3 py-2.5 text-left text-xs font-light transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 ${sanctuaryMagicWheatButton}`}
+          className={`w-full rounded-lg border px-3 py-2.5 text-left text-xs font-medium transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 ${sanctuaryMagicWheatButton} ${wizardMiniCapsAction}`}
         >
           {copy.magicComposition}
         </button>

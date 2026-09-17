@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — **Titres d’étape 1–7** : une spec — 24/26 · medium · mini-caps · lead 16/18 zinc-300. Boutons d’action mini-caps.
 - 17 sept 2026 — **Composition Magique** banque : paille `#E4D96F` (`--wizard-magic-wheat`).
 - 17 sept 2026 — **Bandeau Soft Cap aperçu** : faits à planifier — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
 - 17 sept 2026 — **Aperçu mix BA** (décision, pas de code) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
 - 17 sept 2026 — **Preview live** : teaser storyboard ; pause réellement coupe l’audio ; Payer armé 700 ms (anti ghost-click Stripe).
-- 17 sept 2026 — **Copy Soft Cap** : plus d’Écrin / casket ; forfait nommé (Héritage). N3 Préserver {forfait} inchangé.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -307,6 +307,7 @@ Additional chapters beyond index 2 are temporarily projected into `unassignedIds
 - **Delivered (PR-1/2/3):** layout, FilmMap, DnD, multi-select, auto-fill / clear / refine drawer, magic sequence, QA fixes (drop target, ghost selection).
 - **Chrome S4 :** halo **bloc entier** + compteur = couleur du chapitre (`chapterShellClass`) — repos lisible, pas un trait blanc.
 - **Chrome S5 :** CTA Composition Magique banque = paille `--wizard-magic-wheat` (plus d’amber). Overlay capsule inchangée.
+- **Chrome S6 :** titres 1–7 = `wizardStepTitle` (24/26 · medium · mini-caps) + `wizardStepLead` (16/18 · zinc-300). Boutons d’action mini-caps.
 - **Remaining (S5-J/K):** chapter audio during montage, organic focus mode — see Step 5 doc §10–11. **S5-L** copy ✅ (« Le film de sa vie »).
 - **Legacy orphan files:** `MontageTimeline.tsx`, `MontageChapterTabs.tsx` — candidate removal in S10 cleanup.
 

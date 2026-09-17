@@ -46,6 +46,7 @@ import {
   type MontageOnboardingGateCopy,
 } from "@/src/components/tribute/storyboard/MontageOnboardingGate";
 import { findChapterForMedia } from "@/src/lib/wizard/storyboardHelpers";
+import { wizardStepLead, wizardStepTitle } from "@/src/lib/contribute/sanctuaryChrome";
 import { storyboardCollisionDetection } from "@/src/lib/wizard/storyboardDnd";
 import {
   assignManyMediaToChapter,
@@ -451,10 +452,10 @@ export function StoryboardMontageStep({
   return (
     <div className="space-y-8 pb-10">
       <header className="space-y-3">
-        <h2 className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl">
+        <h2 className={wizardStepTitle}>
           {copy.title}
         </h2>
-        <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+        <p className={`max-w-2xl ${wizardStepLead}`}>
           {copy.description}
         </p>
       </header>
