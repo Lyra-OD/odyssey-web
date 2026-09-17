@@ -30,8 +30,19 @@ import {
 } from "@/src/components/contribute/constellation/skyCraftStore";
 import { SkyCraftPresetsBar } from "@/src/components/contribute/SkyCraftPresets";
 import { SKY_PANORAMA_TEXTURE } from "@/src/components/contribute/constellation/SkyPanorama";
+import {
+  DEFAULT_HERO_GLOBAL_SCALE,
+  DEFAULT_HERO_SPIKES,
+  DEFAULT_HERO_TEAL,
+  DEFAULT_HERO_WHITE,
+} from "@/src/components/contribute/constellation/HeroStar";
+import { HUB_HERO_BREATH_SPEED_INVITE } from "@/src/components/contribute/constellation/graphs/hubIdle";
 import { useVisualTier } from "@/src/components/contribute/constellation/useVisualTier";
+import { WIZARD_BIRTH_REVEAL_END } from "@/src/lib/contribute/wizardBirthReveal";
 import type { Locale } from "@/i18n.config";
+
+/** Reveal figé — capture mobile (Hero seul, sans play A→F). */
+const HERO_CAPTURE_REVEAL_REF = { current: WIZARD_BIRTH_REVEAL_END };
 
 function CraftColorGrid({ colors }: { colors: readonly SkyCraftColorDef[] }) {
   if (colors.length === 0) return null;
@@ -238,6 +249,7 @@ const LAB_CHIP_ORDER: SkyCraftUiTarget[] = [
   "starsField",
   "shootingStars",
   "constellation",
+  "hero",
 ];
 
 const COPY = {
@@ -254,6 +266,9 @@ const COPY = {
     rareStreak: "Filante spéciale",
     modeProcedural: "A · Procédural",
     modeHybrid: "B · Photo NASA",
+    heroOnlyKnob: "Hero",
+    heroOnlyHint:
+      "Étoile teal — Pos X/Y/Z + Scale · glisse pour déplacer la vue · molette zoom",
     lockScale: "Lock W/H",
     scene: "Scène",
     logState: "Log state",
@@ -291,6 +306,7 @@ const COPY = {
       starsField: "Étoiles proches",
       shootingStars: "Filantes",
       constellation: "Constellation",
+      hero: "Hero",
     } satisfies Record<SkyCraftUiTarget, string>,
   },
   en: {
@@ -306,6 +322,9 @@ const COPY = {
     rareStreak: "Special streak",
     modeProcedural: "A · Procedural",
     modeHybrid: "B · NASA photo",
+    heroOnlyKnob: "Hero",
+    heroOnlyHint:
+      "Teal star — Pos X/Y/Z + Scale · drag to pan · scroll to zoom",
     lockScale: "Lock W/H",
     scene: "Scene",
     logState: "Log state",
@@ -343,6 +362,7 @@ const COPY = {
       starsField: "Near stars",
       shootingStars: "Shooting stars",
       constellation: "Constellation",
+      hero: "Hero",
     } satisfies Record<SkyCraftUiTarget, string>,
   },
 } as const;
@@ -367,9 +387,49 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
   const [presetFlash, setPresetFlash] = useState<string | null>(null);
   /** Remonte la barre presets après Réinit. (baseline + slot Défaut). */
   const [presetsNonce, setPresetsNonce] = useState(0);
+  const heroCapture = state.scene.heroOnly === true;
 
   const legacyTheme = useMemo(() => toLegacySkyTheme(state), [state]);
-  const legacyLayers = useMemo(() => toLegacyLayerMap(state), [state]);
+  const legacyLayers = useMemo(() => {
+    const map = toLegacyLayerMap(state);
+    if (!heroCapture) return map;
+    /** Hero seul : mesh Hero sans cocher Constellation (évite le play reveal). */
+    return { ...map, constellation: true };
+  }, [state, heroCapture]);
+
+  const heroCaptureReveal = useMemo(() => {
+    if (!heroCapture) return undefined;
+    HERO_CAPTURE_REVEAL_REF.current = WIZARD_BIRTH_REVEAL_END;
+    const offset = state.scene.heroOffset ?? ([0, 0, 0] as [
+      number,
+      number,
+      number,
+    ]);
+    const craftScale = state.scene.heroCraftScale ?? 1;
+    return {
+      controlled: true as const,
+      revealT: WIZARD_BIRTH_REVEAL_END,
+      revealTRef: HERO_CAPTURE_REVEAL_REF,
+      hubHeroOnly: true,
+      hideHeroName: true,
+      skyActive: true,
+      heroOffset: offset,
+      heroAtom: {
+        white: { ...DEFAULT_HERO_WHITE, breath: HUB_HERO_BREATH_SPEED_INVITE },
+        teal: { ...DEFAULT_HERO_TEAL, breath: HUB_HERO_BREATH_SPEED_INVITE },
+        spikes: {
+          ...DEFAULT_HERO_SPIKES,
+          breath: HUB_HERO_BREATH_SPEED_INVITE,
+        },
+        embedScale: 0.42,
+        globalScale: DEFAULT_HERO_GLOBAL_SCALE * craftScale,
+      },
+    };
+  }, [
+    heroCapture,
+    state.scene.heroOffset,
+    state.scene.heroCraftScale,
+  ]);
 
   useEffect(() => {
     useTexture.preload(SKY_PANORAMA_TEXTURE);
@@ -399,6 +459,7 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
   const applyProceduralMode = () => {
     if (soloId) exitSolo();
     patch({
+      scene: { heroOnly: false },
       layers: {
         panorama: { isVisible: false },
       },
@@ -413,6 +474,7 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
       scene: {
         clearColor: "#000000",
         fog: { color: "#000000" },
+        heroOnly: false,
       },
       layers: {
         panorama: {
@@ -475,11 +537,20 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
           skyTheme={legacyTheme}
           skyLayers={legacyLayers}
           skyCraftChrome={false}
-          parallaxIntensity={state.scene.parallaxIntensity}
-          constellationVisible={legacyLayers.constellation}
+          wanderChrome={false}
+          skyWander={heroCapture}
+          parallaxIntensity={heroCapture ? 0 : state.scene.parallaxIntensity}
+          constellationVisible={
+            heroCapture || Boolean(legacyLayers.constellation)
+          }
+          craftReveal={heroCaptureReveal}
+          skipConstellationReveal={heroCapture}
+          hubSkyCamera={heroCapture}
+          hubSkyCameraStartSettled={heroCapture}
         />
       </div>
 
+      {heroCapture && !panelOpen ? null : (
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex flex-col gap-2 px-4 pt-4 md:px-8 md:pt-6">
         <p className="text-[10px] font-light uppercase tracking-[0.28em] text-white/40 md:text-xs">
           {t.title}
@@ -498,6 +569,12 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
               </span>
             </>
           ) : null}
+          {heroCapture ? (
+            <>
+              {" · "}
+              <span className="font-mono text-teal-300/85">{t.heroOnlyKnob}</span>
+            </>
+          ) : null}
           {presetFlash ? (
             <>
               {" · "}
@@ -506,6 +583,7 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
           ) : null}
         </p>
       </div>
+      )}
 
       {!panelOpen ? (
         <div className="pointer-events-auto absolute bottom-4 right-4 z-30">
@@ -701,6 +779,11 @@ function SkyCraftLabInner({ locale }: { locale: Locale }) {
                     />
                     {t.lockScale}
                   </label>
+                ) : null}
+                {knobTarget === "hero" ? (
+                  <p className="text-[9px] font-light normal-case tracking-normal text-white/45">
+                    {t.heroOnlyHint}
+                  </p>
                 ) : null}
               </div>
               <CraftKnobGrid

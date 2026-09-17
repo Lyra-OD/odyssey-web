@@ -210,6 +210,10 @@ export type ConstellationRevealCraft = {
    */
   hubHeroOnly?: boolean;
   /**
+   * Lab Hero — offset monde appliqué au groupe constellation (capture still).
+   */
+  heroOffset?: [number, number, number];
+  /**
    * Wizard — `false` gèle le WebGL (stop ForceRenderLoop, dpr 1).
    * Défaut `true` (labs / immersive).
    */
@@ -362,6 +366,7 @@ function Constellation({
   /** Sync React des traits — 32 ms = fluide (invité / reward), 125 ms = lab. */
   revealSyncMs,
   hubHeroOnly = false,
+  heroOffset,
   slotStars = DEFAULT_SLOT_STARS,
   bridges = DEFAULT_BRIDGES,
   slotLit,
@@ -407,6 +412,8 @@ function Constellation({
   revealSyncMs?: number;
   /** Hub / saisie — traits et slots masqués. */
   hubHeroOnly?: boolean;
+  /** Lab Hero — offset Pos X/Y/Z. */
+  heroOffset?: [number, number, number];
   slotStars?: SlotStarsCraft;
   bridges?: BridgesCraft;
   slotLit?: Record<string, boolean>;
@@ -686,7 +693,14 @@ function Constellation({
   };
 
   return (
-    <group position={[-0.45, -0.7 + heroSep.heroLift, 0]} scale={graphScale}>
+    <group
+      position={[
+        -0.45 + (hubHeroOnly ? (heroOffset?.[0] ?? 0) : 0),
+        -0.7 + heroSep.heroLift + (hubHeroOnly ? (heroOffset?.[1] ?? 0) : 0),
+        hubHeroOnly ? (heroOffset?.[2] ?? 0) : 0,
+      ]}
+      scale={graphScale}
+    >
       {stars.map((star, i) => {
         const pos = positions[star.id] ?? star.position;
         const isHero = star.role === "hero";
@@ -1137,6 +1151,7 @@ function UniverseScene({
   const hubPrompt = craftReveal?.hubPrompt === true && hubSkyCamera;
   const hubTapHint = hubSkyCamera ? craftReveal?.hubTapHint : undefined;
   const hubHeroOnly = craftReveal?.hubHeroOnly === true;
+  const heroOffset = craftReveal?.heroOffset;
   const slotStars = craftReveal?.slotStars ?? DEFAULT_SLOT_STARS;
   const bridges = craftReveal?.bridges ?? DEFAULT_BRIDGES;
   const slotLit = craftReveal?.slotLit;
@@ -1419,6 +1434,7 @@ function UniverseScene({
                 heroPerfLite={!wizardRewardFullPerf && overlayOnBackdrop}
                 revealSyncMs={wizardRewardFullPerf ? 32 : undefined}
                 hubHeroOnly={hubHeroOnly}
+                heroOffset={heroOffset}
                 slotStars={slotStars}
                 bridges={bridges}
                 slotLit={slotLit}

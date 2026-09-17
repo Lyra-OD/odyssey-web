@@ -59,6 +59,15 @@ export type SceneState = {
   clearEnabled: boolean;
   clearColor: string;
   fog: SceneFogState;
+  /**
+   * Lab `/test-sky` — chip « Hero » : étoile teal seule (hubHeroOnly), sans Leo / prénom.
+   * Pas un mesh layer ; flag scène comme Fond/Fog.
+   */
+  heroOnly: boolean;
+  /** Lab Hero — offset monde (knobs Pos X/Y/Z). */
+  heroOffset: Vec3;
+  /** Lab Hero — taille (knob Scale). */
+  heroCraftScale: number;
   intro: SceneIntroState;
   idle: SceneIdleState;
 };

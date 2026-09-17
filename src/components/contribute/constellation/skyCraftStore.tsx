@@ -68,11 +68,12 @@ type SkyCraftStoreValue = {
   exitSolo: () => void;
 };
 
-/** Cibles UI lab : scène + chips Fond/Fog + layers visuels. */
+/** Cibles UI lab : scène + chips Fond/Fog/Hero + layers visuels. */
 export type SkyCraftUiTarget =
   | "scene"
   | "fond"
   | "fog"
+  | "hero"
   | SkyCraftVisualLayerId;
 
 const SkyCraftStoreContext = createContext<SkyCraftStoreValue | null>(null);
@@ -90,6 +91,8 @@ function withAllVisibility(state: SkyCraftState, visible: boolean): SkyCraftStat
       ...state.scene,
       clearEnabled: visible,
       fog: { ...state.scene.fog, enabled: visible },
+      /** Hero = mode capture, jamais allumé par « Tout on ». */
+      heroOnly: false,
     },
     layers,
   };
@@ -104,7 +107,7 @@ function withSoloVisibility(
   if (id === "fond") {
     return {
       ...next,
-      scene: { ...next.scene, clearEnabled: true },
+      scene: { ...next.scene, clearEnabled: true, heroOnly: false },
     };
   }
   if (id === "fog") {
@@ -113,11 +116,19 @@ function withSoloVisibility(
       scene: {
         ...next.scene,
         fog: { ...next.scene.fog, enabled: true },
+        heroOnly: false,
       },
+    };
+  }
+  if (id === "hero") {
+    return {
+      ...next,
+      scene: { ...next.scene, clearEnabled: true, heroOnly: true },
     };
   }
   return {
     ...next,
+    scene: { ...next.scene, heroOnly: false },
     layers: {
       ...next.layers,
       [id]: { ...next.layers[id], isVisible: true },
@@ -182,6 +193,16 @@ export function SkyCraftStoreProvider({
             scene: {
               ...prev.scene,
               fog: { ...prev.scene.fog, enabled: visible },
+            },
+          };
+        }
+        if (id === "hero") {
+          return {
+            ...prev,
+            scene: {
+              ...prev.scene,
+              ...(visible ? { clearEnabled: true } : {}),
+              heroOnly: visible,
             },
           };
         }
@@ -307,5 +328,6 @@ export function isUiTargetVisible(
   if (id === "scene") return true;
   if (id === "fond") return state.scene.clearEnabled;
   if (id === "fog") return state.scene.fog.enabled;
+  if (id === "hero") return state.scene.heroOnly === true;
   return state.layers[id].isVisible;
 }
