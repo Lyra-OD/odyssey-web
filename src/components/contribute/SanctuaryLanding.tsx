@@ -32,7 +32,6 @@ import {
   SANCTUARY_PREVIEW_TRIBUTE,
   sanctuaryPreviewPacks,
 } from "@/src/lib/contribute/sanctuaryPreview";
-import { useConstellationCraftReveal } from "@/src/components/contribute/constellation/useConstellationCraftReveal";
 import {
   SANCTUARY_HALO_TEAL,
   SANCTUARY_HALO_UV,
@@ -51,8 +50,8 @@ import {
   DEFAULT_HERO_SPIKES,
   DEFAULT_HERO_TEAL,
   DEFAULT_HERO_WHITE,
-} from "@/src/components/contribute/constellation/HeroStar";
-import { HUB_HERO_BREATH_SPEED_INVITE } from "@/src/components/contribute/constellation/graphs/hubIdle";
+  GUEST_HERO_BREATH,
+} from "@/src/lib/contribute/heroAtomDefaults";
 import { WIZARD_BIRTH_REVEAL_END } from "@/src/lib/contribute/wizardBirthReveal";
 import {
   GUEST_PATRON_SUGGESTED_CENTS,
@@ -68,6 +67,18 @@ const SanctuaryUniverse = dynamic(
   () =>
     import("@/src/components/contribute/SanctuaryUniverse").then(
       (m) => m.SanctuaryUniverse,
+    ),
+  {
+    ssr: false,
+    loading: () => <div className="h-screen w-full bg-black" />,
+  },
+);
+
+/** Dev `test-ciel` only — never in the mobile guest graph. */
+const SanctuarySkyPreview = dynamic(
+  () =>
+    import("@/src/components/contribute/SanctuarySkyPreview").then(
+      (m) => m.SanctuarySkyPreview,
     ),
   {
     ssr: false,
@@ -180,55 +191,6 @@ function tributeDisplayName(
     .filter(Boolean);
   if (parts.length > 0) return parts.join(" ");
   return locale === "en" ? "a loved one" : "un être cher";
-}
-
-/** Preview `test-ciel` — même reveal que onglet Constellation (`/test-lueur`). */
-function SkyPreviewExperience({ locale }: { locale: Locale }) {
-  const [skyOpen, setSkyOpen] = useState(true);
-  const { craftReveal, restart } = useConstellationCraftReveal({
-    autoPlay: skyOpen,
-    heroName: SANCTUARY_PREVIEW_TRIBUTE.firstName,
-  });
-  const seeSky = locale === "en" ? "See the sky" : "Voir le ciel";
-  const whisper =
-    locale === "en" ? "The sky is filling" : "Le ciel se remplit";
-
-  return (
-    <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
-      <SanctuaryUniverse
-        mode={skyOpen ? "immersive" : "background"}
-        className={skyOpen ? "fixed inset-0 z-40" : "absolute inset-0 z-0"}
-        onClose={skyOpen ? () => setSkyOpen(false) : undefined}
-        locale={locale}
-        craftReveal={craftReveal}
-      />
-      <div className="absolute right-4 top-4 z-50 md:right-8 md:top-8">
-        <LocaleSwitcher
-          lang={locale}
-          languageLabel={locale === "en" ? "Language" : "Langue"}
-          langOptionFr="FR"
-          langOptionEn="EN"
-        />
-      </div>
-      {!skyOpen ? (
-        <div className="relative z-10 flex min-h-screen flex-col items-center justify-center gap-8 px-6">
-          <p className="text-sm font-light uppercase tracking-[0.35em] text-teal-50/35">
-            {whisper}
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              setSkyOpen(true);
-              restart();
-            }}
-            className={`${sanctuaryGhostButton} px-6 py-3 text-[11px] uppercase tracking-[0.28em]`}
-          >
-            {seeSky}
-          </button>
-        </div>
-      ) : null}
-    </main>
-  );
 }
 
 /**
@@ -458,9 +420,7 @@ export function SanctuaryLanding({
   }, [token, locale, copyFr, copyEn]);
 
   if (isSanctuarySkyPreview(token)) {
-    return (
-      <SkyPreviewExperience locale={locale} />
-    );
+    return <SanctuarySkyPreview locale={locale} />;
   }
 
   const onSky = load.status === "ready" && phase === "sky";
@@ -558,7 +518,9 @@ export function SanctuaryLanding({
     load.status === "ready"
       ? tributeSkyName(load.tribute, uiLocale)
       : undefined;
-  const guestCraftReveal = useMemo((): ConstellationRevealCraft => {
+  /** Desktop WebGL only — never allocated on mobile still path. */
+  const guestCraftReveal = useMemo((): ConstellationRevealCraft | undefined => {
+    if (skyStill) return undefined;
     GUEST_KEEP_REVEAL_REF.current = WIZARD_BIRTH_REVEAL_END;
     return {
       controlled: true,
@@ -568,14 +530,14 @@ export function SanctuaryLanding({
       heroName: guestHeroName,
       skyActive: true,
       heroAtom: {
-        white: { ...DEFAULT_HERO_WHITE, breath: HUB_HERO_BREATH_SPEED_INVITE },
-        teal: { ...DEFAULT_HERO_TEAL, breath: HUB_HERO_BREATH_SPEED_INVITE },
-        spikes: { ...DEFAULT_HERO_SPIKES, breath: HUB_HERO_BREATH_SPEED_INVITE },
+        white: { ...DEFAULT_HERO_WHITE, breath: GUEST_HERO_BREATH },
+        teal: { ...DEFAULT_HERO_TEAL, breath: GUEST_HERO_BREATH },
+        spikes: { ...DEFAULT_HERO_SPIKES, breath: GUEST_HERO_BREATH },
         embedScale: 0.42,
         globalScale: DEFAULT_HERO_GLOBAL_SCALE,
       },
     };
-  }, [guestHeroName]);
+  }, [skyStill, guestHeroName]);
 
   return (
     <main

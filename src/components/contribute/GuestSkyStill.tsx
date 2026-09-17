@@ -1,6 +1,6 @@
 import { GUEST_SKY_STILL_SRC } from "@/src/lib/contribute/guestSkyStill";
 
-/** Ciel invité mobile — image locale, zéro canvas, clics HTML libres. */
+/** Ciel invité mobile — image locale plein écran, zéro canvas, clics HTML libres. */
 export function GuestSkyStill() {
   return (
     <div
@@ -11,12 +11,12 @@ export function GuestSkyStill() {
       <img
         src={GUEST_SKY_STILL_SRC}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className="absolute left-1/2 top-1/2 h-[118%] w-[118%] max-w-none -translate-x-1/2 -translate-y-[48%] object-cover object-center"
         draggable={false}
       />
-      <div className="absolute left-1/2 top-[46%] h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-teal-300/15 blur-3xl" />
-      <div className="absolute inset-x-0 top-0 h-[28%] bg-gradient-to-b from-black/55 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-[44%] bg-gradient-to-t from-[#020202] via-[#020202]/90 to-transparent" />
+      {/* Vignettes légères — lisibilité copy / CTA, sans couper la bande. */}
+      <div className="absolute inset-x-0 top-0 h-[14%] bg-gradient-to-b from-black/40 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-[18%] bg-gradient-to-t from-[#020202]/80 to-transparent" />
     </div>
   );
 }
