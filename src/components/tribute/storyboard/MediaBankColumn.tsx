@@ -5,6 +5,10 @@ import { useDroppable } from "@dnd-kit/core";
 import type { MontageMediaCardCopy } from "@/src/components/tribute/montage/MontageMediaCard";
 import { BankDraggableMediaTile } from "@/src/components/tribute/storyboard/BankDraggableMediaTile";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
+import {
+  sanctuaryMagicWheatButton,
+  sanctuaryMagicWheatDrop,
+} from "@/src/lib/contribute/sanctuaryChrome";
 import { STORYBOARD_BANK_DROPPABLE_ID } from "@/src/lib/wizard/storyboardDnd";
 
 export type MediaBankColumnCopy = {
@@ -66,9 +70,7 @@ export function MediaBankColumn({
   return (
     <aside
       className={`flex min-h-0 flex-col rounded-2xl border bg-white/[0.02] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] ${
-        isDropHighlighted
-          ? "border-amber-400/30 ring-2 ring-amber-400/20 shadow-[0_0_32px_rgba(251,191,36,0.08)]"
-          : "border-white/[0.06]"
+        isDropHighlighted ? sanctuaryMagicWheatDrop : "border-white/[0.06]"
       }`}
       aria-label={copy.title}
     >
@@ -101,7 +103,7 @@ export function MediaBankColumn({
           type="button"
           disabled={!hasUnassignedMedia || isMagicRunning}
           onClick={onMagicComposition}
-          className="w-full rounded-lg border border-amber-400/20 bg-amber-400/[0.06] px-3 py-2.5 text-left text-xs font-light text-amber-100/90 transition-all duration-300 hover:border-amber-400/35 hover:bg-amber-400/[0.1] disabled:cursor-not-allowed disabled:opacity-40"
+          className={`w-full rounded-lg border px-3 py-2.5 text-left text-xs font-light transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40 ${sanctuaryMagicWheatButton}`}
         >
           {copy.magicComposition}
         </button>

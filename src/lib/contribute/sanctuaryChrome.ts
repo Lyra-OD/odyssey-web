@@ -76,6 +76,14 @@ export const sanctuaryMagicWheatCardRest =
 export const sanctuaryMagicWheatIconRest =
   "border-[color:var(--wizard-magic-wheat-icon-border)] bg-[color:var(--wizard-magic-wheat-icon-fill)] text-[color:var(--wizard-magic-wheat)]";
 
+/** CTA Composition Magique (banque) — paille, pas amber. */
+export const sanctuaryMagicWheatButton =
+  "border-[color:var(--wizard-magic-wheat-border)] bg-[color:var(--wizard-magic-wheat-fill)] text-[color:var(--wizard-magic-wheat)] hover:border-[color:var(--wizard-magic-wheat-border-hover)] hover:bg-[color:var(--wizard-magic-wheat-fill-hover)]";
+
+/** Drop vers la banque pendant le montage — même teinte magie. */
+export const sanctuaryMagicWheatDrop =
+  "border-[color:var(--wizard-magic-wheat-border-hover)] ring-2 ring-[color:var(--wizard-magic-wheat-border)] shadow-[0_0_32px_var(--wizard-magic-wheat-glow)]";
+
 /** Création manuelle au repos — violet (ambiance). */
 export const sanctuaryManualVioletCardRest =
   "border-violet-400/25 bg-gradient-to-b from-violet-400/[0.10] to-transparent";

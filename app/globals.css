@@ -764,6 +764,9 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   --wizard-magic-wheat-fill: rgba(228, 217, 111, 0.1);
   --wizard-magic-wheat-icon-border: rgba(228, 217, 111, 0.3);
   --wizard-magic-wheat-icon-fill: rgba(228, 217, 111, 0.1);
+  --wizard-magic-wheat-border-hover: rgba(228, 217, 111, 0.4);
+  --wizard-magic-wheat-fill-hover: rgba(228, 217, 111, 0.16);
+  --wizard-magic-wheat-glow: rgba(228, 217, 111, 0.14);
 }
 
 .font-brand {

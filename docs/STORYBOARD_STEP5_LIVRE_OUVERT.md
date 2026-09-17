@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — Composition Magique (banque) : paille `#E4D96F` (`--wizard-magic-wheat`), plus d’amber.
 - 17 sept 2026 — Composer + Musique : halo **bloc entier** couleur chapitre (repos = même force que la carte ouverte ; drop/magie = ring +).
 - 17 sept 2026 — S8 preview → mix BA (décision) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
 - 16 sept 2026 — Drag : barre d’insertion **dans le gap** (Livre + Composer) ; overlay au-dessus de Composer.
 - 16 sept 2026 — Desktop : shell Étape 5 `max-w-7xl` ; modal directeur / tiroir composition portés au `document.body` ; fade d’étape **sans** `transform` (dnd-kit). Clic souvenir = salle de visionnement ; glisser ≠ ouvrir.
-- 5 sept 2026 — `MontageOnboardingGate` : les **deux** cartes portent le même violet au repos et virent au cyan au survol comme à l’appui. Aucune des deux n’est recommandée — la différence se joue sur l’icône et la phrase. La sélection des souvenirs (banque, vignettes) passe elle aussi au cyan : voir [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) §2.1bis « choisir = teal, partout ».
 
 Document canonique de l'Étape 5 du wizard hommage. Complète [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (ticket S5) et [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) (§ Step 5).
 
