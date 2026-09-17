@@ -1,4 +1,9 @@
-/** Wizard autosave payload — aligned with `/api/projects/[id]/autosave` Zod schemas. */
+/**
+ * Wizard autosave payload — must stay aligned with
+ * `WizardStatePartialSchema` in `/api/projects/[id]/autosave` (`.strict()`).
+ * Toute clé envoyée par `TributeWizard.buildWizardState` et absente du
+ * schéma Zod = 400 silent fail (state + `wizard_step` non écrits).
+ */
 
 import {
   coerceExtensionsState,

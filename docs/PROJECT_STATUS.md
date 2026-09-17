@@ -4,11 +4,12 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — **Autosave silent fail** : Zod accepte `furthestStep` (PATCH 400 depuis cba61d5) · log `invalid_body` en dev — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 - 17 sept 2026 — **Bandeau Soft Cap aperçu** : dire les faits (photos / licence / Héritage) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) (plan plus tard).
 - 17 sept 2026 — **Aperçu mix BA** : décision notée — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) (plan plus tard).
 - 16 sept 2026 — **Coffre / montage** : audit vidéo + DnD desktop · ingest trim client après démo · [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) · **démo 18 sept = P0 preview**.
 - 16 sept 2026 — **Creatomate étape 3** : film atomique complet (intro + clips + outro carte mémoire, sans Odyssey) · [`craft/CREATOMATE_RECIPE.md`](craft/CREATOMATE_RECIPE.md).
-- 16 sept 2026 — **Creatomate étape 2** : intro magazine runtime · resserrée 27 s.
+
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 

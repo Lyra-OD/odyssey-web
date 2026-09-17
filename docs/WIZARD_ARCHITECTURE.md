@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 17 sept 2026 — **Autosave Zod** : `furthestStep` accepté (fin du 400 silent fail) ; plafond montage 250 ; log `invalid_body` en dev.
 - 17 sept 2026 — **Titres d’étape 1–7** : une spec — 24/26 · medium · mini-caps · lead 16/18 zinc-300. Boutons d’action mini-caps.
 - 17 sept 2026 — **Composition Magique** banque : paille `#E4D96F` (`--wizard-magic-wheat`).
 - 17 sept 2026 — **Bandeau Soft Cap aperçu** : faits à planifier — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
 - 17 sept 2026 — **Aperçu mix BA** (décision, pas de code) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
-- 17 sept 2026 — **Preview live** : teaser storyboard ; pause réellement coupe l’audio ; Payer armé 700 ms (anti ghost-click Stripe).
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -216,7 +216,8 @@ sequenceDiagram
 ```
 
 - **Back** button (top-left, steps 2+): same `flush()` then decrement step.
-- **furthestStep** (dans `wizard_state`) : max step jamais atteint ; ne diminue pas au retour. Prépare le fil constellation (N2).
+- **furthestStep** (dans `wizard_state`) : max step jamais atteint ; ne diminue pas au retour. Fil constellation (N2). **Doit** figurer dans `WizardStatePartialSchema` (`.strict()`) — absent = PATCH 400, ni state ni `wizard_step` écrits.
+- Contrat PATCH : chaque clé de `TributeWizard.buildWizardState()` ∈ schéma Zod. Rejet `invalid_body` → `console.error("Autosave Zod Rejection:", …)` en développement (`useWizardAutosave`).
 - Text fields use `queueSave("text")` — 800ms debounce.
 - Step changes and explicit actions use `queueSave("immediate")` or `flush()`.
 
@@ -239,6 +240,7 @@ sequenceDiagram
   },
   essentials?: { firstName, lastName, birthDate, deathDate, avatarPath },
   socialSources?: { selected, url },
+  furthestStep?: 1 | 2 | 3 | 4 | 5 | 6 | 7,  // Zod autosave : 1–10, .strict()
   storyboard?: {
     chapters: Array<{
       id: string,
@@ -250,11 +252,13 @@ sequenceDiagram
     }>,
     unassignedIds?: string[],
     excludedIds: string[],
-    focalPoints: Record<mediaId, { x, y }>
+    focalPoints: Record<mediaId, { x, y }>,
+    videoTrims?: Record<mediaId, { trimStartSec, durationSec }>
   },
   extensions?: {
-    aiRetouch?, extendedLicense?, collectorUsb?,
-    digitalVault?, heritagePack?
+    aiRetouch?, musicLicense?, storyVoice?, sanctuaryToken?,
+    memoryBook?, digitalVault?, heritagePack?,
+    extendedLicense?, collectorUsb?   // alias legacy
   }
 }
 ```

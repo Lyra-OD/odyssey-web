@@ -43,6 +43,8 @@ import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 const WIZARD_STEP_MIN = 1;
 const WIZARD_STEP_MAX = 10;
 const WIZARD_STATE_MAX_BYTES = 64 * 1024;
+/** Aligné sur `PACKAGE_MANIFEST` Éternité (`maxMediaItems: 250`) et `StoryboardSchema`. */
+const WIZARD_MEDIA_ID_MAX = 250;
 
 const EssentialsSchema = z
   .object({
@@ -76,7 +78,8 @@ const SelectedTrackSchema = z
     title: z.string().trim().max(200),
     artist: z.string().trim().max(200),
     trackId: z.string().trim().max(160),
-    coverUrl: z.string().trim().max(500),
+    /** Optionnel : miroir storyboard (`coverUrl?`) — une pochette absente ne doit pas 400. */
+    coverUrl: z.string().trim().max(500).optional(),
     previewUrl: z.string().trim().max(800).optional(),
   })
   .strict();
@@ -128,7 +131,7 @@ const MusicRightsAttestationSchema = z
 
 const UuidSchema = z.string().uuid();
 
-const MontageActListSchema = z.array(UuidSchema).max(150);
+const MontageActListSchema = z.array(UuidSchema).max(WIZARD_MEDIA_ID_MAX);
 
 const MontageFocalPointSchema = z
   .object({
@@ -147,11 +150,11 @@ const MontageSchema = z
       })
       .strict()
       .optional(),
-    unassignedIds: z.array(UuidSchema).max(150).optional(),
-    excludedIds: z.array(UuidSchema).max(150).optional(),
+    unassignedIds: z.array(UuidSchema).max(WIZARD_MEDIA_ID_MAX).optional(),
+    excludedIds: z.array(UuidSchema).max(WIZARD_MEDIA_ID_MAX).optional(),
     focalPoints: z
       .record(UuidSchema, MontageFocalPointSchema)
-      .refine((record) => Object.keys(record).length <= 150, {
+      .refine((record) => Object.keys(record).length <= WIZARD_MEDIA_ID_MAX, {
         message: "Too many focal points",
       })
       .optional(),
@@ -235,7 +238,7 @@ const StoryboardChapterSchema = z
   .object({
     id: StoryboardChapterIdSchema,
     label: z.string().trim().min(1).max(40).optional(),
-    mediaIds: z.array(UuidSchema).max(250),
+    mediaIds: z.array(UuidSchema).max(WIZARD_MEDIA_ID_MAX),
     song: StoryboardSongSchema.optional(),
     mood: StoryboardChapterMoodSchema.optional(),
   })
@@ -257,16 +260,16 @@ const StoryboardChapterSchema = z
 const StoryboardSchema = z
   .object({
     chapters: z.array(StoryboardChapterSchema).max(12),
-    unassignedIds: z.array(UuidSchema).max(250),
-    excludedIds: z.array(UuidSchema).max(250),
+    unassignedIds: z.array(UuidSchema).max(WIZARD_MEDIA_ID_MAX),
+    excludedIds: z.array(UuidSchema).max(WIZARD_MEDIA_ID_MAX),
     focalPoints: z
       .record(UuidSchema, MontageFocalPointSchema)
-      .refine((record) => Object.keys(record).length <= 250, {
+      .refine((record) => Object.keys(record).length <= WIZARD_MEDIA_ID_MAX, {
         message: "too_many_focal_points",
       }),
     videoTrims: z
       .record(UuidSchema, StoryboardVideoTrimSchema)
-      .refine((record) => Object.keys(record).length <= 250, {
+      .refine((record) => Object.keys(record).length <= WIZARD_MEDIA_ID_MAX, {
         message: "too_many_video_trims",
       }),
   })
@@ -356,6 +359,12 @@ const WizardStatePartialSchema = z
      * Legacy accepté pendant la transition S1/S2.
      */
     musicalAmbiance: MusicalAmbianceSchema.optional(),
+    /**
+     * Plus loin atteint (fil constellation). Envoyé par
+     * `TributeWizard.buildWizardState` depuis cba61d5 — absent ici,
+     * `.strict()` 400 sur **tout** le PATCH (state + wizard_step).
+     */
+    furthestStep: z.number().int().min(WIZARD_STEP_MIN).max(WIZARD_STEP_MAX).optional(),
   })
   .strict();
 
@@ -465,10 +474,13 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
   const parsed = PatchBodySchema.safeParse(rawBody);
   if (!parsed.success) {
+    const flattened = parsed.error.flatten();
     return NextResponse.json(
       {
         error: "invalid_body",
-        issues: parsed.error.flatten().fieldErrors,
+        issues: flattened.fieldErrors,
+        formErrors: flattened.formErrors,
+        validationIssues: parsed.error.issues,
       },
       { status: 400 },
     );
