@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 17 sept 2026 — **D0 freeze docs** : canons = runtime (7 étapes, S5-L partiel, Preview pont hybride, démo **18 sept**) — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md).
-- 17 sept 2026 — **Autosave silent fail** : Zod accepte `furthestStep` (PATCH 400 depuis cba61d5) · log `invalid_body` en dev — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
-- 17 sept 2026 — **Bandeau Soft Cap aperçu** : dire les faits (photos / licence / Héritage) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) (plan plus tard).
-- 17 sept 2026 — **Aperçu mix BA** : décision notée — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) (plan plus tard).
-- 16 sept 2026 — **Coffre / montage** : audit vidéo + DnD desktop · ingest trim client après démo · [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md).
+- 17 sept 2026 — Invité **mobile / tactile** : ciel = image (`guest-still-v1`), **zéro WebGL** (clics + premier paint). Desktop garde le canvas.
+- 17 sept 2026 — D0 freeze docs : canons = runtime (7 étapes, S5-L partiel, Preview pont hybride, démo **18 sept**) — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) · [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md).
+- 17 sept 2026 — Autosave silent fail : Zod accepte `furthestStep` (PATCH 400 depuis cba61d5) · log `invalid_body` en dev — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
+- 17 sept 2026 — Bandeau Soft Cap aperçu : dire les faits (photos / licence / Héritage) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) (plan plus tard).
+- 17 sept 2026 — Aperçu mix BA : décision notée — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) (plan plus tard).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -28,7 +28,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **RevShare** | 🟢 UI | Spec + SQL P6/P8 + webhook ✅ · UI Salon + `GET /api/partner/commissions` 🟢 · payout ops ⏳ |
 | **Export Creatomate** | 🟢 assembleur atomes | Intro + N clips + outro carte mémoire (`assembleAtomFilm`) · bed audio · wordmark Odyssey retiré. |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
-| **UX mobile** | 🟡 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 |
+| **UX mobile** | 🟡 | Wizard : [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md). **Sanctuaire invité** : still `guest-still-v1` (pas de WebGL) |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** (titre d’étape OK ; titres chapitre défaut encore Étincelle / Épopée / Héritage) · S5-J/K ⏳ |
 | **Scanner** | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Marque Éclipse** | 🟢 | Play A–B KEEP · mark + exports · brancher UI ⚪ · wormhole = lab |

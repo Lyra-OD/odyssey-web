@@ -19,6 +19,7 @@ import {
   SanctuaryDepositForm,
   type SanctuaryDepositResult,
 } from "@/src/components/contribute/SanctuaryDepositForm";
+import { GuestSkyStill } from "@/src/components/contribute/GuestSkyStill";
 import { GuestStarPills } from "@/src/components/contribute/GuestStarPills";
 import { SanctuaryMonolith } from "@/src/components/contribute/SanctuaryMonolith";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
@@ -58,6 +59,7 @@ import {
   guestSupportPackLabelByKey,
 } from "@/src/lib/wizard/guestSupportPacks";
 import { formatWizardPrice } from "@/src/lib/wizard/wizardPricing";
+import { shouldUseGuestSkyStill } from "@/src/lib/contribute/guestSkyStill";
 import type { Locale } from "@/i18n.config";
 
 const GUEST_KEEP_REVEAL_REF = { current: WIZARD_BIRTH_REVEAL_END };
@@ -260,11 +262,17 @@ export function SanctuaryLanding({
   const [lueurSettling, setLueurSettling] = useState(false);
   const [skyOpen, setSkyOpen] = useState(false);
   const [uiLocale, setUiLocale] = useState(locale);
+  /** Premier paint = still — le chunk WebGL ne part jamais sur téléphone. */
+  const [skyStill, setSkyStill] = useState(true);
   const t = uiLocale === "en" ? copyEn : copyFr;
 
   useEffect(() => {
     setUiLocale(locale);
   }, [locale]);
+
+  useEffect(() => {
+    setSkyStill(shouldUseGuestSkyStill());
+  }, []);
 
   const handleSelectPack = (key: string) => {
     if (selectedPackKey === key) {
@@ -577,32 +585,36 @@ export function SanctuaryLanding({
           : "min-h-screen overflow-x-hidden"
       }`}
     >
-      <SanctuaryUniverse
-        mode={universeImmersive ? "immersive" : "background"}
-        className={
-          universeImmersive ? "fixed inset-0 z-40" : "absolute inset-0 z-0"
-        }
-        constellationVisible
-        skyCraftChrome={false}
-        wanderChrome={false}
-        skyWander={universeImmersive}
-        /**
-         * Même moteur caméra que la famille (dolly hub + molette `window` +
-         * bande décalée) — mais posé direct sur l’étoile, jamais de replay
-         * du dolly 2,8 s (le ciel invité n’a pas de rituel « naissance »).
-         */
-        hubSkyCamera={universeImmersive}
-        hubSkyCameraStartSettled
-        skyLayers={SKY_GUEST_DEMO_LAYERS}
-        craftReveal={guestCraftReveal}
-        skipConstellationReveal
-        parallaxIntensity={0}
-        wizardRewardFullPerf={universeImmersive}
-        onClose={
-          skyOpen && !onSky && !grafting ? () => setSkyOpen(false) : undefined
-        }
-        locale={uiLocale}
-      />
+      {skyStill ? (
+        <GuestSkyStill />
+      ) : (
+        <SanctuaryUniverse
+          mode={universeImmersive ? "immersive" : "background"}
+          className={
+            universeImmersive ? "fixed inset-0 z-40" : "absolute inset-0 z-0"
+          }
+          constellationVisible
+          skyCraftChrome={false}
+          wanderChrome={false}
+          skyWander={universeImmersive}
+          /**
+           * Même moteur caméra que la famille (dolly hub + molette `window` +
+           * bande décalée) — mais posé direct sur l’étoile, jamais de replay
+           * du dolly 2,8 s (le ciel invité n’a pas de rituel « naissance »).
+           */
+          hubSkyCamera={universeImmersive}
+          hubSkyCameraStartSettled
+          skyLayers={SKY_GUEST_DEMO_LAYERS}
+          craftReveal={guestCraftReveal}
+          skipConstellationReveal
+          parallaxIntensity={0}
+          wizardRewardFullPerf={universeImmersive}
+          onClose={
+            skyOpen && !onSky && !grafting ? () => setSkyOpen(false) : undefined
+          }
+          locale={uiLocale}
+        />
+      )}
 
       <GuestStarPills
         stars={showMonolith ? [] : guestStars}
@@ -614,7 +626,7 @@ export function SanctuaryLanding({
       />
 
       {load.status === "loading" ? (
-        <p className="fixed inset-0 z-[46] flex items-center justify-center text-sm font-light text-zinc-500">
+        <p className="pointer-events-none fixed inset-0 z-[46] flex items-center justify-center text-sm font-light text-zinc-500">
           {t.loading}
         </p>
       ) : null}
