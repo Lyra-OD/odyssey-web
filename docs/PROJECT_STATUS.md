@@ -4,7 +4,7 @@
 **Dernière MAJ :** 21 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 21 sept 2026 — Canon Souvenir stream 0 $ / master 49 $ (commits C0–C8) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
+- 21 sept 2026 — Souvenir : blindage double mécène → Fonds + merci hors MP4 + lander `/stream` — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 17 sept 2026 — Sanctuaire invité : HTML ciel immédiat + WebGL **après** le paint (mobile idle ; dépôt = still) — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
 - 17 sept 2026 — Sanctuaire invité : shell ciel immédiat (comme Scanner) + chunks dépôt en `dynamic` — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
 - 17 sept 2026 — Sanctuaire invité mobile : still DA `guest-still-v3` + **Landing sans import Three** — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).

@@ -12,7 +12,7 @@
 | [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md) | Registre beats nommés · craft · stubs · statut impl |
 | [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md) | **Audit trous** — gate avant code T1+ |
 | [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md) | Vision Sanctuaire — prologue · hub · tiroir · navigation |
-| [`SOUVENIR_STREAM_MASTER_49.md`](SOUVENIR_STREAM_MASTER_49.md) | **Souvenir** — stream 0 $ · master 49 $ · commits C0–C8 |
+| [`SOUVENIR_STREAM_MASTER_49.md`](SOUVENIR_STREAM_MASTER_49.md) | **Souvenir** — stream · master 49 $ · **moteur cercle** C0–C14 |
 | [`WIZARD_PREVIEW_BA.md`](WIZARD_PREVIEW_BA.md) | **Étape 6** — mix BA (historique) ; voir Souvenir stream |
 | [`WIZARD_PREVIEW_SOFTCAP.md`](WIZARD_PREVIEW_SOFTCAP.md) | **Étape 6** — bandeau Soft Cap « pourquoi » (faits). |
 
