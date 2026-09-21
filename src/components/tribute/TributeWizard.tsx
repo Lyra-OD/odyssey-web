@@ -109,6 +109,7 @@ import {
   canUploadPersonalAudio,
   formatWizardPrice,
   hasAiRestorationEntitlement,
+  isExtensionBundledInBasePackage,
   packageCents,
   packageTierRank,
   resolveMusicCatalogTier,
@@ -2774,6 +2775,7 @@ export function TributeWizard({
 
           {currentStep === 6 ? (
             <PreviewStep
+              locale={locale}
               projectId={uploadProjectId}
               storyboard={wizardStoryboard.storyboard}
               extensions={extensions}
@@ -2785,7 +2787,20 @@ export function TributeWizard({
                   projectMediaCount > grantedMediaMax ||
                   Boolean(extensions.musicLicense))
               }
+              showSessionArchiveCompare={
+                isFreemiumGrant &&
+                !isEditor &&
+                packageTierRank(intendedPackage) < 1
+              }
+              archiveIncluded={
+                isExtensionBundledInBasePackage(basePackage, "cinemaMaster") ||
+                Boolean(extensions.cinemaMaster)
+              }
               onProceedToPayment={() => void handleProceedToPayment()}
+              onKeepArchiveMaster={() => {
+                handleExtensionsChange({ ...extensions, cinemaMaster: true });
+                void handleProceedToPayment();
+              }}
               onEdit={() => void handlePreviewEdit()}
               copy={{
                 title: copy.stepPreviewTitle,
@@ -2804,6 +2819,18 @@ export function TributeWizard({
                 teaserPlay: copy.previewTeaserPlay,
                 teaserPause: copy.previewTeaserPause,
                 chapterTitleFallback: copy.chapterTitleFallback,
+                sessionArchiveCompare: {
+                  eyebrow: copy.previewCompareEyebrow,
+                  sessionTitle: copy.previewCompareSessionTitle,
+                  sessionBody: copy.previewCompareSessionBody,
+                  sessionDesktopNote: copy.previewCompareSessionDesktopNote,
+                  archiveTitle: copy.previewCompareArchiveTitle,
+                  archiveBody: copy.previewCompareArchiveBody,
+                  archiveIncludedBadge: copy.previewCompareArchiveIncluded,
+                  archiveCta: copy.previewCompareArchiveCta,
+                  archiveFundHint: copy.previewCompareArchiveFundHint,
+                  continueCta: copy.previewCompareContinueCta,
+                },
               }}
             />
           ) : null}

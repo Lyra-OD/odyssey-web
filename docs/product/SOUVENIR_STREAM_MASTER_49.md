@@ -1,15 +1,15 @@
 # Souvenir — Stream 0 $ · Master cinéma 49 $ · Moteur cercle
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
-**Statut :** décision CEO 21 sept 2026 · amendé partenaire + encore mieux + **couche croissance** + **multi-acheteurs Master** · **C0–C2 livrés** · suite **C3→C14**.  
+**Statut :** décision CEO 21 sept 2026 · amendé partenaire + encore mieux + **couche croissance** + **multi-acheteurs Master** · **C0–C3 livrés** · suite **C4→C14**.  
 **Dernière MAJ :** 21 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 21 sept 2026 — **C3** comparatif Séance vs Archive + CTA Master 49 $ (prestige ordi).
 - 21 sept 2026 — **C2** gate export : `cinemaMaster` ou Héritage+ · free Creatomate refusé.
 - 21 sept 2026 — **Multi-acheteurs Master** : CTA jamais grisé ; N×49 $ = N downloads + crédit Fonds ; copy Quiet Luxury universelle.
 - 21 sept 2026 — **C1** livré : SKU `cinemaMaster` 49 $ · panier · strip Héritage+.
 - 21 sept 2026 — **C0** livré : clamp bed + fade audio fin + fade black outro (`payloadBuilder` · `outro.json`).
-- 21 sept 2026 — Blindage : double mécène → crédit Fonds ; merci mécène **hors** MP4 (pas de 2ᵉ render) ; lander QR `/stream/[token]` lecture seule + hub.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md)
 
@@ -198,8 +198,8 @@ Détail commits C4–C7 ci-dessous.
 
 ### C3 — Comparatif Séance vs Archive
 `feat(wizard): Séance live vs Archive patrimoniale`  
-+ prestige ordi + amorce CTA mécénat (copy).  
-**Done :** FR/EN ; CTA 49 $.
++ prestige ordi + amorce CTA Master (copy).  
+**Done :** ✅ FR/EN ; CTA 49 $ (21 sept 2026).
 
 ### C4 — Player core
 `feat(wizard): stream core — MP3 clock + dual video + pastille salon`  

@@ -4,6 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 
 import { CinematicTeaser } from "@/src/components/tribute/CinematicTeaser";
 import {
+  SessionArchiveCompare,
+  type SessionArchiveCompareCopy,
+} from "@/src/components/tribute/SessionArchiveCompare";
+import {
   sanctuaryFocusRing,
   wizardMiniCapsAction,
   wizardStepLead,
@@ -44,17 +48,25 @@ export type PreviewStepCopy = {
   teaserPlay: string;
   teaserPause: string;
   chapterTitleFallback: string;
+  /** C3 — comparatif Séance vs Archive (Souvenir). */
+  sessionArchiveCompare?: SessionArchiveCompareCopy;
 };
 
 type Props = {
   copy: PreviewStepCopy;
+  locale?: "fr" | "en";
   projectId: string | null;
   storyboard: WizardStoryboardState;
   extensions: WizardExtensionsState;
   basePackage?: WizardBasePackage;
   /** Affiche l’ancre Soft Cap (freemium Souvenir + engagement ou dépassement). */
   softCapActive?: boolean;
+  /** C3 : montrer Séance vs Archive (typiquement freemium Souvenir). */
+  showSessionArchiveCompare?: boolean;
+  /** Master inclus (Héritage+) ou déjà sélectionné. */
+  archiveIncluded?: boolean;
   onProceedToPayment: () => void;
+  onKeepArchiveMaster?: () => void;
   onEdit: () => void;
 };
 
@@ -90,12 +102,16 @@ function teaserIdentity(storyboard: WizardStoryboardState): string {
 
 export function PreviewStep({
   copy,
+  locale = "fr",
   projectId,
   storyboard,
   extensions,
   basePackage = "signature",
   softCapActive = false,
+  showSessionArchiveCompare = false,
+  archiveIncluded = false,
   onProceedToPayment,
+  onKeepArchiveMaster,
   onEdit,
 }: Props) {
   const [isLoading, setIsLoading] = useState(true);
@@ -125,6 +141,9 @@ export function PreviewStep({
 
   const teaserKey = useMemo(() => teaserIdentity(storyboard), [storyboard]);
 
+  const compareActive =
+    showSessionArchiveCompare && Boolean(copy.sessionArchiveCompare);
+
   useEffect(() => {
     if (!projectId) {
       setIsLoading(false);
@@ -153,9 +172,7 @@ export function PreviewStep({
   return (
     <div className="space-y-10 pb-44">
       <header className="space-y-3 text-center md:text-left">
-        <h2 className={wizardStepTitle}>
-          {copy.title}
-        </h2>
+        <h2 className={wizardStepTitle}>{copy.title}</h2>
         <p className={`mx-auto max-w-2xl ${wizardStepLead} md:mx-0`}>
           {copy.description}
         </p>
@@ -213,16 +230,32 @@ export function PreviewStep({
         </div>
       ) : null}
 
-      <div className="flex flex-col items-center gap-4 pt-2">
-        <button
-          type="button"
-          onClick={onProceedToPayment}
-          className={`${wizardMiniCapsAction} min-h-[56px] w-full max-w-md rounded-2xl border border-teal-400/45 bg-gradient-to-r from-teal-600/35 via-teal-500/30 to-cyan-400/25 px-6 text-base font-semibold text-white shadow-[0_0_56px_rgba(45,212,191,0.3),0_0_40px_rgba(34,211,238,0.2)] transition-all hover:scale-[1.01] hover:shadow-[0_0_64px_rgba(45,212,191,0.38),0_0_48px_rgba(34,211,238,0.28)] ${sanctuaryFocusRing}`}
-        >
-          {softCapActive && copy.payCtaSoftCap
-            ? copy.payCtaSoftCap
-            : copy.payCta}
-        </button>
+      {compareActive && copy.sessionArchiveCompare ? (
+        <SessionArchiveCompare
+          copy={copy.sessionArchiveCompare}
+          locale={locale}
+          archiveIncluded={archiveIncluded}
+          onKeepArchive={() => {
+            if (onKeepArchiveMaster) onKeepArchiveMaster();
+            else onProceedToPayment();
+          }}
+          onContinue={onProceedToPayment}
+        />
+      ) : (
+        <div className="flex flex-col items-center gap-4 pt-2">
+          <button
+            type="button"
+            onClick={onProceedToPayment}
+            className={`${wizardMiniCapsAction} min-h-[56px] w-full max-w-md rounded-2xl border border-teal-400/45 bg-gradient-to-r from-teal-600/35 via-teal-500/30 to-cyan-400/25 px-6 text-base font-semibold text-white shadow-[0_0_56px_rgba(45,212,191,0.3),0_0_40px_rgba(34,211,238,0.2)] transition-all hover:scale-[1.01] hover:shadow-[0_0_64px_rgba(45,212,191,0.38),0_0_48px_rgba(34,211,238,0.28)] ${sanctuaryFocusRing}`}
+          >
+            {softCapActive && copy.payCtaSoftCap
+              ? copy.payCtaSoftCap
+              : copy.payCta}
+          </button>
+        </div>
+      )}
+
+      <div className="flex flex-col items-center gap-4 pt-1">
         <button
           type="button"
           onClick={onEdit}

@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-21 · **Entrées :** 904
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-21 · **Entrées :** 914
 
 ## `common`
 
@@ -741,8 +741,8 @@
 | `tributeWizard.musicUploadNeedsAttestation` | Acceptez d’abord l’attestation de droits musique. | Please accept the music rights attestation first. |
 | `tributeWizard.extensionsFooterTotalFormula` | Total de votre hommage : {base} + {options} = {total} | Tribute total: {base} + {options} = {total} |
 | `tributeWizard.extensionsFooterContinueCta` | Voir le film | See the film |
-| `tributeWizard.stepPreviewTitle` | Voir le film | See the film |
-| `tributeWizard.stepPreviewDescription` | Votre hommage prend forme. Voici ce qui vous attend. | Your tribute is taking shape. Here is what awaits you. |
+| `tributeWizard.stepPreviewTitle` | La séance | The session |
+| `tributeWizard.stepPreviewDescription` | Ressentez le souffle de votre hommage. Ensuite, choisissez comment le garder. | Feel the breath of your tribute. Then choose how you want to keep it. |
 | `tributeWizard.previewLoadingMedia` | Nous préparons votre film… | We’re preparing your film… |
 | `tributeWizard.previewPayCta` | J’adore, préserver cet hommage | I love it. Preserve this tribute |
 | `tributeWizard.previewPayCtaSoftCap` | Préserver Héritage | Preserve Heritage |
@@ -758,6 +758,16 @@
 | `tributeWizard.previewTeaserNowPlaying` | Bande son du chapitre | Chapter soundtrack |
 | `tributeWizard.previewTeaserPlay` | Lecture | Play |
 | `tributeWizard.previewTeaserPause` | Pause | Pause |
+| `tributeWizard.previewCompareEyebrow` | Deux façons de revivre | Two ways to revisit |
+| `tributeWizard.previewCompareSessionTitle` | Séance live | Live session |
+| `tributeWizard.previewCompareSessionBody` | Le moment partagé — à l’écran, en cercle, autant de fois que vous le souhaitez. Offert avec le Souvenir. | The shared moment — on screen, in circle, as often as you wish. Included with Keepsake. |
+| `tributeWizard.previewCompareSessionDesktopNote` | Sur grand écran, la séance révèle toute sa présence — un salon digne, chez vous. | On a large screen, the session reveals its full presence — a dignified salon, at home. |
+| `tributeWizard.previewCompareArchiveTitle` | Archive patrimoniale | Heritage archive |
+| `tributeWizard.previewCompareArchiveBody` | Le Master MP4 1080p à conserver sur votre ordinateur ou téléphone — fade digne, téléchargeable pour les générations. | The 1080p Master MP4 to keep on your computer or phone — dignified fade, downloadable for generations. |
+| `tributeWizard.previewCompareArchiveIncluded` | Déjà inclus | Already included |
+| `tributeWizard.previewCompareArchiveCta` | Conserver mon Archive Master 1080p · {price} | Keep my Cinema Master archive 1080p · {price} |
+| `tributeWizard.previewCompareArchiveFundHint` | Téléchargez le film haute fidélité pour vos archives personnelles. Votre contribution soutient également le Fonds commémoratif de la famille pour leurs souvenirs tangibles. | Download the high-fidelity film for your personal archives. Your contribution also supports the family’s commemorative Fund for tangible keepsakes. |
+| `tributeWizard.previewCompareContinueCta` | Continuer sans Archive pour l’instant | Continue without the Archive for now |
 | `tributeWizard.stepCheckoutTitle` | Préserver cet hommage | Preserve this tribute |
 | `tributeWizard.stepCheckoutDescription` | Ajoutez, si vous le souhaitez, un geste de pérennité, puis confirmez votre hommage en toute sérénité. | Add a lasting gesture if you wish, then confirm your tribute with peace of mind. |
 | `tributeWizard.checkoutAddonsTitle` | Gestes de pérennité | Gestures of permanence |
