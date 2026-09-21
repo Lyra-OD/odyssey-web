@@ -24,13 +24,16 @@ function buildMusicElements(
   let segIndex = 0;
 
   for (const bed of bedStems) {
-    // film_global : lit sous intro + contenu (recette craft / bed unique).
+    // film_global : lit sous intro + contenu, borné à la durée du film (C0).
     const isGlobal = bed.placement === "film_global";
     const contentOffsetSec = isGlobal ? 0 : introDur;
     const chapterContentStartSec = isGlobal ? 0 : bed.timeSec;
-    const chapterContentDurationSec = isGlobal
-      ? Math.max(filmDurationSec, introDur + bed.durationSec)
-      : bed.durationSec;
+    const rawDurationSec = isGlobal ? filmDurationSec : bed.durationSec;
+    const maxContentDur = Math.max(
+      0,
+      filmDurationSec - contentOffsetSec - chapterContentStartSec,
+    );
+    const chapterContentDurationSec = Math.min(rawDurationSec, maxContentDur);
 
     const segments: MusicSegment[] = buildDuckedMusicSegments({
       contentOffsetSec,
@@ -43,17 +46,37 @@ function buildMusicElements(
     });
 
     for (const seg of segments) {
+      if (seg.timeSec >= filmDurationSec) continue;
+      const duration = Math.min(
+        seg.durationSec,
+        filmDurationSec - seg.timeSec,
+      );
+      if (duration < 0.05) continue;
+
+      const endsAtFilm =
+        seg.timeSec + duration >= filmDurationSec - 0.05;
+      const desiredFadeOut = endsAtFilm
+        ? Math.max(
+            seg.fadeOutSec,
+            music.chapterFadeOutSec,
+            music.filmEndFadeOutSec,
+          )
+        : Math.max(seg.fadeOutSec, music.chapterFadeOutSec * 0.35);
+
       elements.push({
         id: `bed-${bed.chapterId ?? "global"}-${segIndex++}`,
         type: "audio",
         track: music.creatomateTracks.bed,
         time: seg.timeSec,
-        duration: seg.durationSec,
+        duration,
         source: bed.url,
         trim_start: bed.trimStartSec + seg.trimStartSec,
         volume: seg.volume,
-        audio_fade_in: Math.max(seg.fadeInSec, music.chapterFadeInSec * 0.35),
-        audio_fade_out: Math.max(seg.fadeOutSec, music.chapterFadeOutSec * 0.35),
+        audio_fade_in: Math.min(
+          Math.max(seg.fadeInSec, music.chapterFadeInSec * 0.35),
+          duration * 0.45,
+        ),
+        audio_fade_out: Math.min(desiredFadeOut, duration * 0.9),
       });
     }
   }

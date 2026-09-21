@@ -98,6 +98,8 @@ export const cinematicTheme = {
     duckReleaseSec: 0.85,
     chapterFadeInSec: 2.2,
     chapterFadeOutSec: 1.6,
+    /** Fade out du lit en toute fin de film (gate master 49 $ / C0). */
+    filmEndFadeOutSec: 1.8,
     /** Tracks Creatomate par layer (debug / mute). */
     creatomateTracks: {
       bed: 5,

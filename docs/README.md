@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 21 sept 2026 — **C0** Creatomate gate (clamp bed / fade fin / noir outro) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — Souvenir : blindage double mécène / merci hors MP4 / lander QR — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 17 sept 2026 — spec bandeau Soft Cap aperçu « pourquoi » (décision, plan plus tard) : [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
 - 17 sept 2026 — spec aperçu mix BA (décision, plan plus tard) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).

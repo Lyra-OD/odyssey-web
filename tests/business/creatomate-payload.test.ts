@@ -300,6 +300,85 @@ describe("payloadBuilder RenderScript", () => {
       (fq3?.animations as Array<Record<string, unknown>>) ?? [];
     expect(photoAnims.some((a) => a.type === "scale")).toBe(true);
   });
+
+  it("C0 — bed film_global borné à filmDuration + fade fin + noir outro", () => {
+    const storyboard = emptyStoryboardState();
+    storyboard.chapters = [{ id: "chapter-1", mediaIds: ["m1"] }];
+    const mediaById = new Map<string, ResolvedMediaAsset>([
+      [
+        "m1",
+        {
+          id: "m1",
+          kind: "image",
+          url: "https://example.com/m1.jpg",
+          trimStartSec: 0,
+          durationSec: 7,
+          focalX: 0.5,
+          focalY: 0.5,
+          hasAudio: false,
+        },
+      ],
+    ]);
+    const audioStems: ResolvedAudioStem[] = [
+      {
+        id: "bed-global",
+        layer: "bed",
+        provenance: "royalty_free",
+        placement: "film_global",
+        url: "https://example.com/bed-long.mp3",
+        timeSec: 0,
+        durationSec: 600,
+        trimStartSec: 0,
+        chapterId: null,
+        mediaId: null,
+        duckPriority: 0,
+      },
+    ];
+    const plan = buildOdysseyRenderPlan({
+      jobId: "job-c0",
+      webhookUrl: "https://example.com/hook",
+      paidPackage: "signature",
+      storyboard,
+      mediaById,
+      essentials: {
+        displayName: "Éléonore Martin",
+        datesLine: "1948 · 2024",
+        birthYear: "1948",
+        deathYear: "2024",
+        portraitUrl: null,
+      },
+      audioStems,
+    });
+    const source = buildCreatomateSource(plan);
+    const filmDur = source.duration as number;
+    const elements = source.elements as Array<Record<string, unknown>>;
+    const bedAudios = elements.filter(
+      (e) =>
+        e.type === "audio" &&
+        e.track === cinematicTheme.music.creatomateTracks.bed,
+    );
+    expect(bedAudios.length).toBeGreaterThan(0);
+    for (const bed of bedAudios) {
+      const t = bed.time as number;
+      const d = bed.duration as number;
+      expect(t + d).toBeLessThanOrEqual(filmDur + 0.01);
+    }
+    const lastBed = bedAudios.reduce((a, b) =>
+      (a.time as number) + (a.duration as number) >=
+      (b.time as number) + (b.duration as number)
+        ? a
+        : b,
+    );
+    expect(lastBed.audio_fade_out as number).toBeGreaterThanOrEqual(
+      cinematicTheme.music.filmEndFadeOutSec - 0.01,
+    );
+    expect(elements.some((e) => e.name === "Shape-EndBlack")).toBe(true);
+    const endBlack = elements.find((e) => e.name === "Shape-EndBlack");
+    const fadeAnim = (
+      (endBlack?.animations as Array<Record<string, unknown>>) ?? []
+    ).find((a) => a.type === "fade");
+    expect(fadeAnim?.duration as number).toBeGreaterThanOrEqual(1);
+  });
 });
 
 describe("package manifest Creatomate canon", () => {
