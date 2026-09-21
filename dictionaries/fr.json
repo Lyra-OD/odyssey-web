@@ -779,6 +779,8 @@
     "previewTeaserNowPlaying": "Bande son du chapitre",
     "previewTeaserPlay": "Lecture",
     "previewTeaserPause": "Pause",
+    "previewSalonBadge": "Séance offerte par {salon}",
+    "previewSalonBadgeFallback": "Séance offerte",
     "previewCompareEyebrow": "Deux façons de revivre",
     "previewCompareSessionTitle": "Séance live",
     "previewCompareSessionBody": "Le moment partagé — à l’écran, en cercle, autant de fois que vous le souhaitez. Offert avec le Souvenir.",

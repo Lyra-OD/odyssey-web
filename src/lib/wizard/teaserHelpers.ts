@@ -5,6 +5,8 @@ export type TeaserSlide = {
   imageUrl: string;
   trackKey: string;
   label: string;
+  kind?: "image" | "video";
+  durationSec?: number;
 };
 
 export type TeaserTrack = {
@@ -61,6 +63,8 @@ export function buildTeaserFromStoryboard(
         imageUrl,
         trackKey,
         label,
+        kind: item?.isVideo ? "video" : "image",
+        durationSec: item?.isVideo ? 10 : undefined,
       });
     }
   });

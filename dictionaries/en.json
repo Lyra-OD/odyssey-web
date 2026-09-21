@@ -779,6 +779,8 @@
     "previewTeaserNowPlaying": "Chapter soundtrack",
     "previewTeaserPlay": "Play",
     "previewTeaserPause": "Pause",
+    "previewSalonBadge": "Session offered by {salon}",
+    "previewSalonBadgeFallback": "Session offered",
     "previewCompareEyebrow": "Two ways to revisit",
     "previewCompareSessionTitle": "Live session",
     "previewCompareSessionBody": "The shared moment — on screen, in circle, as often as you wish. Included with Keepsake.",

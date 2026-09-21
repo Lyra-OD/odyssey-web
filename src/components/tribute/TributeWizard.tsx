@@ -2796,6 +2796,19 @@ export function TributeWizard({
                 isExtensionBundledInBasePackage(basePackage, "cinemaMaster") ||
                 Boolean(extensions.cinemaMaster)
               }
+              salonBadge={
+                isFreemiumGrant
+                  ? copy.previewSalonBadgeFallback
+                  : null
+              }
+              memoryCard={{
+                displayName:
+                  [firstName.trim(), lastName.trim()].filter(Boolean).join(" ") ||
+                  copy.headerNameFallback,
+                yearsLine: [yearFromDateInput(birthDate), yearFromDateInput(deathDate)]
+                  .filter(Boolean)
+                  .join(" · "),
+              }}
               onProceedToPayment={() => void handleProceedToPayment()}
               onKeepArchiveMaster={() => {
                 handleExtensionsChange({ ...extensions, cinemaMaster: true });

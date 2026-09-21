@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-21 · **Entrées :** 914
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-21 · **Entrées :** 916
 
 ## `common`
 
@@ -758,6 +758,8 @@
 | `tributeWizard.previewTeaserNowPlaying` | Bande son du chapitre | Chapter soundtrack |
 | `tributeWizard.previewTeaserPlay` | Lecture | Play |
 | `tributeWizard.previewTeaserPause` | Pause | Pause |
+| `tributeWizard.previewSalonBadge` | Séance offerte par {salon} | Session offered by {salon} |
+| `tributeWizard.previewSalonBadgeFallback` | Séance offerte | Session offered |
 | `tributeWizard.previewCompareEyebrow` | Deux façons de revivre | Two ways to revisit |
 | `tributeWizard.previewCompareSessionTitle` | Séance live | Live session |
 | `tributeWizard.previewCompareSessionBody` | Le moment partagé — à l’écran, en cercle, autant de fois que vous le souhaitez. Offert avec le Souvenir. | The shared moment — on screen, in circle, as often as you wish. Included with Keepsake. |

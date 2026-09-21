@@ -65,6 +65,10 @@ type Props = {
   showSessionArchiveCompare?: boolean;
   /** Master inclus (Héritage+) ou déjà sélectionné. */
   archiveIncluded?: boolean;
+  salonBadge?: string | null;
+  openingPortraitUrl?: string | null;
+  memoryCard?: { displayName: string; yearsLine: string } | null;
+  onPlaybackComplete?: () => void;
   onProceedToPayment: () => void;
   onKeepArchiveMaster?: () => void;
   onEdit: () => void;
@@ -110,6 +114,10 @@ export function PreviewStep({
   softCapActive = false,
   showSessionArchiveCompare = false,
   archiveIncluded = false,
+  salonBadge = null,
+  openingPortraitUrl = null,
+  memoryCard = null,
+  onPlaybackComplete,
   onProceedToPayment,
   onKeepArchiveMaster,
   onEdit,
@@ -208,6 +216,10 @@ export function PreviewStep({
               pause: copy.teaserPause,
             }}
             emptyLabel={copy.teaserEmpty}
+            salonBadge={salonBadge}
+            openingPortraitUrl={openingPortraitUrl}
+            memoryCard={memoryCard}
+            onPlaybackComplete={onPlaybackComplete}
           />
         )}
 

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 21 sept 2026 — **C4** QuietLuxuryPlayer — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — Trajectoire Cercle + garde-fous C4 — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C3** Séance vs Archive + CTA Master 49 $ — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C2** gate export + multi-acheteurs Master — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C1** `cinemaMaster` 49 $ + **C0** Creatomate gate — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
-- 21 sept 2026 — Souvenir : blindage double mécène / merci hors MP4 / lander QR — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 17 sept 2026 — spec bandeau Soft Cap aperçu « pourquoi » (décision, plan plus tard) : [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
 - 17 sept 2026 — spec aperçu mix BA (décision, plan plus tard) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
 - 9 sept 2026 — isolation invités : même lien WhatsApp, quota et ciel personnels (cookie `odyssey_guest` + SQL P18) : [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
