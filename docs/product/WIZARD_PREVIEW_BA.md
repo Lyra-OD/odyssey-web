@@ -1,42 +1,23 @@
-# Étape 6 — Bande-annonce mix (à planifier)
+# Étape 6 — Bande-annonce mix (historique)
 
-**Type :** canon · **Vérité pour :** direction produit de l’aperçu wizard (pas le master Creatomate).  
-**Dernière MAJ :** 17 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Type :** canon · **Vérité pour :** ancienne direction aperçu mix BA (17 sept).  
+**Dernière MAJ :** 21 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 21 sept 2026 — **Supplanté** pour le cadeau Souvenir par [`SOUVENIR_STREAM_MASTER_49.md`](SOUVENIR_STREAM_MASTER_49.md) (stream séance complète 0 $ · master 49 $).
 - 17 sept 2026 — Décision CEO : mix **BA** (bande-annonce + lecture d’un chapitre). Pas maintenant — plan dédié ensuite.
 
-**Wizard :** [`../WIZARD_ARCHITECTURE.md`](../WIZARD_ARCHITECTURE.md) (étape 6). **Export film :** [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md). Soft Cap inchangé. Bandeau « pourquoi » : [`WIZARD_PREVIEW_SOFTCAP.md`](WIZARD_PREVIEW_SOFTCAP.md).
+**Wizard :** [`../WIZARD_ARCHITECTURE.md`](../WIZARD_ARCHITECTURE.md) (étape 6). **Export film :** [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md). Soft Cap : [`WIZARD_PREVIEW_SOFTCAP.md`](WIZARD_PREVIEW_SOFTCAP.md).
 
 ---
 
-## Pourquoi
+## Canon actif (21 sept 2026)
 
-Le teaser actuel (diaporama 16:9, lecture auto, fades) **fait semblant d’être le film**. Les familles comparent au master. Ça fait pauvre.
-
-On ne rattrape pas le rendu Creatomate dans l’étape 6. On **arrête de promettre un film**.
-
----
-
-## Décision (verrouillée, non codée)
-
-**Mix BA** — pas A seul, pas le Livre en lecture seule.
-
-1. **Bande-annonce** (~30–45 s) : un souvenir fort par chapitre + **sa** musique, fondu Quiet Luxury. Pas une timeline complète.
-2. **Voir ce chapitre** : ouvrir un chapitre pour vérifier souvenirs + piste (contrôle boomer, pas une 2ᵉ fausse pellicule).
-3. **Copy honnête** : premier souffle / fil de l’histoire. Le film complet naît à l’export (~X min). Jamais « voici le film » comme vérité pixel.
-4. **Hors scope ici :** render Creatomate, Ken Burns master, 1080p live, rejouer le DnD.
-
-**Quand :** plan d’implémentation **plus tard**. Ne pas patcher le teaser actuel vers un faux-film.
+Le cadeau salon n’est plus « BA 45 s + chapitre » : c’est une **séance Quiet Luxury stream** (2 actes, ~50 médias) + finition Creatomate à **49 $**.  
+→ [`SOUVENIR_STREAM_MASTER_49.md`](SOUVENIR_STREAM_MASTER_49.md)
 
 ---
 
-## Aujourd’hui (runtime)
+## Décision historique (17 sept, non codée)
 
-`PreviewStep` + `CinematicTeaser` : storyboard live, pause réelle, Payer armé (anti ghost-click). C’est un **pont**, pas la cible mix BA.
-
----
-
-## Suite
-
-Un plan chirurgical (copy FR/EN, UI BA + tiroir chapitre, N3) quand le CEO dit **go**. Soft Cap / checkout ne bougent pas avec ce chantier.
+**Mix BA** — bande-annonce ~30–45 s + « Voir ce chapitre ». Conservé comme archive ; ne pas implémenter en parallèle du stream Souvenir.
