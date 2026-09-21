@@ -1,15 +1,15 @@
 # Souvenir — Stream 0 $ · Master cinéma 49 $ · Moteur cercle
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
-**Statut :** décision CEO 21 sept 2026 · amendé partenaire + encore mieux + **couche croissance** · **C0–C1 livrés** · suite **C2→C14**.  
+**Statut :** décision CEO 21 sept 2026 · amendé partenaire + encore mieux + **couche croissance** + **multi-acheteurs Master** · **C0–C2 livrés** · suite **C3→C14**.  
 **Dernière MAJ :** 21 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 21 sept 2026 — **C2** gate export : `cinemaMaster` ou Héritage+ · free Creatomate refusé.
+- 21 sept 2026 — **Multi-acheteurs Master** : CTA jamais grisé ; N×49 $ = N downloads + crédit Fonds ; copy Quiet Luxury universelle.
 - 21 sept 2026 — **C1** livré : SKU `cinemaMaster` 49 $ · panier · strip Héritage+.
 - 21 sept 2026 — **C0** livré : clamp bed + fade audio fin + fade black outro (`payloadBuilder` · `outro.json`).
 - 21 sept 2026 — Blindage : double mécène → crédit Fonds ; merci mécène **hors** MP4 (pas de 2ᵉ render) ; lander QR `/stream/[token]` lecture seule + hub.
-- 21 sept 2026 — Couche **croissance / cercle** : mécénat, copie post-unlock, Social Cut, QR, notifs ; C11–C14 ; **1** Creatomate.
-- 21 sept 2026 — Amendement technique : précalcul ML, MP3 clock, Mode Célébration, pastille salon, 2.5D héros, sync C10.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md)
 
@@ -31,15 +31,16 @@
 | Cadeau salon | Stream only ≤50 médias, 2 chapitres, MP3 perso |
 | Pastille | *« Séance offerte par [Salon] »* (stream only) |
 | Player | MP3 **master clock** · dual `<video>` muted · ML **précalcul upload** · 2.5D **héros** desktop |
-| Master famille | SKU **`cinemaMaster` = 49 $** ; Héritage+ inclus |
+| Master famille / cercle | SKU **`cinemaMaster` = 49 $** ; Héritage+ inclus · **CTA jamais désactivé** |
 | Free Creatomate | **Interdit** |
 | Comparatif | **Séance live** vs **Archive patrimoniale** |
-| **Mécénat** | CTA *« Offrir le Master… · 49 $ »* · unlock + email · RevShare · **race :** 2ᵉ payeur → crédit **Fonds** (pas refund) |
-| **Copie invité** | **`guestMasterCopy` 15–19 $** — **seulement si** `cinema_master_unlocked` ; même signed URL ; **0** re-render |
+| **Master multi-acheteurs** | N personnes × 49 $ **acceptés** · #1 unlock + render · #2…n = **même** signed URL + **crédit Fonds** (pas refund, pas blocage UI) |
+| **Mécénat** | Variante gift `cinemaMasterGift` (metadata donateur) · même règle multi-acheteurs · RevShare |
+| **Copie invité** | **`guestMasterCopy` 15–19 $** — downsell **optionnel** si unlocked ; même signed URL ; **0** re-render |
 | **Social Cut** | **`socialCut` 19 $** — 9:16 ~30–45 s ; **après** Master ; Quiet Luxury |
-| **COGS** | **Un seul** compile Creatomate / projet ; CDN signed URL pour tous ensuite |
+| **COGS** | **Un seul** compile Creatomate / projet ; CDN signed URL pour tous ensuite · marge brute #2…n ≈ 100 % |
 | **Merci mécène** | Visible sur **hub + page stream** — **pas** re-render MP4 (carton master intemporel) |
-| Sortie hub | Revoir · Lueur · Garder / Offrir Master · Héritage · pay-it-forward · (post-unlock) copie / Social Cut |
+| Sortie hub | Revoir · Lueur · **Conserver Archive Master 49 $** (toujours) · Héritage · pay-it-forward · (option) copie / Social Cut |
 | Viralité | QR → `/stream/[projectToken]` lecture seule · notif contributeurs · Mode Célébration · sync C10 |
 
 ```mermaid
@@ -87,44 +88,50 @@ flowchart TB
 
 ## Couche croissance — monétisation (ordre business)
 
-### 1. Prioritaire — Offrir le Master à la famille (49 $)
-- Bouton élégant sous lecteur / hub / comparatif.
-- Checkout invité `cinemaMasterGift` (metadata donateur).
-- Effets : email famille « Marc D. a offert… » · `cinema_master_unlocked = true` · RevShare.
-- Psychologie : cadeau précis > cagnotte / fleurs.
-- **Race double mécène** : voir § Blindage ci-dessous.
+### 1. Prioritaire — Archive Master 49 $ (universel, jamais grisé)
+- **Règle commerciale :** on ne bloque **jamais** une carte. 1, 2 ou 10 proches qui veulent 49 $ → **tous les paiements acceptés** avec le sourire.
+- CTA Quiet Luxury sous lecteur / hub / lander (copy figée) :
+  - Bouton : *« Conserver mon Archive Master 1080p · 49 $ »*
+  - Mention discrète : *« Téléchargez le film haute fidélité pour vos archives personnelles. Votre contribution soutient également le Fonds commémoratif de la famille pour leurs souvenirs tangibles. »*
+- SKU runtime : `cinemaMaster` (famille) · `cinemaMasterGift` (invité, metadata donateur) — **même** logique cash / COGS.
+- Effets paiement #1 : `cinema_master_unlocked = true` · **1×** Creatomate · email famille si gift · RevShare.
+- Effets paiement #2…n : **0** re-render · signed URL CDN pour l’acheteur · **crédit Fonds** famille (Livre 149 $ / Jeton 79 $ / add-ons) · RevShare.
+- Psychologie : chacun reçoit **son** MP4 ; la famille voit la cagnotte monter (« au pire, ça débloque plus d’argent »).
 
-### 2. Ensuite — Copie personnelle invité (15–19 $)
-- Visible **uniquement si** `cinema_master_unlocked`.
-- Download **même** asset via signed URL CDN — marge ~99 % COGS calcul, **0** 2ᵉ render.
-- Avant unlock : CTA mécénat seulement (primauté famille / cercle digne).
+### 2. Ensuite — Copie personnelle invité (15–19 $, optionnel)
+- Downsell digne **si** unlocked et si l’invité ne veut pas le geste 49 $.
+- Download **même** asset via signed URL CDN — marge ~99 % · **0** 2ᵉ render.
+- **Ne remplace pas** le CTA 49 $ (le 49 $ reste toujours visible / actif).
 
 ### 3. Ensuite — Social Cut 9:16 (19 $)
 - Pastille 30–45 s ; Quiet Luxury ; après Master.
 - Render court ou dérivé ; panneau organique Stories.
 
 ### Option digne
-Mécénat 49 $ peut inclure **1 copie perso** pour le donateur — toujours **1** compile.
+Le 49 $ Master **inclut** déjà la copie perso pour l’acheteur (pas besoin d’un 2ᵉ SKU pour le même payeur).
 
 ---
 
 ## Blindage exécution (verrouillé)
 
-### 1. Double mécène (race 49 $)
-- Flag atomique `cinema_master_unlocked` dès paiement réussi #1.
-- Paiement #2 dans la même fenêtre : **ni rejet ni refund Stripe** → absorbé en **crédit Fonds** famille (priorité Livre Mémoire 149 $ / Jeton NFC / add-ons), message immédiat :  
-  *« Le Master a déjà été offert avec amour par [Prénom]. Votre geste a été crédité au Fonds commémoratif pour offrir [Livre / Jeton / …] à la famille. »*
-- Support zéro ; panier moyen ↑ ; éthique intacte.
+### 1. Multi-acheteurs Master (généralise « double mécène »)
+- **Interdit UI :** griser / désactiver / masquer le CTA 49 $ parce que « déjà payé ».
+- Flag atomique `cinema_master_unlocked` dès paiement réussi #1 (déclenche render si pas encore).
+- Paiements #2…n : **ni rejet ni refund Stripe** → absorbed en **crédit Fonds** famille + download immédiat pour le payeur.
+- Message post-paiement (si déjà unlocked) :  
+  *« Votre Archive Master est prête à télécharger. Le Master avait déjà été débloqué pour la famille — votre geste a été crédité au Fonds commémoratif pour leurs souvenirs tangibles (Livre, Jeton…). »*
+- Variante gift : peut encore citer le premier donateur sur le hub (*« offert avec amour par [Prénom] »*) — **sans** bloquer les suivants.
+- Support zéro ; panier moyen ↑ ; marge #2…n ≈ pure ; éthique intacte (chaque payeur a son fichier).
 
 ### 2. « Merci [Prénom] » sans 2ᵉ Creatomate
-- **Oui** sur hub de sortie + page stream : *« Cette séance et son archive ont été offertes avec respect par [Prénom]. »*
+- **Oui** sur hub de sortie + page stream : *« Cette séance et son archive ont été offertes avec respect par [Prénom]. »* (premier mécène / premier payeur digne).
 - **Non** dans le MP4 déjà compilé (éviter invalidation cache / 2ᵉ COGS).
 - Carton fin Creatomate **intemporel** : *« Préservé pour les générations futures par le cercle des proches. »* (ou équivalent dictionnaire).
 
 ### 3. QR → lander lecture seule
 - URL publique `/stream/[projectToken]` (ou équivalent token-safe).
 - **Pas** d’inscription, **pas** Wizard Studio.
-- Plein écran séance → carton / fade → hub sobre : Revoir · Déposer une pensée / Lueur · (si unlocked) Conserver sa copie · Offrir / Garder Master si pas encore unlocked.
+- Plein écran séance → carton / fade → hub sobré : Revoir · Déposer une pensée / Lueur · **Conserver Archive Master 49 $** (toujours actif) · (option) copie 15–19 $ si unlocked.
 
 ---
 
@@ -187,7 +194,7 @@ Détail commits C4–C7 ci-dessous.
 
 ### C2 — Gate export
 `fix(export): require cinemaMaster or Heritage+`  
-**Done :** free Creatomate refusé.
+**Done :** ✅ free Creatomate refusé (21 sept 2026).
 
 ### C3 — Comparatif Séance vs Archive
 `feat(wizard): Séance live vs Archive patrimoniale`  
@@ -225,13 +232,13 @@ Détail commits C4–C7 ci-dessous.
 (+ QR rejoindre lecture seule — stretch).  
 **Done :** host + 1 follower sync.
 
-### C11 — Mécénat Master (priorité cash cercle)
-`feat(checkout): gift cinemaMaster + double-donor Fonds credit`  
-- CTA · Stripe · email · unlock · RevShare.  
-- Race : 2ᵉ payeur → crédit Fonds + message (pas refund).  
-- Merci mécène sur hub/stream only.  
-- Option : 1 copie perso donateur.  
-**Done :** 2 checkouts parallèles → 1 unlock + 1 crédit Fonds.
+### C11 — Master multi-acheteurs + gift (priorité cash cercle)
+`feat(checkout): cinemaMaster always-on + N-buyer Fonds credit`  
+- CTA universel Quiet Luxury · **jamais** grisé.  
+- Stripe · #1 unlock+render · #2…n download + crédit Fonds · RevShare.  
+- Gift metadata donateur + email optionnel.  
+- Merci premier payeur sur hub/stream only.  
+**Done :** 3 checkouts parallèles → 1 unlock + 2 crédits Fonds + 3 downloads.
 
 ### C12 — Copie perso invité
 `feat(export): guestMasterCopy license same asset 15-19$`  
@@ -261,14 +268,16 @@ Hors chemin critique.
 - [ ] Mode Célébration  
 
 ### Cercle (C11–C14)
-- [ ] Mécénat → unlock + email + RevShare  
-- [ ] Double mécène → crédit Fonds, pas refund  
+- [ ] CTA Master **toujours actif** (jamais grisé post-unlock)  
+- [ ] N×49 $ → N downloads + Fonds sur #2…n · **1** Creatomate  
+- [ ] Gift / premier payeur → email + RevShare  
 - [ ] Merci mécène sur hub, **pas** de 2ᵉ render MP4  
-- [ ] Copie invité refusée avant unlock ; OK après ; **1** render  
+- [ ] Copie 15–19 $ optionnelle post-unlock ; **1** render log  
 - [ ] Social Cut 19 $ post-master  
 - [ ] `/stream/[token]` sans wizard  
 - [ ] Notif « séance prête »  
 - [ ] Aucun CTA cash mid-séance  
+- [ ] Copy : *Conserver mon Archive Master 1080p · 49 $* + mention Fonds
 
 ---
 
@@ -276,9 +285,9 @@ Hors chemin critique.
 
 | ID | Prix | Qui | Creatomate |
 |----|------|-----|------------|
-| `cinemaMaster` | 49 $ | Famille | 1× render |
-| `cinemaMasterGift` | 49 $ | Invité → famille | même 1× (si pas encore) |
-| `guestMasterCopy` | 15–19 $ | Invité | 0 (licence) |
+| `cinemaMaster` | 49 $ | Famille / cercle | 1× render (#1) ; #2…n = licence CDN + Fonds |
+| `cinemaMasterGift` | 49 $ | Invité (metadata gift) | idem multi-acheteurs |
+| `guestMasterCopy` | 15–19 $ | Invité (downsell) | 0 (licence) |
 | `socialCut` | 19 $ | Famille / invité post-master | render court ou dérivé |
 
 Mettre à jour [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) § add-ons **au commit C1** (cinemaMaster) puis C11–C13.

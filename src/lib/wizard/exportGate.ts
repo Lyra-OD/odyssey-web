@@ -19,6 +19,7 @@ export type ExportGateDenial = {
   ok: false;
   code:
     | "entitlements_missing"
+    | "cinema_master_required"
     | "resolution_forbidden"
     | "stingray_master_forbidden"
     | "upload_attestation_missing";
@@ -38,18 +39,27 @@ export function storyboardHasUploadSongs(
   storyboard: WizardStoryboardState | null | undefined,
 ): boolean {
   if (!storyboard?.chapters?.length) return false;
-  return storyboard.chapters.some(
-    (ch) => ch.song?.source === "upload",
-  );
+  return storyboard.chapters.some((ch) => ch.song?.source === "upload");
 }
 
 export function storyboardHasStingraySongs(
   storyboard: WizardStoryboardState | null | undefined,
 ): boolean {
   if (!storyboard?.chapters?.length) return false;
-  return storyboard.chapters.some(
-    (ch) => ch.song?.source === "stingray",
-  );
+  return storyboard.chapters.some((ch) => ch.song?.source === "stingray");
+}
+
+/**
+ * Master Creatomate : Héritage+ **ou** add-on `cinemaMaster` payé.
+ * Souvenir stream (`essential` sans cinemaMaster) = refus (C2).
+ */
+export function hasCinemaMasterExportEntitlement(
+  entitlements: ProjectPaidEntitlementsRow,
+): boolean {
+  if (packageTierRank(entitlements.paid_package) >= 1) return true;
+  const ext = entitlements.extensions;
+  if (!ext || typeof ext !== "object") return false;
+  return ext.cinemaMaster === true;
 }
 
 /**
@@ -73,6 +83,17 @@ export function assertExportAllowed(params: {
         locale === "en"
           ? "Payment entitlements are missing. Complete checkout first."
           : "Entitlements de paiement absents. Finalisez d’abord le checkout.",
+    };
+  }
+
+  if (!hasCinemaMasterExportEntitlement(ent)) {
+    return {
+      ok: false,
+      code: "cinema_master_required",
+      message:
+        locale === "en"
+          ? "Cinema Master (49$) or Heritage+ is required to export the archive MP4."
+          : "Le Master cinéma (49 $) ou Héritage+ est requis pour exporter l’archive MP4.",
     };
   }
 
