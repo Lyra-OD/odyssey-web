@@ -127,22 +127,21 @@ function bindMediaElements(
   });
 }
 
-function bindOutroElement(
-  outro: CreatomateElement,
+function bindOutroElements(
+  elements: CreatomateElement[],
   plan: OdysseyRenderPlan,
 ): void {
   const years =
     formatYearsLine(plan.essentials.birthYear, plan.essentials.deathYear) ??
     "";
-  const nested = Array.isArray(outro.elements)
-    ? (outro.elements as CreatomateElement[])
-    : [];
-  walkElements(nested, (el) => {
-    if (el.id === "outro-name" || el.name === "outro-name") {
+  walkElements(elements, (el) => {
+    const name = el.name;
+    // Text-499 = nom · Text-BZ4 = années (atome UI Creatomate).
+    if (name === "Text-499") {
       el.text = plan.essentials.displayName;
       return;
     }
-    if (el.id === "outro-dates" || el.name === "outro-dates") {
+    if (name === "Text-BZ4") {
       el.text = years;
     }
   });
@@ -189,17 +188,20 @@ function assembleMediaClipAtom(clip: TimelineMediaClip, index: number): {
   return { elements, durationSec };
 }
 
+/**
+ * Outro carte mémoire (docs/craft/atoms/outro.json) — document comme l’intro.
+ */
 function assembleOutroAtom(
   plan: OdysseyRenderPlan,
   startSec: number,
-): CreatomateElement {
-  const outro = deepCloneAtom(loadAtomElement("outro.json"));
-  bindOutroElement(outro, plan);
-  outro.time = startSec;
-  if (typeof outro.duration !== "number") {
-    outro.duration = 6;
-  }
-  return outro;
+): { elements: CreatomateElement[]; durationSec: number } {
+  const doc = loadAtomSource("outro.json");
+  const elements = deepCloneAtom(doc.elements ?? []);
+  bindOutroElements(elements, plan);
+  offsetRootTimes(elements, startSec);
+  const durationSec =
+    typeof doc.duration === "number" && doc.duration > 0 ? doc.duration : 10;
+  return { elements, durationSec };
 }
 
 /**
@@ -222,12 +224,8 @@ export function assembleAtomFilm(plan: OdysseyRenderPlan): AssembledFilm {
 
   cursor = Math.max(0, cursor - fade);
   const outro = assembleOutroAtom(plan, cursor);
-  elements.push(outro);
-  const outroDur =
-    typeof outro.duration === "number" && outro.duration > 0
-      ? outro.duration
-      : 6;
-  cursor += outroDur;
+  elements.push(...outro.elements);
+  cursor += outro.durationSec;
 
   return {
     elements,

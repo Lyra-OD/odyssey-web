@@ -281,19 +281,12 @@ describe("payloadBuilder RenderScript", () => {
     const portrait = findByName(elements, "Image-VZZ");
     expect(String(portrait?.source)).toMatch(/^https:\/\//);
 
-    expect(elements.some((e) => e.id === "outro-composition")).toBe(true);
+    expect(elements.some((e) => e.name === "Text-499")).toBe(true);
     expect(elements.some((e) => e.id === "outro-wordmark")).toBe(false);
-    const outroNameById = (() => {
-      for (const e of elements) {
-        if (e.id === "outro-composition" && Array.isArray(e.elements)) {
-          return (e.elements as Array<Record<string, unknown>>).find(
-            (c) => c.id === "outro-name",
-          );
-        }
-      }
-      return undefined;
-    })();
-    expect(outroNameById?.text).toBe("Marie Dupont");
+    const outroName = findByName(elements, "Text-499");
+    expect(outroName?.text).toBe("Marie Dupont");
+    const outroYears = findByName(elements, "Text-BZ4");
+    expect(outroYears?.text).toBe("1948 - 2024");
     expect(
       elements.some(
         (e) =>

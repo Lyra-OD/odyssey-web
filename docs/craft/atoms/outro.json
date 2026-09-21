@@ -1,43 +1,56 @@
 {
-  "id": "outro-composition",
-  "type": "composition",
-  "track": 1,
-  "time": "end",
-  "duration": 6.0,
+  "output_format": "mp4",
+  "width": 1280,
+  "height": 720,
+  "duration": 10,
   "fill_color": "#000000",
-  "animations": [
-    {
-      "time": 0,
-      "duration": 1.5,
-      "type": "fade"
-    }
-  ],
   "elements": [
     {
-      "id": "outro-eyebrow",
+      "id": "4965a673-c0a5-485e-9a83-871c79bc7696",
+      "name": "Text-BZ4",
       "type": "text",
-      "text": "À la mémoire de",
-      "font_weight": "100",
-      "font_size": "4.5 vmin",
-      "letter_spacing": "500%",
-      "fill_color": "#e6e6e6",
+      "track": 1,
+      "time": 2.98,
+      "duration": 7.01,
       "x": "50%",
-      "y": "36%",
+      "y": "62%",
+      "width": "100%",
       "x_alignment": "50%",
       "y_alignment": "50%",
-      "width": "100%",
+      "text": "{{birthYear}} - {{deathYear}}",
+      "font_weight": "100",
+      "font_size": "6 vmin",
+      "letter_spacing": "500%",
+      "fill_color": "#e6e6e6",
       "animations": [
         {
-          "time": 0.3,
-          "duration": 1.2,
-          "type": "fade",
-          "easing": "quadratic-out"
+          "time": 2.16,
+          "duration": 1.84,
+          "easing": "quadratic-out",
+          "type": "fade"
+        },
+        {
+          "time": "end",
+          "duration": 1.46,
+          "easing": "quadratic-out",
+          "reversed": true,
+          "type": "text-appear",
+          "split": "letter"
         }
       ]
     },
     {
-      "id": "outro-name",
+      "id": "29b8c8e4-b40d-4769-940a-cba3d64d60c0",
+      "name": "Text-499",
       "type": "text",
+      "track": 3,
+      "time": 2.98,
+      "duration": 7.01,
+      "x": "50%",
+      "y": "48%",
+      "width": "100%",
+      "x_alignment": "50%",
+      "y_alignment": "50%",
       "text": "{{displayName}}",
       "font_family": "Playfair Display",
       "font_weight": "500",
@@ -47,47 +60,52 @@
       "opacity": "95%",
       "color_filter": "brighten",
       "color_filter_value": 25,
-      "x": "0%",
-      "y": "48%",
-      "width": "100%",
-      "x_alignment": "50%",
-      "y_alignment": "50%",
       "animations": [
         {
           "time": 0.5,
           "duration": 1.5,
-          "type": "fade",
-          "easing": "quadratic-out"
+          "easing": "quadratic-out",
+          "type": "fade"
         },
         {
           "time": 0.5,
           "duration": 5.5,
           "type": "scale",
-          "start_scale": "102%",
+          "start_scale": "104%",
           "end_scale": "100%",
           "fade": false
+        },
+        {
+          "time": "end",
+          "duration": 1.51,
+          "easing": "quadratic-out",
+          "reversed": true,
+          "type": "text-appear",
+          "split": "letter"
         }
       ]
     },
     {
-      "id": "outro-dates",
-      "type": "text",
-      "text": "{{birthYear}} – {{deathYear}}",
-      "font_weight": "100",
-      "font_size": "6 vmin",
-      "letter_spacing": "500%",
-      "fill_color": "#e6e6e6",
-      "x": "50%",
-      "y": "62%",
-      "x_alignment": "50%",
-      "y_alignment": "50%",
-      "width": "100%",
+      "id": "dbfeacc6-abb7-4df9-be34-a17b170086f7",
+      "name": "Shape-D43",
+      "type": "shape",
+      "track": 6,
+      "time": 0,
+      "duration": 3.11,
+      "x": "51.3004%",
+      "y": "51.398%",
+      "width": "102.6007%",
+      "height": "102.7961%",
+      "x_anchor": "50%",
+      "y_anchor": "50%",
+      "path": "M 0 0 L 100 0 L 100 100 L 0 100 L 0 0 Z",
+      "fill_color": "#000000",
       "animations": [
         {
-          "time": 0.7,
-          "duration": 1.2,
-          "type": "fade",
-          "easing": "quadratic-out"
+          "time": 0,
+          "duration": 3.11,
+          "easing": "quadratic-out",
+          "type": "fade"
         }
       ]
     }

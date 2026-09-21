@@ -104,7 +104,7 @@ describe("assembleAtomFilm", () => {
     );
 
     expect(film.introDurationSec).toBe(27);
-    expect(film.durationSec).toBeGreaterThan(27 + 6);
+    expect(film.durationSec).toBeGreaterThan(27 + 10);
     expect(film.elements.some((e) => e.name === "Composition-Portrait")).toBe(
       true,
     );
@@ -112,7 +112,8 @@ describe("assembleAtomFilm", () => {
     expect(film.elements.some((e) => e.name === "Composition-Video")).toBe(
       true,
     );
-    expect(film.elements.some((e) => e.id === "outro-composition")).toBe(true);
+    expect(film.elements.some((e) => e.name === "Text-499")).toBe(true);
+    expect(film.elements.some((e) => e.name === "Text-BZ4")).toBe(true);
     expect(film.elements.some((e) => e.id === "outro-wordmark")).toBe(false);
 
     const flat: Array<Record<string, unknown>> = [];
@@ -130,9 +131,9 @@ describe("assembleAtomFilm", () => {
     const video = flat.find((e) => e.name === "Video-Clip");
     expect(video?.source).toBe("https://cdn.example/v1.mp4");
     expect(video?.trim_start).toBe(1.5);
-    expect(flat.find((e) => e.id === "outro-name")?.text).toBe(
+    expect(flat.find((e) => e.name === "Text-499")?.text).toBe(
       "Jean-Paul Gaudreault",
     );
-    expect(flat.find((e) => e.id === "outro-dates")?.text).toBe("1940 - 2026");
+    expect(flat.find((e) => e.name === "Text-BZ4")?.text).toBe("1940 - 2026");
   });
 });
