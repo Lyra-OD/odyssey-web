@@ -5,6 +5,11 @@ export const EXTENSION_VISUALS: Record<
   Exclude<ExtensionLineKey, "base">,
   { cardImage?: string; thumbnail: string; alt: string }
 > = {
+  cinemaMaster: {
+    thumbnail:
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=160&h=160&fit=crop&q=80",
+    alt: "Master cinéma",
+  },
   aiRetouch: {
     thumbnail:
       "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=160&h=160&fit=crop&q=80",

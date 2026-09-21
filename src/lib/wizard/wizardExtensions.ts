@@ -15,6 +15,7 @@ export function coerceExtensionsState(raw: unknown): WizardExtensionsState {
   const result: WizardExtensionsState = {};
 
   if (obj.aiRetouch === true) result.aiRetouch = true;
+  if (obj.cinemaMaster === true) result.cinemaMaster = true;
   if (obj.musicLicense === true || obj.extendedLicense === true) {
     result.musicLicense = true;
   }

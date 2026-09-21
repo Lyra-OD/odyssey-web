@@ -440,6 +440,19 @@ export async function POST(request: Request) {
         );
       }
 
+      if (cart.extensions.cinemaMaster) {
+        return NextResponse.json(
+          {
+            error: "cinema_master_requires_payment",
+            message:
+              locale === "en"
+                ? "Remove the Cinema Master archive or upgrade to pay."
+                : "Retirez le Master cinéma ou passez à un forfait payant.",
+          },
+          { status: 422 },
+        );
+      }
+
       const nextWizardState = {
         ...wizardState,
         grantedPackage,
@@ -574,7 +587,7 @@ export async function POST(request: Request) {
         ? settings.revshare_bps
         : 3000;
 
-    const idempotencyKey = `b2b2c:${projectId}:${intendedPackage}:${totalCents}:${cart.extensions.musicLicense ? "ml" : "n"}`;
+    const idempotencyKey = `b2b2c:${projectId}:${intendedPackage}:${totalCents}:${cart.extensions.musicLicense ? "ml" : "n"}:${cart.extensions.cinemaMaster ? "cm" : "n"}`;
 
     const checkoutRow = await resolveTributeCheckoutForRetry(admin, {
       projectId,
@@ -661,6 +674,7 @@ export async function POST(request: Request) {
       base_package: intendedPackage,
       options_cents: String(Math.trunc(cart.optionsCents)),
       music_license: String(Boolean(normalizedExt.musicLicense)),
+      cinema_master: String(Boolean(normalizedExt.cinemaMaster)),
       ai_retouch: String(Boolean(normalizedExt.aiRetouch)),
       sanctuary_token: String(Boolean(normalizedExt.sanctuaryToken)),
       story_voice: String(Boolean(normalizedExt.storyVoice)),

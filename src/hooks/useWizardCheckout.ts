@@ -152,6 +152,13 @@ export function useWizardCheckout({
           setPayError(data.message);
           return;
         }
+        if (
+          data.error === "cinema_master_requires_payment" &&
+          typeof data.message === "string"
+        ) {
+          setPayError(data.message);
+          return;
+        }
         setPayError(
           typeof data.message === "string"
             ? data.message

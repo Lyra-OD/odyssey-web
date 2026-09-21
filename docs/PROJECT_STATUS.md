@@ -4,7 +4,7 @@
 **Dernière MAJ :** 21 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 21 sept 2026 — **C0** Creatomate : clamp bed + fade fin + noir outro — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) · [`craft/CREATOMATE_RECIPE.md`](craft/CREATOMATE_RECIPE.md).
+- 21 sept 2026 — **C1** `cinemaMaster` 49 $ + **C0** Creatomate gate — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
 - 21 sept 2026 — Souvenir : blindage double mécène → Fonds + merci hors MP4 + lander `/stream` — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 17 sept 2026 — Sanctuaire invité : HTML ciel immédiat + WebGL **après** le paint (mobile idle ; dépôt = still) — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
 - 17 sept 2026 — Sanctuaire invité : shell ciel immédiat (comme Scanner) + chunks dépôt en `dynamic` — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
@@ -26,7 +26,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Soft Cap + entitlements + gate export + MP3/ToS — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Héritage **1080p** · 4K dès Éternité · Phase 6 QA ⏳ |
 | **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual / **`charge.refunded`**. QA replay `checkout.session.completed` ✅ (P17 `submitted`). |
 | **RevShare** | 🟢 UI | Spec + SQL P6/P8 + webhook ✅ · UI Salon + `GET /api/partner/commissions` 🟢 · payout ops ⏳ |
-| **Export Creatomate** | 🟡 | Assembleur atomes OK · **C0** gate fin film ✅ · suite master 49 $ **C1+** — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
+| **Export Creatomate** | 🟡 | Assembleur + **C0** fin film ✅ · **C1** `cinemaMaster` 49 $ ✅ · gate export **C2** ⏳ — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
 | **UX mobile** | 🟡 | Wizard : [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md). **Sanctuaire invité** : HTML still immédiat, WebGL en amélioration |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** (titre d’étape OK ; titres chapitre défaut encore Étincelle / Épopée / Héritage) · S5-J/K ⏳ |

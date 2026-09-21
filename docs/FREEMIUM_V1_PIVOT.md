@@ -1,9 +1,10 @@
 # Odyssey — Pivot Freemium V1 (canon CEO)
 
 **Type :** canon · **Vérité pour :** grille, Soft Cap, musique, phases Freemium. Corriger ici, pas dans les snapshots.  
-**Dernière MAJ :** 19 août 2026 (en-tête) · 28 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 21 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 21 sept 2026 — Add-on **`cinemaMaster` 49 $** (Master cinéma Souvenir ; inclus Héritage+) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 19 août 2026 — GTM B2C (brouillon → paywall, pas ads) : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
 - 17 août 2026 — en-tête type + carte.
 - 28 juillet 2026 — vision figée · Phases 0–5 ✅ (Creatomate P0) · 3a UI ✅ · Collab A–C ✅ · Phase 6 QA ⏳.
@@ -17,7 +18,8 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 
 **Specs liées :** [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 
-> SKU musique à la carte : **`musicLicense` (39 $)** — successeur de `extendedLicense` (migration TS Phase 1).
+> SKU musique à la carte : **`musicLicense` (39 $)** — successeur de `extendedLicense` (migration TS Phase 1).  
+> SKU Master cinéma : **`cinemaMaster` (49 $)** — archive MP4 Creatomate sur Souvenir ; **strip** si `intended >= signature` (inclus Héritage+).
 
 > **⚠️ Extension canon — Cascade V-Final (rév. 22 juillet 2026) :** le **B2C direct** pivote —
 > entrée en **brouillon gratuit**, paywall **strict à l'export** (min Héritage **179 $**),
@@ -59,6 +61,7 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 
 | Add-on | Prix | ID technique | Notes |
 |--------|------|--------------|-------|
+| **Master cinéma** | 49 $ | `cinemaMaster` | Archive MP4 Quiet Luxury (Creatomate). Upsell **Souvenir** stream 0 $. Inclus dès Héritage → ne pas facturer si `intended >= signature`. Canon : [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
 | **Jeton du Sanctuaire** (NFC/QR) | 79 $ | `sanctuaryToken` | Remplace `collectorUsb` — stock global, association dynamique |
 | **Voix de l’Histoire** | 39 $ | `storyVoice` | Narration IA biographie — **distinct** de la licence musique |
 | **Licence Musique Premium Stingray** | 39 $ | `musicLicense` | Upsell **Souvenir** : débloque catalogue officiel **sans** forcer Héritage. Inclus (gratuit) dès Héritage/Éternité → ne pas facturer si `intended >= signature` |

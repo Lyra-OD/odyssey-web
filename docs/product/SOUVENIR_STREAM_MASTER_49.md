@@ -1,15 +1,15 @@
 # Souvenir — Stream 0 $ · Master cinéma 49 $ · Moteur cercle
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
-**Statut :** décision CEO 21 sept 2026 · amendé partenaire + encore mieux + **couche croissance** · **C0 livré** · suite **C1→C14**.  
+**Statut :** décision CEO 21 sept 2026 · amendé partenaire + encore mieux + **couche croissance** · **C0–C1 livrés** · suite **C2→C14**.  
 **Dernière MAJ :** 21 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 21 sept 2026 — **C1** livré : SKU `cinemaMaster` 49 $ · panier · strip Héritage+.
 - 21 sept 2026 — **C0** livré : clamp bed + fade audio fin + fade black outro (`payloadBuilder` · `outro.json`).
 - 21 sept 2026 — Blindage : double mécène → crédit Fonds ; merci mécène **hors** MP4 (pas de 2ᵉ render) ; lander QR `/stream/[token]` lecture seule + hub.
 - 21 sept 2026 — Couche **croissance / cercle** : mécénat, copie post-unlock, Social Cut, QR, notifs ; C11–C14 ; **1** Creatomate.
 - 21 sept 2026 — Amendement technique : précalcul ML, MP3 clock, Mode Célébration, pastille salon, 2.5D héros, sync C10.
-- 21 sept 2026 — Décision initiale : stream 0 $ + `cinemaMaster` 49 $ ; plus de Creatomate gratuit.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md)
 
@@ -183,7 +183,7 @@ Détail commits C4–C7 ci-dessous.
 
 ### C1 — SKU cinemaMaster 49 $
 `feat(pricing): add-on cinemaMaster 49$` + docs grille.  
-**Done :** panier ; skip Héritage+.
+**Done :** ✅ panier ; skip Héritage+ (21 sept 2026).
 
 ### C2 — Gate export
 `fix(export): require cinemaMaster or Heritage+`  

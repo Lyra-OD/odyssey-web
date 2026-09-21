@@ -1,6 +1,6 @@
 /**
  * Calcul panier wizard — lit uniquement `pricingConfig.ts`.
- * Freemium V1 : musicLicense, sanctuaryToken, storyVoice, memoryBook.
+ * Freemium V1 : cinemaMaster, musicLicense, sanctuaryToken, storyVoice, memoryBook.
  * Alias legacy extendedLicense / collectorUsb encore acceptés.
  */
 
@@ -87,6 +87,8 @@ export function basePackageCents(
   return packageCents(basePackage);
 }
 
+export const EXTENSION_CINEMA_MASTER_CENTS =
+  WIZARD_PRICING.extensions.CINEMA_MASTER.priceCents;
 export const EXTENSION_AI_RETOUCH_CENTS =
   WIZARD_PRICING.extensions.RETOUCHE_IA.priceCents;
 export const EXTENSION_MUSIC_LICENSE_CENTS =
@@ -111,6 +113,8 @@ export const HERITAGE_PACK_INDIVIDUAL_TOTAL_CENTS =
 export const HERITAGE_PACK_SAVINGS_CENTS = heritagePackSavingsCents();
 
 export type WizardExtensionsState = {
+  /** Master cinéma Creatomate 49 $ (Souvenir) ; inclus Héritage+. */
+  cinemaMaster?: boolean;
   aiRetouch?: boolean;
   musicLicense?: boolean;
   /** @deprecated → musicLicense */
@@ -172,7 +176,8 @@ export function hasExtensionSelection(
 ): boolean {
   const n = normalizeExtensionsState(extensions);
   return Boolean(
-    n.aiRetouch ||
+    n.cinemaMaster ||
+      n.aiRetouch ||
       n.musicLicense ||
       n.sanctuaryToken ||
       n.storyVoice ||
@@ -256,9 +261,18 @@ export function computeWizardCart(
   const skipExtensionCharge = (id: WizardExtensionId) =>
     isExtensionBundledInBasePackage(basePackage, id);
 
-  // Soft Cap : ne jamais facturer musicLicense si forfait ≥ Héritage
+  // Héritage+ : master cinéma + licence musique inclus — strip du panier
+  if (skipExtensionCharge("cinemaMaster")) {
+    normalized.cinemaMaster = false;
+  }
   if (skipExtensionCharge("musicLicense")) {
     normalized.musicLicense = false;
+  }
+
+  if (normalized.cinemaMaster && !skipExtensionCharge("cinemaMaster")) {
+    const cents = extensionCents("cinemaMaster");
+    lineItems.push({ key: "cinemaMaster", cents });
+    optionsCents += cents;
   }
 
   if (normalized.heritagePack && !skipExtensionCharge("heritagePack")) {
@@ -386,6 +400,7 @@ export function buildPricingSnapshot(
 
 export const CHECKOUT_LINE_LABELS: Record<ExtensionLineKey, string> = {
   base: "Odyssey · Cinematic Tribute (Base)",
+  cinemaMaster: "Cinema Master Archive (MP4)",
   aiRetouch: "Premium AI Retouch",
   musicLicense: "Stingray Premium Music License",
   extendedLicense: "Stingray Premium Music License",

@@ -5,6 +5,7 @@ import {
   BookOpen,
   Check,
   Crown,
+  Film,
   Mic2,
   Music2,
   Vault,
@@ -32,6 +33,8 @@ import {
 export type MontageExtensionsStepCopy = {
   title: string;
   description: string;
+  cinemaMasterTitle: string;
+  cinemaMasterDescription: string;
   aiRetouchTitle: string;
   aiRetouchDescription: string;
   musicLicenseTitle: string;
@@ -180,6 +183,16 @@ export function MontageExtensionsStep({
     copy.sanctuaryTokenDescription || copy.collectorUsbDescription || "";
 
   const cards: ExtensionCardConfig[] = [
+    {
+      key: "cinemaMaster",
+      icon: Film,
+      title: copy.cinemaMasterTitle,
+      description: copy.cinemaMasterDescription,
+      priceCents: extensionCents("cinemaMaster"),
+      accent: "text-cyan-200",
+      selectedRing: EXTENSION_SELECTED_RING,
+      iconBg: "bg-cyan-400/10 text-cyan-200",
+    },
     {
       key: "aiRetouch",
       icon: Wand2,

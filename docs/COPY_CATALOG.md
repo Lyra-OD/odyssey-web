@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-17 · **Entrées :** 901
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-21 · **Entrées :** 904
 
 ## `common`
 
@@ -690,6 +690,8 @@
 | `tributeWizard.stepExtensionsDescription` | Choisissez, si vous le souhaitez, ce qui prolongera votre hommage avec soin. | Choose, if you wish, what will carry your tribute a little further with care. |
 | `tributeWizard.extensionAiRetouchTitle` | Retouche IA Premium | Premium AI retouch |
 | `tributeWizard.extensionAiRetouchDescription` | Je rajeunis et embellis vos photos automatiquement. | I automatically refresh and beautify your photos. |
+| `tributeWizard.extensionCinemaMasterTitle` | Master cinéma | Cinema Master |
+| `tributeWizard.extensionCinemaMasterDescription` | Archive MP4 Quiet Luxury — fade digne, téléchargeable. Inclus dès Héritage. | Quiet Luxury MP4 archive — dignified fade, downloadable. Included from Heritage. |
 | `tributeWizard.extensionMusicLicenseTitle` | Licence Musique Premium Stingray | Stingray Premium Music License |
 | `tributeWizard.extensionMusicLicenseDescription` | Débloque le catalogue Stingray officiel pour le master. Soft Cap Souvenir (inclus dès Héritage). | Unlocks the official Stingray catalog for the master. Soft Cap on Keepsake (included from Heritage). |
 | `tributeWizard.extensionExtendedLicenseTitle` | Licence Musique Premium Stingray | Stingray Premium Music License |
@@ -712,6 +714,7 @@
 | `tributeWizard.extensionSelectedBadge` | Sélectionné | Selected |
 | `tributeWizard.extensionsRecapTitle` | Ce que vous avez ajouté | What you added |
 | `tributeWizard.extensionsRecapEmpty` | Aucune extension pour le moment. Choisissez celles qui comptent pour vous. | No extensions yet. Choose the ones that matter to you. |
+| `tributeWizard.recapLineCinemaMaster` | Master cinéma | Cinema Master |
 | `tributeWizard.recapLineAiRetouch` | Retouche IA Premium | Premium AI retouch |
 | `tributeWizard.recapLineMusicLicense` | Licence Musique Premium Stingray | Stingray Premium Music License |
 | `tributeWizard.recapLineExtendedLicense` | Licence Musique Premium Stingray | Stingray Premium Music License |

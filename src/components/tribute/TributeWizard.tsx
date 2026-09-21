@@ -1284,6 +1284,7 @@ export function TributeWizard({
 
   const extensionRecapLineLabels = useMemo(
     () => ({
+      cinemaMaster: copy.recapLineCinemaMaster,
       aiRetouch: copy.recapLineAiRetouch,
       musicLicense: copy.recapLineMusicLicense,
       extendedLicense: copy.recapLineMusicLicense,
@@ -2838,6 +2839,8 @@ export function TributeWizard({
               extensionsCopy={{
                 title: copy.checkoutAddonsTitle,
                 description: copy.checkoutAddonsDescription,
+                cinemaMasterTitle: copy.extensionCinemaMasterTitle,
+                cinemaMasterDescription: copy.extensionCinemaMasterDescription,
                 aiRetouchTitle: copy.extensionAiRetouchTitle,
                 aiRetouchDescription: copy.extensionAiRetouchDescription,
                 musicLicenseTitle: copy.extensionMusicLicenseTitle,

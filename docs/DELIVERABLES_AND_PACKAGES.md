@@ -1,9 +1,10 @@
 # Contrat de Livrables & Packages (Manifeste) — Pivot Freemium V1
 
 **Type :** canon · **Vérité pour :** contrat livrables (code : `wizardDeliverables.ts`). Prix live = `pricingConfig.ts`.  
-**Dernière MAJ :** 17 août 2026 (en-tête) · 24 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 21 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 21 sept 2026 — Add-on **`cinemaMaster` 49 $** (Master cinéma ; inclus Héritage+).
 - 17 août 2026 — en-tête type + carte.
 - 24 juillet 2026 — Freemium V1 + Cascade V-Final (grille Quiet Luxury).
 
@@ -68,6 +69,7 @@ Document canonique **produit** pour forfaits, livrables vidéo, add-ons Quiet Lu
 
 | Add-on | Prix | ID | Commissionnable | Notes |
 |--------|------|-----|-----------------|-------|
+| **Master cinéma** | 49 $ | `cinemaMaster` | Oui | Archive MP4 Creatomate ; **strip** si `intended >= signature` |
 | **Jeton du Sanctuaire** (NFC/QR) | 79 $ | `sanctuaryToken` | Oui | Remplace `collectorUsb` — [`SANCTUARY_TOKEN_NFC.md`](SANCTUARY_TOKEN_NFC.md) |
 | **Voix de l’Histoire** | 39 $ | `storyVoice` | Oui | Narration IA — **≠** licence musique |
 | **Licence Musique Premium Stingray** | 39 $ | `musicLicense` | Oui | Upsell **Souvenir** ; **strip** si `intended >= signature` (inclus forfait) |
