@@ -1,17 +1,17 @@
 # Souvenir — Stream 0 $ · Master cinéma 49 $ · Moteur cercle
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
-**Statut :** décision CEO 21 sept 2026 · amendé partenaire + encore mieux + **couche croissance** + **multi-acheteurs Master** · **C0–C3 livrés** · suite **C4→C14**.  
+**Statut :** décision CEO 21 sept 2026 · **C0–C3 livrés** · suite **C4→C14** · trajectoire cercle (QR registre / Première) + Phase 2 isolée.  
 **Dernière MAJ :** 21 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 21 sept 2026 — Trajectoire **Cercle & Valeur Réseau** : QR registre (C14) · Première sync hub digne (C10) · Phase 2 J+365/CPL isolée · garde-fous **C4** player.
 - 21 sept 2026 — **C3** comparatif Séance vs Archive + CTA Master 49 $ (prestige ordi).
 - 21 sept 2026 — **C2** gate export : `cinemaMaster` ou Héritage+ · free Creatomate refusé.
-- 21 sept 2026 — **Multi-acheteurs Master** : CTA jamais grisé ; N×49 $ = N downloads + crédit Fonds ; copy Quiet Luxury universelle.
-- 21 sept 2026 — **C1** livré : SKU `cinemaMaster` 49 $ · panier · strip Héritage+.
-- 21 sept 2026 — **C0** livré : clamp bed + fade audio fin + fade black outro (`payloadBuilder` · `outro.json`).
+- 21 sept 2026 — **Multi-acheteurs Master** : CTA jamais grisé ; N×49 $ = N downloads + crédit Fonds.
+- 21 sept 2026 — **C1** + **C0** : SKU 49 $ · clamp bed / fade noir outro.
 
-**Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md)
+**Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
 ---
 
@@ -30,7 +30,7 @@
 |--|--|
 | Cadeau salon | Stream only ≤50 médias, 2 chapitres, MP3 perso |
 | Pastille | *« Séance offerte par [Salon] »* (stream only) |
-| Player | MP3 **master clock** · dual `<video>` muted · ML **précalcul upload** · 2.5D **héros** desktop |
+| Player | **`QuietLuxuryPlayer`** · MP3 **master clock** · dual `<video>` muted · pastille salon · ML **précalcul upload** (C5+) · 2.5D héros (C7) |
 | Master famille / cercle | SKU **`cinemaMaster` = 49 $** ; Héritage+ inclus · **CTA jamais désactivé** |
 | Free Creatomate | **Interdit** |
 | Comparatif | **Séance live** vs **Archive patrimoniale** |
@@ -41,7 +41,7 @@
 | **COGS** | **Un seul** compile Creatomate / projet ; CDN signed URL pour tous ensuite · marge brute #2…n ≈ 100 % |
 | **Merci mécène** | Visible sur **hub + page stream** — **pas** re-render MP4 (carton master intemporel) |
 | Sortie hub | Revoir · Lueur · **Conserver Archive Master 49 $** (toujours) · Héritage · pay-it-forward · (option) copie / Social Cut |
-| Viralité | QR → `/stream/[projectToken]` lecture seule · notif contributeurs · Mode Célébration · sync C10 |
+| Viralité | QR → **séance privée / lecture seule** `/stream/[token]` · registre digne · Première sync C10 · notif contributeurs |
 
 ```mermaid
 flowchart TB
@@ -128,19 +128,48 @@ Le 49 $ Master **inclut** déjà la copie perso pour l’acheteur (pas besoin d�
 - **Non** dans le MP4 déjà compilé (éviter invalidation cache / 2ᵉ COGS).
 - Carton fin Creatomate **intemporel** : *« Préservé pour les générations futures par le cercle des proches. »* (ou équivalent dictionnaire).
 
-### 3. QR → lander lecture seule
-- URL publique `/stream/[projectToken]` (ou équivalent token-safe).
-- **Pas** d’inscription, **pas** Wizard Studio.
-- Plein écran séance → carton / fade → hub sobré : Revoir · Déposer une pensée / Lueur · **Conserver Archive Master 49 $** (toujours actif) · (option) copie 15–19 $ si unlocked.
+### 3. QR → lander **séance privée / lecture seule**
+- URL publique `/stream/[projectToken]` (token-safe).
+- Vocabulaire figé : **séance privée / lecture seule** — **pas** « projection » (réservé Mode Célébration HDMI / C8).
+- **Pas** d’inscription Studio, **pas** de mot de passe.
+- Accueil digne (registre) : prénom, nom, courriel — *« Pour signer le registre et recevoir les nouvelles de l’hommage »*.
+- Mot → Livre Ouvert instantané · puis séance.
+- Fin séance → noir ≥1 s → hub (C8) : Revoir · Lueur · **Conserver Archive Master 49 $** (toujours) · (option) copie.
+
+---
+
+## Trajectoire Cercle & Valeur Réseau (post-socle C4–C9)
+
+Activation diaspora / cercle (50–200) **sans** élargir le périmètre immédiat du lecteur. Socle technique d’abord (C4–C9) ; acquisition terrain ensuite.
+
+### Levier #1 — QR Registre & Séance (C14 — priorité post-socle)
+- Chevalet + verso signets : *« Registre d’hommage & Séance privée »*.
+- Scan → `/stream/[token]` lecture seule · capture identité digne · Livre Ouvert · séance.
+- **Loi 25 / RGPD (non négociable) :**
+  - Consentement **registre / avis d’hommage** ≠ opt-in **marketing / préarrangements**.
+  - Opt-in marketing **explicite, non pré-coché**, distinct.
+- Ambition capture emails = bassin hub (Master / copies / Lueurs) — **pas** KPI contractuel salon.
+
+### Levier #2 — Première synchronisée (C10 — accélérateur mécénat)
+- Famille fixe un horaire (ex. 19h30 cérémonie) pour diaspora.
+- Sync playhead stricte · **zéro** CTA mid-film.
+- Après fondu noir **≥ 1 s** : hub live avec **présences honorifiques** (*« Marc a allumé une Lueur »*, *« Sophie a offert l’Archive Master »*) — imitation sociale digne.
+- Mode Célébration HDMI = surface distincte (pas le lander QR).
+
+### Renvoi Phase 2 — Rétention & réseau (hors V1)
+Canon : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md) · Lyra.
+- **J+365 / MRR Sanctuaire** : relance annuelle sobre · constellation / album / lueur — pas dans C4–C14.
+- **Lead-gen préarrangements = CPL fixe (150–250 $)** — **rejet** commission % sur contrats funéraires (Loi arrangements préalables + audit).
+- Pilote partenaire : leads **0 $** pour sceller la dépendance ops avant monétisation à l’unité.
 
 ---
 
 ## Couche croissance — viralité (rituel, pas spam)
 
 ### 1. QR physique cérémonie
-- Verso signet / programme : *« Pour revivre la séance et partager vos souvenirs »*.
-- Scan → **`/stream/[projectToken]`** lecture seule (voir § Blindage 3).
-- Branche Mode Célébration / première sync.
+- Chevalet + verso signet : *« Registre d’hommage & Séance privée »*.
+- Scan → **`/stream/[projectToken]`** séance privée / lecture seule (voir § Blindage 3 + Trajectoire #1).
+- Branche Première sync (C10) / Mode Célébration (C8).
 
 ### 2. Notif contributeurs
 - Email contributeurs Coffre/Sanctuaire à l’enregistrement : « On vous prévient quand la séance est prête ».
@@ -153,6 +182,7 @@ Le 49 $ Master **inclut** déjà la copie perso pour l’acheteur (pas besoin d�
 
 ### Interdits viralité
 - Pop-ups mid-séance, countdown, « 3 autres ont acheté », stickers, voix IA gratuites.
+- Feed d’achats **pendant** le film (hub post-noir seulement).
 
 ---
 
@@ -173,12 +203,13 @@ Détail commits C4–C7 ci-dessous.
 
 ## Ordre stratégique
 
-1. **C0–C2** — Master digne + cash path 49 $ (plus de free Creatomate).  
-2. **C3–C8** — Séance + hub sortie (conversion + lueur + Célébration).  
-3. **C9** — QA.  
-4. **C10** — Première sync.  
-5. **C11–C14** — **Machine cercle** (mécénat → copie → social → QR/notif).  
-6. Polish DA Creatomate intro — plus tard.
+1. **C0–C3** — Gate Creatomate · SKU 49 $ · export gate · comparatif Séance/Archive (**livré**).  
+2. **C4–C9** — **Socle lecteur** Quiet Luxury + hub sortie (conversion) — **périmètre immédiat**.  
+3. **C10** — Première sync + hub présences post-noir.  
+4. **C11–C13** — Machine cash cercle (multi-acheteurs · copie · Social Cut).  
+5. **C14** — **QR registre** (priorité acquisition terrain **après** socle player).  
+6. **Phase 2** — J+365 / CPL préarr — [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md).  
+7. Polish DA Creatomate intro — plus tard.
 
 ---
 
@@ -201,9 +232,17 @@ Détail commits C4–C7 ci-dessous.
 + prestige ordi + amorce CTA Master (copy).  
 **Done :** ✅ FR/EN ; CTA 49 $ (21 sept 2026).
 
-### C4 — Player core
-`feat(wizard): stream core — MP3 clock + dual video + pastille salon`  
-**Done :** 2 actes + vidéo ; Safari-smoke audio.
+### C4 — Player core (`QuietLuxuryPlayer`)
+`feat(wizard): QuietLuxuryPlayer — MP3 clock + dual video + pastille salon`  
+**Garde-fous (verrouillés) :**
+- Composant autonome `src/components/tribute/QuietLuxuryPlayer.tsx` — consommé par teaser / PreviewStep ; **ne casse pas** l’étape 6 ; réutilisable `/stream/[token]`.
+- **Master clock** = piste MP3 (Web Audio / `<audio>`) ; médias **rattrapent** l’audio.
+- **Dual `<video>`** ping-pong : `muted` · `playsInline` · `preload="auto"` · `object-fit: cover` · crossfade.
+- **2 actes** musicaux · souffle ouverture (noir → portrait scale 104→100 %) · fondu chapitre · grain + vignette CSS.
+- Fin : carte mémoire → **noir absolu ≥ 1 s** → **`onPlaybackComplete`** (stub) — **pas** de hub cash (→ **C8**).
+- Pastille salon sobre à l’ouverture · **zéro** bouton d’achat mid-film.
+- **Zéro ML live** (focal / depth = C5 / C7).  
+**Done :** 2 actes + vidéo ; Safari-smoke audio ; callback fin.
 
 ### C5 — Ingest ML
 `feat(media): precompute focal and depth on upload`  
@@ -219,8 +258,10 @@ Détail commits C4–C7 ci-dessous.
 
 ### C8 — Hub sortie + Mode Célébration + pay-it-forward
 `feat(wizard): exit hub + Mode Célébration + pay-it-forward`  
-- Revoir · Lueur · Garder Master · **Offrir Master** · Héritage · ligne Odyssey B2C.  
-- Célébration HDMI.  
+- Déclenché **après** `onPlaybackComplete` (noir ≥ 1 s).  
+- Revoir · Lueur · Conserver Archive Master · Héritage · pay-it-forward.  
+- Célébration **HDMI** (distinct du lander QR).  
+- Présences honorifiques live (si Première C10).  
 **Done :** tunnel + HDMI smoke.
 
 ### C9 — QA core path
@@ -228,9 +269,9 @@ Détail commits C4–C7 ci-dessous.
 **Done :** checklist § QA core.
 
 ### C10 — Première sync
-`feat(wizard): shared premiere playhead`  
-(+ QR rejoindre lecture seule — stretch).  
-**Done :** host + 1 follower sync.
+`feat(wizard): shared premiere playhead + post-fade honorifics`  
+- Horaire collectif · sync stricte · hub post-noir avec présences (*Lueur* / *Archive*).  
+**Done :** host + 1 follower sync + feed digne post-fade.
 
 ### C11 — Master multi-acheteurs + gift (priorité cash cercle)
 `feat(checkout): cinemaMaster always-on + N-buyer Fonds credit`  
@@ -249,9 +290,11 @@ Détail commits C4–C7 ci-dessous.
 `feat(export): socialCut 19$ vertical 30-45s`  
 **Done :** MP4 9:16 + checkout post-master.
 
-### C14 — QR lander + notif contributeurs
-`feat(growth): /stream/[token] read-only lander + session-ready email`  
-**Done :** lander sans wizard ; email contributeur test.
+### C14 — QR registre + lander séance privée
+`feat(growth): /stream/[token] registre digne + séance privée`  
+- Chevalet / signet · capture identité · Livre Ouvert · consentement séparé (Loi 25).  
+- **Priorité acquisition** dès que C4–C9 validés.  
+**Done :** lander sans wizard ; registre ; email contributeur test.
 
 ### Plus tard — Creatomate DA intro
 Hors chemin critique.
@@ -267,14 +310,15 @@ Hors chemin critique.
 - [ ] Hub : lueur + Master + Héritage + pay-it-forward  
 - [ ] Mode Célébration  
 
-### Cercle (C11–C14)
+### Cercle (C10–C14)
 - [ ] CTA Master **toujours actif** (jamais grisé post-unlock)  
 - [ ] N×49 $ → N downloads + Fonds sur #2…n · **1** Creatomate  
-- [ ] Gift / premier payeur → email + RevShare  
+- [ ] Première sync + présences hub **post-noir uniquement**  
+- [ ] QR *Registre d’hommage & Séance privée* → lander lecture seule  
+- [ ] Consentement registre ≠ opt-in marketing (Loi 25)  
 - [ ] Merci mécène sur hub, **pas** de 2ᵉ render MP4  
 - [ ] Copie 15–19 $ optionnelle post-unlock ; **1** render log  
 - [ ] Social Cut 19 $ post-master  
-- [ ] `/stream/[token]` sans wizard  
 - [ ] Notif « séance prête »  
 - [ ] Aucun CTA cash mid-séance  
 - [ ] Copy : *Conserver mon Archive Master 1080p · 49 $* + mention Fonds
@@ -300,7 +344,7 @@ Mettre à jour [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) § add-ons *
 |------|---------|
 | Pricing / Stripe | `pricingConfig.ts`, `wizardPricing.ts`, checkout guest |
 | Export | `exportGate.ts`, `processExportJob.ts`, entitlements |
-| Player / hub | `CinematicTeaser`, `PreviewStep`, exit hub |
+| Player / hub | `QuietLuxuryPlayer.tsx` · `CinematicTeaser` · `PreviewStep` · exit hub (C8) · `/stream/[token]` (C14) |
 | Croissance | lander QR, emails contributeurs, gift checkout |
 | Copy | `dictionaries/fr.json`, `en.json` |
 | RevShare | webhook amount_total > 0 |

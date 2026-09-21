@@ -4,11 +4,11 @@
 **Dernière MAJ :** 21 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 21 sept 2026 — Trajectoire Cercle (QR registre / Première / Phase 2 isolée) + garde-fous C4 — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C3** Séance vs Archive + CTA 49 $ — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C2** gate export (`cinemaMaster` / Héritage+) + multi-acheteurs Master — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C1** `cinemaMaster` 49 $ + **C0** Creatomate gate — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
 - 21 sept 2026 — Souvenir : blindage double mécène → Fonds + merci hors MP4 + lander `/stream` — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
-- 17 sept 2026 — Sanctuaire invité : HTML ciel immédiat + WebGL **après** le paint (mobile idle ; dépôt = still) — [`SANCTUARY_SKY.md`](SANCTUARY_SKY.md).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

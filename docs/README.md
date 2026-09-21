@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 21 sept 2026 — Trajectoire Cercle + garde-fous C4 — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C3** Séance vs Archive + CTA Master 49 $ — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C2** gate export + multi-acheteurs Master — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C1** `cinemaMaster` 49 $ + **C0** Creatomate gate — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).
