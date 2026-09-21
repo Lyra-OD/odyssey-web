@@ -21,12 +21,26 @@ type Props = {
 };
 
 /**
- * Chip d'aide permanente — bas-gauche, fixe, toujours visible.
+ * Chip d'aide permanente — bas-gauche, fixe.
+ * Masqué en séance cinéma (`data-odyssey-cinema`) ou Fullscreen API.
  * Mobile : pastille téléphone au-dessus du footer sticky Next (`bottom-24`).
  * Desktop (`md+`) : chip complet (label + tel + écrire) à `bottom-5`.
  * Portal `document.body` pour échapper au stacking context parent.
  * Suit `UiLocaleContext` quand le LocaleSwitcher switch sans remount layout.
  */
+function isCinemaOrFullscreen(): boolean {
+  if (typeof document === "undefined") return false;
+  const cinema =
+    document.documentElement.getAttribute("data-odyssey-cinema") === "1";
+  const doc = document as Document & {
+    webkitFullscreenElement?: Element | null;
+  };
+  const fullscreen = Boolean(
+    document.fullscreenElement || doc.webkitFullscreenElement,
+  );
+  return cinema || fullscreen;
+}
+
 export function OdysseyHelpLifeline({
   locale: routeLocale,
   copyFr,
@@ -34,8 +48,24 @@ export function OdysseyHelpLifeline({
   className = "",
 }: Props) {
   const [mounted, setMounted] = useState(false);
+  const [immersiveHidden, setImmersiveHidden] = useState(false);
+
   useEffect(() => {
     setMounted(true);
+    const sync = () => setImmersiveHidden(isCinemaOrFullscreen());
+    sync();
+    document.addEventListener("fullscreenchange", sync);
+    document.addEventListener("webkitfullscreenchange", sync);
+    const obs = new MutationObserver(sync);
+    obs.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-odyssey-cinema"],
+    });
+    return () => {
+      document.removeEventListener("fullscreenchange", sync);
+      document.removeEventListener("webkitfullscreenchange", sync);
+      obs.disconnect();
+    };
   }, []);
 
   const ui = useUiLocaleOptional();
@@ -44,6 +74,8 @@ export function OdysseyHelpLifeline({
 
   const digits = copy.phoneDisplay.replace(/\D/g, "");
   const telHref = digits.length === 10 ? `tel:+1${digits}` : `tel:+${digits}`;
+
+  if (immersiveHidden) return null;
 
   const chip = (
     <div
