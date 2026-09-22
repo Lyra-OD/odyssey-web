@@ -39,7 +39,7 @@ describe("formatYearsLine", () => {
 describe("essentialsFromWizard (étape 1)", () => {
   it("remplit years et laisse portraitUrl null", () => {
     const state = {
-      version: 1,
+      version: 2,
       essentials: {
         firstName: "Jean-Paul",
         lastName: "Gaudreault",
