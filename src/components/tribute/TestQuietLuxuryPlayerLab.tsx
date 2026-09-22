@@ -286,6 +286,7 @@ export function TestQuietLuxuryPlayerLab({ locale, exitHubCopy }: Props) {
     archiveTitle: exitHubCopy.archiveTitle,
     archiveBody: exitHubCopy.archiveBody,
     archiveCta: exitHubCopy.archiveCta,
+    archiveUnlocking: exitHubCopy.archiveUnlocking,
     guestCopyTitle: exitHubCopy.guestCopyTitle,
     guestCopyBody: exitHubCopy.guestCopyBody,
     guestCopyCta: exitHubCopy.guestCopyCta,

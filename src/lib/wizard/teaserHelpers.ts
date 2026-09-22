@@ -23,6 +23,8 @@ export type TeaserTrack = {
   artist: string;
   trackId?: string;
   storagePath?: string;
+  /** URL déjà signée (ex. `/stream/[token]`) — skip fetch owner music. */
+  audioUrl?: string;
   creditLabel?: string;
   showCreditInSession?: boolean;
 };

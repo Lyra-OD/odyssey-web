@@ -146,14 +146,16 @@ export type QuietLuxuryPlayerProps = {
   /** Instance Audio amorcée au geste utilisateur — jamais recreée. */
   primedAudio?: HTMLAudioElement | null;
   onPlaybackComplete?: () => void;
-  /** C8 — hub post-noir (cinéma). Absent = teaser inchangé. */
+  /** C8 — hub post-noir (cinéma). Absent = fin → `onPlaybackComplete` only (craft preview). */
   exitHub?: {
     copy: QuietLuxuryExitHubCopy;
     viewerRole?: QuietLuxuryViewerRole;
-    onUnlockMaster: () => void;
+    onUnlockMaster: () => void | Promise<void>;
     onShareSession?: () => void;
     onUpgradePackage?: () => void;
     onLeaveLueur?: () => void;
+    /** Fermer la projection (retour sas étape 6) — en plus de quitter le fullscreen. */
+    onDismiss?: () => void;
   } | null;
   copy: QuietLuxuryPlayerCopy;
   className?: string;
@@ -784,6 +786,8 @@ export function QuietLuxuryPlayer({
       videoRef.current?.pause();
       if (!completedRef.current) {
         completedRef.current = true;
+        // Hub C8 seulement si fourni ; sinon le parent ferme via onPlaybackComplete
+        // (craft preview étape 5 — éviter un noir mort sans CTA).
         if (cinema && exitHub) setShowExitHub(true);
         onPlaybackComplete?.();
       }
@@ -1367,6 +1371,7 @@ export function QuietLuxuryPlayer({
           onLeaveLueur={exitHub.onLeaveLueur}
           onCloseFullscreen={() => {
             void exitNativeFullscreen();
+            exitHub.onDismiss?.();
           }}
         />
       ) : null}

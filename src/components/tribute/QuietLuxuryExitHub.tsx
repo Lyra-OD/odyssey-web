@@ -17,6 +17,7 @@ export type QuietLuxuryExitHubCopy = {
   archiveTitle: string;
   archiveBody: string;
   archiveCta: string;
+  archiveUnlocking: string;
   guestCopyTitle: string;
   guestCopyBody: string;
   guestCopyCta: string;
@@ -30,7 +31,7 @@ export type QuietLuxuryExitHubProps = {
   displayName: string;
   viewerRole?: QuietLuxuryViewerRole;
   onReplaySession: () => void;
-  onUnlockMaster: () => void;
+  onUnlockMaster: () => void | Promise<void>;
   onShareSession?: () => void;
   onUpgradePackage?: () => void;
   onLeaveLueur?: () => void;
@@ -58,6 +59,7 @@ export function QuietLuxuryExitHub({
   className = "",
 }: QuietLuxuryExitHubProps) {
   const [visible, setVisible] = useState(false);
+  const [archiveBusy, setArchiveBusy] = useState(false);
 
   useEffect(() => {
     const id = window.setTimeout(() => setVisible(true), 40);
@@ -78,6 +80,16 @@ export function QuietLuxuryExitHub({
         body: copy.guestCopyBody,
         cta: copy.guestCopyCta,
       };
+
+  const handleUnlockMaster = async () => {
+    if (archiveBusy) return;
+    setArchiveBusy(true);
+    try {
+      await Promise.resolve(onUnlockMaster());
+    } catch {
+      setArchiveBusy(false);
+    }
+  };
 
   return (
     <div
@@ -113,10 +125,14 @@ export function QuietLuxuryExitHub({
             </p>
             <button
               type="button"
-              onClick={onUnlockMaster}
-              className="mt-4 inline-flex text-[12px] font-light tracking-[0.16em] text-zinc-100 underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white/60"
+              onClick={() => {
+                void handleUnlockMaster();
+              }}
+              disabled={archiveBusy}
+              aria-busy={archiveBusy}
+              className="mt-4 inline-flex items-center gap-2 text-[12px] font-light tracking-[0.16em] text-zinc-100 underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white/60 disabled:cursor-wait disabled:text-zinc-400 disabled:no-underline disabled:opacity-70"
             >
-              {honorCard.cta}
+              {archiveBusy ? copy.archiveUnlocking : honorCard.cta}
             </button>
           </div>
 

@@ -5,11 +5,11 @@
 **Dernière MAJ :** 22 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 22 sept 2026 — Séance : étape 5 = `craft_preview` (silence) · étape 6 = bouton *Vivre la projection* → `official_session` + hub C8.
+- 22 sept 2026 — Hub CTA forfait-aware (49 $ / Inclus / Finaliser Héritage) · Partager → `/stream/[token]` · guest hub C12 stub.
+- 22 sept 2026 — C8 câblage Stripe Archive Master 49 $ depuis hub post-séance Studio (`session_hub`).
 - 22 sept 2026 — Fix MP3 perso séance : gate URL signée avant autoplay · waitForAudioReady · prime Visionne.
 - 22 sept 2026 — Polish séance Studio : crédit Quiet Luxury · zéro scrollbar cinéma · chapitres qui gardent leur identité au drag.
-- 22 sept 2026 — **Tranche 1+** : pont musical (fade ~1,1 s) · `actBridge` 2,3 s · crédit musical éditable · précharge audio.
-- 21 sept 2026 — **C8 hub lab** : sortie post-noir (Revoir · Archive 49 $ · Lueur · Lignée) sur `/test-player`.
-- 21 sept 2026 — **C4 polish cinéma** : `/[lang]/test-player` · Fullscreen · Kodak A24 · pastille conditionnelle · micro-noir soft · aide masquée.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -264,7 +264,10 @@ Détail commits C4–C7 ci-dessous.
 - Célébration **HDMI** (distinct du lander QR).  
 - Présences honorifiques live (si Première C10).  
 **Done (lab) :** ✅ hub Quiet Luxury sur `/test-player` — rôles organizer/guest · callbacks fullscreen-safe · Partager visible (organizer) · overlays checkout/share/Héritage — 22 sept 2026.  
-**Reste :** Mode Célébration HDMI · pay-it-forward wire checkout réel · hub prod `/stream`.
+**Done (Studio) :** ✅ C8 câblage Stripe — hub organizer « Conserver l'Archive Master · 49 $ » → `POST /api/checkout` (`source: session_hub`, SKU `cinemaMaster`) · loading noble · success/cancel → Studio (`master_success` / `master_cancel`) — 22 sept 2026.  
+**Done (Studio+) :** ✅ CTA forfait-aware — Souvenir → 49 $ · Héritage draft → Finaliser Écrin · Master inclus / payé → Télécharger · Partager → `POST …/stream-link` → `/[lang]/stream/[token]` · guest hub C12 stub (15 $) — 22 sept 2026.  
+**Done (parcours) :** ✅ Hub C8 uniquement après séance **officielle** (CTA étape 6) · étape 5 film map = `craft_preview` silencieux — 22 sept 2026.  
+**Reste :** Mode Célébration HDMI · pay-it-forward · C11 multi-acheteurs Fonds · Stripe `guestMasterCopy`.
 
 ### C9 — QA core path
 `test(export): Souvenir stream to cinemaMaster`  
@@ -296,7 +299,8 @@ Détail commits C4–C7 ci-dessous.
 `feat(growth): /stream/[token] registre digne + séance privée`  
 - Chevalet / signet · capture identité · Livre Ouvert · consentement séparé (Loi 25).  
 - **Priorité acquisition** dès que C4–C9 validés.  
-**Done :** lander sans wizard ; registre ; email contributeur test.
+**Done (MVP) :** ✅ `/[lang]/stream/[token]` + `GET /api/stream/[token]` (`view_only`) · Quiet Luxury guest hub · copie 15 $ stub — 22 sept 2026.  
+**Reste :** registre digne · capture identité · QR chevalet · email contributeur.
 
 ### Plus tard — Creatomate DA intro
 Hors chemin critique.

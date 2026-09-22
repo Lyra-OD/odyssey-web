@@ -37,6 +37,8 @@ const BodySchema = z
   .object({
     projectId: z.string().uuid(),
     locale: z.enum(["fr", "en"]).optional(),
+    /** Hub post-séance (C8) → URLs retour Master dédiées. */
+    source: z.enum(["wizard", "session_hub"]).optional(),
   })
   .strict();
 
@@ -77,7 +79,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const { projectId, locale = "fr" } = parsed.data;
+  const { projectId, locale = "fr", source = "wizard" } = parsed.data;
+  const fromSessionHub = source === "session_hub";
 
   const editorBlocked = await rejectEditorForOwnerOnlyRoute(
     projectId,
@@ -390,6 +393,16 @@ export async function POST(request: Request) {
   }
 
   if (totalCents <= 0) {
+    // Hub C8 : Héritage+ (Master inclus) ou panier déjà couvert → confirmation Studio.
+    if (fromSessionHub) {
+      return NextResponse.json({
+        ok: true,
+        mode: "already_entitled",
+        url: `${origin}${studioPath}?checkout=master_success`,
+        totalCents: 0,
+      });
+    }
+
     if (hasPartnerInvitation && isFreemiumTenant) {
       intendedPackage = resolveB2b2cIntendedPackage({
         grantedPackage,
@@ -685,6 +698,7 @@ export async function POST(request: Request) {
       collector_usb: String(Boolean(normalizedExt.sanctuaryToken)),
       extensions: JSON.stringify(normalizedExt),
       act_tracks: actTracksMetadata,
+      ...(fromSessionHub ? { checkout_source: "session_hub" } : {}),
     };
 
     try {
@@ -710,8 +724,12 @@ export async function POST(request: Request) {
         .filter((line) => line.cents > 0)
         .map(toStripeLineItem),
       ...(discounts ? { discounts } : {}),
-      success_url: `${origin}${studioPath}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}${studioPath}?checkout=cancel`,
+      success_url: fromSessionHub
+        ? `${origin}${studioPath}?checkout=master_success&session_id={CHECKOUT_SESSION_ID}`
+        : `${origin}${studioPath}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: fromSessionHub
+        ? `${origin}${studioPath}?checkout=master_cancel`
+        : `${origin}${studioPath}?checkout=cancel`,
       client_reference_id: projectId,
       metadata: stripeMetadata,
     });

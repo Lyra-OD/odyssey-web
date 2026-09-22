@@ -71,8 +71,8 @@ async function resolveUploadAudioUrl(
 
 function uploadStoragePathsKey(tracks: TeaserTracks): string {
   return Object.values(tracks)
-    .map((t) => t.storagePath)
-    .filter((p): p is string => Boolean(p))
+    .filter((t) => t.storagePath && !t.audioUrl)
+    .map((t) => t.storagePath as string)
     .sort()
     .join("|");
 }
@@ -150,7 +150,9 @@ export function CinematicTeaser({
       }));
 
       let audioUrl: string | null = null;
-      if (track?.trackId) {
+      if (track?.audioUrl) {
+        audioUrl = track.audioUrl;
+      } else if (track?.trackId) {
         audioUrl = buildMusicPreviewProxyUrl(
           track.trackId,
           projectId ?? undefined,

@@ -19,8 +19,15 @@ import {
   type ReactNode,
 } from "react";
 import { PreviewStep } from "@/src/components/tribute/PreviewStep";
-import { WizardSessionProjection, type WizardSessionHubCopy } from "@/src/components/tribute/WizardSessionProjection";
-import { requestNativeFullscreen } from "@/src/components/tribute/QuietLuxuryPlayer";
+import {
+  WizardSessionProjection,
+  type WizardSessionHubCopy,
+  type WizardSessionIntent,
+} from "@/src/components/tribute/WizardSessionProjection";
+import {
+  exitNativeFullscreen,
+  requestNativeFullscreen,
+} from "@/src/components/tribute/QuietLuxuryPlayer";
 import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
 import { SoftCapModal, SoftCapMediaCountSync } from "@/src/components/tribute/SoftCapModal";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
@@ -135,6 +142,7 @@ import {
 } from "@/src/lib/wizard/stingrayCatalog";
 import { shouldOfferMagicSoftCap } from "@/src/lib/wizard/softCap";
 import { MUSIC_RIGHTS_TOS_VERSION } from "@/src/lib/wizard/exportGate";
+import { resolveOrganizerMasterHubMode } from "@/src/lib/wizard/organizerMasterHub";
 import { resolveStingraySongPreviewUrl } from "@/src/lib/wizard/musicPreview";
 import {
   isWizardStepAllowedForRole,
@@ -320,6 +328,7 @@ export function TributeWizard({
   accessRole = "owner",
   mobileUtilityTrailing = null,
   exitHubCopy = null,
+  masterEntitled = false,
 }: {
   copy: TributeWizardCopy;
   initialDraft?: WizardInitialDraft | null;
@@ -333,6 +342,8 @@ export function TributeWizard({
   accessRole?: WizardAccessRole;
   /** Hub C8 (copy FR/EN déjà chargée par le layout). */
   exitHubCopy?: WizardSessionHubCopy | null;
+  /** Entitlement serveur / retour Stripe Master (hub download). */
+  masterEntitled?: boolean;
   /** Action utilitaire mobile affichée dans la même ligne que "Retour". */
   mobileUtilityTrailing?: ReactNode;
 }) {
@@ -416,6 +427,8 @@ export function TributeWizard({
   );
   const [projectMediaCount, setProjectMediaCount] = useState(0);
   const [sessionOpen, setSessionOpen] = useState(false);
+  const [sessionIntent, setSessionIntent] =
+    useState<WizardSessionIntent>("craft_preview");
   const [sessionAudio, setSessionAudio] = useState<HTMLAudioElement | null>(
     null,
   );
@@ -1047,59 +1060,62 @@ export function TributeWizard({
     return placed || projectMediaCount > 0;
   }, [projectMediaCount, wizardStoryboard.storyboard]);
 
-  const canWatchSession =
-    currentStep >= 5 && hasSessionMedia && Boolean(exitHubCopy);
+  const canWatchSession = currentStep >= 5 && hasSessionMedia;
 
-  const openWatchSession = useCallback(async () => {
-    const projectId = uploadProjectId;
-    let audio = sessionAudioRef.current;
-    if (!audio) {
-      audio = new Audio();
-      audio.preload = "auto";
-      sessionAudioRef.current = audio;
-    }
+  const openWatchSession = useCallback(
+    async (intent: WizardSessionIntent = "craft_preview") => {
+      const projectId = uploadProjectId;
+      let audio = sessionAudioRef.current;
+      if (!audio) {
+        audio = new Audio();
+        audio.preload = "auto";
+        sessionAudioRef.current = audio;
+      }
 
-    const firstSong = wizardStoryboard.storyboard.chapters.find(
-      (chapter) => chapter.song,
-    )?.song;
+      const firstSong = wizardStoryboard.storyboard.chapters.find(
+        (chapter) => chapter.song,
+      )?.song;
 
-    if (firstSong && projectId) {
-      let previewUrl = "";
-      if (firstSong.source === "stingray") {
-        previewUrl = resolveStingraySongPreviewUrl(firstSong, projectId);
-      } else {
-        try {
-          const res = await fetch(
-            `/api/projects/${projectId}/music?path=${encodeURIComponent(firstSong.storagePath)}`,
-          );
-          const body = (await res.json().catch(() => ({}))) as {
-            signedUrl?: string;
-          };
-          if (res.ok && body.signedUrl?.trim()) {
-            previewUrl = body.signedUrl.trim();
+      if (firstSong && projectId) {
+        let previewUrl = "";
+        if (firstSong.source === "stingray") {
+          previewUrl = resolveStingraySongPreviewUrl(firstSong, projectId);
+        } else {
+          try {
+            const res = await fetch(
+              `/api/projects/${projectId}/music?path=${encodeURIComponent(firstSong.storagePath)}`,
+            );
+            const body = (await res.json().catch(() => ({}))) as {
+              signedUrl?: string;
+            };
+            if (res.ok && body.signedUrl?.trim()) {
+              previewUrl = body.signedUrl.trim();
+            }
+          } catch {
+            /* prime best-effort */
           }
-        } catch {
-          /* prime best-effort */
+        }
+
+        if (previewUrl) {
+          audio.src = previewUrl;
+          audio.volume = 0;
+          try {
+            await audio.play();
+            audio.pause();
+            audio.currentTime = 0;
+          } catch {
+            /* gesture unlock best-effort — ne bloque pas l’ouverture */
+          }
         }
       }
 
-      if (previewUrl) {
-        audio.src = previewUrl;
-        audio.volume = 0;
-        try {
-          await audio.play();
-          audio.pause();
-          audio.currentTime = 0;
-        } catch {
-          /* gesture unlock best-effort — ne bloque pas l’ouverture */
-        }
-      }
-    }
-
-    setSessionAudio(audio);
-    setSessionOpen(true);
-    void requestNativeFullscreen(document.documentElement);
-  }, [uploadProjectId, wizardStoryboard.storyboard.chapters]);
+      setSessionAudio(audio);
+      setSessionIntent(intent);
+      setSessionOpen(true);
+      void requestNativeFullscreen(document.documentElement);
+    },
+    [uploadProjectId, wizardStoryboard.storyboard.chapters],
+  );
 
   const closeWatchSession = useCallback(() => {
     setSessionOpen(false);
@@ -1341,6 +1357,107 @@ export function TributeWizard({
     },
     [queueSave],
   );
+
+  const unlockMasterFromSession = useCallback(async () => {
+    if (!uploadProjectId) {
+      throw new Error("missing_project");
+    }
+
+    const nextExtensions: WizardExtensionsState = {
+      ...wizardFieldsRef.current.extensions,
+      cinemaMaster: true,
+    };
+    handleExtensionsChange(nextExtensions);
+    await flush();
+
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        projectId: uploadProjectId,
+        locale,
+        source: "session_hub",
+      }),
+    });
+    const data = (await res.json().catch(() => ({}))) as {
+      url?: string;
+      redirectUrl?: string;
+      mode?: string;
+      message?: string;
+      error?: string;
+    };
+
+    if (!res.ok) {
+      throw new Error(data.error || data.message || "checkout_failed");
+    }
+
+    const target =
+      (typeof data.url === "string" && data.url) ||
+      (typeof data.redirectUrl === "string" && data.redirectUrl) ||
+      null;
+    if (!target) {
+      throw new Error("checkout_missing_url");
+    }
+
+    void exitNativeFullscreen();
+    window.location.href = target;
+  }, [flush, handleExtensionsChange, locale, uploadProjectId]);
+
+  const downloadMasterFromSession = useCallback(async () => {
+    if (!uploadProjectId) {
+      throw new Error("missing_project");
+    }
+    const res = await fetch(`/api/projects/${uploadProjectId}/export`, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ locale }),
+    });
+    const data = (await res.json().catch(() => ({}))) as {
+      error?: string;
+      message?: string;
+      jobId?: string | null;
+    };
+    if (!res.ok) {
+      throw new Error(data.error || data.message || "export_failed");
+    }
+    // Job stub Creatomate — le hub reste ouvert ; notice via erreur = non, succès silencieux.
+    void data.jobId;
+  }, [locale, uploadProjectId]);
+
+  const finalizeHeritageFromSession = useCallback(async () => {
+    void exitNativeFullscreen();
+    closeWatchSession();
+    await navigateToStep(7);
+  }, [closeWatchSession, navigateToStep]);
+
+  const masterHubMode = useMemo(
+    () =>
+      resolveOrganizerMasterHubMode({
+        grantedPackage,
+        intendedPackage,
+        projectStatus: initialDraft?.status ?? "draft",
+        masterEntitled,
+      }),
+    [grantedPackage, initialDraft?.status, intendedPackage, masterEntitled],
+  );
+
+  const honorPrimaryFromSession = useCallback(async () => {
+    if (masterHubMode === "download_included") {
+      await downloadMasterFromSession();
+      return;
+    }
+    if (masterHubMode === "finalize_heritage") {
+      await finalizeHeritageFromSession();
+      return;
+    }
+    await unlockMasterFromSession();
+  }, [
+    downloadMasterFromSession,
+    finalizeHeritageFromSession,
+    masterHubMode,
+    unlockMasterFromSession,
+  ]);
 
   const handleAcceptMusicRights = useCallback(() => {
     const next = {
@@ -2861,7 +2978,11 @@ export function TributeWizard({
               }}
               onOpenCollab={() => setIsCollabInviteOpen(true)}
               onWatchSession={
-                canWatchSession ? openWatchSession : undefined
+                canWatchSession
+                  ? () => {
+                      void openWatchSession("craft_preview");
+                    }
+                  : undefined
               }
               watchSessionCopy={
                 canWatchSession
@@ -2917,9 +3038,18 @@ export function TributeWizard({
                 void handleProceedToPayment();
               }}
               onEdit={() => void handlePreviewEdit()}
+              onLaunchOfficialSession={
+                !isEditor && hasSessionMedia && Boolean(exitHubCopy)
+                  ? () => {
+                      void openWatchSession("official_session");
+                    }
+                  : undefined
+              }
               copy={{
                 title: copy.stepPreviewTitle,
                 description: copy.stepPreviewDescription,
+                launchSession: copy.previewLaunchSession,
+                launchSessionAria: copy.previewLaunchSessionAria,
                 loadingMedia: copy.previewLoadingMedia,
                 payCta: preservePackageCta,
                 payCtaSoftCap: preservePackageCta,
@@ -3178,7 +3308,7 @@ export function TributeWizard({
         </div>
       ) : null}
     </div>
-      {sessionOpen && exitHubCopy ? (
+      {sessionOpen ? (
         <WizardSessionProjection
           projectId={uploadProjectId}
           storyboard={wizardStoryboard.storyboard}
@@ -3208,8 +3338,11 @@ export function TributeWizard({
           teaserPlay={copy.previewTeaserPlay}
           teaserPause={copy.previewTeaserPause}
           teaserLoading={copy.previewTeaserLoading}
+          intent={sessionIntent}
           hubCopy={exitHubCopy}
+          masterHubMode={masterHubMode}
           onClose={closeWatchSession}
+          onHonorPrimary={honorPrimaryFromSession}
         />
       ) : null}
     </>

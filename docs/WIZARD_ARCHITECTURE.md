@@ -307,6 +307,7 @@ Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage
 **Canon:** [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) · **QA:** [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
 
 - **Component:** `StoryboardMontageStep.tsx` — layout Livre Ouvert, banque persistante, chapitres empilés, `StoryboardFilmMap`, DnD global `dnd-kit`, actions chapitre, onboarding gate, Composition Magique.
+- **Voir la séance (film map) :** `WizardSessionProjection` `intent: "craft_preview"` — aperçu immersif pour l’artisanat. Fin / Échap / ✕ → retour silencieux sur la table de montage. **Pas de hub C8** (ni achat, ni partage).
 - **Why not placeholder anymore:** PR-1/2/3 (juillet 2026) replaced the post–Clean Slate placeholder with the full interactive experience.
 - **Magic composition:** `buildMagicTimeline` → `playMagicTimeline` — batch per chapter + CSS cascade; overlay `MagicCinematicOverlay` (scrim Option B + capsule Bouton Noir, **design locked**).
 - **Autosave:** suspended during magic via `magicPerformingRef` in `TributeWizard`; `queueSave("immediate")` on `onMagicSequenceComplete`.
@@ -319,15 +320,18 @@ Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage
 
 ---
 
-## Step 6 — Aperçu (pont hybride · cible mix BA)
+## Step 6 — Aperçu / Son film (pont hybride · séance officielle C8)
 
 | File | Role |
 |------|------|
-| `PreviewStep.tsx` | Copy, teaser, CTA checkout, lien modifier |
+| `PreviewStep.tsx` | Sas : teaser 16:9, Soft Cap, comparatif Archive, CTA checkout |
+| `WizardSessionProjection` | **Séance officielle** (`intent: "official_session"`) — bouton *Vivre la projection* |
 | `CinematicTeaser.tsx` | Diaporama + audio chapitre (pause réelle) |
 | `teaserHelpers.ts` | Slides / pistes depuis le **storyboard live** |
 
-**Aujourd’hui :** l’aperçu **lit le storyboard live** (tous les chapitres, chaque piste, ordre Livre Ouvert). Ce n’est **pas** un teaser 3 actes. Ce n’est **pas** le master Creatomate.
+**Séance officielle :** CTA noble sur l’étape 6 → cinéma immersif puis hub C8 (Master forfait-aware · Partager `/stream/[token]` · Revoir). Fermer le hub (✕) ou la projection → retour sur le sas `PreviewStep` (Soft Cap / Archive / Préserver).
+
+**Aujourd’hui (sas) :** l’aperçu **lit le storyboard live** (tous les chapitres, chaque piste, ordre Livre Ouvert). Ce n’est **pas** un teaser 3 actes. Ce n’est **pas** le master Creatomate.
 
 **Pont hybride (dette temporaire) :** le PATCH autosave envoie encore `montage` + `musicalAmbiance` à côté de `storyboard` ; `POST /api/checkout` envoie encore `act_tracks` compact. À retirer quand S9 (metadata `storyboard`) est stable.
 

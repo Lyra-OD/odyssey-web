@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ lang: string }>;
-  searchParams: Promise<{ plan?: string }>;
+  searchParams: Promise<{ plan?: string; checkout?: string }>;
 };
 
 const DRAFT_SELECT =
@@ -26,12 +26,16 @@ const DRAFT_SELECT =
 
 export default async function StudioPage({ params, searchParams }: PageProps) {
   const { lang: routeLang } = await params;
-  const { plan: rawPlan } = await searchParams;
+  const { plan: rawPlan, checkout: rawCheckout } = await searchParams;
   // Dev-only : `?plan=essential` permet de tester le flux freemium Soft Cap
   // en local (grantedPackage = Souvenir 0 $) sans passer par une invitation
   // partenaire. Jamais honoré en production (faille de monétisation).
   const planOverride =
     process.env.NODE_ENV !== "production" ? rawPlan : undefined;
+  const checkoutReturn =
+    rawCheckout === "master_success" || rawCheckout === "master_cancel"
+      ? rawCheckout
+      : null;
   const lang: Locale = routeLang === "en" ? "en" : "fr";
   const [dictionaryFr, dictionaryEn] = await Promise.all([
     getDictionary("fr"),
@@ -174,6 +178,7 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
           copyEn={dictionaryEn.tributeWizard}
           exitHubCopyFr={dictionaryFr.quietLuxuryExitHub}
           exitHubCopyEn={dictionaryEn.quietLuxuryExitHub}
+          checkoutReturn={checkoutReturn}
           labelsFr={{
             languageLabel: dictionaryFr.header.languageLabel,
             langOptionFr: dictionaryFr.header.langOptionFr,

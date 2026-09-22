@@ -59,6 +59,9 @@ export type PreviewStepCopy = {
   trackCreditTitleOnly: string;
   /** C3 — comparatif Séance vs Archive (Souvenir). */
   sessionArchiveCompare?: SessionArchiveCompareCopy;
+  /** Étape 6 — lancer la séance officielle (hub C8). */
+  launchSession?: string;
+  launchSessionAria?: string;
 };
 
 type Props = {
@@ -81,6 +84,8 @@ type Props = {
   onProceedToPayment: () => void;
   onKeepArchiveMaster?: () => void;
   onEdit: () => void;
+  /** Étape 6 — ouvre la séance officielle (WizardSessionProjection + hub). */
+  onLaunchOfficialSession?: () => void;
 };
 
 function buildValueNote(
@@ -130,6 +135,7 @@ export function PreviewStep({
   onProceedToPayment,
   onKeepArchiveMaster,
   onEdit,
+  onLaunchOfficialSession,
 }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [mediaById, setMediaById] = useState<Map<string, MontageMediaItem>>(
@@ -208,6 +214,18 @@ export function PreviewStep({
         <p className={`mx-auto max-w-2xl ${wizardStepLead} md:mx-0`}>
           {copy.description}
         </p>
+        {onLaunchOfficialSession && copy.launchSession ? (
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={onLaunchOfficialSession}
+              aria-label={copy.launchSessionAria ?? copy.launchSession}
+              className={`${wizardMiniCapsAction} mx-auto min-h-[52px] w-full max-w-md rounded-2xl border border-white/20 bg-white/[0.06] px-6 text-base font-medium text-zinc-50 transition-[colors,box-shadow,transform] hover:border-white/35 hover:bg-white/[0.1] hover:shadow-[0_0_28px_rgba(255,255,255,0.08)] active:scale-[0.985] ${sanctuaryFocusRing} md:mx-0`}
+            >
+              {copy.launchSession}
+            </button>
+          </div>
+        ) : null}
       </header>
 
       <section className="space-y-5">

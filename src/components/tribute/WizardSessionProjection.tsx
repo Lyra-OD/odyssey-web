@@ -1,8 +1,7 @@
 "use client";
 
 /**
- * Tranche 1 — séance cinéma depuis le Wizard (draft réel).
- * Pont teaserHelpers / CinematicTeaser · fullscreen natif · zéro Stripe.
+ * Séance cinéma wizard — aperçu craft (étape 5) ou cérémonie + hub C8 (étape 6).
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -16,6 +15,7 @@ import {
 } from "@/src/components/tribute/QuietLuxuryPlayer";
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
 import { mediaApiToMontageItems } from "@/src/lib/wizard/montageHelpers";
+import type { OrganizerMasterHubMode } from "@/src/lib/wizard/organizerMasterHub";
 import { buildTeaserFromStoryboard } from "@/src/lib/wizard/teaserHelpers";
 import type { CinemaChapterTitlesCopy } from "@/src/lib/wizard/teaserHelpers";
 import type { WizardStoryboardState } from "@/src/lib/wizard/wizardState";
@@ -24,8 +24,22 @@ export type WizardSessionHubCopy = QuietLuxuryExitHubCopy & {
   checkoutModalTitle: string;
   checkoutModalBody: string;
   checkoutModalClose: string;
+  archiveUnlockError: string;
+  archiveIncludedTitle: string;
+  archiveIncludedBody: string;
+  archiveIncludedCta: string;
+  archiveIncludedUnlocking: string;
+  archiveFinalizeTitle: string;
+  archiveFinalizeBody: string;
+  archiveFinalizeCta: string;
+  archiveFinalizeUnlocking: string;
+  masterSuccessNotice: string;
+  masterCancelNotice: string;
+  noticeDismiss: string;
   shareModalTitle: string;
   shareLinkLabel: string;
+  shareLinkLoading: string;
+  shareLinkError: string;
   shareCopy: string;
   shareCopied: string;
   shareNative: string;
@@ -35,7 +49,9 @@ export type WizardSessionHubCopy = QuietLuxuryExitHubCopy & {
   heritageModalClose: string;
 };
 
-type OverlayKind = "checkout" | "share" | "heritage" | null;
+export type WizardSessionIntent = "craft_preview" | "official_session";
+
+type OverlayKind = "share" | "heritage" | null;
 
 type Props = {
   projectId: string | null;
@@ -53,8 +69,16 @@ type Props = {
   teaserPlay: string;
   teaserPause: string;
   teaserLoading: string;
-  hubCopy: WizardSessionHubCopy;
+  /**
+   * `craft_preview` (étape 5) — fin / Échap → fermeture silencieuse, zéro hub.
+   * `official_session` (étape 6 / cérémonie) — hub C8 à la fin.
+   */
+  intent: WizardSessionIntent;
+  hubCopy?: WizardSessionHubCopy | null;
+  masterHubMode?: OrganizerMasterHubMode;
   onClose: () => void;
+  /** CTA carte d’honneur — Stripe 49 $ / export / checkout Héritage. */
+  onHonorPrimary?: () => Promise<void>;
 };
 
 function SimOverlay({
@@ -97,6 +121,37 @@ function SimOverlay({
   );
 }
 
+function honorFieldsForMode(
+  hubCopy: WizardSessionHubCopy,
+  mode: OrganizerMasterHubMode,
+): Pick<
+  QuietLuxuryExitHubCopy,
+  "archiveTitle" | "archiveBody" | "archiveCta" | "archiveUnlocking"
+> {
+  if (mode === "download_included") {
+    return {
+      archiveTitle: hubCopy.archiveIncludedTitle,
+      archiveBody: hubCopy.archiveIncludedBody,
+      archiveCta: hubCopy.archiveIncludedCta,
+      archiveUnlocking: hubCopy.archiveIncludedUnlocking,
+    };
+  }
+  if (mode === "finalize_heritage") {
+    return {
+      archiveTitle: hubCopy.archiveFinalizeTitle,
+      archiveBody: hubCopy.archiveFinalizeBody,
+      archiveCta: hubCopy.archiveFinalizeCta,
+      archiveUnlocking: hubCopy.archiveFinalizeUnlocking,
+    };
+  }
+  return {
+    archiveTitle: hubCopy.archiveTitle,
+    archiveBody: hubCopy.archiveBody,
+    archiveCta: hubCopy.archiveCta,
+    archiveUnlocking: hubCopy.archiveUnlocking,
+  };
+}
+
 export function WizardSessionProjection({
   projectId,
   storyboard,
@@ -113,18 +168,23 @@ export function WizardSessionProjection({
   teaserPlay,
   teaserPause,
   teaserLoading,
-  hubCopy,
+  intent,
+  hubCopy = null,
+  masterHubMode = "buy_master",
   onClose,
+  onHonorPrimary,
 }: Props) {
+  const isOfficial = intent === "official_session" && Boolean(hubCopy);
   const [isLoading, setIsLoading] = useState(true);
   const [mediaById, setMediaById] = useState(
     () => new Map<string, ReturnType<typeof mediaApiToMontageItems>[number]>(),
   );
   const [overlay, setOverlay] = useState<OverlayKind>(null);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [shareBusy, setShareBusy] = useState(false);
+  const [shareError, setShareError] = useState<string | null>(null);
   const [shareCopied, setShareCopied] = useState(false);
-
-  const shareUrl =
-    typeof window !== "undefined" ? window.location.href : `/${locale}/studio`;
+  const [unlockError, setUnlockError] = useState<string | null>(null);
 
   const { slides, tracks, chapterMeta } = useMemo(
     () => buildTeaserFromStoryboard(storyboard, mediaById, chapterTitles),
@@ -199,20 +259,73 @@ export function WizardSessionProjection({
     };
   }, [closeProjection, onClose]);
 
-  const hubFields: QuietLuxuryExitHubCopy = {
-    headline: hubCopy.headline,
-    replay: hubCopy.replay,
-    share: hubCopy.share,
-    archiveTitle: hubCopy.archiveTitle,
-    archiveBody: hubCopy.archiveBody,
-    archiveCta: hubCopy.archiveCta,
-    guestCopyTitle: hubCopy.guestCopyTitle,
-    guestCopyBody: hubCopy.guestCopyBody,
-    guestCopyCta: hubCopy.guestCopyCta,
-    lueur: hubCopy.lueur,
-    lineage: hubCopy.lineage,
-    closeAria: hubCopy.closeAria,
-  };
+  const honor = hubCopy
+    ? honorFieldsForMode(hubCopy, masterHubMode)
+    : null;
+
+  const hubFields: QuietLuxuryExitHubCopy | null =
+    hubCopy && honor
+      ? {
+          headline: hubCopy.headline,
+          replay: hubCopy.replay,
+          share: hubCopy.share,
+          archiveTitle: honor.archiveTitle,
+          archiveBody: honor.archiveBody,
+          archiveCta: honor.archiveCta,
+          archiveUnlocking: honor.archiveUnlocking,
+          guestCopyTitle: hubCopy.guestCopyTitle,
+          guestCopyBody: hubCopy.guestCopyBody,
+          guestCopyCta: hubCopy.guestCopyCta,
+          lueur: hubCopy.lueur,
+          lineage: hubCopy.lineage,
+          closeAria: hubCopy.closeAria,
+        }
+      : null;
+
+  const handleHonorPrimary = useCallback(async () => {
+    if (!onHonorPrimary || !hubCopy) return;
+    setUnlockError(null);
+    try {
+      await onHonorPrimary();
+    } catch {
+      setUnlockError(hubCopy.archiveUnlockError);
+      throw new Error("honor_primary_failed");
+    }
+  }, [hubCopy, onHonorPrimary]);
+
+  const openShare = useCallback(async () => {
+    if (!hubCopy) return;
+    setOverlay("share");
+    setShareCopied(false);
+    setShareError(null);
+    if (!projectId) {
+      setShareError(hubCopy.shareLinkError);
+      return;
+    }
+    if (shareUrl) return;
+    setShareBusy(true);
+    try {
+      const res = await fetch(`/api/projects/${projectId}/stream-link`, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        shareUrl?: string;
+        error?: string;
+      };
+      if (!res.ok || !data.shareUrl) {
+        setShareError(hubCopy.shareLinkError);
+        return;
+      }
+      setShareUrl(data.shareUrl);
+    } catch {
+      setShareError(hubCopy.shareLinkError);
+    } finally {
+      setShareBusy(false);
+    }
+  }, [hubCopy, locale, projectId, shareUrl]);
 
   return (
     <div className="fixed inset-0 z-[80] h-dvh w-screen overflow-hidden bg-[#000000] text-zinc-100">
@@ -249,37 +362,46 @@ export function WizardSessionProjection({
             play: teaserPlay,
             pause: teaserPause,
           }}
-          exitHub={{
-            copy: hubFields,
-            viewerRole: "organizer",
-            onUnlockMaster: () => {
-              console.info("[wizard-session] onUnlockMaster (simulé)");
-              setOverlay("checkout");
-            },
-            onShareSession: () => {
-              console.info("[wizard-session] onShareSession (simulé)");
-              setShareCopied(false);
-              setOverlay("share");
-            },
-            onUpgradePackage: () => {
-              console.info("[wizard-session] onUpgradePackage (simulé)");
-              setOverlay("heritage");
-            },
-          }}
+          onPlaybackComplete={
+            isOfficial
+              ? undefined
+              : () => {
+                  closeProjection();
+                }
+          }
+          exitHub={
+            isOfficial && hubFields
+              ? {
+                  copy: hubFields,
+                  viewerRole: "organizer",
+                  onUnlockMaster: handleHonorPrimary,
+                  onShareSession: () => {
+                    void openShare();
+                  },
+                  onUpgradePackage:
+                    masterHubMode === "buy_master"
+                      ? () => {
+                          setOverlay("heritage");
+                        }
+                      : undefined,
+                  onDismiss: closeProjection,
+                }
+              : null
+          }
           className="h-full w-full"
         />
       )}
 
-      {overlay === "checkout" ? (
-        <SimOverlay
-          title={hubCopy.checkoutModalTitle}
-          body={hubCopy.checkoutModalBody}
-          closeLabel={hubCopy.checkoutModalClose}
-          onClose={() => setOverlay(null)}
-        />
+      {unlockError ? (
+        <p
+          className="pointer-events-none absolute bottom-8 left-1/2 z-[85] w-[min(92vw,24rem)] -translate-x-1/2 text-center text-[12px] font-light tracking-wide text-zinc-400"
+          role="status"
+        >
+          {unlockError}
+        </p>
       ) : null}
 
-      {overlay === "share" ? (
+      {isOfficial && hubCopy && overlay === "share" ? (
         <SimOverlay
           title={hubCopy.shareModalTitle}
           body={hubCopy.shareLinkLabel}
@@ -287,42 +409,48 @@ export function WizardSessionProjection({
           onClose={() => setOverlay(null)}
         >
           <p className="mt-4 break-all rounded-sm border border-white/10 bg-black/40 px-3 py-2 text-[11px] font-light text-zinc-400">
-            {shareUrl}
+            {shareBusy
+              ? hubCopy.shareLinkLoading
+              : shareError
+                ? shareError
+                : (shareUrl ?? "—")}
           </p>
-          <div className="mt-4 flex flex-wrap gap-4">
-            <button
-              type="button"
-              onClick={() => {
-                void navigator.clipboard
-                  .writeText(shareUrl)
-                  .then(() => setShareCopied(true))
-                  .catch(() => setShareCopied(false));
-              }}
-              className="text-[12px] font-light tracking-[0.14em] text-zinc-200 underline decoration-white/25 underline-offset-4"
-            >
-              {shareCopied ? hubCopy.shareCopied : hubCopy.shareCopy}
-            </button>
-            {typeof navigator !== "undefined" &&
-            typeof navigator.share === "function" ? (
+          {shareUrl ? (
+            <div className="mt-4 flex flex-wrap gap-4">
               <button
                 type="button"
                 onClick={() => {
-                  void navigator
-                    .share({ title: hubCopy.shareModalTitle, url: shareUrl })
-                    .catch(() => {
-                      /* annulé */
-                    });
+                  void navigator.clipboard
+                    .writeText(shareUrl)
+                    .then(() => setShareCopied(true))
+                    .catch(() => setShareCopied(false));
                 }}
                 className="text-[12px] font-light tracking-[0.14em] text-zinc-200 underline decoration-white/25 underline-offset-4"
               >
-                {hubCopy.shareNative}
+                {shareCopied ? hubCopy.shareCopied : hubCopy.shareCopy}
               </button>
-            ) : null}
-          </div>
+              {typeof navigator !== "undefined" &&
+              typeof navigator.share === "function" ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    void navigator
+                      .share({ title: hubCopy.shareModalTitle, url: shareUrl })
+                      .catch(() => {
+                        /* annulé */
+                      });
+                  }}
+                  className="text-[12px] font-light tracking-[0.14em] text-zinc-200 underline decoration-white/25 underline-offset-4"
+                >
+                  {hubCopy.shareNative}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
         </SimOverlay>
       ) : null}
 
-      {overlay === "heritage" ? (
+      {isOfficial && hubCopy && overlay === "heritage" ? (
         <SimOverlay
           title={hubCopy.heritageModalTitle}
           body={hubCopy.heritageModalBody}

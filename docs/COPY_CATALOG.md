@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-22 · **Entrées :** 960
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-22 · **Entrées :** 982
 
 ## `common`
 
@@ -760,6 +760,8 @@
 | `tributeWizard.extensionsFooterContinueCta` | Voir le film | See the film |
 | `tributeWizard.stepPreviewTitle` | La séance | The session |
 | `tributeWizard.stepPreviewDescription` | Ressentez le souffle de votre hommage. Ensuite, choisissez comment le garder. | Feel the breath of your tribute. Then choose how you want to keep it. |
+| `tributeWizard.previewLaunchSession` | Vivre la projection | Experience the screening |
+| `tributeWizard.previewLaunchSessionAria` | Lancer la séance officielle en plein écran | Launch the official session fullscreen |
 | `tributeWizard.previewLoadingMedia` | Nous préparons votre film… | We’re preparing your film… |
 | `tributeWizard.previewPayCta` | J’adore, préserver cet hommage | I love it. Preserve this tribute |
 | `tributeWizard.previewPayCtaSoftCap` | Préserver Héritage | Preserve Heritage |
@@ -1042,9 +1044,24 @@
 | `quietLuxuryExitHub.archiveTitle` | Conserver l'Archive Master · 49 $ | Keep the Cinema Master · $49 |
 | `quietLuxuryExitHub.archiveBody` | Fichier 1080p téléchargeable · mix studio masterisé · transmission familiale | Downloadable 1080p file · mastered studio mix · family transmission |
 | `quietLuxuryExitHub.archiveCta` | Conserver l'Archive Master | Keep the Cinema Master |
+| `quietLuxuryExitHub.archiveUnlocking` | Ouverture du paiement… | Opening checkout… |
+| `quietLuxuryExitHub.archiveUnlockError` | Le paiement n'a pas pu s'ouvrir. Réessayez dans un instant. | Checkout could not open. Please try again in a moment. |
+| `quietLuxuryExitHub.archiveIncludedTitle` | Télécharger l'Archive Master | Download the Cinema Master |
+| `quietLuxuryExitHub.archiveIncludedBody` | Incluse dans votre Écrin · fichier 1080p pour vos archives familiales | Included in your collection · 1080p file for your family archives |
+| `quietLuxuryExitHub.archiveIncludedCta` | Télécharger l'archive | Download the archive |
+| `quietLuxuryExitHub.archiveIncludedUnlocking` | Préparation du téléchargement… | Preparing your download… |
+| `quietLuxuryExitHub.archiveFinalizeTitle` | Finaliser votre Écrin | Complete your collection |
+| `quietLuxuryExitHub.archiveFinalizeBody` | L'Archive Master est déjà incluse dans Héritage — validez votre hommage pour la télécharger. | The Cinema Master is already included with Heritage — confirm your tribute to download it. |
+| `quietLuxuryExitHub.archiveFinalizeCta` | Finaliser l'Écrin | Complete checkout |
+| `quietLuxuryExitHub.archiveFinalizeUnlocking` | Ouverture du paiement… | Opening checkout… |
+| `quietLuxuryExitHub.masterSuccessNotice` | L'Archive Master est débloquée. Le rendu sera prêt sous peu. | Cinema Master unlocked. Your render will be ready shortly. |
+| `quietLuxuryExitHub.masterCancelNotice` | Paiement annulé — l'Archive Master reste disponible quand vous le souhaitez. | Payment cancelled — Cinema Master remains available whenever you wish. |
+| `quietLuxuryExitHub.noticeDismiss` | Fermer | Dismiss |
 | `quietLuxuryExitHub.guestCopyTitle` | Conserver sa copie · 15 $ | Keep your copy · $15 |
 | `quietLuxuryExitHub.guestCopyBody` | Même film masterisé · lien de téléchargement personnel | Same mastered film · personal download link |
 | `quietLuxuryExitHub.guestCopyCta` | Conserver sa copie | Keep your copy |
+| `quietLuxuryExitHub.guestCopyUnlocking` | Ouverture… | Opening… |
+| `quietLuxuryExitHub.guestCopyStubBody` | Le paiement de la copie personnelle (15 $) arrive très bientôt. Pour l'instant, revivez la séance. | Personal copy checkout ($15) is coming soon. For now, watch the session again. |
 | `quietLuxuryExitHub.lueur` | Déposer une pensée ou une lueur | Leave a thought or a light |
 | `quietLuxuryExitHub.lineage` | Transmettre à la lignée | Pass it on to the lineage |
 | `quietLuxuryExitHub.closeAria` | Quitter le plein écran | Exit fullscreen |
@@ -1053,6 +1070,8 @@
 | `quietLuxuryExitHub.checkoutModalClose` | Fermer | Close |
 | `quietLuxuryExitHub.shareModalTitle` | Partager la séance | Share the session |
 | `quietLuxuryExitHub.shareLinkLabel` | Lien de la séance | Session link |
+| `quietLuxuryExitHub.shareLinkLoading` | Préparation du lien… | Preparing the link… |
+| `quietLuxuryExitHub.shareLinkError` | Impossible de créer le lien. Réessayez. | Could not create the link. Please try again. |
 | `quietLuxuryExitHub.shareCopy` | Copier le lien | Copy link |
 | `quietLuxuryExitHub.shareCopied` | Lien copié | Link copied |
 | `quietLuxuryExitHub.shareNative` | Partager… | Share… |
@@ -1063,4 +1082,7 @@
 | `quietLuxuryExitHub.lueurModalTitle` | Pensée ou lueur | Thought or light |
 | `quietLuxuryExitHub.lueurModalBody` | Aperçu lab : en production, l'invité rejoint l'espace de recueillement pour déposer un souvenir. | Lab preview: in production, the guest reaches the sanctuary to leave a memory. |
 | `quietLuxuryExitHub.lueurModalClose` | Fermer | Close |
+| `quietLuxuryExitHub.streamLoading` | Préparation de la séance… | Preparing the session… |
+| `quietLuxuryExitHub.streamUnavailable` | Cette séance n'est plus disponible. | This session is no longer available. |
+| `quietLuxuryExitHub.streamEmpty` | La séance n'a pas encore de souvenirs à projeter. | This session does not have memories to project yet. |
 

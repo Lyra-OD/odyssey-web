@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { Locale } from "@/i18n.config";
 import { DashboardSignOut } from "@/src/components/dashboard/DashboardSignOut";
@@ -33,6 +33,7 @@ type StudioLocaleFrameProps = {
   accessRole?: WizardAccessRole;
   exitHubCopyFr: WizardSessionHubCopy;
   exitHubCopyEn: WizardSessionHubCopy;
+  checkoutReturn?: "master_success" | "master_cancel" | null;
 };
 
 /**
@@ -52,10 +53,26 @@ export function StudioLocaleFrame({
   accessRole = "owner",
   exitHubCopyFr,
   exitHubCopyEn,
+  checkoutReturn = null,
 }: StudioLocaleFrameProps) {
   const [uiLocale, setUiLocale] = useState<Locale>(locale);
+  const [checkoutNotice, setCheckoutNotice] = useState<string | null>(null);
   const copy = uiLocale === "en" ? copyEn : copyFr;
   const labels = uiLocale === "en" ? labelsEn : labelsFr;
+  const exitHub = uiLocale === "en" ? exitHubCopyEn : exitHubCopyFr;
+  const masterEntitled = checkoutReturn === "master_success";
+
+  useEffect(() => {
+    if (checkoutReturn === "master_success") {
+      setCheckoutNotice(exitHub.masterSuccessNotice);
+    } else if (checkoutReturn === "master_cancel") {
+      setCheckoutNotice(exitHub.masterCancelNotice);
+    }
+  }, [
+    checkoutReturn,
+    exitHub.masterCancelNotice,
+    exitHub.masterSuccessNotice,
+  ]);
 
   return (
     <>
@@ -78,6 +95,24 @@ export function StudioLocaleFrame({
         </div>
       </div>
 
+      {checkoutNotice ? (
+        <div
+          className="mb-6 rounded-sm border border-white/10 bg-white/[0.03] px-4 py-3 text-center"
+          role="status"
+        >
+          <p className="text-[13px] font-light tracking-wide text-zinc-200">
+            {checkoutNotice}
+          </p>
+          <button
+            type="button"
+            onClick={() => setCheckoutNotice(null)}
+            className="mt-2 text-[11px] font-light tracking-[0.14em] text-zinc-500 underline decoration-white/20 underline-offset-4 hover:text-zinc-300"
+          >
+            {exitHub.noticeDismiss}
+          </button>
+        </div>
+      ) : null}
+
       <TributeWizard
         copy={copy}
         initialDraft={initialDraft}
@@ -85,7 +120,8 @@ export function StudioLocaleFrame({
         isPartner={isPartner}
         planOverride={planOverride}
         accessRole={accessRole}
-        exitHubCopy={uiLocale === "en" ? exitHubCopyEn : exitHubCopyFr}
+        exitHubCopy={exitHub}
+        masterEntitled={masterEntitled}
         mobileUtilityTrailing={
           <>
             <LocaleSwitcher
