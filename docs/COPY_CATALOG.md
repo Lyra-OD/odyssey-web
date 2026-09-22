@@ -513,12 +513,12 @@
 | `tributeWizard.montageCreditEditAria` | Renommer le crédit musical affiché | Rename the displayed music credit |
 | `tributeWizard.montageCreditShowAria` | Afficher le crédit musical pendant la séance | Show the music credit during the session |
 | `tributeWizard.montageCreditHideAria` | Masquer le crédit musical pendant la séance | Hide the music credit during the session |
-| `tributeWizard.montageCreditModify` | Modifier | Edit |
+| `tributeWizard.montageCreditModify` | Renommer | Rename |
 | `tributeWizard.montageCreditDisplayedTitleLabel` | Titre affiché dans le film | Title shown in the film |
 | `tributeWizard.montageCreditDisplayedTitlePlaceholder` | Ex. : La chanson de Papa | e.g. Dad’s song |
 | `tributeWizard.montageCreditSave` | Enregistrer | Save |
 | `tributeWizard.montageCreditCancel` | Annuler | Cancel |
-| `tributeWizard.montageCreditShowInSession` | Afficher cette mention musicale au début du chapitre | Show this music credit at the start of the chapter |
+| `tributeWizard.montageCreditShowInSession` | Mentionner à l’écran | Show on screen |
 | `tributeWizard.montageActEmptyHint` | Aucun souvenir dans ce chapitre | No memory in this chapter |
 | `tributeWizard.montageExclude` | Laisser hors du film | Leave outside the film |
 | `tributeWizard.montageInclude` | Remettre dans le film | Return to the film |

@@ -115,12 +115,59 @@ export function isStoryboardContainerId(overId: string): boolean {
   );
 }
 
+function isChapterBlockCollisionId(overId: string): boolean {
+  return (
+    parseStoryboardChapterSortableId(overId) !== null ||
+    parseStoryboardChapterDroppableId(overId) !== null
+  );
+}
+
+function chapterIdFromBlockCollisionId(overId: string): string | null {
+  return (
+    parseStoryboardChapterSortableId(overId) ??
+    parseStoryboardChapterDroppableId(overId)
+  );
+}
+
 /**
  * Priorise les zones de dépôt (banque / chapitre) sur les vignettes sortables
  * pour éviter les drops fantômes vers le mauvais chapitre.
+ * Drag d’un bloc chapitre : ignore les médias + exclut le chapitre actif
+ * (sinon le pointeur reste « sur soi » et l’ordre ne se fige jamais).
  */
 export const storyboardCollisionDetection: CollisionDetection = (args) => {
+  const activeData = args.active.data.current as
+    | StoryboardChapterBlockDragData
+    | { type?: string }
+    | undefined;
   const pointerHits = pointerWithin(args);
+
+  if (activeData?.type === STORYBOARD_CHAPTER_BLOCK_DND_TYPE) {
+    const activeChapterId =
+      "chapterId" in activeData && typeof activeData.chapterId === "string"
+        ? activeData.chapterId
+        : chapterIdFromBlockCollisionId(String(args.active.id));
+
+    const otherChapterHit = (collisionId: string) => {
+      const chapterId = chapterIdFromBlockCollisionId(collisionId);
+      return chapterId !== null && chapterId !== activeChapterId;
+    };
+
+    const chapterHits = pointerHits.filter((collision) =>
+      otherChapterHit(String(collision.id)),
+    );
+    if (chapterHits.length > 0) return chapterHits;
+
+    const chapterContainers = args.droppableContainers.filter((container) =>
+      otherChapterHit(String(container.id)),
+    );
+    if (chapterContainers.length === 0) return [];
+    return closestCenter({
+      ...args,
+      droppableContainers: chapterContainers,
+    });
+  }
+
   const containerHits = pointerHits.filter((collision) =>
     isStoryboardContainerId(String(collision.id)),
   );

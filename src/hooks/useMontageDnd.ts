@@ -23,8 +23,6 @@ import {
   STORYBOARD_MEDIA_DND_TYPE,
   orderBankSelection,
   orderChapterSelection,
-  parseStoryboardChapterSortableId,
-  parseStoryboardChapterDroppableId,
   pointerFromDndDelta,
   measureChapterGridInsert,
   resolveDropTarget,
@@ -60,6 +58,11 @@ export function useMontageDnd({
   const [dropTargetChapterId, setDropTargetChapterId] = useState<
     string | null
   >(null);
+  const dropTargetChapterIdRef = useRef<string | null>(null);
+  const writeDropTargetChapterId = useCallback((next: string | null) => {
+    dropTargetChapterIdRef.current = next;
+    setDropTargetChapterId(next);
+  }, []);
   const [dropTargetBank, setDropTargetBank] = useState(false);
   const [dragOverChapterIndex, setDragOverChapterIndex] = useState<
     number | null
@@ -106,6 +109,10 @@ export function useMontageDnd({
       if (activeData?.type === STORYBOARD_CHAPTER_BLOCK_DND_TYPE) {
         dragPayloadRef.current = null;
         setActiveDragIds([]);
+        writeDropTargetChapterId(null);
+        setDropTargetBank(false);
+        setDragOverChapterIndex(null);
+        writeInsertPreview(null);
         return;
       }
 
@@ -142,14 +149,19 @@ export function useMontageDnd({
       setActiveDragIds(mediaIds);
       writeInsertPreview(null);
     },
-    [selectedMediaIds, selectionScope, storyboard, writeInsertPreview],
+    [selectedMediaIds, selectionScope, storyboard, writeDropTargetChapterId, writeInsertPreview],
   );
 
   const syncChapterHover = useCallback(
     (event: DragOverEvent | DragMoveEvent) => {
-      const { over } = event;
+      const { over, active } = event;
+      const activeType = (active.data.current as { type?: string } | undefined)
+        ?.type;
+      const isChapterBlockDrag =
+        activeType === STORYBOARD_CHAPTER_BLOCK_DND_TYPE;
+
       if (!over) {
-        setDropTargetChapterId(null);
+        writeDropTargetChapterId(null);
         setDropTargetBank(false);
         setDragOverChapterIndex(null);
         writeInsertPreview(null);
@@ -161,18 +173,23 @@ export function useMontageDnd({
 
       if (target.kind === "bank") {
         setDropTargetBank(true);
-        setDropTargetChapterId(null);
+        writeDropTargetChapterId(null);
         setDragOverChapterIndex(null);
         writeInsertPreview(null);
         return;
       }
 
       setDropTargetBank(false);
-      setDropTargetChapterId(target.chapterId);
+      writeDropTargetChapterId(target.chapterId);
       const chapterIndex = storyboard.chapters.findIndex(
         (chapter) => chapter.id === target.chapterId,
       );
       setDragOverChapterIndex(chapterIndex >= 0 ? chapterIndex : null);
+
+      if (isChapterBlockDrag) {
+        writeInsertPreview(null);
+        return;
+      }
 
       const pointer = pointerFromDndDelta(event.activatorEvent, event.delta);
       if (!pointer) {
@@ -201,7 +218,7 @@ export function useMontageDnd({
         writeInsertPreview(nextPreview);
       }
     },
-    [storyboard, writeInsertPreview],
+    [storyboard, writeDropTargetChapterId, writeInsertPreview],
   );
 
   const handleDragOver = useCallback(
@@ -220,12 +237,12 @@ export function useMontageDnd({
   );
 
   const clearDropTargets = useCallback(() => {
-    setDropTargetChapterId(null);
+    writeDropTargetChapterId(null);
     setDropTargetBank(false);
     setDragOverChapterIndex(null);
     writeInsertPreview(null);
     dragPayloadRef.current = null;
-  }, [writeInsertPreview]);
+  }, [writeDropTargetChapterId, writeInsertPreview]);
 
   const handleDragCancel = useCallback(() => {
     setActiveDragIds([]);
@@ -241,22 +258,27 @@ export function useMontageDnd({
         | StoryboardChapterBlockDragData
         | undefined;
       if (chapterBlockData?.type === STORYBOARD_CHAPTER_BLOCK_DND_TYPE) {
-        if (over) {
-          const overChapterId =
-            parseStoryboardChapterSortableId(String(over.id)) ??
-            parseStoryboardChapterDroppableId(String(over.id));
-          if (
-            overChapterId &&
-            overChapterId !== chapterBlockData.chapterId
-          ) {
-            onStoryboardChange(
-              reorderStoryboardChapters(
-                storyboard,
-                chapterBlockData.chapterId,
-                overChapterId,
-              ),
-            );
-          }
+        const fromOver = over
+          ? resolveDropTarget(String(over.id), storyboard)
+          : null;
+        const hoverChapterId = dropTargetChapterIdRef.current;
+        const overChapterId =
+          fromOver?.kind === "chapter" &&
+          fromOver.chapterId !== chapterBlockData.chapterId
+            ? fromOver.chapterId
+            : hoverChapterId &&
+                hoverChapterId !== chapterBlockData.chapterId
+              ? hoverChapterId
+              : null;
+
+        if (overChapterId) {
+          onStoryboardChange(
+            reorderStoryboardChapters(
+              storyboard,
+              chapterBlockData.chapterId,
+              overChapterId,
+            ),
+          );
         }
         clearDropTargets();
         return;

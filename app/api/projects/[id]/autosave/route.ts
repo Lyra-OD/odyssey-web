@@ -242,6 +242,7 @@ const StoryboardChapterSchema = z
   .object({
     id: StoryboardChapterIdSchema,
     label: z.string().trim().min(1).max(40).optional(),
+    paletteIndex: z.number().int().min(0).max(24).optional(),
     mediaIds: z.array(UuidSchema).max(WIZARD_MEDIA_ID_MAX),
     song: StoryboardSongSchema.optional(),
     mood: StoryboardChapterMoodSchema.optional(),

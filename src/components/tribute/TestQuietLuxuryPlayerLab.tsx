@@ -174,9 +174,16 @@ export function TestQuietLuxuryPlayerLab({ locale, exitHubCopy }: Props) {
       document.documentElement.removeAttribute("data-odyssey-cinema");
       return;
     }
-    document.documentElement.setAttribute("data-odyssey-cinema", "1");
+    const root = document.documentElement;
+    const prevHtmlOverflow = root.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    root.setAttribute("data-odyssey-cinema", "1");
+    root.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
     return () => {
-      document.documentElement.removeAttribute("data-odyssey-cinema");
+      root.removeAttribute("data-odyssey-cinema");
+      root.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
     };
   }, [entered]);
 

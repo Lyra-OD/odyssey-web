@@ -66,7 +66,6 @@ export function ChapterNarrativeHeader({
 }: Props) {
   const theme = getChapterTheme(chapterIndex);
   const creditFieldId = useId();
-  const showCreditId = useId();
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(title);
   const [isEditingCredit, setIsEditingCredit] = useState(false);
@@ -187,21 +186,16 @@ export function ChapterNarrativeHeader({
       </div>
 
       {hasSong ? (
-        <div className="space-y-3 pl-4 md:pl-12">
+        <div className="pl-4 md:pl-12">
           {isEditingCredit && onCreditLabelChange && creditCopy ? (
-            <div className="space-y-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-4">
-              <label
-                htmlFor={creditFieldId}
-                className="block text-sm font-medium text-neutral-200"
-              >
-                {creditCopy.displayedTitleLabel}
-              </label>
+            <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
               <input
                 ref={creditInputRef}
                 id={creditFieldId}
                 type="text"
                 value={creditDraft}
                 maxLength={80}
+                aria-label={creditCopy.displayedTitleLabel}
                 placeholder={creditCopy.displayedTitlePlaceholder}
                 onChange={(event) => setCreditDraft(event.target.value)}
                 onKeyDown={(event) => {
@@ -214,68 +208,83 @@ export function ChapterNarrativeHeader({
                     cancelCredit();
                   }
                 }}
-                className={`min-h-11 w-full rounded-lg border border-white/15 bg-black/40 px-3 text-base font-light text-zinc-100 outline-none placeholder:text-zinc-500 ${sanctuaryFocusRing}`}
+                className={`min-w-0 flex-1 rounded-md border border-white/20 bg-black/40 px-2 py-1 text-xs font-light text-white outline-none placeholder:text-zinc-500 ${sanctuaryFocusRing}`}
               />
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={saveCredit}
-                  className={`inline-flex min-h-11 items-center justify-center rounded-lg border border-white/20 bg-white/[0.08] px-4 text-sm font-medium text-zinc-100 transition-colors hover:border-white/30 hover:bg-white/[0.12] ${sanctuaryFocusRing}`}
-                >
-                  {creditCopy.save}
-                </button>
-                <button
-                  type="button"
-                  onClick={cancelCredit}
-                  className={`inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 bg-transparent px-4 text-sm font-medium text-neutral-300 transition-colors hover:border-white/20 hover:text-zinc-100 ${sanctuaryFocusRing}`}
-                >
-                  {creditCopy.cancel}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={saveCredit}
+                className={`text-xs font-medium tracking-wide text-neutral-200 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white hover:decoration-white/40 ${sanctuaryFocusRing} rounded-sm`}
+              >
+                {creditCopy.save}
+              </button>
+              <button
+                type="button"
+                onClick={cancelCredit}
+                className={`text-xs font-medium tracking-wide text-neutral-500 transition-colors hover:text-neutral-300 ${sanctuaryFocusRing} rounded-sm`}
+              >
+                {creditCopy.cancel}
+              </button>
             </div>
           ) : (
-            <div className="flex min-w-0 flex-wrap items-center gap-3">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-2">
               <p
-                className={`min-w-0 flex-1 truncate text-sm font-light italic tracking-[0.04em] md:text-base ${
-                  creditVisible ? "" : "opacity-50"
+                className={`min-w-0 max-w-[min(100%,28rem)] truncate text-xs font-light italic tracking-[0.04em] sm:text-sm ${
+                  creditVisible ? "" : "opacity-45"
                 }`}
                 style={{
                   color: creditVisible
                     ? `rgba(${theme.glowRgb}, 0.85)`
-                    : `rgba(${theme.glowRgb}, 0.45)`,
+                    : `rgba(${theme.glowRgb}, 0.4)`,
                 }}
               >
                 {songLine || "—"}
               </p>
+
               {onCreditLabelChange && creditCopy ? (
                 <button
                   type="button"
                   onClick={() => setIsEditingCredit(true)}
-                  className={`inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-white/[0.04] px-4 text-sm font-medium text-neutral-200 transition-colors hover:border-white/25 hover:bg-white/[0.08] hover:text-zinc-50 ${sanctuaryFocusRing}`}
+                  className={`inline-flex shrink-0 items-center rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs font-medium text-neutral-300 transition-colors hover:border-white/20 hover:bg-white/[0.08] hover:text-neutral-100 ${sanctuaryFocusRing}`}
                 >
                   {creditCopy.modify}
                 </button>
               ) : null}
+
+              {onShowCreditInSessionChange && creditCopy ? (
+                <>
+                  <span
+                    className="hidden text-neutral-600 sm:inline"
+                    aria-hidden
+                  >
+                    ·
+                  </span>
+                  <button
+                    type="button"
+                    role="checkbox"
+                    aria-checked={creditVisible}
+                    aria-label={creditCopy.showInSession}
+                    onClick={() =>
+                      onShowCreditInSessionChange(!creditVisible)
+                    }
+                    className={`group inline-flex min-h-9 shrink-0 items-center gap-2 rounded-md px-1 text-xs text-neutral-400 transition-colors hover:text-neutral-200 ${sanctuaryFocusRing}`}
+                  >
+                    <span
+                      className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded border border-white/20 bg-white/[0.05] transition-colors group-hover:border-white/30"
+                      aria-hidden
+                    >
+                      {creditVisible ? (
+                        <span
+                          className="h-2 w-2 rounded-[2px]"
+                          style={{ backgroundColor: `rgb(${theme.glowRgb})` }}
+                        />
+                      ) : null}
+                    </span>
+                    <span>{creditCopy.showInSession}</span>
+                  </button>
+                </>
+              ) : null}
             </div>
           )}
-
-          {onShowCreditInSessionChange && creditCopy ? (
-            <label
-              htmlFor={showCreditId}
-              className="flex min-h-11 cursor-pointer items-start gap-3 text-sm leading-snug text-neutral-300"
-            >
-              <input
-                id={showCreditId}
-                type="checkbox"
-                checked={creditVisible}
-                onChange={(event) =>
-                  onShowCreditInSessionChange(event.target.checked)
-                }
-                className={`mt-1 h-5 w-5 shrink-0 rounded border-white/25 bg-black/40 text-teal-400 focus:ring-offset-0 ${sanctuaryFocusRing}`}
-              />
-              <span className="pt-0.5">{creditCopy.showInSession}</span>
-            </label>
-          ) : null}
         </div>
       ) : null}
     </header>

@@ -46,7 +46,10 @@ import {
   MontageOnboardingGate,
   type MontageOnboardingGateCopy,
 } from "@/src/components/tribute/storyboard/MontageOnboardingGate";
-import { findChapterForMedia } from "@/src/lib/wizard/storyboardHelpers";
+import {
+  ensureChapterDisplayIdentity,
+  findChapterForMedia,
+} from "@/src/lib/wizard/storyboardHelpers";
 import { wizardStepLead, wizardStepTitle } from "@/src/lib/contribute/sanctuaryChrome";
 import { storyboardCollisionDetection } from "@/src/lib/wizard/storyboardDnd";
 import {
@@ -123,10 +126,18 @@ function resolveChapterTitle(
   index: number,
   chapterTabsCopy: MontageChapterTabsCopy,
 ): string {
+  const paletteIndex = chapter.paletteIndex ?? index;
   return (
     chapter.label?.trim() ||
-    resolveMontageChapterTabLabel(index, chapterTabsCopy)
+    resolveMontageChapterTabLabel(paletteIndex, chapterTabsCopy)
   );
+}
+
+function resolveChapterThemeIndex(
+  chapter: WizardStoryboardState["chapters"][number],
+  index: number,
+): number {
+  return chapter.paletteIndex ?? index;
 }
 
 export function StoryboardMontageStep({
@@ -204,10 +215,17 @@ export function StoryboardMontageStep({
     [storyboard.chapters, mediaById, copy.chapterTabs],
   );
 
+  useEffect(() => {
+    const next = ensureChapterDisplayIdentity(storyboard, (index) =>
+      resolveMontageChapterTabLabel(index, copy.chapterTabs),
+    );
+    if (next !== storyboard) onStoryboardChange(next);
+  }, [copy.chapterTabs, onStoryboardChange, storyboard]);
+
   const filmMapSegments = useMemo((): StoryboardFilmMapSegment[] => {
     return storyboard.chapters.map((chapter, index) => ({
       chapterId: chapter.id,
-      index,
+      index: resolveChapterThemeIndex(chapter, index),
       label: resolveChapterTitle(chapter, index, copy.chapterTabs),
       assignedCount: chapter.mediaIds.length,
       recommendedCapacity: chapterRecommendedCapacity(
@@ -250,6 +268,7 @@ export function StoryboardMontageStep({
     return {
       chapter,
       index,
+      themeIndex: resolveChapterThemeIndex(chapter, index),
       title: resolveChapterTitle(chapter, index, copy.chapterTabs),
       capacity,
       inCapacity,
@@ -621,7 +640,7 @@ export function StoryboardMontageStep({
           <ChapterRefinementDrawer
             isOpen
             chapterId={refinementChapter.chapter.id}
-            chapterIndex={refinementChapter.index}
+            chapterIndex={refinementChapter.themeIndex}
             chapterTitle={refinementChapter.title}
             songLine={refinementChapter.songLine || undefined}
             recommendedCapacity={refinementChapter.capacity}

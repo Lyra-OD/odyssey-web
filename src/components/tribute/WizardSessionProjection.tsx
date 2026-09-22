@@ -159,9 +159,16 @@ export function WizardSessionProjection({
   }, [onClose]);
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-odyssey-cinema", "1");
+    const root = document.documentElement;
+    const prevHtmlOverflow = root.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    root.setAttribute("data-odyssey-cinema", "1");
+    root.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
     return () => {
-      document.documentElement.removeAttribute("data-odyssey-cinema");
+      root.removeAttribute("data-odyssey-cinema");
+      root.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
     };
   }, []);
 
@@ -208,7 +215,7 @@ export function WizardSessionProjection({
   };
 
   return (
-    <div className="fixed inset-0 z-[80] bg-[#000000] text-zinc-100">
+    <div className="fixed inset-0 z-[80] h-dvh w-screen overflow-hidden bg-[#000000] text-zinc-100">
       <button
         type="button"
         onClick={closeProjection}

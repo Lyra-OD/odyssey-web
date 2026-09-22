@@ -123,6 +123,12 @@ export type WizardStoryboardChapter = {
   /** Titre personnalisé — si absent, l'UI utilise le libellé par défaut du chapitre. */
   label?: string;
   /**
+   * Index DA (couleur / accent) figé à la création.
+   * Suit le chapitre lors d'un réordonnancement — sinon titre/couleur « reviennent »
+   * à la place (index) et le drag paraît ne pas tenir.
+   */
+  paletteIndex?: number;
+  /**
    * Liste ordonnée des media_assets assignés à ce chapitre.
    * L'ordre narratif du chapitre = ordre du tableau.
    */
@@ -620,12 +626,20 @@ function coerceStoryboardChapter(
     typeof obj.label === "string" && obj.label.trim().length > 0
       ? obj.label.trim().slice(0, 40)
       : undefined;
+  const paletteIndexRaw = obj.paletteIndex;
+  const paletteIndex =
+    typeof paletteIndexRaw === "number" &&
+    Number.isFinite(paletteIndexRaw) &&
+    paletteIndexRaw >= 0
+      ? Math.trunc(paletteIndexRaw)
+      : undefined;
   if (mediaIds.length === 0 && !song) return undefined;
 
   return {
     id: normalizeChapterId(obj.id, index),
     mediaIds,
     ...(label ? { label } : {}),
+    ...(paletteIndex !== undefined ? { paletteIndex } : {}),
     ...(song ? { song } : {}),
     ...(mood ? { mood } : {}),
   };

@@ -113,7 +113,7 @@ export function StoryboardChapterBlock({
   onManage,
   resolveChapterDragMediaIds,
 }: Props) {
-  const theme = getChapterTheme(chapterIndex);
+  const theme = getChapterTheme(chapter.paletteIndex ?? chapterIndex);
 
   const {
     attributes: chapterSortAttributes,
@@ -174,7 +174,7 @@ export function StoryboardChapterBlock({
     >
       <div className="space-y-6">
         <ChapterNarrativeHeader
-          chapterIndex={chapterIndex}
+          chapterIndex={chapter.paletteIndex ?? chapterIndex}
           title={title}
           songTitle={chapter.song?.title}
           songArtist={chapter.song?.artist}
@@ -224,7 +224,7 @@ export function StoryboardChapterBlock({
         <ChapterCanvasGrid
           chapterId={chapter.id}
           items={inCapacityItems}
-          chapterIndex={chapterIndex}
+          chapterIndex={chapter.paletteIndex ?? chapterIndex}
           recommendedCapacity={recommendedCapacity}
           excludedIds={excludedIds}
           focalPoints={focalPoints}

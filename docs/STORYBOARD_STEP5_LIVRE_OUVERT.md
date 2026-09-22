@@ -1,14 +1,14 @@
 # Étape 5 — Le Livre Ouvert (Table de Montage)
 
 **Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L **partiel** · S5-J/K ⏳.  
-**Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 22 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 sept 2026 — Crédit musical Quiet Luxury (ligne unique) · réordonnancement chapitres : `label` + `paletteIndex` suivent le bac · DnD collision hors soi.
 - 17 sept 2026 — **D0 freeze** : S5-L partiel (titres 3 actes encore à l’écran) ; §11 commerce = Freemium V1, saga jetons morte.
 - 17 sept 2026 — Composition Magique (banque) : paille `#E4D96F` (`--wizard-magic-wheat`), plus d’amber.
 - 17 sept 2026 — Composer + Musique : halo **bloc entier** couleur chapitre (repos = même force que la carte ouverte ; drop/magie = ring +).
 - 17 sept 2026 — S8 preview → mix BA (décision) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
-- 16 sept 2026 — Drag : barre d’insertion **dans le gap** (Livre + Composer) ; overlay au-dessus de Composer.
 
 Document canonique de l'Étape 5 du wizard hommage. Complète [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (ticket S5) et [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) (§ Step 5).
 
