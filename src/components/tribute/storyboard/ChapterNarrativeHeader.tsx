@@ -1,12 +1,13 @@
 "use client";
 
-import { Eye, EyeOff, GripVertical, Pencil } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { GripVertical } from "lucide-react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
 import { StoryboardCapacityBadge } from "@/src/components/tribute/storyboard/StoryboardCapacityBadge";
+import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
 
 type ChapterDragHandle = {
@@ -15,9 +16,12 @@ type ChapterDragHandle = {
 };
 
 export type ChapterNarrativeHeaderCreditCopy = {
-  editCreditAria: string;
-  showCreditAria: string;
-  hideCreditAria: string;
+  modify: string;
+  displayedTitleLabel: string;
+  displayedTitlePlaceholder: string;
+  save: string;
+  cancel: string;
+  showInSession: string;
 };
 
 type Props = {
@@ -61,6 +65,8 @@ export function ChapterNarrativeHeader({
   onShowCreditInSessionChange,
 }: Props) {
   const theme = getChapterTheme(chapterIndex);
+  const creditFieldId = useId();
+  const showCreditId = useId();
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(title);
   const [isEditingCredit, setIsEditingCredit] = useState(false);
@@ -72,6 +78,7 @@ export function ChapterNarrativeHeader({
   const songLineParts = [displayCredit, songArtist?.trim()].filter(Boolean);
   const songLine = songLineParts.join(" · ");
   const creditVisible = showCreditInSession !== false;
+  const hasSong = Boolean(songTitle || songArtist || creditLabel);
 
   useEffect(() => {
     if (!isEditing) setDraft(title);
@@ -94,10 +101,15 @@ export function ChapterNarrativeHeader({
     if (trimmed !== title) onTitleChange(trimmed);
   }, [draft, onTitleChange, title]);
 
-  const commitCredit = useCallback(() => {
+  const saveCredit = useCallback(() => {
     setIsEditingCredit(false);
     onCreditLabelChange?.(creditDraft.trim());
   }, [creditDraft, onCreditLabelChange]);
+
+  const cancelCredit = useCallback(() => {
+    setIsEditingCredit(false);
+    setCreditDraft(displayCredit);
+  }, [displayCredit]);
 
   const handleListeners = chapterDragHandle?.listeners;
   const {
@@ -174,74 +186,95 @@ export function ChapterNarrativeHeader({
         />
       </div>
 
-      {songTitle || songArtist || creditLabel ? (
-        <div className="flex min-w-0 items-center gap-2 pl-4 md:pl-12">
-          {isEditingCredit && onCreditLabelChange ? (
-            <input
-              ref={creditInputRef}
-              type="text"
-              value={creditDraft}
-              maxLength={80}
-              aria-label={creditCopy?.editCreditAria ?? titleEditAria}
-              onChange={(event) => setCreditDraft(event.target.value)}
-              onBlur={commitCredit}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  commitCredit();
-                }
-                if (event.key === "Escape") {
-                  event.preventDefault();
-                  setIsEditingCredit(false);
-                }
-              }}
-              className="min-w-0 flex-1 border-b border-current/25 bg-transparent pb-0.5 text-sm font-light italic outline-none"
-              style={{ color: `rgba(${theme.glowRgb}, 0.85)` }}
-            />
+      {hasSong ? (
+        <div className="space-y-3 pl-4 md:pl-12">
+          {isEditingCredit && onCreditLabelChange && creditCopy ? (
+            <div className="space-y-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-4">
+              <label
+                htmlFor={creditFieldId}
+                className="block text-sm font-medium text-neutral-200"
+              >
+                {creditCopy.displayedTitleLabel}
+              </label>
+              <input
+                ref={creditInputRef}
+                id={creditFieldId}
+                type="text"
+                value={creditDraft}
+                maxLength={80}
+                placeholder={creditCopy.displayedTitlePlaceholder}
+                onChange={(event) => setCreditDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    saveCredit();
+                  }
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    cancelCredit();
+                  }
+                }}
+                className={`min-h-11 w-full rounded-lg border border-white/15 bg-black/40 px-3 text-base font-light text-zinc-100 outline-none placeholder:text-zinc-500 ${sanctuaryFocusRing}`}
+              />
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={saveCredit}
+                  className={`inline-flex min-h-11 items-center justify-center rounded-lg border border-white/20 bg-white/[0.08] px-4 text-sm font-medium text-zinc-100 transition-colors hover:border-white/30 hover:bg-white/[0.12] ${sanctuaryFocusRing}`}
+                >
+                  {creditCopy.save}
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelCredit}
+                  className={`inline-flex min-h-11 items-center justify-center rounded-lg border border-white/10 bg-transparent px-4 text-sm font-medium text-neutral-300 transition-colors hover:border-white/20 hover:text-zinc-100 ${sanctuaryFocusRing}`}
+                >
+                  {creditCopy.cancel}
+                </button>
+              </div>
+            </div>
           ) : (
-            <p
-              className={`min-w-0 flex-1 truncate text-sm font-light italic tracking-[0.04em] ${
-                creditVisible ? "" : "opacity-40 line-through"
-              }`}
-              style={{
-                color: creditVisible
-                  ? `rgba(${theme.glowRgb}, 0.85)`
-                  : `rgba(${theme.glowRgb}, 0.45)`,
-              }}
-            >
-              {songLine || "—"}
-            </p>
+            <div className="flex min-w-0 flex-wrap items-center gap-3">
+              <p
+                className={`min-w-0 flex-1 truncate text-sm font-light italic tracking-[0.04em] md:text-base ${
+                  creditVisible ? "" : "opacity-50"
+                }`}
+                style={{
+                  color: creditVisible
+                    ? `rgba(${theme.glowRgb}, 0.85)`
+                    : `rgba(${theme.glowRgb}, 0.45)`,
+                }}
+              >
+                {songLine || "—"}
+              </p>
+              {onCreditLabelChange && creditCopy ? (
+                <button
+                  type="button"
+                  onClick={() => setIsEditingCredit(true)}
+                  className={`inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-white/[0.04] px-4 text-sm font-medium text-neutral-200 transition-colors hover:border-white/25 hover:bg-white/[0.08] hover:text-zinc-50 ${sanctuaryFocusRing}`}
+                >
+                  {creditCopy.modify}
+                </button>
+              ) : null}
+            </div>
           )}
 
-          {onCreditLabelChange && creditCopy ? (
-            <button
-              type="button"
-              onClick={() => setIsEditingCredit(true)}
-              aria-label={creditCopy.editCreditAria}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
-            >
-              <Pencil className="h-3 w-3" strokeWidth={1.5} aria-hidden />
-            </button>
-          ) : null}
-
           {onShowCreditInSessionChange && creditCopy ? (
-            <button
-              type="button"
-              onClick={() => onShowCreditInSessionChange(!creditVisible)}
-              aria-label={
-                creditVisible
-                  ? creditCopy.hideCreditAria
-                  : creditCopy.showCreditAria
-              }
-              aria-pressed={creditVisible}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
+            <label
+              htmlFor={showCreditId}
+              className="flex min-h-11 cursor-pointer items-start gap-3 text-sm leading-snug text-neutral-300"
             >
-              {creditVisible ? (
-                <Eye className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden />
-              ) : (
-                <EyeOff className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden />
-              )}
-            </button>
+              <input
+                id={showCreditId}
+                type="checkbox"
+                checked={creditVisible}
+                onChange={(event) =>
+                  onShowCreditInSessionChange(event.target.checked)
+                }
+                className={`mt-1 h-5 w-5 shrink-0 rounded border-white/25 bg-black/40 text-teal-400 focus:ring-offset-0 ${sanctuaryFocusRing}`}
+              />
+              <span className="pt-0.5">{creditCopy.showInSession}</span>
+            </label>
           ) : null}
         </div>
       ) : null}

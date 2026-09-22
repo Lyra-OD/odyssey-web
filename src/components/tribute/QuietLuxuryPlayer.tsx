@@ -95,11 +95,15 @@ const CINEMA_TIMING: Timing = {
   breathBlack: 0.35,
   breathPortrait: 3.25,
   interBlack: 0.2,
-  actBridge: 3.4,
+  /** Carton titre + crédit — musique naît en fade pendant le pont. */
+  actBridge: 2.3,
   memoryCard: 6.5,
   endBlack: 1.55,
   audioFade: 1.5,
 };
+
+/** Fade-in de la piste suivante sur le pont (cinéma radio). */
+const BRIDGE_AUDIO_FADE_SEC = 1.1;
 
 const DEFAULT_IMAGE_SEC = 4.2;
 const DEFAULT_VIDEO_SEC = 10;
@@ -222,8 +226,14 @@ function buildTimeline(
       t += timing.actBridge;
     }
 
-    // Cinéma : l'audio du 1er chapitre court dès t=0 (noir) → offset = ouverture.
-    let audioCursor = actIndex === 0 && cinema ? openingDur : 0;
+    // Cinéma : piste 1 dès t=0 (offset = ouverture).
+    // Chapitres suivants : la piste a déjà couru pendant le pont → offset = durée du pont.
+    let audioCursor =
+      actIndex === 0 && cinema
+        ? openingDur
+        : actIndex > 0
+          ? timing.actBridge
+          : 0;
     act.clips.forEach((clip, clipIndex) => {
       if (clipIndex > 0 && timing.interBlack > 0) {
         segments.push({
@@ -504,10 +514,20 @@ export function QuietLuxuryPlayer({
     (timeSec: number): number => {
       const seg = segmentAt(segments, timeSec);
       if (!seg) return 0;
-      if (seg.kind === "act_bridge") return 0;
       if (seg.kind === "memory_card" || seg.kind === "end_black") return 0;
 
       const fade = timing.audioFade;
+
+      // Pont : nouvelle piste en fade-in (plus de silence mort).
+      if (seg.kind === "act_bridge") {
+        if (!seg.actAudioUrl) return 0;
+        const intoBridge = timeSec - seg.start;
+        const bridgeFade = Math.min(
+          BRIDGE_AUDIO_FADE_SEC,
+          Math.max(0.4, timing.actBridge * 0.5),
+        );
+        return clamp(intoBridge / bridgeFade, 0, 1);
+      }
 
       // Cinéma : musique dès t=0 dans le noir (fade-in), avant le nom.
       if (
@@ -530,7 +550,7 @@ export function QuietLuxuryPlayer({
       const leftInClip = seg.end - timeSec;
 
       let vol = 1;
-      // Fade-in seulement si ce clip démarre vraiment la piste (offset ~0).
+      // Fade-in entrée de piste uniquement si offset ~0 (pas après un pont déjà fondu).
       if (seg.actAudioOffsetSec < 0.05 && intoClip < fade) {
         vol = Math.min(vol, intoClip / fade);
       }
@@ -546,7 +566,7 @@ export function QuietLuxuryPlayer({
       }
       return clamp(vol, 0, 1);
     },
-    [cinema, firstActAudioUrl, openingEndSec, segments, timing.audioFade],
+    [cinema, firstActAudioUrl, openingEndSec, segments, timing.actBridge, timing.audioFade],
   );
 
   const ensureAudio = useCallback(
@@ -594,7 +614,7 @@ export function QuietLuxuryPlayer({
         ) {
           audio.currentTime = Math.max(0, seekSec);
         }
-        if (playingRef.current && volume > 0.01) {
+        if (playingRef.current) {
           if (audio.paused) {
             await audio.play();
             if (process.env.NODE_ENV === "development" && switched) {
@@ -602,18 +622,6 @@ export function QuietLuxuryPlayer({
             }
           }
           setAudioNeedsGesture(false);
-        } else if (playingRef.current && volume <= 0.01 && switched) {
-          // Précharge pendant le pont (volume 0) — amorce la piste suivante.
-          try {
-            await audio.play();
-            audio.pause();
-            audio.currentTime = Math.max(0, seekSec);
-            if (process.env.NODE_ENV === "development") {
-              console.info("[ql-audio] preloaded on bridge", { url });
-            }
-          } catch (err) {
-            console.warn("[ql-audio] preload play() rejected", { url, err });
-          }
         }
       } catch (err) {
         console.warn("[ql-audio] play() rejected", { url, err });
@@ -681,9 +689,9 @@ export function QuietLuxuryPlayer({
         const localAudio = timeSec - seg.start + seg.actAudioOffsetSec;
         void ensureAudio(seg.actAudioUrl, localAudio, volume);
       } else if (seg.kind === "act_bridge") {
-        // Silence sur le carton + précharge de la piste du chapitre suivant.
         if (seg.actAudioUrl) {
-          void ensureAudio(seg.actAudioUrl, 0, 0);
+          const localAudio = timeSec - seg.start;
+          void ensureAudio(seg.actAudioUrl, localAudio, volume);
         } else if (audioRef.current) {
           audioRef.current.volume = 0;
           if (process.env.NODE_ENV === "development") {

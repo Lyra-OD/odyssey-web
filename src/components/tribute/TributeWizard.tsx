@@ -2795,6 +2795,13 @@ export function TributeWizard({
                 creditEditAria: copy.montageCreditEditAria,
                 creditShowAria: copy.montageCreditShowAria,
                 creditHideAria: copy.montageCreditHideAria,
+                creditModify: copy.montageCreditModify,
+                creditDisplayedTitleLabel: copy.montageCreditDisplayedTitleLabel,
+                creditDisplayedTitlePlaceholder:
+                  copy.montageCreditDisplayedTitlePlaceholder,
+                creditSave: copy.montageCreditSave,
+                creditCancel: copy.montageCreditCancel,
+                creditShowInSession: copy.montageCreditShowInSession,
                 refinement: {
                   title: copy.montageRefinementTitle,
                   closeAria: copy.montageRefinementCloseAria,

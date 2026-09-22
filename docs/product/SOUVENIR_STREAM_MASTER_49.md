@@ -5,7 +5,7 @@
 **Dernière MAJ :** 22 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 22 sept 2026 — **Tranche 1+** : séance complète · crédit musical (`creditLabel` / `showCreditInSession`) · précharge audio au pont · logs ql-audio.
+- 22 sept 2026 — **Tranche 1+** : pont musical (fade ~1,1 s) · `actBridge` 2,3 s · crédit musical éditable · précharge audio.
 - 21 sept 2026 — **C8 hub lab** : sortie post-noir (Revoir · Archive 49 $ · Lueur · Lignée) sur `/test-player`.
 - 21 sept 2026 — **C4 polish cinéma** : `/[lang]/test-player` · Fullscreen · Kodak A24 · pastille conditionnelle · micro-noir soft · aide masquée.
 - 21 sept 2026 — **C4** `QuietLuxuryPlayer` : MP3 clock · dual video · pastille · noir ≥1 s → callback.

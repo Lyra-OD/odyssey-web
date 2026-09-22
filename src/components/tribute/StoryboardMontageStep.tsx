@@ -92,6 +92,12 @@ export type StoryboardMontageStepCopy = {
   creditEditAria: string;
   creditShowAria: string;
   creditHideAria: string;
+  creditModify: string;
+  creditDisplayedTitleLabel: string;
+  creditDisplayedTitlePlaceholder: string;
+  creditSave: string;
+  creditCancel: string;
+  creditShowInSession: string;
   refinement: ChapterRefinementDrawerCopy;
   multiDragLabel: string;
   onboarding: MontageOnboardingGateCopy;
@@ -547,9 +553,12 @@ export function StoryboardMontageStep({
               titleEditAria={copy.chapterTitleEditAria}
               chapterReorderAria={copy.chapterReorderAria}
               creditCopy={{
-                editCreditAria: copy.creditEditAria,
-                showCreditAria: copy.creditShowAria,
-                hideCreditAria: copy.creditHideAria,
+                modify: copy.creditModify,
+                displayedTitleLabel: copy.creditDisplayedTitleLabel,
+                displayedTitlePlaceholder: copy.creditDisplayedTitlePlaceholder,
+                save: copy.creditSave,
+                cancel: copy.creditCancel,
+                showInSession: copy.creditShowInSession,
               }}
               toggleSelectAria={copy.toggleSelectAria}
               onMediaClick={handleMediaClick}
