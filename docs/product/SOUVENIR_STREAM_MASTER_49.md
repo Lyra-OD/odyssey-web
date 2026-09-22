@@ -5,11 +5,11 @@
 **Dernière MAJ :** 22 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 22 sept 2026 — Fix MP3 perso séance : gate URL signée avant autoplay · waitForAudioReady · prime Visionne.
 - 22 sept 2026 — Polish séance Studio : crédit Quiet Luxury · zéro scrollbar cinéma · chapitres qui gardent leur identité au drag.
 - 22 sept 2026 — **Tranche 1+** : pont musical (fade ~1,1 s) · `actBridge` 2,3 s · crédit musical éditable · précharge audio.
 - 21 sept 2026 — **C8 hub lab** : sortie post-noir (Revoir · Archive 49 $ · Lueur · Lignée) sur `/test-player`.
 - 21 sept 2026 — **C4 polish cinéma** : `/[lang]/test-player` · Fullscreen · Kodak A24 · pastille conditionnelle · micro-noir soft · aide masquée.
-- 21 sept 2026 — **C4** `QuietLuxuryPlayer` : MP3 clock · dual video · pastille · noir ≥1 s → callback.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 

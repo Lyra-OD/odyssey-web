@@ -4,11 +4,11 @@
 **Dernière MAJ :** 22 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 sept 2026 — Fix MP3 perso en séance : attendre URL signée + priming au clic Visionne.
 - 22 sept 2026 — Quiet Luxury crédit en-tête · réordonnancement chapitres (identité DA figée) · séance sans scrollbar page.
 - 22 sept 2026 — **Tranche 1+** pont musical (fade ~1,1 s, bridge 2,3 s) + crédit éditable — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 22 sept 2026 — **Tranche 1+** crédit musical éditable + toggle séance · précharge audio au pont (chap. 3+) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 22 sept 2026 — **Tranche 1+** séance complète (tous médias, titres cinéma, pause KB, portrait+focal) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
-- 22 sept 2026 — **Tranche 1** capsule « Voir la séance » sur la film map (draft réel, fullscreen sans hang, hub simulé) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

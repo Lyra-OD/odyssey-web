@@ -69,6 +69,14 @@ async function resolveUploadAudioUrl(
   }
 }
 
+function uploadStoragePathsKey(tracks: TeaserTracks): string {
+  return Object.values(tracks)
+    .map((t) => t.storagePath)
+    .filter((p): p is string => Boolean(p))
+    .sort()
+    .join("|");
+}
+
 export function CinematicTeaser({
   slides,
   tracks,
@@ -90,13 +98,20 @@ export function CinematicTeaser({
   const [uploadAudioByPath, setUploadAudioByPath] = useState<
     Record<string, string>
   >({});
+  const [uploadResolveDone, setUploadResolveDone] = useState(false);
+
+  const uploadPathsKey = uploadStoragePathsKey(tracks);
+  const needsUploadAudio = uploadPathsKey.length > 0;
 
   useEffect(() => {
-    if (!projectId) return;
-    const paths = Object.values(tracks)
-      .map((t) => t.storagePath)
-      .filter((p): p is string => Boolean(p));
+    if (!projectId || !needsUploadAudio) {
+      setUploadAudioByPath({});
+      setUploadResolveDone(true);
+      return;
+    }
+    const paths = uploadPathsKey.split("|").filter(Boolean);
     let cancelled = false;
+    setUploadResolveDone(false);
     void (async () => {
       const next: Record<string, string> = {};
       await Promise.all(
@@ -105,12 +120,15 @@ export function CinematicTeaser({
           if (url) next[path] = url;
         }),
       );
-      if (!cancelled) setUploadAudioByPath(next);
+      if (!cancelled) {
+        setUploadAudioByPath(next);
+        setUploadResolveDone(true);
+      }
     })();
     return () => {
       cancelled = true;
     };
-  }, [projectId, tracks]);
+  }, [needsUploadAudio, projectId, uploadPathsKey]);
 
   const acts: QuietLuxuryAct[] = useMemo(() => {
     const groups = groupSlidesByTrack(slides);
@@ -160,13 +178,26 @@ export function CinematicTeaser({
     });
   }, [chapterMeta, projectId, slides, tracks, uploadAudioByPath]);
 
+  // MP3 perso : attendre l'URL signée avant autoplay, sinon la séance part muette.
+  const canAutoPlay = autoPlay && (!needsUploadAudio || uploadResolveDone);
+
+  if (needsUploadAudio && !uploadResolveDone) {
+    return (
+      <div
+        className={`flex items-center justify-center bg-black text-sm font-light text-zinc-500 ${className ?? ""}`}
+      >
+        {copy.loading}
+      </div>
+    );
+  }
+
   return (
     <QuietLuxuryPlayer
       acts={acts}
       openingPortraitUrl={openingPortraitUrl ?? slides[0]?.imageUrl ?? null}
       memoryCard={memoryCard}
       salonBadge={salonBadge}
-      autoPlay={autoPlay}
+      autoPlay={canAutoPlay}
       showControls={!cinema}
       cinema={cinema}
       primedAudio={primedAudio}

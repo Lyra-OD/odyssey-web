@@ -23,6 +23,7 @@ import {
   type QuietLuxuryViewerRole,
 } from "@/src/components/tribute/QuietLuxuryExitHub";
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
+import { waitForAudioReady } from "@/src/lib/wizard/musicPreview";
 
 export type QuietLuxuryKenBurns = "push" | "pull";
 
@@ -169,7 +170,17 @@ function sameMediaUrl(a: string | null, b: string | null): boolean {
   try {
     const origin =
       typeof window !== "undefined" ? window.location.origin : "http://local";
-    return new URL(a, origin).pathname === new URL(b, origin).pathname;
+    const ua = new URL(a, origin);
+    const ub = new URL(b, origin);
+    // Proxy Stingray : même pathname, le trackId est dans la query.
+    if (
+      ua.pathname === ub.pathname &&
+      ua.pathname.includes("/api/music/preview")
+    ) {
+      return ua.searchParams.get("trackId") === ub.searchParams.get("trackId");
+    }
+    // Signed storage : le token change, le pathname suffit.
+    return ua.pathname === ub.pathname;
   } catch {
     return a === b;
   }
@@ -605,6 +616,21 @@ export function QuietLuxuryPlayer({
           },
           { once: true },
         );
+        try {
+          await Promise.race([
+            waitForAudioReady(audio),
+            new Promise<never>((_, reject) => {
+              window.setTimeout(
+                () => reject(new Error("audio_ready_timeout")),
+                8000,
+              );
+            }),
+          ]);
+        } catch (err) {
+          console.warn("[ql-audio] waitForAudioReady failed", { url, err });
+          if (playingRef.current) setAudioNeedsGesture(true);
+          return;
+        }
       }
       audio.volume = clamp(volume, 0, 1);
       try {

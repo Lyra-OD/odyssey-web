@@ -135,6 +135,7 @@ import {
 } from "@/src/lib/wizard/stingrayCatalog";
 import { shouldOfferMagicSoftCap } from "@/src/lib/wizard/softCap";
 import { MUSIC_RIGHTS_TOS_VERSION } from "@/src/lib/wizard/exportGate";
+import { resolveStingraySongPreviewUrl } from "@/src/lib/wizard/musicPreview";
 import {
   isWizardStepAllowedForRole,
   type WizardAccessRole,
@@ -415,7 +416,10 @@ export function TributeWizard({
   );
   const [projectMediaCount, setProjectMediaCount] = useState(0);
   const [sessionOpen, setSessionOpen] = useState(false);
-  const [sessionAudio] = useState<HTMLAudioElement | null>(null);
+  const [sessionAudio, setSessionAudio] = useState<HTMLAudioElement | null>(
+    null,
+  );
+  const sessionAudioRef = useRef<HTMLAudioElement | null>(null);
   const [step3UploadRunning, setStep3UploadRunning] = useState(false);
   const [isPartner] = useState(isPartnerInitial);
   // Cascade V-Final : ChannelProfile décide l'entrée (partner = Souvenir 0 $,
@@ -1046,28 +1050,56 @@ export function TributeWizard({
   const canWatchSession =
     currentStep >= 5 && hasSessionMedia && Boolean(exitHubCopy);
 
-  const openWatchSession = useCallback(() => {
-    const audio = sessionAudio;
-    const src = audio?.currentSrc?.trim() || audio?.src?.trim();
-    if (audio && src) {
+  const openWatchSession = useCallback(async () => {
+    const projectId = uploadProjectId;
+    let audio = sessionAudioRef.current;
+    if (!audio) {
+      audio = new Audio();
       audio.preload = "auto";
-      try {
+      sessionAudioRef.current = audio;
+    }
+
+    const firstSong = wizardStoryboard.storyboard.chapters.find(
+      (chapter) => chapter.song,
+    )?.song;
+
+    if (firstSong && projectId) {
+      let previewUrl = "";
+      if (firstSong.source === "stingray") {
+        previewUrl = resolveStingraySongPreviewUrl(firstSong, projectId);
+      } else {
+        try {
+          const res = await fetch(
+            `/api/projects/${projectId}/music?path=${encodeURIComponent(firstSong.storagePath)}`,
+          );
+          const body = (await res.json().catch(() => ({}))) as {
+            signedUrl?: string;
+          };
+          if (res.ok && body.signedUrl?.trim()) {
+            previewUrl = body.signedUrl.trim();
+          }
+        } catch {
+          /* prime best-effort */
+        }
+      }
+
+      if (previewUrl) {
+        audio.src = previewUrl;
         audio.volume = 0;
-        void audio
-          .play()
-          .then(() => {
-            audio.pause();
-          })
-          .catch(() => {
-            /* prime best-effort — ne bloque pas l’ouverture */
-          });
-      } catch {
-        /* prime best-effort */
+        try {
+          await audio.play();
+          audio.pause();
+          audio.currentTime = 0;
+        } catch {
+          /* gesture unlock best-effort — ne bloque pas l’ouverture */
+        }
       }
     }
+
+    setSessionAudio(audio);
     setSessionOpen(true);
     void requestNativeFullscreen(document.documentElement);
-  }, [sessionAudio]);
+  }, [uploadProjectId, wizardStoryboard.storyboard.chapters]);
 
   const closeWatchSession = useCallback(() => {
     setSessionOpen(false);
