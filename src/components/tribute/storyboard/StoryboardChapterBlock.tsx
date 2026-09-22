@@ -16,6 +16,7 @@ import {
   type ChapterCanvasGridCopy,
 } from "@/src/components/tribute/storyboard/ChapterCanvasGrid";
 import { ChapterNarrativeHeader } from "@/src/components/tribute/storyboard/ChapterNarrativeHeader";
+import type { ChapterNarrativeHeaderCreditCopy } from "@/src/components/tribute/storyboard/ChapterNarrativeHeader";
 import {
   chapterGlowShadow,
   chapterShellClass,
@@ -53,6 +54,7 @@ type Props = {
   cardCopy: MontageMediaCardCopy;
   titleEditAria: string;
   chapterReorderAria: string;
+  creditCopy?: ChapterNarrativeHeaderCreditCopy;
   toggleSelectAria: string;
   activeDragIds: readonly string[];
   selectedMediaIds: readonly string[];
@@ -67,6 +69,8 @@ type Props = {
   onToggleMediaSelect: (assetId: string) => void;
   onShiftMediaSelect: (assetId: string) => void;
   onTitleChange: (nextTitle: string) => void;
+  onCreditLabelChange?: (nextLabel: string) => void;
+  onShowCreditInSessionChange?: (show: boolean) => void;
   onAutoFill: () => void;
   onClear: () => void;
   onManage: () => void;
@@ -87,6 +91,7 @@ export function StoryboardChapterBlock({
   cardCopy,
   titleEditAria,
   chapterReorderAria,
+  creditCopy,
   toggleSelectAria,
   activeDragIds,
   selectedMediaIds,
@@ -101,6 +106,8 @@ export function StoryboardChapterBlock({
   onToggleMediaSelect,
   onShiftMediaSelect,
   onTitleChange,
+  onCreditLabelChange,
+  onShowCreditInSessionChange,
   onAutoFill,
   onClear,
   onManage,
@@ -171,10 +178,13 @@ export function StoryboardChapterBlock({
           title={title}
           songTitle={chapter.song?.title}
           songArtist={chapter.song?.artist}
+          creditLabel={chapter.song?.creditLabel}
+          showCreditInSession={chapter.song?.showCreditInSession}
           capacity={recommendedCapacity}
           assignedCount={chapter.mediaIds.length}
           titleEditAria={titleEditAria}
           chapterReorderAria={chapterReorderAria}
+          creditCopy={creditCopy}
           chapterDragHandle={
             chapterSortableEnabled
               ? {
@@ -185,6 +195,8 @@ export function StoryboardChapterBlock({
           }
           capacityCopy={capacityCopy}
           onTitleChange={onTitleChange}
+          onCreditLabelChange={onCreditLabelChange}
+          onShowCreditInSessionChange={onShowCreditInSessionChange}
         />
 
         <ChapterActionCluster

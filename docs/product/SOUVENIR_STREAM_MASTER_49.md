@@ -1,15 +1,15 @@
 # Souvenir — Stream 0 $ · Master cinéma 49 $ · Moteur cercle
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
-**Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C8 hub lab** · suite **C5/C7 reportés** · C9–C14 · trajectoire cercle + Phase 2 isolée.  
-**Dernière MAJ :** 21 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C8 hub lab** · **Tranche 1 Studio** · suite **C5/C7 reportés** · C9–C14 · trajectoire cercle + Phase 2 isolée.  
+**Dernière MAJ :** 22 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 22 sept 2026 — **Tranche 1+** : séance complète · crédit musical (`creditLabel` / `showCreditInSession`) · précharge audio au pont · logs ql-audio.
 - 21 sept 2026 — **C8 hub lab** : sortie post-noir (Revoir · Archive 49 $ · Lueur · Lignée) sur `/test-player`.
 - 21 sept 2026 — **C4 polish cinéma** : `/[lang]/test-player` · Fullscreen · Kodak A24 · pastille conditionnelle · micro-noir soft · aide masquée.
 - 21 sept 2026 — **C4** `QuietLuxuryPlayer` : MP3 clock · dual video · pastille · noir ≥1 s → callback.
 - 21 sept 2026 — Trajectoire **Cercle & Valeur Réseau** : QR registre (C14) · Première (C10) · Phase 2 isolée · garde-fous C4.
-- 21 sept 2026 — **C3** comparatif Séance vs Archive + CTA Master 49 $ (prestige ordi).
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -346,7 +346,7 @@ Mettre à jour [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) § add-ons *
 |------|---------|
 | Pricing / Stripe | `pricingConfig.ts`, `wizardPricing.ts`, checkout guest |
 | Export | `exportGate.ts`, `processExportJob.ts`, entitlements |
-| Player / hub | `QuietLuxuryPlayer.tsx` · `CinematicTeaser` · `PreviewStep` · exit hub (C8) · `/stream/[token]` (C14) |
+| Player / hub | `QuietLuxuryPlayer.tsx` · `CinematicTeaser` · `PreviewStep` · `WizardSessionProjection` · capsule film map · exit hub (C8) · `/stream/[token]` (C14) |
 | Croissance | lander QR, emails contributeurs, gift checkout |
 | Copy | `dictionaries/fr.json`, `en.json` |
 | RevShare | webhook amount_total > 0 |

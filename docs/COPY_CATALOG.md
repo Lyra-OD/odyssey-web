@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-22 · **Entrées :** 943
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-22 · **Entrées :** 954
 
 ## `common`
 
@@ -500,12 +500,19 @@
 | `tributeWizard.montageDirectorPrevious` | Précédent | Previous |
 | `tributeWizard.montageDirectorNext` | Suivant | Next |
 | `tributeWizard.montageDirectorCounter` | {current} / {total} | {current} / {total} |
-| `tributeWizard.montageActSparkLabel` | L’Étincelle | The Spark |
+| `tributeWizard.montageActSparkLabel` | Les Racines & L’Enfance | Roots & Beginnings |
 | `tributeWizard.montageActSparkSubtitle` | Premier chapitre | First chapter |
-| `tributeWizard.montageActEpicLabel` | L’Épopée | The Epic |
+| `tributeWizard.montageActEpicLabel` | Le Chemin & Les Passions | The Journey & Passions |
 | `tributeWizard.montageActEpicSubtitle` | Deuxième chapitre | Second chapter |
-| `tributeWizard.montageActLegacyLabel` | L’Héritage | The Legacy |
+| `tributeWizard.montageActLegacyLabel` | Les Liens & La Famille | Ties & Family |
 | `tributeWizard.montageActLegacySubtitle` | Troisième chapitre | Third chapter |
+| `tributeWizard.montageChapterHorizonsLabel` | Les Horizons | Horizons & Milestones |
+| `tributeWizard.montageChapterLegacyMemoryLabel` | L’Empreinte & Le Souvenir | Legacy & Memories |
+| `tributeWizard.watchSessionTrackCredit` | Piste : {title} — {artist} | Track: {title} — {artist} |
+| `tributeWizard.watchSessionTrackCreditTitleOnly` | Piste : {title} | Track: {title} |
+| `tributeWizard.montageCreditEditAria` | Renommer le crédit musical affiché | Rename the displayed music credit |
+| `tributeWizard.montageCreditShowAria` | Afficher le crédit musical pendant la séance | Show the music credit during the session |
+| `tributeWizard.montageCreditHideAria` | Masquer le crédit musical pendant la séance | Hide the music credit during the session |
 | `tributeWizard.montageActEmptyHint` | Aucun souvenir dans ce chapitre | No memory in this chapter |
 | `tributeWizard.montageExclude` | Laisser hors du film | Leave outside the film |
 | `tributeWizard.montageInclude` | Remettre dans le film | Return to the film |
@@ -523,6 +530,10 @@
 | `tributeWizard.basePackageLegendaryDesc` | Numérisation Gants Blancs incluse · rendu ultra-prioritaire · 250 médias, 10 chansons. | White-glove digitization included · ultra-priority rendering · 250 media, 10 songs. |
 | `tributeWizard.basePackageLegendary` | Légendaire | Legendary |
 | `tributeWizard.headerPackageLabel` | Votre forfait | Your package |
+| `tributeWizard.watchSession` | Voir la séance | Watch the session |
+| `tributeWizard.watchSessionAria` | Ouvrir la séance en plein écran | Open the session in fullscreen |
+| `tributeWizard.watchSessionClose` | Fermer la séance | Close the session |
+| `tributeWizard.watchSessionEnableSound` | Cliquez pour activer le son | Click to enable sound |
 | `tributeWizard.headerNarrativeSummary` | Votre hommage durera environ {minutes} minutes de film et accueillera jusqu’à {mediaMax} souvenirs. | Your tribute will feature approximately {minutes} minutes of film and hold up to {mediaMax} memories. |
 | `tributeWizard.headerDowngradeWarning` | Repasser à {package} retirera {count} chanson(s) déjà choisie(s). Cette action est irréversible. | Switching to {package} will remove {count} already-chosen song(s). This action can't be undone. |
 | `tributeWizard.headerDowngradeConfirmCta` | Confirmer | Confirm |

@@ -5,11 +5,13 @@ import type { WizardStoryboardChapter } from "@/src/lib/wizard/wizardState";
 
 export type MontageChapterTabsCopy = {
   ariaLabel: string;
-  /** Libellés legacy DA pour les 3 premiers chapitres (Spark / Epic / Legacy). */
+  /** Défauts cinéma universels (index 0–3) + fallback 5+. */
   tabSpark: string;
   tabEpic: string;
   tabLegacy: string;
-  /** Doit contenir `{index}`. */
+  tabHorizons: string;
+  tabLegacyMemory: string;
+  /** Doit contenir `{index}` — secours au-delà des défauts nommés. */
   tabFallback: string;
 };
 
@@ -27,6 +29,8 @@ function tabLabel(
   if (index === 0) return copy.tabSpark;
   if (index === 1) return copy.tabEpic;
   if (index === 2) return copy.tabLegacy;
+  if (index === 3) return copy.tabHorizons;
+  if (index >= 4) return copy.tabLegacyMemory;
   return copy.tabFallback.replace("{index}", String(index + 1));
 }
 

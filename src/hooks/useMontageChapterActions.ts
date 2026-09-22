@@ -6,7 +6,11 @@ import {
   autoFillChapter,
   clearChapterMedia,
 } from "@/src/lib/wizard/storyboardAutoFill";
-import { setChapterLabel } from "@/src/lib/wizard/storyboardHelpers";
+import {
+  setChapterLabel,
+  setChapterSongCreditLabel,
+  setChapterSongShowCreditInSession,
+} from "@/src/lib/wizard/storyboardHelpers";
 import {
   chapterRecommendedCapacity,
   resolveTargetSecondsPerMedia,
@@ -21,7 +25,7 @@ type UseMontageChapterActionsParams = {
   setRefinementChapterId: (chapterId: string | null) => void;
 };
 
-/** Actions par chapitre (titre, auto-remplissage, vidage, panneau de gestion). */
+/** Actions par chapitre (titre, crédit musical, auto-remplissage, vidage). */
 export function useMontageChapterActions({
   storyboard,
   onStoryboardChange,
@@ -31,6 +35,24 @@ export function useMontageChapterActions({
   const handleTitleChange = useCallback(
     (chapterId: string, nextTitle: string) => {
       onStoryboardChange(setChapterLabel(storyboard, chapterId, nextTitle));
+    },
+    [onStoryboardChange, storyboard],
+  );
+
+  const handleCreditLabelChange = useCallback(
+    (chapterId: string, nextLabel: string) => {
+      onStoryboardChange(
+        setChapterSongCreditLabel(storyboard, chapterId, nextLabel),
+      );
+    },
+    [onStoryboardChange, storyboard],
+  );
+
+  const handleShowCreditInSessionChange = useCallback(
+    (chapterId: string, show: boolean) => {
+      onStoryboardChange(
+        setChapterSongShowCreditInSession(storyboard, chapterId, show),
+      );
     },
     [onStoryboardChange, storyboard],
   );
@@ -65,6 +87,8 @@ export function useMontageChapterActions({
 
   return {
     handleTitleChange,
+    handleCreditLabelChange,
+    handleShowCreditInSessionChange,
     handleAutoFill,
     handleClear,
     handleManage,

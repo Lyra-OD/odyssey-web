@@ -9,6 +9,7 @@ import {
   TributeWizard,
   type TributeWizardCopy,
 } from "@/src/components/tribute/TributeWizard";
+import type { WizardSessionHubCopy } from "@/src/components/tribute/WizardSessionProjection";
 import type { WizardAccessRole } from "@/src/lib/wizard/collabCapabilities";
 import type { WizardInitialDraft } from "@/src/lib/wizard/wizardState";
 
@@ -30,6 +31,8 @@ type StudioLocaleFrameProps = {
   isPartner?: boolean;
   planOverride?: string;
   accessRole?: WizardAccessRole;
+  exitHubCopyFr: WizardSessionHubCopy;
+  exitHubCopyEn: WizardSessionHubCopy;
 };
 
 /**
@@ -47,6 +50,8 @@ export function StudioLocaleFrame({
   isPartner = false,
   planOverride,
   accessRole = "owner",
+  exitHubCopyFr,
+  exitHubCopyEn,
 }: StudioLocaleFrameProps) {
   const [uiLocale, setUiLocale] = useState<Locale>(locale);
   const copy = uiLocale === "en" ? copyEn : copyFr;
@@ -80,6 +85,7 @@ export function StudioLocaleFrame({
         isPartner={isPartner}
         planOverride={planOverride}
         accessRole={accessRole}
+        exitHubCopy={uiLocale === "en" ? exitHubCopyEn : exitHubCopyFr}
         mobileUtilityTrailing={
           <>
             <LocaleSwitcher

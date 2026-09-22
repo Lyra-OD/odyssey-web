@@ -1,6 +1,6 @@
 "use client";
 
-import { GripVertical } from "lucide-react";
+import { Eye, EyeOff, GripVertical, Pencil } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { DraggableAttributes } from "@dnd-kit/core";
@@ -14,21 +14,32 @@ type ChapterDragHandle = {
   listeners: SyntheticListenerMap | undefined;
 };
 
+export type ChapterNarrativeHeaderCreditCopy = {
+  editCreditAria: string;
+  showCreditAria: string;
+  hideCreditAria: string;
+};
+
 type Props = {
   chapterIndex: number;
   title: string;
   songTitle?: string | null;
   songArtist?: string | null;
+  creditLabel?: string | null;
+  showCreditInSession?: boolean;
   capacity: number | null;
   assignedCount: number;
   titleEditAria: string;
   chapterReorderAria: string;
+  creditCopy?: ChapterNarrativeHeaderCreditCopy;
   chapterDragHandle?: ChapterDragHandle;
   capacityCopy: {
     recommended: string;
     pending: string;
   };
   onTitleChange: (nextTitle: string) => void;
+  onCreditLabelChange?: (nextLabel: string) => void;
+  onShowCreditInSessionChange?: (show: boolean) => void;
 };
 
 export function ChapterNarrativeHeader({
@@ -36,18 +47,31 @@ export function ChapterNarrativeHeader({
   title,
   songTitle,
   songArtist,
+  creditLabel,
+  showCreditInSession = true,
   capacity,
   assignedCount,
   titleEditAria,
   chapterReorderAria,
+  creditCopy,
   chapterDragHandle,
   capacityCopy,
   onTitleChange,
+  onCreditLabelChange,
+  onShowCreditInSessionChange,
 }: Props) {
   const theme = getChapterTheme(chapterIndex);
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(title);
+  const [isEditingCredit, setIsEditingCredit] = useState(false);
+  const [creditDraft, setCreditDraft] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const creditInputRef = useRef<HTMLInputElement>(null);
+
+  const displayCredit = (creditLabel?.trim() || songTitle?.trim() || "") ?? "";
+  const songLineParts = [displayCredit, songArtist?.trim()].filter(Boolean);
+  const songLine = songLineParts.join(" · ");
+  const creditVisible = showCreditInSession !== false;
 
   useEffect(() => {
     if (!isEditing) setDraft(title);
@@ -57,13 +81,23 @@ export function ChapterNarrativeHeader({
     if (isEditing) inputRef.current?.focus();
   }, [isEditing]);
 
+  useEffect(() => {
+    if (isEditingCredit) {
+      setCreditDraft(displayCredit);
+      creditInputRef.current?.focus();
+    }
+  }, [isEditingCredit, displayCredit]);
+
   const commitTitle = useCallback(() => {
     setIsEditing(false);
     const trimmed = draft.trim();
     if (trimmed !== title) onTitleChange(trimmed);
   }, [draft, onTitleChange, title]);
 
-  const songLine = [songTitle, songArtist].filter(Boolean).join(" · ");
+  const commitCredit = useCallback(() => {
+    setIsEditingCredit(false);
+    onCreditLabelChange?.(creditDraft.trim());
+  }, [creditDraft, onCreditLabelChange]);
 
   const handleListeners = chapterDragHandle?.listeners;
   const {
@@ -140,10 +174,76 @@ export function ChapterNarrativeHeader({
         />
       </div>
 
-      {songLine ? (
-        <p className="truncate pl-4 text-sm font-light text-zinc-400 md:pl-12">
-          {songLine}
-        </p>
+      {songTitle || songArtist || creditLabel ? (
+        <div className="flex min-w-0 items-center gap-2 pl-4 md:pl-12">
+          {isEditingCredit && onCreditLabelChange ? (
+            <input
+              ref={creditInputRef}
+              type="text"
+              value={creditDraft}
+              maxLength={80}
+              aria-label={creditCopy?.editCreditAria ?? titleEditAria}
+              onChange={(event) => setCreditDraft(event.target.value)}
+              onBlur={commitCredit}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  commitCredit();
+                }
+                if (event.key === "Escape") {
+                  event.preventDefault();
+                  setIsEditingCredit(false);
+                }
+              }}
+              className="min-w-0 flex-1 border-b border-current/25 bg-transparent pb-0.5 text-sm font-light italic outline-none"
+              style={{ color: `rgba(${theme.glowRgb}, 0.85)` }}
+            />
+          ) : (
+            <p
+              className={`min-w-0 flex-1 truncate text-sm font-light italic tracking-[0.04em] ${
+                creditVisible ? "" : "opacity-40 line-through"
+              }`}
+              style={{
+                color: creditVisible
+                  ? `rgba(${theme.glowRgb}, 0.85)`
+                  : `rgba(${theme.glowRgb}, 0.45)`,
+              }}
+            >
+              {songLine || "—"}
+            </p>
+          )}
+
+          {onCreditLabelChange && creditCopy ? (
+            <button
+              type="button"
+              onClick={() => setIsEditingCredit(true)}
+              aria-label={creditCopy.editCreditAria}
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
+            >
+              <Pencil className="h-3 w-3" strokeWidth={1.5} aria-hidden />
+            </button>
+          ) : null}
+
+          {onShowCreditInSessionChange && creditCopy ? (
+            <button
+              type="button"
+              onClick={() => onShowCreditInSessionChange(!creditVisible)}
+              aria-label={
+                creditVisible
+                  ? creditCopy.hideCreditAria
+                  : creditCopy.showCreditAria
+              }
+              aria-pressed={creditVisible}
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
+            >
+              {creditVisible ? (
+                <Eye className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden />
+              ) : (
+                <EyeOff className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden />
+              )}
+            </button>
+          ) : null}
+        </div>
       ) : null}
     </header>
   );

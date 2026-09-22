@@ -34,6 +34,7 @@ import {
   StoryboardFilmMap,
   type StoryboardFilmMapCopy,
   type StoryboardFilmMapSegment,
+  type StoryboardFilmMapWatchSession,
 } from "@/src/components/tribute/storyboard/StoryboardFilmMap";
 import { StoryboardOpenBookLayout } from "@/src/components/tribute/storyboard/StoryboardOpenBookLayout";
 import { StoryboardChapterStack } from "@/src/components/tribute/storyboard/StoryboardChapterStack";
@@ -88,6 +89,9 @@ export type StoryboardMontageStepCopy = {
   chapterReorderAria: string;
   toggleSelectAria: string;
   filmMap: StoryboardFilmMapCopy;
+  creditEditAria: string;
+  creditShowAria: string;
+  creditHideAria: string;
   refinement: ChapterRefinementDrawerCopy;
   multiDragLabel: string;
   onboarding: MontageOnboardingGateCopy;
@@ -103,6 +107,8 @@ type Props = {
   onMagicSequenceComplete?: () => void;
   /** Lien discret « déléguer » de la porte d’onboarding → panneau Co-Créateur existant. */
   onOpenCollab?: () => void;
+  onWatchSession?: () => void;
+  watchSessionCopy?: StoryboardFilmMapWatchSession;
   copy: StoryboardMontageStepCopy;
 };
 
@@ -125,6 +131,8 @@ export function StoryboardMontageStep({
   onMagicPerformingChange,
   onMagicSequenceComplete,
   onOpenCollab,
+  onWatchSession,
+  watchSessionCopy,
   copy,
 }: Props) {
   const [mediaItems, setMediaItems] = useState<MontageMediaItem[]>([]);
@@ -367,8 +375,14 @@ export function StoryboardMontageStep({
     onMagicSequenceComplete,
   });
 
-  const { handleTitleChange, handleAutoFill, handleClear, handleManage } =
-    useMontageChapterActions({
+  const {
+    handleTitleChange,
+    handleCreditLabelChange,
+    handleShowCreditInSessionChange,
+    handleAutoFill,
+    handleClear,
+    handleManage,
+  } = useMontageChapterActions({
       storyboard,
       onStoryboardChange,
       packageId,
@@ -504,6 +518,8 @@ export function StoryboardMontageStep({
               <StoryboardFilmMap
                 segments={filmMapSegments}
                 copy={copy.filmMap}
+                watchSession={watchSessionCopy}
+                onWatchSession={onWatchSession}
               />
             }
           >
@@ -530,11 +546,18 @@ export function StoryboardMontageStep({
               cardCopy={copy.card}
               titleEditAria={copy.chapterTitleEditAria}
               chapterReorderAria={copy.chapterReorderAria}
+              creditCopy={{
+                editCreditAria: copy.creditEditAria,
+                showCreditAria: copy.creditShowAria,
+                hideCreditAria: copy.creditHideAria,
+              }}
               toggleSelectAria={copy.toggleSelectAria}
               onMediaClick={handleMediaClick}
               onToggleMediaSelect={handleToggleMediaSelect}
               onShiftMediaSelect={handleShiftMediaSelect}
               onTitleChange={handleTitleChange}
+              onCreditLabelChange={handleCreditLabelChange}
+              onShowCreditInSessionChange={handleShowCreditInSessionChange}
               onAutoFill={handleAutoFill}
               onClear={handleClear}
               onManage={handleManage}

@@ -172,6 +172,8 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
           locale={lang}
           copyFr={dictionaryFr.tributeWizard}
           copyEn={dictionaryEn.tributeWizard}
+          exitHubCopyFr={dictionaryFr.quietLuxuryExitHub}
+          exitHubCopyEn={dictionaryEn.quietLuxuryExitHub}
           labelsFr={{
             languageLabel: dictionaryFr.header.languageLabel,
             langOptionFr: dictionaryFr.header.langOptionFr,

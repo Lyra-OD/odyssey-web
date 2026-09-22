@@ -2,7 +2,8 @@
 
 /**
  * C4 — Lecteur séance Quiet Luxury.
- * MP3 = master clock · dual video ping-pong · 2 actes · noir fin ≥1 s → onPlaybackComplete.
+ * MP3 = master clock · dual video ping-pong · N actes · noir fin ≥1 s → onPlaybackComplete.
+ * Ken Burns photos : alternance pull (pair) / push (impair) · vidéos scale 1 fixe.
  * Variant `cinema` = présentation immersive (lab /stream) — teaser wizard inchangé.
  */
 
@@ -14,12 +15,14 @@ import {
   useState,
   type CSSProperties,
 } from "react";
+import { Pause } from "lucide-react";
 
 import {
   QuietLuxuryExitHub,
   type QuietLuxuryExitHubCopy,
   type QuietLuxuryViewerRole,
 } from "@/src/components/tribute/QuietLuxuryExitHub";
+import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
 
 export type QuietLuxuryKenBurns = "push" | "pull";
 
@@ -31,13 +34,21 @@ export type QuietLuxuryClip = {
   label?: string;
   /** Portrait → push (100→104). Paysage → pull (104→100). */
   kenBurns?: QuietLuxuryKenBurns;
-  /** Cadrage visage / sujet (ex. "center 22%"). */
+  /** Cadrage visage / sujet (ex. "42% 28%"). */
   objectPosition?: string;
+  /** Origine du zoom Ken Burns (ex. "42% 28%"). */
+  transformOrigin?: string;
+  /** Index chapitre — thème couleur crédit musical. */
+  chapterIndex?: number;
 };
 
 export type QuietLuxuryAct = {
   id: string;
+  /** Titre de chapitre (jamais le titre de piste). */
   title?: string;
+  /** Crédit musical teinté — sous le titre. */
+  musicCredit?: string | null;
+  chapterIndex?: number;
   audioUrl: string | null;
   clips: QuietLuxuryClip[];
 };
@@ -114,7 +125,7 @@ type Segment =
       actAudioUrl: string | null;
       actAudioOffsetSec: number;
     }
-  | { kind: "act_bridge"; start: number; end: number; title?: string }
+  | { kind: "act_bridge"; start: number; end: number; title?: string; musicCredit?: string | null; chapterIndex?: number; actAudioUrl?: string | null }
   | { kind: "memory_card"; start: number; end: number }
   | { kind: "end_black"; start: number; end: number };
 
@@ -204,6 +215,9 @@ function buildTimeline(
         start: t,
         end: t + timing.actBridge,
         title: act.title,
+        musicCredit: act.musicCredit,
+        chapterIndex: act.chapterIndex ?? actIndex,
+        actAudioUrl: act.audioUrl,
       });
       t += timing.actBridge;
     }
@@ -321,7 +335,7 @@ export async function exitNativeFullscreen(): Promise<void> {
   }
 }
 
-function isNativeFullscreen(): boolean {
+export function isNativeFullscreen(): boolean {
   const doc = document as Document & {
     webkitFullscreenElement?: Element | null;
   };
@@ -337,10 +351,10 @@ const KODAK_GRAIN_SVG =
 const CINEMA_STYLE = `
 @keyframes ql-kb-push {
   from { transform: scale(1); }
-  to { transform: scale(1.04); }
+  to { transform: scale(1.05); }
 }
 @keyframes ql-kb-pull {
-  from { transform: scale(1.04); }
+  from { transform: scale(1.05); }
   to { transform: scale(1); }
 }
 @keyframes ql-kb-push-soft {
@@ -372,7 +386,17 @@ const CINEMA_STYLE = `
   78% { opacity: 1; }
   100% { opacity: 0; }
 }
+@keyframes ql-pause-flash {
+  0% { opacity: 0; transform: scale(0.92); }
+  18% { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1); }
+}
 `;
+
+/** Alternance cinématographique : pair = pull-out, impair = push-in (photos only). */
+function kenBurnsForImageIndex(imageIndex: number): QuietLuxuryKenBurns {
+  return imageIndex % 2 === 0 ? "pull" : "push";
+}
 
 export function QuietLuxuryPlayer({
   acts,
@@ -405,6 +429,23 @@ export function QuietLuxuryPlayer({
     [acts, openingPortraitUrl, memoryCard?.displayName, timing, cinema],
   );
 
+  /** Index photo global dans le flux (vidéos exclues) → Push/Pull. */
+  const kenBurnsByClipId = useMemo(() => {
+    const map = new Map<string, QuietLuxuryKenBurns>();
+    let imageIndex = 0;
+    for (const act of acts) {
+      for (const c of act.clips) {
+        if (c.kind !== "image") continue;
+        map.set(
+          c.id,
+          c.kenBurns ?? kenBurnsForImageIndex(imageIndex),
+        );
+        imageIndex += 1;
+      }
+    }
+    return map;
+  }, [acts]);
+
   const rootRef = useRef<HTMLDivElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -434,6 +475,14 @@ export function QuietLuxuryPlayer({
   const [audioNeedsGesture, setAudioNeedsGesture] = useState(false);
   const [videoLayerOn, setVideoLayerOn] = useState(false);
   const [showExitHub, setShowExitHub] = useState(false);
+  const [pauseFlashKey, setPauseFlashKey] = useState(0);
+  /** Portrait → contain (pillarbox). Paysage → cover. */
+  const [fitByClipId, setFitByClipId] = useState<
+    Record<string, "cover" | "contain">
+  >({});
+  const [openingPortraitFit, setOpeningPortraitFit] = useState<
+    "cover" | "contain"
+  >("contain");
 
   const current = segmentAt(segments, masterTime);
 
@@ -506,33 +555,68 @@ export function QuietLuxuryPlayer({
       if (!audio) return;
       if (!url) {
         audio.pause();
-        // Ne jamais destroy l'instance amorcée — juste silence.
         audio.volume = 0;
         return;
       }
-      if (!sameMediaUrl(audioActUrlRef.current, url)) {
+      const switched = !sameMediaUrl(audioActUrlRef.current, url);
+      if (switched) {
+        if (process.env.NODE_ENV === "development") {
+          console.info("[ql-audio] src switch", {
+            from: audioActUrlRef.current,
+            to: url,
+            seekSec,
+          });
+        }
         audio.src = url;
         audioActUrlRef.current = url;
         try {
           audio.load();
-        } catch {
-          /* */
+        } catch (err) {
+          console.warn("[ql-audio] load() failed", { url, err });
         }
+        audio.addEventListener(
+          "error",
+          () => {
+            console.warn("[ql-audio] media error after src change", {
+              url,
+              code: audio.error?.code,
+              message: audio.error?.message,
+            });
+          },
+          { once: true },
+        );
       }
       audio.volume = clamp(volume, 0, 1);
       try {
-        // Recalage doux uniquement si dérive nette — pas de saut d'horloge.
         if (
           Number.isFinite(audio.currentTime) &&
           Math.abs(audio.currentTime - seekSec) > 0.75
         ) {
           audio.currentTime = Math.max(0, seekSec);
         }
-        if (playingRef.current) {
-          if (audio.paused) await audio.play();
+        if (playingRef.current && volume > 0.01) {
+          if (audio.paused) {
+            await audio.play();
+            if (process.env.NODE_ENV === "development" && switched) {
+              console.info("[ql-audio] play() ok after switch", { url });
+            }
+          }
           setAudioNeedsGesture(false);
+        } else if (playingRef.current && volume <= 0.01 && switched) {
+          // Précharge pendant le pont (volume 0) — amorce la piste suivante.
+          try {
+            await audio.play();
+            audio.pause();
+            audio.currentTime = Math.max(0, seekSec);
+            if (process.env.NODE_ENV === "development") {
+              console.info("[ql-audio] preloaded on bridge", { url });
+            }
+          } catch (err) {
+            console.warn("[ql-audio] preload play() rejected", { url, err });
+          }
         }
-      } catch {
+      } catch (err) {
+        console.warn("[ql-audio] play() rejected", { url, err });
         if (playingRef.current) setAudioNeedsGesture(true);
       }
     },
@@ -597,7 +681,18 @@ export function QuietLuxuryPlayer({
         const localAudio = timeSec - seg.start + seg.actAudioOffsetSec;
         void ensureAudio(seg.actAudioUrl, localAudio, volume);
       } else if (seg.kind === "act_bridge") {
-        if (audioRef.current) audioRef.current.volume = 0;
+        // Silence sur le carton + précharge de la piste du chapitre suivant.
+        if (seg.actAudioUrl) {
+          void ensureAudio(seg.actAudioUrl, 0, 0);
+        } else if (audioRef.current) {
+          audioRef.current.volume = 0;
+          if (process.env.NODE_ENV === "development") {
+            console.warn("[ql-audio] act_bridge sans actAudioUrl", {
+              title: seg.title,
+              chapterIndex: seg.chapterIndex,
+            });
+          }
+        }
       } else {
         if (audioRef.current) audioRef.current.volume = 0;
       }
@@ -697,6 +792,7 @@ export function QuietLuxuryPlayer({
     cancelRaf();
     audioRef.current?.pause();
     videoRef.current?.pause();
+    setPauseFlashKey((k) => k + 1);
   }, [cancelRaf, readMasterTime]);
 
   const resumeClock = useCallback(() => {
@@ -864,13 +960,18 @@ export function QuietLuxuryPlayer({
   const clip = showClip && seg.kind === "clip" ? seg.clip : null;
   const clipDur =
     showClip && seg.kind === "clip" ? Math.max(0.8, seg.end - seg.start) : 4;
-  const kenMode: QuietLuxuryKenBurns =
-    clip?.kenBurns ??
-    (clip?.label?.toLowerCase().includes("portrait") ||
-    clip?.label?.toLowerCase().includes("présence") ||
-    clip?.label?.toLowerCase().includes("presence")
-      ? "push"
-      : "pull");
+  const clipFit: "cover" | "contain" =
+    clip != null ? (fitByClipId[clip.id] ?? "cover") : "cover";
+  const videoFit = clip?.kind === "video" ? clipFit : "cover";
+  const kenMode: QuietLuxuryKenBurns | null =
+    clip?.kind === "image"
+      ? (kenBurnsByClipId.get(clip.id) ??
+        kenBurnsForImageIndex(0))
+      : null;
+
+  const animPlayState: CSSProperties["animationPlayState"] = isPlaying
+    ? "running"
+    : "paused";
 
   const mediaFilterStyle: CSSProperties = cinema
     ? { filter: KODAK_35MM_FILTER }
@@ -893,6 +994,23 @@ export function QuietLuxuryPlayer({
     ? "relative h-full w-full bg-black"
     : "relative aspect-video w-full bg-black";
 
+  const bridgeTheme =
+    showBridge && seg?.kind === "act_bridge"
+      ? getChapterTheme(seg.chapterIndex ?? 0)
+      : null;
+  const clipAct =
+    showClip && seg?.kind === "clip" ? acts[seg.actIndex] : null;
+  const liveCreditTheme = clipAct
+    ? getChapterTheme(
+        clipAct.chapterIndex ??
+          (seg?.kind === "clip" ? seg.actIndex : 0),
+      )
+    : null;
+  const themedCreditColor = (theme: ReturnType<typeof getChapterTheme> | null) =>
+    theme ? `rgba(${theme.glowRgb}, 0.92)` : null;
+  const bridgeCreditColor = themedCreditColor(bridgeTheme);
+  const liveCreditColor = themedCreditColor(liveCreditTheme);
+
   return (
     <div
       ref={rootRef}
@@ -910,45 +1028,74 @@ export function QuietLuxuryPlayer({
         if (cinema) void toggleBrowserFullscreen();
       }}
     >
-      {cinema ? <style>{CINEMA_STYLE}</style> : null}
+      {/* Keyframes KB / fades — cinéma et teaser. */}
+      <style>{CINEMA_STYLE}</style>
 
       <div className={frameClass}>
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[#000000]">
           <video
             ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{
-              ...mediaFilterStyle,
-              ...(showClip && clip?.kind === "video" && videoLayerOn
-                ? cinema
-                  ? {
-                      animation: [
-                        `ql-fade-in 0.4s ease-out both`,
-                        `ql-fade-out 0.4s ease-in ${Math.max(0, clipDur - 0.4)}s forwards`,
-                      ].join(", "),
-                    }
-                  : { opacity: 1 }
-                : { opacity: 0 }),
-            }}
+            className={`absolute inset-0 h-full w-full will-change-transform ${
+              videoFit === "contain" ? "object-contain" : "object-cover"
+            }`}
+              style={{
+                ...mediaFilterStyle,
+                objectPosition:
+                  clip?.kind === "video"
+                    ? (clip.objectPosition ?? "center center")
+                    : undefined,
+                transformOrigin:
+                  clip?.kind === "video"
+                    ? (clip.transformOrigin ?? "center center")
+                    : undefined,
+                ...(showClip && clip?.kind === "video" && videoLayerOn
+                  ? cinema
+                    ? {
+                        animation: [
+                          `ql-fade-in 0.4s ease-out both`,
+                          `ql-fade-out 0.4s ease-in ${Math.max(0, clipDur - 0.4)}s forwards`,
+                        ].join(", "),
+                      }
+                    : { opacity: 1 }
+                  : { opacity: 0 }),
+                animationPlayState: animPlayState,
+              }}
             muted
             playsInline
             preload="auto"
             loop={false}
             aria-hidden
+            onLoadedMetadata={(e) => {
+              if (!clip || clip.kind !== "video") return;
+              const v = e.currentTarget;
+              const nextFit =
+                v.videoHeight > v.videoWidth ? "contain" : "cover";
+              setFitByClipId((prev) =>
+                prev[clip.id] === nextFit
+                  ? prev
+                  : { ...prev, [clip.id]: nextFit },
+              );
+            }}
           />
 
-          {showClip && clip?.kind === "image" ? (
+          {showClip && clip?.kind === "image" && kenMode ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               key={clip.id}
               src={clip.url}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover will-change-transform"
+              className={`absolute inset-0 h-full w-full will-change-transform ${
+                clipFit === "contain" ? "object-contain" : "object-cover"
+              }`}
               style={{
                 ...mediaFilterStyle,
                 objectPosition:
                   clip.objectPosition ??
                   (kenMode === "push" ? "center 22%" : "center center"),
+                transformOrigin:
+                  clip.transformOrigin ??
+                  clip.objectPosition ??
+                  "center center",
                 ...(cinema
                   ? {
                       animation: [
@@ -964,8 +1111,19 @@ export function QuietLuxuryPlayer({
                       animationTimingFunction: "linear",
                       animationFillMode: "forwards",
                     }),
+                animationPlayState: animPlayState,
               }}
               draggable={false}
+              onLoad={(e) => {
+                const img = e.currentTarget;
+                const nextFit =
+                  img.naturalHeight > img.naturalWidth ? "contain" : "cover";
+                setFitByClipId((prev) =>
+                  prev[clip.id] === nextFit
+                    ? prev
+                    : { ...prev, [clip.id]: nextFit },
+                );
+              }}
             />
           ) : null}
 
@@ -975,16 +1133,28 @@ export function QuietLuxuryPlayer({
               key="opening-portrait"
               src={openingPortraitUrl}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover will-change-transform"
+              className={`absolute inset-0 h-full w-full will-change-transform ${
+                openingPortraitFit === "contain"
+                  ? "object-contain"
+                  : "object-cover"
+              }`}
               style={{
                 ...mediaFilterStyle,
-                objectPosition: "center 18%",
+                objectPosition: "center center",
+                transformOrigin: "center center",
                 animationName: "ql-portrait-reveal, ql-kb-push-soft",
                 animationDuration: `${Math.max(0.8, (seg?.end ?? 0) - (seg?.start ?? 0))}s`,
                 animationTimingFunction: "ease-out, linear",
                 animationFillMode: "forwards",
+                animationPlayState: animPlayState,
               }}
               draggable={false}
+              onLoad={(e) => {
+                const img = e.currentTarget;
+                setOpeningPortraitFit(
+                  img.naturalHeight > img.naturalWidth ? "contain" : "cover",
+                );
+              }}
             />
           ) : null}
         </div>
@@ -1028,17 +1198,48 @@ export function QuietLuxuryPlayer({
         ) : null}
 
         {showBridge && seg.kind === "act_bridge" ? (
-          <div className="absolute inset-0 z-[5] flex items-center justify-center bg-black px-8 text-center">
-            {seg.title ? (
-              <p
-                className="font-editorial max-w-3xl text-[clamp(1.05rem,2.6vw,1.65rem)] font-medium tracking-[0.18em] text-zinc-200/90"
-                style={{
-                  animation: `ql-bridge-title ${Math.max(0.8, seg.end - seg.start)}s ease-in-out both`,
-                }}
-              >
-                {seg.title}
-              </p>
-            ) : null}
+          <div className="absolute inset-0 z-[12] flex items-center justify-center bg-black px-8 text-center">
+            <div
+              className="max-w-3xl"
+              style={{
+                animation: `ql-bridge-title ${Math.max(0.8, seg.end - seg.start)}s ease-in-out both`,
+                animationPlayState: animPlayState,
+              }}
+            >
+              {seg.title ? (
+                <p className="font-editorial text-[clamp(1.05rem,2.6vw,1.65rem)] font-medium tracking-[0.18em] text-zinc-100">
+                  {seg.title}
+                </p>
+              ) : null}
+              {seg.musicCredit && bridgeCreditColor ? (
+                <p
+                  className="mt-4 text-[clamp(0.78rem,1.4vw,1rem)] font-light italic tracking-[0.1em]"
+                  style={{
+                    color: bridgeCreditColor,
+                    textShadow: bridgeTheme
+                      ? `0 0 24px rgba(${bridgeTheme.glowRgb}, 0.35)`
+                      : undefined,
+                  }}
+                >
+                  {seg.musicCredit}
+                </p>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+
+        {pauseFlashKey > 0 && cinema && !showExitHub ? (
+          <div
+            key={pauseFlashKey}
+            className="pointer-events-none absolute inset-0 z-[25] flex items-center justify-center"
+            aria-hidden
+          >
+            <div
+              className="flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-black/45 text-zinc-100 backdrop-blur-sm"
+              style={{ animation: "ql-pause-flash 0.7s ease-out both" }}
+            >
+              <Pause className="h-5 w-5" strokeWidth={1.25} fill="currentColor" />
+            </div>
           </div>
         ) : null}
 
@@ -1069,16 +1270,36 @@ export function QuietLuxuryPlayer({
           aria-hidden
         />
 
-        {salonBadge ? (
+        {salonBadge && !(cinema && showClip && clipAct?.musicCredit) ? (
           <div
             className="pointer-events-none absolute bottom-5 left-1/2 z-10 -translate-x-1/2 text-center text-[10px] font-light tracking-[0.14em] text-zinc-200 transition-opacity duration-700 ease-in-out md:bottom-7 md:text-[11px]"
             style={{
-              // Cinéma : visible uniquement pendant photos/vidéo actives — jamais sur cartons.
               opacity: cinema ? (showClip ? 0.2 : 0) : 0.85,
             }}
             aria-hidden={cinema ? !showClip : undefined}
           >
             {salonBadge}
+          </div>
+        ) : null}
+
+        {cinema &&
+        showClip &&
+        clipAct?.musicCredit &&
+        liveCreditColor &&
+        liveCreditTheme ? (
+          <div
+            className="pointer-events-none absolute bottom-8 left-1/2 z-[12] w-[min(92%,36rem)] -translate-x-1/2 px-4 text-center md:bottom-10"
+            aria-hidden
+          >
+            <p
+              className="text-[clamp(0.7rem,1.2vw,0.88rem)] font-light italic tracking-[0.12em]"
+              style={{
+                color: liveCreditColor,
+                textShadow: `0 0 20px rgba(${liveCreditTheme.glowRgb}, 0.4)`,
+              }}
+            >
+              {clipAct.musicCredit}
+            </p>
           </div>
         ) : null}
 

@@ -63,13 +63,23 @@ export type WizardMontageState = {
 };
 
 export type WizardStoryboardSongBase = {
-  /** Libellé affichable dans l'UI. */
+  /** Libellé catalogue (Stingray / fichier) — vérité droits, jamais écrasé. */
   title: string;
   /**
    * Durée réelle en secondes.
    * `null` = inconnue au moment de la migration / parsing.
    */
   durationSec?: number | null;
+  /**
+   * Libellé d'affichage personnalisé (Livre Ouvert + séance).
+   * Si absent, l'UI utilise `title`.
+   */
+  creditLabel?: string;
+  /**
+   * Afficher le crédit musical pendant la projection.
+   * Absente / true = visible ; false = masqué.
+   */
+  showCreditInSession?: boolean;
 };
 
 export type WizardStoryboardStingraySong = WizardStoryboardSongBase & {
@@ -502,6 +512,11 @@ function coerceStoryboardSong(
 
     if (!trackId || !title || !artist) return undefined;
 
+    const creditLabel = coerceSongCreditLabel(obj.creditLabel);
+    const showCreditInSession = coerceShowCreditInSession(
+      obj.showCreditInSession,
+    );
+
     return {
       source: "stingray",
       trackId,
@@ -509,6 +524,8 @@ function coerceStoryboardSong(
       artist,
       ...(coverUrl ? { coverUrl } : {}),
       ...(durationSec !== undefined ? { durationSec } : {}),
+      ...(creditLabel ? { creditLabel } : {}),
+      ...(showCreditInSession === false ? { showCreditInSession: false } : {}),
     };
   }
 
@@ -529,6 +546,10 @@ function coerceStoryboardSong(
         ? obj.artist.trim()
         : undefined;
     const durationSec = coerceDurationSec(obj.durationSec);
+    const creditLabel = coerceSongCreditLabel(obj.creditLabel);
+    const showCreditInSession = coerceShowCreditInSession(
+      obj.showCreditInSession,
+    );
 
     if (!storagePath || !title) return undefined;
 
@@ -540,9 +561,24 @@ function coerceStoryboardSong(
       ...(mimeType ? { mimeType } : {}),
       ...(artist ? { artist } : {}),
       ...(durationSec !== undefined ? { durationSec } : {}),
+      ...(creditLabel ? { creditLabel } : {}),
+      ...(showCreditInSession === false ? { showCreditInSession: false } : {}),
     };
   }
 
+  return undefined;
+}
+
+function coerceSongCreditLabel(raw: unknown): string | undefined {
+  if (typeof raw !== "string") return undefined;
+  const trimmed = raw.trim().slice(0, 80);
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+/** `undefined` = défaut visible ; seul `false` masque. */
+function coerceShowCreditInSession(raw: unknown): boolean | undefined {
+  if (raw === false) return false;
+  if (raw === true) return true;
   return undefined;
 }
 

@@ -205,6 +205,8 @@ const StoryboardStingraySongSchema = z
     artist: z.string().trim().min(1).max(200),
     coverUrl: z.string().trim().max(500).optional(),
     durationSec: DurationSecondsSchema,
+    creditLabel: z.string().trim().min(1).max(80).optional(),
+    showCreditInSession: z.boolean().optional(),
   })
   .strict();
 
@@ -217,6 +219,8 @@ const StoryboardUploadSongSchema = z
     mimeType: z.string().trim().max(120).optional(),
     artist: z.string().trim().max(200).optional(),
     durationSec: DurationSecondsSchema,
+    creditLabel: z.string().trim().min(1).max(80).optional(),
+    showCreditInSession: z.boolean().optional(),
   })
   .strict()
   .superRefine((song, ctx) => {

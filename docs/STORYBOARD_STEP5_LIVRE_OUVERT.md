@@ -324,7 +324,7 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 
 | Fait | Reste (S5-L2) |
 |------|----------------|
-| Titre / sous-titre d’étape, colonne souvenirs, tiroir « Composer », états vides | Titres chapitre **défaut** encore Étincelle / Épopée / Héritage (`montageActSparkLabel` via `resolveMontageChapterTabLabel`) |
+| Titre / sous-titre d’étape, colonne souvenirs, tiroir « Composer », états vides | Titres chapitre **défaut** cinéma : Racines & Enfance → Empreinte & Souvenir (`montageAct*` + Horizons / LegacyMemory via `resolveMontageChapterTabLabel`) |
 | Purge UI « Gérer » → « Composer » | Clés techniques `acte1` (ne pas afficher) |
 
 ### 10.4 Matière & toucher — 🟡 partiel

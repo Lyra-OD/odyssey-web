@@ -426,6 +426,51 @@ export function setChapterLabel(
   };
 }
 
+/** Libellé d'affichage musical — n'altère jamais `song.title` / `trackId`. */
+export function setChapterSongCreditLabel(
+  storyboard: WizardStoryboardState,
+  chapterId: string,
+  creditLabel: string,
+): WizardStoryboardState {
+  const trimmed = creditLabel.trim().slice(0, 80);
+  return {
+    ...storyboard,
+    chapters: storyboard.chapters.map((chapter) => {
+      if (chapter.id !== chapterId || !chapter.song) return chapter;
+      if (!trimmed) {
+        const { creditLabel: _, ...songRest } = chapter.song;
+        return { ...chapter, song: songRest };
+      }
+      return {
+        ...chapter,
+        song: { ...chapter.song, creditLabel: trimmed },
+      };
+    }),
+  };
+}
+
+/** Afficher / masquer le crédit musical pendant la séance. */
+export function setChapterSongShowCreditInSession(
+  storyboard: WizardStoryboardState,
+  chapterId: string,
+  showCreditInSession: boolean,
+): WizardStoryboardState {
+  return {
+    ...storyboard,
+    chapters: storyboard.chapters.map((chapter) => {
+      if (chapter.id !== chapterId || !chapter.song) return chapter;
+      if (showCreditInSession) {
+        const { showCreditInSession: _, ...songRest } = chapter.song;
+        return { ...chapter, song: songRest };
+      }
+      return {
+        ...chapter,
+        song: { ...chapter.song, showCreditInSession: false },
+      };
+    }),
+  };
+}
+
 /** Réordonne les chapitres (bloc entier + contenu). */
 export function reorderStoryboardChapters(
   storyboard: WizardStoryboardState,

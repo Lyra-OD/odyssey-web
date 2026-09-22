@@ -21,6 +21,7 @@ import {
 import {
   buildTeaserFromStoryboard,
   estimateStoryboardFilmDurationMinutes,
+  type CinemaChapterTitlesCopy,
 } from "@/src/lib/wizard/teaserHelpers";
 import { hasPremiumMusicCatalogAccess } from "@/src/lib/wizard/wizardPricing";
 import type {
@@ -48,6 +49,14 @@ export type PreviewStepCopy = {
   teaserPlay: string;
   teaserPause: string;
   chapterTitleFallback: string;
+  /** Titres cinéma universels + crédit musical. */
+  cinemaChapter1: string;
+  cinemaChapter2: string;
+  cinemaChapter3: string;
+  cinemaChapter4: string;
+  cinemaChapter5Plus: string;
+  trackCredit: string;
+  trackCreditTitleOnly: string;
   /** C3 — comparatif Séance vs Archive (Souvenir). */
   sessionArchiveCompare?: SessionArchiveCompareCopy;
 };
@@ -127,14 +136,29 @@ export function PreviewStep({
     () => new Map(),
   );
 
-  const { slides, tracks } = useMemo(
-    () =>
-      buildTeaserFromStoryboard(
-        storyboard,
-        mediaById,
-        copy.chapterTitleFallback,
-      ),
-    [copy.chapterTitleFallback, mediaById, storyboard],
+  const chapterTitles = useMemo((): CinemaChapterTitlesCopy => {
+    return {
+      chapter1: copy.cinemaChapter1,
+      chapter2: copy.cinemaChapter2,
+      chapter3: copy.cinemaChapter3,
+      chapter4: copy.cinemaChapter4,
+      chapter5Plus: copy.cinemaChapter5Plus,
+      trackCredit: copy.trackCredit,
+      trackCreditTitleOnly: copy.trackCreditTitleOnly,
+    };
+  }, [
+    copy.cinemaChapter1,
+    copy.cinemaChapter2,
+    copy.cinemaChapter3,
+    copy.cinemaChapter4,
+    copy.cinemaChapter5Plus,
+    copy.trackCredit,
+    copy.trackCreditTitleOnly,
+  ]);
+
+  const { slides, tracks, chapterMeta } = useMemo(
+    () => buildTeaserFromStoryboard(storyboard, mediaById, chapterTitles),
+    [chapterTitles, mediaById, storyboard],
   );
 
   const durationMinutes = useMemo(
@@ -208,6 +232,7 @@ export function PreviewStep({
             key={teaserKey}
             slides={slides}
             tracks={tracks}
+            chapterMeta={chapterMeta}
             projectId={projectId}
             copy={{
               loading: copy.teaserLoading,

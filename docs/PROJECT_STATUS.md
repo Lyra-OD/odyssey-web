@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 21 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 22 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 sept 2026 — **Tranche 1+** crédit musical éditable + toggle séance · précharge audio au pont (chap. 3+) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
+- 22 sept 2026 — **Tranche 1+** séance complète (tous médias, titres cinéma, pause KB, portrait+focal) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
+- 22 sept 2026 — **Tranche 1** capsule « Voir la séance » sur la film map (draft réel, fullscreen sans hang, hub simulé) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C8 hub lab** sortie post-séance sur `/test-player` — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C4 polish cinéma** lab `/test-player` (Fullscreen · Kodak A24 · pastille) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
-- 21 sept 2026 — **C4** QuietLuxuryPlayer (MP3 clock · dual video) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
-- 21 sept 2026 — Trajectoire Cercle (QR registre / Première / Phase 2 isolée) + garde-fous C4 — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
-- 21 sept 2026 — **C3** Séance vs Archive + CTA 49 $ — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Adaptateur wizard (étape 6) → QuietLuxuryPlayer (C4).
+ * Adaptateur wizard (étape 6 / séance) → QuietLuxuryPlayer (C4).
  * Conserve l’API historique slides/tracks pour PreviewStep.
  */
 
@@ -11,6 +11,7 @@ import {
   QuietLuxuryPlayer,
   type QuietLuxuryAct,
   type QuietLuxuryClip,
+  type QuietLuxuryPlayerProps,
 } from "@/src/components/tribute/QuietLuxuryPlayer";
 import { buildMusicPreviewProxyUrl } from "@/src/lib/music/stingrayTrackId";
 import {
@@ -27,9 +28,16 @@ export type CinematicTeaserCopy = {
   pause: string;
 };
 
+export type ChapterActMeta = {
+  title: string;
+  musicCredit: string | null;
+  chapterIndex: number;
+};
+
 type Props = {
   slides: TeaserSlide[];
   tracks: TeaserTracks;
+  chapterMeta?: Record<string, ChapterActMeta>;
   copy: CinematicTeaserCopy;
   autoPlay?: boolean;
   projectId?: string | null;
@@ -38,6 +46,11 @@ type Props = {
   openingPortraitUrl?: string | null;
   memoryCard?: { displayName: string; yearsLine: string } | null;
   onPlaybackComplete?: () => void;
+  cinema?: boolean;
+  primedAudio?: HTMLAudioElement | null;
+  exitHub?: QuietLuxuryPlayerProps["exitHub"];
+  className?: string;
+  enableSound?: string;
 };
 
 async function resolveUploadAudioUrl(
@@ -59,6 +72,7 @@ async function resolveUploadAudioUrl(
 export function CinematicTeaser({
   slides,
   tracks,
+  chapterMeta = {},
   copy,
   autoPlay = true,
   projectId = null,
@@ -67,6 +81,11 @@ export function CinematicTeaser({
   openingPortraitUrl = null,
   memoryCard = null,
   onPlaybackComplete,
+  cinema = false,
+  primedAudio = null,
+  exitHub = null,
+  className,
+  enableSound,
 }: Props) {
   const [uploadAudioByPath, setUploadAudioByPath] = useState<
     Record<string, string>
@@ -95,8 +114,10 @@ export function CinematicTeaser({
 
   const acts: QuietLuxuryAct[] = useMemo(() => {
     const groups = groupSlidesByTrack(slides);
-    return groups.map((group) => {
+    return groups.map((group, groupIndex) => {
       const track = tracks[group.trackKey];
+      const meta = chapterMeta[group.trackKey];
+      const chapterIndex = meta?.chapterIndex ?? groupIndex;
       const clips: QuietLuxuryClip[] = group.slides.map((slide, idx) => ({
         id: `${group.trackKey}-${idx}`,
         kind: slide.kind === "video" ? "video" : "image",
@@ -105,6 +126,9 @@ export function CinematicTeaser({
           slide.durationSec ??
           (slide.kind === "video" ? 10 : TEASER_DEFAULT_SLIDE_MS / 1000),
         label: slide.label,
+        objectPosition: slide.objectPosition,
+        transformOrigin: slide.transformOrigin,
+        chapterIndex: slide.chapterIndex ?? chapterIndex,
       }));
 
       let audioUrl: string | null = null;
@@ -117,14 +141,24 @@ export function CinematicTeaser({
         audioUrl = uploadAudioByPath[track.storagePath] ?? null;
       }
 
+      const musicCredit =
+        meta?.musicCredit ??
+        (track && track.showCreditInSession !== false && track.title?.trim()
+          ? track.artist?.trim()
+            ? `${(track.creditLabel || track.title).trim()} — ${track.artist.trim()}`
+            : (track.creditLabel || track.title).trim()
+          : null);
+
       return {
         id: group.trackKey,
-        title: track?.title || group.slides[0]?.label,
+        title: meta?.title || group.slides[0]?.label,
+        musicCredit,
+        chapterIndex,
         audioUrl,
         clips,
       };
     });
-  }, [projectId, slides, tracks, uploadAudioByPath]);
+  }, [chapterMeta, projectId, slides, tracks, uploadAudioByPath]);
 
   return (
     <QuietLuxuryPlayer
@@ -133,10 +167,19 @@ export function CinematicTeaser({
       memoryCard={memoryCard}
       salonBadge={salonBadge}
       autoPlay={autoPlay}
-      showControls
+      showControls={!cinema}
+      cinema={cinema}
+      primedAudio={primedAudio}
+      exitHub={exitHub}
       onPlaybackComplete={onPlaybackComplete}
-      copy={{ play: copy.play, pause: copy.pause, loading: copy.loading }}
+      copy={{
+        play: copy.play,
+        pause: copy.pause,
+        loading: copy.loading,
+        enableSound,
+      }}
       emptyLabel={emptyLabel}
+      className={className}
     />
   );
 }

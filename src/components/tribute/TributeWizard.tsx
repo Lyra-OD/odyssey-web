@@ -19,6 +19,8 @@ import {
   type ReactNode,
 } from "react";
 import { PreviewStep } from "@/src/components/tribute/PreviewStep";
+import { WizardSessionProjection, type WizardSessionHubCopy } from "@/src/components/tribute/WizardSessionProjection";
+import { requestNativeFullscreen } from "@/src/components/tribute/QuietLuxuryPlayer";
 import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
 import { SoftCapModal, SoftCapMediaCountSync } from "@/src/components/tribute/SoftCapModal";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
@@ -316,6 +318,7 @@ export function TributeWizard({
   planOverride,
   accessRole = "owner",
   mobileUtilityTrailing = null,
+  exitHubCopy = null,
 }: {
   copy: TributeWizardCopy;
   initialDraft?: WizardInitialDraft | null;
@@ -327,6 +330,8 @@ export function TributeWizard({
   planOverride?: string;
   /** Owner = parcours complet · Editor = étapes {3,4,5} sans commerce. */
   accessRole?: WizardAccessRole;
+  /** Hub C8 (copy FR/EN déjà chargée par le layout). */
+  exitHubCopy?: WizardSessionHubCopy | null;
   /** Action utilitaire mobile affichée dans la même ligne que "Retour". */
   mobileUtilityTrailing?: ReactNode;
 }) {
@@ -409,6 +414,8 @@ export function TributeWizard({
     hydrated.socialSources?.selected ?? null,
   );
   const [projectMediaCount, setProjectMediaCount] = useState(0);
+  const [sessionOpen, setSessionOpen] = useState(false);
+  const [sessionAudio] = useState<HTMLAudioElement | null>(null);
   const [step3UploadRunning, setStep3UploadRunning] = useState(false);
   const [isPartner] = useState(isPartnerInitial);
   // Cascade V-Final : ChannelProfile décide l'entrée (partner = Souvenir 0 $,
@@ -1028,6 +1035,44 @@ export function TributeWizard({
       .replace("{death}", d || "·");
   }, [birthDate, deathDate, copy.headerYears]);
 
+  const hasSessionMedia = useMemo(() => {
+    const excluded = new Set(wizardStoryboard.storyboard.excludedIds);
+    const placed = wizardStoryboard.storyboard.chapters.some((chapter) =>
+      chapter.mediaIds.some((id) => !excluded.has(id)),
+    );
+    return placed || projectMediaCount > 0;
+  }, [projectMediaCount, wizardStoryboard.storyboard]);
+
+  const canWatchSession =
+    currentStep >= 5 && hasSessionMedia && Boolean(exitHubCopy);
+
+  const openWatchSession = useCallback(() => {
+    const audio = sessionAudio;
+    const src = audio?.currentSrc?.trim() || audio?.src?.trim();
+    if (audio && src) {
+      audio.preload = "auto";
+      try {
+        audio.volume = 0;
+        void audio
+          .play()
+          .then(() => {
+            audio.pause();
+          })
+          .catch(() => {
+            /* prime best-effort — ne bloque pas l’ouverture */
+          });
+      } catch {
+        /* prime best-effort */
+      }
+    }
+    setSessionOpen(true);
+    void requestNativeFullscreen(document.documentElement);
+  }, [sessionAudio]);
+
+  const closeWatchSession = useCallback(() => {
+    setSessionOpen(false);
+  }, []);
+
   useEffect(() => {
     if (isPartnerProp) {
       wizardFieldsRef.current.isPartner = true;
@@ -1044,7 +1089,7 @@ export function TributeWizard({
   // pré-générés à l'Étape 4 (S4). Refetch à chaque entrée dans l'étape pour
   // capter d'éventuels ajouts/suppressions faits en revenant en arrière.
   useEffect(() => {
-    if (!uploadProjectId || (currentStep !== 4 && currentStep !== 5)) return;
+    if (!uploadProjectId || currentStep < 4) return;
     let aborted = false;
     void fetchProjectMedia(uploadProjectId)
       .then((items) => {
@@ -2661,6 +2706,7 @@ export function TributeWizard({
           ) : null}
 
           {currentStep === 5 ? (
+            <>
             <StoryboardMontageStep
               packageId={currentPackageId}
               projectId={uploadProjectId}
@@ -2693,6 +2739,8 @@ export function TributeWizard({
                   tabSpark: copy.montageActSparkLabel,
                   tabEpic: copy.montageActEpicLabel,
                   tabLegacy: copy.montageActLegacyLabel,
+                  tabHorizons: copy.montageChapterHorizonsLabel,
+                  tabLegacyMemory: copy.montageChapterLegacyMemoryLabel,
                   tabFallback: copy.chapterTitleFallback,
                 },
                 card: {
@@ -2744,6 +2792,9 @@ export function TributeWizard({
                   ariaLabel: copy.montageFilmMapAria,
                   segmentAria: copy.montageFilmMapSegmentAria,
                 },
+                creditEditAria: copy.montageCreditEditAria,
+                creditShowAria: copy.montageCreditShowAria,
+                creditHideAria: copy.montageCreditHideAria,
                 refinement: {
                   title: copy.montageRefinementTitle,
                   closeAria: copy.montageRefinementCloseAria,
@@ -2770,7 +2821,19 @@ export function TributeWizard({
                 },
               }}
               onOpenCollab={() => setIsCollabInviteOpen(true)}
+              onWatchSession={
+                canWatchSession ? openWatchSession : undefined
+              }
+              watchSessionCopy={
+                canWatchSession
+                  ? {
+                      label: copy.watchSession,
+                      aria: copy.watchSessionAria,
+                    }
+                  : undefined
+              }
             />
+            </>
           ) : null}
 
           {currentStep === 6 ? (
@@ -2832,6 +2895,13 @@ export function TributeWizard({
                 teaserPlay: copy.previewTeaserPlay,
                 teaserPause: copy.previewTeaserPause,
                 chapterTitleFallback: copy.chapterTitleFallback,
+                cinemaChapter1: copy.montageActSparkLabel,
+                cinemaChapter2: copy.montageActEpicLabel,
+                cinemaChapter3: copy.montageActLegacyLabel,
+                cinemaChapter4: copy.montageChapterHorizonsLabel,
+                cinemaChapter5Plus: copy.montageChapterLegacyMemoryLabel,
+                trackCredit: copy.watchSessionTrackCredit,
+                trackCreditTitleOnly: copy.watchSessionTrackCreditTitleOnly,
                 sessionArchiveCompare: {
                   eyebrow: copy.previewCompareEyebrow,
                   sessionTitle: copy.previewCompareSessionTitle,
@@ -3069,6 +3139,40 @@ export function TributeWizard({
         </div>
       ) : null}
     </div>
+      {sessionOpen && exitHubCopy ? (
+        <WizardSessionProjection
+          projectId={uploadProjectId}
+          storyboard={wizardStoryboard.storyboard}
+          chapterTitles={{
+            chapter1: copy.montageActSparkLabel,
+            chapter2: copy.montageActEpicLabel,
+            chapter3: copy.montageActLegacyLabel,
+            chapter4: copy.montageChapterHorizonsLabel,
+            chapter5Plus: copy.montageChapterLegacyMemoryLabel,
+            trackCredit: copy.watchSessionTrackCredit,
+            trackCreditTitleOnly: copy.watchSessionTrackCreditTitleOnly,
+          }}
+          memoryCard={{
+            displayName: deceasedDisplayName,
+            yearsLine: yearsDisplay === "·" ? "" : yearsDisplay,
+          }}
+          openingPortraitUrl={avatarPreview || null}
+          salonBadge={
+            isFreemiumGrant ? copy.previewSalonBadgeFallback : null
+          }
+          primedAudio={sessionAudio}
+          locale={locale}
+          closeLabel={copy.watchSessionClose}
+          enableSound={copy.watchSessionEnableSound}
+          emptyLabel={copy.previewTeaserEmpty}
+          loadingLabel={copy.previewLoadingMedia}
+          teaserPlay={copy.previewTeaserPlay}
+          teaserPause={copy.previewTeaserPause}
+          teaserLoading={copy.previewTeaserLoading}
+          hubCopy={exitHubCopy}
+          onClose={closeWatchSession}
+        />
+      ) : null}
     </>
   );
 }
