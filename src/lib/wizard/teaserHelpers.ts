@@ -1,4 +1,12 @@
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
+import {
+  CHAPTER_INTRO_MARGIN_SEC,
+  CHAPTER_OUTRO_MARGIN_SEC,
+  chapterAvailableSecondsForMedia,
+  resolveTargetSecondsPerMedia,
+  VIDEO_TRIM_DURATION_SEC,
+} from "@/src/lib/wizard/storyboardPacing";
+import type { PackageId } from "@/src/lib/wizard/wizardDeliverables";
 import type {
   MontageFocalPoint,
   WizardStoryboardState,
@@ -11,6 +19,8 @@ export type TeaserSlide = {
   label: string;
   kind?: "image" | "video";
   durationSec?: number;
+  /** Début d’extrait vidéo (storyboard.videoTrims). */
+  trimStartSec?: number;
   /** Cadrage visage — ex. "42% 28%". */
   objectPosition?: string;
   /** Origine du Ken Burns (0–1 → %). */
@@ -31,6 +41,17 @@ export type TeaserTrack = {
 
 export type TeaserTracks = Record<string, TeaserTrack>;
 
+export type TeaserChapterMeta = {
+  title: string;
+  musicCredit: string | null;
+  chapterIndex: number;
+  /**
+   * Durée du carton + musique quand le chapitre n’a pas encore de médias
+   * (titre + piste seuls).
+   */
+  holdDurationSec?: number;
+};
+
 /** Titres cinéma universels + crédit musical (FR/EN via dictionnaire). */
 export type CinemaChapterTitlesCopy = {
   chapter1: string;
@@ -43,6 +64,10 @@ export type CinemaChapterTitlesCopy = {
   trackCreditTitleOnly: string;
 };
 
+/**
+ * Titre défaut aligné Livre Ouvert : `paletteIndex ?? index` (identité
+ * stable au réordonnancement).
+ */
 export function resolveCinemaChapterTitle(
   index: number,
   customLabel: string | null | undefined,
@@ -87,29 +112,51 @@ function focalToCss(focal: MontageFocalPoint | undefined): {
   };
 }
 
+function resolveChapterHoldDurationSec(
+  durationSec: number | null | undefined,
+): number {
+  if (durationSec && durationSec > 0) {
+    const available = chapterAvailableSecondsForMedia(durationSec);
+    return Math.max(
+      CHAPTER_INTRO_MARGIN_SEC + CHAPTER_OUTRO_MARGIN_SEC,
+      available > 0 ? available : durationSec,
+    );
+  }
+  return CHAPTER_INTRO_MARGIN_SEC + CHAPTER_OUTRO_MARGIN_SEC + 5;
+}
+
+/**
+ * Miroir déterministe Livre Ouvert → Visionne.
+ * `packageId` pilote le tempo photo (`targetSecondsPerMedia`).
+ */
 export function buildTeaserFromStoryboard(
   storyboard: WizardStoryboardState,
   mediaById: Map<string, MontageMediaItem>,
   chapterTitles: CinemaChapterTitlesCopy,
+  packageId: PackageId = "SOUVENIR",
 ): {
   slides: TeaserSlide[];
   tracks: TeaserTracks;
-  chapterMeta: Record<
-    string,
-    { title: string; musicCredit: string | null; chapterIndex: number }
-  >;
+  chapterMeta: Record<string, TeaserChapterMeta>;
+  /** Ordre strict des actes = ordre des chapitres storyboard (y compris sans médias). */
+  chapterOrder: string[];
 } {
   const excluded = new Set(storyboard.excludedIds);
   const slides: TeaserSlide[] = [];
   const tracks: TeaserTracks = {};
-  const chapterMeta: Record<
-    string,
-    { title: string; musicCredit: string | null; chapterIndex: number }
-  > = {};
+  const chapterMeta: Record<string, TeaserChapterMeta> = {};
+  const chapterOrder: string[] = [];
+  const targetSecondsPerMedia = resolveTargetSecondsPerMedia(packageId);
 
   storyboard.chapters.forEach((chapter, index) => {
+    const paletteIndex =
+      typeof chapter.paletteIndex === "number" &&
+      Number.isFinite(chapter.paletteIndex) &&
+      chapter.paletteIndex >= 0
+        ? Math.trunc(chapter.paletteIndex)
+        : index;
     const label = resolveCinemaChapterTitle(
-      index,
+      paletteIndex,
       chapter.label,
       chapterTitles,
     );
@@ -139,39 +186,54 @@ export function buildTeaserFromStoryboard(
     }
 
     const mediaIds = chapter.mediaIds.filter((id) => !excluded.has(id));
-    if (song && mediaIds.length === 0 && process.env.NODE_ENV === "development") {
-      console.warn(
-        `[teaser] chapitre « ${label} » a une piste mais 0 média — acte audio omis de la séance`,
-        { chapterId: chapter.id, songTitle: song.title },
-      );
-    }
+    const slideCountBefore = slides.length;
 
-    chapterMeta[trackKey] = {
-      title: label,
-      musicCredit: formatTrackCredit(tracks[trackKey], chapterTitles),
-      chapterIndex: index,
-    };
-
-    const ids = mediaIds;
-
-    for (const id of ids) {
+    for (const id of mediaIds) {
       const item = mediaById.get(id);
-      const imageUrl = item?.previewUrl ?? item?.fullPreviewUrl;
+      // Plein format pour la séance — le thumb grille masque souvent le cadrage focale.
+      const imageUrl = item?.fullPreviewUrl ?? item?.previewUrl;
       if (!imageUrl) continue;
       const focalCss = focalToCss(storyboard.focalPoints[id]);
+      const isVideo = Boolean(item?.isVideo);
+      const trim = storyboard.videoTrims?.[id];
+      const durationSec = isVideo
+        ? trim?.durationSec && trim.durationSec > 0
+          ? trim.durationSec
+          : VIDEO_TRIM_DURATION_SEC
+        : targetSecondsPerMedia;
       slides.push({
         imageUrl,
         trackKey,
         label,
-        kind: item?.isVideo ? "video" : "image",
-        durationSec: item?.isVideo ? 10 : undefined,
-        chapterIndex: index,
+        kind: isVideo ? "video" : "image",
+        durationSec,
+        ...(isVideo
+          ? { trimStartSec: Math.max(0, trim?.trimStartSec ?? 0) }
+          : {}),
+        chapterIndex: paletteIndex,
         ...focalCss,
       });
     }
+
+    const resolvedMediaCount = slides.length - slideCountBefore;
+    const hasSong = Boolean(song);
+    // Chapitre projetable : médias résolus OU piste (carton + musique même sans photos).
+    if (resolvedMediaCount === 0 && !hasSong) {
+      return;
+    }
+
+    chapterOrder.push(trackKey);
+    chapterMeta[trackKey] = {
+      title: label,
+      musicCredit: formatTrackCredit(tracks[trackKey], chapterTitles),
+      chapterIndex: paletteIndex,
+      ...(resolvedMediaCount === 0 && hasSong
+        ? { holdDurationSec: resolveChapterHoldDurationSec(song?.durationSec) }
+        : {}),
+    };
   });
 
-  return { slides, tracks, chapterMeta };
+  return { slides, tracks, chapterMeta, chapterOrder };
 }
 
 export function estimateStoryboardFilmDurationMinutes(
@@ -200,4 +262,61 @@ export function groupSlidesByTrack(
 }
 
 export const TEASER_FADE_MS = 900;
+/** @deprecated Fallback historique — le pacing canon est `storyboardPacing`. */
 export const TEASER_DEFAULT_SLIDE_MS = 4200;
+
+/**
+ * Empreinte légère du storyboard pour forcer un remount React du teaser /
+ * de la séance quand focale, titre, crédit, piste, trim ou tempo changent.
+ */
+export function storyboardPlaybackFingerprint(
+  storyboard: WizardStoryboardState,
+): string {
+  const excluded = [...storyboard.excludedIds].sort().join(",");
+  const focals = Object.keys(storyboard.focalPoints)
+    .sort()
+    .map((id) => {
+      const pt = storyboard.focalPoints[id];
+      return `${id}:${pt.x.toFixed(3)},${pt.y.toFixed(3)}`;
+    })
+    .join(";");
+
+  const trims = Object.keys(storyboard.videoTrims ?? {})
+    .sort()
+    .map((id) => {
+      const trim = storyboard.videoTrims[id];
+      return `${id}:${trim.trimStartSec.toFixed(2)},${trim.durationSec.toFixed(2)}`;
+    })
+    .join(";");
+
+  const chapters = storyboard.chapters
+    .map((chapter, index) => {
+      const song = chapter.song;
+      let songKey = "";
+      if (song?.source === "stingray") {
+        songKey = `stingray:${song.trackId}:${song.durationSec ?? ""}`;
+      } else if (song?.source === "upload") {
+        songKey = `upload:${song.storagePath}:${song.durationSec ?? ""}`;
+      }
+      const credit = song?.creditLabel?.trim() ?? "";
+      const showCredit =
+        song?.showCreditInSession === false ? "hide" : "show";
+      const label = chapter.label?.trim() ?? "";
+      const palette =
+        typeof chapter.paletteIndex === "number"
+          ? chapter.paletteIndex
+          : index;
+      return [
+        chapter.id,
+        palette,
+        label,
+        songKey,
+        credit,
+        showCredit,
+        chapter.mediaIds.join(","),
+      ].join(":");
+    })
+    .join("|");
+
+  return `ex=${excluded}|fp=${focals}|tr=${trims}|ch=${chapters}`;
+}

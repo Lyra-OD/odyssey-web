@@ -4,10 +4,10 @@
 **Dernière MAJ :** 22 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 sept 2026 — Visionne = miroir 1:1 Livre Ouvert (pacing `storyboardPacing`, seed non-destructif, `paletteIndex`, `videoTrims`, audio unique).
 - 22 sept 2026 — Étape 5 preview silencieuse · étape 6 CTA *Vivre la projection* → hub C8.
 - 22 sept 2026 — Hub séance : CTA selon forfait · share `/stream/[token]` · guest hub 15 $ (stub paiement).
 - 22 sept 2026 — C8 : hub séance → Stripe Checkout Archive Master 49 $ (`cinemaMaster`).
-- 22 sept 2026 — Fix MP3 perso en séance : attendre URL signée + priming au clic Visionne.
 - 22 sept 2026 — Quiet Luxury crédit en-tête · réordonnancement chapitres (identité DA figée) · séance sans scrollbar page.
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  

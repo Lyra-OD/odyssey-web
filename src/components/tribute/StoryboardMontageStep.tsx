@@ -116,7 +116,7 @@ type Props = {
   onMagicSequenceComplete?: () => void;
   /** Lien discret « déléguer » de la porte d’onboarding → panneau Co-Créateur existant. */
   onOpenCollab?: () => void;
-  onWatchSession?: () => void;
+  onWatchSession?: (mediaItems: MontageMediaItem[]) => void;
   watchSessionCopy?: StoryboardFilmMapWatchSession;
   copy: StoryboardMontageStepCopy;
 };
@@ -544,7 +544,13 @@ export function StoryboardMontageStep({
                 segments={filmMapSegments}
                 copy={copy.filmMap}
                 watchSession={watchSessionCopy}
-                onWatchSession={onWatchSession}
+                onWatchSession={
+                  onWatchSession
+                    ? () => {
+                        onWatchSession(mediaItems);
+                      }
+                    : undefined
+                }
               />
             }
           >

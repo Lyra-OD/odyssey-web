@@ -15,10 +15,21 @@ import {
 } from "@/src/components/tribute/QuietLuxuryPlayer";
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
 import { mediaApiToMontageItems } from "@/src/lib/wizard/montageHelpers";
+import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import type { OrganizerMasterHubMode } from "@/src/lib/wizard/organizerMasterHub";
-import { buildTeaserFromStoryboard } from "@/src/lib/wizard/teaserHelpers";
-import type { CinemaChapterTitlesCopy } from "@/src/lib/wizard/teaserHelpers";
-import type { WizardStoryboardState } from "@/src/lib/wizard/wizardState";
+import {
+  buildTeaserFromStoryboard,
+  storyboardPlaybackFingerprint,
+  type CinemaChapterTitlesCopy,
+} from "@/src/lib/wizard/teaserHelpers";
+import {
+  manifestPackageFromWizardBasePackage,
+  type PackageId,
+} from "@/src/lib/wizard/wizardDeliverables";
+import type {
+  WizardBasePackage,
+  WizardStoryboardState,
+} from "@/src/lib/wizard/wizardState";
 
 export type WizardSessionHubCopy = QuietLuxuryExitHubCopy & {
   checkoutModalTitle: string;
@@ -70,8 +81,8 @@ type Props = {
   teaserPause: string;
   teaserLoading: string;
   /**
-   * `craft_preview` (étape 5) — fin / Échap → fermeture silencieuse, zéro hub.
-   * `official_session` (étape 6 / cérémonie) — hub C8 à la fin.
+   * `craft_preview` (étape 5) et `official_session` (étape 6) = **même** cinéma
+   * (focale, titres, pistes, médias). Seul le hub C8 / commerce change.
    */
   intent: WizardSessionIntent;
   hubCopy?: WizardSessionHubCopy | null;
@@ -79,6 +90,13 @@ type Props = {
   onClose: () => void;
   /** CTA carte d’honneur — Stripe 49 $ / export / checkout Héritage. */
   onHonorPrimary?: () => Promise<void>;
+  /**
+   * Médias déjà hydratés (Livre Ouvert / PreviewStep) — SOURCE DE VÉRITÉ.
+   * Un force-fetch ne fait qu’un merge non-destructif des URLs manquantes.
+   */
+  seedMediaItems?: MontageMediaItem[] | null;
+  /** Forfait pour le tempo photo (`storyboardPacing`). */
+  basePackage?: WizardBasePackage;
 };
 
 function SimOverlay({
@@ -173,11 +191,20 @@ export function WizardSessionProjection({
   masterHubMode = "buy_master",
   onClose,
   onHonorPrimary,
+  seedMediaItems = null,
+  basePackage = "essential",
 }: Props) {
   const isOfficial = intent === "official_session" && Boolean(hubCopy);
-  const [isLoading, setIsLoading] = useState(true);
+  const packageId: PackageId = useMemo(
+    () => manifestPackageFromWizardBasePackage(basePackage),
+    [basePackage],
+  );
+  const [isLoading, setIsLoading] = useState(() => !seedMediaItems?.length);
   const [mediaById, setMediaById] = useState(
-    () => new Map<string, ReturnType<typeof mediaApiToMontageItems>[number]>(),
+    () =>
+      new Map(
+        (seedMediaItems ?? []).map((item) => [item.assetId, item] as const),
+      ),
   );
   const [overlay, setOverlay] = useState<OverlayKind>(null);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
@@ -186,24 +213,77 @@ export function WizardSessionProjection({
   const [shareCopied, setShareCopied] = useState(false);
   const [unlockError, setUnlockError] = useState<string | null>(null);
 
-  const { slides, tracks, chapterMeta } = useMemo(
-    () => buildTeaserFromStoryboard(storyboard, mediaById, chapterTitles),
-    [chapterTitles, mediaById, storyboard],
+  const seedKey = useMemo(
+    () =>
+      (seedMediaItems ?? [])
+        .map(
+          (item) =>
+            `${item.assetId}:${item.fullPreviewUrl ?? ""}:${item.previewUrl ?? ""}`,
+        )
+        .join("|"),
+    [seedMediaItems],
+  );
+
+  useEffect(() => {
+    if (!seedMediaItems?.length) return;
+    setMediaById(
+      new Map(seedMediaItems.map((item) => [item.assetId, item] as const)),
+    );
+    setIsLoading(false);
+  }, [seedKey, seedMediaItems]);
+
+  const { slides, tracks, chapterMeta, chapterOrder } = useMemo(
+    () =>
+      buildTeaserFromStoryboard(
+        storyboard,
+        mediaById,
+        chapterTitles,
+        packageId,
+      ),
+    [chapterTitles, mediaById, packageId, storyboard],
+  );
+
+  const playbackKey = useMemo(
+    () => `${storyboardPlaybackFingerprint(storyboard)}|pkg=${packageId}`,
+    [packageId, storyboard],
   );
 
   useEffect(() => {
     if (!projectId) {
-      setIsLoading(false);
-      setMediaById(new Map());
+      if (!seedMediaItems?.length) {
+        setIsLoading(false);
+        setMediaById(new Map());
+      }
       return;
     }
     let cancelled = false;
-    setIsLoading(true);
-    void fetchProjectMedia(projectId)
+    if (!seedMediaItems?.length) setIsLoading(true);
+    void fetchProjectMedia(projectId, { force: true })
       .then((items) => {
         if (cancelled) return;
-        const mediaItems = mediaApiToMontageItems(items);
-        setMediaById(new Map(mediaItems.map((item) => [item.assetId, item])));
+        const fetched = mediaApiToMontageItems(items);
+        setMediaById((prev) => {
+          if (prev.size === 0) {
+            return new Map(fetched.map((item) => [item.assetId, item]));
+          }
+          // Seed = vérité absolue : merge non-destructif des URLs manquantes.
+          const next = new Map(prev);
+          for (const item of fetched) {
+            const existing = next.get(item.assetId);
+            if (!existing) continue;
+            const needsPreview =
+              !existing.previewUrl && Boolean(item.previewUrl);
+            const needsFull =
+              !existing.fullPreviewUrl && Boolean(item.fullPreviewUrl);
+            if (!needsPreview && !needsFull) continue;
+            next.set(item.assetId, {
+              ...existing,
+              ...(needsPreview ? { previewUrl: item.previewUrl } : {}),
+              ...(needsFull ? { fullPreviewUrl: item.fullPreviewUrl } : {}),
+            });
+          }
+          return next;
+        });
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -211,7 +291,7 @@ export function WizardSessionProjection({
     return () => {
       cancelled = true;
     };
-  }, [projectId]);
+  }, [projectId, seedKey, seedMediaItems?.length]);
 
   const closeProjection = useCallback(() => {
     void exitNativeFullscreen();
@@ -344,12 +424,14 @@ export function WizardSessionProjection({
         </div>
       ) : (
         <CinematicTeaser
+          key={playbackKey}
           cinema
           primedAudio={primedAudio}
           autoPlay
           slides={slides}
           tracks={tracks}
           chapterMeta={chapterMeta}
+          chapterOrder={chapterOrder}
           projectId={projectId}
           openingPortraitUrl={openingPortraitUrl}
           memoryCard={memoryCard}

@@ -308,6 +308,7 @@ Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage
 
 - **Component:** `StoryboardMontageStep.tsx` — layout Livre Ouvert, banque persistante, chapitres empilés, `StoryboardFilmMap`, DnD global `dnd-kit`, actions chapitre, onboarding gate, Composition Magique.
 - **Voir la séance (film map) :** `WizardSessionProjection` `intent: "craft_preview"` — aperçu immersif pour l’artisanat. Fin / Échap / ✕ → retour silencieux sur la table de montage. **Pas de hub C8** (ni achat, ni partage).
+- **Miroir 1:1 Livre Ouvert :** `buildTeaserFromStoryboard` + `storyboardPacing` (tempo photo / `videoTrims`) · titres via `paletteIndex ?? index` · seed médias non-écrasé · chapitres musique-seule conservés (carton + piste).
 - **Why not placeholder anymore:** PR-1/2/3 (juillet 2026) replaced the post–Clean Slate placeholder with the full interactive experience.
 - **Magic composition:** `buildMagicTimeline` → `playMagicTimeline` — batch per chapter + CSS cascade; overlay `MagicCinematicOverlay` (scrim Option B + capsule Bouton Noir, **design locked**).
 - **Autosave:** suspended during magic via `magicPerformingRef` in `TributeWizard`; `queueSave("immediate")` on `onMagicSequenceComplete`.
@@ -325,7 +326,7 @@ Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage
 | File | Role |
 |------|------|
 | `PreviewStep.tsx` | Sas : teaser 16:9, Soft Cap, comparatif Archive, CTA checkout |
-| `WizardSessionProjection` | **Séance officielle** (`intent: "official_session"`) — bouton *Vivre la projection* |
+| `WizardSessionProjection` | **Même cinéma** étape 5 (`craft_preview`) et 6 (`official_session`) — seul le hub C8 change |
 | `CinematicTeaser.tsx` | Diaporama + audio chapitre (pause réelle) |
 | `teaserHelpers.ts` | Slides / pistes depuis le **storyboard live** |
 

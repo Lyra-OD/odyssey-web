@@ -36,8 +36,14 @@ type StreamPayload = {
   tracks: TeaserTracks;
   chapterMeta: Record<
     string,
-    { title: string; musicCredit: string | null; chapterIndex: number }
+    {
+      title: string;
+      musicCredit: string | null;
+      chapterIndex: number;
+      holdDurationSec?: number;
+    }
   >;
+  chapterOrder?: string[];
 };
 
 type OverlayKind = "guest_copy" | "lueur" | null;
@@ -152,6 +158,7 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
         slides={payload.slides}
         tracks={payload.tracks}
         chapterMeta={payload.chapterMeta}
+        chapterOrder={payload.chapterOrder}
         openingPortraitUrl={payload.openingPortraitUrl}
         memoryCard={payload.memoryCard}
         emptyLabel={copy.streamEmpty}

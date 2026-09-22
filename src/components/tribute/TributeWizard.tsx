@@ -143,12 +143,12 @@ import {
 import { shouldOfferMagicSoftCap } from "@/src/lib/wizard/softCap";
 import { MUSIC_RIGHTS_TOS_VERSION } from "@/src/lib/wizard/exportGate";
 import { resolveOrganizerMasterHubMode } from "@/src/lib/wizard/organizerMasterHub";
-import { resolveStingraySongPreviewUrl } from "@/src/lib/wizard/musicPreview";
 import {
   isWizardStepAllowedForRole,
   type WizardAccessRole,
 } from "@/src/lib/wizard/collabCapabilities";
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
+import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import { useWizardStoryboard } from "@/src/hooks/useWizardStoryboard";
 import type { Locale } from "@/i18n.config";
 import {
@@ -429,6 +429,9 @@ export function TributeWizard({
   const [sessionOpen, setSessionOpen] = useState(false);
   const [sessionIntent, setSessionIntent] =
     useState<WizardSessionIntent>("craft_preview");
+  const [sessionMediaSeed, setSessionMediaSeed] = useState<
+    MontageMediaItem[] | null
+  >(null);
   const [sessionAudio, setSessionAudio] = useState<HTMLAudioElement | null>(
     null,
   );
@@ -1064,7 +1067,6 @@ export function TributeWizard({
 
   const openWatchSession = useCallback(
     async (intent: WizardSessionIntent = "craft_preview") => {
-      const projectId = uploadProjectId;
       let audio = sessionAudioRef.current;
       if (!audio) {
         audio = new Audio();
@@ -1072,41 +1074,31 @@ export function TributeWizard({
         sessionAudioRef.current = audio;
       }
 
-      const firstSong = wizardStoryboard.storyboard.chapters.find(
-        (chapter) => chapter.song,
-      )?.song;
+      // Reset singleton — QuietLuxuryPlayer possède le src (pipeline unique).
+      try {
+        audio.pause();
+      } catch {
+        /* */
+      }
+      try {
+        audio.currentTime = 0;
+      } catch {
+        /* */
+      }
+      audio.volume = 0;
+      audio.removeAttribute("src");
+      try {
+        audio.load();
+      } catch {
+        /* */
+      }
 
-      if (firstSong && projectId) {
-        let previewUrl = "";
-        if (firstSong.source === "stingray") {
-          previewUrl = resolveStingraySongPreviewUrl(firstSong, projectId);
-        } else {
-          try {
-            const res = await fetch(
-              `/api/projects/${projectId}/music?path=${encodeURIComponent(firstSong.storagePath)}`,
-            );
-            const body = (await res.json().catch(() => ({}))) as {
-              signedUrl?: string;
-            };
-            if (res.ok && body.signedUrl?.trim()) {
-              previewUrl = body.signedUrl.trim();
-            }
-          } catch {
-            /* prime best-effort */
-          }
-        }
-
-        if (previewUrl) {
-          audio.src = previewUrl;
-          audio.volume = 0;
-          try {
-            await audio.play();
-            audio.pause();
-            audio.currentTime = 0;
-          } catch {
-            /* gesture unlock best-effort — ne bloque pas l’ouverture */
-          }
-        }
+      // Débloque seulement la politique autoplay au geste — pas d’amorce URL.
+      try {
+        await audio.play();
+        audio.pause();
+      } catch {
+        /* gesture unlock best-effort — ne bloque pas l’ouverture */
       }
 
       setSessionAudio(audio);
@@ -1114,11 +1106,12 @@ export function TributeWizard({
       setSessionOpen(true);
       void requestNativeFullscreen(document.documentElement);
     },
-    [uploadProjectId, wizardStoryboard.storyboard.chapters],
+    [],
   );
 
   const closeWatchSession = useCallback(() => {
     setSessionOpen(false);
+    setSessionMediaSeed(null);
   }, []);
 
   useEffect(() => {
@@ -2979,7 +2972,8 @@ export function TributeWizard({
               onOpenCollab={() => setIsCollabInviteOpen(true)}
               onWatchSession={
                 canWatchSession
-                  ? () => {
+                  ? (mediaItems) => {
+                      setSessionMediaSeed(mediaItems);
                       void openWatchSession("craft_preview");
                     }
                   : undefined
@@ -3040,7 +3034,8 @@ export function TributeWizard({
               onEdit={() => void handlePreviewEdit()}
               onLaunchOfficialSession={
                 !isEditor && hasSessionMedia && Boolean(exitHubCopy)
-                  ? () => {
+                  ? (mediaItems) => {
+                      setSessionMediaSeed(mediaItems);
                       void openWatchSession("official_session");
                     }
                   : undefined
@@ -3339,6 +3334,8 @@ export function TributeWizard({
           teaserPause={copy.previewTeaserPause}
           teaserLoading={copy.previewTeaserLoading}
           intent={sessionIntent}
+          seedMediaItems={sessionMediaSeed}
+          basePackage={basePackage}
           hubCopy={exitHubCopy}
           masterHubMode={masterHubMode}
           onClose={closeWatchSession}

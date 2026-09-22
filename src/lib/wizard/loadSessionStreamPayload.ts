@@ -10,6 +10,7 @@ import {
   type TeaserSlide,
   type TeaserTracks,
 } from "@/src/lib/wizard/teaserHelpers";
+import { manifestPackageFromWizardBasePackage } from "@/src/lib/wizard/wizardDeliverables";
 import { coerceWizardState, emptyStoryboardState } from "@/src/lib/wizard/wizardState";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
@@ -28,8 +29,14 @@ export type SessionStreamPayload = {
   tracks: TeaserTracks;
   chapterMeta: Record<
     string,
-    { title: string; musicCredit: string | null; chapterIndex: number }
+    {
+      title: string;
+      musicCredit: string | null;
+      chapterIndex: number;
+      holdDurationSec?: number;
+    }
   >;
+  chapterOrder: string[];
 };
 
 /**
@@ -77,10 +84,14 @@ export async function loadSessionStreamPayload(params: {
   const items = await hydrateMediaRowsWithSignedUrls(admin, rows ?? []);
   const mediaItems = mediaApiToMontageItems(items);
   const mediaById = new Map(mediaItems.map((item) => [item.assetId, item]));
+  const packageId = manifestPackageFromWizardBasePackage(
+    wizard.intendedPackage ?? wizard.basePackage ?? "essential",
+  );
   const built = buildTeaserFromStoryboard(
     wizard.storyboard ?? emptyStoryboardState(),
     mediaById,
     params.chapterTitles,
+    packageId,
   );
 
   const uploadPaths = [
@@ -120,5 +131,6 @@ export async function loadSessionStreamPayload(params: {
     slides: built.slides,
     tracks: built.tracks,
     chapterMeta: built.chapterMeta,
+    chapterOrder: built.chapterOrder,
   };
 }

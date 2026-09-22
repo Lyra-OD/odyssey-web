@@ -21,8 +21,10 @@ import {
 import {
   buildTeaserFromStoryboard,
   estimateStoryboardFilmDurationMinutes,
+  storyboardPlaybackFingerprint,
   type CinemaChapterTitlesCopy,
 } from "@/src/lib/wizard/teaserHelpers";
+import { manifestPackageFromWizardBasePackage } from "@/src/lib/wizard/wizardDeliverables";
 import { hasPremiumMusicCatalogAccess } from "@/src/lib/wizard/wizardPricing";
 import type {
   WizardBasePackage,
@@ -84,8 +86,8 @@ type Props = {
   onProceedToPayment: () => void;
   onKeepArchiveMaster?: () => void;
   onEdit: () => void;
-  /** Étape 6 — ouvre la séance officielle (WizardSessionProjection + hub). */
-  onLaunchOfficialSession?: () => void;
+  /** Étape 6 — ouvre la séance officielle (même cinéma que étape 5 + hub). */
+  onLaunchOfficialSession?: (mediaItems: MontageMediaItem[]) => void;
 };
 
 function buildValueNote(
@@ -102,20 +104,6 @@ function buildValueNote(
   if (hasLicense) note += copy.valueLicense;
   if (hasAi || hasLicense) note += ".";
   return note;
-}
-
-function teaserIdentity(storyboard: WizardStoryboardState): string {
-  return storyboard.chapters
-    .map((chapter) => {
-      const songKey =
-        chapter.song?.source === "stingray"
-          ? chapter.song.trackId
-          : chapter.song?.source === "upload"
-            ? chapter.song.storagePath
-            : "";
-      return `${chapter.id}:${songKey}:${chapter.mediaIds.join(",")}`;
-    })
-    .join("|");
 }
 
 export function PreviewStep({
@@ -162,9 +150,20 @@ export function PreviewStep({
     copy.trackCreditTitleOnly,
   ]);
 
-  const { slides, tracks, chapterMeta } = useMemo(
-    () => buildTeaserFromStoryboard(storyboard, mediaById, chapterTitles),
-    [chapterTitles, mediaById, storyboard],
+  const packageId = useMemo(
+    () => manifestPackageFromWizardBasePackage(basePackage),
+    [basePackage],
+  );
+
+  const { slides, tracks, chapterMeta, chapterOrder } = useMemo(
+    () =>
+      buildTeaserFromStoryboard(
+        storyboard,
+        mediaById,
+        chapterTitles,
+        packageId,
+      ),
+    [chapterTitles, mediaById, packageId, storyboard],
   );
 
   const durationMinutes = useMemo(
@@ -177,7 +176,10 @@ export function PreviewStep({
     [basePackage, copy, durationMinutes, extensions],
   );
 
-  const teaserKey = useMemo(() => teaserIdentity(storyboard), [storyboard]);
+  const teaserKey = useMemo(
+    () => `${storyboardPlaybackFingerprint(storyboard)}|pkg=${packageId}`,
+    [packageId, storyboard],
+  );
 
   const compareActive =
     showSessionArchiveCompare && Boolean(copy.sessionArchiveCompare);
@@ -192,7 +194,7 @@ export function PreviewStep({
     let cancelled = false;
     setIsLoading(true);
 
-    void fetchProjectMedia(projectId)
+    void fetchProjectMedia(projectId, { force: true })
       .then((items) => {
         if (cancelled) return;
         const mediaItems = mediaApiToMontageItems(items);
@@ -218,7 +220,9 @@ export function PreviewStep({
           <div className="pt-2">
             <button
               type="button"
-              onClick={onLaunchOfficialSession}
+              onClick={() => {
+                onLaunchOfficialSession([...mediaById.values()]);
+              }}
               aria-label={copy.launchSessionAria ?? copy.launchSession}
               className={`${wizardMiniCapsAction} mx-auto min-h-[52px] w-full max-w-md rounded-2xl border border-white/20 bg-white/[0.06] px-6 text-base font-medium text-zinc-50 transition-[colors,box-shadow,transform] hover:border-white/35 hover:bg-white/[0.1] hover:shadow-[0_0_28px_rgba(255,255,255,0.08)] active:scale-[0.985] ${sanctuaryFocusRing} md:mx-0`}
             >
@@ -251,6 +255,7 @@ export function PreviewStep({
             slides={slides}
             tracks={tracks}
             chapterMeta={chapterMeta}
+            chapterOrder={chapterOrder}
             projectId={projectId}
             copy={{
               loading: copy.teaserLoading,

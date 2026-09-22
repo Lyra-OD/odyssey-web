@@ -14,9 +14,10 @@ import {
   type QuietLuxuryPlayerProps,
 } from "@/src/components/tribute/QuietLuxuryPlayer";
 import { buildMusicPreviewProxyUrl } from "@/src/lib/music/stingrayTrackId";
+import { VIDEO_TRIM_DURATION_SEC } from "@/src/lib/wizard/storyboardPacing";
 import {
   groupSlidesByTrack,
-  TEASER_DEFAULT_SLIDE_MS,
+  type TeaserChapterMeta,
   type TeaserSlide,
   type TeaserTracks,
 } from "@/src/lib/wizard/teaserHelpers";
@@ -28,16 +29,14 @@ export type CinematicTeaserCopy = {
   pause: string;
 };
 
-export type ChapterActMeta = {
-  title: string;
-  musicCredit: string | null;
-  chapterIndex: number;
-};
+export type ChapterActMeta = TeaserChapterMeta;
 
 type Props = {
   slides: TeaserSlide[];
   tracks: TeaserTracks;
   chapterMeta?: Record<string, ChapterActMeta>;
+  /** Ordre des actes = ordre Livre Ouvert (inclut chapitres sans médias). */
+  chapterOrder?: string[];
   copy: CinematicTeaserCopy;
   autoPlay?: boolean;
   projectId?: string | null;
@@ -51,6 +50,8 @@ type Props = {
   exitHub?: QuietLuxuryPlayerProps["exitHub"];
   className?: string;
   enableSound?: string;
+  /** Tempo photo fallback si slide.durationSec absent (secondes). */
+  defaultImageDurationSec?: number;
 };
 
 async function resolveUploadAudioUrl(
@@ -81,6 +82,7 @@ export function CinematicTeaser({
   slides,
   tracks,
   chapterMeta = {},
+  chapterOrder,
   copy,
   autoPlay = true,
   projectId = null,
@@ -94,6 +96,7 @@ export function CinematicTeaser({
   exitHub = null,
   className,
   enableSound,
+  defaultImageDurationSec = 7,
 }: Props) {
   const [uploadAudioByPath, setUploadAudioByPath] = useState<
     Record<string, string>
@@ -131,22 +134,41 @@ export function CinematicTeaser({
   }, [needsUploadAudio, projectId, uploadPathsKey]);
 
   const acts: QuietLuxuryAct[] = useMemo(() => {
-    const groups = groupSlidesByTrack(slides);
-    return groups.map((group, groupIndex) => {
-      const track = tracks[group.trackKey];
-      const meta = chapterMeta[group.trackKey];
+    const slidesByTrack = new Map<string, TeaserSlide[]>();
+    for (const slide of slides) {
+      const list = slidesByTrack.get(slide.trackKey);
+      if (list) list.push(slide);
+      else slidesByTrack.set(slide.trackKey, [slide]);
+    }
+
+    const order =
+      chapterOrder && chapterOrder.length > 0
+        ? chapterOrder
+        : Object.keys(chapterMeta).length > 0
+          ? Object.keys(chapterMeta)
+          : groupSlidesByTrack(slides).map((g) => g.trackKey);
+
+    return order.map((trackKey, groupIndex) => {
+      const groupSlides = slidesByTrack.get(trackKey) ?? [];
+      const track = tracks[trackKey];
+      const meta = chapterMeta[trackKey];
       const chapterIndex = meta?.chapterIndex ?? groupIndex;
-      const clips: QuietLuxuryClip[] = group.slides.map((slide, idx) => ({
-        id: `${group.trackKey}-${idx}`,
+      const clips: QuietLuxuryClip[] = groupSlides.map((slide, idx) => ({
+        id: `${trackKey}-${idx}`,
         kind: slide.kind === "video" ? "video" : "image",
         url: slide.imageUrl,
         durationSec:
           slide.durationSec ??
-          (slide.kind === "video" ? 10 : TEASER_DEFAULT_SLIDE_MS / 1000),
+          (slide.kind === "video"
+            ? VIDEO_TRIM_DURATION_SEC
+            : defaultImageDurationSec),
         label: slide.label,
         objectPosition: slide.objectPosition,
         transformOrigin: slide.transformOrigin,
         chapterIndex: slide.chapterIndex ?? chapterIndex,
+        ...(slide.kind === "video"
+          ? { trimStartSec: Math.max(0, slide.trimStartSec ?? 0) }
+          : {}),
       }));
 
       let audioUrl: string | null = null;
@@ -170,15 +192,26 @@ export function CinematicTeaser({
           : null);
 
       return {
-        id: group.trackKey,
-        title: meta?.title || group.slides[0]?.label,
+        id: trackKey,
+        title: meta?.title || groupSlides[0]?.label,
         musicCredit,
         chapterIndex,
         audioUrl,
         clips,
+        ...(meta?.holdDurationSec != null
+          ? { holdDurationSec: meta.holdDurationSec }
+          : {}),
       };
     });
-  }, [chapterMeta, projectId, slides, tracks, uploadAudioByPath]);
+  }, [
+    chapterMeta,
+    chapterOrder,
+    defaultImageDurationSec,
+    projectId,
+    slides,
+    tracks,
+    uploadAudioByPath,
+  ]);
 
   // MP3 perso : attendre l'URL signée avant autoplay, sinon la séance part muette.
   const canAutoPlay = autoPlay && (!needsUploadAudio || uploadResolveDone);

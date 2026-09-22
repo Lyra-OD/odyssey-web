@@ -24,6 +24,7 @@ import {
 } from "@/src/components/tribute/QuietLuxuryExitHub";
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
 import { waitForAudioReady } from "@/src/lib/wizard/musicPreview";
+import { VIDEO_TRIM_DURATION_SEC } from "@/src/lib/wizard/storyboardPacing";
 
 export type QuietLuxuryKenBurns = "push" | "pull";
 
@@ -41,6 +42,8 @@ export type QuietLuxuryClip = {
   transformOrigin?: string;
   /** Index chapitre — thème couleur crédit musical. */
   chapterIndex?: number;
+  /** Début d’extrait vidéo (storyboard.videoTrims.trimStartSec). */
+  trimStartSec?: number;
 };
 
 export type QuietLuxuryAct = {
@@ -52,6 +55,11 @@ export type QuietLuxuryAct = {
   chapterIndex?: number;
   audioUrl: string | null;
   clips: QuietLuxuryClip[];
+  /**
+   * Chapitre sans médias : durée du carton titre + écoute de la piste
+   * (secondes). Absent → pont titre standard.
+   */
+  holdDurationSec?: number;
 };
 
 export type QuietLuxuryMemoryCard = {
@@ -106,8 +114,9 @@ const CINEMA_TIMING: Timing = {
 /** Fade-in de la piste suivante sur le pont (cinéma radio). */
 const BRIDGE_AUDIO_FADE_SEC = 1.1;
 
-const DEFAULT_IMAGE_SEC = 4.2;
-const DEFAULT_VIDEO_SEC = 10;
+/** Fallbacks uniquement si durationSec manquant (le builder doit toujours poser le pacing). */
+const DEFAULT_IMAGE_SEC = 7;
+const DEFAULT_VIDEO_SEC = VIDEO_TRIM_DURATION_SEC;
 
 type Segment =
   | { kind: "breath_title"; start: number; end: number }
@@ -226,27 +235,40 @@ function buildTimeline(
   const openingDur = t;
 
   acts.forEach((act, actIndex) => {
-    if (actIndex > 0) {
+    // Cinéma : carton titre avant CHAQUE chapitre (y compris le 1er).
+    // Teaser non-cinéma : pont seulement entre chapitres (comportement historique).
+    const showActTitle = cinema || actIndex > 0;
+    const emptyHoldSec =
+      act.clips.length === 0
+        ? Math.max(timing.actBridge, act.holdDurationSec ?? 12)
+        : timing.actBridge;
+    // Chapitre sans médias : toujours un carton (+ musique) ; sinon pont titre classique.
+    const bridgeDur =
+      act.clips.length === 0
+        ? emptyHoldSec
+        : showActTitle
+          ? timing.actBridge
+          : 0;
+
+    if (bridgeDur > 0) {
       segments.push({
         kind: "act_bridge",
         start: t,
-        end: t + timing.actBridge,
+        end: t + bridgeDur,
         title: act.title,
         musicCredit: act.musicCredit,
         chapterIndex: act.chapterIndex ?? actIndex,
         actAudioUrl: act.audioUrl,
       });
-      t += timing.actBridge;
+      t += bridgeDur;
     }
 
-    // Cinéma : piste 1 dès t=0 (offset = ouverture).
+    // Cinéma : piste 1 dès t=0 (offset = ouverture [+ pont titre chap. 1]).
     // Chapitres suivants : la piste a déjà couru pendant le pont → offset = durée du pont.
     let audioCursor =
       actIndex === 0 && cinema
-        ? openingDur
-        : actIndex > 0
-          ? timing.actBridge
-          : 0;
+        ? openingDur + bridgeDur
+        : bridgeDur;
     act.clips.forEach((clip, clipIndex) => {
       if (clipIndex > 0 && timing.interBlack > 0) {
         segments.push({
@@ -438,7 +460,13 @@ export function QuietLuxuryPlayer({
 }: QuietLuxuryPlayerProps) {
   const timing = cinema ? CINEMA_TIMING : TEASER_TIMING;
   const controlsVisible = cinema ? false : showControls;
-  const hasClips = acts.some((a) => a.clips.length > 0);
+  /** Médias ou chapitre musique-seule (carton + piste). */
+  const hasClips = acts.some(
+    (a) =>
+      a.clips.length > 0 ||
+      Boolean(a.audioUrl) ||
+      (a.holdDurationSec != null && a.holdDurationSec > 0),
+  );
 
   const { segments, durationSec } = useMemo(
     () =>
@@ -659,34 +687,38 @@ export function QuietLuxuryPlayer({
     [],
   );
 
-  const ensureVideo = useCallback(async (url: string, localTimeSec: number) => {
-    const el = videoRef.current;
-    if (!el) return;
-    // Visibilité immédiate (DOM) — indépendante d'un re-render React.
-    el.muted = true;
-    el.playsInline = true;
-    el.loop = false;
-    // Ne pas forcer opacity:1 (casse le fondu CSS cinéma).
-    el.style.removeProperty("opacity");
-    setVideoLayerOn((on) => (on ? on : true));
-    if (loadedVideoUrl.current !== url) {
-      el.src = url;
-      loadedVideoUrl.current = url;
+  const ensureVideo = useCallback(
+    async (url: string, localTimeSec: number, trimStartSec = 0) => {
+      const el = videoRef.current;
+      if (!el) return;
+      // Visibilité immédiate (DOM) — indépendante d'un re-render React.
+      el.muted = true;
+      el.playsInline = true;
+      el.loop = false;
+      // Ne pas forcer opacity:1 (casse le fondu CSS cinéma).
+      el.style.removeProperty("opacity");
+      setVideoLayerOn((on) => (on ? on : true));
+      if (loadedVideoUrl.current !== url) {
+        el.src = url;
+        loadedVideoUrl.current = url;
+        try {
+          el.load();
+        } catch {
+          /* */
+        }
+      }
+      const target = Math.max(0, trimStartSec + localTimeSec);
       try {
-        el.load();
+        if (Math.abs(el.currentTime - target) > 0.55) {
+          el.currentTime = target;
+        }
+        if (playingRef.current) await el.play();
       } catch {
         /* */
       }
-    }
-    try {
-      if (Math.abs(el.currentTime - localTimeSec) > 0.55) {
-        el.currentTime = Math.max(0, localTimeSec);
-      }
-      if (playingRef.current) await el.play();
-    } catch {
-      /* */
-    }
-  }, []);
+    },
+    [],
+  );
 
   const hideVideo = useCallback(() => {
     const el = videoRef.current;
@@ -734,7 +766,11 @@ export function QuietLuxuryPlayer({
       }
 
       if (seg.kind === "clip" && seg.clip.kind === "video") {
-        void ensureVideo(seg.clip.url, timeSec - seg.start);
+        void ensureVideo(
+          seg.clip.url,
+          timeSec - seg.start,
+          seg.clip.trimStartSec ?? 0,
+        );
       } else {
         hideVideo();
       }
@@ -1119,11 +1155,15 @@ export function QuietLuxuryPlayer({
           {showClip && clip?.kind === "image" && kenMode ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              key={clip.id}
+              key={`${clip.id}:${clip.objectPosition ?? "c"}:${clip.url.slice(-48)}`}
               src={clip.url}
               alt=""
               className={`absolute inset-0 h-full w-full will-change-transform ${
-                clipFit === "contain" ? "object-contain" : "object-cover"
+                cinema || clip.objectPosition
+                  ? "object-cover"
+                  : clipFit === "contain"
+                    ? "object-contain"
+                    : "object-cover"
               }`}
               style={{
                 ...mediaFilterStyle,
@@ -1153,6 +1193,7 @@ export function QuietLuxuryPlayer({
               }}
               draggable={false}
               onLoad={(e) => {
+                if (cinema || clip.objectPosition) return;
                 const img = e.currentTarget;
                 const nextFit =
                   img.naturalHeight > img.naturalWidth ? "contain" : "cover";
