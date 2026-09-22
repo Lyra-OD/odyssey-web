@@ -15,6 +15,12 @@ import {
   type CSSProperties,
 } from "react";
 
+import {
+  QuietLuxuryExitHub,
+  type QuietLuxuryExitHubCopy,
+  type QuietLuxuryViewerRole,
+} from "@/src/components/tribute/QuietLuxuryExitHub";
+
 export type QuietLuxuryKenBurns = "push" | "pull";
 
 export type QuietLuxuryClip = {
@@ -124,6 +130,15 @@ export type QuietLuxuryPlayerProps = {
   /** Instance Audio amorcée au geste utilisateur — jamais recreée. */
   primedAudio?: HTMLAudioElement | null;
   onPlaybackComplete?: () => void;
+  /** C8 — hub post-noir (cinéma). Absent = teaser inchangé. */
+  exitHub?: {
+    copy: QuietLuxuryExitHubCopy;
+    viewerRole?: QuietLuxuryViewerRole;
+    onUnlockMaster: () => void;
+    onShareSession?: () => void;
+    onUpgradePackage?: () => void;
+    onLeaveLueur?: () => void;
+  } | null;
   copy: QuietLuxuryPlayerCopy;
   className?: string;
   emptyLabel?: string;
@@ -369,6 +384,7 @@ export function QuietLuxuryPlayer({
   cinema = false,
   primedAudio = null,
   onPlaybackComplete,
+  exitHub = null,
   copy,
   className = "",
   emptyLabel,
@@ -417,6 +433,7 @@ export function QuietLuxuryPlayer({
   const [cursorHidden, setCursorHidden] = useState(false);
   const [audioNeedsGesture, setAudioNeedsGesture] = useState(false);
   const [videoLayerOn, setVideoLayerOn] = useState(false);
+  const [showExitHub, setShowExitHub] = useState(false);
 
   const current = segmentAt(segments, masterTime);
 
@@ -638,6 +655,7 @@ export function QuietLuxuryPlayer({
       videoRef.current?.pause();
       if (!completedRef.current) {
         completedRef.current = true;
+        if (cinema && exitHub) setShowExitHub(true);
         onPlaybackComplete?.();
       }
       return;
@@ -645,7 +663,9 @@ export function QuietLuxuryPlayer({
     rafRef.current = requestAnimationFrame(tick);
   }, [
     cancelRaf,
+    cinema,
     durationSec,
+    exitHub,
     onPlaybackComplete,
     publishUiTime,
     readMasterTime,
@@ -723,6 +743,29 @@ export function QuietLuxuryPlayer({
     else await requestNativeFullscreen(document.documentElement);
   }, []);
 
+  const replaySession = useCallback(() => {
+    // Remet t=0, relance l'horloge MP3, masque le hub — fullscreen inchangé.
+    setShowExitHub(false);
+    setAudioNeedsGesture(false);
+    hideVideo();
+    completedRef.current = false;
+    pauseAccumRef.current = 0;
+    pauseStartedRef.current = null;
+    masterTimeRef.current = 0;
+    setMasterTime(0);
+    lastSegKeyRef.current = "";
+    lastUiAtRef.current = 0;
+    if (audioRef.current) {
+      try {
+        audioRef.current.currentTime = 0;
+        audioRef.current.volume = 0;
+      } catch {
+        /* */
+      }
+    }
+    startClock();
+  }, [hideVideo, startClock]);
+
   useEffect(() => {
     if (primedAudio) {
       ownsAudioRef.current = false;
@@ -764,6 +807,13 @@ export function QuietLuxuryPlayer({
     bumpCursor();
     const onMove = () => bumpCursor();
     const onKey = (e: KeyboardEvent) => {
+      if (showExitHub) {
+        if (e.key === "f" || e.key === "F") {
+          e.preventDefault();
+          void toggleBrowserFullscreen();
+        }
+        return;
+      }
       if (e.code === "Space") {
         e.preventDefault();
         toggle();
@@ -781,16 +831,17 @@ export function QuietLuxuryPlayer({
       window.removeEventListener("keydown", onKey);
       if (cursorTimer.current) clearTimeout(cursorTimer.current);
     };
-  }, [bumpCursor, cinema, toggle, toggleBrowserFullscreen]);
+  }, [bumpCursor, cinema, showExitHub, toggle, toggleBrowserFullscreen]);
 
   useEffect(() => {
     if (!cinema) return;
     const prev = document.documentElement.style.cursor;
-    document.documentElement.style.cursor = cursorHidden ? "none" : "";
+    document.documentElement.style.cursor =
+      cursorHidden && !showExitHub ? "none" : "";
     return () => {
       document.documentElement.style.cursor = prev;
     };
-  }, [cinema, cursorHidden]);
+  }, [cinema, cursorHidden, showExitHub]);
 
   if (!hasClips) {
     return (
@@ -845,12 +896,13 @@ export function QuietLuxuryPlayer({
   return (
     <div
       ref={rootRef}
-      className={`relative overflow-hidden bg-[#000000] ${cinema ? "h-full w-full rounded-none" : "rounded-2xl border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.55)]"} ${cursorHidden && cinema ? "cursor-none" : ""} ${className}`}
+      className={`relative overflow-hidden bg-[#000000] ${cinema ? "h-full w-full rounded-none" : "rounded-2xl border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.55)]"} ${cursorHidden && cinema && !showExitHub ? "cursor-none" : ""} ${className}`}
       onMouseMove={() => {
         bumpCursor();
       }}
       onClick={(e) => {
         if (!cinema) return;
+        if (showExitHub) return;
         if ((e.target as HTMLElement).closest("[data-ql-audio-pill]")) return;
         toggle();
       }}
@@ -1047,6 +1099,22 @@ export function QuietLuxuryPlayer({
           </button>
         ) : null}
       </div>
+
+      {showExitHub && exitHub && cinema ? (
+        <QuietLuxuryExitHub
+          copy={exitHub.copy}
+          displayName={memoryCard?.displayName ?? ""}
+          viewerRole={exitHub.viewerRole ?? "organizer"}
+          onReplaySession={replaySession}
+          onUnlockMaster={exitHub.onUnlockMaster}
+          onShareSession={exitHub.onShareSession}
+          onUpgradePackage={exitHub.onUpgradePackage}
+          onLeaveLueur={exitHub.onLeaveLueur}
+          onCloseFullscreen={() => {
+            void exitNativeFullscreen();
+          }}
+        />
+      ) : null}
 
       {controlsVisible ? (
         <div className="border-t border-white/10 bg-[#0a0a0a]/95 px-4 py-3 backdrop-blur-xl md:px-5">

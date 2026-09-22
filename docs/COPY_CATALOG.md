@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-21 · **Entrées :** 916
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-22 · **Entrées :** 943
 
 ## `common`
 
@@ -1014,4 +1014,36 @@
 | `partnerships.title` | Une nouvelle norme d'hommage pour les maisons funéraires exigeantes. | A new standard of tribute for high-trust funeral homes. |
 | `partnerships.body` | Une activation simple pour vos équipes, une expérience digne pour les familles et un espace partenaire clair pour accompagner l'engagement de l'Entourage. | Simple activation for your teams, a dignified experience for families, and a clear partner space to support engagement from loved ones. |
 | `partnerships.cta` | Découvrir l'espace partenaires | Discover the partner space |
+
+## `quietLuxuryExitHub`
+
+| Clé | FR | EN |
+|-----|----|----|
+| `quietLuxuryExitHub.headline` | L'hommage à {name} demeure. | The tribute to {name} remains. |
+| `quietLuxuryExitHub.replay` | Revoir la séance | Watch the session again |
+| `quietLuxuryExitHub.share` | Partager avec les proches | Share with loved ones |
+| `quietLuxuryExitHub.archiveTitle` | Conserver l'Archive Master · 49 $ | Keep the Cinema Master · $49 |
+| `quietLuxuryExitHub.archiveBody` | Fichier 1080p téléchargeable · mix studio masterisé · transmission familiale | Downloadable 1080p file · mastered studio mix · family transmission |
+| `quietLuxuryExitHub.archiveCta` | Conserver l'Archive Master | Keep the Cinema Master |
+| `quietLuxuryExitHub.guestCopyTitle` | Conserver sa copie · 15 $ | Keep your copy · $15 |
+| `quietLuxuryExitHub.guestCopyBody` | Même film masterisé · lien de téléchargement personnel | Same mastered film · personal download link |
+| `quietLuxuryExitHub.guestCopyCta` | Conserver sa copie | Keep your copy |
+| `quietLuxuryExitHub.lueur` | Déposer une pensée ou une lueur | Leave a thought or a light |
+| `quietLuxuryExitHub.lineage` | Transmettre à la lignée | Pass it on to the lineage |
+| `quietLuxuryExitHub.closeAria` | Quitter le plein écran | Exit fullscreen |
+| `quietLuxuryExitHub.checkoutModalTitle` | Simulation Checkout Master 49 $ | Simulated Master Checkout $49 |
+| `quietLuxuryExitHub.checkoutModalBody` | En production, cette action ouvre Stripe pour débloquer l'Archive Master. Plein écran conservé. | In production, this opens Stripe to unlock the Cinema Master. Fullscreen stays on. |
+| `quietLuxuryExitHub.checkoutModalClose` | Fermer | Close |
+| `quietLuxuryExitHub.shareModalTitle` | Partager la séance | Share the session |
+| `quietLuxuryExitHub.shareLinkLabel` | Lien de la séance | Session link |
+| `quietLuxuryExitHub.shareCopy` | Copier le lien | Copy link |
+| `quietLuxuryExitHub.shareCopied` | Lien copié | Link copied |
+| `quietLuxuryExitHub.shareNative` | Partager… | Share… |
+| `quietLuxuryExitHub.shareClose` | Fermer | Close |
+| `quietLuxuryExitHub.heritageModalTitle` | Collections Héritage | Heritage collections |
+| `quietLuxuryExitHub.heritageModalBody` | Aperçu lab : en production, cette porte mène aux forfaits Héritage et au Livre mémoire. | Lab preview: in production, this opens Heritage packages and the memory book. |
+| `quietLuxuryExitHub.heritageModalClose` | Fermer | Close |
+| `quietLuxuryExitHub.lueurModalTitle` | Pensée ou lueur | Thought or light |
+| `quietLuxuryExitHub.lueurModalBody` | Aperçu lab : en production, l'invité rejoint l'espace de recueillement pour déposer un souvenir. | Lab preview: in production, the guest reaches the sanctuary to leave a memory. |
+| `quietLuxuryExitHub.lueurModalClose` | Fermer | Close |
 

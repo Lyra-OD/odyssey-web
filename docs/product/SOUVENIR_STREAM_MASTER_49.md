@@ -1,15 +1,15 @@
 # Souvenir — Stream 0 $ · Master cinéma 49 $ · Moteur cercle
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
-**Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** (+ polish cinéma lab) · suite **C5→C14** · trajectoire cercle (QR registre / Première) + Phase 2 isolée.  
+**Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C8 hub lab** · suite **C5/C7 reportés** · C9–C14 · trajectoire cercle + Phase 2 isolée.  
 **Dernière MAJ :** 21 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 21 sept 2026 — **C8 hub lab** : sortie post-noir (Revoir · Archive 49 $ · Lueur · Lignée) sur `/test-player`.
 - 21 sept 2026 — **C4 polish cinéma** : `/[lang]/test-player` · Fullscreen · Kodak A24 · pastille conditionnelle · micro-noir soft · aide masquée.
 - 21 sept 2026 — **C4** `QuietLuxuryPlayer` : MP3 clock · dual video · pastille · noir ≥1 s → callback.
 - 21 sept 2026 — Trajectoire **Cercle & Valeur Réseau** : QR registre (C14) · Première (C10) · Phase 2 isolée · garde-fous C4.
 - 21 sept 2026 — **C3** comparatif Séance vs Archive + CTA Master 49 $ (prestige ordi).
-- 21 sept 2026 — **C2** gate export : `cinemaMaster` ou Héritage+ · free Creatomate refusé.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -259,11 +259,12 @@ Détail commits C4–C7 ci-dessous.
 
 ### C8 — Hub sortie + Mode Célébration + pay-it-forward
 `feat(wizard): exit hub + Mode Célébration + pay-it-forward`  
-- Déclenché **après** `onPlaybackComplete` (noir ≥ 1 s).  
+- Déclenché **après** `onPlaybackComplete` (noir ≥ 1,5 s cinéma).  
 - Revoir · Lueur · Conserver Archive Master · Héritage · pay-it-forward.  
 - Célébration **HDMI** (distinct du lander QR).  
 - Présences honorifiques live (si Première C10).  
-**Done :** tunnel + HDMI smoke.
+**Done (lab) :** ✅ hub Quiet Luxury sur `/test-player` — rôles organizer/guest · callbacks fullscreen-safe · Partager visible (organizer) · overlays checkout/share/Héritage — 22 sept 2026.  
+**Reste :** Mode Célébration HDMI · pay-it-forward wire checkout réel · hub prod `/stream`.
 
 ### C9 — QA core path
 `test(export): Souvenir stream to cinemaMaster`  
