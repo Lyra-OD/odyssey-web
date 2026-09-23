@@ -240,7 +240,10 @@ function buildTimeline(
     const showActTitle = cinema || actIndex > 0;
     const emptyHoldSec =
       act.clips.length === 0
-        ? Math.max(timing.actBridge, act.holdDurationSec ?? 12)
+        ? Math.min(
+            12,
+            Math.max(timing.actBridge, act.holdDurationSec ?? 8),
+          )
         : timing.actBridge;
     // Chapitre sans médias : toujours un carton (+ musique) ; sinon pont titre classique.
     const bridgeDur =

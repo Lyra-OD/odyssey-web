@@ -1,8 +1,5 @@
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import {
-  CHAPTER_INTRO_MARGIN_SEC,
-  CHAPTER_OUTRO_MARGIN_SEC,
-  chapterAvailableSecondsForMedia,
   resolveTargetSecondsPerMedia,
   VIDEO_TRIM_DURATION_SEC,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -112,18 +109,11 @@ function focalToCss(focal: MontageFocalPoint | undefined): {
   };
 }
 
-function resolveChapterHoldDurationSec(
-  durationSec: number | null | undefined,
-): number {
-  if (durationSec && durationSec > 0) {
-    const available = chapterAvailableSecondsForMedia(durationSec);
-    return Math.max(
-      CHAPTER_INTRO_MARGIN_SEC + CHAPTER_OUTRO_MARGIN_SEC,
-      available > 0 ? available : durationSec,
-    );
-  }
-  return CHAPTER_INTRO_MARGIN_SEC + CHAPTER_OUTRO_MARGIN_SEC + 5;
-}
+/**
+ * Chapitre piste-seule (ou médias pas encore résolus) : carton titre + amorce
+ * musique — **pas** la durée entière de la chanson (sinon N × 3–4 min).
+ */
+export const CHAPTER_TITLE_HOLD_SEC = 8;
 
 /**
  * Miroir déterministe Livre Ouvert → Visionne.
@@ -228,7 +218,7 @@ export function buildTeaserFromStoryboard(
       musicCredit: formatTrackCredit(tracks[trackKey], chapterTitles),
       chapterIndex: paletteIndex,
       ...(resolvedMediaCount === 0 && hasSong
-        ? { holdDurationSec: resolveChapterHoldDurationSec(song?.durationSec) }
+        ? { holdDurationSec: CHAPTER_TITLE_HOLD_SEC }
         : {}),
     };
   });
