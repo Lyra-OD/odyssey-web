@@ -44,6 +44,7 @@ export default async function StreamSessionPage({ params }: PageProps) {
     teaserPause: tw.previewTeaserPause,
     teaserLoading: tw.previewTeaserLoading,
     enableSound: tw.watchSessionEnableSound,
+    watchSessionClose: tw.watchSessionClose,
   };
 
   return <StreamSessionPlayer token={token} locale={lang} copy={copy} />;

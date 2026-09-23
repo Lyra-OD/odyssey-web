@@ -1,14 +1,25 @@
 "use client";
 
 /**
- * Séance cinéma wizard — aperçu craft (étape 5) ou cérémonie + hub C8 (étape 6).
+ * Séance cinéma — Studio (étape 5/6) ou `/stream/[token]` invité.
+ * Même moteur Quiet Luxury ; seul le hub / le chargement médias changent.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { X } from "lucide-react";
 
 import { CinematicTeaser } from "@/src/components/tribute/CinematicTeaser";
-import type { QuietLuxuryExitHubCopy } from "@/src/components/tribute/QuietLuxuryExitHub";
+import type {
+  QuietLuxuryExitHubCopy,
+  QuietLuxuryViewerRole,
+} from "@/src/components/tribute/QuietLuxuryExitHub";
 import {
   exitNativeFullscreen,
   isNativeFullscreen,
@@ -21,6 +32,9 @@ import {
   buildTeaserFromStoryboard,
   storyboardPlaybackFingerprint,
   type CinemaChapterTitlesCopy,
+  type TeaserChapterMeta,
+  type TeaserSlide,
+  type TeaserTracks,
 } from "@/src/lib/wizard/teaserHelpers";
 import {
   manifestPackageFromWizardBasePackage,
@@ -30,6 +44,7 @@ import type {
   WizardBasePackage,
   WizardStoryboardState,
 } from "@/src/lib/wizard/wizardState";
+import { emptyStoryboardState } from "@/src/lib/wizard/wizardState";
 
 export type WizardSessionHubCopy = QuietLuxuryExitHubCopy & {
   checkoutModalTitle: string;
@@ -58,20 +73,36 @@ export type WizardSessionHubCopy = QuietLuxuryExitHubCopy & {
   heritageModalTitle: string;
   heritageModalBody: string;
   heritageModalClose: string;
+  /** Stub C12 — overlay copie invité avant Stripe. */
+  guestCopyStubBody?: string;
+  lueurModalTitle?: string;
+  lueurModalBody?: string;
+  lueurModalClose?: string;
 };
 
 export type WizardSessionIntent = "craft_preview" | "official_session";
 
-type OverlayKind = "share" | "heritage" | null;
+export type WizardSessionPlayback = "studio" | "prebuilt";
+
+export type WizardSessionPrebuiltPayload = {
+  slides: TeaserSlide[];
+  tracks: TeaserTracks;
+  chapterMeta: Record<string, TeaserChapterMeta>;
+  chapterOrder?: string[];
+};
+
+type OverlayKind = "share" | "heritage" | "guest_copy" | "lueur" | null;
 
 type Props = {
-  projectId: string | null;
-  storyboard: WizardStoryboardState;
-  chapterTitles: CinemaChapterTitlesCopy;
+  projectId?: string | null;
+  /** Obligatoire en `playback="studio"`. */
+  storyboard?: WizardStoryboardState;
+  /** Obligatoire en `playback="studio"`. */
+  chapterTitles?: CinemaChapterTitlesCopy;
   memoryCard: { displayName: string; yearsLine: string };
   openingPortraitUrl?: string | null;
   salonBadge?: string | null;
-  primedAudio: HTMLAudioElement | null;
+  primedAudio?: HTMLAudioElement | null;
   locale: "fr" | "en";
   closeLabel: string;
   enableSound: string;
@@ -81,21 +112,30 @@ type Props = {
   teaserPause: string;
   teaserLoading: string;
   /**
-   * `craft_preview` (étape 5) et `official_session` (étape 6) = **même** cinéma
-   * (focale, titres, pistes, médias). Seul le hub C8 / commerce change.
+   * `craft_preview` (étape 5) et `official_session` (étape 6 / stream) =
+   * même cinéma. Seul le hub C8 / commerce change.
    */
   intent: WizardSessionIntent;
+  /**
+   * `studio` = storyboard + seed + fetch non-destructif.
+   * `prebuilt` = payload `/api/stream/[token]` (aucun fetchProjectMedia).
+   */
+  playback?: WizardSessionPlayback;
+  /** Rôle hub — organiseur (share) vs invité (copie 15 $). */
+  viewerRole?: QuietLuxuryViewerRole;
+  /** Payload déjà signé — requis si `playback="prebuilt"`. */
+  prebuilt?: WizardSessionPrebuiltPayload | null;
   hubCopy?: WizardSessionHubCopy | null;
   masterHubMode?: OrganizerMasterHubMode;
   onClose: () => void;
-  /** CTA carte d’honneur — Stripe 49 $ / export / checkout Héritage. */
+  /** CTA carte d’honneur — Stripe 49 $ / export / checkout Héritage / stub guest. */
   onHonorPrimary?: () => Promise<void>;
   /**
    * Médias déjà hydratés (Livre Ouvert / PreviewStep) — SOURCE DE VÉRITÉ.
    * Un force-fetch ne fait qu’un merge non-destructif des URLs manquantes.
    */
   seedMediaItems?: MontageMediaItem[] | null;
-  /** Forfait pour le tempo photo (`storyboardPacing`). */
+  /** Forfait pour le tempo photo (`storyboardPacing`) — studio only. */
   basePackage?: WizardBasePackage;
 };
 
@@ -170,14 +210,24 @@ function honorFieldsForMode(
   };
 }
 
+const EMPTY_CHAPTER_TITLES: CinemaChapterTitlesCopy = {
+  chapter1: "",
+  chapter2: "",
+  chapter3: "",
+  chapter4: "",
+  chapter5Plus: "",
+  trackCredit: "{title} — {artist}",
+  trackCreditTitleOnly: "{title}",
+};
+
 export function WizardSessionProjection({
-  projectId,
+  projectId = null,
   storyboard,
   chapterTitles,
   memoryCard,
   openingPortraitUrl = null,
   salonBadge = null,
-  primedAudio,
+  primedAudio = null,
   locale,
   closeLabel,
   enableSound,
@@ -187,6 +237,9 @@ export function WizardSessionProjection({
   teaserPause,
   teaserLoading,
   intent,
+  playback = "studio",
+  viewerRole = "organizer",
+  prebuilt = null,
   hubCopy = null,
   masterHubMode = "buy_master",
   onClose,
@@ -194,12 +247,18 @@ export function WizardSessionProjection({
   seedMediaItems = null,
   basePackage = "essential",
 }: Props) {
+  const isPrebuilt = playback === "prebuilt";
+  const isGuest = viewerRole === "guest";
   const isOfficial = intent === "official_session" && Boolean(hubCopy);
+
   const packageId: PackageId = useMemo(
     () => manifestPackageFromWizardBasePackage(basePackage),
     [basePackage],
   );
-  const [isLoading, setIsLoading] = useState(() => !seedMediaItems?.length);
+  const [isLoading, setIsLoading] = useState(() => {
+    if (isPrebuilt) return !prebuilt?.slides?.length;
+    return !seedMediaItems?.length;
+  });
   const [mediaById, setMediaById] = useState(
     () =>
       new Map(
@@ -225,30 +284,59 @@ export function WizardSessionProjection({
   );
 
   useEffect(() => {
+    if (isPrebuilt) {
+      setIsLoading(!prebuilt?.slides?.length);
+      return;
+    }
     if (!seedMediaItems?.length) return;
     setMediaById(
       new Map(seedMediaItems.map((item) => [item.assetId, item] as const)),
     );
     setIsLoading(false);
-  }, [seedKey, seedMediaItems]);
+  }, [isPrebuilt, prebuilt?.slides?.length, seedKey, seedMediaItems]);
 
-  const { slides, tracks, chapterMeta, chapterOrder } = useMemo(
-    () =>
-      buildTeaserFromStoryboard(
-        storyboard,
-        mediaById,
-        chapterTitles,
-        packageId,
-      ),
-    [chapterTitles, mediaById, packageId, storyboard],
-  );
+  const studioBuilt = useMemo(() => {
+    if (isPrebuilt) {
+      return {
+        slides: [] as TeaserSlide[],
+        tracks: {} as TeaserTracks,
+        chapterMeta: {} as Record<string, TeaserChapterMeta>,
+        chapterOrder: [] as string[],
+      };
+    }
+    return buildTeaserFromStoryboard(
+      storyboard ?? emptyStoryboardState(),
+      mediaById,
+      chapterTitles ?? EMPTY_CHAPTER_TITLES,
+      packageId,
+    );
+  }, [
+    chapterTitles,
+    isPrebuilt,
+    mediaById,
+    packageId,
+    storyboard,
+  ]);
 
-  const playbackKey = useMemo(
-    () => `${storyboardPlaybackFingerprint(storyboard)}|pkg=${packageId}`,
-    [packageId, storyboard],
-  );
+  const slides = isPrebuilt ? (prebuilt?.slides ?? []) : studioBuilt.slides;
+  const tracks = isPrebuilt ? (prebuilt?.tracks ?? {}) : studioBuilt.tracks;
+  const chapterMeta = isPrebuilt
+    ? (prebuilt?.chapterMeta ?? {})
+    : studioBuilt.chapterMeta;
+  const chapterOrder = isPrebuilt
+    ? (prebuilt?.chapterOrder ?? Object.keys(chapterMeta))
+    : studioBuilt.chapterOrder;
+
+  const playbackKey = useMemo(() => {
+    if (isPrebuilt) {
+      return `prebuilt|${slides.map((s) => s.imageUrl).join("|")}|${chapterOrder.join(",")}`;
+    }
+    return `${storyboardPlaybackFingerprint(storyboard ?? emptyStoryboardState())}|pkg=${packageId}`;
+  }, [chapterOrder, isPrebuilt, packageId, slides, storyboard]);
 
   useEffect(() => {
+    // Invité / prebuilt : jamais de fetch owner medias.
+    if (isPrebuilt) return;
     if (!projectId) {
       if (!seedMediaItems?.length) {
         setIsLoading(false);
@@ -266,7 +354,6 @@ export function WizardSessionProjection({
           if (prev.size === 0) {
             return new Map(fetched.map((item) => [item.assetId, item]));
           }
-          // Seed = vérité absolue : merge non-destructif des URLs manquantes.
           const next = new Map(prev);
           for (const item of fetched) {
             const existing = next.get(item.assetId);
@@ -291,7 +378,7 @@ export function WizardSessionProjection({
     return () => {
       cancelled = true;
     };
-  }, [projectId, seedKey, seedMediaItems?.length]);
+  }, [isPrebuilt, projectId, seedKey, seedMediaItems?.length]);
 
   const closeProjection = useCallback(() => {
     void exitNativeFullscreen();
@@ -363,6 +450,10 @@ export function WizardSessionProjection({
       : null;
 
   const handleHonorPrimary = useCallback(async () => {
+    if (isGuest) {
+      setOverlay("guest_copy");
+      return;
+    }
     if (!onHonorPrimary || !hubCopy) return;
     setUnlockError(null);
     try {
@@ -371,10 +462,10 @@ export function WizardSessionProjection({
       setUnlockError(hubCopy.archiveUnlockError);
       throw new Error("honor_primary_failed");
     }
-  }, [hubCopy, onHonorPrimary]);
+  }, [hubCopy, isGuest, onHonorPrimary]);
 
   const openShare = useCallback(async () => {
-    if (!hubCopy) return;
+    if (!hubCopy || isGuest) return;
     setOverlay("share");
     setShareCopied(false);
     setShareError(null);
@@ -405,7 +496,7 @@ export function WizardSessionProjection({
     } finally {
       setShareBusy(false);
     }
-  }, [hubCopy, locale, projectId, shareUrl]);
+  }, [hubCopy, isGuest, locale, projectId, shareUrl]);
 
   return (
     <div className="fixed inset-0 z-[80] h-dvh w-screen overflow-hidden bg-[#000000] text-zinc-100">
@@ -432,7 +523,7 @@ export function WizardSessionProjection({
           tracks={tracks}
           chapterMeta={chapterMeta}
           chapterOrder={chapterOrder}
-          projectId={projectId}
+          projectId={isPrebuilt ? null : projectId}
           openingPortraitUrl={openingPortraitUrl}
           memoryCard={memoryCard}
           salonBadge={salonBadge}
@@ -455,17 +546,24 @@ export function WizardSessionProjection({
             isOfficial && hubFields
               ? {
                   copy: hubFields,
-                  viewerRole: "organizer",
+                  viewerRole,
                   onUnlockMaster: handleHonorPrimary,
-                  onShareSession: () => {
-                    void openShare();
-                  },
+                  onShareSession: isGuest
+                    ? undefined
+                    : () => {
+                        void openShare();
+                      },
                   onUpgradePackage:
-                    masterHubMode === "buy_master"
+                    !isGuest && masterHubMode === "buy_master"
                       ? () => {
                           setOverlay("heritage");
                         }
                       : undefined,
+                  onLeaveLueur: isGuest
+                    ? () => {
+                        setOverlay("lueur");
+                      }
+                    : undefined,
                   onDismiss: closeProjection,
                 }
               : null
@@ -483,7 +581,7 @@ export function WizardSessionProjection({
         </p>
       ) : null}
 
-      {isOfficial && hubCopy && overlay === "share" ? (
+      {isOfficial && hubCopy && !isGuest && overlay === "share" ? (
         <SimOverlay
           title={hubCopy.shareModalTitle}
           body={hubCopy.shareLinkLabel}
@@ -532,11 +630,29 @@ export function WizardSessionProjection({
         </SimOverlay>
       ) : null}
 
-      {isOfficial && hubCopy && overlay === "heritage" ? (
+      {isOfficial && hubCopy && !isGuest && overlay === "heritage" ? (
         <SimOverlay
           title={hubCopy.heritageModalTitle}
           body={hubCopy.heritageModalBody}
           closeLabel={hubCopy.heritageModalClose}
+          onClose={() => setOverlay(null)}
+        />
+      ) : null}
+
+      {isOfficial && hubCopy && isGuest && overlay === "guest_copy" ? (
+        <SimOverlay
+          title={hubCopy.guestCopyTitle}
+          body={hubCopy.guestCopyStubBody ?? hubCopy.guestCopyBody}
+          closeLabel={hubCopy.closeAria}
+          onClose={() => setOverlay(null)}
+        />
+      ) : null}
+
+      {isOfficial && hubCopy && isGuest && overlay === "lueur" ? (
+        <SimOverlay
+          title={hubCopy.lueurModalTitle ?? hubCopy.lueur}
+          body={hubCopy.lueurModalBody ?? hubCopy.lineage}
+          closeLabel={hubCopy.lueurModalClose ?? hubCopy.closeAria}
           onClose={() => setOverlay(null)}
         />
       ) : null}

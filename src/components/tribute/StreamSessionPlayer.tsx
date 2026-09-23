@@ -1,15 +1,19 @@
 "use client";
 
 /**
- * C14 MVP — séance Quiet Luxury guest via `/stream/[token]`.
+ * C14 — Hydrateur `/stream/[token]` → WizardSessionProjection (guest · prebuilt).
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { X } from "lucide-react";
 
-import { CinematicTeaser } from "@/src/components/tribute/CinematicTeaser";
+import {
+  WizardSessionProjection,
+  type WizardSessionHubCopy,
+  type WizardSessionPrebuiltPayload,
+} from "@/src/components/tribute/WizardSessionProjection";
 import type { QuietLuxuryExitHubCopy } from "@/src/components/tribute/QuietLuxuryExitHub";
 import type {
+  TeaserChapterMeta,
   TeaserSlide,
   TeaserTracks,
 } from "@/src/lib/wizard/teaserHelpers";
@@ -27,26 +31,17 @@ export type StreamSessionCopy = QuietLuxuryExitHubCopy & {
   teaserPause: string;
   teaserLoading: string;
   enableSound: string;
+  watchSessionClose: string;
 };
 
-type StreamPayload = {
+type StreamPayload = WizardSessionPrebuiltPayload & {
   memoryCard: { displayName: string; yearsLine: string };
   openingPortraitUrl: string | null;
   slides: TeaserSlide[];
   tracks: TeaserTracks;
-  chapterMeta: Record<
-    string,
-    {
-      title: string;
-      musicCredit: string | null;
-      chapterIndex: number;
-      holdDurationSec?: number;
-    }
-  >;
+  chapterMeta: Record<string, TeaserChapterMeta>;
   chapterOrder?: string[];
 };
-
-type OverlayKind = "guest_copy" | "lueur" | null;
 
 type Props = {
   token: string;
@@ -54,11 +49,73 @@ type Props = {
   copy: StreamSessionCopy;
 };
 
+function placeholderOrganizerFields(
+  copy: StreamSessionCopy,
+): Pick<
+  WizardSessionHubCopy,
+  | "checkoutModalTitle"
+  | "checkoutModalBody"
+  | "checkoutModalClose"
+  | "archiveUnlockError"
+  | "archiveIncludedTitle"
+  | "archiveIncludedBody"
+  | "archiveIncludedCta"
+  | "archiveIncludedUnlocking"
+  | "archiveFinalizeTitle"
+  | "archiveFinalizeBody"
+  | "archiveFinalizeCta"
+  | "archiveFinalizeUnlocking"
+  | "masterSuccessNotice"
+  | "masterCancelNotice"
+  | "noticeDismiss"
+  | "shareModalTitle"
+  | "shareLinkLabel"
+  | "shareLinkLoading"
+  | "shareLinkError"
+  | "shareCopy"
+  | "shareCopied"
+  | "shareNative"
+  | "shareClose"
+  | "heritageModalTitle"
+  | "heritageModalBody"
+  | "heritageModalClose"
+> {
+  // Invité : champs organiseur non affichés — valeurs neutres pour typer le hub.
+  const dash = "—";
+  return {
+    checkoutModalTitle: dash,
+    checkoutModalBody: dash,
+    checkoutModalClose: copy.closeAria,
+    archiveUnlockError: dash,
+    archiveIncludedTitle: dash,
+    archiveIncludedBody: dash,
+    archiveIncludedCta: dash,
+    archiveIncludedUnlocking: copy.guestCopyUnlocking,
+    archiveFinalizeTitle: dash,
+    archiveFinalizeBody: dash,
+    archiveFinalizeCta: dash,
+    archiveFinalizeUnlocking: copy.guestCopyUnlocking,
+    masterSuccessNotice: dash,
+    masterCancelNotice: dash,
+    noticeDismiss: copy.closeAria,
+    shareModalTitle: dash,
+    shareLinkLabel: dash,
+    shareLinkLoading: dash,
+    shareLinkError: dash,
+    shareCopy: dash,
+    shareCopied: dash,
+    shareNative: dash,
+    shareClose: copy.closeAria,
+    heritageModalTitle: dash,
+    heritageModalBody: dash,
+    heritageModalClose: copy.closeAria,
+  };
+}
+
 export function StreamSessionPlayer({ token, locale, copy }: Props) {
   const [payload, setPayload] = useState<StreamPayload | null>(null);
   const [error, setError] = useState<"unavailable" | null>(null);
   const [loading, setLoading] = useState(true);
-  const [overlay, setOverlay] = useState<OverlayKind>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -84,38 +141,10 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
     };
   }, [locale, token]);
 
-  useEffect(() => {
-    const root = document.documentElement;
-    const prevHtml = root.style.overflow;
-    const prevBody = document.body.style.overflow;
-    root.setAttribute("data-odyssey-cinema", "1");
-    root.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    return () => {
-      root.removeAttribute("data-odyssey-cinema");
-      root.style.overflow = prevHtml;
-      document.body.style.overflow = prevBody;
-    };
-  }, []);
-
-  const hubCopy: QuietLuxuryExitHubCopy = {
-    headline: copy.headline,
-    replay: copy.replay,
-    share: copy.share,
-    archiveTitle: copy.archiveTitle,
-    archiveBody: copy.archiveBody,
-    archiveCta: copy.archiveCta,
-    archiveUnlocking: copy.guestCopyUnlocking,
-    guestCopyTitle: copy.guestCopyTitle,
-    guestCopyBody: copy.guestCopyBody,
-    guestCopyCta: copy.guestCopyCta,
-    lueur: copy.lueur,
-    lineage: copy.lineage,
-    closeAria: copy.closeAria,
-  };
-
   const onClose = useCallback(() => {
-    window.history.length > 1 ? window.history.back() : (window.location.href = `/${locale}`);
+    window.history.length > 1
+      ? window.history.back()
+      : (window.location.href = `/${locale}`);
   }, [locale]);
 
   if (loading) {
@@ -142,71 +171,51 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
     );
   }
 
-  return (
-    <div className="fixed inset-0 z-[80] h-dvh w-screen overflow-hidden bg-[#000000] text-zinc-100">
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label={copy.closeAria}
-        className="absolute right-4 top-4 z-[90] flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-zinc-300 transition-colors hover:border-white/30 hover:text-zinc-50 md:right-6 md:top-6"
-      >
-        <X className="h-4 w-4" strokeWidth={1.5} aria-hidden />
-      </button>
-      <CinematicTeaser
-        cinema
-        autoPlay
-        slides={payload.slides}
-        tracks={payload.tracks}
-        chapterMeta={payload.chapterMeta}
-        chapterOrder={payload.chapterOrder}
-        openingPortraitUrl={payload.openingPortraitUrl}
-        memoryCard={payload.memoryCard}
-        emptyLabel={copy.streamEmpty}
-        enableSound={copy.enableSound}
-        copy={{
-          loading: copy.teaserLoading,
-          nowPlaying: "",
-          play: copy.teaserPlay,
-          pause: copy.teaserPause,
-        }}
-        exitHub={{
-          copy: hubCopy,
-          viewerRole: "guest",
-          onUnlockMaster: () => {
-            setOverlay("guest_copy");
-          },
-          onLeaveLueur: () => {
-            setOverlay("lueur");
-          },
-        }}
-        className="h-full w-full"
-      />
+  const hubCopy: WizardSessionHubCopy = {
+    headline: copy.headline,
+    replay: copy.replay,
+    share: copy.share,
+    archiveTitle: copy.archiveTitle,
+    archiveBody: copy.archiveBody,
+    archiveCta: copy.archiveCta,
+    archiveUnlocking: copy.guestCopyUnlocking,
+    guestCopyTitle: copy.guestCopyTitle,
+    guestCopyBody: copy.guestCopyBody,
+    guestCopyCta: copy.guestCopyCta,
+    lueur: copy.lueur,
+    lineage: copy.lineage,
+    closeAria: copy.closeAria,
+    guestCopyStubBody: copy.guestCopyStubBody,
+    lueurModalTitle: copy.lueurModalTitle,
+    lueurModalBody: copy.lueurModalBody,
+    lueurModalClose: copy.lueurModalClose,
+    ...placeholderOrganizerFields(copy),
+  };
 
-      {overlay ? (
-        <div
-          className="absolute inset-0 z-[90] flex items-center justify-center bg-black/70 px-6"
-          role="dialog"
-          aria-modal
-        >
-          <div className="w-full max-w-md rounded-sm border border-white/15 bg-[#0a0a0a] px-6 py-6 text-center">
-            <p className="font-editorial text-lg font-medium tracking-wide text-zinc-100">
-              {overlay === "guest_copy" ? copy.guestCopyTitle : copy.lueurModalTitle}
-            </p>
-            <p className="mt-3 text-[13px] font-light leading-relaxed text-zinc-400">
-              {overlay === "guest_copy"
-                ? copy.guestCopyStubBody
-                : copy.lueurModalBody}
-            </p>
-            <button
-              type="button"
-              onClick={() => setOverlay(null)}
-              className="mt-6 text-[12px] font-light tracking-[0.14em] text-zinc-300 underline decoration-white/25 underline-offset-4 hover:text-zinc-100"
-            >
-              {overlay === "guest_copy" ? copy.closeAria : copy.lueurModalClose}
-            </button>
-          </div>
-        </div>
-      ) : null}
-    </div>
+  return (
+    <WizardSessionProjection
+      intent="official_session"
+      playback="prebuilt"
+      viewerRole="guest"
+      locale={locale}
+      memoryCard={payload.memoryCard}
+      openingPortraitUrl={payload.openingPortraitUrl}
+      primedAudio={null}
+      closeLabel={copy.watchSessionClose}
+      enableSound={copy.enableSound}
+      emptyLabel={copy.streamEmpty}
+      loadingLabel={copy.streamLoading}
+      teaserPlay={copy.teaserPlay}
+      teaserPause={copy.teaserPause}
+      teaserLoading={copy.teaserLoading}
+      hubCopy={hubCopy}
+      prebuilt={{
+        slides: payload.slides,
+        tracks: payload.tracks,
+        chapterMeta: payload.chapterMeta,
+        chapterOrder: payload.chapterOrder,
+      }}
+      onClose={onClose}
+    />
   );
 }

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 22 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 sept 2026 — C14 : `/stream/[token]` unifié sur `WizardSessionProjection` (`playback=prebuilt`, `viewerRole=guest`).
 - 22 sept 2026 — C9 sanity : 217 tests verts · `tsc --noEmit` clean · hub Héritage `finalize_heritage` / `download_included` (tests) · Étape 5 `craft_preview` silencieuse.
 - 22 sept 2026 — Visionne = miroir 1:1 Livre Ouvert (pacing `storyboardPacing`, seed non-destructif, `paletteIndex`, `videoTrims`, audio unique).
 - 22 sept 2026 — Étape 5 preview silencieuse · étape 6 CTA *Vivre la projection* → hub C8.
 - 22 sept 2026 — Hub séance : CTA selon forfait · share `/stream/[token]` · guest hub 15 $ (stub paiement).
-- 22 sept 2026 — C8 : hub séance → Stripe Checkout Archive Master 49 $ (`cinemaMaster`).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

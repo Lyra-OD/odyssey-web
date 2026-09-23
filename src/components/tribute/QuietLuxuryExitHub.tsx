@@ -87,6 +87,8 @@ export function QuietLuxuryExitHub({
     try {
       await Promise.resolve(onUnlockMaster());
     } catch {
+      /* caller surfaces error */
+    } finally {
       setArchiveBusy(false);
     }
   };

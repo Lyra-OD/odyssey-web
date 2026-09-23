@@ -309,6 +309,7 @@ Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage
 - **Component:** `StoryboardMontageStep.tsx` — layout Livre Ouvert, banque persistante, chapitres empilés, `StoryboardFilmMap`, DnD global `dnd-kit`, actions chapitre, onboarding gate, Composition Magique.
 - **Voir la séance (film map) :** `WizardSessionProjection` `intent: "craft_preview"` — aperçu immersif pour l’artisanat. Fin / Échap / ✕ → retour silencieux sur la table de montage. **Pas de hub C8** (ni achat, ni partage).
 - **Miroir 1:1 Livre Ouvert :** `buildTeaserFromStoryboard` + `storyboardPacing` (tempo photo / `videoTrims`) · titres via `paletteIndex ?? index` · seed médias non-écrasé · chapitres musique-seule conservés (carton + piste).
+- **Stream invité (C14) :** même `WizardSessionProjection` avec `playback="prebuilt"` + `viewerRole="guest"` (payload `/api/stream/[token]`, aucun `fetchProjectMedia`).
 - **Why not placeholder anymore:** PR-1/2/3 (juillet 2026) replaced the post–Clean Slate placeholder with the full interactive experience.
 - **Magic composition:** `buildMagicTimeline` → `playMagicTimeline` — batch per chapter + CSS cascade; overlay `MagicCinematicOverlay` (scrim Option B + capsule Bouton Noir, **design locked**).
 - **Autosave:** suspended during magic via `magicPerformingRef` in `TributeWizard`; `queueSave("immediate")` on `onMagicSequenceComplete`.

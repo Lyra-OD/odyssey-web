@@ -5,11 +5,11 @@
 **Dernière MAJ :** 22 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 22 sept 2026 — C14 : `/[lang]/stream/[token]` via `WizardSessionProjection` guest/prebuilt (C12 Stripe encore stub).
 - 22 sept 2026 — Visionne miroir Livre Ouvert : pacing photo/vidéo · chapitres musique-seule · seed non-destructif · titres `paletteIndex` · `videoTrims` · amorce audio unique.
 - 22 sept 2026 — Séance : étape 5 = `craft_preview` (silence) · étape 6 = bouton *Vivre la projection* → `official_session` + hub C8.
 - 22 sept 2026 — Hub CTA forfait-aware (49 $ / Inclus / Finaliser Héritage) · Partager → `/stream/[token]` · guest hub C12 stub.
 - 22 sept 2026 — C8 câblage Stripe Archive Master 49 $ depuis hub post-séance Studio (`session_hub`).
-- 22 sept 2026 — Polish séance Studio : crédit Quiet Luxury · zéro scrollbar cinéma · chapitres qui gardent leur identité au drag.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -299,8 +299,8 @@ Détail commits C4–C7 ci-dessous.
 `feat(growth): /stream/[token] registre digne + séance privée`  
 - Chevalet / signet · capture identité · Livre Ouvert · consentement séparé (Loi 25).  
 - **Priorité acquisition** dès que C4–C9 validés.  
-**Done (MVP) :** ✅ `/[lang]/stream/[token]` + `GET /api/stream/[token]` (`view_only`) · Quiet Luxury guest hub · copie 15 $ stub — 22 sept 2026.  
-**Reste :** registre digne · capture identité · QR chevalet · email contributeur.
+**Done (MVP) :** ✅ `/[lang]/stream/[token]` + `GET /api/stream/[token]` (`view_only`) · **même moteur** `WizardSessionProjection` (`playback=prebuilt`, `viewerRole=guest`) · hub copie 15 $ stub — 22 sept 2026.  
+**Reste :** Stripe `guestMasterCopy` (C12) · registre digne · capture identité · QR chevalet · email contributeur.
 
 ### Plus tard — Creatomate DA intro
 Hors chemin critique.
