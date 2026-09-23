@@ -9,6 +9,7 @@ import {
   upsertProjectPaidEntitlements,
 } from "@/src/lib/wizard/paidEntitlements";
 import { isCinemaMasterProductKey } from "@/src/lib/wizard/cinemaMasterPurchase";
+import { isSocialCutProductKey } from "@/src/lib/wizard/socialCutPurchase";
 import { normalizeBasePackageId } from "@/src/lib/wizard/pricingConfig";
 import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
 
@@ -440,6 +441,23 @@ async function handleGuestSupportCompleted(
           product_key: productKey,
           first_unlock: fulfill.firstUnlock,
           export_queued: fulfill.exportQueued,
+          status_after: "processed",
+        });
+      }
+    } else if (isSocialCutProductKey(productKey)) {
+      const projectId = metadata.project_id?.trim() || "";
+      if (projectId) {
+        const { fulfillSocialCutPurchase } = await import(
+          "@/src/lib/wizard/socialCutPurchase"
+        );
+        const fulfill = await fulfillSocialCutPurchase(supabase, { projectId });
+        logWebhook({
+          level: "info",
+          context: "social_cut_fulfill_ok",
+          event_id: event.id,
+          project_id: projectId,
+          job_id: fulfill.jobId,
+          already_queued: fulfill.alreadyQueued,
           status_after: "processed",
         });
       }

@@ -2,14 +2,14 @@
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
 **Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C8 hub lab** · **Tranche 1 Studio** · suite **C5/C7 reportés** · C9–C14 · trajectoire cercle + Phase 2 isolée.  
-**Dernière MAJ :** 22 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 23 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 23 sept 2026 — **C13** : Social Cut `socialCut` 19 $ · checkout post-Master · job stub `creatomate_social_stub` 9:16.
 - 23 sept 2026 — C11 : multi-acheteurs Master 49 $ · gift `cinemaMasterGift` · Fonds via `guest_micro` · CTA hub never greyed.
 - 22 sept 2026 — C12 : Checkout Stripe `guestMasterCopy` 15 $ · gate Master unlock · download `output_url` (0 Creatomate).
 - 22 sept 2026 — C14 : `/[lang]/stream/[token]` via `WizardSessionProjection` guest/prebuilt (C12 Stripe encore stub).
 - 22 sept 2026 — Visionne miroir Livre Ouvert : pacing photo/vidéo · chapitres musique-seule · seed non-destructif · titres `paletteIndex` · `videoTrims` · amorce audio unique.
-- 22 sept 2026 — Séance : étape 5 = `craft_preview` (silence) · étape 6 = bouton *Vivre la projection* → `official_session` + hub C8.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -295,7 +295,8 @@ Détail commits C4–C7 ci-dessous.
 
 ### C13 — Social Cut 9:16
 `feat(export): socialCut 19$ vertical 30-45s`  
-**Done :** MP4 9:16 + checkout post-master.
+**Done (MVP) :** ✅ SKU `socialCut` 1900¢ · checkout owner `/api/projects/[id]/social-cut-checkout` + stream `/api/stream/[token]/social-cut-checkout` · gate Master · webhook → `creatomate_social_stub` · hub CTA post-unlock — 23 sept 2026.  
+**Reste :** vrai render Creatomate 9:16 · download signed URL.
 
 ### C14 — QR registre + lander séance privée
 `feat(growth): /stream/[token] registre digne + séance privée`  

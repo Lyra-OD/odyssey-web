@@ -24,6 +24,11 @@ export type QuietLuxuryExitHubCopy = {
   guestCopyTitle: string;
   guestCopyBody: string;
   guestCopyCta: string;
+  /** C13 — Social Cut 9:16 post-Master. */
+  socialCutTitle?: string;
+  socialCutBody?: string;
+  socialCutCta?: string;
+  socialCutUnlocking?: string;
   lueur: string;
   lineage: string;
   closeAria: string;
@@ -39,6 +44,8 @@ export type QuietLuxuryExitHubProps = {
   onUnlockMaster: () => void | Promise<void>;
   onDownloadMaster?: () => void | Promise<void>;
   onGuestCopy?: () => void | Promise<void>;
+  /** C13 — Social Cut 9:16 (après Master). */
+  onSocialCut?: () => void | Promise<void>;
   onShareSession?: () => void;
   onUpgradePackage?: () => void;
   onLeaveLueur?: () => void;
@@ -62,6 +69,7 @@ export function QuietLuxuryExitHub({
   onUnlockMaster,
   onDownloadMaster,
   onGuestCopy,
+  onSocialCut,
   onShareSession,
   onUpgradePackage,
   onLeaveLueur,
@@ -70,6 +78,7 @@ export function QuietLuxuryExitHub({
 }: QuietLuxuryExitHubProps) {
   const [visible, setVisible] = useState(false);
   const [archiveBusy, setArchiveBusy] = useState(false);
+  const [socialBusy, setSocialBusy] = useState(false);
 
   useEffect(() => {
     const id = window.setTimeout(() => setVisible(true), 40);
@@ -98,6 +107,18 @@ export function QuietLuxuryExitHub({
       /* caller surfaces error */
     } finally {
       setArchiveBusy(false);
+    }
+  };
+
+  const handleSocialCut = async () => {
+    if (socialBusy || !onSocialCut) return;
+    setSocialBusy(true);
+    try {
+      await Promise.resolve(onSocialCut());
+    } catch {
+      /* caller surfaces error */
+    } finally {
+      setSocialBusy(false);
     }
   };
 
@@ -155,6 +176,22 @@ export function QuietLuxuryExitHub({
               </button>
             ) : null}
           </div>
+
+          {masterUnlocked && onSocialCut && copy.socialCutCta ? (
+            <button
+              type="button"
+              onClick={() => {
+                void handleSocialCut();
+              }}
+              disabled={socialBusy}
+              aria-busy={socialBusy}
+              className={softLinkBtn}
+            >
+              {socialBusy
+                ? (copy.socialCutUnlocking ?? copy.socialCutCta)
+                : copy.socialCutCta}
+            </button>
+          ) : null}
 
           {!isOrganizer && onGuestCopy ? (
             <button

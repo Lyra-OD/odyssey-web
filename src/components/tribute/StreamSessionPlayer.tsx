@@ -27,6 +27,13 @@ export type StreamSessionCopy = QuietLuxuryExitHubCopy & {
   guestCopyDownloadReady: string;
   guestCopyArchivePending: string;
   guestCopyDownloadCta: string;
+  socialCutTitle: string;
+  socialCutBody: string;
+  socialCutCta: string;
+  socialCutUnlocking: string;
+  socialCutMasterLockedBody: string;
+  socialCutCheckoutError: string;
+  socialCutSuccessNotice: string;
   lueurModalTitle: string;
   lueurModalBody: string;
   lueurModalClose: string;
@@ -47,6 +54,7 @@ type StreamPayload = WizardSessionPrebuiltPayload & {
   tracks: TeaserTracks;
   chapterMeta: Record<string, TeaserChapterMeta>;
   chapterOrder?: string[];
+  masterUnlocked?: boolean;
 };
 
 type OverlayKind =
@@ -56,6 +64,7 @@ type OverlayKind =
   | "checkout_error"
   | "download_ready"
   | "archive_pending"
+  | "social_cut_success"
   | null;
 
 type Props = {
@@ -161,7 +170,12 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    if (params.get("checkout") !== "guest_success") return;
+    const checkout = params.get("checkout");
+    if (checkout === "social_cut_success") {
+      setOverlay("social_cut_success");
+      return;
+    }
+    if (checkout !== "guest_success") return;
     const sessionId = params.get("session_id")?.trim();
     if (!sessionId) return;
 
@@ -245,6 +259,31 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
     window.location.href = data.url;
   }, [locale, token]);
 
+  const startSocialCutCheckout = useCallback(async () => {
+    const res = await fetch(
+      `/api/stream/${encodeURIComponent(token)}/social-cut-checkout`,
+      {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
+      },
+    );
+    const data = (await res.json().catch(() => ({}))) as {
+      url?: string;
+      error?: string;
+    };
+    if (res.status === 422 && data.error === "master_not_unlocked") {
+      setOverlay("master_locked");
+      return;
+    }
+    if (!res.ok || !data.url) {
+      setOverlay("checkout_error");
+      throw new Error(data.error ?? "social_cut_checkout_failed");
+    }
+    window.location.href = data.url;
+  }, [locale, token]);
+
   if (loading) {
     return (
       <div className="flex h-dvh items-center justify-center bg-[#000000] px-6 text-sm font-light text-zinc-500">
@@ -280,6 +319,10 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
     guestCopyTitle: copy.guestCopyTitle,
     guestCopyBody: copy.guestCopyBody,
     guestCopyCta: copy.guestCopyCta,
+    socialCutTitle: copy.socialCutTitle,
+    socialCutBody: copy.socialCutBody,
+    socialCutCta: copy.socialCutCta,
+    socialCutUnlocking: copy.socialCutUnlocking,
     lueur: copy.lueur,
     lineage: copy.lineage,
     closeAria: copy.closeAria,
@@ -299,9 +342,11 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
           ? copy.guestCopyArchivePending
           : overlay === "checkout_error"
             ? copy.guestCopyCheckoutError
-            : overlay === "lueur"
-              ? copy.lueurModalTitle
-              : copy.guestCopyTitle;
+            : overlay === "social_cut_success"
+              ? copy.socialCutTitle
+              : overlay === "lueur"
+                ? copy.lueurModalTitle
+                : copy.guestCopyTitle;
 
   const overlayBody =
     overlay === "master_locked"
@@ -312,9 +357,11 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
           ? copy.guestCopyArchivePending
           : overlay === "checkout_error"
             ? copy.guestCopyCheckoutError
-            : overlay === "lueur"
-              ? copy.lueurModalBody
-              : copy.guestCopyStubBody;
+            : overlay === "social_cut_success"
+              ? copy.socialCutSuccessNotice
+              : overlay === "lueur"
+                ? copy.lueurModalBody
+                : copy.guestCopyStubBody;
 
   return (
     <>
@@ -343,6 +390,8 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
         onClose={onClose}
         onHonorPrimary={startMasterGiftCheckout}
         onGuestCopy={startGuestCopyCheckout}
+        onSocialCut={startSocialCutCheckout}
+        masterUnlocked={payload.masterUnlocked === true}
       />
 
       {overlay &&

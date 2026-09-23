@@ -33,7 +33,10 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
   const planOverride =
     process.env.NODE_ENV !== "production" ? rawPlan : undefined;
   const checkoutReturn =
-    rawCheckout === "master_success" || rawCheckout === "master_cancel"
+    rawCheckout === "master_success" ||
+    rawCheckout === "master_cancel" ||
+    rawCheckout === "social_cut_success" ||
+    rawCheckout === "social_cut_cancel"
       ? rawCheckout
       : null;
   const lang: Locale = routeLang === "en" ? "en" : "fr";

@@ -3,7 +3,9 @@ import "server-only";
 import { formatTributeDisplayName, resolveTributeNames } from "@/src/lib/contribute/tributeName";
 import { hydrateMediaRowsWithSignedUrls } from "@/src/lib/media/hydrateMediaSignedUrls.server";
 import { SIGNED_URL_TTL_SEC } from "@/src/lib/media/storageEgressPolicy";
+import { hasCinemaMasterExportEntitlement } from "@/src/lib/wizard/exportGate";
 import { mediaApiToMontageItems } from "@/src/lib/wizard/montageHelpers";
+import { getProjectPaidEntitlements } from "@/src/lib/wizard/paidEntitlements";
 import {
   buildTeaserFromStoryboard,
   type CinemaChapterTitlesCopy,
@@ -37,6 +39,8 @@ export type SessionStreamPayload = {
     }
   >;
   chapterOrder: string[];
+  /** C13 — Master déjà ouvert → Social Cut / copie invité. */
+  masterUnlocked: boolean;
 };
 
 /**
@@ -125,6 +129,11 @@ export async function loadSessionStreamPayload(params: {
     openingPortraitUrl = data?.signedUrl ?? null;
   }
 
+  const entitlements = await getProjectPaidEntitlements(admin, params.projectId);
+  const masterUnlocked = Boolean(
+    entitlements && hasCinemaMasterExportEntitlement(entitlements),
+  );
+
   return {
     memoryCard: { displayName, yearsLine },
     openingPortraitUrl,
@@ -132,5 +141,6 @@ export async function loadSessionStreamPayload(params: {
     tracks: built.tracks,
     chapterMeta: built.chapterMeta,
     chapterOrder: built.chapterOrder,
+    masterUnlocked,
   };
 }

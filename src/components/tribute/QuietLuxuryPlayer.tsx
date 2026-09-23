@@ -163,6 +163,7 @@ export type QuietLuxuryPlayerProps = {
     onUnlockMaster: () => void | Promise<void>;
     onDownloadMaster?: () => void | Promise<void>;
     onGuestCopy?: () => void | Promise<void>;
+    onSocialCut?: () => void | Promise<void>;
     onShareSession?: () => void;
     onUpgradePackage?: () => void;
     onLeaveLueur?: () => void;
@@ -1416,6 +1417,7 @@ export function QuietLuxuryPlayer({
           onUnlockMaster={exitHub.onUnlockMaster}
           onDownloadMaster={exitHub.onDownloadMaster}
           onGuestCopy={exitHub.onGuestCopy}
+          onSocialCut={exitHub.onSocialCut}
           onShareSession={exitHub.onShareSession}
           onUpgradePackage={exitHub.onUpgradePackage}
           onLeaveLueur={exitHub.onLeaveLueur}

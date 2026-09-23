@@ -33,7 +33,12 @@ type StudioLocaleFrameProps = {
   accessRole?: WizardAccessRole;
   exitHubCopyFr: WizardSessionHubCopy;
   exitHubCopyEn: WizardSessionHubCopy;
-  checkoutReturn?: "master_success" | "master_cancel" | null;
+  checkoutReturn?:
+    | "master_success"
+    | "master_cancel"
+    | "social_cut_success"
+    | "social_cut_cancel"
+    | null;
 };
 
 /**
@@ -60,19 +65,32 @@ export function StudioLocaleFrame({
   const copy = uiLocale === "en" ? copyEn : copyFr;
   const labels = uiLocale === "en" ? labelsEn : labelsFr;
   const exitHub = uiLocale === "en" ? exitHubCopyEn : exitHubCopyFr;
-  const masterEntitled = checkoutReturn === "master_success";
 
   useEffect(() => {
     if (checkoutReturn === "master_success") {
       setCheckoutNotice(exitHub.masterSuccessNotice);
     } else if (checkoutReturn === "master_cancel") {
       setCheckoutNotice(exitHub.masterCancelNotice);
+    } else if (checkoutReturn === "social_cut_success") {
+      setCheckoutNotice(
+        exitHub.socialCutSuccessNotice ?? exitHub.masterSuccessNotice,
+      );
+    } else if (checkoutReturn === "social_cut_cancel") {
+      setCheckoutNotice(
+        exitHub.socialCutCancelNotice ?? exitHub.masterCancelNotice,
+      );
     }
   }, [
     checkoutReturn,
     exitHub.masterCancelNotice,
     exitHub.masterSuccessNotice,
+    exitHub.socialCutCancelNotice,
+    exitHub.socialCutSuccessNotice,
   ]);
+
+  const masterEntitled =
+    checkoutReturn === "master_success" ||
+    checkoutReturn === "social_cut_success";
 
   return (
     <>

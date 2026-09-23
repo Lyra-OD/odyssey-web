@@ -1402,6 +1402,31 @@ export function TributeWizard({
     void data.jobId;
   }, [locale, uploadProjectId]);
 
+  const startSocialCutFromSession = useCallback(async () => {
+    if (!uploadProjectId) {
+      throw new Error("missing_project");
+    }
+    const res = await fetch(
+      `/api/projects/${uploadProjectId}/social-cut-checkout`,
+      {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
+      },
+    );
+    const data = (await res.json().catch(() => ({}))) as {
+      url?: string;
+      error?: string;
+      message?: string;
+    };
+    if (!res.ok || !data.url) {
+      throw new Error(data.error || data.message || "social_cut_checkout_failed");
+    }
+    void exitNativeFullscreen();
+    window.location.href = data.url;
+  }, [locale, uploadProjectId]);
+
   const finalizeHeritageFromSession = useCallback(async () => {
     void exitNativeFullscreen();
     closeWatchSession();
@@ -3324,6 +3349,14 @@ export function TributeWizard({
             masterHubMode === "download_included"
               ? downloadMasterFromSession
               : undefined
+          }
+          onSocialCut={
+            masterHubMode === "download_included" || masterEntitled
+              ? startSocialCutFromSession
+              : undefined
+          }
+          masterUnlocked={
+            masterHubMode === "download_included" || masterEntitled
           }
         />
       ) : null}

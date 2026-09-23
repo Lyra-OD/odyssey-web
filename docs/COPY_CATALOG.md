@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-23 · **Entrées :** 989
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-23 · **Entrées :** 997
 
 ## `common`
 
@@ -1069,6 +1069,14 @@
 | `quietLuxuryExitHub.guestCopyDownloadReady` | Votre copie est prête | Your copy is ready |
 | `quietLuxuryExitHub.guestCopyArchivePending` | Paiement reçu. L'Archive Master est encore en préparation — réessayez sous peu. | Payment received. The Cinema Master is still preparing — try again shortly. |
 | `quietLuxuryExitHub.guestCopyDownloadCta` | Télécharger mon film | Download my film |
+| `quietLuxuryExitHub.socialCutTitle` | Social Cut 9:16 · 19 $ | Social Cut 9:16 · $19 |
+| `quietLuxuryExitHub.socialCutBody` | Pastille Stories ~30–45 s · format vertical Quiet Luxury | Stories paste ~30–45 s · Quiet Luxury vertical |
+| `quietLuxuryExitHub.socialCutCta` | Commander le Social Cut | Order the Social Cut |
+| `quietLuxuryExitHub.socialCutUnlocking` | Ouverture du paiement… | Opening checkout… |
+| `quietLuxuryExitHub.socialCutMasterLockedBody` | Le Social Cut s'ouvre après l'Archive Master. Conservez d'abord le film. | Social Cut opens after the Cinema Master. Preserve the film first. |
+| `quietLuxuryExitHub.socialCutCheckoutError` | Impossible d'ouvrir le paiement du Social Cut. Réessayez dans un instant. | Could not open Social Cut checkout. Please try again shortly. |
+| `quietLuxuryExitHub.socialCutSuccessNotice` | Paiement reçu. Votre Social Cut 9:16 est en préparation. | Payment received. Your 9:16 Social Cut is being prepared. |
+| `quietLuxuryExitHub.socialCutCancelNotice` | Paiement annulé — le Social Cut reste disponible après l'Archive Master. | Payment cancelled — Social Cut remains available after the Cinema Master. |
 | `quietLuxuryExitHub.lueur` | Déposer une pensée ou une lueur | Leave a thought or a light |
 | `quietLuxuryExitHub.lineage` | Transmettre à la lignée | Pass it on to the lineage |
 | `quietLuxuryExitHub.closeAria` | Quitter le plein écran | Exit fullscreen |

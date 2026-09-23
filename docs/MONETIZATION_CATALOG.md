@@ -91,7 +91,7 @@ Tunnel **Sanctuaire d'abord (0 $)** → empreinte payante. Ordre d'affichage UX 
 | Enforce plafonds 5 photos + multi-dépôt | — | Fin 3a | ✅ (flag viral OFF · pilote tenant ⏳) |
 | Capture voix + **témoignage live** + mini-clip 30 s (Phase 3b) | inclus packs / 1 clip | Après 3a | 🔜 |
 | Aide IA rédaction du **mot** (suggestions optionnelles) | coût API | Phase 3b+ | 💡 → 🔜 |
-| Social Cut | 19 $ | V1.5 | 🔜 |
+| Social Cut | 19 $ | V1.5 | ✅ C13 MVP (stub render) |
 | Sanctuaire Numérique (abo) | 49 $/an | Phase 2 MRR | 🔜 |
 | Capsule anniversaire IA Jour-365 | inclus abo | Phase 2 | 🔜 |
 | Lead-Gen CPL | CPL | Phase 2 | 🔜 |

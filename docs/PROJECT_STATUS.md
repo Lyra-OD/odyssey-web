@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 22 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 23 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 23 sept 2026 — **C13** : Social Cut 19 $ (9:16 stub) · checkout post-Master · hub CTA.
 - 23 sept 2026 — C11 : Master multi-acheteurs 49 $ (CTA always-on · #1 unlock+export · #2…n Fonds) · gift stream.
 - 22 sept 2026 — C12 : `guestMasterCopy` 15 $ Stripe depuis hub stream invité · download licence Master.
 - 22 sept 2026 — Visionne : carton chapitre sans médias plafonné (~8 s) — plus de N × durée de piste.
 - 22 sept 2026 — C14 : `/stream/[token]` unifié sur `WizardSessionProjection` (`playback=prebuilt`, `viewerRole=guest`).
-- 22 sept 2026 — C9 sanity : 217 tests verts · `tsc --noEmit` clean · hub Héritage `finalize_heritage` / `download_included` (tests) · Étape 5 `craft_preview` silencieuse.
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -26,7 +26,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Soft Cap + entitlements + gate export + MP3/ToS — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Héritage **1080p** · 4K dès Éternité · Phase 6 QA ⏳ |
 | **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual / **`charge.refunded`**. QA replay `checkout.session.completed` ✅ (P17 `submitted`). |
 | **RevShare** | 🟢 UI | Spec + SQL P6/P8 + webhook ✅ · UI Salon + `GET /api/partner/commissions` 🟢 · payout ops ⏳ |
-| **Export Creatomate** | 🟡 | **C0–C4** ✅ · ML/hub **C5+** — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
+| **Export Creatomate** | 🟡 | **C0–C4** ✅ · **C11–C13** cash cercle ✅ · ML/hub **C5+** — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
 | **UX mobile** | 🟡 | Wizard : [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md). **Sanctuaire invité** : HTML still immédiat, WebGL en amélioration |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** (titre d’étape OK ; titres chapitre défaut encore Étincelle / Épopée / Héritage) · S5-J/K ⏳ |

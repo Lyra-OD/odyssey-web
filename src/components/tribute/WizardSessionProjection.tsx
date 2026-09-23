@@ -77,6 +77,15 @@ export type WizardSessionHubCopy = QuietLuxuryExitHubCopy & {
   heritageModalClose: string;
   /** Stub C12 — overlay copie invité avant Stripe. */
   guestCopyStubBody?: string;
+  /** C13 — Social Cut. */
+  socialCutTitle?: string;
+  socialCutBody?: string;
+  socialCutCta?: string;
+  socialCutUnlocking?: string;
+  socialCutSuccessNotice?: string;
+  socialCutCancelNotice?: string;
+  socialCutMasterLockedBody?: string;
+  socialCutCheckoutError?: string;
   lueurModalTitle?: string;
   lueurModalBody?: string;
   lueurModalClose?: string;
@@ -136,6 +145,13 @@ type Props = {
   onDownloadMaster?: () => Promise<void>;
   /** C12 — copie 15 $ (guest stream). */
   onGuestCopy?: () => Promise<void>;
+  /** C13 — Social Cut 9:16 post-Master. */
+  onSocialCut?: () => Promise<void>;
+  /**
+   * Master déjà unlocked (stream guest) — expose Social Cut.
+   * Studio : déduit de masterHubMode / onDownloadMaster.
+   */
+  masterUnlocked?: boolean;
   /**
    * Médias déjà hydratés (Livre Ouvert / PreviewStep) — SOURCE DE VÉRITÉ.
    * Un force-fetch ne fait qu’un merge non-destructif des URLs manquantes.
@@ -252,6 +268,8 @@ export function WizardSessionProjection({
   onHonorPrimary,
   onDownloadMaster,
   onGuestCopy,
+  onSocialCut,
+  masterUnlocked: masterUnlockedProp,
   seedMediaItems = null,
   basePackage = "essential",
 }: Props) {
@@ -453,6 +471,10 @@ export function WizardSessionProjection({
           guestCopyTitle: hubCopy.guestCopyTitle,
           guestCopyBody: hubCopy.guestCopyBody,
           guestCopyCta: hubCopy.guestCopyCta,
+          socialCutTitle: hubCopy.socialCutTitle,
+          socialCutBody: hubCopy.socialCutBody,
+          socialCutCta: hubCopy.socialCutCta,
+          socialCutUnlocking: hubCopy.socialCutUnlocking,
           lueur: hubCopy.lueur,
           lineage: hubCopy.lineage,
           closeAria: hubCopy.closeAria,
@@ -562,9 +584,10 @@ export function WizardSessionProjection({
                   copy: hubFields,
                   viewerRole,
                   masterUnlocked:
-                    !isGuest &&
-                    (masterHubMode === "download_included" ||
-                      Boolean(onDownloadMaster)),
+                    masterUnlockedProp === true ||
+                    (!isGuest &&
+                      (masterHubMode === "download_included" ||
+                        Boolean(onDownloadMaster))),
                   onUnlockMaster: handleHonorPrimary,
                   onDownloadMaster:
                     !isGuest && onDownloadMaster
@@ -572,6 +595,7 @@ export function WizardSessionProjection({
                       : undefined,
                   onGuestCopy:
                     isGuest && onGuestCopy ? () => onGuestCopy() : undefined,
+                  onSocialCut: onSocialCut ? () => onSocialCut() : undefined,
                   onShareSession: isGuest
                     ? undefined
                     : () => {
