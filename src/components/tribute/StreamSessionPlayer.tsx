@@ -202,6 +202,27 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
       : (window.location.href = `/${locale}`);
   }, [locale]);
 
+  const startMasterGiftCheckout = useCallback(async () => {
+    const res = await fetch(
+      `/api/stream/${encodeURIComponent(token)}/master-checkout`,
+      {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
+      },
+    );
+    const data = (await res.json().catch(() => ({}))) as {
+      url?: string;
+      error?: string;
+    };
+    if (!res.ok || !data.url) {
+      setOverlay("checkout_error");
+      throw new Error(data.error ?? "master_checkout_failed");
+    }
+    window.location.href = data.url;
+  }, [locale, token]);
+
   const startGuestCopyCheckout = useCallback(async () => {
     const res = await fetch(`/api/stream/${encodeURIComponent(token)}/checkout`, {
       method: "POST",
@@ -320,7 +341,8 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
           chapterOrder: payload.chapterOrder,
         }}
         onClose={onClose}
-        onHonorPrimary={startGuestCopyCheckout}
+        onHonorPrimary={startMasterGiftCheckout}
+        onGuestCopy={startGuestCopyCheckout}
       />
 
       {overlay &&

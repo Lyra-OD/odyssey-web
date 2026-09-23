@@ -159,7 +159,10 @@ export type QuietLuxuryPlayerProps = {
   exitHub?: {
     copy: QuietLuxuryExitHubCopy;
     viewerRole?: QuietLuxuryViewerRole;
+    masterUnlocked?: boolean;
     onUnlockMaster: () => void | Promise<void>;
+    onDownloadMaster?: () => void | Promise<void>;
+    onGuestCopy?: () => void | Promise<void>;
     onShareSession?: () => void;
     onUpgradePackage?: () => void;
     onLeaveLueur?: () => void;
@@ -1408,8 +1411,11 @@ export function QuietLuxuryPlayer({
           copy={exitHub.copy}
           displayName={memoryCard?.displayName ?? ""}
           viewerRole={exitHub.viewerRole ?? "organizer"}
+          masterUnlocked={exitHub.masterUnlocked === true}
           onReplaySession={replaySession}
           onUnlockMaster={exitHub.onUnlockMaster}
+          onDownloadMaster={exitHub.onDownloadMaster}
+          onGuestCopy={exitHub.onGuestCopy}
           onShareSession={exitHub.onShareSession}
           onUpgradePackage={exitHub.onUpgradePackage}
           onLeaveLueur={exitHub.onLeaveLueur}

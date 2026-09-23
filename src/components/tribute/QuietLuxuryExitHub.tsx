@@ -18,6 +18,9 @@ export type QuietLuxuryExitHubCopy = {
   archiveBody: string;
   archiveCta: string;
   archiveUnlocking: string;
+  /** Mention Fonds quand Master déjà ouvert (N-buyer). */
+  archiveFundHint?: string;
+  archiveDownloadCta?: string;
   guestCopyTitle: string;
   guestCopyBody: string;
   guestCopyCta: string;
@@ -30,8 +33,12 @@ export type QuietLuxuryExitHubProps = {
   copy: QuietLuxuryExitHubCopy;
   displayName: string;
   viewerRole?: QuietLuxuryViewerRole;
+  /** Master déjà débloqué — CTA 49 $ reste actif (C11) + download optionnel. */
+  masterUnlocked?: boolean;
   onReplaySession: () => void;
   onUnlockMaster: () => void | Promise<void>;
+  onDownloadMaster?: () => void | Promise<void>;
+  onGuestCopy?: () => void | Promise<void>;
   onShareSession?: () => void;
   onUpgradePackage?: () => void;
   onLeaveLueur?: () => void;
@@ -50,8 +57,11 @@ export function QuietLuxuryExitHub({
   copy,
   displayName,
   viewerRole = "organizer",
+  masterUnlocked = false,
   onReplaySession,
   onUnlockMaster,
+  onDownloadMaster,
+  onGuestCopy,
   onShareSession,
   onUpgradePackage,
   onLeaveLueur,
@@ -69,17 +79,15 @@ export function QuietLuxuryExitHub({
   const headline = copy.headline.replace("{name}", displayName.trim() || "—");
   const isOrganizer = viewerRole === "organizer";
 
-  const honorCard = isOrganizer
-    ? {
-        title: copy.archiveTitle,
-        body: copy.archiveBody,
-        cta: copy.archiveCta,
-      }
-    : {
-        title: copy.guestCopyTitle,
-        body: copy.guestCopyBody,
-        cta: copy.guestCopyCta,
-      };
+  // C11 — carte d'honneur = toujours Master 49 $ (organizer + guest mécène).
+  const honorCard = {
+    title: copy.archiveTitle,
+    body:
+      masterUnlocked && copy.archiveFundHint
+        ? copy.archiveFundHint
+        : copy.archiveBody,
+    cta: copy.archiveCta,
+  };
 
   const handleUnlockMaster = async () => {
     if (archiveBusy) return;
@@ -117,7 +125,6 @@ export function QuietLuxuryExitHub({
           className="mt-12 flex w-full flex-col items-stretch gap-6 md:mt-14 md:gap-7"
           aria-label={headline}
         >
-          {/* Carte d'honneur — Master (organizer) ou copie (guest) */}
           <div className="rounded-sm border border-white/[0.1] bg-white/[0.03] px-5 py-5 text-left md:px-6 md:py-6">
             <p className="text-[13px] font-light tracking-[0.12em] text-zinc-100">
               {honorCard.title}
@@ -136,7 +143,30 @@ export function QuietLuxuryExitHub({
             >
               {archiveBusy ? copy.archiveUnlocking : honorCard.cta}
             </button>
+            {masterUnlocked && onDownloadMaster ? (
+              <button
+                type="button"
+                onClick={() => {
+                  void onDownloadMaster();
+                }}
+                className="mt-3 block text-[12px] font-light tracking-[0.14em] text-zinc-400 underline decoration-white/20 underline-offset-4 transition-colors hover:text-zinc-200"
+              >
+                {copy.archiveDownloadCta ?? copy.archiveCta}
+              </button>
+            ) : null}
           </div>
+
+          {!isOrganizer && onGuestCopy ? (
+            <button
+              type="button"
+              onClick={() => {
+                void onGuestCopy();
+              }}
+              className={softLinkBtn}
+            >
+              {copy.guestCopyCta}
+            </button>
+          ) : null}
 
           <button type="button" onClick={onReplaySession} className={secondaryBtn}>
             <RotateCcw

@@ -1356,45 +1356,30 @@ export function TributeWizard({
       throw new Error("missing_project");
     }
 
-    const nextExtensions: WizardExtensionsState = {
-      ...wizardFieldsRef.current.extensions,
-      cinemaMaster: true,
-    };
-    handleExtensionsChange(nextExtensions);
-    await flush();
-
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        projectId: uploadProjectId,
-        locale,
-        source: "session_hub",
-      }),
-    });
+    const res = await fetch(
+      `/api/projects/${uploadProjectId}/master-checkout`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
+      },
+    );
     const data = (await res.json().catch(() => ({}))) as {
       url?: string;
-      redirectUrl?: string;
-      mode?: string;
-      message?: string;
       error?: string;
+      message?: string;
     };
 
     if (!res.ok) {
       throw new Error(data.error || data.message || "checkout_failed");
     }
-
-    const target =
-      (typeof data.url === "string" && data.url) ||
-      (typeof data.redirectUrl === "string" && data.redirectUrl) ||
-      null;
-    if (!target) {
+    if (!data.url) {
       throw new Error("checkout_missing_url");
     }
 
     void exitNativeFullscreen();
-    window.location.href = target;
-  }, [flush, handleExtensionsChange, locale, uploadProjectId]);
+    window.location.href = data.url;
+  }, [locale, uploadProjectId]);
 
   const downloadMasterFromSession = useCallback(async () => {
     if (!uploadProjectId) {
@@ -1414,7 +1399,6 @@ export function TributeWizard({
     if (!res.ok) {
       throw new Error(data.error || data.message || "export_failed");
     }
-    // Job stub Creatomate — le hub reste ouvert ; notice via erreur = non, succès silencieux.
     void data.jobId;
   }, [locale, uploadProjectId]);
 
@@ -1436,17 +1420,13 @@ export function TributeWizard({
   );
 
   const honorPrimaryFromSession = useCallback(async () => {
-    if (masterHubMode === "download_included") {
-      await downloadMasterFromSession();
-      return;
-    }
+    // C11 — 49 $ toujours (sauf finaliser Héritage). Download = CTA secondaire.
     if (masterHubMode === "finalize_heritage") {
       await finalizeHeritageFromSession();
       return;
     }
     await unlockMasterFromSession();
   }, [
-    downloadMasterFromSession,
     finalizeHeritageFromSession,
     masterHubMode,
     unlockMasterFromSession,
@@ -3340,6 +3320,11 @@ export function TributeWizard({
           masterHubMode={masterHubMode}
           onClose={closeWatchSession}
           onHonorPrimary={honorPrimaryFromSession}
+          onDownloadMaster={
+            masterHubMode === "download_included"
+              ? downloadMasterFromSession
+              : undefined
+          }
         />
       ) : null}
     </>

@@ -5,11 +5,11 @@
 **Dernière MAJ :** 22 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 23 sept 2026 — C11 : multi-acheteurs Master 49 $ · gift `cinemaMasterGift` · Fonds via `guest_micro` · CTA hub never greyed.
 - 22 sept 2026 — C12 : Checkout Stripe `guestMasterCopy` 15 $ · gate Master unlock · download `output_url` (0 Creatomate).
 - 22 sept 2026 — C14 : `/[lang]/stream/[token]` via `WizardSessionProjection` guest/prebuilt (C12 Stripe encore stub).
 - 22 sept 2026 — Visionne miroir Livre Ouvert : pacing photo/vidéo · chapitres musique-seule · seed non-destructif · titres `paletteIndex` · `videoTrims` · amorce audio unique.
 - 22 sept 2026 — Séance : étape 5 = `craft_preview` (silence) · étape 6 = bouton *Vivre la projection* → `official_session` + hub C8.
-- 22 sept 2026 — Hub CTA forfait-aware (49 $ / Inclus / Finaliser Héritage) · Partager → `/stream/[token]` · guest hub C12 stub.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -284,7 +284,8 @@ Détail commits C4–C7 ci-dessous.
 - Stripe · #1 unlock+render · #2…n download + crédit Fonds · RevShare.  
 - Gift metadata donateur + email optionnel.  
 - Merci premier payeur sur hub/stream only.  
-**Done :** 3 checkouts parallèles → 1 unlock + 2 crédits Fonds + 3 downloads.
+**Done (MVP) :** ✅ `POST …/master-checkout` (owner + stream gift) · webhook `fulfillCinemaMasterPurchase` · hub CTA 49 $ always-on + download secondaire — 23 sept 2026.  
+**Reste :** e-mail reçu · UI « Merci [Prénom] » live sur hub · tests 3 checkouts parallèles E2E.
 
 ### C12 — Copie perso invité
 `feat(export): guestMasterCopy license same asset 15-19$`  

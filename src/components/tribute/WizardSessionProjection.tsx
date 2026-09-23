@@ -59,6 +59,8 @@ export type WizardSessionHubCopy = QuietLuxuryExitHubCopy & {
   archiveFinalizeBody: string;
   archiveFinalizeCta: string;
   archiveFinalizeUnlocking: string;
+  /** C11 — body N-buyer (Fonds). */
+  archiveFundHint?: string;
   masterSuccessNotice: string;
   masterCancelNotice: string;
   noticeDismiss: string;
@@ -128,8 +130,12 @@ type Props = {
   hubCopy?: WizardSessionHubCopy | null;
   masterHubMode?: OrganizerMasterHubMode;
   onClose: () => void;
-  /** CTA carte d’honneur — Stripe 49 $ / export / checkout Héritage / stub guest. */
+  /** CTA carte d’honneur — Stripe Master 49 $ / checkout Héritage / gift. */
   onHonorPrimary?: () => Promise<void>;
+  /** C11 — télécharger l’archive si Master déjà unlocked. */
+  onDownloadMaster?: () => Promise<void>;
+  /** C12 — copie 15 $ (guest stream). */
+  onGuestCopy?: () => Promise<void>;
   /**
    * Médias déjà hydratés (Livre Ouvert / PreviewStep) — SOURCE DE VÉRITÉ.
    * Un force-fetch ne fait qu’un merge non-destructif des URLs manquantes.
@@ -184,16 +190,14 @@ function honorFieldsForMode(
   mode: OrganizerMasterHubMode,
 ): Pick<
   QuietLuxuryExitHubCopy,
-  "archiveTitle" | "archiveBody" | "archiveCta" | "archiveUnlocking"
+  | "archiveTitle"
+  | "archiveBody"
+  | "archiveCta"
+  | "archiveUnlocking"
+  | "archiveFundHint"
+  | "archiveDownloadCta"
 > {
-  if (mode === "download_included") {
-    return {
-      archiveTitle: hubCopy.archiveIncludedTitle,
-      archiveBody: hubCopy.archiveIncludedBody,
-      archiveCta: hubCopy.archiveIncludedCta,
-      archiveUnlocking: hubCopy.archiveIncludedUnlocking,
-    };
-  }
+  // C11 — CTA 49 $ toujours visible. finalize_heritage garde son parcours Écrin.
   if (mode === "finalize_heritage") {
     return {
       archiveTitle: hubCopy.archiveFinalizeTitle,
@@ -207,6 +211,8 @@ function honorFieldsForMode(
     archiveBody: hubCopy.archiveBody,
     archiveCta: hubCopy.archiveCta,
     archiveUnlocking: hubCopy.archiveUnlocking,
+    archiveFundHint: hubCopy.archiveFundHint,
+    archiveDownloadCta: hubCopy.archiveIncludedCta,
   };
 }
 
@@ -244,6 +250,8 @@ export function WizardSessionProjection({
   masterHubMode = "buy_master",
   onClose,
   onHonorPrimary,
+  onDownloadMaster,
+  onGuestCopy,
   seedMediaItems = null,
   basePackage = "essential",
 }: Props) {
@@ -440,6 +448,8 @@ export function WizardSessionProjection({
           archiveBody: honor.archiveBody,
           archiveCta: honor.archiveCta,
           archiveUnlocking: honor.archiveUnlocking,
+          archiveFundHint: honor.archiveFundHint,
+          archiveDownloadCta: honor.archiveDownloadCta,
           guestCopyTitle: hubCopy.guestCopyTitle,
           guestCopyBody: hubCopy.guestCopyBody,
           guestCopyCta: hubCopy.guestCopyCta,
@@ -551,7 +561,17 @@ export function WizardSessionProjection({
               ? {
                   copy: hubFields,
                   viewerRole,
+                  masterUnlocked:
+                    !isGuest &&
+                    (masterHubMode === "download_included" ||
+                      Boolean(onDownloadMaster)),
                   onUnlockMaster: handleHonorPrimary,
+                  onDownloadMaster:
+                    !isGuest && onDownloadMaster
+                      ? () => onDownloadMaster()
+                      : undefined,
+                  onGuestCopy:
+                    isGuest && onGuestCopy ? () => onGuestCopy() : undefined,
                   onShareSession: isGuest
                     ? undefined
                     : () => {

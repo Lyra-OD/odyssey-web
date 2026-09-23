@@ -1075,6 +1075,8 @@
     "archiveBody": "Fichier 1080p téléchargeable · mix studio masterisé · transmission familiale",
     "archiveCta": "Conserver l'Archive Master",
     "archiveUnlocking": "Ouverture du paiement…",
+    "archiveFundHint": "Votre Archive Master est prête. Un nouveau geste 49 $ crédite le Fonds commémoratif de la famille — et vous gardez votre copie.",
+    "archiveDownloadCta": "Télécharger l'archive",
     "archiveUnlockError": "Le paiement n'a pas pu s'ouvrir. Réessayez dans un instant.",
     "archiveIncludedTitle": "Télécharger l'Archive Master",
     "archiveIncludedBody": "Incluse dans votre Écrin · fichier 1080p pour vos archives familiales",

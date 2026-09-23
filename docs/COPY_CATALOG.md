@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-23 · **Entrées :** 987
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-23 · **Entrées :** 989
 
 ## `common`
 
@@ -1045,6 +1045,8 @@
 | `quietLuxuryExitHub.archiveBody` | Fichier 1080p téléchargeable · mix studio masterisé · transmission familiale | Downloadable 1080p file · mastered studio mix · family transmission |
 | `quietLuxuryExitHub.archiveCta` | Conserver l'Archive Master | Keep the Cinema Master |
 | `quietLuxuryExitHub.archiveUnlocking` | Ouverture du paiement… | Opening checkout… |
+| `quietLuxuryExitHub.archiveFundHint` | Votre Archive Master est prête. Un nouveau geste 49 $ crédite le Fonds commémoratif de la famille — et vous gardez votre copie. | Your Cinema Master is ready. Another $49 gift credits the family’s commemorative Fund — and you keep your own copy. |
+| `quietLuxuryExitHub.archiveDownloadCta` | Télécharger l'archive | Download the archive |
 | `quietLuxuryExitHub.archiveUnlockError` | Le paiement n'a pas pu s'ouvrir. Réessayez dans un instant. | Checkout could not open. Please try again in a moment. |
 | `quietLuxuryExitHub.archiveIncludedTitle` | Télécharger l'Archive Master | Download the Cinema Master |
 | `quietLuxuryExitHub.archiveIncludedBody` | Incluse dans votre Écrin · fichier 1080p pour vos archives familiales | Included in your collection · 1080p file for your family archives |

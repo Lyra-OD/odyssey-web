@@ -4,11 +4,11 @@
 **Dernière MAJ :** 22 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 23 sept 2026 — C11 : Master multi-acheteurs 49 $ (CTA always-on · #1 unlock+export · #2…n Fonds) · gift stream.
 - 22 sept 2026 — C12 : `guestMasterCopy` 15 $ Stripe depuis hub stream invité · download licence Master.
 - 22 sept 2026 — Visionne : carton chapitre sans médias plafonné (~8 s) — plus de N × durée de piste.
 - 22 sept 2026 — C14 : `/stream/[token]` unifié sur `WizardSessionProjection` (`playback=prebuilt`, `viewerRole=guest`).
 - 22 sept 2026 — C9 sanity : 217 tests verts · `tsc --noEmit` clean · hub Héritage `finalize_heritage` / `download_included` (tests) · Étape 5 `craft_preview` silencieuse.
-- 22 sept 2026 — Visionne = miroir 1:1 Livre Ouvert (pacing `storyboardPacing`, seed non-destructif, `paletteIndex`, `videoTrims`, audio unique).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
