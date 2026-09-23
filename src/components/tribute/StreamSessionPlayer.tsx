@@ -2,6 +2,7 @@
 
 /**
  * C14 — Hydrateur `/stream/[token]` → WizardSessionProjection (guest · prebuilt).
+ * C12 — Checkout `guestMasterCopy` + download post-success.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -21,6 +22,11 @@ import type {
 export type StreamSessionCopy = QuietLuxuryExitHubCopy & {
   guestCopyUnlocking: string;
   guestCopyStubBody: string;
+  guestCopyMasterLockedBody: string;
+  guestCopyCheckoutError: string;
+  guestCopyDownloadReady: string;
+  guestCopyArchivePending: string;
+  guestCopyDownloadCta: string;
   lueurModalTitle: string;
   lueurModalBody: string;
   lueurModalClose: string;
@@ -42,6 +48,15 @@ type StreamPayload = WizardSessionPrebuiltPayload & {
   chapterMeta: Record<string, TeaserChapterMeta>;
   chapterOrder?: string[];
 };
+
+type OverlayKind =
+  | "guest_copy"
+  | "lueur"
+  | "master_locked"
+  | "checkout_error"
+  | "download_ready"
+  | "archive_pending"
+  | null;
 
 type Props = {
   token: string;
@@ -80,13 +95,12 @@ function placeholderOrganizerFields(
   | "heritageModalBody"
   | "heritageModalClose"
 > {
-  // Invité : champs organiseur non affichés — valeurs neutres pour typer le hub.
   const dash = "—";
   return {
     checkoutModalTitle: dash,
     checkoutModalBody: dash,
     checkoutModalClose: copy.closeAria,
-    archiveUnlockError: dash,
+    archiveUnlockError: copy.guestCopyCheckoutError,
     archiveIncludedTitle: dash,
     archiveIncludedBody: dash,
     archiveIncludedCta: dash,
@@ -116,6 +130,8 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
   const [payload, setPayload] = useState<StreamPayload | null>(null);
   const [error, setError] = useState<"unavailable" | null>(null);
   const [loading, setLoading] = useState(true);
+  const [overlay, setOverlay] = useState<OverlayKind>(null);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -141,11 +157,72 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
     };
   }, [locale, token]);
 
+  // Retour Stripe C12 — tenter le download Master.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") !== "guest_success") return;
+    const sessionId = params.get("session_id")?.trim();
+    if (!sessionId) return;
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch(
+          `/api/stream/${encodeURIComponent(token)}/download?session_id=${encodeURIComponent(sessionId)}`,
+        );
+        const data = (await res.json().catch(() => ({}))) as {
+          downloadUrl?: string;
+          error?: string;
+        };
+        if (cancelled) return;
+        if (res.ok && data.downloadUrl) {
+          setDownloadUrl(data.downloadUrl);
+          setOverlay("download_ready");
+          return;
+        }
+        if (res.status === 409 || data.error === "archive_pending") {
+          setOverlay("archive_pending");
+          return;
+        }
+        setOverlay("checkout_error");
+      } catch {
+        if (!cancelled) setOverlay("checkout_error");
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
   const onClose = useCallback(() => {
     window.history.length > 1
       ? window.history.back()
       : (window.location.href = `/${locale}`);
   }, [locale]);
+
+  const startGuestCopyCheckout = useCallback(async () => {
+    const res = await fetch(`/api/stream/${encodeURIComponent(token)}/checkout`, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ locale }),
+    });
+    const data = (await res.json().catch(() => ({}))) as {
+      url?: string;
+      error?: string;
+    };
+    if (res.status === 422 && data.error === "master_not_unlocked") {
+      setOverlay("master_locked");
+      return;
+    }
+    if (!res.ok || !data.url) {
+      setOverlay("checkout_error");
+      throw new Error(data.error ?? "checkout_failed");
+    }
+    window.location.href = data.url;
+  }, [locale, token]);
 
   if (loading) {
     return (
@@ -192,30 +269,95 @@ export function StreamSessionPlayer({ token, locale, copy }: Props) {
     ...placeholderOrganizerFields(copy),
   };
 
+  const overlayTitle =
+    overlay === "master_locked"
+      ? copy.guestCopyTitle
+      : overlay === "download_ready"
+        ? copy.guestCopyDownloadReady
+        : overlay === "archive_pending"
+          ? copy.guestCopyArchivePending
+          : overlay === "checkout_error"
+            ? copy.guestCopyCheckoutError
+            : overlay === "lueur"
+              ? copy.lueurModalTitle
+              : copy.guestCopyTitle;
+
+  const overlayBody =
+    overlay === "master_locked"
+      ? copy.guestCopyMasterLockedBody
+      : overlay === "download_ready"
+        ? copy.guestCopyBody
+        : overlay === "archive_pending"
+          ? copy.guestCopyArchivePending
+          : overlay === "checkout_error"
+            ? copy.guestCopyCheckoutError
+            : overlay === "lueur"
+              ? copy.lueurModalBody
+              : copy.guestCopyStubBody;
+
   return (
-    <WizardSessionProjection
-      intent="official_session"
-      playback="prebuilt"
-      viewerRole="guest"
-      locale={locale}
-      memoryCard={payload.memoryCard}
-      openingPortraitUrl={payload.openingPortraitUrl}
-      primedAudio={null}
-      closeLabel={copy.watchSessionClose}
-      enableSound={copy.enableSound}
-      emptyLabel={copy.streamEmpty}
-      loadingLabel={copy.streamLoading}
-      teaserPlay={copy.teaserPlay}
-      teaserPause={copy.teaserPause}
-      teaserLoading={copy.teaserLoading}
-      hubCopy={hubCopy}
-      prebuilt={{
-        slides: payload.slides,
-        tracks: payload.tracks,
-        chapterMeta: payload.chapterMeta,
-        chapterOrder: payload.chapterOrder,
-      }}
-      onClose={onClose}
-    />
+    <>
+      <WizardSessionProjection
+        intent="official_session"
+        playback="prebuilt"
+        viewerRole="guest"
+        locale={locale}
+        memoryCard={payload.memoryCard}
+        openingPortraitUrl={payload.openingPortraitUrl}
+        primedAudio={null}
+        closeLabel={copy.watchSessionClose}
+        enableSound={copy.enableSound}
+        emptyLabel={copy.streamEmpty}
+        loadingLabel={copy.streamLoading}
+        teaserPlay={copy.teaserPlay}
+        teaserPause={copy.teaserPause}
+        teaserLoading={copy.teaserLoading}
+        hubCopy={hubCopy}
+        prebuilt={{
+          slides: payload.slides,
+          tracks: payload.tracks,
+          chapterMeta: payload.chapterMeta,
+          chapterOrder: payload.chapterOrder,
+        }}
+        onClose={onClose}
+        onHonorPrimary={startGuestCopyCheckout}
+      />
+
+      {overlay &&
+      overlay !== "guest_copy" &&
+      overlay !== "lueur" ? (
+        <div
+          className="fixed inset-0 z-[95] flex items-center justify-center bg-black/70 px-6"
+          role="dialog"
+          aria-modal
+        >
+          <div className="w-full max-w-md rounded-sm border border-white/15 bg-[#0a0a0a] px-6 py-6 text-center">
+            <p className="font-editorial text-lg font-medium tracking-wide text-zinc-100">
+              {overlayTitle}
+            </p>
+            <p className="mt-3 text-[13px] font-light leading-relaxed text-zinc-400">
+              {overlayBody}
+            </p>
+            {overlay === "download_ready" && downloadUrl ? (
+              <a
+                href={downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-block text-[12px] font-light tracking-[0.14em] text-zinc-100 underline decoration-white/30 underline-offset-4"
+              >
+                {copy.guestCopyDownloadCta}
+              </a>
+            ) : null}
+            <button
+              type="button"
+              onClick={() => setOverlay(null)}
+              className="mt-6 block w-full text-[12px] font-light tracking-[0.14em] text-zinc-300 underline decoration-white/25 underline-offset-4 hover:text-zinc-100"
+            >
+              {copy.closeAria}
+            </button>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }

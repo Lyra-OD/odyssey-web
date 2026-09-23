@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-22 · **Entrées :** 982
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-23 · **Entrées :** 987
 
 ## `common`
 
@@ -1060,8 +1060,13 @@
 | `quietLuxuryExitHub.guestCopyTitle` | Conserver sa copie · 15 $ | Keep your copy · $15 |
 | `quietLuxuryExitHub.guestCopyBody` | Même film masterisé · lien de téléchargement personnel | Same mastered film · personal download link |
 | `quietLuxuryExitHub.guestCopyCta` | Conserver sa copie | Keep your copy |
-| `quietLuxuryExitHub.guestCopyUnlocking` | Ouverture… | Opening… |
+| `quietLuxuryExitHub.guestCopyUnlocking` | Ouverture du paiement… | Opening checkout… |
 | `quietLuxuryExitHub.guestCopyStubBody` | Le paiement de la copie personnelle (15 $) arrive très bientôt. Pour l'instant, revivez la séance. | Personal copy checkout ($15) is coming soon. For now, watch the session again. |
+| `quietLuxuryExitHub.guestCopyMasterLockedBody` | L'Archive Master n'est pas encore ouverte par la famille. Revenez quand le film aura été conservé. | The Cinema Master archive is not open yet. Come back once the family has preserved the film. |
+| `quietLuxuryExitHub.guestCopyCheckoutError` | Impossible d'ouvrir le paiement. Réessayez dans un instant. | Could not open checkout. Please try again shortly. |
+| `quietLuxuryExitHub.guestCopyDownloadReady` | Votre copie est prête | Your copy is ready |
+| `quietLuxuryExitHub.guestCopyArchivePending` | Paiement reçu. L'Archive Master est encore en préparation — réessayez sous peu. | Payment received. The Cinema Master is still preparing — try again shortly. |
+| `quietLuxuryExitHub.guestCopyDownloadCta` | Télécharger mon film | Download my film |
 | `quietLuxuryExitHub.lueur` | Déposer une pensée ou une lueur | Leave a thought or a light |
 | `quietLuxuryExitHub.lineage` | Transmettre à la lignée | Pass it on to the lineage |
 | `quietLuxuryExitHub.closeAria` | Quitter le plein écran | Exit fullscreen |

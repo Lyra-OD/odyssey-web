@@ -5,11 +5,11 @@
 **Dernière MAJ :** 22 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 22 sept 2026 — C12 : Checkout Stripe `guestMasterCopy` 15 $ · gate Master unlock · download `output_url` (0 Creatomate).
 - 22 sept 2026 — C14 : `/[lang]/stream/[token]` via `WizardSessionProjection` guest/prebuilt (C12 Stripe encore stub).
 - 22 sept 2026 — Visionne miroir Livre Ouvert : pacing photo/vidéo · chapitres musique-seule · seed non-destructif · titres `paletteIndex` · `videoTrims` · amorce audio unique.
 - 22 sept 2026 — Séance : étape 5 = `craft_preview` (silence) · étape 6 = bouton *Vivre la projection* → `official_session` + hub C8.
 - 22 sept 2026 — Hub CTA forfait-aware (49 $ / Inclus / Finaliser Héritage) · Partager → `/stream/[token]` · guest hub C12 stub.
-- 22 sept 2026 — C8 câblage Stripe Archive Master 49 $ depuis hub post-séance Studio (`session_hub`).
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -289,7 +289,8 @@ Détail commits C4–C7 ci-dessous.
 ### C12 — Copie perso invité
 `feat(export): guestMasterCopy license same asset 15-19$`  
 - Gate : `cinema_master_unlocked` ; signed URL ; **pas** de 2ᵉ Creatomate.  
-**Done :** refus avant unlock ; OK après ; 1 render log.
+**Done (MVP) :** ✅ Checkout `/api/stream/[token]/checkout` · webhook `guest_support` + `product_key=guestMasterCopy` · download `/api/stream/[token]/download` — 22 sept 2026.  
+**Reste :** polish UX si archive pending · e-mail reçu.
 
 ### C13 — Social Cut 9:16
 `feat(export): socialCut 19$ vertical 30-45s`  
@@ -299,8 +300,8 @@ Détail commits C4–C7 ci-dessous.
 `feat(growth): /stream/[token] registre digne + séance privée`  
 - Chevalet / signet · capture identité · Livre Ouvert · consentement séparé (Loi 25).  
 - **Priorité acquisition** dès que C4–C9 validés.  
-**Done (MVP) :** ✅ `/[lang]/stream/[token]` + `GET /api/stream/[token]` (`view_only`) · **même moteur** `WizardSessionProjection` (`playback=prebuilt`, `viewerRole=guest`) · hub copie 15 $ stub — 22 sept 2026.  
-**Reste :** Stripe `guestMasterCopy` (C12) · registre digne · capture identité · QR chevalet · email contributeur.
+**Done (MVP) :** ✅ `/[lang]/stream/[token]` + `GET /api/stream/[token]` (`view_only`) · **même moteur** `WizardSessionProjection` (`playback=prebuilt`, `viewerRole=guest`) · hub copie 15 $ → Stripe C12 — 22 sept 2026.  
+**Reste :** registre digne · capture identité · QR chevalet · email contributeur.
 
 ### Plus tard — Creatomate DA intro
 Hors chemin critique.

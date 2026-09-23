@@ -451,6 +451,10 @@ export function WizardSessionProjection({
 
   const handleHonorPrimary = useCallback(async () => {
     if (isGuest) {
+      if (onHonorPrimary) {
+        await onHonorPrimary();
+        return;
+      }
       setOverlay("guest_copy");
       return;
     }
