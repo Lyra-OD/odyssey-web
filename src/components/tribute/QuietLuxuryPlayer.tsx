@@ -515,6 +515,8 @@ export function QuietLuxuryPlayer({
   const pauseAccumRef = useRef(0);
   const pauseStartedRef = useRef<number | null>(null);
   const audioActUrlRef = useRef<string | null>(null);
+  /** Invalide les ensureAudio async en cours (switch chapitre / unmount). */
+  const audioGenRef = useRef(0);
   const masterTimeRef = useRef(0);
   const lastUiAtRef = useRef(0);
   const lastSegKeyRef = useRef("");
@@ -522,10 +524,31 @@ export function QuietLuxuryPlayer({
   const ownsAudioRef = useRef(false);
 
   const firstActAudioUrl = acts[0]?.audioUrl ?? null;
+  /** Fin de l’ouverture (breaths) — avant le 1er carton / clip. */
+  const openingDurSec = useMemo(() => {
+    let end = 0;
+    for (const s of segments) {
+      if (
+        s.kind === "breath_title" ||
+        s.kind === "breath_black" ||
+        s.kind === "breath_portrait"
+      ) {
+        end = Math.max(end, s.end);
+        continue;
+      }
+      break;
+    }
+    return end;
+  }, [segments]);
+  /** Début du 1er clip (ouverture + éventuel carton chap.1). */
   const openingEndSec = useMemo(() => {
     const firstClip = segments.find((s) => s.kind === "clip");
     return firstClip?.start ?? 0;
   }, [segments]);
+  const firstBridgeSeg = useMemo(
+    () => segments.find((s) => s.kind === "act_bridge") ?? null,
+    [segments],
+  );
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [masterTime, setMasterTime] = useState(0);
@@ -567,8 +590,12 @@ export function QuietLuxuryPlayer({
       const fade = timing.audioFade;
 
       // Pont : nouvelle piste en fade-in (plus de silence mort).
+      // Cinéma carton chap.1 : même piste que l’ouverture → pas de re-fade / seek 0.
       if (seg.kind === "act_bridge") {
         if (!seg.actAudioUrl) return 0;
+        if (cinema && firstBridgeSeg && seg.start === firstBridgeSeg.start) {
+          return 1;
+        }
         const intoBridge = timeSec - seg.start;
         const bridgeFade = Math.min(
           BRIDGE_AUDIO_FADE_SEC,
@@ -614,7 +641,15 @@ export function QuietLuxuryPlayer({
       }
       return clamp(vol, 0, 1);
     },
-    [cinema, firstActAudioUrl, openingEndSec, segments, timing.actBridge, timing.audioFade],
+    [
+      cinema,
+      firstActAudioUrl,
+      firstBridgeSeg,
+      openingEndSec,
+      segments,
+      timing.actBridge,
+      timing.audioFade,
+    ],
   );
 
   const ensureAudio = useCallback(
@@ -622,11 +657,17 @@ export function QuietLuxuryPlayer({
       const audio = audioRef.current;
       if (!audio) return;
       if (!url) {
-        audio.pause();
+        audioGenRef.current += 1;
+        try {
+          audio.pause();
+        } catch {
+          /* */
+        }
         audio.volume = 0;
         return;
       }
       const switched = !sameMediaUrl(audioActUrlRef.current, url);
+      const gen = switched ? ++audioGenRef.current : audioGenRef.current;
       if (switched) {
         if (process.env.NODE_ENV === "development") {
           console.info("[ql-audio] src switch", {
@@ -635,6 +676,13 @@ export function QuietLuxuryPlayer({
             seekSec,
           });
         }
+        // Coupe l’ancien flux avant de changer de src (évite double piste).
+        try {
+          audio.pause();
+        } catch {
+          /* */
+        }
+        audio.volume = 0;
         audio.src = url;
         audioActUrlRef.current = url;
         try {
@@ -665,10 +713,13 @@ export function QuietLuxuryPlayer({
           ]);
         } catch (err) {
           console.warn("[ql-audio] waitForAudioReady failed", { url, err });
+          if (gen !== audioGenRef.current) return;
           if (playingRef.current) setAudioNeedsGesture(true);
           return;
         }
+        if (gen !== audioGenRef.current) return;
       }
+      if (switched && gen !== audioGenRef.current) return;
       audio.volume = clamp(volume, 0, 1);
       try {
         if (
@@ -680,6 +731,15 @@ export function QuietLuxuryPlayer({
         if (playingRef.current) {
           if (audio.paused) {
             await audio.play();
+            if (switched && gen !== audioGenRef.current) {
+              try {
+                audio.pause();
+              } catch {
+                /* */
+              }
+              audio.volume = 0;
+              return;
+            }
             if (process.env.NODE_ENV === "development" && switched) {
               console.info("[ql-audio] play() ok after switch", { url });
             }
@@ -687,6 +747,7 @@ export function QuietLuxuryPlayer({
           setAudioNeedsGesture(false);
         }
       } catch (err) {
+        if (switched && gen !== audioGenRef.current) return;
         console.warn("[ql-audio] play() rejected", { url, err });
         if (playingRef.current) setAudioNeedsGesture(true);
       }
@@ -757,7 +818,15 @@ export function QuietLuxuryPlayer({
         void ensureAudio(seg.actAudioUrl, localAudio, volume);
       } else if (seg.kind === "act_bridge") {
         if (seg.actAudioUrl) {
-          const localAudio = timeSec - seg.start;
+          const intoBridge = timeSec - seg.start;
+          // Carton chap.1 cinéma : continuité t=0 (ouverture déjà jouée).
+          const isCinemaFirstBridge =
+            cinema &&
+            firstBridgeSeg != null &&
+            seg.start === firstBridgeSeg.start;
+          const localAudio = isCinemaFirstBridge
+            ? openingDurSec + intoBridge
+            : intoBridge;
           void ensureAudio(seg.actAudioUrl, localAudio, volume);
         } else if (audioRef.current) {
           audioRef.current.volume = 0;
@@ -787,7 +856,9 @@ export function QuietLuxuryPlayer({
       ensureAudio,
       ensureVideo,
       firstActAudioUrl,
+      firstBridgeSeg,
       hideVideo,
+      openingDurSec,
       segments,
       targetVolumeForTime,
     ],
@@ -944,14 +1015,28 @@ export function QuietLuxuryPlayer({
   }, [hideVideo, startClock]);
 
   useEffect(() => {
+    audioGenRef.current += 1;
     if (primedAudio) {
       ownsAudioRef.current = false;
+      // Singleton wizard : pause jusqu’à ce que le clock appelle ensureAudio.
+      try {
+        primedAudio.pause();
+      } catch {
+        /* */
+      }
+      primedAudio.volume = 0;
       audioRef.current = primedAudio;
       audioActUrlRef.current = primedAudio.src || null;
       return () => {
+        audioGenRef.current += 1;
         playingRef.current = false;
         cancelRaf();
-        primedAudio.pause();
+        try {
+          primedAudio.pause();
+        } catch {
+          /* */
+        }
+        primedAudio.volume = 0;
         audioRef.current = null;
       };
     }
@@ -959,10 +1044,16 @@ export function QuietLuxuryPlayer({
     const audio = new Audio();
     audio.preload = "auto";
     audioRef.current = audio;
+    audioActUrlRef.current = null;
     return () => {
+      audioGenRef.current += 1;
       playingRef.current = false;
       cancelRaf();
-      audio.pause();
+      try {
+        audio.pause();
+      } catch {
+        /* */
+      }
       audio.removeAttribute("src");
       audioRef.current = null;
     };
