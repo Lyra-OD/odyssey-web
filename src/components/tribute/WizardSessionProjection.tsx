@@ -153,7 +153,7 @@ type Props = {
    */
   masterUnlocked?: boolean;
   /**
-   * Médias déjà hydratés (Livre Ouvert / PreviewStep) — SOURCE DE VÉRITÉ.
+   * Médias déjà hydratés (Livre Ouvert / sas étape 6) — SOURCE DE VÉRITÉ.
    * Un force-fetch ne fait qu’un merge non-destructif des URLs manquantes.
    */
   seedMediaItems?: MontageMediaItem[] | null;

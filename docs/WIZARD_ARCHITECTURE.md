@@ -1,14 +1,14 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 29 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 29 sept 2026 — **Étape 6** : sas cinéma plein écran (`SessionCinemaGate`) · poster portrait/dernière photo · 2 CTA (projection / checkout) · plus de `PreviewStep` teaser.
 - 17 sept 2026 — **D0 freeze** : 7 étapes (plus de « 7–8 ») ; Preview = storyboard live + pont hybride ; S5-L partiel.
 - 17 sept 2026 — **Autosave Zod** : `furthestStep` accepté (fin du 400 silent fail) ; plafond montage 250 ; log `invalid_body` en dev.
 - 17 sept 2026 — **Titres d’étape 1–7** : une spec — 24/26 · medium · mini-caps · lead 16/18 zinc-300. Boutons d’action mini-caps.
 - 17 sept 2026 — **Composition Magique** banque : paille `#E4D96F` (`--wizard-magic-wheat`).
-- 17 sept 2026 — **Aperçu mix BA** (décision, pas de code) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -24,7 +24,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 
 | File | Role |
 |------|------|
-| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (Dossier + fil) ; barre bas N3 : 2–5 Retour\|Suivant · 6 Préserver {forfait} · 7 Préserver {forfait}·prix |
+| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (Dossier + fil) ; barre bas N3 : 2–5 Retour\|Suivant · 7 Préserver {forfait}·prix · **étape 6 = sas cinéma (pas de footer)** |
 | `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | **Step 1 (J2)** — ciel fullscreen + panneau verre ; `SanctuaryUniverse` background · birth live · reveal contrôlé |
 | `src/hooks/useWizardStep1Reveal.ts` | Phase reveal étape 1 (`idle` → `birth` → `reward` → `done`) · orchestration `playReward()` |
 | `src/lib/wizard/wizardBirthReveal.ts` | Courbes / beats C0–C2 pour naissance Hero au prénom (pont craft → wizard) |
@@ -106,7 +106,7 @@ Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans 
 | `limits.maxMediaItems` | Soft Cap filet à 50 ✅ · quotas `intended` |
 | `resolveTransactionMode()` | Famille : **dollars Soft Cap** ; Salon : commissions |
 
-**Today:** `InvitationComposer` (Salon `/[lang]/salon`) offers **Keepsake only** — email + CTA, no package cards. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is `storyboard`. **Steps 4–5** read/write `storyboard` directly. **Step 6 (Aperçu)** reads the **live storyboard** (`PreviewStep` + `buildTeaserFromStoryboard`) — N chapters, not a 3-act teaser — via a **temporary hybrid bridge** (autosave still PATCHes `montage` + `musicalAmbiance`; checkout still sends compact `act_tracks`). `SoundSignatureStep` was removed during Clean Slate. **There is no step 8.**
+**Today:** `InvitationComposer` (Salon `/[lang]/salon`) offers **Keepsake only** — email + CTA, no package cards. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is `storyboard`. **Steps 4–5** read/write `storyboard` directly. **Step 6 (Aperçu)** = **sas cinéma plein écran** (`SessionCinemaGate` + `resolveSessionPosterUrl`) — 2 CTA (projection officielle / passer au checkout). Autosave still PATCHes `montage` + `musicalAmbiance`; checkout still sends compact `act_tracks` (pont hybride). `SoundSignatureStep` was removed during Clean Slate. **There is no step 8.**
 
 ### Design decisions — why (juillet 2026)
 
@@ -154,7 +154,7 @@ The new canonical model solves this by moving to a **song-based storyboard**:
 
 - `storyboard` is persisted as the canonical V2 shape
 - **Steps 4–5** use `storyboard` directly (`StoryboardChaptersStep` + `StoryboardMontageStep` Livre Ouvert)
-- **Step 6 (Aperçu)** reads the **live storyboard** (`buildTeaserFromStoryboard`) — all chapters, each with its song. **Not** a 3-act teaser. **Not** the Creatomate master
+- **Step 6 (Aperçu)** = sas cinéma plein écran (`SessionCinemaGate`) — poster traité + projection officielle ou checkout. **Not** an inline teaser. **Not** the Creatomate master
 - `wizardState.ts` still rebuilds `montage` + `musicalAmbiance` at runtime ; `buildWizardState()` still **PATCHes** those legacy views beside `storyboard`
 - **Step 7 (Checkout)** still serializes compact Stripe `act_tracks` in addition to `storyboard` — until S9
 - **No step 8** (`TOTAL_STEPS = 7`)
@@ -193,7 +193,7 @@ Package selection is no longer step-bound: the Dossier trigger (`PackageDossierP
 | 3 | `stepperVault` | Dropzone + upload queue + **Scanner Compagnon QR** (cible) | `media_assets` rows; reload `GET /api/projects/[id]/media` · voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | 4 | `stepperChapters` | **Chapitres musicaux dynamiques** (`StoryboardChaptersStep`, live — ✅ `S6`) | `storyboard.chapters[].song` (canonique, plus de bridge) |
 | 5 | `stepperSound` | **Livre Ouvert** — `StoryboardMontageStep` (DnD, magie, actions chapitre) | `storyboard` (canonique) |
-| 6 | `stepperPreview` | Copy + `CinematicTeaser` (pont) | Aperçu — **cible mix BA** [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) |
+| 6 | `stepperPreview` | Sas cinéma plein écran (`SessionCinemaGate`) | Poster + 2 CTA · projection / checkout |
 | 7 | `stepperCheckout` | Cart Soft Cap + **Extensions** Quiet Luxury + pay CTA | `POST /api/checkout` |
 
 ---
@@ -322,26 +322,23 @@ Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage
 
 ---
 
-## Step 6 — Aperçu / Son film (pont hybride · séance officielle C8)
+## Step 6 — Sas cinéma plein écran (séance officielle C8)
 
 | File | Role |
 |------|------|
-| `PreviewStep.tsx` | Sas : teaser 16:9, Soft Cap, comparatif Archive, CTA checkout |
+| `SessionCinemaGate.tsx` | Sas plein viewport : poster N&B (portrait / dernière photo), nom/dates, 2 CTA |
+| `sessionPosterImage.ts` | Résolution URL poster (portrait → dernière image → thumb vidéo) |
 | `WizardSessionProjection` | **Même cinéma** étape 5 (`craft_preview`) et 6 (`official_session`) — seul le hub C8 change |
-| `CinematicTeaser.tsx` | Diaporama + audio chapitre (pause réelle) |
+| `CinematicTeaser.tsx` | Adaptateur slides/tracks → QuietLuxuryPlayer (séance, pas le sas) |
 | `teaserHelpers.ts` | Slides / pistes depuis le **storyboard live** |
 
-**Séance officielle :** CTA noble sur l’étape 6 → cinéma immersif puis hub C8 (Master forfait-aware · Partager `/stream/[token]` · Revoir). Fermer le hub (✕) ou la projection → retour sur le sas `PreviewStep` (Soft Cap / Archive / Préserver).
+**Séance officielle :** CTA « Vivre la projection » → cinéma immersif puis hub C8 (Master forfait-aware · Partager `/stream/[token]` · Revoir). Fermer le hub (✕) ou la projection → retour sur le sas. CTA « Passer » → étape 7 checkout. ✕ du sas → étape 5.
 
-**Aujourd’hui (sas) :** l’aperçu **lit le storyboard live** (tous les chapitres, chaque piste, ordre Livre Ouvert). Ce n’est **pas** un teaser 3 actes. Ce n’est **pas** le master Creatomate.
+**Aujourd’hui (sas) :** pas de mini-player inline. Soft Cap / panier sticky encore visibles côté shell (à retirer hors sas au commit C6 prix).
 
 **Pont hybride (dette temporaire) :** le PATCH autosave envoie encore `montage` + `musicalAmbiance` à côté de `storyboard` ; `POST /api/checkout` envoie encore `act_tracks` compact. À retirer quand S9 (metadata `storyboard`) est stable.
 
-**Cible (décision, plan plus tard) :** mix **bande-annonce + voir un chapitre**, copy honnête — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md). Ne pas pousser le diaporama 16:9 comme s’il était le film.
-
 Payer (étape 7) est armé ~700 ms pour éviter un ghost-click depuis l’aperçu.
-
-Bandeau jaune Soft Cap : phrase générique aujourd’hui. **Cible (plan plus tard)** : reçu des faits — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
 
 ---
 

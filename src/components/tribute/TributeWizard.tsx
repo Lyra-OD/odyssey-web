@@ -18,7 +18,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { PreviewStep } from "@/src/components/tribute/PreviewStep";
 import {
   WizardSessionProjection,
   type WizardSessionHubCopy,
@@ -30,6 +29,7 @@ import {
 } from "@/src/components/tribute/QuietLuxuryPlayer";
 import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
 import { SoftCapModal, SoftCapMediaCountSync } from "@/src/components/tribute/SoftCapModal";
+import { SessionCinemaGate } from "@/src/components/tribute/SessionCinemaGate";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
 import { appRoutes } from "@/src/lib/appRoutes";
 import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
@@ -149,7 +149,11 @@ import {
   type WizardAccessRole,
 } from "@/src/lib/wizard/collabCapabilities";
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
-import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
+import {
+  mediaApiToMontageItems,
+  type MontageMediaItem,
+} from "@/src/lib/wizard/montageHelpers";
+import { resolveSessionPosterUrl } from "@/src/lib/wizard/sessionPosterImage";
 import { useWizardStoryboard } from "@/src/hooks/useWizardStoryboard";
 import type { Locale } from "@/i18n.config";
 import {
@@ -433,6 +437,10 @@ export function TributeWizard({
   const [sessionMediaSeed, setSessionMediaSeed] = useState<
     MontageMediaItem[] | null
   >(null);
+  const [gateMediaById, setGateMediaById] = useState(
+    () => new Map<string, MontageMediaItem>(),
+  );
+  const [gateMediaLoading, setGateMediaLoading] = useState(false);
   const [sessionAudio, setSessionAudio] = useState<HTMLAudioElement | null>(
     null,
   );
@@ -1056,6 +1064,16 @@ export function TributeWizard({
       .replace("{death}", d || "·");
   }, [birthDate, deathDate, copy.headerYears]);
 
+  const gatePosterUrl = useMemo(
+    () =>
+      resolveSessionPosterUrl({
+        openingPortraitUrl: avatarPreview || null,
+        storyboard: wizardStoryboard.storyboard,
+        mediaById: gateMediaById,
+      }),
+    [avatarPreview, gateMediaById, wizardStoryboard.storyboard],
+  );
+
   const hasSessionMedia = useMemo(() => {
     const excluded = new Set(wizardStoryboard.storyboard.excludedIds);
     const placed = wizardStoryboard.storyboard.chapters.some((chapter) =>
@@ -1161,6 +1179,30 @@ export function TributeWizard({
       aborted = true;
     };
   }, [uploadProjectId, currentStep]);
+
+  // Étape 6 sas — médias pour poster (portrait / dernière photo).
+  useEffect(() => {
+    if (currentStep !== 6 || !uploadProjectId) return;
+    let cancelled = false;
+    setGateMediaLoading(true);
+    void fetchProjectMedia(uploadProjectId, { force: true })
+      .then((items) => {
+        if (cancelled) return;
+        const mediaItems = mediaApiToMontageItems(items);
+        setGateMediaById(
+          new Map(mediaItems.map((item) => [item.assetId, item] as const)),
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setGateMediaById(new Map());
+      })
+      .finally(() => {
+        if (!cancelled) setGateMediaLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentStep, uploadProjectId]);
 
   /**
    * Option B (8 sept 2026) — séquencement « dépôt d'abord, invitation
@@ -1487,10 +1529,6 @@ export function TributeWizard({
 
   const handleProceedToPayment = useCallback(async () => {
     await navigateToStep(7);
-  }, [navigateToStep]);
-
-  const handlePreviewEdit = useCallback(async () => {
-    await navigateToStep(5);
   }, [navigateToStep]);
 
   const extensionRecapLineLabels = useMemo(
@@ -2052,7 +2090,7 @@ export function TributeWizard({
       >
         <div
           className={
-            step1Parcours.hubChromeHidden
+            step1Parcours.hubChromeHidden || currentStep === 6
               ? "pointer-events-none h-0 overflow-hidden opacity-0"
               : undefined
           }
@@ -3014,93 +3052,35 @@ export function TributeWizard({
           ) : null}
 
           {currentStep === 6 ? (
-            <PreviewStep
-              locale={locale}
-              projectId={uploadProjectId}
-              storyboard={wizardStoryboard.storyboard}
-              extensions={extensions}
-              basePackage={basePackage}
-              softCapActive={
-                isFreemiumGrant &&
-                !isEditor &&
-                (packageTierRank(intendedPackage) >= 1 ||
-                  projectMediaCount > grantedMediaMax ||
-                  Boolean(extensions.musicLicense))
-              }
-              showSessionArchiveCompare={
-                isFreemiumGrant &&
-                !isEditor &&
-                packageTierRank(intendedPackage) < 1
-              }
-              archiveIncluded={
-                isExtensionBundledInBasePackage(basePackage, "cinemaMaster") ||
-                Boolean(extensions.cinemaMaster)
-              }
+            <SessionCinemaGate
+              posterUrl={gatePosterUrl}
+              isLoading={gateMediaLoading}
               salonBadge={
-                isFreemiumGrant
-                  ? copy.previewSalonBadgeFallback
-                  : null
+                isFreemiumGrant ? copy.previewSalonBadgeFallback : null
               }
               memoryCard={{
-                displayName:
-                  [firstName.trim(), lastName.trim()].filter(Boolean).join(" ") ||
-                  copy.headerNameFallback,
-                yearsLine: [yearFromDateInput(birthDate), yearFromDateInput(deathDate)]
-                  .filter(Boolean)
-                  .join(" · "),
+                displayName: deceasedDisplayName,
+                yearsLine: yearsDisplay === "·" ? "" : yearsDisplay,
               }}
-              onProceedToPayment={() => void handleProceedToPayment()}
-              onKeepArchiveMaster={() => {
-                handleExtensionsChange({ ...extensions, cinemaMaster: true });
+              copy={{
+                play: copy.previewGatePlay,
+                playAria: copy.previewGatePlayAria,
+                skip: copy.previewGateSkip,
+                skipAria: copy.previewGateSkipAria,
+                close: copy.previewGateClose,
+                loading: copy.previewGateLoading,
+                empty: copy.previewGateEmpty,
+                eyebrow: copy.stepPreviewTitle,
+              }}
+              onPlay={() => {
+                setSessionMediaSeed([...gateMediaById.values()]);
+                void openWatchSession("official_session");
+              }}
+              onSkip={() => {
                 void handleProceedToPayment();
               }}
-              onEdit={() => void handlePreviewEdit()}
-              onLaunchOfficialSession={
-                !isEditor && hasSessionMedia && Boolean(exitHubCopy)
-                  ? (mediaItems) => {
-                      setSessionMediaSeed(mediaItems);
-                      void openWatchSession("official_session");
-                    }
-                  : undefined
-              }
-              copy={{
-                title: copy.stepPreviewTitle,
-                description: copy.stepPreviewDescription,
-                launchSession: copy.previewLaunchSession,
-                launchSessionAria: copy.previewLaunchSessionAria,
-                loadingMedia: copy.previewLoadingMedia,
-                payCta: preservePackageCta,
-                payCtaSoftCap: preservePackageCta,
-                softCapNote: copy.previewSoftCapNote,
-                editLink: copy.previewEditLink,
-                valueNote: copy.previewValueNote,
-                valueAiRetouch: copy.previewValueAiRetouch,
-                valueLicense: copy.previewValueLicense,
-                teaserLoading: copy.previewTeaserLoading,
-                teaserEmpty: copy.previewTeaserEmpty,
-                teaserNowPlaying: copy.previewTeaserNowPlaying,
-                teaserPlay: copy.previewTeaserPlay,
-                teaserPause: copy.previewTeaserPause,
-                chapterTitleFallback: copy.chapterTitleFallback,
-                cinemaChapter1: copy.montageActSparkLabel,
-                cinemaChapter2: copy.montageActEpicLabel,
-                cinemaChapter3: copy.montageActLegacyLabel,
-                cinemaChapter4: copy.montageChapterHorizonsLabel,
-                cinemaChapter5Plus: copy.montageChapterLegacyMemoryLabel,
-                trackCredit: copy.watchSessionTrackCredit,
-                trackCreditTitleOnly: copy.watchSessionTrackCreditTitleOnly,
-                sessionArchiveCompare: {
-                  eyebrow: copy.previewCompareEyebrow,
-                  sessionTitle: copy.previewCompareSessionTitle,
-                  sessionBody: copy.previewCompareSessionBody,
-                  sessionDesktopNote: copy.previewCompareSessionDesktopNote,
-                  archiveTitle: copy.previewCompareArchiveTitle,
-                  archiveBody: copy.previewCompareArchiveBody,
-                  archiveIncludedBadge: copy.previewCompareArchiveIncluded,
-                  archiveCta: copy.previewCompareArchiveCta,
-                  archiveFundHint: copy.previewCompareArchiveFundHint,
-                  continueCta: copy.previewCompareContinueCta,
-                },
+              onClose={() => {
+                void navigateToStep(5);
               }}
             />
           ) : null}
@@ -3257,8 +3237,10 @@ export function TributeWizard({
       />
       ) : null}
 
-      {/* N3 — 2–5 Retour|Suivant ; 6 Retour|Préserver {forfait} ; 7 Retour|Préserver {forfait}·prix */}
-      {!step1Parcours.hubChromeHidden && currentStep >= 2 ? (
+      {/* N3 — 2–5 Retour|Suivant ; 7 Retour|Préserver {forfait}·prix (étape 6 = sas cinéma, pas de footer) */}
+      {!step1Parcours.hubChromeHidden &&
+      currentStep >= 2 &&
+      currentStep !== 6 ? (
         <div
           className={`fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8 ${
             n3Cooling ? "pointer-events-none" : ""
@@ -3268,7 +3250,7 @@ export function TributeWizard({
             className={`mx-auto flex gap-3 ${
               currentStep === 5
                 ? "max-w-7xl"
-                : currentStep >= 6
+                : currentStep >= 7
                   ? "max-w-2xl"
                   : "max-w-xl"
             }`}
@@ -3304,14 +3286,6 @@ export function TributeWizard({
                     : copy.next}
                 </button>
               )
-            ) : currentStep === 6 && !isEditor ? (
-              <button
-                type="button"
-                onClick={() => void handleProceedToPayment()}
-                className={`connexion-submit-breathe ${wizardMiniCapsAction} min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-medium text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`}
-              >
-                {preservePackageCta}
-              </button>
             ) : currentStep === 7 && !isEditor ? (
               <button
                 type="button"

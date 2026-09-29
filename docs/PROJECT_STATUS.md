@@ -4,11 +4,11 @@
 **Dernière MAJ :** 29 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 29 sept 2026 — **Étape 6** : sas cinéma plein écran (`SessionCinemaGate`) — poster N&B + 2 CTA ; plus de mini-teaser `PreviewStep`.
 - 29 sept 2026 — Pacing cinéma FIGÉ : taxe chap.1 **5 s** + outro dernier **8 s** (`storyboardPacing`).
 - 23 sept 2026 — **C13** : Social Cut 19 $ (9:16 stub) · checkout post-Master · hub CTA.
 - 23 sept 2026 — C11 : Master multi-acheteurs 49 $ (CTA always-on · #1 unlock+export · #2…n Fonds) · gift stream.
 - 22 sept 2026 — C12 : `guestMasterCopy` 15 $ Stripe depuis hub stream invité · download licence Master.
-- 22 sept 2026 — Visionne : carton chapitre sans médias plafonné (~8 s) — plus de N × durée de piste.
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -85,7 +85,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 **Ne plus faire :** débit jetons, wholesale 40 $, coexistence `is_freemium=false`, saga checkout « v1 jetons ».
 
 **Dette acceptée — pont Preview / Checkout (hybride, temporaire) :**
-- Étape 6 **lit le storyboard live** (`PreviewStep` + `buildTeaserFromStoryboard` — N chapitres, musiques, ordre). Ce n’est **pas** un teaser 3 actes, **ni** le master Creatomate.
+- Étape 6 = **sas cinéma plein écran** (`SessionCinemaGate` + `resolveSessionPosterUrl`) — projection officielle ou passer au checkout. Ce n’est **pas** un teaser inline, **ni** le master Creatomate.
 - L’autosave **envoie encore** `montage` + `musicalAmbiance` (miroir 3 actes) à côté du `storyboard` canon.
 - Le checkout Stripe **sérialise encore** `act_tracks` (compact) en plus de `storyboard` — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 - Cible aperçu : mix BA, plan plus tard — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).

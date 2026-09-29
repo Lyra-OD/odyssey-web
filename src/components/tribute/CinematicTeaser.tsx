@@ -2,7 +2,7 @@
 
 /**
  * Adaptateur wizard (étape 6 / séance) → QuietLuxuryPlayer (C4).
- * Conserve l’API historique slides/tracks pour PreviewStep.
+ * Conserve l’API historique slides/tracks pour la séance cinéma.
  */
 
 import { useEffect, useMemo, useState } from "react";
