@@ -762,10 +762,10 @@
 | `tributeWizard.stepPreviewDescription` | Ressentez le souffle de votre hommage. Ensuite, choisissez comment le garder. | Feel the breath of your tribute. Then choose how you want to keep it. |
 | `tributeWizard.previewLaunchSession` | Vivre la projection | Experience the screening |
 | `tributeWizard.previewLaunchSessionAria` | Lancer la séance officielle en plein écran | Launch the official session fullscreen |
-| `tributeWizard.previewGatePlay` | Vivre la projection | Experience the screening |
-| `tributeWizard.previewGatePlayAria` | Lancer la séance officielle en plein écran | Launch the official session fullscreen |
-| `tributeWizard.previewGateSkip` | Passer à l’étape suivante | Continue to the next step |
-| `tributeWizard.previewGateSkipAria` | Continuer vers la préservation sans lancer la projection | Continue to preserve without starting the screening |
+| `tributeWizard.previewGatePlay` | Lancer le film | Begin the film |
+| `tributeWizard.previewGatePlayAria` | Lancer le film d’hommage en plein écran | Begin the tribute film fullscreen |
+| `tributeWizard.previewGateSkip` | Continuer vers l’hommage | Continue to the tribute |
+| `tributeWizard.previewGateSkipAria` | Continuer vers l’hommage sans lancer le film | Continue to the tribute without starting the film |
 | `tributeWizard.previewGateClose` | Fermer et revenir au film | Close and return to the film |
 | `tributeWizard.previewGateLoading` | Nous préparons votre séance… | We’re preparing your session… |
 | `tributeWizard.previewGateEmpty` | Ajoutez des photos au film pour révéler l’affiche. | Add photos to the film to reveal the poster. |

@@ -1721,9 +1721,6 @@ export function TributeWizard({
         <SessionCinemaGate
           posterUrl={gatePosterUrl}
           isLoading={gateMediaLoading}
-          salonBadge={
-            isFreemiumGrant ? copy.previewSalonBadgeFallback : null
-          }
           memoryCard={sessionMemoryCard}
           copy={{
             play: copy.previewGatePlay,
