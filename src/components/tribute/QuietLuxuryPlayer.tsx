@@ -413,6 +413,10 @@ const CINEMA_STYLE = `
   from { transform: scale(1); }
   to { transform: scale(1.03); }
 }
+@keyframes ql-kb-pull-soft {
+  from { transform: scale(1.03); }
+  to { transform: scale(1); }
+}
 @keyframes ql-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -1133,13 +1137,33 @@ export function QuietLuxuryPlayer({
   const clipDur =
     showClip && seg.kind === "clip" ? Math.max(0.8, seg.end - seg.start) : 4;
   const clipFit: "cover" | "contain" =
-    clip != null ? (fitByClipId[clip.id] ?? "cover") : "cover";
-  const videoFit = clip?.kind === "video" ? clipFit : "cover";
+    clip != null ? (fitByClipId[clip.id] ?? "contain") : "contain";
+  /** Portrait contain : cadre centré + KB doux. Paysage cover : focale + KB plein. */
+  const containSafe = clipFit === "contain";
   const kenMode: QuietLuxuryKenBurns | null =
     clip?.kind === "image"
       ? (kenBurnsByClipId.get(clip.id) ??
         kenBurnsForImageIndex(0))
       : null;
+  const kenAnimName =
+    kenMode == null
+      ? null
+      : containSafe
+        ? kenMode === "push"
+          ? "ql-kb-push-soft"
+          : "ql-kb-pull-soft"
+        : kenMode === "push"
+          ? "ql-kb-push"
+          : "ql-kb-pull";
+  const clipObjectPosition = containSafe
+    ? "center center"
+    : clip?.objectPosition ??
+      (kenMode === "push" ? "center 22%" : "center center");
+  const clipTransformOrigin = containSafe
+    ? "center center"
+    : clip?.transformOrigin ??
+      clip?.objectPosition ??
+      "center center";
 
   const animPlayState: CSSProperties["animationPlayState"] = isPlaying
     ? "running"
@@ -1208,18 +1232,14 @@ export function QuietLuxuryPlayer({
           <video
             ref={videoRef}
             className={`absolute inset-0 h-full w-full will-change-transform ${
-              videoFit === "contain" ? "object-contain" : "object-cover"
+              clipFit === "contain" ? "object-contain" : "object-cover"
             }`}
               style={{
                 ...mediaFilterStyle,
                 objectPosition:
-                  clip?.kind === "video"
-                    ? (clip.objectPosition ?? "center center")
-                    : undefined,
+                  clip?.kind === "video" ? clipObjectPosition : undefined,
                 transformOrigin:
-                  clip?.kind === "video"
-                    ? (clip.transformOrigin ?? "center center")
-                    : undefined,
+                  clip?.kind === "video" ? clipTransformOrigin : undefined,
                 ...(showClip && clip?.kind === "video" && videoLayerOn
                   ? cinema
                     ? {
@@ -1250,39 +1270,29 @@ export function QuietLuxuryPlayer({
             }}
           />
 
-          {showClip && clip?.kind === "image" && kenMode ? (
+          {showClip && clip?.kind === "image" && kenMode && kenAnimName ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               key={`${clip.id}:${clip.objectPosition ?? "c"}:${clip.url.slice(-48)}`}
               src={clip.url}
               alt=""
               className={`absolute inset-0 h-full w-full will-change-transform ${
-                cinema || clip.objectPosition
-                  ? "object-cover"
-                  : clipFit === "contain"
-                    ? "object-contain"
-                    : "object-cover"
+                clipFit === "contain" ? "object-contain" : "object-cover"
               }`}
               style={{
                 ...mediaFilterStyle,
-                objectPosition:
-                  clip.objectPosition ??
-                  (kenMode === "push" ? "center 22%" : "center center"),
-                transformOrigin:
-                  clip.transformOrigin ??
-                  clip.objectPosition ??
-                  "center center",
+                objectPosition: clipObjectPosition,
+                transformOrigin: clipTransformOrigin,
                 ...(cinema
                   ? {
                       animation: [
                         `ql-fade-in 0.4s ease-out both`,
-                        `${kenMode === "push" ? "ql-kb-push" : "ql-kb-pull"} ${clipDur}s linear forwards`,
+                        `${kenAnimName} ${clipDur}s linear forwards`,
                         `ql-fade-out 0.4s ease-in ${Math.max(0, clipDur - 0.4)}s forwards`,
                       ].join(", "),
                     }
                   : {
-                      animationName:
-                        kenMode === "push" ? "ql-kb-push" : "ql-kb-pull",
+                      animationName: kenAnimName,
                       animationDuration: `${clipDur}s`,
                       animationTimingFunction: "linear",
                       animationFillMode: "forwards",
@@ -1291,7 +1301,6 @@ export function QuietLuxuryPlayer({
               }}
               draggable={false}
               onLoad={(e) => {
-                if (cinema || clip.objectPosition) return;
                 const img = e.currentTarget;
                 const nextFit =
                   img.naturalHeight > img.naturalWidth ? "contain" : "cover";
