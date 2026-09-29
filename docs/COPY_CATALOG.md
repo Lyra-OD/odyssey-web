@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-23 · **Entrées :** 997
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-29 · **Entrées :** 1004
 
 ## `common`
 
@@ -762,6 +762,13 @@
 | `tributeWizard.stepPreviewDescription` | Ressentez le souffle de votre hommage. Ensuite, choisissez comment le garder. | Feel the breath of your tribute. Then choose how you want to keep it. |
 | `tributeWizard.previewLaunchSession` | Vivre la projection | Experience the screening |
 | `tributeWizard.previewLaunchSessionAria` | Lancer la séance officielle en plein écran | Launch the official session fullscreen |
+| `tributeWizard.previewGatePlay` | Vivre la projection | Experience the screening |
+| `tributeWizard.previewGatePlayAria` | Lancer la séance officielle en plein écran | Launch the official session fullscreen |
+| `tributeWizard.previewGateSkip` | Passer à l’étape suivante | Continue to the next step |
+| `tributeWizard.previewGateSkipAria` | Continuer vers la préservation sans lancer la projection | Continue to preserve without starting the screening |
+| `tributeWizard.previewGateClose` | Fermer et revenir au film | Close and return to the film |
+| `tributeWizard.previewGateLoading` | Nous préparons votre séance… | We’re preparing your session… |
+| `tributeWizard.previewGateEmpty` | Ajoutez des photos au film pour révéler l’affiche. | Add photos to the film to reveal the poster. |
 | `tributeWizard.previewLoadingMedia` | Nous préparons votre film… | We’re preparing your film… |
 | `tributeWizard.previewPayCta` | J’adore, préserver cet hommage | I love it. Preserve this tribute |
 | `tributeWizard.previewPayCtaSoftCap` | Préserver Héritage | Preserve Heritage |
