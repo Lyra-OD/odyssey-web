@@ -2,7 +2,7 @@
 
 /**
  * C4 — Lecteur séance Quiet Luxury.
- * MP3 = master clock · dual video ping-pong · N actes · noir fin ≥1 s → onPlaybackComplete.
+ * MP3 = master clock · dual image crossfade (cinéma) · N actes · noir fin ≥1 s → onPlaybackComplete.
  * Ken Burns photos : alternance pull (pair) / push (impair) · vidéos scale 1 fixe.
  * Variant `cinema` = présentation immersive (lab /stream) — teaser wizard inchangé.
  */
@@ -10,6 +10,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -25,6 +26,7 @@ import {
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
 import { waitForAudioReady } from "@/src/lib/wizard/musicPreview";
 import { VIDEO_TRIM_DURATION_SEC } from "@/src/lib/wizard/storyboardPacing";
+import { editorialFont } from "@/src/lib/fonts";
 
 export type QuietLuxuryKenBurns = "push" | "pull";
 
@@ -119,6 +121,12 @@ const CINEMA_TIMING: Timing = {
 /** Fade-in de la piste suivante sur le pont (cinéma radio). */
 const BRIDGE_AUDIO_FADE_SEC = 1.1;
 
+/**
+ * Crossfade image→image (cinéma) — B + C léger.
+ * Durée fixe (pas de % clip) ; pas de micro-noir entre deux photos.
+ */
+const IMAGE_CROSSFADE_SEC = 0.7;
+
 /** Fallbacks uniquement si durationSec manquant (le builder doit toujours poser le pacing). */
 const DEFAULT_IMAGE_SEC = 7;
 const DEFAULT_VIDEO_SEC = VIDEO_TRIM_DURATION_SEC;
@@ -184,6 +192,49 @@ export type QuietLuxuryPlayerProps = {
 function clamp(n: number, a: number, b: number) {
   return Math.min(b, Math.max(a, n));
 }
+
+/** Prochain clip média après `from` (ignore clip_black). Pont / fin → null. */
+function nextClipAfter(
+  segments: Segment[],
+  from: Extract<Segment, { kind: "clip" }>,
+): Extract<Segment, { kind: "clip" }> | null {
+  let seen = false;
+  for (const s of segments) {
+    if (
+      s.kind === "clip" &&
+      s.actIndex === from.actIndex &&
+      s.clipIndex === from.clipIndex
+    ) {
+      seen = true;
+      continue;
+    }
+    if (!seen) continue;
+    if (
+      s.kind === "act_bridge" ||
+      s.kind === "pre_memory_black" ||
+      s.kind === "memory_card" ||
+      s.kind === "end_black"
+    ) {
+      return null;
+    }
+    if (s.kind === "clip") return s;
+  }
+  return null;
+}
+
+type ImageLayerSnap = {
+  clipId: string;
+  url: string;
+  fit: "cover" | "contain";
+  objectPosition: string;
+  transformOrigin: string;
+};
+
+type OutgoingImageLayer = ImageLayerSnap & {
+  token: number;
+  /** Master time when crossfade began (incoming clip start). */
+  fadeStartMaster: number;
+};
 
 function sameMediaUrl(a: string | null, b: string | null): boolean {
   if (!a || !b) return a === b;
@@ -283,7 +334,11 @@ function buildTimeline(
         ? openingDur + bridgeDur
         : bridgeDur;
     act.clips.forEach((clip, clipIndex) => {
-      if (clipIndex > 0 && timing.interBlack > 0) {
+      const prevClip = clipIndex > 0 ? act.clips[clipIndex - 1] : null;
+      /** Image→image : crossfade (pas de flash noir). */
+      const skipInterBlack =
+        prevClip?.kind === "image" && clip.kind === "image";
+      if (clipIndex > 0 && timing.interBlack > 0 && !skipInterBlack) {
         segments.push({
           kind: "clip_black",
           start: t,
@@ -589,6 +644,15 @@ export function QuietLuxuryPlayer({
   const [openingPortraitFit, setOpeningPortraitFit] = useState<
     "cover" | "contain"
   >("contain");
+  /** Couche sortante — crossfade image→image cinéma. */
+  const [outgoingImage, setOutgoingImage] = useState<OutgoingImageLayer | null>(
+    null,
+  );
+  const heldImageRef = useRef<ImageLayerSnap | null>(null);
+  const outgoingTokenRef = useRef(0);
+  const outgoingImageRef = useRef<OutgoingImageLayer | null>(null);
+  const kenImgRef = useRef<HTMLImageElement | null>(null);
+  outgoingImageRef.current = outgoingImage;
 
   const current = segmentAt(segments, masterTime);
 
@@ -901,7 +965,27 @@ export function QuietLuxuryPlayer({
       const seg = segmentAt(segments, t);
       const key = segmentKey(seg);
       if (cinema) {
-        if (key !== lastSegKeyRef.current) {
+        /**
+         * 30 fps seulement pendant fenêtres de fade image.
+         * Hors fade : update au changement de segment (laisse le KB CSS tourner).
+         */
+        const outgoingActive = outgoingImageRef.current != null;
+        const inImageFade =
+          outgoingActive ||
+          (seg?.kind === "clip" &&
+            seg.clip.kind === "image" &&
+            (t - seg.start <= IMAGE_CROSSFADE_SEC + 0.05 ||
+              seg.end - t <= 0.45));
+        if (inImageFade) {
+          if (
+            t - lastUiAtRef.current >= 1 / 30 ||
+            key !== lastSegKeyRef.current
+          ) {
+            lastUiAtRef.current = t;
+            lastSegKeyRef.current = key;
+            setMasterTime(t);
+          }
+        } else if (key !== lastSegKeyRef.current) {
           lastSegKeyRef.current = key;
           setMasterTime(t);
         }
@@ -1143,6 +1227,129 @@ export function QuietLuxuryPlayer({
     };
   }, [cinema, cursorHidden, showExitHub]);
 
+  /** Clip image courant (hooks avant early return). */
+  const liveImageClip =
+    current?.kind === "clip" && current.clip.kind === "image"
+      ? current.clip
+      : null;
+  const liveImageFit: "cover" | "contain" = liveImageClip
+    ? (fitByClipId[liveImageClip.id] ?? "contain")
+    : "contain";
+  const liveImageContain = liveImageFit === "contain";
+  const liveImageSnap: ImageLayerSnap | null =
+    cinema && liveImageClip
+      ? {
+          clipId: liveImageClip.id,
+          url: liveImageClip.url,
+          fit: liveImageFit,
+          objectPosition: liveImageContain
+            ? "center center"
+            : liveImageClip.objectPosition ??
+              "center center",
+          transformOrigin: liveImageContain
+            ? "center center"
+            : liveImageClip.transformOrigin ??
+              liveImageClip.objectPosition ??
+              "center center",
+        }
+      : null;
+
+  useLayoutEffect(() => {
+    if (!liveImageSnap) {
+      heldImageRef.current = null;
+      setOutgoingImage(null);
+      return;
+    }
+    const held = heldImageRef.current;
+    if (held && held.clipId !== liveImageSnap.clipId) {
+      const token = ++outgoingTokenRef.current;
+      setOutgoingImage({
+        ...held,
+        token,
+        fadeStartMaster: masterTimeRef.current,
+      });
+      heldImageRef.current = liveImageSnap;
+      const clearAt = window.setTimeout(() => {
+        setOutgoingImage((cur) => (cur?.token === token ? null : cur));
+      }, IMAGE_CROSSFADE_SEC * 1000 + 120);
+      return () => clearTimeout(clearAt);
+    }
+    heldImageRef.current = liveImageSnap;
+  }, [liveImageSnap?.clipId, liveImageSnap?.url]);
+
+  /** Précharge toutes les photos — évite trou noir si decode tardif au crossfade. */
+  useEffect(() => {
+    if (!cinema) return;
+    const urls: string[] = [];
+    for (const act of acts) {
+      for (const c of act.clips) {
+        if (c.kind === "image" && c.url) urls.push(c.url);
+      }
+    }
+    const loaders = urls.map((url) => {
+      const img = new window.Image();
+      img.decoding = "async";
+      img.src = url;
+      return img;
+    });
+    return () => {
+      for (const img of loaders) {
+        img.src = "";
+      }
+    };
+  }, [acts, cinema]);
+
+  /**
+   * KB posé une fois par clip via DOM — les re-renders fade (30 fps) ne doivent
+   * PAS réécrire style.animation (sinon le zoom repart de zéro).
+   */
+  const liveKenFit = liveImageClip
+    ? (fitByClipId[liveImageClip.id] ?? "contain")
+    : "contain";
+  useLayoutEffect(() => {
+    const el = kenImgRef.current;
+    if (!el || !cinema || !liveImageClip) return;
+    const contain = liveKenFit === "contain";
+    const mode =
+      kenBurnsByClipId.get(liveImageClip.id) ?? kenBurnsForImageIndex(0);
+    const name = contain
+      ? mode === "push"
+        ? "ql-kb-push-soft"
+        : "ql-kb-pull-soft"
+      : mode === "push"
+        ? "ql-kb-push"
+        : "ql-kb-pull";
+    const dur = Math.max(
+      0.8,
+      liveImageClip.durationSec || DEFAULT_IMAGE_SEC,
+    );
+    el.style.animation = "none";
+    void el.offsetWidth;
+    el.style.animation = `${name} ${dur}s linear forwards`;
+    el.style.animationPlayState = playingRef.current ? "running" : "paused";
+  }, [
+    cinema,
+    liveImageClip?.id,
+    liveImageClip?.durationSec,
+    liveKenFit,
+    kenBurnsByClipId,
+  ]);
+
+  useEffect(() => {
+    const el = kenImgRef.current;
+    if (!el) return;
+    el.style.animationPlayState = isPlaying ? "running" : "paused";
+  }, [isPlaying]);
+
+  // Garde le snap à jour (fit onLoad) sans retrigger le crossfade.
+  if (
+    liveImageSnap &&
+    heldImageRef.current &&
+    heldImageRef.current.clipId === liveImageSnap.clipId
+  ) {
+    heldImageRef.current = liveImageSnap;
+  }
+
   if (!hasClips) {
     return (
       <div className={`relative overflow-hidden bg-black ${className}`}>
@@ -1192,6 +1399,42 @@ export function QuietLuxuryPlayer({
     : clip?.transformOrigin ??
       clip?.objectPosition ??
       "center center";
+
+  const crossfadeToNextImage =
+    cinema &&
+    showClip &&
+    seg?.kind === "clip" &&
+    clip?.kind === "image" &&
+    nextClipAfter(segments, seg)?.clip.kind === "image";
+
+  /** Opacité pilotée par l’horloge master — pas de CSS fade (reset onLoad). */
+  const imageFadeProgress =
+    cinema && showClip && seg?.kind === "clip" && clip?.kind === "image"
+      ? clamp(
+          (masterTime - seg.start) / IMAGE_CROSSFADE_SEC,
+          0,
+          1,
+        )
+      : 1;
+  const imageEndFade =
+    cinema &&
+    showClip &&
+    seg?.kind === "clip" &&
+    clip?.kind === "image" &&
+    !crossfadeToNextImage
+      ? clamp((seg.end - masterTime) / 0.4, 0, 1)
+      : 1;
+  const incomingImageOpacity = imageFadeProgress * imageEndFade;
+  const outgoingImageOpacity =
+    outgoingImage != null
+      ? clamp(
+          1 -
+            (masterTime - outgoingImage.fadeStartMaster) /
+              IMAGE_CROSSFADE_SEC,
+          0,
+          1,
+        )
+      : 0;
 
   const animPlayState: CSSProperties["animationPlayState"] = isPlaying
     ? "running"
@@ -1298,47 +1541,98 @@ export function QuietLuxuryPlayer({
             }}
           />
 
+          {cinema && outgoingImage && outgoingImageOpacity > 0.001 ? (
+            <div
+              key={`out-${outgoingImage.token}`}
+              className="absolute inset-0 z-[1]"
+              style={{ opacity: outgoingImageOpacity }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={outgoingImage.url}
+                alt=""
+                className={`absolute inset-0 h-full w-full ${
+                  outgoingImage.fit === "contain"
+                    ? "object-contain"
+                    : "object-cover"
+                }`}
+                style={{
+                  ...mediaFilterStyle,
+                  objectPosition: outgoingImage.objectPosition,
+                  transformOrigin: outgoingImage.transformOrigin,
+                }}
+                draggable={false}
+              />
+            </div>
+          ) : null}
+
           {showClip && clip?.kind === "image" && kenMode && kenAnimName ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={`${clip.id}:${clip.objectPosition ?? "c"}:${clip.url.slice(-48)}`}
-              src={clip.url}
-              alt=""
-              className={`absolute inset-0 h-full w-full will-change-transform ${
-                clipFit === "contain" ? "object-contain" : "object-cover"
-              }`}
-              style={{
-                ...mediaFilterStyle,
-                objectPosition: clipObjectPosition,
-                transformOrigin: clipTransformOrigin,
-                ...(cinema
-                  ? {
-                      animation: [
-                        `ql-fade-in 0.4s ease-out both`,
-                        `${kenAnimName} ${clipDur}s linear forwards`,
-                        `ql-fade-out 0.4s ease-in ${Math.max(0, clipDur - 0.4)}s forwards`,
-                      ].join(", "),
-                    }
-                  : {
-                      animationName: kenAnimName,
-                      animationDuration: `${clipDur}s`,
-                      animationTimingFunction: "linear",
-                      animationFillMode: "forwards",
-                    }),
-                animationPlayState: animPlayState,
-              }}
-              draggable={false}
-              onLoad={(e) => {
-                const img = e.currentTarget;
-                const nextFit =
-                  img.naturalHeight > img.naturalWidth ? "contain" : "cover";
-                setFitByClipId((prev) =>
-                  prev[clip.id] === nextFit
-                    ? prev
-                    : { ...prev, [clip.id]: nextFit },
-                );
-              }}
-            />
+            cinema ? (
+              <div
+                key={`in-wrap-${clip.id}:${clip.url.slice(-48)}`}
+                className="absolute inset-0 z-[2]"
+                style={{ opacity: incomingImageOpacity }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  ref={kenImgRef}
+                  src={clip.url}
+                  alt=""
+                  className={`absolute inset-0 h-full w-full will-change-transform ${
+                    clipFit === "contain" ? "object-contain" : "object-cover"
+                  }`}
+                  style={{
+                    ...mediaFilterStyle,
+                    objectPosition: clipObjectPosition,
+                    transformOrigin: clipTransformOrigin,
+                  }}
+                  draggable={false}
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    const nextFit =
+                      img.naturalHeight > img.naturalWidth
+                        ? "contain"
+                        : "cover";
+                    setFitByClipId((prev) =>
+                      prev[clip.id] === nextFit
+                        ? prev
+                        : { ...prev, [clip.id]: nextFit },
+                    );
+                  }}
+                />
+              </div>
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={`${clip.id}:${clip.objectPosition ?? "c"}:${clip.url.slice(-48)}`}
+                src={clip.url}
+                alt=""
+                className={`absolute inset-0 h-full w-full will-change-transform ${
+                  clipFit === "contain" ? "object-contain" : "object-cover"
+                }`}
+                style={{
+                  ...mediaFilterStyle,
+                  objectPosition: clipObjectPosition,
+                  transformOrigin: clipTransformOrigin,
+                  animationName: kenAnimName,
+                  animationDuration: `${clipDur}s`,
+                  animationTimingFunction: "linear",
+                  animationFillMode: "forwards",
+                  animationPlayState: animPlayState,
+                }}
+                draggable={false}
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  const nextFit =
+                    img.naturalHeight > img.naturalWidth ? "contain" : "cover";
+                  setFitByClipId((prev) =>
+                    prev[clip.id] === nextFit
+                      ? prev
+                      : { ...prev, [clip.id]: nextFit },
+                  );
+                }}
+              />
+            )
           ) : null}
 
           {showPortrait && openingPortraitUrl ? (
@@ -1394,7 +1688,7 @@ export function QuietLuxuryPlayer({
               }}
             >
               <p
-                className="font-editorial text-[clamp(1.85rem,4.8vw,3.15rem)] font-medium tracking-[0.04em] text-zinc-100"
+                className={`${editorialFont.className} text-[clamp(1.85rem,4.8vw,3.15rem)] font-medium tracking-[0.04em] text-zinc-100`}
               >
                 {memoryCard.displayName}
               </p>
@@ -1422,7 +1716,9 @@ export function QuietLuxuryPlayer({
               }}
             >
               {seg.title ? (
-                <p className="font-editorial text-[clamp(1.05rem,2.6vw,1.65rem)] font-medium tracking-[0.18em] text-zinc-100">
+                <p
+                  className={`${editorialFont.className} text-[clamp(1.05rem,2.6vw,1.65rem)] font-medium tracking-[0.18em] text-zinc-100`}
+                >
                   {seg.title}
                 </p>
               ) : null}
@@ -1466,7 +1762,9 @@ export function QuietLuxuryPlayer({
                 animationPlayState: animPlayState,
               }}
             >
-              <p className="font-editorial text-[clamp(1.75rem,4.5vw,3rem)] font-medium tracking-wide text-zinc-200">
+              <p
+                className={`${editorialFont.className} text-[clamp(1.75rem,4.5vw,3rem)] font-medium tracking-wide text-zinc-200`}
+              >
                 {memoryCard.displayName}
               </p>
               <p className="mt-5 text-[clamp(0.75rem,1.5vw,1rem)] font-light tracking-[0.42em] text-zinc-400">
@@ -1597,3 +1895,4 @@ export function QuietLuxuryPlayer({
 export const QUIET_LUXURY_END_BLACK_SEC = CINEMA_TIMING.endBlack;
 export const QUIET_LUXURY_PRE_MEMORY_BLACK_SEC = CINEMA_TIMING.preMemoryBlack;
 export const QUIET_LUXURY_TEASER_END_BLACK_SEC = TEASER_TIMING.endBlack;
+export const QUIET_LUXURY_IMAGE_CROSSFADE_SEC = IMAGE_CROSSFADE_SEC;

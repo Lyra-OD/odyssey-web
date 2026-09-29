@@ -22,6 +22,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/** Serif éditorial (Playfair) — gagne toujours sur Inter body. */
+.font-editorial {
+  font-family: var(--font-editorial), Georgia, "Times New Roman", serif !important;
+}
+
 /** Séance cinéma — zéro scrollbar / scroll page derrière le player. */
 html[data-odyssey-cinema="1"],
 html[data-odyssey-cinema="1"] body {
