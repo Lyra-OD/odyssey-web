@@ -12,6 +12,7 @@ import {
   setChapterSongShowCreditInSession,
 } from "@/src/lib/wizard/storyboardHelpers";
 import {
+  chapterPacingRole,
   chapterRecommendedCapacity,
   resolveTargetSecondsPerMedia,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -59,11 +60,13 @@ export function useMontageChapterActions({
 
   const handleAutoFill = useCallback(
     (chapterId: string) => {
-      const chapter = storyboard.chapters.find((c) => c.id === chapterId);
+      const index = storyboard.chapters.findIndex((c) => c.id === chapterId);
+      const chapter = index >= 0 ? storyboard.chapters[index] : undefined;
       if (!chapter) return;
       const capacity = chapterRecommendedCapacity(
         chapter.song?.durationSec,
         resolveTargetSecondsPerMedia(packageId, chapter.mood),
+        chapterPacingRole(index, storyboard.chapters.length),
       );
       const next = autoFillChapter(storyboard, chapterId, capacity);
       onStoryboardChange(next);

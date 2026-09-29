@@ -5,11 +5,11 @@
 **Dernière MAJ :** 23 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 29 sept 2026 — **Pacing FIGÉ** : taxe ouverture chap.1 **5 s** (Option B) · outro dernier chap. **8 s** · clips 7/10 — `storyboardPacing.ts`.
 - 23 sept 2026 — **C13** : Social Cut `socialCut` 19 $ · checkout post-Master · job stub `creatomate_social_stub` 9:16.
 - 23 sept 2026 — C11 : multi-acheteurs Master 49 $ · gift `cinemaMasterGift` · Fonds via `guest_micro` · CTA hub never greyed.
 - 22 sept 2026 — C12 : Checkout Stripe `guestMasterCopy` 15 $ · gate Master unlock · download `output_url` (0 Creatomate).
 - 22 sept 2026 — C14 : `/[lang]/stream/[token]` via `WizardSessionProjection` guest/prebuilt (C12 Stripe encore stub).
-- 22 sept 2026 — Visionne miroir Livre Ouvert : pacing photo/vidéo · chapitres musique-seule · seed non-destructif · titres `paletteIndex` · `videoTrims` · amorce audio unique.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 

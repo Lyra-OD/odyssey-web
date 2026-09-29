@@ -14,6 +14,7 @@ import type { ChapterCanvasGridCopy } from "@/src/components/tribute/storyboard/
 import type { ChapterNarrativeHeaderCreditCopy } from "@/src/components/tribute/storyboard/ChapterNarrativeHeader";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import {
+  chapterPacingRole,
   chapterRecommendedCapacity,
   resolveTargetSecondsPerMedia,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -119,6 +120,7 @@ export function StoryboardChapterStack({
           const recommendedCapacity = chapterRecommendedCapacity(
             chapter.song?.durationSec,
             resolveTargetSecondsPerMedia(packageId, chapter.mood),
+            chapterPacingRole(index, chapters.length),
           );
 
           const chapterSelection =

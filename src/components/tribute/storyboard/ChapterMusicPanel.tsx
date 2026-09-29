@@ -25,6 +25,7 @@ import {
   storyboardSongPreviewKey,
 } from "@/src/lib/wizard/musicPreview";
 import {
+  chapterPacingRole,
   chapterRecommendedCapacity,
   RECOMMENDED_MIN_TRACK_DURATION_SEC,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -55,6 +56,8 @@ function formatTime(seconds: number): string {
 export type ChapterMusicPanelProps = {
   chapter: WizardStoryboardChapter;
   chapterIndex: number;
+  /** Nombre total de chapitres (taxes 1er / dernier). */
+  chapterCount: number;
   chapterLabel: string;
   targetSecondsPerMedia: number;
   catalogTier: MusicCatalogTier;
@@ -86,6 +89,7 @@ export type ChapterMusicPanelProps = {
 export function ChapterMusicPanel({
   chapter,
   chapterIndex,
+  chapterCount,
   chapterLabel,
   targetSecondsPerMedia,
   catalogTier,
@@ -252,7 +256,11 @@ export function ChapterMusicPanel({
   ]);
 
   if (song) {
-    const capacity = chapterRecommendedCapacity(song.durationSec, targetSecondsPerMedia);
+    const capacity = chapterRecommendedCapacity(
+      song.durationSec,
+      targetSecondsPerMedia,
+      chapterPacingRole(chapterIndex, chapterCount),
+    );
     const previewKey = storyboardSongPreviewKey(song);
     const isActivePreview = previewTrackId === previewKey;
     const isPreviewPlaying = isActivePreview && isPlaying;

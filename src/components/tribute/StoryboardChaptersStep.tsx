@@ -17,6 +17,7 @@ import { chapterShellClass, getChapterTheme } from "@/src/lib/wizard/chapterThem
 import { wizardMiniCapsAction, wizardStepLead, wizardStepTitle } from "@/src/lib/contribute/sanctuaryChrome";
 import type { StingrayTrackApiPayload } from "@/src/lib/wizard/stingrayCatalog";
 import {
+  chapterPacingRole,
   chapterRecommendedCapacity,
   resolveTargetSecondsPerMedia,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -399,6 +400,7 @@ export function StoryboardChaptersStep({
           const capacity = chapterRecommendedCapacity(
             song?.durationSec,
             targetSecondsPerMediaForChapter(chapter),
+            chapterPacingRole(index, storyboard.chapters.length),
           );
           const isDuplicate = duplicateChapterIds.has(chapter.id);
 
@@ -524,6 +526,7 @@ export function StoryboardChaptersStep({
           <ChapterMusicPanel
             chapter={activeChapter}
             chapterIndex={Math.max(activeChapterIndex, 0)}
+            chapterCount={storyboard.chapters.length}
             chapterLabel={copy.chapterTitleFallback.replace(
               "{index}",
               String(Math.max(activeChapterIndex, 0) + 1),

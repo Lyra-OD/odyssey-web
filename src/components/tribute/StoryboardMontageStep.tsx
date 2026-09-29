@@ -63,6 +63,7 @@ import {
   unassignMediaFromChapter,
 } from "@/src/lib/wizard/storyboardMedia";
 import {
+  chapterPacingRole,
   chapterRecommendedCapacity,
   resolveTargetSecondsPerMedia,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -223,6 +224,7 @@ export function StoryboardMontageStep({
   }, [copy.chapterTabs, onStoryboardChange, storyboard]);
 
   const filmMapSegments = useMemo((): StoryboardFilmMapSegment[] => {
+    const n = storyboard.chapters.length;
     return storyboard.chapters.map((chapter, index) => ({
       chapterId: chapter.id,
       index: resolveChapterThemeIndex(chapter, index),
@@ -231,16 +233,18 @@ export function StoryboardMontageStep({
       recommendedCapacity: chapterRecommendedCapacity(
         chapter.song?.durationSec,
         resolveTargetSecondsPerMedia(packageId, chapter.mood),
+        chapterPacingRole(index, n),
       ),
     }));
   }, [storyboard.chapters, copy.chapterTabs, packageId]);
 
   const chapterCapacities = useMemo(
     () =>
-      storyboard.chapters.map((chapter) =>
+      storyboard.chapters.map((chapter, index) =>
         chapterRecommendedCapacity(
           chapter.song?.durationSec,
           resolveTargetSecondsPerMedia(packageId, chapter.mood),
+          chapterPacingRole(index, storyboard.chapters.length),
         ),
       ),
     [packageId, storyboard.chapters],
@@ -256,6 +260,7 @@ export function StoryboardMontageStep({
     const capacity = chapterRecommendedCapacity(
       chapter.song?.durationSec,
       resolveTargetSecondsPerMedia(packageId, chapter.mood),
+      chapterPacingRole(index, storyboard.chapters.length),
     );
     const items = chapter.mediaIds
       .map((id) => mediaById.get(id))

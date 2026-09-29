@@ -1,26 +1,15 @@
 /**
- * Moteur de pacing temporel (ticket S4 du plan STORYBOARD_REFACTOR).
+ * Moteur de pacing temporel (ticket S4 + freeze Quiet Luxury 29 sept 2026).
  *
- * Fonctions pures, sans dépendance React. Règles produit validées :
+ * Fonctions pures, sans dépendance React. Règles produit :
  *
- * 1. Rythme photo strict : `targetSecondsPerMedia` (7s) par photo, uniforme
- *    pour tous les forfaits.
- * 2. Vidéos : non soumises au rythme photo. Elles sont tronquées (trim) à
- *    `VIDEO_TRIM_DURATION_SEC` (10s) — c'est cette durée fixe, et non la
- *    durée du fichier source, qui pèse dans le calcul de charge d'un bac.
- * 3. Marges de respiration : chaque chapitre réserve `CHAPTER_INTRO_MARGIN_SEC`
- *    (5s) en intro et `CHAPTER_OUTRO_MARGIN_SEC` (5s) en outro, exclues du
- *    temps disponible pour les médias :
- *      temps_disponible = durationSec - (intro + outro)
+ * 1. Rythme photo : `targetSecondsPerMedia` (7s) par photo.
+ * 2. Vidéos : trim fixe `VIDEO_TRIM_DURATION_SEC` (10s).
+ * 3. Marges : intro 5s + outro 5s (outro **8s** sur le dernier chapitre).
+ * 4. Option B : taxe ouverture **5s** sur le **premier** chapitre (musique dès t=0
+ *    pendant nom + portrait) — `CHAPTER1_OPENING_TAX_SEC`.
  *
- * `durationSec` peut être inconnu (chanson pas encore choisie, ou upload
- * personnel sans métadonnée) : dans ce cas la capacité est `null` et l'UI
- * doit afficher un état "à déterminer" plutôt qu'un chiffre erroné.
- *
- * Pipeline de rendu (Creatomate) — note d'implémentation future : quel que
- * soit le mix photo/vidéo retenu ici, le rendu final devra appliquer un LUT
- * "Odyssey" unifié à tous les médias pour garantir une cohérence
- * colorimétrique cross-device (photo scannée, vidéo VHS, smartphone récent…).
+ * `durationSec` inconnu → capacité `null` (UI « à déterminer »).
  */
 
 import {
@@ -35,46 +24,65 @@ import type {
 /** Durée fixe (post-trim) d'une vidéo dans le calcul de charge d'un chapitre. */
 export const VIDEO_TRIM_DURATION_SEC = 10;
 
-/** Marge de respiration réservée en début de chapitre (avant le premier média). */
+/** Marge de respiration réservée en début de chapitre (carton titre). */
 export const CHAPTER_INTRO_MARGIN_SEC = 5;
-/** Marge de respiration réservée en fin de chapitre (après le dernier média). */
+/** Marge outro chapitres non-derniers (fade). */
 export const CHAPTER_OUTRO_MARGIN_SEC = 5;
-/** Marge totale exclue du temps disponible pour les médias d'un chapitre. */
+/**
+ * Outro du **dernier** chapitre : carte mémoire + noir fin (~6.5+1.55).
+ * Remplace `CHAPTER_OUTRO_MARGIN_SEC` (pas 5+8).
+ */
+export const LAST_CHAPTER_ENDING_OUTRO_SEC = 8;
+/**
+ * Taxe ouverture cinéma (Option B) — nom + portrait pendant la piste 1.
+ * Ajoutée **en plus** des marges, **premier chapitre seulement**.
+ */
+export const CHAPTER1_OPENING_TAX_SEC = 5;
+
+/** @deprecated Préférer `chapterOverheadSeconds(role)` — somme milieu = 10. */
 export const CHAPTER_MARGIN_SEC =
   CHAPTER_INTRO_MARGIN_SEC + CHAPTER_OUTRO_MARGIN_SEC;
 
-/**
- * Durée minimale de piste conseillée côté UX (voir bandeau éducatif Étape 4) —
- * en-deçà, le temps disponible pour les médias devient trop contraint pour un
- * montage confortable.
- */
 export const RECOMMENDED_MIN_TRACK_DURATION_SEC = 3 * 60;
 
-/**
- * Durée moyenne supposée d'une chanson tant qu'aucun titre réel n'est
- * choisi (milieu de la fourchette 3-4 min recommandée côté UX) — sert
- * uniquement à estimer la durée totale du film pour le résumé narratif de
- * l'Étape 4, jamais pour un calcul de capacité par chapitre (qui reste
- * `null` tant que `durationSec` est inconnu, voir `chapterRecommendedCapacity`).
- */
 export const AVERAGE_ASSUMED_TRACK_DURATION_SEC = 3.5 * 60;
 
 export type MediaKind = "image" | "video";
 
-/**
- * Pondération de pacing par mood (S4 — structure prête, valeurs neutres).
- * Phase future : différencier le rythme par intention narrative (ex.
- * "energetic" → cadence plus rapide que 7s/photo). En attente de validation
- * produit des coefficients cible, toutes les pondérations valent 1 afin de
- * ne pas modifier silencieusement le comportement actuel.
- */
+/** Position du chapitre dans le film (pour taxes ouverture / finale). */
+export type ChapterPacingRole = {
+  isFirstChapter: boolean;
+  isLastChapter: boolean;
+};
+
+export function chapterPacingRole(
+  chapterIndex: number,
+  chapterCount: number,
+): ChapterPacingRole {
+  const count = Math.max(0, Math.trunc(chapterCount));
+  const index = Math.max(0, Math.trunc(chapterIndex));
+  return {
+    isFirstChapter: count > 0 && index === 0,
+    isLastChapter: count > 0 && index === count - 1,
+  };
+}
+
+/** Secondes réservées hors médias (intro + outro + taxe ouverture si 1er). */
+export function chapterOverheadSeconds(role?: ChapterPacingRole): number {
+  const intro = CHAPTER_INTRO_MARGIN_SEC;
+  const outro = role?.isLastChapter
+    ? LAST_CHAPTER_ENDING_OUTRO_SEC
+    : CHAPTER_OUTRO_MARGIN_SEC;
+  const openingTax = role?.isFirstChapter ? CHAPTER1_OPENING_TAX_SEC : 0;
+  return intro + outro + openingTax;
+}
+
 const MOOD_PACING_MULTIPLIER: Record<WizardStoryboardChapterMood, number> = {
   contemplative: 1,
   energetic: 1,
   nostalgic: 1,
 };
 
-/** Cible de rythme (secondes/photo) pour un forfait, éventuellement pondérée par mood. */
 export function resolveTargetSecondsPerMedia(
   packageId: PackageId,
   mood?: WizardStoryboardChapterMood,
@@ -84,7 +92,6 @@ export function resolveTargetSecondsPerMedia(
   return base * multiplier;
 }
 
-/** Coût temporel d'un média dans le calcul de charge d'un chapitre. */
 export function mediaCostSeconds(
   kind: MediaKind,
   targetSecondsPerMedia: number,
@@ -92,7 +99,6 @@ export function mediaCostSeconds(
   return kind === "video" ? VIDEO_TRIM_DURATION_SEC : targetSecondsPerMedia;
 }
 
-/** Somme du coût temporel d'une liste de médias (mix photo/vidéo). */
 export function chapterMediaLoadSeconds(
   items: readonly { kind: MediaKind }[],
   targetSecondsPerMedia: number,
@@ -103,48 +109,44 @@ export function chapterMediaLoadSeconds(
   );
 }
 
-/** Temps réellement disponible pour des médias, marges intro/outro déduites. */
+/**
+ * Temps disponible pour des médias.
+ * Sans `role` : comportement milieu (intro 5 + outro 5) — compat tests / callers.
+ */
 export function chapterAvailableSecondsForMedia(
   durationSec: number | null | undefined,
+  role?: ChapterPacingRole,
 ): number {
   if (!durationSec || durationSec <= 0) return 0;
-  return Math.max(0, durationSec - CHAPTER_MARGIN_SEC);
+  return Math.max(0, durationSec - chapterOverheadSeconds(role));
 }
 
 /**
- * Capacité recommandée d'un chapitre, exprimée en équivalent-photos
- * (hypothèse "tout photo" — la vraie charge en Étape 5 dépendra du mix
- * réel photo/vidéo, voir `chapterMediaLoadSeconds`).
- * `null` = durée de chanson inconnue. `0` = chanson trop courte pour
- * accueillir un média après les marges intro/outro.
+ * Capacité recommandée (équivalent-photos).
+ * `null` = durée inconnue. `0` = trop court après overhead.
  */
 export function chapterRecommendedCapacity(
   durationSec: number | null | undefined,
   targetSecondsPerMedia: number,
+  role?: ChapterPacingRole,
 ): number | null {
   if (!durationSec || durationSec <= 0) return null;
   if (!targetSecondsPerMedia || targetSecondsPerMedia <= 0) return null;
-  const available = chapterAvailableSecondsForMedia(durationSec);
+  const available = chapterAvailableSecondsForMedia(durationSec, role);
   if (available <= 0) return 0;
   return Math.floor(available / targetSecondsPerMedia);
 }
 
 export type ChapterPacingState = {
-  /** `null` si la durée de la chanson est inconnue. */
   capacity: number | null;
   assignedCount: number;
   isOverloaded: boolean;
 };
 
-/**
- * Vue simplifiée "nombre de médias vs capacité équivalent-photos" — utilisée
- * Étape 4 où seul le nombre de bacs importe encore (pas de médias assignés).
- * Pour un calcul de charge réel mixte photo/vidéo (Étape 5), voir
- * `chapterTimeLoadState`.
- */
 export function chapterPacingState(
   chapter: Pick<WizardStoryboardChapter, "mediaIds" | "song" | "mood">,
   packageId: PackageId,
+  role?: ChapterPacingRole,
 ): ChapterPacingState {
   const targetSecondsPerMedia = resolveTargetSecondsPerMedia(
     packageId,
@@ -153,6 +155,7 @@ export function chapterPacingState(
   const capacity = chapterRecommendedCapacity(
     chapter.song?.durationSec,
     targetSecondsPerMedia,
+    role,
   );
   const assignedCount = chapter.mediaIds.length;
 
@@ -163,12 +166,6 @@ export function chapterPacingState(
   };
 }
 
-/**
- * Estimation de la durée totale du film (secondes) à partir des chapitres
- * pré-générés — chanson réelle si choisie, sinon `AVERAGE_ASSUMED_TRACK_DURATION_SEC`.
- * Utilisée pour le résumé narratif de l'Étape 4 ; volontairement optimiste
- * tant que l'utilisateur n'a pas encore choisi toutes ses chansons.
- */
 export function estimateStoryboardTotalDurationSec(
   chapters: readonly Pick<WizardStoryboardChapter, "song">[],
 ): number {
@@ -183,22 +180,16 @@ export function estimateStoryboardTotalDurationSec(
 }
 
 export type ChapterTimeLoadState = {
-  /** `null` si la durée de la chanson est inconnue. */
   availableSeconds: number | null;
   usedSeconds: number;
   isOverloaded: boolean;
 };
 
-/**
- * Charge temporelle réelle d'un chapitre (mix photo/vidéo) vs temps
- * disponible après marges intro/outro — moteur prêt pour l'Étape 5
- * (bacs médias). Le dépassement reste un warning non bloquant (bandeau
- * ambre), jamais un blocage de navigation.
- */
 export function chapterTimeLoadState(
   chapter: Pick<WizardStoryboardChapter, "song" | "mood">,
   items: readonly { kind: MediaKind }[],
   packageId: PackageId,
+  role?: ChapterPacingRole,
 ): ChapterTimeLoadState {
   const targetSecondsPerMedia = resolveTargetSecondsPerMedia(
     packageId,
@@ -207,7 +198,7 @@ export function chapterTimeLoadState(
   const durationSec = chapter.song?.durationSec;
   const availableSeconds =
     durationSec && durationSec > 0
-      ? chapterAvailableSecondsForMedia(durationSec)
+      ? chapterAvailableSecondsForMedia(durationSec, role)
       : null;
   const usedSeconds = chapterMediaLoadSeconds(items, targetSecondsPerMedia);
 
