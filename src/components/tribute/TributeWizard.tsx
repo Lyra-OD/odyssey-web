@@ -143,6 +143,7 @@ import {
 import { shouldOfferMagicSoftCap } from "@/src/lib/wizard/softCap";
 import { MUSIC_RIGHTS_TOS_VERSION } from "@/src/lib/wizard/exportGate";
 import { resolveOrganizerMasterHubMode } from "@/src/lib/wizard/organizerMasterHub";
+import { resolveStingraySongPreviewUrl } from "@/src/lib/wizard/musicPreview";
 import {
   isWizardStepAllowedForRole,
   type WizardAccessRole,
@@ -1074,7 +1075,6 @@ export function TributeWizard({
         sessionAudioRef.current = audio;
       }
 
-      // Reset singleton — QuietLuxuryPlayer possède le src (pipeline unique).
       try {
         audio.pause();
       } catch {
@@ -1086,17 +1086,35 @@ export function TributeWizard({
         /* */
       }
       audio.volume = 0;
-      audio.removeAttribute("src");
-      try {
-        audio.load();
-      } catch {
-        /* */
+
+      // Unlock autoplay AU GESTE avec une vraie source (sync).
+      // Stingray = proxy immédiat. Upload = wav silencieux (signed URL async
+      // perdrait le geste) — QuietLuxuryPlayer posera le vrai src ensuite.
+      const firstSong = wizardStoryboard.storyboard.chapters.find(
+        (chapter) => chapter.song,
+      )?.song;
+      let primeUrl = "";
+      if (firstSong?.source === "stingray") {
+        primeUrl = resolveStingraySongPreviewUrl(
+          firstSong,
+          uploadProjectId,
+        );
+      }
+      if (primeUrl) {
+        audio.src = primeUrl;
+      } else {
+        audio.src =
+          "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=";
       }
 
-      // Débloque seulement la politique autoplay au geste — pas d’amorce URL.
       try {
         await audio.play();
         audio.pause();
+        try {
+          audio.currentTime = 0;
+        } catch {
+          /* */
+        }
       } catch {
         /* gesture unlock best-effort — ne bloque pas l’ouverture */
       }
@@ -1106,7 +1124,7 @@ export function TributeWizard({
       setSessionOpen(true);
       void requestNativeFullscreen(document.documentElement);
     },
-    [],
+    [uploadProjectId, wizardStoryboard.storyboard.chapters],
   );
 
   const closeWatchSession = useCallback(() => {
