@@ -229,7 +229,7 @@ export function CinematicTeaser({
   return (
     <QuietLuxuryPlayer
       acts={acts}
-      openingPortraitUrl={openingPortraitUrl ?? slides[0]?.imageUrl ?? null}
+      openingPortraitUrl={openingPortraitUrl ?? null}
       memoryCard={memoryCard}
       salonBadge={salonBadge}
       autoPlay={canAutoPlay}

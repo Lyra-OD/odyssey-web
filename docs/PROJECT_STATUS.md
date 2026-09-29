@@ -4,11 +4,11 @@
 **Dernière MAJ :** 29 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 29 sept 2026 — **Player** : sans portrait officiel, skip `breath_portrait` (plus de fallback 1ʳᵉ photo du film).
+- 29 sept 2026 — **C5-5** : fade-out lent carte mémoire fin (`ql-memory-card-out`).
+- 29 sept 2026 — **C5-4** : cinéma — 1,5 s de noir (`pre_memory_black`) avant la carte mémoire.
 - 29 sept 2026 — **Étape 6 DA** : sas affiche documentaire + CTA éditoriaux (plus de boutons verre).
 - 29 sept 2026 — **Étape 6** : `data-odyssey-cinema` sur sas — Navbar / Aide masqués (ref-count avec projection).
-- 29 sept 2026 — **Étape 6 immersif** : sas hors shell (early return) — chrome/prix masqués ; ✕ → 5 · Passer → 7.
-- 29 sept 2026 — **Étape 6** : sas cinéma plein écran (`SessionCinemaGate`) — poster N&B ; plus de mini-teaser `PreviewStep`.
-- 29 sept 2026 — Pacing cinéma FIGÉ : taxe chap.1 **5 s** + outro dernier **8 s** (`storyboardPacing`).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

@@ -239,7 +239,8 @@ Détail commits C4–C7 ci-dessous.
 - **Master clock** = piste MP3 (Web Audio / `<audio>`) ; médias **rattrapent** l’audio.
 - **Dual `<video>`** ping-pong : `muted` · `playsInline` · `preload="auto"` · `object-fit: cover` · crossfade.
 - **2 actes** musicaux · souffle ouverture (noir → portrait scale 104→100 %) · fondu chapitre · grain + vignette CSS.
-- Fin : carte mémoire → **noir absolu ≥ 1 s** → **`onPlaybackComplete`** (stub) — **pas** de hub cash (→ **C8**).
+- Fin : **noir pré-mémoire ~1,5 s** → carte mémoire (**fade-out lent** `ql-memory-card-out`) → **noir absolu ≥ 1 s** → **`onPlaybackComplete`** (stub) — **pas** de hub cash (→ **C8**).
+- Sans portrait officiel : **pas** de fallback 1ʳᵉ photo — skip `breath_portrait`.
 - Pastille salon sobre à l’ouverture · **zéro** bouton d’achat mid-film.
 - **Zéro ML live** (focal / depth = C5 / C7).  
 - **Lab cinéma** `/[lang]/test-player` (dev) : Fullscreen API · audio amorcé · Kodak A24 · pastille sur clips only · micro-noir soft entre médias.  

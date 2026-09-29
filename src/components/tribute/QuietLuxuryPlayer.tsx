@@ -83,6 +83,8 @@ type Timing = {
   /** Micro-noir entre clips (cinéma). Teaser = 0. */
   interBlack: number;
   actBridge: number;
+  /** Noir pur avant la carte mémoire (cinéma). Teaser = 0. */
+  preMemoryBlack: number;
   memoryCard: number;
   endBlack: number;
   audioFade: number;
@@ -94,6 +96,7 @@ const TEASER_TIMING: Timing = {
   breathPortrait: 2.8,
   interBlack: 0,
   actBridge: 1.35,
+  preMemoryBlack: 0,
   memoryCard: 5.5,
   endBlack: 1.15,
   audioFade: 0.6,
@@ -106,6 +109,8 @@ const CINEMA_TIMING: Timing = {
   interBlack: 0.2,
   /** Carton titre + crédit — musique naît en fade pendant le pont. */
   actBridge: 2.3,
+  /** Silence visuel avant la carte mémoire de fin. */
+  preMemoryBlack: 1.5,
   memoryCard: 6.5,
   endBlack: 1.55,
   audioFade: 1.5,
@@ -140,6 +145,7 @@ type Segment =
       actAudioOffsetSec: number;
     }
   | { kind: "act_bridge"; start: number; end: number; title?: string; musicCredit?: string | null; chapterIndex?: number; actAudioUrl?: string | null }
+  | { kind: "pre_memory_black"; start: number; end: number }
   | { kind: "memory_card"; start: number; end: number }
   | { kind: "end_black"; start: number; end: number };
 
@@ -309,6 +315,14 @@ function buildTimeline(
   });
 
   if (hasMemoryCard) {
+    if (timing.preMemoryBlack > 0) {
+      segments.push({
+        kind: "pre_memory_black",
+        start: t,
+        end: t + timing.preMemoryBlack,
+      });
+      t += timing.preMemoryBlack;
+    }
     segments.push({
       kind: "memory_card",
       start: t,
@@ -429,6 +443,13 @@ const CINEMA_STYLE = `
   0% { opacity: 0; }
   14% { opacity: 1; }
   72% { opacity: 1; }
+  100% { opacity: 0; }
+}
+/** Carte mémoire de fin — hold long, fade-out plus lent que l’ouverture. */
+@keyframes ql-memory-card-out {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  58% { opacity: 1; }
   100% { opacity: 0; }
 }
 @keyframes ql-portrait-reveal {
@@ -589,7 +610,13 @@ export function QuietLuxuryPlayer({
     (timeSec: number): number => {
       const seg = segmentAt(segments, timeSec);
       if (!seg) return 0;
-      if (seg.kind === "memory_card" || seg.kind === "end_black") return 0;
+      if (
+        seg.kind === "memory_card" ||
+        seg.kind === "pre_memory_black" ||
+        seg.kind === "end_black"
+      ) {
+        return 0;
+      }
 
       const fade = timing.audioFade;
 
@@ -637,6 +664,7 @@ export function QuietLuxuryPlayer({
       if (
         next &&
         (next.kind === "act_bridge" ||
+          next.kind === "pre_memory_black" ||
           next.kind === "memory_card" ||
           next.kind === "end_black") &&
         leftInClip < fade
@@ -1378,6 +1406,7 @@ export function QuietLuxuryPlayer({
         ) : null}
 
         {seg?.kind === "breath_black" ||
+        seg?.kind === "pre_memory_black" ||
         seg?.kind === "end_black" ||
         seg?.kind === "clip_black" ? (
           <div className="absolute inset-0 z-[4] bg-black" aria-hidden />
@@ -1431,12 +1460,19 @@ export function QuietLuxuryPlayer({
 
         {showCard && memoryCard ? (
           <div className="absolute inset-0 z-[5] flex flex-col items-center justify-center bg-black px-6 text-center">
-            <p className="font-editorial text-[clamp(1.75rem,4.5vw,3rem)] font-medium tracking-wide text-zinc-200">
-              {memoryCard.displayName}
-            </p>
-            <p className="mt-5 text-[clamp(0.75rem,1.5vw,1rem)] font-light tracking-[0.42em] text-zinc-400">
-              {memoryCard.yearsLine}
-            </p>
+            <div
+              style={{
+                animation: `ql-memory-card-out ${Math.max(0.8, (seg?.end ?? 0) - (seg?.start ?? 0))}s ease-in-out both`,
+                animationPlayState: animPlayState,
+              }}
+            >
+              <p className="font-editorial text-[clamp(1.75rem,4.5vw,3rem)] font-medium tracking-wide text-zinc-200">
+                {memoryCard.displayName}
+              </p>
+              <p className="mt-5 text-[clamp(0.75rem,1.5vw,1rem)] font-light tracking-[0.42em] text-zinc-400">
+                {memoryCard.yearsLine}
+              </p>
+            </div>
           </div>
         ) : null}
 
@@ -1559,4 +1595,5 @@ export function QuietLuxuryPlayer({
 }
 
 export const QUIET_LUXURY_END_BLACK_SEC = CINEMA_TIMING.endBlack;
+export const QUIET_LUXURY_PRE_MEMORY_BLACK_SEC = CINEMA_TIMING.preMemoryBlack;
 export const QUIET_LUXURY_TEASER_END_BLACK_SEC = TEASER_TIMING.endBlack;
