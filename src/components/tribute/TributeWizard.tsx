@@ -1964,11 +1964,9 @@ export function TributeWizard({
       className={`wizard-shell relative mx-auto w-full ${
         currentStep === 5
           ? "max-w-7xl"
-          : currentStep === 6
-            ? "max-w-4xl"
-            : currentStep >= 4
-              ? "max-w-3xl"
-              : "max-w-xl md:max-w-2xl"
+          : currentStep >= 4
+            ? "max-w-3xl"
+            : "max-w-xl md:max-w-2xl"
       } ${step1Sky ? "z-10" : ""} ${
         currentStep === 1 && step1Parcours.showEssentialsPanel
           ? "mt-0"
@@ -2200,7 +2198,7 @@ export function TributeWizard({
       >
         <div
           className={
-            step1Parcours.hubChromeHidden || currentStep === 6
+            step1Parcours.hubChromeHidden
               ? "pointer-events-none h-0 overflow-hidden opacity-0"
               : undefined
           }
@@ -3313,10 +3311,9 @@ export function TributeWizard({
       />
       ) : null}
 
-      {/* N3 — 2–5 Retour|Suivant ; 7 Retour|Préserver {forfait}·prix (étape 6 = sas cinéma, pas de footer) */}
+      {/* N3 — 2–5 Retour|Suivant ; 7 Retour|Préserver {forfait}·prix (étape 6 = sas cinéma early-return) */}
       {!step1Parcours.hubChromeHidden &&
-      currentStep >= 2 &&
-      currentStep !== 6 ? (
+      currentStep >= 2 ? (
         <div
           className={`fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8 ${
             n3Cooling ? "pointer-events-none" : ""
