@@ -110,14 +110,15 @@ function focalToCss(focal: MontageFocalPoint | undefined): {
 }
 
 /**
- * Chapitre piste-seule (ou médias pas encore résolus) : carton titre + amorce
- * musique — **pas** la durée entière de la chanson (sinon N × 3–4 min).
+ * Chapitre piste-seule : **exclu** de la Visionne (FIGÉ Quiet Luxury).
+ * Constante conservée pour compat ; ne plus brancher de hold 8 s.
  */
 export const CHAPTER_TITLE_HOLD_SEC = 8;
 
 /**
  * Miroir déterministe Livre Ouvert → Visionne.
  * `packageId` pilote le tempo photo (`targetSecondsPerMedia`).
+ * Chapitres sans médias résolus → absents de `chapterOrder`.
  */
 export function buildTeaserFromStoryboard(
   storyboard: WizardStoryboardState,
@@ -128,7 +129,7 @@ export function buildTeaserFromStoryboard(
   slides: TeaserSlide[];
   tracks: TeaserTracks;
   chapterMeta: Record<string, TeaserChapterMeta>;
-  /** Ordre strict des actes = ordre des chapitres storyboard (y compris sans médias). */
+  /** Ordre des actes = chapitres avec ≥1 média résolu (FIGÉ : pas de fantômes). */
   chapterOrder: string[];
 } {
   const excluded = new Set(storyboard.excludedIds);
@@ -152,28 +153,6 @@ export function buildTeaserFromStoryboard(
     );
     const trackKey = chapter.id;
     const song = chapter.song;
-
-    if (song?.source === "stingray") {
-      tracks[trackKey] = {
-        title: song.title,
-        artist: song.artist,
-        trackId: song.trackId,
-        ...(song.creditLabel ? { creditLabel: song.creditLabel } : {}),
-        ...(song.showCreditInSession === false
-          ? { showCreditInSession: false }
-          : {}),
-      };
-    } else if (song?.source === "upload") {
-      tracks[trackKey] = {
-        title: song.title,
-        artist: song.artist?.trim() || "",
-        storagePath: song.storagePath,
-        ...(song.creditLabel ? { creditLabel: song.creditLabel } : {}),
-        ...(song.showCreditInSession === false
-          ? { showCreditInSession: false }
-          : {}),
-      };
-    }
 
     const mediaIds = chapter.mediaIds.filter((id) => !excluded.has(id));
     const slideCountBefore = slides.length;
@@ -206,10 +185,31 @@ export function buildTeaserFromStoryboard(
     }
 
     const resolvedMediaCount = slides.length - slideCountBefore;
-    const hasSong = Boolean(song);
-    // Chapitre projetable : médias résolus OU piste (carton + musique même sans photos).
-    if (resolvedMediaCount === 0 && !hasSong) {
+    // FIGÉ Quiet Luxury : sans médias résolus → hors timeline (pas de carton fantôme).
+    if (resolvedMediaCount === 0) {
       return;
+    }
+
+    if (song?.source === "stingray") {
+      tracks[trackKey] = {
+        title: song.title,
+        artist: song.artist,
+        trackId: song.trackId,
+        ...(song.creditLabel ? { creditLabel: song.creditLabel } : {}),
+        ...(song.showCreditInSession === false
+          ? { showCreditInSession: false }
+          : {}),
+      };
+    } else if (song?.source === "upload") {
+      tracks[trackKey] = {
+        title: song.title,
+        artist: song.artist?.trim() || "",
+        storagePath: song.storagePath,
+        ...(song.creditLabel ? { creditLabel: song.creditLabel } : {}),
+        ...(song.showCreditInSession === false
+          ? { showCreditInSession: false }
+          : {}),
+      };
     }
 
     chapterOrder.push(trackKey);
@@ -217,9 +217,6 @@ export function buildTeaserFromStoryboard(
       title: label,
       musicCredit: formatTrackCredit(tracks[trackKey], chapterTitles),
       chapterIndex: paletteIndex,
-      ...(resolvedMediaCount === 0 && hasSong
-        ? { holdDurationSec: CHAPTER_TITLE_HOLD_SEC }
-        : {}),
     };
   });
 
