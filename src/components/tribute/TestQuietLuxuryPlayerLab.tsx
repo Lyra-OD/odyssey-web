@@ -12,6 +12,7 @@ import type {
   QuietLuxuryViewerRole,
 } from "@/src/components/tribute/QuietLuxuryExitHub";
 import type { Locale } from "@/i18n.config";
+import { acquireOdysseyCinemaMode } from "@/src/lib/odysseyCinemaMode";
 
 /**
  * Lab C4/C8 — projection cinéma + hub de sortie (callbacks, overlays fullscreen-safe).
@@ -171,17 +172,16 @@ export function TestQuietLuxuryPlayerLab({ locale, exitHubCopy }: Props) {
 
   useEffect(() => {
     if (!entered) {
-      document.documentElement.removeAttribute("data-odyssey-cinema");
       return;
     }
     const root = document.documentElement;
     const prevHtmlOverflow = root.style.overflow;
     const prevBodyOverflow = document.body.style.overflow;
-    root.setAttribute("data-odyssey-cinema", "1");
+    const releaseCinema = acquireOdysseyCinemaMode();
     root.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
     return () => {
-      root.removeAttribute("data-odyssey-cinema");
+      releaseCinema();
       root.style.overflow = prevHtmlOverflow;
       document.body.style.overflow = prevBodyOverflow;
     };

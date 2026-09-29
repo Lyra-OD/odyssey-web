@@ -36,6 +36,11 @@ html[data-odyssey-cinema="1"] body::-webkit-scrollbar {
   height: 0;
 }
 
+/** Sas / projection — masque Navbar studio (FR·EN · Déconnexion). Aide = OdysseyHelpLifeline. */
+html[data-odyssey-cinema="1"] .studio-locale-chrome {
+  display: none !important;
+}
+
 /** Chemin 1 — T-open-2 : émanation depuis l’étoile (scale + opacity · ease-out). */
 @keyframes parcours-monolith-expand {
   0% {

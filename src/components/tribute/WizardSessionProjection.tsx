@@ -45,6 +45,7 @@ import type {
   WizardStoryboardState,
 } from "@/src/lib/wizard/wizardState";
 import { emptyStoryboardState } from "@/src/lib/wizard/wizardState";
+import { acquireOdysseyCinemaMode } from "@/src/lib/odysseyCinemaMode";
 
 export type WizardSessionHubCopy = QuietLuxuryExitHubCopy & {
   checkoutModalTitle: string;
@@ -415,11 +416,11 @@ export function WizardSessionProjection({
     const root = document.documentElement;
     const prevHtmlOverflow = root.style.overflow;
     const prevBodyOverflow = document.body.style.overflow;
-    root.setAttribute("data-odyssey-cinema", "1");
+    const releaseCinema = acquireOdysseyCinemaMode();
     root.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
     return () => {
-      root.removeAttribute("data-odyssey-cinema");
+      releaseCinema();
       root.style.overflow = prevHtmlOverflow;
       document.body.style.overflow = prevBodyOverflow;
     };

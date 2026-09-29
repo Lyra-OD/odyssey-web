@@ -4,12 +4,11 @@
 **Dernière MAJ :** 29 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 29 sept 2026 — **Étape 6 immersif** : `data-odyssey-cinema` sur sas (ref-count) · masque Navbar studio + Aide · chrome wizard déjà hors shell.
 - 29 sept 2026 — **Étape 6 immersif** : early return hors `wizard-shell` (pas de stacking context / chrome / prix) · ✕ → 5 · Passer → 7.
 - 29 sept 2026 — **Étape 6** : sas cinéma plein écran (`SessionCinemaGate`) · poster portrait/dernière photo · 2 CTA (projection / checkout) · plus de `PreviewStep` teaser.
 - 17 sept 2026 — **D0 freeze** : 7 étapes (plus de « 7–8 ») ; Preview = storyboard live + pont hybride ; S5-L partiel.
 - 17 sept 2026 — **Autosave Zod** : `furthestStep` accepté (fin du 400 silent fail) ; plafond montage 250 ; log `invalid_body` en dev.
-- 17 sept 2026 — **Titres d’étape 1–7** : une spec — 24/26 · medium · mini-caps · lead 16/18 zinc-300. Boutons d’action mini-caps.
-- 17 sept 2026 — **Composition Magique** banque : paille `#E4D96F` (`--wizard-magic-wheat`).
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -333,7 +332,7 @@ Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage
 | `CinematicTeaser.tsx` | Adaptateur slides/tracks → QuietLuxuryPlayer (séance, pas le sas) |
 | `teaserHelpers.ts` | Slides / pistes depuis le **storyboard live** |
 
-**Séance officielle :** CTA « Vivre la projection » → cinéma immersif puis hub C8 (Master forfait-aware · Partager `/stream/[token]` · Revoir). Fermer le hub (✕) ou la projection → retour sur le sas. CTA « Passer » → étape 7 checkout. ✕ du sas → étape 5. **Immersion :** `currentStep === 6` early-return **après** les hooks — hors `wizard-step-enter` / shell (évite stacking context + Total Soft Cap / fil / footer).
+**Séance officielle :** CTA « Vivre la projection » → cinéma immersif puis hub C8 (Master forfait-aware · Partager `/stream/[token]` · Revoir). Fermer le hub (✕) ou la projection → retour sur le sas. CTA « Passer » → étape 7 checkout. ✕ du sas → étape 5. **Immersion :** `currentStep === 6` early-return **après** les hooks — hors `wizard-step-enter` / shell · `data-odyssey-cinema` (ref-count sas↔projection) masque `.studio-locale-chrome` + `OdysseyHelpLifeline`.
 
 **Aujourd’hui (sas) :** pas de mini-player inline. Soft Cap sticky / fil / footer **absents** du rendu étape 6 (early return).
 

@@ -94,7 +94,7 @@ export function StudioLocaleFrame({
 
   return (
     <>
-      <div className="pointer-events-none fixed right-8 top-6 z-[60] hidden md:block">
+      <div className="studio-locale-chrome pointer-events-none fixed right-8 top-6 z-[60] hidden md:block">
         <div className="pointer-events-auto flex flex-col items-end gap-2">
           <LocaleSwitcher
             lang={uiLocale}

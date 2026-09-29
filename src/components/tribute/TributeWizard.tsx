@@ -1996,14 +1996,14 @@ export function TributeWizard({
       {/* Rituel du ciel : le wizard n'a pas de chrome, les contrôles restent
           flottants — un rang court en haut à droite, sous le lockup de marque. */}
       {step1Parcours.hubChromeHidden && mobileUtilityTrailing ? (
-        <div className="fixed right-3 top-2 z-[60] flex items-center gap-2.5 md:hidden">
+        <div className="studio-locale-chrome fixed right-3 top-2 z-[60] flex items-center gap-2.5 md:hidden">
           {mobileUtilityTrailing}
         </div>
       ) : null}
 
       {/* Mobile : langue / session seulement — Retour vit dans la barre bas (N3). */}
       {!step1Parcours.hubChromeHidden && mobileUtilityTrailing ? (
-        <div className="sticky top-0 z-[55] -mx-6 mb-4 flex h-12 items-center justify-end gap-3 border-b border-white/10 bg-black/40 px-6 backdrop-blur-xl md:hidden">
+        <div className="studio-locale-chrome sticky top-0 z-[55] -mx-6 mb-4 flex h-12 items-center justify-end gap-3 border-b border-white/10 bg-black/40 px-6 backdrop-blur-xl md:hidden">
           <div className="flex shrink-0 items-center gap-3">
             {mobileUtilityTrailing}
           </div>

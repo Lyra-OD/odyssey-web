@@ -2,11 +2,12 @@
 
 /**
  * Sas cinéma étape 6 — plein écran, poster traité, 2 CTA.
- * Non branché au wizard tant que C5-3 (câblage TributeWizard).
+ * Pose `data-odyssey-cinema` (ref-count) pour masquer Navbar / Aide.
  */
 
 import { Play, X } from "lucide-react";
 
+import { useOdysseyCinemaMode } from "@/src/hooks/useOdysseyCinemaMode";
 import {
   sanctuaryFocusRing,
   wizardMiniCapsAction,
@@ -57,6 +58,8 @@ export function SessionCinemaGate({
   onSkip,
   onClose,
 }: Props) {
+  useOdysseyCinemaMode(true);
+
   return (
     <div
       className="fixed inset-0 z-[75] flex h-dvh w-screen flex-col overflow-hidden bg-black text-zinc-100"
