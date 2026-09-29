@@ -4,6 +4,7 @@
 **Dernière MAJ :** 29 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 29 sept 2026 — **Étape 6 immersif** : sas hors shell (early return) — chrome/prix masqués ; ✕ → 5 · Passer → 7.
 - 29 sept 2026 — **Étape 6** : sas cinéma plein écran (`SessionCinemaGate`) — poster N&B + 2 CTA ; plus de mini-teaser `PreviewStep`.
 - 29 sept 2026 — Pacing cinéma FIGÉ : taxe chap.1 **5 s** + outro dernier **8 s** (`storyboardPacing`).
 - 23 sept 2026 — **C13** : Social Cut 19 $ (9:16 stub) · checkout post-Master · hub CTA.

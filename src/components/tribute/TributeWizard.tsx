@@ -1693,6 +1693,119 @@ export function TributeWizard({
     [copy],
   );
 
+  const sessionChapterTitles = useMemo(
+    () => ({
+      chapter1: copy.montageActSparkLabel,
+      chapter2: copy.montageActEpicLabel,
+      chapter3: copy.montageActLegacyLabel,
+      chapter4: copy.montageChapterHorizonsLabel,
+      chapter5Plus: copy.montageChapterLegacyMemoryLabel,
+      trackCredit: copy.watchSessionTrackCredit,
+      trackCreditTitleOnly: copy.watchSessionTrackCreditTitleOnly,
+    }),
+    [copy],
+  );
+
+  const sessionMemoryCard = useMemo(
+    () => ({
+      displayName: deceasedDisplayName,
+      yearsLine: yearsDisplay === "·" ? "" : yearsDisplay,
+    }),
+    [deceasedDisplayName, yearsDisplay],
+  );
+
+  /** Étape 6 immersif : hors wizard-shell (évite stacking context / chrome). */
+  if (currentStep === 6) {
+    return (
+      <>
+        <SessionCinemaGate
+          posterUrl={gatePosterUrl}
+          isLoading={gateMediaLoading}
+          salonBadge={
+            isFreemiumGrant ? copy.previewSalonBadgeFallback : null
+          }
+          memoryCard={sessionMemoryCard}
+          copy={{
+            play: copy.previewGatePlay,
+            playAria: copy.previewGatePlayAria,
+            skip: copy.previewGateSkip,
+            skipAria: copy.previewGateSkipAria,
+            close: copy.previewGateClose,
+            loading: copy.previewGateLoading,
+            empty: copy.previewGateEmpty,
+            eyebrow: copy.stepPreviewTitle,
+          }}
+          onPlay={() => {
+            setSessionMediaSeed([...gateMediaById.values()]);
+            void openWatchSession("official_session");
+          }}
+          onSkip={() => {
+            void handleProceedToPayment();
+          }}
+          onClose={() => {
+            void navigateToStep(5);
+          }}
+        />
+        {sessionOpen ? (
+          <WizardSessionProjection
+            projectId={uploadProjectId}
+            storyboard={wizardStoryboard.storyboard}
+            chapterTitles={sessionChapterTitles}
+            memoryCard={sessionMemoryCard}
+            openingPortraitUrl={avatarPreview || null}
+            salonBadge={
+              isFreemiumGrant ? copy.previewSalonBadgeFallback : null
+            }
+            primedAudio={sessionAudio}
+            locale={locale}
+            closeLabel={copy.watchSessionClose}
+            enableSound={copy.watchSessionEnableSound}
+            emptyLabel={copy.previewTeaserEmpty}
+            loadingLabel={copy.previewLoadingMedia}
+            teaserPlay={copy.previewTeaserPlay}
+            teaserPause={copy.previewTeaserPause}
+            teaserLoading={copy.previewTeaserLoading}
+            intent={sessionIntent}
+            seedMediaItems={sessionMediaSeed}
+            basePackage={basePackage}
+            hubCopy={exitHubCopy}
+            masterHubMode={masterHubMode}
+            onClose={closeWatchSession}
+            onHonorPrimary={honorPrimaryFromSession}
+            onDownloadMaster={
+              masterHubMode === "download_included"
+                ? downloadMasterFromSession
+                : undefined
+            }
+            onSocialCut={
+              masterHubMode === "download_included" || masterEntitled
+                ? startSocialCutFromSession
+                : undefined
+            }
+            masterUnlocked={
+              masterHubMode === "download_included" || masterEntitled
+            }
+          />
+        ) : null}
+        {!isEditor ? (
+          <SoftCapModal
+            open={softCapOpen}
+            variant={softCapVariant}
+            mediaCount={projectMediaCount}
+            copy={softCapCopy}
+            onAcceptHeritage={acceptSoftCapHeritage}
+            onAcceptLicense={acceptSoftCapLicense}
+            onDismiss={dismissSoftCap}
+            onInviteCollab={() => {
+              dismissSoftCap();
+              setIsCollabInviteOpen(true);
+            }}
+          />
+        ) : null}
+      </>
+    );
+  }
+
   return (
     <>
       <ParcoursHubBodyFlag active={step1Parcours.hubChromeHidden} />
@@ -3051,40 +3164,6 @@ export function TributeWizard({
             </>
           ) : null}
 
-          {currentStep === 6 ? (
-            <SessionCinemaGate
-              posterUrl={gatePosterUrl}
-              isLoading={gateMediaLoading}
-              salonBadge={
-                isFreemiumGrant ? copy.previewSalonBadgeFallback : null
-              }
-              memoryCard={{
-                displayName: deceasedDisplayName,
-                yearsLine: yearsDisplay === "·" ? "" : yearsDisplay,
-              }}
-              copy={{
-                play: copy.previewGatePlay,
-                playAria: copy.previewGatePlayAria,
-                skip: copy.previewGateSkip,
-                skipAria: copy.previewGateSkipAria,
-                close: copy.previewGateClose,
-                loading: copy.previewGateLoading,
-                empty: copy.previewGateEmpty,
-                eyebrow: copy.stepPreviewTitle,
-              }}
-              onPlay={() => {
-                setSessionMediaSeed([...gateMediaById.values()]);
-                void openWatchSession("official_session");
-              }}
-              onSkip={() => {
-                void handleProceedToPayment();
-              }}
-              onClose={() => {
-                void navigateToStep(5);
-              }}
-            />
-          ) : null}
-
           {currentStep === 7 ? (
             <CheckoutStep
               locale={locale}
@@ -3304,19 +3383,8 @@ export function TributeWizard({
         <WizardSessionProjection
           projectId={uploadProjectId}
           storyboard={wizardStoryboard.storyboard}
-          chapterTitles={{
-            chapter1: copy.montageActSparkLabel,
-            chapter2: copy.montageActEpicLabel,
-            chapter3: copy.montageActLegacyLabel,
-            chapter4: copy.montageChapterHorizonsLabel,
-            chapter5Plus: copy.montageChapterLegacyMemoryLabel,
-            trackCredit: copy.watchSessionTrackCredit,
-            trackCreditTitleOnly: copy.watchSessionTrackCreditTitleOnly,
-          }}
-          memoryCard={{
-            displayName: deceasedDisplayName,
-            yearsLine: yearsDisplay === "·" ? "" : yearsDisplay,
-          }}
+          chapterTitles={sessionChapterTitles}
+          memoryCard={sessionMemoryCard}
           openingPortraitUrl={avatarPreview || null}
           salonBadge={
             isFreemiumGrant ? copy.previewSalonBadgeFallback : null

@@ -4,6 +4,7 @@
 **Dernière MAJ :** 29 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 29 sept 2026 — **Étape 6 immersif** : early return hors `wizard-shell` (pas de stacking context / chrome / prix) · ✕ → 5 · Passer → 7.
 - 29 sept 2026 — **Étape 6** : sas cinéma plein écran (`SessionCinemaGate`) · poster portrait/dernière photo · 2 CTA (projection / checkout) · plus de `PreviewStep` teaser.
 - 17 sept 2026 — **D0 freeze** : 7 étapes (plus de « 7–8 ») ; Preview = storyboard live + pont hybride ; S5-L partiel.
 - 17 sept 2026 — **Autosave Zod** : `furthestStep` accepté (fin du 400 silent fail) ; plafond montage 250 ; log `invalid_body` en dev.
@@ -24,7 +25,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 
 | File | Role |
 |------|------|
-| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (Dossier + fil) ; barre bas N3 : 2–5 Retour\|Suivant · 7 Préserver {forfait}·prix · **étape 6 = sas cinéma (pas de footer)** |
+| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (Dossier + fil) ; barre bas N3 : 2–5 Retour\|Suivant · 7 Préserver {forfait}·prix · **étape 6 = early return immersif** (`SessionCinemaGate` hors shell, chrome/prix absents) |
 | `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | **Step 1 (J2)** — ciel fullscreen + panneau verre ; `SanctuaryUniverse` background · birth live · reveal contrôlé |
 | `src/hooks/useWizardStep1Reveal.ts` | Phase reveal étape 1 (`idle` → `birth` → `reward` → `done`) · orchestration `playReward()` |
 | `src/lib/wizard/wizardBirthReveal.ts` | Courbes / beats C0–C2 pour naissance Hero au prénom (pont craft → wizard) |
@@ -332,9 +333,9 @@ Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage
 | `CinematicTeaser.tsx` | Adaptateur slides/tracks → QuietLuxuryPlayer (séance, pas le sas) |
 | `teaserHelpers.ts` | Slides / pistes depuis le **storyboard live** |
 
-**Séance officielle :** CTA « Vivre la projection » → cinéma immersif puis hub C8 (Master forfait-aware · Partager `/stream/[token]` · Revoir). Fermer le hub (✕) ou la projection → retour sur le sas. CTA « Passer » → étape 7 checkout. ✕ du sas → étape 5.
+**Séance officielle :** CTA « Vivre la projection » → cinéma immersif puis hub C8 (Master forfait-aware · Partager `/stream/[token]` · Revoir). Fermer le hub (✕) ou la projection → retour sur le sas. CTA « Passer » → étape 7 checkout. ✕ du sas → étape 5. **Immersion :** `currentStep === 6` early-return **après** les hooks — hors `wizard-step-enter` / shell (évite stacking context + Total Soft Cap / fil / footer).
 
-**Aujourd’hui (sas) :** pas de mini-player inline. Soft Cap / panier sticky encore visibles côté shell (à retirer hors sas au commit C6 prix).
+**Aujourd’hui (sas) :** pas de mini-player inline. Soft Cap sticky / fil / footer **absents** du rendu étape 6 (early return).
 
 **Pont hybride (dette temporaire) :** le PATCH autosave envoie encore `montage` + `musicalAmbiance` à côté de `storyboard` ; `POST /api/checkout` envoie encore `act_tracks` compact. À retirer quand S9 (metadata `storyboard`) est stable.
 
