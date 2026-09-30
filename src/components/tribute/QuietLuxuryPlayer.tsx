@@ -1608,12 +1608,22 @@ export function QuietLuxuryPlayer({
         : kenMode === "push"
           ? "ql-kb-push"
           : "ql-kb-pull";
-  const clipObjectPosition = hasFocal ? focalAnchor : "center center";
-  const clipTransformOrigin = hasFocal
-    ? clip?.transformOrigin?.trim() ||
-      clip?.objectPosition?.trim() ||
-      "center center"
-    : "center center";
+  /**
+   * Portrait contain : toujours centré (la focale C5 ne doit pas décadrer
+   * un `object-contain`). Focale = cover paysage seulement.
+   */
+  const clipObjectPosition = containSafe
+    ? "center center"
+    : hasFocal
+      ? focalAnchor
+      : "center center";
+  const clipTransformOrigin = containSafe
+    ? "center center"
+    : hasFocal
+      ? clip?.transformOrigin?.trim() ||
+        clip?.objectPosition?.trim() ||
+        "center center"
+      : "center center";
 
   const crossfadeToNextImage =
     cinema &&
