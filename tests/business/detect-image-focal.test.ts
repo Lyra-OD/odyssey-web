@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   clampUnit,
+  detectImageFocalDetailed,
   detectImageFocalFromBlob,
   focalFromFaceBox,
 } from "@/src/lib/media/detectImageFocal";
@@ -20,7 +21,6 @@ describe("detectImageFocal (C5)", () => {
       1000,
       1000,
     );
-    // cx = 200 → 0.2 ; cy = 100 + 70 = 170 → 0.17
     expect(pt.x).toBeCloseTo(0.2, 5);
     expect(pt.y).toBeCloseTo(0.17, 5);
   });
@@ -37,21 +37,24 @@ describe("detectImageFocal (C5)", () => {
     expect(pt.y).toBeLessThanOrEqual(1);
   });
 
-  it("detectImageFocalFromBlob — non-image → null", async () => {
+  it("detectImageFocalDetailed — non-image → skipped", async () => {
     const blob = new Blob(["not-an-image"], { type: "application/pdf" });
-    await expect(detectImageFocalFromBlob(blob)).resolves.toBeNull();
-  });
-
-  it("detectImageFocalFromBlob — heic → null", async () => {
-    const blob = new Blob([new Uint8Array([0, 1, 2])], { type: "image/heic" });
-    await expect(detectImageFocalFromBlob(blob)).resolves.toBeNull();
-  });
-
-  it("detectImageFocalFromBlob — sans FaceDetector → null", async () => {
-    const blob = new Blob([new Uint8Array([0xff, 0xd8, 0xff])], {
-      type: "image/jpeg",
+    await expect(detectImageFocalDetailed(blob)).resolves.toEqual({
+      point: null,
+      engine: "skipped",
     });
-    // Node / vitest : pas de FaceDetector → null (pas de throw).
+  });
+
+  it("detectImageFocalDetailed — heic → skipped", async () => {
+    const blob = new Blob([new Uint8Array([0, 1, 2])], { type: "image/heic" });
+    await expect(detectImageFocalDetailed(blob)).resolves.toEqual({
+      point: null,
+      engine: "skipped",
+    });
+  });
+
+  it("detectImageFocalFromBlob — non-image → null", async () => {
+    const blob = new Blob(["x"], { type: "text/plain" });
     await expect(detectImageFocalFromBlob(blob)).resolves.toBeNull();
   });
 });

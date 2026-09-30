@@ -112,7 +112,7 @@ import {
   type WizardStoryboardState,
 } from "@/src/lib/wizard/wizardState";
 import { setStoryboardFocalPoint } from "@/src/lib/wizard/storyboardMedia";
-import { detectImageFocalFromBlob } from "@/src/lib/media/detectImageFocal";
+import { detectImageFocalDetailed } from "@/src/lib/media/detectImageFocal";
 import {
   buildPricingSnapshot,
   bundleSavingsDollarsLabel,
@@ -517,12 +517,13 @@ export function TributeWizard({
       if (storyboardRef.current.focalPoints[assetId]) return;
 
       const run = () => {
-        void detectImageFocalFromBlob(file).then((pt) => {
+        void detectImageFocalDetailed(file).then(({ point: pt, engine }) => {
           if (!pt) return;
           if (storyboardRef.current.focalPoints[assetId]) return;
           if (process.env.NODE_ENV === "development") {
             console.info("[c5-focal] auto", {
               assetId,
+              engine,
               x: Number(pt.x.toFixed(3)),
               y: Number(pt.y.toFixed(3)),
             });

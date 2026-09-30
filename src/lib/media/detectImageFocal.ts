@@ -1,6 +1,7 @@
 /**
  * C5 — précalcul focale image (client).
- * Shape Detection API `FaceDetector` si dispo ; sinon `null` (pas de faux positif).
+ * 1) Shape Detection `FaceDetector` si dispo (flag Chrome / certains OS)
+ * 2) sinon BlazeFace (tfjs) en lazy import — marche Chrome/Safari desktop.
  */
 
 export type DetectedFocalPoint = {
@@ -8,6 +9,12 @@ export type DetectedFocalPoint = {
   x: number;
   /** 0..1 depuis le bord haut. */
   y: number;
+};
+
+export type DetectImageFocalResult = {
+  point: DetectedFocalPoint | null;
+  /** `faceDetector` | `blazeface` | `unavailable` | `skipped` */
+  engine: "faceDetector" | "blazeface" | "unavailable" | "skipped";
 };
 
 export function clampUnit(n: number): number {
@@ -67,18 +74,9 @@ function getFaceDetectorCtor():
   return typeof ctor === "function" ? ctor : null;
 }
 
-/**
- * Détecte une focale sur un blob image.
- * Skip : non-image · HEIC/HEIF · trop gros · API absente · 0 visage.
- */
-export async function detectImageFocalFromBlob(
+async function detectWithFaceDetector(
   blob: Blob,
 ): Promise<DetectedFocalPoint | null> {
-  const mime = (blob.type || "").toLowerCase();
-  if (!mime.startsWith("image/")) return null;
-  if (mime.includes("heic") || mime.includes("heif")) return null;
-  if (blob.size <= 0 || blob.size > MAX_FOCAL_DETECT_BYTES) return null;
-
   const FaceDetectorCtor = getFaceDetectorCtor();
   if (!FaceDetectorCtor) return null;
 
@@ -93,8 +91,7 @@ export async function detectImageFocalFromBlob(
     if (!faces?.length) return null;
 
     let best = faces[0]!;
-    let bestArea =
-      best.boundingBox.width * best.boundingBox.height;
+    let bestArea = best.boundingBox.width * best.boundingBox.height;
     for (let i = 1; i < faces.length; i += 1) {
       const face = faces[i]!;
       const area = face.boundingBox.width * face.boundingBox.height;
@@ -114,4 +111,49 @@ export async function detectImageFocalFromBlob(
   } finally {
     bitmap?.close();
   }
+}
+
+function shouldSkipBlob(blob: Blob): boolean {
+  const mime = (blob.type || "").toLowerCase();
+  if (!mime.startsWith("image/")) return true;
+  if (mime.includes("heic") || mime.includes("heif")) return true;
+  if (blob.size <= 0 || blob.size > MAX_FOCAL_DETECT_BYTES) return true;
+  return false;
+}
+
+/**
+ * Détecte une focale sur un blob image (FaceDetector → BlazeFace).
+ */
+export async function detectImageFocalDetailed(
+  blob: Blob,
+): Promise<DetectImageFocalResult> {
+  if (shouldSkipBlob(blob)) {
+    return { point: null, engine: "skipped" };
+  }
+
+  if (getFaceDetectorCtor()) {
+    const native = await detectWithFaceDetector(blob);
+    if (native) return { point: native, engine: "faceDetector" };
+  }
+
+  try {
+    const { detectImageFocalWithBlazeFace } = await import(
+      "@/src/lib/media/detectImageFocalBlaze"
+    );
+    const blaze = await detectImageFocalWithBlazeFace(blob);
+    return {
+      point: blaze,
+      engine: blaze ? "blazeface" : "blazeface",
+    };
+  } catch {
+    return { point: null, engine: "unavailable" };
+  }
+}
+
+/** Compat — point seul. */
+export async function detectImageFocalFromBlob(
+  blob: Blob,
+): Promise<DetectedFocalPoint | null> {
+  const { point } = await detectImageFocalDetailed(blob);
+  return point;
 }

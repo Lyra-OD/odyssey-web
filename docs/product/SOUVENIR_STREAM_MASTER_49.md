@@ -248,8 +248,9 @@ Détail commits C4–C7 ci-dessous.
 
 ### C5 — Ingest ML
 `feat(media): precompute focal point on image upload`  
-**Statut :** **focale auto livrée (30 sept)** — `FaceDetector` client post-upload → `storyboard.focalPoints` si absent (manuel gagne) · lab `/[lang]/test-focal` · **depth reportée** (C5b / C7 sans depth).  
-**Vérif :** Chrome/Edge · `/fr/test-focal` (croix teal) · ou upload Étape 3 → pastille focale Étape 5 · console `[c5-focal] auto`.
+**Statut :** **focale auto livrée (30 sept)** — post-upload → `storyboard.focalPoints` si absent (manuel gagne) · moteur : `FaceDetector` natif **si** flag, sinon **BlazeFace** (tfjs lazy) · lab `/[lang]/test-focal` · **depth reportée**.  
+**Vérif :** `/fr/test-focal` → croix teal + `engine=blazeface` · ou upload Étape 3 → pastille Étape 5 · console `[c5-focal] auto`.  
+**Note :** Chrome desktop n’active **pas** `FaceDetector` par défaut (flag expérimental) — le fallback BlazeFace est le chemin réel.
 
 ### C6 — Grade + Ken Burns + souffle
 `feat(wizard): grade LUT + metadata Ken Burns + audio fades`  

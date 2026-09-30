@@ -3,59 +3,56 @@
 import { useCallback, useState } from "react";
 
 import {
-  detectImageFocalFromBlob,
+  detectImageFocalDetailed,
   type DetectedFocalPoint,
 } from "@/src/lib/media/detectImageFocal";
 
 /**
- * Lab C5 — drop une photo, voir si FaceDetector pose une focale.
+ * Lab C5 — drop une photo, voir la focale (FaceDetector ou BlazeFace).
  * Dev only · `/[lang]/test-focal`
  */
 export function TestFocalLab() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [point, setPoint] = useState<DetectedFocalPoint | null>(null);
-  const [status, setStatus] = useState<string>("Dépose un portrait JPEG/PNG/WebP.");
+  const [status, setStatus] = useState<string>(
+    "Dépose un portrait JPEG/PNG/WebP (BlazeFace si FaceDetector absent).",
+  );
   const [busy, setBusy] = useState(false);
 
-  const onFile = useCallback(async (file: File | null) => {
-    if (!file) return;
-    setBusy(true);
-    setPoint(null);
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    setStatus("Analyse…");
+  const onFile = useCallback(
+    async (file: File | null) => {
+      if (!file) return;
+      setBusy(true);
+      setPoint(null);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      setStatus("Chargement modèle / analyse… (1ʳᵉ fois ~quelques secondes)");
 
-    const hasApi =
-      typeof window !== "undefined" &&
-      typeof (
-        window as unknown as { FaceDetector?: unknown }
-      ).FaceDetector === "function";
-
-    if (!hasApi) {
-      setStatus(
-        "FaceDetector indisponible dans ce navigateur (Chrome/Edge recommandé). Résultat : null.",
-      );
-      setBusy(false);
-      return;
-    }
-
-    try {
-      const pt = await detectImageFocalFromBlob(file);
-      setPoint(pt);
-      setStatus(
-        pt
-          ? `Focale détectée · x=${pt.x.toFixed(3)} · y=${pt.y.toFixed(3)}`
-          : "Aucun visage détecté (null).",
-      );
-    } catch (error) {
-      setStatus(
-        error instanceof Error ? error.message : "Erreur de détection",
-      );
-    } finally {
-      setBusy(false);
-    }
-  }, [previewUrl]);
+      try {
+        const { point: pt, engine } = await detectImageFocalDetailed(file);
+        setPoint(pt);
+        if (pt) {
+          setStatus(
+            `Focale OK (${engine}) · x=${pt.x.toFixed(3)} · y=${pt.y.toFixed(3)}`,
+          );
+        } else if (engine === "skipped") {
+          setStatus("Image ignorée (HEIC / trop lourde / type non supporté).");
+        } else if (engine === "unavailable") {
+          setStatus("Aucun moteur de détection disponible.");
+        } else {
+          setStatus(`Aucun visage détecté (${engine}).`);
+        }
+      } catch (error) {
+        setStatus(
+          error instanceof Error ? error.message : "Erreur de détection",
+        );
+      } finally {
+        setBusy(false);
+      }
+    },
+    [previewUrl],
+  );
 
   return (
     <div className="min-h-screen bg-[#050505] px-6 py-10 text-zinc-200">
@@ -67,9 +64,11 @@ export function TestFocalLab() {
           Test Focal
         </h1>
         <p className="mt-3 max-w-xl text-sm font-light leading-relaxed text-zinc-400">
-          Vérifie la détection visage client avant / après upload wizard.
-          Chrome ou Edge requis pour{" "}
-          <code className="text-zinc-300">FaceDetector</code>.
+          FaceDetector natif est souvent{" "}
+          <strong className="font-medium text-zinc-300">désactivé</strong> sur
+          Chrome desktop (flag expérimental). Fallback :{" "}
+          <code className="text-zinc-300">BlazeFace</code> (tfjs), chargé à la
+          demande.
         </p>
 
         <label className="mt-8 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-white/15 bg-white/[0.03] px-6 py-12 text-center transition-colors hover:border-teal-400/30">
@@ -89,7 +88,10 @@ export function TestFocalLab() {
           </span>
         </label>
 
-        <p className="mt-4 text-sm font-light text-teal-300/90" aria-live="polite">
+        <p
+          className="mt-4 text-sm font-light text-teal-300/90"
+          aria-live="polite"
+        >
           {status}
         </p>
 
