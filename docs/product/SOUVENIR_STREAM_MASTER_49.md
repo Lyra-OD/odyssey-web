@@ -5,8 +5,8 @@
 **Dernière MAJ :** 30 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 30 sept 2026 — **Light leaks** : blend `screen` · pic 0,32 · blob coin haut-droit lisible (Quiet Luxury, pas Instagram).
 - 30 sept 2026 — **Deep to black** : hold finale 3 s · fondu cosine 2,2 s · noir pur 0,8 s · puis nom — `QuietLuxuryPlayer` + taxe Soft Cap.
-- 30 sept 2026 — **Light leaks** : soft-light dosé sur holds Breath / `breath_portrait` · enveloppe master-time — `QuietLuxuryPlayer` · Tranche 3 V1.5.
 - 30 sept 2026 — **Breath Engine** : holds narratifs déterministes (max 3) · fin chapitre +2,5 s / finale + hold+deep · taxe Soft Cap — `QuietLuxuryPlayer` + `storyboardPacing`.
 - 30 sept 2026 — **One Bed modèle** : `hasAudio` sur `TeaserSlide` → player (passthrough) · **pas** d’heuristique vidéo → duck ; probe upload plus tard.
 - 30 sept 2026 — **One Bed player** : `hasAudio` · duck bed déterministe 18 % (attack 0.65 / release 0.85) — `QuietLuxuryPlayer`.

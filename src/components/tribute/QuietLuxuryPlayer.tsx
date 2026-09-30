@@ -1920,7 +1920,7 @@ export function QuietLuxuryPlayer({
             className="pointer-events-none absolute inset-0 z-[5]"
             style={{
               opacity: lightLeakOpacity,
-              background: `radial-gradient(ellipse 70% 55% at 88% 12%, ${cinematicTheme.lightLeak.warm} 0%, transparent 62%)`,
+              background: `radial-gradient(ellipse 85% 70% at 90% 8%, ${cinematicTheme.lightLeak.warm} 0%, transparent 68%)`,
               mixBlendMode: cinematicTheme.lightLeak.blend,
               animation: `ql-leak-drift ${lightLeakDriftSec}s ease-in-out both`,
               animationPlayState: animPlayState,

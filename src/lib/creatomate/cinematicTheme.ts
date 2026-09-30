@@ -128,11 +128,12 @@ export const cinematicTheme = {
    * Pas permanent (Quiet Luxury, pas Instagram).
    */
   lightLeak: {
-    peakOpacity: 0.14,
+    /** Test lecture — soft-light 0.14 était invisible sur portrait chaud. */
+    peakOpacity: 0.32,
     fadeInSec: 0.9,
     fadeOutSec: 1.2,
-    warm: "rgba(255, 214, 170, 0.72)",
-    blend: "soft-light" as const,
+    warm: "rgba(255, 196, 140, 0.95)",
+    blend: "screen" as const,
   },
 
   frameRate: "25 fps",
