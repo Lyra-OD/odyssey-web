@@ -387,7 +387,14 @@ function buildTimeline(
       actIndex === 0 && cinema
         ? openingDur + bridgeDur
         : bridgeDur;
-    const lastClipIndex = act.clips.length - 1;
+    /** Dernière image du chapitre (ignore les vidéos en queue) — cible Breath. */
+    let lastImageIndex = -1;
+    for (let i = act.clips.length - 1; i >= 0; i--) {
+      if (act.clips[i]?.kind === "image") {
+        lastImageIndex = i;
+        break;
+      }
+    }
     act.clips.forEach((clip, clipIndex) => {
       const prevClip = clipIndex > 0 ? act.clips[clipIndex - 1] : null;
       /** Image→image : crossfade (pas de flash noir). */
@@ -410,13 +417,13 @@ function buildTimeline(
           (clip.kind === "video" ? DEFAULT_VIDEO_SEC : DEFAULT_IMAGE_SEC),
       );
       /**
-       * Breath Engine — allonge la dernière image d’un chapitre / du film.
-       * Skip vidéo · max `breath.maxMajorBreathsPerFilm` · cinéma seulement.
+       * Breath Engine — allonge la dernière *image* du chapitre / du film
+       * (même si une vidéo suit). Skip pur-vidéo · max holds · cinéma.
        */
       if (
         cinema &&
         clip.kind === "image" &&
-        clipIndex === lastClipIndex &&
+        clipIndex === lastImageIndex &&
         breathsUsed < breath.maxMajorBreathsPerFilm
       ) {
         const isLastAct = actIndex === lastActIndex;
