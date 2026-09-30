@@ -2,14 +2,14 @@
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
 **Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C8 hub lab** · **Tranche 1 Studio** · suite **C5/C7 reportés** · C9–C14 · trajectoire cercle + Phase 2 isolée.  
-**Dernière MAJ :** 29 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 30 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 30 sept 2026 — **C4 V1.5** : Smart Ken Burns focal-locked · soft sans focale (plus de `center 22%`) — `QuietLuxuryPlayer`.
 - 29 sept 2026 — **C4** : opacité crossfade pilotée par horloge master (30 fps) · précharge photos · KB hors re-render — `QuietLuxuryPlayer`.
 - 29 sept 2026 — **Pacing FIGÉ** : taxe ouverture chap.1 **5 s** (Option B) · outro dernier chap. **8 s** · clips 7/10 — `storyboardPacing.ts`.
 - 23 sept 2026 — **C13** : Social Cut `socialCut` 19 $ · checkout post-Master · job stub `creatomate_social_stub` 9:16.
 - 23 sept 2026 — C11 : multi-acheteurs Master 49 $ · gift `cinemaMasterGift` · Fonds via `guest_micro` · CTA hub never greyed.
-- 22 sept 2026 — C12 : Checkout Stripe `guestMasterCopy` 15 $ · gate Master unlock · download `output_url` (0 Creatomate).
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 

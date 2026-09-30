@@ -1302,17 +1302,23 @@ export function QuietLuxuryPlayer({
   /**
    * KB posé une fois par clip via DOM — les re-renders fade (30 fps) ne doivent
    * PAS réécrire style.animation (sinon le zoom repart de zéro).
+   * Soft si pas de focale (micro-respiration) ou portrait contain.
    */
   const liveKenFit = liveImageClip
     ? (fitByClipId[liveImageClip.id] ?? "contain")
     : "contain";
+  const liveHasFocal = Boolean(
+    liveImageClip?.objectPosition?.trim() ||
+      liveImageClip?.transformOrigin?.trim(),
+  );
   useLayoutEffect(() => {
     const el = kenImgRef.current;
     if (!el || !cinema || !liveImageClip) return;
     const contain = liveKenFit === "contain";
     const mode =
       kenBurnsByClipId.get(liveImageClip.id) ?? kenBurnsForImageIndex(0);
-    const name = contain
+    const useSoftKen = !liveHasFocal || contain;
+    const name = useSoftKen
       ? mode === "push"
         ? "ql-kb-push-soft"
         : "ql-kb-pull-soft"
@@ -1332,6 +1338,7 @@ export function QuietLuxuryPlayer({
     liveImageClip?.id,
     liveImageClip?.durationSec,
     liveKenFit,
+    liveHasFocal,
     kenBurnsByClipId,
   ]);
 
@@ -1380,25 +1387,32 @@ export function QuietLuxuryPlayer({
       ? (kenBurnsByClipId.get(clip.id) ??
         kenBurnsForImageIndex(0))
       : null;
+  /** V1.5 Smart KB : focale = objectPosition ou transformOrigin non vide. */
+  const hasFocal = Boolean(
+    clip?.objectPosition?.trim() || clip?.transformOrigin?.trim(),
+  );
+  const focalAnchor =
+    clip?.objectPosition?.trim() ||
+    clip?.transformOrigin?.trim() ||
+    "center center";
+  /** Soft sans focale (micro-respiration cover) OU portrait contain. */
+  const useSoftKen = !hasFocal || containSafe;
   const kenAnimName =
     kenMode == null
       ? null
-      : containSafe
+      : useSoftKen
         ? kenMode === "push"
           ? "ql-kb-push-soft"
           : "ql-kb-pull-soft"
         : kenMode === "push"
           ? "ql-kb-push"
           : "ql-kb-pull";
-  const clipObjectPosition = containSafe
-    ? "center center"
-    : clip?.objectPosition ??
-      (kenMode === "push" ? "center 22%" : "center center");
-  const clipTransformOrigin = containSafe
-    ? "center center"
-    : clip?.transformOrigin ??
-      clip?.objectPosition ??
-      "center center";
+  const clipObjectPosition = hasFocal ? focalAnchor : "center center";
+  const clipTransformOrigin = hasFocal
+    ? clip?.transformOrigin?.trim() ||
+      clip?.objectPosition?.trim() ||
+      "center center"
+    : "center center";
 
   const crossfadeToNextImage =
     cinema &&
