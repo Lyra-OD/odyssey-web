@@ -25,7 +25,7 @@ const PHOTO_LANDSCAPE =
   "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1600&q=80";
 const PHOTO_FAMILY =
   "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1600&h=900&fit=crop&crop=faces&q=80";
-const VIDEO_SHORT = "/video/test-video.mp4";
+const VIDEO_SHORT = "/video/test-video-audio.mp4";
 const AUDIO_ACT_1 = "/audio/test-1.mp3";
 const AUDIO_ACT_2 = "/audio/test-2.mp3";
 
