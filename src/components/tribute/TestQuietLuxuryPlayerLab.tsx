@@ -85,6 +85,8 @@ function buildMockActs(locale: Locale): QuietLuxuryAct[] {
           url: VIDEO_SHORT,
           durationSec: 10,
           label: "Mouvement",
+          /** Lab — force sync pour tester One Bed / ducking. */
+          hasAudio: true,
         },
       ],
     },

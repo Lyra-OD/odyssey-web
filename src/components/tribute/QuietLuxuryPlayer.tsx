@@ -46,6 +46,11 @@ export type QuietLuxuryClip = {
   chapterIndex?: number;
   /** Début d’extrait vidéo (storyboard.videoTrims.trimStartSec). */
   trimStartSec?: number;
+  /**
+   * Vidéo avec piste sync pertinente (voix / ambiance) — unmute + duck le bed.
+   * Absent / false → muted (comportement historique).
+   */
+  hasAudio?: boolean;
 };
 
 export type QuietLuxuryAct = {
@@ -127,6 +132,14 @@ const BRIDGE_AUDIO_FADE_SEC = 1.1;
  */
 const IMAGE_CROSSFADE_SEC = 0.7;
 
+/**
+ * One Bed / Smart Ducking — canon `cinematicTheme.music`
+ * (duckFromSync 18 % · attack 0.65 s · release 0.85 s).
+ */
+const DUCK_FLOOR = 0.18;
+const DUCK_ATTACK_SEC = 0.65;
+const DUCK_RELEASE_SEC = 0.85;
+
 /** Fallbacks uniquement si durationSec manquant (le builder doit toujours poser le pacing). */
 const DEFAULT_IMAGE_SEC = 7;
 const DEFAULT_VIDEO_SEC = VIDEO_TRIM_DURATION_SEC;
@@ -191,6 +204,42 @@ export type QuietLuxuryPlayerProps = {
 
 function clamp(n: number, a: number, b: number) {
   return Math.min(b, Math.max(a, n));
+}
+
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * clamp(t, 0, 1);
+}
+
+/**
+ * Gain bed sous sync vidéo — pure / master-time.
+ * `1` = plein lit · `DUCK_FLOOR` = ducké. Attack / release aux bords du clip.
+ */
+function duckGainForTime(segments: Segment[], timeSec: number): number {
+  const seg = segmentAt(segments, timeSec);
+  if (!seg || seg.kind !== "clip") return 1;
+  if (seg.clip.kind !== "video" || !seg.clip.hasAudio) return 1;
+
+  const dur = Math.max(0, seg.end - seg.start);
+  if (dur <= 0) return 1;
+
+  let attack = DUCK_ATTACK_SEC;
+  let release = DUCK_RELEASE_SEC;
+  if (dur < attack + release) {
+    const scale = dur / (attack + release);
+    attack *= scale;
+    release *= scale;
+  }
+
+  const into = timeSec - seg.start;
+  const left = seg.end - timeSec;
+
+  if (attack > 0 && into < attack) {
+    return lerp(1, DUCK_FLOOR, into / attack);
+  }
+  if (release > 0 && left < release) {
+    return lerp(DUCK_FLOOR, 1, 1 - left / release);
+  }
+  return DUCK_FLOOR;
 }
 
 /** Prochain clip média après `from` (ignore clip_black). Pont / fin → null. */
@@ -689,14 +738,17 @@ export function QuietLuxuryPlayer({
       if (seg.kind === "act_bridge") {
         if (!seg.actAudioUrl) return 0;
         if (cinema && firstBridgeSeg && seg.start === firstBridgeSeg.start) {
-          return 1;
+          return 1 * duckGainForTime(segments, timeSec);
         }
         const intoBridge = timeSec - seg.start;
         const bridgeFade = Math.min(
           BRIDGE_AUDIO_FADE_SEC,
           Math.max(0.4, timing.actBridge * 0.5),
         );
-        return clamp(intoBridge / bridgeFade, 0, 1);
+        return (
+          clamp(intoBridge / bridgeFade, 0, 1) *
+          duckGainForTime(segments, timeSec)
+        );
       }
 
       // Cinéma : musique dès t=0 dans le noir (fade-in), avant le nom.
@@ -708,11 +760,16 @@ export function QuietLuxuryPlayer({
           seg.kind === "breath_black" ||
           seg.kind === "breath_portrait")
       ) {
-        return clamp(timeSec / Math.max(fade, 0.01), 0, 1);
+        return (
+          clamp(timeSec / Math.max(fade, 0.01), 0, 1) *
+          duckGainForTime(segments, timeSec)
+        );
       }
 
       // Micro-noir entre clips : audio continue (pas de trou musical).
-      if (seg.kind === "clip_black" && seg.actAudioUrl) return 1;
+      if (seg.kind === "clip_black" && seg.actAudioUrl) {
+        return 1 * duckGainForTime(segments, timeSec);
+      }
 
       if (seg.kind !== "clip" || !seg.actAudioUrl) return 0;
 
@@ -735,7 +792,7 @@ export function QuietLuxuryPlayer({
       ) {
         vol = Math.min(vol, leftInClip / fade);
       }
-      return clamp(vol, 0, 1);
+      return clamp(vol, 0, 1) * duckGainForTime(segments, timeSec);
     },
     [
       cinema,
@@ -852,11 +909,16 @@ export function QuietLuxuryPlayer({
   );
 
   const ensureVideo = useCallback(
-    async (url: string, localTimeSec: number, trimStartSec = 0) => {
+    async (
+      url: string,
+      localTimeSec: number,
+      trimStartSec = 0,
+      hasAudio = false,
+    ) => {
       const el = videoRef.current;
       if (!el) return;
       // Visibilité immédiate (DOM) — indépendante d'un re-render React.
-      el.muted = true;
+      el.muted = !hasAudio;
       el.playsInline = true;
       el.loop = false;
       // Ne pas forcer opacity:1 (casse le fondu CSS cinéma).
@@ -942,6 +1004,7 @@ export function QuietLuxuryPlayer({
           seg.clip.url,
           timeSec - seg.start,
           seg.clip.trimStartSec ?? 0,
+          Boolean(seg.clip.hasAudio),
         );
       } else {
         hideVideo();
@@ -1537,7 +1600,7 @@ export function QuietLuxuryPlayer({
                   : { opacity: 0 }),
                 animationPlayState: animPlayState,
               }}
-            muted
+            muted={!clip?.hasAudio}
             playsInline
             preload="auto"
             loop={false}

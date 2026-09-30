@@ -5,12 +5,11 @@
 **Dernière MAJ :** 30 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 30 sept 2026 — **C4 V1.5** : Smart Ken Burns focal-locked · soft sans focale (plus de `center 22%`) — `QuietLuxuryPlayer`.
+- 30 sept 2026 — **One Bed player** : `hasAudio` · duck bed déterministe 18 % (attack 0.65 / release 0.85) — `QuietLuxuryPlayer`.
 - 30 sept 2026 — **C4 KB amp** : soft 6 % (`1.06`) · full focale 9 % (`1.09`) — contraste portrait/paysage, Quiet Luxury.
+- 30 sept 2026 — **C4 V1.5** : Smart Ken Burns focal-locked · soft sans focale (plus de `center 22%`) — `QuietLuxuryPlayer`.
 - 29 sept 2026 — **C4** : opacité crossfade pilotée par horloge master (30 fps) · précharge photos · KB hors re-render — `QuietLuxuryPlayer`.
 - 29 sept 2026 — **Pacing FIGÉ** : taxe ouverture chap.1 **5 s** (Option B) · outro dernier chap. **8 s** · clips 7/10 — `storyboardPacing.ts`.
-- 23 sept 2026 — **C13** : Social Cut `socialCut` 19 $ · checkout post-Master · job stub `creatomate_social_stub` 9:16.
-- 23 sept 2026 — C11 : multi-acheteurs Master 49 $ · gift `cinemaMasterGift` · Fonds via `guest_micro` · CTA hub never greyed.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -31,7 +30,7 @@
 |--|--|
 | Cadeau salon | Stream only ≤50 médias, 2 chapitres, MP3 perso |
 | Pastille | *« Séance offerte par [Salon] »* (stream only) |
-| Player | **`QuietLuxuryPlayer`** · MP3 **master clock** · dual `<video>` muted · pastille salon · ML **précalcul upload** (C5+) · 2.5D héros (C7) |
+| Player | **`QuietLuxuryPlayer`** · MP3 **master clock** · dual `<video>` · `hasAudio` + duck bed 18 % · pastille salon · ML **précalcul upload** (C5+) · 2.5D héros (C7) |
 | Master famille / cercle | SKU **`cinemaMaster` = 49 $** ; Héritage+ inclus · **CTA jamais désactivé** |
 | Free Creatomate | **Interdit** |
 | Comparatif | **Séance live** vs **Archive patrimoniale** |
