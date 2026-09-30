@@ -158,6 +158,8 @@ type Segment =
       clip: QuietLuxuryClip;
       actAudioUrl: string | null;
       actAudioOffsetSec: number;
+      /** Surplus Breath Engine en fin de clip (s) — pilote light leak. */
+      breathHoldSec?: number;
     }
   | {
       kind: "clip_black";
@@ -241,6 +243,52 @@ function duckGainForTime(segments: Segment[], timeSec: number): number {
     return lerp(DUCK_FLOOR, 1, 1 - left / release);
   }
   return DUCK_FLOOR;
+}
+
+/**
+ * Fenêtre master-time d’un light leak (null = off).
+ * Portrait d’ouverture entier · ou queue Breath d’un clip image.
+ */
+function lightLeakWindow(
+  seg: Segment | null,
+): { start: number; end: number } | null {
+  if (!seg) return null;
+  if (seg.kind === "breath_portrait") {
+    return { start: seg.start, end: seg.end };
+  }
+  if (seg.kind === "clip" && seg.clip.kind === "image" && seg.breathHoldSec) {
+    const hold = Math.min(seg.breathHoldSec, Math.max(0, seg.end - seg.start));
+    if (hold <= 0) return null;
+    return { start: seg.end - hold, end: seg.end };
+  }
+  return null;
+}
+
+/** Enveloppe attack → peak → release (déterministe / master-time). */
+function lightLeakOpacityAt(
+  seg: Segment | null,
+  timeSec: number,
+): number {
+  const win = lightLeakWindow(seg);
+  if (!win) return 0;
+  const leak = cinematicTheme.lightLeak;
+  const dur = win.end - win.start;
+  if (dur <= 0 || timeSec < win.start || timeSec > win.end) return 0;
+
+  let attack = leak.fadeInSec;
+  let release = leak.fadeOutSec;
+  if (dur < attack + release) {
+    const scale = dur / (attack + release);
+    attack *= scale;
+    release *= scale;
+  }
+
+  const into = timeSec - win.start;
+  const left = win.end - timeSec;
+  let gain = 1;
+  if (attack > 0 && into < attack) gain = into / attack;
+  else if (release > 0 && left < release) gain = left / release;
+  return leak.peakOpacity * clamp(gain, 0, 1);
 }
 
 /** Prochain clip média après `from` (ignore clip_black). Pont / fin → null. */
@@ -416,6 +464,8 @@ function buildTimeline(
         clip.durationSec ||
           (clip.kind === "video" ? DEFAULT_VIDEO_SEC : DEFAULT_IMAGE_SEC),
       );
+      /** Surplus Breath posé sur ce clip (pilote light leak). */
+      let breathHoldSec: number | undefined;
       /**
        * Breath Engine — allonge la dernière *image* du chapitre / du film
        * (même si une vidéo suit). Skip pur-vidéo · max holds · cinéma.
@@ -432,6 +482,7 @@ function buildTimeline(
           : breath.chapterEndHoldSec;
         if (holdSec > 0) {
           dur += holdSec;
+          breathHoldSec = holdSec;
           breathsUsed += 1;
         }
       }
@@ -444,6 +495,7 @@ function buildTimeline(
         clip,
         actAudioUrl: act.audioUrl,
         actAudioOffsetSec: audioCursor,
+        ...(breathHoldSec != null ? { breathHoldSec } : {}),
       });
       t += dur;
       audioCursor += dur;
@@ -580,6 +632,10 @@ const CINEMA_STYLE = `
   14% { opacity: 1; }
   72% { opacity: 1; }
   100% { opacity: 0; }
+}
+@keyframes ql-leak-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-2.5%, 1.5%, 0) scale(1.04); }
 }
 /** Carte mémoire de fin — hold long, fade-out plus lent que l’ouverture. */
 @keyframes ql-memory-card-out {
@@ -1061,8 +1117,8 @@ export function QuietLuxuryPlayer({
       const key = segmentKey(seg);
       if (cinema) {
         /**
-         * 30 fps seulement pendant fenêtres de fade image.
-         * Hors fade : update au changement de segment (laisse le KB CSS tourner).
+         * 30 fps pendant fades image **ou** fenêtres light leak
+         * (enveloppe attack/peak/release). Hors : update au changement de segment.
          */
         const outgoingActive = outgoingImageRef.current != null;
         const inImageFade =
@@ -1071,7 +1127,12 @@ export function QuietLuxuryPlayer({
             seg.clip.kind === "image" &&
             (t - seg.start <= IMAGE_CROSSFADE_SEC + 0.05 ||
               seg.end - t <= 0.45));
-        if (inImageFade) {
+        const leakWin = lightLeakWindow(seg);
+        const inLeak =
+          leakWin != null &&
+          t >= leakWin.start - 0.02 &&
+          t <= leakWin.end + 0.02;
+        if (inImageFade || inLeak) {
           if (
             t - lastUiAtRef.current >= 1 / 30 ||
             key !== lastSegKeyRef.current
@@ -1549,6 +1610,14 @@ export function QuietLuxuryPlayer({
     ? "running"
     : "paused";
 
+  const lightLeakWin = cinema ? lightLeakWindow(seg) : null;
+  const lightLeakOpacity = cinema
+    ? lightLeakOpacityAt(seg, masterTime)
+    : 0;
+  const lightLeakDriftSec = lightLeakWin
+    ? Math.max(2.4, lightLeakWin.end - lightLeakWin.start)
+    : 2.4;
+
   const mediaFilterStyle: CSSProperties = cinema
     ? { filter: KODAK_35MM_FILTER }
     : {};
@@ -1784,6 +1853,21 @@ export function QuietLuxuryPlayer({
               background:
                 "linear-gradient(135deg, rgba(232, 220, 196, 0.16) 0%, rgba(20, 30, 36, 0.2) 100%)",
               mixBlendMode: "soft-light",
+            }}
+            aria-hidden
+          />
+        ) : null}
+
+        {/* Light leak dosé — holds Breath + breath_portrait seulement */}
+        {cinema && lightLeakOpacity > 0.001 ? (
+          <div
+            className="pointer-events-none absolute inset-0 z-[5]"
+            style={{
+              opacity: lightLeakOpacity,
+              background: `radial-gradient(ellipse 70% 55% at 88% 12%, ${cinematicTheme.lightLeak.warm} 0%, transparent 62%)`,
+              mixBlendMode: cinematicTheme.lightLeak.blend,
+              animation: `ql-leak-drift ${lightLeakDriftSec}s ease-in-out both`,
+              animationPlayState: animPlayState,
             }}
             aria-hidden
           />

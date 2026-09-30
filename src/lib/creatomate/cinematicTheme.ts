@@ -121,6 +121,18 @@ export const cinematicTheme = {
     finaleHoldSec: 2.0,
   },
 
+  /**
+   * Light leaks dosés — pic soft-light sur holds / breath_portrait seulement.
+   * Pas permanent (Quiet Luxury, pas Instagram).
+   */
+  lightLeak: {
+    peakOpacity: 0.08,
+    fadeInSec: 0.9,
+    fadeOutSec: 1.2,
+    warm: "rgba(255, 214, 170, 0.55)",
+    blend: "soft-light" as const,
+  },
+
   frameRate: "25 fps",
   outputFormat: "mp4" as const,
 } as const;

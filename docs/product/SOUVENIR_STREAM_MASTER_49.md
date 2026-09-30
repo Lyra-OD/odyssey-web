@@ -5,11 +5,11 @@
 **Dernière MAJ :** 30 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 30 sept 2026 — **Light leaks** : soft-light dosé sur holds Breath / `breath_portrait` · enveloppe master-time — `QuietLuxuryPlayer` · Tranche 3 V1.5.
 - 30 sept 2026 — **Breath Engine** : holds narratifs déterministes (max 3) · fin chapitre +2,5 s / finale +2 s · taxe Soft Cap — `QuietLuxuryPlayer` + `storyboardPacing`.
 - 30 sept 2026 — **One Bed modèle** : `hasAudio` sur `TeaserSlide` → player (passthrough) · **pas** d’heuristique vidéo → duck ; probe upload plus tard.
 - 30 sept 2026 — **One Bed player** : `hasAudio` · duck bed déterministe 18 % (attack 0.65 / release 0.85) — `QuietLuxuryPlayer`.
 - 30 sept 2026 — **C4 KB amp** : soft 6 % (`1.06`) · full focale 9 % (`1.09`) — contraste portrait/paysage, Quiet Luxury.
-- 30 sept 2026 — **C4 V1.5** : Smart Ken Burns focal-locked · soft sans focale (plus de `center 22%`) — `QuietLuxuryPlayer`.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
