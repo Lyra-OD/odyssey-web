@@ -145,6 +145,11 @@ export type MediaDropzoneAdapterProps = {
   onFilesRejected?: (rejections: MediaDropzoneRejection[]) => void;
   onUploadComplete?: (summary: MediaDropzoneSummary) => void;
   onUploadError?: (error: Error) => void;
+  /**
+   * C5 — appelé une fois par asset local dès qu’il passe à `uploaded`
+   * (File encore en mémoire pour FaceDetector).
+   */
+  onAssetUploaded?: (item: UseMassMediaUploadReturn["items"][number]) => void;
 
   children: (context: MediaDropzoneAdapterRenderContext) => React.ReactNode;
 };
@@ -185,6 +190,7 @@ export function MediaDropzoneAdapter({
   onFilesRejected,
   onUploadComplete,
   onUploadError,
+  onAssetUploaded,
   children,
 }: MediaDropzoneAdapterProps) {
   const upload = useMassMediaUpload({
@@ -197,6 +203,7 @@ export function MediaDropzoneAdapter({
   const [rejections, setRejections] = useState<MediaDropzoneRejection[]>([]);
   const wasRunningRef = useRef(false);
   const hydratedProjectRef = useRef<string | null>(null);
+  const notifiedAssetsRef = useRef<Set<string>>(new Set());
 
   const remainingSlots = useMemo(() => {
     const used = upload.items.length;
@@ -360,6 +367,16 @@ export function MediaDropzoneAdapter({
     }, pollIntervalMs);
     return () => window.clearInterval(timer);
   }, [pollIntervalMs, projectId, upload.loadProjectMedia, onUploadError]);
+
+  useEffect(() => {
+    if (!onAssetUploaded) return;
+    for (const item of upload.items) {
+      if (item.status !== "uploaded" || !item.assetId || !item.file) continue;
+      if (notifiedAssetsRef.current.has(item.assetId)) continue;
+      notifiedAssetsRef.current.add(item.assetId);
+      onAssetUploaded(item);
+    }
+  }, [onAssetUploaded, upload.items]);
 
   useEffect(() => {
     // Détection de fin d'exécution pour notifier une seule fois le résumé.

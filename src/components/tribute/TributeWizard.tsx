@@ -111,6 +111,8 @@ import {
   type WizardStateV1,
   type WizardStoryboardState,
 } from "@/src/lib/wizard/wizardState";
+import { setStoryboardFocalPoint } from "@/src/lib/wizard/storyboardMedia";
+import { detectImageFocalFromBlob } from "@/src/lib/media/detectImageFocal";
 import {
   buildPricingSnapshot,
   bundleSavingsDollarsLabel,
@@ -501,6 +503,45 @@ export function TributeWizard({
     projectMediaCount,
     onChange: handleStoryboardDomainChange,
   });
+  const storyboardRef = useRef(wizardStoryboard.storyboard);
+  storyboardRef.current = wizardStoryboard.storyboard;
+
+  /** C5 — focale auto post-upload (FaceDetector) ; n’écrase jamais le manuel. */
+  const handleAssetUploaded = useCallback(
+    (item: { assetId?: string; file?: File; mimeType?: string | null }) => {
+      const assetId = item.assetId;
+      const file = item.file;
+      if (!assetId || !file) return;
+      const mime = (item.mimeType || file.type || "").toLowerCase();
+      if (!mime.startsWith("image/")) return;
+      if (storyboardRef.current.focalPoints[assetId]) return;
+
+      const run = () => {
+        void detectImageFocalFromBlob(file).then((pt) => {
+          if (!pt) return;
+          if (storyboardRef.current.focalPoints[assetId]) return;
+          if (process.env.NODE_ENV === "development") {
+            console.info("[c5-focal] auto", {
+              assetId,
+              x: Number(pt.x.toFixed(3)),
+              y: Number(pt.y.toFixed(3)),
+            });
+          }
+          wizardStoryboard.setStoryboard(
+            setStoryboardFocalPoint(storyboardRef.current, assetId, pt),
+          );
+        });
+      };
+
+      if (typeof requestIdleCallback === "function") {
+        requestIdleCallback(() => run(), { timeout: 2500 });
+      } else {
+        window.setTimeout(run, 0);
+      }
+    },
+    [wizardStoryboard.setStoryboard],
+  );
+
   // Pont Preview : re-dérivé du storyboard live (plus de freeze au hydrate).
   const montage = useMemo(
     () => legacyMontageFromStoryboard(wizardStoryboard.storyboard),
@@ -2659,6 +2700,7 @@ export function TributeWizard({
                   maxFiles={effectiveMaxMediaItems}
                   maxFileSizeBytes={300 * 1024 * 1024}
                   overflowRejectionMessage={copy.uploadLimitOverflowRejection}
+                  onAssetUploaded={handleAssetUploaded}
                   onUploadError={(error) => {
                     if (error.message === "unauthenticated") {
                       setMediaSessionExpired(true);

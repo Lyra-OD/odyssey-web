@@ -1,15 +1,15 @@
 # Souvenir — Stream 0 $ · Master cinéma 49 $ · Moteur cercle
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
-**Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C4 V1.5 player fermée (30 sept)** · **C8 hub lab** · **Tranche 1 Studio** · **C5/C7 partiels / reportés prod** · C9–C14 · trajectoire cercle + Phase 2 isolée.  
+**Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C4 V1.5 player fermée (30 sept)** · **C5 focale auto** · **C8 hub lab** · **Tranche 1 Studio** · **C7 / depth reportés** · C9–C14 · trajectoire cercle + Phase 2 isolée.  
 **Dernière MAJ :** 30 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 30 sept 2026 — **C5 focale auto** : FaceDetector post-upload → `focalPoints` · lab `/test-focal` · depth reportée.
 - 30 sept 2026 — **Docs alignées** : § C4 / Player / C5–C7 = vérité code V1.5 (deep-to-black, Breath, leaks, KB).
 - 30 sept 2026 — **Light leaks** : blend `screen` · pic 0,32 · blob coin haut-droit lisible (Quiet Luxury, pas Instagram).
 - 30 sept 2026 — **Deep to black** : hold finale 3 s · fondu cosine 2,2 s · noir pur 0,8 s · puis nom — `QuietLuxuryPlayer` + taxe Soft Cap.
 - 30 sept 2026 — **Breath Engine** : holds narratifs déterministes (max 3) · fin chapitre +2,5 s / finale + hold+deep · taxe Soft Cap — `QuietLuxuryPlayer` + `storyboardPacing`.
-- 30 sept 2026 — **One Bed** : `hasAudio` passthrough · duck bed 18 % · **pas** d’heuristique vidéo ; probe upload plus tard.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -247,8 +247,9 @@ Détail commits C4–C7 ci-dessous.
 **Done :** ✅ core 21 sept · ✅ **V1.5 player fermée** 30 sept (KB · Breath · leaks · deep-to-black · duck modèle).
 
 ### C5 — Ingest ML
-`feat(media): precompute focal and depth on upload`  
-**Statut :** **partiel / reporté prod** — focale sur asset test seulement ; pas de pipeline upload ML complet. (≠ Breath Engine léger V1, déjà dans C4.)
+`feat(media): precompute focal point on image upload`  
+**Statut :** **focale auto livrée (30 sept)** — `FaceDetector` client post-upload → `storyboard.focalPoints` si absent (manuel gagne) · lab `/[lang]/test-focal` · **depth reportée** (C5b / C7 sans depth).  
+**Vérif :** Chrome/Edge · `/fr/test-focal` (croix teal) · ou upload Étape 3 → pastille focale Étape 5 · console `[c5-focal] auto`.
 
 ### C6 — Grade + Ken Burns + souffle
 `feat(wizard): grade LUT + metadata Ken Burns + audio fades`  
