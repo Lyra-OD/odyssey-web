@@ -27,6 +27,7 @@ import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
 import { waitForAudioReady } from "@/src/lib/wizard/musicPreview";
 import { VIDEO_TRIM_DURATION_SEC } from "@/src/lib/wizard/storyboardPacing";
 import { editorialFont } from "@/src/lib/fonts";
+import { cinematicTheme } from "@/src/lib/creatomate/cinematicTheme";
 
 export type QuietLuxuryKenBurns = "push" | "pull";
 
@@ -316,6 +317,9 @@ function buildTimeline(
 ): { segments: Segment[]; durationSec: number } {
   const segments: Segment[] = [];
   let t = 0;
+  const breath = cinematicTheme.breath;
+  /** Ouverture portrait = hold #1 (cinéma). */
+  let breathsUsed = cinema && hasPortrait ? 1 : 0;
 
   if (cinema && hasMemoryCard && timing.breathTitle > 0) {
     segments.push({
@@ -343,6 +347,7 @@ function buildTimeline(
   }
 
   const openingDur = t;
+  const lastActIndex = acts.length - 1;
 
   acts.forEach((act, actIndex) => {
     // Cinéma : carton titre avant CHAQUE chapitre (y compris le 1er).
@@ -382,6 +387,7 @@ function buildTimeline(
       actIndex === 0 && cinema
         ? openingDur + bridgeDur
         : bridgeDur;
+    const lastClipIndex = act.clips.length - 1;
     act.clips.forEach((clip, clipIndex) => {
       const prevClip = clipIndex > 0 ? act.clips[clipIndex - 1] : null;
       /** Image→image : crossfade (pas de flash noir). */
@@ -398,11 +404,30 @@ function buildTimeline(
         t += timing.interBlack;
         audioCursor += timing.interBlack;
       }
-      const dur = Math.max(
+      let dur = Math.max(
         0.8,
         clip.durationSec ||
           (clip.kind === "video" ? DEFAULT_VIDEO_SEC : DEFAULT_IMAGE_SEC),
       );
+      /**
+       * Breath Engine — allonge la dernière image d’un chapitre / du film.
+       * Skip vidéo · max `breath.maxMajorBreathsPerFilm` · cinéma seulement.
+       */
+      if (
+        cinema &&
+        clip.kind === "image" &&
+        clipIndex === lastClipIndex &&
+        breathsUsed < breath.maxMajorBreathsPerFilm
+      ) {
+        const isLastAct = actIndex === lastActIndex;
+        const holdSec = isLastAct
+          ? breath.finaleHoldSec
+          : breath.chapterEndHoldSec;
+        if (holdSec > 0) {
+          dur += holdSec;
+          breathsUsed += 1;
+        }
+      }
       segments.push({
         kind: "clip",
         start: t,

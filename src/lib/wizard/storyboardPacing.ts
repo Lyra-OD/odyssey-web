@@ -8,10 +8,13 @@
  * 3. Marges : intro 5s + outro 5s (outro **8s** sur le dernier chapitre).
  * 4. Option B : taxe ouverture **5s** sur le **premier** chapitre (musique dès t=0
  *    pendant nom + portrait) — `CHAPTER1_OPENING_TAX_SEC`.
+ * 5. Breath Engine : réserve `chapterEndHoldSec` / `finaleHoldSec` (canon
+ *    `cinematicTheme.breath`) pour que Soft Cap ne déborde pas la piste.
  *
  * `durationSec` inconnu → capacité `null` (UI « à déterminer »).
  */
 
+import { cinematicTheme } from "@/src/lib/creatomate/cinematicTheme";
 import {
   packageTargetSecondsPerMedia,
   type PackageId,
@@ -38,6 +41,13 @@ export const LAST_CHAPTER_ENDING_OUTRO_SEC = 8;
  * Ajoutée **en plus** des marges, **premier chapitre seulement**.
  */
 export const CHAPTER1_OPENING_TAX_SEC = 5;
+
+/** Canon Breath Engine — taxe Soft Cap (miroirs `cinematicTheme.breath`). */
+export const BREATH_MAX_MAJOR_PER_FILM =
+  cinematicTheme.breath.maxMajorBreathsPerFilm;
+export const BREATH_CHAPTER_END_HOLD_SEC =
+  cinematicTheme.breath.chapterEndHoldSec;
+export const BREATH_FINALE_HOLD_SEC = cinematicTheme.breath.finaleHoldSec;
 
 /** @deprecated Préférer `chapterOverheadSeconds(role)` — somme milieu = 10. */
 export const CHAPTER_MARGIN_SEC =
@@ -67,14 +77,22 @@ export function chapterPacingRole(
   };
 }
 
-/** Secondes réservées hors médias (intro + outro + taxe ouverture si 1er). */
+/**
+ * Secondes réservées hors médias (intro + outro + taxe ouverture si 1er
+ * + hold Breath Engine si `role` fourni).
+ */
 export function chapterOverheadSeconds(role?: ChapterPacingRole): number {
   const intro = CHAPTER_INTRO_MARGIN_SEC;
   const outro = role?.isLastChapter
     ? LAST_CHAPTER_ENDING_OUTRO_SEC
     : CHAPTER_OUTRO_MARGIN_SEC;
   const openingTax = role?.isFirstChapter ? CHAPTER1_OPENING_TAX_SEC : 0;
-  return intro + outro + openingTax;
+  const breathTax = role
+    ? role.isLastChapter
+      ? BREATH_FINALE_HOLD_SEC
+      : BREATH_CHAPTER_END_HOLD_SEC
+    : 0;
+  return intro + outro + openingTax + breathTax;
 }
 
 const MOOD_PACING_MULTIPLIER: Record<WizardStoryboardChapterMood, number> = {

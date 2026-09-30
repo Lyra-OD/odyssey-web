@@ -108,6 +108,19 @@ export const cinematicTheme = {
     },
   },
 
+  /**
+   * Breath Engine léger (V1) — holds narratifs déterministes.
+   * Ouverture `breath_portrait` compte comme hold #1 ; puis fin chapitre / finale.
+   * Pas de Ghost Track (Phase 2).
+   */
+  breath: {
+    maxMajorBreathsPerFilm: 3,
+    /** Surplus sur dernière image d’un chapitre non-final. */
+    chapterEndHoldSec: 2.5,
+    /** Surplus sur dernière image du film. */
+    finaleHoldSec: 2.0,
+  },
+
   frameRate: "25 fps",
   outputFormat: "mp4" as const,
 } as const;

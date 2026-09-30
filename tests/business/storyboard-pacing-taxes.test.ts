@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  BREATH_CHAPTER_END_HOLD_SEC,
+  BREATH_FINALE_HOLD_SEC,
   CHAPTER1_OPENING_TAX_SEC,
   CHAPTER_INTRO_MARGIN_SEC,
   CHAPTER_OUTRO_MARGIN_SEC,
@@ -12,11 +14,13 @@ import {
 } from "@/src/lib/wizard/storyboardPacing";
 
 describe("Quiet Luxury pacing taxes (commit 0)", () => {
-  it("constants FIGÉ 5s ouverture · 8s outro dernier", () => {
+  it("constants FIGÉ 5s ouverture · 8s outro dernier · Breath holds", () => {
     expect(CHAPTER1_OPENING_TAX_SEC).toBe(5);
     expect(LAST_CHAPTER_ENDING_OUTRO_SEC).toBe(8);
     expect(CHAPTER_INTRO_MARGIN_SEC).toBe(5);
     expect(CHAPTER_OUTRO_MARGIN_SEC).toBe(5);
+    expect(BREATH_CHAPTER_END_HOLD_SEC).toBe(2.5);
+    expect(BREATH_FINALE_HOLD_SEC).toBe(2);
   });
 
   it("role first / middle / last / alone", () => {
@@ -38,23 +42,23 @@ describe("Quiet Luxury pacing taxes (commit 0)", () => {
     });
   });
 
-  it("overhead: milieu 10 · premier 15 · dernier 13 · seul 18", () => {
+  it("overhead: sans role 10 · milieu 12.5 · premier 17.5 · dernier 15 · seul 20", () => {
     expect(chapterOverheadSeconds()).toBe(10);
     expect(
       chapterOverheadSeconds({ isFirstChapter: false, isLastChapter: false }),
-    ).toBe(10);
+    ).toBe(12.5);
     expect(
       chapterOverheadSeconds({ isFirstChapter: true, isLastChapter: false }),
-    ).toBe(15);
+    ).toBe(17.5);
     expect(
       chapterOverheadSeconds({ isFirstChapter: false, isLastChapter: true }),
-    ).toBe(13);
+    ).toBe(15);
     expect(
       chapterOverheadSeconds({ isFirstChapter: true, isLastChapter: true }),
-    ).toBe(18);
+    ).toBe(20);
   });
 
-  it("210s song: milieu 28 photos · premier 27 · dernier 28", () => {
+  it("210s song: milieu 28 → 28 · premier 27 → 27 · dernier 28 → 27 (taxe Breath)", () => {
     const target = 7;
     const mid = chapterRecommendedCapacity(
       210,
@@ -71,12 +75,12 @@ describe("Quiet Luxury pacing taxes (commit 0)", () => {
       target,
       chapterPacingRole(2, 3),
     );
-    // 210-10=200 → 28 ; 210-15=195 → 27 ; 210-13=197 → 28
+    // 210-12.5=197.5 → 28 ; 210-17.5=192.5 → 27 ; 210-15=195 → 27
     expect(mid).toBe(28);
     expect(first).toBe(27);
-    expect(last).toBe(28);
+    expect(last).toBe(27);
     expect(chapterAvailableSecondsForMedia(210, chapterPacingRole(0, 3))).toBe(
-      195,
+      192.5,
     );
   });
 });
