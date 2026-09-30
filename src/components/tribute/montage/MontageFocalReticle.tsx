@@ -12,7 +12,8 @@ type Props = {
 const UV = "#ff00ff";
 
 /**
- * Cinematic crosshair reticle — Ultraviolet pulse, precise studio look.
+ * Cinematic crosshair reticle — Ultraviolet pulse (CSS, pas FM infinite —
+ * les repeat:Infinity bloquent l’exit AnimatePresence de la View).
  */
 export function MontageFocalReticle({ point, onClear }: Props) {
   return (
@@ -26,27 +27,17 @@ export function MontageFocalReticle({ point, onClear }: Props) {
       className="pointer-events-auto absolute z-20 -translate-x-1/2 -translate-y-1/2"
       style={{ left: `${point.x * 100}%`, top: `${point.y * 100}%` }}
       initial={{ opacity: 0, scale: 0.6 }}
-      animate={{
-        opacity: 1,
-        scale: [1, 1.06, 1],
-      }}
-      transition={{
-        opacity: { duration: 0.25 },
-        scale: {
-          duration: 2.2,
-          repeat: Infinity,
-          ease: "easeInOut",
-        },
-      }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={{ duration: 0.2 }}
     >
       <span className="relative flex h-8 w-8 items-center justify-center">
-        <motion.span
-          className="absolute -inset-2 rounded-full"
+        <span
+          className="absolute -inset-2 animate-pulse rounded-full"
           style={{
             boxShadow: `0 0 20px ${UV}55, 0 0 40px ${UV}22`,
           }}
-          animate={{ opacity: [0.35, 0.7, 0.35] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          aria-hidden
         />
         <span
           className="absolute h-px w-full"

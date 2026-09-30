@@ -121,6 +121,7 @@ export function MontageDirectorModal({
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        document.body.style.overflow = "";
         onClose();
         return;
       }
@@ -130,15 +131,26 @@ export function MontageDirectorModal({
     [goNext, goPrevious, onClose],
   );
 
+  /** Lock scroll au mount uniquement — pas à chaque re-render focale/chapitre. */
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown]);
+
+  const handleClose = useCallback(() => {
+    document.body.style.overflow = "";
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
     activeChapterRef.current?.scrollIntoView({
@@ -167,9 +179,10 @@ export function MontageDirectorModal({
       aria-modal="true"
       aria-label={item.displayName}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1, pointerEvents: "auto" }}
-      exit={{ opacity: 0, pointerEvents: "none" }}
-      transition={{ duration: 0.25, ease: EASE_OUT_LUXE }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: EASE_OUT_LUXE }}
+      style={{ pointerEvents: "auto" }}
     >
       <div
         className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -190,7 +203,7 @@ export function MontageDirectorModal({
         </p>
         <motion.button
           type="button"
-          onClick={onClose}
+          onClick={handleClose}
           aria-label={copy.close}
           whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
           whileTap={{ scale: 0.95 }}
@@ -323,14 +336,9 @@ export function MontageDirectorModal({
                   }`}
                 >
                   {active ? (
-                    <motion.span
-                      layoutId="storyboard-chapter-pill"
-                      className="absolute inset-0 rounded-full bg-teal-500/10 shadow-[0_0_24px_rgba(45,212,191,0.18)]"
-                      transition={{
-                        type: "spring",
-                        stiffness: 380,
-                        damping: 28,
-                      }}
+                    <span
+                      className="absolute inset-0 rounded-full bg-teal-500/10 shadow-[0_0_24px_rgba(45,212,191,0.18)] transition-opacity duration-200"
+                      aria-hidden
                     />
                   ) : null}
                   <span className="relative z-[1]">{chapter.label}</span>

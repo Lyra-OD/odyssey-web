@@ -687,10 +687,14 @@ export function StoryboardMontageStep({
         ) : null}
       </AnimatePresence>
 
-      <AnimatePresence>
+      <AnimatePresence
+        onExitComplete={() => {
+          document.body.style.overflow = "";
+        }}
+      >
         {directorItem ? (
           <MontageDirectorModal
-            key={directorItem.assetId}
+            key="montage-director"
             item={directorItem}
             chapters={directorChapters}
             currentChapterId={findChapterForMedia(
