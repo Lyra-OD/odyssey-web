@@ -117,8 +117,8 @@ const CINEMA_TIMING: Timing = {
   interBlack: 0.2,
   /** Carton titre + crédit — musique naît en fade pendant le pont. */
   actBridge: 2.3,
-  /** Silence visuel avant la carte mémoire de fin. */
-  preMemoryBlack: 1.5,
+  /** Silence visuel avant la carte mémoire de fin (noir pur post deep-to-black). */
+  preMemoryBlack: 0.8,
   memoryCard: 6.5,
   endBlack: 1.55,
   audioFade: 1.5,
@@ -160,6 +160,8 @@ type Segment =
       actAudioOffsetSec: number;
       /** Surplus Breath Engine en fin de clip (s) — pilote light leak. */
       breathHoldSec?: number;
+      /** Deep-to-black final (s) — après le hold, avant noir pur. */
+      deepToBlackSec?: number;
     }
   | {
       kind: "clip_black";
@@ -247,7 +249,7 @@ function duckGainForTime(segments: Segment[], timeSec: number): number {
 
 /**
  * Fenêtre master-time d’un light leak (null = off).
- * Portrait d’ouverture entier · ou queue Breath d’un clip image.
+ * Portrait d’ouverture entier · ou hold Breath (hors deep-to-black).
  */
 function lightLeakWindow(
   seg: Segment | null,
@@ -257,11 +259,42 @@ function lightLeakWindow(
     return { start: seg.start, end: seg.end };
   }
   if (seg.kind === "clip" && seg.clip.kind === "image" && seg.breathHoldSec) {
-    const hold = Math.min(seg.breathHoldSec, Math.max(0, seg.end - seg.start));
+    const deep = Math.max(0, seg.deepToBlackSec ?? 0);
+    const hold = Math.min(
+      seg.breathHoldSec,
+      Math.max(0, seg.end - seg.start - deep),
+    );
     if (hold <= 0) return null;
-    return { start: seg.end - hold, end: seg.end };
+    const end = seg.end - deep;
+    return { start: end - hold, end };
   }
   return null;
+}
+
+/** Fenêtre deep-to-black (queue finale du dernier clip image). */
+function deepToBlackWindow(
+  seg: Segment | null,
+): { start: number; end: number } | null {
+  if (!seg || seg.kind !== "clip" || !seg.deepToBlackSec) return null;
+  const deep = Math.min(seg.deepToBlackSec, Math.max(0, seg.end - seg.start));
+  if (deep <= 0) return null;
+  return { start: seg.end - deep, end: seg.end };
+}
+
+/**
+ * Opacité média pendant deep-to-black (1 → 0, ease cosine).
+ * Hors fenêtre : 1.
+ */
+function deepToBlackMediaOpacity(
+  seg: Segment | null,
+  timeSec: number,
+): number {
+  const win = deepToBlackWindow(seg);
+  if (!win) return 1;
+  if (timeSec <= win.start) return 1;
+  if (timeSec >= win.end) return 0;
+  const u = (timeSec - win.start) / (win.end - win.start);
+  return 1 - (0.5 - 0.5 * Math.cos(Math.PI * clamp(u, 0, 1)));
 }
 
 /** Enveloppe attack → peak → release (déterministe / master-time). */
@@ -466,6 +499,8 @@ function buildTimeline(
       );
       /** Surplus Breath posé sur ce clip (pilote light leak). */
       let breathHoldSec: number | undefined;
+      /** Deep-to-black finale (après hold, film only). */
+      let deepToBlackSec: number | undefined;
       /**
        * Breath Engine — allonge la dernière *image* du chapitre / du film
        * (même si une vidéo suit). Skip pur-vidéo · max holds · cinéma.
@@ -485,6 +520,10 @@ function buildTimeline(
           breathHoldSec = holdSec;
           breathsUsed += 1;
         }
+        if (isLastAct && breath.finaleDeepToBlackSec > 0) {
+          dur += breath.finaleDeepToBlackSec;
+          deepToBlackSec = breath.finaleDeepToBlackSec;
+        }
       }
       segments.push({
         kind: "clip",
@@ -496,6 +535,7 @@ function buildTimeline(
         actAudioUrl: act.audioUrl,
         actAudioOffsetSec: audioCursor,
         ...(breathHoldSec != null ? { breathHoldSec } : {}),
+        ...(deepToBlackSec != null ? { deepToBlackSec } : {}),
       });
       t += dur;
       audioCursor += dur;
@@ -637,11 +677,11 @@ const CINEMA_STYLE = `
   0% { transform: translate3d(0, 0, 0) scale(1); }
   100% { transform: translate3d(-2.5%, 1.5%, 0) scale(1.04); }
 }
-/** Carte mémoire de fin — hold long, fade-out plus lent que l’ouverture. */
+/** Carte mémoire de fin — naît du silence, hold long, fade-out lent. */
 @keyframes ql-memory-card-out {
   0% { opacity: 0; }
-  10% { opacity: 1; }
-  58% { opacity: 1; }
+  18% { opacity: 1; }
+  62% { opacity: 1; }
   100% { opacity: 0; }
 }
 @keyframes ql-portrait-reveal {
@@ -1132,7 +1172,12 @@ export function QuietLuxuryPlayer({
           leakWin != null &&
           t >= leakWin.start - 0.02 &&
           t <= leakWin.end + 0.02;
-        if (inImageFade || inLeak) {
+        const deepWin = deepToBlackWindow(seg);
+        const inDeep =
+          deepWin != null &&
+          t >= deepWin.start - 0.02 &&
+          t <= deepWin.end + 0.02;
+        if (inImageFade || inLeak || inDeep) {
           if (
             t - lastUiAtRef.current >= 1 / 30 ||
             key !== lastSegKeyRef.current
@@ -1617,6 +1662,9 @@ export function QuietLuxuryPlayer({
   const lightLeakDriftSec = lightLeakWin
     ? Math.max(2.4, lightLeakWin.end - lightLeakWin.start)
     : 2.4;
+  const deepMediaOpacity = cinema
+    ? deepToBlackMediaOpacity(seg, masterTime)
+    : 1;
 
   const mediaFilterStyle: CSSProperties = cinema
     ? { filter: KODAK_35MM_FILTER }
@@ -1677,7 +1725,14 @@ export function QuietLuxuryPlayer({
       <style>{CINEMA_STYLE}</style>
 
       <div className={frameClass}>
-        <div className="absolute inset-0 bg-[#000000]">
+        <div
+          className="absolute inset-0 bg-[#000000]"
+          style={
+            cinema && deepMediaOpacity < 0.999
+              ? { opacity: deepMediaOpacity }
+              : undefined
+          }
+        >
           <video
             ref={videoRef}
             className={`absolute inset-0 h-full w-full will-change-transform ${
@@ -1853,6 +1908,7 @@ export function QuietLuxuryPlayer({
               background:
                 "linear-gradient(135deg, rgba(232, 220, 196, 0.16) 0%, rgba(20, 30, 36, 0.2) 100%)",
               mixBlendMode: "soft-light",
+              opacity: deepMediaOpacity,
             }}
             aria-hidden
           />

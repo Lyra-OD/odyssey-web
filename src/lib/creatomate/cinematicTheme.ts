@@ -117,8 +117,10 @@ export const cinematicTheme = {
     maxMajorBreathsPerFilm: 3,
     /** Surplus sur dernière image d’un chapitre non-final. */
     chapterEndHoldSec: 2.5,
-    /** Surplus sur dernière image du film. */
-    finaleHoldSec: 2.0,
+    /** Hold pure sur dernière image du film (avant deep-to-black). */
+    finaleHoldSec: 3.0,
+    /** Fondu lent dernière image → noir (cinéma du souvenir). */
+    finaleDeepToBlackSec: 2.2,
   },
 
   /**
@@ -126,10 +128,10 @@ export const cinematicTheme = {
    * Pas permanent (Quiet Luxury, pas Instagram).
    */
   lightLeak: {
-    peakOpacity: 0.08,
+    peakOpacity: 0.14,
     fadeInSec: 0.9,
     fadeOutSec: 1.2,
-    warm: "rgba(255, 214, 170, 0.55)",
+    warm: "rgba(255, 214, 170, 0.72)",
     blend: "soft-light" as const,
   },
 

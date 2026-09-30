@@ -5,11 +5,11 @@
  *
  * 1. Rythme photo : `targetSecondsPerMedia` (7s) par photo.
  * 2. Vidéos : trim fixe `VIDEO_TRIM_DURATION_SEC` (10s).
- * 3. Marges : intro 5s + outro 5s (outro **8s** sur le dernier chapitre).
+ * 3. Marges : intro 5s + outro 5s (outro **9s** sur le dernier chapitre).
  * 4. Option B : taxe ouverture **5s** sur le **premier** chapitre (musique dès t=0
  *    pendant nom + portrait) — `CHAPTER1_OPENING_TAX_SEC`.
- * 5. Breath Engine : réserve `chapterEndHoldSec` / `finaleHoldSec` (canon
- *    `cinematicTheme.breath`) pour que Soft Cap ne déborde pas la piste.
+ * 5. Breath Engine : réserve `chapterEndHoldSec` / `finaleHoldSec` +
+ *    `finaleDeepToBlackSec` (canon `cinematicTheme.breath`) pour Soft Cap.
  *
  * `durationSec` inconnu → capacité `null` (UI « à déterminer »).
  */
@@ -32,10 +32,10 @@ export const CHAPTER_INTRO_MARGIN_SEC = 5;
 /** Marge outro chapitres non-derniers (fade). */
 export const CHAPTER_OUTRO_MARGIN_SEC = 5;
 /**
- * Outro du **dernier** chapitre : carte mémoire + noir fin (~6.5+1.55).
- * Remplace `CHAPTER_OUTRO_MARGIN_SEC` (pas 5+8).
+ * Outro du **dernier** chapitre : noir pur + carte mémoire + noir fin
+ * (~0.8+6.5+1.55). Deep-to-black + hold finale = taxe Breath séparée.
  */
-export const LAST_CHAPTER_ENDING_OUTRO_SEC = 8;
+export const LAST_CHAPTER_ENDING_OUTRO_SEC = 9;
 /**
  * Taxe ouverture cinéma (Option B) — nom + portrait pendant la piste 1.
  * Ajoutée **en plus** des marges, **premier chapitre seulement**.
@@ -48,6 +48,8 @@ export const BREATH_MAX_MAJOR_PER_FILM =
 export const BREATH_CHAPTER_END_HOLD_SEC =
   cinematicTheme.breath.chapterEndHoldSec;
 export const BREATH_FINALE_HOLD_SEC = cinematicTheme.breath.finaleHoldSec;
+export const BREATH_FINALE_DEEP_TO_BLACK_SEC =
+  cinematicTheme.breath.finaleDeepToBlackSec;
 
 /** @deprecated Préférer `chapterOverheadSeconds(role)` — somme milieu = 10. */
 export const CHAPTER_MARGIN_SEC =
@@ -89,7 +91,7 @@ export function chapterOverheadSeconds(role?: ChapterPacingRole): number {
   const openingTax = role?.isFirstChapter ? CHAPTER1_OPENING_TAX_SEC : 0;
   const breathTax = role
     ? role.isLastChapter
-      ? BREATH_FINALE_HOLD_SEC
+      ? BREATH_FINALE_HOLD_SEC + BREATH_FINALE_DEEP_TO_BLACK_SEC
       : BREATH_CHAPTER_END_HOLD_SEC
     : 0;
   return intro + outro + openingTax + breathTax;

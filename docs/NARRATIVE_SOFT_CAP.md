@@ -4,6 +4,7 @@
 **Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 30 sept 2026 — Outro dernier chapitre : hold 3 s + deep-to-black 2,2 s taxés Breath · outro fin **9 s** (noir pur 0,8 + carte + noir) — `storyboardPacing`.
 - 17 sept 2026 — Bandeau aperçu : dire les **faits** (photos / licence / Héritage) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) (plan plus tard). Logique granted/intended inchangée.
 - 17 sept 2026 — Copy écran : plus d’« Écrin » ; Soft Cap parle du forfait **Héritage**. Logique granted/intended inchangée.
 - 17 août 2026 — en-tête type + carte.
