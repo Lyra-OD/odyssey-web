@@ -1,7 +1,7 @@
 # Soft Cap — Expansion Narrative
 
-**Type :** canon · **Vérité pour :** granted / intended, dual musique, amputation.  
-**Dernière MAJ :** 17 sept 2026 · **Carte :** [`README.md`](README.md)
+**Type :** canon · **Vérité pour :** granted / intended, dual musique, amputation, taxes pacing Breath.  
+**Dernière MAJ :** 30 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
 - 30 sept 2026 — Outro dernier chapitre : hold 3 s + deep-to-black 2,2 s taxés Breath · outro fin **9 s** (noir pur 0,8 + carte + noir) — `storyboardPacing`.
@@ -10,7 +10,7 @@
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — spec Soft Cap Freemium V1.
 
-Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Émotion : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · Musique : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
+Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Émotion : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · Musique : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) · Player : [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 
 ---
 
@@ -25,6 +25,21 @@ Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Émotion : [`SANCTUAR
 | Checkout | Line items = delta forfait (`intended` vs `granted`) **+** add-ons panier ; strip `musicLicense` si `intended >= signature`. |
 
 Ne **jamais** écraser `grantedPackage` lors d’un Soft Cap.
+
+---
+
+## Taxes pacing (dernier chapitre)
+
+Le Soft Cap réserve du temps hors médias via `storyboardPacing.chapterOverheadSeconds` (miroirs `cinematicTheme.breath`) :
+
+| Réserve | Valeur | Rôle |
+|---------|--------|------|
+| Outro fin (`LAST_CHAPTER_ENDING_OUTRO_SEC`) | **9 s** | Noir pur 0,8 + Memory Card ~6,5 + noir fin ~1,55 |
+| Hold finale | **3 s** | Dernière image du film |
+| Deep-to-black | **2,2 s** | Fondu cosine image → noir avant le noir pur |
+| Hold fin de chapitre (non-final) | **2,5 s** | Taxe Breath hors dernier chapitre |
+
+Canon chiffres : `cinematicTheme.breath` · tests `tests/business/storyboard-pacing-taxes.test.ts`.
 
 ---
 

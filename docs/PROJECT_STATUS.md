@@ -1,12 +1,12 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 29 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 30 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 30 sept 2026 — **V1.5 player fermée** : KB · Breath · light leaks · deep-to-black · One Bed modèle — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
+- 30 sept 2026 — **Fin cinéma** : hold 3 s → deep-to-black 2,2 s → noir pur 0,8 s → Memory Card (plus 1,5 s de cut).
 - 29 sept 2026 — **Player** : sans portrait officiel, skip `breath_portrait` (plus de fallback 1ʳᵉ photo du film).
-- 29 sept 2026 — **C5-5** : fade-out lent carte mémoire fin (`ql-memory-card-out`).
-- 29 sept 2026 — **C5-4** : cinéma — 1,5 s de noir (`pre_memory_black`) avant la carte mémoire.
 - 29 sept 2026 — **Étape 6 DA** : sas affiche documentaire + CTA éditoriaux (plus de boutons verre).
 - 29 sept 2026 — **Étape 6** : `data-odyssey-cinema` sur sas — Navbar / Aide masqués (ref-count avec projection).
 
@@ -26,7 +26,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Soft Cap + entitlements + gate export + MP3/ToS — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Héritage **1080p** · 4K dès Éternité · Phase 6 QA ⏳ |
 | **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual / **`charge.refunded`**. QA replay `checkout.session.completed` ✅ (P17 `submitted`). |
 | **RevShare** | 🟢 UI | Spec + SQL P6/P8 + webhook ✅ · UI Salon + `GET /api/partner/commissions` 🟢 · payout ops ⏳ |
-| **Export Creatomate** | 🟡 | **C0–C4** ✅ · **C11–C13** cash cercle ✅ · ML/hub **C5+** — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
+| **Export Creatomate** | 🟡 | **C0–C4** ✅ · **C4 V1.5 player** ✅ · **C11–C13** cash cercle ✅ · ML/2.5D **C5/C7 partiels** — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
 | **UX mobile** | 🟡 | Wizard : [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md). **Sanctuaire invité** : HTML still immédiat, WebGL en amélioration |
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** (titre d’étape OK ; titres chapitre défaut encore Étincelle / Épopée / Héritage) · S5-J/K ⏳ |

@@ -124,11 +124,11 @@ export const cinematicTheme = {
   },
 
   /**
-   * Light leaks dosés — pic soft-light sur holds / breath_portrait seulement.
+   * Light leaks dosés — blend `screen`, holds / breath_portrait seulement.
    * Pas permanent (Quiet Luxury, pas Instagram).
    */
   lightLeak: {
-    /** Test lecture — soft-light 0.14 était invisible sur portrait chaud. */
+    /** Pic lisible sur portrait chaud (soft-light 0.14 était invisible). */
     peakOpacity: 0.32,
     fadeInSec: 0.9,
     fadeOutSec: 1.2,

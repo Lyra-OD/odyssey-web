@@ -1,15 +1,15 @@
 # Souvenir — Stream 0 $ · Master cinéma 49 $ · Moteur cercle
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
-**Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C8 hub lab** · **Tranche 1 Studio** · suite **C5/C7 reportés** · C9–C14 · trajectoire cercle + Phase 2 isolée.  
+**Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C4 V1.5 player fermée (30 sept)** · **C8 hub lab** · **Tranche 1 Studio** · **C5/C7 partiels / reportés prod** · C9–C14 · trajectoire cercle + Phase 2 isolée.  
 **Dernière MAJ :** 30 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 30 sept 2026 — **Docs alignées** : § C4 / Player / C5–C7 = vérité code V1.5 (deep-to-black, Breath, leaks, KB).
 - 30 sept 2026 — **Light leaks** : blend `screen` · pic 0,32 · blob coin haut-droit lisible (Quiet Luxury, pas Instagram).
 - 30 sept 2026 — **Deep to black** : hold finale 3 s · fondu cosine 2,2 s · noir pur 0,8 s · puis nom — `QuietLuxuryPlayer` + taxe Soft Cap.
 - 30 sept 2026 — **Breath Engine** : holds narratifs déterministes (max 3) · fin chapitre +2,5 s / finale + hold+deep · taxe Soft Cap — `QuietLuxuryPlayer` + `storyboardPacing`.
-- 30 sept 2026 — **One Bed modèle** : `hasAudio` sur `TeaserSlide` → player (passthrough) · **pas** d’heuristique vidéo → duck ; probe upload plus tard.
-- 30 sept 2026 — **One Bed player** : `hasAudio` · duck bed déterministe 18 % (attack 0.65 / release 0.85) — `QuietLuxuryPlayer`.
+- 30 sept 2026 — **One Bed** : `hasAudio` passthrough · duck bed 18 % · **pas** d’heuristique vidéo ; probe upload plus tard.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -30,7 +30,7 @@
 |--|--|
 | Cadeau salon | Stream only ≤50 médias, 2 chapitres, MP3 perso |
 | Pastille | *« Séance offerte par [Salon] »* (stream only) |
-| Player | **`QuietLuxuryPlayer`** · MP3 **master clock** · dual `<video>` · `hasAudio` + duck bed 18 % · pastille salon · ML **précalcul upload** (C5+) · 2.5D héros (C7) |
+| Player | **`QuietLuxuryPlayer`** · MP3 **master clock** · dual `<video>` · **V1.5** : Smart KB (soft 6 % / focale 9 %) · Breath holds · light leaks `screen` · deep-to-black · `hasAudio` + duck bed 18 % · pastille salon · ML **précalcul upload** (C5+) · 2.5D héros (C7) |
 | Master famille / cercle | SKU **`cinemaMaster` = 49 $** ; Héritage+ inclus · **CTA jamais désactivé** |
 | Free Creatomate | **Interdit** |
 | Comparatif | **Séance live** vs **Archive patrimoniale** |
@@ -238,25 +238,25 @@ Détail commits C4–C7 ci-dessous.
 - Composant autonome `src/components/tribute/QuietLuxuryPlayer.tsx` — consommé par teaser / PreviewStep ; **ne casse pas** l’étape 6 ; réutilisable `/stream/[token]`.
 - **Master clock** = piste MP3 (Web Audio / `<audio>`) ; médias **rattrapent** l’audio.
 - **Dual `<video>`** ping-pong : `muted` · `playsInline` · `preload="auto"` · `object-fit: cover` · crossfade.
-- **2 actes** musicaux · souffle ouverture (noir → portrait scale 104→100 %) · fondu chapitre · grain + vignette CSS.
-- Fin : **noir pré-mémoire ~1,5 s** → carte mémoire (**fade-out lent** `ql-memory-card-out`) → **noir absolu ≥ 1 s** → **`onPlaybackComplete`** (stub) — **pas** de hub cash (→ **C8**).
+- **2 actes** musicaux · souffle ouverture (noir → portrait) · fondu chapitre · grain + vignette CSS · Kodak A24.
+- **V1.5 (30 sept 2026) :** Smart Ken Burns (soft `1.06` / focale `1.09`) · One Bed duck 18 % si `hasAudio` · Breath Engine léger (max 3 holds · fin chapitre +2,5 s · finale hold **3 s**) · light leaks `screen` pic 0,32 (portrait d’ouverture + holds) · **chorégraphie de fin** : hold → deep-to-black cosine **2,2 s** → noir pur **0,8 s** → Memory Card (naissance du silence) → noir fin → **`onPlaybackComplete`** (hub = **C8**).
 - Sans portrait officiel : **pas** de fallback 1ʳᵉ photo — skip `breath_portrait`.
-- Pastille salon sobre à l’ouverture · **zéro** bouton d’achat mid-film.
+- Pastille salon sobre · **zéro** bouton d’achat mid-film.
 - **Zéro ML live** (focal / depth = C5 / C7).  
-- **Lab cinéma** `/[lang]/test-player` (dev) : Fullscreen API · audio amorcé · Kodak A24 · pastille sur clips only · **crossfade 0,7 s image→image** · micro-noir soft image↔vidéo.  
-**Done :** ✅ 2 actes + vidéo ; Safari-smoke audio ; callback fin · lab cinéma (21 sept 2026).
+- **Lab cinéma** `/[lang]/test-player` (dev) : Fullscreen API · audio amorcé · Kodak · pastille · **crossfade 0,7 s** image→image · micro-noir soft image↔vidéo.  
+**Done :** ✅ core 21 sept · ✅ **V1.5 player fermée** 30 sept (KB · Breath · leaks · deep-to-black · duck modèle).
 
 ### C5 — Ingest ML
 `feat(media): precompute focal and depth on upload`  
-**Done :** focale sur asset test.
+**Statut :** **partiel / reporté prod** — focale sur asset test seulement ; pas de pipeline upload ML complet. (≠ Breath Engine léger V1, déjà dans C4.)
 
 ### C6 — Grade + Ken Burns + souffle
 `feat(wizard): grade LUT + metadata Ken Burns + audio fades`  
-**Done :** look unifié.
+**Done :** look unifié · Smart KB V1.5 dans le player (amplitude ci-dessus).
 
 ### C7 — 2.5D héros
 `feat(wizard): hero 2.5D desktop-only + letterbox`  
-**Done :** desktop héros ; mobile plat.
+**Statut :** **partiel / reporté prod** — desktop héros expérimenté ; mobile plat ; pas le socle V1.5 immédiat.
 
 ### C8 — Hub sortie + Mode Célébration + pay-it-forward
 `feat(wizard): exit hub + Mode Célébration + pay-it-forward`  
