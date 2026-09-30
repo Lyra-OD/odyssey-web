@@ -3,9 +3,18 @@
 /**
  * Sas cinéma étape 6 — affiche documentaire + CTA éditoriaux.
  * Pose `data-odyssey-cinema` (ref-count) pour masquer Navbar / Aide.
+ * Desktop : poster 2.5D Quiet Luxury (spring + specular + breath).
  */
 
 import { Play, X } from "lucide-react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+} from "react";
 
 import { useOdysseyCinemaMode } from "@/src/hooks/useOdysseyCinemaMode";
 import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
@@ -13,6 +22,15 @@ import { editorialFont } from "@/src/lib/fonts";
 
 const POSTER_GRAIN =
   "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E\")";
+
+/** Parallaxe max (px) — Quiet Luxury, pas gadget. */
+const PARALLAX_FG_PX = 7;
+const PARALLAX_BG_PX = 11;
+/** Lerp spring ~0,15 s à 60 fps. */
+const SPRING = 0.12;
+const BREATH_PERIOD_SEC = 10;
+const BREATH_AMP = 0.015;
+const SPECULAR_PEAK = 0.11;
 
 export type SessionCinemaGateCopy = {
   play: string;
@@ -41,6 +59,10 @@ type Props = {
   onClose: () => void;
 };
 
+function clamp(n: number, a: number, b: number) {
+  return Math.min(b, Math.max(a, n));
+}
+
 export function SessionCinemaGate({
   copy,
   memoryCard,
@@ -52,35 +74,200 @@ export function SessionCinemaGate({
 }: Props) {
   useOdysseyCinemaMode(true);
 
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const bgRef = useRef<HTMLDivElement | null>(null);
+  const fgRef = useRef<HTMLDivElement | null>(null);
+  const specularRef = useRef<HTMLDivElement | null>(null);
+  const grainRef = useRef<HTMLDivElement | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const targetRef = useRef({ x: 0, y: 0 });
+  const currentRef = useRef({ x: 0, y: 0 });
+  const engageRef = useRef(0);
+  const engageTargetRef = useRef(0);
+  const t0Ref = useRef(
+    typeof performance !== "undefined" ? performance.now() : 0,
+  );
+
+  const [desktopPoster, setDesktopPoster] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia(
+      "(min-width: 1024px) and (pointer: fine)",
+    );
+    const apply = () => setDesktopPoster(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  const tick = useCallback(() => {
+    const cur = currentRef.current;
+    const tgt = targetRef.current;
+    cur.x += (tgt.x - cur.x) * SPRING;
+    cur.y += (tgt.y - cur.y) * SPRING;
+    engageRef.current +=
+      (engageTargetRef.current - engageRef.current) * SPRING;
+
+    const now =
+      typeof performance !== "undefined" ? performance.now() : 0;
+    const breathPhase =
+      ((now - t0Ref.current) / 1000 / BREATH_PERIOD_SEC) * Math.PI * 2;
+    const breath = 1 + BREATH_AMP * Math.sin(breathPhase);
+    const engage = engageRef.current;
+
+    const fx = cur.x * PARALLAX_FG_PX * engage;
+    const fy = cur.y * PARALLAX_FG_PX * 0.85 * engage;
+    const bx = -cur.x * PARALLAX_BG_PX * engage;
+    const by = -cur.y * PARALLAX_BG_PX * 0.8 * engage;
+
+    if (fgRef.current) {
+      fgRef.current.style.transform = `translate3d(${fx.toFixed(2)}px, ${fy.toFixed(2)}px, 0) scale(${breath.toFixed(4)})`;
+    }
+    if (bgRef.current) {
+      bgRef.current.style.transform = `translate3d(${bx.toFixed(2)}px, ${by.toFixed(2)}px, 0) scale(${(1.1 * breath).toFixed(4)})`;
+    }
+    if (specularRef.current) {
+      const ox = 50 + cur.x * 18 * Math.max(0.35, engage);
+      const oy = 42 + cur.y * 14 * Math.max(0.35, engage);
+      const op =
+        SPECULAR_PEAK * (0.35 + 0.65 * engage) *
+        (0.85 + 0.15 * Math.sin(breathPhase));
+      specularRef.current.style.opacity = op.toFixed(3);
+      specularRef.current.style.background = `radial-gradient(ellipse 55% 45% at ${ox.toFixed(1)}% ${oy.toFixed(1)}%, rgba(255, 214, 170, 0.55) 0%, transparent 68%)`;
+    }
+    if (grainRef.current) {
+      const g =
+        0.04 + 0.03 * (0.5 + 0.5 * Math.sin(breathPhase));
+      grainRef.current.style.opacity = g.toFixed(3);
+    }
+
+    rafRef.current = window.requestAnimationFrame(tick);
+  }, []);
+
+  useEffect(() => {
+    if (!desktopPoster || isLoading || !posterUrl) {
+      if (rafRef.current != null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      return;
+    }
+    t0Ref.current =
+      typeof performance !== "undefined" ? performance.now() : 0;
+    rafRef.current = window.requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current != null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+  }, [desktopPoster, isLoading, posterUrl, tick]);
+
+  const onPointerMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!desktopPoster) return;
+    const root = rootRef.current;
+    if (!root) return;
+    const r = root.getBoundingClientRect();
+    const nx = ((e.clientX - r.left) / Math.max(1, r.width) - 0.5) * 2;
+    const ny = ((e.clientY - r.top) / Math.max(1, r.height) - 0.5) * 2;
+    targetRef.current = {
+      x: clamp(nx, -1, 1),
+      y: clamp(ny, -1, 1),
+    };
+    engageTargetRef.current = 1;
+  };
+
+  const onPointerLeave = () => {
+    targetRef.current = { x: 0, y: 0 };
+    engageTargetRef.current = 0;
+  };
+
+  const showPosterFx = Boolean(posterUrl) && !isLoading;
+
   return (
     <div
+      ref={rootRef}
       className="fixed inset-0 z-[75] flex h-dvh w-screen flex-col overflow-hidden bg-[#020202] text-zinc-100"
       role="dialog"
       aria-modal="true"
       aria-label={copy.eyebrow ?? copy.play}
+      onMouseMove={onPointerMove}
+      onMouseLeave={onPointerLeave}
     >
-      {/* Affiche — N&B, opacity basse, gradient + grain. */}
-      {!isLoading && posterUrl ? (
-        <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={posterUrl}
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40 grayscale"
-            draggable={false}
-          />
-          <div
-            className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/60 to-black/20"
-            aria-hidden
-          />
-        </>
+      {/* Affiche — N&B · desktop = dual-plane 2.5D */}
+      {showPosterFx ? (
+        desktopPoster ? (
+          <>
+            <div
+              ref={bgRef}
+              className="pointer-events-none absolute inset-0 will-change-transform"
+              style={{ transform: "translate3d(0,0,0) scale(1.1)" }}
+              aria-hidden
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={posterUrl!}
+                alt=""
+                className="absolute inset-0 h-full w-full scale-110 object-cover opacity-28 grayscale blur-[14px]"
+                draggable={false}
+              />
+            </div>
+            <div
+              ref={fgRef}
+              className="pointer-events-none absolute inset-0 will-change-transform"
+              style={{ transform: "translate3d(0,0,0) scale(1)" }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={posterUrl!}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover opacity-40 grayscale"
+                draggable={false}
+              />
+            </div>
+            <div
+              ref={specularRef}
+              className="pointer-events-none absolute inset-0 z-[1] will-change-[opacity,background]"
+              style={
+                {
+                  opacity: SPECULAR_PEAK * 0.35,
+                  mixBlendMode: "soft-light",
+                  background:
+                    "radial-gradient(ellipse 55% 45% at 50% 42%, rgba(255, 214, 170, 0.55) 0%, transparent 68%)",
+                } satisfies CSSProperties
+              }
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/60 to-black/20"
+              aria-hidden
+            />
+          </>
+        ) : (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={posterUrl!}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40 grayscale"
+              draggable={false}
+            />
+            <div
+              className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/60 to-black/20"
+              aria-hidden
+            />
+          </>
+        )
       ) : null}
 
       <div
+        ref={grainRef}
         className="pointer-events-none absolute inset-0 z-[2]"
         style={{
           backgroundImage: POSTER_GRAIN,
           mixBlendMode: "overlay",
+          opacity: 0.05,
         }}
         aria-hidden
       />

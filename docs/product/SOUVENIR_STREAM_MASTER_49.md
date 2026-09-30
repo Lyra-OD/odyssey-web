@@ -1,15 +1,15 @@
 # Souvenir — Stream 0 $ · Master cinéma 49 $ · Moteur cercle
 
 **Type :** canon produit · **Vérité pour :** offre B2B2C Souvenir + player Quiet Luxury + **monétisation / viralité du cercle** (50–200 proches).  
-**Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C4 V1.5 player fermée (30 sept)** · **C5 focale auto** · **C8 hub lab** · **Tranche 1 Studio** · **C7 / depth reportés** · C9–C14 · trajectoire cercle + Phase 2 isolée.  
+**Statut :** décision CEO 21 sept 2026 · **C0–C4 livrés** · **C4 V1.5 player fermée (30 sept)** · **C5 focale auto** · **C7 poster sas 2.5D** · **C8 hub lab** · **Tranche 1 Studio** · depth / cadre overlay reportés · C9–C14 · trajectoire cercle + Phase 2 isolée.  
 **Dernière MAJ :** 30 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 30 sept 2026 — **C5 focale auto** : FaceDetector post-upload → `focalPoints` · lab `/test-focal` · depth reportée.
+- 30 sept 2026 — **Poster sas 2.5D** : spring + specular + breath desktop — `SessionCinemaGate` (pas dans le play).
+- 30 sept 2026 — **C5 focale auto** : FaceDetector / BlazeFace post-upload → `focalPoints` · lab `/test-focal` · depth reportée.
 - 30 sept 2026 — **Docs alignées** : § C4 / Player / C5–C7 = vérité code V1.5 (deep-to-black, Breath, leaks, KB).
 - 30 sept 2026 — **Light leaks** : blend `screen` · pic 0,32 · blob coin haut-droit lisible (Quiet Luxury, pas Instagram).
 - 30 sept 2026 — **Deep to black** : hold finale 3 s · fondu cosine 2,2 s · noir pur 0,8 s · puis nom — `QuietLuxuryPlayer` + taxe Soft Cap.
-- 30 sept 2026 — **Breath Engine** : holds narratifs déterministes (max 3) · fin chapitre +2,5 s / finale + hold+deep · taxe Soft Cap — `QuietLuxuryPlayer` + `storyboardPacing`.
 
 **Liés :** [`../FREEMIUM_V1_PIVOT.md`](../FREEMIUM_V1_PIVOT.md) · [`../B2B2C_COMMERCE.md`](../B2B2C_COMMERCE.md) · [`../PARTNER_REVSHARE.md`](../PARTNER_REVSHARE.md) · [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md) · [`../SANCTUARY_SKY.md`](../SANCTUARY_SKY.md) · [`../NARRATIVE_SOFT_CAP.md`](../NARRATIVE_SOFT_CAP.md) · Phase 2 : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md)
 
@@ -30,7 +30,7 @@
 |--|--|
 | Cadeau salon | Stream only ≤50 médias, 2 chapitres, MP3 perso |
 | Pastille | *« Séance offerte par [Salon] »* (stream only) |
-| Player | **`QuietLuxuryPlayer`** · MP3 **master clock** · dual `<video>` · **V1.5** : Smart KB (soft 6 % / focale 9 %) · Breath holds · light leaks `screen` · deep-to-black · `hasAudio` + duck bed 18 % · pastille salon · ML **précalcul upload** (C5+) · 2.5D héros (C7) |
+| Player | **`QuietLuxuryPlayer`** · MP3 **master clock** · dual `<video>` · **V1.5** : Smart KB (soft 6 % / focale 9 %) · Breath holds · light leaks `screen` · deep-to-black · `hasAudio` + duck bed 18 % · pastille salon · ML **précalcul upload** (C5+) · **C7** = poster sas 2.5D (pas dans le play) |
 | Master famille / cercle | SKU **`cinemaMaster` = 49 $** ; Héritage+ inclus · **CTA jamais désactivé** |
 | Free Creatomate | **Interdit** |
 | Comparatif | **Séance live** vs **Archive patrimoniale** |
@@ -256,9 +256,11 @@ Détail commits C4–C7 ci-dessous.
 `feat(wizard): grade LUT + metadata Ken Burns + audio fades`  
 **Done :** look unifié · Smart KB V1.5 dans le player (amplitude ci-dessus).
 
-### C7 — 2.5D héros
-`feat(wizard): hero 2.5D desktop-only + letterbox`  
-**Statut :** **partiel / reporté prod** — desktop héros expérimenté ; mobile plat ; pas le socle V1.5 immédiat.
+### C7 — 2.5D héros / poster
+`feat(preview): poster sas 2.5D Quiet Luxury`  
+**Statut :** **poster sas livré (30 sept)** — dual-plane + **spring** + **specular drift** + **breath** lent · desktop `pointer: fine` · **pas** dans le play (géométrie player inchangée).  
+**Suite** : option cadre 2.35 overlay sur le sas (commit suivant) · depth ML reportée.  
+**Vérif :** étape 6 wizard desktop — bouger la souris sur l’affiche.
 
 ### C8 — Hub sortie + Mode Célébration + pay-it-forward
 `feat(wizard): exit hub + Mode Célébration + pay-it-forward`  

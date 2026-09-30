@@ -4,11 +4,11 @@
 **Dernière MAJ :** 30 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 30 sept 2026 — **C5** : focale auto upload (FaceDetector) · lab `/fr/test-focal` — depth reportée.
+- 30 sept 2026 — **Poster sas 2.5D** : spring + specular + breath — `SessionCinemaGate` desktop.
+- 30 sept 2026 — **C5** : focale auto upload (FaceDetector / BlazeFace) · lab `/fr/test-focal` — depth reportée.
 - 30 sept 2026 — **V1.5 player fermée** : KB · Breath · light leaks · deep-to-black · One Bed modèle — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 30 sept 2026 — **Fin cinéma** : hold 3 s → deep-to-black 2,2 s → noir pur 0,8 s → Memory Card (plus 1,5 s de cut).
 - 29 sept 2026 — **Player** : sans portrait officiel, skip `breath_portrait` (plus de fallback 1ʳᵉ photo du film).
-- 29 sept 2026 — **Étape 6 DA** : sas affiche documentaire + CTA éditoriaux (plus de boutons verre).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
