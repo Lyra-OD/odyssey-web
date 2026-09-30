@@ -166,6 +166,7 @@ export function CinematicTeaser({
         objectPosition: slide.objectPosition,
         transformOrigin: slide.transformOrigin,
         chapterIndex: slide.chapterIndex ?? chapterIndex,
+        ...(slide.hasAudio ? { hasAudio: true } : {}),
         ...(slide.kind === "video"
           ? { trimStartSec: Math.max(0, slide.trimStartSec ?? 0) }
           : {}),

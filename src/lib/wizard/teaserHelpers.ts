@@ -23,6 +23,12 @@ export type TeaserSlide = {
   /** Origine du Ken Burns (0–1 → %). */
   transformOrigin?: string;
   chapterIndex?: number;
+  /**
+   * Sync audio réelle (voix / ambiance) — One Bed duck + unmute.
+   * Absent / false = muet, bed plein. Ne jamais déduire de `kind === "video"`
+   * (piste AAC vide ≠ son). Rempli plus tard par probe upload.
+   */
+  hasAudio?: boolean;
 };
 
 export type TeaserTrack = {
