@@ -6,6 +6,7 @@
 
 **Changelog** (max 5)
 - 30 sept 2026 — **C4 V1.5** : Smart Ken Burns focal-locked · soft sans focale (plus de `center 22%`) — `QuietLuxuryPlayer`.
+- 30 sept 2026 — **C4 KB amp** : soft 6 % (`1.06`) · full focale 9 % (`1.09`) — contraste portrait/paysage, Quiet Luxury.
 - 29 sept 2026 — **C4** : opacité crossfade pilotée par horloge master (30 fps) · précharge photos · KB hors re-render — `QuietLuxuryPlayer`.
 - 29 sept 2026 — **Pacing FIGÉ** : taxe ouverture chap.1 **5 s** (Option B) · outro dernier chap. **8 s** · clips 7/10 — `storyboardPacing.ts`.
 - 23 sept 2026 — **C13** : Social Cut `socialCut` 19 $ · checkout post-Master · job stub `creatomate_social_stub` 9:16.

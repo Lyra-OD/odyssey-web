@@ -472,18 +472,18 @@ const KODAK_GRAIN_SVG =
 const CINEMA_STYLE = `
 @keyframes ql-kb-push {
   from { transform: scale(1); }
-  to { transform: scale(1.05); }
+  to { transform: scale(1.09); }
 }
 @keyframes ql-kb-pull {
-  from { transform: scale(1.05); }
+  from { transform: scale(1.09); }
   to { transform: scale(1); }
 }
 @keyframes ql-kb-push-soft {
   from { transform: scale(1); }
-  to { transform: scale(1.03); }
+  to { transform: scale(1.06); }
 }
 @keyframes ql-kb-pull-soft {
-  from { transform: scale(1.03); }
+  from { transform: scale(1.06); }
   to { transform: scale(1); }
 }
 @keyframes ql-fade-in {
