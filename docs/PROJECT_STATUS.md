@@ -4,7 +4,7 @@
 **Dernière MAJ :** 30 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 30 sept 2026 — **Poster sas 2.5D** : spring + specular + breath — `SessionCinemaGate` desktop.
+- 30 sept 2026 — **Poster sas 2.5D** : 1 plan net + spring + breath + specular — `SessionCinemaGate` desktop (pas dual-plane).
 - 30 sept 2026 — **C5** : focale auto upload (FaceDetector / BlazeFace) · lab `/fr/test-focal` — depth reportée.
 - 30 sept 2026 — **V1.5 player fermée** : KB · Breath · light leaks · deep-to-black · One Bed modèle — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 30 sept 2026 — **Fin cinéma** : hold 3 s → deep-to-black 2,2 s → noir pur 0,8 s → Memory Card (plus 1,5 s de cut).

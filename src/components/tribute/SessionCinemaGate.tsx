@@ -3,7 +3,7 @@
 /**
  * Sas cinéma étape 6 — affiche documentaire + CTA éditoriaux.
  * Pose `data-odyssey-cinema` (ref-count) pour masquer Navbar / Aide.
- * Desktop : poster 2.5D Quiet Luxury (spring + specular + breath).
+ * Desktop : 1 plan net + spring + breath + specular (pas dual-plane).
  */
 
 import { Play, X } from "lucide-react";
@@ -23,14 +23,15 @@ import { editorialFont } from "@/src/lib/fonts";
 const POSTER_GRAIN =
   "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E\")";
 
-/** Parallaxe max (px) — Quiet Luxury, pas gadget. */
-const PARALLAX_FG_PX = 7;
-const PARALLAX_BG_PX = 11;
-/** Lerp spring ~0,15 s à 60 fps. */
-const SPRING = 0.12;
-const BREATH_PERIOD_SEC = 10;
-const BREATH_AMP = 0.015;
-const SPECULAR_PEAK = 0.11;
+/** Parallaxe max (px) — Quiet Luxury. */
+const PARALLAX_PX = 6;
+const SPRING = 0.11;
+/** Breath : entre le trop fort (0,014/10s) et le trop mou (0,006/16s). */
+const BREATH_PERIOD_SEC = 12;
+const BREATH_AMP = 0.01;
+const BASE_SCALE = 1.04;
+/** Specular soft-light — pic lisible (A/B desktop). */
+const SPECULAR_PEAK = 0.42;
 
 export type SessionCinemaGateCopy = {
   play: string;
@@ -75,8 +76,7 @@ export function SessionCinemaGate({
   useOdysseyCinemaMode(true);
 
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const bgRef = useRef<HTMLDivElement | null>(null);
-  const fgRef = useRef<HTMLDivElement | null>(null);
+  const planeRef = useRef<HTMLDivElement | null>(null);
   const specularRef = useRef<HTMLDivElement | null>(null);
   const grainRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -113,32 +113,28 @@ export function SessionCinemaGate({
       typeof performance !== "undefined" ? performance.now() : 0;
     const breathPhase =
       ((now - t0Ref.current) / 1000 / BREATH_PERIOD_SEC) * Math.PI * 2;
-    const breath = 1 + BREATH_AMP * Math.sin(breathPhase);
+    const breath = BASE_SCALE * (1 + BREATH_AMP * Math.sin(breathPhase));
     const engage = engageRef.current;
 
-    const fx = cur.x * PARALLAX_FG_PX * engage;
-    const fy = cur.y * PARALLAX_FG_PX * 0.85 * engage;
-    const bx = -cur.x * PARALLAX_BG_PX * engage;
-    const by = -cur.y * PARALLAX_BG_PX * 0.8 * engage;
+    const fx = cur.x * PARALLAX_PX * engage;
+    const fy = cur.y * PARALLAX_PX * 0.85 * engage;
 
-    if (fgRef.current) {
-      fgRef.current.style.transform = `translate3d(${fx.toFixed(2)}px, ${fy.toFixed(2)}px, 0) scale(${breath.toFixed(4)})`;
-    }
-    if (bgRef.current) {
-      bgRef.current.style.transform = `translate3d(${bx.toFixed(2)}px, ${by.toFixed(2)}px, 0) scale(${(1.1 * breath).toFixed(4)})`;
+    if (planeRef.current) {
+      planeRef.current.style.transform = `translate3d(${fx.toFixed(2)}px, ${fy.toFixed(2)}px, 0) scale(${breath.toFixed(4)})`;
     }
     if (specularRef.current) {
-      const ox = 50 + cur.x * 18 * Math.max(0.35, engage);
-      const oy = 42 + cur.y * 14 * Math.max(0.35, engage);
+      // Specular : voile chaud dérive avec la souris.
+      const ox = 50 + cur.x * 22 * Math.max(0.5, engage);
+      const oy = 40 + cur.y * 16 * Math.max(0.5, engage);
       const op =
-        SPECULAR_PEAK * (0.35 + 0.65 * engage) *
-        (0.85 + 0.15 * Math.sin(breathPhase));
+        SPECULAR_PEAK *
+        (0.75 + 0.25 * Math.max(0.4, engage)) *
+        (0.9 + 0.1 * Math.sin(breathPhase));
       specularRef.current.style.opacity = op.toFixed(3);
-      specularRef.current.style.background = `radial-gradient(ellipse 55% 45% at ${ox.toFixed(1)}% ${oy.toFixed(1)}%, rgba(255, 214, 170, 0.55) 0%, transparent 68%)`;
+      specularRef.current.style.background = `radial-gradient(ellipse 60% 48% at ${ox.toFixed(1)}% ${oy.toFixed(1)}%, rgba(255, 220, 180, 0.85) 0%, rgba(255, 200, 150, 0.25) 42%, transparent 72%)`;
     }
     if (grainRef.current) {
-      const g =
-        0.04 + 0.03 * (0.5 + 0.5 * Math.sin(breathPhase));
+      const g = 0.045 + 0.015 * (0.5 + 0.5 * Math.sin(breathPhase));
       grainRef.current.style.opacity = g.toFixed(3);
     }
 
@@ -195,28 +191,16 @@ export function SessionCinemaGate({
       onMouseMove={onPointerMove}
       onMouseLeave={onPointerLeave}
     >
-      {/* Affiche — N&B · desktop = dual-plane 2.5D */}
+      {/* Affiche — 1 plan net + spring + breath + specular */}
       {showPosterFx ? (
         desktopPoster ? (
           <>
             <div
-              ref={bgRef}
+              ref={planeRef}
               className="pointer-events-none absolute inset-0 will-change-transform"
-              style={{ transform: "translate3d(0,0,0) scale(1.1)" }}
-              aria-hidden
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={posterUrl!}
-                alt=""
-                className="absolute inset-0 h-full w-full scale-110 object-cover opacity-28 grayscale blur-[14px]"
-                draggable={false}
-              />
-            </div>
-            <div
-              ref={fgRef}
-              className="pointer-events-none absolute inset-0 will-change-transform"
-              style={{ transform: "translate3d(0,0,0) scale(1)" }}
+              style={{
+                transform: `translate3d(0,0,0) scale(${BASE_SCALE})`,
+              }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -231,10 +215,10 @@ export function SessionCinemaGate({
               className="pointer-events-none absolute inset-0 z-[1] will-change-[opacity,background]"
               style={
                 {
-                  opacity: SPECULAR_PEAK * 0.35,
+                  opacity: SPECULAR_PEAK * 0.8,
                   mixBlendMode: "soft-light",
                   background:
-                    "radial-gradient(ellipse 55% 45% at 50% 42%, rgba(255, 214, 170, 0.55) 0%, transparent 68%)",
+                    "radial-gradient(ellipse 60% 48% at 50% 40%, rgba(255, 220, 180, 0.85) 0%, rgba(255, 200, 150, 0.25) 42%, transparent 72%)",
                 } satisfies CSSProperties
               }
               aria-hidden

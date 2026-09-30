@@ -5,7 +5,7 @@
 **Dernière MAJ :** 30 sept 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 30 sept 2026 — **Poster sas 2.5D** : spring + specular + breath desktop — `SessionCinemaGate` (pas dans le play).
+- 30 sept 2026 — **Poster sas 2.5D** : 1 plan net + spring + breath + specular desktop — `SessionCinemaGate` (pas dual-plane).
 - 30 sept 2026 — **C5 focale auto** : FaceDetector / BlazeFace post-upload → `focalPoints` · lab `/test-focal` · depth reportée.
 - 30 sept 2026 — **Docs alignées** : § C4 / Player / C5–C7 = vérité code V1.5 (deep-to-black, Breath, leaks, KB).
 - 30 sept 2026 — **Light leaks** : blend `screen` · pic 0,32 · blob coin haut-droit lisible (Quiet Luxury, pas Instagram).
@@ -258,7 +258,7 @@ Détail commits C4–C7 ci-dessous.
 
 ### C7 — 2.5D héros / poster
 `feat(preview): poster sas 2.5D Quiet Luxury`  
-**Statut :** **poster sas livré (30 sept)** — dual-plane + **spring** + **specular drift** + **breath** lent · desktop `pointer: fine` · **pas** dans le play (géométrie player inchangée).  
+**Statut :** **poster sas livré (30 sept)** — **1 plan net** + **spring** + **breath** (~1 % / 12 s) + **specular** soft-light · desktop `pointer: fine` · **pas** dual-plane (ghost) · **pas** dans le play.  
 **Suite** : option cadre 2.35 overlay sur le sas (commit suivant) · depth ML reportée.  
 **Vérif :** étape 6 wizard desktop — bouger la souris sur l’affiche.
 
