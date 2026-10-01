@@ -16,10 +16,16 @@ import { StoryboardCapacityBadge } from "@/src/components/tribute/storyboard/Sto
 import type { StoryboardChaptersStepCopy } from "@/src/components/tribute/StoryboardChaptersStep";
 import { useDebouncedValue } from "@/src/hooks/useDebouncedValue";
 import {
+  chapterGlowShadow,
+  chapterShellClass,
+  getChapterTheme,
+} from "@/src/lib/wizard/chapterTheme";
+import {
   resolvePreviewUrl,
   storyboardSongPreviewKey,
 } from "@/src/lib/wizard/musicPreview";
 import {
+  chapterPacingRole,
   chapterRecommendedCapacity,
   RECOMMENDED_MIN_TRACK_DURATION_SEC,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -49,6 +55,9 @@ function formatTime(seconds: number): string {
 
 export type ChapterMusicPanelProps = {
   chapter: WizardStoryboardChapter;
+  chapterIndex: number;
+  /** Nombre total de chapitres (taxes 1er / dernier). */
+  chapterCount: number;
   chapterLabel: string;
   targetSecondsPerMedia: number;
   catalogTier: MusicCatalogTier;
@@ -68,6 +77,8 @@ export type ChapterMusicPanelProps = {
   projectId?: string | null;
   musicRightsAccepted?: boolean;
   onAcceptMusicRights?: () => void;
+  /** Couleur du chapitre pour le badge capacité. */
+  toneClassName?: string;
 };
 
 /**
@@ -77,6 +88,8 @@ export type ChapterMusicPanelProps = {
  */
 export function ChapterMusicPanel({
   chapter,
+  chapterIndex,
+  chapterCount,
   chapterLabel,
   targetSecondsPerMedia,
   catalogTier,
@@ -94,6 +107,7 @@ export function ChapterMusicPanel({
   projectId = null,
   musicRightsAccepted = false,
   onAcceptMusicRights,
+  toneClassName,
 }: ChapterMusicPanelProps) {
   const searchId = useId();
   const uploadInputId = useId();
@@ -108,6 +122,7 @@ export function ChapterMusicPanel({
   const [sourceMode, setSourceMode] = useState<MusicSourceMode>("catalog");
   const debouncedQuery = useDebouncedValue(query, 280);
   const song = chapter.song;
+  const theme = getChapterTheme(chapterIndex);
 
   const handlePersonalAudioFile = async (file: File | undefined) => {
     if (!file) return;
@@ -241,14 +256,19 @@ export function ChapterMusicPanel({
   ]);
 
   if (song) {
-    const capacity = chapterRecommendedCapacity(song.durationSec, targetSecondsPerMedia);
+    const capacity = chapterRecommendedCapacity(
+      song.durationSec,
+      targetSecondsPerMedia,
+      chapterPacingRole(chapterIndex, chapterCount),
+    );
     const previewKey = storyboardSongPreviewKey(song);
     const isActivePreview = previewTrackId === previewKey;
     const isPreviewPlaying = isActivePreview && isPlaying;
 
     return (
       <section
-        className="rounded-2xl border border-white/10 bg-white/[0.02] p-6"
+        className={`rounded-2xl border p-6 ${chapterShellClass(theme, "rest")}`}
+        style={{ boxShadow: chapterGlowShadow(theme.glowRgb, "idle") }}
         aria-labelledby={`${chapter.id}-selected`}
       >
         <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
@@ -283,6 +303,7 @@ export function ChapterMusicPanel({
             <div className="mt-2">
               <StoryboardCapacityBadge
                 capacity={capacity}
+                toneClassName={toneClassName}
                 copy={{
                   recommended: copy.capacityRecommended,
                   pending: copy.capacityPending,

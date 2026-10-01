@@ -8,9 +8,14 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        editorial: ["var(--font-editorial)"],
-        label: ["var(--font-label)"]
-      }
+        editorial: [
+          "var(--font-editorial)",
+          "Georgia",
+          "Times New Roman",
+          "serif",
+        ],
+        label: ["var(--font-label)", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
     }
   },
   plugins: []

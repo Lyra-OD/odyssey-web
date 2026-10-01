@@ -8,6 +8,8 @@ import {
   parseExtensionsFromMetadata,
   upsertProjectPaidEntitlements,
 } from "@/src/lib/wizard/paidEntitlements";
+import { isCinemaMasterProductKey } from "@/src/lib/wizard/cinemaMasterPurchase";
+import { isSocialCutProductKey } from "@/src/lib/wizard/socialCutPurchase";
 import { normalizeBasePackageId } from "@/src/lib/wizard/pricingConfig";
 import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
 
@@ -416,6 +418,51 @@ async function handleGuestSupportCompleted(
   };
 
   if (result.ok === true) {
+    const productKey = metadata.product_key?.trim() || "";
+    if (isCinemaMasterProductKey(productKey)) {
+      const projectId = metadata.project_id?.trim() || "";
+      if (projectId) {
+        const { fulfillCinemaMasterPurchase } = await import(
+          "@/src/lib/wizard/cinemaMasterPurchase"
+        );
+        const donorName =
+          metadata.donor_name?.trim() ||
+          (session.customer_details?.name ?? null);
+        const fulfill = await fulfillCinemaMasterPurchase(supabase, {
+          projectId,
+          productKey,
+          donorName,
+        });
+        logWebhook({
+          level: "info",
+          context: "cinema_master_fulfill_ok",
+          event_id: event.id,
+          project_id: projectId,
+          product_key: productKey,
+          first_unlock: fulfill.firstUnlock,
+          export_queued: fulfill.exportQueued,
+          status_after: "processed",
+        });
+      }
+    } else if (isSocialCutProductKey(productKey)) {
+      const projectId = metadata.project_id?.trim() || "";
+      if (projectId) {
+        const { fulfillSocialCutPurchase } = await import(
+          "@/src/lib/wizard/socialCutPurchase"
+        );
+        const fulfill = await fulfillSocialCutPurchase(supabase, { projectId });
+        logWebhook({
+          level: "info",
+          context: "social_cut_fulfill_ok",
+          event_id: event.id,
+          project_id: projectId,
+          job_id: fulfill.jobId,
+          already_queued: fulfill.alreadyQueued,
+          status_after: "processed",
+        });
+      }
+    }
+
     logWebhook({
       level: "info",
       context: "guest_support_accrual_ok",

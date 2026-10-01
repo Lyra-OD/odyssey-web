@@ -6,8 +6,13 @@ import {
   autoFillChapter,
   clearChapterMedia,
 } from "@/src/lib/wizard/storyboardAutoFill";
-import { setChapterLabel } from "@/src/lib/wizard/storyboardHelpers";
 import {
+  setChapterLabel,
+  setChapterSongCreditLabel,
+  setChapterSongShowCreditInSession,
+} from "@/src/lib/wizard/storyboardHelpers";
+import {
+  chapterPacingRole,
   chapterRecommendedCapacity,
   resolveTargetSecondsPerMedia,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -21,7 +26,7 @@ type UseMontageChapterActionsParams = {
   setRefinementChapterId: (chapterId: string | null) => void;
 };
 
-/** Actions par chapitre (titre, auto-remplissage, vidage, panneau de gestion). */
+/** Actions par chapitre (titre, crédit musical, auto-remplissage, vidage). */
 export function useMontageChapterActions({
   storyboard,
   onStoryboardChange,
@@ -35,13 +40,33 @@ export function useMontageChapterActions({
     [onStoryboardChange, storyboard],
   );
 
+  const handleCreditLabelChange = useCallback(
+    (chapterId: string, nextLabel: string) => {
+      onStoryboardChange(
+        setChapterSongCreditLabel(storyboard, chapterId, nextLabel),
+      );
+    },
+    [onStoryboardChange, storyboard],
+  );
+
+  const handleShowCreditInSessionChange = useCallback(
+    (chapterId: string, show: boolean) => {
+      onStoryboardChange(
+        setChapterSongShowCreditInSession(storyboard, chapterId, show),
+      );
+    },
+    [onStoryboardChange, storyboard],
+  );
+
   const handleAutoFill = useCallback(
     (chapterId: string) => {
-      const chapter = storyboard.chapters.find((c) => c.id === chapterId);
+      const index = storyboard.chapters.findIndex((c) => c.id === chapterId);
+      const chapter = index >= 0 ? storyboard.chapters[index] : undefined;
       if (!chapter) return;
       const capacity = chapterRecommendedCapacity(
         chapter.song?.durationSec,
         resolveTargetSecondsPerMedia(packageId, chapter.mood),
+        chapterPacingRole(index, storyboard.chapters.length),
       );
       const next = autoFillChapter(storyboard, chapterId, capacity);
       onStoryboardChange(next);
@@ -65,6 +90,8 @@ export function useMontageChapterActions({
 
   return {
     handleTitleChange,
+    handleCreditLabelChange,
+    handleShowCreditInSessionChange,
     handleAutoFill,
     handleClear,
     handleManage,

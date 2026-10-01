@@ -36,6 +36,7 @@ type FreeCheckoutOutcome =
   | { status: 200; mode: "freemium_free"; grantedPackage: WizardBasePackage }
   | { status: 422; error: "amputation_required"; maxMedia: number; currentMedia: number }
   | { status: 422; error: "music_license_requires_payment" }
+  | { status: 422; error: "cinema_master_requires_payment" }
   | { status: "paid"; totalCents: number };
 
 /** Miroir du guard serveur — voir app/api/checkout/route.ts. */
@@ -69,6 +70,10 @@ function simulatePartnerFreemiumCheckout(params: {
 
   if (cart.extensions.musicLicense) {
     return { status: 422, error: "music_license_requires_payment" };
+  }
+
+  if (cart.extensions.cinemaMaster) {
+    return { status: 422, error: "cinema_master_requires_payment" };
   }
 
   return { status: 200, mode: "freemium_free", grantedPackage: params.grantedPackage };

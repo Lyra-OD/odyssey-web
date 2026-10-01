@@ -10,7 +10,8 @@ export const runtime = "nodejs";
  * POST /api/webhooks/creatomate
  *
  * Retour async Creatomate (render succeeded | failed).
- * Auth obligatoire : Bearer ou header CREATOMATE_WEBHOOK_SECRET (fail-closed).
+ * Auth fail-closed : Bearer, header `x-creatomate-webhook-secret`, ou
+ * query `?secret=` (Creatomate n’envoie pas de header custom).
  * Corrélation : external_render_id (= render.id) ou metadata (= job.id).
  */
 
@@ -34,6 +35,10 @@ function authorizeWebhook(req: Request): boolean {
 
   const headerSecret = req.headers.get("x-creatomate-webhook-secret")?.trim();
   if (headerSecret && safeEqualString(headerSecret, secret)) return true;
+
+  // Creatomate appelle le webhook_url tel quel — pas de header secret.
+  const querySecret = new URL(req.url).searchParams.get("secret")?.trim();
+  if (querySecret && safeEqualString(querySecret, secret)) return true;
 
   return false;
 }

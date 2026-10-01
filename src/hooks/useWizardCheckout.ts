@@ -55,6 +55,14 @@ export function useWizardCheckout({
       resolveWizardDisplayCart(extensions, intendedPackage, grantedPackage),
     [extensions, intendedPackage, grantedPackage],
   );
+  const fundAppliedCents =
+    viralLoopEnabled && displayCart.totalCents > 0
+      ? Math.min(
+          Math.max(0, fundCreditCents),
+          Math.max(displayCart.totalCents - Math.max(0, ownerFloorCents), 0),
+        )
+      : 0;
+  const remainingDueCents = Math.max(displayCart.totalCents - fundAppliedCents, 0);
   const showCheckoutStayFree =
     packageCents(grantedPackage) === 0 && displayCart.totalCents > 0;
 
@@ -91,7 +99,17 @@ export function useWizardCheckout({
     };
   }, [currentStep, uploadProjectId, isPartner, isEditor]);
 
+  const [payArmed, setPayArmed] = useState(false);
+
+  useEffect(() => {
+    setPayArmed(false);
+    if (currentStep !== 7) return;
+    const timer = window.setTimeout(() => setPayArmed(true), 700);
+    return () => window.clearTimeout(timer);
+  }, [currentStep]);
+
   const handlePay = useCallback(async () => {
+    if (currentStep !== 7 || !payArmed) return;
     if (!uploadProjectId) {
       setPayError(copy.checkoutMissingProject);
       return;
@@ -134,6 +152,13 @@ export function useWizardCheckout({
           setPayError(data.message);
           return;
         }
+        if (
+          data.error === "cinema_master_requires_payment" &&
+          typeof data.message === "string"
+        ) {
+          setPayError(data.message);
+          return;
+        }
         setPayError(
           typeof data.message === "string"
             ? data.message
@@ -168,7 +193,7 @@ export function useWizardCheckout({
     } finally {
       setIsPaying(false);
     }
-  }, [uploadProjectId, locale, flush, copy]);
+  }, [currentStep, payArmed, uploadProjectId, locale, flush, copy]);
 
   return {
     isPaying,
@@ -181,6 +206,8 @@ export function useWizardCheckout({
     setRiderAccepted,
     showCheckoutStayFree,
     excessMediaCount,
+    remainingDueCents,
+    payArmed,
     handlePay,
   };
 }

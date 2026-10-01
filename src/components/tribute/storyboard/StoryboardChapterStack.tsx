@@ -11,8 +11,10 @@ import {
 } from "@/src/components/tribute/storyboard/StoryboardChapterBlock";
 import type { ChapterActionClusterCopy } from "@/src/components/tribute/storyboard/ChapterActionCluster";
 import type { ChapterCanvasGridCopy } from "@/src/components/tribute/storyboard/ChapterCanvasGrid";
+import type { ChapterNarrativeHeaderCreditCopy } from "@/src/components/tribute/storyboard/ChapterNarrativeHeader";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import {
+  chapterPacingRole,
   chapterRecommendedCapacity,
   resolveTargetSecondsPerMedia,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -54,11 +56,14 @@ type Props = {
   cardCopy: MontageMediaCardCopy;
   titleEditAria: string;
   chapterReorderAria: string;
+  creditCopy?: ChapterNarrativeHeaderCreditCopy;
   toggleSelectAria: string;
   onMediaClick: (assetId: string, event?: React.MouseEvent) => void;
   onToggleMediaSelect: (assetId: string, chapterId?: string) => void;
   onShiftMediaSelect: (assetId: string, chapterId?: string) => void;
   onTitleChange: (chapterId: string, nextTitle: string) => void;
+  onCreditLabelChange?: (chapterId: string, nextLabel: string) => void;
+  onShowCreditInSessionChange?: (chapterId: string, show: boolean) => void;
   onAutoFill: (chapterId: string) => void;
   onClear: (chapterId: string) => void;
   onManage: (chapterId: string) => void;
@@ -88,11 +93,14 @@ export function StoryboardChapterStack({
   cardCopy,
   titleEditAria,
   chapterReorderAria,
+  creditCopy,
   toggleSelectAria,
   onMediaClick,
   onToggleMediaSelect,
   onShiftMediaSelect,
   onTitleChange,
+  onCreditLabelChange,
+  onShowCreditInSessionChange,
   onAutoFill,
   onClear,
   onManage,
@@ -112,6 +120,7 @@ export function StoryboardChapterStack({
           const recommendedCapacity = chapterRecommendedCapacity(
             chapter.song?.durationSec,
             resolveTargetSecondsPerMedia(packageId, chapter.mood),
+            chapterPacingRole(index, chapters.length),
           );
 
           const chapterSelection =
@@ -136,6 +145,7 @@ export function StoryboardChapterStack({
               cardCopy={cardCopy}
               titleEditAria={titleEditAria}
               chapterReorderAria={chapterReorderAria}
+              creditCopy={creditCopy}
               toggleSelectAria={toggleSelectAria}
               activeDragIds={activeDragIds}
               selectedMediaIds={chapterSelection}
@@ -154,6 +164,16 @@ export function StoryboardChapterStack({
                 onShiftMediaSelect(assetId, chapter.id)
               }
               onTitleChange={(nextTitle) => onTitleChange(chapter.id, nextTitle)}
+              onCreditLabelChange={
+                onCreditLabelChange
+                  ? (nextLabel) => onCreditLabelChange(chapter.id, nextLabel)
+                  : undefined
+              }
+              onShowCreditInSessionChange={
+                onShowCreditInSessionChange
+                  ? (show) => onShowCreditInSessionChange(chapter.id, show)
+                  : undefined
+              }
               onAutoFill={() => onAutoFill(chapter.id)}
               onClear={() => onClear(chapter.id)}
               onManage={() => onManage(chapter.id)}

@@ -1,11 +1,14 @@
 # Odyssey — Pivot Freemium V1 (canon CEO)
 
 **Type :** canon · **Vérité pour :** grille, Soft Cap, musique, phases Freemium. Corriger ici, pas dans les snapshots.  
-**Dernière MAJ :** 19 août 2026 (en-tête) · 28 juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 21 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 23 sept 2026 — Add-on **`socialCut` 19 $** (9:16 post-Master · stub Creatomate) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
+- 21 sept 2026 — Add-on **`cinemaMaster` 49 $** (Master cinéma Souvenir ; inclus Héritage+) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
+- 22 sept 2026 — SKU cercle **`guestMasterCopy` 15 $** (licence même MP4 · 0 Creatomate) — stream invité C12.
+- 23 sept 2026 — C11 multi-acheteurs **`cinemaMaster` / `cinemaMasterGift` 49 $** — CTA always-on · Fonds #2…n.
 - 19 août 2026 — GTM B2C (brouillon → paywall, pas ads) : [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md).
-- 17 août 2026 — en-tête type + carte.
 - 28 juillet 2026 — vision figée · Phases 0–5 ✅ (Creatomate P0) · 3a UI ✅ · Collab A–C ✅ · Phase 6 QA ⏳.
 
 Document canonique du **pivot produit majeur** : purge totale des jetons, freemium B2B2C + RevShare only, Soft Cap (Expansion Narrative), grille forfaits (Héritage **1080p** · Master **4K** dès Éternité), musique à deux voies + add-on Licence Stingray, add-ons Quiet Luxury.
@@ -17,7 +20,8 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 
 **Specs liées :** [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
 
-> SKU musique à la carte : **`musicLicense` (39 $)** — successeur de `extendedLicense` (migration TS Phase 1).
+> SKU musique à la carte : **`musicLicense` (39 $)** — successeur de `extendedLicense` (migration TS Phase 1).  
+> SKU Master cinéma : **`cinemaMaster` (49 $)** — archive MP4 Creatomate sur Souvenir ; **strip** si `intended >= signature` (inclus Héritage+).
 
 > **⚠️ Extension canon — Cascade V-Final (rév. 22 juillet 2026) :** le **B2C direct** pivote —
 > entrée en **brouillon gratuit**, paywall **strict à l'export** (min Héritage **179 $**),
@@ -59,6 +63,10 @@ Document canonique du **pivot produit majeur** : purge totale des jetons, freemi
 
 | Add-on | Prix | ID technique | Notes |
 |--------|------|--------------|-------|
+| **Master cinéma** | 49 $ | `cinemaMaster` | Archive MP4 Quiet Luxury (Creatomate). Upsell **Souvenir** stream 0 $. Inclus dès Héritage → ne pas facturer si `intended >= signature`. Canon : [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
+| **Master mécène (gift)** | 49 $ | `cinemaMasterGift` | Même cash/COGS que Master · metadata donateur · N-buyer Fonds (C11) |
+| **Copie invité** | 15 $ | `guestMasterCopy` | Downsell cercle post-Master : **même** signed URL · **0** re-render · Checkout `/api/stream/[token]/checkout` |
+| **Social Cut** | 19 $ | `socialCut` | Pastille Stories 9:16 ~30–45 s · **après** Master · job stub `creatomate_social_stub` (C13) |
 | **Jeton du Sanctuaire** (NFC/QR) | 79 $ | `sanctuaryToken` | Remplace `collectorUsb` — stock global, association dynamique |
 | **Voix de l’Histoire** | 39 $ | `storyVoice` | Narration IA biographie — **distinct** de la licence musique |
 | **Licence Musique Premium Stingray** | 39 $ | `musicLicense` | Upsell **Souvenir** : débloque catalogue officiel **sans** forcer Héritage. Inclus (gratuit) dès Héritage/Éternité → ne pas facturer si `intended >= signature` |
@@ -220,11 +228,12 @@ flowchart TD
 ### Phase 5 — Export & add-ons — ✅ FAIT (Creatomate P0)
 
 19. ✅ Gate export : `assertExportAllowed` + `POST /api/projects/[id]/export` + table P9 `project_export_jobs` (+ P9.1 webhook columns).
-19b. ✅ Worker : `src/lib/creatomate/` (storyboard dynamique, résolution 1080p/4K, Audio Stem Graph, One Bed Law) · drain mock **ou** submit Creatomate · webhook **fail-closed**.
+19b. ✅ Worker : `src/lib/creatomate/` (storyboard dynamique, résolution 1080p/4K, Audio Stem Graph, One Bed Law) · drain mock **ou** submit Creatomate · webhook **fail-closed** (`?secret=`).
+19c. ✅ **Smoke réel** (15 sept 2026) : POST `/v1/renders` body objet `{ source }` · filtre médias image/vidéo · `output_url` exposé au GET export.
 20. ✅ Checkout : attestation MP3/WAV obligatoire si `source=upload`.
 21. ✅ Webhook / freemium_free : `enqueueQuietLuxuryFulfillment` (NFC · Voix · Livre → `wizard_state.quietLuxuryFulfillment`).
 22. ✅ UI add-ons : `storyVoice` · `sanctuaryToken` (NFC) · `memoryBook` · labels i18n.
-23. ⏳ Master Stingray prod (`STINGRAY_MASTER_URL_TEMPLATE`) + claim NFC / Gelato / TTS = follow-ups.
+23. ⏳ Recette DA convaincante + bed musique · Master Stingray prod (`STINGRAY_MASTER_URL_TEMPLATE`) · claim NFC / Gelato / TTS.
 
 ### Phase 6 — QA & cutover
 
@@ -240,5 +249,5 @@ Mettre à jour ce fichier quand la grille, les SKUs (`musicLicense` / `storyVoic
 
 ---
 
-*Vision CEO figée — juillet 2026 (rév. **grille 179/349/499** · Sanctuaire empreintes · gratuit sans Stingray licencié). Phases 0–5 livrées (Creatomate = stub) ; Phase 3a Sanctuaire UI ✅ · Collab ✅. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
+*Vision CEO figée — juillet 2026 (rév. **grille 179/349/499** · Sanctuaire empreintes · gratuit sans Stingray licencié). Phases 0–5 livrées (Creatomate smoke réel ✅ · recette DA ⏳) ; Phase 3a Sanctuaire UI ✅ · Collab ✅. Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).*  
 *Appliquer SQL P9 sur Supabase : [`sql/odyssey_p9_project_export_jobs.sql`](sql/odyssey_p9_project_export_jobs.sql).*

@@ -13,6 +13,8 @@ type Props = {
   /** Affiche `{assigned}/{capacity}` plutôt que la seule capacité recommandée. */
   showAssigned?: boolean;
   copy: StoryboardCapacityBadgeCopy;
+  /** Couleur du chapitre (`theme.text`) — jamais le teal générique. */
+  toneClassName?: string;
   className?: string;
 };
 
@@ -25,8 +27,11 @@ export function StoryboardCapacityBadge({
   assignedCount,
   showAssigned = false,
   copy,
+  toneClassName,
   className = "",
 }: Props) {
+  const countTone = toneClassName ?? "text-teal-300/90";
+
   if (capacity === null) {
     return (
       <span className={`text-xs font-light text-zinc-500 ${className}`}>
@@ -35,15 +40,10 @@ export function StoryboardCapacityBadge({
     );
   }
 
-  const isOverloaded =
-    showAssigned && typeof assignedCount === "number" && assignedCount > capacity;
-
   if (showAssigned && typeof assignedCount === "number") {
     return (
       <span
-        className={`text-xs font-medium tabular-nums ${
-          isOverloaded ? "text-amber-300" : "text-teal-300/90"
-        } ${className}`}
+        className={`text-xs font-medium tabular-nums ${countTone} ${className}`}
       >
         {assignedCount}/{capacity}
       </span>
@@ -51,7 +51,7 @@ export function StoryboardCapacityBadge({
   }
 
   return (
-    <span className={`text-xs font-medium text-teal-300/90 ${className}`}>
+    <span className={`text-xs font-medium ${countTone} ${className}`}>
       {copy.recommended.replace("{count}", String(capacity))}
     </span>
   );

@@ -17,6 +17,16 @@ export {
   essentialsFromWizard,
 } from "@/src/lib/creatomate/buildPlan";
 export {
+  yearFromDate,
+  formatYearsLine,
+} from "@/src/lib/creatomate/yearFromDate";
+export {
+  assembleIntroAtom,
+  assembleAtomFilm,
+  resolvePortraitUrl,
+  DEMO_PORTRAIT_URL,
+} from "@/src/lib/creatomate/atomsAssembler";
+export {
   buildTimelineClips,
   buildDuckedMusicSegments,
 } from "@/src/lib/creatomate/timeline";

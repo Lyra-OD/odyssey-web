@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ lang: string }>;
-  searchParams: Promise<{ plan?: string }>;
+  searchParams: Promise<{ plan?: string; checkout?: string }>;
 };
 
 const DRAFT_SELECT =
@@ -26,12 +26,19 @@ const DRAFT_SELECT =
 
 export default async function StudioPage({ params, searchParams }: PageProps) {
   const { lang: routeLang } = await params;
-  const { plan: rawPlan } = await searchParams;
+  const { plan: rawPlan, checkout: rawCheckout } = await searchParams;
   // Dev-only : `?plan=essential` permet de tester le flux freemium Soft Cap
   // en local (grantedPackage = Souvenir 0 $) sans passer par une invitation
   // partenaire. Jamais honoré en production (faille de monétisation).
   const planOverride =
     process.env.NODE_ENV !== "production" ? rawPlan : undefined;
+  const checkoutReturn =
+    rawCheckout === "master_success" ||
+    rawCheckout === "master_cancel" ||
+    rawCheckout === "social_cut_success" ||
+    rawCheckout === "social_cut_cancel"
+      ? rawCheckout
+      : null;
   const lang: Locale = routeLang === "en" ? "en" : "fr";
   const [dictionaryFr, dictionaryEn] = await Promise.all([
     getDictionary("fr"),
@@ -148,7 +155,7 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/25 to-transparent" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col px-6 pb-10 pt-12 md:px-10 md:pt-16">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col px-6 pb-10 pt-12 md:px-10 md:pt-16">
         <header className="studio-shell-chrome relative mb-10 transition-opacity duration-500">
           <h1 className="sr-only">{welcomeSrOnly}</h1>
 
@@ -172,6 +179,9 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
           locale={lang}
           copyFr={dictionaryFr.tributeWizard}
           copyEn={dictionaryEn.tributeWizard}
+          exitHubCopyFr={dictionaryFr.quietLuxuryExitHub}
+          exitHubCopyEn={dictionaryEn.quietLuxuryExitHub}
+          checkoutReturn={checkoutReturn}
           labelsFr={{
             languageLabel: dictionaryFr.header.languageLabel,
             langOptionFr: dictionaryFr.header.langOptionFr,

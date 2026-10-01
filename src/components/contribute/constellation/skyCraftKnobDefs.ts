@@ -941,6 +941,62 @@ export function buildSkyCraftKnobs(
       ];
     }
 
+    case "hero": {
+      const off = scene.heroOffset ?? ([0, 0, 0] as const);
+      const scale = scene.heroCraftScale ?? 1;
+      return [
+        knob(
+          "hero-x",
+          "Pos X",
+          off[0],
+          -4,
+          4,
+          0.05,
+          (v) =>
+            patch({
+              scene: { heroOffset: [v, off[1], off[2]] },
+            }),
+          "Décale l’étoile horizontalement (capture).",
+        ),
+        knob(
+          "hero-y",
+          "Pos Y",
+          off[1],
+          -4,
+          4,
+          0.05,
+          (v) =>
+            patch({
+              scene: { heroOffset: [off[0], v, off[2]] },
+            }),
+          "Décale l’étoile verticalement (capture).",
+        ),
+        knob(
+          "hero-z",
+          "Pos Z",
+          off[2],
+          -3,
+          3,
+          0.05,
+          (v) =>
+            patch({
+              scene: { heroOffset: [off[0], off[1], v] },
+            }),
+          "Avance / recule l’étoile.",
+        ),
+        knob(
+          "hero-scale",
+          "Scale",
+          scale,
+          0.25,
+          3,
+          0.05,
+          (v) => patch({ scene: { heroCraftScale: v } }),
+          "Taille de l’étoile Hero.",
+        ),
+      ];
+    }
+
     case "eclipse":
       return [];
 
@@ -959,6 +1015,7 @@ export function buildSkyCraftColors(
     case "scene":
     case "milkyGroup":
     case "eclipse":
+    case "hero":
       return [];
     case "fond":
       return [

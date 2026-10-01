@@ -1,13 +1,16 @@
 # Soft Cap — Expansion Narrative
 
-**Type :** canon · **Vérité pour :** granted / intended, dual musique, amputation.  
-**Dernière MAJ :** 17 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Type :** canon · **Vérité pour :** granted / intended, dual musique, amputation, taxes pacing Breath.  
+**Dernière MAJ :** 30 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 30 sept 2026 — Outro dernier chapitre : hold 3 s + deep-to-black 2,2 s taxés Breath · outro fin **9 s** (noir pur 0,8 + carte + noir) — `storyboardPacing`.
+- 17 sept 2026 — Bandeau aperçu : dire les **faits** (photos / licence / Héritage) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) (plan plus tard). Logique granted/intended inchangée.
+- 17 sept 2026 — Copy écran : plus d’« Écrin » ; Soft Cap parle du forfait **Héritage**. Logique granted/intended inchangée.
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — spec Soft Cap Freemium V1.
 
-Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Émotion : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · Musique : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md).
+Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Émotion : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · Musique : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) · Player : [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 
 ---
 
@@ -22,6 +25,21 @@ Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Émotion : [`SANCTUAR
 | Checkout | Line items = delta forfait (`intended` vs `granted`) **+** add-ons panier ; strip `musicLicense` si `intended >= signature`. |
 
 Ne **jamais** écraser `grantedPackage` lors d’un Soft Cap.
+
+---
+
+## Taxes pacing (dernier chapitre)
+
+Le Soft Cap réserve du temps hors médias via `storyboardPacing.chapterOverheadSeconds` (miroirs `cinematicTheme.breath`) :
+
+| Réserve | Valeur | Rôle |
+|---------|--------|------|
+| Outro fin (`LAST_CHAPTER_ENDING_OUTRO_SEC`) | **9 s** | Noir pur 0,8 + Memory Card ~6,5 + noir fin ~1,55 |
+| Hold finale | **3 s** | Dernière image du film |
+| Deep-to-black | **2,2 s** | Fondu cosine image → noir avant le noir pur |
+| Hold fin de chapitre (non-final) | **2,5 s** | Taxe Breath hors dernier chapitre |
+
+Canon chiffres : `cinematicTheme.breath` · tests `tests/business/storyboard-pacing-taxes.test.ts`.
 
 ---
 
@@ -45,7 +63,7 @@ Règles :
 
 - Soft Cap **à 50** : auto-modale filet + bandeau étape Médias avec CTA — copy courte, pas de prix froid.
 - Soft Cap **post-Composition Magique** = moment d’aversion à la perte principal (Phase 4 UX) — exige que `intended` soit encore Souvenir.
-- Soft Cap **Preview** : ancre valeur Héritage avant checkout si engagement Soft Cap ou dépassement quota cadeau.
+- Soft Cap **Preview** : ancre valeur Héritage avant checkout si engagement Soft Cap ou dépassement quota cadeau. **Copy actuelle** = phrase générique. **Cible (plus tard)** : dire *pourquoi* (n souvenirs, licence, Héritage déjà ouvert) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md).
 - Si `intended` est déjà `signature`+, ne pas re-spammer la modale.
 
 ---
@@ -60,7 +78,7 @@ Sélection d’une piste du **catalogue Stingray officiel** depuis Souvenir :
 | Option | Effet state | Panier virtuel | Ce qui se débloque |
 |--------|-------------|----------------|--------------------|
 | **Licence Musique Premium Stingray — 39 $** | `intended` reste `essential` | `extensions.musicLicense = true` | Catalogue officiel uniquement (reste 50 médias / 1080p) |
-| **Écrin Héritage — 179 $** | `intendedPackage = signature` | Forfait Héritage ; **pas** de line item Licence | Musique officielle **incluse** + **1080p** + 125 médias (Master **4K** = Éternité+) |
+| **Héritage — 179 $** | `intendedPackage = signature` | Forfait Héritage ; **pas** de line item Licence | Musique officielle **incluse** + **1080p** + 125 médias (Master **4K** = Éternité+) |
 
 Helper d’accès catalogue (Phase 1) :
 

@@ -65,6 +65,11 @@ export const WIZARD_PRICING = {
     },
   },
   extensions: {
+    /** Master cinéma Creatomate — Souvenir stream ; inclus Héritage+. */
+    CINEMA_MASTER: {
+      id: "cinemaMaster",
+      priceCents: 49_00,
+    },
     RETOUCHE_IA: {
       id: "aiRetouch",
       priceCents: 49_00,
@@ -278,9 +283,10 @@ export function packageTierRank(packageId: WizardBasePackage): number {
 
 /**
  * Extensions incluses dans Éternité / Légendaire (pas facturées à part).
- * `musicLicense` est inclus dès Héritage (`signature`).
+ * `musicLicense` / `cinemaMaster` sont inclus dès Héritage (`signature`).
  */
 export const ETERNITE_BUNDLED_EXTENSION_IDS: WizardExtensionId[] = [
+  "cinemaMaster",
   "musicLicense",
   "extendedLicense",
   "aiRetouch",
@@ -332,7 +338,11 @@ export function isExtensionBundledInBasePackage(
 ): boolean {
   const rank = packageTierRank(basePackage);
 
-  if (extensionId === "musicLicense" || extensionId === "extendedLicense") {
+  if (
+    extensionId === "cinemaMaster" ||
+    extensionId === "musicLicense" ||
+    extensionId === "extendedLicense"
+  ) {
     return rank >= 1; // Héritage+
   }
 
@@ -348,6 +358,7 @@ export function isExtensionBundledInBasePackage(
 }
 
 export type WizardExtensionsLike = {
+  cinemaMaster?: boolean;
   musicLicense?: boolean;
   /** @deprecated → musicLicense */
   extendedLicense?: boolean;

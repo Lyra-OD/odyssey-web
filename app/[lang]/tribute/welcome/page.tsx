@@ -125,6 +125,7 @@ export default async function TributeWelcomePage({
           initialDraft={project}
           locale={lang}
           isPartner={false}
+          exitHubCopy={dictionary.quietLuxuryExitHub}
         />
       </div>
     </main>

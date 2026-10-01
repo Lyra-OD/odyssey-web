@@ -16,7 +16,12 @@ import {
   type ChapterCanvasGridCopy,
 } from "@/src/components/tribute/storyboard/ChapterCanvasGrid";
 import { ChapterNarrativeHeader } from "@/src/components/tribute/storyboard/ChapterNarrativeHeader";
-import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
+import type { ChapterNarrativeHeaderCreditCopy } from "@/src/components/tribute/storyboard/ChapterNarrativeHeader";
+import {
+  chapterGlowShadow,
+  chapterShellClass,
+  getChapterTheme,
+} from "@/src/lib/wizard/chapterTheme";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import { MAGIC_SCROLL_MARGIN_TOP_PX } from "@/src/lib/wizard/magicTimelinePlayer";
 import {
@@ -49,6 +54,7 @@ type Props = {
   cardCopy: MontageMediaCardCopy;
   titleEditAria: string;
   chapterReorderAria: string;
+  creditCopy?: ChapterNarrativeHeaderCreditCopy;
   toggleSelectAria: string;
   activeDragIds: readonly string[];
   selectedMediaIds: readonly string[];
@@ -63,6 +69,8 @@ type Props = {
   onToggleMediaSelect: (assetId: string) => void;
   onShiftMediaSelect: (assetId: string) => void;
   onTitleChange: (nextTitle: string) => void;
+  onCreditLabelChange?: (nextLabel: string) => void;
+  onShowCreditInSessionChange?: (show: boolean) => void;
   onAutoFill: () => void;
   onClear: () => void;
   onManage: () => void;
@@ -83,6 +91,7 @@ export function StoryboardChapterBlock({
   cardCopy,
   titleEditAria,
   chapterReorderAria,
+  creditCopy,
   toggleSelectAria,
   activeDragIds,
   selectedMediaIds,
@@ -97,12 +106,14 @@ export function StoryboardChapterBlock({
   onToggleMediaSelect,
   onShiftMediaSelect,
   onTitleChange,
+  onCreditLabelChange,
+  onShowCreditInSessionChange,
   onAutoFill,
   onClear,
   onManage,
   resolveChapterDragMediaIds,
 }: Props) {
-  const theme = getChapterTheme(chapterIndex);
+  const theme = getChapterTheme(chapter.paletteIndex ?? chapterIndex);
 
   const {
     attributes: chapterSortAttributes,
@@ -122,12 +133,19 @@ export function StoryboardChapterBlock({
 
   const { setNodeRef: setDropRef } = useDroppable({
     id: storyboardChapterDroppableId(chapter.id),
+    disabled: !sortableEnabled,
   });
 
+  const glowIntensity = isMagicHighlighted
+    ? "magic"
+    : isDropHighlighted
+      ? "drop"
+      : "idle";
   const chapterStyle = {
     transform: CSS.Transform.toString(chapterTransform),
     transition: chapterTransition,
     scrollMarginTop: MAGIC_SCROLL_MARGIN_TOP_PX,
+    boxShadow: chapterGlowShadow(theme.glowRgb, glowIntensity),
   };
 
   const setRefs = (node: HTMLElement | null) => {
@@ -149,24 +167,24 @@ export function StoryboardChapterBlock({
       ref={setRefs}
       id={storyboardChapterDomId(chapter.id)}
       style={chapterStyle}
-      className={`rounded-2xl border p-6 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:p-8 ${
-        isMagicHighlighted
-          ? `${theme.active} ring-2 ${theme.ring} shadow-[0_0_56px_rgba(255,255,255,0.08)]`
-          : isDropHighlighted
-          ? `${theme.active} ring-2 ${theme.ring} shadow-[0_0_48px_rgba(255,255,255,0.06)]`
-          : "border-white/[0.06] bg-white/[0.02]"
-      } ${isChapterDragging ? "opacity-50" : ""}`}
+      className={`rounded-2xl border p-6 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:p-8 ${chapterShellClass(
+        theme,
+        isMagicHighlighted || isDropHighlighted ? "drop" : "rest",
+      )} ${isChapterDragging ? "opacity-50" : ""}`}
     >
       <div className="space-y-6">
         <ChapterNarrativeHeader
-          chapterIndex={chapterIndex}
+          chapterIndex={chapter.paletteIndex ?? chapterIndex}
           title={title}
           songTitle={chapter.song?.title}
           songArtist={chapter.song?.artist}
+          creditLabel={chapter.song?.creditLabel}
+          showCreditInSession={chapter.song?.showCreditInSession}
           capacity={recommendedCapacity}
           assignedCount={chapter.mediaIds.length}
           titleEditAria={titleEditAria}
           chapterReorderAria={chapterReorderAria}
+          creditCopy={creditCopy}
           chapterDragHandle={
             chapterSortableEnabled
               ? {
@@ -177,6 +195,8 @@ export function StoryboardChapterBlock({
           }
           capacityCopy={capacityCopy}
           onTitleChange={onTitleChange}
+          onCreditLabelChange={onCreditLabelChange}
+          onShowCreditInSessionChange={onShowCreditInSessionChange}
         />
 
         <ChapterActionCluster
@@ -204,7 +224,7 @@ export function StoryboardChapterBlock({
         <ChapterCanvasGrid
           chapterId={chapter.id}
           items={inCapacityItems}
-          chapterIndex={chapterIndex}
+          chapterIndex={chapter.paletteIndex ?? chapterIndex}
           recommendedCapacity={recommendedCapacity}
           excludedIds={excludedIds}
           focalPoints={focalPoints}

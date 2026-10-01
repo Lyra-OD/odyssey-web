@@ -1,4 +1,9 @@
-/** Wizard autosave payload — aligned with `/api/projects/[id]/autosave` Zod schemas. */
+/**
+ * Wizard autosave payload — must stay aligned with
+ * `WizardStatePartialSchema` in `/api/projects/[id]/autosave` (`.strict()`).
+ * Toute clé envoyée par `TributeWizard.buildWizardState` et absente du
+ * schéma Zod = 400 silent fail (state + `wizard_step` non écrits).
+ */
 
 import {
   coerceExtensionsState,
@@ -58,13 +63,23 @@ export type WizardMontageState = {
 };
 
 export type WizardStoryboardSongBase = {
-  /** Libellé affichable dans l'UI. */
+  /** Libellé catalogue (Stingray / fichier) — vérité droits, jamais écrasé. */
   title: string;
   /**
    * Durée réelle en secondes.
    * `null` = inconnue au moment de la migration / parsing.
    */
   durationSec?: number | null;
+  /**
+   * Libellé d'affichage personnalisé (Livre Ouvert + séance).
+   * Si absent, l'UI utilise `title`.
+   */
+  creditLabel?: string;
+  /**
+   * Afficher le crédit musical pendant la projection.
+   * Absente / true = visible ; false = masqué.
+   */
+  showCreditInSession?: boolean;
 };
 
 export type WizardStoryboardStingraySong = WizardStoryboardSongBase & {
@@ -107,6 +122,12 @@ export type WizardStoryboardChapter = {
   id: string;
   /** Titre personnalisé — si absent, l'UI utilise le libellé par défaut du chapitre. */
   label?: string;
+  /**
+   * Index DA (couleur / accent) figé à la création.
+   * Suit le chapitre lors d'un réordonnancement — sinon titre/couleur « reviennent »
+   * à la place (index) et le drag paraît ne pas tenir.
+   */
+  paletteIndex?: number;
   /**
    * Liste ordonnée des media_assets assignés à ce chapitre.
    * L'ordre narratif du chapitre = ordre du tableau.
@@ -230,6 +251,11 @@ export type WizardStateV1 = {
    * Legacy runtime bridge — lecture uniquement pendant la transition.
    */
   musicalAmbiance?: WizardLegacyMusicalAmbianceState;
+  /**
+   * Plus loin atteint dans le parcours (1–7). Sert au fil constellation :
+   * étoiles visitables / allumées. Ne diminue jamais (retour en arrière OK).
+   */
+  furthestStep?: number;
 };
 
 export type WizardStatePersistedV2 = Omit<
@@ -492,6 +518,11 @@ function coerceStoryboardSong(
 
     if (!trackId || !title || !artist) return undefined;
 
+    const creditLabel = coerceSongCreditLabel(obj.creditLabel);
+    const showCreditInSession = coerceShowCreditInSession(
+      obj.showCreditInSession,
+    );
+
     return {
       source: "stingray",
       trackId,
@@ -499,6 +530,8 @@ function coerceStoryboardSong(
       artist,
       ...(coverUrl ? { coverUrl } : {}),
       ...(durationSec !== undefined ? { durationSec } : {}),
+      ...(creditLabel ? { creditLabel } : {}),
+      ...(showCreditInSession === false ? { showCreditInSession: false } : {}),
     };
   }
 
@@ -519,6 +552,10 @@ function coerceStoryboardSong(
         ? obj.artist.trim()
         : undefined;
     const durationSec = coerceDurationSec(obj.durationSec);
+    const creditLabel = coerceSongCreditLabel(obj.creditLabel);
+    const showCreditInSession = coerceShowCreditInSession(
+      obj.showCreditInSession,
+    );
 
     if (!storagePath || !title) return undefined;
 
@@ -530,9 +567,24 @@ function coerceStoryboardSong(
       ...(mimeType ? { mimeType } : {}),
       ...(artist ? { artist } : {}),
       ...(durationSec !== undefined ? { durationSec } : {}),
+      ...(creditLabel ? { creditLabel } : {}),
+      ...(showCreditInSession === false ? { showCreditInSession: false } : {}),
     };
   }
 
+  return undefined;
+}
+
+function coerceSongCreditLabel(raw: unknown): string | undefined {
+  if (typeof raw !== "string") return undefined;
+  const trimmed = raw.trim().slice(0, 80);
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+/** `undefined` = défaut visible ; seul `false` masque. */
+function coerceShowCreditInSession(raw: unknown): boolean | undefined {
+  if (raw === false) return false;
+  if (raw === true) return true;
   return undefined;
 }
 
@@ -574,12 +626,20 @@ function coerceStoryboardChapter(
     typeof obj.label === "string" && obj.label.trim().length > 0
       ? obj.label.trim().slice(0, 40)
       : undefined;
+  const paletteIndexRaw = obj.paletteIndex;
+  const paletteIndex =
+    typeof paletteIndexRaw === "number" &&
+    Number.isFinite(paletteIndexRaw) &&
+    paletteIndexRaw >= 0
+      ? Math.trunc(paletteIndexRaw)
+      : undefined;
   if (mediaIds.length === 0 && !song) return undefined;
 
   return {
     id: normalizeChapterId(obj.id, index),
     mediaIds,
     ...(label ? { label } : {}),
+    ...(paletteIndex !== undefined ? { paletteIndex } : {}),
     ...(song ? { song } : {}),
     ...(mood ? { mood } : {}),
   };
@@ -761,7 +821,7 @@ function selectedTrackFromStoryboardSong(
   };
 }
 
-function legacyMontageFromStoryboard(
+export function legacyMontageFromStoryboard(
   storyboard: WizardStoryboardState,
 ): WizardMontageState {
   const base = emptyMontageState();
@@ -796,7 +856,7 @@ function legacyMontageFromStoryboard(
   };
 }
 
-function legacyMusicalAmbianceFromStoryboard(
+export function legacyMusicalAmbianceFromStoryboard(
   storyboard: WizardStoryboardState,
 ): WizardLegacyMusicalAmbianceState | undefined {
   const tracks: WizardActTracks = {};
@@ -996,6 +1056,11 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
     ? legacyMusicalAmbianceFromStoryboard(storyboard) ?? legacyMusicalAmbiance
     : legacyMusicalAmbiance;
 
+  const furthestStep =
+    typeof obj.furthestStep === "number"
+      ? clampWizardStep(obj.furthestStep, 7)
+      : undefined;
+
   const state: WizardStateV1 = {
     version: WIZARD_STATE_VERSION,
     ...(isPartner ? { isPartner: true } : {}),
@@ -1017,6 +1082,7 @@ export function coerceWizardState(raw: unknown): WizardStateV1 {
     ...(runtimeMusicalAmbiance
       ? { musicalAmbiance: runtimeMusicalAmbiance }
       : {}),
+    ...(furthestStep !== undefined ? { furthestStep } : {}),
   };
 
   return state;
@@ -1048,6 +1114,9 @@ export function buildPersistedWizardState(
     ...(state.socialSources ? { socialSources: state.socialSources } : {}),
     ...(storyboard ? { storyboard } : {}),
     ...(state.extensions ? { extensions: state.extensions } : {}),
+    ...(typeof state.furthestStep === "number"
+      ? { furthestStep: clampWizardStep(state.furthestStep, 7) }
+      : {}),
   };
 }
 

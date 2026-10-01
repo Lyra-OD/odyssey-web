@@ -133,8 +133,37 @@ function nextChapterId(existingIds: ReadonlySet<string>): string {
   return id;
 }
 
-function emptyChapter(id: string): WizardStoryboardChapter {
-  return { id, mediaIds: [] };
+function emptyChapter(
+  id: string,
+  paletteIndex: number,
+): WizardStoryboardChapter {
+  return { id, mediaIds: [], paletteIndex };
+}
+
+/**
+ * Fige titre + accent DA sur chaque chapitre (suivent le bac au réordonnancement).
+ * Référentiellement stable si déjà renseigné.
+ */
+export function ensureChapterDisplayIdentity(
+  storyboard: WizardStoryboardState,
+  defaultLabelForIndex: (index: number) => string,
+): WizardStoryboardState {
+  let changed = false;
+  const chapters = storyboard.chapters.map((chapter, index) => {
+    const paletteIndex =
+      typeof chapter.paletteIndex === "number" &&
+      Number.isFinite(chapter.paletteIndex) &&
+      chapter.paletteIndex >= 0
+        ? Math.trunc(chapter.paletteIndex)
+        : index;
+    const label = chapter.label?.trim() || defaultLabelForIndex(paletteIndex);
+    if (chapter.paletteIndex === paletteIndex && chapter.label === label) {
+      return chapter;
+    }
+    changed = true;
+    return { ...chapter, paletteIndex, label };
+  });
+  return changed ? { ...storyboard, chapters } : storyboard;
 }
 
 /**
@@ -157,7 +186,7 @@ export function ensureMinimumChapters(
   while (nextChapters.length < target) {
     const id = nextChapterId(usedIds);
     usedIds.add(id);
-    nextChapters.push(emptyChapter(id));
+    nextChapters.push(emptyChapter(id, nextChapters.length));
   }
 
   return { ...storyboard, chapters: nextChapters };
@@ -241,7 +270,13 @@ export function addChapter(
   if (storyboard.chapters.length >= maxCount) return storyboard;
   const usedIds = new Set(storyboard.chapters.map((chapter) => chapter.id));
   const id = nextChapterId(usedIds);
-  return { ...storyboard, chapters: [...storyboard.chapters, emptyChapter(id)] };
+  return {
+    ...storyboard,
+    chapters: [
+      ...storyboard.chapters,
+      emptyChapter(id, storyboard.chapters.length),
+    ],
+  };
 }
 
 /**
@@ -426,7 +461,52 @@ export function setChapterLabel(
   };
 }
 
-/** Réordonne les chapitres (bloc entier + contenu). */
+/** Libellé d'affichage musical — n'altère jamais `song.title` / `trackId`. */
+export function setChapterSongCreditLabel(
+  storyboard: WizardStoryboardState,
+  chapterId: string,
+  creditLabel: string,
+): WizardStoryboardState {
+  const trimmed = creditLabel.trim().slice(0, 80);
+  return {
+    ...storyboard,
+    chapters: storyboard.chapters.map((chapter) => {
+      if (chapter.id !== chapterId || !chapter.song) return chapter;
+      if (!trimmed) {
+        const { creditLabel: _, ...songRest } = chapter.song;
+        return { ...chapter, song: songRest };
+      }
+      return {
+        ...chapter,
+        song: { ...chapter.song, creditLabel: trimmed },
+      };
+    }),
+  };
+}
+
+/** Afficher / masquer le crédit musical pendant la séance. */
+export function setChapterSongShowCreditInSession(
+  storyboard: WizardStoryboardState,
+  chapterId: string,
+  showCreditInSession: boolean,
+): WizardStoryboardState {
+  return {
+    ...storyboard,
+    chapters: storyboard.chapters.map((chapter) => {
+      if (chapter.id !== chapterId || !chapter.song) return chapter;
+      if (showCreditInSession) {
+        const { showCreditInSession: _, ...songRest } = chapter.song;
+        return { ...chapter, song: songRest };
+      }
+      return {
+        ...chapter,
+        song: { ...chapter.song, showCreditInSession: false },
+      };
+    }),
+  };
+}
+
+/** Réordonne les chapitres (bloc entier + contenu + identité DA). */
 export function reorderStoryboardChapters(
   storyboard: WizardStoryboardState,
   activeChapterId: string,

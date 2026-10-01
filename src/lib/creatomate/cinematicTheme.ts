@@ -68,31 +68,72 @@ export const cinematicTheme = {
   },
 
   media: {
-    photoDurationSec: 7,
+    /** Respiration photo — un peu plus longue = plus digne. */
+    photoDurationSec: 8.5,
     /** Fallback si videoTrims absent */
     videoFallbackDurationSec: 10,
-    transitionFadeSec: 0.55,
+    /** Crossfade plus lent = Quiet Luxury. */
+    transitionFadeSec: 0.9,
     fit: "cover" as const,
+    /**
+     * Smart Ken Burns (photos) — zoom lent depuis la focale.
+     * Alternance léger / plus marqué selon l’index clip.
+     */
+    kenBurns: {
+      startScaleA: "108%",
+      startScaleB: "112%",
+      endScale: "100%",
+    },
   },
 
   music: {
-    bedVolume: "55%",
+    bedVolume: "48%",
     /** Duck bed sous vidéo sync (layer sync). */
-    duckFromSync: "22%",
+    duckFromSync: "18%",
     /** Duck bed sous VO / mémo (layer foreground) — Phase 2. */
-    duckFromVoice: "18%",
+    duckFromVoice: "15%",
     /** @deprecated alias → duckFromSync */
-    duckVolume: "22%",
-    duckAttackSec: 0.55,
-    duckReleaseSec: 0.7,
-    chapterFadeInSec: 1.8,
-    chapterFadeOutSec: 1.2,
+    duckVolume: "18%",
+    duckAttackSec: 0.65,
+    duckReleaseSec: 0.85,
+    chapterFadeInSec: 2.2,
+    chapterFadeOutSec: 1.6,
+    /** Fade out du lit en toute fin de film (gate master 49 $ / C0). */
+    filmEndFadeOutSec: 1.8,
     /** Tracks Creatomate par layer (debug / mute). */
     creatomateTracks: {
       bed: 5,
       ghost: 6,
       foreground: 7,
     },
+  },
+
+  /**
+   * Breath Engine léger (V1) — holds narratifs déterministes.
+   * Ouverture `breath_portrait` compte comme hold #1 ; puis fin chapitre / finale.
+   * Pas de Ghost Track (Phase 2).
+   */
+  breath: {
+    maxMajorBreathsPerFilm: 3,
+    /** Surplus sur dernière image d’un chapitre non-final. */
+    chapterEndHoldSec: 2.5,
+    /** Hold pure sur dernière image du film (avant deep-to-black). */
+    finaleHoldSec: 3.0,
+    /** Fondu lent dernière image → noir (cinéma du souvenir). */
+    finaleDeepToBlackSec: 2.2,
+  },
+
+  /**
+   * Light leaks dosés — blend `screen`, holds / breath_portrait seulement.
+   * Pas permanent (Quiet Luxury, pas Instagram).
+   */
+  lightLeak: {
+    /** Pic lisible sur portrait chaud (soft-light 0.14 était invisible). */
+    peakOpacity: 0.32,
+    fadeInSec: 0.9,
+    fadeOutSec: 1.2,
+    warm: "rgba(255, 196, 140, 0.95)",
+    blend: "screen" as const,
   },
 
   frameRate: "25 fps",

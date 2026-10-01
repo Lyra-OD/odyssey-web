@@ -1,14 +1,15 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 10 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 30 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 10 sept 2026 — **Dates Essentiel** : naissance ≤ hier ; départ ≥ naissance et ≤ aujourd’hui + 2 ans (MAID) ; copy FR/EN dédiée.
-- 10 sept 2026 — **Intro hub Étape 1** : pitch lié au draft live incomplet (clear + close → « Le film de leur vie » revient).
-- 9 sept 2026 — **Chrome mobile Wizard** : sticky header split L/R comme desktop (Package + Creation help à droite) ; chip Need Help pastille au-dessus du footer Next.
-- 9 sept 2026 — **Fix Étape 1 Essentiel** : retirer `wizard-step-enter` du monolithe (containing block) ; Soft Glass monolithe (`0.45/0.55/0.50`) pour laisser voir le ciel.
-- 9 sept 2026 — **Lot 8 : Détails d'orfèvre** — sélection teal, `theme-color` `#020202`, glass footer wizard, Navbar Quiet Luxury (motion calmé, panneau mobile blur).
+- 30 sept 2026 — **Poster sas 2.5D** : 1 plan net + spring + breath + specular — `SessionCinemaGate` desktop (pas dual-plane).
+- 30 sept 2026 — **C5** : focale auto upload (FaceDetector / BlazeFace) · lab `/fr/test-focal` — depth reportée.
+- 30 sept 2026 — **V1.5 player fermée** : KB · Breath · light leaks · deep-to-black · One Bed modèle — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
+- 30 sept 2026 — **Fin cinéma** : hold 3 s → deep-to-black 2,2 s → noir pur 0,8 s → Memory Card (plus 1,5 s de cut).
+- 29 sept 2026 — **Player** : sans portrait officiel, skip `breath_portrait` (plus de fallback 1ʳᵉ photo du film).
+
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 
@@ -20,21 +21,21 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 | Dimension | Status | Notes |
 |-----------|--------|-------|
-| **Family Studio (wizard)** | 🟢 | **7** étapes (`TOTAL_STEPS = 7`, Extensions au checkout). Autosave, Stingray, Livre Ouvert, Soft Cap, Inviter, Co-Créateur |
+| **Family Studio (wizard)** | 🟢 | **7** étapes (`TOTAL_STEPS = 7` — plus d’étape 8 boutique). Extensions au checkout. Autosave, Stingray, Livre Ouvert, Soft Cap, Inviter, Co-Créateur |
 | **Partner Salon** | 🟢 | Invitation Souvenir-only · mes perfs conseiller · solde = **commissions** admin |
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Soft Cap + entitlements + gate export + MP3/ToS — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Héritage **1080p** · 4K dès Éternité · Phase 6 QA ⏳ |
 | **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual / **`charge.refunded`**. QA replay `checkout.session.completed` ✅ (P17 `submitted`). |
 | **RevShare** | 🟢 UI | Spec + SQL P6/P8 + webhook ✅ · UI Salon + `GET /api/partner/commissions` 🟢 · payout ops ⏳ |
-| **Export Creatomate** | 🟡 P0 / master ⏳ | **P0 livré** (gate, P9/P9.1, `src/lib/creatomate/`, drain, webhook fail-closed). **Pas** « documented only ». Master Stingray / rendu cinéma ⏳ |
+| **Export Creatomate** | 🟡 | **C0–C4** ✅ · **C4 V1.5** ✅ · **C5 focale auto** ✅ · **C11–C13** cash cercle ✅ · **C7/depth** reportés — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
-| **UX mobile** | 🟡 | [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md) M0–M6 |
-| **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L** copy ✅ · S5-J/K ⏳ |
+| **UX mobile** | 🟡 | Wizard : [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md). **Sanctuaire invité** : HTML still immédiat, WebGL en amélioration |
+| **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** (titre d’étape OK ; titres chapitre défaut encore Étincelle / Épopée / Héritage) · S5-J/K ⏳ |
 | **Scanner** | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Marque Éclipse** | 🟢 | Play A–B KEEP · mark + exports · brancher UI ⚪ · wormhole = lab |
 | **Tests & CI** | 🟢 | Vitest business 🟢 · CI GitHub `npm test` + **`next build`** sur `main` + PR |
 | **Security** | 🟡 | RLS, gate Salon, entitlements never-trust, webhook Creatomate fail-closed |
 
-**Suite :** ops P16 (quand Supabase dégelé) · master Stingray · pilote 1 tenant flag ON.
+**Suite (après démo 18 sept) :** S5-L2 titres chapitre · S5-clean orphelins · S5-J/K · pas de mix BA cette semaine.
 
 ---
 
@@ -43,7 +44,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Surface | Status | Detail |
 |---------|--------|--------|
 | Landing / connexions | 🟢 | Halo-Éclipse |
-| Wizard 7 étapes | 🟢 | Étape 5 = Livre Ouvert · Co-Créateur 3–5 |
+| Wizard **7** étapes | 🟢 | 1 Essentiels · 2 Inviter · 3 Coffre · 4 Son · 5 Livre Ouvert · 6 Aperçu · 7 Checkout. **Plus d’étape 8.** Co-Créateur 3–5 |
 | Marque Éclipse + ODYSSEY | 🟢 | [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · brancher produit ⚪ |
 | Ciel Sanctuaire / intro | 🟡 | Craft ✅ · **J2** wizard étape 1 (ciel + birth + reveal) 🟡 · hub J3 ⏳ · prologue J1 labs · `scene.intro` OFF |
 | Médias / Storage | 🟢 | Thumbs WebP + cache session — récit [log §4.1](_archive/PROJECT_STATUS_LOG.md#41-supabase-storage-egress-juin-2026) |
@@ -56,7 +57,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Odyssey HQ | 🟢 A–D | Formulaire `/partners` + alerte HQ · CRM / onboarding auto ⏳ — [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) |
 | Fonds / packs invité | 🟢 gated | Code 3a livré · visible si `viral_loop_enabled` sur le tenant |
 | Scanner Compagnon | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
-| **Export / render** | 🟡 | P0 🟢 · master / cinéma ⏳ — **pas** 🔴 |
+| **Export / render** | 🟡 | Smoke Creatomate ✅ · recette DA + musique ⏳ |
 | `app-backend/` | ⚪ | Hors périmètre Next |
 
 **Schéma vivant (post-P8) :** commissions `partner_commission_*` · Soft Cap quota · entitlements · invitations · fonds. **Pas** `partner_token_wallets`. Ordre SQL : [`sql/README.md`](sql/README.md).
@@ -69,7 +70,9 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 | Priorité | Quoi | Done when |
 |----------|------|-----------|
-| **P0** | Slice invité démo **10 sept** (ciel d’abord · étoile nommée stub · courriel · packs) | Script §0 du plan technique vert |
+| **P0** | Démo **18 sept 2026** — wizard 7 étapes, Livre Ouvert, aperçu-pont (pas le master) | Famille parcourt 1→7 sans silent-fail autosave ; teaser ≠ film Creatomate |
+| **Later** | Étape 6 **mix BA** (bande-annonce + voir un chapitre) — pas le teaser-film actuel | Plan dédié · [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) |
+| **Later** | Étape 6 bandeau Soft Cap **« pourquoi »** (faits, pas alerte générique) | Plan dédié · [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) |
 | **Ops** | Stripe CLI `stripe login` + `stripe listen` local · activer `charge.refunded` endpoint prod | Webhook local sans script replay |
 | **Ops** | Factu / quota egress Supabase | 🟢 egress payé · revert DEMO_MODE **28 août** — [`ops/DEMO_VP_EGRESS_REVERT.md`](ops/DEMO_VP_EGRESS_REVERT.md) (clôturé) |
 | A | Master Stingray + preuve rendu | Héritage 1080p / Éternité+ 4K gated |
@@ -81,7 +84,13 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 **Ne plus faire :** débit jetons, wholesale 40 $, coexistence `is_freemium=false`, saga checkout « v1 jetons ».
 
-**Dette acceptée :** Preview/Checkout lisent encore le pont `actTracks` jusqu’à S8/S9 · mark Éclipse pas partout · intro ciel OFF · étape 1 code exige **nom** vs D1 CEO (prénom + 2 dates) — [`SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b.
+**Dette acceptée — pont Preview / Checkout (hybride, temporaire) :**
+- Étape 6 = **sas cinéma plein écran** (`SessionCinemaGate` + `resolveSessionPosterUrl`) — projection officielle ou passer au checkout. Ce n’est **pas** un teaser inline, **ni** le master Creatomate.
+- L’autosave **envoie encore** `montage` + `musicalAmbiance` (miroir 3 actes) à côté du `storyboard` canon.
+- Le checkout Stripe **sérialise encore** `act_tracks` (compact) en plus de `storyboard` — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
+- Cible aperçu : mix BA, plan plus tard — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
+
+**Dette acceptée (reste) :** S5-L titres 3 actes par défaut · mark Éclipse pas partout · intro ciel OFF · étape 1 code exige **nom** vs D1 CEO (prénom + 2 dates) — [`SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b.
 
 **Différé :** Stripe Connect auto-payout · Scanner Phase B · Gants Blancs ops · Lyra produit · verticales pets UI.
 

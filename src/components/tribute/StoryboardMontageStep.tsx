@@ -18,6 +18,7 @@ import {
   MontageMultiDragOverlay,
   type MontageMediaCardCopy,
 } from "@/src/components/tribute/montage/MontageMediaCard";
+import { CanvasInsertLine } from "@/src/components/tribute/storyboard/CanvasInsertLine";
 import type { ChapterActionClusterCopy } from "@/src/components/tribute/storyboard/ChapterActionCluster";
 import {
   ChapterRefinementDrawer,
@@ -33,6 +34,7 @@ import {
   StoryboardFilmMap,
   type StoryboardFilmMapCopy,
   type StoryboardFilmMapSegment,
+  type StoryboardFilmMapWatchSession,
 } from "@/src/components/tribute/storyboard/StoryboardFilmMap";
 import { StoryboardOpenBookLayout } from "@/src/components/tribute/storyboard/StoryboardOpenBookLayout";
 import { StoryboardChapterStack } from "@/src/components/tribute/storyboard/StoryboardChapterStack";
@@ -44,7 +46,11 @@ import {
   MontageOnboardingGate,
   type MontageOnboardingGateCopy,
 } from "@/src/components/tribute/storyboard/MontageOnboardingGate";
-import { findChapterForMedia } from "@/src/lib/wizard/storyboardHelpers";
+import {
+  ensureChapterDisplayIdentity,
+  findChapterForMedia,
+} from "@/src/lib/wizard/storyboardHelpers";
+import { wizardStepLead, wizardStepTitle } from "@/src/lib/contribute/sanctuaryChrome";
 import { storyboardCollisionDetection } from "@/src/lib/wizard/storyboardDnd";
 import {
   assignManyMediaToChapter,
@@ -57,6 +63,7 @@ import {
   unassignMediaFromChapter,
 } from "@/src/lib/wizard/storyboardMedia";
 import {
+  chapterPacingRole,
   chapterRecommendedCapacity,
   resolveTargetSecondsPerMedia,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -86,6 +93,15 @@ export type StoryboardMontageStepCopy = {
   chapterReorderAria: string;
   toggleSelectAria: string;
   filmMap: StoryboardFilmMapCopy;
+  creditEditAria: string;
+  creditShowAria: string;
+  creditHideAria: string;
+  creditModify: string;
+  creditDisplayedTitleLabel: string;
+  creditDisplayedTitlePlaceholder: string;
+  creditSave: string;
+  creditCancel: string;
+  creditShowInSession: string;
   refinement: ChapterRefinementDrawerCopy;
   multiDragLabel: string;
   onboarding: MontageOnboardingGateCopy;
@@ -101,6 +117,8 @@ type Props = {
   onMagicSequenceComplete?: () => void;
   /** Lien discret « déléguer » de la porte d’onboarding → panneau Co-Créateur existant. */
   onOpenCollab?: () => void;
+  onWatchSession?: (mediaItems: MontageMediaItem[]) => void;
+  watchSessionCopy?: StoryboardFilmMapWatchSession;
   copy: StoryboardMontageStepCopy;
 };
 
@@ -109,10 +127,18 @@ function resolveChapterTitle(
   index: number,
   chapterTabsCopy: MontageChapterTabsCopy,
 ): string {
+  const paletteIndex = chapter.paletteIndex ?? index;
   return (
     chapter.label?.trim() ||
-    resolveMontageChapterTabLabel(index, chapterTabsCopy)
+    resolveMontageChapterTabLabel(paletteIndex, chapterTabsCopy)
   );
+}
+
+function resolveChapterThemeIndex(
+  chapter: WizardStoryboardState["chapters"][number],
+  index: number,
+): number {
+  return chapter.paletteIndex ?? index;
 }
 
 export function StoryboardMontageStep({
@@ -123,6 +149,8 @@ export function StoryboardMontageStep({
   onMagicPerformingChange,
   onMagicSequenceComplete,
   onOpenCollab,
+  onWatchSession,
+  watchSessionCopy,
   copy,
 }: Props) {
   const [mediaItems, setMediaItems] = useState<MontageMediaItem[]>([]);
@@ -138,7 +166,7 @@ export function StoryboardMontageStep({
     if (!projectId) return;
     let aborted = false;
     setIsLoadingMedia(true);
-    void fetchProjectMedia(projectId)
+    void fetchProjectMedia(projectId, { force: true })
       .then((items) => {
         if (aborted) return;
         const montageItems = mediaApiToMontageItems(items);
@@ -188,25 +216,35 @@ export function StoryboardMontageStep({
     [storyboard.chapters, mediaById, copy.chapterTabs],
   );
 
+  useEffect(() => {
+    const next = ensureChapterDisplayIdentity(storyboard, (index) =>
+      resolveMontageChapterTabLabel(index, copy.chapterTabs),
+    );
+    if (next !== storyboard) onStoryboardChange(next);
+  }, [copy.chapterTabs, onStoryboardChange, storyboard]);
+
   const filmMapSegments = useMemo((): StoryboardFilmMapSegment[] => {
+    const n = storyboard.chapters.length;
     return storyboard.chapters.map((chapter, index) => ({
       chapterId: chapter.id,
-      index,
+      index: resolveChapterThemeIndex(chapter, index),
       label: resolveChapterTitle(chapter, index, copy.chapterTabs),
       assignedCount: chapter.mediaIds.length,
       recommendedCapacity: chapterRecommendedCapacity(
         chapter.song?.durationSec,
         resolveTargetSecondsPerMedia(packageId, chapter.mood),
+        chapterPacingRole(index, n),
       ),
     }));
   }, [storyboard.chapters, copy.chapterTabs, packageId]);
 
   const chapterCapacities = useMemo(
     () =>
-      storyboard.chapters.map((chapter) =>
+      storyboard.chapters.map((chapter, index) =>
         chapterRecommendedCapacity(
           chapter.song?.durationSec,
           resolveTargetSecondsPerMedia(packageId, chapter.mood),
+          chapterPacingRole(index, storyboard.chapters.length),
         ),
       ),
     [packageId, storyboard.chapters],
@@ -222,6 +260,7 @@ export function StoryboardMontageStep({
     const capacity = chapterRecommendedCapacity(
       chapter.song?.durationSec,
       resolveTargetSecondsPerMedia(packageId, chapter.mood),
+      chapterPacingRole(index, storyboard.chapters.length),
     );
     const items = chapter.mediaIds
       .map((id) => mediaById.get(id))
@@ -234,6 +273,7 @@ export function StoryboardMontageStep({
     return {
       chapter,
       index,
+      themeIndex: resolveChapterThemeIndex(chapter, index),
       title: resolveChapterTitle(chapter, index, copy.chapterTabs),
       capacity,
       inCapacity,
@@ -290,8 +330,10 @@ export function StoryboardMontageStep({
     dropTargetChapterId,
     dropTargetBank,
     dragOverChapterIndex,
+    insertPreview,
     handleDragStart,
     handleDragOver,
+    handleDragMove,
     handleDragEnd,
     handleDragCancel,
   } = useMontageDnd({
@@ -310,7 +352,37 @@ export function StoryboardMontageStep({
     [activeDragIds, mediaById],
   );
 
+  const ignoreDirectorClickRef = useRef(false);
+
+  const releaseDirectorClick = useCallback(() => {
+    window.setTimeout(() => {
+      ignoreDirectorClickRef.current = false;
+    }, 80);
+  }, []);
+
+  const handleDragStartGuarded = useCallback(
+    (...args: Parameters<typeof handleDragStart>) => {
+      ignoreDirectorClickRef.current = true;
+      handleDragStart(...args);
+    },
+    [handleDragStart],
+  );
+
+  const handleDragEndGuarded = useCallback(
+    (...args: Parameters<typeof handleDragEnd>) => {
+      handleDragEnd(...args);
+      releaseDirectorClick();
+    },
+    [handleDragEnd, releaseDirectorClick],
+  );
+
+  const handleDragCancelGuarded = useCallback(() => {
+    handleDragCancel();
+    releaseDirectorClick();
+  }, [handleDragCancel, releaseDirectorClick]);
+
   const handleMediaClick = useCallback((assetId: string) => {
+    if (ignoreDirectorClickRef.current) return;
     setDirectorAssetId(assetId);
   }, []);
 
@@ -333,8 +405,14 @@ export function StoryboardMontageStep({
     onMagicSequenceComplete,
   });
 
-  const { handleTitleChange, handleAutoFill, handleClear, handleManage } =
-    useMontageChapterActions({
+  const {
+    handleTitleChange,
+    handleCreditLabelChange,
+    handleShowCreditInSessionChange,
+    handleAutoFill,
+    handleClear,
+    handleManage,
+  } = useMontageChapterActions({
       storyboard,
       onStoryboardChange,
       packageId,
@@ -418,10 +496,10 @@ export function StoryboardMontageStep({
   return (
     <div className="space-y-8 pb-10">
       <header className="space-y-3">
-        <h2 className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl">
+        <h2 className={wizardStepTitle}>
           {copy.title}
         </h2>
-        <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+        <p className={`max-w-2xl ${wizardStepLead}`}>
           {copy.description}
         </p>
       </header>
@@ -437,10 +515,11 @@ export function StoryboardMontageStep({
         sensors={sensors}
         collisionDetection={storyboardCollisionDetection}
         autoScroll={autoScroll}
-        onDragStart={handleDragStart}
+        onDragStart={handleDragStartGuarded}
         onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-        onDragCancel={handleDragCancel}
+        onDragMove={handleDragMove}
+        onDragEnd={handleDragEndGuarded}
+        onDragCancel={handleDragCancelGuarded}
       >
         {storyboard.chapters.length > 0 ? (
           <div
@@ -469,6 +548,14 @@ export function StoryboardMontageStep({
               <StoryboardFilmMap
                 segments={filmMapSegments}
                 copy={copy.filmMap}
+                watchSession={watchSessionCopy}
+                onWatchSession={
+                  onWatchSession
+                    ? () => {
+                        onWatchSession(mediaItems);
+                      }
+                    : undefined
+                }
               />
             }
           >
@@ -495,11 +582,21 @@ export function StoryboardMontageStep({
               cardCopy={copy.card}
               titleEditAria={copy.chapterTitleEditAria}
               chapterReorderAria={copy.chapterReorderAria}
+              creditCopy={{
+                modify: copy.creditModify,
+                displayedTitleLabel: copy.creditDisplayedTitleLabel,
+                displayedTitlePlaceholder: copy.creditDisplayedTitlePlaceholder,
+                save: copy.creditSave,
+                cancel: copy.creditCancel,
+                showInSession: copy.creditShowInSession,
+              }}
               toggleSelectAria={copy.toggleSelectAria}
               onMediaClick={handleMediaClick}
               onToggleMediaSelect={handleToggleMediaSelect}
               onShiftMediaSelect={handleShiftMediaSelect}
               onTitleChange={handleTitleChange}
+              onCreditLabelChange={handleCreditLabelChange}
+              onShowCreditInSessionChange={handleShowCreditInSessionChange}
               onAutoFill={handleAutoFill}
               onClear={handleClear}
               onManage={handleManage}
@@ -509,7 +606,15 @@ export function StoryboardMontageStep({
           </div>
         ) : null}
 
+        {insertPreview?.line ? (
+          <CanvasInsertLine
+            chapterIndex={dragOverChapterIndex ?? overlaySourceChapterIndex}
+            line={insertPreview.line}
+          />
+        ) : null}
+
         <DragOverlay
+          style={{ zIndex: 200 }}
           dropAnimation={{
             duration: 280,
             easing: "cubic-bezier(0.16, 1, 0.3, 1)",
@@ -546,7 +651,7 @@ export function StoryboardMontageStep({
           <ChapterRefinementDrawer
             isOpen
             chapterId={refinementChapter.chapter.id}
-            chapterIndex={refinementChapter.index}
+            chapterIndex={refinementChapter.themeIndex}
             chapterTitle={refinementChapter.title}
             songLine={refinementChapter.songLine || undefined}
             recommendedCapacity={refinementChapter.capacity}
@@ -582,10 +687,14 @@ export function StoryboardMontageStep({
         ) : null}
       </AnimatePresence>
 
-      <AnimatePresence>
+      <AnimatePresence
+        onExitComplete={() => {
+          document.body.style.overflow = "";
+        }}
+      >
         {directorItem ? (
           <MontageDirectorModal
-            key={directorItem.assetId}
+            key="montage-director"
             item={directorItem}
             chapters={directorChapters}
             currentChapterId={findChapterForMedia(

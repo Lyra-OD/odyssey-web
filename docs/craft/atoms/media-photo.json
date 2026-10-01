@@ -1,0 +1,65 @@
+{
+  "output_format": "mp4",
+  "width": 1280,
+  "height": 720,
+  "duration": 6.98,
+  "elements": [
+    {
+      "id": "ffe5ac81-68c5-485f-999d-82bd132cd5bc",
+      "name": "Composition-XWX",
+      "type": "composition",
+      "track": 1,
+      "time": 0.08,
+      "fill_color": "#000000",
+      "color_filter": "contrast",
+      "color_filter_value": 1.2,
+      "color_overlay": "rgba(244,173,0,0.06)",
+      "elements": [
+        {
+          "id": "3b3c827f-2ee2-4964-818c-ee6d249c3c51",
+          "name": "Image-FQ3",
+          "type": "image",
+          "track": 1,
+          "time": 0,
+          "source": "{{mediaUrl}}",
+          "smart_crop": true,
+          "warp_mode": "perspective",
+          "warp_matrix": [
+            [
+              { "x": "0%", "y": "0%" },
+              { "x": "100%", "y": "0%" }
+            ],
+            [
+              { "x": "0%", "y": "100%" },
+              { "x": "100%", "y": "100%" }
+            ]
+          ],
+          "dynamic": ["smart_crop", "blur_radius"],
+          "animations": [
+            {
+              "time": -0.08,
+              "duration": 6.91,
+              "transition": true,
+              "type": "scale",
+              "start_scale": "101%",
+              "end_scale": "107%"
+            },
+            {
+              "time": 0,
+              "duration": 1,
+              "easing": "quadratic-out",
+              "type": "fade"
+            },
+            {
+              "time": "end",
+              "duration": 1,
+              "easing": "quadratic-out",
+              "reversed": true,
+              "type": "fade"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

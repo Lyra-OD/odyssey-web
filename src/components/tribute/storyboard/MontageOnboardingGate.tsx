@@ -10,6 +10,9 @@ import {
   sanctuaryManualVioletIconRest,
   sanctuaryMontageGateCardInteractive,
   sanctuaryMontageGateIconInteractive,
+  wizardMiniCapsTitle,
+  wizardStepLead,
+  wizardStepTitle,
 } from "@/src/lib/contribute/sanctuaryChrome";
 import { EASE_OUT_LUXE } from "@/src/lib/motion/easing";
 
@@ -60,11 +63,11 @@ export function MontageOnboardingGate({
         <div className="space-y-3 md:space-y-4">
           <h2
             id="montage-onboarding-title"
-            className="font-[family-name:var(--font-label)] text-balance text-2xl font-semibold tracking-tight text-white md:text-4xl"
+            className={wizardStepTitle}
           >
             {copy.title}
           </h2>
-          <p className="mx-auto max-w-lg text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+          <p className={`mx-auto max-w-lg ${wizardStepLead}`}>
             {copy.description}
           </p>
         </div>
@@ -82,7 +85,7 @@ export function MontageOnboardingGate({
             >
               <Wand2 className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             </span>
-            <span className="block font-[family-name:var(--font-label)] text-base font-semibold text-white md:text-lg">
+            <span className={`block ${wizardMiniCapsTitle} text-base text-white md:text-lg`}>
               {copy.magic}
             </span>
             <span className="mt-1.5 block text-[13px] font-light leading-relaxed text-zinc-400 md:mt-2 md:text-sm">
@@ -100,7 +103,7 @@ export function MontageOnboardingGate({
             >
               <Sparkles className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             </span>
-            <span className="block font-[family-name:var(--font-label)] text-base font-semibold text-white md:text-lg">
+            <span className={`block ${wizardMiniCapsTitle} text-base text-white md:text-lg`}>
               {copy.manual}
             </span>
             <span className="mt-1.5 block text-[13px] font-light leading-relaxed text-zinc-400 md:mt-2 md:text-sm">

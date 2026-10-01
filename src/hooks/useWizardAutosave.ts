@@ -144,12 +144,26 @@ export function useWizardAutosave({
               last_saved_at?: string;
               error?: string;
               message?: string;
+              issues?: unknown;
+              formErrors?: unknown;
+              validationIssues?: unknown;
             }
           | null;
 
         if (!res.ok) {
           const reason =
             payload?.message ?? payload?.error ?? `HTTP ${res.status}`;
+          if (
+            process.env.NODE_ENV === "development" &&
+            res.status === 400 &&
+            payload?.error === "invalid_body"
+          ) {
+            const validationIssues =
+              payload.validationIssues ??
+              payload.formErrors ??
+              payload.issues;
+            console.error("Autosave Zod Rejection:", validationIssues);
+          }
           setStatus("error");
           setErrorMessage(reason);
           return;

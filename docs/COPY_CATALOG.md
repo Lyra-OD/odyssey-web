@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-10 · **Entrées :** 892
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-29 · **Entrées :** 1004
 
 ## `common`
 
@@ -343,6 +343,13 @@
 | `tributeWizard.phaseGatherLabel` | Déposer | Gather |
 | `tributeWizard.phaseComposeLabel` | Composer | Craft |
 | `tributeWizard.phaseReceiveLabel` | Recevoir | Receive |
+| `tributeWizard.trailEssentiel` | Essentiel | Essentials |
+| `tributeWizard.trailCoffre` | Coffre | Chest |
+| `tributeWizard.trailMusique` | Musique | Music |
+| `tributeWizard.trailComposer` | Composer | Craft |
+| `tributeWizard.trailSonFilm` | Son film | Their film |
+| `tributeWizard.trailGoToAria` | Aller à {label} | Go to {label} |
+| `tributeWizard.trailHereAria` | Vous êtes ici · {label} | You are here · {label} |
 | `tributeWizard.editorModeBanner` | Mode Co-Créateur | Co-Creator Mode |
 | `tributeWizard.editorModeHint` | Vous enrichissez le Coffre à souvenirs, la musique et le film. Le titulaire finalisera le parcours. | You’re enriching the Memory Chest, the music, and the film. The account holder will finish the journey. |
 | `tributeWizard.editorCraftComplete` | Votre contribution est enregistrée. Le titulaire poursuivra l’hommage. | Your contribution is saved. The account holder will continue the tribute. |
@@ -493,12 +500,25 @@
 | `tributeWizard.montageDirectorPrevious` | Précédent | Previous |
 | `tributeWizard.montageDirectorNext` | Suivant | Next |
 | `tributeWizard.montageDirectorCounter` | {current} / {total} | {current} / {total} |
-| `tributeWizard.montageActSparkLabel` | L’Étincelle | The Spark |
+| `tributeWizard.montageActSparkLabel` | Les Racines & L’Enfance | Roots & Beginnings |
 | `tributeWizard.montageActSparkSubtitle` | Premier chapitre | First chapter |
-| `tributeWizard.montageActEpicLabel` | L’Épopée | The Epic |
+| `tributeWizard.montageActEpicLabel` | Le Chemin & Les Passions | The Journey & Passions |
 | `tributeWizard.montageActEpicSubtitle` | Deuxième chapitre | Second chapter |
-| `tributeWizard.montageActLegacyLabel` | L’Héritage | The Legacy |
+| `tributeWizard.montageActLegacyLabel` | Les Liens & La Famille | Ties & Family |
 | `tributeWizard.montageActLegacySubtitle` | Troisième chapitre | Third chapter |
+| `tributeWizard.montageChapterHorizonsLabel` | Les Horizons | Horizons & Milestones |
+| `tributeWizard.montageChapterLegacyMemoryLabel` | L’Empreinte & Le Souvenir | Legacy & Memories |
+| `tributeWizard.watchSessionTrackCredit` | Piste : {title} — {artist} | Track: {title} — {artist} |
+| `tributeWizard.watchSessionTrackCreditTitleOnly` | Piste : {title} | Track: {title} |
+| `tributeWizard.montageCreditEditAria` | Renommer le crédit musical affiché | Rename the displayed music credit |
+| `tributeWizard.montageCreditShowAria` | Afficher le crédit musical pendant la séance | Show the music credit during the session |
+| `tributeWizard.montageCreditHideAria` | Masquer le crédit musical pendant la séance | Hide the music credit during the session |
+| `tributeWizard.montageCreditModify` | Renommer | Rename |
+| `tributeWizard.montageCreditDisplayedTitleLabel` | Titre affiché dans le film | Title shown in the film |
+| `tributeWizard.montageCreditDisplayedTitlePlaceholder` | Ex. : La chanson de Papa | e.g. Dad’s song |
+| `tributeWizard.montageCreditSave` | Enregistrer | Save |
+| `tributeWizard.montageCreditCancel` | Annuler | Cancel |
+| `tributeWizard.montageCreditShowInSession` | Mentionner à l’écran | Show on screen |
 | `tributeWizard.montageActEmptyHint` | Aucun souvenir dans ce chapitre | No memory in this chapter |
 | `tributeWizard.montageExclude` | Laisser hors du film | Leave outside the film |
 | `tributeWizard.montageInclude` | Remettre dans le film | Return to the film |
@@ -516,6 +536,10 @@
 | `tributeWizard.basePackageLegendaryDesc` | Numérisation Gants Blancs incluse · rendu ultra-prioritaire · 250 médias, 10 chansons. | White-glove digitization included · ultra-priority rendering · 250 media, 10 songs. |
 | `tributeWizard.basePackageLegendary` | Légendaire | Legendary |
 | `tributeWizard.headerPackageLabel` | Votre forfait | Your package |
+| `tributeWizard.watchSession` | Voir la séance | Watch the session |
+| `tributeWizard.watchSessionAria` | Ouvrir la séance en plein écran | Open the session in fullscreen |
+| `tributeWizard.watchSessionClose` | Fermer la séance | Close the session |
+| `tributeWizard.watchSessionEnableSound` | Cliquez pour activer le son | Click to enable sound |
 | `tributeWizard.headerNarrativeSummary` | Votre hommage durera environ {minutes} minutes de film et accueillera jusqu’à {mediaMax} souvenirs. | Your tribute will feature approximately {minutes} minutes of film and hold up to {mediaMax} memories. |
 | `tributeWizard.headerDowngradeWarning` | Repasser à {package} retirera {count} chanson(s) déjà choisie(s). Cette action est irréversible. | Switching to {package} will remove {count} already-chosen song(s). This action can't be undone. |
 | `tributeWizard.headerDowngradeConfirmCta` | Confirmer | Confirm |
@@ -683,6 +707,8 @@
 | `tributeWizard.stepExtensionsDescription` | Choisissez, si vous le souhaitez, ce qui prolongera votre hommage avec soin. | Choose, if you wish, what will carry your tribute a little further with care. |
 | `tributeWizard.extensionAiRetouchTitle` | Retouche IA Premium | Premium AI retouch |
 | `tributeWizard.extensionAiRetouchDescription` | Je rajeunis et embellis vos photos automatiquement. | I automatically refresh and beautify your photos. |
+| `tributeWizard.extensionCinemaMasterTitle` | Master cinéma | Cinema Master |
+| `tributeWizard.extensionCinemaMasterDescription` | Archive MP4 Quiet Luxury — fade digne, téléchargeable. Inclus dès Héritage. | Quiet Luxury MP4 archive — dignified fade, downloadable. Included from Heritage. |
 | `tributeWizard.extensionMusicLicenseTitle` | Licence Musique Premium Stingray | Stingray Premium Music License |
 | `tributeWizard.extensionMusicLicenseDescription` | Débloque le catalogue Stingray officiel pour le master. Soft Cap Souvenir (inclus dès Héritage). | Unlocks the official Stingray catalog for the master. Soft Cap on Keepsake (included from Heritage). |
 | `tributeWizard.extensionExtendedLicenseTitle` | Licence Musique Premium Stingray | Stingray Premium Music License |
@@ -705,6 +731,7 @@
 | `tributeWizard.extensionSelectedBadge` | Sélectionné | Selected |
 | `tributeWizard.extensionsRecapTitle` | Ce que vous avez ajouté | What you added |
 | `tributeWizard.extensionsRecapEmpty` | Aucune extension pour le moment. Choisissez celles qui comptent pour vous. | No extensions yet. Choose the ones that matter to you. |
+| `tributeWizard.recapLineCinemaMaster` | Master cinéma | Cinema Master |
 | `tributeWizard.recapLineAiRetouch` | Retouche IA Premium | Premium AI retouch |
 | `tributeWizard.recapLineMusicLicense` | Licence Musique Premium Stingray | Stingray Premium Music License |
 | `tributeWizard.recapLineExtendedLicense` | Licence Musique Premium Stingray | Stingray Premium Music License |
@@ -731,12 +758,23 @@
 | `tributeWizard.musicUploadNeedsAttestation` | Acceptez d’abord l’attestation de droits musique. | Please accept the music rights attestation first. |
 | `tributeWizard.extensionsFooterTotalFormula` | Total de votre hommage : {base} + {options} = {total} | Tribute total: {base} + {options} = {total} |
 | `tributeWizard.extensionsFooterContinueCta` | Voir le film | See the film |
-| `tributeWizard.stepPreviewTitle` | Voir le film | See the film |
-| `tributeWizard.stepPreviewDescription` | Votre hommage prend forme. Voici ce qui vous attend. | Your tribute is taking shape. Here is what awaits you. |
+| `tributeWizard.stepPreviewTitle` | La séance | The session |
+| `tributeWizard.stepPreviewDescription` | Ressentez le souffle de votre hommage. Ensuite, choisissez comment le garder. | Feel the breath of your tribute. Then choose how you want to keep it. |
+| `tributeWizard.previewLaunchSession` | Vivre la projection | Experience the screening |
+| `tributeWizard.previewLaunchSessionAria` | Lancer la séance officielle en plein écran | Launch the official session fullscreen |
+| `tributeWizard.previewGatePlay` | Lancer le film | Begin the film |
+| `tributeWizard.previewGatePlayAria` | Lancer le film d’hommage en plein écran | Begin the tribute film fullscreen |
+| `tributeWizard.previewGateSkip` | Continuer vers l’hommage | Continue to the tribute |
+| `tributeWizard.previewGateSkipAria` | Continuer vers l’hommage sans lancer le film | Continue to the tribute without starting the film |
+| `tributeWizard.previewGateClose` | Fermer et revenir au film | Close and return to the film |
+| `tributeWizard.previewGateLoading` | Nous préparons votre séance… | We’re preparing your session… |
+| `tributeWizard.previewGateEmpty` | Ajoutez des photos au film pour révéler l’affiche. | Add photos to the film to reveal the poster. |
 | `tributeWizard.previewLoadingMedia` | Nous préparons votre film… | We’re preparing your film… |
 | `tributeWizard.previewPayCta` | J’adore, préserver cet hommage | I love it. Preserve this tribute |
-| `tributeWizard.previewPayCtaSoftCap` | Préserver l’Écrin Héritage | Preserve the Heritage casket |
-| `tributeWizard.previewSoftCapNote` | Votre histoire dépasse déjà le Souvenir offert. L’Écrin Héritage accueille jusqu’à 125 souvenirs, musique officielle incluse. 179 $, réglé seulement à l’export. | Your story already exceeds the complimentary Keepsake. The Heritage casket holds up to 125 memories with official music included. $179, paid only at export. |
+| `tributeWizard.previewPayCtaSoftCap` | Préserver Héritage | Preserve Heritage |
+| `tributeWizard.preservePackageCta` | Préserver {package} | Preserve {package} |
+| `tributeWizard.preservePackagePayCta` | Préserver {package} · {total} | Preserve {package} · {total} |
+| `tributeWizard.previewSoftCapNote` | Votre histoire dépasse déjà le Souvenir offert. Héritage accueille jusqu’à 125 souvenirs, musique officielle incluse. 179 $, réglé seulement à l’export. | Your story already exceeds the complimentary Keepsake. Heritage holds up to 125 memories with official music included. $179, paid only at export. |
 | `tributeWizard.previewEditLink` | Revenir ajuster | Go back and refine |
 | `tributeWizard.previewValueNote` | Votre film complet durera environ {minutes} minutes, avec une qualité professionnelle | Your complete film will run about {minutes} minutes, with professional quality |
 | `tributeWizard.previewValueAiRetouch` | , une retouche IA | , AI retouching |
@@ -746,6 +784,18 @@
 | `tributeWizard.previewTeaserNowPlaying` | Bande son du chapitre | Chapter soundtrack |
 | `tributeWizard.previewTeaserPlay` | Lecture | Play |
 | `tributeWizard.previewTeaserPause` | Pause | Pause |
+| `tributeWizard.previewSalonBadge` | Séance offerte par {salon} | Session offered by {salon} |
+| `tributeWizard.previewSalonBadgeFallback` | Séance offerte | Session offered |
+| `tributeWizard.previewCompareEyebrow` | Deux façons de revivre | Two ways to revisit |
+| `tributeWizard.previewCompareSessionTitle` | Séance live | Live session |
+| `tributeWizard.previewCompareSessionBody` | Le moment partagé — à l’écran, en cercle, autant de fois que vous le souhaitez. Offert avec le Souvenir. | The shared moment — on screen, in circle, as often as you wish. Included with Keepsake. |
+| `tributeWizard.previewCompareSessionDesktopNote` | Sur grand écran, la séance révèle toute sa présence — un salon digne, chez vous. | On a large screen, the session reveals its full presence — a dignified salon, at home. |
+| `tributeWizard.previewCompareArchiveTitle` | Archive patrimoniale | Heritage archive |
+| `tributeWizard.previewCompareArchiveBody` | Le Master MP4 1080p à conserver sur votre ordinateur ou téléphone — fade digne, téléchargeable pour les générations. | The 1080p Master MP4 to keep on your computer or phone — dignified fade, downloadable for generations. |
+| `tributeWizard.previewCompareArchiveIncluded` | Déjà inclus | Already included |
+| `tributeWizard.previewCompareArchiveCta` | Conserver mon Archive Master 1080p · {price} | Keep my Cinema Master archive 1080p · {price} |
+| `tributeWizard.previewCompareArchiveFundHint` | Téléchargez le film haute fidélité pour vos archives personnelles. Votre contribution soutient également le Fonds commémoratif de la famille pour leurs souvenirs tangibles. | Download the high-fidelity film for your personal archives. Your contribution also supports the family’s commemorative Fund for tangible keepsakes. |
+| `tributeWizard.previewCompareContinueCta` | Continuer sans Archive pour l’instant | Continue without the Archive for now |
 | `tributeWizard.stepCheckoutTitle` | Préserver cet hommage | Preserve this tribute |
 | `tributeWizard.stepCheckoutDescription` | Ajoutez, si vous le souhaitez, un geste de pérennité, puis confirmez votre hommage en toute sérénité. | Add a lasting gesture if you wish, then confirm your tribute with peace of mind. |
 | `tributeWizard.checkoutAddonsTitle` | Gestes de pérennité | Gestures of permanence |
@@ -761,24 +811,24 @@
 | `tributeWizard.checkoutPayError` | Impossible d’ouvrir le paiement sécurisé pour le moment. | We could not open secure checkout right now. |
 | `tributeWizard.checkoutMissingProject` | Enregistrez d’abord votre hommage avant de poursuivre. | Save your tribute first before continuing. |
 | `tributeWizard.checkoutStayFreeCta` | Rester dans le Souvenir pour l’instant | Stay with Keepsake for now |
-| `tributeWizard.checkoutStayFreeHint` | Vous avez commencé un Écrin plus vaste. Rester sur le Souvenir offert, c’est choisir en toute sérénité de vous concentrer sur l’essentiel inclus, sans jugement, à votre rythme. | You’ve begun a wider Heritage casket. Staying on the complimentary Keepsake simply means resting, with calm, on what is already included, no judgment, at your own pace. |
+| `tributeWizard.checkoutStayFreeHint` | Vous avez commencé un hommage plus vaste. Rester sur le Souvenir offert, c’est choisir en toute sérénité de vous concentrer sur l’essentiel inclus, sans jugement, à votre rythme. | You’ve begun a wider tribute. Staying on the complimentary Keepsake simply means resting, with calm, on what is already included, no judgment, at your own pace. |
 | `tributeWizard.checkoutAmputationHint` | Si besoin, nous recentrerons simplement les souvenirs et la musique sur ce qui est inclus dans le Souvenir offert. | If needed, we’ll gently recenter memories and music on what the complimentary Keepsake includes. |
-| `tributeWizard.softCapMediaUnlockTitle` | Ces souvenirs demandent un écrin plus vaste | These memories ask for a wider casket |
-| `tributeWizard.softCapMediaUnlockBody` | Vous pouvez continuer sans carte. Quand vous serez prêts, l’Écrin Héritage accueillera jusqu’à 125 souvenirs en 1080p, musique officielle incluse. | You may continue with no card. When you’re ready, the Heritage casket will hold up to 125 memories in 1080p, with official music included. |
+| `tributeWizard.softCapMediaUnlockTitle` | Ces souvenirs demandent plus d’espace | These memories need more room |
+| `tributeWizard.softCapMediaUnlockBody` | Vous pouvez continuer sans carte. Quand vous serez prêts, Héritage accueillera jusqu’à 125 souvenirs en 1080p, musique officielle incluse. | You may continue with no card. When you’re ready, Heritage will hold up to 125 memories in 1080p, with official music included. |
 | `tributeWizard.softCapMediaMagicTitle` | Votre histoire tisse déjà {count} souvenirs | Your story already weaves {count} memories |
-| `tributeWizard.softCapMediaMagicBody` | Pour qu’aucun moment ne reste dans l’ombre, ouvrez l’Écrin Héritage : large toile, export 1080p, musique digne de la cérémonie. | So no moment is left in the dark, open the Heritage casket: a wider canvas, 1080p export, music worthy of the ceremony. |
+| `tributeWizard.softCapMediaMagicBody` | Pour qu’aucun moment ne reste dans l’ombre, ouvrez Héritage : large toile, export 1080p, musique digne de la cérémonie. | So no moment is left in the dark, open Heritage: a wider canvas, 1080p export, music worthy of the ceremony. |
 | `tributeWizard.softCapMusicTitle` | Cette mélodie porte déjà leur voix | This melody already carries their voice |
-| `tributeWizard.softCapMusicBody` | Gardez cette piste officielle. Licence seule, ou Écrin Héritage (musique incluse, toile élargie, 1080p). | Keep this official track. Music License alone, or the Heritage casket (music included, wider canvas, 1080p). |
-| `tributeWizard.softCapCtaHeritage` | Ouvrir l’Écrin Héritage | Open the Heritage casket |
+| `tributeWizard.softCapMusicBody` | Gardez cette piste officielle. Licence seule, ou Héritage (musique incluse, toile élargie, 1080p). | Keep this official track. Music License alone, or Heritage (music included, wider canvas, 1080p). |
+| `tributeWizard.softCapCtaHeritage` | Ouvrir Héritage | Open Heritage |
 | `tributeWizard.softCapCtaLicense` | Garder la musique · Licence 39 $ | Keep the music · License $39 |
-| `tributeWizard.softCapCtaContinue` | Garder toute l’histoire dans l’Écrin | Keep the whole story in the casket |
+| `tributeWizard.softCapCtaContinue` | Garder toute l’histoire dans Héritage | Keep the whole story in Heritage |
 | `tributeWizard.softCapCtaDismiss` | Continuer sur le Souvenir pour l’instant | Continue on Keepsake for now |
 | `tributeWizard.softCapPriceHeritage` | 179 $ · réglé seulement à l’export · 125 souvenirs · 1080p | $179 · pay only at export · 125 memories · 1080p |
 | `tributeWizard.softCapPriceLicense` | 39 $ · catalogue officiel, restez sur Souvenir | $39 · official catalog, stay on Keepsake |
 | `tributeWizard.softCapCollabHint` | Ou invitez un proche à déposer des souvenirs. | Or invite a loved one to add memories. |
 | `tributeWizard.softCapCollabCta` | Inviter un proche | Invite a loved one |
-| `tributeWizard.softCapMediaUnlockCta` | Préparer l’Écrin Héritage | Prepare the Heritage casket |
-| `tributeWizard.softCapMediaBannerTitle` | Votre toile s’ouvre vers l’Écrin Héritage | Your canvas opens toward Heritage |
+| `tributeWizard.softCapMediaUnlockCta` | Préparer Héritage | Prepare Heritage |
+| `tributeWizard.softCapMediaBannerTitle` | Votre toile s’ouvre vers Héritage | Your canvas opens toward Heritage |
 | `tributeWizard.softCapMediaBannerBody` | Elle peut accueillir jusqu’à 125 souvenirs. Aucune carte aujourd’hui : vous ne réglez qu’au moment de l’export. | It can hold up to 125 memories. No card today: you only pay at export. |
 | `tributeWizard.checkoutExcessMediaNotice` | Votre hommage contient {count} souvenir(s) au-delà du Souvenir offert. | This tribute has {count} memories beyond the complimentary Keepsake. |
 | `tributeWizard.checkoutGoToMediaLink` | Revenir au Coffre à souvenirs | Return to the Memory Chest |
@@ -804,7 +854,7 @@
 | `tributeWizard.tracksReorderHint` | Glissez pour modifier l’ordre d’écoute. | Drag to change the listening order. |
 | `tributeWizard.finishCta` | Terminer et créer l’hommage | Finish and create the tribute |
 | `tributeWizard.back` | Retour | Back |
-| `tributeWizard.next` | Étape suivante | Next step |
+| `tributeWizard.next` | Suivant | Next |
 | `tributeWizard.completedMessage` | Votre parcours est enregistré. Nous préparerons votre hommage avec tendresse. | Your choices are saved. We will prepare your tribute with care. |
 | `tributeWizard.headerYears` | {birth} – {death} | {birth} – {death} |
 | `tributeWizard.headerNameFallback` | Nom à compléter | Name to complete |
@@ -990,4 +1040,71 @@
 | `partnerships.title` | Une nouvelle norme d'hommage pour les maisons funéraires exigeantes. | A new standard of tribute for high-trust funeral homes. |
 | `partnerships.body` | Une activation simple pour vos équipes, une expérience digne pour les familles et un espace partenaire clair pour accompagner l'engagement de l'Entourage. | Simple activation for your teams, a dignified experience for families, and a clear partner space to support engagement from loved ones. |
 | `partnerships.cta` | Découvrir l'espace partenaires | Discover the partner space |
+
+## `quietLuxuryExitHub`
+
+| Clé | FR | EN |
+|-----|----|----|
+| `quietLuxuryExitHub.headline` | L'hommage à {name} demeure. | The tribute to {name} remains. |
+| `quietLuxuryExitHub.replay` | Revoir la séance | Watch the session again |
+| `quietLuxuryExitHub.share` | Partager avec les proches | Share with loved ones |
+| `quietLuxuryExitHub.archiveTitle` | Conserver l'Archive Master · 49 $ | Keep the Cinema Master · $49 |
+| `quietLuxuryExitHub.archiveBody` | Fichier 1080p téléchargeable · mix studio masterisé · transmission familiale | Downloadable 1080p file · mastered studio mix · family transmission |
+| `quietLuxuryExitHub.archiveCta` | Conserver l'Archive Master | Keep the Cinema Master |
+| `quietLuxuryExitHub.archiveUnlocking` | Ouverture du paiement… | Opening checkout… |
+| `quietLuxuryExitHub.archiveFundHint` | Votre Archive Master est prête. Un nouveau geste 49 $ crédite le Fonds commémoratif de la famille — et vous gardez votre copie. | Your Cinema Master is ready. Another $49 gift credits the family’s commemorative Fund — and you keep your own copy. |
+| `quietLuxuryExitHub.archiveDownloadCta` | Télécharger l'archive | Download the archive |
+| `quietLuxuryExitHub.archiveUnlockError` | Le paiement n'a pas pu s'ouvrir. Réessayez dans un instant. | Checkout could not open. Please try again in a moment. |
+| `quietLuxuryExitHub.archiveIncludedTitle` | Télécharger l'Archive Master | Download the Cinema Master |
+| `quietLuxuryExitHub.archiveIncludedBody` | Incluse dans votre Écrin · fichier 1080p pour vos archives familiales | Included in your collection · 1080p file for your family archives |
+| `quietLuxuryExitHub.archiveIncludedCta` | Télécharger l'archive | Download the archive |
+| `quietLuxuryExitHub.archiveIncludedUnlocking` | Préparation du téléchargement… | Preparing your download… |
+| `quietLuxuryExitHub.archiveFinalizeTitle` | Finaliser votre Écrin | Complete your collection |
+| `quietLuxuryExitHub.archiveFinalizeBody` | L'Archive Master est déjà incluse dans Héritage — validez votre hommage pour la télécharger. | The Cinema Master is already included with Heritage — confirm your tribute to download it. |
+| `quietLuxuryExitHub.archiveFinalizeCta` | Finaliser l'Écrin | Complete checkout |
+| `quietLuxuryExitHub.archiveFinalizeUnlocking` | Ouverture du paiement… | Opening checkout… |
+| `quietLuxuryExitHub.masterSuccessNotice` | L'Archive Master est débloquée. Le rendu sera prêt sous peu. | Cinema Master unlocked. Your render will be ready shortly. |
+| `quietLuxuryExitHub.masterCancelNotice` | Paiement annulé — l'Archive Master reste disponible quand vous le souhaitez. | Payment cancelled — Cinema Master remains available whenever you wish. |
+| `quietLuxuryExitHub.noticeDismiss` | Fermer | Dismiss |
+| `quietLuxuryExitHub.guestCopyTitle` | Conserver sa copie · 15 $ | Keep your copy · $15 |
+| `quietLuxuryExitHub.guestCopyBody` | Même film masterisé · lien de téléchargement personnel | Same mastered film · personal download link |
+| `quietLuxuryExitHub.guestCopyCta` | Conserver sa copie | Keep your copy |
+| `quietLuxuryExitHub.guestCopyUnlocking` | Ouverture du paiement… | Opening checkout… |
+| `quietLuxuryExitHub.guestCopyStubBody` | Le paiement de la copie personnelle (15 $) arrive très bientôt. Pour l'instant, revivez la séance. | Personal copy checkout ($15) is coming soon. For now, watch the session again. |
+| `quietLuxuryExitHub.guestCopyMasterLockedBody` | L'Archive Master n'est pas encore ouverte par la famille. Revenez quand le film aura été conservé. | The Cinema Master archive is not open yet. Come back once the family has preserved the film. |
+| `quietLuxuryExitHub.guestCopyCheckoutError` | Impossible d'ouvrir le paiement. Réessayez dans un instant. | Could not open checkout. Please try again shortly. |
+| `quietLuxuryExitHub.guestCopyDownloadReady` | Votre copie est prête | Your copy is ready |
+| `quietLuxuryExitHub.guestCopyArchivePending` | Paiement reçu. L'Archive Master est encore en préparation — réessayez sous peu. | Payment received. The Cinema Master is still preparing — try again shortly. |
+| `quietLuxuryExitHub.guestCopyDownloadCta` | Télécharger mon film | Download my film |
+| `quietLuxuryExitHub.socialCutTitle` | Social Cut 9:16 · 19 $ | Social Cut 9:16 · $19 |
+| `quietLuxuryExitHub.socialCutBody` | Pastille Stories ~30–45 s · format vertical Quiet Luxury | Stories paste ~30–45 s · Quiet Luxury vertical |
+| `quietLuxuryExitHub.socialCutCta` | Commander le Social Cut | Order the Social Cut |
+| `quietLuxuryExitHub.socialCutUnlocking` | Ouverture du paiement… | Opening checkout… |
+| `quietLuxuryExitHub.socialCutMasterLockedBody` | Le Social Cut s'ouvre après l'Archive Master. Conservez d'abord le film. | Social Cut opens after the Cinema Master. Preserve the film first. |
+| `quietLuxuryExitHub.socialCutCheckoutError` | Impossible d'ouvrir le paiement du Social Cut. Réessayez dans un instant. | Could not open Social Cut checkout. Please try again shortly. |
+| `quietLuxuryExitHub.socialCutSuccessNotice` | Paiement reçu. Votre Social Cut 9:16 est en préparation. | Payment received. Your 9:16 Social Cut is being prepared. |
+| `quietLuxuryExitHub.socialCutCancelNotice` | Paiement annulé — le Social Cut reste disponible après l'Archive Master. | Payment cancelled — Social Cut remains available after the Cinema Master. |
+| `quietLuxuryExitHub.lueur` | Déposer une pensée ou une lueur | Leave a thought or a light |
+| `quietLuxuryExitHub.lineage` | Transmettre à la lignée | Pass it on to the lineage |
+| `quietLuxuryExitHub.closeAria` | Quitter le plein écran | Exit fullscreen |
+| `quietLuxuryExitHub.checkoutModalTitle` | Simulation Checkout Master 49 $ | Simulated Master Checkout $49 |
+| `quietLuxuryExitHub.checkoutModalBody` | En production, cette action ouvre Stripe pour débloquer l'Archive Master. Plein écran conservé. | In production, this opens Stripe to unlock the Cinema Master. Fullscreen stays on. |
+| `quietLuxuryExitHub.checkoutModalClose` | Fermer | Close |
+| `quietLuxuryExitHub.shareModalTitle` | Partager la séance | Share the session |
+| `quietLuxuryExitHub.shareLinkLabel` | Lien de la séance | Session link |
+| `quietLuxuryExitHub.shareLinkLoading` | Préparation du lien… | Preparing the link… |
+| `quietLuxuryExitHub.shareLinkError` | Impossible de créer le lien. Réessayez. | Could not create the link. Please try again. |
+| `quietLuxuryExitHub.shareCopy` | Copier le lien | Copy link |
+| `quietLuxuryExitHub.shareCopied` | Lien copié | Link copied |
+| `quietLuxuryExitHub.shareNative` | Partager… | Share… |
+| `quietLuxuryExitHub.shareClose` | Fermer | Close |
+| `quietLuxuryExitHub.heritageModalTitle` | Collections Héritage | Heritage collections |
+| `quietLuxuryExitHub.heritageModalBody` | Aperçu lab : en production, cette porte mène aux forfaits Héritage et au Livre mémoire. | Lab preview: in production, this opens Heritage packages and the memory book. |
+| `quietLuxuryExitHub.heritageModalClose` | Fermer | Close |
+| `quietLuxuryExitHub.lueurModalTitle` | Pensée ou lueur | Thought or light |
+| `quietLuxuryExitHub.lueurModalBody` | Aperçu lab : en production, l'invité rejoint l'espace de recueillement pour déposer un souvenir. | Lab preview: in production, the guest reaches the sanctuary to leave a memory. |
+| `quietLuxuryExitHub.lueurModalClose` | Fermer | Close |
+| `quietLuxuryExitHub.streamLoading` | Préparation de la séance… | Preparing the session… |
+| `quietLuxuryExitHub.streamUnavailable` | Cette séance n'est plus disponible. | This session is no longer available. |
+| `quietLuxuryExitHub.streamEmpty` | La séance n'a pas encore de souvenirs à projeter. | This session does not have memories to project yet. |
 

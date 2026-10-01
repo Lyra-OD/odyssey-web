@@ -21,7 +21,7 @@ Next.js 14 (App Router) — **Studio Odyssey** : hommages vidéo Quiet Luxury en
 | 2 | SQL P8 (purge jetons, Soft Cap quota, entitlements) — **appliqué Supabase** | ✅ |
 | 3 | Checkout Soft Cap + webhook `project_paid_entitlements` | ✅ |
 | 4 | Soft Cap UX (médias, post-Composition Magique, musique dual) | ✅ |
-| **5** | Gate export + worker Creatomate (mock / API) · NFC · Voix · Livre | ✅ partiel (master Stingray / ops ⏳) |
+| **5** | Gate export + worker Creatomate (smoke réel) · NFC · Voix · Livre | ✅ partiel (recette DA / master Stingray ⏳) |
 | 6 | QA / cutover | ⏳ |
 
 ## Quickstart

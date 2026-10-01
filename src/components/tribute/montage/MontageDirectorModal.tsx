@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronLeft,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { MontageFocalReticle } from "@/src/components/tribute/montage/MontageFocalReticle";
+import { MediaVideoPreview } from "@/src/components/media/MediaVideoPreview";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import type { MontageFocalPoint } from "@/src/lib/wizard/wizardState";
 
@@ -119,6 +121,7 @@ export function MontageDirectorModal({
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        document.body.style.overflow = "";
         onClose();
         return;
       }
@@ -128,15 +131,26 @@ export function MontageDirectorModal({
     [goNext, goPrevious, onClose],
   );
 
+  /** Lock scroll au mount uniquement — pas à chaque re-render focale/chapitre. */
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown]);
+
+  const handleClose = useCallback(() => {
+    document.body.style.overflow = "";
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
     activeChapterRef.current?.scrollIntoView({
@@ -156,17 +170,19 @@ export function MontageDirectorModal({
           .replace("{total}", String(navigationOrder.length));
 
   const slideOffset = slideDirection === 0 ? 0 : slideDirection * 20;
+  const previewMaxH = "max-h-[min(86vh,56rem)]";
 
-  return (
+  const dialog = (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col bg-[#020202]/98 backdrop-blur-3xl"
+      className="fixed inset-0 z-[80] flex flex-col bg-[#020202]/98 backdrop-blur-3xl"
       role="dialog"
       aria-modal="true"
       aria-label={item.displayName}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1, pointerEvents: "auto" }}
-      exit={{ opacity: 0, pointerEvents: "none" }}
-      transition={{ duration: 0.25, ease: EASE_OUT_LUXE }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: EASE_OUT_LUXE }}
+      style={{ pointerEvents: "auto" }}
     >
       <div
         className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -187,7 +203,7 @@ export function MontageDirectorModal({
         </p>
         <motion.button
           type="button"
-          onClick={onClose}
+          onClick={handleClose}
           aria-label={copy.close}
           whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
           whileTap={{ scale: 0.95 }}
@@ -197,15 +213,15 @@ export function MontageDirectorModal({
         </motion.button>
       </motion.div>
 
-      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center px-4 pb-28 pt-16 md:px-8">
+      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center px-4 pb-28 pt-16 md:px-10 lg:px-16">
         <motion.div
-          className="relative w-full max-w-[min(96vw,1200px)]"
+          className="relative flex h-[min(86vh,56rem)] w-full max-w-[min(96vw,90rem)] items-center justify-center"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, ease: EASE_OUT_LUXE }}
         >
           {(item.fullPreviewUrl ?? item.previewUrl) ? (
-            <div className="relative mx-auto inline-block max-h-[min(78vh,900px)] max-w-full">
+            <div className={`relative mx-auto inline-block ${previewMaxH} max-w-full`}>
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={item.assetId}
@@ -215,7 +231,16 @@ export function MontageDirectorModal({
                   exit={{ opacity: 0, x: -slideOffset, scale: 0.98 }}
                   transition={{ duration: 0.35, ease: EASE_OUT_LUXE }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                {item.isVideo ? (
+                  <MediaVideoPreview
+                    src={item.fullPreviewUrl ?? item.previewUrl ?? ""}
+                    controls
+                    className={`block ${previewMaxH} w-auto max-w-full object-contain ${
+                      isExcluded ? "opacity-40 grayscale" : ""
+                    }`}
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <motion.img
                     src={item.fullPreviewUrl ?? item.previewUrl ?? ""}
                     alt={item.displayName}
@@ -225,13 +250,14 @@ export function MontageDirectorModal({
                     onClick={(e) => {
                       onSetFocalPoint(item.assetId, focalFromImageClick(e));
                     }}
-                    className={`block max-h-[min(78vh,900px)] max-w-full cursor-crosshair object-contain ${
+                    className={`block ${previewMaxH} w-auto max-w-full cursor-crosshair object-contain ${
                       isExcluded ? "opacity-40 grayscale" : ""
                     }`}
                     layout={false}
                   />
+                )}
                   <AnimatePresence>
-                    {focalPoint ? (
+                    {!item.isVideo && focalPoint ? (
                       <MontageFocalReticle
                         key={`${item.assetId}-focal`}
                         point={focalPoint}
@@ -259,7 +285,7 @@ export function MontageDirectorModal({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.4 }}
         >
-          {copy.focalHint}
+          {item.isVideo ? null : copy.focalHint}
         </motion.p>
       </div>
 
@@ -310,14 +336,9 @@ export function MontageDirectorModal({
                   }`}
                 >
                   {active ? (
-                    <motion.span
-                      layoutId="storyboard-chapter-pill"
-                      className="absolute inset-0 rounded-full bg-teal-500/10 shadow-[0_0_24px_rgba(45,212,191,0.18)]"
-                      transition={{
-                        type: "spring",
-                        stiffness: 380,
-                        damping: 28,
-                      }}
+                    <span
+                      className="absolute inset-0 rounded-full bg-teal-500/10 shadow-[0_0_24px_rgba(45,212,191,0.18)] transition-opacity duration-200"
+                      aria-hidden
                     />
                   ) : null}
                   <span className="relative z-[1]">{chapter.label}</span>
@@ -370,4 +391,7 @@ export function MontageDirectorModal({
       </div>
     </motion.div>
   );
+
+  if (typeof document === "undefined") return dialog;
+  return createPortal(dialog, document.body);
 }

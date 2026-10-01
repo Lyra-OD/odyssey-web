@@ -23,6 +23,8 @@ import {
   sanctuarySecondaryButton,
   sanctuarySelectedSurface,
   sanctuarySubmitButton,
+  wizardStepLead,
+  wizardStepTitle,
 } from "@/src/lib/contribute/sanctuaryChrome";
 
 export type SanctuaryInvitePanelCopy = {
@@ -459,14 +461,14 @@ export function SanctuaryInviteStep({
         </p>
         <h2
           id={titleId}
-          className="mt-3 font-editorial text-balance text-[1.65rem] font-medium leading-snug tracking-tight text-zinc-50 md:text-3xl"
+          className={`mt-3 ${wizardStepTitle}`}
         >
           {stepTitle}
         </h2>
-        <p className="mx-auto mt-5 max-w-md text-base font-light leading-relaxed text-zinc-200 md:text-lg">
+        <p className={`mx-auto mt-5 max-w-md ${wizardStepLead}`}>
           {stepLead}
         </p>
-        <p className="mx-auto mt-3 max-w-md text-sm font-light leading-relaxed text-zinc-300 md:text-base">
+        <p className="mx-auto mt-3 max-w-md text-sm font-light leading-relaxed text-zinc-400 md:text-base">
           {stepBody}
         </p>
       </div>

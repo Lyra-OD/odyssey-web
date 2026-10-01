@@ -32,7 +32,7 @@ export async function GET(
   const { data, error } = await access.supabase
     .from("project_export_jobs")
     .select(
-      "id, status, provider, allow_4k, allow_stingray_master, denial_code, message, created_at, updated_at",
+      "id, status, provider, allow_4k, allow_stingray_master, denial_code, message, external_render_id, output_url, created_at, updated_at",
     )
     .eq("project_id", projectId)
     .order("created_at", { ascending: false })

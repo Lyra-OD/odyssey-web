@@ -1,14 +1,14 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 10 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 29 sept 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 10 sept 2026 — **Dates Essentiel** : naissance `max` = hier ; départ `min` = naissance (ou 1800), `max` = aujourd’hui + 2 ans (horizon MAID) ; validation CTA + copy dédiée ([`wizardDateBounds.ts`](../src/lib/wizard/wizardDateBounds.ts)).
-- 10 sept 2026 — **Intro hub Étape 1** : pitch `SanctuaryHubIntro` lié au draft live incomplet (`!hasEssentialsData`), plus au snapshot `virginHub` mount — clear + close ramène « Le film de leur vie ».
-- 9 sept 2026 — **Chrome mobile Wizard** : sticky header — split gauche/droite dès mobile (identité + Loved ones | Package + Creation help empilés) ; chip `OdysseyHelpLifeline` pastille `bottom-24` mobile / chip complet `md:bottom-5`.
-- 5 sept 2026 — **Mobile, Étapes 1 et 3** : chaque champ de date de l’Essentiel gagne un « Effacer » applicatif — l’effacement du sélecteur natif n’émet pas de `change` de façon fiable entre iOS et Android, on ne dépend plus de lui ; le repli de `showPicker()` ajoute un `click()` (Safari iOS < 16 n’ouvrait rien). Le Scanner Compagnon remplace son QR par « Ouvrir l’appareil photo » sur pointeur grossier ([`SCANNER_COMPANION.md`](SCANNER_COMPANION.md)).
-- 5 sept 2026 — **Barre utilitaire mobile** : `TributeWizard` reçoit un emplacement `mobileUtilityTrailing` (langue + Déconnexion, injectés par `StudioLocaleFrame`) posé à **deux endroits** selon l’état du chrome — rang flottant court en haut à droite pendant le rituel du ciel (Étape 1, `hubChromeHidden`), sinon barre en haut du parcours aux côtés de `Retour` (l’en-tête se cale dessous, `top-12`). Le cluster flottant haut-droite devient desktop-only : plus de bouton de session au-dessus du lockup de marque. ⚠️ `position: sticky` est **inerte** sur `/studio` — `<main>` porte `overflow-x-hidden`, donc `overflow-y` calcule `auto` et devient le scrollport ; l’en-tête « sticky » du wizard ne collait déjà pas.
+- 29 sept 2026 — **Étape 6 DA** : sas affiche N&B sombre + CTA éditoriaux (typo / lien Passer) — plus de boutons verre.
+- 29 sept 2026 — **Étape 6 immersif** : `data-odyssey-cinema` sur sas (ref-count) · masque Navbar studio + Aide · chrome wizard déjà hors shell.
+- 29 sept 2026 — **Étape 6 immersif** : early return hors `wizard-shell` (pas de stacking context / chrome / prix) · ✕ → 5 · Passer → 7.
+- 29 sept 2026 — **Étape 6** : sas cinéma plein écran (`SessionCinemaGate`) · poster portrait/dernière photo · projection / checkout · plus de `PreviewStep`.
+- 17 sept 2026 — **D0 freeze** : 7 étapes (plus de « 7–8 ») ; Preview = storyboard live + pont hybride ; S5-L partiel.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -24,14 +24,14 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 
 | File | Role |
 |------|------|
-| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (package Dossier + phase progress) |
+| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (Dossier + fil) ; barre bas N3 : 2–5 Retour\|Suivant · 7 Préserver {forfait}·prix · **étape 6 = early return immersif** (`SessionCinemaGate` hors shell, chrome/prix absents) |
 | `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | **Step 1 (J2)** — ciel fullscreen + panneau verre ; `SanctuaryUniverse` background · birth live · reveal contrôlé |
 | `src/hooks/useWizardStep1Reveal.ts` | Phase reveal étape 1 (`idle` → `birth` → `reward` → `done`) · orchestration `playReward()` |
 | `src/lib/wizard/wizardBirthReveal.ts` | Courbes / beats C0–C2 pour naissance Hero au prénom (pont craft → wizard) |
 | `src/components/contribute/SanctuaryUniverse.tsx` | Scène WebGL partagée (lab + wizard) — Hero, constellation, lift séparation Hero↔nom |
 | `src/components/contribute/useHeroNameSeparation.ts` | Spring séparation Hero ↔ nom (craft J2) |
 | `src/hooks/useWizardStoryboard.ts` | Domaine storyboard pur — resync chapitres, doublons, validation structurelle, estimation durée ; autosave reste dans `TributeWizard` via `persistStoryboardRef` |
-| `src/components/tribute/WizardPhaseProgress.tsx` | Minimalist 3-phase progress indicator (Déposer / Composer / Recevoir) — replaces the old 8-circle `WizardStepper` |
+| `src/components/tribute/WizardPhaseProgress.tsx` | Fil colonnes — pleine largeur, mono-teal, breath/poussière/glow futur, pont pulse, hover, naissance/flash ; ancres mini-caps |
 | `src/components/tribute/PackageDossierPanel.tsx` | Global off-canvas package selector (« Le Dossier ») — editorial trigger, exhaustive inclusions from `PACKAGE_MANIFEST`, cross-fade comparison, inline downgrade guard. Visible from Step 1 onward, replaces the per-step `WizardBasePackagePicker` and the short-lived `StoryboardPackageSwitcher` dropdown |
 | `src/lib/wizard/packageDossier.ts` | Resolves a package's exhaustive inclusion rows from `PACKAGE_MANIFEST` for the Dossier |
 | `src/components/StickyPriceBar.tsx` | Sticky total Soft Cap (`resolveWizardDisplayCart`) |
@@ -106,19 +106,19 @@ Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans 
 | `limits.maxMediaItems` | Soft Cap filet à 50 ✅ · quotas `intended` |
 | `resolveTransactionMode()` | Famille : **dollars Soft Cap** ; Salon : commissions |
 
-**Today:** `InvitationComposer` (Salon `/[lang]/salon`) offers **Keepsake only** — email + CTA, no package cards. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is now `storyboard`; Step 4 reads/writes `storyboard.chapters[].song` via `useWizardStoryboard`. **Step 5** is the live **Livre Ouvert** montage UI (`StoryboardMontageStep`) — DnD, actions chapitre, onboarding gate, and **Composition Magique** (see [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md)). `SoundSignatureStep` was removed during Clean Slate. Steps 7–8 still use a temporary legacy bridge (`actTracks`) for Preview/Checkout until `S8`/`S9`.
+**Today:** `InvitationComposer` (Salon `/[lang]/salon`) offers **Keepsake only** — email + CTA, no package cards. `TributeWizard` renders the global package Dossier (`PackageDossierPanel`) with **marketing labels** while persisting technical IDs (`essential` / `signature` / `heritage` / `legendary`); `WizardBasePackagePicker` has been removed. The canonical persisted model is `storyboard`. **Steps 4–5** read/write `storyboard` directly. **Step 6 (Aperçu)** = **sas cinéma plein écran** (`SessionCinemaGate` + `resolveSessionPosterUrl`) — 2 CTA (projection officielle / passer au checkout). Autosave still PATCHes `montage` + `musicalAmbiance`; checkout still sends compact `act_tracks` (pont hybride). `SoundSignatureStep` was removed during Clean Slate. **There is no step 8.**
 
 ### Design decisions — why (juillet 2026)
 
 | Decision | Why |
 |----------|-----|
-| **Le Dossier** (off-canvas vs dropdown) | Reduce visual cognitive load (8 circles → 3 phases); avoid cheap e-commerce dropdown; package consultable from any step without polluting step body |
+| **Le Dossier** (off-canvas vs dropdown) | Reduce visual cognitive load ; package consultable from any step without polluting step body. Fil = constellation C (pas 8 cercles, pas 3 phases Déposer/Composer/Recevoir) |
 | **DEFAULT_B2C_BASE_PACKAGE = "heritage"** (fallback) | Ancien ancrage Éternité ; **supplanté Cascade V-Final** : init via `ChannelProfile` (B2B2C → `essential`, B2C → `signature` / Héritage **179 $**) |
 | **Step 4 ↔ 5 reorder** | Chapter media capacity depends on `durationSec` — music choice must precede media assignment |
 | **Clean Slate Step 5** | `SoundSignatureStep` showed functional UI but inputs were silently ignored by `coerceWizardState()` — misleading UX, not mere tech debt |
-| **`useWizardStoryboard`** | Isolate chapter domain from `TributeWizard` (~1780 lines) before `dnd-kit`; hook stays pure (no autosave) |
+| **`useWizardStoryboard`** | Isolate chapter domain from `TributeWizard` (~3030 lines today) ; hook stays pure (no autosave) |
 | **montage/* triage** | Purge 3-act logic (`MontageStep`, act columns); keep pure UI (`MontageDirectorModal`, `MontageMediaCard`, `MontageFocalReticle`) retyped for chapters |
-| **`actTracks` kept read-only** | Preview/Checkout still depend on legacy bridge — removal would regress Steps 7–8 before `S8`/`S9` |
+| **Pont hybride Preview/Checkout** | Étape 6 lit le **storyboard live**. Autosave + Stripe gardent encore le miroir `montage` / `act_tracks` jusqu’à S9 |
 | **EMFILE / `ulimit -n 65536`** | Next.js Watchpack failed silently → 404 on all routes in dev; restart `npm run dev` with raised fd limit |
 
 ### Major architecture change — from 3 acts to song-based storyboard
@@ -150,12 +150,14 @@ The new canonical model solves this by moving to a **song-based storyboard**:
 - direct path to MP3 uploads and Stingray chapters in the same model
 - future pacing logic can use `durationSec / targetSecondsPerMedia`
 
-**Current transition state**
+**Current transition state (hybrid, temporary)**
 
-- `storyboard` is now persisted as the canonical V2 shape
-- `wizardState.ts` rebuilds temporary `montage` + `musicalAmbiance` legacy views at runtime for Preview/Checkout
-- Steps 4–5 use canonical `storyboard` directly (`StoryboardChaptersStep` + `StoryboardMontageStep` Livre Ouvert)
-- Steps 7–8 still render through the legacy bridge until `S8`/`S9`
+- `storyboard` is persisted as the canonical V2 shape
+- **Steps 4–5** use `storyboard` directly (`StoryboardChaptersStep` + `StoryboardMontageStep` Livre Ouvert)
+- **Step 6 (Aperçu)** = sas cinéma plein écran (`SessionCinemaGate`) — poster traité + projection officielle ou checkout. **Not** an inline teaser. **Not** the Creatomate master
+- `wizardState.ts` still rebuilds `montage` + `musicalAmbiance` at runtime ; `buildWizardState()` still **PATCHes** those legacy views beside `storyboard`
+- **Step 7 (Checkout)** still serializes compact Stripe `act_tracks` in addition to `storyboard` — until S9
+- **No step 8** (`TOTAL_STEPS = 7`)
 
 ### i18n (marketing names)
 
@@ -191,7 +193,7 @@ Package selection is no longer step-bound: the Dossier trigger (`PackageDossierP
 | 3 | `stepperVault` | Dropzone + upload queue + **Scanner Compagnon QR** (cible) | `media_assets` rows; reload `GET /api/projects/[id]/media` · voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | 4 | `stepperChapters` | **Chapitres musicaux dynamiques** (`StoryboardChaptersStep`, live — ✅ `S6`) | `storyboard.chapters[].song` (canonique, plus de bridge) |
 | 5 | `stepperSound` | **Livre Ouvert** — `StoryboardMontageStep` (DnD, magie, actions chapitre) | `storyboard` (canonique) |
-| 6 | `stepperPreview` | Copy + `CinematicTeaser` | Aperçu |
+| 6 | `stepperPreview` | Sas cinéma plein écran (`SessionCinemaGate`) | Poster + 2 CTA · projection / checkout |
 | 7 | `stepperCheckout` | Cart Soft Cap + **Extensions** Quiet Luxury + pay CTA | `POST /api/checkout` |
 
 ---
@@ -208,13 +210,16 @@ sequenceDiagram
 
   User->>Stepper: Click step N
   Stepper->>TW: onStepClick(N)
+  Note over TW: ignore if N > furthestStep
   TW->>AS: flush()
-  AS->>API: wizard_state + wizard_step
+  AS->>API: wizard_state + wizard_step (+ furthestStep)
   API-->>AS: last_saved_at
-  TW->>TW: setCurrentStep(N)
+  TW->>TW: setCurrentStep(N) · bump furthestStep
 ```
 
 - **Back** button (top-left, steps 2+): same `flush()` then decrement step.
+- **furthestStep** (dans `wizard_state`) : max step jamais atteint ; ne diminue pas au retour. Fil constellation (N2). **Doit** figurer dans `WizardStatePartialSchema` (`.strict()`) — absent = PATCH 400, ni state ni `wizard_step` écrits.
+- Contrat PATCH : chaque clé de `TributeWizard.buildWizardState()` ∈ schéma Zod. Rejet `invalid_body` → `console.error("Autosave Zod Rejection:", …)` en développement (`useWizardAutosave`).
 - Text fields use `queueSave("text")` — 800ms debounce.
 - Step changes and explicit actions use `queueSave("immediate")` or `flush()`.
 
@@ -237,6 +242,7 @@ sequenceDiagram
   },
   essentials?: { firstName, lastName, birthDate, deathDate, avatarPath },
   socialSources?: { selected, url },
+  furthestStep?: 1 | 2 | 3 | 4 | 5 | 6 | 7,  // Zod autosave : 1–10, .strict()
   storyboard?: {
     chapters: Array<{
       id: string,
@@ -248,16 +254,18 @@ sequenceDiagram
     }>,
     unassignedIds?: string[],
     excludedIds: string[],
-    focalPoints: Record<mediaId, { x, y }>
+    focalPoints: Record<mediaId, { x, y }>,
+    videoTrims?: Record<mediaId, { trimStartSec, durationSec }>
   },
   extensions?: {
-    aiRetouch?, extendedLicense?, collectorUsb?,
-    digitalVault?, heritagePack?
+    aiRetouch?, musicLicense?, storyVoice?, sanctuaryToken?,
+    memoryBook?, digitalVault?, heritagePack?,
+    extendedLicense?, collectorUsb?   // alias legacy
   }
 }
 ```
 
-**Runtime bridge during transition:** `coerceWizardState()` still reconstructs temporary `montage` and `musicalAmbiance` views from `storyboard` so the existing UI keeps working while Storyboard UI tickets ship.
+**Runtime bridge (temporary hybrid):** `coerceWizardState()` still rebuilds `montage` and `musicalAmbiance` from `storyboard` for the autosave PATCH and Stripe `act_tracks`. **Preview UI does not render 3 acts** — it consumes `storyboard` via `teaserHelpers.ts`.
 
 **Legacy package id:** `prestige` is coerced to `signature` on read (`pricingConfig.ts`).
 
@@ -271,7 +279,7 @@ sequenceDiagram
 
 ## Storyboard transition bridge
 
-To preserve backward compatibility while the UI still renders 3 legacy slots, the first three storyboard chapters are projected as follows:
+Autosave / checkout still project the first three storyboard chapters onto the legacy 3-act shell (so old JSON and Stripe `act_tracks` stay valid). **The Preview and Livre Ouvert UIs do not show this shell.**
 
 | Canonical storyboard chapter | Legacy montage bridge | Legacy music bridge |
 |------------------------------|-----------------------|---------------------|
@@ -279,7 +287,7 @@ To preserve backward compatibility while the UI still renders 3 legacy slots, th
 | `chapters[1]` | `epic` | `acte2` |
 | `chapters[2]` | `legacy` | `acte3` |
 
-Additional chapters beyond index 2 are temporarily projected into `unassignedIds` on the runtime montage bridge so the old UI does not silently lose media.
+Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage mirror only** — the live storyboard keeps them as chapters.
 
 ---
 
@@ -299,24 +307,38 @@ Additional chapters beyond index 2 are temporarily projected into `unassignedIds
 **Canon:** [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) · **QA:** [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
 
 - **Component:** `StoryboardMontageStep.tsx` — layout Livre Ouvert, banque persistante, chapitres empilés, `StoryboardFilmMap`, DnD global `dnd-kit`, actions chapitre, onboarding gate, Composition Magique.
+- **Voir la séance (film map) :** `WizardSessionProjection` `intent: "craft_preview"` — aperçu immersif pour l’artisanat. Fin / Échap / ✕ → retour silencieux sur la table de montage. **Pas de hub C8** (ni achat, ni partage).
+- **Miroir 1:1 Livre Ouvert :** `buildTeaserFromStoryboard` + `storyboardPacing` (tempo photo / `videoTrims`) · titres via `paletteIndex ?? index` · seed médias non-écrasé · chapitres musique-seule conservés (carton + piste).
+- **Stream invité (C14) :** même `WizardSessionProjection` avec `playback="prebuilt"` + `viewerRole="guest"` (payload `/api/stream/[token]`, aucun `fetchProjectMedia`).
 - **Why not placeholder anymore:** PR-1/2/3 (juillet 2026) replaced the post–Clean Slate placeholder with the full interactive experience.
 - **Magic composition:** `buildMagicTimeline` → `playMagicTimeline` — batch per chapter + CSS cascade; overlay `MagicCinematicOverlay` (scrim Option B + capsule Bouton Noir, **design locked**).
 - **Autosave:** suspended during magic via `magicPerformingRef` in `TributeWizard`; `queueSave("immediate")` on `onMagicSequenceComplete`.
 - **Delivered (PR-1/2/3):** layout, FilmMap, DnD, multi-select, auto-fill / clear / refine drawer, magic sequence, QA fixes (drop target, ghost selection).
-- **Remaining (S5-J/K):** chapter audio during montage, organic focus mode — see Step 5 doc §10–11. **S5-L** copy ✅ (« Le film de sa vie »).
+- **Chrome S4 :** halo **bloc entier** + compteur = couleur du chapitre (`chapterShellClass`) — repos lisible, pas un trait blanc.
+- **Chrome S5 :** CTA Composition Magique banque = paille `--wizard-magic-wheat` (plus d’amber). Overlay capsule inchangée.
+- **Chrome S6 :** titres 1–7 = `wizardStepTitle` (24/26 · medium · mini-caps) + `wizardStepLead` (16/18 · zinc-300). Boutons d’action mini-caps.
+- **Remaining (S5-J/K):** chapter audio during montage, organic focus mode — see Step 5 doc §10–11. **S5-L partiel** : titre d’étape « Le film de sa vie » ✅ ; titres chapitre **défaut** encore Étincelle / Épopée / Héritage (S5-L2).
 - **Legacy orphan files:** `MontageTimeline.tsx`, `MontageChapterTabs.tsx` — candidate removal in S10 cleanup.
 
 ---
 
-## Step 7 — Cinematic preview
+## Step 6 — Sas cinéma plein écran (séance officielle C8)
 
 | File | Role |
 |------|------|
-| `PreviewStep.tsx` | Marketing copy, CTA to checkout, link to edit earlier steps |
-| `CinematicTeaser.tsx` | Photo crossfade per slide + audio from selected track |
-| `teaserHelpers.ts` | Slide list, duration estimate, temporary bridge grouping |
+| `SessionCinemaGate.tsx` | Sas plein viewport : poster N&B (portrait / dernière photo), nom/dates, 2 CTA |
+| `sessionPosterImage.ts` | Résolution URL poster (portrait → dernière image → thumb vidéo) |
+| `WizardSessionProjection` | **Même cinéma** étape 5 (`craft_preview`) et 6 (`official_session`) — seul le hub C8 change |
+| `CinematicTeaser.tsx` | Adaptateur slides/tracks → QuietLuxuryPlayer (séance, pas le sas) |
+| `teaserHelpers.ts` | Slides / pistes depuis le **storyboard live** |
 
-Audio `src` uses `track.previewUrl` (typically `/api/music/preview?trackId=…`). Until `S8`, preview still consumes the legacy bridge rebuilt from `storyboard`.
+**Séance officielle :** CTA « Vivre la projection » → cinéma immersif puis hub C8 (Master forfait-aware · Partager `/stream/[token]` · Revoir). Fermer le hub (✕) ou la projection → retour sur le sas. CTA « Passer » → étape 7 checkout. ✕ du sas → étape 5. **Immersion :** `currentStep === 6` early-return **après** les hooks — hors `wizard-step-enter` / shell · `data-odyssey-cinema` (ref-count sas↔projection) masque `.studio-locale-chrome` + `OdysseyHelpLifeline`.
+
+**Aujourd’hui (sas) :** pas de mini-player inline. Soft Cap sticky / fil / footer **absents** du rendu étape 6 (early return).
+
+**Pont hybride (dette temporaire) :** le PATCH autosave envoie encore `montage` + `musicalAmbiance` à côté de `storyboard` ; `POST /api/checkout` envoie encore `act_tracks` compact. À retirer quand S9 (metadata `storyboard`) est stable.
+
+Payer (étape 7) est armé ~700 ms pour éviter un ghost-click depuis l’aperçu.
 
 ---
 
@@ -399,7 +421,7 @@ Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WAT
 
 | Component | Location | Role |
 |-----------|----------|------|
-| `StickyPriceBar` | Sticky under stepper, every step | Live **total** (B2C $) or **tokens** (B2B); reflects `computeWizardCart` including Heritage bundle rules |
+| `StickyPriceBar` | Sticky under fil, **étapes 6+ seulement** | Live **total** (B2C $) or **tokens** (B2B); absent en craft 1–5 (Quiet Luxury) |
 | `PackageDossierPanel` | Global header, Step 1+ (`hidePrices` when partner) | Off-canvas — inclusions exhaustives + **Éternité savings badge** (67 $) + comparaison cross-fade |
 | `WizardCartSummary` | Steps 5–6 (B2C only) | Line recap |
 | `StoryboardMontageStep` | Step 5 | Livre Ouvert — DnD, Composition Magique — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |

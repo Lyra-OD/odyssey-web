@@ -100,7 +100,13 @@ export type DuckInterval = {
 
 export type RenderEssentials = {
   displayName: string;
+  /** Ligne legacy (dates brutes) — intro TS actuelle. */
   datesLine: string | null;
+  /** Années seules pour atomes Creatomate. */
+  birthYear: string | null;
+  deathYear: string | null;
+  /** URL signée avatar / portrait intro ; null si absent. */
+  portraitUrl: string | null;
 };
 
 export type OdysseyRenderPlan = {

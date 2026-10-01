@@ -5,6 +5,7 @@ import {
   BookOpen,
   Check,
   Crown,
+  Film,
   Mic2,
   Music2,
   Vault,
@@ -32,6 +33,8 @@ import {
 export type MontageExtensionsStepCopy = {
   title: string;
   description: string;
+  cinemaMasterTitle: string;
+  cinemaMasterDescription: string;
   aiRetouchTitle: string;
   aiRetouchDescription: string;
   musicLicenseTitle: string;
@@ -134,16 +137,17 @@ function ExtensionVisual({
 }) {
   if (card.imageUrl) {
     return (
-      <div className="relative h-28 w-full overflow-hidden rounded-xl border border-white/10 bg-black/20">
+      <div className="relative h-36 w-full overflow-hidden rounded-xl border border-white/10 bg-black/30">
         <Image
           src={card.imageUrl}
           alt={card.imageAlt ?? ""}
           fill
-          className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+          className="object-cover object-[center_33%] transition-transform duration-500 group-hover:scale-[1.03]"
           sizes="(max-width: 640px) 100vw, 320px"
           unoptimized
+          priority
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
       </div>
     );
   }
@@ -179,6 +183,16 @@ export function MontageExtensionsStep({
     copy.sanctuaryTokenDescription || copy.collectorUsbDescription || "";
 
   const cards: ExtensionCardConfig[] = [
+    {
+      key: "cinemaMaster",
+      icon: Film,
+      title: copy.cinemaMasterTitle,
+      description: copy.cinemaMasterDescription,
+      priceCents: extensionCents("cinemaMaster"),
+      accent: "text-cyan-200",
+      selectedRing: EXTENSION_SELECTED_RING,
+      iconBg: "bg-cyan-400/10 text-cyan-200",
+    },
     {
       key: "aiRetouch",
       icon: Wand2,

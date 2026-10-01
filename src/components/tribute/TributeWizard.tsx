@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ArrowLeft,
   Calendar,
   Camera,
   Image as ImageIcon,
@@ -19,9 +18,18 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { PreviewStep } from "@/src/components/tribute/PreviewStep";
+import {
+  WizardSessionProjection,
+  type WizardSessionHubCopy,
+  type WizardSessionIntent,
+} from "@/src/components/tribute/WizardSessionProjection";
+import {
+  exitNativeFullscreen,
+  requestNativeFullscreen,
+} from "@/src/components/tribute/QuietLuxuryPlayer";
 import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
 import { SoftCapModal, SoftCapMediaCountSync } from "@/src/components/tribute/SoftCapModal";
+import { SessionCinemaGate } from "@/src/components/tribute/SessionCinemaGate";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
 import { appRoutes } from "@/src/lib/appRoutes";
 import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
@@ -58,7 +66,7 @@ import {
   useParcoursUx,
 } from "@/src/hooks/useParcoursUx";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
-import { sanctuaryFocusRing } from "@/src/lib/contribute/sanctuaryChrome";
+import { sanctuaryFocusRing, wizardMiniCapsAction, wizardStepLead, wizardStepTitle } from "@/src/lib/contribute/sanctuaryChrome";
 import { SkyBackdrop } from "@/src/components/contribute/SkyBackdrop";
 import type { HubFrameCapture } from "@/src/lib/parcours/hubFreezeCapture";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
@@ -89,10 +97,11 @@ import { useWizardSoftCap } from "@/src/hooks/useWizardSoftCap";
 import type { AppDictionary } from "@/lib/dictionaries";
 import {
   coerceWizardState,
-  emptyMontageState,
   emptyStoryboardState,
   resolveInitialWizardStep,
   WIZARD_STATE_VERSION,
+  legacyMontageFromStoryboard,
+  legacyMusicalAmbianceFromStoryboard,
   type SocialId,
   type WizardInitialDraft,
   type WizardMontageState,
@@ -102,6 +111,8 @@ import {
   type WizardStateV1,
   type WizardStoryboardState,
 } from "@/src/lib/wizard/wizardState";
+import { setStoryboardFocalPoint } from "@/src/lib/wizard/storyboardMedia";
+import { detectImageFocalDetailed } from "@/src/lib/media/detectImageFocal";
 import {
   buildPricingSnapshot,
   bundleSavingsDollarsLabel,
@@ -109,6 +120,7 @@ import {
   canUploadPersonalAudio,
   formatWizardPrice,
   hasAiRestorationEntitlement,
+  isExtensionBundledInBasePackage,
   packageCents,
   packageTierRank,
   resolveMusicCatalogTier,
@@ -132,11 +144,18 @@ import {
 } from "@/src/lib/wizard/stingrayCatalog";
 import { shouldOfferMagicSoftCap } from "@/src/lib/wizard/softCap";
 import { MUSIC_RIGHTS_TOS_VERSION } from "@/src/lib/wizard/exportGate";
+import { resolveOrganizerMasterHubMode } from "@/src/lib/wizard/organizerMasterHub";
+import { resolveStingraySongPreviewUrl } from "@/src/lib/wizard/musicPreview";
 import {
   isWizardStepAllowedForRole,
   type WizardAccessRole,
 } from "@/src/lib/wizard/collabCapabilities";
 import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
+import {
+  mediaApiToMontageItems,
+  type MontageMediaItem,
+} from "@/src/lib/wizard/montageHelpers";
+import { resolveSessionPosterUrl } from "@/src/lib/wizard/sessionPosterImage";
 import { useWizardStoryboard } from "@/src/hooks/useWizardStoryboard";
 import type { Locale } from "@/i18n.config";
 import {
@@ -298,6 +317,7 @@ type WizardFieldsSnapshot = {
   extensions: WizardExtensionsState;
   actTracks: WizardActTracks;
   musicRightsAttestation?: WizardStateV1["musicRightsAttestation"];
+  furthestStep: number;
 };
 
 function yearFromDateInput(iso: string): string {
@@ -314,6 +334,8 @@ export function TributeWizard({
   planOverride,
   accessRole = "owner",
   mobileUtilityTrailing = null,
+  exitHubCopy = null,
+  masterEntitled = false,
 }: {
   copy: TributeWizardCopy;
   initialDraft?: WizardInitialDraft | null;
@@ -325,6 +347,10 @@ export function TributeWizard({
   planOverride?: string;
   /** Owner = parcours complet · Editor = étapes {3,4,5} sans commerce. */
   accessRole?: WizardAccessRole;
+  /** Hub C8 (copy FR/EN déjà chargée par le layout). */
+  exitHubCopy?: WizardSessionHubCopy | null;
+  /** Entitlement serveur / retour Stripe Master (hub download). */
+  masterEntitled?: boolean;
   /** Action utilitaire mobile affichée dans la même ligne que "Retour". */
   mobileUtilityTrailing?: ReactNode;
 }) {
@@ -382,6 +408,22 @@ export function TributeWizard({
     }
     return resolved;
   });
+  /** Plus loin atteint — allume / autorise le fil (N2 constellation). */
+  const [furthestStep, setFurthestStep] = useState(() => {
+    const resolved = resolveInitialWizardStep(
+      initialDraft?.wizard_step,
+      hydrated,
+      TOTAL_STEPS,
+    );
+    const boot =
+      accessRole === "editor" &&
+      !isWizardStepAllowedForRole("editor", resolved)
+        ? 3
+        : resolved;
+    const saved =
+      typeof hydrated.furthestStep === "number" ? hydrated.furthestStep : 1;
+    return Math.max(saved, boot, isEditor ? 3 : 1);
+  });
   const [essentialError, setEssentialError] = useState(false);
   const [essentialsShakeGen, setEssentialsShakeGen] = useState(0);
   const [essentialsShake, setEssentialsShake] = useState(false);
@@ -390,13 +432,21 @@ export function TributeWizard({
   const [selectedSocial, setSelectedSocial] = useState<SocialId | null>(
     hydrated.socialSources?.selected ?? null,
   );
-  // `montage` reste un pont legacy en lecture seule pour Preview/Checkout —
-  // il n'est plus manipulé par une UI depuis le passage à `storyboard`
-  // (Étape 4). Sera retiré lors du ticket cleanup-legacy.
-  const [montage] = useState<WizardMontageState>(
-    () => hydrated.montage ?? emptyMontageState(),
-  );
   const [projectMediaCount, setProjectMediaCount] = useState(0);
+  const [sessionOpen, setSessionOpen] = useState(false);
+  const [sessionIntent, setSessionIntent] =
+    useState<WizardSessionIntent>("craft_preview");
+  const [sessionMediaSeed, setSessionMediaSeed] = useState<
+    MontageMediaItem[] | null
+  >(null);
+  const [gateMediaById, setGateMediaById] = useState(
+    () => new Map<string, MontageMediaItem>(),
+  );
+  const [gateMediaLoading, setGateMediaLoading] = useState(false);
+  const [sessionAudio, setSessionAudio] = useState<HTMLAudioElement | null>(
+    null,
+  );
+  const sessionAudioRef = useRef<HTMLAudioElement | null>(null);
   const [step3UploadRunning, setStep3UploadRunning] = useState(false);
   const [isPartner] = useState(isPartnerInitial);
   // Cascade V-Final : ChannelProfile décide l'entrée (partner = Souvenir 0 $,
@@ -453,6 +503,57 @@ export function TributeWizard({
     projectMediaCount,
     onChange: handleStoryboardDomainChange,
   });
+  const storyboardRef = useRef(wizardStoryboard.storyboard);
+  storyboardRef.current = wizardStoryboard.storyboard;
+
+  /** C5 — focale auto post-upload (FaceDetector) ; n’écrase jamais le manuel. */
+  const handleAssetUploaded = useCallback(
+    (item: { assetId?: string; file?: File; mimeType?: string | null }) => {
+      const assetId = item.assetId;
+      const file = item.file;
+      if (!assetId || !file) return;
+      const mime = (item.mimeType || file.type || "").toLowerCase();
+      if (!mime.startsWith("image/")) return;
+      if (storyboardRef.current.focalPoints[assetId]) return;
+
+      const run = () => {
+        void detectImageFocalDetailed(file).then(({ point: pt, engine }) => {
+          if (!pt) return;
+          if (storyboardRef.current.focalPoints[assetId]) return;
+          if (process.env.NODE_ENV === "development") {
+            console.info("[c5-focal] auto", {
+              assetId,
+              engine,
+              x: Number(pt.x.toFixed(3)),
+              y: Number(pt.y.toFixed(3)),
+            });
+          }
+          wizardStoryboard.setStoryboard(
+            setStoryboardFocalPoint(storyboardRef.current, assetId, pt),
+          );
+        });
+      };
+
+      if (typeof requestIdleCallback === "function") {
+        requestIdleCallback(() => run(), { timeout: 2500 });
+      } else {
+        window.setTimeout(run, 0);
+      }
+    },
+    [wizardStoryboard.setStoryboard],
+  );
+
+  // Pont Preview : re-dérivé du storyboard live (plus de freeze au hydrate).
+  const montage = useMemo(
+    () => legacyMontageFromStoryboard(wizardStoryboard.storyboard),
+    [wizardStoryboard.storyboard],
+  );
+  const actTracks = useMemo(
+    () =>
+      legacyMusicalAmbianceFromStoryboard(wizardStoryboard.storyboard)?.tracks ??
+      emptyActTracks(),
+    [wizardStoryboard.storyboard],
+  );
   const packageDisplayNameFor = useCallback(
     (pkg: WizardBasePackage): string => {
       switch (pkg) {
@@ -573,13 +674,6 @@ export function TributeWizard({
   const openPackageDossier = useCallback(() => {
     setIsPackageDossierOpen(true);
   }, []);
-  // `actTracks` reste un pont legacy en lecture seule pour PreviewStep/
-  // CheckoutStep — il n'est plus manipulé par une UI depuis la neutralisation
-  // de SoundSignatureStep (ex-Étape 5, cul-de-sac fonctionnel remplacé par
-  // StoryboardMontageStep). Sera retiré lors du ticket cleanup-legacy.
-  const [actTracks] = useState<WizardActTracks>(
-    () => hydrated.musicalAmbiance?.tracks ?? emptyActTracks(),
-  );
   const wizardTitleId = useId();
 
   // Identifiants DB nécessaires pour passer RLS Storage + insert media_assets.
@@ -624,6 +718,7 @@ export function TributeWizard({
     extensions,
     actTracks,
     musicRightsAttestation,
+    furthestStep,
   });
 
   const buildWizardState = useCallback((): WizardStateV1 => {
@@ -654,6 +749,7 @@ export function TributeWizard({
       montage: s.montage,
       storyboard: s.storyboard,
       extensions: s.extensions,
+      furthestStep: s.furthestStep,
       ...(s.musicRightsAttestation
         ? { musicRightsAttestation: s.musicRightsAttestation }
         : {}),
@@ -935,6 +1031,7 @@ export function TributeWizard({
     extensions,
     actTracks,
     musicRightsAttestation,
+    furthestStep,
   };
 
   useWizardDraftLifecycle({
@@ -1009,6 +1106,92 @@ export function TributeWizard({
       .replace("{death}", d || "·");
   }, [birthDate, deathDate, copy.headerYears]);
 
+  const gatePosterUrl = useMemo(
+    () =>
+      resolveSessionPosterUrl({
+        openingPortraitUrl: avatarPreview || null,
+        storyboard: wizardStoryboard.storyboard,
+        mediaById: gateMediaById,
+      }),
+    [avatarPreview, gateMediaById, wizardStoryboard.storyboard],
+  );
+
+  const hasSessionMedia = useMemo(() => {
+    const excluded = new Set(wizardStoryboard.storyboard.excludedIds);
+    const placed = wizardStoryboard.storyboard.chapters.some((chapter) =>
+      chapter.mediaIds.some((id) => !excluded.has(id)),
+    );
+    return placed || projectMediaCount > 0;
+  }, [projectMediaCount, wizardStoryboard.storyboard]);
+
+  const canWatchSession = currentStep >= 5 && hasSessionMedia;
+
+  const openWatchSession = useCallback(
+    async (intent: WizardSessionIntent = "craft_preview") => {
+      let audio = sessionAudioRef.current;
+      if (!audio) {
+        audio = new Audio();
+        audio.preload = "auto";
+        sessionAudioRef.current = audio;
+      }
+
+      try {
+        audio.pause();
+      } catch {
+        /* */
+      }
+      try {
+        audio.currentTime = 0;
+      } catch {
+        /* */
+      }
+      audio.volume = 0;
+
+      // Unlock autoplay AU GESTE avec une vraie source (sync).
+      // Stingray = proxy immédiat. Upload = wav silencieux (signed URL async
+      // perdrait le geste) — QuietLuxuryPlayer posera le vrai src ensuite.
+      const firstSong = wizardStoryboard.storyboard.chapters.find(
+        (chapter) => chapter.song,
+      )?.song;
+      let primeUrl = "";
+      if (firstSong?.source === "stingray") {
+        primeUrl = resolveStingraySongPreviewUrl(
+          firstSong,
+          uploadProjectId,
+        );
+      }
+      if (primeUrl) {
+        audio.src = primeUrl;
+      } else {
+        audio.src =
+          "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=";
+      }
+
+      try {
+        await audio.play();
+        audio.pause();
+        try {
+          audio.currentTime = 0;
+        } catch {
+          /* */
+        }
+      } catch {
+        /* gesture unlock best-effort — ne bloque pas l’ouverture */
+      }
+
+      setSessionAudio(audio);
+      setSessionIntent(intent);
+      setSessionOpen(true);
+      void requestNativeFullscreen(document.documentElement);
+    },
+    [uploadProjectId, wizardStoryboard.storyboard.chapters],
+  );
+
+  const closeWatchSession = useCallback(() => {
+    setSessionOpen(false);
+    setSessionMediaSeed(null);
+  }, []);
+
   useEffect(() => {
     if (isPartnerProp) {
       wizardFieldsRef.current.isPartner = true;
@@ -1025,7 +1208,7 @@ export function TributeWizard({
   // pré-générés à l'Étape 4 (S4). Refetch à chaque entrée dans l'étape pour
   // capter d'éventuels ajouts/suppressions faits en revenant en arrière.
   useEffect(() => {
-    if (!uploadProjectId || (currentStep !== 4 && currentStep !== 5)) return;
+    if (!uploadProjectId || currentStep < 4) return;
     let aborted = false;
     void fetchProjectMedia(uploadProjectId)
       .then((items) => {
@@ -1038,6 +1221,30 @@ export function TributeWizard({
       aborted = true;
     };
   }, [uploadProjectId, currentStep]);
+
+  // Étape 6 sas — médias pour poster (portrait / dernière photo).
+  useEffect(() => {
+    if (currentStep !== 6 || !uploadProjectId) return;
+    let cancelled = false;
+    setGateMediaLoading(true);
+    void fetchProjectMedia(uploadProjectId, { force: true })
+      .then((items) => {
+        if (cancelled) return;
+        const mediaItems = mediaApiToMontageItems(items);
+        setGateMediaById(
+          new Map(mediaItems.map((item) => [item.assetId, item] as const)),
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setGateMediaById(new Map());
+      })
+      .finally(() => {
+        if (!cancelled) setGateMediaLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentStep, uploadProjectId]);
 
   /**
    * Option B (8 sept 2026) — séquencement « dépôt d'abord, invitation
@@ -1081,6 +1288,7 @@ export function TributeWizard({
       if (!isWizardStepAllowedForRole(accessRole, step)) return;
       await flush();
       setCurrentStep(step);
+      setFurthestStep((prev) => Math.max(prev, step));
     },
     [accessRole, currentStep, flush],
   );
@@ -1196,12 +1404,11 @@ export function TributeWizard({
   }, [accessRole, currentStep, navigateToStep]);
 
   const handleStepperClick = useCallback(
-    (step: number) => {
-      // Éditeur : le progress remappe 1/2/3 → Wizard 3/4/5.
-      const wizardStep = (isEditor ? step + 2 : step) as Step;
-      void navigateToStep(wizardStep);
+    (wizardStep: number) => {
+      if (wizardStep > furthestStep) return;
+      void navigateToStep(wizardStep as Step);
     },
-    [isEditor, navigateToStep],
+    [furthestStep, navigateToStep],
   );
 
   const handleSocialSelect = useCallback(
@@ -1246,6 +1453,112 @@ export function TributeWizard({
     [queueSave],
   );
 
+  const unlockMasterFromSession = useCallback(async () => {
+    if (!uploadProjectId) {
+      throw new Error("missing_project");
+    }
+
+    const res = await fetch(
+      `/api/projects/${uploadProjectId}/master-checkout`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
+      },
+    );
+    const data = (await res.json().catch(() => ({}))) as {
+      url?: string;
+      error?: string;
+      message?: string;
+    };
+
+    if (!res.ok) {
+      throw new Error(data.error || data.message || "checkout_failed");
+    }
+    if (!data.url) {
+      throw new Error("checkout_missing_url");
+    }
+
+    void exitNativeFullscreen();
+    window.location.href = data.url;
+  }, [locale, uploadProjectId]);
+
+  const downloadMasterFromSession = useCallback(async () => {
+    if (!uploadProjectId) {
+      throw new Error("missing_project");
+    }
+    const res = await fetch(`/api/projects/${uploadProjectId}/export`, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ locale }),
+    });
+    const data = (await res.json().catch(() => ({}))) as {
+      error?: string;
+      message?: string;
+      jobId?: string | null;
+    };
+    if (!res.ok) {
+      throw new Error(data.error || data.message || "export_failed");
+    }
+    void data.jobId;
+  }, [locale, uploadProjectId]);
+
+  const startSocialCutFromSession = useCallback(async () => {
+    if (!uploadProjectId) {
+      throw new Error("missing_project");
+    }
+    const res = await fetch(
+      `/api/projects/${uploadProjectId}/social-cut-checkout`,
+      {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
+      },
+    );
+    const data = (await res.json().catch(() => ({}))) as {
+      url?: string;
+      error?: string;
+      message?: string;
+    };
+    if (!res.ok || !data.url) {
+      throw new Error(data.error || data.message || "social_cut_checkout_failed");
+    }
+    void exitNativeFullscreen();
+    window.location.href = data.url;
+  }, [locale, uploadProjectId]);
+
+  const finalizeHeritageFromSession = useCallback(async () => {
+    void exitNativeFullscreen();
+    closeWatchSession();
+    await navigateToStep(7);
+  }, [closeWatchSession, navigateToStep]);
+
+  const masterHubMode = useMemo(
+    () =>
+      resolveOrganizerMasterHubMode({
+        grantedPackage,
+        intendedPackage,
+        projectStatus: initialDraft?.status ?? "draft",
+        masterEntitled,
+      }),
+    [grantedPackage, initialDraft?.status, intendedPackage, masterEntitled],
+  );
+
+  const honorPrimaryFromSession = useCallback(async () => {
+    // C11 — 49 $ toujours (sauf finaliser Héritage). Download = CTA secondaire.
+    if (masterHubMode === "finalize_heritage") {
+      await finalizeHeritageFromSession();
+      return;
+    }
+    await unlockMasterFromSession();
+  }, [
+    finalizeHeritageFromSession,
+    masterHubMode,
+    unlockMasterFromSession,
+  ]);
+
   const handleAcceptMusicRights = useCallback(() => {
     const next = {
       acceptedAt: new Date().toISOString(),
@@ -1260,12 +1573,9 @@ export function TributeWizard({
     await navigateToStep(7);
   }, [navigateToStep]);
 
-  const handlePreviewEdit = useCallback(async () => {
-    await navigateToStep(5);
-  }, [navigateToStep]);
-
   const extensionRecapLineLabels = useMemo(
     () => ({
+      cinemaMaster: copy.recapLineCinemaMaster,
       aiRetouch: copy.recapLineAiRetouch,
       musicLicense: copy.recapLineMusicLicense,
       extendedLicense: copy.recapLineMusicLicense,
@@ -1290,6 +1600,8 @@ export function TributeWizard({
     setRiderAccepted,
     showCheckoutStayFree,
     handlePay,
+    remainingDueCents,
+    payArmed,
   } = useWizardCheckout({
     uploadProjectId,
     locale,
@@ -1307,6 +1619,26 @@ export function TributeWizard({
     projectMediaCount,
     copy,
   });
+
+  const packageLabel = packageDisplayNameFor(intendedPackage);
+  const preservePackageCta = copy.preservePackageCta.replace(
+    "{package}",
+    packageLabel,
+  );
+  const preservePackagePayCta = copy.preservePackagePayCta
+    .replace("{package}", packageLabel)
+    .replace(
+      "{total}",
+      formatWizardPrice(remainingDueCents, locale === "en" ? "en" : "fr"),
+    );
+  const n3PayDisabled =
+    isPaying || isEditor || !payArmed || (!isPartner && !riderAccepted);
+  const [n3Cooling, setN3Cooling] = useState(false);
+  useEffect(() => {
+    setN3Cooling(true);
+    const timer = window.setTimeout(() => setN3Cooling(false), 500);
+    return () => window.clearTimeout(timer);
+  }, [currentStep]);
 
   const {
     softCapMusicBrowse,
@@ -1346,51 +1678,172 @@ export function TributeWizard({
   const musicBrowseTier =
     isEditor || softCapMusicBrowse ? "premium" : musicCatalogTier;
 
-  const stepperSteps = useMemo(
-    () => [
-      { id: 1, label: copy.stepperEssentials },
-      { id: 2, label: copy.stepperSources },
-      { id: 3, label: copy.stepperVault },
-      { id: 4, label: copy.stepperChapters },
-      { id: 5, label: copy.stepperMontage },
-      { id: 6, label: copy.stepperPreview },
-      { id: 7, label: copy.stepperCheckout },
-    ],
-    [copy],
-  );
-
-  // Stepper en 3 "phases" cinématiques (Déposer / Composer / Recevoir) plutôt
-  // que 8 cercles linéaires — réduit la charge cognitive tout en gardant la
-  // notion d'avancement (voir refonte en-tête global).
-  // Co-Créateur : phases craft uniquement (pas de « Recevoir » / checkout).
-  // Les numéros de phase sont locaux (1…N) ; onPhaseClick remap vers étapes Wizard.
-  const wizardPhases = useMemo(() => {
+  /** Fil constellation — ancres Essentiel / Coffre / Musique / Composer / Son film. */
+  const trailStars = useMemo(() => {
     if (isEditor) {
       return [
-        { id: 1, label: copy.phaseGatherLabel, firstStep: 1, lastStep: 1 },
-        { id: 2, label: copy.phaseComposeLabel, firstStep: 2, lastStep: 3 },
+        {
+          step: 3,
+          anchorLabel: copy.trailCoffre,
+          ariaName: copy.stepperVault,
+        },
+        {
+          step: 4,
+          anchorLabel: copy.trailMusique,
+          ariaName: copy.stepperChapters,
+        },
+        {
+          step: 5,
+          anchorLabel: copy.trailComposer,
+          ariaName: copy.stepperMontage,
+        },
       ];
     }
     return [
-      { id: 1, label: copy.phaseGatherLabel, firstStep: 1, lastStep: 3 },
-      { id: 2, label: copy.phaseComposeLabel, firstStep: 4, lastStep: 5 },
-      { id: 3, label: copy.phaseReceiveLabel, firstStep: 6, lastStep: 7 },
+      {
+        step: 1,
+        anchorLabel: copy.trailEssentiel,
+        ariaName: copy.stepperEssentials,
+      },
+      { step: 2, ariaName: copy.stepperSources },
+      {
+        step: 3,
+        anchorLabel: copy.trailCoffre,
+        ariaName: copy.stepperVault,
+      },
+      {
+        step: 4,
+        anchorLabel: copy.trailMusique,
+        ariaName: copy.stepperChapters,
+      },
+      {
+        step: 5,
+        anchorLabel: copy.trailComposer,
+        ariaName: copy.stepperMontage,
+      },
+      { step: 6, ariaName: copy.stepperPreview },
+      {
+        step: 7,
+        anchorLabel: copy.trailSonFilm,
+        ariaName: copy.stepperCheckout,
+      },
     ];
   }, [copy, isEditor]);
-  const currentStepLabel = useMemo(
-    () => stepperSteps.find((step) => step.id === currentStep)?.label ?? "",
-    [stepperSteps, currentStep],
-  );
-  const progressTotalSteps = isEditor ? 3 : TOTAL_STEPS;
-  /** Éditeur : remap étapes Wizard 3/4/5 → progression locale 1/2/3. */
-  const progressCurrentStep = isEditor
-    ? (Math.min(5, Math.max(3, currentStep)) - 2)
-    : currentStep;
 
   const collabInviteCopy = useMemo(
     () => collabInviteCopyFromDictionary(copy),
     [copy],
   );
+
+  const sessionChapterTitles = useMemo(
+    () => ({
+      chapter1: copy.montageActSparkLabel,
+      chapter2: copy.montageActEpicLabel,
+      chapter3: copy.montageActLegacyLabel,
+      chapter4: copy.montageChapterHorizonsLabel,
+      chapter5Plus: copy.montageChapterLegacyMemoryLabel,
+      trackCredit: copy.watchSessionTrackCredit,
+      trackCreditTitleOnly: copy.watchSessionTrackCreditTitleOnly,
+    }),
+    [copy],
+  );
+
+  const sessionMemoryCard = useMemo(
+    () => ({
+      displayName: deceasedDisplayName,
+      yearsLine: yearsDisplay === "·" ? "" : yearsDisplay,
+    }),
+    [deceasedDisplayName, yearsDisplay],
+  );
+
+  /** Étape 6 immersif : hors wizard-shell (évite stacking context / chrome). */
+  if (currentStep === 6) {
+    return (
+      <>
+        <SessionCinemaGate
+          posterUrl={gatePosterUrl}
+          isLoading={gateMediaLoading}
+          memoryCard={sessionMemoryCard}
+          copy={{
+            play: copy.previewGatePlay,
+            playAria: copy.previewGatePlayAria,
+            skip: copy.previewGateSkip,
+            skipAria: copy.previewGateSkipAria,
+            close: copy.previewGateClose,
+            loading: copy.previewGateLoading,
+            empty: copy.previewGateEmpty,
+            eyebrow: copy.stepPreviewTitle,
+          }}
+          onPlay={() => {
+            setSessionMediaSeed([...gateMediaById.values()]);
+            void openWatchSession("official_session");
+          }}
+          onSkip={() => {
+            void handleProceedToPayment();
+          }}
+          onClose={() => {
+            void navigateToStep(5);
+          }}
+        />
+        {sessionOpen ? (
+          <WizardSessionProjection
+            projectId={uploadProjectId}
+            storyboard={wizardStoryboard.storyboard}
+            chapterTitles={sessionChapterTitles}
+            memoryCard={sessionMemoryCard}
+            openingPortraitUrl={avatarPreview || null}
+            salonBadge={
+              isFreemiumGrant ? copy.previewSalonBadgeFallback : null
+            }
+            primedAudio={sessionAudio}
+            locale={locale}
+            closeLabel={copy.watchSessionClose}
+            enableSound={copy.watchSessionEnableSound}
+            emptyLabel={copy.previewTeaserEmpty}
+            loadingLabel={copy.previewLoadingMedia}
+            teaserPlay={copy.previewTeaserPlay}
+            teaserPause={copy.previewTeaserPause}
+            teaserLoading={copy.previewTeaserLoading}
+            intent={sessionIntent}
+            seedMediaItems={sessionMediaSeed}
+            basePackage={basePackage}
+            hubCopy={exitHubCopy}
+            masterHubMode={masterHubMode}
+            onClose={closeWatchSession}
+            onHonorPrimary={honorPrimaryFromSession}
+            onDownloadMaster={
+              masterHubMode === "download_included"
+                ? downloadMasterFromSession
+                : undefined
+            }
+            onSocialCut={
+              masterHubMode === "download_included" || masterEntitled
+                ? startSocialCutFromSession
+                : undefined
+            }
+            masterUnlocked={
+              masterHubMode === "download_included" || masterEntitled
+            }
+          />
+        ) : null}
+        {!isEditor ? (
+          <SoftCapModal
+            open={softCapOpen}
+            variant={softCapVariant}
+            mediaCount={projectMediaCount}
+            copy={softCapCopy}
+            onAcceptHeritage={acceptSoftCapHeritage}
+            onAcceptLicense={acceptSoftCapLicense}
+            onDismiss={dismissSoftCap}
+            onInviteCollab={() => {
+              dismissSoftCap();
+              setIsCollabInviteOpen(true);
+            }}
+          />
+        ) : null}
+      </>
+    );
+  }
 
   return (
     <>
@@ -1551,8 +2004,8 @@ export function TributeWizard({
       ) : null}
     <div
       className={`wizard-shell relative mx-auto w-full ${
-        currentStep === 6
-          ? "max-w-4xl"
+        currentStep === 5
+          ? "max-w-7xl"
           : currentStep >= 4
             ? "max-w-3xl"
             : "max-w-xl md:max-w-2xl"
@@ -1580,45 +2033,18 @@ export function TributeWizard({
       {/* Rituel du ciel : le wizard n'a pas de chrome, les contrôles restent
           flottants — un rang court en haut à droite, sous le lockup de marque. */}
       {step1Parcours.hubChromeHidden && mobileUtilityTrailing ? (
-        <div className="fixed right-3 top-2 z-[60] flex items-center gap-2.5 md:hidden">
+        <div className="studio-locale-chrome fixed right-3 top-2 z-[60] flex items-center gap-2.5 md:hidden">
           {mobileUtilityTrailing}
         </div>
       ) : null}
 
-      {/* Partout ailleurs : barre utilitaire mobile — navigation + langue +
-          session dans le même rang. Desktop : contrôles flottants inchangés. */}
-      {!step1Parcours.hubChromeHidden &&
-      (currentStep > (isEditor ? 3 : 1) || mobileUtilityTrailing) ? (
-        <div className="sticky top-0 z-[55] -mx-6 mb-4 flex h-12 items-center justify-between gap-3 border-b border-white/10 bg-black/40 px-6 backdrop-blur-xl md:hidden">
-          {currentStep > (isEditor ? 3 : 1) ? (
-            <button
-              type="button"
-              onClick={() => void goBack()}
-              className="inline-flex items-center gap-2 rounded-lg px-1 py-1 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-100"
-            >
-              <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
-              {copy.back}
-            </button>
-          ) : (
-            <span aria-hidden />
-          )}
-          {mobileUtilityTrailing ? (
-            <div className="flex shrink-0 items-center gap-3">
-              {mobileUtilityTrailing}
-            </div>
-          ) : null}
+      {/* Mobile : langue / session seulement — Retour vit dans la barre bas (N3). */}
+      {!step1Parcours.hubChromeHidden && mobileUtilityTrailing ? (
+        <div className="studio-locale-chrome sticky top-0 z-[55] -mx-6 mb-4 flex h-12 items-center justify-end gap-3 border-b border-white/10 bg-black/40 px-6 backdrop-blur-xl md:hidden">
+          <div className="flex shrink-0 items-center gap-3">
+            {mobileUtilityTrailing}
+          </div>
         </div>
-      ) : null}
-
-      {currentStep > (isEditor ? 3 : 1) ? (
-        <button
-          type="button"
-          onClick={() => void goBack()}
-          className="mb-6 hidden items-center gap-2 rounded-lg px-1 py-1 text-sm font-light text-zinc-400 transition-colors hover:text-zinc-100 md:inline-flex"
-        >
-          <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden />
-          {copy.back}
-        </button>
       ) : null}
 
       {!step1Parcours.hubChromeHidden ? (
@@ -1639,8 +2065,7 @@ export function TributeWizard({
           avatar/nom ne rejoint l'en-tête qu'à partir de l'Étape 2. */}
       <header
         className={`sticky z-50 -mx-6 mb-8 border-b border-white/10 bg-black/40 px-6 py-3.5 backdrop-blur-xl transition-opacity duration-500 md:top-0 md:-mx-10 md:px-10 ${
-          !step1Parcours.hubChromeHidden &&
-          (currentStep > (isEditor ? 3 : 1) || mobileUtilityTrailing)
+          !step1Parcours.hubChromeHidden && mobileUtilityTrailing
             ? "top-12"
             : "top-0"
         } ${
@@ -1821,36 +2246,36 @@ export function TributeWizard({
           }
         >
         <WizardPhaseProgress
-          phases={wizardPhases}
-          currentStep={progressCurrentStep}
-          totalSteps={progressTotalSteps}
-          currentStepLabel={currentStepLabel}
-          onPhaseClick={handleStepperClick}
+          stars={trailStars}
+          currentStep={currentStep}
+          furthestStep={furthestStep}
+          onStepClick={handleStepperClick}
           copy={{
             ariaLabel: copy.progressAria,
-            stepAnnouncement: copy.stepLabel,
-            stepProgressLabel: copy.stepProgressLabel,
+            goToStepAria: copy.trailGoToAria,
+            hereAria: copy.trailHereAria,
           }}
         />
         </div>
 
-        {!isEditor && !step1Parcours.hubChromeHidden ? (
+        {/* Quiet Luxury : pas de sticky prix pendant le craft (1–5).
+            Total $ / jetons seulement à partir de Preview (6+). */}
+        {!isEditor &&
+        !step1Parcours.hubChromeHidden &&
+        currentStep >= 6 ? (
         <StickyPriceBar
           extensions={extensions}
           basePackage={basePackage}
           grantedPackage={grantedPackage}
           isPartner={isPartner}
-          draftMode={currentStep < 6}
           copy={{
             consumerTotalLabel: copy.stickyConsumerTotal,
             partnerTokenCostLabel: copy.stickyPartnerTokenCost,
-            draftLabel: copy.stickyDraftLabel,
           }}
         />
         ) : null}
 
-        {/* Pas de Total $ pendant le craft (1–5) — empathie Quiet Luxury.
-            Visible seulement à partir de Recevoir / Preview (6+). */}
+        {/* Cart détail B2C — aussi à partir de Preview / Recevoir. */}
         {currentStep >= 6 && !isPartner && !isEditor ? (
           <div className="mb-8">
             <WizardCartSummary
@@ -1949,11 +2374,11 @@ export function TributeWizard({
               <div className="parcours-open-stagger-1">
               <h2
                 id={wizardTitleId}
-                className="font-[family-name:var(--font-label)] text-balance text-2xl font-light tracking-wide text-zinc-100 md:text-[1.65rem]"
+                className={wizardStepTitle}
               >
                 {copy.stepEssentialTitle}
               </h2>
-              <p className="mt-5 whitespace-pre-line text-lg font-light leading-relaxed text-zinc-400 md:text-xl">
+              <p className={`mt-5 whitespace-pre-line ${wizardStepLead}`}>
                 {copy.stepEssentialDescription}
               </p>
               </div>
@@ -2213,11 +2638,11 @@ export function TributeWizard({
             <>
               <h2
                 id={wizardTitleId}
-                className="font-[family-name:var(--font-label)] text-balance text-2xl font-light tracking-wide text-zinc-100 md:text-[1.65rem]"
+                className={wizardStepTitle}
               >
                 {copy.stepMediaTitle}
               </h2>
-              <p className="mt-5 text-lg font-light leading-relaxed text-zinc-400 md:text-xl">
+              <p className={`mt-5 ${wizardStepLead}`}>
                 {copy.stepMediaDescription}
               </p>
 
@@ -2276,6 +2701,7 @@ export function TributeWizard({
                   maxFiles={effectiveMaxMediaItems}
                   maxFileSizeBytes={300 * 1024 * 1024}
                   overflowRejectionMessage={copy.uploadLimitOverflowRejection}
+                  onAssetUploaded={handleAssetUploaded}
                   onUploadError={(error) => {
                     if (error.message === "unauthenticated") {
                       setMediaSessionExpired(true);
@@ -2525,29 +2951,6 @@ export function TributeWizard({
                   googlePhotos: copy.socialGooglePhotos,
                 }}
               />
-
-              <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
-                <div className="mx-auto flex max-w-xl gap-3">
-                  {!isEditor ? (
-                    <button
-                      type="button"
-                      onClick={() => void goBack()}
-                      className={`font-[family-name:var(--font-label)] min-h-[52px] flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-base font-normal text-zinc-400 transition-colors hover:border-white/12 hover:bg-white/[0.05] hover:text-zinc-200 ${sanctuaryFocusRing}`}
-                    >
-                      {copy.back}
-                    </button>
-                  ) : null}
-
-                  <button
-                    type="button"
-                    onClick={() => void goNext()}
-                    disabled={step3UploadRunning}
-                    className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none transition-[colors,box-shadow,transform] hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`}
-                  >
-                    {projectMediaCount > 0 ? copy.next : copy.stepMediaLater}
-                  </button>
-                </div>
-              </div>
             </>
           ) : null}
 
@@ -2657,6 +3060,7 @@ export function TributeWizard({
           ) : null}
 
           {currentStep === 5 ? (
+            <>
             <StoryboardMontageStep
               packageId={currentPackageId}
               projectId={uploadProjectId}
@@ -2689,6 +3093,8 @@ export function TributeWizard({
                   tabSpark: copy.montageActSparkLabel,
                   tabEpic: copy.montageActEpicLabel,
                   tabLegacy: copy.montageActLegacyLabel,
+                  tabHorizons: copy.montageChapterHorizonsLabel,
+                  tabLegacyMemory: copy.montageChapterLegacyMemoryLabel,
                   tabFallback: copy.chapterTitleFallback,
                 },
                 card: {
@@ -2740,6 +3146,16 @@ export function TributeWizard({
                   ariaLabel: copy.montageFilmMapAria,
                   segmentAria: copy.montageFilmMapSegmentAria,
                 },
+                creditEditAria: copy.montageCreditEditAria,
+                creditShowAria: copy.montageCreditShowAria,
+                creditHideAria: copy.montageCreditHideAria,
+                creditModify: copy.montageCreditModify,
+                creditDisplayedTitleLabel: copy.montageCreditDisplayedTitleLabel,
+                creditDisplayedTitlePlaceholder:
+                  copy.montageCreditDisplayedTitlePlaceholder,
+                creditSave: copy.montageCreditSave,
+                creditCancel: copy.montageCreditCancel,
+                creditShowInSession: copy.montageCreditShowInSession,
                 refinement: {
                   title: copy.montageRefinementTitle,
                   closeAria: copy.montageRefinementCloseAria,
@@ -2766,43 +3182,24 @@ export function TributeWizard({
                 },
               }}
               onOpenCollab={() => setIsCollabInviteOpen(true)}
-            />
-          ) : null}
-
-          {currentStep === 6 ? (
-            <PreviewStep
-              projectId={uploadProjectId}
-              montage={montage}
-              actTracks={actTracks}
-              extensions={extensions}
-              basePackage={basePackage}
-              softCapActive={
-                isFreemiumGrant &&
-                !isEditor &&
-                (packageTierRank(intendedPackage) >= 1 ||
-                  projectMediaCount > grantedMediaMax ||
-                  Boolean(extensions.musicLicense))
+              onWatchSession={
+                canWatchSession
+                  ? (mediaItems) => {
+                      setSessionMediaSeed(mediaItems);
+                      void openWatchSession("craft_preview");
+                    }
+                  : undefined
               }
-              onProceedToPayment={() => void handleProceedToPayment()}
-              onEdit={() => void handlePreviewEdit()}
-              copy={{
-                title: copy.stepPreviewTitle,
-                description: copy.stepPreviewDescription,
-                loadingMedia: copy.previewLoadingMedia,
-                payCta: copy.previewPayCta,
-                payCtaSoftCap: copy.previewPayCtaSoftCap,
-                softCapNote: copy.previewSoftCapNote,
-                editLink: copy.previewEditLink,
-                valueNote: copy.previewValueNote,
-                valueAiRetouch: copy.previewValueAiRetouch,
-                valueLicense: copy.previewValueLicense,
-                teaserLoading: copy.previewTeaserLoading,
-                teaserEmpty: copy.previewTeaserEmpty,
-                teaserNowPlaying: copy.previewTeaserNowPlaying,
-                teaserPlay: copy.previewTeaserPlay,
-                teaserPause: copy.previewTeaserPause,
-              }}
+              watchSessionCopy={
+                canWatchSession
+                  ? {
+                      label: copy.watchSession,
+                      aria: copy.watchSessionAria,
+                    }
+                  : undefined
+              }
             />
+            </>
           ) : null}
 
           {currentStep === 7 ? (
@@ -2820,6 +3217,7 @@ export function TributeWizard({
               viralLoopEnabled={viralLoopEnabled}
               riderAccepted={riderAccepted}
               onRiderChange={setRiderAccepted}
+              payLocked={!payArmed}
               excessMediaCount={
                 isFreemiumGrant && projectMediaCount > grantedMediaMax
                   ? projectMediaCount - grantedMediaMax
@@ -2835,6 +3233,8 @@ export function TributeWizard({
               extensionsCopy={{
                 title: copy.checkoutAddonsTitle,
                 description: copy.checkoutAddonsDescription,
+                cinemaMasterTitle: copy.extensionCinemaMasterTitle,
+                cinemaMasterDescription: copy.extensionCinemaMasterDescription,
                 aiRetouchTitle: copy.extensionAiRetouchTitle,
                 aiRetouchDescription: copy.extensionAiRetouchDescription,
                 musicLicenseTitle: copy.extensionMusicLicenseTitle,
@@ -2866,7 +3266,10 @@ export function TributeWizard({
                 recapLineLabels: extensionRecapLineLabels,
                 totalLabel: copy.checkoutTotalLabel,
                 secureNote: copy.checkoutSecureNote,
-                payCta: copy.checkoutPayCta,
+                payCta: copy.preservePackagePayCta.replace(
+                  "{package}",
+                  packageLabel,
+                ),
                 partnerPayCta: copy.checkoutPartnerPayCta,
                 partnerRecapLabel: copy.checkoutPartnerRecap,
                 paying: copy.checkoutPaying,
@@ -2882,7 +3285,12 @@ export function TributeWizard({
                 remainingDueLabel: copy.checkoutRemainingDueLabel,
                 riderLabel: copy.checkoutRiderLabel,
                 riderHint: copy.checkoutRiderHint,
-                payCtaFree: copy.checkoutPayCtaFree,
+                payCtaFree: copy.preservePackagePayCta
+                  .replace("{package}", packageLabel)
+                  .replace(
+                    "{total}",
+                    formatWizardPrice(0, locale === "en" ? "en" : "fr"),
+                  ),
               }}
             />
           ) : null}
@@ -2946,33 +3354,109 @@ export function TributeWizard({
       />
       ) : null}
 
-      {currentStep !== 3 &&
-      currentStep !== 6 &&
-      currentStep !== 7 &&
-      !(currentStep === 1 && step1Sky) ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8">
+      {/* N3 — 2–5 Retour|Suivant ; 7 Retour|Préserver {forfait}·prix (étape 6 = sas cinéma early-return) */}
+      {!step1Parcours.hubChromeHidden &&
+      currentStep >= 2 ? (
+        <div
+          className={`fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8 ${
+            n3Cooling ? "pointer-events-none" : ""
+          }`}
+        >
           <div
-            className={`mx-auto ${
-              currentStep >= 5 ? "max-w-3xl" : "max-w-xl"
+            className={`mx-auto flex gap-3 ${
+              currentStep === 5
+                ? "max-w-7xl"
+                : currentStep >= 7
+                  ? "max-w-2xl"
+                  : "max-w-xl"
             }`}
           >
-            {currentStep === 5 && isEditor ? (
-              <p className="text-center text-sm font-light text-white/55">
-                {copy.editorCraftComplete}
-              </p>
-            ) : currentStep <= 5 ? (
+            {currentStep > (isEditor ? 3 : 1) ? (
               <button
                 type="button"
-                onClick={() => void goNext()}
-                className={`connexion-submit-breathe font-[family-name:var(--font-label)] min-h-[52px] w-full rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-normal text-zinc-50 transition-colors hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 transition-[colors,box-shadow,transform] hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] ${sanctuaryFocusRing}`}
+                onClick={() => void goBack()}
+                className={`${wizardMiniCapsAction} min-h-[52px] flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-base font-medium text-zinc-400 transition-colors hover:border-white/12 hover:bg-white/[0.05] hover:text-zinc-200 ${sanctuaryFocusRing}`}
               >
-                {copy.next}
+                {copy.back}
+              </button>
+            ) : null}
+
+            {currentStep <= 5 ? (
+              currentStep === 5 && isEditor ? (
+                <p className="flex min-h-[52px] flex-[1.35] items-center justify-center text-center text-sm font-light text-white/55">
+                  {copy.editorCraftComplete}
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => void goNext()}
+                  disabled={currentStep === 3 && step3UploadRunning}
+                  className={`connexion-submit-breathe ${wizardMiniCapsAction} min-h-[52px] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-medium text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${
+                    currentStep > (isEditor ? 3 : 1)
+                      ? "flex-[1.35]"
+                      : "w-full"
+                  } ${sanctuaryFocusRing}`}
+                >
+                  {currentStep === 3 && projectMediaCount === 0
+                    ? copy.stepMediaLater
+                    : copy.next}
+                </button>
+              )
+            ) : currentStep === 7 && !isEditor ? (
+              <button
+                type="button"
+                onClick={() => void handlePay()}
+                disabled={n3PayDisabled}
+                className={`connexion-submit-breathe ${wizardMiniCapsAction} min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-medium text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${sanctuaryFocusRing}`}
+              >
+                {isPaying ? copy.checkoutPaying : preservePackagePayCta}
               </button>
             ) : null}
           </div>
         </div>
       ) : null}
     </div>
+      {sessionOpen ? (
+        <WizardSessionProjection
+          projectId={uploadProjectId}
+          storyboard={wizardStoryboard.storyboard}
+          chapterTitles={sessionChapterTitles}
+          memoryCard={sessionMemoryCard}
+          openingPortraitUrl={avatarPreview || null}
+          salonBadge={
+            isFreemiumGrant ? copy.previewSalonBadgeFallback : null
+          }
+          primedAudio={sessionAudio}
+          locale={locale}
+          closeLabel={copy.watchSessionClose}
+          enableSound={copy.watchSessionEnableSound}
+          emptyLabel={copy.previewTeaserEmpty}
+          loadingLabel={copy.previewLoadingMedia}
+          teaserPlay={copy.previewTeaserPlay}
+          teaserPause={copy.previewTeaserPause}
+          teaserLoading={copy.previewTeaserLoading}
+          intent={sessionIntent}
+          seedMediaItems={sessionMediaSeed}
+          basePackage={basePackage}
+          hubCopy={exitHubCopy}
+          masterHubMode={masterHubMode}
+          onClose={closeWatchSession}
+          onHonorPrimary={honorPrimaryFromSession}
+          onDownloadMaster={
+            masterHubMode === "download_included"
+              ? downloadMasterFromSession
+              : undefined
+          }
+          onSocialCut={
+            masterHubMode === "download_included" || masterEntitled
+              ? startSocialCutFromSession
+              : undefined
+          }
+          masterUnlocked={
+            masterHubMode === "download_included" || masterEntitled
+          }
+        />
+      ) : null}
     </>
   );
 }

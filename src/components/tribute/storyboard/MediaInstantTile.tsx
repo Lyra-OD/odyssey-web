@@ -1,8 +1,6 @@
 "use client";
 
-import { Film, Image as ImageIcon } from "lucide-react";
-
-import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
+import { MediaAssetThumb } from "@/src/components/media/MediaAssetThumb";
 import {
   getChapterCardTheme,
   getUnassignedCardTheme,
@@ -45,22 +43,12 @@ export function MediaInstantTile({
       ? getUnassignedCardTheme()
       : getChapterCardTheme(chapterIndex);
 
-  const preview = item.previewUrl ? (
-    <StoragePreviewImage
+  const preview = (
+    <MediaAssetThumb
+      isVideo={item.isVideo}
       src={item.previewUrl}
       fallbackSrc={item.fullPreviewUrl}
-      alt=""
-      className="pointer-events-none h-full w-full object-cover"
-      draggable={false}
     />
-  ) : item.isVideo ? (
-    <div className="pointer-events-none flex h-full w-full items-center justify-center bg-[#020202]">
-      <Film className="h-7 w-7 text-zinc-600" strokeWidth={1.1} />
-    </div>
-  ) : (
-    <div className="pointer-events-none flex h-full w-full items-center justify-center bg-[#020202]">
-      <ImageIcon className="h-7 w-7 text-zinc-600" strokeWidth={1.1} />
-    </div>
   );
 
   return (

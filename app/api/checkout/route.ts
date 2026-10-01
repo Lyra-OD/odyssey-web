@@ -37,6 +37,8 @@ const BodySchema = z
   .object({
     projectId: z.string().uuid(),
     locale: z.enum(["fr", "en"]).optional(),
+    /** Hub post-séance (C8) → URLs retour Master dédiées. */
+    source: z.enum(["wizard", "session_hub"]).optional(),
   })
   .strict();
 
@@ -77,7 +79,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const { projectId, locale = "fr" } = parsed.data;
+  const { projectId, locale = "fr", source = "wizard" } = parsed.data;
+  const fromSessionHub = source === "session_hub";
 
   const editorBlocked = await rejectEditorForOwnerOnlyRoute(
     projectId,
@@ -390,6 +393,16 @@ export async function POST(request: Request) {
   }
 
   if (totalCents <= 0) {
+    // Hub C8 : Héritage+ (Master inclus) ou panier déjà couvert → confirmation Studio.
+    if (fromSessionHub) {
+      return NextResponse.json({
+        ok: true,
+        mode: "already_entitled",
+        url: `${origin}${studioPath}?checkout=master_success`,
+        totalCents: 0,
+      });
+    }
+
     if (hasPartnerInvitation && isFreemiumTenant) {
       intendedPackage = resolveB2b2cIntendedPackage({
         grantedPackage,
@@ -435,6 +448,19 @@ export async function POST(request: Request) {
               locale === "en"
                 ? "Remove the Stingray Premium license or upgrade to pay."
                 : "Retirez la Licence Stingray ou passez à un forfait payant.",
+          },
+          { status: 422 },
+        );
+      }
+
+      if (cart.extensions.cinemaMaster) {
+        return NextResponse.json(
+          {
+            error: "cinema_master_requires_payment",
+            message:
+              locale === "en"
+                ? "Remove the Cinema Master archive or upgrade to pay."
+                : "Retirez le Master cinéma ou passez à un forfait payant.",
           },
           { status: 422 },
         );
@@ -574,7 +600,7 @@ export async function POST(request: Request) {
         ? settings.revshare_bps
         : 3000;
 
-    const idempotencyKey = `b2b2c:${projectId}:${intendedPackage}:${totalCents}:${cart.extensions.musicLicense ? "ml" : "n"}`;
+    const idempotencyKey = `b2b2c:${projectId}:${intendedPackage}:${totalCents}:${cart.extensions.musicLicense ? "ml" : "n"}:${cart.extensions.cinemaMaster ? "cm" : "n"}`;
 
     const checkoutRow = await resolveTributeCheckoutForRetry(admin, {
       projectId,
@@ -661,6 +687,7 @@ export async function POST(request: Request) {
       base_package: intendedPackage,
       options_cents: String(Math.trunc(cart.optionsCents)),
       music_license: String(Boolean(normalizedExt.musicLicense)),
+      cinema_master: String(Boolean(normalizedExt.cinemaMaster)),
       ai_retouch: String(Boolean(normalizedExt.aiRetouch)),
       sanctuary_token: String(Boolean(normalizedExt.sanctuaryToken)),
       story_voice: String(Boolean(normalizedExt.storyVoice)),
@@ -671,6 +698,7 @@ export async function POST(request: Request) {
       collector_usb: String(Boolean(normalizedExt.sanctuaryToken)),
       extensions: JSON.stringify(normalizedExt),
       act_tracks: actTracksMetadata,
+      ...(fromSessionHub ? { checkout_source: "session_hub" } : {}),
     };
 
     try {
@@ -696,8 +724,12 @@ export async function POST(request: Request) {
         .filter((line) => line.cents > 0)
         .map(toStripeLineItem),
       ...(discounts ? { discounts } : {}),
-      success_url: `${origin}${studioPath}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}${studioPath}?checkout=cancel`,
+      success_url: fromSessionHub
+        ? `${origin}${studioPath}?checkout=master_success&session_id={CHECKOUT_SESSION_ID}`
+        : `${origin}${studioPath}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: fromSessionHub
+        ? `${origin}${studioPath}?checkout=master_cancel`
+        : `${origin}${studioPath}?checkout=cancel`,
       client_reference_id: projectId,
       metadata: stripeMetadata,
     });

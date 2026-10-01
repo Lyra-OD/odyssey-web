@@ -8,8 +8,12 @@
 export type ChapterTabTheme = {
   ring: string;
   active: string;
+  /** Bordure + fond au repos (halo chapitre, pas le blanc générique). */
+  idle: string;
   dot: string;
   text: string;
+  /** RGB sans alpha — halo box-shadow idle / drop / magie. */
+  glowRgb: string;
 };
 
 /** Thème carte média / modal directeur — dérivé de l'index de chapitre. */
@@ -196,62 +200,82 @@ const CHAPTER_THEME_PALETTE: ChapterTabTheme[] = [
   {
     ring: "ring-amber-400/30",
     active: "border-amber-400/35 bg-amber-400/[0.05]",
+    idle: "border-amber-400/22 bg-amber-400/[0.03]",
     dot: "bg-amber-400",
     text: "text-amber-400",
+    glowRgb: "251,191,36",
   },
   {
     ring: "ring-teal-400/30",
     active: "border-teal-400/35 bg-teal-400/[0.05]",
+    idle: "border-teal-400/22 bg-teal-400/[0.03]",
     dot: "bg-teal-400",
     text: "text-teal-400",
+    glowRgb: "45,212,191",
   },
   {
     ring: "ring-fuchsia-400/30",
     active: "border-fuchsia-400/35 bg-fuchsia-400/[0.05]",
+    idle: "border-fuchsia-400/22 bg-fuchsia-400/[0.03]",
     dot: "bg-fuchsia-400",
     text: "text-fuchsia-400",
+    glowRgb: "217,70,239",
   },
   {
     ring: "ring-violet-400/30",
     active: "border-violet-400/35 bg-violet-400/[0.05]",
+    idle: "border-violet-400/22 bg-violet-400/[0.03]",
     dot: "bg-violet-400",
     text: "text-violet-400",
+    glowRgb: "167,139,250",
   },
   {
     ring: "ring-cyan-400/30",
     active: "border-cyan-400/35 bg-cyan-400/[0.05]",
+    idle: "border-cyan-400/22 bg-cyan-400/[0.03]",
     dot: "bg-cyan-400",
     text: "text-cyan-400",
+    glowRgb: "34,211,238",
   },
   {
     ring: "ring-emerald-400/30",
     active: "border-emerald-400/35 bg-emerald-400/[0.05]",
+    idle: "border-emerald-400/22 bg-emerald-400/[0.03]",
     dot: "bg-emerald-400",
     text: "text-emerald-400",
+    glowRgb: "52,211,153",
   },
   {
     ring: "ring-rose-400/30",
     active: "border-rose-400/35 bg-rose-400/[0.05]",
+    idle: "border-rose-400/22 bg-rose-400/[0.03]",
     dot: "bg-rose-400",
     text: "text-rose-400",
+    glowRgb: "251,113,133",
   },
   {
     ring: "ring-sky-400/30",
     active: "border-sky-400/35 bg-sky-400/[0.05]",
+    idle: "border-sky-400/22 bg-sky-400/[0.03]",
     dot: "bg-sky-400",
     text: "text-sky-400",
+    glowRgb: "56,189,248",
   },
   {
     ring: "ring-orange-400/30",
     active: "border-orange-400/35 bg-orange-400/[0.05]",
+    idle: "border-orange-400/22 bg-orange-400/[0.03]",
     dot: "bg-orange-400",
     text: "text-orange-400",
+    glowRgb: "251,146,60",
   },
   {
     ring: "ring-lime-400/30",
     active: "border-lime-400/35 bg-lime-400/[0.05]",
+    idle: "border-lime-400/22 bg-lime-400/[0.03]",
     dot: "bg-lime-400",
     text: "text-lime-400",
+    glowRgb: "163,230,53",
   },
 ];
 
@@ -259,6 +283,24 @@ export function getChapterTheme(index: number): ChapterTabTheme {
   const safeIndex = ((index % CHAPTER_THEME_PALETTE.length) + CHAPTER_THEME_PALETTE.length) %
     CHAPTER_THEME_PALETTE.length;
   return CHAPTER_THEME_PALETTE[safeIndex];
+}
+
+export function chapterGlowShadow(
+  glowRgb: string,
+  intensity: "idle" | "drop" | "magic",
+): string {
+  const alpha = intensity === "magic" ? 0.22 : intensity === "drop" ? 0.2 : 0.18;
+  const blur = intensity === "magic" ? 56 : intensity === "drop" ? 48 : 40;
+  return `0 0 ${blur}px rgba(${glowRgb},${alpha})`;
+}
+
+/** Cadre + halo chapitre — repos = lisible ; selected/drop = ring plus fort. */
+export function chapterShellClass(
+  theme: ChapterTabTheme,
+  emphasis: "rest" | "selected" | "drop" = "rest",
+): string {
+  const ring = emphasis === "rest" ? "ring-1" : "ring-2";
+  return `${theme.active} ${ring} ${theme.ring}`;
 }
 
 export function getChapterCardTheme(chapterIndex: number): ChapterCardTheme {

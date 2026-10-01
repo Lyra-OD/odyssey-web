@@ -1,353 +1,252 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { Loader2, Pause, Play } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+/**
+ * Adaptateur wizard (étape 6 / séance) → QuietLuxuryPlayer (C4).
+ * Conserve l’API historique slides/tracks pour la séance cinéma.
+ */
 
-import { buildMusicPreviewProxyUrl } from "@/src/lib/music/stingrayTrackId";
-import type { WizardActTracks } from "@/src/lib/wizard/wizardState";
+import { useEffect, useMemo, useState } from "react";
+
 import {
-  groupSlidesByAct,
-  TEASER_DEFAULT_SLIDE_MS,
-  TEASER_FADE_MS,
+  QuietLuxuryPlayer,
+  type QuietLuxuryAct,
+  type QuietLuxuryClip,
+  type QuietLuxuryPlayerProps,
+} from "@/src/components/tribute/QuietLuxuryPlayer";
+import { buildMusicPreviewProxyUrl } from "@/src/lib/music/stingrayTrackId";
+import { VIDEO_TRIM_DURATION_SEC } from "@/src/lib/wizard/storyboardPacing";
+import {
+  groupSlidesByTrack,
+  type TeaserChapterMeta,
   type TeaserSlide,
+  type TeaserTracks,
 } from "@/src/lib/wizard/teaserHelpers";
 
 export type CinematicTeaserCopy = {
   loading: string;
-  empty: string;
   nowPlaying: string;
   play: string;
   pause: string;
 };
 
+export type ChapterActMeta = TeaserChapterMeta;
+
 type Props = {
   slides: TeaserSlide[];
-  tracks: WizardActTracks;
+  tracks: TeaserTracks;
+  chapterMeta?: Record<string, ChapterActMeta>;
+  /** Ordre des actes = ordre Livre Ouvert (inclut chapitres sans médias). */
+  chapterOrder?: string[];
   copy: CinematicTeaserCopy;
   autoPlay?: boolean;
   projectId?: string | null;
+  emptyLabel: string;
+  salonBadge?: string | null;
+  openingPortraitUrl?: string | null;
+  memoryCard?: { displayName: string; yearsLine: string } | null;
+  onPlaybackComplete?: () => void;
+  cinema?: boolean;
+  primedAudio?: HTMLAudioElement | null;
+  exitHub?: QuietLuxuryPlayerProps["exitHub"];
+  className?: string;
+  enableSound?: string;
+  /** Tempo photo fallback si slide.durationSec absent (secondes). */
+  defaultImageDurationSec?: number;
 };
 
-function formatTime(seconds: number): string {
-  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${String(s).padStart(2, "0")}`;
+async function resolveUploadAudioUrl(
+  projectId: string,
+  storagePath: string,
+): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `/api/projects/${projectId}/music?path=${encodeURIComponent(storagePath)}`,
+    );
+    if (!res.ok) return null;
+    const body = (await res.json()) as { signedUrl?: string };
+    return body.signedUrl?.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+function uploadStoragePathsKey(tracks: TeaserTracks): string {
+  return Object.values(tracks)
+    .filter((t) => t.storagePath && !t.audioUrl)
+    .map((t) => t.storagePath as string)
+    .sort()
+    .join("|");
 }
 
 export function CinematicTeaser({
   slides,
   tracks,
+  chapterMeta = {},
+  chapterOrder,
   copy,
   autoPlay = true,
   projectId = null,
+  emptyLabel,
+  salonBadge = null,
+  openingPortraitUrl = null,
+  memoryCard = null,
+  onPlaybackComplete,
+  cinema = false,
+  primedAudio = null,
+  exitHub = null,
+  className,
+  enableSound,
+  defaultImageDurationSec = 7,
 }: Props) {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const slideStartRef = useRef<number>(Date.now());
-  const rafRef = useRef<number | null>(null);
+  const [uploadAudioByPath, setUploadAudioByPath] = useState<
+    Record<string, string>
+  >({});
+  const [uploadResolveDone, setUploadResolveDone] = useState(false);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isAudioLoading, setIsAudioLoading] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
-  const [totalDuration, setTotalDuration] = useState(0);
-  const [hasAutoStarted, setHasAutoStarted] = useState(false);
-
-  const actGroups = useMemo(() => groupSlidesByAct(slides), [slides]);
-
-  const slideDurations = useMemo(() => {
-    const durations = new Map<number, number>();
-    let offset = 0;
-
-    for (const group of actGroups) {
-      const perSlide = TEASER_DEFAULT_SLIDE_MS;
-      for (const slide of group.slides) {
-        const idx = slides.indexOf(slide);
-        if (idx >= 0) {
-          durations.set(idx, perSlide);
-          offset += perSlide;
-        }
-      }
-    }
-
-    if (offset === 0 && slides.length) {
-      slides.forEach((_, idx) => durations.set(idx, TEASER_DEFAULT_SLIDE_MS));
-    }
-
-    return durations;
-  }, [actGroups, slides]);
+  const uploadPathsKey = uploadStoragePathsKey(tracks);
+  const needsUploadAudio = uploadPathsKey.length > 0;
 
   useEffect(() => {
-    let total = 0;
-    for (let i = 0; i < slides.length; i += 1) {
-      total += slideDurations.get(i) ?? TEASER_DEFAULT_SLIDE_MS;
-    }
-    setTotalDuration(total / 1000);
-  }, [slideDurations, slides.length]);
-
-  useEffect(() => {
-    const audio = new Audio();
-    audio.preload = "auto";
-    audioRef.current = audio;
-
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-
-    audio.addEventListener("play", onPlay);
-    audio.addEventListener("pause", onPause);
-
-    return () => {
-      audio.pause();
-      audio.removeEventListener("play", onPlay);
-      audio.removeEventListener("pause", onPause);
-      audioRef.current = null;
-    };
-  }, []);
-
-  const playMusicForSlide = useCallback(
-    async (slideIndex: number) => {
-      const slide = slides[slideIndex];
-      const track = slide ? tracks[slide.actKey] : undefined;
-      const audio = audioRef.current;
-      if (!slide || !track?.trackId || !audio) return;
-
-      setIsAudioLoading(true);
-      try {
-        const url =
-          track.trackId && projectId
-            ? buildMusicPreviewProxyUrl(track.trackId, projectId)
-            : track.previewUrl?.trim() ||
-              (track.trackId
-                ? buildMusicPreviewProxyUrl(track.trackId)
-                : "");
-        if (!url) {
-          console.error("URL audio manquante pour", track.title);
-          return;
-        }
-        audio.pause();
-        audio.currentTime = 0;
-        audio.src = url;
-        audio.load();
-        await audio.play();
-      } catch {
-        /* preview best-effort */
-      } finally {
-        setIsAudioLoading(false);
-      }
-    },
-    [slides, tracks, projectId],
-  );
-
-  const stopPlayback = useCallback(() => {
-    audioRef.current?.pause();
-    setIsPlaying(false);
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-  }, []);
-
-  const tickProgress = useCallback(() => {
-    const slideMs = slideDurations.get(currentIndex) ?? TEASER_DEFAULT_SLIDE_MS;
-    const slideElapsed = Date.now() - slideStartRef.current;
-    let priorMs = 0;
-    for (let i = 0; i < currentIndex; i += 1) {
-      priorMs += slideDurations.get(i) ?? TEASER_DEFAULT_SLIDE_MS;
-    }
-    setElapsed((priorMs + Math.min(slideElapsed, slideMs)) / 1000);
-
-    if (slideElapsed >= slideMs) {
-      const next = currentIndex + 1;
-      if (next >= slides.length) {
-        stopPlayback();
-        setCurrentIndex(0);
-        setElapsed(0);
-        return;
-      }
-      setCurrentIndex(next);
-      slideStartRef.current = Date.now();
-      const nextSlide = slides[next];
-      const prevSlide = slides[currentIndex];
-      if (nextSlide?.actKey !== prevSlide?.actKey) {
-        void playMusicForSlide(next);
-      }
-    }
-
-    if (isPlaying) {
-      rafRef.current = requestAnimationFrame(tickProgress);
-    }
-  }, [
-    currentIndex,
-    isPlaying,
-    playMusicForSlide,
-    slideDurations,
-    slides,
-    stopPlayback,
-  ]);
-
-  const startPlayback = useCallback(async () => {
-    if (!slides.length) return;
-    slideStartRef.current = Date.now();
-    setIsPlaying(true);
-    await playMusicForSlide(currentIndex);
-    rafRef.current = requestAnimationFrame(tickProgress);
-  }, [currentIndex, playMusicForSlide, slides.length, tickProgress]);
-
-  const togglePlayback = useCallback(() => {
-    if (isPlaying) {
-      stopPlayback();
+    if (!projectId || !needsUploadAudio) {
+      setUploadAudioByPath({});
+      setUploadResolveDone(true);
       return;
     }
-    void startPlayback();
-  }, [isPlaying, startPlayback, stopPlayback]);
-
-  useEffect(() => {
-    if (autoPlay && slides.length && !hasAutoStarted) {
-      setHasAutoStarted(true);
-      void startPlayback();
-    }
-  }, [autoPlay, hasAutoStarted, slides.length, startPlayback]);
-
-  useEffect(() => {
-    if (isPlaying) {
-      rafRef.current = requestAnimationFrame(tickProgress);
-    }
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [currentIndex, isPlaying, tickProgress]);
-
-  useEffect(() => () => stopPlayback(), [stopPlayback]);
-
-  const handleSeek = (ratio: number) => {
-    if (!slides.length || !totalDuration) return;
-    const targetMs = ratio * totalDuration * 1000;
-    let acc = 0;
-    let targetIndex = 0;
-    for (let i = 0; i < slides.length; i += 1) {
-      const dur = slideDurations.get(i) ?? TEASER_DEFAULT_SLIDE_MS;
-      if (acc + dur >= targetMs) {
-        targetIndex = i;
-        break;
+    const paths = uploadPathsKey.split("|").filter(Boolean);
+    let cancelled = false;
+    setUploadResolveDone(false);
+    void (async () => {
+      const next: Record<string, string> = {};
+      await Promise.all(
+        paths.map(async (path) => {
+          const url = await resolveUploadAudioUrl(projectId, path);
+          if (url) next[path] = url;
+        }),
+      );
+      if (!cancelled) {
+        setUploadAudioByPath(next);
+        setUploadResolveDone(true);
       }
-      acc += dur;
-      targetIndex = i;
-    }
-    setCurrentIndex(targetIndex);
-    slideStartRef.current = Date.now();
-    setElapsed(targetMs / 1000);
-    if (isPlaying) void playMusicForSlide(targetIndex);
-  };
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [needsUploadAudio, projectId, uploadPathsKey]);
 
-  if (!slides.length) {
+  const acts: QuietLuxuryAct[] = useMemo(() => {
+    const slidesByTrack = new Map<string, TeaserSlide[]>();
+    for (const slide of slides) {
+      const list = slidesByTrack.get(slide.trackKey);
+      if (list) list.push(slide);
+      else slidesByTrack.set(slide.trackKey, [slide]);
+    }
+
+    const order =
+      chapterOrder && chapterOrder.length > 0
+        ? chapterOrder
+        : Object.keys(chapterMeta).length > 0
+          ? Object.keys(chapterMeta)
+          : groupSlidesByTrack(slides).map((g) => g.trackKey);
+
+    return order.map((trackKey, groupIndex) => {
+      const groupSlides = slidesByTrack.get(trackKey) ?? [];
+      const track = tracks[trackKey];
+      const meta = chapterMeta[trackKey];
+      const chapterIndex = meta?.chapterIndex ?? groupIndex;
+      const clips: QuietLuxuryClip[] = groupSlides.map((slide, idx) => ({
+        id: `${trackKey}-${idx}`,
+        kind: slide.kind === "video" ? "video" : "image",
+        url: slide.imageUrl,
+        durationSec:
+          slide.durationSec ??
+          (slide.kind === "video"
+            ? VIDEO_TRIM_DURATION_SEC
+            : defaultImageDurationSec),
+        label: slide.label,
+        objectPosition: slide.objectPosition,
+        transformOrigin: slide.transformOrigin,
+        chapterIndex: slide.chapterIndex ?? chapterIndex,
+        ...(slide.hasAudio ? { hasAudio: true } : {}),
+        ...(slide.kind === "video"
+          ? { trimStartSec: Math.max(0, slide.trimStartSec ?? 0) }
+          : {}),
+      }));
+
+      let audioUrl: string | null = null;
+      if (track?.audioUrl) {
+        audioUrl = track.audioUrl;
+      } else if (track?.trackId) {
+        audioUrl = buildMusicPreviewProxyUrl(
+          track.trackId,
+          projectId ?? undefined,
+        );
+      } else if (track?.storagePath) {
+        audioUrl = uploadAudioByPath[track.storagePath] ?? null;
+      }
+
+      const musicCredit =
+        meta?.musicCredit ??
+        (track && track.showCreditInSession !== false && track.title?.trim()
+          ? track.artist?.trim()
+            ? `${(track.creditLabel || track.title).trim()} — ${track.artist.trim()}`
+            : (track.creditLabel || track.title).trim()
+          : null);
+
+      return {
+        id: trackKey,
+        title: meta?.title || groupSlides[0]?.label,
+        musicCredit,
+        chapterIndex,
+        audioUrl,
+        clips,
+        ...(meta?.holdDurationSec != null
+          ? { holdDurationSec: meta.holdDurationSec }
+          : {}),
+      };
+    });
+  }, [
+    chapterMeta,
+    chapterOrder,
+    defaultImageDurationSec,
+    projectId,
+    slides,
+    tracks,
+    uploadAudioByPath,
+  ]);
+
+  // MP3 perso : attendre l'URL signée avant autoplay, sinon la séance part muette.
+  const canAutoPlay = autoPlay && (!needsUploadAudio || uploadResolveDone);
+
+  if (needsUploadAudio && !uploadResolveDone) {
     return (
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-        <div
-          className="pointer-events-none absolute inset-0"
-          aria-hidden
-          style={{
-            background:
-              "radial-gradient(ellipse 80% 70% at 50% 20%, rgba(34,211,238,0.12) 0%, transparent 55%), linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.24) 100%)",
-          }}
-        />
-        <div className="flex aspect-video min-h-[18rem] items-center justify-center px-6 text-center">
-          <p className="max-w-md text-sm font-light leading-relaxed text-zinc-400 md:text-base">
-            {copy.empty}
-          </p>
-        </div>
+      <div
+        className={`flex items-center justify-center bg-black text-sm font-light text-zinc-500 ${className ?? ""}`}
+      >
+        {copy.loading}
       </div>
     );
   }
 
-  const currentSlide = slides[currentIndex];
-  const progressRatio = totalDuration > 0 ? elapsed / totalDuration : 0;
-
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_24px_80px_rgba(0,0,0,0.55)]">
-      <div className="relative aspect-video w-full bg-[#050505]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${currentIndex}-${currentSlide.imageUrl}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: TEASER_FADE_MS / 1000, ease: "easeInOut" }}
-            className="absolute inset-0"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={currentSlide.imageUrl}
-              alt=""
-              className="h-full w-full object-cover"
-              draggable={false}
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
-          </motion.div>
-        </AnimatePresence>
-
-        <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[10px] font-medium uppercase tracking-widest text-zinc-300 backdrop-blur-md">
-          {currentSlide.label}
-        </div>
-
-        {isAudioLoading ? (
-          <div className="absolute right-4 top-4 flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-xs text-zinc-400 backdrop-blur-md">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
-            {copy.loading}
-          </div>
-        ) : null}
-      </div>
-
-      <div className="border-t border-white/10 bg-[#0a0a0a]/95 px-4 py-4 backdrop-blur-xl md:px-6">
-        <p className="mb-3 truncate text-xs font-light text-zinc-400">
-          {tracks[currentSlide.actKey]
-            ? `${tracks[currentSlide.actKey]?.title} · ${tracks[currentSlide.actKey]?.artist}`
-            : copy.nowPlaying}
-        </p>
-
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={togglePlayback}
-            aria-label={isPlaying ? copy.pause : copy.play}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-zinc-100 transition-colors hover:bg-white/[0.1]"
-          >
-            {isPlaying ? (
-              <Pause className="h-5 w-5" fill="currentColor" aria-hidden />
-            ) : (
-              <Play className="ml-0.5 h-5 w-5" fill="currentColor" aria-hidden />
-            )}
-          </button>
-
-          <div className="min-w-0 flex-1">
-            <button
-              type="button"
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const ratio = (e.clientX - rect.left) / rect.width;
-                handleSeek(Math.min(1, Math.max(0, ratio)));
-              }}
-              className="group relative h-1.5 w-full cursor-pointer rounded-full bg-white/10"
-              aria-label={copy.play}
-            >
-              <span
-                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 transition-all duration-150"
-                style={{ width: `${Math.min(100, progressRatio * 100)}%` }}
-              />
-              <span
-                className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-white opacity-0 shadow-[0_0_12px_rgba(255,255,255,0.4)] transition-opacity group-hover:opacity-100"
-                style={{
-                  left: `calc(${Math.min(100, progressRatio * 100)}% - 6px)`,
-                }}
-              />
-            </button>
-            <div className="mt-2 flex justify-between text-[11px] tabular-nums text-zinc-400">
-              <span>{formatTime(elapsed)}</span>
-              <span>{formatTime(totalDuration)}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <QuietLuxuryPlayer
+      acts={acts}
+      openingPortraitUrl={openingPortraitUrl ?? null}
+      memoryCard={memoryCard}
+      salonBadge={salonBadge}
+      autoPlay={canAutoPlay}
+      showControls={!cinema}
+      cinema={cinema}
+      primedAudio={primedAudio}
+      exitHub={exitHub}
+      onPlaybackComplete={onPlaybackComplete}
+      copy={{
+        play: copy.play,
+        pause: copy.pause,
+        loading: copy.loading,
+        enableSound,
+      }}
+      emptyLabel={emptyLabel}
+      className={className}
+    />
   );
 }

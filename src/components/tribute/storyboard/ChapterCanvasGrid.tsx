@@ -11,6 +11,8 @@ import {
 } from "@/src/components/tribute/montage/MontageMediaCard";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import {
+  STORYBOARD_CHAPTER_GRID_ATTR,
+  STORYBOARD_CHAPTER_GRID_SURFACE_ATTR,
   STORYBOARD_MEDIA_DND_TYPE,
   type StoryboardMediaDragData,
 } from "@/src/lib/wizard/storyboardDnd";
@@ -98,7 +100,11 @@ export function ChapterCanvasGrid({
       ) : null}
 
       <div
-        className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6"
+        {...{
+          [STORYBOARD_CHAPTER_GRID_ATTR]: chapterId,
+          [STORYBOARD_CHAPTER_GRID_SURFACE_ATTR]: "book",
+        }}
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
         role="list"
         aria-label={`Médias du chapitre · ${assignedCount} placé(s)`}
       >

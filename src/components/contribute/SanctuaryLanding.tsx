@@ -2,25 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
-import {
-  ImprintCatalog,
-  type ImprintPack,
-} from "@/src/components/contribute/ImprintCatalog";
-import { ImprintCheckoutCta } from "@/src/components/contribute/ImprintCheckoutCta";
-import { GuestVoiceRecorder } from "@/src/components/contribute/GuestVoiceRecorder";
-import { GuestVideoRecorder } from "@/src/components/contribute/GuestVideoRecorder";
-import { SanctuaryLueurOrb } from "@/src/components/contribute/SanctuaryLueurOrb";
-import { SanctuaryLueurPanel } from "@/src/components/contribute/SanctuaryLueurPanel";
-import { PatronAmountField } from "@/src/components/contribute/PatronAmountField";
-import {
-  SanctuaryDepositForm,
-  type SanctuaryDepositResult,
-} from "@/src/components/contribute/SanctuaryDepositForm";
+import type { ImprintPack } from "@/src/components/contribute/ImprintCatalog";
+import type { SanctuaryDepositResult } from "@/src/components/contribute/SanctuaryDepositForm";
+import { GuestSkyStill } from "@/src/components/contribute/GuestSkyStill";
 import { GuestStarPills } from "@/src/components/contribute/GuestStarPills";
-import { SanctuaryMonolith } from "@/src/components/contribute/SanctuaryMonolith";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
 import { formatCircleDisplayName } from "@/src/lib/contribute/circle";
 import { LocaleSwitcher } from "@/src/components/i18n/LocaleSwitcher";
@@ -31,7 +18,6 @@ import {
   SANCTUARY_PREVIEW_TRIBUTE,
   sanctuaryPreviewPacks,
 } from "@/src/lib/contribute/sanctuaryPreview";
-import { useConstellationCraftReveal } from "@/src/components/contribute/constellation/useConstellationCraftReveal";
 import {
   SANCTUARY_HALO_TEAL,
   SANCTUARY_HALO_UV,
@@ -39,10 +25,6 @@ import {
   sanctuaryGhostButton,
 } from "@/src/lib/contribute/sanctuaryChrome";
 import { SANCTUARY_GUEST_PHOTO_MAX } from "@/src/lib/contribute/sanctuaryLimits";
-import {
-  DURATION_RITUAL,
-  EASE_OUT_LUXE,
-} from "@/src/lib/motion/easing";
 import { SKY_GUEST_DEMO_LAYERS } from "@/src/components/contribute/constellation/skyCraftLayers";
 import type { ConstellationRevealCraft } from "@/src/components/contribute/SanctuaryUniverse";
 import {
@@ -50,14 +32,25 @@ import {
   DEFAULT_HERO_SPIKES,
   DEFAULT_HERO_TEAL,
   DEFAULT_HERO_WHITE,
-} from "@/src/components/contribute/constellation/HeroStar";
-import { HUB_HERO_BREATH_SPEED_INVITE } from "@/src/components/contribute/constellation/graphs/hubIdle";
+  GUEST_HERO_BREATH,
+} from "@/src/lib/contribute/heroAtomDefaults";
 import { WIZARD_BIRTH_REVEAL_END } from "@/src/lib/contribute/wizardBirthReveal";
 import {
   GUEST_PATRON_SUGGESTED_CENTS,
   guestSupportPackLabelByKey,
 } from "@/src/lib/wizard/guestSupportPacks";
 import { formatWizardPrice } from "@/src/lib/wizard/wizardPricing";
+import {
+  shouldDeferGuestWebgl,
+  shouldKeepGuestSkyStill,
+} from "@/src/lib/contribute/guestSkyStill";
+import {
+  inMemoryOfTitle,
+  tributeDisplayName,
+  tributeSkyName,
+} from "@/src/lib/contribute/inMemoryTitle";
+import type { SanctuaryGuestPayload } from "@/src/lib/contribute/sanctuaryGuestPayload";
+import { WebGLErrorBoundary } from "@/src/components/contribute/constellation/webglGate";
 import type { Locale } from "@/i18n.config";
 
 const GUEST_KEEP_REVEAL_REF = { current: WIZARD_BIRTH_REVEAL_END };
@@ -69,23 +62,81 @@ const SanctuaryUniverse = dynamic(
     ),
   {
     ssr: false,
-    loading: () => <div className="h-screen w-full bg-black" />,
+    loading: () => <GuestSkyStill />,
   },
 );
 
+/** Dev `test-ciel` only — never in the mobile guest graph. */
+const SanctuarySkyPreview = dynamic(
+  () =>
+    import("@/src/components/contribute/SanctuarySkyPreview").then(
+      (m) => m.SanctuarySkyPreview,
+    ),
+  {
+    ssr: false,
+    loading: () => <GuestSkyStill />,
+  },
+);
+
+/** Deposit / bridge — hors du premier paint (comme le Scanner : shell d’abord). */
+const SanctuaryMonolith = dynamic(() =>
+  import("@/src/components/contribute/SanctuaryMonolith").then(
+    (m) => m.SanctuaryMonolith,
+  ),
+);
+const SanctuaryDepositForm = dynamic(() =>
+  import("@/src/components/contribute/SanctuaryDepositForm").then(
+    (m) => m.SanctuaryDepositForm,
+  ),
+);
+const ImprintCatalog = dynamic(() =>
+  import("@/src/components/contribute/ImprintCatalog").then(
+    (m) => m.ImprintCatalog,
+  ),
+);
+const ImprintCheckoutCta = dynamic(() =>
+  import("@/src/components/contribute/ImprintCheckoutCta").then(
+    (m) => m.ImprintCheckoutCta,
+  ),
+);
+const GuestVoiceRecorder = dynamic(() =>
+  import("@/src/components/contribute/GuestVoiceRecorder").then(
+    (m) => m.GuestVoiceRecorder,
+  ),
+);
+const GuestVideoRecorder = dynamic(() =>
+  import("@/src/components/contribute/GuestVideoRecorder").then(
+    (m) => m.GuestVideoRecorder,
+  ),
+);
+const SanctuaryLueurOrb = dynamic(() =>
+  import("@/src/components/contribute/SanctuaryLueurOrb").then(
+    (m) => m.SanctuaryLueurOrb,
+  ),
+);
+const SanctuaryLueurPanel = dynamic(() =>
+  import("@/src/components/contribute/SanctuaryLueurPanel").then(
+    (m) => m.SanctuaryLueurPanel,
+  ),
+);
+const PatronAmountField = dynamic(() =>
+  import("@/src/components/contribute/PatronAmountField").then(
+    (m) => m.PatronAmountField,
+  ),
+);
+
 export type SanctuaryCopy = AppDictionary["sanctuary"];
+
+/** Ciel d'abord → dépôt (courriel inclus) → greffe étoile → offres. */
+type Phase = "sky" | "deposit" | "graft" | "bridge";
 
 export type SanctuaryLandingProps = {
   token: string;
   locale: Locale;
   copyFr: SanctuaryCopy;
   copyEn: SanctuaryCopy;
-};
-
-type TributePayload = {
-  firstName: string | null;
-  lastName: string | null;
-  displayName?: string;
+  initial?: SanctuaryGuestPayload | null;
+  initialPhase?: Phase;
 };
 
 function fill(template: string, vars: Record<string, string | number>): string {
@@ -124,32 +175,6 @@ function GuestOdysseyHomeMark({
   );
 }
 
-function tributeSkyName(
-  tribute: TributePayload,
-  locale: Locale,
-): string {
-  const first = tribute.firstName?.trim();
-  if (first) return first;
-  return tributeDisplayName(tribute, locale);
-}
-
-/**
- * Titre ciel invité — FR : « En mémoire de/d’ » (élision voyelle),
- * EN : « In loving memory of ».
- */
-function inMemoryOfTitle(name: string, locale: Locale): string {
-  const trimmed = name.trim();
-  if (locale === "en") {
-    return trimmed
-      ? `In loving memory of ${trimmed}`
-      : "In loving memory";
-  }
-  if (!trimmed) return "En mémoire";
-  const first = trimmed.charAt(0).normalize("NFD")[0]?.toLowerCase() ?? "";
-  const elide = "aeiouy".includes(first);
-  return elide ? `En mémoire d’${trimmed}` : `En mémoire de ${trimmed}`;
-}
-
 function starIdFromName(name: string): string {
   return name.trim().toLowerCase();
 }
@@ -159,75 +184,11 @@ type LoadState =
   | { status: "error"; message: string }
   | {
       status: "ready";
-      tribute: TributePayload;
+      tribute: SanctuaryGuestPayload["tribute"];
       packs: ImprintPack[];
       guestPhotoCount: number;
       guestPhotoMax: number;
     };
-
-/** Ciel d'abord → dépôt (courriel inclus) → greffe étoile → offres. */
-type Phase = "sky" | "deposit" | "graft" | "bridge";
-
-function tributeDisplayName(
-  tribute: TributePayload,
-  locale: "fr" | "en",
-): string {
-  if (tribute.displayName?.trim()) return tribute.displayName.trim();
-  const parts = [tribute.firstName, tribute.lastName]
-    .map((p) => (p ?? "").trim())
-    .filter(Boolean);
-  if (parts.length > 0) return parts.join(" ");
-  return locale === "en" ? "a loved one" : "un être cher";
-}
-
-/** Preview `test-ciel` — même reveal que onglet Constellation (`/test-lueur`). */
-function SkyPreviewExperience({ locale }: { locale: Locale }) {
-  const [skyOpen, setSkyOpen] = useState(true);
-  const { craftReveal, restart } = useConstellationCraftReveal({
-    autoPlay: skyOpen,
-    heroName: SANCTUARY_PREVIEW_TRIBUTE.firstName,
-  });
-  const seeSky = locale === "en" ? "See the sky" : "Voir le ciel";
-  const whisper =
-    locale === "en" ? "The sky is filling" : "Le ciel se remplit";
-
-  return (
-    <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
-      <SanctuaryUniverse
-        mode={skyOpen ? "immersive" : "background"}
-        className={skyOpen ? "fixed inset-0 z-40" : "absolute inset-0 z-0"}
-        onClose={skyOpen ? () => setSkyOpen(false) : undefined}
-        locale={locale}
-        craftReveal={craftReveal}
-      />
-      <div className="absolute right-4 top-4 z-50 md:right-8 md:top-8">
-        <LocaleSwitcher
-          lang={locale}
-          languageLabel={locale === "en" ? "Language" : "Langue"}
-          langOptionFr="FR"
-          langOptionEn="EN"
-        />
-      </div>
-      {!skyOpen ? (
-        <div className="relative z-10 flex min-h-screen flex-col items-center justify-center gap-8 px-6">
-          <p className="text-sm font-light uppercase tracking-[0.35em] text-teal-50/35">
-            {whisper}
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              setSkyOpen(true);
-              restart();
-            }}
-            className={`${sanctuaryGhostButton} px-6 py-3 text-[11px] uppercase tracking-[0.28em]`}
-          >
-            {seeSky}
-          </button>
-        </div>
-      ) : null}
-    </main>
-  );
-}
 
 /**
  * Shell client du Sanctuaire — dépôt (multi photos) → catalogue → checkout.
@@ -237,17 +198,33 @@ export function SanctuaryLanding({
   locale,
   copyFr,
   copyEn,
+  initial = null,
+  initialPhase,
 }: SanctuaryLandingProps) {
-  const [load, setLoad] = useState<LoadState>({ status: "loading" });
+  const [load, setLoad] = useState<LoadState>(() =>
+    initial
+      ? {
+          status: "ready",
+          tribute: initial.tribute,
+          packs: initial.packs,
+          guestPhotoCount: initial.guestPhotoCount,
+          guestPhotoMax: initial.guestPhotoMax,
+        }
+      : { status: "loading" },
+  );
   const [deposit, setDeposit] = useState<SanctuaryDepositResult | null>(null);
-  const [phase, setPhase] = useState<Phase>("sky");
+  const [phase, setPhase] = useState<Phase>(initialPhase ?? "sky");
   const [guestStars, setGuestStars] = useState<
     { id: string; label: string }[]
   >([]);
   const [graftingStarId, setGraftingStarId] = useState<string | null>(null);
   const pendingStarNameRef = useRef<string | null>(null);
-  const [photoCount, setPhotoCount] = useState(0);
-  const [photoMax, setPhotoMax] = useState(SANCTUARY_GUEST_PHOTO_MAX);
+  const [photoCount, setPhotoCount] = useState(
+    initial?.guestPhotoCount ?? 0,
+  );
+  const [photoMax, setPhotoMax] = useState(
+    initial?.guestPhotoMax ?? SANCTUARY_GUEST_PHOTO_MAX,
+  );
   const [selectedPackKey, setSelectedPackKey] = useState<string | null>(null);
   const [voiceMediaId, setVoiceMediaId] = useState<string | null>(null);
   const [videoMediaId, setVideoMediaId] = useState<string | null>(null);
@@ -260,11 +237,39 @@ export function SanctuaryLanding({
   const [lueurSettling, setLueurSettling] = useState(false);
   const [skyOpen, setSkyOpen] = useState(false);
   const [uiLocale, setUiLocale] = useState(locale);
+  /** Premier paint = still. WebGL = amélioration (idle sur mobile). */
+  const [skyStill, setSkyStill] = useState(true);
   const t = uiLocale === "en" ? copyEn : copyFr;
 
   useEffect(() => {
     setUiLocale(locale);
   }, [locale]);
+
+  useEffect(() => {
+    if (initialPhase) setPhase(initialPhase);
+  }, [initialPhase]);
+
+  useEffect(() => {
+    if (shouldKeepGuestSkyStill()) {
+      setSkyStill(true);
+      return;
+    }
+    if (shouldDeferGuestWebgl() && phase !== "sky") {
+      setSkyStill(true);
+      return;
+    }
+    const enable = () => setSkyStill(false);
+    if (shouldDeferGuestWebgl()) {
+      const ric = window.requestIdleCallback;
+      if (typeof ric === "function") {
+        const id = ric(() => enable(), { timeout: 2000 });
+        return () => window.cancelIdleCallback(id);
+      }
+      const timer = window.setTimeout(enable, 400);
+      return () => window.clearTimeout(timer);
+    }
+    enable();
+  }, [phase]);
 
   const handleSelectPack = (key: string) => {
     if (selectedPackKey === key) {
@@ -388,6 +393,10 @@ export function SanctuaryLanding({
       return;
     }
 
+    if (initial) {
+      return;
+    }
+
     if (isSanctuaryVisualPreview(token)) {
       setLoad({
         status: "ready",
@@ -409,7 +418,7 @@ export function SanctuaryLanding({
         );
         const body = (await res.json().catch(() => ({}))) as {
           ok?: boolean;
-          tribute?: TributePayload;
+          tribute?: SanctuaryGuestPayload["tribute"];
           packs?: ImprintPack[];
           guestPhotoCount?: number;
           guestPhotoMax?: number;
@@ -447,18 +456,18 @@ export function SanctuaryLanding({
     return () => {
       cancelled = true;
     };
-  }, [token, locale, copyFr, copyEn]);
+  }, [token, locale, copyFr, copyEn, initial]);
 
   if (isSanctuarySkyPreview(token)) {
-    return (
-      <SkyPreviewExperience locale={locale} />
-    );
+    return <SanctuarySkyPreview locale={locale} />;
   }
 
-  const onSky = load.status === "ready" && phase === "sky";
+  const onSky =
+    (load.status === "ready" || load.status === "loading") && phase === "sky";
   const hasJoined = guestStars.length > 0 || deposit !== null;
   const skyFirst = onSky && !hasJoined;
-  const skyReturn = onSky && hasJoined;
+  const skyReady = load.status === "ready";
+  const skyReturn = skyReady && phase === "sky" && hasJoined;
   const grafting = load.status === "ready" && phase === "graft";
   const showMonolith =
     load.status === "ready" &&
@@ -550,7 +559,9 @@ export function SanctuaryLanding({
     load.status === "ready"
       ? tributeSkyName(load.tribute, uiLocale)
       : undefined;
-  const guestCraftReveal = useMemo((): ConstellationRevealCraft => {
+  /** Desktop WebGL only — never allocated on mobile still path. */
+  const guestCraftReveal = useMemo((): ConstellationRevealCraft | undefined => {
+    if (skyStill) return undefined;
     GUEST_KEEP_REVEAL_REF.current = WIZARD_BIRTH_REVEAL_END;
     return {
       controlled: true,
@@ -560,14 +571,14 @@ export function SanctuaryLanding({
       heroName: guestHeroName,
       skyActive: true,
       heroAtom: {
-        white: { ...DEFAULT_HERO_WHITE, breath: HUB_HERO_BREATH_SPEED_INVITE },
-        teal: { ...DEFAULT_HERO_TEAL, breath: HUB_HERO_BREATH_SPEED_INVITE },
-        spikes: { ...DEFAULT_HERO_SPIKES, breath: HUB_HERO_BREATH_SPEED_INVITE },
+        white: { ...DEFAULT_HERO_WHITE, breath: GUEST_HERO_BREATH },
+        teal: { ...DEFAULT_HERO_TEAL, breath: GUEST_HERO_BREATH },
+        spikes: { ...DEFAULT_HERO_SPIKES, breath: GUEST_HERO_BREATH },
         embedScale: 0.42,
         globalScale: DEFAULT_HERO_GLOBAL_SCALE,
       },
     };
-  }, [guestHeroName]);
+  }, [skyStill, guestHeroName]);
 
   return (
     <main
@@ -577,32 +588,38 @@ export function SanctuaryLanding({
           : "min-h-screen overflow-x-hidden"
       }`}
     >
-      <SanctuaryUniverse
-        mode={universeImmersive ? "immersive" : "background"}
-        className={
-          universeImmersive ? "fixed inset-0 z-40" : "absolute inset-0 z-0"
-        }
-        constellationVisible
-        skyCraftChrome={false}
-        wanderChrome={false}
-        skyWander={universeImmersive}
-        /**
-         * Même moteur caméra que la famille (dolly hub + molette `window` +
-         * bande décalée) — mais posé direct sur l’étoile, jamais de replay
-         * du dolly 2,8 s (le ciel invité n’a pas de rituel « naissance »).
-         */
-        hubSkyCamera={universeImmersive}
-        hubSkyCameraStartSettled
-        skyLayers={SKY_GUEST_DEMO_LAYERS}
-        craftReveal={guestCraftReveal}
-        skipConstellationReveal
-        parallaxIntensity={0}
-        wizardRewardFullPerf={universeImmersive}
-        onClose={
-          skyOpen && !onSky && !grafting ? () => setSkyOpen(false) : undefined
-        }
-        locale={uiLocale}
-      />
+      {skyStill ? (
+        <GuestSkyStill />
+      ) : (
+        <WebGLErrorBoundary fallback={<GuestSkyStill />}>
+        <SanctuaryUniverse
+          mode={universeImmersive ? "immersive" : "background"}
+          className={
+            universeImmersive ? "fixed inset-0 z-40" : "absolute inset-0 z-0"
+          }
+          constellationVisible
+          skyCraftChrome={false}
+          wanderChrome={false}
+          skyWander={universeImmersive}
+          /**
+           * Même moteur caméra que la famille (dolly hub + molette `window` +
+           * bande décalée) — mais posé direct sur l’étoile, jamais de replay
+           * du dolly 2,8 s (le ciel invité n’a pas de rituel « naissance »).
+           */
+          hubSkyCamera={universeImmersive}
+          hubSkyCameraStartSettled
+          skyLayers={SKY_GUEST_DEMO_LAYERS}
+          craftReveal={guestCraftReveal}
+          skipConstellationReveal
+          parallaxIntensity={0}
+          wizardRewardFullPerf={universeImmersive}
+          onClose={
+            skyOpen && !onSky && !grafting ? () => setSkyOpen(false) : undefined
+          }
+          locale={uiLocale}
+        />
+        </WebGLErrorBoundary>
+      )}
 
       <GuestStarPills
         stars={showMonolith ? [] : guestStars}
@@ -613,12 +630,6 @@ export function SanctuaryLanding({
         }
       />
 
-      {load.status === "loading" ? (
-        <p className="fixed inset-0 z-[46] flex items-center justify-center text-sm font-light text-zinc-500">
-          {t.loading}
-        </p>
-      ) : null}
-
       {skyFirst ? (
         <div className="pointer-events-none fixed inset-0 z-[46] flex flex-col">
           {skyTopChrome}
@@ -626,16 +637,30 @@ export function SanctuaryLanding({
             <p className="text-[10px] font-medium uppercase tracking-[0.55em] text-white/35">
               {t.kicker}
             </p>
-            <h1 className="font-editorial text-[1.85rem] font-medium tracking-tight text-zinc-50 md:text-4xl">
-              {inMemoryOfTitle(
-                tributeSkyName(load.tribute, uiLocale),
-                uiLocale,
-              )}
+            <h1
+              className={`font-editorial text-[1.85rem] font-medium tracking-tight text-zinc-50 transition-opacity duration-300 md:text-4xl ${
+                skyReady ? "opacity-100" : "opacity-40"
+              }`}
+            >
+              {skyReady
+                ? inMemoryOfTitle(
+                    tributeSkyName(load.tribute, uiLocale),
+                    uiLocale,
+                  )
+                : inMemoryOfTitle("", uiLocale)}
             </h1>
-            <p className="max-w-sm text-sm font-light leading-relaxed text-white/70 md:text-base">
+            <p
+              className={`max-w-sm text-sm font-light leading-relaxed text-white/70 transition-opacity duration-300 md:text-base ${
+                skyReady ? "opacity-100" : "opacity-0"
+              }`}
+            >
               {t.skyContextBody}
             </p>
-            <p className="max-w-sm text-xs font-light leading-relaxed text-white/40 md:text-sm">
+            <p
+              className={`max-w-sm text-xs font-light leading-relaxed text-white/40 transition-opacity duration-300 md:text-sm ${
+                skyReady ? "opacity-100" : "opacity-0"
+              }`}
+            >
               {t.skyPrivacyNote}
             </p>
           </div>
@@ -643,10 +668,11 @@ export function SanctuaryLanding({
           <div className="flex flex-col items-center gap-4 px-6 pb-16 text-center">
             <button
               type="button"
+              disabled={!skyReady}
               onClick={() => setPhase("deposit")}
               className={`pointer-events-auto parcours-monolith-continue ${connexionSubmitButtonClass} max-w-xs touch-manipulation`}
             >
-              {t.skyCta}
+              {skyReady ? t.skyCta : t.loading}
             </button>
             <p className="text-[8px] font-medium uppercase tracking-[0.44em] text-white/26">
               {t.poweredBy} {t.brandWordmark}
@@ -929,24 +955,16 @@ export function SanctuaryLanding({
         </header>
 
         <div className="flex-1">
-          <AnimatePresence mode="wait">
-            {load.status === "error" ? (
-              <motion.div
-                key="error"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: DURATION_RITUAL, ease: EASE_OUT_LUXE }}
-                className="text-center"
-              >
-                <h1 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
-                  {t.errorTitle}
-                </h1>
-                <p className="mt-4 text-sm font-light leading-relaxed text-white/55">
-                  {load.message}
-                </p>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+          {load.status === "error" ? (
+            <div className="text-center">
+              <h1 className="font-editorial text-2xl font-medium tracking-tight text-zinc-50 md:text-3xl">
+                {t.errorTitle}
+              </h1>
+              <p className="mt-4 text-sm font-light leading-relaxed text-white/55">
+                {load.message}
+              </p>
+            </div>
+          ) : null}
         </div>
 
         <footer className="mt-16 flex flex-col items-center gap-1 pb-2 pt-8 text-center">

@@ -13,9 +13,11 @@ import {
   storyboardSongPreviewKey,
   waitForAudioReady,
 } from "@/src/lib/wizard/musicPreview";
-import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
+import { chapterShellClass, getChapterTheme } from "@/src/lib/wizard/chapterTheme";
+import { wizardMiniCapsAction, wizardStepLead, wizardStepTitle } from "@/src/lib/contribute/sanctuaryChrome";
 import type { StingrayTrackApiPayload } from "@/src/lib/wizard/stingrayCatalog";
 import {
+  chapterPacingRole,
   chapterRecommendedCapacity,
   resolveTargetSecondsPerMedia,
 } from "@/src/lib/wizard/storyboardPacing";
@@ -358,6 +360,10 @@ export function StoryboardChaptersStep({
     () => storyboard.chapters.find((chapter) => chapter.id === activeChapterId) ?? null,
     [storyboard.chapters, activeChapterId],
   );
+  const activeChapterIndex = useMemo(
+    () => storyboard.chapters.findIndex((chapter) => chapter.id === activeChapterId),
+    [storyboard.chapters, activeChapterId],
+  );
 
   const canAddChapter = storyboard.chapters.length < maxSongs;
   const canRemoveChapters = storyboard.chapters.length > 1;
@@ -365,10 +371,10 @@ export function StoryboardChaptersStep({
   return (
     <div className="space-y-8 pb-10">
       <header className="space-y-3">
-        <h2 className="font-[family-name:var(--font-label)] text-balance text-3xl font-semibold tracking-tight text-white md:text-4xl">
+        <h2 className={wizardStepTitle}>
           {copy.title}
         </h2>
-        <p className="max-w-2xl text-sm font-light leading-relaxed text-zinc-400 md:text-base">
+        <p className={`max-w-2xl ${wizardStepLead}`}>
           {copy.description}
         </p>
         <p className="text-xs font-light text-zinc-400">
@@ -394,6 +400,7 @@ export function StoryboardChaptersStep({
           const capacity = chapterRecommendedCapacity(
             song?.durationSec,
             targetSecondsPerMediaForChapter(chapter),
+            chapterPacingRole(index, storyboard.chapters.length),
           );
           const isDuplicate = duplicateChapterIds.has(chapter.id);
 
@@ -407,9 +414,7 @@ export function StoryboardChaptersStep({
                 className={`w-full rounded-2xl border p-4 text-center transition-all duration-200 ${
                   isDuplicate
                     ? "border-amber-400/40 bg-amber-500/[0.06] ring-1 ring-amber-400/30"
-                    : isActive
-                      ? `${theme.active} ring-1 ${theme.ring}`
-                      : "border-white/10 bg-white/[0.02] hover:border-white/15"
+                    : chapterShellClass(theme, isActive ? "selected" : "rest")
                 }`}
               >
                 <div className="mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/30">
@@ -452,6 +457,7 @@ export function StoryboardChaptersStep({
                 <div className="mt-1.5">
                   <StoryboardCapacityBadge
                     capacity={capacity}
+                    toneClassName={theme.text}
                     copy={{
                       recommended: copy.capacityRecommended,
                       pending: copy.capacityPending,
@@ -481,7 +487,7 @@ export function StoryboardChaptersStep({
           <button
             type="button"
             onClick={handleAddChapter}
-            className="flex min-h-[9.5rem] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 bg-white/[0.01] text-sm font-light text-zinc-400 transition-colors hover:border-white/25 hover:bg-white/[0.03] hover:text-zinc-300"
+            className={`flex min-h-[9.5rem] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 bg-white/[0.01] text-sm font-medium text-zinc-400 transition-colors hover:border-white/25 hover:bg-white/[0.03] hover:text-zinc-300 ${wizardMiniCapsAction}`}
           >
             <Plus className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             {copy.addChapterCta}
@@ -519,10 +525,13 @@ export function StoryboardChaptersStep({
         <div role="tabpanel">
           <ChapterMusicPanel
             chapter={activeChapter}
+            chapterIndex={Math.max(activeChapterIndex, 0)}
+            chapterCount={storyboard.chapters.length}
             chapterLabel={copy.chapterTitleFallback.replace(
               "{index}",
-              String(storyboard.chapters.findIndex((c) => c.id === activeChapter.id) + 1),
+              String(Math.max(activeChapterIndex, 0) + 1),
             )}
+            toneClassName={getChapterTheme(Math.max(activeChapterIndex, 0)).text}
             targetSecondsPerMedia={targetSecondsPerMediaForChapter(activeChapter)}
             catalogTier={catalogTier}
             copy={copy}
