@@ -1142,9 +1142,11 @@
     "metaTitle": "Odyssey · Deck",
     "introSkip": "Passer",
     "gateTitle": "Deck investisseur",
-    "gateHint": "Entrez le mot de passe pour ouvrir le Studio.",
+    "gateHint": "Entrez le mot de passe pour ouvrir le deck.",
     "gateSubmit": "Ouvrir",
     "gateError": "Mot de passe incorrect.",
+    "gateUnavailable": "Accès temporairement indisponible.",
+    "gatePasswordLabel": "Mot de passe",
     "progressOf": "{current} / {total}",
     "slides": [
       {
@@ -1154,7 +1156,7 @@
         "phase": "Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ensuite ?",
         "bullets": [
           "Pas une liste de fonctionnalités. Un moment humain.",
-          "Jon et Erik. Quiet Luxury. Né dans la salle des machines des hommages.",
+          "Erik et Jon. Pas des outsiders. Des cicatrices d’industrie.",
           "Scrollez quand vous êtes prêts."
         ],
         "progress": "Ouverture"
@@ -1248,7 +1250,7 @@
         "title": "Bâti depuis la salle des machines des hommages",
         "phase": "Cinq ans dans la vidéo funéraire nous ont appris exactement où les opérations cassent.",
         "bullets": [
-          "Jon et Erik apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit.",
+          "Erik et Jon apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit.",
           "Nous gagnons par notre empathie pour la distribution et en livrant un vrai Studio au lieu de simples maquettes."
         ]
       },
@@ -1271,7 +1273,7 @@
         "title": "Contact",
         "phase": "Répondez à notre point de contact investisseur principal pour organiser une démo live du Soft Cap.",
         "bullets": [
-          "Contactez Jon et Erik.",
+          "Contactez Erik et Jon.",
           "Nous sommes prêts pour une démonstration live du Studio sur demande.",
           "Le lien protégé est accessible via /fr/deck."
         ]

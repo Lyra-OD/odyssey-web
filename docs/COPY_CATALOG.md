@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-05 · **Entrées :** 1096
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-05 · **Entrées :** 1098
 
 ## `common`
 
@@ -1115,16 +1115,18 @@
 | `pitchDeck.metaTitle` | Odyssey · Deck | Odyssey · Deck |
 | `pitchDeck.introSkip` | Passer | Skip |
 | `pitchDeck.gateTitle` | Deck investisseur | Investor deck |
-| `pitchDeck.gateHint` | Entrez le mot de passe pour ouvrir le Studio. | Enter the password to open the Studio. |
+| `pitchDeck.gateHint` | Entrez le mot de passe pour ouvrir le deck. | Enter the password to open the deck. |
 | `pitchDeck.gateSubmit` | Ouvrir | Open |
 | `pitchDeck.gateError` | Mot de passe incorrect. | Incorrect password. |
+| `pitchDeck.gateUnavailable` | Accès temporairement indisponible. | Access temporarily unavailable. |
+| `pitchDeck.gatePasswordLabel` | Mot de passe | Password |
 | `pitchDeck.progressOf` | {current} / {total} | {current} / {total} |
 | `pitchDeck.slides[0].id` | open | open |
 | `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before a pitch. |
 | `pitchDeck.slides[0].title` | Odyssey | Odyssey |
 | `pitchDeck.slides[0].phase` | Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ensuite ? | If someone you loved died today, would you know what to do next? |
 | `pitchDeck.slides[0].bullets[0]` | Pas une liste de fonctionnalités. Un moment humain. | Not a feature list. A human moment. |
-| `pitchDeck.slides[0].bullets[1]` | Jon et Erik. Quiet Luxury. Né dans la salle des machines des hommages. | Jon and Erik. Quiet Luxury. Built from inside tribute ops. |
+| `pitchDeck.slides[0].bullets[1]` | Erik et Jon. Pas des outsiders. Des cicatrices d’industrie. | Erik and Jon. Not outsiders. Industry scars. |
 | `pitchDeck.slides[0].bullets[2]` | Scrollez quand vous êtes prêts. | Scroll when you’re ready. |
 | `pitchDeck.slides[0].progress` | Ouverture | Open |
 | `pitchDeck.slides[1].id` | need | need |
@@ -1186,7 +1188,7 @@
 | `pitchDeck.slides[8].tagline` | Pas des outsiders qui devinent. | Not outsiders guessing. |
 | `pitchDeck.slides[8].title` | Bâti depuis la salle des machines des hommages | Built from inside the tribute machine room |
 | `pitchDeck.slides[8].phase` | Cinq ans dans la vidéo funéraire nous ont appris exactement où les opérations cassent. | Five years operating inside funeral tribute video means we know exactly where the process breaks. |
-| `pitchDeck.slides[8].bullets[0]` | Jon et Erik apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit. | Jon and Erik bring an unfair combination of industry scars and product craft. |
+| `pitchDeck.slides[8].bullets[0]` | Erik et Jon apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit. | Erik and Jon bring an unfair combination of industry scars and product craft. |
 | `pitchDeck.slides[8].bullets[1]` | Nous gagnons par notre empathie pour la distribution et en livrant un vrai Studio au lieu de simples maquettes. | We win through distribution empathy and by shipping a real Studio instead of slideware. |
 | `pitchDeck.slides[9].id` | ask | ask |
 | `pitchDeck.slides[9].tagline` | Financer le wedge. Semer la Phase 2. | Fund the wedge. Seed Phase 2. |
@@ -1201,7 +1203,7 @@
 | `pitchDeck.slides[10].tagline` | Ouvrons un Studio. | Let’s open a Studio. |
 | `pitchDeck.slides[10].title` | Contact | Contact |
 | `pitchDeck.slides[10].phase` | Répondez à notre point de contact investisseur principal pour organiser une démo live du Soft Cap. | Reply to our primary investor point of contact and we will run a live Soft Cap walkthrough. |
-| `pitchDeck.slides[10].bullets[0]` | Contactez Jon et Erik. | Contact Jon and Erik. |
+| `pitchDeck.slides[10].bullets[0]` | Contactez Erik et Jon. | Contact Erik and Jon. |
 | `pitchDeck.slides[10].bullets[1]` | Nous sommes prêts pour une démonstration live du Studio sur demande. | We are ready for a live demo or Studio walkthrough on request. |
 | `pitchDeck.slides[10].bullets[2]` | Le lien protégé est accessible via /fr/deck. | Password link is available at /en/deck. |
 

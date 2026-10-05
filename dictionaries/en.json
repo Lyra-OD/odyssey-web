@@ -1142,9 +1142,11 @@
     "metaTitle": "Odyssey · Deck",
     "introSkip": "Skip",
     "gateTitle": "Investor deck",
-    "gateHint": "Enter the password to open the Studio.",
+    "gateHint": "Enter the password to open the deck.",
     "gateSubmit": "Open",
     "gateError": "Incorrect password.",
+    "gateUnavailable": "Access temporarily unavailable.",
+    "gatePasswordLabel": "Password",
     "progressOf": "{current} / {total}",
     "slides": [
       {
@@ -1154,7 +1156,7 @@
         "phase": "If someone you loved died today, would you know what to do next?",
         "bullets": [
           "Not a feature list. A human moment.",
-          "Jon and Erik. Quiet Luxury. Built from inside tribute ops.",
+          "Erik and Jon. Not outsiders. Industry scars.",
           "Scroll when you’re ready."
         ],
         "progress": "Open"
@@ -1248,7 +1250,7 @@
         "title": "Built from inside the tribute machine room",
         "phase": "Five years operating inside funeral tribute video means we know exactly where the process breaks.",
         "bullets": [
-          "Jon and Erik bring an unfair combination of industry scars and product craft.",
+          "Erik and Jon bring an unfair combination of industry scars and product craft.",
           "We win through distribution empathy and by shipping a real Studio instead of slideware."
         ]
       },
@@ -1271,7 +1273,7 @@
         "title": "Contact",
         "phase": "Reply to our primary investor point of contact and we will run a live Soft Cap walkthrough.",
         "bullets": [
-          "Contact Jon and Erik.",
+          "Contact Erik and Jon.",
           "We are ready for a live demo or Studio walkthrough on request.",
           "Password link is available at /en/deck."
         ]

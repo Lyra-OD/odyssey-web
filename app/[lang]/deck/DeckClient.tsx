@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { ConnexionEclipseLayer } from "@/src/components/auth/ConnexionEclipseLayer";
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
+import {
+  LocaleSwitcher,
+  type LocaleSwitcherLabels,
+} from "@/src/components/i18n/LocaleSwitcher";
 import { editorialFont } from "@/src/lib/fonts";
 
 import {
@@ -30,11 +39,18 @@ type DeckClientProps = {
   introSkip: string;
   progressOf: string;
   slides: PitchDeckSlide[];
+  localeSwitcher: LocaleSwitcherLabels;
 };
 
+function isOdysseyTitle(title: string, wordmark: string) {
+  return (
+    title === "Odyssey" ||
+    title.toUpperCase() === wordmark.toUpperCase()
+  );
+}
+
 /**
- * Shell Quiet Luxury — A (Mark + éclipse login) + intro craft play B.
- * T1 : slide 1 depuis dict. Gate + scroller = T2–T3.
+ * Scroller Quiet Luxury — 11 slides snap. Intro craft puis lecture.
  */
 export function DeckClient({
   locale,
@@ -42,15 +58,12 @@ export function DeckClient({
   introSkip,
   progressOf,
   slides,
+  localeSwitcher,
 }: DeckClientProps) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const [showIntro, setShowIntro] = useState(false);
-  const slide = slides[0];
-  const progressLabel =
-    slide?.progress ??
-    progressOf
-      .replace("{current}", "1")
-      .replace("{total}", String(slides.length));
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     const skipIntro = hasSeenDeckEclipseIntro();
@@ -58,10 +71,80 @@ export function DeckClient({
     setReady(true);
   }, []);
 
-  if (!slide) return null;
+  useEffect(() => {
+    const root = scrollerRef.current;
+    if (!root || showIntro || !ready) return;
+
+    const sections = Array.from(
+      root.querySelectorAll<HTMLElement>("[data-deck-slide]"),
+    );
+    if (sections.length === 0) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting || entry.intersectionRatio < 0.55) continue;
+          const i = Number(entry.target.getAttribute("data-deck-index"));
+          if (Number.isFinite(i)) setIndex(i);
+        }
+      },
+      { root, threshold: [0.55] },
+    );
+
+    sections.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [ready, showIntro, slides.length]);
+
+  const goTo = useCallback(
+    (next: number) => {
+      const root = scrollerRef.current;
+      if (!root) return;
+      const clamped = Math.max(0, Math.min(next, slides.length - 1));
+      const el = root.querySelector<HTMLElement>(
+        `[data-deck-index="${clamped}"]`,
+      );
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
+    [slides.length],
+  );
+
+  useEffect(() => {
+    if (showIntro || !ready) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
+        e.preventDefault();
+        goTo(index + 1);
+      } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+        e.preventDefault();
+        goTo(index - 1);
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        goTo(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        goTo(slides.length - 1);
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [goTo, index, ready, showIntro, slides.length]);
+
+  if (slides.length === 0) return null;
+
+  const progressLabel = progressOf
+    .replace("{current}", String(index + 1))
+    .replace("{total}", String(slides.length));
+
+  const deckVisible = ready && !showIntro;
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-[#020202] px-6">
+    <div className="relative h-dvh overflow-hidden bg-[#020202]">
+      <div className="absolute right-5 top-5 z-30 md:right-8 md:top-8">
+        <LocaleSwitcher lang={locale} {...localeSwitcher} />
+      </div>
+
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <ConnexionEclipseLayer />
         <div
@@ -83,45 +166,89 @@ export function DeckClient({
         />
       ) : null}
 
-      <div
-        className={`relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center px-2 transition-opacity duration-700 ease-out ${
-          !ready || showIntro ? "opacity-0" : "opacity-100"
+      <p
+        className={`font-label pointer-events-none absolute left-1/2 top-6 z-20 -translate-x-1/2 text-[0.65rem] uppercase tracking-[0.42em] text-white/35 transition-opacity duration-500 ${
+          deckVisible ? "opacity-100" : "opacity-0"
         }`}
+        aria-live="polite"
       >
-        <p className="font-label mb-6 text-[0.65rem] uppercase tracking-[0.42em] text-white/35">
-          {progressLabel}
-        </p>
-        <OdysseyConnexionMark
-          wordmark={wordmark}
-          animate={!showIntro && ready}
-          className="mb-10"
-        />
-        <p className="font-label text-center text-[0.7rem] uppercase tracking-[0.32em] text-white/40">
-          {slide.tagline}
-        </p>
-        {slide.title !== "Odyssey" &&
-        slide.title.toUpperCase() !== wordmark.toUpperCase() ? (
-          <h1
-            className={`${editorialFont.className} mt-5 text-center text-[clamp(1.85rem,5vw,2.75rem)] font-medium tracking-[0.04em] text-zinc-100`}
+        {slides[index]?.progress ?? progressLabel}
+      </p>
+
+      <div
+        className={`absolute right-5 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2 transition-opacity duration-500 md:right-8 ${
+          deckVisible ? "opacity-100" : "opacity-0"
+        }`}
+        aria-hidden
+      >
+        {slides.map((s, i) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => goTo(i)}
+            className={`h-1.5 w-1.5 rounded-full transition-colors ${
+              i === index ? "bg-white/70" : "bg-white/20 hover:bg-white/40"
+            }`}
+            tabIndex={deckVisible ? 0 : -1}
+            aria-label={`${i + 1} / ${slides.length}`}
+          />
+        ))}
+      </div>
+
+      <div
+        ref={scrollerRef}
+        className={`relative z-10 h-dvh snap-y snap-mandatory overflow-y-auto overscroll-y-contain transition-opacity duration-700 ease-out ${
+          deckVisible ? "opacity-100" : "opacity-0"
+        }`}
+        style={{ scrollBehavior: "smooth" }}
+      >
+        {slides.map((slide, i) => (
+          <section
+            key={slide.id}
+            data-deck-slide
+            data-deck-index={i}
+            className="flex min-h-dvh snap-start snap-always flex-col items-center justify-center px-6 py-20"
           >
-            {slide.title}
-          </h1>
-        ) : null}
-        <p
-          className={`${editorialFont.className} mt-6 max-w-xl text-center text-[clamp(1.15rem,3.2vw,1.55rem)] font-medium leading-snug tracking-[0.02em] text-zinc-200`}
-        >
-          {slide.phase}
-        </p>
-        <ul className="mt-10 space-y-3 text-center">
-          {slide.bullets.map((bullet) => (
-            <li
-              key={bullet}
-              className="font-label text-sm font-light leading-relaxed text-white/50 md:text-[0.95rem]"
-            >
-              {bullet}
-            </li>
-          ))}
-        </ul>
+            <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
+              {i === 0 ? (
+                <OdysseyConnexionMark
+                  wordmark={wordmark}
+                  animate={deckVisible}
+                  className="mb-10"
+                />
+              ) : null}
+
+              <p className="font-label text-center text-[0.7rem] uppercase tracking-[0.32em] text-white/40">
+                {slide.tagline}
+              </p>
+
+              {!isOdysseyTitle(slide.title, wordmark) ? (
+                <h2
+                  className={`${editorialFont.className} mt-5 text-center text-[clamp(1.55rem,4.2vw,2.45rem)] font-medium tracking-[0.04em] text-zinc-100`}
+                >
+                  {slide.title}
+                </h2>
+              ) : null}
+
+              <p
+                className={`${editorialFont.className} mt-6 max-w-xl text-center text-[clamp(1.05rem,2.8vw,1.4rem)] font-medium leading-snug tracking-[0.02em] text-zinc-200`}
+              >
+                {slide.phase}
+              </p>
+
+              <ul className="mt-10 max-w-xl space-y-3 text-center">
+                {slide.bullets.map((bullet) => (
+                  <li
+                    key={bullet}
+                    className="font-label text-sm font-light leading-relaxed text-white/50 md:text-[0.95rem]"
+                  >
+                    {bullet}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        ))}
       </div>
     </div>
   );

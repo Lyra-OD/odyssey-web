@@ -67,7 +67,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Phase: If someone you loved died today, would you know what to do next?
 - Bullets:
   - Not a feature list. A human moment.
-  - Jon and Erik · Quiet Luxury · built from inside tribute ops
+  - Erik and Jon. Not outsiders. Industry scars.
   - Scroll when you’re ready
 - Progress: Open
 
@@ -77,7 +77,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Phase: Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ensuite ?
 - Bullets:
   - Pas une liste de fonctionnalités. Un moment humain.
-  - Jon et Erik · Quiet Luxury · né dans la salle des machines des hommages
+  - Erik et Jon. Pas des outsiders. Des cicatrices d’industrie.
   - Scrollez quand vous êtes prêts
 
 ---
@@ -261,7 +261,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Title: Built from inside the tribute machine room
 - Phase: Five years operating inside funeral tribute video means we know exactly where the process breaks.
 - Bullets:
-  - Jon and Erik bring an unfair combination of industry scars and product craft.
+  - Erik and Jon bring an unfair combination of industry scars and product craft.
   - We win through distribution empathy and by shipping a real Studio instead of slideware.
 
 **FR**
@@ -269,7 +269,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Title: Bâti depuis la salle des machines des hommages
 - Phase: Cinq ans dans la vidéo funéraire nous ont appris exactement où les opérations cassent.
 - Bullets:
-  - Jon et Erik apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit.
+  - Erik et Jon apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit.
   - Nous gagnons par notre empathie pour la distribution et en livrant un vrai Studio au lieu de simples maquettes.
 
 ---
@@ -307,7 +307,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Title: Contact
 - Phase: Reply to our primary investor point of contact and we will run a live Soft Cap walkthrough.
 - Bullets:
-  - Contact Jon and Erik.
+  - Contact Erik and Jon.
   - We are ready for a live demo or Studio walkthrough on request.
   - Password link is available at `/en/deck`.
 
@@ -316,7 +316,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Title: Contact
 - Phase: Répondez à notre point de contact investisseur principal pour organiser une démo live du Soft Cap.
 - Bullets:
-  - Contactez Jon et Erik.
+  - Contactez Erik et Jon.
   - Nous sommes prêts pour une démonstration live du Studio sur demande.
   - Le lien protégé est accessible via `/fr/deck`.
 

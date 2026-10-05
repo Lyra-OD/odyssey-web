@@ -4,9 +4,11 @@
 **Dernière MAJ :** 5 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 5 oct 2026 : T1 copy `pitchDeck.slides` FR/EN (11) + gate keys ; slide 1 affichée depuis le dict.
-- 5 oct 2026 : T0+ Mark connexion + fond login + intro **EclipseCraftPlay** prologue (~9,5 s, 1× / session).
-- 5 oct 2026 : T0 scaffold route `/[lang]/deck` (shell Quiet Luxury, sans gate).
+- 5 oct 2026 : T2 gate password (`DECK_ACCESS_PASSWORD`, cookie 7 j) — slides hors HTML si verrouillé.
+- 5 oct 2026 : T3 scroller snap 11 slides (clavier ↑↓ · dots).
+- 5 oct 2026 : T1 copy `pitchDeck.slides` FR/EN (11) + gate keys.
+- 5 oct 2026 : T0+ Mark + intro EclipseCraftPlay prologue.
+- 5 oct 2026 : Canon copy V2.1 (Erik first · bullet B outsiders).
 
 | Doc | Sujet |
 |-----|--------|
