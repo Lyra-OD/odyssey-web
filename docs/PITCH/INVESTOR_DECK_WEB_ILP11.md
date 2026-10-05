@@ -4,6 +4,8 @@
 **Dernière MAJ :** 5 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 5 oct 2026 : Copy V2.3 slide 2 Need — diagnostic système (industrie / deuil / écosystème), plus USB-CapCut.
+- 5 oct 2026 : Copy V2.2 slide 9 Team — Option 1 punchy (tranchées / cicatrices / Erik·Jon / unfair advantage).
 - 5 oct 2026 : Copy V2.1 slides 5–11 (soundbites à l’écran, phase 5 sans doublon, consented leads, kill 90 j, Marketplace = Endgame hors budget T0). Pas de tiret long.
 - 5 oct 2026 : Copy V2 CEO + soundbites (CAC · Loi 25 · Amazon · générosité · kill 90 j).
 - 5 oct 2026 : Canon initial capital only · 11 slides EN/FR.
@@ -26,7 +28,7 @@
 ## Doctrine
 
 **Double voix :**
-1. **Humain d’abord** (slides 1–3) — question, avant / pendant / après, dignité.
+1. **Humain d’abord** (slides 1–3) — question, diagnostic système (industrie / deuil / écosystème), solution plateforme.
 2. **Investisseur toujours** — Soft Cap, CAC ≈ 0, RevShare ; 4–11 = ILP business full.
 
 **Règle :** émotion = porte · **économie = preuve**.  
@@ -44,8 +46,8 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ## Story chain (but / therefore)
 
 1 Opening question  
-**therefore** 2 Analog industry + soften before/during/after  
-**therefore** 3 Studio guides the arc  
+**therefore** 2 System stuck — industry, grief journey, fragmented end-of-life  
+**therefore** 3 Platform that guides and softens (Studio = wedge)  
 **but** 4 not a consumer editor play  
 **therefore** 5 Trojan / borrow the network  
 **therefore** 6 P1 → P2 (consent) → P3 Endgame  
@@ -87,22 +89,22 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Analog industry. Digital families.
 - Title: Death-care is stuck at digital ground zero
-- Phase: Our vision is to bring this industry into the digital era, our point of entry is softening what families and counselors endure before during and after a loss.
+- Phase: Our vision is to bring this industry into the digital era by rethinking the grief journey and moving operations onto a platform that guides and softens.
 - Bullets:
-  - Before: chaos of collecting photos and stories — endless USBs and email chains
-  - During: counselors have no time to be editors; families want dignity, not DIY CapCut
-  - After: memories should live on — not vanish into a drawer or a cold portal
-  - **Investor bridge:** that friction is our monetizable gap — $0 dignified gift at the desk, paid keep at home
+  - The industry: The desk stays analog. Funeral homes lack the digital processes to support without friction
+  - The grief: At home, families face an unguided, fragmented, often undignified journey
+  - The ecosystem: End of life is scattered — no rail connects homes, families, and services over time
+  - **Investor bridge:** That triple friction is our gap — enter with a dignified gift, keep the relationship, open the platform
 
 **FR**
 - Tagline: Industrie analogique. Familles digitales.
 - Title: Le funéraire est bloqué à l’ère zéro numérique
-- Phase: Notre vision est d’amener cette industrie dans l’ère digitale, notre point d’entrée est d’adoucir ce que vivent les familles et les conseillers avant pendant et après un décès.
+- Phase: Notre vision est d’amener cette industrie dans l’ère digitale, en repensant le parcours de deuil et en basculant les process sur une plateforme qui guide et adoucit.
 - Bullets:
-  - Avant : chaos de la collecte — chasse aux USB et aux courriels
-  - Pendant : le conseiller n’a pas le temps de monter ; la famille veut de la dignité, pas du CapCut
-  - Après : la mémoire doit vivre — pas disparaître dans un tiroir ou un portail froid
-  - **Pont investisseur :** cette friction est notre brèche monétisable — cadeau digne à 0 $ au comptoir, conservation payante à la maison
+  - L'industrie : Le comptoir reste analogique. Les salons n'ont ni le temps ni les process digitaux pour accompagner sans friction
+  - Le deuil : À la maison, les familles traversent un parcours non guidé, fragmenté, souvent indigne
+  - L'écosystème : La fin de vie est éclatée — aucun rail ne relie salons, familles et services dans le temps
+  - **Pont investisseur :** Cette triple friction est notre brèche — on entre par un geste digne, on garde la relation, on ouvre la plateforme
 
 ---
 
@@ -257,20 +259,22 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 9 - Team
 
 **EN**
-- Tagline: Not outsiders guessing.
-- Title: Built from inside the tribute machine room
-- Phase: Five years operating inside funeral tribute video means we know exactly where the process breaks.
+- Tagline: Zero guesswork. Five years in the trenches.
+- Title: Not outsiders. Industry scars.
+- Phase: We don't guess where operations break — we spent five years living it.
 - Bullets:
-  - Erik and Jon bring an unfair combination of industry scars and product craft.
-  - We win through distribution empathy and by shipping a real Studio instead of slideware.
+  - Erik (CEO & CPO): Business narrative, product strategy, and Quiet Luxury craft.
+  - Jon (CTO): Technical architecture, code orchestration, and scale.
+  - Unfair Advantage: Real operational scars fused with software execution — shipping a live Studio, not slideware.
 
 **FR**
-- Tagline: Pas des outsiders qui devinent.
-- Title: Bâti depuis la salle des machines des hommages
-- Phase: Cinq ans dans la vidéo funéraire nous ont appris exactement où les opérations cassent.
+- Tagline: Zéro théorie. Cinq ans dans les tranchées.
+- Title: Pas des observateurs. Des cicatrices de terrain.
+- Phase: Nous ne devinons pas où le système casse : nous y avons passé cinq ans.
 - Bullets:
-  - Erik et Jon apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit.
-  - Nous gagnons par notre empathie pour la distribution et en livrant un vrai Studio au lieu de simples maquettes.
+  - Erik (CEO & CPO) : Vision d'affaires, architecture produit et craft Quiet Luxury.
+  - Jon (CTO) : Orchestration technique, scalabilité et robustesse du code.
+  - L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite — pas de simples maquettes.
 
 ---
 

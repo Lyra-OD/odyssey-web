@@ -22,8 +22,8 @@ export const DECK_FILM_EASE: [number, number, number, number] = [
 export const DECK_DOCK_DUR = 1.0;
 
 /**
- * Soft dock spatial — opacity + blur + rise.
- * `play` = visible maintenant (delay optionnel). Reduced-motion → visible.
+ * Soft dock — opacity + rise seulement.
+ * Pas de filter blur : ça créait un faux halo (blanc/mauve) sur la typo.
  */
 export function useDeckSoftDock(play: boolean) {
   const reduceMotion = useReducedMotion();
@@ -32,16 +32,16 @@ export function useDeckSoftDock(play: boolean) {
     if (reduceMotion) {
       return {
         initial: false as const,
-        animate: { opacity: 1, y: 0, filter: "blur(0px)" } as const,
+        animate: { opacity: 1, y: 0 } as const,
         transition: { duration: 0 } satisfies Transition,
       };
     }
 
     return {
-      initial: { opacity: 0, y: 10, filter: "blur(6px)" } as const,
+      initial: { opacity: 0, y: 10 } as const,
       animate: play
-        ? ({ opacity: 1, y: 0, filter: "blur(0px)" } as const)
-        : ({ opacity: 0, y: 10, filter: "blur(6px)" } as const),
+        ? ({ opacity: 1, y: 0 } as const)
+        : ({ opacity: 0, y: 10 } as const),
       transition: {
         duration: play ? DECK_DOCK_DUR : 0.35,
         ease: DECK_FILM_EASE,

@@ -1165,12 +1165,12 @@
         "id": "need",
         "tagline": "Industrie analogique. Familles digitales.",
         "title": "Le funéraire est bloqué à l'ère zéro numérique",
-        "phase": "Notre vision est d'amener cette industrie dans l'ère digitale, notre point d'entrée est d'adoucir ce que vivent les familles et les conseillers avant pendant et après un décès.",
+        "phase": "Notre vision est d'amener cette industrie dans l'ère digitale, en repensant le parcours de deuil et en basculant les process sur une plateforme qui guide et adoucit.",
         "bullets": [
-          "Avant : Le chaos de la collecte de photos et de récits crée une chasse aux clés USB et aux courriels",
-          "Pendant : Le conseiller n'a pas le temps de monter des vidéos — la famille exige de la dignité au lieu du bricolage CapCut",
-          "Après : La mémoire doit vivre au lieu de disparaître dans un tiroir ou un portail froid",
-          "Le Pont Investisseur : Cette friction est notre brèche monétisable — cadeau digne à 0 $ au comptoir, conservation payante à la maison"
+          "L'industrie : Le comptoir reste analogique. Les salons n'ont ni le temps ni les process digitaux pour accompagner sans friction",
+          "Le deuil : À la maison, les familles traversent un parcours non guidé, fragmenté, souvent indigne",
+          "L'écosystème : La fin de vie est éclatée — aucun rail ne relie salons, familles et services dans le temps",
+          "Le pont investisseur : Cette triple friction est notre brèche — on entre par un geste digne, on garde la relation, on ouvre la plateforme"
         ]
       },
       {
@@ -1246,12 +1246,13 @@
       },
       {
         "id": "team",
-        "tagline": "Pas des outsiders qui devinent.",
-        "title": "Bâti depuis la salle des machines des hommages",
-        "phase": "Cinq ans dans la vidéo funéraire nous ont appris exactement où les opérations cassent.",
+        "tagline": "Zéro théorie. Cinq ans dans les tranchées.",
+        "title": "Pas des observateurs. Des cicatrices de terrain.",
+        "phase": "Nous ne devinons pas où le système casse : nous y avons passé cinq ans.",
         "bullets": [
-          "Erik et Jon apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit.",
-          "Nous gagnons par notre empathie pour la distribution et en livrant un vrai Studio au lieu de simples maquettes."
+          "Erik (CEO & CPO) : Vision d'affaires, architecture produit et craft Quiet Luxury.",
+          "Jon (CTO) : Orchestration technique, scalabilité et robustesse du code.",
+          "L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite — pas de simples maquettes."
         ]
       },
       {

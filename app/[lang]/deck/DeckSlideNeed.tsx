@@ -1,12 +1,11 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { editorialFont } from "@/src/lib/fonts";
 
 import {
-  DECK_DOCK_DUR,
   DECK_EYEBROW_CLASS,
   DECK_FILM_EASE,
   DECK_NEED_LAST_STEP,
@@ -21,7 +20,6 @@ type DeckSlideNeedProps = {
   title: string;
   phase: string;
   bullets: string[];
-  /** Slide active (index deck) — relance le tempo film à chaque entrée. */
   active: boolean;
 };
 
@@ -29,6 +27,25 @@ type SplitBullet = {
   label: string;
   body: string;
 };
+
+/**
+ * Desktop — 4 points sur la diagonale voie lactée (bas-G → haut-D), en zigzag
+ * (alternance au-dessus / en-dessous de la ligne).
+ */
+const NODE_LAYOUT = [
+  { left: "1%", top: "68%", maxW: "min(20rem,36%)" },
+  { left: "24%", top: "14%", maxW: "min(21rem,34%)" },
+  { left: "50%", top: "46%", maxW: "min(20rem,32%)" },
+  { left: "74%", top: "6%", maxW: "min(22rem,26%)" },
+];
+
+/** Path SVG viewBox 0 0 100 60 — même zigzag. */
+const PATH_POINTS = [
+  { x: 7, y: 54 },
+  { x: 30, y: 12 },
+  { x: 56, y: 40 },
+  { x: 88, y: 8 },
+];
 
 function splitLabeledBullet(raw: string): SplitBullet {
   const idx = raw.search(/\s*[:：]\s*/);
@@ -51,16 +68,15 @@ function isBridgeLabel(label: string) {
   );
 }
 
-const COL_STEPS = [
-  DECK_NEED_STEP.col0,
-  DECK_NEED_STEP.col1,
-  DECK_NEED_STEP.col2,
-] as const;
+function pathD(points: { x: number; y: number }[]) {
+  if (points.length === 0) return "";
+  const [first, ...rest] = points;
+  return `M ${first.x} ${first.y} ${rest.map((p) => `L ${p.x} ${p.y}`).join(" ")}`;
+}
 
 /**
- * Slide 2 — Need.
- * Tempo auto · clic (n’importe où sur la slide) = saute l’attente · fil cyan.
- * Eyebrow/title/phase centrés · triptyque plus large.
+ * Slide 2 — Need : constellation zigzag (version d’avant le ruban épais).
+ * Soft dock sans blur — pas de halo mauve.
  */
 export function DeckSlideNeed({
   tagline,
@@ -71,7 +87,7 @@ export function DeckSlideNeed({
 }: DeckSlideNeedProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-  const { advance, visible, canAdvance } = useDeckStepReveal(
+  const { advance, visible, canAdvance, step } = useDeckStepReveal(
     active,
     DECK_NEED_WAITS_S,
     DECK_NEED_LAST_STEP,
@@ -83,7 +99,7 @@ export function DeckSlideNeed({
 
   const parsed = bullets.map(splitLabeledBullet);
   const bridgeIdx = parsed.findIndex((b) => isBridgeLabel(b.label));
-  const times =
+  const stations =
     bridgeIdx >= 0
       ? parsed.filter((_, i) => i !== bridgeIdx)
       : parsed.slice(0, -1);
@@ -101,9 +117,26 @@ export function DeckSlideNeed({
   const dockCol1 = useDeckSoftDock(visible(DECK_NEED_STEP.col1));
   const dockCol2 = useDeckSoftDock(visible(DECK_NEED_STEP.col2));
   const dockBridge = useDeckSoftDock(visible(DECK_NEED_STEP.bridge));
-  const dockCols = [dockCol0, dockCol1, dockCol2];
+  const dockStations = [dockCol0, dockCol1, dockCol2];
 
-  /** Clic plein slide (section parente) — pas seulement le bloc texte. */
+  const stationsVisible = Math.max(
+    0,
+    Math.min(
+      stations.length,
+      step >= DECK_NEED_STEP.col0 ? step - DECK_NEED_STEP.col0 + 1 : 0,
+    ),
+  );
+  const arrivalOn = visible(DECK_NEED_STEP.bridge);
+  const pathProgress = reduceMotion
+    ? 1
+    : arrivalOn
+      ? 1
+      : stationsVisible <= 0
+        ? 0
+        : stationsVisible / (stations.length + 1);
+
+  const d = useMemo(() => pathD(PATH_POINTS), []);
+
   useEffect(() => {
     if (!active) return;
     const section = rootRef.current?.closest("[data-deck-slide]");
@@ -112,7 +145,9 @@ export function DeckSlideNeed({
     const onClick = (e: MouseEvent) => {
       if (!canAdvanceRef.current) return;
       if (!(e.target instanceof Element)) return;
-      if (e.target.closest("a, button, input, textarea, select, [role='button']")) {
+      if (
+        e.target.closest("a, button, input, textarea, select, [role='button']")
+      ) {
         return;
       }
       e.preventDefault();
@@ -126,90 +161,179 @@ export function DeckSlideNeed({
   return (
     <div
       ref={rootRef}
-      className={`relative mx-auto flex w-full max-w-[80rem] flex-col items-center px-2 ${
+      className={`relative mx-auto flex w-full max-w-[90rem] flex-col px-3 md:px-6 ${
         canAdvance ? "cursor-pointer" : ""
       }`}
     >
-      <motion.p className={DECK_EYEBROW_CLASS} {...dockEyebrow()}>
-        {tagline}
-      </motion.p>
+      <div className="relative z-10 mx-auto flex w-full max-w-[90rem] flex-col items-center text-center">
+        <motion.p className={DECK_EYEBROW_CLASS} {...dockEyebrow()}>
+          {tagline}
+        </motion.p>
 
-      <motion.h2
-        className={`${editorialFont.className} relative z-10 mt-8 max-w-[22em] text-center text-[clamp(1.65rem,4.6vw,2.75rem)] font-medium leading-[1.2] tracking-[0.01em] text-white md:mt-10`}
-        {...dockHero()}
-      >
-        {title}
-      </motion.h2>
+        <motion.h2
+          className={`${editorialFont.className} relative z-10 mt-6 whitespace-nowrap text-[clamp(1.2rem,2.9vw,2.45rem)] font-medium leading-none tracking-[0.01em] text-white md:mt-8`}
+          style={{ textShadow: "none", filter: "none" }}
+          {...dockHero()}
+        >
+          {title}
+        </motion.h2>
 
-      <motion.p
-        className={`${editorialFont.className} relative z-10 mt-5 max-w-[40rem] text-center text-[clamp(0.95rem,2.1vw,1.12rem)] font-medium leading-snug tracking-[0.01em] text-white/70 text-pretty md:mt-6 md:max-w-[46rem]`}
-        {...dockPhase()}
-      >
-        {phase}
-      </motion.p>
+        <motion.p
+          className={`${editorialFont.className} relative z-10 mt-8 w-full max-w-[68rem] text-[clamp(1.2rem,2.4vw,1.55rem)] font-medium leading-[1.35] tracking-[0.01em] text-[#6d4fc4] md:mt-10`}
+          style={{
+            color: "#6d4fc4",
+            textShadow: "none",
+            filter: "none",
+            WebkitFontSmoothing: "antialiased",
+          }}
+          {...dockPhase()}
+        >
+          {phase}
+        </motion.p>
+      </div>
 
-      <div className="relative z-10 mt-12 flex w-full max-w-[80rem] flex-col items-stretch gap-8 md:mt-14 md:flex-row md:items-start md:gap-0">
-        {times.map((item, i) => {
-          const colStep = COL_STEPS[i] ?? DECK_NEED_STEP.col2;
-          const colVisible = visible(colStep);
+      {/* Mobile — descente verticale */}
+      <div className="relative z-10 mt-10 flex w-full flex-col gap-10 md:hidden">
+        {stations.map((item, i) => (
+          <motion.div
+            key={`m-${item.label}-${item.body}`}
+            className="relative pl-7"
+            {...(dockStations[i] ?? dockCol2)()}
+          >
+            <span
+              aria-hidden
+              className="absolute left-0 top-1.5 h-1.5 w-1.5 rounded-full bg-[var(--salon-cyan)]"
+            />
+            {i < stations.length - 1 || bridge ? (
+              <span
+                aria-hidden
+                className="absolute bottom-[-2.2rem] left-[2px] top-4 w-px bg-[rgba(0,232,240,0.2)]"
+              />
+            ) : null}
+            {item.label ? (
+              <p className="font-label text-[0.68rem] font-medium uppercase tracking-[0.3em] text-[rgba(0,232,240,0.7)]">
+                {item.label}
+              </p>
+            ) : null}
+            <p
+              className={`${editorialFont.className} mt-2 text-[1.05rem] font-light leading-snug text-zinc-400`}
+            >
+              {item.body}
+            </p>
+          </motion.div>
+        ))}
+        {bridge ? (
+          <motion.div className="relative pl-7 pt-2" {...dockBridge()}>
+            <span
+              aria-hidden
+              className="absolute left-0 top-3.5 h-2 w-2 rounded-full bg-[var(--salon-cyan)]"
+            />
+            {bridge.label ? (
+              <p className="font-label text-[0.68rem] font-medium uppercase tracking-[0.3em] text-[var(--salon-cyan)]">
+                {bridge.label}
+              </p>
+            ) : null}
+            <p
+              className={`${editorialFont.className} mt-2 text-[1.1rem] font-medium leading-snug text-white`}
+              style={{ textShadow: "none", filter: "none" }}
+            >
+              {bridge.body}
+            </p>
+          </motion.div>
+        ) : null}
+      </div>
+
+      {/* Desktop — constellation zigzag fine */}
+      <div className="relative z-10 mt-6 hidden min-h-[min(58vh,34rem)] w-full md:mt-8 md:block lg:min-h-[min(62vh,38rem)]">
+        <svg
+          aria-hidden
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          viewBox="0 0 100 60"
+          preserveAspectRatio="none"
+        >
+          <motion.path
+            d={d}
+            fill="none"
+            stroke="rgba(0,232,240,0.22)"
+            strokeWidth="0.3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+            initial={false}
+            animate={{
+              pathLength: pathProgress,
+              opacity: pathProgress > 0 ? 1 : 0,
+            }}
+            transition={{
+              duration: reduceMotion ? 0 : 1.1,
+              ease: DECK_FILM_EASE,
+            }}
+          />
+        </svg>
+
+        {stations.map((item, i) => {
+          const layout = NODE_LAYOUT[i] ?? NODE_LAYOUT[0];
           return (
-            <div key={`${item.label}-${item.body}`} className="contents">
-              {i > 0 ? (
-                <motion.div
+            <motion.div
+              key={`d-${item.label}-${item.body}`}
+              className="absolute text-left"
+              style={{
+                left: layout.left,
+                top: layout.top,
+                maxWidth: layout.maxW,
+              }}
+              {...(dockStations[i] ?? dockCol2)()}
+            >
+              <div className="mb-2.5 flex items-center gap-2">
+                <span
                   aria-hidden
-                  className="mx-auto hidden h-px w-10 shrink-0 self-start bg-[rgba(0,232,240,0.4)] md:mx-0 md:mt-[0.85rem] md:block md:w-10 md:min-w-[2rem] lg:w-16"
-                  initial={false}
-                  animate={
-                    reduceMotion || colVisible
-                      ? { scaleX: 1, opacity: 0.85 }
-                      : { scaleX: 0, opacity: 0 }
-                  }
-                  style={{ originX: 0 }}
-                  transition={
-                    reduceMotion
-                      ? { duration: 0 }
-                      : {
-                          duration: colVisible ? DECK_DOCK_DUR * 0.85 : 0.3,
-                          ease: DECK_FILM_EASE,
-                          delay: 0,
-                        }
-                  }
+                  className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--salon-cyan)]"
                 />
-              ) : null}
-
-              <motion.div
-                className="flex min-w-0 flex-1 flex-col items-center px-1 text-center md:px-2 lg:px-4"
-                {...(dockCols[i] ?? dockCol2)()}
-              >
                 {item.label ? (
-                  <p className="font-label text-[0.72rem] font-medium uppercase tracking-[0.28em] text-[rgba(0,232,240,0.62)] md:text-[0.75rem]">
+                  <p className="font-label text-[0.65rem] font-medium uppercase tracking-[0.32em] text-[var(--salon-cyan)]">
                     {item.label}
                   </p>
                 ) : null}
-                <p className="font-label mt-3 w-full text-[0.9rem] font-light leading-relaxed tracking-[0.01em] text-white/70 text-pretty md:text-[0.98rem] md:leading-[1.55]">
-                  {item.body}
-                </p>
-              </motion.div>
-            </div>
+              </div>
+              <p
+                className={`${editorialFont.className} text-[clamp(0.95rem,1.25vw,1.12rem)] font-light leading-[1.5] text-zinc-400 text-pretty`}
+              >
+                {item.body}
+              </p>
+            </motion.div>
           );
         })}
-      </div>
 
-      {bridge ? (
-        <motion.div
-          className="relative z-10 mt-12 w-full max-w-3xl border-t border-[rgba(0,232,240,0.22)] pt-7 text-center md:mt-14 md:max-w-4xl"
-          {...dockBridge()}
-        >
-          {bridge.label ? (
-            <p className="font-label text-[0.7rem] font-medium uppercase tracking-[0.28em] text-[rgba(0,232,240,0.7)]">
-              {bridge.label}
+        {bridge ? (
+          <motion.div
+            className="absolute text-left"
+            style={{
+              left: NODE_LAYOUT[3].left,
+              top: NODE_LAYOUT[3].top,
+              maxWidth: NODE_LAYOUT[3].maxW,
+            }}
+            {...dockBridge()}
+          >
+            <div className="mb-2.5 flex items-center gap-2">
+              <span
+                aria-hidden
+                className="h-2 w-2 shrink-0 rounded-full bg-[var(--salon-cyan)]"
+              />
+              {bridge.label ? (
+                <p className="font-label text-[0.65rem] font-medium uppercase tracking-[0.32em] text-[var(--salon-cyan)]">
+                  {bridge.label}
+                </p>
+              ) : null}
+            </div>
+            <p
+              className={`${editorialFont.className} text-[clamp(1.02rem,1.4vw,1.28rem)] font-medium leading-snug text-white`}
+              style={{ textShadow: "none", filter: "none" }}
+            >
+              {bridge.body}
             </p>
-          ) : null}
-          <p className="font-label mt-3 text-[0.9rem] font-light leading-relaxed tracking-[0.01em] text-[rgba(0,232,240,0.55)] md:text-[0.95rem]">
-            {bridge.body}
-          </p>
-        </motion.div>
-      ) : null}
+          </motion.div>
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-05 · **Entrées :** 1098
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-05 · **Entrées :** 1099
 
 ## `common`
 
@@ -1132,11 +1132,11 @@
 | `pitchDeck.slides[1].id` | need | need |
 | `pitchDeck.slides[1].tagline` | Industrie analogique. Familles digitales. | Analog industry. Digital families. |
 | `pitchDeck.slides[1].title` | Le funéraire est bloqué à l'ère zéro numérique | Death-care is stuck at digital ground zero |
-| `pitchDeck.slides[1].phase` | Notre vision est d'amener cette industrie dans l'ère digitale, notre point d'entrée est d'adoucir ce que vivent les familles et les conseillers avant pendant et après un décès. | Our vision is to bring this industry into the digital era, our point of entry is softening what families and counselors endure before during and after a loss. |
-| `pitchDeck.slides[1].bullets[0]` | Avant : Le chaos de la collecte de photos et de récits crée une chasse aux clés USB et aux courriels | Before: The chaos of collecting photos and stories results in endless USBs and email chains |
-| `pitchDeck.slides[1].bullets[1]` | Pendant : Le conseiller n'a pas le temps de monter des vidéos — la famille exige de la dignité au lieu du bricolage CapCut | During: Counselors have no time to be editors — families demand dignity instead of DIY CapCut |
-| `pitchDeck.slides[1].bullets[2]` | Après : La mémoire doit vivre au lieu de disparaître dans un tiroir ou un portail froid | After: Memories should live on rather than vanish into a drawer or a cold portal |
-| `pitchDeck.slides[1].bullets[3]` | Le Pont Investisseur : Cette friction est notre brèche monétisable — cadeau digne à 0 $ au comptoir, conservation payante à la maison | The Investor Bridge: That friction is our monetizable gap — a $0 dignified gift at the desk, paid keep at home |
+| `pitchDeck.slides[1].phase` | Notre vision est d'amener cette industrie dans l'ère digitale, en repensant le parcours de deuil et en basculant les process sur une plateforme qui guide et adoucit. | Our vision is to bring this industry into the digital era by rethinking the grief journey and moving operations onto a platform that guides and softens. |
+| `pitchDeck.slides[1].bullets[0]` | L'industrie : Le comptoir reste analogique. Les salons n'ont ni le temps ni les process digitaux pour accompagner sans friction | The industry: The desk stays analog. Funeral homes lack the digital processes to support without friction |
+| `pitchDeck.slides[1].bullets[1]` | Le deuil : À la maison, les familles traversent un parcours non guidé, fragmenté, souvent indigne | The grief: At home, families face an unguided, fragmented, often undignified journey |
+| `pitchDeck.slides[1].bullets[2]` | L'écosystème : La fin de vie est éclatée — aucun rail ne relie salons, familles et services dans le temps | The ecosystem: End of life is scattered — no rail connects homes, families, and services over time |
+| `pitchDeck.slides[1].bullets[3]` | Le pont investisseur : Cette triple friction est notre brèche — on entre par un geste digne, on garde la relation, on ouvre la plateforme | The Investor Bridge: That triple friction is our gap — enter with a dignified gift, keep the relationship, open the platform |
 | `pitchDeck.slides[2].id` | solution | solution |
 | `pitchDeck.slides[2].tagline` | Adoucir avant. Pendant. Après. | Soften before. During. After. |
 | `pitchDeck.slides[2].title` | Odyssey Studio. La mémoire guidée en Quiet Luxury. | Odyssey Studio. Guided memory in Quiet Luxury. |
@@ -1185,11 +1185,12 @@
 | `pitchDeck.slides[7].bullets[1]` | Partenaires : Les discussions et la préparation de pilotes avancent avec des acteurs comme Athos et Urgel Bourgie. | Partners: Discussions and pilot paths are active with networks like Athos and Urgel Bourgie. |
 | `pitchDeck.slides[7].bullets[2]` | Validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion de nos pilotes. | Validation: Unit economics are stress-tested in our models. The next proof relies on metrics from unpaid to paid pilots. |
 | `pitchDeck.slides[8].id` | team | team |
-| `pitchDeck.slides[8].tagline` | Pas des outsiders qui devinent. | Not outsiders guessing. |
-| `pitchDeck.slides[8].title` | Bâti depuis la salle des machines des hommages | Built from inside the tribute machine room |
-| `pitchDeck.slides[8].phase` | Cinq ans dans la vidéo funéraire nous ont appris exactement où les opérations cassent. | Five years operating inside funeral tribute video means we know exactly where the process breaks. |
-| `pitchDeck.slides[8].bullets[0]` | Erik et Jon apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit. | Erik and Jon bring an unfair combination of industry scars and product craft. |
-| `pitchDeck.slides[8].bullets[1]` | Nous gagnons par notre empathie pour la distribution et en livrant un vrai Studio au lieu de simples maquettes. | We win through distribution empathy and by shipping a real Studio instead of slideware. |
+| `pitchDeck.slides[8].tagline` | Zéro théorie. Cinq ans dans les tranchées. | Zero guesswork. Five years in the trenches. |
+| `pitchDeck.slides[8].title` | Pas des observateurs. Des cicatrices de terrain. | Not outsiders. Industry scars. |
+| `pitchDeck.slides[8].phase` | Nous ne devinons pas où le système casse : nous y avons passé cinq ans. | We don't guess where operations break — we spent five years living it. |
+| `pitchDeck.slides[8].bullets[0]` | Erik (CEO & CPO) : Vision d'affaires, architecture produit et craft Quiet Luxury. | Erik (CEO & CPO): Business narrative, product strategy, and Quiet Luxury craft. |
+| `pitchDeck.slides[8].bullets[1]` | Jon (CTO) : Orchestration technique, scalabilité et robustesse du code. | Jon (CTO): Technical architecture, code orchestration, and scale. |
+| `pitchDeck.slides[8].bullets[2]` | L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite — pas de simples maquettes. | Unfair Advantage: Real operational scars fused with software execution — shipping a live Studio, not slideware. |
 | `pitchDeck.slides[9].id` | ask | ask |
 | `pitchDeck.slides[9].tagline` | Financer le wedge. Semer la Phase 2. | Fund the wedge. Seed Phase 2. |
 | `pitchDeck.slides[9].title` | Capital stratégique pour les Phases 1 et 2 | Strategic capital for Phase 1 and 2 |

@@ -1165,12 +1165,12 @@
         "id": "need",
         "tagline": "Analog industry. Digital families.",
         "title": "Death-care is stuck at digital ground zero",
-        "phase": "Our vision is to bring this industry into the digital era, our point of entry is softening what families and counselors endure before during and after a loss.",
+        "phase": "Our vision is to bring this industry into the digital era by rethinking the grief journey and moving operations onto a platform that guides and softens.",
         "bullets": [
-          "Before: The chaos of collecting photos and stories results in endless USBs and email chains",
-          "During: Counselors have no time to be editors — families demand dignity instead of DIY CapCut",
-          "After: Memories should live on rather than vanish into a drawer or a cold portal",
-          "The Investor Bridge: That friction is our monetizable gap — a $0 dignified gift at the desk, paid keep at home"
+          "The industry: The desk stays analog. Funeral homes lack the digital processes to support without friction",
+          "The grief: At home, families face an unguided, fragmented, often undignified journey",
+          "The ecosystem: End of life is scattered — no rail connects homes, families, and services over time",
+          "The Investor Bridge: That triple friction is our gap — enter with a dignified gift, keep the relationship, open the platform"
         ]
       },
       {
@@ -1246,12 +1246,13 @@
       },
       {
         "id": "team",
-        "tagline": "Not outsiders guessing.",
-        "title": "Built from inside the tribute machine room",
-        "phase": "Five years operating inside funeral tribute video means we know exactly where the process breaks.",
+        "tagline": "Zero guesswork. Five years in the trenches.",
+        "title": "Not outsiders. Industry scars.",
+        "phase": "We don't guess where operations break — we spent five years living it.",
         "bullets": [
-          "Erik and Jon bring an unfair combination of industry scars and product craft.",
-          "We win through distribution empathy and by shipping a real Studio instead of slideware."
+          "Erik (CEO & CPO): Business narrative, product strategy, and Quiet Luxury craft.",
+          "Jon (CTO): Technical architecture, code orchestration, and scale.",
+          "Unfair Advantage: Real operational scars fused with software execution — shipping a live Studio, not slideware."
         ]
       },
       {
