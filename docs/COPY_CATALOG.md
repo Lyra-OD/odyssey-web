@@ -1132,11 +1132,11 @@
 | `pitchDeck.slides[1].id` | need | need |
 | `pitchDeck.slides[1].tagline` | Industrie analogique. Familles digitales. | Analog industry. Digital families. |
 | `pitchDeck.slides[1].title` | Le funéraire est bloqué à l'ère zéro numérique | Death-care is stuck at digital ground zero |
-| `pitchDeck.slides[1].phase` | Notre vision est d'amener cette industrie dans l'ère digitale. Notre point d'entrée est d'adoucir ce que vivent les familles et les conseillers avant, pendant et après un décès. | Our vision is to bring this industry into the digital era. The real work is softening what families and counselors endure before, during, and after a loss. |
-| `pitchDeck.slides[1].bullets[0]` | Avant : Le chaos de la collecte de photos et de récits crée une chasse aux clés USB et aux courriels. | Before: The chaos of collecting photos and stories results in endless USBs and email chains. |
-| `pitchDeck.slides[1].bullets[1]` | Pendant : Le conseiller n'a pas le temps de monter des vidéos. La famille exige de la dignité au lieu du bricolage CapCut. | During: Counselors have no time to be editors. Families demand dignity instead of DIY CapCut. |
-| `pitchDeck.slides[1].bullets[2]` | Après : La mémoire doit vivre au lieu de disparaître dans un tiroir ou un portail froid. | After: Memories should live on rather than vanish into a drawer or a cold portal. |
-| `pitchDeck.slides[1].bullets[3]` | Le Pont Investisseur : Cette friction est notre brèche monétisable. Nous offrons un cadeau digne à 0 $ au comptoir et une conservation payante à la maison. | The Investor Bridge: That friction is our monetizable gap. We offer a $0 dignified gift at the desk and a paid keep at home. |
+| `pitchDeck.slides[1].phase` | Notre vision est d'amener cette industrie dans l'ère digitale, notre point d'entrée est d'adoucir ce que vivent les familles et les conseillers avant pendant et après un décès. | Our vision is to bring this industry into the digital era, our point of entry is softening what families and counselors endure before during and after a loss. |
+| `pitchDeck.slides[1].bullets[0]` | Avant : Le chaos de la collecte de photos et de récits crée une chasse aux clés USB et aux courriels | Before: The chaos of collecting photos and stories results in endless USBs and email chains |
+| `pitchDeck.slides[1].bullets[1]` | Pendant : Le conseiller n'a pas le temps de monter des vidéos — la famille exige de la dignité au lieu du bricolage CapCut | During: Counselors have no time to be editors — families demand dignity instead of DIY CapCut |
+| `pitchDeck.slides[1].bullets[2]` | Après : La mémoire doit vivre au lieu de disparaître dans un tiroir ou un portail froid | After: Memories should live on rather than vanish into a drawer or a cold portal |
+| `pitchDeck.slides[1].bullets[3]` | Le Pont Investisseur : Cette friction est notre brèche monétisable — cadeau digne à 0 $ au comptoir, conservation payante à la maison | The Investor Bridge: That friction is our monetizable gap — a $0 dignified gift at the desk, paid keep at home |
 | `pitchDeck.slides[2].id` | solution | solution |
 | `pitchDeck.slides[2].tagline` | Adoucir avant. Pendant. Après. | Soften before. During. After. |
 | `pitchDeck.slides[2].title` | Odyssey Studio. La mémoire guidée en Quiet Luxury. | Odyssey Studio. Guided memory in Quiet Luxury. |

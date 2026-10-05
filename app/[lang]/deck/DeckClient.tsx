@@ -20,6 +20,7 @@ import {
   DeckEclipseIntro,
   hasSeenDeckEclipseIntro,
 } from "./DeckEclipseIntro";
+import { DeckSlideNeed } from "./DeckSlideNeed";
 import { DeckSlideOpen } from "./DeckSlideOpen";
 
 const SanctuaryUniverse = dynamic(
@@ -266,6 +267,14 @@ export function DeckClient({
                 tagline={slide.tagline}
                 phase={slide.phase}
                 bullets={slide.bullets}
+              />
+            ) : i === 1 || slide.id === "need" ? (
+              <DeckSlideNeed
+                tagline={slide.tagline}
+                title={slide.title}
+                phase={slide.phase}
+                bullets={slide.bullets}
+                active={index === i}
               />
             ) : (
               <div className="mx-auto flex w-full max-w-2xl flex-col items-center">

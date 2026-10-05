@@ -87,7 +87,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Analog industry. Digital families.
 - Title: Death-care is stuck at digital ground zero
-- Phase: Our vision is to bring this industry into the digital era. The real work is softening what families and counselors endure before, during, and after a loss.
+- Phase: Our vision is to bring this industry into the digital era, our point of entry is softening what families and counselors endure before during and after a loss.
 - Bullets:
   - Before: chaos of collecting photos and stories — endless USBs and email chains
   - During: counselors have no time to be editors; families want dignity, not DIY CapCut
@@ -97,7 +97,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **FR**
 - Tagline: Industrie analogique. Familles digitales.
 - Title: Le funéraire est bloqué à l’ère zéro numérique
-- Phase: Notre vision est d’amener cette industrie dans l’ère digitale. Notre point d’entrée est d’adoucir ce que vivent les familles et les conseillers avant, pendant et après un décès.
+- Phase: Notre vision est d’amener cette industrie dans l’ère digitale, notre point d’entrée est d’adoucir ce que vivent les familles et les conseillers avant pendant et après un décès.
 - Bullets:
   - Avant : chaos de la collecte — chasse aux USB et aux courriels
   - Pendant : le conseiller n’a pas le temps de monter ; la famille veut de la dignité, pas du CapCut
