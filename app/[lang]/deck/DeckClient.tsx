@@ -19,6 +19,7 @@ import {
   DeckEclipseIntro,
   hasSeenDeckEclipseIntro,
 } from "./DeckEclipseIntro";
+import { DeckSlideOpen } from "./DeckSlideOpen";
 
 /** Grain léger (même ADN sas / player). */
 const DECK_GRAIN =
@@ -218,36 +219,44 @@ export function DeckClient({
             data-deck-index={i}
             className="flex min-h-dvh snap-start snap-always flex-col items-center justify-center px-6 pb-20 pt-28 sm:pt-32 md:pt-36"
           >
-            <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
-              <p className="font-label text-center text-[0.7rem] uppercase tracking-[0.32em] text-white/40">
-                {slide.tagline}
-              </p>
+            {i === 0 ? (
+              <DeckSlideOpen
+                tagline={slide.tagline}
+                phase={slide.phase}
+                bullets={slide.bullets}
+              />
+            ) : (
+              <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
+                <p className="font-label text-center text-[0.7rem] uppercase tracking-[0.32em] text-white/40">
+                  {slide.tagline}
+                </p>
 
-              {!isOdysseyTitle(slide.title, wordmark) ? (
-                <h2
-                  className={`${editorialFont.className} mt-5 text-center text-[clamp(1.55rem,4.2vw,2.45rem)] font-medium tracking-[0.04em] text-zinc-100`}
-                >
-                  {slide.title}
-                </h2>
-              ) : null}
-
-              <p
-                className={`${editorialFont.className} mt-6 max-w-xl text-center text-[clamp(1.05rem,2.8vw,1.4rem)] font-medium leading-snug tracking-[0.02em] text-zinc-200`}
-              >
-                {slide.phase}
-              </p>
-
-              <ul className="mt-10 max-w-xl space-y-3 text-center">
-                {slide.bullets.map((bullet) => (
-                  <li
-                    key={bullet}
-                    className="font-label text-sm font-light leading-relaxed text-white/50 md:text-[0.95rem]"
+                {!isOdysseyTitle(slide.title, wordmark) ? (
+                  <h2
+                    className={`${editorialFont.className} mt-5 text-center text-[clamp(1.55rem,4.2vw,2.45rem)] font-medium tracking-[0.04em] text-zinc-100`}
                   >
-                    {bullet}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                    {slide.title}
+                  </h2>
+                ) : null}
+
+                <p
+                  className={`${editorialFont.className} mt-6 max-w-xl text-center text-[clamp(1.05rem,2.8vw,1.4rem)] font-medium leading-snug tracking-[0.02em] text-zinc-200`}
+                >
+                  {slide.phase}
+                </p>
+
+                <ul className="mt-10 max-w-xl space-y-3 text-center">
+                  {slide.bullets.map((bullet) => (
+                    <li
+                      key={bullet}
+                      className="font-label text-sm font-light leading-relaxed text-white/50 md:text-[0.95rem]"
+                    >
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </section>
         ))}
       </div>

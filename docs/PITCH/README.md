@@ -4,11 +4,11 @@
 **Dernière MAJ :** 5 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 5 oct 2026 : T5s1 slide Open — question héros, bullets secondaires, ciel still soft.
 - 5 oct 2026 : T5b Mark ODYSSEY sticky en haut (détaché du flux slides).
 - 5 oct 2026 : T2 gate password (`DECK_ACCESS_PASSWORD`, cookie 7 j).
 - 5 oct 2026 : T3 scroller snap 11 slides (clavier ↑↓ · dots).
-- 5 oct 2026 : T1 copy `pitchDeck.slides` FR/EN (11) + gate keys.
-- 5 oct 2026 : T0+ Mark + intro EclipseCraftPlay prologue.
+- 5 oct 2026 : T1 copy + T0 prologue EclipseCraftPlay.
 
 | Doc | Sujet |
 |-----|--------|
