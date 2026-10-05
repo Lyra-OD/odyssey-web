@@ -1140,8 +1140,142 @@
   },
   "pitchDeck": {
     "metaTitle": "Odyssey · Deck",
-    "scaffoldHint": "Scaffold du deck capital. Les onze slides arrivent ensuite.",
-    "scaffoldProgress": "Ouverture",
-    "introSkip": "Passer"
+    "introSkip": "Passer",
+    "gateTitle": "Deck investisseur",
+    "gateHint": "Entrez le mot de passe pour ouvrir le Studio.",
+    "gateSubmit": "Ouvrir",
+    "gateError": "Mot de passe incorrect.",
+    "progressOf": "{current} / {total}",
+    "slides": [
+      {
+        "id": "open",
+        "tagline": "Une question avant un pitch.",
+        "title": "Odyssey",
+        "phase": "Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ensuite ?",
+        "bullets": [
+          "Pas une liste de fonctionnalités. Un moment humain.",
+          "Jon et Erik. Quiet Luxury. Né dans la salle des machines des hommages.",
+          "Scrollez quand vous êtes prêts."
+        ],
+        "progress": "Ouverture"
+      },
+      {
+        "id": "need",
+        "tagline": "Industrie analogique. Familles digitales.",
+        "title": "Le funéraire est bloqué à l'ère zéro numérique",
+        "phase": "Notre vision est d'amener cette industrie dans l'ère digitale. Notre point d'entrée est d'adoucir ce que vivent les familles et les conseillers avant, pendant et après un décès.",
+        "bullets": [
+          "Avant : Le chaos de la collecte de photos et de récits crée une chasse aux clés USB et aux courriels.",
+          "Pendant : Le conseiller n'a pas le temps de monter des vidéos. La famille exige de la dignité au lieu du bricolage CapCut.",
+          "Après : La mémoire doit vivre au lieu de disparaître dans un tiroir ou un portail froid.",
+          "Le Pont Investisseur : Cette friction est notre brèche monétisable. Nous offrons un cadeau digne à 0 $ au comptoir et une conservation payante à la maison."
+        ]
+      },
+      {
+        "id": "solution",
+        "tagline": "Adoucir avant. Pendant. Après.",
+        "title": "Odyssey Studio. La mémoire guidée en Quiet Luxury.",
+        "phase": "Nous offrons aux salons un geste digne à 0 $. Nous guidons ensuite les familles dans un Coffre cinématographique presque sans montage et avec un soin émotionnel total.",
+        "bullets": [
+          "Avant (Activation) : Le conseiller active le projet en 30 secondes via un code QR. La famille n'est pas laissée seule face à un devoir.",
+          "Pendant (Création) : Le cercle dépose ses fragments. Le Studio façonne un film Quiet Luxury.",
+          "Après (Conservation) : Le Sanctuaire et le partage. La mémoire ne s'arrête pas à la clé USB de la cérémonie.",
+          "Le Soft Cap : Quand l'histoire devient palpable, la famille choisit de la préserver. Il n'y a jamais de vente agressive au comptoir.",
+          "Le Business : Le modèle B2B2C via les salons permet un CAC quasi nul et un RevShare sur le Net. L'émotion alimente l'entonnoir de conversion."
+        ]
+      },
+      {
+        "id": "ecosystem",
+        "tagline": "Qui nous tenons avec soin.",
+        "title": "Partenaires au comptoir. Familles à la maison.",
+        "phase": "Les réseaux funéraires sont notre canal de distribution avec un CAC quasi nul. Les familles paient à la fin. Ce n’est pas un outil d'édition grand public.",
+        "bullets": [
+          "Salons (partenaires) : Ils veulent un geste digne et des opérations en 30 secondes pour générer du profit sans vendre sur le deuil. Ils manquent de temps pour le montage et considèrent l'USB comme un coût.",
+          "Familles (utilisateurs finaux) : Elles veulent honorer leurs proches et garder un bien durable. Elles veulent du cinéma sans devenir des monteurs vidéo.",
+          "Comportement : L'achat se déclenche quand l’histoire devient réelle au moment du Soft Cap."
+        ]
+      },
+      {
+        "id": "competition",
+        "tagline": "La distribution est le produit.",
+        "title": "Cheval de Troie via les réseaux funéraires",
+        "phase": "Les éditeurs grand public vendent des outils. Nous vendons la distribution.",
+        "bullets": [
+          "Nous n’achetons pas des familles sur Facebook. Nous empruntons le réseau qui les a déjà.",
+          "L'activation par le salon élimine totalement les dépenses d’acquisition famille.",
+          "Le paywall se trouve au pic émotionnel et non à l’entrée.",
+          "Notre tarification Quiet Luxury évite la guerre des prix des éditeurs classiques.",
+          "Nous partageons les revenus nets avec nos partenaires."
+        ]
+      },
+      {
+        "id": "phases",
+        "tagline": "La séquence bat les slogans.",
+        "title": "Trois phases. Wedge, rétention, plateforme.",
+        "phase": "Nous capturons d’abord l’attention via les salons. Nous fidélisons ensuite avant de router la demande fragmentée de fin de vie sans aucun stock.",
+        "bullets": [
+          "Phase 1 (Wedge) : Studio B2B2C, Souvenir 0 $, Soft Cap et RevShare.",
+          "Phase 2 (Rétention) : Sanctuaire MRR, leads consentis et orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.",
+          "Phase 3 (Marketplace Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes."
+        ]
+      },
+      {
+        "id": "model",
+        "tagline": "Les maths avant la magie.",
+        "title": "Freemium Soft Cap. Cadeau d’abord, upgrade quand ça compte.",
+        "phase": "Le salon offre Souvenir à 0 $. La famille touche le Soft Cap et choisit Héritage ou plus ce qui génère un RevShare sur le Net pour le partenaire.",
+        "bullets": [
+          "Forfaits : Souvenir est le Coffre offert à 0 $. Héritage à 179 $ repousse les limites. Éternité à 349 $ débloque la suite cinématographique complète.",
+          "Économie : Frais de plateforme de 10 % et 30 % du Net pour le partenaire. Odyssey conserve le reste après les coûts.",
+          "Rendement conservateur : Environ 22 $ par famille entrante via le Soft Cap de base.",
+          "La boucle virale : Le cercle des invités paie aussi. Nous monétisons la générosité au lieu de cibler uniquement la carte de crédit de la personne en deuil. Ce levier pousse le rendement à environ 43 $."
+        ]
+      },
+      {
+        "id": "traction",
+        "tagline": "L’honnêteté bat le hype.",
+        "title": "Produit live. Chemin partenaires en cours.",
+        "phase": "Nous livrons un vrai Studio Phase 1 et avançons avec de grands réseaux québécois. Nous basons notre discours sur des preuves concrètes.",
+        "bullets": [
+          "Produit : Le Studio en 7 étapes, le Soft Cap et la boucle du Sanctuaire sont fonctionnels.",
+          "Partenaires : Les discussions et la préparation de pilotes avancent avec des acteurs comme Athos et Urgel Bourgie.",
+          "Validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion de nos pilotes."
+        ]
+      },
+      {
+        "id": "team",
+        "tagline": "Pas des outsiders qui devinent.",
+        "title": "Bâti depuis la salle des machines des hommages",
+        "phase": "Cinq ans dans la vidéo funéraire nous ont appris exactement où les opérations cassent.",
+        "bullets": [
+          "Jon et Erik apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit.",
+          "Nous gagnons par notre empathie pour la distribution et en livrant un vrai Studio au lieu de simples maquettes."
+        ]
+      },
+      {
+        "id": "ask",
+        "tagline": "Financer le wedge. Semer la Phase 2.",
+        "title": "Capital stratégique pour les Phases 1 et 2",
+        "phase": "Nous levons des fonds pour industrialiser l'activation B2B et poser les fondations de la Phase 2 au lieu de bâtir la Marketplace au premier jour.",
+        "bullets": [
+          "Montant : [À définir avant l'envoi externe]",
+          "Allocation : Le capital financera l'activation B2B, le succès partenaire et la fiabilité du produit.",
+          "Gestion du risque : Le déploiement réseau implique des critères d'arrêt clairs à 90 jours si un pilote ne fonctionne pas. Nous sommes rationnels avec le capital.",
+          "Jalons : Les 12 à 18 prochains mois se concentrent sur les KPI d'activation réseau, les métriques du Soft Cap et l'architecture de la Phase 2.",
+          "Objectif exclu : La construction de la Marketplace est notre Endgame et n'est explicitement pas au budget initial."
+        ]
+      },
+      {
+        "id": "contact",
+        "tagline": "Ouvrons un Studio.",
+        "title": "Contact",
+        "phase": "Répondez à notre point de contact investisseur principal pour organiser une démo live du Soft Cap.",
+        "bullets": [
+          "Contactez Jon et Erik.",
+          "Nous sommes prêts pour une démonstration live du Studio sur demande.",
+          "Le lien protégé est accessible via /fr/deck."
+        ]
+      }
+    ]
   }
 }

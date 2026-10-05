@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-05 · **Entrées :** 1008
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-05 · **Entrées :** 1096
 
 ## `common`
 
@@ -1113,7 +1113,95 @@
 | Clé | FR | EN |
 |-----|----|----|
 | `pitchDeck.metaTitle` | Odyssey · Deck | Odyssey · Deck |
-| `pitchDeck.scaffoldHint` | Scaffold du deck capital. Les onze slides arrivent ensuite. | Capital deck scaffold. The eleven slides come next. |
-| `pitchDeck.scaffoldProgress` | Ouverture | Open |
 | `pitchDeck.introSkip` | Passer | Skip |
+| `pitchDeck.gateTitle` | Deck investisseur | Investor deck |
+| `pitchDeck.gateHint` | Entrez le mot de passe pour ouvrir le Studio. | Enter the password to open the Studio. |
+| `pitchDeck.gateSubmit` | Ouvrir | Open |
+| `pitchDeck.gateError` | Mot de passe incorrect. | Incorrect password. |
+| `pitchDeck.progressOf` | {current} / {total} | {current} / {total} |
+| `pitchDeck.slides[0].id` | open | open |
+| `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before a pitch. |
+| `pitchDeck.slides[0].title` | Odyssey | Odyssey |
+| `pitchDeck.slides[0].phase` | Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ensuite ? | If someone you loved died today, would you know what to do next? |
+| `pitchDeck.slides[0].bullets[0]` | Pas une liste de fonctionnalités. Un moment humain. | Not a feature list. A human moment. |
+| `pitchDeck.slides[0].bullets[1]` | Jon et Erik. Quiet Luxury. Né dans la salle des machines des hommages. | Jon and Erik. Quiet Luxury. Built from inside tribute ops. |
+| `pitchDeck.slides[0].bullets[2]` | Scrollez quand vous êtes prêts. | Scroll when you’re ready. |
+| `pitchDeck.slides[0].progress` | Ouverture | Open |
+| `pitchDeck.slides[1].id` | need | need |
+| `pitchDeck.slides[1].tagline` | Industrie analogique. Familles digitales. | Analog industry. Digital families. |
+| `pitchDeck.slides[1].title` | Le funéraire est bloqué à l'ère zéro numérique | Death-care is stuck at digital ground zero |
+| `pitchDeck.slides[1].phase` | Notre vision est d'amener cette industrie dans l'ère digitale. Notre point d'entrée est d'adoucir ce que vivent les familles et les conseillers avant, pendant et après un décès. | Our vision is to bring this industry into the digital era. The real work is softening what families and counselors endure before, during, and after a loss. |
+| `pitchDeck.slides[1].bullets[0]` | Avant : Le chaos de la collecte de photos et de récits crée une chasse aux clés USB et aux courriels. | Before: The chaos of collecting photos and stories results in endless USBs and email chains. |
+| `pitchDeck.slides[1].bullets[1]` | Pendant : Le conseiller n'a pas le temps de monter des vidéos. La famille exige de la dignité au lieu du bricolage CapCut. | During: Counselors have no time to be editors. Families demand dignity instead of DIY CapCut. |
+| `pitchDeck.slides[1].bullets[2]` | Après : La mémoire doit vivre au lieu de disparaître dans un tiroir ou un portail froid. | After: Memories should live on rather than vanish into a drawer or a cold portal. |
+| `pitchDeck.slides[1].bullets[3]` | Le Pont Investisseur : Cette friction est notre brèche monétisable. Nous offrons un cadeau digne à 0 $ au comptoir et une conservation payante à la maison. | The Investor Bridge: That friction is our monetizable gap. We offer a $0 dignified gift at the desk and a paid keep at home. |
+| `pitchDeck.slides[2].id` | solution | solution |
+| `pitchDeck.slides[2].tagline` | Adoucir avant. Pendant. Après. | Soften before. During. After. |
+| `pitchDeck.slides[2].title` | Odyssey Studio. La mémoire guidée en Quiet Luxury. | Odyssey Studio. Guided memory in Quiet Luxury. |
+| `pitchDeck.slides[2].phase` | Nous offrons aux salons un geste digne à 0 $. Nous guidons ensuite les familles dans un Coffre cinématographique presque sans montage et avec un soin émotionnel total. | We give funeral homes a dignified $0 starting gesture. We then guide families through a cinematic Memory Chest with almost no editing and full emotional care. |
+| `pitchDeck.slides[2].bullets[0]` | Avant (Activation) : Le conseiller active le projet en 30 secondes via un code QR. La famille n'est pas laissée seule face à un devoir. | Before (Activation): Counselor initiates in roughly 30 seconds via QR and identity details. No homework is dumped on the grieving family. |
+| `pitchDeck.slides[2].bullets[1]` | Pendant (Création) : Le cercle dépose ses fragments. Le Studio façonne un film Quiet Luxury. | During (Crafting): Family and guests add fragments. Studio shapes a Quiet Luxury film. |
+| `pitchDeck.slides[2].bullets[2]` | Après (Conservation) : Le Sanctuaire et le partage. La mémoire ne s'arrête pas à la clé USB de la cérémonie. | After (Keep): Sanctuary and sharing path. Memory doesn't end when the ceremony USB is unplugged. |
+| `pitchDeck.slides[2].bullets[3]` | Le Soft Cap : Quand l'histoire devient palpable, la famille choisit de la préserver. Il n'y a jamais de vente agressive au comptoir. | The Soft Cap: When the story feels real, families choose to preserve more. There is never a hard sell at the counter. |
+| `pitchDeck.slides[2].bullets[4]` | Le Business : Le modèle B2B2C via les salons permet un CAC quasi nul et un RevShare sur le Net. L'émotion alimente l'entonnoir de conversion. | The Business: B2B2C via funeral homes leads to near-zero CAC and RevShare on Net. Emotion funds the funnel. |
+| `pitchDeck.slides[3].id` | ecosystem | ecosystem |
+| `pitchDeck.slides[3].tagline` | Qui nous tenons avec soin. | Who we hold gently. |
+| `pitchDeck.slides[3].title` | Partenaires au comptoir. Familles à la maison. | Partners at the desk. Families at home. |
+| `pitchDeck.slides[3].phase` | Les réseaux funéraires sont notre canal de distribution avec un CAC quasi nul. Les familles paient à la fin. Ce n’est pas un outil d'édition grand public. | Funeral networks are our distribution channel bringing our CAC to zero. Families are the paying end users. We are not a consumer editor play. |
+| `pitchDeck.slides[3].bullets[0]` | Salons (partenaires) : Ils veulent un geste digne et des opérations en 30 secondes pour générer du profit sans vendre sur le deuil. Ils manquent de temps pour le montage et considèrent l'USB comme un coût. | Funeral homes (partners): They want a dignified gesture and 30-second ops to create a new profit center without selling on grief. They lack time for editing and fear looking cold or pushy. |
+| `pitchDeck.slides[3].bullets[1]` | Familles (utilisateurs finaux) : Elles veulent honorer leurs proches et garder un bien durable. Elles veulent du cinéma sans devenir des monteurs vidéo. | Families (end users): They want to honor someone well and keep a lasting asset. They want cinematic results without becoming editors. |
+| `pitchDeck.slides[3].bullets[2]` | Comportement : L'achat se déclenche quand l’histoire devient réelle au moment du Soft Cap. | Behavioral: Users upgrade when the story feels real. This is our Soft Cap timing. |
+| `pitchDeck.slides[4].id` | competition | competition |
+| `pitchDeck.slides[4].tagline` | La distribution est le produit. | Distribution is the product. |
+| `pitchDeck.slides[4].title` | Cheval de Troie via les réseaux funéraires | Trojan Horse via funeral networks |
+| `pitchDeck.slides[4].phase` | Les éditeurs grand public vendent des outils. Nous vendons la distribution. | Consumer editors sell tools. We sell distribution. |
+| `pitchDeck.slides[4].bullets[0]` | Nous n’achetons pas des familles sur Facebook. Nous empruntons le réseau qui les a déjà. | We don't buy families on Facebook. We borrow the network that already holds them. |
+| `pitchDeck.slides[4].bullets[1]` | L'activation par le salon élimine totalement les dépenses d’acquisition famille. | There is zero family acquisition spend when the salon activates the gift. |
+| `pitchDeck.slides[4].bullets[2]` | Le paywall se trouve au pic émotionnel et non à l’entrée. | The paywall sits at the emotional peak instead of at the door. |
+| `pitchDeck.slides[4].bullets[3]` | Notre tarification Quiet Luxury évite la guerre des prix des éditeurs classiques. | We use Quiet Luxury pricing to avoid the race-to-bottom seen with commodity tools. |
+| `pitchDeck.slides[4].bullets[4]` | Nous partageons les revenus nets avec nos partenaires. | We share revenue on net with our partners. |
+| `pitchDeck.slides[5].id` | phases | phases |
+| `pitchDeck.slides[5].tagline` | La séquence bat les slogans. | Sequence beats slogans. |
+| `pitchDeck.slides[5].title` | Trois phases. Wedge, rétention, plateforme. | Three phases. Wedge, retention, platform. |
+| `pitchDeck.slides[5].phase` | Nous capturons d’abord l’attention via les salons. Nous fidélisons ensuite avant de router la demande fragmentée de fin de vie sans aucun stock. | We capture attention through funeral homes first. We then retain families and finally route fragmented end-of-life demand without holding inventory. |
+| `pitchDeck.slides[5].bullets[0]` | Phase 1 (Wedge) : Studio B2B2C, Souvenir 0 $, Soft Cap et RevShare. | Phase 1 (Wedge): Studio B2B2C, $0 Souvenir, Soft Cap and RevShare. |
+| `pitchDeck.slides[5].bullets[1]` | Phase 2 (Rétention) : Sanctuaire MRR, leads consentis et orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing. | Phase 2 (Retention): Sanctuary MRR, consented leads and Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins. |
+| `pitchDeck.slides[5].bullets[2]` | Phase 3 (Marketplace Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes. | Phase 3 (Endgame): Amazon started with books. We start with the film and the memory chest. We then route the fragmented supply economy like urns and venues. |
+| `pitchDeck.slides[6].id` | model | model |
+| `pitchDeck.slides[6].tagline` | Les maths avant la magie. | Math before magic. |
+| `pitchDeck.slides[6].title` | Freemium Soft Cap. Cadeau d’abord, upgrade quand ça compte. | Freemium Soft Cap. Gift first, upgrade when it matters. |
+| `pitchDeck.slides[6].phase` | Le salon offre Souvenir à 0 $. La famille touche le Soft Cap et choisit Héritage ou plus ce qui génère un RevShare sur le Net pour le partenaire. | The funeral home gifts Souvenir at $0. Families hit a Soft Cap and choose Heritage or higher while partners earn RevShare on Net. |
+| `pitchDeck.slides[6].bullets[0]` | Forfaits : Souvenir est le Coffre offert à 0 $. Héritage à 179 $ repousse les limites. Éternité à 349 $ débloque la suite cinématographique complète. | Packages: Souvenir is the $0 gifted Memory Chest. Heritage at $179 expands limits. Eternity at $349 provides the fuller cinematic suite. |
+| `pitchDeck.slides[6].bullets[1]` | Économie : Frais de plateforme de 10 % et 30 % du Net pour le partenaire. Odyssey conserve le reste après les coûts. | Economics: Platform fee is 10%. Partners get 30% of Net. Odyssey keeps the remainder minus COGS. |
+| `pitchDeck.slides[6].bullets[2]` | Rendement conservateur : Environ 22 $ par famille entrante via le Soft Cap de base. | Conservative yield: Roughly $22 per entering family at the Soft Cap baseline. |
+| `pitchDeck.slides[6].bullets[3]` | La boucle virale : Le cercle des invités paie aussi. Nous monétisons la générosité au lieu de cibler uniquement la carte de crédit de la personne en deuil. Ce levier pousse le rendement à environ 43 $. | The Viral Loop: The guest circle pays too. We monetize generosity instead of just the grieving person's credit card. This grows the yield to roughly $43. |
+| `pitchDeck.slides[7].id` | traction | traction |
+| `pitchDeck.slides[7].tagline` | L’honnêteté bat le hype. | Honest beats hype. |
+| `pitchDeck.slides[7].title` | Produit live. Chemin partenaires en cours. | Product live. Partner path in motion. |
+| `pitchDeck.slides[7].phase` | Nous livrons un vrai Studio Phase 1 et avançons avec de grands réseaux québécois. Nous basons notre discours sur des preuves concrètes. | We ship a real Phase 1 Studio and are advancing design partnerships with major networks. We rely on proof instead of claims. |
+| `pitchDeck.slides[7].bullets[0]` | Produit : Le Studio en 7 étapes, le Soft Cap et la boucle du Sanctuaire sont fonctionnels. | Product: The 7-step Studio, Soft Cap checkout and Sanctuary loop are live. |
+| `pitchDeck.slides[7].bullets[1]` | Partenaires : Les discussions et la préparation de pilotes avancent avec des acteurs comme Athos et Urgel Bourgie. | Partners: Discussions and pilot paths are active with networks like Athos and Urgel Bourgie. |
+| `pitchDeck.slides[7].bullets[2]` | Validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion de nos pilotes. | Validation: Unit economics are stress-tested in our models. The next proof relies on metrics from unpaid to paid pilots. |
+| `pitchDeck.slides[8].id` | team | team |
+| `pitchDeck.slides[8].tagline` | Pas des outsiders qui devinent. | Not outsiders guessing. |
+| `pitchDeck.slides[8].title` | Bâti depuis la salle des machines des hommages | Built from inside the tribute machine room |
+| `pitchDeck.slides[8].phase` | Cinq ans dans la vidéo funéraire nous ont appris exactement où les opérations cassent. | Five years operating inside funeral tribute video means we know exactly where the process breaks. |
+| `pitchDeck.slides[8].bullets[0]` | Jon et Erik apportent une combinaison unique de cicatrices de l'industrie et d'expertise produit. | Jon and Erik bring an unfair combination of industry scars and product craft. |
+| `pitchDeck.slides[8].bullets[1]` | Nous gagnons par notre empathie pour la distribution et en livrant un vrai Studio au lieu de simples maquettes. | We win through distribution empathy and by shipping a real Studio instead of slideware. |
+| `pitchDeck.slides[9].id` | ask | ask |
+| `pitchDeck.slides[9].tagline` | Financer le wedge. Semer la Phase 2. | Fund the wedge. Seed Phase 2. |
+| `pitchDeck.slides[9].title` | Capital stratégique pour les Phases 1 et 2 | Strategic capital for Phase 1 and 2 |
+| `pitchDeck.slides[9].phase` | Nous levons des fonds pour industrialiser l'activation B2B et poser les fondations de la Phase 2 au lieu de bâtir la Marketplace au premier jour. | We are raising to industrialize B2B activation and lay Phase 2 foundations rather than building the Marketplace on day one. |
+| `pitchDeck.slides[9].bullets[0]` | Montant : [À définir avant l'envoi externe] | Amount: [TBD fill before external send] |
+| `pitchDeck.slides[9].bullets[1]` | Allocation : Le capital financera l'activation B2B, le succès partenaire et la fiabilité du produit. | Allocation: Capital will fund B2B activation, partner success, and product reliability. |
+| `pitchDeck.slides[9].bullets[2]` | Gestion du risque : Le déploiement réseau implique des critères d'arrêt clairs à 90 jours si un pilote ne fonctionne pas. Nous sommes rationnels avec le capital. | Risk Management: Network deployment includes clear 90-day kill criteria if a pilot underperforms. We stay rational with capital. |
+| `pitchDeck.slides[9].bullets[3]` | Jalons : Les 12 à 18 prochains mois se concentrent sur les KPI d'activation réseau, les métriques du Soft Cap et l'architecture de la Phase 2. | Milestones: The next 12 to 18 months focus on network activation KPIs, Soft Cap metrics, and Phase 2 architecture spikes. |
+| `pitchDeck.slides[9].bullets[4]` | Objectif exclu : La construction de la Marketplace est notre Endgame et n'est explicitement pas au budget initial. | Explicit non-goal: The Marketplace build is our Endgame and explicitly not a current budget line. |
+| `pitchDeck.slides[10].id` | contact | contact |
+| `pitchDeck.slides[10].tagline` | Ouvrons un Studio. | Let’s open a Studio. |
+| `pitchDeck.slides[10].title` | Contact | Contact |
+| `pitchDeck.slides[10].phase` | Répondez à notre point de contact investisseur principal pour organiser une démo live du Soft Cap. | Reply to our primary investor point of contact and we will run a live Soft Cap walkthrough. |
+| `pitchDeck.slides[10].bullets[0]` | Contactez Jon et Erik. | Contact Jon and Erik. |
+| `pitchDeck.slides[10].bullets[1]` | Nous sommes prêts pour une démonstration live du Studio sur demande. | We are ready for a live demo or Studio walkthrough on request. |
+| `pitchDeck.slides[10].bullets[2]` | Le lien protégé est accessible via /fr/deck. | Password link is available at /en/deck. |
 

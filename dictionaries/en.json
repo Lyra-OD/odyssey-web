@@ -1140,8 +1140,142 @@
   },
   "pitchDeck": {
     "metaTitle": "Odyssey · Deck",
-    "scaffoldHint": "Capital deck scaffold. The eleven slides come next.",
-    "scaffoldProgress": "Open",
-    "introSkip": "Skip"
+    "introSkip": "Skip",
+    "gateTitle": "Investor deck",
+    "gateHint": "Enter the password to open the Studio.",
+    "gateSubmit": "Open",
+    "gateError": "Incorrect password.",
+    "progressOf": "{current} / {total}",
+    "slides": [
+      {
+        "id": "open",
+        "tagline": "A question before a pitch.",
+        "title": "Odyssey",
+        "phase": "If someone you loved died today, would you know what to do next?",
+        "bullets": [
+          "Not a feature list. A human moment.",
+          "Jon and Erik. Quiet Luxury. Built from inside tribute ops.",
+          "Scroll when you’re ready."
+        ],
+        "progress": "Open"
+      },
+      {
+        "id": "need",
+        "tagline": "Analog industry. Digital families.",
+        "title": "Death-care is stuck at digital ground zero",
+        "phase": "Our vision is to bring this industry into the digital era. The real work is softening what families and counselors endure before, during, and after a loss.",
+        "bullets": [
+          "Before: The chaos of collecting photos and stories results in endless USBs and email chains.",
+          "During: Counselors have no time to be editors. Families demand dignity instead of DIY CapCut.",
+          "After: Memories should live on rather than vanish into a drawer or a cold portal.",
+          "The Investor Bridge: That friction is our monetizable gap. We offer a $0 dignified gift at the desk and a paid keep at home."
+        ]
+      },
+      {
+        "id": "solution",
+        "tagline": "Soften before. During. After.",
+        "title": "Odyssey Studio. Guided memory in Quiet Luxury.",
+        "phase": "We give funeral homes a dignified $0 starting gesture. We then guide families through a cinematic Memory Chest with almost no editing and full emotional care.",
+        "bullets": [
+          "Before (Activation): Counselor initiates in roughly 30 seconds via QR and identity details. No homework is dumped on the grieving family.",
+          "During (Crafting): Family and guests add fragments. Studio shapes a Quiet Luxury film.",
+          "After (Keep): Sanctuary and sharing path. Memory doesn't end when the ceremony USB is unplugged.",
+          "The Soft Cap: When the story feels real, families choose to preserve more. There is never a hard sell at the counter.",
+          "The Business: B2B2C via funeral homes leads to near-zero CAC and RevShare on Net. Emotion funds the funnel."
+        ]
+      },
+      {
+        "id": "ecosystem",
+        "tagline": "Who we hold gently.",
+        "title": "Partners at the desk. Families at home.",
+        "phase": "Funeral networks are our distribution channel bringing our CAC to zero. Families are the paying end users. We are not a consumer editor play.",
+        "bullets": [
+          "Funeral homes (partners): They want a dignified gesture and 30-second ops to create a new profit center without selling on grief. They lack time for editing and fear looking cold or pushy.",
+          "Families (end users): They want to honor someone well and keep a lasting asset. They want cinematic results without becoming editors.",
+          "Behavioral: Users upgrade when the story feels real. This is our Soft Cap timing."
+        ]
+      },
+      {
+        "id": "competition",
+        "tagline": "Distribution is the product.",
+        "title": "Trojan Horse via funeral networks",
+        "phase": "Consumer editors sell tools. We sell distribution.",
+        "bullets": [
+          "We don't buy families on Facebook. We borrow the network that already holds them.",
+          "There is zero family acquisition spend when the salon activates the gift.",
+          "The paywall sits at the emotional peak instead of at the door.",
+          "We use Quiet Luxury pricing to avoid the race-to-bottom seen with commodity tools.",
+          "We share revenue on net with our partners."
+        ]
+      },
+      {
+        "id": "phases",
+        "tagline": "Sequence beats slogans.",
+        "title": "Three phases. Wedge, retention, platform.",
+        "phase": "We capture attention through funeral homes first. We then retain families and finally route fragmented end-of-life demand without holding inventory.",
+        "bullets": [
+          "Phase 1 (Wedge): Studio B2B2C, $0 Souvenir, Soft Cap and RevShare.",
+          "Phase 2 (Retention): Sanctuary MRR, consented leads and Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins.",
+          "Phase 3 (Endgame): Amazon started with books. We start with the film and the memory chest. We then route the fragmented supply economy like urns and venues."
+        ]
+      },
+      {
+        "id": "model",
+        "tagline": "Math before magic.",
+        "title": "Freemium Soft Cap. Gift first, upgrade when it matters.",
+        "phase": "The funeral home gifts Souvenir at $0. Families hit a Soft Cap and choose Heritage or higher while partners earn RevShare on Net.",
+        "bullets": [
+          "Packages: Souvenir is the $0 gifted Memory Chest. Heritage at $179 expands limits. Eternity at $349 provides the fuller cinematic suite.",
+          "Economics: Platform fee is 10%. Partners get 30% of Net. Odyssey keeps the remainder minus COGS.",
+          "Conservative yield: Roughly $22 per entering family at the Soft Cap baseline.",
+          "The Viral Loop: The guest circle pays too. We monetize generosity instead of just the grieving person's credit card. This grows the yield to roughly $43."
+        ]
+      },
+      {
+        "id": "traction",
+        "tagline": "Honest beats hype.",
+        "title": "Product live. Partner path in motion.",
+        "phase": "We ship a real Phase 1 Studio and are advancing design partnerships with major networks. We rely on proof instead of claims.",
+        "bullets": [
+          "Product: The 7-step Studio, Soft Cap checkout and Sanctuary loop are live.",
+          "Partners: Discussions and pilot paths are active with networks like Athos and Urgel Bourgie.",
+          "Validation: Unit economics are stress-tested in our models. The next proof relies on metrics from unpaid to paid pilots."
+        ]
+      },
+      {
+        "id": "team",
+        "tagline": "Not outsiders guessing.",
+        "title": "Built from inside the tribute machine room",
+        "phase": "Five years operating inside funeral tribute video means we know exactly where the process breaks.",
+        "bullets": [
+          "Jon and Erik bring an unfair combination of industry scars and product craft.",
+          "We win through distribution empathy and by shipping a real Studio instead of slideware."
+        ]
+      },
+      {
+        "id": "ask",
+        "tagline": "Fund the wedge. Seed Phase 2.",
+        "title": "Strategic capital for Phase 1 and 2",
+        "phase": "We are raising to industrialize B2B activation and lay Phase 2 foundations rather than building the Marketplace on day one.",
+        "bullets": [
+          "Amount: [TBD fill before external send]",
+          "Allocation: Capital will fund B2B activation, partner success, and product reliability.",
+          "Risk Management: Network deployment includes clear 90-day kill criteria if a pilot underperforms. We stay rational with capital.",
+          "Milestones: The next 12 to 18 months focus on network activation KPIs, Soft Cap metrics, and Phase 2 architecture spikes.",
+          "Explicit non-goal: The Marketplace build is our Endgame and explicitly not a current budget line."
+        ]
+      },
+      {
+        "id": "contact",
+        "tagline": "Let’s open a Studio.",
+        "title": "Contact",
+        "phase": "Reply to our primary investor point of contact and we will run a live Soft Cap walkthrough.",
+        "bullets": [
+          "Contact Jon and Erik.",
+          "We are ready for a live demo or Studio walkthrough on request.",
+          "Password link is available at /en/deck."
+        ]
+      }
+    ]
   }
 }
