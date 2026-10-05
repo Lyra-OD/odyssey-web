@@ -4,11 +4,11 @@
 **Dernière MAJ :** 5 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 5 oct 2026 : Open — soft dock + tempo film (signature anim deck) ; eyebrow lisible.
 - 5 oct 2026 : Open — ciel Sanctuaire GL en fond ; rond vidéo au sas ; cyan soft CTA + dots breathe ; scrollbar hidden.
 - 5 oct 2026 : T5s1b Open — question FR sans « ensuite », aide masquée sur /deck.
 - 5 oct 2026 : T5s1 slide Open — question héros, bullets secondaires.
 - 5 oct 2026 : T5b Mark ODYSSEY sticky en haut.
-- 5 oct 2026 : T2 gate + T3 scroller + T1 copy.
 
 | Doc | Sujet |
 |-----|--------|

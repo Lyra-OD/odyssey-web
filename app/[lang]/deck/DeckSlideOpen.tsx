@@ -1,4 +1,15 @@
+"use client";
+
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+
 import { editorialFont } from "@/src/lib/fonts";
+
+import {
+  DECK_EYEBROW_CLASS,
+  DECK_OPEN_TEMPO,
+  useDeckSoftDock,
+} from "./deckSoftDock";
 
 type DeckSlideOpenProps = {
   tagline: string;
@@ -7,40 +18,56 @@ type DeckSlideOpenProps = {
 };
 
 /**
- * Slide 1 — Open (centré).
- * Lumière = ciel GL en fond (DeckClient) ; le rond vidéo reste au sas password.
- * Accent cyan soft (sans halo) : dernière ligne = invitation à scroller.
- * Le halo qui respire (ADN FR) est sur les dots (DeckClient), pas ici.
+ * Slide 1 — Open.
+ * Soft dock spatial + tempo film (temps de lire entre chaque beat).
  */
 export function DeckSlideOpen({ tagline, phase, bullets }: DeckSlideOpenProps) {
-  return (
-    <div className="relative mx-auto flex w-full max-w-4xl flex-col items-center px-2">
-      <p className="font-label relative z-10 text-center text-[0.65rem] uppercase tracking-[0.42em] text-white/50">
-        {tagline}
-      </p>
+  const rootRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(rootRef, { amount: 0.5, once: true });
+  const softDock = useDeckSoftDock(inView);
 
-      <h2
-        className={`${editorialFont.className} relative z-10 mt-12 max-w-[18em] text-center text-[clamp(1.85rem,5.2vw,3.15rem)] font-medium leading-[1.22] tracking-[0.01em] text-white md:mt-14`}
+  const proofBullets = bullets.slice(0, -1);
+  const scrollCue = bullets[bullets.length - 1];
+  const proofDelays = [DECK_OPEN_TEMPO.proof1, DECK_OPEN_TEMPO.proof2];
+
+  return (
+    <div
+      ref={rootRef}
+      className="relative mx-auto flex w-full max-w-4xl flex-col items-center px-2"
+    >
+      <motion.p
+        className={DECK_EYEBROW_CLASS}
+        {...softDock(DECK_OPEN_TEMPO.eyebrow)}
+      >
+        {tagline}
+      </motion.p>
+
+      <motion.h2
+        className={`${editorialFont.className} relative z-10 mt-10 max-w-[18em] text-center text-[clamp(1.85rem,5.2vw,3.15rem)] font-medium leading-[1.22] tracking-[0.01em] text-white md:mt-12`}
+        {...softDock(DECK_OPEN_TEMPO.hero)}
       >
         {phase}
-      </h2>
+      </motion.h2>
 
-      <ul className="relative z-10 mt-16 flex max-w-lg flex-col gap-4 text-center md:mt-20 md:gap-5">
-        {bullets.map((bullet, i) => {
-          const isScrollCue = i === bullets.length - 1;
-          return (
-            <li
-              key={bullet}
-              className={`font-label text-[0.85rem] font-light leading-relaxed tracking-[0.02em] md:text-[0.95rem] ${
-                isScrollCue
-                  ? "mt-2 text-[rgba(0,232,240,0.58)]"
-                  : "text-zinc-400"
-              }`}
-            >
-              {bullet}
-            </li>
-          );
-        })}
+      <ul className="relative z-10 mt-14 flex max-w-lg flex-col gap-5 text-center md:mt-16 md:gap-6">
+        {proofBullets.map((bullet, i) => (
+          <motion.li
+            key={bullet}
+            className="font-label text-[0.95rem] font-light leading-relaxed tracking-[0.02em] text-white/70 md:text-[1.05rem]"
+            {...softDock(proofDelays[i] ?? DECK_OPEN_TEMPO.proof2 + i * 2)}
+          >
+            {bullet}
+          </motion.li>
+        ))}
+
+        {scrollCue ? (
+          <motion.li
+            className="mt-3 font-label text-[0.9rem] font-light leading-relaxed tracking-[0.02em] text-[rgba(0,232,240,0.58)] md:text-[0.95rem]"
+            {...softDock(DECK_OPEN_TEMPO.cta)}
+          >
+            {scrollCue}
+          </motion.li>
+        ) : null}
       </ul>
     </div>
   );

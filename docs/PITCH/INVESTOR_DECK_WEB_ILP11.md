@@ -19,7 +19,7 @@
 
 **Intention produit (pas encore shippé) :** page `/[lang]/deck` · password env · cookie · scroller 11 beats · copy `pitchDeck.*`.
 
-**Skin visuelle :** après unlock — **ciel Sanctuaire GL** en fond (mode background, sans constellation) + grain + voile ; Mark sticky ; accent cyan (dots breathe ADN FR|EN, CTA soft). **Sas password** = rond vidéo Eclipse (login). Prologue craft inchangé. **Pas** le look marketing `/partners`.
+**Skin visuelle :** après unlock — **ciel Sanctuaire GL** en fond (mode background, sans constellation) + grain + voile ; Mark sticky ; accent cyan (dots breathe ADN FR|EN, CTA soft). **Apparition texte :** soft dock + tempo film (silences lisibles) — signature toutes slides. **Sas password** = rond vidéo Eclipse (login). Prologue craft inchangé. **Pas** le look marketing `/partners`.
 
 ---
 
