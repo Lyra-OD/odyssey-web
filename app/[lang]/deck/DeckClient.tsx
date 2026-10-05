@@ -50,7 +50,8 @@ function isOdysseyTitle(title: string, wordmark: string) {
 }
 
 /**
- * Scroller Quiet Luxury — 11 slides snap. Intro craft puis lecture.
+ * Scroller Quiet Luxury — 11 slides snap.
+ * T5b : Mark ODYSSEY sticky en haut, détaché du contenu des slides.
  */
 export function DeckClient({
   locale,
@@ -141,7 +142,7 @@ export function DeckClient({
 
   return (
     <div className="relative h-dvh overflow-hidden bg-[#020202]">
-      <div className="absolute right-5 top-5 z-30 md:right-8 md:top-8">
+      <div className="absolute right-5 top-5 z-40 md:right-8 md:top-8">
         <LocaleSwitcher lang={locale} {...localeSwitcher} />
       </div>
 
@@ -166,14 +167,22 @@ export function DeckClient({
         />
       ) : null}
 
-      <p
-        className={`font-label pointer-events-none absolute left-1/2 top-6 z-20 -translate-x-1/2 text-[0.65rem] uppercase tracking-[0.42em] text-white/35 transition-opacity duration-500 ${
+      {/* Chrome sticky : Mark détaché + progress — hors flux des slides */}
+      <header
+        className={`pointer-events-none fixed inset-x-0 top-0 z-30 flex flex-col items-center pt-5 transition-opacity duration-500 md:pt-6 ${
           deckVisible ? "opacity-100" : "opacity-0"
         }`}
-        aria-live="polite"
       >
-        {slides[index]?.progress ?? progressLabel}
-      </p>
+        <div className="pointer-events-none scale-[0.82] sm:scale-90">
+          <OdysseyConnexionMark wordmark={wordmark} animate={deckVisible} />
+        </div>
+        <p
+          className="font-label mt-3 text-[0.6rem] uppercase tracking-[0.42em] text-white/35 md:mt-3.5 md:text-[0.65rem]"
+          aria-live="polite"
+        >
+          {slides[index]?.progress ?? progressLabel}
+        </p>
+      </header>
 
       <div
         className={`absolute right-5 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2 transition-opacity duration-500 md:right-8 ${
@@ -207,17 +216,9 @@ export function DeckClient({
             key={slide.id}
             data-deck-slide
             data-deck-index={i}
-            className="flex min-h-dvh snap-start snap-always flex-col items-center justify-center px-6 py-20"
+            className="flex min-h-dvh snap-start snap-always flex-col items-center justify-center px-6 pb-20 pt-28 sm:pt-32 md:pt-36"
           >
             <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
-              {i === 0 ? (
-                <OdysseyConnexionMark
-                  wordmark={wordmark}
-                  animate={deckVisible}
-                  className="mb-10"
-                />
-              ) : null}
-
               <p className="font-label text-center text-[0.7rem] uppercase tracking-[0.32em] text-white/40">
                 {slide.tagline}
               </p>
