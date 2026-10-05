@@ -19,7 +19,6 @@ import {
   DeckEclipseIntro,
   hasSeenDeckEclipseIntro,
 } from "./DeckEclipseIntro";
-import { DeckSlideLayout } from "./DeckSlideLayout";
 
 /** Grain léger (même ADN sas / player). */
 const DECK_GRAIN =
@@ -51,8 +50,7 @@ function isOdysseyTitle(title: string, wordmark: string) {
 }
 
 /**
- * Scroller Quiet Luxury — 11 slides snap.
- * T5 : layout desktop split (texte | visual), mobile stack.
+ * Scroller Quiet Luxury — 11 slides snap. Intro craft puis lecture.
  */
 export function DeckClient({
   locale,
@@ -169,7 +167,7 @@ export function DeckClient({
       ) : null}
 
       <p
-        className={`font-label pointer-events-none absolute left-1/2 top-6 z-20 -translate-x-1/2 text-[0.65rem] uppercase tracking-[0.42em] text-white/35 transition-opacity duration-500 lg:left-10 lg:translate-x-0 ${
+        className={`font-label pointer-events-none absolute left-1/2 top-6 z-20 -translate-x-1/2 text-[0.65rem] uppercase tracking-[0.42em] text-white/35 transition-opacity duration-500 ${
           deckVisible ? "opacity-100" : "opacity-0"
         }`}
         aria-live="polite"
@@ -204,74 +202,53 @@ export function DeckClient({
         }`}
         style={{ scrollBehavior: "smooth" }}
       >
-        {slides.map((slide, i) => {
-          const isOpen = i === 0;
-          const text = (
-            <>
-              {isOpen ? (
-                <div className="mb-8 lg:hidden">
-                  <OdysseyConnexionMark
-                    wordmark={wordmark}
-                    animate={deckVisible}
-                  />
-                </div>
+        {slides.map((slide, i) => (
+          <section
+            key={slide.id}
+            data-deck-slide
+            data-deck-index={i}
+            className="flex min-h-dvh snap-start snap-always flex-col items-center justify-center px-6 py-20"
+          >
+            <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
+              {i === 0 ? (
+                <OdysseyConnexionMark
+                  wordmark={wordmark}
+                  animate={deckVisible}
+                  className="mb-10"
+                />
               ) : null}
 
-              <p className="font-label text-[0.7rem] uppercase tracking-[0.32em] text-white/40">
+              <p className="font-label text-center text-[0.7rem] uppercase tracking-[0.32em] text-white/40">
                 {slide.tagline}
               </p>
 
               {!isOdysseyTitle(slide.title, wordmark) ? (
                 <h2
-                  className={`${editorialFont.className} mt-5 text-[clamp(1.55rem,3.6vw,2.65rem)] font-medium tracking-[0.04em] text-zinc-100`}
+                  className={`${editorialFont.className} mt-5 text-center text-[clamp(1.55rem,4.2vw,2.45rem)] font-medium tracking-[0.04em] text-zinc-100`}
                 >
                   {slide.title}
                 </h2>
               ) : null}
 
               <p
-                className={`${editorialFont.className} mt-6 max-w-xl text-[clamp(1.05rem,2.4vw,1.45rem)] font-medium leading-snug tracking-[0.02em] text-zinc-200 lg:max-w-none`}
+                className={`${editorialFont.className} mt-6 max-w-xl text-center text-[clamp(1.05rem,2.8vw,1.4rem)] font-medium leading-snug tracking-[0.02em] text-zinc-200`}
               >
                 {slide.phase}
               </p>
 
-              <ul className="mt-10 max-w-xl space-y-3 lg:max-w-none">
+              <ul className="mt-10 max-w-xl space-y-3 text-center">
                 {slide.bullets.map((bullet) => (
                   <li
                     key={bullet}
-                    className="font-label text-sm font-light leading-relaxed text-white/55 md:text-[0.95rem] lg:text-left"
+                    className="font-label text-sm font-light leading-relaxed text-white/50 md:text-[0.95rem]"
                   >
                     {bullet}
                   </li>
                 ))}
               </ul>
-            </>
-          );
-
-          const visual = isOpen ? (
-            <div className="hidden w-full justify-center lg:flex">
-              <OdysseyConnexionMark
-                wordmark={wordmark}
-                animate={deckVisible}
-              />
             </div>
-          ) : undefined;
-
-          return (
-            <section
-              key={slide.id}
-              data-deck-slide
-              data-deck-index={i}
-              className="flex min-h-dvh snap-start snap-always flex-col justify-center"
-            >
-              <DeckSlideLayout
-                text={text}
-                visual={visual}
-                showVisualColumn
-              />
-            </section>
-          );
-        })}
+          </section>
+        ))}
       </div>
     </div>
   );
