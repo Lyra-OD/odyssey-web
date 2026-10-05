@@ -1,14 +1,14 @@
 # Carte documentation Odyssey
 
 **Type :** living · **Vérité pour :** index des docs, types, « ne pas copier ».  
-**Dernière MAJ :** 30 sept 2026 · **Carte :** ce fichier.
+**Dernière MAJ :** 5 oct 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 5 oct 2026 — **PITCH/** : canon deck capital ILP 11 — [`PITCH/INVESTOR_DECK_WEB_ILP11.md`](PITCH/INVESTOR_DECK_WEB_ILP11.md).
 - 30 sept 2026 — **C4 V1.5** player fermée (KB · Breath · leaks · deep-to-black) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 23 sept 2026 — **C13** Social Cut 19 $ — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C4** QuietLuxuryPlayer — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — Trajectoire Cercle + garde-fous C4 — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
-- 21 sept 2026 — **C3** Séance vs Archive + CTA Master 49 $ — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 
 Hiérarchie développeur (ordre de lecture code) : [`CONVENTIONS.md`](CONVENTIONS.md).  
 Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
@@ -29,6 +29,7 @@ Les catégories ci-dessous = **carte mentale** + index. Pas de big bang `busines
 | **design** | DA Figma, copy, design system | [`design/`](design/README.md) |
 | **craft** | Labs éclipse / wormhole / ciel | [`craft/`](craft/README.md) · exports [`brand/`](brand/odyssey-eclipse/README.md) |
 | **vision** | CPL / Lyra · cinéma Creatomate (2 « Phase 2 » distinctes) | [`vision/`](vision/README.md) |
+| **PITCH** | Deck capital (investisseurs / banques) — copy ILP web | [`PITCH/`](PITCH/README.md) |
 | **ops** | SQL, runbooks, QA | [`sql/`](sql/README.md) · [`ops/`](ops/) |
 | **TEMP** | Rush, mails, notes session | [`TEMP/`](TEMP/README.md) |
 | **archive** | Historique | [`_archive/`](_archive/README.md) |
@@ -50,6 +51,7 @@ Les catégories ci-dessous = **carte mentale** + index. Pas de big bang `busines
 | Playbook DA, tokens, copy process **neuf** | `design/` | `design/….md` |
 | Lab craft **neuf** | `craft/` | `craft/….md` |
 | Vision stratégique **neuve** | `vision/` | `vision/….md` |
+| Pitch **capital** (deck investisseurs) | `PITCH/` | `PITCH/….md` |
 | Porte d’entrée (STATUS, conventions) | racine `docs/` | rare |
 
 Toujours : en-tête type · **une ligne dans cette carte** · même commit si code produit.  
@@ -140,6 +142,8 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`business/NARRATIVE_VP_ATHOS_SEP2026.md`](business/NARRATIVE_VP_ATHOS_SEP2026.md) | business | Pitch VP / réseau funéraire (Phase 1) |
 | [`business/INVESTOR_NARRATIVE_SANJI_SEP2026.md`](business/INVESTOR_NARRATIVE_SANJI_SEP2026.md) | business | Pitch investisseur / Sanji (wedge + Lyra upside) |
 | [`business/ODYSSEY_STRATEGIC_VISION_INVESTMENT_NARRATIVE.md`](business/ODYSSEY_STRATEGIC_VISION_INVESTMENT_NARRATIVE.md) | business | One-pager EN PDF — Strategic Vision & Investment Narrative |
+| [`PITCH/INVESTOR_DECK_WEB_ILP11.md`](PITCH/INVESTOR_DECK_WEB_ILP11.md) | pitch | **Canon copy** deck web ILP 11 — capital only · humain + business |
+| [`PITCH/README.md`](PITCH/README.md) | ops | Index dossier PITCH |
 | [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) | playbook | Canal direct |
 | [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) | snapshot | Projections juil. 2026 — **figé** (ne pas corriger) |
 | [`PARTNER_BRIEF_JON_JUL2026.md`](PARTNER_BRIEF_JON_JUL2026.md) | snapshot | Brief Jon, figé |
