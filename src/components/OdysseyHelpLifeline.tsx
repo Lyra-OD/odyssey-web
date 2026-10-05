@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Phone } from "lucide-react";
 
 import { appRoutes } from "@/src/lib/appRoutes";
@@ -22,7 +23,7 @@ type Props = {
 
 /**
  * Chip d'aide permanente — bas-gauche, fixe.
- * Masqué en séance cinéma (`data-odyssey-cinema`) ou Fullscreen API.
+ * Masqué en séance cinéma (`data-odyssey-cinema`), Fullscreen API, ou pitch `/deck`.
  * Mobile : pastille téléphone au-dessus du footer sticky Next (`bottom-24`).
  * Desktop (`md+`) : chip complet (label + tel + écrire) à `bottom-5`.
  * Portal `document.body` pour échapper au stacking context parent.
@@ -41,12 +42,18 @@ function isCinemaOrFullscreen(): boolean {
   return cinema || fullscreen;
 }
 
+function isPitchDeckPath(pathname: string | null): boolean {
+  if (!pathname) return false;
+  return /\/(fr|en)\/deck\/?$/.test(pathname);
+}
+
 export function OdysseyHelpLifeline({
   locale: routeLocale,
   copyFr,
   copyEn,
   className = "",
 }: Props) {
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [immersiveHidden, setImmersiveHidden] = useState(false);
 
@@ -75,7 +82,8 @@ export function OdysseyHelpLifeline({
   const digits = copy.phoneDisplay.replace(/\D/g, "");
   const telHref = digits.length === 10 ? `tel:+1${digits}` : `tel:+${digits}`;
 
-  if (immersiveHidden) return null;
+  if (!mounted) return null;
+  if (immersiveHidden || isPitchDeckPath(pathname)) return null;
 
   const chip = (
     <div

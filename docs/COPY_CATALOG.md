@@ -1124,7 +1124,7 @@
 | `pitchDeck.slides[0].id` | open | open |
 | `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before a pitch. |
 | `pitchDeck.slides[0].title` | Odyssey | Odyssey |
-| `pitchDeck.slides[0].phase` | Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ensuite ? | If someone you loved died today, would you know what to do next? |
+| `pitchDeck.slides[0].phase` | Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ? | If someone you loved died today, would you know what to do? |
 | `pitchDeck.slides[0].bullets[0]` | Pas une liste de fonctionnalités. Un moment humain. | Not a feature list. A human moment. |
 | `pitchDeck.slides[0].bullets[1]` | Erik et Jon. Pas des outsiders. Des cicatrices d’industrie. | Erik and Jon. Not outsiders. Industry scars. |
 | `pitchDeck.slides[0].bullets[2]` | Scrollez quand vous êtes prêts. | Scroll when you’re ready. |

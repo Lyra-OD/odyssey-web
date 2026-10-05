@@ -64,7 +64,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: A question before a pitch.
 - Title: Odyssey
-- Phase: If someone you loved died today, would you know what to do next?
+- Phase: If someone you loved died today, would you know what to do?
 - Bullets:
   - Not a feature list. A human moment.
   - Erik and Jon. Not outsiders. Industry scars.
@@ -74,7 +74,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **FR**
 - Tagline: Une question avant un pitch.
 - Title: Odyssey
-- Phase: Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ensuite ?
+- Phase: Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ?
 - Bullets:
   - Pas une liste de fonctionnalités. Un moment humain.
   - Erik et Jon. Pas des outsiders. Des cicatrices d’industrie.
