@@ -6,9 +6,10 @@ import {
   useRef,
   useState,
 } from "react";
+import dynamic from "next/dynamic";
 
-import { ConnexionEclipseLayer } from "@/src/components/auth/ConnexionEclipseLayer";
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
+import { SKY_LAB_DEFAULT_LAYERS } from "@/src/components/contribute/constellation/skyCraftLayers";
 import {
   LocaleSwitcher,
   type LocaleSwitcherLabels,
@@ -20,6 +21,14 @@ import {
   hasSeenDeckEclipseIntro,
 } from "./DeckEclipseIntro";
 import { DeckSlideOpen } from "./DeckSlideOpen";
+
+const SanctuaryUniverse = dynamic(
+  () =>
+    import("@/src/components/contribute/SanctuaryUniverse").then(
+      (m) => m.SanctuaryUniverse,
+    ),
+  { ssr: false },
+);
 
 /** Grain léger (même ADN sas / player). */
 const DECK_GRAIN =
@@ -147,16 +156,32 @@ export function DeckClient({
         <LocaleSwitcher lang={locale} {...localeSwitcher} />
       </div>
 
+      {/* Ciel GL en fond — le rond vidéo reste sur le sas password (DeckGate). */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <ConnexionEclipseLayer />
+        {deckVisible ? (
+          <SanctuaryUniverse
+            mode="background"
+            locale={locale}
+            skyLayers={SKY_LAB_DEFAULT_LAYERS}
+            constellationVisible={false}
+            skyCraftChrome={false}
+            wanderChrome={false}
+            skipConstellationReveal
+            className="h-full w-full"
+          />
+        ) : null}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: DECK_GRAIN }}
+          className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-black/45 via-black/38 to-black/62"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.78)_100%)]"
+          className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_72%_58%_at_50%_48%,rgba(0,0,0,0.42),transparent_72%)]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-[1] opacity-[0.035]"
+          style={{ backgroundImage: DECK_GRAIN }}
         />
       </div>
 
@@ -191,23 +216,40 @@ export function DeckClient({
         }`}
         aria-hidden
       >
-        {slides.map((s, i) => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => goTo(i)}
-            className={`h-1.5 w-1.5 rounded-full transition-colors ${
-              i === index ? "bg-white/70" : "bg-white/20 hover:bg-white/40"
-            }`}
-            tabIndex={deckVisible ? 0 : -1}
-            aria-label={`${i + 1} / ${slides.length}`}
-          />
-        ))}
+        {slides.map((s, i) => {
+          const active = i === index;
+          return (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => goTo(i)}
+              className="relative flex h-3 w-3 items-center justify-center"
+              tabIndex={deckVisible ? 0 : -1}
+              aria-label={`${i + 1} / ${slides.length}`}
+            >
+              {active ? (
+                <>
+                  {/* Même ADN que FR (SalonCyanGlowText) : flou blanc + cœur cyan. */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-[10px] w-[10px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-80 blur-[5px]"
+                  />
+                  <span
+                    aria-hidden
+                    className="deck-nav-dot-breathe relative h-1.5 w-1.5 rounded-full bg-[var(--salon-cyan)]"
+                  />
+                </>
+              ) : (
+                <span className="h-1.5 w-1.5 rounded-full bg-white/20 transition-colors hover:bg-[var(--salon-cyan-dim)]" />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       <div
         ref={scrollerRef}
-        className={`relative z-10 h-dvh snap-y snap-mandatory overflow-y-auto overscroll-y-contain transition-opacity duration-700 ease-out ${
+        className={`deck-scroller relative z-10 h-dvh snap-y snap-mandatory overflow-y-auto overscroll-y-contain transition-opacity duration-700 ease-out ${
           deckVisible ? "opacity-100" : "opacity-0"
         }`}
         style={{ scrollBehavior: "smooth" }}

@@ -19,7 +19,7 @@
 
 **Intention produit (pas encore shippé) :** page `/[lang]/deck` · password env · cookie · scroller 11 beats · copy `pitchDeck.*`.
 
-**Skin visuelle :** même ADN que le **player cinéma** / sas (`QuietLuxuryPlayer`, `SessionCinemaGate`) — noir pur, grain, serif éditorial, tracking, vignette — **pas** le look marketing `/partners`.
+**Skin visuelle :** après unlock — **ciel Sanctuaire GL** en fond (mode background, sans constellation) + grain + voile ; Mark sticky ; accent cyan (dots breathe ADN FR|EN, CTA soft). **Sas password** = rond vidéo Eclipse (login). Prologue craft inchangé. **Pas** le look marketing `/partners`.
 
 ---
 
