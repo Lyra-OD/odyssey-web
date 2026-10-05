@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-09-29 · **Entrées :** 1004
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-05 · **Entrées :** 1008
 
 ## `common`
 
@@ -1107,4 +1107,13 @@
 | `quietLuxuryExitHub.streamLoading` | Préparation de la séance… | Preparing the session… |
 | `quietLuxuryExitHub.streamUnavailable` | Cette séance n'est plus disponible. | This session is no longer available. |
 | `quietLuxuryExitHub.streamEmpty` | La séance n'a pas encore de souvenirs à projeter. | This session does not have memories to project yet. |
+
+## `pitchDeck`
+
+| Clé | FR | EN |
+|-----|----|----|
+| `pitchDeck.metaTitle` | Odyssey · Deck | Odyssey · Deck |
+| `pitchDeck.scaffoldHint` | Scaffold du deck capital. Les onze slides arrivent ensuite. | Capital deck scaffold. The eleven slides come next. |
+| `pitchDeck.scaffoldProgress` | Ouverture | Open |
+| `pitchDeck.introSkip` | Passer | Skip |
 

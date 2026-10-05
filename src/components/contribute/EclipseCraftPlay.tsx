@@ -5,6 +5,7 @@ import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import Link from "next/link";
 import {
   Suspense,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -357,15 +358,39 @@ function BloomDriver({
 
 type Locale = "fr" | "en";
 
+/** Si WebGL indisponible en prologue : skip sans bloquer. */
+function PrologueWebGLFallback({ onSkip }: { onSkip: () => void }) {
+  useEffect(() => {
+    onSkip();
+  }, [onSkip]);
+  return <div className="absolute inset-0 bg-black" aria-hidden />;
+}
+
+export type EclipseCraftPlayProps = {
+  locale?: Locale;
+  /**
+   * `lab` = page craft (chrome + timeline).
+   * `prologue` = intro plein écran autoplay (~9,5 s), sans UI lab.
+   */
+  mode?: "lab" | "prologue";
+  /** Prologue : appelé à la fin (ou WebGL impossible). */
+  onComplete?: () => void;
+};
+
 /**
  * Lecture cinéma — A bis → B blanc → C tunnel + timeline.
  */
-export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
+export function EclipseCraftPlay({
+  locale = "fr",
+  mode = "lab",
+  onComplete,
+}: EclipseCraftPlayProps) {
+  const isPrologue = mode === "prologue";
   const tier = useVisualTier();
   const recipe = ECLIPSE_LOGO_RECIPE;
   const transportRef = useRef<PlayTransport>({
     time: 0,
-    playing: false,
+    playing: isPrologue,
     seekGen: 0,
   });
   const bloomIntensityRef = useRef(0.28);
@@ -374,7 +399,16 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
   const tunnelRef = useRef(0);
   const sliderRef = useRef<HTMLInputElement>(null);
   const timeLabelRef = useRef<HTMLSpanElement>(null);
-  const [playing, setPlaying] = useState(false);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+  const completedRef = useRef(false);
+  const [playing, setPlaying] = useState(isPrologue);
+
+  const finishPrologue = useCallback(() => {
+    if (!isPrologue || completedRef.current) return;
+    completedRef.current = true;
+    onCompleteRef.current?.();
+  }, [isPrologue]);
 
   const craftRef = useRef<CraftBag>({
     step: 3,
@@ -494,63 +528,81 @@ export function EclipseCraftPlay({ locale = "fr" }: { locale?: Locale }) {
   const labHref = `/${locale}/contribute/test-eclipse`;
   const wormholeHref = `/${locale}/contribute/test-wormhole`;
 
-  return (
-    <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
-      <ClientWebGLGate
-        fallback={(message) => (
+  const scene = (
+    <ClientWebGLGate
+      fallback={(message) =>
+        isPrologue ? (
+          <PrologueWebGLFallback onSkip={finishPrologue} />
+        ) : (
           <div className="flex min-h-screen items-center justify-center px-6 text-center text-sm text-white/50">
             {message}
           </div>
-        )}
-      >
-        <div className="fixed inset-0 z-0">
-          <Canvas
-            className="h-full w-full"
-            style={{ width: "100%", height: "100%" }}
-            frameloop="always"
-            dpr={tierDpr(tier)}
-            camera={{
-              position: [0, 0, CAM_Z_START],
-              fov: CAM_FOV_START,
-              near: 0.1,
-              far: 40,
-            }}
-            gl={{
-              antialias: true,
-              alpha: false,
-              powerPreference: "high-performance",
-              preserveDrawingBuffer: true,
-            }}
-            onCreated={({ gl }) => {
-              gl.setClearColor("#000000", 1);
-            }}
-          >
-            <Suspense fallback={null}>
-              <SkyThemeProvider theme={defaultSkyTheme}>
-                <PlayChronoDriver
-                  transportRef={transportRef}
-                  craft={craftRef.current}
-                  bloomIntensityRef={bloomIntensityRef}
-                  washRef={washRef}
-                  tunnelRef={tunnelRef}
-                  bloomThresholdRef={bloomThresholdRef}
-                  onEnded={() => {
-                    setPlaying(false);
-                  }}
+        )
+      }
+    >
+      <div className={isPrologue ? "absolute inset-0 z-0" : "fixed inset-0 z-0"}>
+        <Canvas
+          className="h-full w-full"
+          style={{ width: "100%", height: "100%" }}
+          frameloop="always"
+          dpr={tierDpr(tier)}
+          camera={{
+            position: [0, 0, CAM_Z_START],
+            fov: CAM_FOV_START,
+            near: 0.1,
+            far: 40,
+          }}
+          gl={{
+            antialias: true,
+            alpha: false,
+            powerPreference: "high-performance",
+            preserveDrawingBuffer: true,
+          }}
+          onCreated={({ gl }) => {
+            gl.setClearColor("#000000", 1);
+          }}
+        >
+          <Suspense fallback={null}>
+            <SkyThemeProvider theme={defaultSkyTheme}>
+              <PlayChronoDriver
+                transportRef={transportRef}
+                craft={craftRef.current}
+                bloomIntensityRef={bloomIntensityRef}
+                washRef={washRef}
+                tunnelRef={tunnelRef}
+                bloomThresholdRef={bloomThresholdRef}
+                onEnded={() => {
+                  setPlaying(false);
+                  finishPrologue();
+                }}
+              />
+              <color attach="background" args={["#000000"]} />
+              <EclipseDisc tier="desktop" craft={craftRef.current} />
+              <EffectComposer multisampling={0}>
+                <BloomDriver
+                  intensityRef={bloomIntensityRef}
+                  thresholdRef={bloomThresholdRef}
                 />
-                <color attach="background" args={["#000000"]} />
-                <EclipseDisc tier="desktop" craft={craftRef.current} />
-                <EffectComposer multisampling={0}>
-                  <BloomDriver
-                    intensityRef={bloomIntensityRef}
-                    thresholdRef={bloomThresholdRef}
-                  />
-                </EffectComposer>
-              </SkyThemeProvider>
-            </Suspense>
-          </Canvas>
-        </div>
-      </ClientWebGLGate>
+              </EffectComposer>
+            </SkyThemeProvider>
+          </Suspense>
+        </Canvas>
+      </div>
+    </ClientWebGLGate>
+  );
+
+  if (isPrologue) {
+    return (
+      <div className="absolute inset-0 overflow-hidden bg-black">
+        {scene}
+        <WhiteWashOverlay washRef={washRef} />
+      </div>
+    );
+  }
+
+  return (
+    <main className="relative min-h-screen overflow-hidden bg-black text-zinc-100 antialiased">
+      {scene}
 
       <WhiteWashOverlay washRef={washRef} />
 

@@ -1137,5 +1137,11 @@
     "streamLoading": "Preparing the session…",
     "streamUnavailable": "This session is no longer available.",
     "streamEmpty": "This session does not have memories to project yet."
+  },
+  "pitchDeck": {
+    "metaTitle": "Odyssey · Deck",
+    "scaffoldHint": "Capital deck scaffold. The eleven slides come next.",
+    "scaffoldProgress": "Open",
+    "introSkip": "Skip"
   }
 }

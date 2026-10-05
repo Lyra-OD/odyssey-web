@@ -58,6 +58,8 @@ export const appRoutes = {
   login: (lang: Locale) => `/${lang}/login`,
   /** Page marketing « devenir partenaire » (≠ salon). */
   partnersMarketing: (lang: Locale) => `/${lang}/partners`,
+  /** Pitch deck capital (investisseurs) — password gate dès T2. */
+  deck: (lang: Locale) => `/${lang}/deck`,
   /** Page de contact / aide. */
   contact: (lang: Locale) => `/${lang}/contact`,
   inviteAccept: (lang: Locale) => `/${lang}/invite/accept`,

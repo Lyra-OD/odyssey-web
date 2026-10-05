@@ -3,9 +3,15 @@
 **Type :** ops · **Vérité pour :** où vivent les docs **pitch capital** (pas VP salon).  
 **Dernière MAJ :** 5 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
+**Changelog** (max 5)
+- 5 oct 2026 : T0+ Mark connexion + fond login + intro **EclipseCraftPlay** prologue (~9,5 s, 1× / session).
+- 5 oct 2026 : T0 scaffold route `/[lang]/deck` (shell Quiet Luxury, sans gate).
+
 | Doc | Sujet |
 |-----|--------|
 | [`INVESTOR_DECK_WEB_ILP11.md`](INVESTOR_DECK_WEB_ILP11.md) | **Canon copy** deck web 11 slides (ILP) — humain + business · EN/FR |
+
+**Route (WIP) :** `appRoutes.deck(lang)` → `/fr/deck` · `/en/deck`. Env : `DECK_ACCESS_PASSWORD` (gate dès T2).
 
 ## Ne pas mettre ici
 

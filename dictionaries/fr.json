@@ -1137,5 +1137,11 @@
     "streamLoading": "Préparation de la séance…",
     "streamUnavailable": "Cette séance n'est plus disponible.",
     "streamEmpty": "La séance n'a pas encore de souvenirs à projeter."
+  },
+  "pitchDeck": {
+    "metaTitle": "Odyssey · Deck",
+    "scaffoldHint": "Scaffold du deck capital. Les onze slides arrivent ensuite.",
+    "scaffoldProgress": "Ouverture",
+    "introSkip": "Passer"
   }
 }
