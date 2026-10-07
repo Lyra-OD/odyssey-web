@@ -21,6 +21,7 @@ import {
   DeckEclipseIntro,
   hasSeenDeckEclipseIntro,
 } from "./DeckEclipseIntro";
+import { DeckSlideEcosystem } from "./DeckSlideEcosystem";
 import { DeckSlideNeed } from "./DeckSlideNeed";
 import { DeckSlideOpen } from "./DeckSlideOpen";
 import { DeckSlideSolution } from "./DeckSlideSolution";
@@ -281,6 +282,14 @@ export function DeckClient({
               />
             ) : i === 2 || slide.id === "solution" ? (
               <DeckSlideSolution
+                tagline={slide.tagline}
+                title={slide.title}
+                phase={slide.phase}
+                bullets={slide.bullets}
+                active={index === i}
+              />
+            ) : i === 3 || slide.id === "ecosystem" ? (
+              <DeckSlideEcosystem
                 tagline={slide.tagline}
                 title={slide.title}
                 phase={slide.phase}

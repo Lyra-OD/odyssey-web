@@ -113,7 +113,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Three frictions. One platform.
 - Title: Odyssey answers the triple friction.
-- Phase: Grief deserves a journey equal to our time. One link between the funeral home, the home, and the platform. Dignified before, during, and after.
+- Phase: Grief deserves a journey equal to our time. / One link between the funeral home, the home, and the platform. / Dignified before, during, and after.
 - Bullets:
   - The funeral home: A dignified $0 gift. It goes live in seconds. This is the answer to the analog industry.
   - Home: A guided path for families. Fragmented tasks disappear.
@@ -124,7 +124,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **FR**
 - Tagline: Trois frictions. Une plateforme.
 - Title: Odyssey répond à la triple friction.
-- Phase: Le deuil mérite un parcours à la hauteur d’aujourd’hui. Un seul lien entre le salon, la maison et la plateforme. Digne avant, pendant, et après.
+- Phase: Le deuil mérite un parcours à la hauteur d’aujourd’hui. / Un seul lien entre le salon, la maison et la plateforme. / Digne avant, pendant, et après.
 - Bullets:
   - Le salon : Un geste digne à 0 $. Il s'active en quelques secondes. C'est la réponse à l'industrie analogique.
   - La maison : Un parcours guidé pour les familles. Les tâches fragmentées disparaissent.
@@ -138,23 +138,23 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 **EN**
 - Tagline: Who we hold gently.
-- Title: Partners at the desk. Families at home.
-- Phase: Funeral networks are our distribution channel — CAC near zero. Families are the paying end users. We are not a consumer editor play.
+- Title: Partners at the funeral home. Families at home.
+- Phase: Funeral networks are our distribution channel. The acquisition cost is near zero. / Families pay at the end. Odyssey is not a generic consumer video app.
 - Soundbite: **We don’t buy families. We borrow the network that already holds them.**
 - Bullets:
-  - Funeral homes: dignified gesture, 30-second ops, profit center without selling on grief; no time to edit; fear of looking cold or pushy
-  - Families: honor someone well, keep a lasting asset, cinematic results without becoming editors
-  - Behavioral: upgrade when the story feels real — Soft Cap timing
+  - The partners: dignified gesture in 30 seconds; profit without selling on grief; editing takes too long; USB = a cost with no lasting value
+  - The families: honor loved ones, lasting legacy, cinematic results without becoming video editors
+  - The behavior: purchases at the emotional peak — when the tribute becomes precious, the family chooses to keep it
 
 **FR**
-- Tagline: Qui nous tenons avec soin.
-- Title: Partenaires au comptoir. Familles à la maison.
-- Phase: Les réseaux funéraires sont notre canal — CAC quasi nul. Les familles paient. Ce n’est pas un outil d’édition grand public.
+- Tagline: Ceux que nous accompagnons.
+- Title: Les partenaires en salon. Les familles à la maison.
+- Phase: Les réseaux funéraires sont notre canal de distribution. Le coût d'acquisition est quasi nul. / La famille paie à la fin. Odyssey n'est pas une simple application vidéo grand public.
 - Soundbite: **Nous n’achetons pas des familles. Nous empruntons le réseau qui les a déjà.**
 - Bullets:
-  - Salons : geste digne, ops 30 s, profit sans vendre sur le deuil ; pas le temps de monter ; USB = coût
-  - Familles : honorer, garder un bien durable, cinéma sans devenir monteurs
-  - Comportement : l’achat se déclenche quand l’histoire devient réelle — Soft Cap
+  - Les salons : geste digne en 30 s ; profit sans vendre sur le deuil ; montage trop long ; USB = coût sans valeur
+  - Les familles : honorer, héritage durable, cinéma sans devoir monter
+  - Le comportement : achat au pic émotionnel — quand l’hommage devient précieux, la famille choisit de le garder
 
 ---
 

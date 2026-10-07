@@ -1177,7 +1177,7 @@
         "id": "solution",
         "tagline": "Trois frictions. Une plateforme.",
         "title": "Odyssey répond à la triple friction.",
-        "phase": "Le deuil mérite un parcours à la hauteur d’aujourd’hui. Un seul lien entre le salon, la maison et la plateforme. Digne avant, pendant, et après.",
+        "phase": "Le deuil mérite un parcours à la hauteur d’aujourd’hui.\nUn seul lien entre le salon, la maison et la plateforme.\nDigne avant, pendant, et après.",
         "bullets": [
           "Le salon : Un geste digne à 0 $. Il s'active en quelques secondes. C'est la réponse à l'industrie analogique.",
           "La maison : Un parcours guidé pour les familles. Les tâches fragmentées disparaissent.",
@@ -1187,13 +1187,13 @@
       },
       {
         "id": "ecosystem",
-        "tagline": "Qui nous tenons avec soin.",
-        "title": "Partenaires au comptoir. Familles à la maison.",
-        "phase": "Les réseaux funéraires sont notre canal de distribution avec un CAC quasi nul. Les familles paient à la fin. Ce n’est pas un outil d'édition grand public.",
+        "tagline": "Ceux que nous accompagnons.",
+        "title": "Les partenaires en salon. Les familles à la maison.",
+        "phase": "Les réseaux funéraires sont notre canal de distribution. Le coût d'acquisition est quasi nul.\nLa famille paie à la fin. Odyssey n'est pas une simple application vidéo grand public.",
         "bullets": [
-          "Salons (partenaires) : Ils veulent un geste digne et des opérations en 30 secondes pour générer du profit sans vendre sur le deuil. Ils manquent de temps pour le montage et considèrent l'USB comme un coût.",
-          "Familles (utilisateurs finaux) : Elles veulent honorer leurs proches et garder un bien durable. Elles veulent du cinéma sans devenir des monteurs vidéo.",
-          "Comportement : L'achat se déclenche quand l’histoire devient réelle au moment du Soft Cap."
+          "Les salons : Ils cherchent un geste digne activable en 30 secondes. Ils veulent générer du profit sans vendre sur le deuil. Le montage prend trop de temps. La clé USB est un coût sans valeur.",
+          "Les familles : Elles veulent honorer leurs proches et garder un héritage durable. Elles exigent un résultat cinématographique sans devoir faire le montage.",
+          "Le comportement : L'achat se déclenche au pic émotionnel. Quand l’hommage devient précieux, la famille choisit de le garder."
         ]
       },
       {

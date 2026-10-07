@@ -129,6 +129,32 @@ export const DECK_SOLUTION_WAITS_S: readonly number[] = [
   2.8, // focus → coda
 ];
 
+/** Indices Ecosystem — Salon → corps → Familles → corps → canal → sat + comportement */
+export const DECK_ECOSYSTEM_STEP = {
+  eyebrow: 0,
+  hero: 1,
+  phase: 2,
+  pole0: 3,
+  body0: 4,
+  pole1: 5,
+  body1: 6,
+  arc: 7,
+  spark: 8,
+} as const;
+
+export const DECK_ECOSYSTEM_LAST_STEP = DECK_ECOSYSTEM_STEP.spark;
+
+export const DECK_ECOSYSTEM_WAITS_S: readonly number[] = [
+  0.9, // eyebrow → hero
+  1.6, // hero → phase
+  2.4, // phase → planète salon
+  1.2, // salon → corps salon
+  3.6, // lire corps → planète familles
+  1.2, // familles → corps familles
+  3.6, // lire corps → canal
+  1.6, // canal / orbite → satellite + comportement
+];
+
 /**
  * Reveal pas-à-pas : auto-tempo + clic pour avancer (le clic annule l’attente).
  * `step` = dernier beat visible (−1 = slide inactive).

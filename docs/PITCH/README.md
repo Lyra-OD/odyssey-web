@@ -4,11 +4,11 @@
 **Dernière MAJ :** 7 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 7 oct 2026 : Ecosystem — reveal planètes → corps → canal → sat + comportement.
+- 7 oct 2026 : Ecosystem — 2 planètes + satellite (comportement).
+- 7 oct 2026 : Ecosystem — copy salon/familles/comportement sans Soft Cap ni CAC.
 - 7 oct 2026 : Solution — vision Quiet Luxury + économie sans jargon Soft Cap.
 - 7 oct 2026 : Solution — reveal ordonné (nœud → faisceau ×3 → foyer → économie).
-- 7 oct 2026 : Solution — schéma A (3 faisceaux → foyer) + copy Salon/Maison/Plateforme.
-- 7 oct 2026 : Deck — titres glow ; `phase` teal ; Need constellation + Opportunité.
-- 5 oct 2026 : Need — diagnostic système (industrie / familles / écosystème) + opportunité.
 
 | Doc | Sujet |
 |-----|--------|
