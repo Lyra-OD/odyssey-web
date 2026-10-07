@@ -32,31 +32,32 @@ type SplitBullet = {
 
 /**
  * Schéma A — 3 nœuds → foyer (pas un triangle).
- * Phase 1 : géométrie seule (titres / boîtes masqués).
+ * Phase titres : labels nœuds + Odyssey ; boîtes corps / économie encore masquées.
  * Coords % dans un espace 100×60.
  */
-const SHOW_SCHEMA_COPY = false;
+const SHOW_SCHEMA_TITLES = true;
+const SHOW_SCHEMA_BODIES = false;
 
 const BEAM_NODES = [
   {
     x: 50,
     y: 6,
-    // Salon — état avant « descends le schéma »
-    anchor: "translate(-50%, calc(-100% - 0.65rem))",
+    // Points fixes — seul le label monte un peu (anchor)
+    anchor: "translate(-50%, calc(-100% - 1.15rem))",
     bodyMax: "18rem",
   },
   {
     x: 28,
     y: 50,
-    // Maison — bas gauche
-    anchor: "translate(calc(-100% - 0.75rem), -40%)",
+    // Points fixes — label mini à gauche
+    anchor: "translate(calc(-100% - 1.2rem), -40%)",
     bodyMax: "17rem",
   },
   {
     x: 72,
     y: 50,
-    // Plateforme — bas droite
-    anchor: "translate(0.75rem, -40%)",
+    // Points fixes — label mini à droite
+    anchor: "translate(1.2rem, -40%)",
     bodyMax: "17rem",
   },
 ] as const;
@@ -205,10 +206,12 @@ export function DeckSlideSolution({
   const dockEyebrow = useDeckSoftDock(visible(DECK_SOLUTION_STEP.eyebrow));
   const dockHero = useDeckSoftDock(visible(DECK_SOLUTION_STEP.hero));
   const dockPhase = useDeckSoftDock(visible(DECK_SOLUTION_STEP.phase));
-  const dockNode0 = useDeckSoftDock(visible(DECK_SOLUTION_STEP.node0));
-  const dockNode1 = useDeckSoftDock(visible(DECK_SOLUTION_STEP.node1));
-  const dockNode2 = useDeckSoftDock(visible(DECK_SOLUTION_STEP.node2));
-  const dockFocus = useDeckSoftDock(visible(DECK_SOLUTION_STEP.focus));
+  /** Phase titres : tous visibles (tempo/anim = plus tard). */
+  const titlesOn = Boolean(reduceMotion || active);
+  const dockNode0 = useDeckSoftDock(titlesOn);
+  const dockNode1 = useDeckSoftDock(titlesOn);
+  const dockNode2 = useDeckSoftDock(titlesOn);
+  const dockFocus = useDeckSoftDock(titlesOn);
   const dockCoda = useDeckSoftDock(visible(DECK_SOLUTION_STEP.coda));
   const dockNodes = [dockNode0, dockNode1, dockNode2];
 
@@ -301,8 +304,8 @@ export function DeckSlideSolution({
         </motion.p>
       </div>
 
-      {/* Mobile — stack (copy masquée en phase schéma) */}
-      {SHOW_SCHEMA_COPY ? (
+      {/* Mobile — titres (+ corps si phase boîtes) */}
+      {SHOW_SCHEMA_TITLES ? (
         <div className="relative z-10 mt-10 flex w-full flex-col gap-10 md:hidden">
           {beams.map((item, i) => (
             <motion.div
@@ -319,14 +322,16 @@ export function DeckSlideSolution({
                   {item.label}
                 </p>
               ) : null}
-              <p
-                className={`${editorialFont.className} mt-2 text-[1.05rem] font-light leading-snug text-zinc-400`}
-              >
-                {item.body}
-              </p>
+              {SHOW_SCHEMA_BODIES ? (
+                <p
+                  className={`${editorialFont.className} mt-2 text-[1.05rem] font-light leading-snug text-zinc-400`}
+                >
+                  {item.body}
+                </p>
+              ) : null}
             </motion.div>
           ))}
-          {coda ? (
+          {SHOW_SCHEMA_BODIES && coda ? (
             <motion.div className="relative pl-7 pt-2" {...dockCoda()}>
               {coda.label ? (
                 <p className="font-label text-[0.68rem] font-medium uppercase tracking-[0.3em] text-[var(--salon-cyan)]">
@@ -454,7 +459,7 @@ export function DeckSlideSolution({
           </motion.g>
         </svg>
 
-        {SHOW_SCHEMA_COPY
+        {SHOW_SCHEMA_TITLES
           ? beams.map((item, i) => {
               const node = BEAM_NODES[i];
               if (!node || !item.label) return null;
@@ -474,32 +479,39 @@ export function DeckSlideSolution({
                     <p className="font-label whitespace-nowrap text-[clamp(0.8rem,1.1vw,0.98rem)] font-semibold uppercase tracking-[0.28em] text-[var(--salon-cyan)]">
                       {item.label}
                     </p>
-                    <p
-                      className={`${editorialFont.className} mt-1.5 text-[clamp(0.95rem,1.15vw,1.12rem)] font-light leading-snug text-zinc-400`}
-                    >
-                      {item.body}
-                    </p>
+                    {SHOW_SCHEMA_BODIES ? (
+                      <p
+                        className={`${editorialFont.className} mt-1.5 text-[clamp(0.95rem,1.15vw,1.12rem)] font-light leading-snug text-zinc-400`}
+                      >
+                        {item.body}
+                      </p>
+                    ) : null}
                   </motion.div>
                 </div>
               );
             })
           : null}
 
-        {SHOW_SCHEMA_COPY ? (
-          <motion.p
-            className="font-label absolute z-10 whitespace-nowrap text-[clamp(0.75rem,1vw,0.9rem)] font-semibold uppercase tracking-[0.32em] text-white"
+        {SHOW_SCHEMA_TITLES ? (
+          <div
+            className="absolute z-10"
             style={{
               left: `${FOCUS_NODE.x}%`,
               top: `${(FOCUS_NODE.y / 60) * 100}%`,
-              transform: "translate(-50%, 1.55rem)",
+              // Hors soft-dock : Framer y écrasait le transform
+              transform: "translate(3.7rem, -58%)",
             }}
-            {...dockFocus()}
           >
-            Odyssey
-          </motion.p>
+            <motion.p
+              className="font-label whitespace-nowrap text-[clamp(1.05rem,1.55vw,1.35rem)] font-semibold uppercase tracking-[0.36em] text-white"
+              {...dockFocus()}
+            >
+              <OdysseyLuminousText variant="deck">Odyssey</OdysseyLuminousText>
+            </motion.p>
+          </div>
         ) : null}
 
-        {SHOW_SCHEMA_COPY && coda ? (
+        {SHOW_SCHEMA_BODIES && coda ? (
           <motion.div
             className="absolute bottom-2 left-1/2 z-10 w-[min(36rem,70%)] -translate-x-1/2 text-center"
             {...dockCoda()}
