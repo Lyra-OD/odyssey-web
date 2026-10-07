@@ -179,6 +179,30 @@ export const DECK_COMPETITION_WAITS_S: readonly number[] = [
   2.4, // beat3 → beat4
 ];
 
+/** Indices Phases — titres puis corridor 01 — 02 — 03 */
+export const DECK_PHASES_STEP = {
+  eyebrow: 0,
+  hero: 1,
+  phase: 2,
+  station0: 3,
+  arc01: 4,
+  station1: 5,
+  arc12: 6,
+  station2: 7,
+} as const;
+
+export const DECK_PHASES_LAST_STEP = DECK_PHASES_STEP.station2;
+
+export const DECK_PHASES_WAITS_S: readonly number[] = [
+  0.9, // eyebrow → hero
+  1.6, // hero → phase
+  2.8, // phase → station0
+  1.1, // station0 → arc01
+  1.8, // arc01 → station1
+  1.1, // station1 → arc12
+  1.8, // arc12 → station2
+];
+
 /**
  * Reveal pas-à-pas : auto-tempo + clic pour avancer (le clic annule l’attente).
  * `step` = dernier beat visible (−1 = slide inactive).

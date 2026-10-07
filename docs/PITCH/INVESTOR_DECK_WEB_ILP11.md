@@ -189,22 +189,22 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Sequence beats slogans.
 - Title: Three phases. Wedge, retention, platform.
-- Phase: We build the digital link for end-of-life. First the Memory Chest at the funeral home. Then Lyra guides families through administration. Then the platform routes that demand to services — with zero inventory.
+- Phase: We build the digital link for end-of-life. First the Memory Chest at the funeral home. Then Lyra guides families through administration. Then the platform routes that demand to services, with zero inventory.
 - Bullets:
-  - Phase 1 (Wedge): Studio B2B2C, $0 Souvenir, Soft Cap and RevShare.
+  - Phase 1 (Wedge): Studio through the funeral home. $0 Souvenir Memory Chest. Soft Cap = a free ceiling that triggers the upgrade. Partner RevShare: 30% of net.
   - Phase 2 (Retention): Sanctuary MRR, consented leads and Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins.
   - Phase 3 (Endgame): Amazon started with books. We start with the film and the memory chest. We then route the fragmented supply economy like urns and venues.
-- Note: Marketplace stays Phase 3 Endgame. Not a Day-1 build / not in the current ask budget.
+- Note: Teal on Soft Cap / $0 / RevShare / 30% / MRR / Law 25 / Amazon. Marketplace stays Phase 3 Endgame — not Day-1 / not in current ask.
 
 **FR**
 - Tagline: La séquence bat les slogans.
 - Title: Trois phases. Wedge, rétention, plateforme.
-- Phase: Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande aux services — sans stock.
+- Phase: Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande aux services, sans stock.
 - Bullets:
-  - Phase 1 (Wedge) : Studio B2B2C, Souvenir 0 $, Soft Cap et RevShare.
+  - Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net.
   - Phase 2 (Rétention) : Sanctuaire MRR, leads consentis et orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.
-  - Phase 3 (Marketplace Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes.
-- Note : la Marketplace reste Phase 3 Endgame. Hors budget du tour actuel.
+  - Phase 3 (Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes.
+- Note : teal Soft Cap / 0 $ / RevShare / 30 % / MRR / Loi 25 / Amazon. Marketplace = Phase 3 Endgame — hors budget du tour actuel.
 
 ---
 
@@ -259,11 +259,11 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Zero guesswork. Five years in the trenches.
 - Title: Not outsiders. Industry scars.
-- Phase: We don't guess where operations break — we spent five years living it.
+- Phase: We don't guess where operations break. We spent five years living it.
 - Bullets:
   - Erik (CEO & CPO): Business narrative, product strategy, and Quiet Luxury craft.
   - Jon (CTO): Technical architecture, code orchestration, and scale.
-  - Unfair Advantage: Real operational scars fused with software execution — shipping a live Studio, not slideware.
+  - Unfair Advantage: Real operational scars fused with software execution. Shipping a live Studio, not slideware.
 
 **FR**
 - Tagline: Zéro théorie. Cinq ans dans les tranchées.
@@ -272,7 +272,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Bullets:
   - Erik (CEO & CPO) : Vision d'affaires, architecture produit et craft Quiet Luxury.
   - Jon (CTO) : Orchestration technique, scalabilité et robustesse du code.
-  - L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite — pas de simples maquettes.
+  - L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite, pas de simples maquettes.
 
 ---
 

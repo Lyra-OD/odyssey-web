@@ -1213,11 +1213,11 @@
         "id": "phases",
         "tagline": "La séquence bat les slogans.",
         "title": "Trois phases. Wedge, rétention, plateforme.",
-        "phase": "Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande aux services — sans stock.",
+        "phase": "Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande aux services, sans stock.",
         "bullets": [
-          "Phase 1 (Wedge) : Studio B2B2C, Souvenir 0 $, Soft Cap et RevShare.",
+          "Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net.",
           "Phase 2 (Rétention) : Sanctuaire MRR, leads consentis et orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.",
-          "Phase 3 (Marketplace Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes."
+          "Phase 3 (Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes."
         ]
       },
       {
@@ -1251,7 +1251,7 @@
         "bullets": [
           "Erik (CEO & CPO) : Vision d'affaires, architecture produit et craft Quiet Luxury.",
           "Jon (CTO) : Orchestration technique, scalabilité et robustesse du code.",
-          "L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite — pas de simples maquettes."
+          "L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite, pas de simples maquettes."
         ]
       },
       {

@@ -1164,10 +1164,10 @@
 | `pitchDeck.slides[5].id` | phases | phases |
 | `pitchDeck.slides[5].tagline` | La séquence bat les slogans. | Sequence beats slogans. |
 | `pitchDeck.slides[5].title` | Trois phases. Wedge, rétention, plateforme. | Three phases. Wedge, retention, platform. |
-| `pitchDeck.slides[5].phase` | Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande aux services — sans stock. | We build the digital link for end-of-life. First the Memory Chest at the funeral home. Then Lyra guides families through administration. Then the platform routes that demand to services — with zero inventory. |
-| `pitchDeck.slides[5].bullets[0]` | Phase 1 (Wedge) : Studio B2B2C, Souvenir 0 $, Soft Cap et RevShare. | Phase 1 (Wedge): Studio B2B2C, $0 Souvenir, Soft Cap and RevShare. |
+| `pitchDeck.slides[5].phase` | Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande aux services, sans stock. | We build the digital link for end-of-life. First the Memory Chest at the funeral home. Then Lyra guides families through administration. Then the platform routes that demand to services, with zero inventory. |
+| `pitchDeck.slides[5].bullets[0]` | Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net. | Phase 1 (Wedge): Studio through the funeral home. $0 Souvenir Memory Chest. Soft Cap = a free ceiling that triggers the upgrade. Partner RevShare: 30% of net. |
 | `pitchDeck.slides[5].bullets[1]` | Phase 2 (Rétention) : Sanctuaire MRR, leads consentis et orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing. | Phase 2 (Retention): Sanctuary MRR, consented leads and Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins. |
-| `pitchDeck.slides[5].bullets[2]` | Phase 3 (Marketplace Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes. | Phase 3 (Endgame): Amazon started with books. We start with the film and the memory chest. We then route the fragmented supply economy like urns and venues. |
+| `pitchDeck.slides[5].bullets[2]` | Phase 3 (Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes. | Phase 3 (Endgame): Amazon started with books. We start with the film and the memory chest. We then route the fragmented supply economy like urns and venues. |
 | `pitchDeck.slides[6].id` | model | model |
 | `pitchDeck.slides[6].tagline` | Les maths avant la magie. | Math before magic. |
 | `pitchDeck.slides[6].title` | Freemium Soft Cap. Cadeau d’abord, upgrade quand ça compte. | Freemium Soft Cap. Gift first, upgrade when it matters. |
@@ -1186,10 +1186,10 @@
 | `pitchDeck.slides[8].id` | team | team |
 | `pitchDeck.slides[8].tagline` | Zéro théorie. Cinq ans dans les tranchées. | Zero guesswork. Five years in the trenches. |
 | `pitchDeck.slides[8].title` | Pas des observateurs. Des cicatrices de terrain. | Not outsiders. Industry scars. |
-| `pitchDeck.slides[8].phase` | Nous ne devinons pas où le système casse : nous y avons passé cinq ans. | We don't guess where operations break — we spent five years living it. |
+| `pitchDeck.slides[8].phase` | Nous ne devinons pas où le système casse : nous y avons passé cinq ans. | We don't guess where operations break. We spent five years living it. |
 | `pitchDeck.slides[8].bullets[0]` | Erik (CEO & CPO) : Vision d'affaires, architecture produit et craft Quiet Luxury. | Erik (CEO & CPO): Business narrative, product strategy, and Quiet Luxury craft. |
 | `pitchDeck.slides[8].bullets[1]` | Jon (CTO) : Orchestration technique, scalabilité et robustesse du code. | Jon (CTO): Technical architecture, code orchestration, and scale. |
-| `pitchDeck.slides[8].bullets[2]` | L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite — pas de simples maquettes. | Unfair Advantage: Real operational scars fused with software execution — shipping a live Studio, not slideware. |
+| `pitchDeck.slides[8].bullets[2]` | L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite, pas de simples maquettes. | Unfair Advantage: Real operational scars fused with software execution. Shipping a live Studio, not slideware. |
 | `pitchDeck.slides[9].id` | ask | ask |
 | `pitchDeck.slides[9].tagline` | Financer le wedge. Semer la Phase 2. | Fund the wedge. Seed Phase 2. |
 | `pitchDeck.slides[9].title` | Capital stratégique pour les Phases 1 et 2 | Strategic capital for Phase 1 and 2 |

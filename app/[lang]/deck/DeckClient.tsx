@@ -25,6 +25,7 @@ import { DeckSlideCompetition } from "./DeckSlideCompetition";
 import { DeckSlideEcosystem } from "./DeckSlideEcosystem";
 import { DeckSlideNeed } from "./DeckSlideNeed";
 import { DeckSlideOpen } from "./DeckSlideOpen";
+import { DeckSlidePhases } from "./DeckSlidePhases";
 import { DeckSlideSolution } from "./DeckSlideSolution";
 import { DECK_PHASE_CLASS } from "./deckSoftDock";
 
@@ -299,6 +300,14 @@ export function DeckClient({
               />
             ) : i === 4 || slide.id === "competition" ? (
               <DeckSlideCompetition
+                tagline={slide.tagline}
+                title={slide.title}
+                phase={slide.phase}
+                bullets={slide.bullets}
+                active={index === i}
+              />
+            ) : i === 5 || slide.id === "phases" ? (
+              <DeckSlidePhases
                 tagline={slide.tagline}
                 title={slide.title}
                 phase={slide.phase}
