@@ -201,7 +201,7 @@ export function DeckSlidePhases({
   return (
     <div
       ref={rootRef}
-      className={`relative mx-auto flex w-full max-w-[90rem] flex-col px-3 md:px-6 ${
+      className={`relative mx-auto flex w-full max-w-[118rem] flex-col px-2 md:px-4 lg:px-6 ${
         canAdvance ? "cursor-pointer" : ""
       }`}
     >
@@ -228,7 +228,7 @@ export function DeckSlidePhases({
 
       <div
         ref={corridorRef}
-        className="relative z-10 mx-auto mt-2 w-full max-w-[78rem] md:mt-0"
+        className="relative z-10 mx-auto mt-2 w-full translate-x-[7%] md:mt-0 md:translate-x-[9.5%] lg:translate-x-[11%]"
       >
         <svg
           className="pointer-events-none absolute inset-0 hidden h-full w-full md:block"
@@ -260,7 +260,7 @@ export function DeckSlidePhases({
           ) : null}
         </svg>
 
-        <div className="relative grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-10 lg:gap-14">
+        <div className="relative grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-20 lg:gap-32 xl:gap-40">
           {stations.map((item, i) => {
             const dock = dockStations[i] ?? dockStation2;
             return (
