@@ -218,7 +218,7 @@ export function DeckSlidePhases({
         </motion.h2>
 
         <motion.p
-          className={`${editorialFont.className} ${DECK_PHASE_CLASS} relative z-10 mt-8 w-full max-w-[72rem] text-[clamp(1.2rem,2.35vw,1.65rem)] font-medium leading-[1.35] tracking-[0.01em] md:mt-10`}
+          className={`${editorialFont.className} ${DECK_PHASE_CLASS} relative z-10 mt-8 w-full max-w-[72rem] whitespace-pre-line text-[clamp(1.2rem,2.35vw,1.65rem)] font-medium leading-[1.35] tracking-[0.01em] md:mt-10`}
           style={{ WebkitFontSmoothing: "antialiased" }}
           {...dockPhase()}
         >

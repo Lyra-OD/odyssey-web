@@ -189,7 +189,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Sequence beats slogans.
 - Title: Three phases. Wedge, retention, platform.
-- Phase: We build the digital link for end-of-life. First the Memory Chest at the funeral home. Then Lyra guides families through administration. Then the platform routes that demand to services, with zero inventory.
+- Phase (3 lines): We build the digital link for end-of-life. First the Memory Chest at the funeral home. / Then Lyra guides families through administration. / Then the platform routes that demand to services, with zero inventory.
 - Bullets:
   - Phase 1 (Wedge): Studio through the funeral home. $0 Souvenir Memory Chest. Soft Cap = a free ceiling that triggers the upgrade. Partner RevShare: 30% of net.
   - Phase 2 (Retention): Sanctuary MRR, consented leads and Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins.
@@ -199,7 +199,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **FR**
 - Tagline: La séquence bat les slogans.
 - Title: Trois phases. Wedge, rétention, plateforme.
-- Phase: Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande aux services, sans stock.
+- Phase (3 lignes) : Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. / Ensuite Lyra guide les familles dans l’administratif. / Puis la plateforme relie cette demande aux services, sans stock.
 - Bullets:
   - Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net.
   - Phase 2 (Rétention) : Sanctuaire MRR, leads consentis et orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.

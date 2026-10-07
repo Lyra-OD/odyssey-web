@@ -4,11 +4,11 @@
 **Dernière MAJ :** 7 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 7 oct 2026 : Phases — vision en 3 lignes (Coffre / Lyra / plateforme).
 - 7 oct 2026 : Phases — corridor élargi + décalé à droite.
 - 7 oct 2026 : Phases — Soft Cap clair + RevShare 30 % ; teal tokens ; P2 graphe/Loi 25.
 - 7 oct 2026 : Phases — corridor 01—02—03 + soft-dock (épine canal).
 - 7 oct 2026 : Competition — titres ADN + beats soft-dock (schéma Troie ensuite).
-- 7 oct 2026 : Competition + Phases — Troie labelisé ; vision Coffre → Lyra → plateforme.
 | Doc | Sujet |
 |-----|--------|
 | [`INVESTOR_DECK_WEB_ILP11.md`](INVESTOR_DECK_WEB_ILP11.md) | **Canon copy** deck web 11 slides (ILP) — humain + business · EN/FR |
