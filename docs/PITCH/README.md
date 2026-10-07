@@ -4,11 +4,11 @@
 **Dernière MAJ :** 5 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 7 oct 2026 : Deck — titres glow logo ; `phase` teal continu ; Need tempo + boîte Opportunité.
 - 5 oct 2026 : Need — diagnostic système (industrie / deuil / écosystème) + pont plateforme.
 - 5 oct 2026 : Team (slide 9) — Option 1 punchy FR/EN (tranchées, cicatrices, rôles, avantage injuste).
 - 5 oct 2026 : Need — triptyque + soft dock + tempo/clic.
 - 5 oct 2026 : Open — soft dock + tempo film (signature anim deck) ; eyebrow lisible.
-- 5 oct 2026 : Open — ciel Sanctuaire GL en fond ; rond vidéo au sas ; cyan soft CTA + dots breathe.
 
 | Doc | Sujet |
 |-----|--------|

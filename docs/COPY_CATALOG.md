@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-05 · **Entrées :** 1099
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-07 · **Entrées :** 1099
 
 ## `common`
 
@@ -1131,12 +1131,12 @@
 | `pitchDeck.slides[0].progress` | Ouverture | Open |
 | `pitchDeck.slides[1].id` | need | need |
 | `pitchDeck.slides[1].tagline` | Industrie analogique. Familles digitales. | Analog industry. Digital families. |
-| `pitchDeck.slides[1].title` | Le funéraire est bloqué à l'ère zéro numérique | Death-care is stuck at digital ground zero |
-| `pitchDeck.slides[1].phase` | Notre vision est d'amener cette industrie dans l'ère digitale, en repensant le parcours de deuil et en basculant les process sur une plateforme qui guide et adoucit. | Our vision is to bring this industry into the digital era by rethinking the grief journey and moving operations onto a platform that guides and softens. |
-| `pitchDeck.slides[1].bullets[0]` | L'industrie : Le comptoir reste analogique. Les salons n'ont ni le temps ni les process digitaux pour accompagner sans friction | The industry: The desk stays analog. Funeral homes lack the digital processes to support without friction |
-| `pitchDeck.slides[1].bullets[1]` | Le deuil : À la maison, les familles traversent un parcours non guidé, fragmenté, souvent indigne | The grief: At home, families face an unguided, fragmented, often undignified journey |
-| `pitchDeck.slides[1].bullets[2]` | L'écosystème : La fin de vie est éclatée — aucun rail ne relie salons, familles et services dans le temps | The ecosystem: End of life is scattered — no rail connects homes, families, and services over time |
-| `pitchDeck.slides[1].bullets[3]` | Le pont investisseur : Cette triple friction est notre brèche — on entre par un geste digne, on garde la relation, on ouvre la plateforme | The Investor Bridge: That triple friction is our gap — enter with a dignified gift, keep the relationship, open the platform |
+| `pitchDeck.slides[1].title` | Le secteur funéraire est bloqué à l'ère zéro numérique. | Death-care is stuck at digital ground zero. |
+| `pitchDeck.slides[1].phase` | Notre vision est d'amener cette industrie dans l'ère digitale. Nous repensons le parcours de deuil sur une plateforme qui guide les familles et apaise l'expérience. | Our vision is to bring this industry into the digital era. We rethink the bereavement journey through a platform that guides families and brings peace to the process. |
+| `pitchDeck.slides[1].bullets[0]` | L'industrie : Les opérations restent manuelles. Les salons manquent de temps et d'outils numériques pour offrir un accompagnement fluide. | The industry: Operations remain manual. Funeral homes lack the time and digital tools to deliver a seamless experience. |
+| `pitchDeck.slides[1].bullets[1]` | Les familles : À la maison, les familles traversent un parcours logistique chaotique, fragmenté et non guidé. | The families: At home, families navigate a chaotic, fragmented, and unguided logistical maze. |
+| `pitchDeck.slides[1].bullets[2]` | L'écosystème : Le marché de la fin de vie est éclaté. Aucune infrastructure ne relie les salons, les familles et les services dans le temps. | The ecosystem: The end-of-life market is disconnected. No unified infrastructure links funeral homes, families, and services over time. |
+| `pitchDeck.slides[1].bullets[3]` | L'opportunité : Cette triple friction est notre point d'entrée monétisable. Nous entrons par un geste digne au salon. Nous fidélisons la relation à la maison et nous monétisons via la plateforme. | The wedge: This triple friction is our monetizable wedge. We acquire users through a dignified gift at the funeral home. We retain the relationship at home and scale the platform. |
 | `pitchDeck.slides[2].id` | solution | solution |
 | `pitchDeck.slides[2].tagline` | Adoucir avant. Pendant. Après. | Soften before. During. After. |
 | `pitchDeck.slides[2].title` | Odyssey Studio. La mémoire guidée en Quiet Luxury. | Odyssey Studio. Guided memory in Quiet Luxury. |

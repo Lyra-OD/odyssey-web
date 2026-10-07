@@ -13,6 +13,13 @@ import {
 export const DECK_EYEBROW_CLASS =
   "font-label relative z-10 text-center text-[0.72rem] font-medium uppercase tracking-[0.36em] text-white/65 md:text-[0.78rem] md:tracking-[0.4em]";
 
+/**
+ * Sous-titre / vision / `phase` — teal continu (même ADN lignes + labels).
+ * Pas de mauve ponctuel.
+ */
+export const DECK_PHASE_CLASS =
+  "text-[var(--salon-cyan)] [text-shadow:none] [filter:none]";
+
 /** Courbe cinéma (ADN Manifesto / Quiet Luxury). */
 export const DECK_FILM_EASE: [number, number, number, number] = [
   0.16, 1, 0.3, 1,
@@ -60,30 +67,36 @@ export const DECK_OPEN_TEMPO = {
   cta: 0.4 + 1.15 + 2.2 + 2.0 + 1.6,
 } as const;
 
-/** Indices Need — 0…6 */
+/** Indices Need — triangle 1→2→3→1 puis convergence → pont */
 export const DECK_NEED_STEP = {
   eyebrow: 0,
   hero: 1,
   phase: 2,
-  col0: 3,
-  col1: 4,
-  col2: 5,
-  bridge: 6,
+  node0: 3,
+  line01: 4,
+  node1: 5,
+  line12: 6,
+  node2: 7,
+  line20: 8,
+  converge: 9,
 } as const;
 
-export const DECK_NEED_LAST_STEP = DECK_NEED_STEP.bridge;
+export const DECK_NEED_LAST_STEP = DECK_NEED_STEP.converge;
 
 /**
- * Attentes auto *après* chaque step (s), avant le suivant.
- * Clic = saute l’attente. Un cran plus court que le tempo lecture pur.
+ * Attentes auto *après* chaque step (s).
+ * Assez pour lire ; plus court sans clic. Clic = saute.
  */
 export const DECK_NEED_WAITS_S: readonly number[] = [
-  1.15, // eyebrow → hero
-  2.2, // hero → phase
-  8.5, // phase → Avant (lire la phase)
-  5.2, // Avant → Pendant
-  5.2, // Pendant → Après
-  6.0, // Après → pont
+  0.9, // eyebrow → hero
+  1.6, // hero → phase
+  3.2, // phase → node0
+  4.2, // node0 lire → line01
+  1.5, // line01 courant → node1
+  4.2, // node1 lire → line12
+  1.5, // line12 → node2
+  4.2, // node2 lire → line20
+  1.5, // line20 → converge
 ];
 
 /**

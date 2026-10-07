@@ -3,8 +3,12 @@ import type { ReactNode } from "react";
 type OdysseyLuminousTextProps = {
   children: ReactNode;
   className?: string;
-  /** `mark` = emblème connexion · `soft` = titres éditoriaux (glow atténué). */
-  variant?: "mark" | "soft";
+  /**
+   * `mark` = emblème connexion (plein).
+   * `deck` = titres slide (un cran sous le logo, encore lisible).
+   * `soft` = accroches marketing très légères.
+   */
+  variant?: "mark" | "deck" | "soft";
 };
 
 /** Blanc lumineux emblème — accroches courtes et libellés CTA marketing (§3.1bis). */
@@ -21,6 +25,22 @@ export function OdysseyLuminousText({
         <span
           aria-hidden
           className="pointer-events-none absolute inset-0 select-none text-white opacity-25 blur-[3px]"
+        >
+          {children}
+        </span>
+        <span className="relative">{children}</span>
+      </span>
+    );
+  }
+
+  if (variant === "deck") {
+    return (
+      <span
+        className={`relative inline-block text-white [text-shadow:0_0_10px_rgba(255,255,255,0.7),0_0_22px_rgba(255,255,255,0.35),0_0_36px_rgba(255,255,255,0.12)] ${className}`}
+      >
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 select-none text-white opacity-55 blur-[4px]"
         >
           {children}
         </span>

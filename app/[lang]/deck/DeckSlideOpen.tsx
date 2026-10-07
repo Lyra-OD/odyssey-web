@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
+import { OdysseyLuminousText } from "@/src/components/marketing/OdysseyLuminousText";
 import { editorialFont } from "@/src/lib/fonts";
 
 import {
@@ -46,7 +47,7 @@ export function DeckSlideOpen({ tagline, phase, bullets }: DeckSlideOpenProps) {
         className={`${editorialFont.className} relative z-10 mt-10 max-w-[18em] text-center text-[clamp(1.85rem,5.2vw,3.15rem)] font-medium leading-[1.22] tracking-[0.01em] text-white md:mt-12`}
         {...softDock(DECK_OPEN_TEMPO.hero)}
       >
-        {phase}
+        <OdysseyLuminousText variant="deck">{phase}</OdysseyLuminousText>
       </motion.h2>
 
       <ul className="relative z-10 mt-14 flex max-w-lg flex-col gap-5 text-center md:mt-16 md:gap-6">

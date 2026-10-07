@@ -14,6 +14,7 @@ import {
   LocaleSwitcher,
   type LocaleSwitcherLabels,
 } from "@/src/components/i18n/LocaleSwitcher";
+import { OdysseyLuminousText } from "@/src/components/marketing/OdysseyLuminousText";
 import { editorialFont } from "@/src/lib/fonts";
 
 import {
@@ -22,6 +23,7 @@ import {
 } from "./DeckEclipseIntro";
 import { DeckSlideNeed } from "./DeckSlideNeed";
 import { DeckSlideOpen } from "./DeckSlideOpen";
+import { DECK_PHASE_CLASS } from "./deckSoftDock";
 
 const SanctuaryUniverse = dynamic(
   () =>
@@ -284,14 +286,14 @@ export function DeckClient({
 
                 {!isOdysseyTitle(slide.title, wordmark) ? (
                   <h2
-                    className={`${editorialFont.className} mt-5 text-center text-[clamp(1.55rem,4.2vw,2.45rem)] font-medium tracking-[0.04em] text-zinc-100`}
+                    className={`${editorialFont.className} mt-5 text-center text-[clamp(1.55rem,4.2vw,2.45rem)] font-medium tracking-[0.04em] text-white`}
                   >
-                    {slide.title}
+                    <OdysseyLuminousText variant="deck">{slide.title}</OdysseyLuminousText>
                   </h2>
                 ) : null}
 
                 <p
-                  className={`${editorialFont.className} mt-6 max-w-xl text-center text-[clamp(1.05rem,2.8vw,1.4rem)] font-medium leading-snug tracking-[0.02em] text-zinc-200`}
+                  className={`${editorialFont.className} ${DECK_PHASE_CLASS} mt-6 max-w-xl text-center text-[clamp(1.05rem,2.8vw,1.4rem)] font-medium leading-snug tracking-[0.02em]`}
                 >
                   {slide.phase}
                 </p>
