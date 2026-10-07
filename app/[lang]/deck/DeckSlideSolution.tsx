@@ -32,33 +32,39 @@ type SplitBullet = {
 
 /**
  * Schéma A — 3 nœuds → foyer (pas un triangle).
- * Phase titres : labels nœuds + Odyssey ; boîtes corps / économie encore masquées.
+ * Phase boîtes : titres + corps + économie.
  * Coords % dans un espace 100×60.
  */
 const SHOW_SCHEMA_TITLES = true;
-const SHOW_SCHEMA_BODIES = false;
+const SHOW_SCHEMA_BODIES = true;
 
 const BEAM_NODES = [
   {
     x: 50,
     y: 6,
-    // Points fixes — seul le label monte un peu (anchor)
+    // Titres figés — seuls bodyAnchor ajustés
     anchor: "translate(-50%, calc(-100% - 1.15rem))",
+    // Corps au-dessus du titre (titre déjà au-dessus du nœud)
+    bodyAnchor: "translate(-50%, calc(-100% - 2.95rem))",
     bodyMax: "18rem",
+    bodyAlign: "left" as const,
   },
   {
     x: 28,
     y: 50,
-    // Points fixes — label mini à gauche
     anchor: "translate(calc(-100% - 1.2rem), -40%)",
-    bodyMax: "17rem",
+    // Corps sous le titre — X réel = -(largeur titre + 1.2rem) via mesure
+    bodyAnchor: "translate(-11.6rem, 1.05rem)",
+    bodyMax: "16rem",
+    bodyAlign: "left" as const,
   },
   {
     x: 72,
     y: 50,
-    // Points fixes — label mini à droite
     anchor: "translate(1.2rem, -40%)",
-    bodyMax: "17rem",
+    bodyAnchor: "translate(1.2rem, 1.05rem)",
+    bodyMax: "16rem",
+    bodyAlign: "left" as const,
   },
 ] as const;
 
@@ -206,20 +212,27 @@ export function DeckSlideSolution({
   const dockEyebrow = useDeckSoftDock(visible(DECK_SOLUTION_STEP.eyebrow));
   const dockHero = useDeckSoftDock(visible(DECK_SOLUTION_STEP.hero));
   const dockPhase = useDeckSoftDock(visible(DECK_SOLUTION_STEP.phase));
-  /** Phase titres : tous visibles (tempo/anim = plus tard). */
-  const titlesOn = Boolean(reduceMotion || active);
-  const dockNode0 = useDeckSoftDock(titlesOn);
-  const dockNode1 = useDeckSoftDock(titlesOn);
-  const dockNode2 = useDeckSoftDock(titlesOn);
-  const dockFocus = useDeckSoftDock(titlesOn);
-  const dockCoda = useDeckSoftDock(visible(DECK_SOLUTION_STEP.coda));
+  const dockNode0 = useDeckSoftDock(visible(DECK_SOLUTION_STEP.node0));
+  const dockNode1 = useDeckSoftDock(visible(DECK_SOLUTION_STEP.node1));
+  const dockNode2 = useDeckSoftDock(visible(DECK_SOLUTION_STEP.node2));
+  const dockFocus = useDeckSoftDock(visible(DECK_SOLUTION_STEP.focus));
+  const dockCoda = useDeckSoftDock(
+    Boolean(visible(DECK_SOLUTION_STEP.coda) && SHOW_SCHEMA_BODIES),
+  );
   const dockNodes = [dockNode0, dockNode1, dockNode2];
 
-  /** Phase schéma : géométrie complète dès que la slide est active. */
-  const geoOn = Boolean(reduceMotion || active);
+  const showBeams = BEAM_STEPS.map((s) =>
+    Boolean(reduceMotion || visible(s)),
+  );
+  const showFocus = Boolean(reduceMotion || visible(DECK_SOLUTION_STEP.focus));
 
   const mapRef = useRef<HTMLDivElement>(null);
+  const salonTitleRef = useRef<HTMLParagraphElement>(null);
+  const maisonTitleRef = useRef<HTMLParagraphElement>(null);
   const [mapSize, setMapSize] = useState({ w: 1000, h: 600 });
+  /** Largeurs titres — aligne le bord gauche du corps sur le L */
+  const [salonTitleW, setSalonTitleW] = useState(0);
+  const [maisonTitleW, setMaisonTitleW] = useState(0);
 
   useEffect(() => {
     const el = mapRef.current;
@@ -232,6 +245,34 @@ export function DeckSlideSolution({
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+
+  useEffect(() => {
+    const targets: {
+      el: HTMLParagraphElement | null;
+      set: (w: number) => void;
+    }[] = [
+      { el: salonTitleRef.current, set: setSalonTitleW },
+      { el: maisonTitleRef.current, set: setMaisonTitleW },
+    ];
+    const ros: ResizeObserver[] = [];
+    for (const { el, set } of targets) {
+      if (!el) continue;
+      const measure = () => {
+        const w = el.getBoundingClientRect().width;
+        if (w > 1) set(w);
+      };
+      measure();
+      const ro = new ResizeObserver(measure);
+      ro.observe(el);
+      ros.push(ro);
+    }
+    return () => ros.forEach((ro) => ro.disconnect());
+  }, [
+    beams[0]?.label,
+    beams[1]?.label,
+    visible(DECK_SOLUTION_STEP.node0),
+    visible(DECK_SOLUTION_STEP.node1),
+  ]);
 
   const toPx = (x: number, y: number) => ({
     x: (x / 100) * mapSize.w,
@@ -360,46 +401,50 @@ export function DeckSlideSolution({
           height={mapSize.h}
           viewBox={`0 0 ${mapSize.w} ${mapSize.h}`}
         >
-          {beamPaths.map((d, i) => (
-            <g key={`beam-${i}`}>
-              <motion.path
-                d={d}
-                fill="none"
-                stroke="rgba(0,232,240,0.6)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                initial={false}
-                animate={{
-                  pathLength: geoOn ? 1 : 0,
-                  opacity: geoOn ? 1 : 0,
-                }}
-                transition={{
-                  duration: beamDur,
-                  ease: DECK_FILM_EASE,
-                  delay: reduceMotion ? 0 : i * 0.12,
-                }}
-              />
-              <FlowCurrent
-                d={d}
-                play={geoOn}
-                delay={i * 0.12}
-                duration={1.25}
-                reduceMotion={reduceMotion}
-              />
-            </g>
-          ))}
+          {beamPaths.map((d, i) => {
+            const beamOn = showBeams[i] ?? false;
+            return (
+              <g key={`beam-${i}`}>
+                <motion.path
+                  d={d}
+                  fill="none"
+                  stroke="rgba(0,232,240,0.6)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  initial={false}
+                  animate={{
+                    pathLength: beamOn ? 1 : 0,
+                    opacity: beamOn ? 1 : 0,
+                  }}
+                  transition={{
+                    duration: beamDur,
+                    ease: DECK_FILM_EASE,
+                  }}
+                />
+                <FlowCurrent
+                  d={d}
+                  play={beamOn}
+                  delay={0}
+                  duration={1.25}
+                  reduceMotion={reduceMotion}
+                />
+              </g>
+            );
+          })}
 
           {BEAM_NODES.map((n, i) => {
             const q = toPx(n.x, n.y);
+            const nodeOn = Boolean(
+              reduceMotion || visible(NODE_STEPS[i] ?? DECK_SOLUTION_STEP.node2),
+            );
             return (
               <motion.g
                 key={`bn-${i}`}
                 initial={false}
-                animate={{ opacity: geoOn ? 1 : 0, scale: geoOn ? 1 : 0.6 }}
+                animate={{ opacity: nodeOn ? 1 : 0, scale: nodeOn ? 1 : 0.6 }}
                 transition={{
                   duration: reduceMotion ? 0 : 0.45,
                   ease: DECK_FILM_EASE,
-                  delay: reduceMotion ? 0 : i * 0.1,
                 }}
                 style={{ transformOrigin: `${q.x}px ${q.y}px` }}
               >
@@ -415,17 +460,16 @@ export function DeckSlideSolution({
             );
           })}
 
-          {/* Foyer — échelle wow, traits inchangés */}
+          {/* Foyer — après les 3 faisceaux */}
           <motion.g
             initial={false}
             animate={{
-              opacity: geoOn ? 1 : 0,
-              scale: geoOn ? 1 : 0.5,
+              opacity: showFocus ? 1 : 0,
+              scale: showFocus ? 1 : 0.5,
             }}
             transition={{
               duration: reduceMotion ? 0 : 0.55,
               ease: DECK_FILM_EASE,
-              delay: reduceMotion ? 0 : 0.35,
             }}
             style={{
               transformOrigin: `${focusPx.x}px ${focusPx.y}px`,
@@ -472,26 +516,61 @@ export function DeckSlideSolution({
                     left: `${node.x}%`,
                     top: `${(node.y / 60) * 100}%`,
                     transform: node.anchor,
-                    maxWidth: node.bodyMax,
                   }}
                 >
-                  <motion.div {...dock()}>
-                    <p className="font-label whitespace-nowrap text-[clamp(0.8rem,1.1vw,0.98rem)] font-semibold uppercase tracking-[0.28em] text-[var(--salon-cyan)]">
-                      {item.label}
-                    </p>
-                    {SHOW_SCHEMA_BODIES ? (
-                      <p
-                        className={`${editorialFont.className} mt-1.5 text-[clamp(0.95rem,1.15vw,1.12rem)] font-light leading-snug text-zinc-400`}
-                      >
-                        {item.body}
-                      </p>
-                    ) : null}
-                  </motion.div>
+                  <motion.p
+                    ref={
+                      i === 0
+                        ? salonTitleRef
+                        : i === 1
+                          ? maisonTitleRef
+                          : undefined
+                    }
+                    className="font-label whitespace-nowrap text-[clamp(0.8rem,1.1vw,0.98rem)] font-semibold uppercase tracking-[0.28em] text-[var(--salon-cyan)]"
+                    {...dock()}
+                  >
+                    {item.label}
+                  </motion.p>
                 </div>
               );
             })
           : null}
 
+        {SHOW_SCHEMA_BODIES
+          ? beams.map((item, i) => {
+              const node = BEAM_NODES[i];
+              if (!node || !item.body) return null;
+              const dock = dockNodes[i] ?? dockNode2;
+              // Salon / Maison : bord gauche du corps = L du titre
+              const bodyTransform =
+                i === 0 && salonTitleW > 0
+                  ? `translate(-${salonTitleW / 2}px, calc(-100% - 2.95rem))`
+                  : i === 1 && maisonTitleW > 0
+                    ? `translate(calc(-${maisonTitleW}px - 1.2rem), 1.05rem)`
+                    : node.bodyAnchor;
+              return (
+                <div
+                  key={`body-${item.label}-${i}`}
+                  className="absolute z-10"
+                  style={{
+                    left: `${node.x}%`,
+                    top: `${(node.y / 60) * 100}%`,
+                    transform: bodyTransform,
+                    maxWidth: node.bodyMax,
+                    width: node.bodyMax,
+                    textAlign: node.bodyAlign,
+                  }}
+                >
+                  <motion.p
+                    className={`${editorialFont.className} text-[clamp(0.95rem,1.15vw,1.12rem)] font-light leading-snug text-zinc-400`}
+                    {...dock(0.05)}
+                  >
+                    {item.body}
+                  </motion.p>
+                </div>
+              );
+            })
+          : null}
         {SHOW_SCHEMA_TITLES ? (
           <div
             className="absolute z-10"
@@ -511,24 +590,32 @@ export function DeckSlideSolution({
           </div>
         ) : null}
 
+        {/* Économie — nettement à droite d’Odyssey (titres nœuds non touchés) */}
         {SHOW_SCHEMA_BODIES && coda ? (
-          <motion.div
-            className="absolute bottom-2 left-1/2 z-10 w-[min(36rem,70%)] -translate-x-1/2 text-center"
-            {...dockCoda()}
+          <div
+            className="absolute z-10"
+            style={{
+              left: `${FOCUS_NODE.x}%`,
+              top: `${(FOCUS_NODE.y / 60) * 100}%`,
+              transform: "translate(24rem, -72%)",
+              maxWidth: "20rem",
+              width: "20rem",
+            }}
           >
-            {coda.label ? (
-              <p className="font-label text-[0.72rem] font-medium uppercase tracking-[0.28em] text-[var(--salon-cyan)]">
-                {coda.label}
+            <motion.div {...dockCoda()}>
+              {coda.label ? (
+                <p className="font-label whitespace-nowrap text-[clamp(0.8rem,1.1vw,0.98rem)] font-semibold uppercase tracking-[0.28em] text-[var(--salon-cyan)]">
+                  {coda.label}
+                </p>
+              ) : null}
+              <p
+                className={`${editorialFont.className} mt-1.5 text-[clamp(0.95rem,1.15vw,1.12rem)] font-medium leading-snug text-white/85`}
+              >
+                {coda.body}
               </p>
-            ) : null}
-            <p
-              className={`${editorialFont.className} mt-1.5 text-[clamp(0.95rem,1.15vw,1.1rem)] font-medium leading-snug text-white/85`}
-            >
-              {coda.body}
-            </p>
-          </motion.div>
-        ) : null}
-      </div>
+            </motion.div>
+          </div>
+        ) : null}      </div>
     </div>
   );
 }

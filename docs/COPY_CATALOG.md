@@ -1140,11 +1140,11 @@
 | `pitchDeck.slides[2].id` | solution | solution |
 | `pitchDeck.slides[2].tagline` | Trois frictions. Une plateforme. | Three frictions. One platform. |
 | `pitchDeck.slides[2].title` | Odyssey répond à la triple friction. | Odyssey answers the triple friction. |
-| `pitchDeck.slides[2].phase` | Nous n'ajoutons pas un outil de plus en salon. Nous bâtissons un lien unique entre le salon, la maison et la plateforme. L'expérience reste Quiet Luxury de bout en bout. | We do not drop another tool in the arrangement room. We build a unified path across the funeral home, the family home, and the platform. Quiet Luxury from end to end. |
+| `pitchDeck.slides[2].phase` | Le deuil mérite un parcours à la hauteur d’aujourd’hui. Un seul lien entre le salon, la maison et la plateforme. Digne avant, pendant, et après. | Grief deserves a journey equal to our time. One link between the funeral home, the home, and the platform. Dignified before, during, and after. |
 | `pitchDeck.slides[2].bullets[0]` | Le salon : Un geste digne à 0 $. Il s'active en quelques secondes. C'est la réponse à l'industrie analogique. | The funeral home: A dignified $0 gift. It goes live in seconds. This is the answer to the analog industry. |
 | `pitchDeck.slides[2].bullets[1]` | La maison : Un parcours guidé pour les familles. Les tâches fragmentées disparaissent. | Home: A guided path for families. Fragmented tasks disappear. |
 | `pitchDeck.slides[2].bullets[2]` | La plateforme : L'infrastructure de la mémoire. Elle connecte les salons, les familles et les services dans la durée. | The platform: The infrastructure of memory. It links funeral homes, families, and services over time. |
-| `pitchDeck.slides[2].bullets[3]` | L'économie : Le Soft Cap s'active quand l'histoire devient réelle. Le modèle B2B2C garantit un coût d'acquisition quasi nul. Le partenaire gagne un RevShare sur le net. | The economics: The Soft Cap triggers when the story feels real. The B2B2C model drives near-zero CAC. Partners earn a RevShare on the net. |
+| `pitchDeck.slides[2].bullets[3]` | L'économie : Le salon offre le départ à 0 $. Quand l’hommage devient précieux, la famille choisit de le garder. Le salon gagne une commission sur ce choix. | The economics: The funeral home offers the start at $0. When the tribute becomes precious, the family chooses to keep it. The funeral home earns a commission on that choice. |
 | `pitchDeck.slides[3].id` | ecosystem | ecosystem |
 | `pitchDeck.slides[3].tagline` | Qui nous tenons avec soin. | Who we hold gently. |
 | `pitchDeck.slides[3].title` | Partenaires au comptoir. Familles à la maison. | Partners at the desk. Families at home. |

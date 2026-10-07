@@ -1,14 +1,14 @@
 # PITCH/ — deck capital (investisseurs · banques)
 
 **Type :** ops · **Vérité pour :** où vivent les docs **pitch capital** (pas VP salon).  
-**Dernière MAJ :** 5 oct 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 7 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 7 oct 2026 : Solution — vision Quiet Luxury + économie sans jargon Soft Cap.
+- 7 oct 2026 : Solution — reveal ordonné (nœud → faisceau ×3 → foyer → économie).
 - 7 oct 2026 : Solution — schéma A (3 faisceaux → foyer) + copy Salon/Maison/Plateforme.
 - 7 oct 2026 : Deck — titres glow ; `phase` teal ; Need constellation + Opportunité.
 - 5 oct 2026 : Need — diagnostic système (industrie / familles / écosystème) + opportunité.
-- 5 oct 2026 : Team (slide 9) — Option 1 punchy FR/EN.
-- 5 oct 2026 : Open — soft dock + tempo film (signature anim deck).
 
 | Doc | Sujet |
 |-----|--------|

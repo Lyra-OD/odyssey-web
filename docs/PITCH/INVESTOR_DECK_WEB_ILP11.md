@@ -111,28 +111,26 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 3 — Solution
 
 **EN**
-- Tagline: Soften before. During. After.
-- Title: Odyssey Studio. Guided memory in Quiet Luxury.
-- Phase: We give funeral homes a dignified $0 starting gesture. We then guide families through a cinematic Memory Chest with almost no editing and full emotional care.
+- Tagline: Three frictions. One platform.
+- Title: Odyssey answers the triple friction.
+- Phase: Grief deserves a journey equal to our time. One link between the funeral home, the home, and the platform. Dignified before, during, and after.
 - Bullets:
-  - Before (Activation): counselor initiates in ~30 seconds via QR and identity — no homework dumped on the grieving family
-  - During (Crafting): family and guests add fragments; Studio shapes a Quiet Luxury film
-  - After (Keep): Sanctuary and sharing — memory doesn’t end when the ceremony USB is unplugged
-  - Soft Cap: when the story feels real, families choose to preserve more — never a hard sell at the counter
-  - Business: B2B2C via funeral homes → near-zero CAC → RevShare on Net — emotion funds the funnel
-- Anti-overclaim: *almost* no editing / guided workflow — not “AI does everything forever”
+  - The funeral home: A dignified $0 gift. It goes live in seconds. This is the answer to the analog industry.
+  - Home: A guided path for families. Fragmented tasks disappear.
+  - The platform: The infrastructure of memory. It links funeral homes, families, and services over time.
+  - The economics: The funeral home offers the start at $0. When the tribute becomes precious, the family chooses to keep it. The funeral home earns a commission on that choice.
+- Note: Soft Cap / B2B2C / RevShare naming lives on the freemium / business slides — not here.
 
 **FR**
-- Tagline: Adoucir avant. Pendant. Après.
-- Title: Odyssey Studio. La mémoire guidée en Quiet Luxury.
-- Phase: Nous offrons aux salons un geste digne à 0 $. Nous guidons ensuite les familles dans un Coffre cinématographique — presque sans montage, avec soin émotionnel.
+- Tagline: Trois frictions. Une plateforme.
+- Title: Odyssey répond à la triple friction.
+- Phase: Le deuil mérite un parcours à la hauteur d’aujourd’hui. Un seul lien entre le salon, la maison et la plateforme. Digne avant, pendant, et après.
 - Bullets:
-  - Avant (Activation) : le conseiller active en ~30 s via QR — la famille n’est pas seule face à un devoir
-  - Pendant (Création) : le cercle dépose ses fragments ; le Studio façonne un film Quiet Luxury
-  - Après (Conservation) : Sanctuaire et partage — la mémoire ne s’arrête pas à l’USB de cérémonie
-  - Soft Cap : quand l’histoire devient palpable, la famille choisit de préserver — jamais de vente agressive au comptoir
-  - Business : B2B2C via salons → CAC quasi nul → RevShare sur le Net — l’émotion alimente l’entonnoir
-- Anti-overclaim : *presque* sans montage / workflow guidé
+  - Le salon : Un geste digne à 0 $. Il s'active en quelques secondes. C'est la réponse à l'industrie analogique.
+  - La maison : Un parcours guidé pour les familles. Les tâches fragmentées disparaissent.
+  - La plateforme : L'infrastructure de la mémoire. Elle connecte les salons, les familles et les services dans la durée.
+  - L'économie : Le salon offre le départ à 0 $. Quand l’hommage devient précieux, la famille choisit de le garder. Le salon gagne une commission sur ce choix.
+- Note : Soft Cap / B2B2C / RevShare nommés plus loin (slides freemium / business) — pas ici.
 
 ---
 
