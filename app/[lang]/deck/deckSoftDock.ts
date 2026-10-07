@@ -155,6 +155,30 @@ export const DECK_ECOSYSTEM_WAITS_S: readonly number[] = [
   1.6, // canal / orbite → satellite + comportement
 ];
 
+/** Indices Competition — titres puis beats labelisés (schéma Troie = plus tard) */
+export const DECK_COMPETITION_STEP = {
+  eyebrow: 0,
+  hero: 1,
+  phase: 2,
+  beat0: 3,
+  beat1: 4,
+  beat2: 5,
+  beat3: 6,
+  beat4: 7,
+} as const;
+
+export const DECK_COMPETITION_LAST_STEP = DECK_COMPETITION_STEP.beat4;
+
+export const DECK_COMPETITION_WAITS_S: readonly number[] = [
+  0.9, // eyebrow → hero
+  1.6, // hero → phase
+  2.8, // phase → beat0
+  2.4, // beat0 → beat1
+  2.4, // beat1 → beat2
+  2.4, // beat2 → beat3
+  2.4, // beat3 → beat4
+];
+
 /**
  * Reveal pas-à-pas : auto-tempo + clic pour avancer (le clic annule l’attente).
  * `step` = dernier beat visible (−1 = slide inactive).

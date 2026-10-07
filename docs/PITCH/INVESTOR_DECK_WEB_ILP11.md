@@ -162,25 +162,25 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 **EN**
 - Tagline: Distribution is the product.
-- Title: Trojan Horse via funeral networks
+- Title: A Trojan Horse through funeral networks.
 - Phase: Consumer editors sell tools. We sell distribution.
 - Bullets:
-  - We don't buy families on Facebook. We borrow the network that already holds them.
-  - There is zero family acquisition spend when the salon activates the gift.
-  - The paywall sits at the emotional peak instead of at the door.
-  - We use Quiet Luxury pricing to avoid the race-to-bottom seen with commodity tools.
-  - We share revenue on net with our partners.
+  - The model: We do not buy families on Facebook. We borrow the network that already holds them.
+  - Acquisition: Partner activation completely eliminates family acquisition spend.
+  - Conversion: The paywall sits at the emotional peak. It is never at the door.
+  - Positioning: Our Quiet Luxury pricing avoids the race to the bottom.
+  - Economics: We share net revenue with our partners.
 
 **FR**
 - Tagline: La distribution est le produit.
-- Title: Cheval de Troie via les réseaux funéraires
+- Title: Un cheval de Troie via les réseaux funéraires.
 - Phase: Les éditeurs grand public vendent des outils. Nous vendons la distribution.
 - Bullets:
-  - Nous n’achetons pas des familles sur Facebook. Nous empruntons le réseau qui les a déjà.
-  - L'activation par le salon élimine totalement les dépenses d’acquisition famille.
-  - Le paywall se trouve au pic émotionnel et non à l’entrée.
-  - Notre tarification Quiet Luxury évite la guerre des prix des éditeurs classiques.
-  - Nous partageons les revenus nets avec nos partenaires.
+  - Le modèle : Nous n’achetons pas des familles sur Facebook. Nous empruntons le réseau qui les a déjà.
+  - L'acquisition : L'activation en salon élimine totalement les dépenses d’acquisition.
+  - La conversion : Le paywall se trouve au pic émotionnel. Il n'est jamais à l’entrée.
+  - Le positionnement : Notre tarification Quiet Luxury évite la guerre des prix des éditeurs classiques.
+  - L'économie : Nous partageons les revenus nets avec nos partenaires.
 
 ---
 
@@ -189,7 +189,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Sequence beats slogans.
 - Title: Three phases. Wedge, retention, platform.
-- Phase: We capture attention through funeral homes first. We then retain families and finally route fragmented end-of-life demand without holding inventory.
+- Phase: We build the digital link for end-of-life. First the Memory Chest at the funeral home. Then Lyra guides families through administration. Then the platform routes that demand to services — with zero inventory.
 - Bullets:
   - Phase 1 (Wedge): Studio B2B2C, $0 Souvenir, Soft Cap and RevShare.
   - Phase 2 (Retention): Sanctuary MRR, consented leads and Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins.
@@ -199,7 +199,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **FR**
 - Tagline: La séquence bat les slogans.
 - Title: Trois phases. Wedge, rétention, plateforme.
-- Phase: Nous capturons d’abord l’attention via les salons. Nous fidélisons ensuite avant de router la demande fragmentée de fin de vie sans aucun stock.
+- Phase: Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande aux services — sans stock.
 - Bullets:
   - Phase 1 (Wedge) : Studio B2B2C, Souvenir 0 $, Soft Cap et RevShare.
   - Phase 2 (Rétention) : Sanctuaire MRR, leads consentis et orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.

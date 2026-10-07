@@ -1154,17 +1154,17 @@
 | `pitchDeck.slides[3].bullets[2]` | Le comportement : L'achat se déclenche au pic émotionnel. Quand l’hommage devient précieux, la famille choisit de le garder. | The behavior: Purchases trigger at the emotional peak. When the tribute becomes precious, the family chooses to keep it. |
 | `pitchDeck.slides[4].id` | competition | competition |
 | `pitchDeck.slides[4].tagline` | La distribution est le produit. | Distribution is the product. |
-| `pitchDeck.slides[4].title` | Cheval de Troie via les réseaux funéraires | Trojan Horse via funeral networks |
+| `pitchDeck.slides[4].title` | Un cheval de Troie via les réseaux funéraires. | A Trojan Horse through funeral networks. |
 | `pitchDeck.slides[4].phase` | Les éditeurs grand public vendent des outils. Nous vendons la distribution. | Consumer editors sell tools. We sell distribution. |
-| `pitchDeck.slides[4].bullets[0]` | Nous n’achetons pas des familles sur Facebook. Nous empruntons le réseau qui les a déjà. | We don't buy families on Facebook. We borrow the network that already holds them. |
-| `pitchDeck.slides[4].bullets[1]` | L'activation par le salon élimine totalement les dépenses d’acquisition famille. | There is zero family acquisition spend when the salon activates the gift. |
-| `pitchDeck.slides[4].bullets[2]` | Le paywall se trouve au pic émotionnel et non à l’entrée. | The paywall sits at the emotional peak instead of at the door. |
-| `pitchDeck.slides[4].bullets[3]` | Notre tarification Quiet Luxury évite la guerre des prix des éditeurs classiques. | We use Quiet Luxury pricing to avoid the race-to-bottom seen with commodity tools. |
-| `pitchDeck.slides[4].bullets[4]` | Nous partageons les revenus nets avec nos partenaires. | We share revenue on net with our partners. |
+| `pitchDeck.slides[4].bullets[0]` | Le modèle : Nous n’achetons pas des familles sur Facebook. Nous empruntons le réseau qui les a déjà. | The model: We do not buy families on Facebook. We borrow the network that already holds them. |
+| `pitchDeck.slides[4].bullets[1]` | L'acquisition : L'activation en salon élimine totalement les dépenses d’acquisition. | Acquisition: Partner activation completely eliminates family acquisition spend. |
+| `pitchDeck.slides[4].bullets[2]` | La conversion : Le paywall se trouve au pic émotionnel. Il n'est jamais à l’entrée. | Conversion: The paywall sits at the emotional peak. It is never at the door. |
+| `pitchDeck.slides[4].bullets[3]` | Le positionnement : Notre tarification Quiet Luxury évite la guerre des prix des éditeurs classiques. | Positioning: Our Quiet Luxury pricing avoids the race to the bottom. |
+| `pitchDeck.slides[4].bullets[4]` | L'économie : Nous partageons les revenus nets avec nos partenaires. | Economics: We share net revenue with our partners. |
 | `pitchDeck.slides[5].id` | phases | phases |
 | `pitchDeck.slides[5].tagline` | La séquence bat les slogans. | Sequence beats slogans. |
 | `pitchDeck.slides[5].title` | Trois phases. Wedge, rétention, plateforme. | Three phases. Wedge, retention, platform. |
-| `pitchDeck.slides[5].phase` | Nous capturons d’abord l’attention via les salons. Nous fidélisons ensuite avant de router la demande fragmentée de fin de vie sans aucun stock. | We capture attention through funeral homes first. We then retain families and finally route fragmented end-of-life demand without holding inventory. |
+| `pitchDeck.slides[5].phase` | Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande aux services — sans stock. | We build the digital link for end-of-life. First the Memory Chest at the funeral home. Then Lyra guides families through administration. Then the platform routes that demand to services — with zero inventory. |
 | `pitchDeck.slides[5].bullets[0]` | Phase 1 (Wedge) : Studio B2B2C, Souvenir 0 $, Soft Cap et RevShare. | Phase 1 (Wedge): Studio B2B2C, $0 Souvenir, Soft Cap and RevShare. |
 | `pitchDeck.slides[5].bullets[1]` | Phase 2 (Rétention) : Sanctuaire MRR, leads consentis et orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing. | Phase 2 (Retention): Sanctuary MRR, consented leads and Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins. |
 | `pitchDeck.slides[5].bullets[2]` | Phase 3 (Marketplace Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes. | Phase 3 (Endgame): Amazon started with books. We start with the film and the memory chest. We then route the fragmented supply economy like urns and venues. |
