@@ -41,7 +41,7 @@ const BEAM_NODES = [
   {
     x: 50,
     y: 6,
-    // Salon — haut (triangle ouvert, échelle plus large)
+    // Salon — état avant « descends le schéma »
     anchor: "translate(-50%, calc(-100% - 0.65rem))",
     bodyMax: "18rem",
   },
@@ -280,7 +280,7 @@ export function DeckSlideSolution({
         canAdvance ? "cursor-pointer" : ""
       }`}
     >
-      <div className="relative z-10 mx-auto flex w-full max-w-[90rem] flex-col items-center text-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-[90rem] -translate-y-[70%] flex-col items-center text-center">
         <motion.p className={DECK_EYEBROW_CLASS} {...dockEyebrow()}>
           {tagline}
         </motion.p>
