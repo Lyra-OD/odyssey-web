@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-07 · **Entrées :** 1099
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-07 · **Entrées :** 1098
 
 ## `common`
 
@@ -1138,14 +1138,13 @@
 | `pitchDeck.slides[1].bullets[2]` | L'écosystème : Le marché de la fin de vie est éclaté. Aucune infrastructure ne relie les salons, les familles et les services dans le temps. | The ecosystem: The end-of-life market is disconnected. No unified infrastructure links funeral homes, families, and services over time. |
 | `pitchDeck.slides[1].bullets[3]` | L'opportunité : Cette triple friction est notre point d'entrée monétisable. Nous entrons par un geste digne au salon. Nous fidélisons la relation à la maison et nous monétisons via la plateforme. | The wedge: This triple friction is our monetizable wedge. We acquire users through a dignified gift at the funeral home. We retain the relationship at home and scale the platform. |
 | `pitchDeck.slides[2].id` | solution | solution |
-| `pitchDeck.slides[2].tagline` | Adoucir avant. Pendant. Après. | Soften before. During. After. |
-| `pitchDeck.slides[2].title` | Odyssey Studio. La mémoire guidée en Quiet Luxury. | Odyssey Studio. Guided memory in Quiet Luxury. |
-| `pitchDeck.slides[2].phase` | Nous offrons aux salons un geste digne à 0 $. Nous guidons ensuite les familles dans un Coffre cinématographique presque sans montage et avec un soin émotionnel total. | We give funeral homes a dignified $0 starting gesture. We then guide families through a cinematic Memory Chest with almost no editing and full emotional care. |
-| `pitchDeck.slides[2].bullets[0]` | Avant (Activation) : Le conseiller active le projet en 30 secondes via un code QR. La famille n'est pas laissée seule face à un devoir. | Before (Activation): Counselor initiates in roughly 30 seconds via QR and identity details. No homework is dumped on the grieving family. |
-| `pitchDeck.slides[2].bullets[1]` | Pendant (Création) : Le cercle dépose ses fragments. Le Studio façonne un film Quiet Luxury. | During (Crafting): Family and guests add fragments. Studio shapes a Quiet Luxury film. |
-| `pitchDeck.slides[2].bullets[2]` | Après (Conservation) : Le Sanctuaire et le partage. La mémoire ne s'arrête pas à la clé USB de la cérémonie. | After (Keep): Sanctuary and sharing path. Memory doesn't end when the ceremony USB is unplugged. |
-| `pitchDeck.slides[2].bullets[3]` | Le Soft Cap : Quand l'histoire devient palpable, la famille choisit de la préserver. Il n'y a jamais de vente agressive au comptoir. | The Soft Cap: When the story feels real, families choose to preserve more. There is never a hard sell at the counter. |
-| `pitchDeck.slides[2].bullets[4]` | Le Business : Le modèle B2B2C via les salons permet un CAC quasi nul et un RevShare sur le Net. L'émotion alimente l'entonnoir de conversion. | The Business: B2B2C via funeral homes leads to near-zero CAC and RevShare on Net. Emotion funds the funnel. |
+| `pitchDeck.slides[2].tagline` | Trois frictions. Une plateforme. | Three frictions. One platform. |
+| `pitchDeck.slides[2].title` | Odyssey répond à la triple friction. | Odyssey answers the triple friction. |
+| `pitchDeck.slides[2].phase` | Nous n'ajoutons pas un outil de plus en salon. Nous bâtissons un lien unique entre le salon, la maison et la plateforme. L'expérience reste Quiet Luxury de bout en bout. | We do not drop another tool in the arrangement room. We build a unified path across the funeral home, the family home, and the platform. Quiet Luxury from end to end. |
+| `pitchDeck.slides[2].bullets[0]` | Le salon : Un geste digne à 0 $. Il s'active en quelques secondes. C'est la réponse à l'industrie analogique. | The funeral home: A dignified $0 gift. It goes live in seconds. This is the answer to the analog industry. |
+| `pitchDeck.slides[2].bullets[1]` | La maison : Un parcours guidé pour les familles. Les tâches fragmentées disparaissent. | Home: A guided path for families. Fragmented tasks disappear. |
+| `pitchDeck.slides[2].bullets[2]` | La plateforme : L'infrastructure de la mémoire. Elle connecte les salons, les familles et les services dans la durée. | The platform: The infrastructure of memory. It links funeral homes, families, and services over time. |
+| `pitchDeck.slides[2].bullets[3]` | L'économie : Le Soft Cap s'active quand l'histoire devient réelle. Le modèle B2B2C garantit un coût d'acquisition quasi nul. Le partenaire gagne un RevShare sur le net. | The economics: The Soft Cap triggers when the story feels real. The B2B2C model drives near-zero CAC. Partners earn a RevShare on the net. |
 | `pitchDeck.slides[3].id` | ecosystem | ecosystem |
 | `pitchDeck.slides[3].tagline` | Qui nous tenons avec soin. | Who we hold gently. |
 | `pitchDeck.slides[3].title` | Partenaires au comptoir. Familles à la maison. | Partners at the desk. Families at home. |

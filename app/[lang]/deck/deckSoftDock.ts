@@ -99,6 +99,36 @@ export const DECK_NEED_WAITS_S: readonly number[] = [
   1.5, // line20 → converge
 ];
 
+/** Indices Solution — 3 faisceaux → foyer */
+export const DECK_SOLUTION_STEP = {
+  eyebrow: 0,
+  hero: 1,
+  phase: 2,
+  node0: 3,
+  beam0: 4,
+  node1: 5,
+  beam1: 6,
+  node2: 7,
+  beam2: 8,
+  focus: 9,
+  coda: 10,
+} as const;
+
+export const DECK_SOLUTION_LAST_STEP = DECK_SOLUTION_STEP.coda;
+
+export const DECK_SOLUTION_WAITS_S: readonly number[] = [
+  0.9, // eyebrow → hero
+  1.6, // hero → phase
+  3.0, // phase → node0
+  3.8, // node0 lire → beam0
+  1.4, // beam0 → node1
+  3.8, // node1 lire → beam1
+  1.4, // beam1 → node2
+  3.8, // node2 lire → beam2
+  1.4, // beam2 → focus
+  2.8, // focus → coda
+];
+
 /**
  * Reveal pas-à-pas : auto-tempo + clic pour avancer (le clic annule l’attente).
  * `step` = dernier beat visible (−1 = slide inactive).

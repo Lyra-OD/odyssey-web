@@ -23,6 +23,7 @@ import {
 } from "./DeckEclipseIntro";
 import { DeckSlideNeed } from "./DeckSlideNeed";
 import { DeckSlideOpen } from "./DeckSlideOpen";
+import { DeckSlideSolution } from "./DeckSlideSolution";
 import { DECK_PHASE_CLASS } from "./deckSoftDock";
 
 const SanctuaryUniverse = dynamic(
@@ -272,6 +273,14 @@ export function DeckClient({
               />
             ) : i === 1 || slide.id === "need" ? (
               <DeckSlideNeed
+                tagline={slide.tagline}
+                title={slide.title}
+                phase={slide.phase}
+                bullets={slide.bullets}
+                active={index === i}
+              />
+            ) : i === 2 || slide.id === "solution" ? (
+              <DeckSlideSolution
                 tagline={slide.tagline}
                 title={slide.title}
                 phase={slide.phase}
