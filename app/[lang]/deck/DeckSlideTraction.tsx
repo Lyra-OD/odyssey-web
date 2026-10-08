@@ -8,6 +8,7 @@ import { editorialFont } from "@/src/lib/fonts";
 
 import {
   DECK_BODY_CLASS,
+  DECK_DOCK_DUR,
   DECK_EYEBROW_CLASS,
   DECK_FILM_EASE,
   DECK_LABEL_CLASS,
@@ -49,7 +50,8 @@ const FRAME = {
   y: 13,
   w: 30,
   h: 16.5,
-  bodyMax: "22rem",
+  /** Colonne corps centrée sous le cadre (text-center). */
+  bodyMax: "30rem",
 } as const;
 
 /** Hub Athos + orbite. */
@@ -57,7 +59,8 @@ const HUB = {
   x: 75,
   y: 13,
   r: 7.8,
-  bodyMax: "22rem",
+  /** Colonne corps centrée sous la planète (text-center). */
+  bodyMax: "32rem",
 } as const;
 
 const ORBIT = {
@@ -79,8 +82,8 @@ const ARC = {
   x2: 64,
 } as const;
 
-/** Corps collés sous leurs objets (après Soft Cap sous le cadre). */
-const BODY_BAND_TOP = `${(((FRAME.y + FRAME.h / 2 + 3.2) / 60) * 100).toFixed(2)}%`;
+/** Corps sous leurs objets — un cran plus bas pour respirer. */
+const BODY_BAND_TOP = `${(((FRAME.y + FRAME.h / 2 + 4.4) / 60) * 100).toFixed(2)}%`;
 /** Titre validation juste sous le trait. */
 const VALIDATION_TOP = `${(((ARC.y + 2.4) / 60) * 100).toFixed(2)}%`;
 
@@ -121,6 +124,37 @@ function orbitMotionPath(cx: number, cy: number, rx: number, ry: number) {
   return `M ${cx + rx} ${cy} A ${rx} ${ry} 0 1 1 ${cx - rx} ${cy} A ${rx} ${ry} 0 1 1 ${cx + rx} ${cy}`;
 }
 
+/** Soft-dock SVG — opacity + translateY (fiable sur `<g>`), pas de scale. */
+const DECK_SVG_DOCK_Y = 10;
+
+function deckSvgSoftDock(
+  play: boolean,
+  reduceMotion: boolean | null,
+  delay = 0,
+) {
+  if (reduceMotion) {
+    return {
+      initial: false as const,
+      animate: { opacity: 1, transform: "translateY(0px)" },
+      transition: { duration: 0 },
+    };
+  }
+  return {
+    initial: false as const,
+    animate: play
+      ? { opacity: 1, transform: "translateY(0px)" }
+      : {
+          opacity: 0,
+          transform: `translateY(${DECK_SVG_DOCK_Y}px)`,
+        },
+    transition: {
+      duration: play ? DECK_DOCK_DUR : 0.35,
+      ease: DECK_FILM_EASE,
+      delay: play ? delay : 0,
+    },
+  };
+}
+
 function HubDisk({
   cx,
   cy,
@@ -146,16 +180,7 @@ function HubDisk({
   const ly = cy - r * 0.58;
 
   return (
-    <motion.g
-      initial={false}
-      animate={{ opacity: on ? 1 : 0, scale: on ? 1 : 0.72 }}
-      transition={{
-        duration: reduceMotion ? 0 : 0.65,
-        delay: reduceMotion ? 0 : delay,
-        ease: DECK_FILM_EASE,
-      }}
-      style={{ transformOrigin: `${cx}px ${cy}px` }}
-    >
+    <motion.g {...deckSvgSoftDock(on, reduceMotion, delay)}>
       <defs>
         <radialGradient id={haloId} cx="50%" cy="50%" r="50%">
           <stop offset="72%" stopColor="rgba(140,210,230,0)" />
@@ -262,7 +287,23 @@ export function DeckSlideTraction({
   const showValidation = Boolean(
     reduceMotion || visible(DECK_TRACTION_STEP.validation),
   );
-  const orbitLive = Boolean(showSats && !reduceMotion && active);
+
+  /**
+   * Athos : 1) planète soft-dock → 2) satellites soft-dock → 3) orbite.
+   * L’orbite démarre après que les sats se soient posés.
+   */
+  const [orbitLive, setOrbitLive] = useState(false);
+  useEffect(() => {
+    if (!showSats || !active || reduceMotion) {
+      setOrbitLive(false);
+      return;
+    }
+    const t = window.setTimeout(
+      () => setOrbitLive(true),
+      DECK_DOCK_DUR * 1000 + 280,
+    );
+    return () => window.clearTimeout(t);
+  }, [showSats, active, reduceMotion]);
 
   useEffect(() => {
     const el = mapRef.current;
@@ -471,33 +512,9 @@ export function DeckSlideTraction({
           height={mapSize.h}
           viewBox={`0 0 ${mapSize.w} ${mapSize.h}`}
         >
-          {/* Studio — rectangle, même finition halo/rim qu’Athos */}
-          <motion.g
-            initial={false}
-            animate={{
-              opacity: showProduct ? 1 : 0,
-              scale: showProduct ? 1 : 0.9,
-            }}
-            transition={{
-              duration: reduceMotion ? 0 : 0.7,
-              ease: DECK_FILM_EASE,
-            }}
-            style={{
-              transformOrigin: `${framePx.cx}px ${framePx.cy}px`,
-            }}
-          >
+          {/* Studio — rectangle, halo/rim qui suivent le cadre (pas d’ovale) */}
+          <motion.g {...deckSvgSoftDock(showProduct, reduceMotion)}>
             <defs>
-              <radialGradient
-                id="deck-trac-frame-halo"
-                cx="50%"
-                cy="50%"
-                r="50%"
-              >
-                <stop offset="62%" stopColor="rgba(140,210,230,0)" />
-                <stop offset="82%" stopColor="rgba(150,220,235,0.13)" />
-                <stop offset="94%" stopColor="rgba(160,225,240,0.05)" />
-                <stop offset="100%" stopColor="rgba(140,210,230,0)" />
-              </radialGradient>
               <radialGradient
                 id="deck-trac-frame-diamond"
                 cx="50%"
@@ -510,31 +527,33 @@ export function DeckSlideTraction({
               </radialGradient>
               <filter
                 id="deck-trac-frame-blur-soft"
-                x="-40%"
-                y="-50%"
-                width="180%"
-                height="200%"
+                x="-35%"
+                y="-40%"
+                width="170%"
+                height="180%"
               >
-                <feGaussianBlur stdDeviation={Math.max(3.4, framePx.w * 0.018)} />
+                <feGaussianBlur stdDeviation={Math.max(4.5, framePx.w * 0.022)} />
               </filter>
               <filter
                 id="deck-trac-frame-blur-rim"
-                x="-20%"
-                y="-25%"
-                width="140%"
-                height="150%"
+                x="-18%"
+                y="-22%"
+                width="136%"
+                height="144%"
               >
                 <feGaussianBlur stdDeviation={Math.max(1.6, framePx.w * 0.008)} />
               </filter>
             </defs>
 
-            {/* Halo (même ADN planète) */}
-            <ellipse
-              cx={framePx.cx}
-              cy={framePx.cy}
-              rx={framePx.w * 0.72}
-              ry={framePx.h * 0.82}
-              fill="url(#deck-trac-frame-halo)"
+            {/* Halo rectangulaire (suit le cadre) */}
+            <rect
+              x={framePx.x - framePx.w * 0.06}
+              y={framePx.y - framePx.h * 0.08}
+              width={framePx.w * 1.12}
+              height={framePx.h * 1.16}
+              rx={3}
+              ry={3}
+              fill="rgba(150,220,235,0.16)"
               filter="url(#deck-trac-frame-blur-soft)"
             />
             {/* Rim soft */}
@@ -550,14 +569,14 @@ export function DeckSlideTraction({
               strokeWidth={Math.max(1.15, framePx.w * 0.008)}
               filter="url(#deck-trac-frame-blur-rim)"
             />
-            {/* Diamond haut-droite */}
+            {/* Diamond haut-droite (même ADN planète) */}
             <circle
-              cx={framePx.x + framePx.w * 0.82}
-              cy={framePx.y + framePx.h * 0.18}
-              r={Math.min(framePx.w, framePx.h) * 0.16}
+              cx={framePx.x + framePx.w * 0.84}
+              cy={framePx.y + framePx.h * 0.16}
+              r={Math.min(framePx.w, framePx.h) * 0.12}
               fill="url(#deck-trac-frame-diamond)"
               filter="url(#deck-trac-frame-blur-soft)"
-              opacity="0.78"
+              opacity="0.72"
             />
             {/* Corps noir */}
             <rect
@@ -641,20 +660,7 @@ export function DeckSlideTraction({
             ) : null}
           </motion.g>
 
-          {/* Orbite + hub */}
-          <motion.ellipse
-            cx={orbitPx.cx}
-            cy={orbitPx.cy}
-            rx={orbitPx.rx}
-            ry={orbitPx.ry}
-            fill="none"
-            stroke="rgba(200,225,230,0.24)"
-            strokeWidth="0.95"
-            initial={false}
-            animate={{ opacity: showSats || showHub ? 1 : 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.55 }}
-          />
-
+          {/* 1) Planète Athos — un seul soft-dock (monte + fade) */}
           <HubDisk
             cx={hubPx.x}
             cy={hubPx.y}
@@ -664,20 +670,22 @@ export function DeckSlideTraction({
             gradId="deck-trac-hub"
           />
 
-          {satellites.map((name, i) => {
-            if (orbitLive) {
-              const begin = `${(-i * (ORBIT_DUR_S / 3)).toFixed(2)}s`;
-              return (
-                <motion.g
-                  key={`sat-live-${name}`}
-                  initial={false}
-                  animate={{ opacity: showSats ? 1 : 0 }}
-                  transition={{
-                    duration: 0.45,
-                    delay: reduceMotion ? 0 : 0.06 * i,
-                  }}
-                >
-                  <g>
+          {/* 2) Orbite + satellites — ensemble ; 3) puis orbitLive */}
+          <motion.g {...deckSvgSoftDock(showSats, reduceMotion)}>
+            <ellipse
+              cx={orbitPx.cx}
+              cy={orbitPx.cy}
+              rx={orbitPx.rx}
+              ry={orbitPx.ry}
+              fill="none"
+              stroke="rgba(200,225,230,0.24)"
+              strokeWidth="0.95"
+            />
+            {satellites.map((name, i) => {
+              if (orbitLive) {
+                const begin = `${(-i * (ORBIT_DUR_S / 3)).toFixed(2)}s`;
+                return (
+                  <g key={`sat-live-${name}`}>
                     <animateMotion
                       dur={`${ORBIT_DUR_S}s`}
                       repeatCount="indefinite"
@@ -700,80 +708,70 @@ export function DeckSlideTraction({
                       {name}
                     </text>
                   </g>
-                </motion.g>
-              );
-            }
+                );
+              }
 
-            const sat = satStatic[i];
-            if (!sat) return null;
-            const sx = (sat.x / 100) * mapSize.w;
-            const sy = (sat.y / 60) * mapSize.h;
-            return (
-              <motion.g
-                key={`sat-static-${name}`}
-                initial={false}
-                animate={{ opacity: showSats ? 1 : 0 }}
-                transition={{ duration: reduceMotion ? 0 : 0.45 }}
-              >
-                <circle cx={sx} cy={sy} r={5} fill="rgba(230,245,250,0.14)" />
-                <circle
-                  cx={sx}
-                  cy={sy}
-                  r={2.7}
-                  fill="rgba(220,235,240,0.95)"
-                />
-                <text
-                  x={sx}
-                  y={sy - 13}
-                  textAnchor="middle"
-                  fill="var(--salon-cyan)"
-                  style={{
-                    fontFamily: "var(--font-label, Inter, sans-serif)",
-                    fontSize: Math.max(10.5, unitX * 1),
-                    fontWeight: 500,
-                    letterSpacing: "0.04em",
-                  }}
-                >
-                  {name}
-                </text>
-              </motion.g>
-            );
-          })}
+              const sat = satStatic[i];
+              if (!sat) return null;
+              const sx = (sat.x / 100) * mapSize.w;
+              const sy = (sat.y / 60) * mapSize.h;
+              return (
+                <g key={`sat-static-${name}`}>
+                  <circle
+                    cx={sx}
+                    cy={sy}
+                    r={5}
+                    fill="rgba(230,245,250,0.14)"
+                  />
+                  <circle
+                    cx={sx}
+                    cy={sy}
+                    r={2.7}
+                    fill="rgba(220,235,240,0.95)"
+                  />
+                  <text
+                    x={sx}
+                    y={sy - 13}
+                    textAnchor="middle"
+                    fill="var(--salon-cyan)"
+                    style={{
+                      fontFamily: "var(--font-label, Inter, sans-serif)",
+                      fontSize: Math.max(10.5, unitX * 1),
+                      fontWeight: 500,
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {name}
+                  </text>
+                </g>
+              );
+            })}
+          </motion.g>
 
           {/* Validation A — trait droit + 2 bornes */}
-          <motion.line
-            x1={arcLine.x1}
-            y1={arcLine.y}
-            x2={arcLine.x2}
-            y2={arcLine.y}
-            stroke="rgba(180,225,240,0.5)"
-            strokeWidth="1.35"
-            strokeLinecap="round"
-            initial={false}
-            animate={{
-              pathLength: showValidation ? 1 : 0,
-              opacity: showValidation ? 1 : 0,
-            }}
-            transition={{
-              duration: reduceMotion ? 0 : 0.9,
-              ease: DECK_FILM_EASE,
-            }}
-          />
-          {[arcLine.x1, arcLine.x2].map((px, i) => (
-            <motion.circle
-              key={`arc-end-${i}`}
-              cx={px}
+          <motion.g {...deckSvgSoftDock(showValidation, reduceMotion)}>
+            <line
+              x1={arcLine.x1}
+              y1={arcLine.y}
+              x2={arcLine.x2}
+              y2={arcLine.y}
+              stroke="rgba(180,225,240,0.5)"
+              strokeWidth="1.35"
+              strokeLinecap="round"
+            />
+            <circle
+              cx={arcLine.x1}
               cy={arcLine.y}
               r={3.2}
               fill="rgba(200,230,240,0.9)"
-              initial={false}
-              animate={{ opacity: showValidation ? 1 : 0 }}
-              transition={{
-                duration: reduceMotion ? 0 : 0.4,
-                delay: reduceMotion ? 0 : 0.12 * i,
-              }}
             />
-          ))}
+            <circle
+              cx={arcLine.x2}
+              cy={arcLine.y}
+              r={3.2}
+              fill="rgba(200,230,240,0.9)"
+            />
+          </motion.g>
         </svg>
 
         {/* STUDIO au-dessus du cadre + badge Phase 1 */}
@@ -820,9 +818,9 @@ export function DeckSlideTraction({
           </motion.p>
         </div>
 
-        {/* Corps produit — collé sous le cadre */}
+        {/* Corps produit — ancré FRAME.x, texte centré sous le cadre */}
         <div
-          className="absolute z-20"
+          className="absolute z-20 text-center"
           style={{
             left: `${FRAME.x}%`,
             top: BODY_BAND_TOP,
@@ -837,7 +835,9 @@ export function DeckSlideTraction({
                 {product.label}
               </p>
             ) : null}
-            <p className={`${DECK_BODY_CLASS} mt-2 text-left`}>
+            <p
+              className={`${DECK_BODY_CLASS} mt-2 whitespace-pre-line text-center`}
+            >
               {highlightDeckTeal(productDesktop)}
             </p>
           </motion.div>
@@ -860,9 +860,9 @@ export function DeckSlideTraction({
           </motion.p>
         </div>
 
-        {/* Corps partenaires — collé sous Athos */}
+        {/* Corps partenaires — ancré HUB.x, texte centré sous la planète */}
         <div
-          className="absolute z-20"
+          className="absolute z-20 text-center"
           style={{
             left: `${HUB.x}%`,
             top: BODY_BAND_TOP,
@@ -877,7 +877,9 @@ export function DeckSlideTraction({
                 {partners.label}
               </p>
             ) : null}
-            <p className={`${DECK_BODY_CLASS} mt-2 text-left`}>
+            <p
+              className={`${DECK_BODY_CLASS} mt-2 whitespace-pre-line text-center`}
+            >
               {highlightDeckTeal(partnersDesktop)}
             </p>
           </motion.div>

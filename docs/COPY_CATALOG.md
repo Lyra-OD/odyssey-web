@@ -1131,7 +1131,7 @@
 | `pitchDeck.tractionArcTo` | Terrain | Field |
 | `pitchDeck.tractionPhaseBadge` | Phase 1 | Phase 1 |
 | `pitchDeck.tractionProductDesktop` | Le Studio fonctionne en sept étapes. Soft Cap & Sanctuaire sont actifs. | The seven-step Studio is operational. Soft Cap & Sanctuary are live. |
-| `pitchDeck.tractionPartnersDesktop` | Les pilotes se préparent. Les discussions avancent avec Athos. | Pilot programs are in preparation. Discussions advance with Athos. |
+| `pitchDeck.tractionPartnersDesktop` | Les pilotes se préparent avec le groupe Athos. Les discussions avancent. | Pilot programs are in preparation with the Athos group. Discussions are under way. |
 | `pitchDeck.slides[0].id` | open | open |
 | `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before a pitch. |
 | `pitchDeck.slides[0].title` | Odyssey | Odyssey |

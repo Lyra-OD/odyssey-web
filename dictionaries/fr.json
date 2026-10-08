@@ -1157,8 +1157,8 @@
     "tractionArcFrom": "Modélisé",
     "tractionArcTo": "Terrain",
     "tractionPhaseBadge": "Phase 1",
-    "tractionProductDesktop": "Le Studio fonctionne en sept étapes. Soft Cap & Sanctuaire sont actifs.",
-    "tractionPartnersDesktop": "Les pilotes se préparent. Les discussions avancent avec Athos.",
+    "tractionProductDesktop": "Le Studio fonctionne en sept étapes.\nSoft Cap & Sanctuaire sont actifs.",
+    "tractionPartnersDesktop": "Les pilotes se préparent avec le groupe Athos.\nLes discussions avancent.",
     "slides": [
       {
         "id": "open",

@@ -266,10 +266,10 @@ export const DECK_TRACTION_LAST_STEP = DECK_TRACTION_STEP.validation;
 export const DECK_TRACTION_WAITS_S: readonly number[] = [
   0.9, // eyebrow → hero
   1.6, // hero → phase
-  2.6, // phase → foyer Studio
-  2.0, // foyer → hub Athos
-  1.6, // hub → satellites
-  2.2, // satellites → courbe validation
+  2.6, // phase → Studio
+  2.0, // Studio → planète Athos (soft-dock)
+  1.8, // Athos → satellites (puis orbite après dock)
+  2.4, // satellites → validation
 ];
 
 /**
