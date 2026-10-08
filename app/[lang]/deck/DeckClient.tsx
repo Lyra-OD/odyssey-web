@@ -29,6 +29,7 @@ import { DeckSlideOpen } from "./DeckSlideOpen";
 import { DeckSlidePhases } from "./DeckSlidePhases";
 import { DeckSlideSolution } from "./DeckSlideSolution";
 import { DeckSlideAsk } from "./DeckSlideAsk";
+import { DeckSlideContact } from "./DeckSlideContact";
 import { DeckSlideTeam } from "./DeckSlideTeam";
 import { DeckSlideTraction } from "./DeckSlideTraction";
 import {
@@ -81,6 +82,8 @@ type DeckClientProps = {
   softCapTip: string;
   softCapTipAria: string;
   tractionLabels: TractionLabels;
+  contactCta: string;
+  contactCtaHref: string;
   slides: PitchDeckSlide[];
   localeSwitcher: LocaleSwitcherLabels;
 };
@@ -104,6 +107,8 @@ export function DeckClient({
   softCapTip,
   softCapTipAria,
   tractionLabels,
+  contactCta,
+  contactCtaHref,
   slides,
   localeSwitcher,
 }: DeckClientProps) {
@@ -384,6 +389,18 @@ export function DeckClient({
                 phase={slide.phase}
                 bullets={slide.bullets}
                 active={index === i}
+              />
+            ) : i === 10 || slide.id === "contact" ? (
+              <DeckSlideContact
+                locale={locale}
+                tagline={slide.tagline}
+                title={slide.title}
+                phase={slide.phase}
+                bullets={slide.bullets}
+                active={index === i}
+                ctaLabel={contactCta}
+                ctaHref={contactCtaHref}
+                skipLabel={introSkip}
               />
             ) : (
               <div className="mx-auto flex w-full max-w-2xl flex-col items-center">

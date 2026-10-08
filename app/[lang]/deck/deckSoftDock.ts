@@ -321,6 +321,29 @@ export const DECK_ASK_WAITS_S: readonly number[] = [
 ];
 
 /**
+ * Indices Contact — après le cinéma eclipse (noir→blanc→ciel).
+ * Soft-dock titres / beats / CTA sur le ciel (Soft Cap = dans la vision).
+ */
+export const DECK_CONTACT_STEP = {
+  eyebrow: 0,
+  hero: 1,
+  phase: 2,
+  beat0: 3,
+  beat1: 4,
+  cta: 5,
+} as const;
+
+export const DECK_CONTACT_LAST_STEP = DECK_CONTACT_STEP.cta;
+
+export const DECK_CONTACT_WAITS_S: readonly number[] = [
+  0.9, // eyebrow → hero
+  1.6, // hero → phase
+  1.8, // phase → beat0
+  1.6, // beat0 → beat1
+  1.8, // beat1 → CTA
+];
+
+/**
  * Reveal pas-à-pas : auto-tempo + clic pour avancer (le clic annule l’attente).
  * `step` = dernier beat visible (−1 = slide inactive).
  */

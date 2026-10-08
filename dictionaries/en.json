@@ -1159,6 +1159,7 @@
     "tractionPhaseBadge": "Phase 1",
     "tractionProductDesktop": "The seven-step Studio is operational.\nSoft Cap & Sanctuary are live.",
     "tractionPartnersDesktop": "Pilot programs are in preparation with the Athos group.\nDiscussions are under way.",
+    "contactCta": "Enter the Studio",
     "slides": [
       {
         "id": "open",
@@ -1280,13 +1281,12 @@
       },
       {
         "id": "contact",
-        "tagline": "Let’s open a Studio.",
-        "title": "Contact",
-        "phase": "Reply to our primary investor point of contact and we will run a live Soft Cap walkthrough.",
+        "tagline": "Join the Odyssey.",
+        "title": "The Studio is ready.",
+        "phase": "Write us.\nWe'll walk you through Soft Cap live.",
         "bullets": [
-          "Contact Erik and Jon.",
-          "We are ready for a live demo or Studio walkthrough on request.",
-          "Password link is available at /en/deck."
+          "Erik & Jon.",
+          "Studio walkthrough on request."
         ]
       }
     ]

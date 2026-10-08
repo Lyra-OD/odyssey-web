@@ -1132,6 +1132,7 @@
 | `pitchDeck.tractionPhaseBadge` | Phase 1 | Phase 1 |
 | `pitchDeck.tractionProductDesktop` | Le Studio fonctionne en sept étapes. Soft Cap & Sanctuaire sont actifs. | The seven-step Studio is operational. Soft Cap & Sanctuary are live. |
 | `pitchDeck.tractionPartnersDesktop` | Les pilotes se préparent avec le groupe Athos. Les discussions avancent. | Pilot programs are in preparation with the Athos group. Discussions are under way. |
+| `pitchDeck.contactCta` | Entrer dans le Studio | Enter the Studio |
 | `pitchDeck.slides[0].id` | open | open |
 | `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before a pitch. |
 | `pitchDeck.slides[0].title` | Odyssey | Odyssey |
@@ -1211,10 +1212,9 @@
 | `pitchDeck.slides[9].bullets[3]` | 90 jours : À 90 jours, un pilote qui ne convertit pas est arrêté. Le capital n'est pas brûlé à l'aveugle. | 90 days : At 90 days, a pilot that does not convert is stopped. Capital is not burned blind. |
 | `pitchDeck.slides[9].bullets[4]` | Limite : La Marketplace est notre Endgame. Hors de ce budget initial. | Boundary : The Marketplace is our Endgame. Outside this initial budget. |
 | `pitchDeck.slides[10].id` | contact | contact |
-| `pitchDeck.slides[10].tagline` | Ouvrons un Studio. | Let’s open a Studio. |
-| `pitchDeck.slides[10].title` | Contact | Contact |
-| `pitchDeck.slides[10].phase` | Répondez à notre point de contact investisseur principal pour organiser une démo live du Soft Cap. | Reply to our primary investor point of contact and we will run a live Soft Cap walkthrough. |
-| `pitchDeck.slides[10].bullets[0]` | Contactez Erik et Jon. | Contact Erik and Jon. |
-| `pitchDeck.slides[10].bullets[1]` | Nous sommes prêts pour une démonstration live du Studio sur demande. | We are ready for a live demo or Studio walkthrough on request. |
-| `pitchDeck.slides[10].bullets[2]` | Le lien protégé est accessible via /fr/deck. | Password link is available at /en/deck. |
+| `pitchDeck.slides[10].tagline` | Rejoignez l'Odyssée. | Join the Odyssey. |
+| `pitchDeck.slides[10].title` | Le Studio est prêt. | The Studio is ready. |
+| `pitchDeck.slides[10].phase` | Écrivez-nous. On vous explique le Soft Cap en direct. | Write us. We'll walk you through Soft Cap live. |
+| `pitchDeck.slides[10].bullets[0]` | Erik & Jon. | Erik & Jon. |
+| `pitchDeck.slides[10].bullets[1]` | Démo Studio sur demande. | Studio walkthrough on request. |
 

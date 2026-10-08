@@ -1,14 +1,14 @@
 # Odyssey — Investor deck web (ILP 11)
 
 **Type :** business / pitch · **Vérité pour :** copy + doctrine du deck capital (investisseurs, banques, mentors).  
-**Dernière MAJ :** 5 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
+**Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 : Contact — cinéma plein écran (noir→blanc) puis dissolve ciel + titres soft-dock.
 - 5 oct 2026 : Copy V2.3 slide 2 Need — diagnostic système (industrie / deuil / écosystème), plus USB-CapCut.
 - 5 oct 2026 : Copy V2.2 slide 9 Team — Option 1 punchy (tranchées / cicatrices / Erik·Jon / unfair advantage).
 - 5 oct 2026 : Copy V2.1 slides 5–11 (soundbites à l’écran, phase 5 sans doublon, consented leads, kill 90 j, Marketplace = Endgame hors budget T0). Pas de tiret long.
 - 5 oct 2026 : Copy V2 CEO + soundbites (CAC · Loi 25 · Amazon · générosité · kill 90 j).
-- 5 oct 2026 : Canon initial capital only · 11 slides EN/FR.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -55,7 +55,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **but** 8 honest traction  
 **therefore** 9 insider team  
 **therefore** 10 ask P1–2 + 90-day kill criteria  
-**therefore** 11 contact / live Soft Cap
+**therefore** 11 contact / Soft Cap walkthrough
 
 ---
 
@@ -315,22 +315,20 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 11 - Contact
 
 **EN**
-- Tagline: Let’s open a Studio.
-- Title: Contact
-- Phase: Reply to our primary investor point of contact and we will run a live Soft Cap walkthrough.
-- Bullets:
-  - Contact Erik and Jon.
-  - We are ready for a live demo or Studio walkthrough on request.
-  - Password link is available at `/en/deck`.
+- Tagline: Join the Odyssey.
+- Title: The Studio is ready.
+- Phase: Write us. / We'll walk you through Soft Cap live. (2 lines)
+- Bullets: Erik & Jon. · Studio walkthrough on request.
+- CTA: Enter the Studio → `/{lang}/studio` (not the deck URL).
+- Note: Visu A — prologue cinema → white → sky → soft-dock copy + CTA (Soft Cap only in vision line).
 
 **FR**
-- Tagline: Ouvrons un Studio.
-- Title: Contact
-- Phase: Répondez à notre point de contact investisseur principal pour organiser une démo live du Soft Cap.
-- Bullets:
-  - Contactez Erik et Jon.
-  - Nous sommes prêts pour une démonstration live du Studio sur demande.
-  - Le lien protégé est accessible via `/fr/deck`.
+- Tagline: Rejoignez l'Odyssée.
+- Title: Le Studio est prêt.
+- Phase: Écrivez-nous. / On vous explique le Soft Cap en direct. (2 lignes)
+- Bullets: Erik & Jon. · Démo Studio sur demande.
+- CTA: Entrer dans le Studio → `/{lang}/studio` (pas l'URL du deck).
+- Note : Visu A — cinéma → blanc → ciel → titres / CTA soft-dock (Soft Cap seulement dans la vision).
 
 ---
 

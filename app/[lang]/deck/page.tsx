@@ -6,6 +6,7 @@ import {
   getDeckAccessPassword,
   isDeckSessionUnlocked,
 } from "@/src/lib/deck/deckAccess";
+import { appRoutes } from "@/src/lib/appRoutes";
 
 import { DeckClient, type PitchDeckSlide } from "./DeckClient";
 import { DeckGate } from "./DeckGate";
@@ -91,6 +92,8 @@ export default async function DeckPage({ params }: PageProps) {
           productDesktop: t.tractionProductDesktop,
           partnersDesktop: t.tractionPartnersDesktop,
         }}
+        contactCta={t.contactCta}
+        contactCtaHref={appRoutes.studio(lang)}
         slides={slides}
         localeSwitcher={localeSwitcher}
       />

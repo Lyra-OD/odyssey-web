@@ -166,6 +166,7 @@ function PlayChronoDriver({
   washRef,
   tunnelRef,
   bloomThresholdRef,
+  duration = CRAFT_PLAY_DURATION,
   onEnded,
 }: {
   transportRef: MutableRefObject<PlayTransport>;
@@ -174,6 +175,8 @@ function PlayChronoDriver({
   washRef: MutableRefObject<number>;
   tunnelRef: MutableRefObject<number>;
   bloomThresholdRef: MutableRefObject<number>;
+  /** Fin de lecture (prologue = 9,5 s ; embed = hold pré-dolly). */
+  duration?: number;
   onEnded: () => void;
 }) {
   const pushRef = useRef(0);
@@ -233,10 +236,10 @@ function PlayChronoDriver({
     }
 
     if (tr.playing) {
-      tr.time = Math.min(tr.time + dt, CRAFT_PLAY_DURATION);
+      tr.time = Math.min(tr.time + dt, duration);
     }
 
-    const t = Math.max(0, Math.min(tr.time, CRAFT_PLAY_DURATION));
+    const t = Math.max(0, Math.min(tr.time, duration));
     const chrono = sampleCraftPlayChrono(t);
     const hard = seeked || !tr.playing;
     applyChronoToCraft(craft, chrono, dt, hard);
@@ -267,13 +270,23 @@ function PlayChronoDriver({
       gl.setClearColor("#000000", 1);
     }
 
-    if (tr.playing && t >= CRAFT_PLAY_DURATION - 1e-4) {
-      if (pushRef.current < 0.992 && chrono.tunnelMul < 0.5 && !seeked) return;
-      applyCamera(1, chrono.tunnelMul, true, dt, t);
-      washRef.current = chrono.wash;
-      tunnelRef.current = chrono.tunnelMul;
+    if (tr.playing && t >= duration - 1e-4) {
+      // Prologue : attendre fin dolly / tunnel. Embed : hold figé à duration.
+      if (
+        duration >= CRAFT_PLAY_DURATION - 1e-3 &&
+        pushRef.current < 0.992 &&
+        chrono.tunnelMul < 0.5 &&
+        !seeked
+      ) {
+        return;
+      }
+      if (duration >= CRAFT_PLAY_DURATION - 1e-3) {
+        applyCamera(1, chrono.tunnelMul, true, dt, t);
+        washRef.current = chrono.wash;
+        tunnelRef.current = chrono.tunnelMul;
+      }
       tr.playing = false;
-      tr.time = CRAFT_PLAY_DURATION;
+      tr.time = duration;
       onEnded();
     }
   });
@@ -366,15 +379,28 @@ function PrologueWebGLFallback({ onSkip }: { onSkip: () => void }) {
   return <div className="absolute inset-0 bg-black" aria-hidden />;
 }
 
+/**
+ * Embed deck Contact — même cinéma que le prologue, hold avant dolly
+ * (ODYSSEY + corona stables, pas de blanc B). Parent = plein viewport.
+ */
+export const ECLIPSE_EMBED_HOLD_S = 5.35;
+
 export type EclipseCraftPlayProps = {
   locale?: Locale;
   /**
    * `lab` = page craft (chrome + timeline).
    * `prologue` = intro plein écran autoplay (~9,5 s), sans UI lab.
+   * `embed` = finale deck : noir → naissance → hold (plein cadre, pas de badge).
    */
-  mode?: "lab" | "prologue";
-  /** Prologue : appelé à la fin (ou WebGL impossible). */
+  mode?: "lab" | "prologue" | "embed";
+  /** Prologue / embed : appelé à la fin (ou WebGL impossible). */
   onComplete?: () => void;
+  /**
+   * Embed : si false, pause + reset. Défaut true.
+   * Permet de ne lancer le craft que quand la slide est active.
+   */
+  active?: boolean;
+  className?: string;
 };
 
 /**
@@ -384,13 +410,18 @@ export function EclipseCraftPlay({
   locale = "fr",
   mode = "lab",
   onComplete,
+  active = true,
+  className = "",
 }: EclipseCraftPlayProps) {
   const isPrologue = mode === "prologue";
+  const isEmbed = mode === "embed";
+  const isAutoCinema = isPrologue || isEmbed;
+  const playDuration = isEmbed ? ECLIPSE_EMBED_HOLD_S : CRAFT_PLAY_DURATION;
   const tier = useVisualTier();
   const recipe = ECLIPSE_LOGO_RECIPE;
   const transportRef = useRef<PlayTransport>({
     time: 0,
-    playing: isPrologue,
+    playing: isAutoCinema && active,
     seekGen: 0,
   });
   const bloomIntensityRef = useRef(0.28);
@@ -402,13 +433,13 @@ export function EclipseCraftPlay({
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
   const completedRef = useRef(false);
-  const [playing, setPlaying] = useState(isPrologue);
+  const [playing, setPlaying] = useState(isAutoCinema && active);
 
-  const finishPrologue = useCallback(() => {
-    if (!isPrologue || completedRef.current) return;
+  const finishCinema = useCallback(() => {
+    if (!isAutoCinema || completedRef.current) return;
     completedRef.current = true;
     onCompleteRef.current?.();
-  }, [isPrologue]);
+  }, [isAutoCinema]);
 
   const craftRef = useRef<CraftBag>({
     step: 3,
@@ -454,6 +485,29 @@ export function EclipseCraftPlay({
       skyIntroRef.discScale = 1;
     };
   }, []);
+
+  useEffect(() => {
+    if (!isEmbed) return;
+    const tr = transportRef.current;
+    if (active) {
+      completedRef.current = false;
+      tr.time = 0;
+      tr.seekGen += 1;
+      tr.playing = true;
+      setPlaying(true);
+      applyChronoToCraft(
+        craftRef.current,
+        sampleCraftPlayChrono(0),
+        1 / 60,
+        true,
+      );
+    } else {
+      tr.playing = false;
+      tr.time = 0;
+      tr.seekGen += 1;
+      setPlaying(false);
+    }
+  }, [active, isEmbed]);
 
   // Sync DOM timeline sans setState (évite jank pendant le play)
   useEffect(() => {
@@ -532,7 +586,11 @@ export function EclipseCraftPlay({
     <ClientWebGLGate
       fallback={(message) =>
         isPrologue ? (
-          <PrologueWebGLFallback onSkip={finishPrologue} />
+          <PrologueWebGLFallback onSkip={finishCinema} />
+        ) : isEmbed ? (
+          <div className="flex h-full w-full items-center justify-center" aria-hidden>
+            <div className="h-[62%] w-[62%] rounded-full border border-white/35" />
+          </div>
         ) : (
           <div className="flex min-h-screen items-center justify-center px-6 text-center text-sm text-white/50">
             {message}
@@ -540,7 +598,11 @@ export function EclipseCraftPlay({
         )
       }
     >
-      <div className={isPrologue ? "absolute inset-0 z-0" : "fixed inset-0 z-0"}>
+      <div
+        className={
+          isPrologue || isEmbed ? "absolute inset-0 z-0" : "fixed inset-0 z-0"
+        }
+      >
         <Canvas
           className="h-full w-full"
           style={{ width: "100%", height: "100%" }}
@@ -571,9 +633,10 @@ export function EclipseCraftPlay({
                 washRef={washRef}
                 tunnelRef={tunnelRef}
                 bloomThresholdRef={bloomThresholdRef}
+                duration={playDuration}
                 onEnded={() => {
                   setPlaying(false);
-                  finishPrologue();
+                  finishCinema();
                 }}
               />
               <color attach="background" args={["#000000"]} />
@@ -596,6 +659,18 @@ export function EclipseCraftPlay({
       <div className="absolute inset-0 overflow-hidden bg-black">
         {scene}
         <WhiteWashOverlay washRef={washRef} />
+      </div>
+    );
+  }
+
+  if (isEmbed) {
+    return (
+      <div
+        className={`relative overflow-hidden bg-black ${className}`}
+        role="img"
+        aria-label="Odyssey"
+      >
+        {scene}
       </div>
     );
   }

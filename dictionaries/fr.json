@@ -1159,6 +1159,7 @@
     "tractionPhaseBadge": "Phase 1",
     "tractionProductDesktop": "Le Studio fonctionne en sept étapes.\nSoft Cap & Sanctuaire sont actifs.",
     "tractionPartnersDesktop": "Les pilotes se préparent avec le groupe Athos.\nLes discussions avancent.",
+    "contactCta": "Entrer dans le Studio",
     "slides": [
       {
         "id": "open",
@@ -1280,13 +1281,12 @@
       },
       {
         "id": "contact",
-        "tagline": "Ouvrons un Studio.",
-        "title": "Contact",
-        "phase": "Répondez à notre point de contact investisseur principal pour organiser une démo live du Soft Cap.",
+        "tagline": "Rejoignez l'Odyssée.",
+        "title": "Le Studio est prêt.",
+        "phase": "Écrivez-nous.\nOn vous explique le Soft Cap en direct.",
         "bullets": [
-          "Contactez Erik et Jon.",
-          "Nous sommes prêts pour une démonstration live du Studio sur demande.",
-          "Le lien protégé est accessible via /fr/deck."
+          "Erik & Jon.",
+          "Démo Studio sur demande."
         ]
       }
     ]
