@@ -4,11 +4,11 @@
 **Dernière MAJ :** 7 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 7 oct 2026 : Phases — vision en 3 lignes (Coffre / Lyra / plateforme).
-- 7 oct 2026 : Phases — corridor élargi + décalé à droite.
-- 7 oct 2026 : Phases — Soft Cap clair + RevShare 30 % ; teal tokens ; P2 graphe/Loi 25.
-- 7 oct 2026 : Phases — corridor 01—02—03 + soft-dock (épine canal).
-- 7 oct 2026 : Competition — titres ADN + beats soft-dock (schéma Troie ensuite).
+- 8 oct 2026 : Model — forfaits en 3 colonnes (0 / 179 / 349).
+- 8 oct 2026 : Model — diptyque forfaits | yield 22→43 + soft-dock.
+- 8 oct 2026 : Deck — Coffre Souvenir + cercle/émotion collective (slides 3–7).
+- 8 oct 2026 : Model — mécanisme Soft Cap (cercle dedans) ; maths en beats.
+- 8 oct 2026 : Deck — teal tokens partagés sur tous les corps.
 | Doc | Sujet |
 |-----|--------|
 | [`INVESTOR_DECK_WEB_ILP11.md`](INVESTOR_DECK_WEB_ILP11.md) | **Canon copy** deck web 11 slides (ILP) — humain + business · EN/FR |

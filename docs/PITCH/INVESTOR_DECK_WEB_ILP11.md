@@ -37,7 +37,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **Soundbites à garder (oral + bullets clés) :**
 1. *We don’t buy families. We borrow the network that already holds them.*
 2. Phase 2 data = **consentement explicite séparé** (Loi 25). Upload ≠ opt-in marketing.
-3. *Amazon started with books. We start with the film and the Chest. Then we route the fragmented rest.*
+3. *Amazon started with books. We start with the film and the Chest. Then we route every funeral product, across every budget.*
 4. *The circle pays too. We monetize generosity (“flowers that don’t wilt”), not only one mourner’s card.*
 5. Ask = **kill criteria clairs à 90 jours** sur les pilotes.
 
@@ -118,7 +118,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
   - The funeral home: A dignified $0 gift. It goes live in seconds. This is the answer to the analog industry.
   - Home: A guided path for families. Fragmented tasks disappear.
   - The platform: The infrastructure of memory. It links funeral homes, families, and services over time.
-  - The economics: The funeral home offers the start at $0. When the tribute becomes precious, the family chooses to keep it. The funeral home earns a commission on that choice.
+  - The economics: The funeral home offers the Souvenir Memory Chest at $0. The circle invests. When the tribute becomes precious, the family chooses to keep it. The funeral home earns a commission.
 - Note: Soft Cap / B2B2C / RevShare naming lives on the freemium / business slides — not here.
 
 **FR**
@@ -129,7 +129,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
   - Le salon : Un geste digne à 0 $. Il s'active en quelques secondes. C'est la réponse à l'industrie analogique.
   - La maison : Un parcours guidé pour les familles. Les tâches fragmentées disparaissent.
   - La plateforme : L'infrastructure de la mémoire. Elle connecte les salons, les familles et les services dans la durée.
-  - L'économie : Le salon offre le départ à 0 $. Quand l’hommage devient précieux, la famille choisit de le garder. Le salon gagne une commission sur ce choix.
+  - L'économie : Le salon offre le Coffre Souvenir à 0 $. Le cercle s’investit. Quand l’hommage devient précieux, la famille choisit de le garder. Le salon gagne une commission.
 - Note : Soft Cap / B2B2C / RevShare nommés plus loin (slides freemium / business) — pas ici.
 
 ---
@@ -139,22 +139,22 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Who we hold gently.
 - Title: Partners at the funeral home. Families at home.
-- Phase: Funeral networks are our distribution channel. The acquisition cost is near zero. / Families pay at the end. Odyssey is not a generic consumer video app.
+- Phase (3 lines): Funeral networks are our distribution channel. / The acquisition cost is near zero. / Families pay at the end. Odyssey is not a generic consumer video app.
 - Soundbite: **We don’t buy families. We borrow the network that already holds them.**
 - Bullets:
   - The partners: dignified gesture in 30 seconds; profit without selling on grief; editing takes too long; USB = a cost with no lasting value
   - The families: honor loved ones, lasting legacy, cinematic results without becoming video editors
-  - The behavior: purchases at the emotional peak — when the tribute becomes precious, the family chooses to keep it
+  - The behavior: Purchases trigger at the emotional peak. The circle has already fed the tribute. When it becomes precious, the family chooses to keep it.
 
 **FR**
 - Tagline: Ceux que nous accompagnons.
 - Title: Les partenaires en salon. Les familles à la maison.
-- Phase: Les réseaux funéraires sont notre canal de distribution. Le coût d'acquisition est quasi nul. / La famille paie à la fin. Odyssey n'est pas une simple application vidéo grand public.
+- Phase (3 lignes) : Les réseaux funéraires sont notre canal de distribution. / Le coût d'acquisition est quasi nul. / La famille paie à la fin. Odyssey n'est pas une simple application vidéo grand public.
 - Soundbite: **Nous n’achetons pas des familles. Nous empruntons le réseau qui les a déjà.**
 - Bullets:
   - Les salons : geste digne en 30 s ; profit sans vendre sur le deuil ; montage trop long ; USB = coût sans valeur
   - Les familles : honorer, héritage durable, cinéma sans devoir monter
-  - Le comportement : achat au pic émotionnel — quand l’hommage devient précieux, la famille choisit de le garder
+  - Le comportement : L'achat se déclenche au pic émotionnel. Le cercle a déjà nourri l’hommage. Quand il devient précieux, la famille choisit de le garder.
 
 ---
 
@@ -167,9 +167,9 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Bullets:
   - The model: We do not buy families on Facebook. We borrow the network that already holds them.
   - Acquisition: Partner activation completely eliminates family acquisition spend.
-  - Conversion: The paywall sits at the emotional peak. It is never at the door.
+  - Conversion: The paywall sits at the emotional peak, once the circle has already invested. It is never at the door.
   - Positioning: Our Quiet Luxury pricing avoids the race to the bottom.
-  - Economics: We share net revenue with our partners.
+  - Economics: We share 30% of net revenue with our partners.
 
 **FR**
 - Tagline: La distribution est le produit.
@@ -178,9 +178,9 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Bullets:
   - Le modèle : Nous n’achetons pas des familles sur Facebook. Nous empruntons le réseau qui les a déjà.
   - L'acquisition : L'activation en salon élimine totalement les dépenses d’acquisition.
-  - La conversion : Le paywall se trouve au pic émotionnel. Il n'est jamais à l’entrée.
+  - La conversion : Le paywall se trouve au pic émotionnel, quand le cercle s’est déjà investi. Il n'est jamais à l’entrée.
   - Le positionnement : Notre tarification Quiet Luxury évite la guerre des prix des éditeurs classiques.
-  - L'économie : Nous partageons les revenus nets avec nos partenaires.
+  - L'économie : Nous partageons 30 % des revenus nets avec nos partenaires.
 
 ---
 
@@ -189,22 +189,22 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Sequence beats slogans.
 - Title: Three phases. Wedge, retention, platform.
-- Phase (3 lines): We build the digital link for end-of-life. First the Memory Chest at the funeral home. / Then Lyra guides families through administration. / Then the platform routes that demand to services, with zero inventory.
+- Phase (3 lines): We build the digital link for end-of-life. First the Souvenir Memory Chest at the funeral home. / Then Lyra guides families through administration. / Then the platform routes that demand across the full funeral supply, with zero inventory.
 - Bullets:
-  - Phase 1 (Wedge): Studio through the funeral home. $0 Souvenir Memory Chest. Soft Cap = a free ceiling that triggers the upgrade. Partner RevShare: 30% of net.
-  - Phase 2 (Retention): Sanctuary MRR, consented leads and Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins.
-  - Phase 3 (Endgame): Amazon started with books. We start with the film and the memory chest. We then route the fragmented supply economy like urns and venues.
-- Note: Teal on Soft Cap / $0 / RevShare / 30% / MRR / Law 25 / Amazon. Marketplace stays Phase 3 Endgame — not Day-1 / not in current ask.
+  - Phase 1 (Wedge): Studio through the funeral home. $0 Souvenir Memory Chest. The circle invests with photos & contributions. Soft Cap = a free ceiling that triggers the upgrade. Partner RevShare: 30% of net.
+  - Phase 2 (Retention): Sanctuary MRR, consented leads & Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins.
+  - Phase 3 (Endgame): Amazon started with books. We start with the film & the Souvenir Memory Chest. We then route the fragmented supply economy: every funeral product, across every budget.
+- Note: Teal on Soft Cap / Coffre / circle / photos / RevShare / 30% / MRR / Law 25 / Amazon. Marketplace stays Phase 3 Endgame. Not Day-1 / not in current ask.
 
 **FR**
 - Tagline: La séquence bat les slogans.
 - Title: Trois phases. Wedge, rétention, plateforme.
-- Phase (3 lignes) : Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon. / Ensuite Lyra guide les familles dans l’administratif. / Puis la plateforme relie cette demande aux services, sans stock.
+- Phase (3 lignes) : Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre Souvenir en salon. / Ensuite Lyra guide les familles dans l’administratif. / Puis la plateforme relie cette demande à toute l’offre funéraire, sans stock.
 - Bullets:
-  - Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net.
-  - Phase 2 (Rétention) : Sanctuaire MRR, leads consentis et orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.
-  - Phase 3 (Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes.
-- Note : teal Soft Cap / 0 $ / RevShare / 30 % / MRR / Loi 25 / Amazon. Marketplace = Phase 3 Endgame — hors budget du tour actuel.
+  - Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le cercle s’investit avec photos & contributions. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net.
+  - Phase 2 (Rétention) : Sanctuaire MRR, leads consentis & orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.
+  - Phase 3 (Endgame) : Amazon a commencé par les livres. Nous commençons par le film & le Coffre Souvenir. Nous routons ensuite l’économie fragmentée : tous les produits funéraires, pour tous les budgets.
+- Note : teal Soft Cap / Coffre Souvenir / cercle / photos / RevShare / 30 % / MRR / Loi 25 / Amazon. Marketplace = Phase 3 Endgame. Hors budget du tour actuel.
 
 ---
 
@@ -212,23 +212,25 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 **EN**
 - Tagline: Math before magic.
-- Title: Freemium Soft Cap. Gift first, upgrade when it matters.
-- Phase: The funeral home gifts Souvenir at $0. Families hit a Soft Cap and choose Heritage or higher while partners earn RevShare on Net.
+- Title: The Soft Cap model: give first. Convert at the emotion.
+- Phase (mechanic, 4 lines): The funeral home offers the Souvenir Memory Chest at $0. / The family invites their circle: photos & contributions. / Everyone invests. At the Soft Cap, the emotion is collective. / The upgrade shares revenue with the partner.
 - Bullets:
-  - Packages: Souvenir is the $0 gifted Memory Chest. Heritage at $179 expands limits. Eternity at $349 provides the fuller cinematic suite.
-  - Economics: Platform fee is 10%. Partners get 30% of Net. Odyssey keeps the remainder minus COGS.
-  - Conservative yield: Roughly $22 per entering family at the Soft Cap baseline.
-  - The Viral Loop: The guest circle pays too. We monetize generosity instead of just the grieving person's credit card. This grows the yield to roughly $43.
+  - The tiers: Souvenir: free entry · $0. Heritage: expanded limits · $179. Eternity: full suite · $349.
+  - The economics: The platform takes a 10% fee. The partner earns 30% of net revenue. Odyssey keeps the remaining margin.
+  - The yield: The conservative Soft Cap baseline generates $22 per family.
+  - The viral loop: Guests contribute too. The immediate family no longer carries the financial burden alone. This lever drives the yield to $43.
+- Note: Viral/circle is inside the mechanic (emotion). Yield bullets are proof only. No em dashes. Visual A live: tiers left / yield 22→43 right.
 
 **FR**
 - Tagline: Les maths avant la magie.
-- Title: Freemium Soft Cap. Cadeau d’abord, upgrade quand ça compte.
-- Phase: Le salon offre Souvenir à 0 $. La famille touche le Soft Cap et choisit Héritage ou plus ce qui génère un RevShare sur le Net pour le partenaire.
+- Title: Le modèle Soft Cap : offrir d’abord. Convertir à l’émotion.
+- Phase (mécanisme, 4 lignes) : Le salon offre le Coffre Souvenir à 0 $. / La famille invite son cercle : photos & contributions. / Tout le monde s’investit. Au Soft Cap, l’émotion est collective. / L’upgrade partage les revenus avec le partenaire.
 - Bullets:
-  - Forfaits : Souvenir est le Coffre offert à 0 $. Héritage à 179 $ repousse les limites. Éternité à 349 $ débloque la suite cinématographique complète.
-  - Économie : Frais de plateforme de 10 % et 30 % du Net pour le partenaire. Odyssey conserve le reste après les coûts.
-  - Rendement conservateur : Environ 22 $ par famille entrante via le Soft Cap de base.
-  - La boucle virale : Le cercle des invités paie aussi. Nous monétisons la générosité au lieu de cibler uniquement la carte de crédit de la personne en deuil. Ce levier pousse le rendement à environ 43 $.
+  - Les forfaits : Souvenir : point d’entrée · 0 $. Héritage : limites élargies · 179 $. Éternité : suite complète · 349 $.
+  - L'économie : La plateforme prélève 10 %. Le partenaire gagne 30 % du revenu net. Odyssey conserve la marge restante.
+  - Le rendement : La base conservatrice du Soft Cap génère 22 $ par famille.
+  - La boucle virale : Les invités contribuent aussi. La famille proche ne porte plus seule le fardeau financier. Ce levier pousse le rendement à 43 $.
+- Note : cercle/photos/émotion collective = dans le mécanisme. Chiffres = preuve. Pas de tiret long. Visuel A live : forfaits gauche | yield 22→43 droite.
 
 ---
 

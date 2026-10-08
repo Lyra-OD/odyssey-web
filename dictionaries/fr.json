@@ -1182,18 +1182,18 @@
           "Le salon : Un geste digne à 0 $. Il s'active en quelques secondes. C'est la réponse à l'industrie analogique.",
           "La maison : Un parcours guidé pour les familles. Les tâches fragmentées disparaissent.",
           "La plateforme : L'infrastructure de la mémoire. Elle connecte les salons, les familles et les services dans la durée.",
-          "L'économie : Le salon offre le départ à 0 $. Quand l’hommage devient précieux, la famille choisit de le garder. Le salon gagne une commission sur ce choix."
+          "L'économie : Le salon offre le Coffre Souvenir à 0 $. Le cercle s’investit. Quand l’hommage devient précieux, la famille choisit de le garder. Le salon gagne une commission."
         ]
       },
       {
         "id": "ecosystem",
         "tagline": "Ceux que nous accompagnons.",
         "title": "Les partenaires en salon. Les familles à la maison.",
-        "phase": "Les réseaux funéraires sont notre canal de distribution. Le coût d'acquisition est quasi nul.\nLa famille paie à la fin. Odyssey n'est pas une simple application vidéo grand public.",
+        "phase": "Les réseaux funéraires sont notre canal de distribution.\nLe coût d'acquisition est quasi nul.\nLa famille paie à la fin. Odyssey n'est pas une simple application vidéo grand public.",
         "bullets": [
           "Les salons : Ils cherchent un geste digne activable en 30 secondes. Ils veulent générer du profit sans vendre sur le deuil. Le montage prend trop de temps. La clé USB est un coût sans valeur.",
           "Les familles : Elles veulent honorer leurs proches et garder un héritage durable. Elles exigent un résultat cinématographique sans devoir faire le montage.",
-          "Le comportement : L'achat se déclenche au pic émotionnel. Quand l’hommage devient précieux, la famille choisit de le garder."
+          "Le comportement : L'achat se déclenche au pic émotionnel. Le cercle a déjà nourri l’hommage. Quand il devient précieux, la famille choisit de le garder."
         ]
       },
       {
@@ -1204,32 +1204,32 @@
         "bullets": [
           "Le modèle : Nous n’achetons pas des familles sur Facebook. Nous empruntons le réseau qui les a déjà.",
           "L'acquisition : L'activation en salon élimine totalement les dépenses d’acquisition.",
-          "La conversion : Le paywall se trouve au pic émotionnel. Il n'est jamais à l’entrée.",
+          "La conversion : Le paywall se trouve au pic émotionnel, quand le cercle s’est déjà investi. Il n'est jamais à l’entrée.",
           "Le positionnement : Notre tarification Quiet Luxury évite la guerre des prix des éditeurs classiques.",
-          "L'économie : Nous partageons les revenus nets avec nos partenaires."
+          "L'économie : Nous partageons 30 % des revenus nets avec nos partenaires."
         ]
       },
       {
         "id": "phases",
         "tagline": "La séquence bat les slogans.",
         "title": "Trois phases. Wedge, rétention, plateforme.",
-        "phase": "Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre en salon.\nEnsuite Lyra guide les familles dans l’administratif.\nPuis la plateforme relie cette demande aux services, sans stock.",
+        "phase": "Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre Souvenir en salon.\nEnsuite Lyra guide les familles dans l’administratif.\nPuis la plateforme relie cette demande à toute l’offre funéraire, sans stock.",
         "bullets": [
-          "Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net.",
-          "Phase 2 (Rétention) : Sanctuaire MRR, leads consentis et orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.",
-          "Phase 3 (Endgame) : Amazon a commencé par les livres. Nous commençons par le film et le coffre. Nous routons ensuite l'économie fragmentée comme les salles et les urnes."
+          "Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le cercle s’investit avec photos & contributions. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net.",
+          "Phase 2 (Rétention) : Sanctuaire MRR, leads consentis & orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.",
+          "Phase 3 (Endgame) : Amazon a commencé par les livres. Nous commençons par le film & le Coffre Souvenir. Nous routons ensuite l’économie fragmentée : tous les produits funéraires, pour tous les budgets."
         ]
       },
       {
         "id": "model",
         "tagline": "Les maths avant la magie.",
-        "title": "Freemium Soft Cap. Cadeau d’abord, upgrade quand ça compte.",
-        "phase": "Le salon offre Souvenir à 0 $. La famille touche le Soft Cap et choisit Héritage ou plus ce qui génère un RevShare sur le Net pour le partenaire.",
+        "title": "Le modèle Soft Cap : offrir d’abord. Convertir à l’émotion.",
+        "phase": "Le salon offre le Coffre Souvenir à 0 $.\nLa famille invite son cercle : photos & contributions.\nTout le monde s’investit. Au Soft Cap, l’émotion est collective.\nL’upgrade partage les revenus avec le partenaire.",
         "bullets": [
-          "Forfaits : Souvenir est le Coffre offert à 0 $. Héritage à 179 $ repousse les limites. Éternité à 349 $ débloque la suite cinématographique complète.",
-          "Économie : Frais de plateforme de 10 % et 30 % du Net pour le partenaire. Odyssey conserve le reste après les coûts.",
-          "Rendement conservateur : Environ 22 $ par famille entrante via le Soft Cap de base.",
-          "La boucle virale : Le cercle des invités paie aussi. Nous monétisons la générosité au lieu de cibler uniquement la carte de crédit de la personne en deuil. Ce levier pousse le rendement à environ 43 $."
+          "Les forfaits : Souvenir : point d’entrée · 0 $. Héritage : limites élargies · 179 $. Éternité : suite complète · 349 $.",
+          "L'économie : La plateforme prélève 10 %. Le partenaire gagne 30 % du revenu net. Odyssey conserve la marge restante.",
+          "Le rendement : La base conservatrice du Soft Cap génère 22 $ par famille.",
+          "La boucle virale : Les invités contribuent aussi. La famille proche ne porte plus seule le fardeau financier. Ce levier pousse le rendement à 43 $."
         ]
       },
       {
@@ -1238,7 +1238,7 @@
         "title": "Produit live. Chemin partenaires en cours.",
         "phase": "Nous livrons un vrai Studio Phase 1 et avançons avec de grands réseaux québécois. Nous basons notre discours sur des preuves concrètes.",
         "bullets": [
-          "Produit : Le Studio en 7 étapes, le Soft Cap et la boucle du Sanctuaire sont fonctionnels.",
+          "Produit : Le Studio en 7 étapes, le Soft Cap & la boucle du Sanctuaire sont fonctionnels.",
           "Partenaires : Les discussions et la préparation de pilotes avancent avec des acteurs comme Athos et Urgel Bourgie.",
           "Validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion de nos pilotes."
         ]

@@ -7,14 +7,18 @@ import { OdysseyLuminousText } from "@/src/components/marketing/OdysseyLuminousT
 import { editorialFont } from "@/src/lib/fonts";
 
 import {
+  DECK_BODY_CLASS,
   DECK_COMPETITION_LAST_STEP,
   DECK_COMPETITION_STEP,
   DECK_COMPETITION_WAITS_S,
   DECK_EYEBROW_CLASS,
-  DECK_PHASE_CLASS,
+  DECK_LABEL_CLASS,
+  DECK_TITLE_CLASS,
+  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideCompetitionProps = {
   tagline: string;
@@ -108,14 +112,14 @@ export function DeckSlideCompetition({
         </motion.p>
 
         <motion.h2
-          className={`${editorialFont.className} relative z-10 mt-6 text-center text-[clamp(1.4rem,3.4vw,2.85rem)] font-medium leading-[1.12] tracking-[0.01em] text-white md:mt-8`}
+          className={`${editorialFont.className} ${DECK_TITLE_CLASS}`}
           {...dockHero()}
         >
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
         <motion.p
-          className={`${editorialFont.className} ${DECK_PHASE_CLASS} relative z-10 mt-8 w-full max-w-[72rem] text-[clamp(1.3rem,2.55vw,1.75rem)] font-medium leading-[1.32] tracking-[0.01em] md:mt-10`}
+          className={`${editorialFont.className} ${DECK_VISION_CLASS}`}
           style={{ WebkitFontSmoothing: "antialiased" }}
           {...dockPhase()}
         >
@@ -134,14 +138,10 @@ export function DeckSlideCompetition({
               {...dock()}
             >
               {item.label ? (
-                <p className="font-label text-[clamp(0.85rem,1.2vw,1.05rem)] font-semibold uppercase tracking-[0.26em] text-[var(--salon-cyan)]">
-                  {item.label}
-                </p>
+                <p className={DECK_LABEL_CLASS}>{item.label}</p>
               ) : null}
-              <p
-                className={`${editorialFont.className} mt-2.5 text-[clamp(1.22rem,1.7vw,1.5rem)] font-light leading-snug text-zinc-300`}
-              >
-                {item.body}
+              <p className={`${DECK_BODY_CLASS} mt-2.5`}>
+                {highlightDeckTeal(item.body)}
               </p>
             </motion.div>
           );

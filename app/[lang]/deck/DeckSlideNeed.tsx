@@ -7,15 +7,20 @@ import { OdysseyLuminousText } from "@/src/components/marketing/OdysseyLuminousT
 import { editorialFont } from "@/src/lib/fonts";
 
 import {
+  DECK_BODY_CLASS,
+  DECK_BODY_EMPHASIS_CLASS,
   DECK_EYEBROW_CLASS,
   DECK_FILM_EASE,
+  DECK_LABEL_CLASS,
   DECK_NEED_LAST_STEP,
   DECK_NEED_STEP,
   DECK_NEED_WAITS_S,
-  DECK_PHASE_CLASS,
+  DECK_TITLE_CLASS,
+  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideNeedProps = {
   tagline: string;
@@ -486,14 +491,14 @@ export function DeckSlideNeed({
         </motion.p>
 
         <motion.h2
-          className={`${editorialFont.className} relative z-10 mt-6 text-center text-[clamp(1.2rem,2.9vw,2.45rem)] font-medium leading-[1.15] tracking-[0.01em] text-white md:mt-8`}
+          className={`${editorialFont.className} ${DECK_TITLE_CLASS}`}
           {...dockHero()}
         >
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
         <motion.p
-          className={`${editorialFont.className} ${DECK_PHASE_CLASS} relative z-10 mt-8 w-full max-w-[68rem] text-[clamp(1.2rem,2.4vw,1.55rem)] font-medium leading-[1.35] tracking-[0.01em] md:mt-10`}
+          className={`${editorialFont.className} ${DECK_VISION_CLASS}`}
           style={{ WebkitFontSmoothing: "antialiased" }}
           {...dockPhase()}
         >
@@ -520,14 +525,12 @@ export function DeckSlideNeed({
               />
             ) : null}
             {item.label ? (
-              <p className="font-label text-[0.68rem] font-medium uppercase tracking-[0.3em] text-[rgba(0,232,240,0.7)]">
+              <p className={`${DECK_LABEL_CLASS} text-[rgba(0,232,240,0.7)]`}>
                 {item.label}
               </p>
             ) : null}
-            <p
-              className={`${editorialFont.className} mt-2 text-[1.05rem] font-light leading-snug text-zinc-400`}
-            >
-              {item.body}
+            <p className={`${DECK_BODY_CLASS} mt-2 text-zinc-400`}>
+              {highlightDeckTeal(item.body)}
             </p>
           </motion.div>
         ))}
@@ -538,15 +541,15 @@ export function DeckSlideNeed({
               className="absolute left-0 top-3.5 h-2 w-2 rounded-full bg-[var(--salon-cyan)]"
             />
             {bridge.label ? (
-              <p className="font-label text-[0.68rem] font-medium uppercase tracking-[0.3em] text-[var(--salon-cyan)]">
+              <p className={DECK_LABEL_CLASS}>
                 {bridge.label}
               </p>
             ) : null}
             <p
-              className={`${editorialFont.className} mt-2 text-[1.1rem] font-medium leading-snug text-white`}
+              className={`${DECK_BODY_EMPHASIS_CLASS} mt-2 text-white`}
               style={{ textShadow: "none", filter: "none" }}
             >
-              {bridge.body}
+              {highlightDeckTeal(bridge.body)}
             </p>
           </motion.div>
         ) : null}
@@ -735,17 +738,17 @@ export function DeckSlideNeed({
                       ? ecosystemeTitleRef
                       : undefined
                 }
-                className="font-label shrink-0 whitespace-nowrap text-[clamp(0.8rem,1.1vw,0.98rem)] font-semibold uppercase tracking-[0.28em] text-[var(--salon-cyan)]"
+                className={`${DECK_LABEL_CLASS} shrink-0 whitespace-nowrap`}
                 {...dock()}
               >
                 {item.label}
               </motion.p>
               {isDeuil && item.body ? (
                 <motion.p
-                  className={`${editorialFont.className} min-w-0 text-[clamp(0.95rem,1.15vw,1.12rem)] font-light leading-snug text-zinc-400`}
+                  className={`${DECK_BODY_CLASS} min-w-0 text-zinc-400`}
                   {...dock()}
                 >
-                  {item.body}
+                  {highlightDeckTeal(item.body)}
                 </motion.p>
               ) : null}
             </div>
@@ -763,7 +766,7 @@ export function DeckSlideNeed({
           >
             <motion.p
               ref={pontTitleRef}
-              className="font-label whitespace-nowrap text-[clamp(0.85rem,1.15vw,1.05rem)] font-semibold uppercase tracking-[0.28em] text-[var(--salon-cyan)]"
+              className={`${DECK_LABEL_CLASS} whitespace-nowrap`}
               {...dockBridge()}
             >
               {bridge.label}
@@ -774,7 +777,7 @@ export function DeckSlideNeed({
         {/* Corps Industrie : élargi, bord gauche = bord gauche du titre (titre inchangé). */}
         {stations[0]?.body && industrieBodyBox ? (
           <motion.p
-            className={`${editorialFont.className} absolute z-10 text-[clamp(0.95rem,1.15vw,1.12rem)] font-light leading-snug text-zinc-400`}
+            className={`${DECK_BODY_CLASS} absolute z-10 text-zinc-400`}
             style={{
               left: industrieBodyBox.left,
               top: industrieBodyBox.top,
@@ -782,14 +785,14 @@ export function DeckSlideNeed({
             }}
             {...dockNode0(0.05)}
           >
-            {stations[0].body}
+            {highlightDeckTeal(stations[0].body)}
           </motion.p>
         ) : null}
 
         {/* Corps Écosystème : sous le titre, aligné au titre (titre inchangé). */}
         {stations[2]?.body && ecosystemeBodyBox ? (
           <motion.p
-            className={`${editorialFont.className} absolute z-10 text-[clamp(0.95rem,1.15vw,1.12rem)] font-light leading-snug text-zinc-400`}
+            className={`${DECK_BODY_CLASS} absolute z-10 text-zinc-400`}
             style={{
               left: ecosystemeBodyBox.left,
               top: ecosystemeBodyBox.top,
@@ -797,14 +800,14 @@ export function DeckSlideNeed({
             }}
             {...dockNode2(0.05)}
           >
-            {stations[2].body}
+            {highlightDeckTeal(stations[2].body)}
           </motion.p>
         ) : null}
 
         {/* Corps Pont : sous le titre, largeur = titre, aligné (titre inchangé). */}
         {bridge?.body && pontBodyBox ? (
           <motion.p
-            className={`${editorialFont.className} absolute z-10 text-[clamp(1rem,1.2vw,1.15rem)] font-medium leading-snug text-white`}
+            className={`${DECK_BODY_EMPHASIS_CLASS} absolute z-10 text-white`}
             style={{
               left: pontBodyBox.left,
               top: pontBodyBox.top,
@@ -814,7 +817,7 @@ export function DeckSlideNeed({
             }}
             {...dockBridge(0.05)}
           >
-            {bridge.body}
+            {highlightDeckTeal(bridge.body)}
           </motion.p>
         ) : null}
       </div>

@@ -7,15 +7,20 @@ import { OdysseyLuminousText } from "@/src/components/marketing/OdysseyLuminousT
 import { editorialFont } from "@/src/lib/fonts";
 
 import {
+  DECK_BODY_CLASS,
+  DECK_BODY_EMPHASIS_CLASS,
   DECK_EYEBROW_CLASS,
   DECK_FILM_EASE,
-  DECK_PHASE_CLASS,
+  DECK_LABEL_CLASS,
   DECK_SOLUTION_LAST_STEP,
   DECK_SOLUTION_STEP,
   DECK_SOLUTION_WAITS_S,
+  DECK_TITLE_CLASS,
+  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideSolutionProps = {
   tagline: string;
@@ -324,20 +329,20 @@ export function DeckSlideSolution({
         canAdvance ? "cursor-pointer" : ""
       }`}
     >
-      <div className="relative z-10 mx-auto flex w-full max-w-[90rem] -translate-y-[70%] flex-col items-center text-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-[90rem] -translate-y-[58%] flex-col items-center text-center">
         <motion.p className={DECK_EYEBROW_CLASS} {...dockEyebrow()}>
           {tagline}
         </motion.p>
 
         <motion.h2
-          className={`${editorialFont.className} relative z-10 mt-6 text-center text-[clamp(1.2rem,2.9vw,2.45rem)] font-medium leading-[1.15] tracking-[0.01em] text-white md:mt-8`}
+          className={`${editorialFont.className} ${DECK_TITLE_CLASS}`}
           {...dockHero()}
         >
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
         <motion.p
-          className={`${editorialFont.className} ${DECK_PHASE_CLASS} relative z-10 mt-8 w-full max-w-[68rem] whitespace-pre-line text-[clamp(1.15rem,2.2vw,1.45rem)] font-medium leading-[1.35] tracking-[0.01em] md:mt-10`}
+          className={`${editorialFont.className} ${DECK_VISION_CLASS} whitespace-pre-line`}
           style={{ WebkitFontSmoothing: "antialiased" }}
           {...dockPhase()}
         >
@@ -359,15 +364,15 @@ export function DeckSlideSolution({
                 className="absolute left-0 top-1.5 h-1.5 w-1.5 rounded-full bg-[var(--salon-cyan)]"
               />
               {item.label ? (
-                <p className="font-label text-[0.68rem] font-medium uppercase tracking-[0.3em] text-[rgba(0,232,240,0.7)]">
+                <p className={`${DECK_LABEL_CLASS} text-[rgba(0,232,240,0.7)]`}>
                   {item.label}
                 </p>
               ) : null}
               {SHOW_SCHEMA_BODIES ? (
                 <p
-                  className={`${editorialFont.className} mt-2 text-[1.05rem] font-light leading-snug text-zinc-400`}
+                  className={`${DECK_BODY_CLASS} mt-2 text-zinc-400`}
                 >
-                  {item.body}
+                  {highlightDeckTeal(item.body)}
                 </p>
               ) : null}
             </motion.div>
@@ -375,14 +380,14 @@ export function DeckSlideSolution({
           {SHOW_SCHEMA_BODIES && coda ? (
             <motion.div className="relative pl-7 pt-2" {...dockCoda()}>
               {coda.label ? (
-                <p className="font-label text-[0.68rem] font-medium uppercase tracking-[0.3em] text-[var(--salon-cyan)]">
+                <p className={DECK_LABEL_CLASS}>
                   {coda.label}
                 </p>
               ) : null}
               <p
-                className={`${editorialFont.className} mt-2 text-[1.05rem] font-medium leading-snug text-white`}
+                className={`${DECK_BODY_EMPHASIS_CLASS} mt-2 text-white`}
               >
-                {coda.body}
+                {highlightDeckTeal(coda.body)}
               </p>
             </motion.div>
           ) : null}
@@ -526,7 +531,7 @@ export function DeckSlideSolution({
                           ? maisonTitleRef
                           : undefined
                     }
-                    className="font-label whitespace-nowrap text-[clamp(0.8rem,1.1vw,0.98rem)] font-semibold uppercase tracking-[0.28em] text-[var(--salon-cyan)]"
+                    className={`${DECK_LABEL_CLASS} whitespace-nowrap`}
                     {...dock()}
                   >
                     {item.label}
@@ -562,10 +567,10 @@ export function DeckSlideSolution({
                   }}
                 >
                   <motion.p
-                    className={`${editorialFont.className} text-[clamp(0.95rem,1.15vw,1.12rem)] font-light leading-snug text-zinc-400`}
+                    className={`${DECK_BODY_CLASS} text-zinc-400`}
                     {...dock(0.05)}
                   >
-                    {item.body}
+                    {highlightDeckTeal(item.body)}
                   </motion.p>
                 </div>
               );
@@ -582,7 +587,7 @@ export function DeckSlideSolution({
             }}
           >
             <motion.p
-              className="font-label whitespace-nowrap text-[clamp(1.05rem,1.55vw,1.35rem)] font-semibold uppercase tracking-[0.36em] text-white"
+              className={`${DECK_LABEL_CLASS} whitespace-nowrap tracking-[0.36em] text-white`}
               {...dockFocus()}
             >
               <OdysseyLuminousText variant="deck">Odyssey</OdysseyLuminousText>
@@ -604,14 +609,14 @@ export function DeckSlideSolution({
           >
             <motion.div {...dockCoda()}>
               {coda.label ? (
-                <p className="font-label whitespace-nowrap text-[clamp(0.8rem,1.1vw,0.98rem)] font-semibold uppercase tracking-[0.28em] text-[var(--salon-cyan)]">
+                <p className={`${DECK_LABEL_CLASS} whitespace-nowrap`}>
                   {coda.label}
                 </p>
               ) : null}
               <p
-                className={`${editorialFont.className} mt-1.5 text-[clamp(0.95rem,1.15vw,1.12rem)] font-medium leading-snug text-white/85`}
+                className={`${DECK_BODY_EMPHASIS_CLASS} mt-1.5`}
               >
-                {coda.body}
+                {highlightDeckTeal(coda.body)}
               </p>
             </motion.div>
           </div>

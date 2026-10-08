@@ -7,15 +7,20 @@ import { OdysseyLuminousText } from "@/src/components/marketing/OdysseyLuminousT
 import { editorialFont } from "@/src/lib/fonts";
 
 import {
+  DECK_BODY_CLASS,
+  DECK_BODY_EMPHASIS_CLASS,
   DECK_ECOSYSTEM_LAST_STEP,
   DECK_ECOSYSTEM_STEP,
   DECK_ECOSYSTEM_WAITS_S,
   DECK_EYEBROW_CLASS,
   DECK_FILM_EASE,
-  DECK_PHASE_CLASS,
+  DECK_LABEL_CLASS,
+  DECK_TITLE_CLASS,
+  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideEcosystemProps = {
   tagline: string;
@@ -334,20 +339,20 @@ export function DeckSlideEcosystem({
         canAdvance ? "cursor-pointer" : ""
       }`}
     >
-      <div className="relative z-10 mx-auto flex w-full max-w-[90rem] -translate-y-[70%] flex-col items-center text-center">
+      <div className="relative z-10 mx-auto flex w-full max-w-[90rem] -translate-y-[58%] flex-col items-center text-center">
         <motion.p className={DECK_EYEBROW_CLASS} {...dockEyebrow()}>
           {tagline}
         </motion.p>
 
         <motion.h2
-          className={`${editorialFont.className} relative z-10 mt-6 text-center text-[clamp(1.2rem,2.9vw,2.45rem)] font-medium leading-[1.15] tracking-[0.01em] text-white md:mt-8`}
+          className={`${editorialFont.className} ${DECK_TITLE_CLASS}`}
           {...dockHero()}
         >
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
         <motion.p
-          className={`${editorialFont.className} ${DECK_PHASE_CLASS} relative z-10 mt-8 w-full max-w-[68rem] whitespace-pre-line text-[clamp(1.15rem,2.2vw,1.45rem)] font-medium leading-[1.35] tracking-[0.01em] md:mt-10`}
+          className={`${editorialFont.className} ${DECK_VISION_CLASS} whitespace-pre-line`}
           style={{ WebkitFontSmoothing: "antialiased" }}
           {...dockPhase()}
         >
@@ -361,17 +366,17 @@ export function DeckSlideEcosystem({
             <div key={`m-${item.label}`} className="relative pl-7">
               <motion.div {...(dockPoles[i] ?? dockPole1)()}>
                 {item.label ? (
-                  <p className="font-label text-[0.68rem] font-medium uppercase tracking-[0.3em] text-[var(--salon-cyan)]">
+                  <p className={DECK_LABEL_CLASS}>
                     {item.label}
                   </p>
                 ) : null}
               </motion.div>
               {SHOW_SCHEMA_BODIES ? (
                 <motion.p
-                  className={`${editorialFont.className} mt-2 text-[1.15rem] font-light leading-snug text-zinc-300`}
+                  className={`${DECK_BODY_CLASS} mt-2`}
                   {...(dockBodies[i] ?? dockBody1)()}
                 >
-                  {item.body}
+                  {highlightDeckTeal(item.body)}
                 </motion.p>
               ) : null}
             </div>
@@ -379,14 +384,14 @@ export function DeckSlideEcosystem({
           {SHOW_SCHEMA_BODIES && behavior ? (
             <motion.div className="relative pl-7 pt-2" {...dockSpark()}>
               {behavior.label ? (
-                <p className="font-label text-[0.68rem] font-medium uppercase tracking-[0.3em] text-[var(--salon-cyan)]">
+                <p className={DECK_LABEL_CLASS}>
                   {behavior.label}
                 </p>
               ) : null}
               <p
-                className={`${editorialFont.className} mt-2 text-[1.15rem] font-medium leading-snug text-white/90`}
+                className={`${DECK_BODY_EMPHASIS_CLASS} mt-2`}
               >
-                {behavior.body}
+                {highlightDeckTeal(behavior.body)}
               </p>
             </motion.div>
           ) : null}
@@ -490,7 +495,7 @@ export function DeckSlideEcosystem({
                   }}
                 >
                   <motion.p
-                    className="font-label whitespace-nowrap text-center text-[clamp(0.78rem,1.05vw,0.95rem)] font-semibold uppercase tracking-[0.22em] text-[var(--salon-cyan)]"
+                    className={`${DECK_LABEL_CLASS} whitespace-nowrap text-center tracking-[0.22em]`}
                     {...dock()}
                   >
                     {item.label}
@@ -522,10 +527,10 @@ export function DeckSlideEcosystem({
                   }}
                 >
                   <motion.p
-                    className={`${editorialFont.className} text-left text-[clamp(1.05rem,1.35vw,1.22rem)] font-light leading-snug text-zinc-300`}
+                    className={`${DECK_BODY_CLASS} text-left`}
                     {...dock()}
                   >
-                    {item.body}
+                    {highlightDeckTeal(item.body)}
                   </motion.p>
                 </div>
               );
@@ -545,14 +550,14 @@ export function DeckSlideEcosystem({
           >
             <motion.div {...dockSpark()}>
               {behavior.label ? (
-                <p className="font-label whitespace-nowrap text-[clamp(0.78rem,1.05vw,0.95rem)] font-semibold uppercase tracking-[0.22em] text-[var(--salon-cyan)]">
+                <p className={`${DECK_LABEL_CLASS} whitespace-nowrap tracking-[0.22em]`}>
                   {behavior.label}
                 </p>
               ) : null}
               <p
-                className={`${editorialFont.className} mt-2 text-[clamp(1.05rem,1.35vw,1.22rem)] font-medium leading-snug text-white/90`}
+                className={`${DECK_BODY_EMPHASIS_CLASS} mt-2`}
               >
-                {behavior.body}
+                {highlightDeckTeal(behavior.body)}
               </p>
             </motion.div>
           </div>

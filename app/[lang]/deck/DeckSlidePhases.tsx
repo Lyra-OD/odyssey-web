@@ -1,26 +1,24 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { OdysseyLuminousText } from "@/src/components/marketing/OdysseyLuminousText";
 import { editorialFont } from "@/src/lib/fonts";
 
 import {
+  DECK_BODY_CLASS,
   DECK_EYEBROW_CLASS,
-  DECK_PHASE_CLASS,
+  DECK_LABEL_CLASS,
   DECK_PHASES_LAST_STEP,
   DECK_PHASES_STEP,
   DECK_PHASES_WAITS_S,
+  DECK_TITLE_CLASS,
+  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlidePhasesProps = {
   tagline: string;
@@ -35,47 +33,6 @@ type Station = {
   label: string;
   body: string;
 };
-
-/** Tokens investisseur — teal, pas de phrase entière. */
-const DECK_PHASES_TEAL_TOKENS = [
-  "graphe de données",
-  "data graph",
-  "Soft Cap",
-  "RevShare",
-  "Loi 25",
-  "Law 25",
-  "Amazon",
-  "MRR",
-  "30 %",
-  "30%",
-  "0 $",
-  "$0",
-] as const;
-
-const DECK_PHASES_TEAL_RE = new RegExp(
-  `(${[...DECK_PHASES_TEAL_TOKENS]
-    .sort((a, b) => b.length - a.length)
-    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-    .join("|")})`,
-  "g",
-);
-
-function highlightPhaseTokens(text: string): ReactNode {
-  const parts = text.split(DECK_PHASES_TEAL_RE);
-  if (parts.length === 1) return text;
-  return parts.map((part, i) => {
-    if (
-      (DECK_PHASES_TEAL_TOKENS as readonly string[]).includes(part)
-    ) {
-      return (
-        <span key={`tok-${i}`} className="font-medium text-[var(--salon-cyan)]">
-          {part}
-        </span>
-      );
-    }
-    return <span key={`txt-${i}`}>{part}</span>;
-  });
-}
 
 function splitPhaseStation(raw: string, index: number): Station {
   const idx = raw.search(/\s*[:：]\s*/);
@@ -211,14 +168,14 @@ export function DeckSlidePhases({
         </motion.p>
 
         <motion.h2
-          className={`${editorialFont.className} relative z-10 mt-6 text-center text-[clamp(1.4rem,3.4vw,2.85rem)] font-medium leading-[1.12] tracking-[0.01em] text-white md:mt-8`}
+          className={`${editorialFont.className} ${DECK_TITLE_CLASS}`}
           {...dockHero()}
         >
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
         <motion.p
-          className={`${editorialFont.className} ${DECK_PHASE_CLASS} relative z-10 mt-8 w-full max-w-[72rem] whitespace-pre-line text-[clamp(1.2rem,2.35vw,1.65rem)] font-medium leading-[1.35] tracking-[0.01em] md:mt-10`}
+          className={`${editorialFont.className} ${DECK_VISION_CLASS} whitespace-pre-line`}
           style={{ WebkitFontSmoothing: "antialiased" }}
           {...dockPhase()}
         >
@@ -280,14 +237,12 @@ export function DeckSlidePhases({
                   </span>
                 </div>
 
-                <p className="font-label mt-5 text-[clamp(0.85rem,1.15vw,1.02rem)] font-semibold uppercase tracking-[0.28em] text-[var(--salon-cyan)]">
+                <p className={`${DECK_LABEL_CLASS} mt-5`}>
                   {item.label}
                 </p>
 
-                <p
-                  className={`${editorialFont.className} mt-3 text-[clamp(1.08rem,1.45vw,1.32rem)] font-light leading-snug text-zinc-300`}
-                >
-                  {highlightPhaseTokens(item.body)}
+                <p className={`${DECK_BODY_CLASS} mt-3`}>
+                  {highlightDeckTeal(item.body)}
                 </p>
               </motion.div>
             );

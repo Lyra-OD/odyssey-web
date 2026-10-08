@@ -23,11 +23,18 @@ import {
 } from "./DeckEclipseIntro";
 import { DeckSlideCompetition } from "./DeckSlideCompetition";
 import { DeckSlideEcosystem } from "./DeckSlideEcosystem";
+import { DeckSlideModel } from "./DeckSlideModel";
 import { DeckSlideNeed } from "./DeckSlideNeed";
 import { DeckSlideOpen } from "./DeckSlideOpen";
 import { DeckSlidePhases } from "./DeckSlidePhases";
 import { DeckSlideSolution } from "./DeckSlideSolution";
-import { DECK_PHASE_CLASS } from "./deckSoftDock";
+import {
+  DECK_BODY_CLASS,
+  DECK_EYEBROW_CLASS,
+  DECK_TITLE_CLASS,
+  DECK_VISION_CLASS,
+} from "./deckSoftDock";
+import { highlightDeckTeal } from "./deckTealText";
 
 const SanctuaryUniverse = dynamic(
   () =>
@@ -314,33 +321,34 @@ export function DeckClient({
                 bullets={slide.bullets}
                 active={index === i}
               />
+            ) : i === 6 || slide.id === "model" ? (
+              <DeckSlideModel
+                tagline={slide.tagline}
+                title={slide.title}
+                phase={slide.phase}
+                bullets={slide.bullets}
+                active={index === i}
+              />
             ) : (
               <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
-                <p className="font-label text-center text-[0.7rem] uppercase tracking-[0.32em] text-white/40">
-                  {slide.tagline}
-                </p>
+                <p className={DECK_EYEBROW_CLASS}>{slide.tagline}</p>
 
                 {!isOdysseyTitle(slide.title, wordmark) ? (
-                  <h2
-                    className={`${editorialFont.className} mt-5 text-center text-[clamp(1.55rem,4.2vw,2.45rem)] font-medium tracking-[0.04em] text-white`}
-                  >
+                  <h2 className={`${editorialFont.className} ${DECK_TITLE_CLASS}`}>
                     <OdysseyLuminousText variant="deck">{slide.title}</OdysseyLuminousText>
                   </h2>
                 ) : null}
 
                 <p
-                  className={`${editorialFont.className} ${DECK_PHASE_CLASS} mt-6 max-w-xl text-center text-[clamp(1.05rem,2.8vw,1.4rem)] font-medium leading-snug tracking-[0.02em]`}
+                  className={`${editorialFont.className} ${DECK_VISION_CLASS} max-w-xl text-center`}
                 >
                   {slide.phase}
                 </p>
 
                 <ul className="mt-10 max-w-xl space-y-3 text-center">
                   {slide.bullets.map((bullet) => (
-                    <li
-                      key={bullet}
-                      className="font-label text-sm font-light leading-relaxed text-white/50 md:text-[0.95rem]"
-                    >
-                      {bullet}
+                    <li key={bullet} className={`${DECK_BODY_CLASS} text-white/50`}>
+                      {highlightDeckTeal(bullet)}
                     </li>
                   ))}
                 </ul>

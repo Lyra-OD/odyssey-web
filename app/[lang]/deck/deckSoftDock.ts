@@ -20,6 +20,29 @@ export const DECK_EYEBROW_CLASS =
 export const DECK_PHASE_CLASS =
   "text-[var(--salon-cyan)] [text-shadow:none] [filter:none]";
 
+/**
+ * Échelle typo deck (titre > vision > corps).
+ * Titre / vision : préfixer `editorialFont.className` (Playfair).
+ * Corps / labels : Inter via `font-label`.
+ */
+export const DECK_TITLE_CLASS =
+  "relative z-10 mt-6 text-center text-[clamp(1.5rem,3.6vw,3rem)] font-medium leading-[1.12] tracking-[0.01em] text-white md:mt-8";
+
+export const DECK_VISION_CLASS =
+  `relative z-10 mt-8 w-full max-w-[72rem] ${DECK_PHASE_CLASS} text-[clamp(1.35rem,2.7vw,1.85rem)] font-medium leading-[1.35] tracking-[0.01em] md:mt-10`;
+
+/** Corps lecture — Inter light. */
+export const DECK_BODY_CLASS =
+  "font-label text-[clamp(1.1rem,1.5vw,1.35rem)] font-light leading-snug text-zinc-300";
+
+/** Corps accent (foyer / emphasis) — même taille, medium. */
+export const DECK_BODY_EMPHASIS_CLASS =
+  "font-label text-[clamp(1.1rem,1.5vw,1.35rem)] font-medium leading-snug text-white/90";
+
+/** Labels uppercase (WEDGE, Le salon…) — Inter semibold. */
+export const DECK_LABEL_CLASS =
+  "font-label text-[clamp(0.95rem,1.35vw,1.18rem)] font-semibold uppercase tracking-[0.24em] text-[var(--salon-cyan)]";
+
 /** Courbe cinéma (ADN Manifesto / Quiet Luxury). */
 export const DECK_FILM_EASE: [number, number, number, number] = [
   0.16, 1, 0.3, 1,
@@ -201,6 +224,30 @@ export const DECK_PHASES_WAITS_S: readonly number[] = [
   1.8, // arc01 → station1
   1.1, // station1 → arc12
   1.8, // arc12 → station2
+];
+
+/** Indices Model — titres + diptyque forfaits | yield 22→43 */
+export const DECK_MODEL_STEP = {
+  eyebrow: 0,
+  hero: 1,
+  phase: 2,
+  tiers: 3,
+  economics: 4,
+  yield: 5,
+  arc: 6,
+  viral: 7,
+} as const;
+
+export const DECK_MODEL_LAST_STEP = DECK_MODEL_STEP.viral;
+
+export const DECK_MODEL_WAITS_S: readonly number[] = [
+  0.9, // eyebrow → hero
+  1.6, // hero → phase
+  3.2, // phase (mécanisme) → forfaits
+  2.2, // forfaits → économie
+  2.2, // économie → yield 22
+  1.2, // yield → arc
+  2.0, // arc → viral 43
 ];
 
 /**
