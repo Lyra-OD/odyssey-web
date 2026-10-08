@@ -1150,6 +1150,15 @@
     "progressOf": "{current} / {total}",
     "softCapTip": "Soft Cap : limite gratuite du Coffre Souvenir. À ce plafond, l'upgrade se propose, c'est là que le partenaire partage les revenus.",
     "softCapTipAria": "Définition Soft Cap",
+    "tractionFoyer": "Studio",
+    "tractionRingOuter": "Soft Cap",
+    "tractionRingInner": "Sanctuaire",
+    "tractionHub": "Athos",
+    "tractionArcFrom": "Modélisé",
+    "tractionArcTo": "Terrain",
+    "tractionPhaseBadge": "Phase 1",
+    "tractionProductDesktop": "Le Studio fonctionne en sept étapes. Soft Cap & Sanctuaire sont actifs.",
+    "tractionPartnersDesktop": "Les pilotes se préparent. Les discussions avancent avec Athos.",
     "slides": [
       {
         "id": "open",
@@ -1237,12 +1246,12 @@
       {
         "id": "traction",
         "tagline": "L’honnêteté bat le hype.",
-        "title": "Produit live. Chemin partenaires en cours.",
-        "phase": "Nous livrons un vrai Studio Phase 1 et avançons avec de grands réseaux québécois. Nous basons notre discours sur des preuves concrètes.",
+        "title": "Le produit est live. Les partenaires avancent.",
+        "phase": "Nous livrons un véritable Studio Phase 1.\nNous avançons avec de grands réseaux québécois.\nNotre discours repose sur des preuves concrètes.",
         "bullets": [
-          "Produit : Le Studio en 7 étapes, le Soft Cap & la boucle du Sanctuaire sont fonctionnels.",
-          "Partenaires : Les discussions et la préparation de pilotes avancent avec des acteurs comme Athos et Urgel Bourgie.",
-          "Validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion de nos pilotes."
+          "Le produit : Le Studio fonctionne en sept étapes. Le modèle Soft Cap & le Sanctuaire sont actifs.",
+          "Les partenaires : Les pilotes se préparent. Les discussions avancent avec le groupe Athos (Urgel Bourgie, Espace Memoria & Lépine Cloutier).",
+          "La validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion réelle sur le terrain."
         ]
       },
       {

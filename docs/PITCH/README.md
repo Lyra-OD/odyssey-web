@@ -4,11 +4,11 @@
 **Dernière MAJ :** 7 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 : Traction — playhead 1→7 + trait validation Modélisé—Terrain.
 - 8 oct 2026 : Deck — bulle Soft Cap (définition investisseur FR/EN).
 - 8 oct 2026 : Model — forfaits en 3 colonnes (0 / 179 / 349).
 - 8 oct 2026 : Model — diptyque forfaits | yield 22→43 + soft-dock.
 - 8 oct 2026 : Deck — Coffre Souvenir + cercle/émotion collective (slides 3–7).
-- 8 oct 2026 : Model — mécanisme Soft Cap (cercle dedans) ; maths en beats.
 | Doc | Sujet |
 |-----|--------|
 | [`INVESTOR_DECK_WEB_ILP11.md`](INVESTOR_DECK_WEB_ILP11.md) | **Canon copy** deck web 11 slides (ILP) — humain + business · EN/FR |

@@ -250,6 +250,28 @@ export const DECK_MODEL_WAITS_S: readonly number[] = [
   2.0, // arc → viral 43
 ];
 
+/** Indices Traction — titres + foyer Studio → Athos → satellites → courbe */
+export const DECK_TRACTION_STEP = {
+  eyebrow: 0,
+  hero: 1,
+  phase: 2,
+  product: 3,
+  hub: 4,
+  sats: 5,
+  validation: 6,
+} as const;
+
+export const DECK_TRACTION_LAST_STEP = DECK_TRACTION_STEP.validation;
+
+export const DECK_TRACTION_WAITS_S: readonly number[] = [
+  0.9, // eyebrow → hero
+  1.6, // hero → phase
+  2.6, // phase → foyer Studio
+  2.0, // foyer → hub Athos
+  1.6, // hub → satellites
+  2.2, // satellites → courbe validation
+];
+
 /**
  * Reveal pas-à-pas : auto-tempo + clic pour avancer (le clic annule l’attente).
  * `step` = dernier beat visible (−1 = slide inactive).

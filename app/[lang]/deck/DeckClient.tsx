@@ -28,6 +28,7 @@ import { DeckSlideNeed } from "./DeckSlideNeed";
 import { DeckSlideOpen } from "./DeckSlideOpen";
 import { DeckSlidePhases } from "./DeckSlidePhases";
 import { DeckSlideSolution } from "./DeckSlideSolution";
+import { DeckSlideTraction } from "./DeckSlideTraction";
 import {
   DECK_BODY_CLASS,
   DECK_EYEBROW_CLASS,
@@ -58,6 +59,18 @@ export type PitchDeckSlide = {
   progress?: string;
 };
 
+type TractionLabels = {
+  foyer: string;
+  ringOuter: string;
+  ringInner: string;
+  hub: string;
+  arcFrom: string;
+  arcTo: string;
+  phaseBadge: string;
+  productDesktop: string;
+  partnersDesktop: string;
+};
+
 type DeckClientProps = {
   locale: "fr" | "en";
   wordmark: string;
@@ -65,6 +78,7 @@ type DeckClientProps = {
   progressOf: string;
   softCapTip: string;
   softCapTipAria: string;
+  tractionLabels: TractionLabels;
   slides: PitchDeckSlide[];
   localeSwitcher: LocaleSwitcherLabels;
 };
@@ -87,6 +101,7 @@ export function DeckClient({
   progressOf,
   softCapTip,
   softCapTipAria,
+  tractionLabels,
   slides,
   localeSwitcher,
 }: DeckClientProps) {
@@ -334,6 +349,23 @@ export function DeckClient({
                 phase={slide.phase}
                 bullets={slide.bullets}
                 active={index === i}
+              />
+            ) : i === 7 || slide.id === "traction" ? (
+              <DeckSlideTraction
+                tagline={slide.tagline}
+                title={slide.title}
+                phase={slide.phase}
+                bullets={slide.bullets}
+                active={index === i}
+                foyerLabel={tractionLabels.foyer}
+                ringOuter={tractionLabels.ringOuter}
+                ringInner={tractionLabels.ringInner}
+                hubLabel={tractionLabels.hub}
+                arcFrom={tractionLabels.arcFrom}
+                arcTo={tractionLabels.arcTo}
+                phaseBadge={tractionLabels.phaseBadge}
+                productDesktop={tractionLabels.productDesktop}
+                partnersDesktop={tractionLabels.partnersDesktop}
               />
             ) : (
               <div className="mx-auto flex w-full max-w-2xl flex-col items-center">

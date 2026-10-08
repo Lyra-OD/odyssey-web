@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-08 · **Entrées :** 1100
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-08 · **Entrées :** 1109
 
 ## `common`
 
@@ -1123,6 +1123,15 @@
 | `pitchDeck.progressOf` | {current} / {total} | {current} / {total} |
 | `pitchDeck.softCapTip` | Soft Cap : limite gratuite du Coffre Souvenir. À ce plafond, l'upgrade se propose, c'est là que le partenaire partage les revenus. | Soft Cap: the free ceiling on the Souvenir Memory Chest. At that limit, the upgrade is offered, and the partner shares in the revenue. |
 | `pitchDeck.softCapTipAria` | Définition Soft Cap | Soft Cap definition |
+| `pitchDeck.tractionFoyer` | Studio | Studio |
+| `pitchDeck.tractionRingOuter` | Soft Cap | Soft Cap |
+| `pitchDeck.tractionRingInner` | Sanctuaire | Sanctuary |
+| `pitchDeck.tractionHub` | Athos | Athos |
+| `pitchDeck.tractionArcFrom` | Modélisé | Modeled |
+| `pitchDeck.tractionArcTo` | Terrain | Field |
+| `pitchDeck.tractionPhaseBadge` | Phase 1 | Phase 1 |
+| `pitchDeck.tractionProductDesktop` | Le Studio fonctionne en sept étapes. Soft Cap & Sanctuaire sont actifs. | The seven-step Studio is operational. Soft Cap & Sanctuary are live. |
+| `pitchDeck.tractionPartnersDesktop` | Les pilotes se préparent. Les discussions avancent avec Athos. | Pilot programs are in preparation. Discussions advance with Athos. |
 | `pitchDeck.slides[0].id` | open | open |
 | `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before a pitch. |
 | `pitchDeck.slides[0].title` | Odyssey | Odyssey |
@@ -1180,11 +1189,11 @@
 | `pitchDeck.slides[6].bullets[3]` | La boucle virale : Les invités contribuent aussi. La famille proche ne porte plus seule le fardeau financier. Ce levier pousse le rendement à 43 $. | The viral loop: Guests contribute too. The immediate family no longer carries the financial burden alone. This lever drives the yield to $43. |
 | `pitchDeck.slides[7].id` | traction | traction |
 | `pitchDeck.slides[7].tagline` | L’honnêteté bat le hype. | Honest beats hype. |
-| `pitchDeck.slides[7].title` | Produit live. Chemin partenaires en cours. | Product live. Partner path in motion. |
-| `pitchDeck.slides[7].phase` | Nous livrons un vrai Studio Phase 1 et avançons avec de grands réseaux québécois. Nous basons notre discours sur des preuves concrètes. | We ship a real Phase 1 Studio and are advancing design partnerships with major networks. We rely on proof instead of claims. |
-| `pitchDeck.slides[7].bullets[0]` | Produit : Le Studio en 7 étapes, le Soft Cap & la boucle du Sanctuaire sont fonctionnels. | Product: The 7-step Studio, Soft Cap checkout & Sanctuary loop are live. |
-| `pitchDeck.slides[7].bullets[1]` | Partenaires : Les discussions et la préparation de pilotes avancent avec des acteurs comme Athos et Urgel Bourgie. | Partners: Discussions and pilot paths are active with networks like Athos and Urgel Bourgie. |
-| `pitchDeck.slides[7].bullets[2]` | Validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion de nos pilotes. | Validation: Unit economics are stress-tested in our models. The next proof relies on metrics from unpaid to paid pilots. |
+| `pitchDeck.slides[7].title` | Le produit est live. Les partenaires avancent. | Product live. Partner path in motion. |
+| `pitchDeck.slides[7].phase` | Nous livrons un véritable Studio Phase 1. Nous avançons avec de grands réseaux québécois. Notre discours repose sur des preuves concrètes. | We ship a real Phase 1 Studio. We advance with major Quebec networks. We build our narrative on concrete proof. |
+| `pitchDeck.slides[7].bullets[0]` | Le produit : Le Studio fonctionne en sept étapes. Le modèle Soft Cap & le Sanctuaire sont actifs. | The product: The seven-step Studio is operational. The Soft Cap checkout & the Sanctuary loop are live. |
+| `pitchDeck.slides[7].bullets[1]` | Les partenaires : Les pilotes se préparent. Les discussions avancent avec le groupe Athos (Urgel Bourgie, Espace Memoria & Lépine Cloutier). | The partners: Pilot programs are in preparation. Discussions are under way with the Athos group (Urgel Bourgie, Espace Memoria & Lépine Cloutier). |
+| `pitchDeck.slides[7].bullets[2]` | La validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion réelle sur le terrain. | The validation: Unit economics are modeled and stress-tested. The next milestone measures actual conversion from pilots. |
 | `pitchDeck.slides[8].id` | team | team |
 | `pitchDeck.slides[8].tagline` | Zéro théorie. Cinq ans dans les tranchées. | Zero guesswork. Five years in the trenches. |
 | `pitchDeck.slides[8].title` | Pas des observateurs. Des cicatrices de terrain. | Not outsiders. Industry scars. |

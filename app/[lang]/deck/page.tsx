@@ -80,6 +80,17 @@ export default async function DeckPage({ params }: PageProps) {
         progressOf={t.progressOf}
         softCapTip={t.softCapTip}
         softCapTipAria={t.softCapTipAria}
+        tractionLabels={{
+          foyer: t.tractionFoyer,
+          ringOuter: t.tractionRingOuter,
+          ringInner: t.tractionRingInner,
+          hub: t.tractionHub,
+          arcFrom: t.tractionArcFrom,
+          arcTo: t.tractionArcTo,
+          phaseBadge: t.tractionPhaseBadge,
+          productDesktop: t.tractionProductDesktop,
+          partnersDesktop: t.tractionPartnersDesktop,
+        }}
         slides={slides}
         localeSwitcher={localeSwitcher}
       />

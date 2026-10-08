@@ -1150,6 +1150,15 @@
     "progressOf": "{current} / {total}",
     "softCapTip": "Soft Cap: the free ceiling on the Souvenir Memory Chest. At that limit, the upgrade is offered, and the partner shares in the revenue.",
     "softCapTipAria": "Soft Cap definition",
+    "tractionFoyer": "Studio",
+    "tractionRingOuter": "Soft Cap",
+    "tractionRingInner": "Sanctuary",
+    "tractionHub": "Athos",
+    "tractionArcFrom": "Modeled",
+    "tractionArcTo": "Field",
+    "tractionPhaseBadge": "Phase 1",
+    "tractionProductDesktop": "The seven-step Studio is operational. Soft Cap & Sanctuary are live.",
+    "tractionPartnersDesktop": "Pilot programs are in preparation. Discussions advance with Athos.",
     "slides": [
       {
         "id": "open",
@@ -1238,11 +1247,11 @@
         "id": "traction",
         "tagline": "Honest beats hype.",
         "title": "Product live. Partner path in motion.",
-        "phase": "We ship a real Phase 1 Studio and are advancing design partnerships with major networks. We rely on proof instead of claims.",
+        "phase": "We ship a real Phase 1 Studio.\nWe advance with major Quebec networks.\nWe build our narrative on concrete proof.",
         "bullets": [
-          "Product: The 7-step Studio, Soft Cap checkout & Sanctuary loop are live.",
-          "Partners: Discussions and pilot paths are active with networks like Athos and Urgel Bourgie.",
-          "Validation: Unit economics are stress-tested in our models. The next proof relies on metrics from unpaid to paid pilots."
+          "The product: The seven-step Studio is operational. The Soft Cap checkout & the Sanctuary loop are live.",
+          "The partners: Pilot programs are in preparation. Discussions are under way with the Athos group (Urgel Bourgie, Espace Memoria & Lépine Cloutier).",
+          "The validation: Unit economics are modeled and stress-tested. The next milestone measures actual conversion from pilots."
         ]
       },
       {

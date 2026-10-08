@@ -39,8 +39,12 @@ export const DECK_TEAL_TOKENS = [
   "Facebook",
   "paywall",
   "Amazon",
+  "Espace Memoria",
+  "Lépine Cloutier",
+  "Urgel Bourgie",
   "Sanctuaire",
   "Sanctuary",
+  "Athos",
   "Lyra",
   "MRR",
   "clé USB",
@@ -95,21 +99,5 @@ export function highlightDeckTeal(text: string): ReactNode {
       );
     }
     return <span key={`txt-${i}`}>{part}</span>;
-  });
-}
-
-/** Titre deck : Soft Cap cliquable, reste en luminous si fourni. */
-export function highlightDeckTitle(
-  title: string,
-  renderPlain: (chunk: string) => ReactNode,
-): ReactNode {
-  if (!title.includes("Soft Cap")) return renderPlain(title);
-  const parts = title.split(/(Soft Cap)/g);
-  return parts.map((part, i) => {
-    if (part === "Soft Cap") {
-      return <DeckSoftCapWord key={`title-soft-${i}`} />;
-    }
-    if (!part) return null;
-    return <span key={`title-${i}`}>{renderPlain(part)}</span>;
   });
 }

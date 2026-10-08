@@ -239,20 +239,22 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Honest beats hype.
 - Title: Product live. Partner path in motion.
-- Phase: We ship a real Phase 1 Studio and are advancing design partnerships with major networks. We rely on proof instead of claims.
+- Phase (3 lines): We ship a real Phase 1 Studio. / We advance with major Quebec networks. / We build our narrative on concrete proof.
 - Bullets:
-  - Product: The 7-step Studio, Soft Cap checkout and Sanctuary loop are live.
-  - Partners: Discussions and pilot paths are active with networks like Athos and Urgel Bourgie.
-  - Validation: Unit economics are stress-tested in our models. The next proof relies on metrics from unpaid to paid pilots.
+  - The product: The seven-step Studio is operational. The Soft Cap checkout & the Sanctuary loop are live.
+  - The partners: Pilot programs are in preparation. Discussions are under way with the Athos group (Urgel Bourgie, Espace Memoria & Lépine Cloutier).
+  - The validation: Unit economics are modeled and stress-tested. The next milestone measures actual conversion from pilots.
+- Note: Visu A — Studio eclipse rectangle + small 1–7 rings; playhead 1→7 (hold, return) lights ticks; validation = straight Modélisé—Terrain line above LA VALIDATION.
 
 **FR**
 - Tagline: L’honnêteté bat le hype.
-- Title: Produit live. Chemin partenaires en cours.
-- Phase: Nous livrons un vrai Studio Phase 1 et avançons avec de grands réseaux québécois. Nous basons notre discours sur des preuves concrètes.
+- Title: Le produit est live. Les partenaires avancent.
+- Phase (3 lignes) : Nous livrons un véritable Studio Phase 1. / Nous avançons avec de grands réseaux québécois. / Notre discours repose sur des preuves concrètes.
 - Bullets:
-  - Produit : Le Studio en 7 étapes, le Soft Cap et la boucle du Sanctuaire sont fonctionnels.
-  - Partenaires : Les discussions et la préparation de pilotes avancent avec des acteurs comme Athos et Urgel Bourgie.
-  - Validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion de nos pilotes.
+  - Le produit : Le Studio fonctionne en sept étapes. Le modèle Soft Cap & le Sanctuaire sont actifs.
+  - Les partenaires : Les pilotes se préparent. Les discussions avancent avec le groupe Athos (Urgel Bourgie, Espace Memoria & Lépine Cloutier).
+  - La validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion réelle sur le terrain.
+- Note : Visu A — rectangle Studio halo/rim ; petits ronds 1–7 ; playhead 1→7 (pause, retour) allume les ticks ; validation = trait droit Modélisé—Terrain au-dessus de LA VALIDATION.
 
 ---
 
