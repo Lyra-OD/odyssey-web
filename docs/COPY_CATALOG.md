@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-08 · **Entrées :** 1098
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-08 · **Entrées :** 1100
 
 ## `common`
 
@@ -1121,6 +1121,8 @@
 | `pitchDeck.gateUnavailable` | Accès temporairement indisponible. | Access temporarily unavailable. |
 | `pitchDeck.gatePasswordLabel` | Mot de passe | Password |
 | `pitchDeck.progressOf` | {current} / {total} | {current} / {total} |
+| `pitchDeck.softCapTip` | Soft Cap : limite gratuite du Coffre Souvenir. À ce plafond, l'upgrade se propose, c'est là que le partenaire partage les revenus. | Soft Cap: the free ceiling on the Souvenir Memory Chest. At that limit, the upgrade is offered, and the partner shares in the revenue. |
+| `pitchDeck.softCapTipAria` | Définition Soft Cap | Soft Cap definition |
 | `pitchDeck.slides[0].id` | open | open |
 | `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before a pitch. |
 | `pitchDeck.slides[0].title` | Odyssey | Odyssey |

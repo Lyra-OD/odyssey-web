@@ -1148,6 +1148,8 @@
     "gateUnavailable": "Access temporarily unavailable.",
     "gatePasswordLabel": "Password",
     "progressOf": "{current} / {total}",
+    "softCapTip": "Soft Cap: the free ceiling on the Souvenir Memory Chest. At that limit, the upgrade is offered, and the partner shares in the revenue.",
+    "softCapTipAria": "Soft Cap definition",
     "slides": [
       {
         "id": "open",

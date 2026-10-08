@@ -1,8 +1,13 @@
+"use client";
+
 import type { ReactNode } from "react";
+
+import { DeckSoftCapWord } from "./DeckSoftCapTip";
 
 /**
  * Mots / chiffres investisseur en teal dans les corps deck.
  * Phrases entières = non. FR + EN dans la même liste.
+ * Soft Cap = bulle définition (DeckSoftCapWord).
  */
 export const DECK_TEAL_TOKENS = [
   "graphe de données",
@@ -79,6 +84,9 @@ export function highlightDeckTeal(text: string): ReactNode {
   const parts = text.split(DECK_TEAL_RE);
   if (parts.length === 1) return text;
   return parts.map((part, i) => {
+    if (part === "Soft Cap") {
+      return <DeckSoftCapWord key={`soft-${i}`} />;
+    }
     if (DECK_TEAL_SET.has(part)) {
       return (
         <span key={`tok-${i}`} className="font-medium text-[var(--salon-cyan)]">
@@ -87,5 +95,21 @@ export function highlightDeckTeal(text: string): ReactNode {
       );
     }
     return <span key={`txt-${i}`}>{part}</span>;
+  });
+}
+
+/** Titre deck : Soft Cap cliquable, reste en luminous si fourni. */
+export function highlightDeckTitle(
+  title: string,
+  renderPlain: (chunk: string) => ReactNode,
+): ReactNode {
+  if (!title.includes("Soft Cap")) return renderPlain(title);
+  const parts = title.split(/(Soft Cap)/g);
+  return parts.map((part, i) => {
+    if (part === "Soft Cap") {
+      return <DeckSoftCapWord key={`title-soft-${i}`} />;
+    }
+    if (!part) return null;
+    return <span key={`title-${i}`}>{renderPlain(part)}</span>;
   });
 }

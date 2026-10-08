@@ -34,6 +34,7 @@ import {
   DECK_TITLE_CLASS,
   DECK_VISION_CLASS,
 } from "./deckSoftDock";
+import { DeckSoftCapTipProvider } from "./DeckSoftCapTip";
 import { highlightDeckTeal } from "./deckTealText";
 
 const SanctuaryUniverse = dynamic(
@@ -62,6 +63,8 @@ type DeckClientProps = {
   wordmark: string;
   introSkip: string;
   progressOf: string;
+  softCapTip: string;
+  softCapTipAria: string;
   slides: PitchDeckSlide[];
   localeSwitcher: LocaleSwitcherLabels;
 };
@@ -82,6 +85,8 @@ export function DeckClient({
   wordmark,
   introSkip,
   progressOf,
+  softCapTip,
+  softCapTipAria,
   slides,
   localeSwitcher,
 }: DeckClientProps) {
@@ -165,6 +170,7 @@ export function DeckClient({
   const deckVisible = ready && !showIntro;
 
   return (
+    <DeckSoftCapTipProvider tip={softCapTip} aria={softCapTipAria}>
     <div className="relative h-dvh overflow-hidden bg-[#020202]">
       <div className="absolute right-5 top-5 z-40 md:right-8 md:top-8">
         <LocaleSwitcher lang={locale} {...localeSwitcher} />
@@ -342,7 +348,7 @@ export function DeckClient({
                 <p
                   className={`${editorialFont.className} ${DECK_VISION_CLASS} max-w-xl text-center`}
                 >
-                  {slide.phase}
+                  {highlightDeckTeal(slide.phase)}
                 </p>
 
                 <ul className="mt-10 max-w-xl space-y-3 text-center">
@@ -358,5 +364,6 @@ export function DeckClient({
         ))}
       </div>
     </div>
+    </DeckSoftCapTipProvider>
   );
 }

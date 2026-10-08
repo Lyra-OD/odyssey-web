@@ -18,7 +18,7 @@ import {
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
-import { highlightDeckTeal } from "./deckTealText";
+import { highlightDeckTeal, highlightDeckTitle } from "./deckTealText";
 
 type DeckSlideModelProps = {
   tagline: string;
@@ -157,7 +157,9 @@ export function DeckSlideModel({
           className={`${editorialFont.className} ${DECK_TITLE_CLASS}`}
           {...dockHero()}
         >
-          <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
+          {highlightDeckTitle(title, (chunk) => (
+            <OdysseyLuminousText variant="deck">{chunk}</OdysseyLuminousText>
+          ))}
         </motion.h2>
 
         <motion.p

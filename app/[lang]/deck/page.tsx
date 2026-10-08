@@ -78,6 +78,8 @@ export default async function DeckPage({ params }: PageProps) {
         wordmark={wordmark}
         introSkip={t.introSkip}
         progressOf={t.progressOf}
+        softCapTip={t.softCapTip}
+        softCapTipAria={t.softCapTipAria}
         slides={slides}
         localeSwitcher={localeSwitcher}
       />

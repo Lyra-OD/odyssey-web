@@ -1148,6 +1148,8 @@
     "gateUnavailable": "Accès temporairement indisponible.",
     "gatePasswordLabel": "Mot de passe",
     "progressOf": "{current} / {total}",
+    "softCapTip": "Soft Cap : limite gratuite du Coffre Souvenir. À ce plafond, l'upgrade se propose, c'est là que le partenaire partage les revenus.",
+    "softCapTipAria": "Définition Soft Cap",
     "slides": [
       {
         "id": "open",
