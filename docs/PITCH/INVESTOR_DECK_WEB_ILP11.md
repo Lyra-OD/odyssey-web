@@ -4,11 +4,11 @@
 **Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 : `DeckEclipseCinema` — même prologue intro ↔ Contact (fade 700 ms, z-50).
 - 8 oct 2026 : Visions EN révisées + lignes phrase (`DeckVision`) — plus de coupure molle.
 - 8 oct 2026 : Open — moment humain guidé + Zéro théorie ; Team tagline Cinq ans (plus d’écho).
 - 8 oct 2026 : Contact — cinéma plein écran (noir→blanc) puis dissolve ciel + titres soft-dock.
 - 5 oct 2026 : Copy V2.3 slide 2 Need — diagnostic système (industrie / deuil / écosystème), plus USB-CapCut.
-- 5 oct 2026 : Copy V2.2 slide 9 Team — Option 1 punchy (tranchées / cicatrices / Erik·Jon / unfair advantage).
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
