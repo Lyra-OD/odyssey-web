@@ -4,6 +4,8 @@
 **Dernière MAJ :** 7 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 : Ask — corridor Réseau / Terrain / Lyra + coda 90 j (Visu A).
+- 8 oct 2026 : Team — diptyque Erik | Jon + avantage déloyal (Visu A).
 - 8 oct 2026 : Traction — playhead 1→7 + trait validation Modélisé—Terrain.
 - 8 oct 2026 : Deck — bulle Soft Cap (définition investisseur FR/EN).
 - 8 oct 2026 : Model — forfaits en 3 colonnes (0 / 179 / 349).

@@ -1195,21 +1195,21 @@
 | `pitchDeck.slides[7].bullets[1]` | Les partenaires : Les pilotes se préparent. Les discussions avancent avec le groupe Athos (Urgel Bourgie, Espace Memoria & Lépine Cloutier). | The partners: Pilot programs are in preparation. Discussions are under way with the Athos group (Urgel Bourgie, Espace Memoria & Lépine Cloutier). |
 | `pitchDeck.slides[7].bullets[2]` | La validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion réelle sur le terrain. | The validation: Unit economics are modeled and stress-tested. The next milestone measures actual conversion from pilots. |
 | `pitchDeck.slides[8].id` | team | team |
-| `pitchDeck.slides[8].tagline` | Zéro théorie. Cinq ans dans les tranchées. | Zero guesswork. Five years in the trenches. |
-| `pitchDeck.slides[8].title` | Pas des observateurs. Des cicatrices de terrain. | Not outsiders. Industry scars. |
-| `pitchDeck.slides[8].phase` | Nous ne devinons pas où le système casse : nous y avons passé cinq ans. | We don't guess where operations break. We spent five years living it. |
-| `pitchDeck.slides[8].bullets[0]` | Erik (CEO & CPO) : Vision d'affaires, architecture produit et craft Quiet Luxury. | Erik (CEO & CPO): Business narrative, product strategy, and Quiet Luxury craft. |
-| `pitchDeck.slides[8].bullets[1]` | Jon (CTO) : Orchestration technique, scalabilité et robustesse du code. | Jon (CTO): Technical architecture, code orchestration, and scale. |
-| `pitchDeck.slides[8].bullets[2]` | L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite, pas de simples maquettes. | Unfair Advantage: Real operational scars fused with software execution. Shipping a live Studio, not slideware. |
+| `pitchDeck.slides[8].tagline` | Zéro théorie. Forgés de l'intérieur. | Zero theory. Built from the inside. |
+| `pitchDeck.slides[8].title` | Erik et Jon. Pas des outsiders. Des cicatrices d'industrie. | Erik and Jon. Not outsiders. Industry scars. |
+| `pitchDeck.slides[8].phase` | Nous ne devinons pas où les opérations cassent. Nous y avons passé cinq ans. | We do not guess where operations break. We spent five years living it. |
+| `pitchDeck.slides[8].bullets[0]` | Erik (CEO & CPO) : Vision d'affaires. Architecture produit. Design Quiet Luxury. | Erik (CEO & CPO) : Business vision. Product architecture. Quiet Luxury craft. |
+| `pitchDeck.slides[8].bullets[1]` | Jon (CTO) : Orchestration technique. Scalabilité. Code prêt pour un exit Silicon Valley. | Jon (CTO) : Technical orchestration. Scalability. Code ready for a Silicon Valley exit. |
+| `pitchDeck.slides[8].bullets[2]` | L'avantage déloyal : Une compréhension viscérale de la distribution funéraire. L'art de livrer un véritable Studio. Pas de simples maquettes. | The unfair advantage : Visceral grip on funeral distribution. The craft of shipping a live Studio. Not just slideware. |
 | `pitchDeck.slides[9].id` | ask | ask |
-| `pitchDeck.slides[9].tagline` | Financer le wedge. Semer la Phase 2. | Fund the wedge. Seed Phase 2. |
-| `pitchDeck.slides[9].title` | Capital stratégique pour les Phases 1 et 2 | Strategic capital for Phase 1 and 2 |
-| `pitchDeck.slides[9].phase` | Nous levons des fonds pour industrialiser l'activation B2B et poser les fondations de la Phase 2 au lieu de bâtir la Marketplace au premier jour. | We are raising to industrialize B2B activation and lay Phase 2 foundations rather than building the Marketplace on day one. |
-| `pitchDeck.slides[9].bullets[0]` | Montant : [À définir avant l'envoi externe] | Amount: [TBD fill before external send] |
-| `pitchDeck.slides[9].bullets[1]` | Allocation : Le capital financera l'activation B2B, le succès partenaire et la fiabilité du produit. | Allocation: Capital will fund B2B activation, partner success, and product reliability. |
-| `pitchDeck.slides[9].bullets[2]` | Gestion du risque : Le déploiement réseau implique des critères d'arrêt clairs à 90 jours si un pilote ne fonctionne pas. Nous sommes rationnels avec le capital. | Risk Management: Network deployment includes clear 90-day kill criteria if a pilot underperforms. We stay rational with capital. |
-| `pitchDeck.slides[9].bullets[3]` | Jalons : Les 12 à 18 prochains mois se concentrent sur les KPI d'activation réseau, les métriques du Soft Cap et l'architecture de la Phase 2. | Milestones: The next 12 to 18 months focus on network activation KPIs, Soft Cap metrics, and Phase 2 architecture spikes. |
-| `pitchDeck.slides[9].bullets[4]` | Objectif exclu : La construction de la Marketplace est notre Endgame et n'est explicitement pas au budget initial. | Explicit non-goal: The Marketplace build is our Endgame and explicitly not a current budget line. |
+| `pitchDeck.slides[9].tagline` | Financer la croissance. Bâtir la Phase 2. | Fund growth. Build Phase 2. |
+| `pitchDeck.slides[9].title` | Capital stratégique pour l'expansion canadienne. | Strategic capital for Canadian expansion. |
+| `pitchDeck.slides[9].phase` | Nous industrialisons la distribution. Nous déployons une équipe terrain au Canada. Nous bâtissons Lyra Phase 2. | We industrialize distribution. We deploy a field team across Canada. We build Lyra Phase 2. |
+| `pitchDeck.slides[9].bullets[0]` | 01 (Réseau) : Le capital propulse notre réseau de partenaires. | 01 (Network) : Capital drives our partner network. |
+| `pitchDeck.slides[9].bullets[1]` | 02 (Terrain) : Il finance l'équipe terrain au Canada. | 02 (Field) : It funds the field team across Canada. |
+| `pitchDeck.slides[9].bullets[2]` | 03 (Lyra) : Il bâtit Lyra : graphe de données & outils de pointe pour les salons. | 03 (Lyra) : It builds Lyra: data graph & precision tools for funeral homes. |
+| `pitchDeck.slides[9].bullets[3]` | 90 jours : À 90 jours, un pilote qui ne convertit pas est arrêté. Le capital n'est pas brûlé à l'aveugle. | 90 days : At 90 days, a pilot that does not convert is stopped. Capital is not burned blind. |
+| `pitchDeck.slides[9].bullets[4]` | Limite : La Marketplace est notre Endgame. Hors de ce budget initial. | Boundary : The Marketplace is our Endgame. Outside this initial budget. |
 | `pitchDeck.slides[10].id` | contact | contact |
 | `pitchDeck.slides[10].tagline` | Ouvrons un Studio. | Let’s open a Studio. |
 | `pitchDeck.slides[10].title` | Contact | Contact |

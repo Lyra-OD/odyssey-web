@@ -28,6 +28,8 @@ import { DeckSlideNeed } from "./DeckSlideNeed";
 import { DeckSlideOpen } from "./DeckSlideOpen";
 import { DeckSlidePhases } from "./DeckSlidePhases";
 import { DeckSlideSolution } from "./DeckSlideSolution";
+import { DeckSlideAsk } from "./DeckSlideAsk";
+import { DeckSlideTeam } from "./DeckSlideTeam";
 import { DeckSlideTraction } from "./DeckSlideTraction";
 import {
   DECK_BODY_CLASS,
@@ -366,6 +368,22 @@ export function DeckClient({
                 phaseBadge={tractionLabels.phaseBadge}
                 productDesktop={tractionLabels.productDesktop}
                 partnersDesktop={tractionLabels.partnersDesktop}
+              />
+            ) : i === 8 || slide.id === "team" ? (
+              <DeckSlideTeam
+                tagline={slide.tagline}
+                title={slide.title}
+                phase={slide.phase}
+                bullets={slide.bullets}
+                active={index === i}
+              />
+            ) : i === 9 || slide.id === "ask" ? (
+              <DeckSlideAsk
+                tagline={slide.tagline}
+                title={slide.title}
+                phase={slide.phase}
+                bullets={slide.bullets}
+                active={index === i}
               />
             ) : (
               <div className="mx-auto flex w-full max-w-2xl flex-col items-center">

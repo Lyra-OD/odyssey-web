@@ -1256,26 +1256,26 @@
       },
       {
         "id": "team",
-        "tagline": "Zero guesswork. Five years in the trenches.",
-        "title": "Not outsiders. Industry scars.",
-        "phase": "We don't guess where operations break. We spent five years living it.",
+        "tagline": "Zero theory. Built from the inside.",
+        "title": "Erik and Jon. Not outsiders. Industry scars.",
+        "phase": "We do not guess where operations break. We spent five years living it.",
         "bullets": [
-          "Erik (CEO & CPO): Business narrative, product strategy, and Quiet Luxury craft.",
-          "Jon (CTO): Technical architecture, code orchestration, and scale.",
-          "Unfair Advantage: Real operational scars fused with software execution. Shipping a live Studio, not slideware."
+          "Erik (CEO & CPO) : Business vision. Product architecture. Quiet Luxury craft.",
+          "Jon (CTO) : Technical orchestration. Scalability. Code ready for a Silicon Valley exit.",
+          "The unfair advantage : Visceral grip on funeral distribution. The craft of shipping a live Studio. Not just slideware."
         ]
       },
       {
         "id": "ask",
-        "tagline": "Fund the wedge. Seed Phase 2.",
-        "title": "Strategic capital for Phase 1 and 2",
-        "phase": "We are raising to industrialize B2B activation and lay Phase 2 foundations rather than building the Marketplace on day one.",
+        "tagline": "Fund growth. Build Phase 2.",
+        "title": "Strategic capital for Canadian expansion.",
+        "phase": "We industrialize distribution.\nWe deploy a field team across Canada.\nWe build Lyra Phase 2.",
         "bullets": [
-          "Amount: [TBD fill before external send]",
-          "Allocation: Capital will fund B2B activation, partner success, and product reliability.",
-          "Risk Management: Network deployment includes clear 90-day kill criteria if a pilot underperforms. We stay rational with capital.",
-          "Milestones: The next 12 to 18 months focus on network activation KPIs, Soft Cap metrics, and Phase 2 architecture spikes.",
-          "Explicit non-goal: The Marketplace build is our Endgame and explicitly not a current budget line."
+          "01 (Network) : Capital drives our partner network.",
+          "02 (Field) : It funds the field team across Canada.",
+          "03 (Lyra) : It builds Lyra: data graph & precision tools for funeral homes.",
+          "90 days : At 90 days, a pilot that does not convert is stopped.\nCapital is not burned blind.",
+          "Boundary : The Marketplace is our Endgame. Outside this initial budget."
         ]
       },
       {

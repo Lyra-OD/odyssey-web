@@ -261,48 +261,54 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 9 - Team
 
 **EN**
-- Tagline: Zero guesswork. Five years in the trenches.
-- Title: Not outsiders. Industry scars.
-- Phase: We don't guess where operations break. We spent five years living it.
+- Tagline: Zero theory. Built from the inside.
+- Title: Erik and Jon. Not outsiders. Industry scars.
+- Phase: We do not guess where operations break. We spent five years living it.
 - Bullets:
-  - Erik (CEO & CPO): Business narrative, product strategy, and Quiet Luxury craft.
-  - Jon (CTO): Technical architecture, code orchestration, and scale.
-  - Unfair Advantage: Real operational scars fused with software execution. Shipping a live Studio, not slideware.
+  - Erik (CEO & CPO) : Business vision. Product architecture. Quiet Luxury craft.
+  - Jon (CTO) : Technical orchestration. Scalability. Code ready for a Silicon Valley exit.
+  - The unfair advantage : Visceral grip on funeral distribution. The craft of shipping a live Studio. Not just slideware.
+- Note: Visu A — diptyque disks E | J (Athos-like halo) + advantage coda. Soft-dock: titles → Erik → Jon → advantage.
 
 **FR**
-- Tagline: Zéro théorie. Cinq ans dans les tranchées.
-- Title: Pas des observateurs. Des cicatrices de terrain.
-- Phase: Nous ne devinons pas où le système casse : nous y avons passé cinq ans.
+- Tagline: Zéro théorie. Forgés de l'intérieur.
+- Title: Erik et Jon. Pas des outsiders. Des cicatrices d'industrie.
+- Phase: Nous ne devinons pas où les opérations cassent. Nous y avons passé cinq ans.
 - Bullets:
-  - Erik (CEO & CPO) : Vision d'affaires, architecture produit et craft Quiet Luxury.
-  - Jon (CTO) : Orchestration technique, scalabilité et robustesse du code.
-  - L'avantage injuste : Les cicatrices réelles des opérations funéraires combinées à l'art d'expédier un produit d'élite, pas de simples maquettes.
+  - Erik (CEO & CPO) : Vision d'affaires. Architecture produit. Design Quiet Luxury.
+  - Jon (CTO) : Orchestration technique. Scalabilité. Code prêt pour un exit Silicon Valley.
+  - L'avantage déloyal : Une compréhension viscérale de la distribution funéraire. L'art de livrer un véritable Studio. Pas de simples maquettes.
+- Note : Visu A — diptyque disques E | J (finition Athos) + coda avantage. Soft-dock : titres → Erik → Jon → avantage.
 
 ---
 
 ### 10 - Ask & Use of Funds
 
 **EN**
-- Tagline: Fund the wedge. Seed Phase 2.
-- Title: Strategic capital for Phase 1 and 2
-- Phase: We are raising to industrialize B2B activation and lay Phase 2 foundations rather than building the Marketplace on day one.
-- Bullets:
-  - Amount: [TBD fill before external send]
-  - Allocation: Capital will fund B2B activation, partner success, and product reliability.
-  - Risk Management: Network deployment includes clear 90-day kill criteria if a pilot underperforms. We stay rational with capital.
-  - Milestones: The next 12 to 18 months focus on network activation KPIs, Soft Cap metrics, and Phase 2 architecture spikes.
-  - Explicit non-goal: The Marketplace build is our Endgame and explicitly not a current budget line.
+- Tagline: Fund growth. Build Phase 2.
+- Title: Strategic capital for Canadian expansion.
+- Phase (3 lines): We industrialize distribution. / We deploy a field team across Canada. / We build Lyra Phase 2.
+- Corridor:
+  - 01 (Network): Capital drives our partner network.
+  - 02 (Field): It funds the field team across Canada.
+  - 03 (Lyra): It builds Lyra: data graph & precision tools for funeral homes.
+- Coda:
+  - 90 days: At 90 days, a pilot that does not convert is stopped. / Capital is not burned blind.
+  - Boundary: The Marketplace is our Endgame. Outside this initial budget.
+- Note: Visu A — corridor 01–03 (Phases ADN) + risk/limit coda. No amount on slide.
 
 **FR**
-- Tagline: Financer le wedge. Semer la Phase 2.
-- Title: Capital stratégique pour les Phases 1 et 2
-- Phase: Nous levons des fonds pour industrialiser l'activation B2B et poser les fondations de la Phase 2 au lieu de bâtir la Marketplace au premier jour.
-- Bullets:
-  - Montant : [À définir avant l'envoi externe]
-  - Allocation : Le capital financera l'activation B2B, le succès partenaire et la fiabilité du produit.
-  - Gestion du risque : Le déploiement réseau implique des critères d'arrêt clairs à 90 jours si un pilote ne fonctionne pas. Nous sommes rationnels avec le capital.
-  - Jalons : Les 12 à 18 prochains mois se concentrent sur les KPI d'activation réseau, les métriques du Soft Cap et l'architecture de la Phase 2.
-  - Objectif exclu : La construction de la Marketplace est notre Endgame et n'est explicitement pas au budget initial.
+- Tagline: Financer la croissance. Bâtir la Phase 2.
+- Title: Capital stratégique pour l'expansion canadienne.
+- Phase (3 lignes) : Nous industrialisons la distribution. / Nous déployons une équipe terrain au Canada. / Nous bâtissons Lyra Phase 2.
+- Corridor :
+  - 01 (Réseau) : Le capital propulse notre réseau de partenaires.
+  - 02 (Terrain) : Il finance l'équipe terrain au Canada.
+  - 03 (Lyra) : Il bâtit Lyra : graphe de données & outils de pointe pour les salons.
+- Coda :
+  - 90 jours : À 90 jours, un pilote qui ne convertit pas est arrêté. / Le capital n'est pas brûlé à l'aveugle.
+  - Limite : La Marketplace est notre Endgame. Hors de ce budget initial.
+- Note : Visu A — corridor 01–03 (ADN Phases) + coda risque / limite. Pas de montant à l'écran.
 
 ---
 

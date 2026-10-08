@@ -272,6 +272,54 @@ export const DECK_TRACTION_WAITS_S: readonly number[] = [
   2.4, // satellites → validation
 ];
 
+/** Indices Team — titres → Erik → Jon → avantage déloyal */
+export const DECK_TEAM_STEP = {
+  eyebrow: 0,
+  hero: 1,
+  phase: 2,
+  erik: 3,
+  jon: 4,
+  advantage: 5,
+} as const;
+
+export const DECK_TEAM_LAST_STEP = DECK_TEAM_STEP.advantage;
+
+export const DECK_TEAM_WAITS_S: readonly number[] = [
+  0.9, // eyebrow → hero
+  1.6, // hero → phase
+  2.6, // phase → Erik
+  1.8, // Erik → Jon
+  2.2, // Jon → avantage
+];
+
+/** Indices Ask — titres + corridor 01–03 + coda 90 j / limite */
+export const DECK_ASK_STEP = {
+  eyebrow: 0,
+  hero: 1,
+  phase: 2,
+  station0: 3,
+  arc01: 4,
+  station1: 5,
+  arc12: 6,
+  station2: 7,
+  risk: 8,
+  limit: 9,
+} as const;
+
+export const DECK_ASK_LAST_STEP = DECK_ASK_STEP.limit;
+
+export const DECK_ASK_WAITS_S: readonly number[] = [
+  0.9, // eyebrow → hero
+  1.6, // hero → phase
+  2.6, // phase → 01 Réseau
+  1.1, // 01 → arc
+  1.6, // arc → 02 Terrain
+  1.1, // 02 → arc
+  1.6, // arc → 03 Lyra
+  2.0, // 03 → 90 jours
+  2.0, // 90 j → limite Marketplace
+];
+
 /**
  * Reveal pas-à-pas : auto-tempo + clic pour avancer (le clic annule l’attente).
  * `step` = dernier beat visible (−1 = slide inactive).
