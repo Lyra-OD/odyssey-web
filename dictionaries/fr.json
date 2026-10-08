@@ -1225,10 +1225,10 @@
         "id": "phases",
         "tagline": "La séquence bat les slogans.",
         "title": "Trois phases. Wedge, rétention, plateforme.",
-        "phase": "Nous bâtissons le lien numérique de la fin de vie.\nD’abord le Coffre Souvenir en salon.\nEnsuite Lyra guide les familles dans l’administratif.\nPuis la plateforme relie cette demande à toute l’offre funéraire, sans stock.",
+        "phase": "Nous bâtissons le lien numérique de la fin de vie.\nD’abord le Coffre Souvenir en salon.\nEnsuite Lyra : IA funéraire native pour la famille et le salon.\nPuis la plateforme relie cette demande à toute l’offre funéraire, sans stock.",
         "bullets": [
           "Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le cercle s’investit avec photos & contributions. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net.",
-          "Phase 2 (Rétention) : Sanctuaire MRR, leads consentis & orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.",
+          "Phase 2 (Rétention) : Lyra, IA builder 100 % funéraire (environ 27 rites & religions). Parcours admin guidé à domicile, ou copilote du directeur en salon. Alimentée par le graphe médias Odyssey (scans, photos, film). Sanctuaire MRR & leads consentis (Loi 25).",
           "Phase 3 (Endgame) : Amazon a commencé par les livres. Nous commençons par le film & le Coffre Souvenir. Nous routons ensuite l’économie fragmentée : tous les produits funéraires, pour tous les budgets."
         ]
       },
@@ -1270,11 +1270,11 @@
         "id": "ask",
         "tagline": "Financer la croissance. Bâtir la Phase 2.",
         "title": "Capital stratégique pour l'expansion canadienne.",
-        "phase": "Nous industrialisons la distribution.\nNous déployons une équipe terrain au Canada.\nNous bâtissons Lyra Phase 2.",
+        "phase": "Nous industrialisons la distribution.\nNous déployons une équipe terrain au Canada.\nNous bâtissons Lyra, l’IA funéraire Phase 2.",
         "bullets": [
           "01 (Réseau) : Le capital propulse notre réseau de partenaires.",
           "02 (Terrain) : Il finance l'équipe terrain au Canada.",
-          "03 (Lyra) : Il bâtit Lyra : graphe de données & outils de pointe pour les salons.",
+          "03 (Lyra) : Il bâtit Lyra : IA funéraire native, rites & religions, copilote salon et parcours famille. Moteur : graphe médias Odyssey.",
           "90 jours : À 90 jours, un pilote qui ne convertit pas est arrêté.\nLe capital n'est pas brûlé à l'aveugle.",
           "Limite : La Marketplace est notre Endgame. Hors de ce budget initial."
         ]

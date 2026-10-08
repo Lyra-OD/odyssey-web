@@ -4,11 +4,11 @@
 **Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 : Lyra clarifiée (Phases + Ask) : IA funéraire native, rites, salon/famille, graphe médias Odyssey.
 - 8 oct 2026 : Copy EN business (slides 1–11) — jargon NA, visions en lignes, Ecosystem « care for ».
 - 8 oct 2026 : `DeckEclipseCinema` — même prologue intro ↔ Contact (fade 700 ms, z-50).
 - 8 oct 2026 : Visions EN révisées + lignes phrase (`DeckVision`) — plus de coupure molle.
 - 8 oct 2026 : Open — moment humain guidé + Zéro théorie ; Team tagline Cinq ans (plus d’écho).
-- 8 oct 2026 : Contact — cinéma plein écran (noir→blanc) puis dissolve ciel + titres soft-dock.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -188,20 +188,20 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Sequence beats slogans.
 - Title: Three phases: Wedge, Retention, Platform.
-- Phase (4 lines): We are building the digital link for end-of-life. / First, the Souvenir Memory Chest at the funeral home. / Next, Lyra guides families through administration. / Finally, the platform routes that demand across the supply chain with zero inventory.
+- Phase (4 lines): We are building the digital link for end-of-life. / First, the Souvenir Memory Chest at the funeral home. / Next, Lyra: funeral-native AI for the family and the funeral home. / Finally, the platform routes that demand across the supply chain with zero inventory.
 - Bullets:
   - Phase 1 (Wedge): Odyssey Studio via the funeral home. A $0 Souvenir Memory Chest. The circle contributes photos and funds. The Soft Cap acts as a free ceiling that triggers the upgrade. Partner RevShare is 30% of net revenue.
-  - Phase 2 (Retention): Sanctuary MRR, consented leads, and Lyra orchestration. The data graph relies on explicit consent (Law 25 compliant). Transactional uploads never default to marketing opt-ins.
+  - Phase 2 (Retention): Lyra, a funeral-native AI builder (~27 rites and religions). Guided admin at home, or the director’s copilot in the funeral home. Powered by Odyssey’s media graph (scans, photos, film). Sanctuary MRR and consented leads (Law 25).
   - Phase 3 (Endgame): Amazon started with books. We start with the tribute film and the Memory Chest. We then route the fragmented supply economy: every end-of-life product, across every budget.
 - Note: Teal on Soft Cap / Coffre / circle / photos / RevShare / 30% / MRR / Law 25 / Amazon. Marketplace stays Phase 3 Endgame. Not Day-1 / not in current ask.
 
 **FR**
 - Tagline: La séquence bat les slogans.
 - Title: Trois phases. Wedge, rétention, plateforme.
-- Phase (3 lignes) : Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre Souvenir en salon. / Ensuite Lyra guide les familles dans l’administratif. / Puis la plateforme relie cette demande à toute l’offre funéraire, sans stock.
+- Phase (4 lignes) : Nous bâtissons le lien numérique de la fin de vie. / D’abord le Coffre Souvenir en salon. / Ensuite Lyra : IA funéraire native pour la famille et le salon. / Puis la plateforme relie cette demande à toute l’offre funéraire, sans stock.
 - Bullets:
   - Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le cercle s’investit avec photos & contributions. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net.
-  - Phase 2 (Rétention) : Sanctuaire MRR, leads consentis & orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.
+  - Phase 2 (Rétention) : Lyra, IA builder 100 % funéraire (environ 27 rites & religions). Parcours admin guidé à domicile, ou copilote du directeur en salon. Alimentée par le graphe médias Odyssey (scans, photos, film). Sanctuaire MRR & leads consentis (Loi 25).
   - Phase 3 (Endgame) : Amazon a commencé par les livres. Nous commençons par le film & le Coffre Souvenir. Nous routons ensuite l’économie fragmentée : tous les produits funéraires, pour tous les budgets.
 - Note : teal Soft Cap / Coffre Souvenir / cercle / photos / RevShare / 30 % / MRR / Loi 25 / Amazon. Marketplace = Phase 3 Endgame. Hors budget du tour actuel.
 
@@ -286,11 +286,11 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Fund growth. Seed Phase 2.
 - Title: Strategic capital for Canadian expansion.
-- Phase (3 lines): We industrialize distribution. / We deploy a field team across Canada. / We lay the foundations for Lyra Phase 2.
+- Phase (3 lines): We industrialize distribution. / We deploy a field team across Canada. / We lay the foundations for Lyra, our funeral-native AI.
 - Corridor:
   - 01 (Network): Capital drives the expansion of our partner network.
   - 02 (Field): It funds a dedicated field team across Canada.
-  - 03 (Lyra): It builds Lyra: the data graph and precision tools for funeral homes.
+  - 03 (Lyra): It builds Lyra: funeral-native AI, rites and religions, funeral-home copilot and family path. Engine: Odyssey’s media graph.
 - Coda:
   - 90 days: If a pilot does not convert within 90 days, it is stopped. / Capital is never burned blindly.
   - Boundary: The Marketplace is our Endgame. It is explicitly outside this initial budget.
@@ -299,11 +299,11 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **FR**
 - Tagline: Financer la croissance. Bâtir la Phase 2.
 - Title: Capital stratégique pour l'expansion canadienne.
-- Phase (3 lignes) : Nous industrialisons la distribution. / Nous déployons une équipe terrain au Canada. / Nous bâtissons Lyra Phase 2.
+- Phase (3 lignes) : Nous industrialisons la distribution. / Nous déployons une équipe terrain au Canada. / Nous bâtissons Lyra, l’IA funéraire Phase 2.
 - Corridor :
   - 01 (Réseau) : Le capital propulse notre réseau de partenaires.
   - 02 (Terrain) : Il finance l'équipe terrain au Canada.
-  - 03 (Lyra) : Il bâtit Lyra : graphe de données & outils de pointe pour les salons.
+  - 03 (Lyra) : Il bâtit Lyra : IA funéraire native, rites & religions, copilote salon et parcours famille. Moteur : graphe médias Odyssey.
 - Coda :
   - 90 jours : À 90 jours, un pilote qui ne convertit pas est arrêté. / Le capital n'est pas brûlé à l'aveugle.
   - Limite : La Marketplace est notre Endgame. Hors de ce budget initial.

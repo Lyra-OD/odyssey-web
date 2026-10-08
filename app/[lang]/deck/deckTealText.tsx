@@ -11,7 +11,11 @@ import { DeckSoftCapWord } from "./DeckSoftCapTip";
  */
 export const DECK_TEAL_TOKENS = [
   "graphe de données",
+  "graphe médias",
   "data graph",
+  "media graph",
+  "IA funéraire",
+  "funeral-native AI",
   "tous les budgets",
   "every budget",
   "infrastructure de la mémoire",
