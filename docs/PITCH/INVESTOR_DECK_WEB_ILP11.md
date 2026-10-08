@@ -4,11 +4,11 @@
 **Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 : Copy EN business (slides 1–11) — jargon NA, visions en lignes, Ecosystem « care for ».
 - 8 oct 2026 : `DeckEclipseCinema` — même prologue intro ↔ Contact (fade 700 ms, z-50).
 - 8 oct 2026 : Visions EN révisées + lignes phrase (`DeckVision`) — plus de coupure molle.
 - 8 oct 2026 : Open — moment humain guidé + Zéro théorie ; Team tagline Cinq ans (plus d’écho).
 - 8 oct 2026 : Contact — cinéma plein écran (noir→blanc) puis dissolve ciel + titres soft-dock.
-- 5 oct 2026 : Copy V2.3 slide 2 Need — diagnostic système (industrie / deuil / écosystème), plus USB-CapCut.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -64,12 +64,12 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 1 — Title & Opening question
 
 **EN**
-- Tagline: A question before a pitch.
+- Tagline: A question before we pitch.
 - Title: Odyssey
-- Phase: If someone you loved died today, would you know what to do?
+- Phase: If someone you loved died today, would you know what to do next?
 - Bullets:
   - Vision (Playfair + teal, 2 lines): A guided human moment. / A platform that walks with families.
-  - Zero theory. Built from the inside.
+  - No theory. Built from within.
   - Scroll when you’re ready. (teal cue)
 - Progress: Open
 
@@ -88,13 +88,13 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 **EN**
 - Tagline: Analog industry. Digital families.
-- Title: Death-care is stuck at digital ground zero
-- Phase: Our vision is to bring this industry into the digital era by rethinking the grief journey and moving operations onto a platform that guides and softens.
+- Title: Death-care is stuck at digital ground zero.
+- Phase (3 lines): Our vision is to bring this industry into the digital era. / We rethink the grief journey and move operations / onto a platform that guides and softens.
 - Bullets:
-  - The industry: The desk stays analog. Funeral homes lack the digital processes to support without friction
-  - The grief: At home, families face an unguided, fragmented, often undignified journey
-  - The ecosystem: End of life is scattered — no rail connects homes, families, and services over time
-  - **Investor bridge:** That triple friction is our gap — enter with a dignified gift, keep the relationship, open the platform
+  - The industry: The arrangement desk remains analog. Funeral homes lack the digital processes to provide frictionless support.
+  - The grief: At home, families face an unguided, fragmented, and often undignified journey.
+  - The ecosystem: End-of-life logistics are scattered. No unified infrastructure connects homes, families, and services over time.
+  - Investor bridge: This triple friction is our wedge. We enter with a dignified gift, retain the relationship, and open the platform.
 
 **FR**
 - Tagline: Industrie analogique. Familles digitales.
@@ -112,13 +112,13 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 **EN**
 - Tagline: Three frictions. One platform.
-- Title: Odyssey answers the triple friction.
-- Phase: Grief deserves a journey equal to our time. / One link between the funeral home, the home, and the platform. / Dignified before, during, and after.
+- Title: Odyssey solves the triple friction.
+- Phase (3 lines): Grief deserves an experience built for the modern era. / A single link connecting the funeral home, the family, and the platform. / Dignified before, during, and after.
 - Bullets:
-  - The funeral home: A dignified $0 gift. It goes live in seconds. This is the answer to the analog industry.
+  - The funeral home: A dignified $0 gift that goes live in seconds. This is the antidote to the analog industry.
   - Home: A guided path for families. Fragmented tasks disappear.
   - The platform: The infrastructure of memory. It links funeral homes, families, and services over time.
-  - The economics: The funeral home offers the Souvenir Memory Chest at $0. The circle invests. When the tribute becomes precious, the family chooses to keep it. The funeral home earns a commission.
+  - The economics: The funeral home offers the Souvenir Memory Chest for $0. The broader circle contributes. As the tribute grows in emotional value, the family chooses to preserve it. The funeral home earns a commission.
 - Note: Soft Cap / B2B2C / RevShare naming lives on the freemium / business slides — not here.
 
 **FR**
@@ -137,14 +137,13 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 4 — Ecosystem & User Profile
 
 **EN**
-- Tagline: Who we hold gently.
+- Tagline: Who we care for.
 - Title: Partners at the funeral home. Families at home.
-- Phase (3 lines): Funeral networks are our distribution channel. / The acquisition cost is near zero. / Families pay at the end. Odyssey is not a generic consumer video app.
-- Soundbite: **We don’t buy families. We borrow the network that already holds them.**
+- Phase (4 lines): Funeral networks are our distribution channel. / Our customer acquisition cost (CAC) is near zero. / Families pay at the end. / Odyssey is not a generic consumer video app.
 - Bullets:
-  - The partners: dignified gesture in 30 seconds; profit without selling on grief; editing takes too long; USB = a cost with no lasting value
-  - The families: honor loved ones, lasting legacy, cinematic results without becoming video editors
-  - The behavior: Purchases trigger at the emotional peak. The circle has already fed the tribute. When it becomes precious, the family chooses to keep it.
+  - The partners: A dignified gesture in 30 seconds. A new profit center without selling on grief. Editing takes too long, and USBs are a cost center with no lasting value.
+  - The families: A way to honor loved ones and build a lasting legacy. Cinematic results without having to become video editors.
+  - The behavior: Purchases are triggered at the emotional peak. Once the inner circle has contributed and the tribute becomes invaluable, the family chooses to keep it.
 
 **FR**
 - Tagline: Ceux que nous accompagnons.
@@ -163,11 +162,11 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Distribution is the product.
 - Title: A Trojan Horse through funeral networks.
-- Phase: Consumer editors sell tools. We sell distribution.
+- Phase (2 lines): Consumer editing apps sell tools. / We leverage distribution.
 - Bullets:
   - The model: We do not buy families on Facebook. We borrow the network that already holds them.
-  - Acquisition: Partner activation completely eliminates family acquisition spend.
-  - Conversion: The paywall sits at the emotional peak, once the circle has already invested. It is never at the door.
+  - Acquisition: Partner activation completely eliminates family acquisition costs.
+  - Conversion: The paywall sits at the emotional peak, after the circle is already emotionally invested. It is never at the door.
   - Positioning: Our Quiet Luxury pricing avoids the race to the bottom.
   - Economics: We share 30% of net revenue with our partners.
 
@@ -188,12 +187,12 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 **EN**
 - Tagline: Sequence beats slogans.
-- Title: Three phases. Wedge, retention, platform.
-- Phase (3 lines): We build the digital link for end-of-life. First the Souvenir Memory Chest at the funeral home. / Then Lyra guides families through administration. / Then the platform routes that demand across the full funeral supply, with zero inventory.
+- Title: Three phases: Wedge, Retention, Platform.
+- Phase (4 lines): We are building the digital link for end-of-life. / First, the Souvenir Memory Chest at the funeral home. / Next, Lyra guides families through administration. / Finally, the platform routes that demand across the supply chain with zero inventory.
 - Bullets:
-  - Phase 1 (Wedge): Studio through the funeral home. $0 Souvenir Memory Chest. The circle invests with photos & contributions. Soft Cap = a free ceiling that triggers the upgrade. Partner RevShare: 30% of net.
-  - Phase 2 (Retention): Sanctuary MRR, consented leads & Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins.
-  - Phase 3 (Endgame): Amazon started with books. We start with the film & the Souvenir Memory Chest. We then route the fragmented supply economy: every funeral product, across every budget.
+  - Phase 1 (Wedge): Odyssey Studio via the funeral home. A $0 Souvenir Memory Chest. The circle contributes photos and funds. The Soft Cap acts as a free ceiling that triggers the upgrade. Partner RevShare is 30% of net revenue.
+  - Phase 2 (Retention): Sanctuary MRR, consented leads, and Lyra orchestration. The data graph relies on explicit consent (Law 25 compliant). Transactional uploads never default to marketing opt-ins.
+  - Phase 3 (Endgame): Amazon started with books. We start with the tribute film and the Memory Chest. We then route the fragmented supply economy: every end-of-life product, across every budget.
 - Note: Teal on Soft Cap / Coffre / circle / photos / RevShare / 30% / MRR / Law 25 / Amazon. Marketplace stays Phase 3 Endgame. Not Day-1 / not in current ask.
 
 **FR**
@@ -212,13 +211,13 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 **EN**
 - Tagline: Math before magic.
-- Title: The Soft Cap model: give first. Convert at the emotion.
-- Phase (mechanic, 4 lines): The funeral home offers the Souvenir Memory Chest at $0. / The family invites their circle: photos & contributions. / Everyone invests. At the Soft Cap, the emotion is collective. / The upgrade shares revenue with the partner.
+- Title: The Soft Cap model: Give first. Convert at the emotional peak.
+- Phase (mechanic, 4 lines): The funeral home offers the Souvenir Memory Chest for $0. / The family invites their circle to add photos and contributions. / Everyone participates. By the Soft Cap, the emotional investment is collective. / The upgrade shares revenue with the partner.
 - Bullets:
-  - The tiers: Souvenir: free entry · $0. Heritage: expanded limits · $179. Eternity: full suite · $349.
+  - The tiers: Souvenir: free entry ($0). Heritage: expanded limits ($179). Eternity: full cinematic suite ($349).
   - The economics: The platform takes a 10% fee. The partner earns 30% of net revenue. Odyssey keeps the remaining margin.
-  - The yield: The conservative Soft Cap baseline generates $22 per family.
-  - The viral loop: Guests contribute too. The immediate family no longer carries the financial burden alone. This lever drives the yield to $43.
+  - The yield: Our conservative Soft Cap baseline generates $22 per family.
+  - The viral loop: Guests contribute as well. The immediate family no longer carries the financial burden alone. This lever drives the yield up to $43 per family.
 - Note: Viral/circle is inside the mechanic (emotion). Yield bullets are proof only. No em dashes. Visual A live: tiers left / yield 22→43 right.
 
 **FR**
@@ -237,13 +236,13 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 8 - Traction
 
 **EN**
-- Tagline: Honest beats hype.
-- Title: Product live. Partner path in motion.
-- Phase (3 lines): We ship a real Phase 1 Studio. / We advance with major Quebec networks. / We build our narrative on concrete proof.
+- Tagline: Honesty beats hype.
+- Title: The product is live. Partner path in motion.
+- Phase (3 lines): We have shipped a fully functional Phase 1 Studio. / We are advancing with major Quebec networks. / Our narrative is built on concrete proof, not just promises.
 - Bullets:
-  - The product: The seven-step Studio is operational. The Soft Cap checkout & the Sanctuary loop are live.
-  - The partners: Pilot programs are in preparation. Discussions are under way with the Athos group (Urgel Bourgie, Espace Memoria & Lépine Cloutier).
-  - The validation: Unit economics are modeled and stress-tested. The next milestone measures actual conversion from pilots.
+  - The product: The seven-step Studio is fully operational. The Soft Cap checkout and the Sanctuary loop are live.
+  - The partners: Pilot programs are actively in preparation. Strategic discussions are underway with the Athos group (Urgel Bourgie, Espace Memoria & Lépine Cloutier).
+  - The validation: Unit economics are modeled and stress-tested. Our next milestone will measure actual conversion rates from the field pilots.
 - Note: Visu A — Studio eclipse rectangle + small 1–7 rings; playhead 1→7 (hold, return) lights ticks; validation = straight Modélisé—Terrain line above LA VALIDATION.
 
 **FR**
@@ -261,13 +260,13 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 9 - Team
 
 **EN**
-- Tagline: Five years in the operations.
-- Title: Erik and Jon. Not outsiders. Industry scars.
-- Phase: We do not guess where operations break. We spent five years living it.
+- Tagline: Five years in the trenches.
+- Title: Erik and Jon. Industry insiders with the scars to prove it.
+- Phase (2 lines): We do not guess where operations break. / We spent five years living them.
 - Bullets:
-  - Erik (CEO & CPO) : Business vision. Product architecture. Quiet Luxury craft.
-  - Jon (CTO) : Technical orchestration. Scalability. Code ready for a Silicon Valley exit.
-  - The unfair advantage : Visceral grip on funeral distribution. The craft of shipping a live Studio. Not just slideware.
+  - Erik (CEO & CPO) : Business vision. Product architecture. Quiet Luxury craftsmanship.
+  - Jon (CTO) : Technical orchestration. Scalability. Code built for a Silicon Valley exit.
+  - The unfair advantage : A visceral understanding of funeral distribution. The technical craft to ship a live Studio, rather than just pitching slideware.
 - Note: Visu A — diptyque disks E | J (Athos-like halo) + advantage coda. Soft-dock: titles → Erik → Jon → advantage.
 
 **FR**
@@ -285,16 +284,16 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 10 - Ask & Use of Funds
 
 **EN**
-- Tagline: Fund growth. Build Phase 2.
+- Tagline: Fund growth. Seed Phase 2.
 - Title: Strategic capital for Canadian expansion.
-- Phase (3 lines): We industrialize distribution. / We deploy a field team across Canada. / We build Lyra Phase 2.
+- Phase (3 lines): We industrialize distribution. / We deploy a field team across Canada. / We lay the foundations for Lyra Phase 2.
 - Corridor:
-  - 01 (Network): Capital drives our partner network.
-  - 02 (Field): It funds the field team across Canada.
-  - 03 (Lyra): It builds Lyra: data graph & precision tools for funeral homes.
+  - 01 (Network): Capital drives the expansion of our partner network.
+  - 02 (Field): It funds a dedicated field team across Canada.
+  - 03 (Lyra): It builds Lyra: the data graph and precision tools for funeral homes.
 - Coda:
-  - 90 days: At 90 days, a pilot that does not convert is stopped. / Capital is not burned blind.
-  - Boundary: The Marketplace is our Endgame. Outside this initial budget.
+  - 90 days: If a pilot does not convert within 90 days, it is stopped. / Capital is never burned blindly.
+  - Boundary: The Marketplace is our Endgame. It is explicitly outside this initial budget.
 - Note: Visu A — corridor 01–03 (Phases ADN) + risk/limit coda. No amount on slide.
 
 **FR**
@@ -317,8 +316,8 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 **EN**
 - Tagline: Join the Odyssey.
 - Title: The Studio is ready.
-- Phase: Write us. / We'll walk you through Soft Cap live. (2 lines)
-- Bullets: Erik & Jon. · Studio walkthrough on request.
+- Phase (2 lines): Reach out to us. / We will walk you through a live demo of the Soft Cap.
+- Bullets: Erik & Jon. · Studio walkthrough on request. (kept sober)
 - CTA: Enter the Studio → `/{lang}/studio` (not the deck URL).
 - Note: Visu A — prologue cinema → white → sky → soft-dock copy + CTA (Soft Cap only in vision line).
 

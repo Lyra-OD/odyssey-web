@@ -4,11 +4,11 @@
 **Dernière MAJ :** 7 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 : Deck — copy EN business slides 1–11 (care for, trenches, Soft Cap demo).
 - 8 oct 2026 : Deck — `DeckEclipseCinema` partagé (intro = Contact, fade 700 ms, z-50).
 - 8 oct 2026 : Deck — visions EN + `DeckVision` (une phrase = une ligne).
 - 8 oct 2026 : Open — moment humain guidé + Zéro théorie ; cue scroll teal plein.
 - 8 oct 2026 : Contact — cinéma eclipse → blanc → ciel + titres (soft-dock).
-- 8 oct 2026 : Ask — corridor Réseau / Terrain / Lyra + coda 90 j (Visu A).
 | Doc | Sujet |
 |-----|--------|
 | [`INVESTOR_DECK_WEB_ILP11.md`](INVESTOR_DECK_WEB_ILP11.md) | **Canon copy** deck web 11 slides (ILP) — humain + business · EN/FR |

@@ -33,6 +33,7 @@ export const DECK_TEAL_TOKENS = [
   "acquisition spend",
   "Quiet Luxury",
   "Soft Cap",
+  "CAC",
   "RevShare",
   "Loi 25",
   "Law 25",
