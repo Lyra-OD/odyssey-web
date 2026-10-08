@@ -16,10 +16,10 @@ import {
   DECK_TRACTION_LAST_STEP,
   DECK_TRACTION_STEP,
   DECK_TRACTION_WAITS_S,
-  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { DeckVision } from "./DeckVision";
 import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideTractionProps = {
@@ -457,13 +457,7 @@ export function DeckSlideTraction({
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
-        <motion.p
-          className={`${editorialFont.className} ${DECK_VISION_CLASS} whitespace-pre-line`}
-          style={{ WebkitFontSmoothing: "antialiased" }}
-          {...dockPhase()}
-        >
-          {highlightDeckTeal(phase)}
-        </motion.p>
+        <DeckVision text={phase} {...dockPhase()} />
       </div>
 
       {/* Mobile — stack narratif (corps complet) */}

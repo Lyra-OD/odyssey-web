@@ -16,10 +16,10 @@ import {
   DECK_FILM_EASE,
   DECK_LABEL_CLASS,
   DECK_TITLE_CLASS,
-  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { DeckVision } from "./DeckVision";
 import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideEcosystemProps = {
@@ -339,7 +339,8 @@ export function DeckSlideEcosystem({
         canAdvance ? "cursor-pointer" : ""
       }`}
     >
-      <div className="relative z-10 mx-auto flex w-full max-w-[90rem] -translate-y-[58%] flex-col items-center text-center">
+      {/* Titres seuls descendus — le schéma planètes garde son translate. */}
+      <div className="relative z-10 mx-auto flex w-full max-w-[90rem] -translate-y-[34%] flex-col items-center text-center md:-translate-y-[36%]">
         <motion.p className={DECK_EYEBROW_CLASS} {...dockEyebrow()}>
           {tagline}
         </motion.p>
@@ -351,13 +352,7 @@ export function DeckSlideEcosystem({
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
-        <motion.p
-          className={`${editorialFont.className} ${DECK_VISION_CLASS} whitespace-pre-line`}
-          style={{ WebkitFontSmoothing: "antialiased" }}
-          {...dockPhase()}
-        >
-          {phase}
-        </motion.p>
+        <DeckVision text={phase} {...dockPhase()} />
       </div>
 
       {SHOW_PLANET_TITLES ? (

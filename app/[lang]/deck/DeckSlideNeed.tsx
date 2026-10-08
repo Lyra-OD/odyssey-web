@@ -16,10 +16,10 @@ import {
   DECK_NEED_STEP,
   DECK_NEED_WAITS_S,
   DECK_TITLE_CLASS,
-  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { DeckVision } from "./DeckVision";
 import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideNeedProps = {
@@ -497,13 +497,11 @@ export function DeckSlideNeed({
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
-        <motion.p
-          className={`${editorialFont.className} ${DECK_VISION_CLASS}`}
-          style={{ WebkitFontSmoothing: "antialiased" }}
+        <DeckVision
+          text={phase}
+          className="max-w-[min(96rem,98vw)] text-[clamp(1.28rem,2.55vw,1.78rem)]"
           {...dockPhase()}
-        >
-          {phase}
-        </motion.p>
+        />
       </div>
 
       {/* Mobile — descente verticale */}

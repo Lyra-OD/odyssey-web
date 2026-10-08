@@ -14,10 +14,10 @@ import {
   DECK_EYEBROW_CLASS,
   DECK_LABEL_CLASS,
   DECK_TITLE_CLASS,
-  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { DeckVision } from "./DeckVision";
 import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideCompetitionProps = {
@@ -118,13 +118,7 @@ export function DeckSlideCompetition({
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
-        <motion.p
-          className={`${editorialFont.className} ${DECK_VISION_CLASS}`}
-          style={{ WebkitFontSmoothing: "antialiased" }}
-          {...dockPhase()}
-        >
-          {phase}
-        </motion.p>
+        <DeckVision text={phase} {...dockPhase()} />
       </div>
 
       {/* Beats — colonne lisible ; schéma Troie = plus tard */}

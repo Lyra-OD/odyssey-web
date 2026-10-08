@@ -4,16 +4,17 @@
 **Dernière MAJ :** 7 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 : Deck — visions EN + `DeckVision` (une phrase = une ligne).
+- 8 oct 2026 : Open — moment humain guidé + Zéro théorie ; cue scroll teal plein.
 - 8 oct 2026 : Contact — cinéma eclipse → blanc → ciel + titres (soft-dock).
 - 8 oct 2026 : Ask — corridor Réseau / Terrain / Lyra + coda 90 j (Visu A).
 - 8 oct 2026 : Team — diptyque Erik | Jon + avantage déloyal (Visu A).
-- 8 oct 2026 : Traction — playhead 1→7 + trait validation Modélisé—Terrain.
-- 8 oct 2026 : Deck — bulle Soft Cap (définition investisseur FR/EN).
 | Doc | Sujet |
 |-----|--------|
 | [`INVESTOR_DECK_WEB_ILP11.md`](INVESTOR_DECK_WEB_ILP11.md) | **Canon copy** deck web 11 slides (ILP) — humain + business · EN/FR |
 
-**Route (WIP) :** `appRoutes.deck(lang)` → `/fr/deck` · `/en/deck`. Env : `DECK_ACCESS_PASSWORD` (gate dès T2).
+**Route :** `appRoutes.deck(lang)` → `/fr/deck` · `/en/deck`.  
+**Prod :** `https://odyssey-web-eta.vercel.app/en/deck` · Env `DECK_ACCESS_PASSWORD` (Vercel + `.env.local`, jamais committer la valeur).
 
 ## Ne pas mettre ici
 

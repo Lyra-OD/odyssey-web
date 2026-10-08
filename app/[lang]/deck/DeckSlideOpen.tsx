@@ -7,10 +7,13 @@ import { OdysseyLuminousText } from "@/src/components/marketing/OdysseyLuminousT
 import { editorialFont } from "@/src/lib/fonts";
 
 import {
+  DECK_BODY_CLASS,
   DECK_EYEBROW_CLASS,
   DECK_OPEN_TEMPO,
   useDeckSoftDock,
 } from "./deckSoftDock";
+import { DeckVision } from "./DeckVision";
+import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideOpenProps = {
   tagline: string;
@@ -21,15 +24,16 @@ type DeckSlideOpenProps = {
 /**
  * Slide 1 — Open.
  * Soft dock spatial + tempo film (temps de lire entre chaque beat).
+ * Beat 1 = vision (Playfair + teal, 2 lignes) · beat 2 = preuve · cue scroll.
  */
 export function DeckSlideOpen({ tagline, phase, bullets }: DeckSlideOpenProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const inView = useInView(rootRef, { amount: 0.5, once: true });
   const softDock = useDeckSoftDock(inView);
 
-  const proofBullets = bullets.slice(0, -1);
-  const scrollCue = bullets[bullets.length - 1];
-  const proofDelays = [DECK_OPEN_TEMPO.proof1, DECK_OPEN_TEMPO.proof2];
+  const visionBeat = bullets[0];
+  const proofBeat = bullets[1];
+  const scrollCue = bullets[2];
 
   return (
     <div
@@ -50,20 +54,27 @@ export function DeckSlideOpen({ tagline, phase, bullets }: DeckSlideOpenProps) {
         <OdysseyLuminousText variant="deck">{phase}</OdysseyLuminousText>
       </motion.h2>
 
-      <ul className="relative z-10 mt-14 flex max-w-lg flex-col gap-5 text-center md:mt-16 md:gap-6">
-        {proofBullets.map((bullet, i) => (
+      {visionBeat ? (
+        <DeckVision
+          text={visionBeat}
+          className="max-w-2xl"
+          {...softDock(DECK_OPEN_TEMPO.proof1)}
+        />
+      ) : null}
+
+      <ul className="relative z-10 mt-10 flex max-w-lg flex-col gap-5 text-center md:mt-12 md:gap-6">
+        {proofBeat ? (
           <motion.li
-            key={bullet}
-            className="font-label text-[0.95rem] font-light leading-relaxed tracking-[0.02em] text-white/70 md:text-[1.05rem]"
-            {...softDock(proofDelays[i] ?? DECK_OPEN_TEMPO.proof2 + i * 2)}
+            className={`${DECK_BODY_CLASS} text-center`}
+            {...softDock(DECK_OPEN_TEMPO.proof2)}
           >
-            {bullet}
+            {highlightDeckTeal(proofBeat)}
           </motion.li>
-        ))}
+        ) : null}
 
         {scrollCue ? (
           <motion.li
-            className="mt-3 font-label text-[0.9rem] font-light leading-relaxed tracking-[0.02em] text-[rgba(0,232,240,0.58)] md:text-[0.95rem]"
+            className="mt-3 font-label text-[0.9rem] font-light leading-relaxed tracking-[0.02em] text-[var(--salon-cyan)] md:text-[0.95rem]"
             {...softDock(DECK_OPEN_TEMPO.cta)}
           >
             {scrollCue}

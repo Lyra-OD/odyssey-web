@@ -15,10 +15,10 @@ import {
   DECK_CONTACT_WAITS_S,
   DECK_EYEBROW_CLASS,
   DECK_TITLE_CLASS,
-  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { DeckVision } from "./DeckVision";
 import { highlightDeckTeal } from "./deckTealText";
 
 const EclipseCraftPlay = dynamic(
@@ -199,13 +199,7 @@ export function DeckSlideContact({
             <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
           </motion.h2>
 
-          <motion.p
-            className={`${editorialFont.className} ${DECK_VISION_CLASS} whitespace-pre-line`}
-            style={{ WebkitFontSmoothing: "antialiased" }}
-            {...dockPhase()}
-          >
-            {highlightDeckTeal(phase)}
-          </motion.p>
+          <DeckVision text={phase} {...dockPhase()} />
 
           <div className="mt-10 flex w-full flex-col items-center gap-5 md:mt-12">
             {beat0 ? (

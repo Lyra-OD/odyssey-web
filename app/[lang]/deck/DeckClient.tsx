@@ -36,9 +36,9 @@ import {
   DECK_BODY_CLASS,
   DECK_EYEBROW_CLASS,
   DECK_TITLE_CLASS,
-  DECK_VISION_CLASS,
 } from "./deckSoftDock";
 import { DeckSoftCapTipProvider } from "./DeckSoftCapTip";
+import { DeckVision } from "./DeckVision";
 import { highlightDeckTeal } from "./deckTealText";
 
 const SanctuaryUniverse = dynamic(
@@ -412,11 +412,7 @@ export function DeckClient({
                   </h2>
                 ) : null}
 
-                <p
-                  className={`${editorialFont.className} ${DECK_VISION_CLASS} max-w-xl text-center`}
-                >
-                  {highlightDeckTeal(slide.phase)}
-                </p>
+                <DeckVision text={slide.phase} className="max-w-xl" />
 
                 <ul className="mt-10 max-w-xl space-y-3 text-center">
                   {slide.bullets.map((bullet) => (

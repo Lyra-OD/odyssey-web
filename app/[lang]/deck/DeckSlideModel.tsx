@@ -14,10 +14,10 @@ import {
   DECK_MODEL_STEP,
   DECK_MODEL_WAITS_S,
   DECK_TITLE_CLASS,
-  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { DeckVision } from "./DeckVision";
 import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideModelProps = {
@@ -160,13 +160,7 @@ export function DeckSlideModel({
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
-        <motion.p
-          className={`${editorialFont.className} ${DECK_VISION_CLASS} whitespace-pre-line`}
-          style={{ WebkitFontSmoothing: "antialiased" }}
-          {...dockPhase()}
-        >
-          {highlightDeckTeal(phase)}
-        </motion.p>
+        <DeckVision text={phase} {...dockPhase()} />
       </div>
 
       {/* Diptyque : forfaits + économie | yield → boucle */}

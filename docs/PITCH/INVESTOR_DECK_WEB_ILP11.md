@@ -4,11 +4,11 @@
 **Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 : Visions EN révisées + lignes phrase (`DeckVision`) — plus de coupure molle.
+- 8 oct 2026 : Open — moment humain guidé + Zéro théorie ; Team tagline Cinq ans (plus d’écho).
 - 8 oct 2026 : Contact — cinéma plein écran (noir→blanc) puis dissolve ciel + titres soft-dock.
 - 5 oct 2026 : Copy V2.3 slide 2 Need — diagnostic système (industrie / deuil / écosystème), plus USB-CapCut.
 - 5 oct 2026 : Copy V2.2 slide 9 Team — Option 1 punchy (tranchées / cicatrices / Erik·Jon / unfair advantage).
-- 5 oct 2026 : Copy V2.1 slides 5–11 (soundbites à l’écran, phase 5 sans doublon, consented leads, kill 90 j, Marketplace = Endgame hors budget T0). Pas de tiret long.
-- 5 oct 2026 : Copy V2 CEO + soundbites (CAC · Loi 25 · Amazon · générosité · kill 90 j).
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -68,9 +68,9 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Title: Odyssey
 - Phase: If someone you loved died today, would you know what to do?
 - Bullets:
-  - Not a feature list. A human moment.
-  - Erik and Jon. Not outsiders. Industry scars.
-  - Scroll when you’re ready
+  - Vision (Playfair + teal, 2 lines): A guided human moment. / A platform that walks with families.
+  - Zero theory. Built from the inside.
+  - Scroll when you’re ready. (teal cue)
 - Progress: Open
 
 **FR**
@@ -78,9 +78,9 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Title: Odyssey
 - Phase: Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ?
 - Bullets:
-  - Pas une liste de fonctionnalités. Un moment humain.
-  - Erik et Jon. Pas des outsiders. Des cicatrices d’industrie.
-  - Scrollez quand vous êtes prêts
+  - Vision (Playfair + teal, 2 lignes) : Un moment humain guidé. / Une plateforme qui accompagne les familles.
+  - Zéro théorie. Forgés de l'intérieur.
+  - Scrollez quand vous êtes prêts. (cue teal)
 
 ---
 
@@ -261,7 +261,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 9 - Team
 
 **EN**
-- Tagline: Zero theory. Built from the inside.
+- Tagline: Five years in the operations.
 - Title: Erik and Jon. Not outsiders. Industry scars.
 - Phase: We do not guess where operations break. We spent five years living it.
 - Bullets:
@@ -271,7 +271,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Note: Visu A — diptyque disks E | J (Athos-like halo) + advantage coda. Soft-dock: titles → Erik → Jon → advantage.
 
 **FR**
-- Tagline: Zéro théorie. Forgés de l'intérieur.
+- Tagline: Cinq ans dans les opérations.
 - Title: Erik et Jon. Pas des outsiders. Des cicatrices d'industrie.
 - Phase: Nous ne devinons pas où les opérations cassent. Nous y avons passé cinq ans.
 - Bullets:

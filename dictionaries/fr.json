@@ -1167,8 +1167,8 @@
         "title": "Odyssey",
         "phase": "Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ?",
         "bullets": [
-          "Pas une liste de fonctionnalités. Un moment humain.",
-          "Erik et Jon. Pas des outsiders. Des cicatrices d’industrie.",
+          "Un moment humain guidé.\nUne plateforme qui accompagne les familles.",
+          "Zéro théorie. Forgés de l'intérieur.",
           "Scrollez quand vous êtes prêts."
         ],
         "progress": "Ouverture"
@@ -1177,7 +1177,7 @@
         "id": "need",
         "tagline": "Industrie analogique. Familles digitales.",
         "title": "Le secteur funéraire est bloqué à l'ère zéro numérique.",
-        "phase": "Notre vision est d'amener cette industrie dans l'ère digitale. Nous repensons le parcours de deuil sur une plateforme qui guide les familles et apaise l'expérience.",
+        "phase": "Notre vision est d'amener cette industrie dans l'ère digitale.\nNous repensons le parcours de deuil sur une plateforme qui guide les familles et apaise l'expérience.",
         "bullets": [
           "L'industrie : Les opérations restent manuelles. Les salons manquent de temps et d'outils numériques pour offrir un accompagnement fluide.",
           "Les familles : À la maison, les familles traversent un parcours logistique chaotique, fragmenté et non guidé.",
@@ -1201,7 +1201,7 @@
         "id": "ecosystem",
         "tagline": "Ceux que nous accompagnons.",
         "title": "Les partenaires en salon. Les familles à la maison.",
-        "phase": "Les réseaux funéraires sont notre canal de distribution.\nLe coût d'acquisition est quasi nul.\nLa famille paie à la fin. Odyssey n'est pas une simple application vidéo grand public.",
+        "phase": "Les réseaux funéraires sont notre canal de distribution.\nLe coût d'acquisition est quasi nul.\nLa famille paie à la fin.\nOdyssey n'est pas une simple application vidéo grand public.",
         "bullets": [
           "Les salons : Ils cherchent un geste digne activable en 30 secondes. Ils veulent générer du profit sans vendre sur le deuil. Le montage prend trop de temps. La clé USB est un coût sans valeur.",
           "Les familles : Elles veulent honorer leurs proches et garder un héritage durable. Elles exigent un résultat cinématographique sans devoir faire le montage.",
@@ -1212,7 +1212,7 @@
         "id": "competition",
         "tagline": "La distribution est le produit.",
         "title": "Un cheval de Troie via les réseaux funéraires.",
-        "phase": "Les éditeurs grand public vendent des outils. Nous vendons la distribution.",
+        "phase": "Les éditeurs grand public vendent des outils.\nNous vendons la distribution.",
         "bullets": [
           "Le modèle : Nous n’achetons pas des familles sur Facebook. Nous empruntons le réseau qui les a déjà.",
           "L'acquisition : L'activation en salon élimine totalement les dépenses d’acquisition.",
@@ -1225,7 +1225,7 @@
         "id": "phases",
         "tagline": "La séquence bat les slogans.",
         "title": "Trois phases. Wedge, rétention, plateforme.",
-        "phase": "Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre Souvenir en salon.\nEnsuite Lyra guide les familles dans l’administratif.\nPuis la plateforme relie cette demande à toute l’offre funéraire, sans stock.",
+        "phase": "Nous bâtissons le lien numérique de la fin de vie.\nD’abord le Coffre Souvenir en salon.\nEnsuite Lyra guide les familles dans l’administratif.\nPuis la plateforme relie cette demande à toute l’offre funéraire, sans stock.",
         "bullets": [
           "Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le cercle s’investit avec photos & contributions. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net.",
           "Phase 2 (Rétention) : Sanctuaire MRR, leads consentis & orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing.",
@@ -1257,9 +1257,9 @@
       },
       {
         "id": "team",
-        "tagline": "Zéro théorie. Forgés de l'intérieur.",
+        "tagline": "Cinq ans dans les opérations.",
         "title": "Erik et Jon. Pas des outsiders. Des cicatrices d'industrie.",
-        "phase": "Nous ne devinons pas où les opérations cassent. Nous y avons passé cinq ans.",
+        "phase": "Nous ne devinons pas où les opérations cassent.\nNous y avons passé cinq ans.",
         "bullets": [
           "Erik (CEO & CPO) : Vision d'affaires. Architecture produit. Design Quiet Luxury.",
           "Jon (CTO) : Orchestration technique. Scalabilité. Code prêt pour un exit Silicon Valley.",

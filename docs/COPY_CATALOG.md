@@ -1137,14 +1137,14 @@
 | `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before a pitch. |
 | `pitchDeck.slides[0].title` | Odyssey | Odyssey |
 | `pitchDeck.slides[0].phase` | Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ? | If someone you loved died today, would you know what to do? |
-| `pitchDeck.slides[0].bullets[0]` | Pas une liste de fonctionnalités. Un moment humain. | Not a feature list. A human moment. |
-| `pitchDeck.slides[0].bullets[1]` | Erik et Jon. Pas des outsiders. Des cicatrices d’industrie. | Erik and Jon. Not outsiders. Industry scars. |
+| `pitchDeck.slides[0].bullets[0]` | Un moment humain guidé. Une plateforme qui accompagne les familles. | A guided human moment. A platform that walks with families. |
+| `pitchDeck.slides[0].bullets[1]` | Zéro théorie. Forgés de l'intérieur. | Zero theory. Built from the inside. |
 | `pitchDeck.slides[0].bullets[2]` | Scrollez quand vous êtes prêts. | Scroll when you’re ready. |
 | `pitchDeck.slides[0].progress` | Ouverture | Open |
 | `pitchDeck.slides[1].id` | need | need |
 | `pitchDeck.slides[1].tagline` | Industrie analogique. Familles digitales. | Analog industry. Digital families. |
 | `pitchDeck.slides[1].title` | Le secteur funéraire est bloqué à l'ère zéro numérique. | Death-care is stuck at digital ground zero. |
-| `pitchDeck.slides[1].phase` | Notre vision est d'amener cette industrie dans l'ère digitale. Nous repensons le parcours de deuil sur une plateforme qui guide les familles et apaise l'expérience. | Our vision is to bring this industry into the digital era. We rethink the bereavement journey through a platform that guides families and brings peace to the process. |
+| `pitchDeck.slides[1].phase` | Notre vision est d'amener cette industrie dans l'ère digitale. Nous repensons le parcours de deuil sur une plateforme qui guide les familles et apaise l'expérience. | Our vision is to bring this industry into the digital era. We rethink the grief journey on a platform that guides families and softens the experience. |
 | `pitchDeck.slides[1].bullets[0]` | L'industrie : Les opérations restent manuelles. Les salons manquent de temps et d'outils numériques pour offrir un accompagnement fluide. | The industry: Operations remain manual. Funeral homes lack the time and digital tools to deliver a seamless experience. |
 | `pitchDeck.slides[1].bullets[1]` | Les familles : À la maison, les familles traversent un parcours logistique chaotique, fragmenté et non guidé. | The families: At home, families navigate a chaotic, fragmented, and unguided logistical maze. |
 | `pitchDeck.slides[1].bullets[2]` | L'écosystème : Le marché de la fin de vie est éclaté. Aucune infrastructure ne relie les salons, les familles et les services dans le temps. | The ecosystem: The end-of-life market is disconnected. No unified infrastructure links funeral homes, families, and services over time. |
@@ -1152,7 +1152,7 @@
 | `pitchDeck.slides[2].id` | solution | solution |
 | `pitchDeck.slides[2].tagline` | Trois frictions. Une plateforme. | Three frictions. One platform. |
 | `pitchDeck.slides[2].title` | Odyssey répond à la triple friction. | Odyssey answers the triple friction. |
-| `pitchDeck.slides[2].phase` | Le deuil mérite un parcours à la hauteur d’aujourd’hui. Un seul lien entre le salon, la maison et la plateforme. Digne avant, pendant, et après. | Grief deserves a journey equal to our time. One link between the funeral home, the home, and the platform. Dignified before, during, and after. |
+| `pitchDeck.slides[2].phase` | Le deuil mérite un parcours à la hauteur d’aujourd’hui. Un seul lien entre le salon, la maison et la plateforme. Digne avant, pendant, et après. | Grief deserves a journey worthy of today. One link between the funeral home, the home, and the platform. Dignified before, during, and after. |
 | `pitchDeck.slides[2].bullets[0]` | Le salon : Un geste digne à 0 $. Il s'active en quelques secondes. C'est la réponse à l'industrie analogique. | The funeral home: A dignified $0 gift. It goes live in seconds. This is the answer to the analog industry. |
 | `pitchDeck.slides[2].bullets[1]` | La maison : Un parcours guidé pour les familles. Les tâches fragmentées disparaissent. | Home: A guided path for families. Fragmented tasks disappear. |
 | `pitchDeck.slides[2].bullets[2]` | La plateforme : L'infrastructure de la mémoire. Elle connecte les salons, les familles et les services dans la durée. | The platform: The infrastructure of memory. It links funeral homes, families, and services over time. |
@@ -1160,7 +1160,7 @@
 | `pitchDeck.slides[3].id` | ecosystem | ecosystem |
 | `pitchDeck.slides[3].tagline` | Ceux que nous accompagnons. | Who we hold gently. |
 | `pitchDeck.slides[3].title` | Les partenaires en salon. Les familles à la maison. | Partners at the funeral home. Families at home. |
-| `pitchDeck.slides[3].phase` | Les réseaux funéraires sont notre canal de distribution. Le coût d'acquisition est quasi nul. La famille paie à la fin. Odyssey n'est pas une simple application vidéo grand public. | Funeral networks are our distribution channel. The acquisition cost is near zero. Families pay at the end. Odyssey is not a generic consumer video app. |
+| `pitchDeck.slides[3].phase` | Les réseaux funéraires sont notre canal de distribution. Le coût d'acquisition est quasi nul. La famille paie à la fin. Odyssey n'est pas une simple application vidéo grand public. | Funeral networks are our distribution channel. Acquisition cost is near zero. Families pay at the end. Odyssey is not a generic consumer video app. |
 | `pitchDeck.slides[3].bullets[0]` | Les salons : Ils cherchent un geste digne activable en 30 secondes. Ils veulent générer du profit sans vendre sur le deuil. Le montage prend trop de temps. La clé USB est un coût sans valeur. | The partners: They need a dignified gesture activated in 30 seconds. They want to generate profit without selling on grief. Video editing takes too much time. USB drives are a cost with no lasting value. |
 | `pitchDeck.slides[3].bullets[1]` | Les familles : Elles veulent honorer leurs proches et garder un héritage durable. Elles exigent un résultat cinématographique sans devoir faire le montage. | The families: They want to honor their loved ones and keep a lasting legacy. They demand cinematic results without becoming video editors. |
 | `pitchDeck.slides[3].bullets[2]` | Le comportement : L'achat se déclenche au pic émotionnel. Le cercle a déjà nourri l’hommage. Quand il devient précieux, la famille choisit de le garder. | The behavior: Purchases trigger at the emotional peak. The circle has already fed the tribute. When it becomes precious, the family chooses to keep it. |
@@ -1176,7 +1176,7 @@
 | `pitchDeck.slides[5].id` | phases | phases |
 | `pitchDeck.slides[5].tagline` | La séquence bat les slogans. | Sequence beats slogans. |
 | `pitchDeck.slides[5].title` | Trois phases. Wedge, rétention, plateforme. | Three phases. Wedge, retention, platform. |
-| `pitchDeck.slides[5].phase` | Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre Souvenir en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande à toute l’offre funéraire, sans stock. | We build the digital link for end-of-life. First the Souvenir Memory Chest at the funeral home. Then Lyra guides families through administration. Then the platform routes that demand across the full funeral supply, with zero inventory. |
+| `pitchDeck.slides[5].phase` | Nous bâtissons le lien numérique de la fin de vie. D’abord le Coffre Souvenir en salon. Ensuite Lyra guide les familles dans l’administratif. Puis la plateforme relie cette demande à toute l’offre funéraire, sans stock. | We build the digital link for end-of-life. First, the Souvenir Memory Chest at the funeral home. Then Lyra guides families through administration. Then the platform connects that demand to the full funeral offer with zero inventory. |
 | `pitchDeck.slides[5].bullets[0]` | Phase 1 (Wedge) : Studio via le salon. Coffre Souvenir à 0 $. Le cercle s’investit avec photos & contributions. Le Soft Cap = un plafond gratuit qui déclenche l’upgrade. RevShare partenaire : 30 % du net. | Phase 1 (Wedge): Studio through the funeral home. $0 Souvenir Memory Chest. The circle invests with photos & contributions. Soft Cap = a free ceiling that triggers the upgrade. Partner RevShare: 30% of net. |
 | `pitchDeck.slides[5].bullets[1]` | Phase 2 (Rétention) : Sanctuaire MRR, leads consentis & orchestration Lyra. Le graphe de données repose sur un consentement explicite conforme à la Loi 25. L'upload transactionnel n'équivaut pas à un opt-in marketing. | Phase 2 (Retention): Sanctuary MRR, consented leads & Lyra orchestration. The data graph relies on explicit consent compliant with Law 25. Transactional uploads do not equal marketing opt-ins. |
 | `pitchDeck.slides[5].bullets[2]` | Phase 3 (Endgame) : Amazon a commencé par les livres. Nous commençons par le film & le Coffre Souvenir. Nous routons ensuite l’économie fragmentée : tous les produits funéraires, pour tous les budgets. | Phase 3 (Endgame): Amazon started with books. We start with the film & the Souvenir Memory Chest. We then route the fragmented supply economy: every funeral product, across every budget. |
@@ -1191,12 +1191,12 @@
 | `pitchDeck.slides[7].id` | traction | traction |
 | `pitchDeck.slides[7].tagline` | L’honnêteté bat le hype. | Honest beats hype. |
 | `pitchDeck.slides[7].title` | Le produit est live. Les partenaires avancent. | Product live. Partner path in motion. |
-| `pitchDeck.slides[7].phase` | Nous livrons un véritable Studio Phase 1. Nous avançons avec de grands réseaux québécois. Notre discours repose sur des preuves concrètes. | We ship a real Phase 1 Studio. We advance with major Quebec networks. We build our narrative on concrete proof. |
+| `pitchDeck.slides[7].phase` | Nous livrons un véritable Studio Phase 1. Nous avançons avec de grands réseaux québécois. Notre discours repose sur des preuves concrètes. | We ship a real Phase 1 Studio. We advance with major Quebec networks. Our story rests on concrete proof. |
 | `pitchDeck.slides[7].bullets[0]` | Le produit : Le Studio fonctionne en sept étapes. Le modèle Soft Cap & le Sanctuaire sont actifs. | The product: The seven-step Studio is operational. The Soft Cap checkout & the Sanctuary loop are live. |
 | `pitchDeck.slides[7].bullets[1]` | Les partenaires : Les pilotes se préparent. Les discussions avancent avec le groupe Athos (Urgel Bourgie, Espace Memoria & Lépine Cloutier). | The partners: Pilot programs are in preparation. Discussions are under way with the Athos group (Urgel Bourgie, Espace Memoria & Lépine Cloutier). |
 | `pitchDeck.slides[7].bullets[2]` | La validation : Les fondamentaux économiques sont modélisés et stress-testés. La prochaine étape mesurera la conversion réelle sur le terrain. | The validation: Unit economics are modeled and stress-tested. The next milestone measures actual conversion from pilots. |
 | `pitchDeck.slides[8].id` | team | team |
-| `pitchDeck.slides[8].tagline` | Zéro théorie. Forgés de l'intérieur. | Zero theory. Built from the inside. |
+| `pitchDeck.slides[8].tagline` | Cinq ans dans les opérations. | Five years in the operations. |
 | `pitchDeck.slides[8].title` | Erik et Jon. Pas des outsiders. Des cicatrices d'industrie. | Erik and Jon. Not outsiders. Industry scars. |
 | `pitchDeck.slides[8].phase` | Nous ne devinons pas où les opérations cassent. Nous y avons passé cinq ans. | We do not guess where operations break. We spent five years living it. |
 | `pitchDeck.slides[8].bullets[0]` | Erik (CEO & CPO) : Vision d'affaires. Architecture produit. Design Quiet Luxury. | Erik (CEO & CPO) : Business vision. Product architecture. Quiet Luxury craft. |
@@ -1214,7 +1214,7 @@
 | `pitchDeck.slides[10].id` | contact | contact |
 | `pitchDeck.slides[10].tagline` | Rejoignez l'Odyssée. | Join the Odyssey. |
 | `pitchDeck.slides[10].title` | Le Studio est prêt. | The Studio is ready. |
-| `pitchDeck.slides[10].phase` | Écrivez-nous. On vous explique le Soft Cap en direct. | Write us. We'll walk you through Soft Cap live. |
+| `pitchDeck.slides[10].phase` | Écrivez-nous. On vous explique le Soft Cap en direct. | Write to us. We'll walk you through Soft Cap live. |
 | `pitchDeck.slides[10].bullets[0]` | Erik & Jon. | Erik & Jon. |
 | `pitchDeck.slides[10].bullets[1]` | Démo Studio sur demande. | Studio walkthrough on request. |
 

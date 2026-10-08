@@ -14,10 +14,10 @@ import {
   DECK_PHASES_STEP,
   DECK_PHASES_WAITS_S,
   DECK_TITLE_CLASS,
-  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { DeckVision } from "./DeckVision";
 import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlidePhasesProps = {
@@ -174,18 +174,16 @@ export function DeckSlidePhases({
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
-        <motion.p
-          className={`${editorialFont.className} ${DECK_VISION_CLASS} whitespace-pre-line`}
-          style={{ WebkitFontSmoothing: "antialiased" }}
+        <DeckVision
+          text={phase}
+          className="max-w-[min(96rem,98vw)] text-[clamp(1.28rem,2.55vw,1.78rem)]"
           {...dockPhase()}
-        >
-          {phase}
-        </motion.p>
+        />
       </div>
 
       <div
         ref={corridorRef}
-        className="relative z-10 mx-auto mt-2 w-full translate-x-[7%] md:mt-0 md:translate-x-[9.5%] lg:translate-x-[11%]"
+        className="relative z-10 mx-auto mt-2 w-full translate-x-[2%] md:mt-0 md:translate-x-[3.5%] lg:translate-x-[4.5%]"
       >
         <svg
           className="pointer-events-none absolute inset-0 hidden h-full w-full md:block"

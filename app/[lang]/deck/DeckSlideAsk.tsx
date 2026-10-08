@@ -14,10 +14,10 @@ import {
   DECK_EYEBROW_CLASS,
   DECK_LABEL_CLASS,
   DECK_TITLE_CLASS,
-  DECK_VISION_CLASS,
   useDeckSoftDock,
   useDeckStepReveal,
 } from "./deckSoftDock";
+import { DeckVision } from "./DeckVision";
 import { highlightDeckTeal } from "./deckTealText";
 
 type DeckSlideAskProps = {
@@ -192,13 +192,7 @@ export function DeckSlideAsk({
           <OdysseyLuminousText variant="deck">{title}</OdysseyLuminousText>
         </motion.h2>
 
-        <motion.p
-          className={`${editorialFont.className} ${DECK_VISION_CLASS} whitespace-pre-line`}
-          style={{ WebkitFontSmoothing: "antialiased" }}
-          {...dockPhase()}
-        >
-          {highlightDeckTeal(phase)}
-        </motion.p>
+        <DeckVision text={phase} {...dockPhase()} />
       </div>
 
       {/* Corridor 01 — 02 — 03 */}
