@@ -1,14 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 30 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 8 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 — Next = packages Coffre/Livre + ingest — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) · audit docs [`product/DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](product/DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md).
 - 30 sept 2026 — **Poster sas 2.5D** : 1 plan net + spring + breath + specular — `SessionCinemaGate` desktop (pas dual-plane).
 - 30 sept 2026 — **C5** : focale auto upload (FaceDetector / BlazeFace) · lab `/fr/test-focal` — depth reportée.
 - 30 sept 2026 — **V1.5 player fermée** : KB · Breath · light leaks · deep-to-black · One Bed modèle — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 30 sept 2026 — **Fin cinéma** : hold 3 s → deep-to-black 2,2 s → noir pur 0,8 s → Memory Card (plus 1,5 s de cut).
-- 29 sept 2026 — **Player** : sans portrait officiel, skip `breath_portrait` (plus de fallback 1ʳᵉ photo du film).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -32,10 +32,10 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** (titre d’étape OK ; titres chapitre défaut encore Étincelle / Épopée / Héritage) · S5-J/K ⏳ |
 | **Scanner** | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Marque Éclipse** | 🟢 | Play A–B KEEP · mark + exports · brancher UI ⚪ · wormhole = lab |
-| **Tests & CI** | 🟢 | Vitest business 🟢 · CI GitHub `npm test` + **`next build`** sur `main` + PR |
+| **Tests & CI** | 🟡 | `next build` 🟢 · `npm test` 🔴 (1 fail `quiet-luxury-player` : noir pré-mémoire 0.8 vs test 1.5 — hors chantier Coffre) |
 | **Security** | 🟡 | RLS, gate Salon, entitlements never-trust, webhook Creatomate fail-closed |
 
-**Suite (après démo 18 sept) :** S5-L2 titres chapitre · S5-clean orphelins · S5-J/K · pas de mix BA cette semaine.
+**Suite :** chantier [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) (Coffre tiroir → ingest S5–S7 → Livre). Démo 18 sept **passée**.
 
 ---
 
@@ -47,7 +47,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Wizard **7** étapes | 🟢 | 1 Essentiels · 2 Inviter · 3 Coffre · 4 Son · 5 Livre Ouvert · 6 Aperçu · 7 Checkout. **Plus d’étape 8.** Co-Créateur 3–5 |
 | Marque Éclipse + ODYSSEY | 🟢 | [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · brancher produit ⚪ |
 | Ciel Sanctuaire / intro | 🟡 | Craft ✅ · **J2** wizard étape 1 (ciel + birth + reveal) 🟡 · hub J3 ⏳ · prologue J1 labs · `scene.intro` OFF |
-| Médias / Storage | 🟢 | Thumbs WebP + cache session — récit [log §4.1](_archive/PROJECT_STATUS_LOG.md#41-supabase-storage-egress-juin-2026) |
+| Médias / Storage | 🟡 | Thumbs WebP + cache OK · ingest allégé (trim 10 s / resize / 1 objet) ⏳ — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
 | Stingray preview | 🟢 | MAPI + mock |
 | Checkout famille (Stripe) | 🟢 | Soft Cap, `freemium_free`, entitlements |
 | Checkout jetons B2B | — | **N/A** — purgé P8. Ne plus planifier |
@@ -70,7 +70,10 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 | Priorité | Quoi | Done when |
 |----------|------|-----------|
-| **P0** | Démo **18 sept 2026** — wizard 7 étapes, Livre Ouvert, aperçu-pont (pas le master) | Famille parcourt 1→7 sans silent-fail autosave ; teaser ≠ film Creatomate |
+| **P0** | Packages **Coffre** + tiroir chrome · même banque que l’étape 3 | Surface extrait · drawer wizard · [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 1 |
+| **P1** | Ingest S5→S6→S7 + copy « versions allégées seulement » | Trim 10 s · encode 1080p · resize photo · 1 objet Storage |
+| **P2** | Package **Livre** + polish (après cadrage) | `surfaces/livre` · UX listée avec Erik |
+| **Fix** | CI `quiet-luxury-player` (0.8 vs 1.5) | Test aligné sur `CINEMA_TIMING.preMemoryBlack` |
 | **Later** | Étape 6 **mix BA** (bande-annonce + voir un chapitre) — pas le teaser-film actuel | Plan dédié · [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) |
 | **Later** | Étape 6 bandeau Soft Cap **« pourquoi »** (faits, pas alerte générique) | Plan dédié · [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) |
 | **Ops** | Stripe CLI `stripe login` + `stripe listen` local · activer `charge.refunded` endpoint prod | Webhook local sans script replay |

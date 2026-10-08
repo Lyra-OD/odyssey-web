@@ -1,10 +1,12 @@
 # product/ — nouveaux docs produit (wizard, Sanctuaire, Scanner)
 
 **Type :** ops · **Vérité pour :** où naissent les **nouveaux** docs produit.  
-**Dernière MAJ :** 21 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 | Doc | Sujet |
 |-----|--------|
+| [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) | **Chantier** packages Coffre / Livre · tiroir · ingest S5–S7 |
+| [`DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md) | Audit fraîcheur docs cluster Wizard (8 oct 2026) |
 | [`PARCOURS_UX_STORYBOARD_VOULU.md`](PARCOURS_UX_STORYBOARD_VOULU.md) | **Chemin 1** voulu (0→12 figé) |
 | [`PARCOURS_UX_STORYBOARD_INVITE.md`](PARCOURS_UX_STORYBOARD_INVITE.md) | **Invité** — storyboard voulu (G0→G5) |
 | [`PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md`](PARCOURS_UX_PLAN_TECHNIQUE_DEMO_10_SEPT.md) | Plan technique — démo **10 sept 2026** (slice invité) |

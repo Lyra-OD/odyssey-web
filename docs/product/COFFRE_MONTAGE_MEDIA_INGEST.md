@@ -1,15 +1,16 @@
 # Coffre · montage · ingest médias
 
 **Type :** living · **Vérité pour :** audit Coffre + Livre Ouvert + décision ingest client (trim 10 s + compress).  
-**Dernière MAJ :** 16 sept 2026 · **Carte :** [`../README.md`](../README.md)  
-**Démo :** vendredi 18 sept 2026 — voir § Étapes chirurgicales.
+**Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md)  
+**Chantier actif :** [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 2 (= S5–S7).  
+**Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · P1 ingest **ouvert**.
 
 **Changelog** (max 5)
+- 8 oct 2026 — Démo 18 sept clôturée dans l’en-tête · S5–S7 = Phase 2 du plan packages Coffre/Livre.
 - 16 sept 2026 — **S3** : fetch étape 5 avec `force` ; dropzone accepte `.mp4`/`.mov` même sans MIME.
 - 16 sept 2026 — **S2d** : barre d’insertion dans le gap (Livre + Composer) ; overlay z-index au-dessus de Composer.
 - 16 sept 2026 — **S2c** : Étape 5 desktop élargie (`max-w-7xl`) ; directeur / composition au `document.body` ; fade wizard sans `transform` (drag dnd-kit).
 - 16 sept 2026 — **S2b** : drag desktop = listeners sur l’aperçu (pas le wrapper) ; overlay seul suit le curseur ; poignée mobile inchangée.
-- 16 sept 2026 — **S2** : `useFinePointer` synchrone (`useSyncExternalStore`) — DnD desktop dès le 1er paint.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  

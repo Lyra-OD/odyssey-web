@@ -1,14 +1,14 @@
 # Carte documentation Odyssey
 
 **Type :** living · **Vérité pour :** index des docs, types, « ne pas copier ».  
-**Dernière MAJ :** 5 oct 2026 · **Carte :** ce fichier.
+**Dernière MAJ :** 8 oct 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 8 oct 2026 — Plan packages Coffre/Livre + audit docs cluster — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md).
 - 5 oct 2026 — **PITCH/** : canon deck capital ILP 11 — [`PITCH/INVESTOR_DECK_WEB_ILP11.md`](PITCH/INVESTOR_DECK_WEB_ILP11.md).
 - 30 sept 2026 — **C4 V1.5** player fermée (KB · Breath · leaks · deep-to-black) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 23 sept 2026 — **C13** Social Cut 19 $ — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 21 sept 2026 — **C4** QuietLuxuryPlayer — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
-- 21 sept 2026 — Trajectoire Cercle + garde-fous C4 — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 
 Hiérarchie développeur (ordre de lecture code) : [`CONVENTIONS.md`](CONVENTIONS.md).  
 Hub onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
@@ -168,7 +168,9 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) | canon | **Chemin 1** — Traversée UX (spec impl active) |
 | [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) | canon | Beats Parcours UX · craft · stubs |
 | [`product/PARCOURS_UX_GAPS.md`](product/PARCOURS_UX_GAPS.md) | living | Audit trous Chemin 1 · gate T1 |
-| [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) | living | Coffre + montage : audit vidéo / DnD desktop · ingest trim 10 s · **démo 18 sept** |
+| [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) | living | Coffre + montage : audit vidéo / DnD · ingest trim 10 s (S5–S7 ouverts) |
+| [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) | living | Chantier packages Coffre/Livre · tiroir · ingest |
+| [`product/DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](product/DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md) | living | Audit fraîcheur docs Wizard / Coffre / Livre |
 | [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) | canon | Étape 6 aperçu — mix BA (historique) ; cadeau Souvenir → [`SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
 | [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) | canon | Souvenir stream 0 $ · master 49 $ · **moteur cercle** C0–C14 |
 | [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) | canon | Étape 6 bandeau Soft Cap — faits / pourquoi (plan plus tard) |

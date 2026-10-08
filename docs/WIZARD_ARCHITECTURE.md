@@ -1,14 +1,14 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 29 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 8 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 8 oct 2026 — Orchestrateur `TributeWizard.tsx` ~**3462** L · chantier découpage Coffre/Livre : [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md).
 - 29 sept 2026 — **Étape 6 DA** : sas affiche N&B sombre + CTA éditoriaux (typo / lien Passer) — plus de boutons verre.
 - 29 sept 2026 — **Étape 6 immersif** : `data-odyssey-cinema` sur sas (ref-count) · masque Navbar studio + Aide · chrome wizard déjà hors shell.
 - 29 sept 2026 — **Étape 6 immersif** : early return hors `wizard-shell` (pas de stacking context / chrome / prix) · ✕ → 5 · Passer → 7.
 - 29 sept 2026 — **Étape 6** : sas cinéma plein écran (`SessionCinemaGate`) · poster portrait/dernière photo · projection / checkout · plus de `PreviewStep`.
-- 17 sept 2026 — **D0 freeze** : 7 étapes (plus de « 7–8 ») ; Preview = storyboard live + pont hybride ; S5-L partiel.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -24,7 +24,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 
 | File | Role |
 |------|------|
-| `src/components/tribute/TributeWizard.tsx` | Step routing, validation gates, autosave wiring, checkout handoff, global header (Dossier + fil) ; barre bas N3 : 2–5 Retour\|Suivant · 7 Préserver {forfait}·prix · **étape 6 = early return immersif** (`SessionCinemaGate` hors shell, chrome/prix absents) |
+| `src/components/tribute/TributeWizard.tsx` | Orchestrateur ~**3462** L — step routing, gates, autosave, checkout, header (Dossier + fil) ; barre bas N3 : 2–5 Retour\|Suivant · 7 Préserver {forfait}·prix · **étape 6 = early return immersif** (`SessionCinemaGate` hors shell). **Découpage cible :** [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) (Coffre tiroir · Livre package · ingest). |
 | `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | **Step 1 (J2)** — ciel fullscreen + panneau verre ; `SanctuaryUniverse` background · birth live · reveal contrôlé |
 | `src/hooks/useWizardStep1Reveal.ts` | Phase reveal étape 1 (`idle` → `birth` → `reward` → `done`) · orchestration `playReward()` |
 | `src/lib/wizard/wizardBirthReveal.ts` | Courbes / beats C0–C2 pour naissance Hero au prénom (pont craft → wizard) |
@@ -116,7 +116,7 @@ Voir [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · UI `SoftCapModal` dans 
 | **DEFAULT_B2C_BASE_PACKAGE = "heritage"** (fallback) | Ancien ancrage Éternité ; **supplanté Cascade V-Final** : init via `ChannelProfile` (B2B2C → `essential`, B2C → `signature` / Héritage **179 $**) |
 | **Step 4 ↔ 5 reorder** | Chapter media capacity depends on `durationSec` — music choice must precede media assignment |
 | **Clean Slate Step 5** | `SoundSignatureStep` showed functional UI but inputs were silently ignored by `coerceWizardState()` — misleading UX, not mere tech debt |
-| **`useWizardStoryboard`** | Isolate chapter domain from `TributeWizard` (~3030 lines today) ; hook stays pure (no autosave) |
+| **`useWizardStoryboard`** | Isolate chapter domain from `TributeWizard` (~3462 lines today) ; hook stays pure (no autosave) |
 | **montage/* triage** | Purge 3-act logic (`MontageStep`, act columns); keep pure UI (`MontageDirectorModal`, `MontageMediaCard`, `MontageFocalReticle`) retyped for chapters |
 | **Pont hybride Preview/Checkout** | Étape 6 lit le **storyboard live**. Autosave + Stripe gardent encore le miroir `montage` / `act_tracks` jusqu’à S9 |
 | **EMFILE / `ulimit -n 65536`** | Next.js Watchpack failed silently → 404 on all routes in dev; restart `npm run dev` with raised fd limit |
