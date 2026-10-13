@@ -39,10 +39,64 @@ export type MediaQueueGridCopy = {
   viaScanner?: string;
   /** Badge tuile — souvenir déposé par un invité. */
   viaGuest?: string;
+  /** Badge tuile — photo upload famille. */
+  viaPhoto?: string;
+  /** Badge tuile — vidéo upload famille. */
+  viaVideo?: string;
   /** Ouvre l’aperçu restauration IA (tuiles Scanner). */
   restorePreview?: string;
   /** Message affiché quand item.error === MEDIA_QUOTA_EXCEEDED_ERROR (support `{max}`). */
   quotaExceededError?: string;
+};
+
+type TileBadgeKind = "scanner" | "guest" | "video" | "photo";
+
+/** Un badge / tuile — provenance avant nature. */
+function resolveTileBadgeKind(item: UploadQueueItem): TileBadgeKind {
+  if (item.source === "scanner_companion") return "scanner";
+  if (item.source?.startsWith("guest_")) return "guest";
+  if (isVideoItem(item)) return "video";
+  return "photo";
+}
+
+/** 2ᵉ passage : fond sombre + teintes poussées + glow (pas pastille pleine). */
+const TILE_BADGE_STYLE: Record<
+  TileBadgeKind,
+  {
+    backgroundColor: string;
+    color: string;
+    borderColor: string;
+    boxShadow: string;
+  }
+> = {
+  // Scanner — indigo
+  scanner: {
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    color: "#a5b4fc",
+    borderColor: "rgba(129, 140, 248, 0.8)",
+    boxShadow: "0 0 12px rgba(129, 140, 248, 0.28)",
+  },
+  // Souvenir — teal saturé
+  guest: {
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    color: "#5eead4",
+    borderColor: "rgba(45, 212, 191, 0.8)",
+    boxShadow: "0 0 12px rgba(45, 212, 191, 0.25)",
+  },
+  // Vidéo — ambre saturé
+  video: {
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    color: "#fcd34d",
+    borderColor: "rgba(251, 191, 36, 0.8)",
+    boxShadow: "0 0 12px rgba(251, 191, 36, 0.28)",
+  },
+  // Photo — mauve / fuchsia saturé
+  photo: {
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    color: "#f5d0fe",
+    borderColor: "rgba(232, 121, 249, 0.7)",
+    boxShadow: "0 0 12px rgba(232, 121, 249, 0.22)",
+  },
 };
 
 type Props = {
@@ -78,6 +132,16 @@ function isVideoItem(item: UploadQueueItem): boolean {
   const mime = getItemMimeType(item);
   if (mime.startsWith(VIDEO_PREFIX)) return true;
   return /\.(mp4|mov)$/i.test(getItemDisplayName(item));
+}
+
+function tileBadgeLabel(
+  kind: TileBadgeKind,
+  copy: MediaQueueGridCopy,
+): string | null {
+  if (kind === "scanner") return copy.viaScanner ?? null;
+  if (kind === "guest") return copy.viaGuest ?? null;
+  if (kind === "video") return copy.viaVideo ?? null;
+  return copy.viaPhoto ?? null;
 }
 
 function isPreviewableImage(item: UploadQueueItem): boolean {
@@ -197,6 +261,8 @@ export function MediaQueueGrid({
             (isVideoItem(item) && previewIsImage && isRemoteMediaItem(item)));
         const showVideoPreview =
           isVideoItem(item) && Boolean(previewUrl) && !previewIsImage;
+        const badgeKind = resolveTileBadgeKind(item);
+        const badgeLabel = tileBadgeLabel(badgeKind, copy);
         const displayName = getItemDisplayName(item);
         const isHeic =
           /\.(heic|heif)$/i.test(displayName) ||
@@ -297,13 +363,12 @@ export function MediaQueueGrid({
                 </span>
               </div>
 
-              {item.source?.startsWith("guest_") && copy.viaGuest ? (
-                <span className="absolute left-1.5 top-1.5 rounded-sm border border-teal-400/35 bg-black/55 px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-[0.16em] text-teal-200/90">
-                  {copy.viaGuest}
-                </span>
-              ) : item.source === "scanner_companion" && copy.viaScanner ? (
-                <span className="absolute left-1.5 top-1.5 rounded-sm border border-teal-400/35 bg-black/55 px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-[0.16em] text-teal-200/90">
-                  {copy.viaScanner}
+              {badgeLabel ? (
+                <span
+                  className="absolute left-1.5 top-1.5 rounded-sm border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em]"
+                  style={TILE_BADGE_STYLE[badgeKind]}
+                >
+                  {badgeLabel}
                 </span>
               ) : null}
 

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 13 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 13 oct 2026 — Badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo.
 - 13 oct 2026 — **S5 ✅** poster frame vidéo à l’upload (tuile Coffre/banque = image) — suite S6/S7 + package Coffre.
 - 8 oct 2026 — Next = packages Coffre/Livre + ingest — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) · audit docs [`product/DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](product/DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md).
 - 30 sept 2026 — **Poster sas 2.5D** : 1 plan net + spring + breath + specular — `SessionCinemaGate` desktop (pas dual-plane).
 - 30 sept 2026 — **C5** : focale auto upload (FaceDetector / BlazeFace) · lab `/fr/test-focal` — depth reportée.
-- 30 sept 2026 — **V1.5 player fermée** : KB · Breath · light leaks · deep-to-black · One Bed modèle — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

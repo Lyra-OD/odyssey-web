@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-08 · **Entrées :** 1109
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-13 · **Entrées :** 1111
 
 ## `common`
 
@@ -428,8 +428,10 @@
 | `tributeWizard.scannerUnavailable` | Scanner indisponible pour le moment. | Scanner unavailable for the moment. |
 | `tributeWizard.scannerWaitingPhone` | En attente du téléphone | Waiting for phone |
 | `tributeWizard.scannerPhotosReceived` | {count} photo(s) reçue(s) | {count} photo(s) received |
-| `tributeWizard.queueViaScanner` | Via Scanner | Via Scanner |
+| `tributeWizard.queueViaScanner` | Scanner | Scanner |
 | `tributeWizard.queueViaGuest` | Souvenir | Memory |
+| `tributeWizard.queueViaPhoto` | Photo | Photo |
+| `tributeWizard.queueViaVideo` | Vidéo | Video |
 | `tributeWizard.scannerRestorePreview` | Aperçu restauration IA | AI restoration preview |
 | `tributeWizard.scannerRestoreTitle` | Restauration IA | AI restoration |
 | `tributeWizard.scannerRestoreHint` | Aperçu sur cette photo. La restauration finale est livrée après paiement. | Preview on this photo. The final restoration is delivered after payment. |

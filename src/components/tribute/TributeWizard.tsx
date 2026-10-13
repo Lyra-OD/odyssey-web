@@ -2873,6 +2873,8 @@ export function TributeWizard({
                             retry: copy.queueRetry,
                             viaScanner: copy.queueViaScanner,
                             viaGuest: copy.queueViaGuest,
+                            viaPhoto: copy.queueViaPhoto,
+                            viaVideo: copy.queueViaVideo,
                             restorePreview: copy.scannerRestorePreview,
                             quotaExceededError:
                               copy.uploadLimitExceededItemError.replace(
