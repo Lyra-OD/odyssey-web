@@ -4,8 +4,9 @@
 **Dernière MAJ :** 13 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 13 oct 2026 — **S6 ✅** resize photo ≤2048 JPEG preflight (`resizeImageForUploadFile`) · HEIC skip. Suite = S7 + copy · Phase 1 Coffre.
-- 13 oct 2026 — Badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo — [`MediaQueueGrid`](../../src/components/media/MediaQueueGrid.tsx).
+- 13 oct 2026 — **S6b ✅** Sanctuaire photo invité = même resize ≤2048. Suite = S7 + copy · Phase 1 Coffre · Scanner hors scope.
+- 13 oct 2026 — **S6 ✅** resize photo ≤2048 JPEG preflight (`resizeImageForUploadFile`) · HEIC skip.
+- 13 oct 2026 — Badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo.
 - 13 oct 2026 — **S5 ✅** poster vidéo client (upload + hydrate + tuiles image).
 - 8 oct 2026 — Plan figé (CEO) : packages (pas 2ᵉ app) · Coffre tiroir d’abord · ingest S5–S7 · Livre polish après cadrage.
 

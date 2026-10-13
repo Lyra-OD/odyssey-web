@@ -6,11 +6,11 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · P1 ingest **ouvert** (S5–S6 livrés).
 
 **Changelog** (max 5)
+- 13 oct 2026 — **S6b ✅** : Sanctuaire dépôt photo = même resize ≤2048 — [`SanctuaryDepositForm`](../../src/components/contribute/SanctuaryDepositForm.tsx).
 - 13 oct 2026 — **S6 ✅** : resize photo ≤2048 JPEG preflight · HEIC skip · [`resizeImageForUpload.ts`](../../src/lib/media/resizeImageForUpload.ts).
 - 13 oct 2026 — Badges tuile : Photo / Vidéo / Souvenir / Scanner — canon [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) § Badges.
 - 13 oct 2026 — **S5 ✅** : poster WebP client · hydrate/delete `*-thumb.webp` vidéo · tuiles = image.
 - 8 oct 2026 — Démo 18 sept clôturée · S5–S7 = Phase 2 packages Coffre/Livre.
-- 16 sept 2026 — **S3** : fetch étape 5 `force` ; dropzone `.mp4`/`.mov` sans MIME.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
@@ -68,7 +68,7 @@ Legacy **orphelin** : [`MontageTimeline.tsx`](../../src/components/tribute/story
 |--------|--------|
 | Vidéo | Fenêtre **10 s** (défaut 0→10, range dans la file Coffre) + re-encode **1080p** H.264/AAC, fichier typiquement **≪ 80 Mo** |
 | Photo | Côté long max **2048 px**, JPEG/WebP ~0.82 |
-| Hors V1 | Sanctuaire deposit, Scanner, musique MP3 (déjà ~40 Mo), worker ffmpeg serveur |
+| Hors V1 | Scanner, musique MP3 (déjà ~40 Mo), worker ffmpeg serveur · Sanctuaire **photo** = S6b ✅ (même `resizeImageForUploadFile`) |
 
 Creatomate : clip déjà court → `trim_start` = 0. Re-trim directeur = phase plus tard **seulement si** on stocke plus que 10 s (on ne le fait pas en V1).
 

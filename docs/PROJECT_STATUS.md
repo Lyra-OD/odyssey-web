@@ -4,11 +4,11 @@
 **Dernière MAJ :** 13 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 13 oct 2026 — **S6b ✅** Sanctuaire dépôt photo = resize ≤2048 (même lib que Coffre).
 - 13 oct 2026 — **S6 ✅** resize photo ≤2048 JPEG preflight (HEIC skip) — suite S7 + copy · package Coffre.
 - 13 oct 2026 — CI : test `quiet-luxury-player` aligné sur `preMemoryBlack: 0.8` · docs badges Coffre.
 - 13 oct 2026 — Badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo.
 - 13 oct 2026 — **S5 ✅** poster frame vidéo à l’upload (tuile Coffre/banque = image).
-- 8 oct 2026 — Next = packages Coffre/Livre + ingest — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -47,7 +47,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Wizard **7** étapes | 🟢 | 1 Essentiels · 2 Inviter · 3 Coffre · 4 Son · 5 Livre Ouvert · 6 Aperçu · 7 Checkout. **Plus d’étape 8.** Co-Créateur 3–5 |
 | Marque Éclipse + ODYSSEY | 🟢 | [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · brancher produit ⚪ |
 | Ciel Sanctuaire / intro | 🟡 | Craft ✅ · **J2** wizard étape 1 (ciel + birth + reveal) 🟡 · hub J3 ⏳ · prologue J1 labs · `scene.intro` OFF |
-| Médias / Storage | 🟡 | Thumbs + **S5–S6 ✅** (poster vidéo · resize photo ≤2048) · badges tuile ✅ · **S7** trim/encode ⏳ — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
+| Médias / Storage | 🟡 | Thumbs + **S5–S6b ✅** (poster · resize Coffre + Sanctuaire photo) · badges ✅ · **S7** ⏳ — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
 | Stingray preview | 🟢 | MAPI + mock |
 | Checkout famille (Stripe) | 🟢 | Soft Cap, `freemium_free`, entitlements |
 | Checkout jetons B2B | — | **N/A** — purgé P8. Ne plus planifier |

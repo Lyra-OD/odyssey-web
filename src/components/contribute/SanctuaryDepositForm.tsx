@@ -12,6 +12,7 @@ import {
   sanctuaryWizardLabel,
   sanctuaryWizardTextarea,
 } from "@/src/lib/contribute/sanctuaryChrome";
+import { resizeImageForUploadFile } from "@/src/lib/media/resizeImageForUpload";
 import { connexionSubmitButtonClass } from "@/src/components/salon/SalonCyanGlowText";
 import { DURATION_RITUAL, EASE_OUT_LUXE } from "@/src/lib/motion/easing";
 import type { AppDictionary } from "@/lib/dictionaries";
@@ -114,12 +115,14 @@ export function SanctuaryDepositForm({
     | { ok: true; deposit: SanctuaryDepositResult }
     | { ok: false; limit: boolean }
   > => {
+    // S6b — même preflight Coffre (≤2048 JPEG · HEIC skip).
+    const uploadFile = await resizeImageForUploadFile(file);
     const form = new FormData();
     form.set("kind", "photo");
     form.set("contributorName", trimmedName);
     form.set("contributorEmail", emailTrimmed);
     form.set("consentMarketing", consentMarketing ? "true" : "false");
-    form.set("file", file);
+    form.set("file", uploadFile);
 
     const res = await fetch(
       `/api/contribute/${encodeURIComponent(token)}/deposit`,
