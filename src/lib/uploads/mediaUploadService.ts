@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/client";
 import { generateImageThumbnailBlob } from "@/src/lib/media/generateImageThumbnail";
+import { generateVideoPosterBlob } from "@/src/lib/media/generateVideoPoster";
 import {
   STORAGE_CACHE_CONTROL,
 } from "@/src/lib/media/storageEgressPolicy";
@@ -225,7 +226,9 @@ async function uploadAndInsertSigned(params: {
     throw new Error(`Storage upload failed: ${uploadError.message}`);
   }
 
-  const thumbBlob = await generateImageThumbnailBlob(params.item.file);
+  const thumbBlob =
+    (await generateImageThumbnailBlob(params.item.file)) ??
+    (await generateVideoPosterBlob(params.item.file));
   if (thumbBlob) {
     try {
       const thumbSigned = await requestSignedUploadUrl({
@@ -308,7 +311,9 @@ async function uploadAndInsert(
     throw new Error(`Storage upload failed: ${uploadError.message}`);
   }
 
-  const thumbBlob = await generateImageThumbnailBlob(params.item.file);
+  const thumbBlob =
+    (await generateImageThumbnailBlob(params.item.file)) ??
+    (await generateVideoPosterBlob(params.item.file));
   if (thumbBlob) {
     const thumbPath = thumbStoragePathFor(storagePath);
     const { error: thumbError } = await supabase.storage
