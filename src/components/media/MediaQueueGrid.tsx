@@ -18,6 +18,7 @@ import {
 } from "@/src/lib/uploads/mediaUploadService";
 import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
 import { MediaVideoPreview } from "@/src/components/media/MediaVideoPreview";
+import { looksLikeImageSrc } from "@/src/lib/media/thumbnailPath";
 import {
   getItemDisplayName,
   getItemMimeType,
@@ -189,9 +190,13 @@ export function MediaQueueGrid({
     >
       {sortedItems.map((item) => {
         const previewUrl = previews.get(item.id);
+        const previewIsImage = looksLikeImageSrc(previewUrl);
         const showImagePreview =
-          isPreviewableImage(item) && Boolean(previewUrl);
-        const showVideoPreview = isVideoItem(item) && Boolean(previewUrl);
+          Boolean(previewUrl) &&
+          (isPreviewableImage(item) ||
+            (isVideoItem(item) && previewIsImage && isRemoteMediaItem(item)));
+        const showVideoPreview =
+          isVideoItem(item) && Boolean(previewUrl) && !previewIsImage;
         const displayName = getItemDisplayName(item);
         const isHeic =
           /\.(heic|heif)$/i.test(displayName) ||
@@ -238,7 +243,11 @@ export function MediaQueueGrid({
                 isRemoteMediaItem(item) ? (
                   <StoragePreviewImage
                     src={previewUrl}
-                    fallbackSrc={item.fullPreviewUrl}
+                    fallbackSrc={
+                      looksLikeImageSrc(item.fullPreviewUrl)
+                        ? item.fullPreviewUrl
+                        : null
+                    }
                     alt={displayName}
                     className="h-full w-full object-cover"
                   />

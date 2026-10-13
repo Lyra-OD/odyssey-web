@@ -4,6 +4,7 @@ import { Film, Image as ImageIcon } from "lucide-react";
 
 import { MediaVideoPreview } from "@/src/components/media/MediaVideoPreview";
 import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
+import { looksLikeImageSrc } from "@/src/lib/media/thumbnailPath";
 
 type Props = {
   isVideo: boolean;
@@ -14,7 +15,8 @@ type Props = {
 };
 
 /**
- * Miniature Coffre / montage : photo = img, vidéo = &lt;video&gt; (jamais img sur MP4).
+ * Miniature Coffre / montage : photo ou poster vidéo = img ;
+ * vidéo sans poster = video element (jamais img sur MP4).
  */
 export function MediaAssetThumb({
   isVideo,
@@ -25,6 +27,19 @@ export function MediaAssetThumb({
 }: Props) {
   const wrap = pointerEventsNone ? "pointer-events-none " : "";
   const cls = `${wrap}${className}`.trim();
+  const imageFallback = looksLikeImageSrc(fallbackSrc) ? fallbackSrc : null;
+
+  if (src && looksLikeImageSrc(src)) {
+    return (
+      <StoragePreviewImage
+        src={src}
+        fallbackSrc={imageFallback}
+        alt=""
+        className={cls}
+        draggable={false}
+      />
+    );
+  }
 
   if (isVideo && src) {
     return <MediaVideoPreview src={src} className={cls} />;

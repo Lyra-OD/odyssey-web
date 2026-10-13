@@ -1,9 +1,10 @@
 # Wizard — packages Coffre / Livre + ingest
 
 **Type :** living · **Vérité pour :** chantier post-deck — découpage Coffre/Livre en packages, tiroir global, ingest trim/compress.  
-**Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 13 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 13 oct 2026 — **S5 ✅** poster vidéo client (upload + hydrate + tuiles image). Suite = S6 resize · S7 trim/encode · Phase 1 Coffre.
 - 8 oct 2026 — Plan figé (CEO) : packages (pas 2ᵉ app) · Coffre tiroir d’abord · ingest S5–S7 · Livre polish après cadrage.
 
 Canon liés : [`COFFRE_MONTAGE_MEDIA_INGEST.md`](COFFRE_MONTAGE_MEDIA_INGEST.md) · [`../WIZARD_ARCHITECTURE.md`](../WIZARD_ARCHITECTURE.md) · [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md) · tiroir J5 [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md).  
@@ -71,7 +72,7 @@ Détail technique : [`COFFRE_MONTAGE_MEDIA_INGEST.md`](COFFRE_MONTAGE_MEDIA_INGE
 
 | Slice | Quoi | Done when |
 |-------|------|-----------|
-| **S5** | Poster frame vidéo client à l’upload | Tuile Coffre / banque = image |
+| **S5** | ✅ Poster frame vidéo client à l’upload | Tuile Coffre / banque = image |
 | **S6** | Resize photo ≤2048 px preflight | Plus d’upload « plein capteur » V1 |
 | **S7** | Trim 10 s + encode 1080p H.264/AAC + UX préparation | Fichier léger · Creatomate `trim_start` = 0 |
 | **Copy** | Famille informée : on ne garde que la version préparée / allégée | Clés FR/EN + catalog |
@@ -106,6 +107,6 @@ Sortir helpers locaux ; garder nav / gates / checkout. Cible mentale : orchestra
 ## Ordre de ship
 
 1. Package Coffre + tiroir chrome wizard  
-2. S5 → S6 → S7 + copy rétention allégée  
+2. ~~S5~~ ✅ → S6 → S7 + copy rétention allégée  
 3. Cadrage Livre → package + polish  
 4. Unifier tiroir ciel / studio si pas déjà fait en P1  

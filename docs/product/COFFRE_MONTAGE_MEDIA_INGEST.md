@@ -1,16 +1,16 @@
 # Coffre · montage · ingest médias
 
 **Type :** living · **Vérité pour :** audit Coffre + Livre Ouvert + décision ingest client (trim 10 s + compress).  
-**Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md)  
-**Chantier actif :** [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 2 (= S5–S7).  
-**Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · P1 ingest **ouvert**.
+**Dernière MAJ :** 13 oct 2026 · **Carte :** [`../README.md`](../README.md)  
+**Chantier actif :** [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 2 (= S6–S7 ; **S5 ✅**).  
+**Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · P1 ingest **ouvert** (S5 livré).
 
 **Changelog** (max 5)
+- 13 oct 2026 — **S5 ✅** : poster WebP client à l’upload · hydrate/delete `*-thumb.webp` vidéo · tuiles Coffre/banque = image.
 - 8 oct 2026 — Démo 18 sept clôturée dans l’en-tête · S5–S7 = Phase 2 du plan packages Coffre/Livre.
 - 16 sept 2026 — **S3** : fetch étape 5 avec `force` ; dropzone accepte `.mp4`/`.mov` même sans MIME.
 - 16 sept 2026 — **S2d** : barre d’insertion dans le gap (Livre + Composer) ; overlay z-index au-dessus de Composer.
 - 16 sept 2026 — **S2c** : Étape 5 desktop élargie (`max-w-7xl`) ; directeur / composition au `document.body` ; fade wizard sans `transform` (drag dnd-kit).
-- 16 sept 2026 — **S2b** : drag desktop = listeners sur l’aperçu (pas le wrapper) ; overlay seul suit le curseur ; poignée mobile inchangée.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
@@ -23,7 +23,7 @@ Pacing : `VIDEO_TRIM_DURATION_SEC` = 10 s dans [`src/lib/wizard/storyboardPacing
 | # | Symptôme | Cause réelle |
 |---|----------|----------------|
 | A | Upload vidéo → *The object exceeded the maximum allowed size* | Limite **Supabase Storage** (souvent 50 Mo), pas le plafond app (300 Mo) |
-| B | « Je ne vois pas la vidéo » dans le Coffre | Tuile **Film** sans poster (S5) ; MIME vide `.mp4`/`.mov` = **S3** |
+| B | « Je ne vois pas la vidéo » dans le Coffre | **S5 ✅** poster WebP ; legacy sans thumb = Film / preview metadata ; MIME vide `.mp4`/`.mov` = **S3** |
 | C | Vidéo absente / cassée à la table de montage | URL **MP4 passée à un `<img>`** (banque, cartes, directeur) |
 | D | Composer desktop « plus comme avant » | Shell `max-w-3xl` + fade `transform` (piège `fixed` / casse dnd-kit) |
 | E | Export = toujours les 10 premières secondes | `videoTrims` jamais écrit par l’UI |
@@ -110,7 +110,7 @@ Copy FR/EN si nouveau texte écran (ex. « Souvenir filmé ») — dictionnaires
 
 | # | Quoi |
 |---|------|
-| **S5** | Poster frame client à l’upload (canvas), même pipeline que thumb photo |
+| **S5** | ✅ Poster frame client à l’upload (canvas), même pipeline que thumb photo |
 | **S6** | Resize photos 2048 px preflight |
 | **S7** | Trim 10 s + encode 1080p client (file Coffre) + copy « Préparation de la vidéo… » |
 
