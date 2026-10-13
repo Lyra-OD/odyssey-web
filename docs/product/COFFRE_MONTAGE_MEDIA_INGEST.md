@@ -6,11 +6,11 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · P1 ingest **ouvert** (S5 livré).
 
 **Changelog** (max 5)
+- 13 oct 2026 — Badges tuile : Photo / Vidéo / Souvenir / Scanner (couleurs) — canon [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) § Badges.
 - 13 oct 2026 — **S5 ✅** : poster WebP client à l’upload · hydrate/delete `*-thumb.webp` vidéo · tuiles Coffre/banque = image.
-- 8 oct 2026 — Démo 18 sept clôturée dans l’en-tête · S5–S7 = Phase 2 du plan packages Coffre/Livre.
-- 16 sept 2026 — **S3** : fetch étape 5 avec `force` ; dropzone accepte `.mp4`/`.mov` même sans MIME.
-- 16 sept 2026 — **S2d** : barre d’insertion dans le gap (Livre + Composer) ; overlay z-index au-dessus de Composer.
-- 16 sept 2026 — **S2c** : Étape 5 desktop élargie (`max-w-7xl`) ; directeur / composition au `document.body` ; fade wizard sans `transform` (drag dnd-kit).
+- 8 oct 2026 — Démo 18 sept clôturée · S5–S7 = Phase 2 packages Coffre/Livre.
+- 16 sept 2026 — **S3** : fetch étape 5 `force` ; dropzone `.mp4`/`.mov` sans MIME.
+- 16 sept 2026 — **S2d** : barre d’insertion gap (Livre + Composer).
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  

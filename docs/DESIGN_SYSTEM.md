@@ -1,15 +1,14 @@
 # Odyssey — Design System
 
 **Type :** canon · **Vérité pour :** palette, Halo-Éclipse, tokens UI.  
-**Dernière MAJ :** 28 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 13 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 5 sept. 2026 — arbitrage palette ouvert : 3 bleu-verts mesurés, magenta = échec (le rose disparaît), teinte chaude à déplacer de 43° vers ~75° → [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md).
-- 5 sept. 2026 — §2.1bis « choisir = teal, partout » : sélection des souvenirs et des options payantes passée en teal (l'ambre garde le domaine, pas l'état) · `sanctuaryFocusRing` inclus dans les tokens boutons.
-- 28 août 2026 — `/partners` : H1 `OdysseyLuminousText` variant `soft` · lead form + CTA démo = `sanctuarySubmitButton` (teal Studio).
-- 28 août 2026 — §3.1bis blanc lumineux `odyssey-connexion-mark` : grammaire emblème (wordmark + accroches courtes, pas le corps).
-- 28 août 2026 — stratégie bicolore DA : **Cyan Connexion** (#00E8F0) marketing + login · **Teal Sanctuaire** (#2DD4BF) wizard + Studio · §2 réécrit.
-- 19 août 2026 — contrat DA : frames Vague 1 = [`DA_SCREENS.md`](DA_SCREENS.md).
+- 13 oct 2026 — §2.1bis badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo (identité ≠ sélection).
+- 5 sept. 2026 — arbitrage palette ouvert : 3 bleu-verts mesurés, magenta = échec → [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md).
+- 5 sept. 2026 — §2.1bis « choisir = teal, partout » : sélection = teal · domaine = identité.
+- 28 août 2026 — `/partners` : H1 soft · CTA démo = `sanctuarySubmitButton` (teal Studio).
+- 28 août 2026 — stratégie bicolore DA : Cyan Connexion · Teal Sanctuaire · §2.
 - 17 août 2026 — KPI Salon : chiffres en `--salon-cyan` · invitation Salon email + CTA Souvenir.
 
 Guide visuel et produit pour l’ensemble du site Next.js (Studio B2C, Salon B2B2C, pages marketing). Complète [`CONVENTIONS.md`](CONVENTIONS.md) et [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).  
@@ -69,6 +68,17 @@ Couleur d'**interaction produit** (sélection, focus, états actifs, respiration
 **Règle :** dès l'entrée Studio (wizard, montage, Sanctuaire), privilégier le **teal**. Le cyan reste sur la porte ; le teal accueille la famille.
 
 **Choisir = teal, partout.** Un élément retenu (souvenir, réseau, option payante, carte de composition) se signale en teal, jamais dans la teinte de son domaine. Les couleurs de domaine — ambre pour la banque de souvenirs, violet pour l'ambiance, palette de chapitre, teinte propre à chaque option payante — restent sur l'**identité** de l'élément (icône, en-tête), pas sur son **état**.
+
+**Badges tuile Coffre (identité, pas état)** — grille étape 3 [`MediaQueueGrid`](../src/components/media/MediaQueueGrid.tsx). Un badge / tuile ; fond sombre + teinte saturée (pas pastille pleine). Détail produit : [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) § Badges.
+
+| Domaine | Teinte | Texte approx. |
+|---------|--------|---------------|
+| Photo | Mauve / fuchsia | `#f5d0fe` |
+| Vidéo | Ambre | `#fcd34d` |
+| Souvenir (invité) | Teal | `#5eead4` |
+| Scanner | Indigo | `#a5b4fc` |
+
+Statut « Envoyé » / anneau upload = teal (état). Ne pas réutiliser indigo/ambre/mauve pour la sélection.
 
 | Token `sanctuaryChrome` | Rôle |
 |---|---|

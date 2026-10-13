@@ -4,6 +4,7 @@
 **Dernière MAJ :** 13 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 13 oct 2026 — Badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo — [`MediaQueueGrid`](../../src/components/media/MediaQueueGrid.tsx).
 - 13 oct 2026 — **S5 ✅** poster vidéo client (upload + hydrate + tuiles image). Suite = S6 resize · S7 trim/encode · Phase 1 Coffre.
 - 8 oct 2026 — Plan figé (CEO) : packages (pas 2ᵉ app) · Coffre tiroir d’abord · ingest S5–S7 · Livre polish après cadrage.
 
@@ -21,6 +22,23 @@ Audit docs cluster : [`DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](DOCS_AUDIT_WIZA
 | Ordre | **Coffre** (package + tiroir + ingest) → **Livre** (package + polish après cadrage Erik) |
 | Ingest V1 | Client trimme / compresse **avant** upload · **un seul** objet Storage · copy « versions allégées seulement » |
 | Soft Cap | Silence dans le Coffre (canon Soft Cap) |
+| Badges tuile | **Un** badge / tuile — provenance avant nature (Scanner → Souvenir → Vidéo → Photo) |
+
+---
+
+## Badges grille Coffre (étape 3)
+
+Canon UI : [`MediaQueueGrid.tsx`](../../src/components/media/MediaQueueGrid.tsx) · copy `tributeWizard.queueVia*`.
+
+| Badge | Clé FR/EN | Condition | Couleur (identité, pas sélection) |
+|-------|-----------|-----------|-----------------------------------|
+| **Scanner** | `queueViaScanner` | `source === scanner_companion` | Indigo — texte `#a5b4fc`, bordure + glow |
+| **Souvenir** | `queueViaGuest` | `source` préfixe `guest_` | Teal — texte `#5eead4` |
+| **Vidéo** | `queueViaVideo` | Upload famille vidéo (sinon) | Ambre — texte `#fcd34d` |
+| **Photo** | `queueViaPhoto` | Upload famille photo (défaut) | Mauve / fuchsia — texte `#f5d0fe` |
+
+Style : fond noir ~75 %, bordure + texte saturés, glow léger — **pas** pastille plein fond coloré.  
+Sélection / « Envoyé » restent teal (état) — [`DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md) « choisir = teal ».
 
 ---
 

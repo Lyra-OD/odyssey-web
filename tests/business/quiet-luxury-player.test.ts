@@ -12,8 +12,8 @@ describe("C4 QuietLuxuryPlayer garde-fous", () => {
     expect(QUIET_LUXURY_END_BLACK_SEC).toBeGreaterThanOrEqual(1.5);
   });
 
-  it("noir pré-carte mémoire cinéma = 1.5 s (C5-4)", () => {
-    expect(QUIET_LUXURY_PRE_MEMORY_BLACK_SEC).toBe(1.5);
+  it("noir pré-carte mémoire cinéma = 0.8 s (CINEMA_TIMING.preMemoryBlack)", () => {
+    expect(QUIET_LUXURY_PRE_MEMORY_BLACK_SEC).toBe(0.8);
   });
 
   it("noir de fin teaser ≥ 1 s", () => {
