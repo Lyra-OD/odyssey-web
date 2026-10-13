@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { generateImageThumbnailBlob } from "@/src/lib/media/generateImageThumbnail";
 import { generateVideoPosterBlob } from "@/src/lib/media/generateVideoPoster";
+import { resizeImageForUploadFile } from "@/src/lib/media/resizeImageForUpload";
 import {
   STORAGE_CACHE_CONTROL,
 } from "@/src/lib/media/storageEgressPolicy";
@@ -206,20 +207,21 @@ async function uploadAndInsertSigned(params: {
     throw new Error("Upload requires a local file item");
   }
 
+  const uploadFile = await resizeImageForUploadFile(params.item.file);
   const supabase = createClient();
   const signed = await requestSignedUploadUrl({
     projectId: params.projectId,
-    fileName: params.item.file.name,
-    mimeType: params.item.file.type || undefined,
-    sizeBytes: params.item.file.size,
+    fileName: uploadFile.name,
+    mimeType: uploadFile.type || undefined,
+    sizeBytes: uploadFile.size,
     orderIndex: params.item.orderIndex ?? 0,
   });
 
   const { error: uploadError } = await supabase.storage
     .from(params.bucket)
-    .uploadToSignedUrl(signed.path, signed.token, params.item.file, {
+    .uploadToSignedUrl(signed.path, signed.token, uploadFile, {
       cacheControl: STORAGE_CACHE_CONTROL,
-      contentType: params.item.file.type || undefined,
+      contentType: uploadFile.type || undefined,
     });
 
   if (uploadError) {
@@ -227,8 +229,8 @@ async function uploadAndInsertSigned(params: {
   }
 
   const thumbBlob =
-    (await generateImageThumbnailBlob(params.item.file)) ??
-    (await generateVideoPosterBlob(params.item.file));
+    (await generateImageThumbnailBlob(uploadFile)) ??
+    (await generateVideoPosterBlob(uploadFile));
   if (thumbBlob) {
     try {
       const thumbSigned = await requestSignedUploadUrl({
@@ -262,8 +264,8 @@ async function uploadAndInsertSigned(params: {
   const assetId = await registerMediaAsset({
     projectId: params.projectId,
     storagePath: signed.path,
-    mimeType: params.item.file.type || null,
-    sizeBytes: params.item.file.size,
+    mimeType: uploadFile.type || null,
+    sizeBytes: uploadFile.size,
     orderIndex: params.item.orderIndex ?? 0,
     source: params.source,
   });
@@ -296,15 +298,17 @@ async function uploadAndInsert(
     throw new Error("Upload requires a local file item");
   }
 
+  const uploadFile = await resizeImageForUploadFile(params.item.file);
+  const itemForUpload = { ...params.item, file: uploadFile };
   const supabase = createClient();
-  const storagePath = buildStoragePath(params.projectId, params.item);
+  const storagePath = buildStoragePath(params.projectId, itemForUpload);
 
   const { error: uploadError } = await supabase.storage
     .from(params.bucket)
-    .upload(storagePath, params.item.file, {
+    .upload(storagePath, uploadFile, {
       cacheControl: STORAGE_CACHE_CONTROL,
       upsert: false,
-      contentType: params.item.file.type || undefined,
+      contentType: uploadFile.type || undefined,
     });
 
   if (uploadError) {
@@ -312,8 +316,8 @@ async function uploadAndInsert(
   }
 
   const thumbBlob =
-    (await generateImageThumbnailBlob(params.item.file)) ??
-    (await generateVideoPosterBlob(params.item.file));
+    (await generateImageThumbnailBlob(uploadFile)) ??
+    (await generateVideoPosterBlob(uploadFile));
   if (thumbBlob) {
     const thumbPath = thumbStoragePathFor(storagePath);
     const { error: thumbError } = await supabase.storage
@@ -335,7 +339,7 @@ async function uploadAndInsert(
     params.insertRowFactory?.({
       projectId: params.projectId,
       storagePath,
-      item: params.item,
+      item: itemForUpload,
       source: params.source,
       userId: params.userId,
       tenantId: params.tenantId,
@@ -343,8 +347,8 @@ async function uploadAndInsert(
     ({
       project_id: params.projectId,
       storage_path: storagePath,
-      mime_type: params.item.file.type || null,
-      size_bytes: params.item.file.size,
+      mime_type: uploadFile.type || null,
+      size_bytes: uploadFile.size,
       source: params.source,
       upload_status: "uploaded",
       order_index: params.item.orderIndex ?? 0,
