@@ -2,15 +2,15 @@
 
 **Type :** living · **Vérité pour :** audit Coffre + Livre Ouvert + décision ingest client (trim 10 s + compress).  
 **Dernière MAJ :** 13 oct 2026 · **Carte :** [`../README.md`](../README.md)  
-**Chantier actif :** [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 2 (= S6–S7 ; **S5 ✅**).  
-**Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · P1 ingest **ouvert** (S5 livré).
+**Chantier actif :** [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 2 (= **S7** ; S5–S6 ✅).  
+**Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · P1 ingest **ouvert** (S5–S6 livrés).
 
 **Changelog** (max 5)
-- 13 oct 2026 — Badges tuile : Photo / Vidéo / Souvenir / Scanner (couleurs) — canon [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) § Badges.
-- 13 oct 2026 — **S5 ✅** : poster WebP client à l’upload · hydrate/delete `*-thumb.webp` vidéo · tuiles Coffre/banque = image.
+- 13 oct 2026 — **S6 ✅** : resize photo ≤2048 JPEG preflight · HEIC skip · [`resizeImageForUpload.ts`](../../src/lib/media/resizeImageForUpload.ts).
+- 13 oct 2026 — Badges tuile : Photo / Vidéo / Souvenir / Scanner — canon [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) § Badges.
+- 13 oct 2026 — **S5 ✅** : poster WebP client · hydrate/delete `*-thumb.webp` vidéo · tuiles = image.
 - 8 oct 2026 — Démo 18 sept clôturée · S5–S7 = Phase 2 packages Coffre/Livre.
 - 16 sept 2026 — **S3** : fetch étape 5 `force` ; dropzone `.mp4`/`.mov` sans MIME.
-- 16 sept 2026 — **S2d** : barre d’insertion gap (Livre + Composer).
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
@@ -111,7 +111,7 @@ Copy FR/EN si nouveau texte écran (ex. « Souvenir filmé ») — dictionnaires
 | # | Quoi |
 |---|------|
 | **S5** | ✅ Poster frame client à l’upload (canvas), même pipeline que thumb photo |
-| **S6** | Resize photos 2048 px preflight |
+| **S6** | ✅ Resize photos 2048 px preflight (JPEG 0.82 · HEIC skip) |
 | **S7** | Trim 10 s + encode 1080p client (file Coffre) + copy « Préparation de la vidéo… » |
 
 S7 = le plus gros ; ne pas commencer avant S1–S3 verts.

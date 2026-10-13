@@ -4,8 +4,9 @@
 **Dernière MAJ :** 13 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 13 oct 2026 — **S6 ✅** resize photo ≤2048 JPEG preflight (`resizeImageForUploadFile`) · HEIC skip. Suite = S7 + copy · Phase 1 Coffre.
 - 13 oct 2026 — Badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo — [`MediaQueueGrid`](../../src/components/media/MediaQueueGrid.tsx).
-- 13 oct 2026 — **S5 ✅** poster vidéo client (upload + hydrate + tuiles image). Suite = S6 resize · S7 trim/encode · Phase 1 Coffre.
+- 13 oct 2026 — **S5 ✅** poster vidéo client (upload + hydrate + tuiles image).
 - 8 oct 2026 — Plan figé (CEO) : packages (pas 2ᵉ app) · Coffre tiroir d’abord · ingest S5–S7 · Livre polish après cadrage.
 
 Canon liés : [`COFFRE_MONTAGE_MEDIA_INGEST.md`](COFFRE_MONTAGE_MEDIA_INGEST.md) · [`../WIZARD_ARCHITECTURE.md`](../WIZARD_ARCHITECTURE.md) · [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md) · tiroir J5 [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md).  
@@ -50,7 +51,7 @@ Sélection / « Envoyé » restent teal (état) — [`DESIGN_SYSTEM.md`](../DESI
 | Coffre | Étape 3 inline + `MediaDropzoneAdapter` / grille | `src/surfaces/coffre/` (ou `components/coffre/`) + **tiroir chrome** = même banque |
 | Livre | [`StoryboardMontageStep.tsx`](../../src/components/tribute/StoryboardMontageStep.tsx) + `montage/*` | `src/surfaces/livre/` après Coffre |
 | Vidéo | Export = 10 premières s · `videoTrims` non écrit par l’UI · originaux lourds | S7 : picker 10 s + encode 1080p client |
-| Photo | Thumb WebP ~400px + original gardé | S6 : resize ≤2048 px · V1 sans original |
+| Photo | **S6 ✅** resize ≤2048 JPEG avant upload + thumb WebP · HEIC = original (canvas) | Copy « allégé » avec S7 |
 
 ```mermaid
 flowchart TB
@@ -91,11 +92,11 @@ Détail technique : [`COFFRE_MONTAGE_MEDIA_INGEST.md`](COFFRE_MONTAGE_MEDIA_INGE
 | Slice | Quoi | Done when |
 |-------|------|-----------|
 | **S5** | ✅ Poster frame vidéo client à l’upload | Tuile Coffre / banque = image |
-| **S6** | Resize photo ≤2048 px preflight | Plus d’upload « plein capteur » V1 |
+| **S6** | ✅ Resize photo ≤2048 px preflight (JPEG 0.82 · HEIC skip) | Plus d’upload « plein capteur » V1 (JPEG/PNG) |
 | **S7** | Trim 10 s + encode 1080p H.264/AAC + UX préparation | Fichier léger · Creatomate `trim_start` = 0 |
 | **Copy** | Famille informée : on ne garde que la version préparée / allégée | Clés FR/EN + catalog |
 
-Ancrage : [`mediaUploadService.ts`](../../src/lib/uploads/mediaUploadService.ts). Ops : plafond Supabase Storage 100–300 Mo.
+Ancrage : [`mediaUploadService.ts`](../../src/lib/uploads/mediaUploadService.ts) · [`resizeImageForUpload.ts`](../../src/lib/media/resizeImageForUpload.ts). Ops : plafond Supabase Storage 100–300 Mo.
 
 ---
 
@@ -125,6 +126,6 @@ Sortir helpers locaux ; garder nav / gates / checkout. Cible mentale : orchestra
 ## Ordre de ship
 
 1. Package Coffre + tiroir chrome wizard  
-2. ~~S5~~ ✅ → S6 → S7 + copy rétention allégée  
+2. ~~S5~~ ✅ → ~~S6~~ ✅ → S7 + copy rétention allégée  
 3. Cadrage Livre → package + polish  
 4. Unifier tiroir ciel / studio si pas déjà fait en P1  
