@@ -7,6 +7,7 @@ import {
 import { SIGNED_URL_TTL_SEC } from "@/src/lib/media/storageEgressPolicy";
 import {
   isImageStoragePath,
+  isVideoStoragePath,
   thumbStoragePathFor,
 } from "@/src/lib/media/thumbnailPath";
 
@@ -42,7 +43,10 @@ export async function hydrateMediaRowsWithSignedUrls(
   for (const row of rows) {
     if (!row.storage_path) continue;
     pathsToSign.add(row.storage_path);
-    if (isImageStoragePath(row.storage_path)) {
+    if (
+      isImageStoragePath(row.storage_path) ||
+      isVideoStoragePath(row.storage_path)
+    ) {
       pathsToSign.add(thumbStoragePathFor(row.storage_path));
     }
   }
@@ -75,7 +79,9 @@ export async function hydrateMediaRowsWithSignedUrls(
 
     const thumbPath = storagePath ? thumbStoragePathFor(storagePath) : null;
     const thumbUrl =
-      storagePath && isImageStoragePath(storagePath) && thumbPath
+      storagePath &&
+      thumbPath &&
+      (isImageStoragePath(storagePath) || isVideoStoragePath(storagePath))
         ? signedUrlForPath(signedByPath, thumbPath)
         : null;
 

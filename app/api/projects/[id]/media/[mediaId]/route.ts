@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
-import { thumbStoragePathFor, isImageStoragePath } from "@/src/lib/media/thumbnailPath";
+import {
+  thumbStoragePathFor,
+  isImageStoragePath,
+  isVideoStoragePath,
+} from "@/src/lib/media/thumbnailPath";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
@@ -98,7 +102,10 @@ export async function DELETE(
   const admin = getSupabaseAdminClient();
 
   const pathsToRemove = [row.storage_path];
-  if (isImageStoragePath(row.storage_path)) {
+  if (
+    isImageStoragePath(row.storage_path) ||
+    isVideoStoragePath(row.storage_path)
+  ) {
     pathsToRemove.push(thumbStoragePathFor(row.storage_path));
   }
 
