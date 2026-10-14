@@ -1771,19 +1771,19 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   padding-inline: 0.35rem 0.5rem;
   overflow: visible;
 }
-/* Glow vers le futur — ancré sur l’ici, fade soft à droite */
+/* Glow vers le futur — ancré sur l’ici, fade soft à droite (Quiet Luxury : plus discret). */
 .wizard-trail-future-glow {
   pointer-events: none;
   position: absolute;
-  top: 10%;
+  top: 18%;
   z-index: 0;
-  height: 70%;
-  width: min(58%, 22rem);
+  height: 55%;
+  width: min(42%, 16rem);
   transform: translateX(-6%);
   background: radial-gradient(
     ellipse 90% 75% at 12% 50%,
-    rgba(45, 212, 191, 0.16) 0%,
-    rgba(45, 212, 191, 0.06) 42%,
+    rgba(45, 212, 191, 0.1) 0%,
+    rgba(45, 212, 191, 0.035) 42%,
     transparent 72%
   );
   mask-image: linear-gradient(
@@ -1798,19 +1798,19 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   overflow: visible;
 }
 .wizard-trail-filament {
-  stroke: rgba(45, 212, 191, 0.5);
-  stroke-width: 1.5;
+  stroke: rgba(45, 212, 191, 0.38);
+  stroke-width: 1;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 0 4px rgba(45, 212, 191, 0.35));
+  filter: drop-shadow(0 0 2px rgba(45, 212, 191, 0.22));
 }
 /* F3-B — pont précédent→ici : pulse d’opacité soft (pas de dash/laser) */
 .wizard-trail-bridge {
-  stroke: rgba(94, 234, 212, 0.75);
-  stroke-width: 1.75;
+  stroke: rgba(94, 234, 212, 0.55);
+  stroke-width: 1.25;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 0 5px rgba(45, 212, 191, 0.4));
+  filter: drop-shadow(0 0 3px rgba(45, 212, 191, 0.28));
   animation: wizard-trail-bridge-pulse 3.2s ease-in-out infinite;
 }
 .wizard-trail-hit {
@@ -1841,8 +1841,8 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 .wizard-trail-hit:hover .wizard-trail-label-past,
 .wizard-trail-hit:hover .wizard-trail-label-current {
   color: rgb(153, 246, 228);
-  text-shadow: 0 0 12px rgba(45, 212, 191, 0.45);
-  transform: scale(1.08);
+  text-shadow: 0 0 8px rgba(45, 212, 191, 0.28);
+  transform: scale(1.04);
 }
 .wizard-trail-label {
   margin-top: 0.35rem;
@@ -1855,24 +1855,24 @@ html[data-parcours-hub-idle] .studio-shell-halo {
     transform 0.3s ease;
 }
 .wizard-trail-label-current {
-  /* Ici : pas d’ellipsis — « Composer » doit rester lisible */
+  /* Crédit film : léger, tracking ouvert — pas d’ellipsis */
   overflow: visible;
   font-family: var(--font-label), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  color: rgb(255, 255, 255);
+  font-size: 0.6875rem;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  color: rgb(228, 228, 231);
 }
 @media (min-width: 640px) {
   .wizard-trail-label-current {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
 }
 .wizard-trail-label-past {
   overflow: visible;
   font-size: 0.5625rem;
   font-weight: 300;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.22em;
   color: rgb(113, 113, 122);
 }
 @media (min-width: 640px) {
@@ -1898,14 +1898,14 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   left: 50%;
   top: 50%;
   z-index: 0;
-  height: 2.6rem;
-  width: 2.6rem;
+  height: 1.75rem;
+  width: 1.75rem;
   transform: translate(-50%, -50%);
   border-radius: 9999px;
   background: radial-gradient(
     circle,
-    rgba(45, 212, 191, 0.28) 0%,
-    rgba(45, 212, 191, 0.1) 48%,
+    rgba(45, 212, 191, 0.18) 0%,
+    rgba(45, 212, 191, 0.06) 48%,
     transparent 72%
   );
   animation: wizard-trail-breath-orb 3.4s ease-in-out infinite;
@@ -2097,25 +2097,25 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   animation-delay: 2.8s;
 }
 /* Beam vertical soft — glow haut/bas autour du fil */
-/* Beam soft — vertical / horizontal / diagonale (F5 : un cran plus gros) */
+/* Beam soft — vertical / horizontal / diagonale (Quiet Luxury : plus fin) */
 .wizard-trail-beam {
   pointer-events: none;
   position: absolute;
   left: 50%;
   top: 50%;
   z-index: 0;
-  width: 1.75px;
-  height: 28px;
+  width: 1.25px;
+  height: 18px;
   border-radius: 9999px;
   background: linear-gradient(
     to bottom,
     rgba(45, 212, 191, 0) 0%,
-    rgba(45, 212, 191, 0.28) 30%,
-    rgba(94, 234, 212, 0.65) 50%,
-    rgba(45, 212, 191, 0.28) 70%,
+    rgba(45, 212, 191, 0.22) 30%,
+    rgba(94, 234, 212, 0.5) 50%,
+    rgba(45, 212, 191, 0.22) 70%,
     rgba(45, 212, 191, 0) 100%
   );
-  box-shadow: 0 0 6px rgba(45, 212, 191, 0.22);
+  box-shadow: 0 0 4px rgba(45, 212, 191, 0.16);
   transform: translate(-50%, -50%);
 }
 .wizard-trail-beam::before {
@@ -2142,38 +2142,38 @@ html[data-parcours-hub-idle] .studio-shell-halo {
   opacity: 0.85;
 }
 .wizard-trail-beam-d {
-  height: 24px;
+  height: 16px;
   transform: translate(-50%, -50%) rotate(42deg);
-  opacity: 0.7;
+  opacity: 0.65;
 }
 .wizard-trail-core {
   position: relative;
   z-index: 2;
   display: block;
-  height: 6.5px;
-  width: 6.5px;
+  height: 4.5px;
+  width: 4.5px;
   border-radius: 9999px;
   background: radial-gradient(
     circle,
-    rgba(94, 234, 212, 0.9) 0%,
-    rgba(45, 212, 191, 0.45) 55%,
+    rgba(94, 234, 212, 0.85) 0%,
+    rgba(45, 212, 191, 0.4) 55%,
     rgba(45, 212, 191, 0) 100%
   );
-  box-shadow: 0 0 7px rgba(45, 212, 191, 0.45);
+  box-shadow: 0 0 5px rgba(45, 212, 191, 0.35);
 }
 .wizard-trail-node-short .wizard-trail-beam-v,
 .wizard-trail-node-short .wizard-trail-beam-h {
-  height: 22px;
+  height: 14px;
 }
 .wizard-trail-node-short .wizard-trail-beam-d {
-  height: 18px;
+  height: 12px;
 }
 .wizard-trail-node-tall .wizard-trail-beam-v,
 .wizard-trail-node-tall .wizard-trail-beam-h {
-  height: 32px;
+  height: 22px;
 }
 .wizard-trail-node-tall .wizard-trail-beam-d {
-  height: 28px;
+  height: 18px;
 }
 .wizard-trail-node-born {
   opacity: 0.78;
@@ -2183,38 +2183,38 @@ html[data-parcours-hub-idle] .studio-shell-halo {
 }
 .wizard-trail-node-current .wizard-trail-beam-v,
 .wizard-trail-node-current .wizard-trail-beam-h {
-  height: 44px;
-  width: 2.5px;
+  height: 28px;
+  width: 1.75px;
   background: linear-gradient(
     to bottom,
     rgba(45, 212, 191, 0) 0%,
-    rgba(45, 212, 191, 0.4) 24%,
-    rgba(94, 234, 212, 0.9) 50%,
-    rgba(45, 212, 191, 0.4) 76%,
+    rgba(45, 212, 191, 0.32) 24%,
+    rgba(94, 234, 212, 0.75) 50%,
+    rgba(45, 212, 191, 0.32) 76%,
     rgba(45, 212, 191, 0) 100%
   );
   box-shadow:
-    0 0 10px rgba(45, 212, 191, 0.4),
-    0 0 20px rgba(45, 212, 191, 0.18);
+    0 0 6px rgba(45, 212, 191, 0.32),
+    0 0 12px rgba(45, 212, 191, 0.12);
   animation: wizard-trail-breath-beam 3.4s ease-in-out infinite;
 }
 .wizard-trail-node-current .wizard-trail-beam-d {
-  height: 38px;
-  width: 2px;
-  opacity: 0.9;
+  height: 24px;
+  width: 1.5px;
+  opacity: 0.8;
   animation: wizard-trail-breath-beam 3.4s ease-in-out infinite;
   animation-delay: 0.25s;
 }
 .wizard-trail-node-current .wizard-trail-beam::before {
-  inset: -6px -8px;
-  opacity: 0.8;
+  inset: -4px -5px;
+  opacity: 0.55;
 }
 .wizard-trail-node-current .wizard-trail-core {
-  height: 11px;
-  width: 11px;
+  height: 7px;
+  width: 7px;
   box-shadow:
-    0 0 12px rgba(45, 212, 191, 0.65),
-    0 0 22px rgba(45, 212, 191, 0.28);
+    0 0 8px rgba(45, 212, 191, 0.5),
+    0 0 14px rgba(45, 212, 191, 0.18);
   animation: wizard-trail-breath-core 3.4s ease-in-out infinite;
 }
 .wizard-trail-select-ring {

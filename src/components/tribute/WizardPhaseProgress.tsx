@@ -28,7 +28,8 @@ type Props = {
   copy: WizardConstellationTrailCopy;
 };
 
-const ROW_H = 64;
+/** Hauteur de la rangée des nœuds — Quiet Luxury : plus compacte qu’un progress SaaS. */
+const ROW_H = 44;
 
 function replaceTokens(template: string, tokens: Record<string, string>): string {
   return Object.entries(tokens).reduce(
@@ -96,7 +97,7 @@ export function WizardPhaseProgress({
 
   return (
     <nav
-      className="wizard-trail relative mb-7 w-full overflow-visible md:mb-10"
+      className="wizard-trail relative mb-6 w-full overflow-visible md:mb-8"
       aria-label={copy.ariaLabel}
     >
       {hereLabel ? (
@@ -143,7 +144,7 @@ export function WizardPhaseProgress({
 
         {/* Une colonne = nœud + titre (hit unique pour hover cohérent) */}
         <ol
-          className="relative z-[2] -mt-[64px] flex w-full"
+          className="relative z-[2] -mt-[44px] flex w-full"
           style={{ minHeight: ROW_H }}
         >
           {stars.map((star, index) => {
@@ -185,7 +186,7 @@ export function WizardPhaseProgress({
                   <>
                     <span className="wizard-trail-orb" />
                     <span className="wizard-trail-dust">
-                      {Array.from({ length: 26 }, (_, i) => (
+                      {Array.from({ length: 12 }, (_, i) => (
                         <i key={i} />
                       ))}
                     </span>
