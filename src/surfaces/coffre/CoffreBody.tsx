@@ -10,6 +10,7 @@ import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll"
 import type { CoffreHostProps } from "./types";
 
 export function CoffreBody({
+  mode,
   projectId,
   userId,
   tenantId,
@@ -212,6 +213,7 @@ export function CoffreBody({
                 ) : null}
 
                 <MediaQueueGrid
+                  columns={mode === "drawer" ? "fill" : "viewport"}
                   items={dz.items}
                   isRunning={dz.isRunning}
                   deletingId={dz.deletingId}

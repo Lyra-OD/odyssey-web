@@ -2182,31 +2182,30 @@ export function TributeWizard({
                   </p>
                 </div>
               </div>
-              {/* Coffre (pilier, s’ouvre à gauche) + Inviter l’entourage — sous le nom. */}
-              {showCoffreTrigger || (!isEditor && currentStep !== 2) ? (
-                <div className="ml-14 flex min-w-0 flex-wrap items-center gap-x-6 gap-y-3">
-                  {showCoffreTrigger ? (
-                    <CoffreDrawerTrigger
-                      onOpen={openCoffre}
-                      mediaCount={projectMediaCount}
-                      copy={{
-                        label: copy.coffreDrawerLabel,
-                        openAria: copy.coffreDrawerOpenAria,
-                      }}
-                    />
-                  ) : null}
-                  {!isEditor && currentStep !== 2 ? (
-                    <SanctuaryInviteTrigger
-                      onOpen={handleOpenSanctuaryInvite}
-                      copy={{
-                        triggerLabel: copy.inviteTriggerLabel,
-                        triggerCta: copy.inviteTriggerCta,
-                        triggerOpenAria: copy.inviteOpenAria,
-                      }}
-                      className="min-w-0"
-                    />
-                  ) : null}
-                </div>
+              {/* Inviter l’entourage — sous le nom (colonne gauche). */}
+              {!isEditor ? (
+                <SanctuaryInviteTrigger
+                  onOpen={handleOpenSanctuaryInvite}
+                  disabled={currentStep === 2}
+                  copy={{
+                    triggerLabel: copy.inviteTriggerLabel,
+                    triggerCta: copy.inviteTriggerCta,
+                    triggerOpenAria: copy.inviteOpenAria,
+                  }}
+                  className={`ml-14 min-w-0${currentStep === 2 ? " hidden" : ""}`}
+                />
+              ) : null}
+              {/* Coffre — pilier : propre ligne, bord gauche de l’en-tête (tiroir à gauche). */}
+              {showCoffreTrigger ? (
+                <CoffreDrawerTrigger
+                  onOpen={openCoffre}
+                  mediaCount={projectMediaCount}
+                  copy={{
+                    label: copy.coffreDrawerLabel,
+                    openAria: copy.coffreDrawerOpenAria,
+                  }}
+                  className="self-start"
+                />
               ) : null}
             </div>
           ) : null}

@@ -4,7 +4,7 @@
 **Dernière MAJ :** 14 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 14 oct 2026 — **C3.1** tiroir Coffre **à gauche**, large (~⅔ écran) · déclencheur = pastille teal + compteur, colonne gauche de l’en-tête (pilier, distinct de Dossier / Co-Créateur à droite).
+- 14 oct 2026 — **C3.1** tiroir Coffre **à gauche**, 75 % de l’écran, grille selon la largeur du tiroir · déclencheur = pastille teal + compteur mauve, ligne propre au bord gauche de l’en-tête (pilier, distinct de Dossier / Co-Créateur à droite) · chip d’aide masqué tiroir ouvert.
 - 14 oct 2026 — **Phase 1 C3 ✅** tiroir Coffre dans l’en-tête (dès l’étape 3 atteinte, hors étape 3) = **même** `CoffreBody` · un seul monté à la fois · upload continue tiroir fermé · étape 5 recharge la banque à la fermeture.
 - 14 oct 2026 — Phase 1 C1–C2 : corps étape 3 → `src/surfaces/coffre/CoffreBody` (contrat `CoffreHostProps`). Compteur selon le forfait : « 50 inclus dans le forfait Souvenir · jusqu’à 125 avec Héritage ».
 - 13 oct 2026 — **S6b ✅** Sanctuaire photo invité = même resize ≤2048. Suite = S7 + copy · Phase 1 Coffre · Scanner hors scope.
@@ -48,7 +48,7 @@ Sélection / « Envoyé » restent teal (état) — [`DESIGN_SYSTEM.md`](../DESI
 | Surface | Réalité | Cible chantier |
 |---------|---------|----------------|
 | Orchestrateur | [`TributeWizard.tsx`](../../src/components/tribute/TributeWizard.tsx) **~3462 L** | Orchestrateur (nav, gates, chrome, wiring) |
-| Coffre | ✅ (14 oct) [`src/surfaces/coffre/`](../../src/surfaces/coffre/) — `CoffreBody` (étape 3 `onboarding` + tiroir `drawer`) · `CoffreDrawerShell` (gauche, ~⅔ écran · sheet bas en mobile) · `CoffreDrawerTrigger` (pastille, en-tête gauche) | Règle : un seul `CoffreBody` monté (étape 3 **ou** tiroir) · tiroir monté tant qu’un upload tourne |
+| Coffre | ✅ (14 oct) [`src/surfaces/coffre/`](../../src/surfaces/coffre/) — `CoffreBody` (étape 3 `onboarding` + tiroir `drawer`) · `CoffreDrawerShell` (gauche, 75 vw · sheet bas en mobile) · `CoffreDrawerTrigger` (pastille, en-tête gauche) | Règle : un seul `CoffreBody` monté (étape 3 **ou** tiroir) · tiroir monté tant qu’un upload tourne |
 | Livre | [`StoryboardMontageStep.tsx`](../../src/components/tribute/StoryboardMontageStep.tsx) + `montage/*` | `src/surfaces/livre/` après Coffre |
 | Vidéo | Export = 10 premières s · `videoTrims` non écrit par l’UI · originaux lourds | S7 : picker 10 s + encode 1080p client |
 | Photo | **S6 ✅** resize ≤2048 JPEG avant upload + thumb WebP · HEIC = original (canvas) | Copy « allégé » avec S7 |

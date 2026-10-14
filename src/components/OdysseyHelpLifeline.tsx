@@ -23,7 +23,8 @@ type Props = {
 
 /**
  * Chip d'aide permanente — bas-gauche, fixe.
- * Masqué en séance cinéma (`data-odyssey-cinema`), Fullscreen API, ou pitch `/deck`.
+ * Masqué en séance cinéma (`data-odyssey-cinema`), tiroir Coffre ouvert
+ * (`data-odyssey-coffre`), Fullscreen API, ou pitch `/deck`.
  * Mobile : pastille téléphone au-dessus du footer sticky Next (`bottom-24`).
  * Desktop (`md+`) : chip complet (label + tel + écrire) à `bottom-5`.
  * Portal `document.body` pour échapper au stacking context parent.
@@ -39,7 +40,9 @@ function isCinemaOrFullscreen(): boolean {
   const fullscreen = Boolean(
     document.fullscreenElement || doc.webkitFullscreenElement,
   );
-  return cinema || fullscreen;
+  const coffreOpen =
+    document.documentElement.getAttribute("data-odyssey-coffre") === "1";
+  return cinema || fullscreen || coffreOpen;
 }
 
 function isPitchDeckPath(pathname: string | null): boolean {
@@ -66,7 +69,7 @@ export function OdysseyHelpLifeline({
     const obs = new MutationObserver(sync);
     obs.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["data-odyssey-cinema"],
+      attributeFilter: ["data-odyssey-cinema", "data-odyssey-coffre"],
     });
     return () => {
       document.removeEventListener("fullscreenchange", sync);

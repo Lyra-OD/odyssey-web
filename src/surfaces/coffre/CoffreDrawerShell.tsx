@@ -32,16 +32,18 @@ export function CoffreDrawerShell({
     };
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    document.documentElement.setAttribute("data-odyssey-coffre", "1");
     window.addEventListener("keydown", onKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.documentElement.removeAttribute("data-odyssey-coffre");
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [isOpen, onClose]);
 
   const panelClass =
     layout === "drawer"
-      ? `inset-y-0 left-0 w-[min(66vw,64rem)] min-w-[34rem] border-r shadow-[24px_0_64px_rgba(0,0,0,0.5)] ${
+      ? `inset-y-0 left-0 w-[75vw] min-w-[34rem] border-r shadow-[24px_0_64px_rgba(0,0,0,0.5)] ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`
       : `inset-x-0 bottom-0 h-[88vh] rounded-t-2xl border-t shadow-[0_-24px_64px_rgba(0,0,0,0.5)] ${
