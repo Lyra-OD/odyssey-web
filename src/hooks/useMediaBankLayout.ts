@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-/** `drawer` = off-canvas droit (desktop) · `sheet` = bottom sheet (mobile). */
+/** `drawer` = off-canvas latéral (desktop) · `sheet` = bottom sheet (mobile). */
 export type MediaBankLayout = "drawer" | "sheet";
 
 const DESKTOP_QUERY = "(min-width: 768px)";

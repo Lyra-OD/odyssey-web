@@ -41,10 +41,10 @@ export function CoffreDrawerShell({
 
   const panelClass =
     layout === "drawer"
-      ? `inset-y-0 right-0 w-full max-w-[34rem] border-l ${
-          isOpen ? "translate-x-0" : "translate-x-full"
+      ? `inset-y-0 left-0 w-[min(66vw,64rem)] min-w-[34rem] border-r shadow-[24px_0_64px_rgba(0,0,0,0.5)] ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`
-      : `inset-x-0 bottom-0 h-[88vh] rounded-t-2xl border-t ${
+      : `inset-x-0 bottom-0 h-[88vh] rounded-t-2xl border-t shadow-[0_-24px_64px_rgba(0,0,0,0.5)] ${
           isOpen ? "translate-y-0" : "translate-y-full"
         }`;
 
@@ -61,7 +61,7 @@ export function CoffreDrawerShell({
         role="dialog"
         aria-modal={isOpen}
         aria-label={title}
-        className={`fixed z-[61] flex flex-col border-white/10 bg-[#020202]/98 shadow-[-24px_0_64px_rgba(0,0,0,0.5)] backdrop-blur-2xl transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${panelClass}`}
+        className={`fixed z-[61] flex flex-col border-white/10 bg-[#020202]/98 backdrop-blur-2xl transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${panelClass}`}
       >
         <div
           className="h-px w-full shrink-0 bg-gradient-to-r from-teal-400/60 via-cyan-400/40 to-transparent"

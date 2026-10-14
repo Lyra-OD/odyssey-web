@@ -4,13 +4,18 @@ import { Archive } from "lucide-react";
 
 type CoffreDrawerTriggerProps = {
   onOpen: () => void;
-  copy: { label: string; cta: string; openAria: string };
+  mediaCount: number;
+  copy: { label: string; openAria: string };
   className?: string;
 };
 
-/** Déclencheur typographique du tiroir Coffre — même grammaire que Dossier / Co-Créateur. */
+/**
+ * Déclencheur du tiroir Coffre — pilier du projet : pastille teal à gauche de
+ * l’en-tête, distincte des déclencheurs typographiques (Dossier / Co-Créateur).
+ */
 export function CoffreDrawerTrigger({
   onOpen,
+  mediaCount,
   copy,
   className = "",
 }: CoffreDrawerTriggerProps) {
@@ -19,20 +24,20 @@ export function CoffreDrawerTrigger({
       type="button"
       onClick={onOpen}
       aria-label={copy.openAria}
-      className={`group inline-flex min-w-0 flex-col items-start gap-0.5 text-left ${className}`}
+      className={`group inline-flex min-w-0 max-w-full items-center gap-2.5 rounded-full border border-teal-400/30 bg-teal-400/[0.06] py-1.5 pl-2 pr-3.5 shadow-[0_0_24px_rgba(45,212,191,0.08)] transition-colors duration-200 hover:border-teal-300/60 hover:bg-teal-400/[0.1] ${className}`}
     >
-      <span className="max-w-full truncate text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-400">
-        {copy.label}
-      </span>
-      <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 font-editorial text-sm font-medium text-zinc-100 md:text-base">
-        <span className="truncate border-b border-transparent pb-0.5 transition-colors duration-200 group-hover:border-teal-400/40">
-          {copy.cta}
-        </span>
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-teal-400/15">
         <Archive
-          className="h-3.5 w-3.5 text-zinc-400 transition-colors duration-200 group-hover:text-teal-300"
+          className="h-3.5 w-3.5 text-teal-200"
           strokeWidth={1.5}
           aria-hidden
         />
+      </span>
+      <span className="truncate font-editorial text-sm font-medium text-zinc-50 md:text-base">
+        {copy.label}
+      </span>
+      <span className="shrink-0 rounded-full bg-white/[0.08] px-2 py-0.5 text-[11px] font-medium tabular-nums text-teal-100">
+        {mediaCount}
       </span>
     </button>
   );

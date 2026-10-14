@@ -2138,9 +2138,21 @@ export function TributeWizard({
             Creation help empilés à droite (plus de grille 2 cols mobile). */}
         <div
           className={`mx-auto flex max-w-5xl flex-row items-start gap-3 md:items-center md:gap-4 ${
-            currentStep >= 2 ? "justify-between" : "justify-end"
+            currentStep >= 2 || showCoffreTrigger
+              ? "justify-between"
+              : "justify-end"
           }`}
         >
+          {currentStep < 2 && showCoffreTrigger ? (
+            <CoffreDrawerTrigger
+              onOpen={openCoffre}
+              mediaCount={projectMediaCount}
+              copy={{
+                label: copy.coffreDrawerLabel,
+                openAria: copy.coffreDrawerOpenAria,
+              }}
+            />
+          ) : null}
           {currentStep >= 2 ? (
             <div className="min-w-0 flex-1 flex flex-col gap-3">
               <div className="flex items-center gap-3 md:gap-4">
@@ -2170,18 +2182,31 @@ export function TributeWizard({
                   </p>
                 </div>
               </div>
-              {/* Inviter l’entourage — sous le nom (colonne gauche). */}
-              {!isEditor ? (
-                <SanctuaryInviteTrigger
-                  onOpen={handleOpenSanctuaryInvite}
-                  disabled={currentStep === 2}
-                  copy={{
-                    triggerLabel: copy.inviteTriggerLabel,
-                    triggerCta: copy.inviteTriggerCta,
-                    triggerOpenAria: copy.inviteOpenAria,
-                  }}
-                  className={`ml-14 min-w-0${currentStep === 2 ? " hidden" : ""}`}
-                />
+              {/* Coffre (pilier, s’ouvre à gauche) + Inviter l’entourage — sous le nom. */}
+              {showCoffreTrigger || (!isEditor && currentStep !== 2) ? (
+                <div className="ml-14 flex min-w-0 flex-wrap items-center gap-x-6 gap-y-3">
+                  {showCoffreTrigger ? (
+                    <CoffreDrawerTrigger
+                      onOpen={openCoffre}
+                      mediaCount={projectMediaCount}
+                      copy={{
+                        label: copy.coffreDrawerLabel,
+                        openAria: copy.coffreDrawerOpenAria,
+                      }}
+                    />
+                  ) : null}
+                  {!isEditor && currentStep !== 2 ? (
+                    <SanctuaryInviteTrigger
+                      onOpen={handleOpenSanctuaryInvite}
+                      copy={{
+                        triggerLabel: copy.inviteTriggerLabel,
+                        triggerCta: copy.inviteTriggerCta,
+                        triggerOpenAria: copy.inviteOpenAria,
+                      }}
+                      className="min-w-0"
+                    />
+                  ) : null}
+                </div>
               ) : null}
             </div>
           ) : null}
@@ -2210,17 +2235,6 @@ export function TributeWizard({
               className="max-w-full items-end text-right"
             />
               </>
-            ) : null}
-            {showCoffreTrigger ? (
-              <CoffreDrawerTrigger
-                onOpen={openCoffre}
-                copy={{
-                  label: copy.coffreDrawerLabel,
-                  cta: copy.coffreDrawerCta,
-                  openAria: copy.coffreDrawerOpenAria,
-                }}
-                className="max-w-full items-end text-right"
-              />
             ) : null}
             {/* Masqué sur mobile — détail consultable dans le Dossier. */}
             <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-400 md:block md:text-right">
