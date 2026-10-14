@@ -2684,7 +2684,9 @@ export function TributeWizard({
                 locale={locale}
                 copy={copy}
                 maxFiles={effectiveMaxMediaItems}
-                quotaMaxFiles={currentMaxMediaItems}
+                includedMaxFiles={currentMaxMediaItems}
+                packageLabel={packageDisplayNameFor(basePackage)}
+                upgradePackageLabel={packageDisplayNameFor("signature")}
                 projectDraftLoading={projectDraftLoading}
                 offerMediaSoftCap={offerMediaSoftCap}
                 onOpenSoftCap={() => openSoftCap("mediaUnlock")}

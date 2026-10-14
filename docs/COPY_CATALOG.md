@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-13 · **Entrées :** 1111
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-14 · **Entrées :** 1112
 
 ## `common`
 
@@ -448,7 +448,8 @@
 | `tributeWizard.uploadSubtext` | Photos et vidéos. Nous les traitons avec le plus grand soin. | Photos and videos. We handle them with care. |
 | `tributeWizard.uploadAria` | Ajouter des fichiers depuis votre appareil | Add files from your device |
 | `tributeWizard.uploadFilesCount` | {count} fichier(s) ajouté(s) | {count} file(s) added |
-| `tributeWizard.uploadLimitCount` | {count} / {max} souvenirs inclus dans votre forfait | {count} / {max} memories included in your package |
+| `tributeWizard.uploadLimitCount` | {count} / {max} souvenirs inclus dans le forfait {package} | {count} / {max} memories included in the {package} package |
+| `tributeWizard.uploadLimitCountSoftCap` | {count} souvenirs · {included} inclus dans le forfait {package} · jusqu’à {max} avec {upgrade} | {count} memories · {included} included in the {package} package · up to {max} with {upgrade} |
 | `tributeWizard.uploadBreakdown` | ({uploaded} envoyés • {uploading} en cours • {failed} échecs) | ({uploaded} uploaded • {uploading} in progress • {failed} failed) |
 | `tributeWizard.uploadInProgress` | Vos souvenirs arrivent… | Your memories are arriving… |
 | `tributeWizard.uploadAtLeastOne` | Ajoutez au moins un souvenir pour ouvrir le film de sa vie. | Add at least one memory to open the film of their life. |

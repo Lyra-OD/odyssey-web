@@ -17,7 +17,9 @@ export function CoffreBody({
   locale,
   copy,
   maxFiles,
-  quotaMaxFiles,
+  includedMaxFiles,
+  packageLabel,
+  upgradePackageLabel,
   projectDraftLoading,
   offerMediaSoftCap,
   onOpenSoftCap,
@@ -110,9 +112,14 @@ export function CoffreBody({
                       className="relative mt-4 text-sm text-teal-400/90"
                       aria-live="polite"
                     >
-                      {copy.uploadLimitCount
+                      {(maxFiles > includedMaxFiles
+                        ? copy.uploadLimitCountSoftCap
+                            .replace("{included}", String(includedMaxFiles))
+                            .replace("{upgrade}", upgradePackageLabel)
+                        : copy.uploadLimitCount)
                         .replace("{count}", String(totalQueued))
-                        .replace("{max}", String(maxFiles))}
+                        .replace("{max}", String(maxFiles))
+                        .replace("{package}", packageLabel)}
                       {dz.totals.uploaded > 0 || dz.totals.uploading > 0 || dz.totals.failed > 0 ? (
                         <span className="ml-2 text-xs font-light text-zinc-400">
                           {copy.uploadBreakdown
@@ -227,7 +234,7 @@ export function CoffreBody({
                     quotaExceededError:
                       copy.uploadLimitExceededItemError.replace(
                         "{max}",
-                        String(quotaMaxFiles),
+                        String(maxFiles),
                       ),
                   }}
                   onPreviewScanner={(item) => {

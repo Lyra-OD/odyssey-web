@@ -1,14 +1,13 @@
 # Wizard — packages Coffre / Livre + ingest
 
 **Type :** living · **Vérité pour :** chantier post-deck — découpage Coffre/Livre en packages, tiroir global, ingest trim/compress.  
-**Dernière MAJ :** 13 oct 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 14 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 14 oct 2026 — Phase 1 C1–C2 : corps étape 3 → `src/surfaces/coffre/CoffreBody` (contrat `CoffreHostProps`). Compteur selon le forfait : « 50 inclus dans le forfait Souvenir · jusqu’à 125 avec Héritage ».
 - 13 oct 2026 — **S6b ✅** Sanctuaire photo invité = même resize ≤2048. Suite = S7 + copy · Phase 1 Coffre · Scanner hors scope.
 - 13 oct 2026 — **S6 ✅** resize photo ≤2048 JPEG preflight (`resizeImageForUploadFile`) · HEIC skip.
-- 13 oct 2026 — Badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo.
-- 13 oct 2026 — **S5 ✅** poster vidéo client (upload + hydrate + tuiles image).
-- 8 oct 2026 — Plan figé (CEO) : packages (pas 2ᵉ app) · Coffre tiroir d’abord · ingest S5–S7 · Livre polish après cadrage.
+- 13 oct 2026 — Badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo.- 8 oct 2026 — Plan figé (CEO) : packages (pas 2ᵉ app) · Coffre tiroir d’abord · ingest S5–S7 · Livre polish après cadrage.
 
 Canon liés : [`COFFRE_MONTAGE_MEDIA_INGEST.md`](COFFRE_MONTAGE_MEDIA_INGEST.md) · [`../WIZARD_ARCHITECTURE.md`](../WIZARD_ARCHITECTURE.md) · [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md) · tiroir J5 [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md).  
 Audit docs cluster : [`DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md).

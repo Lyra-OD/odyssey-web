@@ -51,6 +51,7 @@ export type CoffreCopy = Pick<
   | "uploadBreakdown"
   | "uploadInProgress"
   | "uploadLimitCount"
+  | "uploadLimitCountSoftCap"
   | "uploadLimitExceededItemError"
   | "uploadLimitOverflowRejection"
   | "uploadLimitReachedHint"
@@ -68,10 +69,14 @@ export type CoffreHostProps = {
   uploadStrategy: "direct" | "signed";
   locale: Locale;
   copy: CoffreCopy;
-  /** Plafond effectif de la dropzone (inclut le déblocage Soft Cap). */
+  /** Plafond effectif de la dropzone (inclut le déblocage Soft Cap) — miroir du trigger SQL P19. */
   maxFiles: number;
-  /** Plafond affiché dans l’erreur quota d’une tuile (palier courant). */
-  quotaMaxFiles: number;
+  /** Médias inclus dans le forfait courant ; `< maxFiles` = Soft Cap ouvert. */
+  includedMaxFiles: number;
+  /** Nom affiché du forfait courant (Souvenir, Héritage…). */
+  packageLabel: string;
+  /** Nom du forfait qui accueille le plafond Soft Cap (Héritage). */
+  upgradePackageLabel: string;
   projectDraftLoading: boolean;
   offerMediaSoftCap: boolean;
   onOpenSoftCap: () => void;
