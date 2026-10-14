@@ -2100,7 +2100,7 @@ export function TributeWizard({
 
       {/* Mobile : langue / session seulement — Retour vit dans la barre bas (N3). */}
       {!step1Parcours.hubChromeHidden && mobileUtilityTrailing ? (
-        <div className="studio-locale-chrome sticky top-0 z-[55] -mx-6 mb-4 flex h-12 items-center justify-end gap-3 border-b border-white/10 bg-black/40 px-6 backdrop-blur-xl md:hidden">
+        <div className="studio-locale-chrome sticky top-0 z-[55] -mx-6 mb-4 flex h-12 items-center justify-end gap-3 border-b border-white/[0.06] bg-black/20 px-6 backdrop-blur-md md:hidden">
           <div className="flex shrink-0 items-center gap-3">
             {mobileUtilityTrailing}
           </div>
@@ -2119,12 +2119,10 @@ export function TributeWizard({
         />
       ) : null}
 
-      {/* En-tête sticky — dès l'Étape 1. Le déclencheur du Dossier de forfait
-          (typographique, sans chrome de bouton) y est toujours visible, même
-          avant que l'identité du défunt ne soit renseignée ; le bloc
-          avatar/nom ne rejoint l'en-tête qu'à partir de l'Étape 2. */}
+      {/* En-tête sticky — Quiet Luxury : trait fin + verre léger (pas d’app bar).
+          Dossier typographique toujours visible ; avatar/nom dès l’Étape 2. */}
       <header
-        className={`sticky z-50 -mx-6 mb-8 border-b border-white/10 bg-black/40 px-6 py-3.5 backdrop-blur-xl transition-opacity duration-500 md:top-0 md:-mx-10 md:px-10 ${
+        className={`sticky z-50 -mx-6 mb-8 border-b border-white/[0.06] bg-black/15 px-6 py-4 backdrop-blur-md transition-opacity duration-500 md:top-0 md:-mx-10 md:px-10 ${
           !step1Parcours.hubChromeHidden && mobileUtilityTrailing
             ? "top-12"
             : "top-0"
@@ -2157,7 +2155,7 @@ export function TributeWizard({
             <div className="min-w-0 flex-1 flex flex-col gap-3">
               <div className="flex items-center gap-3 md:gap-4">
                 <div
-                  className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/10 shadow-[0_0_20px_rgba(6,182,212,0.15)] ring-1 ring-white/5"
+                  className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/[0.08] ring-1 ring-white/[0.04]"
                   aria-hidden={!avatarPreview}
                 >
                   {avatarPreview ? (
@@ -2177,7 +2175,7 @@ export function TributeWizard({
                   <p className="font-editorial truncate text-lg font-medium leading-tight tracking-[0.02em] text-zinc-100 md:text-xl">
                     {deceasedDisplayName}
                   </p>
-                  <p className="font-[family-name:var(--font-label)] mt-0.5 text-xs font-normal tracking-[0.18em] text-zinc-400 uppercase">
+                  <p className="font-[family-name:var(--font-label)] mt-0.5 text-[11px] font-light tracking-[0.28em] text-zinc-500 uppercase">
                     {yearsDisplay}
                   </p>
                 </div>
@@ -2210,7 +2208,7 @@ export function TributeWizard({
             </div>
           ) : null}
 
-          <div className="flex w-[42%] max-w-[11rem] shrink-0 flex-col items-end gap-2 md:w-60 md:max-w-none md:gap-4">
+          <div className="flex w-[42%] max-w-[11rem] shrink-0 flex-col items-end gap-2 md:w-60 md:max-w-none md:gap-3">
             {!isEditor ? (
               <>
             <PackageDossierTrigger
@@ -2235,8 +2233,8 @@ export function TributeWizard({
             />
               </>
             ) : null}
-            {/* Masqué sur mobile — détail consultable dans le Dossier. */}
-            <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-400 md:block md:text-right">
+            {/* Légende film — masquée sur mobile (détail dans le Dossier). */}
+            <p className="mt-2 hidden max-w-[14rem] text-[10px] font-light italic leading-relaxed tracking-[0.02em] text-zinc-500 md:block md:text-right">
               {copy.headerNarrativeSummary
                 .replace("{minutes}", String(wizardStoryboard.estimatedTotalMinutes))
                 .replace("{mediaMax}", String(currentMaxMediaItems))}
