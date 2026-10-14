@@ -85,9 +85,12 @@ describe("Soft Cap Médias — quota & Frustration Positive", () => {
     expect(packageMaxMediaItems(manifestPackageFromWizardBasePackage("signature"))).toBe(125);
   });
 
-  it("propose le Soft Cap dès 50 médias sur un projet resté Souvenir", () => {
+  it("propose le Soft Cap au 51ᵉ média sur un projet resté Souvenir", () => {
     expect(isSoftCapEligible("essential", "essential")).toBe(true);
-    expect(shouldOfferMediaSoftCap("essential", "essential", 50)).toBe(true);
+    expect(shouldOfferMediaSoftCap("essential", "essential", 51)).toBe(true);
+    // Forfait plein (50 / 50) : pas encore de nudge
+    expect(shouldOfferMediaSoftCap("essential", "essential", 50)).toBe(false);
+    expect(shouldOfferMagicSoftCap("essential", "essential", 50)).toBe(false);
     expect(shouldOfferMagicSoftCap("essential", "essential", 62)).toBe(true);
     // Au-delà de 50 sans acceptation UI : Soft Cap Magique reste éligible
     expect(shouldOfferMediaSoftCap("essential", "essential", 80)).toBe(true);

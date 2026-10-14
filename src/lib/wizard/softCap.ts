@@ -1,5 +1,20 @@
 import type { WizardBasePackage } from "@/src/lib/wizard/pricingConfig";
 import { packageTierRank } from "@/src/lib/wizard/pricingConfig";
+import {
+  manifestPackageFromWizardBasePackage,
+  packageMaxMediaItems,
+} from "@/src/lib/wizard/wizardDeliverables";
+
+/** Le Soft Cap s'ouvre au premier média au-delà du forfait offert (51ᵉ en Souvenir). */
+function exceedsGrantedMedia(
+  grantedPackage: WizardBasePackage,
+  mediaCount: number,
+): boolean {
+  return (
+    mediaCount >
+    packageMaxMediaItems(manifestPackageFromWizardBasePackage(grantedPackage))
+  );
+}
 
 /** Soft Cap freemium : cadeau Souvenir encore actif. */
 export function isSoftCapEligible(
@@ -17,7 +32,10 @@ export function shouldOfferMediaSoftCap(
   intendedPackage: WizardBasePackage,
   mediaCount: number,
 ): boolean {
-  return isSoftCapEligible(grantedPackage, intendedPackage) && mediaCount >= 50;
+  return (
+    isSoftCapEligible(grantedPackage, intendedPackage) &&
+    exceedsGrantedMedia(grantedPackage, mediaCount)
+  );
 }
 
 export function shouldOfferMagicSoftCap(
@@ -27,7 +45,10 @@ export function shouldOfferMagicSoftCap(
 ): boolean {
   // Soft Cap principal post-Composition Magique — uniquement si encore Souvenir
   // (si intended ≥ Héritage, ne pas re-spammer — voir NARRATIVE_SOFT_CAP.md)
-  return isSoftCapEligible(grantedPackage, intendedPackage) && mediaCount >= 50;
+  return (
+    isSoftCapEligible(grantedPackage, intendedPackage) &&
+    exceedsGrantedMedia(grantedPackage, mediaCount)
+  );
 }
 
 export function shouldOfferMusicSoftCap(
