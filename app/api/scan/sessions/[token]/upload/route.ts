@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 
-import { ensureFreemiumMediaSoftCapIntent } from "@/src/lib/media/ensureFreemiumMediaSoftCapIntent";
 import { STORAGE_CACHE_CONTROL } from "@/src/lib/media/storageEgressPolicy";
 import {
   SCAN_ALLOWED_IMAGE_TYPES,
@@ -88,8 +87,6 @@ export async function POST(
   if (!tenantId) {
     return NextResponse.json({ error: "tenant_missing" }, { status: 400 });
   }
-
-  await ensureFreemiumMediaSoftCapIntent(admin, session.project_id);
 
   const assetId = randomUUID();
   const ext = extensionForMime(mimeType);

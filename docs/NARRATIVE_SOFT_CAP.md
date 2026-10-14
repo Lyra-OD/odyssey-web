@@ -4,12 +4,11 @@
 **Dernière MAJ :** 14 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 14 oct 2026 — Réversible : Dossier propose Souvenir si `granted = essential` · suppression bascule serveur auto (`ensureFreemiumMediaSoftCapIntent`) · `package-intent` n’écrase plus `grantedPackage`.
 - 14 oct 2026 — Serveur aligné (SQL P19) : accordé Souvenir → quota **125**, plus de refus à 50. Choix Héritage / rester à 50 = checkout.
 - 30 sept 2026 — Outro dernier chapitre : hold 3 s + deep-to-black 2,2 s taxés Breath · outro fin **9 s** (noir pur 0,8 + carte + noir) — `storyboardPacing`.
 - 17 sept 2026 — Bandeau aperçu : dire les **faits** (photos / licence / Héritage) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) (plan plus tard). Logique granted/intended inchangée.
 - 17 sept 2026 — Copy écran : plus d’« Écrin » ; Soft Cap parle du forfait **Héritage**. Logique granted/intended inchangée.
-- 17 août 2026 — en-tête type + carte.
-
 Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Émotion : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · Musique : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) · Player : [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 
 ---

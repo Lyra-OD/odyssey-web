@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
-import { ensureFreemiumMediaSoftCapIntent } from "@/src/lib/media/ensureFreemiumMediaSoftCapIntent";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 
@@ -73,9 +72,6 @@ export async function POST(
   if (projectError || !project?.user_id) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
-
-  // Soft Cap intent avant upsert — évite media_quota_exceeded à 50 sur freemium.
-  await ensureFreemiumMediaSoftCapIntent(admin, projectId);
 
   const row = {
     project_id: projectId,

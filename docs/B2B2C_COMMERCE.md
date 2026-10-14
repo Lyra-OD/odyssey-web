@@ -1,15 +1,14 @@
 # Odyssey — Commerce B2B2C Freemium V1
 
 **Type :** canon · **Vérité pour :** flux salon → famille, Soft Cap, RevShare (post-purge).  
-**Dernière MAJ :** 18 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 14 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 14 oct 2026 — Dossier famille invitée : liste Souvenir / Héritage / Éternité dès que `granted = essential` (plus selon le rôle salon) → retour au Souvenir possible jusqu’au checkout. Plus de bascule serveur auto vers Héritage à 50 médias.
 - 18 août 2026 — P17 : enum `project_status` + `submitted` · webhook n’abort plus l’accrual si l’UPDATE projet échoue.
 - 18 août 2026 — checkout : metadata Stripe `act_tracks` compact (trackId only, ≤500 car.) + retry `tribute_checkouts` sans duplicate `idempotency_key`.
 - 18 août 2026 — P0-02 : `charge.refunded` clawback ledger + révocation entitlements film (fail-closed).
 - 17 août 2026 — HQ C.3 : drill conseillers en lecture sur `/hq/salons/[id]` (mêmes taux, pas de virement).
-- 17 août 2026 — relance conseiller : 1 courriel famille (Resend), au clic, max 1 par invitation.
-
 > **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
 > **Archive pré-purge :** [`_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md`](_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md) — ne plus onboards dessus.
 
@@ -72,7 +71,7 @@ Un geste. Zéro carte. Le conseiller saisit l’email et offre le Souvenir.
 | RPC | `p_granted_package = 'essential'`, metadata `packageId: SOUVENIR`. |
 | CHECK SQL | `essential` / `signature` / `heritage` **inchangé** (lignes historiques). |
 
-L’upsell (Héritage, Éternité, add-ons) se fait dans le wizard famille (Soft Cap / Dossier), pas au salon.
+L’upsell (Héritage, Éternité, add-ons) se fait dans le wizard famille (Soft Cap / Dossier), pas au salon. Le choix reste **réversible** jusqu’au checkout : le Dossier propose Souvenir tant que `granted = essential` ; jamais de bascule serveur silencieuse vers Héritage.
 
 Attribution conseiller : `invited_by_user_id` + ledger `invitation_id` → `/salon/mes-performances` (engagement + conversion perso). Même agrégation en lecture HQ C.3 sur `/hq/salons/[id]`. Commission Odyssey = **tenant** (`/salon/commissions`, admin). Pas de `?director_id=`. Pas de virement Odyssey au conseiller.
 

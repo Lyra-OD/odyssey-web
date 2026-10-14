@@ -567,10 +567,16 @@ export function TributeWizard({
   );
   // Même liste que le Dossier de forfait global (en-tête) selon le canal —
   // ne doit jamais proposer un forfait invalide pour ce contexte (ex. jamais
-  // Légendaire en canal partenaire freemium).
+  // Légendaire en canal partenaire freemium). Souvenir offert (lien salon) =
+  // liste partenaire même si la famille n'est pas membre du salon : elle doit
+  // pouvoir revenir au Souvenir. B2C (offert ≠ Souvenir) = jamais Souvenir.
+  const isSouvenirGrant = packageTierRank(grantedPackage) === 0;
   const availableBasePackagesForWizard = useMemo(
-    () => (isPartner ? WIZARD_PARTNER_GRANTED_PACKAGES : WIZARD_B2C_DIRECT_PACKAGES),
-    [isPartner],
+    () =>
+      isPartner || isSouvenirGrant
+        ? WIZARD_PARTNER_GRANTED_PACKAGES
+        : WIZARD_B2C_DIRECT_PACKAGES,
+    [isPartner, isSouvenirGrant],
   );
   const basePackageOptions: PackageDossierOption[] = useMemo(
     () =>

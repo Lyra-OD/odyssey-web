@@ -79,8 +79,11 @@ export async function POST(req: Request, { params }: RouteParams) {
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
+  const currentState = coerceWizardState(project.wizard_state);
   const invitationId = project.invitation_id as string | null;
-  let grantedPackage: WizardBasePackage = intendedPackage;
+  // Sans invitation : le forfait offert déjà persisté est figé (canon Soft Cap).
+  let grantedPackage: WizardBasePackage =
+    currentState.grantedPackage ?? intendedPackage;
 
   if (invitationId) {
     let admin;
@@ -105,7 +108,6 @@ export async function POST(req: Request, { params }: RouteParams) {
     }
   }
 
-  const currentState = coerceWizardState(project.wizard_state);
   const extensions = currentState.extensions ?? {};
   const pricing = buildPricingSnapshot(
     extensions,
