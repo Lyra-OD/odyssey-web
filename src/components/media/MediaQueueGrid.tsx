@@ -107,8 +107,6 @@ type Props = {
   onRemove: (id: string) => void;
   onRetry: (id: string) => void;
   onPreviewScanner?: (item: UploadQueueItem) => void;
-  /** `viewport` = colonnes selon l’écran · `fill` = selon la largeur du conteneur (tiroir). */
-  columns?: "viewport" | "fill";
 };
 
 function displayItemError(
@@ -230,7 +228,6 @@ export function MediaQueueGrid({
   onRemove,
   onRetry,
   onPreviewScanner,
-  columns = "viewport",
 }: Props) {
   const previews = useImagePreviews(items);
 
@@ -252,11 +249,7 @@ export function MediaQueueGrid({
 
   return (
     <ul
-      className={`mt-6 grid gap-3 ${
-        columns === "fill"
-          ? "grid-cols-2 md:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))]"
-          : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
-      }`}
+      className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-[repeat(auto-fill,minmax(11rem,1fr))]"
       aria-label="Files queued for upload"
     >
       {sortedItems.map((item) => {

@@ -310,7 +310,6 @@ export function CoffreBody({
                     ) : null}
 
                     <MediaQueueGrid
-                      columns={mode === "drawer" ? "fill" : "viewport"}
                       items={dz.items}
                       isRunning={dz.isRunning}
                       deletingId={dz.deletingId}
