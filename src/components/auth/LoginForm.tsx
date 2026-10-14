@@ -20,6 +20,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import type { AppDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/i18n.config";
 import {
+  appRoutes,
   connexionPathForAudience,
   defaultHqPostAuthPath,
   defaultPartnerPostAuthPath,
@@ -221,6 +222,12 @@ export function LoginForm({
     () => sanitizeClientNextPath(searchParams.get("next"), lang, audience),
     [searchParams, lang, audience],
   );
+  /** Famille arrivée par un lien salon : elle n'a jamais de compte. */
+  const isInviteAcceptFlow =
+    allowSignUp &&
+    (["fr", "en"] as const).some((l) =>
+      postAuthPath.startsWith(`${appRoutes.inviteAccept(l)}?`),
+    );
 
   const raiseError = useCallback((message: string) => {
     setError(message);
@@ -414,7 +421,7 @@ export function LoginForm({
       email: trimmed,
       options: {
         emailRedirectTo: buildAuthCallbackUrl(lang, postAuthPath),
-        shouldCreateUser: false,
+        shouldCreateUser: isInviteAcceptFlow,
       },
     });
     setLoading(false);

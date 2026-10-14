@@ -4,12 +4,11 @@
 **Dernière MAJ :** 14 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 14 oct 2026 — Lien salon : le lien magique **crée le compte** famille si absent (connexion avec `next=/invite/accept?…` seulement). Ailleurs, lien magique = comptes existants.
 - 14 oct 2026 — Dossier famille invitée : liste Souvenir / Héritage / Éternité dès que `granted = essential` (plus selon le rôle salon) → retour au Souvenir possible jusqu’au checkout. Plus de bascule serveur auto vers Héritage à 50 médias.
 - 18 août 2026 — P17 : enum `project_status` + `submitted` · webhook n’abort plus l’accrual si l’UPDATE projet échoue.
 - 18 août 2026 — checkout : metadata Stripe `act_tracks` compact (trackId only, ≤500 car.) + retry `tribute_checkouts` sans duplicate `idempotency_key`.
-- 18 août 2026 — P0-02 : `charge.refunded` clawback ledger + révocation entitlements film (fail-closed).
-- 17 août 2026 — HQ C.3 : drill conseillers en lecture sur `/hq/salons/[id]` (mêmes taux, pas de virement).
-> **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
+- 18 août 2026 — P0-02 : `charge.refunded` clawback ledger + révocation entitlements film (fail-closed).> **Canon :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · RevShare : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md).  
 > **Archive pré-purge :** [`_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md`](_archive/B2B2C_COMMERCE_PRE_FREEMIUM_PURGE.md) — ne plus onboards dessus.
 
 Modèle **salon → famille** : Souvenir offert, Soft Cap, Stripe upsell, RevShare **30 % du Net Distribuable** (Platform Fee 10 %).
