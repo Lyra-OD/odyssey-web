@@ -24,7 +24,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 
 | File | Role |
 |------|------|
-| `src/components/tribute/TributeWizard.tsx` | Orchestrateur ~**3462** L — step routing, gates, autosave, checkout, header (Dossier + fil) ; barre bas N3 : 2–5 Retour\|Suivant · 7 Préserver {forfait}·prix · **étape 6 = early return immersif** (`SessionCinemaGate` hors shell). **Découpage cible :** [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) (Coffre tiroir · Livre package · ingest). |
+| `src/components/tribute/TributeWizard.tsx` | Orchestrateur ~**3462** L — step routing, gates, autosave, checkout, header (Dossier + fil + tiroir Coffre hors étape 3, [`src/surfaces/coffre/`](../src/surfaces/coffre/)) ; barre bas N3 : 2–5 Retour\|Suivant · 7 Préserver {forfait}·prix · **étape 6 = early return immersif** (`SessionCinemaGate` hors shell). **Découpage cible :** [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) (Coffre tiroir · Livre package · ingest). |
 | `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | **Step 1 (J2)** — ciel fullscreen + panneau verre ; `SanctuaryUniverse` background · birth live · reveal contrôlé |
 | `src/hooks/useWizardStep1Reveal.ts` | Phase reveal étape 1 (`idle` → `birth` → `reward` → `done`) · orchestration `playReward()` |
 | `src/lib/wizard/wizardBirthReveal.ts` | Courbes / beats C0–C2 pour naissance Hero au prénom (pont craft → wizard) |

@@ -29,7 +29,12 @@ import { CheckoutStep } from "@/src/components/tribute/CheckoutStep";
 import { SoftCapModal } from "@/src/components/tribute/SoftCapModal";
 import { SessionCinemaGate } from "@/src/components/tribute/SessionCinemaGate";
 import { appRoutes } from "@/src/lib/appRoutes";
-import { CoffreBody } from "@/src/surfaces/coffre";
+import {
+  CoffreBody,
+  CoffreDrawerShell,
+  CoffreDrawerTrigger,
+  type CoffreHostProps,
+} from "@/src/surfaces/coffre";
 import { StoryboardMontageStep } from "@/src/components/tribute/StoryboardMontageStep";
 import { StoryboardChaptersStep } from "@/src/components/tribute/StoryboardChaptersStep";
 import { WizardCartSummary } from "@/src/components/tribute/WizardCartSummary";
@@ -692,6 +697,39 @@ export function TributeWizard({
   const [projectDraftError, setProjectDraftError] = useState<string | null>(
     null,
   );
+
+  // Tiroir Coffre (Phase 1 C3) — même banque que l'étape 3, jamais deux
+  // CoffreBody montés : l'étape 3 ne monte le sien que si le tiroir est démonté.
+  const [coffreOpen, setCoffreOpen] = useState(false);
+  const [coffreDrawerUploading, setCoffreDrawerUploading] = useState(false);
+  const [coffreMediaRevision, setCoffreMediaRevision] = useState(0);
+  const coffreDrawerMounted =
+    Boolean(uploadProjectId) && (coffreOpen || coffreDrawerUploading);
+  const coffreCountAtMountRef = useRef<number | null>(null);
+  const openCoffre = useCallback(() => setCoffreOpen(true), []);
+  const closeCoffre = useCallback(() => setCoffreOpen(false), []);
+
+  useEffect(() => {
+    if (coffreDrawerMounted) {
+      if (coffreCountAtMountRef.current === null) {
+        coffreCountAtMountRef.current = projectMediaCount;
+      }
+      return;
+    }
+    if (coffreCountAtMountRef.current === null) return;
+    if (coffreCountAtMountRef.current !== projectMediaCount) {
+      setCoffreMediaRevision((r) => r + 1);
+    }
+    coffreCountAtMountRef.current = null;
+  }, [coffreDrawerMounted, projectMediaCount]);
+
+  useEffect(() => {
+    if (currentStep !== 3) return;
+    // Upload tiroir en cours en arrivant à l'étape 3 : on le montre plutôt
+    // que de monter un 2ᵉ Coffre ; sinon le tiroir s'efface devant l'étape.
+    if (coffreDrawerUploading) setCoffreOpen(true);
+    else setCoffreOpen(false);
+  }, [currentStep, coffreDrawerUploading]);
   const [projectDraftLoading, setProjectDraftLoading] = useState(false);
   /**
    * Session Supabase morte côté serveur détectée par le poll média (401
@@ -1845,6 +1883,28 @@ export function TributeWizard({
     );
   }
 
+  const coffreSharedProps = {
+    projectId: uploadProjectId,
+    userId: uploadUserId ?? undefined,
+    tenantId: uploadTenantId ?? undefined,
+    uploadStrategy: isEditor ? ("signed" as const) : ("direct" as const),
+    locale,
+    copy,
+    maxFiles: effectiveMaxMediaItems,
+    includedMaxFiles: currentMaxMediaItems,
+    packageLabel: packageDisplayNameFor(basePackage),
+    upgradePackageLabel: packageDisplayNameFor("signature"),
+    projectDraftLoading,
+    offerMediaSoftCap,
+    onOpenSoftCap: () => openSoftCap("mediaUnlock"),
+    onQueueCountChange: syncStep3MediaCount,
+    onAssetUploaded: handleAssetUploaded,
+    onSessionExpired: () => setMediaSessionExpired(true),
+    onRestorationPreview: setRestorationSrc,
+  } satisfies Omit<CoffreHostProps, "mode" | "onUploadRunningChange">;
+  const showCoffreTrigger =
+    Boolean(uploadProjectId) && currentStep !== 3 && furthestStep >= 3;
+
   return (
     <>
       <ParcoursHubBodyFlag active={step1Parcours.hubChromeHidden} />
@@ -2151,6 +2211,17 @@ export function TributeWizard({
             />
               </>
             ) : null}
+            {showCoffreTrigger ? (
+              <CoffreDrawerTrigger
+                onOpen={openCoffre}
+                copy={{
+                  label: copy.coffreDrawerLabel,
+                  cta: copy.coffreDrawerCta,
+                  openAria: copy.coffreDrawerOpenAria,
+                }}
+                className="max-w-full items-end text-right"
+              />
+            ) : null}
             {/* Masqué sur mobile — détail consultable dans le Dossier. */}
             <p className="mt-1.5 hidden text-[11px] font-light italic leading-snug text-zinc-400 md:block md:text-right">
               {copy.headerNarrativeSummary
@@ -2160,6 +2231,21 @@ export function TributeWizard({
           </div>
         </div>
       </header>
+
+      {coffreDrawerMounted ? (
+        <CoffreDrawerShell
+          isOpen={coffreOpen || currentStep === 3}
+          onClose={closeCoffre}
+          title={copy.coffreDrawerLabel}
+          closeAria={copy.coffreDrawerCloseAria}
+        >
+          <CoffreBody
+            {...coffreSharedProps}
+            mode="drawer"
+            onUploadRunningChange={setCoffreDrawerUploading}
+          />
+        </CoffreDrawerShell>
+      ) : null}
 
       {!isEditor ? (
         <>
@@ -2681,27 +2767,13 @@ export function TributeWizard({
                 </div>
               ) : null}
 
-              <CoffreBody
-                mode="onboarding"
-                projectId={uploadProjectId}
-                userId={uploadUserId ?? undefined}
-                tenantId={uploadTenantId ?? undefined}
-                uploadStrategy={isEditor ? "signed" : "direct"}
-                locale={locale}
-                copy={copy}
-                maxFiles={effectiveMaxMediaItems}
-                includedMaxFiles={currentMaxMediaItems}
-                packageLabel={packageDisplayNameFor(basePackage)}
-                upgradePackageLabel={packageDisplayNameFor("signature")}
-                projectDraftLoading={projectDraftLoading}
-                offerMediaSoftCap={offerMediaSoftCap}
-                onOpenSoftCap={() => openSoftCap("mediaUnlock")}
-                onQueueCountChange={syncStep3MediaCount}
-                onUploadRunningChange={setStep3UploadRunning}
-                onAssetUploaded={handleAssetUploaded}
-                onSessionExpired={() => setMediaSessionExpired(true)}
-                onRestorationPreview={setRestorationSrc}
-              />
+              {!coffreDrawerMounted ? (
+                <CoffreBody
+                  {...coffreSharedProps}
+                  mode="onboarding"
+                  onUploadRunningChange={setStep3UploadRunning}
+                />
+              ) : null}
 
               <VaultOnlineSourcesSection
                 className="mt-12 mb-28"
@@ -2830,6 +2902,7 @@ export function TributeWizard({
             <StoryboardMontageStep
               packageId={currentPackageId}
               projectId={uploadProjectId}
+              mediaRevision={coffreMediaRevision}
               storyboard={wizardStoryboard.storyboard}
               onStoryboardChange={wizardStoryboard.setStoryboard}
               onMagicPerformingChange={(performing) => {

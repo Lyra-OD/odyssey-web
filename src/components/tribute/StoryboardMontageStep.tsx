@@ -111,6 +111,8 @@ export type StoryboardMontageStepCopy = {
 type Props = {
   packageId: PackageId;
   projectId: string | null;
+  /** Incrémenté par le host quand le tiroir Coffre a modifié la banque → refetch. */
+  mediaRevision?: number;
   storyboard: WizardStoryboardState;
   onStoryboardChange: (next: WizardStoryboardState) => void;
   onMagicPerformingChange?: (performing: boolean) => void;
@@ -144,6 +146,7 @@ function resolveChapterThemeIndex(
 export function StoryboardMontageStep({
   packageId,
   projectId,
+  mediaRevision = 0,
   storyboard,
   onStoryboardChange,
   onMagicPerformingChange,
@@ -188,7 +191,7 @@ export function StoryboardMontageStep({
       aborted = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId]);
+  }, [projectId, mediaRevision]);
 
   const mediaById = useMemo(
     () => new Map(mediaItems.map((item) => [item.assetId, item])),
