@@ -84,7 +84,7 @@ export function SanctuaryInviteTrigger({
       aria-label={copy.triggerOpenAria}
       className={`group inline-flex flex-col items-start gap-0.5 text-left disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
     >
-      <span className="text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-400">
+      <span className="text-[10px] font-medium uppercase tracking-[0.28em] text-teal-400/80">
         {copy.triggerLabel}
       </span>
       <span className="inline-flex items-center gap-1.5 font-editorial text-base font-medium text-zinc-100">

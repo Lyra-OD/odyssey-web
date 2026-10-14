@@ -76,7 +76,7 @@ export function CollabInviteTrigger({
       aria-label={copy.triggerOpenAria}
       className={`group inline-flex min-w-0 flex-col items-start gap-0.5 text-left disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
     >
-      <span className="max-w-full truncate text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-400">
+      <span className="max-w-full truncate text-[10px] font-medium uppercase tracking-[0.28em] text-teal-400/80">
         {copy.triggerLabel}
       </span>
       <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 font-editorial text-sm font-medium text-zinc-100 md:text-base">

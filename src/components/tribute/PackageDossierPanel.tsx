@@ -58,7 +58,7 @@ export function PackageDossierTrigger({
       aria-label={copy.openAria}
       className={`group inline-flex min-w-0 flex-col items-start gap-0.5 text-left ${className}`}
     >
-      <span className="max-w-full truncate text-[10px] font-medium uppercase tracking-[0.28em] text-zinc-400">
+      <span className="max-w-full truncate text-[10px] font-medium uppercase tracking-[0.28em] text-teal-400/80">
         {copy.label}
       </span>
       <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 font-editorial text-sm font-medium text-zinc-100 md:text-base">
