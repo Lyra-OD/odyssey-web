@@ -1,15 +1,14 @@
 # Odyssey — Routes applicatives & authentification
 
 **Type :** canon · **Vérité pour :** URLs, connexions Studio/Salon, `appRoutes.ts`.  
-**Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 14 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 14 oct 2026 — Invitation acceptée → `/studio?projectId=…` (même coquille FR/EN que le Studio). `/tribute/welcome` = redirect legacy. Lien magique lien salon crée le compte.
 - 19 août 2026 — inventaire DA Vague 1 : [`DA_SCREENS.md`](DA_SCREENS.md) (une frame = une URL).
 - 18 août 2026 — `POST /api/partners/lead` (formulaire marketing, alerte HQ).
 - 17 août 2026 — `/hq/salons/[tenantId]` : drill conseillers (lecture, pas de payout directeur).
 - 17 août 2026 — `/hq/salons/[tenantId]` + `GET /api/hq/tenants/[id]` (fiche micro).
-- 17 août 2026 — `POST /api/hq/tenants/[id]/payout` + liste salons (RPC P14).
-
 Document canonique pour les **URLs**, les **trois pages de connexion** (famille, partenaire, HQ Odyssey), les **redirects legacy**, et le **branding Salon** (gant blanc). Source de vérité code : `src/lib/appRoutes.ts`.
 
 Complète [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) § Routes / env et [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).  
@@ -21,7 +20,7 @@ Frames DA (une frame = une URL) : [`DA_SCREENS.md`](DA_SCREENS.md).
 
 | Zone | URL | Auth | Rôle |
 |------|-----|------|------|
-| **Studio** (famille) | `/[lang]/studio` | Oui (ou cookie editor) | Wizard hommage **7** étapes — B2C / B2B2C / Co-Créateur |
+| **Studio** (famille) | `/[lang]/studio` (`?projectId=` optionnel : ouvre ce brouillon du titulaire, sinon le plus récent) | Oui (ou cookie editor) | Wizard hommage **7** étapes — B2C / B2B2C / Co-Créateur |
 | **Studio connexion** | `/[lang]/studio/connexion` | Non | Login + **inscription** famille |
 | **Salon** (funérarium) | `/[lang]/salon` | Oui | Console partenaire — invitations Souvenir |
 | **Salon performances** | `/[lang]/salon/mes-performances` | Oui | Conseiller (`canInvite`) — ses invitations, pas le solde salon |
@@ -32,8 +31,8 @@ Frames DA (une frame = une URL) : [`DA_SCREENS.md`](DA_SCREENS.md).
 | **HQ salon** | `/[lang]/hq/salons/[tenantId]` | Oui + allowlist | Fiche micro (miroir commissions + drill conseillers) |
 | **HQ connexion** | `/[lang]/hq/connexion` | Non | Login opérateurs **sans** inscription |
 | **Marketing partenaires** | `/[lang]/partners` ou `/partenaires` | Non | Formulaire « devenir partenaire » → `POST /api/partners/lead` |
-| **Acceptation invitation** | `/[lang]/invite/accept?token=…` | Oui (redir. studio connexion) | Magic link famille → projet B2B2C |
-| **Bienvenue hommage** | `/[lang]/tribute/welcome?projectId=…` | Oui | Wizard seedé après invitation |
+| **Acceptation invitation** | `/[lang]/invite/accept?token=…` | Oui (redir. studio connexion) | Magic link famille → projet B2B2C → `/studio?projectId=…` |
+| **Bienvenue hommage** | `/[lang]/tribute/welcome?projectId=…` | — | **Legacy** — redirect `/studio?projectId=…` |
 | **Auth callback** | `/auth/callback?next=…` | — | Échange code Supabase (signup / magic link) |
 
 ### Scanner Compagnon (Phase A — QR + galerie)
@@ -185,7 +184,7 @@ Exécuter **P5.2 + (P5.3 ou P5.4) + seed** pour connexion et dashboard co-brand�
 | `/[lang]/salon/facturation` | Redirect serveur → `/salon/commissions` |
 | `/[lang]/hq` (+ layout) | Middleware + layout : hors session → `/hq/connexion` ; hors `hq_allowlist` → `/{lang}` ; layout partenaire → `/salon` |
 | `/[lang]/invite/accept` | → `/studio/connexion?next=…` (famille invitée) |
-| `/[lang]/tribute/welcome` | → `/studio/connexion?next=…` |
+| `/[lang]/tribute/welcome` | → `/studio?projectId=…` (le Studio gère la connexion) |
 
 **Déconnexion** (`DashboardSignOut`) :
 - Studio (défaut) → `/studio/connexion`

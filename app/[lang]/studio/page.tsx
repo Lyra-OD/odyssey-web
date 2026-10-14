@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { OdysseyConnexionMark } from "@/src/components/auth/OdysseyConnexionMark";
 import { StudioLocaleFrame } from "@/src/components/tribute/StudioLocaleFrame";
 import { appRoutes } from "@/src/lib/appRoutes";
+import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
 import {
   SANCTUARY_HALO_TEAL,
   SANCTUARY_HALO_UV,
@@ -18,7 +19,7 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ lang: string }>;
-  searchParams: Promise<{ plan?: string; checkout?: string }>;
+  searchParams: Promise<{ plan?: string; checkout?: string; projectId?: string }>;
 };
 
 const DRAFT_SELECT =
@@ -26,7 +27,15 @@ const DRAFT_SELECT =
 
 export default async function StudioPage({ params, searchParams }: PageProps) {
   const { lang: routeLang } = await params;
-  const { plan: rawPlan, checkout: rawCheckout } = await searchParams;
+  const {
+    plan: rawPlan,
+    checkout: rawCheckout,
+    projectId: rawProjectId,
+  } = await searchParams;
+  // Arrivée lien salon (`/invite/accept`) : ouvrir CE projet, pas le dernier brouillon.
+  const requestedProjectId = ProjectIdSchema.safeParse(rawProjectId).success
+    ? (rawProjectId as string)
+    : null;
   // Dev-only : `?plan=essential` permet de tester le flux freemium Soft Cap
   // en local (grantedPackage = Souvenir 0 $) sans passer par une invitation
   // partenaire. Jamais honoré en production (faille de monétisation).
@@ -115,16 +124,29 @@ export default async function StudioPage({ params, searchParams }: PageProps) {
       ),
     );
 
-    const { data: ownDraft } = await supabase
-      .from("projects")
-      .select(DRAFT_SELECT)
-      .eq("user_id", user.id)
-      .eq("status", "draft")
-      .order("last_saved_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    if (requestedProjectId) {
+      const { data: requestedDraft } = await supabase
+        .from("projects")
+        .select(DRAFT_SELECT)
+        .eq("id", requestedProjectId)
+        .eq("user_id", user.id)
+        .eq("status", "draft")
+        .maybeSingle();
+      draftProject = (requestedDraft as WizardInitialDraft | null) ?? null;
+    }
 
-    draftProject = (ownDraft as WizardInitialDraft | null) ?? null;
+    if (!draftProject) {
+      const { data: ownDraft } = await supabase
+        .from("projects")
+        .select(DRAFT_SELECT)
+        .eq("user_id", user.id)
+        .eq("status", "draft")
+        .order("last_saved_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      draftProject = (ownDraft as WizardInitialDraft | null) ?? null;
+    }
   }
 
   const brandWordmark = dictionary.tributeWizard.inviteBrandWordmark;

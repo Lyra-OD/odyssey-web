@@ -70,7 +70,7 @@ export default async function InviteAcceptPage({
 
   if (result.ok) {
     redirect(
-      `/${lang}/tribute/welcome?projectId=${encodeURIComponent(result.projectId)}`,
+      `${appRoutes.studio(lang)}?projectId=${encodeURIComponent(result.projectId)}`,
     );
   }
 
