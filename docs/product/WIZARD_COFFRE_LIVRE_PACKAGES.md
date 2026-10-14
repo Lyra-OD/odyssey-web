@@ -5,7 +5,7 @@
 
 **Changelog** (max 5)
 - 14 oct 2026 — **C3.2** tiroir : barre compacte collante (compteur + « Ajouter des souvenirs ») au lieu de la grande zone · dépôt n’importe où dans le tiroir (voile « Déposez vos souvenirs ») · Scanner inclus dans la zone. Étape 3 inchangée.
-- 14 oct 2026 — **C3.1** tiroir Coffre **à gauche**, 75 % de l’écran, grille selon la largeur du tiroir · déclencheur = pastille teal + compteur mauve, ligne propre au bord gauche de l’en-tête (pilier, distinct de Dossier / Co-Créateur à droite) · chip d’aide masqué tiroir ouvert.
+- 14 oct 2026 — **C3.1** tiroir Coffre **à gauche**, 75 % de l’écran, grille selon la largeur du tiroir · déclencheur = pastille teal + compteur signature (bulle cyan qui respire, chiffre glow comme FR/EN), ligne propre au bord gauche de l’en-tête (pilier, distinct de Dossier / Co-Créateur à droite) · chip d’aide masqué tiroir ouvert.
 - 14 oct 2026 — **Phase 1 C3 ✅** tiroir Coffre dans l’en-tête (dès l’étape 3 atteinte, hors étape 3) = **même** `CoffreBody` · un seul monté à la fois · upload continue tiroir fermé · étape 5 recharge la banque à la fermeture.
 - 14 oct 2026 — Phase 1 C1–C2 : corps étape 3 → `src/surfaces/coffre/CoffreBody` (contrat `CoffreHostProps`). Compteur selon le forfait : « 50 inclus dans le forfait Souvenir · jusqu’à 125 avec Héritage ».
 - 13 oct 2026 — **S6 / S6b ✅** resize photo ≤2048 JPEG preflight (`resizeImageForUploadFile`, HEIC skip) · Sanctuaire invité idem.
