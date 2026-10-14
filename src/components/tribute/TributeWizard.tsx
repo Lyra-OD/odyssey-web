@@ -3204,11 +3204,11 @@ export function TributeWizard({
       />
       ) : null}
 
-      {/* N3 — 2–5 Retour|Suivant ; 7 Retour|Préserver {forfait}·prix (étape 6 = sas cinéma early-return) */}
+      {/* N3 — Quiet Luxury : barre légère, Retour ghost, Suivant accent (breathe). */}
       {!step1Parcours.hubChromeHidden &&
       currentStep >= 2 ? (
         <div
-          className={`fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#020202]/80 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md shadow-[0_-12px_40px_rgba(0,0,0,0.45)] md:px-8 ${
+          className={`fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.06] bg-[#020202]/55 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md shadow-[0_-8px_28px_rgba(0,0,0,0.28)] md:px-8 ${
             n3Cooling ? "pointer-events-none" : ""
           }`}
         >
@@ -3225,7 +3225,7 @@ export function TributeWizard({
               <button
                 type="button"
                 onClick={() => void goBack()}
-                className={`${wizardMiniCapsAction} min-h-[52px] flex-1 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-base font-medium text-zinc-400 transition-colors hover:border-white/12 hover:bg-white/[0.05] hover:text-zinc-200 ${sanctuaryFocusRing}`}
+                className={`${wizardMiniCapsAction} min-h-[44px] flex-1 rounded-lg border border-white/[0.1] bg-transparent px-4 text-sm font-light tracking-[0.18em] text-zinc-400 transition-colors hover:border-white/20 hover:text-zinc-200 ${sanctuaryFocusRing}`}
               >
                 {copy.back}
               </button>
@@ -3233,7 +3233,7 @@ export function TributeWizard({
 
             {currentStep <= 5 ? (
               currentStep === 5 && isEditor ? (
-                <p className="flex min-h-[52px] flex-[1.35] items-center justify-center text-center text-sm font-light text-white/55">
+                <p className="flex min-h-[44px] flex-[1.35] items-center justify-center text-center text-sm font-light text-white/55">
                   {copy.editorCraftComplete}
                 </p>
               ) : (
@@ -3241,7 +3241,7 @@ export function TributeWizard({
                   type="button"
                   onClick={() => void goNext()}
                   disabled={currentStep === 3 && step3UploadRunning}
-                  className={`connexion-submit-breathe ${wizardMiniCapsAction} min-h-[52px] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-medium text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${
+                  className={`connexion-submit-breathe ${wizardMiniCapsAction} min-h-[44px] rounded-lg border border-teal-400/30 bg-white/[0.04] px-4 text-sm font-light tracking-[0.18em] text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/50 hover:bg-white/[0.07] hover:text-teal-50 active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${
                     currentStep > (isEditor ? 3 : 1)
                       ? "flex-[1.35]"
                       : "w-full"
@@ -3257,7 +3257,7 @@ export function TributeWizard({
                 type="button"
                 onClick={() => void handlePay()}
                 disabled={n3PayDisabled}
-                className={`connexion-submit-breathe ${wizardMiniCapsAction} min-h-[52px] flex-[1.35] rounded-2xl border border-teal-400/35 bg-white/[0.06] px-4 text-base font-medium text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/55 hover:bg-white/[0.09] hover:text-teal-50 hover:shadow-[0_0_28px_rgba(45,212,191,0.22)] active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${sanctuaryFocusRing}`}
+                className={`connexion-submit-breathe ${wizardMiniCapsAction} min-h-[44px] flex-[1.35] rounded-lg border border-teal-400/30 bg-white/[0.04] px-4 text-sm font-light tracking-[0.18em] text-zinc-50 transition-[colors,box-shadow,transform] hover:border-teal-300/50 hover:bg-white/[0.07] hover:text-teal-50 active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${sanctuaryFocusRing}`}
               >
                 {isPaying ? copy.checkoutPaying : preservePackagePayCta}
               </button>

@@ -1,15 +1,14 @@
 # Odyssey — Design System
 
 **Type :** canon · **Vérité pour :** palette, Halo-Éclipse, tokens UI.  
-**Dernière MAJ :** 13 oct 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 14 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 14 oct 2026 — §6.4 Wizard Quiet Luxury (forme) : chrome léger, rayons éditoriaux, glow = exception — aligné player, palette inchangée.
 - 13 oct 2026 — §2.1bis badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo (identité ≠ sélection).
 - 5 sept. 2026 — arbitrage palette ouvert : 3 bleu-verts mesurés, magenta = échec → [`design/PALETTE_ARBITRAGE.md`](design/PALETTE_ARBITRAGE.md).
 - 5 sept. 2026 — §2.1bis « choisir = teal, partout » : sélection = teal · domaine = identité.
 - 28 août 2026 — `/partners` : H1 soft · CTA démo = `sanctuarySubmitButton` (teal Studio).
-- 28 août 2026 — stratégie bicolore DA : Cyan Connexion · Teal Sanctuaire · §2.
-- 17 août 2026 — KPI Salon : chiffres en `--salon-cyan` · invitation Salon email + CTA Souvenir.
 
 Guide visuel et produit pour l’ensemble du site Next.js (Studio B2C, Salon B2B2C, pages marketing). Complète [`CONVENTIONS.md`](CONVENTIONS.md) et [`ROUTES_AND_AUTH.md`](ROUTES_AND_AUTH.md).  
 Inventaire frames Figma (Vague 1 famille) : [`DA_SCREENS.md`](DA_SCREENS.md). Tokens ici ; **layout écran par écran** = Figma signé, pas ce fichier.
@@ -445,6 +444,20 @@ Skin : `src/lib/salonTierCardSkin.ts` (stagger, champ email, CTA). Upsell = wiza
 ### 6.3 Header salon
 
 `bg-[#020202]/40`, `backdrop-blur-md`, `border-b white/6`, **`z-30`** (au-dessus des halos d’ambiance).
+
+### 6.4 Wizard Quiet Luxury — forme (Studio)
+
+Aligner le chrome wizard sur le player (`QuietLuxuryPlayer` / `QuietLuxuryExitHub`) **sans changer la palette** teal/cyan.
+
+| Règle | Oui | Non |
+|-------|-----|-----|
+| Conteneurs | Trait fin + air ; carte seulement si interaction (dropzone, tuile média) | Empiler `rounded-2xl` + fill partout |
+| Rayons | `rounded-sm` / `rounded-lg` ; `rounded-full` = disques (avatar, play) | Capsules CTA / pastilles chrome |
+| Labels | `font-light`, tracking ouvert (~0.18–0.28em) | Mini-caps denses « SaaS » |
+| Chrome | En-tête / footer / stepper secondaires, verre léger | App bar opaque + gros glow permanent |
+| Glow | Exception (Suivant breathe, étape active) | Halo sur chaque hover |
+
+Réf. code : `TributeWizard` (header N3) · `WizardPhaseProgress` · `QuietLuxuryExitHub`.
 
 ---
 
