@@ -583,9 +583,9 @@
 | `tributeWizard.collabTriggerLabel` | Aide création | Creation help |
 | `tributeWizard.collabTriggerCta` | Inviter un proche | Invite a loved one |
 | `tributeWizard.collabOpenAria` | Inviter un proche à vous aider au Studio | Invite a loved one to help in the Studio |
-| `tributeWizard.coffreDrawerLabel` | Coffre à souvenirs | Memory Chest |
-| `tributeWizard.coffreDrawerOpenAria` | Ouvrir le Coffre à souvenirs | Open the Memory Chest |
-| `tributeWizard.coffreDrawerCloseAria` | Fermer le Coffre à souvenirs | Close the Memory Chest |
+| `tributeWizard.coffreDrawerLabel` | Le Coffre | The Chest |
+| `tributeWizard.coffreDrawerOpenAria` | Ouvrir le Coffre | Open the Chest |
+| `tributeWizard.coffreDrawerCloseAria` | Fermer le Coffre | Close the Chest |
 | `tributeWizard.coffreDrawerAddCta` | Ajouter des souvenirs | Add memories |
 | `tributeWizard.coffreDrawerDropHint` | ou glissez-les n’importe où dans le Coffre | or drop them anywhere in the Chest |
 | `tributeWizard.coffreDrawerDropOverlay` | Déposez vos souvenirs dans le Coffre | Drop your memories into the Chest |
