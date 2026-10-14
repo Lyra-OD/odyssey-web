@@ -37,6 +37,7 @@ export function CoffreBody({
 
   return (
     <>
+      {mode === "onboarding" || !projectId ? scannerSection : null}
       {!projectId ? (
         <div
           className="mt-10 flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-white/12 bg-white/[0.03] px-6 py-16 text-center text-sm font-light text-zinc-400 backdrop-blur-xl"
@@ -98,8 +99,8 @@ export function CoffreBody({
                   <input
                     {...dz.getInputProps({ "aria-label": copy.uploadAria })}
                   />
-                  {children}
                   {scannerSection}
+                  {children}
                   {dz.isDragActive ? (
                     // `fixed` se cale sur l’aside du tiroir (ancêtre transformé), pas sur l’écran.
                     <div
@@ -356,8 +357,6 @@ export function CoffreBody({
           }}
         </MediaDropzoneAdapter>
       )}
-
-      {mode === "onboarding" || !projectId ? scannerSection : null}
     </>
   );
 }
@@ -368,7 +367,7 @@ function CoffreScannerSection({
   copy,
 }: Pick<CoffreHostProps, "projectId" | "locale" | "copy">) {
   return (
-    <section className="mt-12 border-t border-white/[0.06] pt-10">
+    <section className="mt-8 border-b border-white/[0.06] pb-10">
       {projectId ? (
         <ScannerCompanionPanel
           projectId={projectId}
