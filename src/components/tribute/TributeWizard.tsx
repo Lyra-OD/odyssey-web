@@ -2177,7 +2177,7 @@ export function TributeWizard({
                   <p className="font-editorial truncate text-lg font-medium leading-tight tracking-[0.02em] text-zinc-100 md:text-xl">
                     {deceasedDisplayName}
                   </p>
-                  <p className="font-[family-name:var(--font-label)] mt-0.5 text-xs font-normal tracking-[0.18em] text-zinc-400 uppercase">
+                  <p className="font-[family-name:var(--font-label)] mt-0.5 text-xs font-normal tracking-[0.18em] text-teal-400/80 uppercase">
                     {yearsDisplay}
                   </p>
                 </div>
