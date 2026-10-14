@@ -134,7 +134,7 @@
 | `pricing.title` | Préserver cet hommage | Preserve this tribute |
 | `pricing.sectionSubtitle` | L'hommage à sa mesure | A tribute in its full measure |
 | `pricing.subtitle` | Choisissez l'ampleur de l'hommage. Plus l'Entourage partage, plus il s'enrichit en souvenirs, en voix et en présence. | Choose the scale of the tribute. The more loved ones share, the richer it becomes in memories, voices, and presence. |
-| `pricing.tierTitles.essential` | Héritage | Legacy |
+| `pricing.tierTitles.essential` | Héritage | Heritage |
 | `pricing.tierTitles.tribute` | Éternité | Eternity |
 | `pricing.tierTitles.legacy` | Légendaire | Legendary |
 | `pricing.tiers[0].key` | essential | essential |
@@ -164,7 +164,7 @@
 | Clé | FR | EN |
 |-----|----|----|
 | `packages.names.essential` | Souvenir | Keepsake |
-| `packages.names.signature` | Héritage | Legacy |
+| `packages.names.signature` | Héritage | Heritage |
 | `packages.names.heritage` | Éternité | Eternity |
 | `packages.styles.essential` | Épuré et constant | Pure and steady |
 | `packages.styles.signature` | Rythme sensible, musique au cœur | Sensitive rhythm, music at heart |
@@ -532,7 +532,7 @@
 | `tributeWizard.stickyDraftLabel` | À poursuivre plus tard | Continue later |
 | `tributeWizard.basePackageEssential` | Souvenir | Keepsake |
 | `tributeWizard.basePackageEssentialDesc` | Montage narratif complet et livraison digitale. | Full narrative edit and digital delivery. |
-| `tributeWizard.basePackageSignature` | Héritage | Legacy |
+| `tributeWizard.basePackageSignature` | Héritage | Heritage |
 | `tributeWizard.basePackageSignatureDesc` | Catalogue musical inclus · un clip pensé pour vos réseaux sociaux · Coffre numérique 50 ans. | Music catalog included · a clip made for your social feeds · Digital vault, 50 years. |
 | `tributeWizard.basePackageHeritage` | Éternité | Eternity |
 | `tributeWizard.basePackageHeritageDesc` | Export 4K · restauration IA de vos photos · Compagnon scanner inclus. | 4K export · AI photo restoration · Scanner Companion included. |

@@ -138,7 +138,7 @@
     "sectionSubtitle": "A tribute in its full measure",
     "subtitle": "Choose the scale of the tribute. The more loved ones share, the richer it becomes in memories, voices, and presence.",
     "tierTitles": {
-      "essential": "Legacy",
+      "essential": "Heritage",
       "tribute": "Eternity",
       "legacy": "Legendary"
     },
@@ -182,7 +182,7 @@
   "packages": {
     "names": {
       "essential": "Keepsake",
-      "signature": "Legacy",
+      "signature": "Heritage",
       "heritage": "Eternity"
     },
     "styles": {
@@ -553,7 +553,7 @@
     "stickyDraftLabel": "Continue later",
     "basePackageEssential": "Keepsake",
     "basePackageEssentialDesc": "Full narrative edit and digital delivery.",
-    "basePackageSignature": "Legacy",
+    "basePackageSignature": "Heritage",
     "basePackageSignatureDesc": "Music catalog included · a clip made for your social feeds · Digital vault, 50 years.",
     "basePackageHeritage": "Eternity",
     "basePackageHeritageDesc": "4K export · AI photo restoration · Scanner Companion included.",

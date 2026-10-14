@@ -1,9 +1,10 @@
 # Contrat de Livrables & Packages (Manifeste) — Pivot Freemium V1
 
 **Type :** canon · **Vérité pour :** contrat livrables (code : `wizardDeliverables.ts`). Prix live = `pricingConfig.ts`.  
-**Dernière MAJ :** 21 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 14 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 14 oct 2026 — Nom EN du forfait Héritage = **Heritage** (fin de « Legacy »), aligné sur la copy Soft Cap.
 - 21 sept 2026 — Add-on **`cinemaMaster` 49 $** (Master cinéma ; inclus Héritage+).
 - 17 août 2026 — en-tête type + carte.
 - 24 juillet 2026 — Freemium V1 + Cascade V-Final (grille Quiet Luxury).
@@ -23,7 +24,7 @@ Document canonique **produit** pour forfaits, livrables vidéo, add-ons Quiet Lu
 | Nom marketing (FR) | Nom marketing (EN) | `PackageId` | ID technique (`granted` / `intended`) |
 |--------------------|--------------------|-------------|----------------------------------------|
 | **Souvenir** | **Keepsake** | `SOUVENIR` | `essential` |
-| **Héritage** | **Legacy** | `HERITAGE` | `signature` |
+| **Héritage** | **Heritage** | `HERITAGE` | `signature` |
 | **Éternité** | **Eternity** | `ETERNITE` | `heritage` |
 | **Légendaire** | **Legendary** | `LEGENDAIRE` | `legendary` (B2C only) |
 

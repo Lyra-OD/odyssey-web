@@ -27,7 +27,7 @@ function isEnglishDictionary(
   labels: PackageNamesI18n | PackageStylesI18n,
 ): boolean {
   const record = labels as LabelsRecord;
-  return record.essential === "Keepsake" || record.signature === "Legacy";
+  return record.essential === "Keepsake" || record.signature === "Heritage";
 }
 
 function fallbackPackageName(
