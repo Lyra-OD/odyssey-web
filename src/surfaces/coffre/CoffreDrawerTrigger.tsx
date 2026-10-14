@@ -36,7 +36,7 @@ export function CoffreDrawerTrigger({
       <span className="truncate font-editorial text-sm font-medium text-zinc-50 md:text-base">
         {copy.label}
       </span>
-      <span className="shrink-0 rounded-full border border-purple-300/50 bg-purple-500/20 px-2 py-0.5 text-[11px] font-semibold tabular-nums text-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.35)]">
+      <span className="shrink-0 rounded-full border border-purple-300/50 bg-purple-500/20 px-2 py-0.5 text-[11px] font-semibold tabular-nums text-teal-200 shadow-[0_0_12px_rgba(168,85,247,0.35)]">
         {mediaCount}
       </span>
     </button>
