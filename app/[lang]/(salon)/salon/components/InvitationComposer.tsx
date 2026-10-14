@@ -4,11 +4,9 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useCallback, useRef, useState } from "react";
 
 import type { Locale } from "@/i18n.config";
+import type { AppDictionary } from "@/lib/dictionaries";
 import { usePartner } from "@/src/lib/partner/PartnerContext";
-import {
-  CreatePartnerInvitationResponseSchema,
-  InvitationAlreadyPendingErrorSchema,
-} from "@/src/lib/partner/invitationSchemas";
+import { CreatePartnerInvitationResponseSchema } from "@/src/lib/partner/invitationSchemas";
 import {
   SALON_INVITE_STAGGER_CONTAINER,
   SALON_INVITE_STAGGER_ITEM,
@@ -28,6 +26,7 @@ type InvitationSuccessData = {
 
 type InvitationComposerProps = {
   lang: Locale;
+  copy: AppDictionary["salon"]["invite"];
 };
 
 function formatExpiresAt(iso: string, locale: Locale): string {
@@ -38,7 +37,7 @@ function formatExpiresAt(iso: string, locale: Locale): string {
   }).format(date);
 }
 
-export function InvitationComposer({ lang }: InvitationComposerProps) {
+export function InvitationComposer({ lang, copy }: InvitationComposerProps) {
   const prefersReducedMotion = useReducedMotion();
   const submitLockRef = useRef(false);
   const { activeTenantId, isLoading: isPartnerLoading } = usePartner();
@@ -53,51 +52,6 @@ export function InvitationComposer({ lang }: InvitationComposerProps) {
 
   const locale = lang === "en" ? "en" : "fr";
   const reducedMotion = prefersReducedMotion === true;
-
-  const copy =
-    lang === "en"
-      ? {
-          kicker: "Invitation",
-          title: "Offer Keepsake to a family",
-          hint: "The salon gifts the digital sanctuary. The family may elevate the story later.",
-          emailLabel: "Family email",
-          emailPlaceholder: "name@family.com",
-          send: "Offer Keepsake",
-          sending: "Preparing the link…",
-          errorGeneric:
-            "An error occurred while creating the invitation. Please try again.",
-          invitationAlreadyPending:
-            "An invitation is already pending for this email address.",
-          successTitle: "The invitation was created successfully.",
-          linkLabel: "Invitation link",
-          copyLink: "Copy link",
-          copied: "Copied!",
-          validUntil: "This link is valid until",
-          newInvitation: "Create another invitation",
-          tenantMissing:
-            "No partner workspace linked to this account. Sign in via the partner link.",
-        }
-      : {
-          kicker: "Invitation",
-          title: "Offrir le Souvenir à une famille",
-          hint: "Le salon offre l’écrin numérique. La famille pourra élever l’histoire plus tard.",
-          emailLabel: "Courriel de la famille",
-          emailPlaceholder: "nom@famille.com",
-          send: "Offrir le Souvenir",
-          sending: "Préparation du lien…",
-          errorGeneric:
-            "Une erreur est survenue lors de la création de l’invitation. Veuillez réessayer.",
-          invitationAlreadyPending:
-            "Une invitation est déjà en attente pour cette adresse.",
-          successTitle: "L’invitation a été générée avec succès.",
-          linkLabel: "Lien d’invitation",
-          copyLink: "Copier le lien",
-          copied: "Copié !",
-          validUntil: "Ce lien est valide jusqu’au",
-          newInvitation: "Créer une nouvelle invitation",
-          tenantMissing:
-            "Aucun espace partenaire rattaché à ce compte. Reconnectez-vous via le lien partenaire.",
-        };
 
   const formLocked = isSubmitting || Boolean(successData);
   const canSubmit =
@@ -152,12 +106,7 @@ export function InvitationComposer({ lang }: InvitationComposerProps) {
       }
 
       if (response.status === 409) {
-        const conflict = InvitationAlreadyPendingErrorSchema.safeParse(payload);
-        setError(
-          conflict.success
-            ? conflict.data.message
-            : copy.invitationAlreadyPending,
-        );
+        setError(copy.invitationAlreadyPending);
         return;
       }
 
@@ -194,6 +143,8 @@ export function InvitationComposer({ lang }: InvitationComposerProps) {
   ]);
 
   if (successData) {
+    const [validUntilBefore, validUntilAfter = ""] =
+      copy.validUntil.split("{date}");
     return (
       <section
         className="mt-16 md:mt-20"
@@ -231,11 +182,11 @@ export function InvitationComposer({ lang }: InvitationComposerProps) {
           </div>
 
           <p className="font-label text-sm font-light leading-relaxed text-zinc-400">
-            {copy.validUntil}{" "}
+            {validUntilBefore}
             <span className="text-zinc-200">
               {formatExpiresAt(successData.expiresAt, locale)}
             </span>
-            .
+            {validUntilAfter}
           </p>
 
           <div className="flex flex-wrap gap-4 pt-2">

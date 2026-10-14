@@ -3,33 +3,24 @@
 import Link from "next/link";
 
 import type { Locale } from "@/i18n.config";
+import type { AppDictionary } from "@/lib/dictionaries";
 import { appRoutes } from "@/src/lib/appRoutes";
 import { usePartner } from "@/src/lib/partner/PartnerContext";
 
 type PartnerSalonPageIntroProps = {
   lang: Locale;
+  copy: AppDictionary["salon"]["intro"];
 };
 
 /**
  * Bandeau de hiérarchie : contexte workspace + lien commissions (admin).
  * L’action principale (invitation) reste dans InvitationComposer.
  */
-export function PartnerSalonPageIntro({ lang }: PartnerSalonPageIntroProps) {
+export function PartnerSalonPageIntro({
+  lang,
+  copy,
+}: PartnerSalonPageIntroProps) {
   const { capabilities } = usePartner();
-  const copy =
-    lang === "en"
-      ? {
-          workspace: "Partner space",
-          subtitle: "Invite a family — Keepsake is the gift.",
-          commissions: "Commissions",
-          performance: "My performance",
-        }
-      : {
-          workspace: "Espace partenaires",
-          subtitle: "Invitez une famille — Souvenir offert.",
-          commissions: "Commissions",
-          performance: "Mes performances",
-        };
 
   return (
     <section

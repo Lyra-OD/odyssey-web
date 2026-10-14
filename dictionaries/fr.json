@@ -923,6 +923,30 @@
       "ERR_INVALID_TENANT": "Espace partenaire invalide ou manquant.",
       "ERR_WALLET_NOT_FOUND": "Portefeuille jetons introuvable pour cet espace partenaire.",
       "ERR_INTERNAL": "Une erreur est survenue. Réessayez."
+    },
+    "intro": {
+      "workspace": "Espace partenaires",
+      "subtitle": "Invitez une famille — Souvenir offert.",
+      "commissions": "Commissions",
+      "performance": "Mes performances"
+    },
+    "invite": {
+      "kicker": "Invitation",
+      "title": "Offrir le Souvenir à une famille",
+      "hint": "Le salon offre l’écrin numérique. La famille pourra élever l’histoire plus tard.",
+      "emailLabel": "Courriel de la famille",
+      "emailPlaceholder": "nom@famille.com",
+      "send": "Offrir le Souvenir",
+      "sending": "Préparation du lien…",
+      "errorGeneric": "Une erreur est survenue lors de la création de l’invitation. Veuillez réessayer.",
+      "invitationAlreadyPending": "Une invitation est déjà en attente pour cette adresse.",
+      "successTitle": "L’invitation a été générée avec succès.",
+      "linkLabel": "Lien d’invitation",
+      "copyLink": "Copier le lien",
+      "copied": "Copié !",
+      "validUntil": "Ce lien est valide jusqu’au {date}.",
+      "newInvitation": "Créer une nouvelle invitation",
+      "tenantMissing": "Aucun espace partenaire rattaché à ce compte. Reconnectez-vous via le lien partenaire."
     }
   },
   "sanctuary": {

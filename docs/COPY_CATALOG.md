@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-14 · **Entrées :** 1118
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-14 · **Entrées :** 1138
 
 ## `common`
 
@@ -907,6 +907,26 @@
 | `salon.apiErrors.ERR_INVALID_TENANT` | Espace partenaire invalide ou manquant. | Invalid or missing partner workspace. |
 | `salon.apiErrors.ERR_WALLET_NOT_FOUND` | Portefeuille jetons introuvable pour cet espace partenaire. | Token wallet not found for this partner workspace. |
 | `salon.apiErrors.ERR_INTERNAL` | Une erreur est survenue. Réessayez. | Something went wrong. Please try again. |
+| `salon.intro.workspace` | Espace partenaires | Partner space |
+| `salon.intro.subtitle` | Invitez une famille — Souvenir offert. | Invite a family — Keepsake is the gift. |
+| `salon.intro.commissions` | Commissions | Commissions |
+| `salon.intro.performance` | Mes performances | My performance |
+| `salon.invite.kicker` | Invitation | Invitation |
+| `salon.invite.title` | Offrir le Souvenir à une famille | Offer Keepsake to a family |
+| `salon.invite.hint` | Le salon offre l’écrin numérique. La famille pourra élever l’histoire plus tard. | The salon gifts the digital sanctuary. The family may elevate the story later. |
+| `salon.invite.emailLabel` | Courriel de la famille | Family email |
+| `salon.invite.emailPlaceholder` | nom@famille.com | name@family.com |
+| `salon.invite.send` | Offrir le Souvenir | Offer Keepsake |
+| `salon.invite.sending` | Préparation du lien… | Preparing the link… |
+| `salon.invite.errorGeneric` | Une erreur est survenue lors de la création de l’invitation. Veuillez réessayer. | An error occurred while creating the invitation. Please try again. |
+| `salon.invite.invitationAlreadyPending` | Une invitation est déjà en attente pour cette adresse. | An invitation is already pending for this email address. |
+| `salon.invite.successTitle` | L’invitation a été générée avec succès. | The invitation was created successfully. |
+| `salon.invite.linkLabel` | Lien d’invitation | Invitation link |
+| `salon.invite.copyLink` | Copier le lien | Copy link |
+| `salon.invite.copied` | Copié ! | Copied! |
+| `salon.invite.validUntil` | Ce lien est valide jusqu’au {date}. | This link is valid until {date}. |
+| `salon.invite.newInvitation` | Créer une nouvelle invitation | Create another invitation |
+| `salon.invite.tenantMissing` | Aucun espace partenaire rattaché à ce compte. Reconnectez-vous via le lien partenaire. | No partner workspace linked to this account. Sign in via the partner link. |
 
 ## `sanctuary`
 

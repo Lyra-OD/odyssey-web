@@ -923,6 +923,30 @@
       "ERR_INVALID_TENANT": "Invalid or missing partner workspace.",
       "ERR_WALLET_NOT_FOUND": "Token wallet not found for this partner workspace.",
       "ERR_INTERNAL": "Something went wrong. Please try again."
+    },
+    "intro": {
+      "workspace": "Partner space",
+      "subtitle": "Invite a family — Keepsake is the gift.",
+      "commissions": "Commissions",
+      "performance": "My performance"
+    },
+    "invite": {
+      "kicker": "Invitation",
+      "title": "Offer Keepsake to a family",
+      "hint": "The salon gifts the digital sanctuary. The family may elevate the story later.",
+      "emailLabel": "Family email",
+      "emailPlaceholder": "name@family.com",
+      "send": "Offer Keepsake",
+      "sending": "Preparing the link…",
+      "errorGeneric": "An error occurred while creating the invitation. Please try again.",
+      "invitationAlreadyPending": "An invitation is already pending for this email address.",
+      "successTitle": "The invitation was created successfully.",
+      "linkLabel": "Invitation link",
+      "copyLink": "Copy link",
+      "copied": "Copied!",
+      "validUntil": "This link is valid until {date}.",
+      "newInvitation": "Create another invitation",
+      "tenantMissing": "No partner workspace linked to this account. Sign in via the partner link."
     }
   },
   "sanctuary": {
