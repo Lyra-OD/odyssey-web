@@ -186,7 +186,7 @@ export function WizardPhaseProgress({
                   <>
                     <span className="wizard-trail-orb" />
                     <span className="wizard-trail-dust">
-                      {Array.from({ length: 12 }, (_, i) => (
+                      {Array.from({ length: 26 }, (_, i) => (
                         <i key={i} />
                       ))}
                     </span>
