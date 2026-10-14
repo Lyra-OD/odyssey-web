@@ -1,38 +1,13 @@
 "use client";
 
 import { Image as ImageIcon, Music2 } from "lucide-react";
-import type { AppDictionary } from "@/lib/dictionaries";
-import type { Locale } from "@/i18n.config";
 import { SoftCapMediaCountSync } from "@/src/components/tribute/SoftCapModal";
-import {
-  MediaDropzoneAdapter,
-  type MediaDropzoneAdapterProps,
-} from "@/src/components/media/MediaDropzoneAdapter";
+import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
 import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
 import { ScannerCompanionPanel } from "@/src/components/scanner/ScannerCompanionPanel";
 import { ScannerCompanionPlaceholder } from "@/src/components/scanner/ScannerCompanionPlaceholder";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
-
-type CoffreBodyProps = {
-  projectId: string | null;
-  userId?: string;
-  tenantId?: string;
-  uploadStrategy: "direct" | "signed";
-  locale: Locale;
-  copy: AppDictionary["tributeWizard"];
-  /** Plafond effectif de la dropzone (inclut le déblocage Soft Cap). */
-  maxFiles: number;
-  /** Plafond affiché dans l’erreur quota d’une tuile (palier courant). */
-  quotaMaxFiles: number;
-  projectDraftLoading: boolean;
-  offerMediaSoftCap: boolean;
-  onOpenSoftCap: () => void;
-  onQueueCountChange: (count: number) => void;
-  onUploadRunningChange: (running: boolean) => void;
-  onAssetUploaded?: MediaDropzoneAdapterProps["onAssetUploaded"];
-  onSessionExpired: () => void;
-  onRestorationPreview: (url: string) => void;
-};
+import type { CoffreHostProps } from "./types";
 
 export function CoffreBody({
   projectId,
@@ -51,7 +26,7 @@ export function CoffreBody({
   onAssetUploaded,
   onSessionExpired,
   onRestorationPreview,
-}: CoffreBodyProps) {
+}: CoffreHostProps) {
   return (
     <>
       {!projectId ? (

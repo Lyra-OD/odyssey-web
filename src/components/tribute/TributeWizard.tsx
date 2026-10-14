@@ -2676,6 +2676,7 @@ export function TributeWizard({
               ) : null}
 
               <CoffreBody
+                mode="onboarding"
                 projectId={uploadProjectId}
                 userId={uploadUserId ?? undefined}
                 tenantId={uploadTenantId ?? undefined}
