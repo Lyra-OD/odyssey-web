@@ -75,6 +75,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | 28 | `odyssey_p16_fix_invitations_rls.sql` | **Patch** | **Salon P0-03** — RLS invitations : conseiller = ses lignes · admin = tenant |
 | 29 | `odyssey_p17_project_status_submitted.sql` | **Patch** | **Checkout** — enum `project_status` + valeur `submitted` (webhook / panier 0 $) |
 | 30 | `odyssey_p18_guest_session_photo_quota.sql` | **Patch** | **Sanctuaire** — plafond 5 photos / **session** invité (même lien, appareils distincts). **À jouer** sinon le trigger P10.3 rebloque tout le monde. |
+| 31 | `odyssey_p19_soft_cap_media_ceiling.sql` | **Patch** | **Soft Cap** — accordé Souvenir → quota 125 (plus de blocage à 50) · rétablit `intended ?? base ?? granted` (régression P10.2) — voir [§ P19](#p19--soft-cap-plafond-média-héritage) |
 | — | `odyssey_p6_1_waterfall_qa_assert.sql` | **QA** | Assert waterfall pur S1–S3 + clawback S5 (lecture seule). |
 | — | `odyssey_p6_qa_revshare_accrual.sql` | **QA** | Accrual RevShare E2E (solde +30 % net · idempotence · 0 jeton) — transactionnel ROLLBACK. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
@@ -292,6 +293,15 @@ Remplace le COUNT P10.3 (par token) : le chemin
 Chemins legacy (un seul UUID) : comportement P10.3 inchangé.
 
 **À jouer** dans le SQL Editor avant de tester deux invités sur le même lien.
+
+---
+
+## P19 — Soft Cap plafond média Héritage
+
+**Fichier :** `odyssey_p19_soft_cap_media_ceiling.sql`  
+**Prérequis :** P7 · P8 · P10.2. **Idempotent** (`CREATE OR REPLACE`). Onglet SQL Editor : « Odyssey P19 — Soft Cap : le quota médias ne bloque plus à 50 en Souvenir ».
+
+Remplace `enforce_media_asset_quota()` : plafond = `intendedPackage ?? basePackage ?? grantedPackage` (logique P8, perdue en P10.2) ; si `grantedPackage = essential` → au moins **125** (même règle que `effectiveMaxMediaItems` côté client). Invités toujours hors quota. Le choix Héritage / rester à 50 se fait au checkout (`amputation_required`).
 
 ---
 

@@ -1,14 +1,14 @@
 # Soft Cap — Expansion Narrative
 
 **Type :** canon · **Vérité pour :** granted / intended, dual musique, amputation, taxes pacing Breath.  
-**Dernière MAJ :** 30 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 14 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 14 oct 2026 — Serveur aligné (SQL P19) : accordé Souvenir → quota **125**, plus de refus à 50. Choix Héritage / rester à 50 = checkout.
 - 30 sept 2026 — Outro dernier chapitre : hold 3 s + deep-to-black 2,2 s taxés Breath · outro fin **9 s** (noir pur 0,8 + carte + noir) — `storyboardPacing`.
 - 17 sept 2026 — Bandeau aperçu : dire les **faits** (photos / licence / Héritage) — [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) (plan plus tard). Logique granted/intended inchangée.
 - 17 sept 2026 — Copy écran : plus d’« Écrin » ; Soft Cap parle du forfait **Héritage**. Logique granted/intended inchangée.
 - 17 août 2026 — en-tête type + carte.
-- juillet 2026 — spec Soft Cap Freemium V1.
 
 Parent : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Émotion : [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · Musique : [`MUSIC_RIGHTS_ATTESTATION.md`](MUSIC_RIGHTS_ATTESTATION.md) · Player : [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 
@@ -45,7 +45,7 @@ Canon chiffres : `cinematicTheme.breath` · tests `tests/business/storyboard-pac
 
 ## Déclencheur médias → Héritage
 
-Atteinte / dépassement de **50** photos (Souvenir) → Soft Cap Quiet Luxury → `intendedPackage = signature` (après **acceptation UI**) + autosave. Upload non bloqué après le seuil (plafond runtime Héritage tant que freemium).
+Atteinte / dépassement de **50** photos (Souvenir) → Soft Cap Quiet Luxury → `intendedPackage = signature` (après **acceptation UI**) + autosave. Upload non bloqué après le seuil (plafond runtime Héritage tant que freemium) — client `effectiveMaxMediaItems` **et** trigger `enforce_media_asset_quota()` (SQL P19). Le Soft Cap informe, il ne bloque pas ; la décision Héritage / rester à 50 arrive au checkout (`amputation_required`).
 
 > **Ne jamais** auto-bumber `intended` en silence : cela désactive le filet 50 et le Soft Cap post-Composition Magique.
 
