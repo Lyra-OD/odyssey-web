@@ -2195,7 +2195,7 @@ export function TributeWizard({
                   className={`ml-14 min-w-0${currentStep === 2 ? " hidden" : ""}`}
                 />
               ) : null}
-              {/* Coffre — pilier : propre ligne, bord gauche de l’en-tête (tiroir à gauche). */}
+              {/* Coffre — propre ligne, aligné sous Entourage (même colonne que le nom). */}
               {showCoffreTrigger ? (
                 <CoffreDrawerTrigger
                   onOpen={openCoffre}
@@ -2204,7 +2204,7 @@ export function TributeWizard({
                     label: copy.coffreDrawerLabel,
                     openAria: copy.coffreDrawerOpenAria,
                   }}
-                  className="self-start"
+                  className="ml-14 self-start"
                 />
               ) : null}
             </div>
