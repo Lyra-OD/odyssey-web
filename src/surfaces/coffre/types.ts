@@ -10,6 +10,9 @@ export type CoffreMode = "onboarding" | "drawer";
 
 export type CoffreCopy = Pick<
   AppDictionary["tributeWizard"],
+  | "coffreDrawerAddCta"
+  | "coffreDrawerDropHint"
+  | "coffreDrawerDropOverlay"
   | "projectDraftIdle"
   | "projectDraftLoading"
   | "queueEmpty"

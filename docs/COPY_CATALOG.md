@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-14 · **Entrées :** 1115
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-14 · **Entrées :** 1118
 
 ## `common`
 
@@ -586,6 +586,9 @@
 | `tributeWizard.coffreDrawerLabel` | Coffre à souvenirs | Memory Chest |
 | `tributeWizard.coffreDrawerOpenAria` | Ouvrir le Coffre à souvenirs | Open the Memory Chest |
 | `tributeWizard.coffreDrawerCloseAria` | Fermer le Coffre à souvenirs | Close the Memory Chest |
+| `tributeWizard.coffreDrawerAddCta` | Ajouter des souvenirs | Add memories |
+| `tributeWizard.coffreDrawerDropHint` | ou glissez-les n’importe où dans le Coffre | or drop them anywhere in the Chest |
+| `tributeWizard.coffreDrawerDropOverlay` | Déposez vos souvenirs dans le Coffre | Drop your memories into the Chest |
 | `tributeWizard.collabTitle` | Inviter un proche à vous aider | Invite a loved one to help |
 | `tributeWizard.collabDescription` | Partagez cet accès privilégié avec une personne de confiance. Elle pourra vous accompagner dans le choix des souvenirs et de la musique. | Share this privileged access with someone you trust. They can assist you in selecting memories and music. |
 | `tributeWizard.collabFootnote` | Ce lien est entièrement gratuit et sécurisé. | This link is completely free and secure. |

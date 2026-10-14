@@ -1,6 +1,7 @@
 "use client";
 
-import { Image as ImageIcon, Music2 } from "lucide-react";
+import { Image as ImageIcon, Music2, Plus } from "lucide-react";
+import type { ReactNode } from "react";
 import { SoftCapMediaCountSync } from "@/src/components/tribute/SoftCapModal";
 import { MediaDropzoneAdapter } from "@/src/components/media/MediaDropzoneAdapter";
 import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
@@ -30,6 +31,10 @@ export function CoffreBody({
   onSessionExpired,
   onRestorationPreview,
 }: CoffreHostProps) {
+  const scannerSection = (
+    <CoffreScannerSection projectId={projectId} locale={locale} copy={copy} />
+  );
+
   return (
     <>
       {!projectId ? (
@@ -61,6 +66,63 @@ export function CoffreBody({
         >
           {(dz) => {
             const totalQueued = dz.items.length;
+            const countLabel =
+              totalQueued > 0
+                ? (maxFiles > includedMaxFiles
+                    ? copy.uploadLimitCountSoftCap
+                        .replace("{included}", String(includedMaxFiles))
+                        .replace("{upgrade}", upgradePackageLabel)
+                    : copy.uploadLimitCount
+                  )
+                    .replace("{count}", String(totalQueued))
+                    .replace("{max}", String(maxFiles))
+                    .replace("{package}", packageLabel)
+                : null;
+            const breakdownLabel =
+              dz.totals.uploaded > 0 ||
+              dz.totals.uploading > 0 ||
+              dz.totals.failed > 0
+                ? copy.uploadBreakdown
+                    .replace("{uploaded}", String(dz.totals.uploaded))
+                    .replace("{uploading}", String(dz.totals.uploading))
+                    .replace("{failed}", String(dz.totals.failed))
+                : null;
+
+            const wrapDrawerRoot = (children: ReactNode) =>
+              mode === "drawer" ? (
+                <div
+                  {...dz.getRootProps({
+                    className: "relative min-h-full focus:outline-none",
+                  })}
+                >
+                  <input
+                    {...dz.getInputProps({ "aria-label": copy.uploadAria })}
+                  />
+                  {children}
+                  {scannerSection}
+                  {dz.isDragActive ? (
+                    // `fixed` se cale sur l’aside du tiroir (ancêtre transformé), pas sur l’écran.
+                    <div
+                      className={`pointer-events-none fixed inset-3 z-20 flex items-center justify-center rounded-2xl border-2 border-dashed backdrop-blur-sm ${
+                        dz.isDragReject
+                          ? "border-fuchsia-500/60 bg-fuchsia-950/30"
+                          : "border-teal-400/50 bg-teal-950/40"
+                      }`}
+                      aria-hidden
+                    >
+                      <span className="flex items-center gap-3 font-editorial text-xl font-medium text-zinc-50 md:text-2xl">
+                        <ImageIcon
+                          className="h-7 w-7 text-teal-300"
+                          strokeWidth={1.2}
+                        />
+                        {copy.coffreDrawerDropOverlay}
+                      </span>
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                children
+              );
 
             return (
               <>
@@ -72,229 +134,276 @@ export function CoffreBody({
                   count={dz.isRunning ? 1 : 0}
                   onCount={(n) => onUploadRunningChange(n > 0)}
                 />
-                <div
-                  {...dz.getRootProps({
-                    className: `group relative mt-10 flex w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white/[0.03] px-6 py-16 text-center backdrop-blur-xl shadow-[0_0_24px_rgba(45,212,191,0.08)] transition-[border,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${
-                      dz.isDragReject
-                        ? "border-fuchsia-500/60 shadow-[0_0_32px_rgba(255,0,255,0.24)] focus-visible:ring-fuchsia-500/40"
-                        : dz.isDragAccept || dz.isDragActive
-                          ? "border-teal-400/30 shadow-[0_0_32px_rgba(34,211,238,0.16)] focus-visible:ring-teal-400/35"
-                          : "border-white/12 hover:border-teal-400/25 hover:shadow-[0_0_32px_rgba(34,211,238,0.12)] focus-visible:ring-teal-400/35"
-                    }`,
-                  })}
-                  aria-describedby="wizard-step3-dropzone-hint"
-                >
-                  <input {...dz.getInputProps({ "aria-label": copy.uploadAria })} />
-
-                  <span
-                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-400 group-hover:opacity-100"
-                    style={{
-                      background: dz.isDragReject
-                        ? "radial-gradient(ellipse 80% 70% at 50% 80%, rgba(255, 0, 255, 0.24) 0%, transparent 55%)"
-                        : "radial-gradient(ellipse 80% 70% at 50% 80%, rgba(34,211,238,0.15) 0%, transparent 55%)",
-                    }}
-                  />
-
-                  <div className="relative flex items-center gap-3 text-teal-300/85">
-                    <ImageIcon className="h-11 w-11 shrink-0" strokeWidth={1.1} />
-                    <Music2 className="h-9 w-9 shrink-0 opacity-70" strokeWidth={1.1} />
-                  </div>
-                  <span className="relative mt-6 text-lg font-light text-zinc-200 md:text-xl">
-                    {copy.uploadPrompt}
-                  </span>
-                  <span
-                    id="wizard-step3-dropzone-hint"
-                    className="relative mt-2 text-sm font-light text-zinc-400"
-                  >
-                    {copy.uploadSubtext}
-                  </span>
-                  {totalQueued > 0 ? (
-                    <span
-                      className="relative mt-4 text-sm text-teal-400/90"
-                      aria-live="polite"
-                    >
-                      {(maxFiles > includedMaxFiles
-                        ? copy.uploadLimitCountSoftCap
-                            .replace("{included}", String(includedMaxFiles))
-                            .replace("{upgrade}", upgradePackageLabel)
-                        : copy.uploadLimitCount)
-                        .replace("{count}", String(totalQueued))
-                        .replace("{max}", String(maxFiles))
-                        .replace("{package}", packageLabel)}
-                      {dz.totals.uploaded > 0 || dz.totals.uploading > 0 || dz.totals.failed > 0 ? (
-                        <span className="ml-2 text-xs font-light text-zinc-400">
-                          {copy.uploadBreakdown
-                            .replace("{uploaded}", String(dz.totals.uploaded))
-                            .replace("{uploading}", String(dz.totals.uploading))
-                            .replace("{failed}", String(dz.totals.failed))}
-                        </span>
-                      ) : null}
-                    </span>
-                  ) : null}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      dz.open();
-                    }}
-                    className="relative mt-4 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/[0.08]"
-                  >
-                    {copy.uploadPrompt}
-                  </button>
-                </div>
-
-                {offerMediaSoftCap ? (
-                  <div
-                    className="mt-5 overflow-hidden rounded-2xl border border-amber-300/25 bg-gradient-to-br from-amber-200/[0.07] via-white/[0.02] to-transparent p-5 shadow-[0_0_36px_rgba(251,191,36,0.10)] backdrop-blur-md"
-                    role="status"
-                    aria-live="polite"
-                  >
-                    <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-amber-200/70">
-                      Odyssey
-                    </p>
-                    <p className="mt-2 font-serif text-lg leading-snug text-amber-50">
-                      {copy.softCapMediaBannerTitle}
-                    </p>
-                    <p className="mt-1.5 text-sm font-light leading-relaxed text-amber-100/75">
-                      {copy.softCapMediaBannerBody}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={onOpenSoftCap}
-                      className="mt-4 rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-2 text-sm font-semibold text-[#1a1410] transition hover:brightness-105"
-                    >
-                      {copy.softCapMediaUnlockCta}
-                    </button>
-                  </div>
-                ) : null}
-
-                {dz.remainingSlots <= 0 && !offerMediaSoftCap ? (
-                  <div
-                    className="mt-5 rounded-xl border border-amber-400/40 bg-amber-950/10 p-4 shadow-[0_0_24px_rgba(251,191,36,0.14)] backdrop-blur-md"
-                    role="status"
-                    aria-live="polite"
-                  >
-                    <p className="text-sm font-medium text-amber-200/95">
-                      {copy.uploadLimitReachedTitle}
-                    </p>
-                    <p className="mt-1 text-xs text-amber-100/85">
-                      {copy.uploadLimitReachedHint.replace(
-                        "{max}",
-                        String(maxFiles),
-                      )}
-                    </p>
-                  </div>
-                ) : null}
-
-                {dz.rejections.length > 0 ? (
-                  <div className="mt-5 rounded-xl border border-fuchsia-500/45 bg-fuchsia-950/10 p-4 shadow-[0_0_24px_rgba(255,0,255,0.22)] backdrop-blur-md">
-                    <div className="mb-2 flex items-center justify-between gap-2">
-                      <p className="text-sm font-medium text-fuchsia-200/95">
-                        {copy.rejectionsTitle}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={dz.clearRejections}
-                        className="text-xs text-fuchsia-200/80 underline decoration-fuchsia-300/40 underline-offset-4 hover:text-fuchsia-100"
+                {wrapDrawerRoot(
+                  <>
+                    {mode === "drawer" ? (
+                      <div className="sticky top-0 z-10 -mx-6 flex items-center justify-between gap-4 border-b border-white/[0.06] bg-[#020202]/90 px-6 py-3 backdrop-blur-xl md:-mx-8 md:px-8">
+                        <div className="min-w-0" aria-live="polite">
+                          <p className="truncate text-sm text-teal-400/90">
+                            {countLabel ?? copy.uploadSubtext}
+                          </p>
+                          <p className="mt-0.5 truncate text-xs font-light text-zinc-400">
+                            {breakdownLabel ? `${breakdownLabel} · ` : ""}
+                            {copy.coffreDrawerDropHint}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={dz.open}
+                          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-teal-400/35 bg-teal-400/[0.08] px-4 py-2 text-sm font-medium text-zinc-50 transition-colors hover:border-teal-300/60 hover:bg-teal-400/[0.14]"
+                        >
+                          <Plus
+                            className="h-4 w-4 text-teal-300"
+                            strokeWidth={1.75}
+                            aria-hidden
+                          />
+                          {copy.coffreDrawerAddCta}
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        {...dz.getRootProps({
+                          className: `group relative mt-10 flex w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white/[0.03] px-6 py-16 text-center backdrop-blur-xl shadow-[0_0_24px_rgba(45,212,191,0.08)] transition-[border,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#020202] ${
+                            dz.isDragReject
+                              ? "border-fuchsia-500/60 shadow-[0_0_32px_rgba(255,0,255,0.24)] focus-visible:ring-fuchsia-500/40"
+                              : dz.isDragAccept || dz.isDragActive
+                                ? "border-teal-400/30 shadow-[0_0_32px_rgba(34,211,238,0.16)] focus-visible:ring-teal-400/35"
+                                : "border-white/12 hover:border-teal-400/25 hover:shadow-[0_0_32px_rgba(34,211,238,0.12)] focus-visible:ring-teal-400/35"
+                          }`,
+                        })}
+                        aria-describedby="wizard-step3-dropzone-hint"
                       >
-                        {copy.rejectionsClear}
-                      </button>
-                    </div>
-                    <ul className="space-y-1.5">
-                      {dz.rejections.slice(0, 6).map((r, idx) => (
-                        <li key={`${r.fileName}-${idx}`} className="text-xs text-fuchsia-100/90">
-                          <span className="font-medium text-[#ff00ff]">{r.code}</span>{" "}
-                          <span className="text-fuchsia-100/80">- {r.fileName}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
+                        <input
+                          {...dz.getInputProps({
+                            "aria-label": copy.uploadAria,
+                          })}
+                        />
 
-                <MediaQueueGrid
-                  columns={mode === "drawer" ? "fill" : "viewport"}
-                  items={dz.items}
-                  isRunning={dz.isRunning}
-                  deletingId={dz.deletingId}
-                  onRemove={dz.handleRemoveItem}
-                  onRetry={dz.retryItem}
-                  copy={{
-                    emptyTitle: copy.queueEmpty,
-                    statusQueued: copy.queueStatusQueued,
-                    statusUploading: copy.queueStatusUploading,
-                    statusUploaded: copy.queueStatusUploaded,
-                    statusFailed: copy.queueStatusFailed,
-                    statusCancelled: copy.queueStatusCancelled,
-                    remove: copy.queueRemove,
-                    retry: copy.queueRetry,
-                    viaScanner: copy.queueViaScanner,
-                    viaGuest: copy.queueViaGuest,
-                    viaPhoto: copy.queueViaPhoto,
-                    viaVideo: copy.queueViaVideo,
-                    restorePreview: copy.scannerRestorePreview,
-                    quotaExceededError:
-                      copy.uploadLimitExceededItemError.replace(
-                        "{max}",
-                        String(maxFiles),
-                      ),
-                  }}
-                  onPreviewScanner={(item) => {
-                    const url =
-                      item.fullPreviewUrl || item.previewUrl || null;
-                    if (url) onRestorationPreview(url);
-                  }}
-                />
+                        <span
+                          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-400 group-hover:opacity-100"
+                          style={{
+                            background: dz.isDragReject
+                              ? "radial-gradient(ellipse 80% 70% at 50% 80%, rgba(255, 0, 255, 0.24) 0%, transparent 55%)"
+                              : "radial-gradient(ellipse 80% 70% at 50% 80%, rgba(34,211,238,0.15) 0%, transparent 55%)",
+                          }}
+                        />
 
-                <p className="mt-4 text-sm font-light text-zinc-400">
-                  {dz.isRunning
-                    ? copy.uploadInProgress
-                    : dz.totals.uploaded === 0
-                      ? copy.uploadAtLeastOne
-                      : null}
-                </p>
+                        <div className="relative flex items-center gap-3 text-teal-300/85">
+                          <ImageIcon
+                            className="h-11 w-11 shrink-0"
+                            strokeWidth={1.1}
+                          />
+                          <Music2
+                            className="h-9 w-9 shrink-0 opacity-70"
+                            strokeWidth={1.1}
+                          />
+                        </div>
+                        <span className="relative mt-6 text-lg font-light text-zinc-200 md:text-xl">
+                          {copy.uploadPrompt}
+                        </span>
+                        <span
+                          id="wizard-step3-dropzone-hint"
+                          className="relative mt-2 text-sm font-light text-zinc-400"
+                        >
+                          {copy.uploadSubtext}
+                        </span>
+                        {countLabel ? (
+                          <span
+                            className="relative mt-4 text-sm text-teal-400/90"
+                            aria-live="polite"
+                          >
+                            {countLabel}
+                            {breakdownLabel ? (
+                              <span className="ml-2 text-xs font-light text-zinc-400">
+                                {breakdownLabel}
+                              </span>
+                            ) : null}
+                          </span>
+                        ) : null}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            dz.open();
+                          }}
+                          className="relative mt-4 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/[0.08]"
+                        >
+                          {copy.uploadPrompt}
+                        </button>
+                      </div>
+                    )}
+
+                    {offerMediaSoftCap ? (
+                      <div
+                        className="mt-5 overflow-hidden rounded-2xl border border-amber-300/25 bg-gradient-to-br from-amber-200/[0.07] via-white/[0.02] to-transparent p-5 shadow-[0_0_36px_rgba(251,191,36,0.10)] backdrop-blur-md"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-amber-200/70">
+                          Odyssey
+                        </p>
+                        <p className="mt-2 font-serif text-lg leading-snug text-amber-50">
+                          {copy.softCapMediaBannerTitle}
+                        </p>
+                        <p className="mt-1.5 text-sm font-light leading-relaxed text-amber-100/75">
+                          {copy.softCapMediaBannerBody}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={onOpenSoftCap}
+                          className="mt-4 rounded-xl bg-gradient-to-r from-amber-200/90 to-amber-100/80 px-4 py-2 text-sm font-semibold text-[#1a1410] transition hover:brightness-105"
+                        >
+                          {copy.softCapMediaUnlockCta}
+                        </button>
+                      </div>
+                    ) : null}
+
+                    {dz.remainingSlots <= 0 && !offerMediaSoftCap ? (
+                      <div
+                        className="mt-5 rounded-xl border border-amber-400/40 bg-amber-950/10 p-4 shadow-[0_0_24px_rgba(251,191,36,0.14)] backdrop-blur-md"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        <p className="text-sm font-medium text-amber-200/95">
+                          {copy.uploadLimitReachedTitle}
+                        </p>
+                        <p className="mt-1 text-xs text-amber-100/85">
+                          {copy.uploadLimitReachedHint.replace(
+                            "{max}",
+                            String(maxFiles),
+                          )}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {dz.rejections.length > 0 ? (
+                      <div className="mt-5 rounded-xl border border-fuchsia-500/45 bg-fuchsia-950/10 p-4 shadow-[0_0_24px_rgba(255,0,255,0.22)] backdrop-blur-md">
+                        <div className="mb-2 flex items-center justify-between gap-2">
+                          <p className="text-sm font-medium text-fuchsia-200/95">
+                            {copy.rejectionsTitle}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={dz.clearRejections}
+                            className="text-xs text-fuchsia-200/80 underline decoration-fuchsia-300/40 underline-offset-4 hover:text-fuchsia-100"
+                          >
+                            {copy.rejectionsClear}
+                          </button>
+                        </div>
+                        <ul className="space-y-1.5">
+                          {dz.rejections.slice(0, 6).map((r, idx) => (
+                            <li
+                              key={`${r.fileName}-${idx}`}
+                              className="text-xs text-fuchsia-100/90"
+                            >
+                              <span className="font-medium text-[#ff00ff]">
+                                {r.code}
+                              </span>{" "}
+                              <span className="text-fuchsia-100/80">
+                                - {r.fileName}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    <MediaQueueGrid
+                      columns={mode === "drawer" ? "fill" : "viewport"}
+                      items={dz.items}
+                      isRunning={dz.isRunning}
+                      deletingId={dz.deletingId}
+                      onRemove={dz.handleRemoveItem}
+                      onRetry={dz.retryItem}
+                      copy={{
+                        emptyTitle: copy.queueEmpty,
+                        statusQueued: copy.queueStatusQueued,
+                        statusUploading: copy.queueStatusUploading,
+                        statusUploaded: copy.queueStatusUploaded,
+                        statusFailed: copy.queueStatusFailed,
+                        statusCancelled: copy.queueStatusCancelled,
+                        remove: copy.queueRemove,
+                        retry: copy.queueRetry,
+                        viaScanner: copy.queueViaScanner,
+                        viaGuest: copy.queueViaGuest,
+                        viaPhoto: copy.queueViaPhoto,
+                        viaVideo: copy.queueViaVideo,
+                        restorePreview: copy.scannerRestorePreview,
+                        quotaExceededError:
+                          copy.uploadLimitExceededItemError.replace(
+                            "{max}",
+                            String(maxFiles),
+                          ),
+                      }}
+                      onPreviewScanner={(item) => {
+                        const url =
+                          item.fullPreviewUrl || item.previewUrl || null;
+                        if (url) onRestorationPreview(url);
+                      }}
+                    />
+
+                    <p className="mt-4 text-sm font-light text-zinc-400">
+                      {dz.isRunning
+                        ? copy.uploadInProgress
+                        : dz.totals.uploaded === 0
+                          ? copy.uploadAtLeastOne
+                          : null}
+                    </p>
+                  </>,
+                )}
               </>
             );
           }}
         </MediaDropzoneAdapter>
       )}
 
-      <section className="mt-12 border-t border-white/[0.06] pt-10">
-        {projectId ? (
-          <ScannerCompanionPanel
-            projectId={projectId}
-            locale={locale}
-            copy={{
-              eyebrow: copy.scannerEyebrow,
-              title: copy.scannerTitle,
-              description: copy.scannerDescription,
-              mobileDescription: copy.scannerMobileDescription,
-              openCapture: copy.scannerOpenCapture,
-              badge: copy.scannerBadge,
-              hint: copy.scannerHint,
-              instructions: copy.scannerInstructions,
-              generating: copy.scannerGenerating,
-              copyLink: copy.scannerCopyLink,
-              copied: copy.scannerCopied,
-              qrAlt: copy.scannerQrAlt,
-              errorGeneric: copy.scannerErrorGeneric,
-              unavailable: copy.scannerUnavailable,
-              waitingPhone: copy.scannerWaitingPhone,
-              photosReceived: copy.scannerPhotosReceived,
-            }}
-          />
-        ) : (
-          <ScannerCompanionPlaceholder
-            copy={{
-              eyebrow: copy.scannerEyebrow,
-              title: copy.scannerTitle,
-              description: copy.scannerDescription,
-              badge: copy.scannerBadge,
-              hint: copy.scannerHint,
-            }}
-          />
-        )}
-      </section>
+      {mode === "onboarding" || !projectId ? scannerSection : null}
     </>
+  );
+}
+
+function CoffreScannerSection({
+  projectId,
+  locale,
+  copy,
+}: Pick<CoffreHostProps, "projectId" | "locale" | "copy">) {
+  return (
+    <section className="mt-12 border-t border-white/[0.06] pt-10">
+      {projectId ? (
+        <ScannerCompanionPanel
+          projectId={projectId}
+          locale={locale}
+          copy={{
+            eyebrow: copy.scannerEyebrow,
+            title: copy.scannerTitle,
+            description: copy.scannerDescription,
+            mobileDescription: copy.scannerMobileDescription,
+            openCapture: copy.scannerOpenCapture,
+            badge: copy.scannerBadge,
+            hint: copy.scannerHint,
+            instructions: copy.scannerInstructions,
+            generating: copy.scannerGenerating,
+            copyLink: copy.scannerCopyLink,
+            copied: copy.scannerCopied,
+            qrAlt: copy.scannerQrAlt,
+            errorGeneric: copy.scannerErrorGeneric,
+            unavailable: copy.scannerUnavailable,
+            waitingPhone: copy.scannerWaitingPhone,
+            photosReceived: copy.scannerPhotosReceived,
+          }}
+        />
+      ) : (
+        <ScannerCompanionPlaceholder
+          copy={{
+            eyebrow: copy.scannerEyebrow,
+            title: copy.scannerTitle,
+            description: copy.scannerDescription,
+            badge: copy.scannerBadge,
+            hint: copy.scannerHint,
+          }}
+        />
+      )}
+    </section>
   );
 }
