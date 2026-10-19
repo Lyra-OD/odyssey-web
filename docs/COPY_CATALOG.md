@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-14 · **Entrées :** 1138
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-19 · **Entrées :** 1138
 
 ## `common`
 
@@ -1163,10 +1163,10 @@
 | `pitchDeck.tractionPartnersDesktop` | Les pilotes se préparent avec le groupe Athos. Les discussions avancent. | Pilot programs are actively in preparation. Strategic discussions are underway with the Athos group. |
 | `pitchDeck.contactCta` | Entrer dans le Studio | Enter the Studio |
 | `pitchDeck.slides[0].id` | open | open |
-| `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before we pitch. |
+| `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before a pitch. |
 | `pitchDeck.slides[0].title` | Odyssey | Odyssey |
-| `pitchDeck.slides[0].phase` | Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ? | If someone you loved died today, would you know what to do next? |
-| `pitchDeck.slides[0].bullets[0]` | Un moment humain guidé. Une plateforme qui accompagne les familles. | A guided human moment. A platform that walks with families. |
+| `pitchDeck.slides[0].phase` | Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ? | If someone you loved died today, would you know what to do? |
+| `pitchDeck.slides[0].bullets[0]` | La plateforme numérique qui démocratise et modernise l’industrie funéraire. Nous simplifions tout le parcours pour les familles et les salons — avant, pendant et après un décès. | The digital platform modernizing the end-of-life industry. We simplify the entire journey for both families and funeral homes — before, during, and after a loss. |
 | `pitchDeck.slides[0].bullets[1]` | Zéro théorie. Forgés de l'intérieur. | No theory. Built from within. |
 | `pitchDeck.slides[0].bullets[2]` | Scrollez quand vous êtes prêts. | Scroll when you’re ready. |
 | `pitchDeck.slides[0].progress` | Ouverture | Open |

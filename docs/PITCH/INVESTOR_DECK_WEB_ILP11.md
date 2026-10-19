@@ -1,14 +1,14 @@
 # Odyssey — Investor deck web (ILP 11)
 
 **Type :** business / pitch · **Vérité pour :** copy + doctrine du deck capital (investisseurs, banques, mentors).  
-**Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
+**Dernière MAJ :** 19 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 19 oct 2026 : **Slide 01 INTRO** — VP plateforme (familles + salons, avant/pendant/après). Why Now démographie = slide Opportunity (pas l’intro). Début rework 20 slides (Jon).
 - 8 oct 2026 : Lyra clarifiée (Phases + Ask) : IA funéraire native, rites, salon/famille, graphe médias Odyssey.
 - 8 oct 2026 : Copy EN business (slides 1–11) — jargon NA, visions en lignes, Ecosystem « care for ».
 - 8 oct 2026 : `DeckEclipseCinema` — même prologue intro ↔ Contact (fade 700 ms, z-50).
 - 8 oct 2026 : Visions EN révisées + lignes phrase (`DeckVision`) — plus de coupure molle.
-- 8 oct 2026 : Open — moment humain guidé + Zéro théorie ; Team tagline Cinq ans (plus d’écho).
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -61,26 +61,26 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 ## Slides 1–11 (canon V2.1)
 
-### 1 — Title & Opening question
+### 1 — INTRO (01) — plateforme, pas encore Why Now
 
-**EN**
-- Tagline: A question before we pitch.
+**EN** (Google Slides + `pitchDeck.slides[0]`)
+- Tagline: A question before a pitch.
 - Title: Odyssey
-- Phase: If someone you loved died today, would you know what to do next?
-- Bullets:
-  - Vision (Playfair + teal, 2 lines): A guided human moment. / A platform that walks with families.
-  - No theory. Built from within.
-  - Scroll when you’re ready. (teal cue)
+- Opening: If someone you loved died today, would you know what to do?
+- Value proposition:
+  - The digital platform modernizing the end-of-life industry.
+  - We simplify the entire journey for both families and funeral homes — before, during, and after a loss.
+- Web extras (deck `/deck` only): No theory. Built from within. · Scroll when you’re ready.
 - Progress: Open
 
 **FR**
 - Tagline: Une question avant un pitch.
 - Title: Odyssey
-- Phase: Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ?
-- Bullets:
-  - Vision (Playfair + teal, 2 lignes) : Un moment humain guidé. / Une plateforme qui accompagne les familles.
-  - Zéro théorie. Forgés de l'intérieur.
-  - Scrollez quand vous êtes prêts. (cue teal)
+- Opening: Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ?
+- Value proposition:
+  - La plateforme numérique qui démocratise et modernise l’industrie funéraire.
+  - Nous simplifions tout le parcours pour les familles et les salons — avant, pendant et après un décès.
+- Web extras (`/deck`) : Zéro théorie. Forgés de l'intérieur. · Scrollez quand vous êtes prêts.
 
 ---
 
