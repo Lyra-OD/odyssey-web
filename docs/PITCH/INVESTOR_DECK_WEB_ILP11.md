@@ -132,13 +132,31 @@ Canon Google Slides 20 beats. Pas encore mappé sur `DeckSlideSolution` du `/dec
   - Décideurs : Ce sont les natifs du numérique qui choisiront le salon, le parcours et les outils. Plus le fax, la clé USB et le papier.
   - Fenêtre : La plateforme se construit avant le pic. Pas pendant. Pas après.
 
-### 3bis — Solution (ancien slot `/deck` web, devient slide 04 Odyssey Solution dans le deck 20)
+### 4 — ODYSSEY SOLUTION (04) — plateforme globale (pas la vidéo)
 
-Conservé côté produit web tant que le remap 20 slides n’est pas fait. Voir `pitchDeck.slides[2]` (`id: solution`).
+Canon Google Slides. Vidéo = slides 05+. `/deck` web : ancien `slides[2] solution` inchangé jusqu’au remap.
 
----
+**EN**
+- Tagline: Democratize for families. Become indispensable to funeral homes. Own the network.
+- Title: The platform that opens the journey for families and anchors the funeral home at the center of the network.
+- Framing: Before, during, and after a loss. Families finally know what to do. Funeral homes gain a digital partner they cannot route around. Around every family, the community engages and grows the platform.
+- Bullets:
+  - Families: Democratize an opaque journey. Guidance, clarity, dignity. Less chaos for people deciding under shock.
+  - Funeral homes: Help them operate and stay at the center of the relationship. Not another tool. An indispensable partner.
+  - Community: The inner circle participates, shares, supports. One family activates a whole network.
+  - Growth: That network brings new families back to the funeral home and the platform. Structurally low acquisition cost.
 
-### 4 — Ecosystem & User Profile
+**FR** (adaptation)
+- Accroche: Démocratiser pour les familles. Devenir indispensable aux salons. Posséder le réseau.
+- Titre: La plateforme qui ouvre le parcours aux familles et ancre le salon au centre du réseau.
+- Cadre: Avant, pendant et après un décès. Les familles comprennent enfin quoi faire. Les salons gagnent un partenaire digital qu’ils ne peuvent plus contourner. Autour de chaque famille, la communauté s’engage et fait grandir la plateforme.
+- Puces:
+  - Familles : Démocratiser un parcours opaque. Guidage, clarté, dignité. Moins de chaos pour ceux qui décident sous le choc.
+  - Salons : Les aider à opérer et à rester au cœur de la relation. Pas un outil de plus. Un partenaire indispensable.
+  - Communauté : Le cercle proche participe, partage, soutient. Une famille active tout un réseau.
+  - Croissance : Ce réseau ramène de nouvelles familles vers le salon et la plateforme. Coût d’acquisition structurellement bas.
+
+### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
 **EN**
 - Tagline: Who we care for.
