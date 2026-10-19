@@ -84,26 +84,26 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 ---
 
-### 2 — PROBLEM (02) — titres négatifs, pas encore Why Now
+### 2 — PROBLEM (02) — version C (infra + capital), pas encore Why Now
 
 **EN** (Google Slides + `pitchDeck.slides[1]`)
-- Tagline: Analog industry. Digital families.
-- Title: Death-care is stuck in the analog era.
-- Framing: Heavy. Fragmented. Archaic. / For families and for funeral homes.
+- Tagline: A high-cashflow industry. Still analog.
+- Title: No platform. No data. No digital leverage.
+- Framing: Death-care moves billions and family wealth with paper, phone calls, and disconnected tools.
 - Bullets:
-  - Families: At home, logistical and emotional chaos. No digital path guides them before, during, and after.
-  - Funeral homes: Operations still run by hand. They burn time, margins, and the capacity to care with dignity.
-  - The ecosystem: Services are scattered. No platform links the funeral home, the family, and what comes next.
+  - Families: They pay and decide under shock, with no dignified digital path. The relationship dies after the ceremony.
+  - Funeral homes: Margin pressure, manual ops, little recurrence. Service costs (USB, editing, admin) instead of a profit center.
+  - Capital: Extreme fragmentation. No one owns the digital rail before / during / after. Whoever builds it now owns the flow.
 - Web bridge: Investor bridge: Two audiences. One broken system. That is the opening.
 
 **FR**
-- Tagline: Industrie analogique. Familles digitales.
-- Title: Le funéraire est bloqué à l’ère analogique.
-- Framing: Lourd. Fragmenté. Archaïque. / Pour les familles et pour les salons.
+- Tagline: Une industrie à fort cashflow. Toujours analogique.
+- Title: Pas de plateforme. Pas de données. Pas de levier digital.
+- Framing: Le funéraire bouge des milliards et de l’héritage familial avec des process papier, du téléphone, et des outils isolés.
 - Bullets:
-  - Les familles : À la maison, chaos logistique et émotionnel. Aucun parcours numérique ne les guide avant, pendant et après.
-  - Les salons : Des opérations encore manuelles. Elles grugent le temps, les marges, et la capacité d’accompagner dignement.
-  - L’écosystème : Services éclatés. Aucune plateforme ne relie le salon, la famille et la suite du parcours.
+  - Familles : Elles paient et décident sous le choc, sans parcours digital digne. La relation se perd après la cérémonie.
+  - Salons : Marges sous pression, ops manuelles, peu de récurrence. Une dépense de service (USB, montage, admin) au lieu d’un centre de profit.
+  - Capital : Fragmentation extrême. Aucun acteur ne possède le rail digital avant / pendant / après. Qui le bâtit maintenant capture le flux.
 - Pont web : Pont investisseur : Deux audiences. Un système cassé. C’est la porte d’entrée.
 
 ---

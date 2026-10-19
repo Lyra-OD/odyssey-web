@@ -1171,12 +1171,12 @@
 | `pitchDeck.slides[0].bullets[2]` | Scrollez quand vous êtes prêts. | Scroll when you’re ready. |
 | `pitchDeck.slides[0].progress` | Ouverture | Open |
 | `pitchDeck.slides[1].id` | need | need |
-| `pitchDeck.slides[1].tagline` | Industrie analogique. Familles digitales. | Analog industry. Digital families. |
-| `pitchDeck.slides[1].title` | Le funéraire est bloqué à l’ère analogique. | Death-care is stuck in the analog era. |
-| `pitchDeck.slides[1].phase` | Lourd. Fragmenté. Archaïque. Pour les familles et pour les salons. | Heavy. Fragmented. Archaic. For families and for funeral homes. |
-| `pitchDeck.slides[1].bullets[0]` | Les familles : À la maison, chaos logistique et émotionnel. Aucun parcours numérique ne les guide avant, pendant et après. | Families: At home, logistical and emotional chaos. No digital path guides them before, during, and after. |
-| `pitchDeck.slides[1].bullets[1]` | Les salons : Des opérations encore manuelles. Elles grugent le temps, les marges, et la capacité d’accompagner dignement. | Funeral homes: Operations still run by hand. They burn time, margins, and the capacity to care with dignity. |
-| `pitchDeck.slides[1].bullets[2]` | L’écosystème : Services éclatés. Aucune plateforme ne relie le salon, la famille et la suite du parcours. | The ecosystem: Services are scattered. No platform links the funeral home, the family, and what comes next. |
+| `pitchDeck.slides[1].tagline` | Une industrie à fort cashflow. Toujours analogique. | A high-cashflow industry. Still analog. |
+| `pitchDeck.slides[1].title` | Pas de plateforme. Pas de données. Pas de levier digital. | No platform. No data. No digital leverage. |
+| `pitchDeck.slides[1].phase` | Le funéraire bouge des milliards et de l’héritage familial avec des process papier, du téléphone, et des outils isolés. | Death-care moves billions and family wealth with paper, phone calls, and disconnected tools. |
+| `pitchDeck.slides[1].bullets[0]` | Familles : Elles paient et décident sous le choc, sans parcours digital digne. La relation se perd après la cérémonie. | Families: They pay and decide under shock, with no dignified digital path. The relationship dies after the ceremony. |
+| `pitchDeck.slides[1].bullets[1]` | Salons : Marges sous pression, ops manuelles, peu de récurrence. Une dépense de service (USB, montage, admin) au lieu d’un centre de profit. | Funeral homes: Margin pressure, manual ops, little recurrence. Service costs (USB, editing, admin) instead of a profit center. |
+| `pitchDeck.slides[1].bullets[2]` | Capital : Fragmentation extrême. Aucun acteur ne possède le rail digital avant / pendant / après. Qui le bâtit maintenant capture le flux. | Capital: Extreme fragmentation. No one owns the digital rail before / during / after. Whoever builds it now owns the flow. |
 | `pitchDeck.slides[1].bullets[3]` | Pont investisseur : Deux audiences. Un système cassé. C’est la porte d’entrée. | Investor bridge: Two audiences. One broken system. That is the opening. |
 | `pitchDeck.slides[2].id` | solution | solution |
 | `pitchDeck.slides[2].tagline` | Trois frictions. Une plateforme. | Three frictions. One platform. |
