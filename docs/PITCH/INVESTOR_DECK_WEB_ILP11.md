@@ -4,7 +4,7 @@
 **Dernière MAJ :** 19 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 19 oct 2026 : Slides **01 INTRO** + **02 PROBLEM** (titres négatifs, familles + salons). Why Now démographie = Opportunity. Rework 20 slides (Jon).
+- 19 oct 2026 : Slides **01–03** (Intro, Problem C, Opportunity / Tsunami argenté). FR adapté ≠ traduction. Rework 20 slides (Jon). `/deck` web 11 slides : remap plus tard.
 - 8 oct 2026 : Lyra clarifiée (Phases + Ask) : IA funéraire native, rites, salon/famille, graphe médias Odyssey.
 - 8 oct 2026 : Copy EN business (slides 1–11) — jargon NA, visions en lignes, Ecosystem « care for ».
 - 8 oct 2026 : `DeckEclipseCinema` — même prologue intro ↔ Contact (fade 700 ms, z-50).
@@ -108,29 +108,33 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 ---
 
-### 3 — Solution
+### 3 — OPPORTUNITY + MARKET (03) — Why Now (vague à venir, pas déjà au pic)
+
+Canon Google Slides 20 beats. Pas encore mappé sur `DeckSlideSolution` du `/deck` web (11 slides).
 
 **EN**
-- Tagline: Three frictions. One platform.
-- Title: Odyssey solves the triple friction.
-- Phase (3 lines): Grief deserves an experience built for the modern era. / A single link connecting the funeral home, the family, and the platform. / Dignified before, during, and after.
+- Tagline: Why now.
+- Title: Silver Tsunami: a predictable wave. An unprepared industry.
+- Framing: Over the next twenty years, baby boomers will concentrate a historic share of deaths and family wealth in motion. The peak is not fully here yet. It is starting.
 - Bullets:
-  - The funeral home: A dignified $0 gift that goes live in seconds. This is the antidote to the analog industry.
-  - Home: A guided path for families. Fragmented tasks disappear.
-  - The platform: The infrastructure of memory. It links funeral homes, families, and services over time.
-  - The economics: The funeral home offers the Souvenir Memory Chest for $0. The broader circle contributes. As the tribute grows in emotional value, the family chooses to preserve it. The funeral home earns a commission.
-- Note: Soft Cap / B2B2C / RevShare naming lives on the freemium / business slides — not here.
+  - Demographics: More families will move through death-care, faster, than in any recent period.
+  - Wealth: A massive share of global legacy will change hands. The industry around it still runs by hand.
+  - Decision-makers: Digital natives will choose the funeral home, the path, and the tools. Not fax, USB sticks, and paper.
+  - Window: The platform gets built before the peak. Not during. Not after.
 
-**FR**
-- Tagline: Trois frictions. Une plateforme.
-- Title: Odyssey répond à la triple friction.
-- Phase: Le deuil mérite un parcours à la hauteur d’aujourd’hui. / Un seul lien entre le salon, la maison et la plateforme. / Digne avant, pendant, et après.
-- Bullets:
-  - Le salon : Un geste digne à 0 $. Il s'active en quelques secondes. C'est la réponse à l'industrie analogique.
-  - La maison : Un parcours guidé pour les familles. Les tâches fragmentées disparaissent.
-  - La plateforme : L'infrastructure de la mémoire. Elle connecte les salons, les familles et les services dans la durée.
-  - L'économie : Le salon offre le Coffre Souvenir à 0 $. Le cercle s’investit. Quand l’hommage devient précieux, la famille choisit de le garder. Le salon gagne une commission.
-- Note : Soft Cap / B2B2C / RevShare nommés plus loin (slides freemium / business) — pas ici.
+**FR** (adaptation, pas traduction)
+- Accroche: Pourquoi maintenant.
+- Titre: Tsunami argenté (vague des baby-boomers) : une vague prévisible. Une industrie non préparée.
+- Cadre: Dans les vingt prochaines années, les baby-boomers vont concentrer une part historique des décès et du patrimoine à transmettre. Le pic n’est pas encore là. Il s’amorce.
+- Puces:
+  - Démographie : Plus de familles vont passer par le funéraire, plus vite, que sur toute période récente.
+  - Patrimoine : Une part massive de l’héritage mondial va changer de mains. L’industrie qui l’accompagne tourne encore à la main.
+  - Décideurs : Ce sont les natifs du numérique qui choisiront le salon, le parcours et les outils. Plus le fax, la clé USB et le papier.
+  - Fenêtre : La plateforme se construit avant le pic. Pas pendant. Pas après.
+
+### 3bis — Solution (ancien slot `/deck` web, devient slide 04 Odyssey Solution dans le deck 20)
+
+Conservé côté produit web tant que le remap 20 slides n’est pas fait. Voir `pitchDeck.slides[2]` (`id: solution`).
 
 ---
 
