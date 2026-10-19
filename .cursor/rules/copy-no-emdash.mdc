@@ -1,0 +1,21 @@
+---
+description: Copy Odyssey — jamais de tiret long (em dash) dans les textes humains
+alwaysApply: true
+---
+
+# Pas de tiret long « — »
+
+Dans toute copy visible (dictionnaires, pitch, deck, docs destinées à l’écran ou à coller dans des slides) : **ne jamais utiliser le tiret long** `—` (em dash).
+
+Ça sonne trop « IA ». Préférer :
+- une virgule,
+- un point,
+- un deux-points,
+- ou reformuler en deux phrases.
+
+```text
+❌ …salons — avant, pendant et après…
+✅ …salons, avant, pendant et après…
+```
+
+OK ailleurs : commentaires code, séparateurs techniques, SQL, IDs.

@@ -1166,7 +1166,7 @@
 | `pitchDeck.slides[0].tagline` | Une question avant un pitch. | A question before a pitch. |
 | `pitchDeck.slides[0].title` | Odyssey | Odyssey |
 | `pitchDeck.slides[0].phase` | Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ? | If someone you loved died today, would you know what to do? |
-| `pitchDeck.slides[0].bullets[0]` | La plateforme numérique qui démocratise et modernise l’industrie funéraire. Nous simplifions tout le parcours pour les familles et les salons — avant, pendant et après un décès. | The digital platform modernizing the end-of-life industry. We simplify the entire journey for both families and funeral homes — before, during, and after a loss. |
+| `pitchDeck.slides[0].bullets[0]` | La plateforme numérique qui démocratise et modernise l’industrie funéraire. Nous simplifions tout le parcours pour les familles et les salons, avant, pendant et après un décès. | The digital platform modernizing the end-of-life industry. We simplify the entire journey for both families and funeral homes, before, during, and after a loss. |
 | `pitchDeck.slides[0].bullets[1]` | Zéro théorie. Forgés de l'intérieur. | No theory. Built from within. |
 | `pitchDeck.slides[0].bullets[2]` | Scrollez quand vous êtes prêts. | Scroll when you’re ready. |
 | `pitchDeck.slides[0].progress` | Ouverture | Open |

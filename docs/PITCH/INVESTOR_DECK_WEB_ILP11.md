@@ -69,7 +69,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Opening: If someone you loved died today, would you know what to do?
 - Value proposition:
   - The digital platform modernizing the end-of-life industry.
-  - We simplify the entire journey for both families and funeral homes — before, during, and after a loss.
+  - We simplify the entire journey for both families and funeral homes, before, during, and after a loss.
 - Web extras (deck `/deck` only): No theory. Built from within. · Scroll when you’re ready.
 - Progress: Open
 
@@ -79,7 +79,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 - Opening: Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ?
 - Value proposition:
   - La plateforme numérique qui démocratise et modernise l’industrie funéraire.
-  - Nous simplifions tout le parcours pour les familles et les salons — avant, pendant et après un décès.
+  - Nous simplifions tout le parcours pour les familles et les salons, avant, pendant et après un décès.
 - Web extras (`/deck`) : Zéro théorie. Forgés de l'intérieur. · Scrollez quand vous êtes prêts.
 
 ---
