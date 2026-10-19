@@ -4,7 +4,7 @@
 **Dernière MAJ :** 19 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 19 oct 2026 : Slides **01–03** (Intro, Problem C, Opportunity / Tsunami argenté). FR adapté ≠ traduction. Rework 20 slides (Jon). `/deck` web 11 slides : remap plus tard.
+- 19 oct 2026 : Slides **01–04** (Intro, Problem C, Opportunity, Odyssey Solution plateforme). FR adapté ≠ traduction. Rework 20 slides (Jon).
 - 8 oct 2026 : Lyra clarifiée (Phases + Ask) : IA funéraire native, rites, salon/famille, graphe médias Odyssey.
 - 8 oct 2026 : Copy EN business (slides 1–11) — jargon NA, visions en lignes, Ecosystem « care for ».
 - 8 oct 2026 : `DeckEclipseCinema` — même prologue intro ↔ Contact (fade 700 ms, z-50).
