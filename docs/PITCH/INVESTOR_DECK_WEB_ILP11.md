@@ -4,7 +4,7 @@
 **Dernière MAJ :** 19 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 19 oct 2026 : **Slide 01 INTRO** — VP plateforme (familles + salons, avant/pendant/après). Why Now démographie = slide Opportunity (pas l’intro). Début rework 20 slides (Jon).
+- 19 oct 2026 : Slides **01 INTRO** + **02 PROBLEM** (titres négatifs, familles + salons). Why Now démographie = Opportunity. Rework 20 slides (Jon).
 - 8 oct 2026 : Lyra clarifiée (Phases + Ask) : IA funéraire native, rites, salon/famille, graphe médias Odyssey.
 - 8 oct 2026 : Copy EN business (slides 1–11) — jargon NA, visions en lignes, Ecosystem « care for ».
 - 8 oct 2026 : `DeckEclipseCinema` — même prologue intro ↔ Contact (fade 700 ms, z-50).
@@ -84,27 +84,27 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 ---
 
-### 2 — Need Statement
+### 2 — PROBLEM (02) — titres négatifs, pas encore Why Now
 
-**EN**
+**EN** (Google Slides + `pitchDeck.slides[1]`)
 - Tagline: Analog industry. Digital families.
-- Title: Death-care is stuck at digital ground zero.
-- Phase (3 lines): Our vision is to bring this industry into the digital era. / We rethink the grief journey and move operations / onto a platform that guides and softens.
+- Title: Death-care is stuck in the analog era.
+- Framing: Heavy. Fragmented. Archaic. / For families and for funeral homes.
 - Bullets:
-  - The industry: The arrangement desk remains analog. Funeral homes lack the digital processes to provide frictionless support.
-  - The grief: At home, families face an unguided, fragmented, and often undignified journey.
-  - The ecosystem: End-of-life logistics are scattered. No unified infrastructure connects homes, families, and services over time.
-  - Investor bridge: This triple friction is our wedge. We enter with a dignified gift, retain the relationship, and open the platform.
+  - Families: At home, logistical and emotional chaos. No digital path guides them before, during, and after.
+  - Funeral homes: Operations still run by hand. They burn time, margins, and the capacity to care with dignity.
+  - The ecosystem: Services are scattered. No platform links the funeral home, the family, and what comes next.
+- Web bridge: Investor bridge: Two audiences. One broken system. That is the opening.
 
 **FR**
 - Tagline: Industrie analogique. Familles digitales.
-- Title: Le funéraire est bloqué à l’ère zéro numérique
-- Phase: Notre vision est d’amener cette industrie dans l’ère digitale, en repensant le parcours de deuil et en basculant les process sur une plateforme qui guide et adoucit.
+- Title: Le funéraire est bloqué à l’ère analogique.
+- Framing: Lourd. Fragmenté. Archaïque. / Pour les familles et pour les salons.
 - Bullets:
-  - L'industrie : Le comptoir reste analogique. Les salons n'ont ni le temps ni les process digitaux pour accompagner sans friction
-  - Le deuil : À la maison, les familles traversent un parcours non guidé, fragmenté, souvent indigne
-  - L'écosystème : La fin de vie est éclatée — aucun rail ne relie salons, familles et services dans le temps
-  - **Pont investisseur :** Cette triple friction est notre brèche — on entre par un geste digne, on garde la relation, on ouvre la plateforme
+  - Les familles : À la maison, chaos logistique et émotionnel. Aucun parcours numérique ne les guide avant, pendant et après.
+  - Les salons : Des opérations encore manuelles. Elles grugent le temps, les marges, et la capacité d’accompagner dignement.
+  - L’écosystème : Services éclatés. Aucune plateforme ne relie le salon, la famille et la suite du parcours.
+- Pont web : Pont investisseur : Deux audiences. Un système cassé. C’est la porte d’entrée.
 
 ---
 

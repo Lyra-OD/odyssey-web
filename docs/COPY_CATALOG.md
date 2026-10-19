@@ -1172,12 +1172,12 @@
 | `pitchDeck.slides[0].progress` | Ouverture | Open |
 | `pitchDeck.slides[1].id` | need | need |
 | `pitchDeck.slides[1].tagline` | Industrie analogique. Familles digitales. | Analog industry. Digital families. |
-| `pitchDeck.slides[1].title` | Le secteur funéraire est bloqué à l'ère zéro numérique. | Death-care is stuck at digital ground zero. |
-| `pitchDeck.slides[1].phase` | Notre vision est d'amener cette industrie dans l'ère digitale. Nous repensons le parcours de deuil sur une plateforme qui guide les familles et apaise l'expérience. | Our vision is to bring this industry into the digital era. We rethink the grief journey and move operations onto a platform that guides and softens. |
-| `pitchDeck.slides[1].bullets[0]` | L'industrie : Les opérations restent manuelles. Les salons manquent de temps et d'outils numériques pour offrir un accompagnement fluide. | The industry: The arrangement desk remains analog. Funeral homes lack the digital processes to provide frictionless support. |
-| `pitchDeck.slides[1].bullets[1]` | Les familles : À la maison, les familles traversent un parcours logistique chaotique, fragmenté et non guidé. | The grief: At home, families face an unguided, fragmented, and often undignified journey. |
-| `pitchDeck.slides[1].bullets[2]` | L'écosystème : Le marché de la fin de vie est éclaté. Aucune infrastructure ne relie les salons, les familles et les services dans le temps. | The ecosystem: End-of-life logistics are scattered. No unified infrastructure connects homes, families, and services over time. |
-| `pitchDeck.slides[1].bullets[3]` | L'opportunité : Cette triple friction est notre point d'entrée monétisable. Nous entrons par un geste digne au salon. Nous fidélisons la relation à la maison et nous monétisons via la plateforme. | Investor bridge: This triple friction is our wedge. We enter with a dignified gift, retain the relationship, and open the platform. |
+| `pitchDeck.slides[1].title` | Le funéraire est bloqué à l’ère analogique. | Death-care is stuck in the analog era. |
+| `pitchDeck.slides[1].phase` | Lourd. Fragmenté. Archaïque. Pour les familles et pour les salons. | Heavy. Fragmented. Archaic. For families and for funeral homes. |
+| `pitchDeck.slides[1].bullets[0]` | Les familles : À la maison, chaos logistique et émotionnel. Aucun parcours numérique ne les guide avant, pendant et après. | Families: At home, logistical and emotional chaos. No digital path guides them before, during, and after. |
+| `pitchDeck.slides[1].bullets[1]` | Les salons : Des opérations encore manuelles. Elles grugent le temps, les marges, et la capacité d’accompagner dignement. | Funeral homes: Operations still run by hand. They burn time, margins, and the capacity to care with dignity. |
+| `pitchDeck.slides[1].bullets[2]` | L’écosystème : Services éclatés. Aucune plateforme ne relie le salon, la famille et la suite du parcours. | The ecosystem: Services are scattered. No platform links the funeral home, the family, and what comes next. |
+| `pitchDeck.slides[1].bullets[3]` | Pont investisseur : Deux audiences. Un système cassé. C’est la porte d’entrée. | Investor bridge: Two audiences. One broken system. That is the opening. |
 | `pitchDeck.slides[2].id` | solution | solution |
 | `pitchDeck.slides[2].tagline` | Trois frictions. Une plateforme. | Three frictions. One platform. |
 | `pitchDeck.slides[2].title` | Odyssey répond à la triple friction. | Odyssey solves the triple friction. |
