@@ -5,7 +5,8 @@
 
 **Changelog** (max 5)
 - 21 oct 2026 : Slide **06 REVENUE** mix final (choix famille · 0/179/349 · canal acquisition salon · éligible 10/30). Unit 50→100 $ → **07**.
-- 21 oct 2026 : Slide **07 GTM** Athos + 22→43 $ salon + Odyssey ~50→~100 $.
+- 21 oct 2026 : Slide **07 GTM** titre One Funeral Group · CAC = potentiel bas (pas near-zero fait) · 22/43 salon + 50/100 Odyssey = projections deux scénarios · 9k = portée potentielle.
+- 21 oct 2026 : Slide **08** Platform Strategy (vidéo = porte, ton soft) · Trojan agressif = oral seulement.
 - 21 oct 2026 : Slide **05 VIDEO** UX 4 étapes. Pas RevShare / pas « generator ».
 - 21 oct 2026 : Slides **01–04** Intro → Solution VP (rework Jon).
 - 19 oct 2026 : Slides **08–10** Trojan → roadmap Lyra.
@@ -201,56 +202,62 @@ Unit Odyssey ~50→~100 $ + commission salon 22→43 $ + Athos = **07** (scénar
   - Revenus partagés (transactions éligibles) : 10 % frais plateforme, puis 30 % du net au salon. Odyssey conserve le reste.
   - Scale : À l’échelle d’un groupe funéraire, des milliers de dossiers par an. Même mécanique, dossier après dossier. Une famille allume un cercle ; le cercle élargit le modèle.
 
-### 7 — GO-TO-MARKET VIDEO (07) — groupes, Athos, unit econ
+### 7 — GO-TO-MARKET & DISTRIBUTION (07) — groupes, Athos, unit econ projetée
 
-Canon Google Slides. Mise sur le marché / portes. Pas l’argent dans le dossier (→ 06). Dépense→revenu / Trojan → **08**.  
-Unit econ 22→43 $ = commission salon **par famille entrante** (funnel, base conservatrice). Statut Athos : client vidéo classique · discussions modèle plateforme (pas deal plateforme signé).  
-**Règle copy Google :** ne jamais écrire « Soft Cap » sur la slide (jargon interne seulement).
+Canon Google Slides. Distribution B2B2C (pas vente B2B pure, pas ads B2C). Mécanique argent dossier → **06**. Trojan → **08**.  
+Unit econ = **projections** par dossier entrant, deux scénarios (base / cercle) : commission salon ~22→~43 $ · revenu Odyssey ~50→~100 $ (compatibles waterfall 10 % + 30 % net de **06**).  
+Athos ~9 000 = **portée potentielle** (pas volume plateforme activé). Client vidéo classique · discussions modèle plateforme.  
+**Règle copy Google :** ne jamais écrire « Soft Cap » / « near-zero CAC » comme fait établi.
 
 **EN**
 - Tagline: We don’t buy families. We borrow the network that already holds them.
-- Title: We enter through funeral groups. One door opens thousands of families.
-- Framing: Athos Group (Urgel Bourgie, Espace Memoria, Lépine Cloutier) is already an Odyssey client for classic tribute video. We are in discussion to roll out the platform model: $0 gift, circle, shared revenue. Athos is about 23% of the Quebec funeral market and ~9,000 deaths a year (~3,000 per banner). One group relationship opens structural volume. Each activated case has a clear economic value.
-- Bullets:
-  - Channel: Funeral groups and homes. Near-zero family CAC at the start.
-  - Beachhead: Athos. Current video client. Platform discussions. ~9,000 deaths / year, three banners, ~23% of the Quebec market.
-  - Value per incoming family: Partner commission ~$22 → ~$43 (baseline → with circle). Odyssey revenue ~$50 → ~$100 per incoming family (same scenarios).
-  - Scale: Activate inside the network, banner by banner, then adjacent groups. Volume follows open doors, not ad spend.
+- Title: One Funeral Group. Thousands of Families. A Scalable Distribution Model.
+- Framing: North America represents approximately 3.4 million deaths annually and a $20B–$30B funeral market. Odyssey’s go-to-market starts with funeral groups: established relationships provide a trusted path to families, with low initial customer acquisition cost potential. Athos Group (Urgel Bourgie, Espace Memoria, Lépine Cloutier) is already an Odyssey client for classic tribute video. Discussions are underway to extend that relationship to the platform model: a complimentary tribute space, community participation, and shared revenue. Athos represents an estimated 9,000 deaths annually across three banners, about 23% of Quebec’s funeral market. That is potential reach of the relationship, not yet activated platform volume.
+- Channel economics:
+  - Distribution: Funeral groups and homes provide the initial access to families, reducing reliance on paid advertising. Low initial CAC potential, not zero cost: Odyssey still carries product, support, activation, and service.
+  - Beachhead: Build from the existing video relationship toward platform adoption, banner by banner.
+  - Projected value per incoming case (two scenarios): Partner commission approximately $22 baseline, potentially $43 with community participation. Odyssey revenue approximately $50 and $100, respectively. Same waterfall as slide 06 (10% platform fee, then 30% of net to the funeral home).
+  - Scalable expansion: Prove the model inside the initial network, expand across its banners, then replicate with adjacent funeral groups.
+- The growth engine: One group relationship can unlock access to thousands of families. Each activated tribute can engage a wider circle of relatives and friends, creating additional participation and revenue opportunities without depending primarily on paid acquisition.
 
 **FR** (adaptation)
 - Accroche: On n’achète pas des familles. On emprunte le réseau qui les a déjà.
-- Titre: On entre par les groupes funéraires. Une porte ouvre des milliers de familles.
-- Cadre: Le Groupe Athos (Urgel Bourgie, Espace Memoria, Lépine Cloutier) est déjà client Odyssey pour la vidéo classique. Nous discutons le déploiement du modèle plateforme : geste à 0 $, cercle, revenu partagé. Athos, c’est environ 23 % du marché funéraire québécois et ~9 000 décès par an (~3 000 par bannière). Une relation groupe ouvre un volume structurel. Chaque dossier activé a une valeur économique claire.
-- Puces:
-  - Canal : Groupes et salons funéraires. CAC famille quasi nul au départ.
-  - Tête de pont : Athos. Client vidéo actuel. Discussions plateforme. ~9 000 décès / an, trois bannières, ~23 % du marché québécois.
-  - Valeur par famille entrante : Commission salon ~22 $ → ~43 $ (base → avec cercle). Revenu Odyssey ~50 $ → ~100 $ par famille entrante (mêmes scénarios).
-  - Scale : Activer dans le réseau, bannière par bannière, puis groupes adjacents. Le volume suit les portes ouvertes, pas le budget ads.
+- Titre: Un groupe funéraire. Des milliers de familles. Un modèle de distribution scalable.
+- Cadre: L’Amérique du Nord, c’est environ 3,4 millions de décès par an et un marché funéraire de 20 à 30 milliards $. Odyssey entre par les groupes funéraires : des relations établies offrent un chemin de confiance vers les familles, avec un potentiel de coût d’acquisition initial bas. Le Groupe Athos (Urgel Bourgie, Espace Memoria, Lépine Cloutier) est déjà client Odyssey pour la vidéo classique. Les discussions portent sur l’extension au modèle plateforme : espace d’hommage offert, participation du cercle, revenus partagés. Athos représente environ 9 000 décès par an sur trois bannières, soit près de 23 % du marché funéraire québécois. C’est la portée potentielle de la relation, pas encore un volume plateforme activé.
+- Économie du canal :
+  - Distribution : Les groupes et salons ouvrent l’accès aux familles et réduisent la dépendance à la pub payante. Potentiel de CAC initial bas, pas un coût nul : Odyssey garde du développement, du soutien, de l’activation et du service.
+  - Tête de pont : Partir de la relation vidéo existante vers l’adoption plateforme, bannière par bannière.
+  - Valeur projetée par dossier entrant (deux scénarios) : Commission partenaire d’environ 22 $ en base, potentiellement 43 $ avec participation du cercle. Revenu Odyssey d’environ 50 $ et 100 $, respectivement. Même waterfall que la diapo 06 (10 % frais plateforme, puis 30 % du net au salon).
+  - Expansion scalable : Prouver le modèle dans le réseau initial, l’étendre à ses bannières, puis le répliquer avec des groupes adjacents.
+- Le moteur de croissance : Une seule entente de groupe peut ouvrir l’accès à des milliers de familles. Chaque hommage activé peut engager un cercle plus large de proches, avec participation et revenus additionnels, sans dépendre surtout de l’acquisition payante.
 
-### 8 — TROJAN / WHY THEY CAN’T SAY NO (08) — vidéo = tête de pont industrie
+### 8 — THE PLATFORM STRATEGY (08) — vidéo = porte, plateforme = opportunité
 
-Canon Google Slides. Trojan nommé ici (pas en 05). Accroche ≠ buy/borrow (déjà **07**). « Soft Cap » interdit à l’écran.  
-Thèse : Phase 1 vidéo infiltre le canal ; P2/P3 s’appuient sur ce que le salon utilise déjà → ownership du réseau.
+Canon Google Slides. **Une idée à l’écran :** Phase 1 vidéo ouvre ; P2/P3 élargissent l’écosystème. Accroche ≠ buy/borrow (**07**).  
+Interdit à l’écran : Soft Cap · *Trojan / own / capture / can’t leave* (oral seulement, ton soft).  
+Athos / unit econ → **07**. Scale CA → **09**. Synthèse stratégique des phases, pas claim « tout déjà live ».
 
 **EN**
-- Tagline: Today the funeral home says yes. Tomorrow it can’t leave.
-- Title: Trojan horse: video opens the door. Then we own the network.
-- Framing: We enter as the funeral home’s partner, not as a competing video app. A $0 gift: what used to cost them (USBs, editing, archaic early-2000s systems, or barely better) becomes revenue for them. They can’t say no. Behind that yes, Odyssey installs in the channel. Distribution is how we scale; the gift is how we enter. Phase 1 is the beachhead. Phase 2 and 3 expand (guidance, consented data, marketplace). By then, the funeral home cannot run without the platform. We are not renting them a tool. We are capturing the industry from the inside.
+- Tagline: Today, they choose the video. Tomorrow, they rely on the platform.
+- Title: Video Opens the Door. The Platform Expands the Opportunity.
+- Framing: Odyssey enters as a funeral home’s partner, not as a competing video app. Every family receives access to a complimentary collaborative tribute experience, while automation transforms a traditionally costly, fragmented process into a scalable service with shared revenue potential. Phase 1 establishes Odyssey within the tribute workflow. Phases 2 and 3 build on that foundation, extending the platform into additional services and experiences around the family journey. We are not simply selling a video tool. We are building the infrastructure for a broader funeral-service ecosystem.
 - Bullets:
-  - Why the yes now: No risk. Their cost center becomes their revenue center.
-  - Trojan horse (today): Family gift → video platform inside the funeral home.
-  - Trojan horse (real thesis): Once we sit in every case, we infiltrate the whole network. Later phases ride what the funeral home already uses.
-  - Endgame: Whoever holds the funeral home holds the flow. Later, homes depend on Odyssey. The market is eaten from the inside, not with ads.
+  - The entry point: A meaningful family gift, with no upfront licence fee.
+  - The strategic foothold: Integrate Odyssey into the tribute workflow and establish a trusted distribution channel.
+  - The expansion: Build additional services around the existing relationship, with appropriate consent and partner alignment.
+  - The long-term vision: From a single tribute experience to a connected platform serving families, funeral homes and their wider communities.
+- Talk track (off-slide): We enter through a service funeral homes already understand and families genuinely value. Once Odyssey becomes part of that experience, we can progressively extend the platform into other services. The video is the starting point; the broader ecosystem is the opportunity. (Trojan logic without capture / own / can’t leave.)
 
 **FR** (adaptation)
-- Accroche: Aujourd’hui le salon dit oui. Demain il ne peut plus s’en passer.
-- Titre: Cheval de Troie : la vidéo ouvre la porte. Ensuite on possède le réseau.
-- Cadre: On entre en partenaire du salon, pas en app vidéo concurrente. Un geste à 0 $ : ce qui leur coûtait (USB, montage, systèmes archaïques façon années 2000, ou à peine mieux) devient un revenu pour eux. Ils ne peuvent pas dire non. Derrière ce oui, Odyssey s’installe dans le canal. La distribution scale ; le cadeau ouvre. Phase 1 = la tête de pont. Phase 2 et 3 = on élargit (accompagnement, données consenties, marketplace). À ce moment-là, le salon ne peut plus se passer de la plateforme. On ne loue pas un outil. On capture l’industrie de l’intérieur.
+- Accroche: Aujourd’hui, ils choisissent la vidéo. Demain, ils s’appuient sur la plateforme.
+- Titre: La vidéo ouvre la porte. La plateforme élargit l’opportunité.
+- Cadre: Odyssey entre comme partenaire du salon, pas comme une app vidéo concurrente. Chaque famille reçoit un accès à une expérience d’hommage collaborative offerte, tandis que l’automation transforme un processus traditionnellement coûteux et fragmenté en un service scalable, avec un potentiel de revenus partagés. La Phase 1 installe Odyssey dans le parcours d’hommage. Les phases 2 et 3 s’appuient sur cette base pour étendre la plateforme à d’autres services et expériences autour du parcours famille. On ne vend pas simplement un outil vidéo. On construit l’infrastructure d’un écosystème de services funéraires plus large.
 - Puces:
-  - Pourquoi le oui maintenant : Zéro risque. Leur centre de coût devient leur centre de revenu.
-  - Cheval de Troie (aujourd’hui) : Cadeau famille → plateforme vidéo dans le salon.
-  - Cheval de Troie (vraie thèse) : Une fois dans chaque dossier, on infiltre le réseau entier. Les phases suivantes s’appuient sur ce que le salon utilise déjà.
-  - Endgame : Qui tient le salon tient le flux. Plus tard, les salons dépendent d’Odyssey. Le marché se mange de l’intérieur, pas avec des ads.
+  - Le point d’entrée : Un geste significatif pour la famille, sans frais de licence à l’entrée.
+  - La tête de pont stratégique : Intégrer Odyssey dans le parcours d’hommage et établir un canal de distribution de confiance.
+  - L’expansion : Ajouter des services autour de la relation existante, avec consentement approprié et alignement partenaire.
+  - La vision long terme : D’une expérience d’hommage unique à une plateforme connectée au service des familles, des salons et de leurs communautés élargies.
+- Talk track (hors slide) : On entre par un service que les salons comprennent déjà et que les familles valorisent vraiment. Une fois Odyssey dans cette expérience, on peut étendre progressivement la plateforme à d’autres services. La vidéo est le point de départ ; l’écosystème plus large est l’opportunité. (Logique Trojan sans capture / own / can’t leave.)
 
 ### 9 — GO-TO-MARKET B2B2C (09) — volume Canada + moteur + scale géographique
 
