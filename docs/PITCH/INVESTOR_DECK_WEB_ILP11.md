@@ -4,11 +4,11 @@
 **Dernière MAJ :** 21 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 21 oct 2026 : Slide **02 PROBLEM** prisme 3 (familles/salons/capital). Vocabulaire Jon (complicated/expensive/confusing/isolating). Sans « rail ». Pas 100 % B2C.
-- 21 oct 2026 : Slide **01 INTRO** VP Jon (famille+communauté+suite) via salons déjà de confiance. B2C d’abord, salon en douceur.
-- 19 oct 2026 : Slide **10 Roadmap** (Amazon · inversion porte film→Lyra→place de marché).
-- 19 oct 2026 : Slide **09 GTM B2B2C** (~337 k décès CA · Odyssey ~50→~100 $/famille · QC→Canada).
-- 19 oct 2026 : Slides **05–08** vidéo + revenue + GTM Athos + Trojan.
+- 21 oct 2026 : Slide **04 SOLUTION** VP 3 piliers (démocratisation · communauté · salon). Sans How/CAC/own the network.
+- 21 oct 2026 : Slide **03 OPPORTUNITY** finale resserrée (~3,4 M · ~20→~30 B$ · 84 T$ US Cerulli + 1 T$ CA). Pic pas encore là.
+- 21 oct 2026 : Slide **02 PROBLEM** prisme 3 + vocabulaire Jon. Sans « rail ». Pas 100 % B2C.
+- 21 oct 2026 : Slide **01 INTRO** VP Jon (famille+communauté) via salons déjà de confiance.
+- 19 oct 2026 : Slides **05–10** vidéo wedge → roadmap Lyra.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -103,53 +103,51 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 ---
 
-### 3 — OPPORTUNITY + MARKET (03) — Why Now (vague à venir, pas déjà au pic)
+### 3 — OPPORTUNITY + MARKET (03) — Why Now chiffré (3 ancres, pas TAM flou)
 
-Canon Google Slides 20 beats. Pas encore mappé sur `DeckSlideSolution` du `/deck` web (11 slides).
+Canon Google Slides. Séparer industrie funéraire (Phase 1/3) et transfert de patrimoine (macro / Phase 2). Sources publiques. Cerulli = US. Global 120→180 B$ = oral seulement.
 
 **EN**
 - Tagline: Why now.
 - Title: Silver Tsunami: a predictable wave. An unprepared industry.
-- Framing: Over the next twenty years, baby boomers will concentrate a historic share of deaths and family wealth in motion. The peak is not fully here yet. It is starting.
+- Framing: Over the next 20 years, the aging baby boomer generation will drive a multi-billion-dollar surge in death-care and the largest wealth transfer in history. The peak is not fully here yet. It is starting.
 - Bullets:
-  - Demographics: More families will move through death-care, faster, than in any recent period.
-  - Wealth: A massive share of global legacy will change hands. The industry around it still runs by hand.
-  - Decision-makers: Digital natives will choose the funeral home, the path, and the tools. Not fax, USB sticks, and paper.
-  - Window: The platform gets built before the peak. Not during. Not after.
-
-**FR** (adaptation, pas traduction)
-- Accroche: Pourquoi maintenant.
-- Titre: Tsunami argenté (vague des baby-boomers) : une vague prévisible. Une industrie non préparée.
-- Cadre: Dans les vingt prochaines années, les baby-boomers vont concentrer une part historique des décès et du patrimoine à transmettre. Le pic n’est pas encore là. Il s’amorce.
-- Puces:
-  - Démographie : Plus de familles vont passer par le funéraire, plus vite, que sur toute période récente.
-  - Patrimoine : Une part massive de l’héritage mondial va changer de mains. L’industrie qui l’accompagne tourne encore à la main.
-  - Décideurs : Ce sont les natifs du numérique qui choisiront le salon, le parcours et les outils. Plus le fax, la clé USB et le papier.
-  - Fenêtre : La plateforme se construit avant le pic. Pas pendant. Pas après.
-
-### 4 — ODYSSEY SOLUTION (04) — plateforme globale (pas la vidéo)
-
-Canon Google Slides. Vidéo = slides 05+. `/deck` web : ancien `slides[2] solution` inchangé jusqu’au remap.
-
-**EN**
-- Tagline: Democratize for families. Become indispensable to funeral homes. Own the network.
-- Title: The platform that opens the journey for families and anchors the funeral home at the center of the network.
-- Framing: Before, during, and after a loss. Families finally know what to do. Funeral homes gain a digital partner they cannot route around. Around every family, the community engages and grows the platform.
-- Bullets:
-  - Families: Democratize an opaque journey. Guidance, clarity, dignity. Less chaos for people deciding under shock.
-  - Funeral homes: Help them operate and stay at the center of the relationship. Not another tool. An indispensable partner.
-  - Community: The inner circle participates, shares, supports. One family activates a whole network.
-  - Growth: That network brings new families back to the funeral home and the platform. Structurally low acquisition cost.
+  - Demographics: Roughly 3.4M deaths per year across North America (StatCan & CDC), accelerating steadily over the next two decades.
+  - Industry valuation: A ~$20B North American funeral market today, projected to reach ~$30B over the next 10 years (NFDA & IBISWorld).
+  - Wealth in motion: $84T in U.S. family wealth (Cerulli) and $1T+ in Canada (CPA Canada) will change hands over the next 20 years, while the estate process around it still runs on paper.
+  - Decision-makers & window: Digital natives now choose the funeral home and manage the estate. They reject fax, USB sticks, and paper. The winning platform gets built before the peak, not during it.
 
 **FR** (adaptation)
-- Accroche: Démocratiser pour les familles. Devenir indispensable aux salons. Posséder le réseau.
-- Titre: La plateforme qui ouvre le parcours aux familles et ancre le salon au centre du réseau.
-- Cadre: Avant, pendant et après un décès. Les familles comprennent enfin quoi faire. Les salons gagnent un partenaire digital qu’ils ne peuvent plus contourner. Autour de chaque famille, la communauté s’engage et fait grandir la plateforme.
+- Accroche: Pourquoi maintenant.
+- Titre: Tsunami argenté : une vague prévisible. Une industrie non préparée.
+- Cadre: Au cours des 20 prochaines années, le vieillissement des baby-boomers entraînera une croissance de plusieurs milliards dans le secteur funéraire et le plus grand transfert de patrimoine de l’histoire. Le pic n’est pas encore là. Il commence.
 - Puces:
-  - Familles : Démocratiser un parcours opaque. Guidage, clarté, dignité. Moins de chaos pour ceux qui décident sous le choc.
-  - Salons : Les aider à opérer et à rester au cœur de la relation. Pas un outil de plus. Un partenaire indispensable.
-  - Communauté : Le cercle proche participe, partage, soutient. Une famille active tout un réseau.
-  - Croissance : Ce réseau ramène de nouvelles familles vers le salon et la plateforme. Coût d’acquisition structurellement bas.
+  - Démographie : Environ 3,4 millions de décès par an en Amérique du Nord (StatCan et CDC), en accélération constante sur les deux prochaines décennies.
+  - Taille de l’industrie : Un marché funéraire nord-américain d’environ 20 milliards $ aujourd’hui, projeté à près de 30 milliards $ d’ici 10 ans (NFDA et IBISWorld).
+  - Patrimoine en mouvement : 84 000 milliards $ aux États-Unis (Cerulli) et plus de 1 000 milliards $ au Canada (CPA Canada) changeront de mains d’ici 20 ans, alors que les démarches entourant le décès se font encore sur papier.
+  - Décideurs et fenêtre : Les natifs du numérique choisissent désormais le salon et règlent la succession. Ils refusent le fax, les clés USB et le papier. La plateforme gagnante se bâtit avant le pic, pas pendant.
+
+### 4 — ODYSSEY SOLUTION (04) — VP plateforme (pas How / pas éco)
+
+Canon Google Slides. Vidéo = 05+. How + CAC + ownership réseau = GTM / Trojan plus loin. Trois piliers VP : démocratisation · communauté · salon (continuité).
+
+**EN**
+- Tagline: Democratize the journey. Engage the community.
+- Title: One platform to guide the family, rally the community, and anchor the funeral home.
+- Framing: Before, during, and after a loss, Odyssey replaces an overwhelming, isolated ordeal with a clear, shared digital experience.
+- Bullets:
+  - For Families (Democratization): Turn an opaque, confusing process into a guided path. Families get clarity, dignity, and step-by-step support when deciding under shock.
+  - For the Community (Engagement): Grief is no longer carried alone. The inner circle actively participates, shares memories, and supports the immediate family from anywhere.
+  - For Funeral Homes (Connection): A seamless digital experience that elevates their care and keeps them at the center of the family relationship long after the ceremony.
+
+**FR** (adaptation)
+- Accroche: Démocratiser le parcours. Mobiliser la communauté.
+- Titre: Une seule plateforme pour guider la famille, mobiliser la communauté et ancrer le salon funéraire.
+- Cadre: Avant, pendant et après un décès, Odyssey remplace une épreuve isolante et complexe par une expérience numérique claire et partagée.
+- Puces:
+  - Pour les familles (Démocratisation) : Transformer un parcours opaque en un chemin guidé. Les familles trouvent clarté, dignité et accompagnement étape par étape malgré le choc.
+  - Pour la communauté (Engagement) : Le deuil n’est plus porté seul. L’entourage participe activement, partage ses souvenirs et soutient la famille immédiate, où qu’il soit.
+  - Pour les salons funéraires (Continuité) : Une expérience numérique fluide qui rehausse leur accompagnement et les maintient au cœur de la relation familiale bien après la cérémonie.
 
 ### 5 — VIDEO SOLUTION (05) — produit porte d’entrée (pas Trojan)
 
