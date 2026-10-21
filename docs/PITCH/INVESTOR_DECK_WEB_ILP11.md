@@ -4,11 +4,11 @@
 **Dernière MAJ :** 21 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 21 oct 2026 : Slide **04 SOLUTION** VP 3 piliers (démocratisation · communauté · salon). Sans How/CAC/own the network.
-- 21 oct 2026 : Slide **03 OPPORTUNITY** finale resserrée (~3,4 M · ~20→~30 B$ · 84 T$ US Cerulli + 1 T$ CA). Pic pas encore là.
-- 21 oct 2026 : Slide **02 PROBLEM** prisme 3 + vocabulaire Jon. Sans « rail ». Pas 100 % B2C.
-- 21 oct 2026 : Slide **01 INTRO** VP Jon (famille+communauté) via salons déjà de confiance.
-- 19 oct 2026 : Slides **05–10** vidéo wedge → roadmap Lyra.
+- 21 oct 2026 : Slide **06 REVENUE** mix final (choix famille · 0/179/349 · canal acquisition salon · éligible 10/30). Unit 50→100 $ → **07**.
+- 21 oct 2026 : Slide **07 GTM** Athos + 22→43 $ salon + Odyssey ~50→~100 $.
+- 21 oct 2026 : Slide **05 VIDEO** UX 4 étapes. Pas RevShare / pas « generator ».
+- 21 oct 2026 : Slides **01–04** Intro → Solution VP (rework Jon).
+- 19 oct 2026 : Slides **08–10** Trojan → roadmap Lyra.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -149,53 +149,57 @@ Canon Google Slides. Vidéo = 05+. How + CAC + ownership réseau = GTM / Trojan 
   - Pour la communauté (Engagement) : Le deuil n’est plus porté seul. L’entourage participe activement, partage ses souvenirs et soutient la famille immédiate, où qu’il soit.
   - Pour les salons funéraires (Continuité) : Une expérience numérique fluide qui rehausse leur accompagnement et les maintient au cœur de la relation familiale bien après la cérémonie.
 
-### 5 — VIDEO SOLUTION (05) — produit porte d’entrée (pas Trojan)
+### 5 — VIDEO SOLUTION (05) — parcours UX famille (pas RevShare / pas « generator »)
 
-Canon Google Slides. Trojan nommé en **08**. Mécanique monétisation (plafond gratuit → forfaits, cercle, RevShare) en **06**. Pas de méta « slide suivante » dans le pitch.
+Canon Google Slides. 4 étapes Create → Share → Community → Cinema. Salon = porte d’entrée seulement. Monétisation / RevShare → **06**. Trojan → **08**. Pas de « video generator ».
 
 **EN**
-- Tagline: A gift. An emotion. Cinema. A circle that funds.
+- Tagline: A collaborative tribute. Guided from the first photo to the final film.
 - Title: The tribute film that makes every life worthy of the big screen.
-- Framing: The funeral home offers a $0 gesture in seconds. At peak emotion, the family and their circle join the tribute. This is not a homemade edit. It is cinema. And the circle can contribute financially, so love is not carried by one card alone.
+- Framing: Today, we are launching Odyssey Studio, a collaborative tribute film experience that empowers families to honor a loved one by rallying their entire community, with zero editing skills required.
 - Bullets:
-  - Why the funeral home says yes: Free to start. Dignified. Fast. They help without selling under shock.
-  - Emotion and circle funding: Relatives, friends, colleagues join and can support. The tribute becomes collective. So does the funding.
-  - Cinema quality: Quiet luxury. We celebrate a life the way icons are celebrated.
-  - RevShare: When the family chooses to go further, they pay. The funeral home earns a share of that revenue.
+  - 1. Open the Memory Chest: Gifted by the funeral home in seconds or started online, the family opens a private digital space with just a name, dates, and a portrait.
+  - 2. Share One Link: With a single click or QR code, the family invites relatives, friends, and colleagues via text, email, or social messaging.
+  - 3. Activate the Community: From their phones, loved ones upload photos, videos, and stories, and can contribute to the tribute together so the family never carries it alone.
+  - 4. Shape into Cinema: Odyssey Studio automatically weaves these shared memories and music into a big-screen tribute film and a living digital Sanctuary.
 
 **FR** (adaptation)
-- Accroche: Un cadeau. Une émotion. Un cinéma. Un cercle qui finance.
-- Titre: La vidéo d’hommage qui rend chaque vie digne d’un grand écran.
-- Cadre: Le salon offre un geste à 0 $, en quelques secondes. Au pic de l’émotion, la famille et son cercle rejoignent l’hommage. Ce n’est pas un montage amateur : c’est du cinéma. Et le cercle peut contribuer financièrement, pour que l’amour ne repose pas sur une seule carte.
+- Accroche: Un hommage collaboratif. Guidé de la première photo jusqu’au film final.
+- Titre: Le film d’hommage qui rend chaque vie digne du grand écran.
+- Cadre: Aujourd’hui, nous lançons Odyssey Studio, une expérience de film d’hommage collaboratif qui permet aux familles d’honorer un proche en mobilisant toute leur communauté, sans aucune compétence en montage.
 - Puces:
-  - Pourquoi le salon dit oui : Gratuit au départ. Digne. Rapide. Le salon aide sans vendre sous le choc.
-  - Émotion et financement du cercle : Parents, amis, collègues rejoignent et peuvent soutenir. L’hommage devient collectif. Le financement aussi.
-  - Qualité cinéma : Haut de gamme. On célèbre une vie comme on célèbre une icône.
-  - RevShare : Quand la famille choisit d’aller plus loin, elle paie. Le salon est rémunéré sur ce revenu.
+  - 1. Ouvrir le Coffre à souvenirs : Offert par le salon funéraire en quelques secondes ou démarré en ligne, un espace numérique privé s’ouvre avec un simple nom, deux dates et un portrait.
+  - 2. Partager un lien unique : En un clic ou via un code QR, la famille invite les proches, amis et collègues par texto, courriel ou messagerie.
+  - 3. Activer la communauté : Depuis leur téléphone, les proches déposent photos, vidéos et anecdotes, et peuvent contribuer ensemble à l’hommage pour que la famille ne porte plus rien seule.
+  - 4. Transformer en cinéma : Odyssey Studio assemble automatiquement ces souvenirs partagés et la musique en un film digne du grand écran et en un Sanctuaire numérique vivant.
 
-### 6 — VIDEO SOLUTION REVENUE STREAMS (06) — émotion, communauté, nouveau marché
+### 6 — VIDEO SOLUTION REVENUE STREAMS (06) — modèle économique (choix famille · nouveau canal salon)
 
-Canon Google Slides. Soft Cap = note orale / interne (« plafond gratuit → forfait suivant »), pas en titre. Yield 22→43 $ = **07** (unit econ × portes Athos). Trojan → **08**.
+Canon Google Slides. Soft Cap = jargon interne. Visuel : **0 / 179 / 349**. Offert par le salon ≠ « gratuit » piège.  
+Émotion ≠ conversion automatique. Commission = **transactions éligibles**.  
+Unit Odyssey ~50→~100 $ + commission salon 22→43 $ + Athos = **07** (scénarios projetés + hypothèses). Trojan → **08**.
 
 **EN**
-- Tagline: The funeral home gifts. The family invites. The free gift soon isn’t enough.
-- Title: Emotion. Community. New market.
-- Framing: The funeral home turns on a Souvenir tribute space at $0. The family invites their circle. Photos, testimonies, contributions pour in. Emotion rises. The gifted package becomes too small for the story. The next packages open. This is not only an upgrade on one card: the circle can also contribute, so the immediate family does not carry the cost alone. On that flow, the funeral home is paid and gains a market it never had: the whole circle around the family.
+- Tagline: A gift that brings people together. An experience that creates value.
+- Title: Emotion. Community. A new market.
+- Framing: The funeral home offers every family a Souvenir tribute space at $0. The family invites its circle to share photos, memories, and stories. As the tribute grows, the family can choose enhanced packages. Relatives and friends can contribute toward the experience. Shared revenue for the funeral home and Odyssey, inside a meaningful family experience, not a hard sell. No license fee for the funeral home to start.
+- Price ladder (visual): Souvenir $0 (offered by the funeral home) · Heritage $179 · Eternity $349 · Circle contributions welcome.
 - Bullets:
-  - Emotion: The more people contribute, the more precious the tribute becomes. Souvenir $0 → Heritage $179 → Eternity $349, when the story outgrows the gifted ceiling.
-  - Engaged community: The family joins and invites. The circle activates, adds memories, and can help fund the tribute. Each relative is a door in: new contacts for the funeral home, with no paid ads. The bill is no longer only on the immediate family.
-  - New funeral-home market: Relatives, friends, colleagues they never reached. Several money doors: packages, circle support, books and deliverables, testimonies.
-  - Revenue share: The funeral home earns on a market it never had, on every payment. 10% platform fee. 30% of net to the funeral home. Odyssey keeps the rest.
+  - Who / when / how: Family chooses if and when to upgrade. The circle can help fund. Participation is emotional; conversion is a separate choice.
+  - New acquisition channel: Every invitation reaches people the funeral home never monetized, through a trusted family link, without relying only on ads.
+  - Shared revenue (eligible transactions): 10% platform fee, then 30% of net to the funeral home. Odyssey keeps the rest.
+  - Scale: At funeral-group scale, thousands of cases a year. Same mechanic, case after case. One family lights a circle; the circle widens the model.
 
 **FR** (adaptation)
-- Accroche: Le salon offre. La famille invite. Le cadeau gratuit ne suffit bientôt plus.
-- Titre: Émotion. Communauté. Nouveau marché.
-- Cadre: Le salon active un espace d’hommage Souvenir à 0 $. La famille invite ses proches. Photos, témoignages, contributions affluent. L’émotion monte. Le forfait offert devient trop petit pour l’histoire. Les forfaits suivants s’ouvrent. Ce n’est pas qu’un upgrade porté par une seule carte : le cercle peut aussi contribuer, pour que la famille proche ne porte pas seule le coût. Sur ce flux, le salon est rémunéré et découvre un marché qu’il n’avait pas : tout le cercle autour de la famille.
+- Accroche: Un geste qui rassemble. Une expérience qui crée de la valeur.
+- Titre: Émotion. Communauté. Un nouveau marché.
+- Cadre: Le salon offre à chaque famille un espace d’hommage Souvenir à 0 $. La famille invite son cercle à partager photos, souvenirs et récits. Quand l’hommage grandit, la famille peut choisir des forfaits enrichis. Les proches peuvent contribuer. Revenus partagés pour le salon et Odyssey, dans une expérience digne, pas une vente forcée. Pas de frais de licence pour démarrer côté salon.
+- Échelle de prix (visuel) : Souvenir 0 $ (offert par le salon) · Héritage 179 $ · Éternité 349 $ · Contributions du cercle bienvenues.
 - Puces:
-  - Émotion : Plus on contribue, plus l’hommage devient précieux. Souvenir 0 $ → Héritage 179 $ → Éternité 349 $, quand l’histoire dépasse le plafond offert.
-  - Communauté engagée : La famille participe et invite. Le cercle s’active, dépose des souvenirs et peut aider à financer l’hommage. Chaque proche est une porte d’entrée : nouveaux contacts pour le salon, sans pub payante. La facture n’est plus seulement celle de la famille proche.
-  - Nouveau marché salon : Parents, amis, collègues que le salon ne touchait pas. Plusieurs portes d’argent : forfaits, aide du cercle, livres et livrables, témoignages.
-  - Partage du revenu : Le salon gagne sur un marché qu’il n’avait pas, à chaque paiement. 10 % frais plateforme. 30 % du net au salon. Odyssey garde le reste.
+  - Qui / quand / comment : La famille choisit si et quand upgrader. Le cercle peut aider à financer. Participer n’égale pas automatiquement payer.
+  - Nouveau canal d’acquisition : Chaque invitation touche des gens que le salon ne monétisait pas, via un lien de confiance familial, sans dépendre seulement de la pub.
+  - Revenus partagés (transactions éligibles) : 10 % frais plateforme, puis 30 % du net au salon. Odyssey conserve le reste.
+  - Scale : À l’échelle d’un groupe funéraire, des milliers de dossiers par an. Même mécanique, dossier après dossier. Une famille allume un cercle ; le cercle élargit le modèle.
 
 ### 7 — GO-TO-MARKET VIDEO (07) — groupes, Athos, unit econ
 
@@ -210,7 +214,7 @@ Unit econ 22→43 $ = commission salon **par famille entrante** (funnel, base co
 - Bullets:
   - Channel: Funeral groups and homes. Near-zero family CAC at the start.
   - Beachhead: Athos. Current video client. Platform discussions. ~9,000 deaths / year, three banners, ~23% of the Quebec market.
-  - Value per incoming family: ~$22 conservative baseline (partner commission). ~$43 when the circle contributes too.
+  - Value per incoming family: Partner commission ~$22 → ~$43 (baseline → with circle). Odyssey revenue ~$50 → ~$100 per incoming family (same scenarios).
   - Scale: Activate inside the network, banner by banner, then adjacent groups. Volume follows open doors, not ad spend.
 
 **FR** (adaptation)
@@ -220,7 +224,7 @@ Unit econ 22→43 $ = commission salon **par famille entrante** (funnel, base co
 - Puces:
   - Canal : Groupes et salons funéraires. CAC famille quasi nul au départ.
   - Tête de pont : Athos. Client vidéo actuel. Discussions plateforme. ~9 000 décès / an, trois bannières, ~23 % du marché québécois.
-  - Valeur par famille entrante : ~22 $ en base conservatrice (commission salon). ~43 $ quand le cercle contribue aussi.
+  - Valeur par famille entrante : Commission salon ~22 $ → ~43 $ (base → avec cercle). Revenu Odyssey ~50 $ → ~100 $ par famille entrante (mêmes scénarios).
   - Scale : Activer dans le réseau, bannière par bannière, puis groupes adjacents. Le volume suit les portes ouvertes, pas le budget ads.
 
 ### 8 — TROJAN / WHY THEY CAN’T SAY NO (08) — vidéo = tête de pont industrie
