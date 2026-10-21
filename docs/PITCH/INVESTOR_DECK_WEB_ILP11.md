@@ -1,14 +1,14 @@
 # Odyssey — Investor deck web (ILP 11)
 
 **Type :** business / pitch · **Vérité pour :** copy + doctrine du deck capital (investisseurs, banques, mentors).  
-**Dernière MAJ :** 19 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
+**Dernière MAJ :** 21 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 19 oct 2026 : Slides **01–04** (Intro, Problem C, Opportunity, Odyssey Solution plateforme). FR adapté ≠ traduction. Rework 20 slides (Jon).
-- 8 oct 2026 : Lyra clarifiée (Phases + Ask) : IA funéraire native, rites, salon/famille, graphe médias Odyssey.
-- 8 oct 2026 : Copy EN business (slides 1–11) — jargon NA, visions en lignes, Ecosystem « care for ».
-- 8 oct 2026 : `DeckEclipseCinema` — même prologue intro ↔ Contact (fade 700 ms, z-50).
-- 8 oct 2026 : Visions EN révisées + lignes phrase (`DeckVision`) — plus de coupure molle.
+- 21 oct 2026 : Slide **02 PROBLEM** prisme 3 (familles/salons/capital). Vocabulaire Jon (complicated/expensive/confusing/isolating). Sans « rail ». Pas 100 % B2C.
+- 21 oct 2026 : Slide **01 INTRO** VP Jon (famille+communauté+suite) via salons déjà de confiance. B2C d’abord, salon en douceur.
+- 19 oct 2026 : Slide **10 Roadmap** (Amazon · inversion porte film→Lyra→place de marché).
+- 19 oct 2026 : Slide **09 GTM B2B2C** (~337 k décès CA · Odyssey ~50→~100 $/famille · QC→Canada).
+- 19 oct 2026 : Slides **05–08** vidéo + revenue + GTM Athos + Trojan.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -61,50 +61,45 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 ## Slides 1–11 (canon V2.1)
 
-### 1 — INTRO (01) — plateforme, pas encore Why Now
+### 1 — INTRO (01) — B2C d’abord, salon en douceur (formule Jon)
 
 **EN** (Google Slides + `pitchDeck.slides[0]`)
 - Tagline: A question before a pitch.
 - Title: Odyssey
 - Opening: If someone you loved died today, would you know what to do?
-- Value proposition:
-  - The digital platform modernizing the end-of-life industry.
-  - We simplify the entire journey for both families and funeral homes, before, during, and after a loss.
-- Web extras (deck `/deck` only): No theory. Built from within. · Scroll when you’re ready.
+- Value proposition: A platform that guides families through loss by rallying their community to honor a life and navigate what comes next, delivered through the funeral homes they already trust.
+- Web extras (deck `/deck` only): Scroll when you’re ready. (Pas « No theory. Built from within. » sur slide capital.)
 - Progress: Open
 
-**FR**
-- Tagline: Une question avant un pitch.
-- Title: Odyssey
-- Opening: Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ?
-- Value proposition:
-  - La plateforme numérique qui démocratise et modernise l’industrie funéraire.
-  - Nous simplifions tout le parcours pour les familles et les salons, avant, pendant et après un décès.
-- Web extras (`/deck`) : Zéro théorie. Forgés de l'intérieur. · Scrollez quand vous êtes prêts.
+**FR** (adaptation)
+- Accroche: Une question avant un pitch.
+- Titre: Odyssey
+- Ouverture: Si un de vos proches décédait aujourd’hui, sauriez-vous quoi faire ?
+- Value proposition: Une plateforme qui guide les familles dans le deuil en mobilisant leur communauté pour honorer une vie et gérer la suite, offerte par les salons funéraires qui les accompagnent déjà.
+- Extras web (`/deck`) : Scrollez quand vous êtes prêts. (Pas « Zéro théorie / Forgés de l'intérieur » sur slide capital.)
 
 ---
 
-### 2 — PROBLEM (02) — version C (infra + capital), pas encore Why Now
+### 2 — PROBLEM (02) — prisme 3 (familles / salons / capital), pas 100 % B2C
 
 **EN** (Google Slides + `pitchDeck.slides[1]`)
 - Tagline: A high-cashflow industry. Still analog.
 - Title: No platform. No data. No digital leverage.
-- Framing: Death-care moves billions and family wealth with paper, phone calls, and disconnected tools.
+- Framing: Death-care moves billions in services and family wealth through paper, phone calls, and disconnected tools.
 - Bullets:
-  - Families: They pay and decide under shock, with no dignified digital path. The relationship dies after the ceremony.
-  - Funeral homes: Margin pressure, manual ops, little recurrence. Service costs (USB, editing, admin) instead of a profit center.
-  - Capital: Extreme fragmentation. No one owns the digital rail before / during / after. Whoever builds it now owns the flow.
-- Web bridge: Investor bridge: Two audiences. One broken system. That is the opening.
+  - Families: Navigating a loss is complicated, expensive, confusing, and isolating. Families make high-stakes decisions under shock, and support vanishes right after the ceremony.
+  - Funeral homes: Buried in manual operations and margin pressure. Tribute videos, USB drives, and chasing family files act as a heavy cost center instead of a profit engine.
+  - Capital & Market: Extreme fragmentation. No single digital platform connects families, funeral homes, and services before, during, and after a loss. Whoever builds that unified layer owns the flow.
+- Note: Pas de « rail ». Vocabulaire Jon sur la douleur famille. Prisme 3 conservé (anti grief-app).
 
-**FR**
-- Tagline: Une industrie à fort cashflow. Toujours analogique.
-- Title: Pas de plateforme. Pas de données. Pas de levier digital.
-- Framing: Le funéraire bouge des milliards et de l’héritage familial avec des process papier, du téléphone, et des outils isolés.
-- Bullets:
-  - Familles : Elles paient et décident sous le choc, sans parcours digital digne. La relation se perd après la cérémonie.
-  - Salons : Marges sous pression, ops manuelles, peu de récurrence. Une dépense de service (USB, montage, admin) au lieu d’un centre de profit.
-  - Capital : Fragmentation extrême. Aucun acteur ne possède le rail digital avant / pendant / après. Qui le bâtit maintenant capture le flux.
-- Pont web : Pont investisseur : Deux audiences. Un système cassé. C’est la porte d’entrée.
+**FR** (adaptation)
+- Accroche: Une industrie à fort cashflow. Toujours analogique.
+- Titre: Pas de plateforme. Pas de données. Pas de levier digital.
+- Cadre: Le funéraire fait circuler des milliards en services et en patrimoine familial avec du papier, des appels téléphoniques et des outils déconnectés.
+- Puces:
+  - Familles : Traverser un décès est compliqué, coûteux, confus et isolant. Les familles prennent des décisions lourdes sous le choc, et l’accompagnement s’arrête net après la cérémonie.
+  - Salons funéraires : Étouffés par les opérations manuelles et la pression sur les marges. Les montages vidéo, les clés USB et la chasse aux fichiers sont un centre de coût au lieu d’être un centre de profit.
+  - Capital et marché : Fragmentation extrême. Aucune plateforme numérique unique ne relie les familles, les salons et les services avant, pendant et après un décès. Qui bâtit cette couche unifiée capture le flux.
 
 ---
 
@@ -156,6 +151,155 @@ Canon Google Slides. Vidéo = slides 05+. `/deck` web : ancien `slides[2] soluti
   - Communauté : Le cercle proche participe, partage, soutient. Une famille active tout un réseau.
   - Croissance : Ce réseau ramène de nouvelles familles vers le salon et la plateforme. Coût d’acquisition structurellement bas.
 
+### 5 — VIDEO SOLUTION (05) — produit porte d’entrée (pas Trojan)
+
+Canon Google Slides. Trojan nommé en **08**. Mécanique monétisation (plafond gratuit → forfaits, cercle, RevShare) en **06**. Pas de méta « slide suivante » dans le pitch.
+
+**EN**
+- Tagline: A gift. An emotion. Cinema. A circle that funds.
+- Title: The tribute film that makes every life worthy of the big screen.
+- Framing: The funeral home offers a $0 gesture in seconds. At peak emotion, the family and their circle join the tribute. This is not a homemade edit. It is cinema. And the circle can contribute financially, so love is not carried by one card alone.
+- Bullets:
+  - Why the funeral home says yes: Free to start. Dignified. Fast. They help without selling under shock.
+  - Emotion and circle funding: Relatives, friends, colleagues join and can support. The tribute becomes collective. So does the funding.
+  - Cinema quality: Quiet luxury. We celebrate a life the way icons are celebrated.
+  - RevShare: When the family chooses to go further, they pay. The funeral home earns a share of that revenue.
+
+**FR** (adaptation)
+- Accroche: Un cadeau. Une émotion. Un cinéma. Un cercle qui finance.
+- Titre: La vidéo d’hommage qui rend chaque vie digne d’un grand écran.
+- Cadre: Le salon offre un geste à 0 $, en quelques secondes. Au pic de l’émotion, la famille et son cercle rejoignent l’hommage. Ce n’est pas un montage amateur : c’est du cinéma. Et le cercle peut contribuer financièrement, pour que l’amour ne repose pas sur une seule carte.
+- Puces:
+  - Pourquoi le salon dit oui : Gratuit au départ. Digne. Rapide. Le salon aide sans vendre sous le choc.
+  - Émotion et financement du cercle : Parents, amis, collègues rejoignent et peuvent soutenir. L’hommage devient collectif. Le financement aussi.
+  - Qualité cinéma : Haut de gamme. On célèbre une vie comme on célèbre une icône.
+  - RevShare : Quand la famille choisit d’aller plus loin, elle paie. Le salon est rémunéré sur ce revenu.
+
+### 6 — VIDEO SOLUTION REVENUE STREAMS (06) — émotion, communauté, nouveau marché
+
+Canon Google Slides. Soft Cap = note orale / interne (« plafond gratuit → forfait suivant »), pas en titre. Yield 22→43 $ = **07** (unit econ × portes Athos). Trojan → **08**.
+
+**EN**
+- Tagline: The funeral home gifts. The family invites. The free gift soon isn’t enough.
+- Title: Emotion. Community. New market.
+- Framing: The funeral home turns on a Souvenir tribute space at $0. The family invites their circle. Photos, testimonies, contributions pour in. Emotion rises. The gifted package becomes too small for the story. The next packages open. This is not only an upgrade on one card: the circle can also contribute, so the immediate family does not carry the cost alone. On that flow, the funeral home is paid and gains a market it never had: the whole circle around the family.
+- Bullets:
+  - Emotion: The more people contribute, the more precious the tribute becomes. Souvenir $0 → Heritage $179 → Eternity $349, when the story outgrows the gifted ceiling.
+  - Engaged community: The family joins and invites. The circle activates, adds memories, and can help fund the tribute. Each relative is a door in: new contacts for the funeral home, with no paid ads. The bill is no longer only on the immediate family.
+  - New funeral-home market: Relatives, friends, colleagues they never reached. Several money doors: packages, circle support, books and deliverables, testimonies.
+  - Revenue share: The funeral home earns on a market it never had, on every payment. 10% platform fee. 30% of net to the funeral home. Odyssey keeps the rest.
+
+**FR** (adaptation)
+- Accroche: Le salon offre. La famille invite. Le cadeau gratuit ne suffit bientôt plus.
+- Titre: Émotion. Communauté. Nouveau marché.
+- Cadre: Le salon active un espace d’hommage Souvenir à 0 $. La famille invite ses proches. Photos, témoignages, contributions affluent. L’émotion monte. Le forfait offert devient trop petit pour l’histoire. Les forfaits suivants s’ouvrent. Ce n’est pas qu’un upgrade porté par une seule carte : le cercle peut aussi contribuer, pour que la famille proche ne porte pas seule le coût. Sur ce flux, le salon est rémunéré et découvre un marché qu’il n’avait pas : tout le cercle autour de la famille.
+- Puces:
+  - Émotion : Plus on contribue, plus l’hommage devient précieux. Souvenir 0 $ → Héritage 179 $ → Éternité 349 $, quand l’histoire dépasse le plafond offert.
+  - Communauté engagée : La famille participe et invite. Le cercle s’active, dépose des souvenirs et peut aider à financer l’hommage. Chaque proche est une porte d’entrée : nouveaux contacts pour le salon, sans pub payante. La facture n’est plus seulement celle de la famille proche.
+  - Nouveau marché salon : Parents, amis, collègues que le salon ne touchait pas. Plusieurs portes d’argent : forfaits, aide du cercle, livres et livrables, témoignages.
+  - Partage du revenu : Le salon gagne sur un marché qu’il n’avait pas, à chaque paiement. 10 % frais plateforme. 30 % du net au salon. Odyssey garde le reste.
+
+### 7 — GO-TO-MARKET VIDEO (07) — groupes, Athos, unit econ
+
+Canon Google Slides. Mise sur le marché / portes. Pas l’argent dans le dossier (→ 06). Dépense→revenu / Trojan → **08**.  
+Unit econ 22→43 $ = commission salon **par famille entrante** (funnel, base conservatrice). Statut Athos : client vidéo classique · discussions modèle plateforme (pas deal plateforme signé).  
+**Règle copy Google :** ne jamais écrire « Soft Cap » sur la slide (jargon interne seulement).
+
+**EN**
+- Tagline: We don’t buy families. We borrow the network that already holds them.
+- Title: We enter through funeral groups. One door opens thousands of families.
+- Framing: Athos Group (Urgel Bourgie, Espace Memoria, Lépine Cloutier) is already an Odyssey client for classic tribute video. We are in discussion to roll out the platform model: $0 gift, circle, shared revenue. Athos is about 23% of the Quebec funeral market and ~9,000 deaths a year (~3,000 per banner). One group relationship opens structural volume. Each activated case has a clear economic value.
+- Bullets:
+  - Channel: Funeral groups and homes. Near-zero family CAC at the start.
+  - Beachhead: Athos. Current video client. Platform discussions. ~9,000 deaths / year, three banners, ~23% of the Quebec market.
+  - Value per incoming family: ~$22 conservative baseline (partner commission). ~$43 when the circle contributes too.
+  - Scale: Activate inside the network, banner by banner, then adjacent groups. Volume follows open doors, not ad spend.
+
+**FR** (adaptation)
+- Accroche: On n’achète pas des familles. On emprunte le réseau qui les a déjà.
+- Titre: On entre par les groupes funéraires. Une porte ouvre des milliers de familles.
+- Cadre: Le Groupe Athos (Urgel Bourgie, Espace Memoria, Lépine Cloutier) est déjà client Odyssey pour la vidéo classique. Nous discutons le déploiement du modèle plateforme : geste à 0 $, cercle, revenu partagé. Athos, c’est environ 23 % du marché funéraire québécois et ~9 000 décès par an (~3 000 par bannière). Une relation groupe ouvre un volume structurel. Chaque dossier activé a une valeur économique claire.
+- Puces:
+  - Canal : Groupes et salons funéraires. CAC famille quasi nul au départ.
+  - Tête de pont : Athos. Client vidéo actuel. Discussions plateforme. ~9 000 décès / an, trois bannières, ~23 % du marché québécois.
+  - Valeur par famille entrante : ~22 $ en base conservatrice (commission salon). ~43 $ quand le cercle contribue aussi.
+  - Scale : Activer dans le réseau, bannière par bannière, puis groupes adjacents. Le volume suit les portes ouvertes, pas le budget ads.
+
+### 8 — TROJAN / WHY THEY CAN’T SAY NO (08) — vidéo = tête de pont industrie
+
+Canon Google Slides. Trojan nommé ici (pas en 05). Accroche ≠ buy/borrow (déjà **07**). « Soft Cap » interdit à l’écran.  
+Thèse : Phase 1 vidéo infiltre le canal ; P2/P3 s’appuient sur ce que le salon utilise déjà → ownership du réseau.
+
+**EN**
+- Tagline: Today the funeral home says yes. Tomorrow it can’t leave.
+- Title: Trojan horse: video opens the door. Then we own the network.
+- Framing: We enter as the funeral home’s partner, not as a competing video app. A $0 gift: what used to cost them (USBs, editing, archaic early-2000s systems, or barely better) becomes revenue for them. They can’t say no. Behind that yes, Odyssey installs in the channel. Distribution is how we scale; the gift is how we enter. Phase 1 is the beachhead. Phase 2 and 3 expand (guidance, consented data, marketplace). By then, the funeral home cannot run without the platform. We are not renting them a tool. We are capturing the industry from the inside.
+- Bullets:
+  - Why the yes now: No risk. Their cost center becomes their revenue center.
+  - Trojan horse (today): Family gift → video platform inside the funeral home.
+  - Trojan horse (real thesis): Once we sit in every case, we infiltrate the whole network. Later phases ride what the funeral home already uses.
+  - Endgame: Whoever holds the funeral home holds the flow. Later, homes depend on Odyssey. The market is eaten from the inside, not with ads.
+
+**FR** (adaptation)
+- Accroche: Aujourd’hui le salon dit oui. Demain il ne peut plus s’en passer.
+- Titre: Cheval de Troie : la vidéo ouvre la porte. Ensuite on possède le réseau.
+- Cadre: On entre en partenaire du salon, pas en app vidéo concurrente. Un geste à 0 $ : ce qui leur coûtait (USB, montage, systèmes archaïques façon années 2000, ou à peine mieux) devient un revenu pour eux. Ils ne peuvent pas dire non. Derrière ce oui, Odyssey s’installe dans le canal. La distribution scale ; le cadeau ouvre. Phase 1 = la tête de pont. Phase 2 et 3 = on élargit (accompagnement, données consenties, marketplace). À ce moment-là, le salon ne peut plus se passer de la plateforme. On ne loue pas un outil. On capture l’industrie de l’intérieur.
+- Puces:
+  - Pourquoi le oui maintenant : Zéro risque. Leur centre de coût devient leur centre de revenu.
+  - Cheval de Troie (aujourd’hui) : Cadeau famille → plateforme vidéo dans le salon.
+  - Cheval de Troie (vraie thèse) : Une fois dans chaque dossier, on infiltre le réseau entier. Les phases suivantes s’appuient sur ce que le salon utilise déjà.
+  - Endgame : Qui tient le salon tient le flux. Plus tard, les salons dépendent d’Odyssey. Le marché se mange de l’intérieur, pas avec des ads.
+
+### 9 — GO-TO-MARKET B2B2C (09) — volume Canada + moteur + scale géographique
+
+Canon Google Slides. Pas Athos détaillé (→ **07**). Pas Trojan ownership (→ **08**).  
+Unit econ ici = **revenu Odyssey** / famille entrante (~50 → ~100 $), pas commission salon (22→43 = **07**).  
+Volume : StatCan estimations ~337 000 décès CA 2025–2026. Scale : QC → Canada (US / monde = vision plus loin, pas cette slide).
+
+**EN**
+- Tagline: The funeral home brings the family. The family brings the network.
+- Title: B2B2C: ~337,000 deaths a year in Canada. We reach them through the funeral home, not ads.
+- Framing: Statistics Canada: about 337,000 estimated deaths in Canada in 2025–2026. Our Athos beachhead (~9,000 deaths / year in Quebec) is only the start. Once Odyssey sits inside the funeral home, each case activates a family, then a circle, without buying grief on Meta. B2B unlocks B2C. That engine scales from the group to the country.
+- Bullets:
+  - Volume market: ~337,000 deaths / year in Canada (StatCan 2025–2026).
+  - Engine: Funeral home → family → circle. Structurally low family CAC.
+  - Odyssey / incoming family: ~$50 conservative baseline. ~$100 when the circle contributes too.
+  - Scale: Quebec → Canada. Same playbook. Video opens. The network grows.
+
+**FR** (adaptation)
+- Accroche: Le salon amène la famille. La famille amène le réseau.
+- Titre: B2B2C : ~337 000 décès par an au Canada. On les atteint par le salon, pas par la pub.
+- Cadre: Statistique Canada : environ 337 000 décès estimés au Canada en 2025–2026. Notre tête de pont Athos (~9 000 décès / an au Québec) n’est que le début. Une fois Odyssey dans le salon, chaque dossier active une famille, puis un cercle, sans acheter du deuil sur Meta. Le B2B ouvre le B2C. Ce moteur scale du groupe au pays.
+- Puces:
+  - Marché volume : ~337 000 décès / an au Canada (StatCan 2025–2026).
+  - Moteur : Salon → famille → cercle. CAC famille structurellement bas.
+  - Odyssey / famille entrante : ~50 $ en base conservatrice. ~100 $ quand le cercle contribue aussi.
+  - Scale : Québec → Canada. Même playbook. La vidéo ouvre. Le réseau grossit.
+
+### 10 — PLATFORM ROADMAP (10) — film ouvre → Lyra conduit → place de marché
+
+Canon Google Slides. Accroche Amazon (doctrine books→film→route). Histoire : inversion de la porte (film = entrée temporaire ; Lyra = porte permanente + chef d’orchestre ; marketplace organique). Lyra **toujours** définie. FR sans anglicismes orphelins. Pas de méta NDA.
+
+**EN**
+- Tagline: Amazon started with books. We start with the film. Then we route the whole funeral economy.
+- Title: Today the film opens. Tomorrow Lyra leads. The marketplace follows.
+- Framing: Phase 1: we enter through the film. The funeral home says yes. The channel lights up. Phase 2: Lyra, our funeral-specialized AI, becomes the real front door. Conductor of the journey: legal, legacy, rites, admin, through to the words to write. The film is no longer the door. It is a step she triggers at the right time. Phase 3: if Lyra runs the whole path, bringing the marketplace (every budget, zero inventory) becomes natural. Odyssey routes. Funeral home and family never leave the thread.
+- Bullets:
+  - Wedge (Phase 1): The film opens funeral homes. Distribution. Revenue per case.
+  - Lyra (Phase 2): The new front door. Funeral-specialized AI. She leads every step. The film comes after, inside the flow.
+  - Marketplace (Phase 3): Plugged into Lyra’s journey. Full supply, every budget. Take-rate on the flow.
+  - Sequence: Capture the channel with the film. Keep it with Lyra. Monetize it with the marketplace.
+
+**FR** (adaptation)
+- Accroche: Amazon a commencé par les livres. Nous, par le film. Ensuite on relie toute l’économie funéraire.
+- Titre: Aujourd’hui le film ouvre. Demain Lyra conduit. La place de marché suit.
+- Cadre: Phase 1 : on entre par le film. Le salon dit oui. Le canal s’allume. Phase 2 : Lyra, notre IA spécialisée funéraire, devient la vraie porte d’entrée. Chef d’orchestre du parcours : légal, héritage, rites, démarches, jusqu’au mot à écrire. Le film n’est plus la porte : c’est une étape qu’elle déclenche au bon moment. Phase 3 : si Lyra gère tout le chemin, amener la place de marché (tous les budgets, sans stock) devient naturel. Odyssey met en relation l’offre et la demande. Le salon et la famille ne quittent plus le fil.
+- Puces:
+  - Tête de pont (Phase 1) : Le film ouvre les salons. Distribution. Revenus sur chaque dossier.
+  - Lyra (Phase 2) : La nouvelle porte. IA spécialisée funéraire. Elle conduit chaque étape. Le film vient après, dans le flux.
+  - Place de marché (Phase 3) : Branchée sur le parcours Lyra. Offre complète, tous les budgets. Commission sur le flux.
+  - Séquence : On capture le canal avec le film. On le garde avec Lyra. On l’exploite avec la place de marché.
+
 ### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
 **EN**
@@ -179,7 +323,7 @@ Canon Google Slides. Vidéo = slides 05+. `/deck` web : ancien `slides[2] soluti
 
 ---
 
-### 5 - Competitive Landscape & Differentiation
+### 5bis — Competitive / Trojan (ancien deck 11 · **supersédé par Google 08** ci-dessus ; garder pour remap `/deck`)
 
 **EN**
 - Tagline: Distribution is the product.
@@ -205,7 +349,7 @@ Canon Google Slides. Vidéo = slides 05+. `/deck` web : ancien `slides[2] soluti
 
 ---
 
-### 6 - Market Opportunity & Growth Phases
+### 6bis — Market Opportunity & Growth Phases (ancien deck 11 · à réordonner vers Google roadmap)
 
 **EN**
 - Tagline: Sequence beats slogans.
