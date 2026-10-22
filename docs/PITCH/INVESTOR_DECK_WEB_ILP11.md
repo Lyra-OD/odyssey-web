@@ -4,11 +4,11 @@
 **Dernière MAJ :** 22 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 oct 2026 : Slide **12** Phase 3 place de marché · une slide · chaque budget · salon d’origine si pertinent · hors projections et financement.
 - 22 oct 2026 : Slide **11** scindée : **11A** Lyra produit (4 capacités) · **11B** modèle d’affaires par moment (copilote inclus · Concierge 99 $ · Sanctuaire 49 $/an, cibles).
 - 21 oct 2026 : Slide **10** From Film to Platform · One Foundation / 3 phases · Amazon analogie · fondation = cible.
 - 21 oct 2026 : Slide **09** B2B2C film alone · One Partner · 450–900 k$ Athos full activation · 50/100 = 07.
 - 21 oct 2026 : Slide **08** Platform Strategy (vidéo = porte, ton soft) · Trojan agressif = oral seulement.
-- 21 oct 2026 : Slide **07 GTM** One Funeral Group · CAC potentiel bas · 22/43 + 50/100 projections · 9k = portée.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -400,6 +400,70 @@ Titre et accroche « sans frais fixes » (jamais « gratuit ») : le copilote a 
 - What is live: "Phase 2 vision, not all capabilities are live today" stays visible on 11A and covers everything still in development.
 - Consent: contributing to a Sanctuary is not consent to commercial outreach. Referrals need separate, explicit consent (Law 25).
 - To measure, not to show: directors using Lyra may collect more media, which could lift film upgrades at $179 and $349.
+
+### 12 — PHASE 3: LA PLACE DE MARCHÉ (12) — une place de marché de confiance, pour chaque budget
+
+Canon Google Slides. **Une idée :** Lyra comprend les besoins, Odyssey ouvre les possibilités, pour différents budgets, sans pression. Doctrine : [`../VISION_PHASE_2.md`](../VISION_PHASE_2.md) §3ter (routeur, zéro stock, partenaire d’abord, consentement séparé, séquençage).  
+**Une seule slide, volontairement :** plus la phase est loin, moins on détaille. Marketplace = endgame plateforme, après validation Phases 1 et 2, **hors projections et hors financement actuel** (cohérent avec l’Ask).  
+**Mise en page (3 niveaux) :** haut = timeline (Phase 3 en évidence) + titre + parcours 3 étapes · milieu = 3 cartes valeur · bas = bandeau économie + gouvernance + pied « vision ».  
+Interdits à l’écran : « opaque » (vise les salons), « tous les budgets » comme garantie, « via Odyssey » comme encaissement, « coût d’acquisition nul », « zéro logistique », taux en %, Loi 25 comme garantie, Amazon (déjà en 10), diamants de cendres / orbital (oral seulement).
+
+**EN**
+- Eyebrow: PHASE 3 · FUTURE VISION
+- Visual timeline: Phase 1 Film → Phase 2 Lyra → **Phase 3 Marketplace**
+- Title: A Trusted Marketplace for Every Budget.
+- Tagline: Lyra understands the needs. Odyssey opens the possibilities.
+- Framing: After a death, every family faces a different reality, with its own needs, priorities and means. With Lyra, Odyssey can better understand that reality and connect families with verified providers, offering options suited to different budgets and needs. Odyssey holds no inventory.
+- A journey shaped around each family:
+  1. Understand. Lyra helps clarify needs, priorities and budget, with the family's consent.
+  2. Explore. Relevant options at different price points from verified providers.
+  3. Choose freely. The family compares and decides, without pressure.
+- Value for each side:
+  - Families: Options matched to their needs and budget, with transparent pricing and negotiated offers where available.
+  - Originating partner funeral homes: Their offers highlighted when relevant to the family's needs, with potential revenue sharing on eligible referrals.
+  - Verified providers: Access to qualified demand, with compensation tied to completed transactions.
+- Marketplace economics:
+  - Revenue: Commissions on transactions completed through Odyssey or attributed to the platform, with revenue sharing on eligible referrals.
+  - Acquisition: Demand from Phases 1 and 2 may reduce incremental family acquisition costs. Building the network will require recruiting and vetting providers.
+  - Operating costs: Provider vetting, quality standards, payments, support and dispute resolution. No inventory held by Odyssey.
+- Footnote: Phase 3 vision only. Deployment planned after Phases 1 and 2 are validated. Excluded from current revenue projections and funding requirements.
+- Governance: Explicit consent for referrals. Originating partner home highlighted when relevant; other providers presented by transparent relevance and quality criteria. No paid placement. The final choice always stays with the family.
+- Closing: Every family is different. Their options should be too.
+
+**FR** (adaptation)
+- Sur-titre : PHASE 3 · VISION FUTURE
+- Timeline visuelle : Phase 1 Film → Phase 2 Lyra → **Phase 3 Place de marché**
+- Titre : Une place de marché de confiance, pour chaque budget.
+- Accroche : Lyra comprend les besoins. Odyssey ouvre les possibilités.
+- Cadre : Après un décès, chaque famille vit une réalité différente, avec ses propres besoins, ses priorités et ses moyens. Grâce à Lyra, Odyssey pourra mieux comprendre cette réalité et mettre les familles en relation avec des fournisseurs vérifiés, en proposant des options adaptées à différents budgets et besoins. Odyssey ne détient aucun stock.
+- Un parcours adapté à chaque famille :
+  1. Comprendre. Lyra aide à clarifier les besoins, les priorités et le budget, avec le consentement de la famille.
+  2. Explorer. Des options pertinentes à différents prix, auprès de fournisseurs vérifiés.
+  3. Choisir librement. La famille compare et décide, sans pression.
+- Une valeur pour chaque partie :
+  - Familles : Des options adaptées à leurs besoins et à leur budget, des prix transparents et des offres négociées lorsque disponibles.
+  - Salons partenaires d'origine : Leurs offres mises en avant lorsqu'elles sont pertinentes pour les besoins de la famille, avec un potentiel de partage des revenus sur les références admissibles.
+  - Fournisseurs vérifiés : Accès à une demande qualifiée, avec une rémunération liée aux transactions réalisées.
+- Économie de la place de marché :
+  - Revenus : Commissions sur les transactions réalisées par l'entremise d'Odyssey ou attribuées à la plateforme, avec partage des revenus sur les références admissibles.
+  - Acquisition : La demande issue des Phases 1 et 2 pourrait réduire les coûts d'acquisition supplémentaires des familles. Le développement du réseau nécessitera le recrutement et la vérification des fournisseurs.
+  - Coûts d'exploitation : Vérification des fournisseurs, normes de qualité, paiements, soutien et résolution des litiges. Aucun stock détenu par Odyssey.
+- Note de bas de page : Vision Phase 3 uniquement. Déploiement envisagé après validation des Phases 1 et 2. Exclue des projections de revenus et des besoins de financement actuels.
+- Gouvernance : Consentement explicite aux mises en relation. Salon partenaire d'origine mis en avant lorsque pertinent; autres fournisseurs présentés selon des critères transparents de pertinence et de qualité. Aucune place payante. Le choix final revient toujours à la famille.
+- Closing : Chaque famille est différente. Les possibilités devraient l'être aussi.
+
+**Note Jon (EN, off-slide, plain text for slide comments)**
+- Why one slide: the further out the phase, the less detail, to stay credible. The Marketplace is the platform endgame, sequenced after Phases 1 and 2.
+- Core message: Lyra understands what matters to each family. Odyssey helps them find options that fit, whatever their means. Relevant options across budgets, not a guaranteed option at every price point before the provider network exists.
+- Layout in 3 levels: top = timeline with Phase 3 highlighted + title + 3-step journey. Middle = 3 value cards (families, originating funeral homes, providers). Bottom = economics + governance strip.
+- Ranking rule (if asked): the originating partner funeral home is highlighted for needs it can actually serve (reception halls, cemetery plots, pre-arrangements), because it welcomed the family, not because it pays. It is not first in every category (artisans, memorial pieces, specialized services). Everyone else is ranked by family fit and verified quality. No one can buy placement.
+- Transactions: "completed through Odyssey or attributed to the platform" on purpose. It covers both a booking on the platform and an attributed referral (affiliation). We do not commit yet to Odyssey processing all payments.
+- Commission rates will likely vary by category (urn, venue, service). No percentage on screen until we have a defensible hypothesis. Commissions, partner sharing and negotiated pricing stay envisioned mechanisms in the financial model until terms are confirmed.
+- Costs are shown on purpose: no inventory does not mean no costs. Vetting, payments, support and disputes are the real cost of a marketplace.
+- Negotiated family pricing, commissions and acquisition savings are levers to build and validate, not advantages already secured.
+- Consent: designed around explicit consent, privacy and transparency. Formal compliance (e.g. Quebec Law 25) to be assessed before launch, not claimed today.
+- Phase 3 is excluded from current projections and from this raise. Expansion potential, not part of the financial case.
+- Spectacular examples (ash diamonds, orbital memorials) for verbal discussion only.
 
 ### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
