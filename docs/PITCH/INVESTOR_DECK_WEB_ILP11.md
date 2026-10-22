@@ -4,12 +4,11 @@
 **Dernière MAJ :** 22 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 oct 2026 : Slide **15** équipe (Erik fondateur et CEO · ≈ 7 000 films · produit construit seul par le fondateur · rôle de Jon à valider par Jon · priorités du financement, pas d'embauches figées). Supersède l'ancienne « 9 - Team ».
 - 22 oct 2026 : Slide **14** traction et prochains jalons (Aujourd’hui honnête : export en validation finale · KPI pilote avec dénominateurs · 5 groupes ou bannières actifs · Phase 3 = conditions). Supersède l’ancienne « 8 - Traction ».
 - 22 oct 2026 : Slide **13** projections 3 ans (scénario central Athos, croissance en pointillé, revenu annualisé ≠ ARR, B2C = jalon An 2 non chiffré) · **07** Athos ≈ 11 % des décès QC (pas 23 %) · **09** 327 k décès CA (StatCan 2024) · **03** bandeau *Built Locally. Designed to Scale Globally.*
 - 22 oct 2026 : Slide **12** Phase 3 place de marché · une slide · chaque budget · salon d’origine si pertinent · hors projections et financement.
 - 22 oct 2026 : Slide **11** scindée : **11A** Lyra produit (4 capacités) · **11B** modèle d’affaires par moment (copilote inclus · Concierge 99 $ · Sanctuaire 49 $/an, cibles).
-- 21 oct 2026 : Slide **10** From Film to Platform · One Foundation / 3 phases · Amazon analogie · fondation = cible.
-
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
 
@@ -643,6 +642,59 @@ Interdits à l’écran : Soft Cap, « fully live », dates qu’on ne tient pas
 - Phase 3 has launch conditions, not revenue KPIs, on purpose: it stays outside projections and outside this raise.
 - Never on screen: Soft Cap, "fully live", dates we cannot hold, prospect names.
 
+### 15 — TEAM (15) — pourquoi cette équipe, pas seulement qui nous sommes
+
+Canon Google Slides. Brief Jon : *why we are the only team to build this* (photo, nom, titre, expérience). Supersède l’ancienne « 9 - Team » ci-dessous (« Code built for a Silicon Valley exit », « CEO & CPO » : ne plus utiliser).  
+**Faits :** Erik **possède** Odyssey (fondée déc. 2021) · **≈ 7 000** films hommage produits (estimation opérationnelle, non auditée : toujours « about / environ ») · Athos = client **vidéo classique** aujourd’hui, déploiement plateforme = étape distincte · produit actuel (Studio, paiements, commissions, Sanctuaire) **construit seul par Erik**.  
+**Ouvert avant publication :** ligne de rôle de Jon (à valider par Jon) · titre exact, années en tech, rôle actuel chez ELYSIUM, temps plein, statut cofondateur / parts · photos · LinkedIn d’Erik à mettre à jour (« Vice-président marketing » → « Fondateur et CEO, Odyssey »).  
+Interdits à l’écran : « the only team » littéral, Collège LaSalle (question du temps plein), prix anciens (Webby 2008, China Cup 2003 : oral seulement), noms de prospects.
+
+**EN**
+- Eyebrow: TEAM
+- Title: Inside the Industry. Built to Scale.
+- Tagline: We understand the realities of this industry because we've worked inside it.
+- Erik Gaudreault, Founder & CEO
+  - Founded Odyssey in 2021. About 7,000 tribute films produced for funeral homes and families.
+  - 20+ years building brands. As Marketing & Brand Director, repositioned Mackage as a luxury label: sales up 40% at Mackage and 60% at Soia & Kyo within three seasons. Led expansion into the U.S. and Europe.
+  - Founder before: co-founded Perplex&Lola, with 50+ U.S. wholesale accounts in year one. Immersive entertainment at Triotech.
+- Jon Yu, Co-founder & CTO
+  - Leads architecture, scaling and Lyra's AI. *(to be confirmed by Jon before publication)*
+  - Founder of ELYSIUM, a spatial computing and augmented reality platform.
+  - Former neuroscience researcher, published in peer-reviewed journals.
+- Why this team:
+  - Industry access: Five years and about 7,000 tribute films. Athos is already an Odyssey client for traditional tribute films.
+  - Product execution: Studio, payments, partner commissions and Sanctuary, built in-house by the founder.
+  - Distinctive experience: Brand-building expertise meets immersive and spatial technology.
+- What the raise unlocks: Partner activation · Lyra AI development · Family support
+- Visual: two founder cards with matching professional headshots · "~7,000" as a large number in the bottom strip.
+
+**FR** (adaptation)
+- Sur-titre : ÉQUIPE
+- Titre : Au cœur de l'industrie. Conçu pour passer à l'échelle.
+- Accroche : Nous connaissons les réalités de cette industrie parce que nous y avons travaillé.
+- Erik Gaudreault, fondateur et CEO
+  - Fondateur d'Odyssey en 2021. Environ 7 000 films hommage produits pour les salons et les familles.
+  - Plus de 20 ans à bâtir des marques. Comme directeur marketing et marque, repositionnement de Mackage comme marque de luxe : ventes en hausse de 40 % chez Mackage et de 60 % chez Soia & Kyo en trois saisons. Expansion aux États-Unis et en Europe.
+  - Déjà fondateur : cofondateur de Perplex&Lola, avec plus de 50 comptes de gros aux États-Unis dès la première année. Divertissement immersif chez Triotech.
+- Jon Yu, cofondateur et CTO
+  - Dirige l'architecture, la mise à l'échelle et l'IA de Lyra. *(à confirmer par Jon avant publication)*
+  - Fondateur d'ELYSIUM, une plateforme d'informatique spatiale et de réalité augmentée.
+  - Ancien chercheur en neurosciences, publié dans des revues scientifiques avec comité de lecture.
+- Pourquoi cette équipe :
+  - Ancrage dans l'industrie : cinq ans et environ 7 000 films hommage. Athos est déjà client d'Odyssey pour les films hommage classiques.
+  - Exécution produit : Studio, paiements, commissions partenaires et Sanctuaire, construits à l'interne par le fondateur.
+  - Une expérience distinctive : l'expertise en création de marque rencontre les technologies immersives et spatiales.
+- Ce que le financement rend possible : activation des salons partenaires · développement de l'IA de Lyra · accompagnement des familles
+
+**Note Jon (EN, off-slide, plain text for slide comments)**
+- Slide 15 is about why this team, not just who we are. Erik founded Odyssey in 2021, and Odyssey has produced about 7,000 tribute films since then. Keep it as "about". It is an operational estimate, not an audited figure.
+- Athos is a client for traditional films today. The platform rollout is a separate step, so don't merge the two.
+- Erik's brand results (Mackage, Soia & Kyo, Perplex&Lola) show he can build and grow a brand in the U.S. and Europe.
+- Erik built the current product alone (Studio, payments, commissions, Sanctuary). Investors will ask what the CTO does. Your card now opens with your forward role: "Leads architecture, scaling and Lyra's AI." Please confirm or rewrite it so it matches what you will actually own.
+- Please also confirm your exact title, your years in tech, your current role at ELYSIUM, and your commitment to Odyssey (full-time or not, co-founder equity or not).
+- Key-person risk: since one person built the product, be ready to explain how the raise reduces that dependency: knowledge transfer, technical documentation, clearly split responsibilities and more execution capacity. "What the raise unlocks" lists priorities, not hires already decided.
+- Photos: one professional headshot each, same style and framing.
+
 ### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
 **EN**
@@ -767,6 +819,8 @@ Interdits à l’écran : Soft Cap, « fully live », dates qu’on ne tient pas
 ---
 
 ### 9 - Team
+
+> **Supersédé par la slide 15** (ci-dessus). Garder pour remap `/deck` seulement.
 
 **EN**
 - Tagline: Five years in the trenches.
