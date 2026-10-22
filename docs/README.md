@@ -142,6 +142,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`business/NARRATIVE_VP_ATHOS_SEP2026.md`](business/NARRATIVE_VP_ATHOS_SEP2026.md) | business | Pitch VP / réseau funéraire (Phase 1) |
 | [`business/INVESTOR_NARRATIVE_SANJI_SEP2026.md`](business/INVESTOR_NARRATIVE_SANJI_SEP2026.md) | business | Pitch investisseur / Sanji (wedge + Lyra upside) |
 | [`business/ODYSSEY_STRATEGIC_VISION_INVESTMENT_NARRATIVE.md`](business/ODYSSEY_STRATEGIC_VISION_INVESTMENT_NARRATIVE.md) | business | One-pager EN PDF — Strategic Vision & Investment Narrative |
+| [`business/LYRA_BUSINESS_MODEL.md`](business/LYRA_BUSINESS_MODEL.md) | business | **Modèle d’affaires Lyra** Phase 2 · qui paie, quand, combien (cibles) |
 | [`PITCH/INVESTOR_DECK_WEB_ILP11.md`](PITCH/INVESTOR_DECK_WEB_ILP11.md) | pitch | **Canon copy** deck web ILP 11 — capital only · humain + business |
 | [`PITCH/README.md`](PITCH/README.md) | ops | Index dossier PITCH |
 | [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) | playbook | Canal direct |

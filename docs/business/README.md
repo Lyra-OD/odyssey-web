@@ -16,6 +16,7 @@ Les canons / snapshots **existants** restent à la racine `docs/` (`FREEMIUM_V1_
 | [`URGEL_ADOPTION_AND_PILOT.md`](URGEL_ADOPTION_AND_PILOT.md) | Adoption conseillers · risques · tactiques · protocole pilote Urgel |
 | [`PATRICE_MURDER_BOARD_PITCH.md`](PATRICE_MURDER_BOARD_PITCH.md) | Pré-mortem VP · objections · revenu/famille · probabilités |
 | [`SCRIPT_DE_FER_PATRICE.md`](SCRIPT_DE_FER_PATRICE.md) | Script oral à apprendre · 5 phases |
+| [`LYRA_BUSINESS_MODEL.md`](LYRA_BUSINESS_MODEL.md) | **Modèle d’affaires Lyra** (Phase 2) · copilote inclus · Concierge 99 $ · Sanctuaire 49 $/an · Fonds |
 - Notes deal / pricing *hors* grille live (la grille = toujours FREEMIUM §2)
 
 ## Ne pas mettre ici

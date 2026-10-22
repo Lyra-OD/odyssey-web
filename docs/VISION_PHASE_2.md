@@ -1,9 +1,10 @@
 # Odyssey — Vision produit : Phase 1 · Phase 2 (Licorne) · Phase 3 (Marketplace)
 
 **Type :** vision · **Vérité pour :** stratégie CPL / MRR / Lyra / **Marketplace agrégateur**. **Pas** le checkout V1. ≠ [`ROADMAP_PHASE2.md`](ROADMAP_PHASE2.md) (cinéma).  
-**Dernière MAJ :** 10 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 22 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 oct 2026 — Modèle d’affaires Lyra (qui paie, quand) → [`business/LYRA_BUSINESS_MODEL.md`](business/LYRA_BUSINESS_MODEL.md).
 - 10 sept 2026 — **Phase 3** Agrégateur / Marketplace · **LYRA** = graphe + **chef d’orchestre IA** (admin / légal guidé · directeur + famille).
 - 17 août 2026 — en-tête type + carte.
 - juillet 2026 — session stratégique partenaires.
@@ -165,6 +166,8 @@ Gross → Platform Fee 10% → Net Distribuable → Partner Commission 30%
 ---
 
 ### Pilier 3 — Projet LYRA (Data Graph + **Chef d’orchestre IA**)
+
+> **Monétisation :** copilote directeur inclus · Lyra Concierge (famille, après cérémonie) · Fonds · décisions ouvertes → [`business/LYRA_BUSINESS_MODEL.md`](business/LYRA_BUSINESS_MODEL.md).
 
 **Objectif double :**
 

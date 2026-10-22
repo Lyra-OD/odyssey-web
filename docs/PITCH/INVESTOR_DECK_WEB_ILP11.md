@@ -1,14 +1,14 @@
 # Odyssey — Investor deck web (ILP 11)
 
 **Type :** business / pitch · **Vérité pour :** copy + doctrine du deck capital (investisseurs, banques, mentors).  
-**Dernière MAJ :** 21 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
+**Dernière MAJ :** 22 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 oct 2026 : Slide **11** scindée : **11A** Lyra produit (4 capacités) · **11B** modèle d’affaires par moment (copilote inclus · Concierge 99 $ · Sanctuaire 49 $/an, cibles).
 - 21 oct 2026 : Slide **10** From Film to Platform · One Foundation / 3 phases · Amazon analogie · fondation = cible.
 - 21 oct 2026 : Slide **09** B2B2C film alone · One Partner · 450–900 k$ Athos full activation · 50/100 = 07.
 - 21 oct 2026 : Slide **08** Platform Strategy (vidéo = porte, ton soft) · Trojan agressif = oral seulement.
 - 21 oct 2026 : Slide **07 GTM** One Funeral Group · CAC potentiel bas · 22/43 + 50/100 projections · 9k = portée.
-- 21 oct 2026 : Slide **06 REVENUE** mix final (0/179/349 · éligible 10/30). Unit 50→100 $ → **07**.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -313,6 +313,93 @@ P2/P3 **nommées**, pas détaillées (rites / admin / features → **11**). Visu
 - Exemple de valeur long terme : Des recommandations assistées par IA peuvent aider les opérateurs à fluidifier les coûts et améliorer les marges, tout en proposant aux familles des options alignées sur leurs besoins et budgets.
 - Closing : Le film est le point d’entrée. La plateforme est l’opportunité long terme.
 - Note Jon : One Foundation = architecture cible / en construction, pas un actif déjà fully live. Nommer P2/P3 sans deep-dive (→ 11). Pas de « route the whole funeral economy » à l’écran.
+
+### 11A — PHASE 2: LYRA, LE PRODUIT (11A) — pourquoi Lyra doit exister
+
+Canon Google Slides. Slide 11 scindée en **11A (produit)** + **11B (modèle d’affaires)** le 22 oct. **Une idée :** problème humain d’abord, puis Lyra et ses 4 capacités.  
+**Mise en page :** timeline en haut (Phase 2 en évidence) · Lyra au centre, 4 blocs autour · boucle d’intelligence en bandeau bas · gouvernance en pied de page. Accent visuel sur clarté et accompagnement, pas sur le graphe.  
+« Phase 2 vision. Not all capabilities are live today. » **toujours visible** : couvre tout ce qui est encore en développement. Jamais « Legal » dans un libellé. Pas de prix ici (→ **11B**). « 48 h » = oral seulement.
+
+**EN**
+- Tagline: From urgency and uncertainty to clarity and control.
+- Title: Lyra. The Intelligence That Guides Every Next Step.
+- Core proposition: When a death occurs, families face unfamiliar procedures, difficult decisions and significant expenses under intense time pressure. Lyra is Odyssey’s funeral-specialized AI layer, connecting information and guiding families and professionals through the next steps with greater clarity and coordination.
+- Status line (visible): Phase 2 vision. Not all capabilities are live today.
+- Visual timeline: Phase 1 Film → **Phase 2 Lyra** → Phase 3 Marketplace
+- Center: LYRA · Funeral-specialized AI layer
+- Four capabilities:
+  - 01 — Graph Intelligence: Connects authorized information into a structured graph.
+  - 02 — Administrative & Estate Guidance: Organizes steps and clarifies what needs attention.
+  - 03 — Professional Copilot: Streamlines case preparation and workflows.
+  - 04 — Family Guidance: Clarifies services, costs and informed choices.
+- The intelligence loop (bottom band): Media + documents + interactions → AI agents + structured graph → Guidance + workflows + relevant options
+- Footer: Built on consent, privacy, transparent recommendations and human oversight. Confirmed information remains distinct from AI-generated inferences.
+
+**FR** (adaptation)
+- Accroche: De l’urgence et de l’incertitude à la clarté et à la maîtrise.
+- Titre: Lyra. L’intelligence qui guide la suite.
+- Proposition: Lors d’un décès, les familles font face à des démarches inconnues, des décisions difficiles et des dépenses importantes, sous une forte pression de temps. Lyra est la couche d’IA spécialisée funéraire d’Odyssey : elle relie l’information et guide familles et professionnels dans les prochaines étapes, avec plus de clarté et de coordination.
+- Ligne de statut (visible) : Vision Phase 2. Toutes les capacités ne sont pas encore opérationnelles.
+- Timeline visuelle : Phase 1 Film → **Phase 2 Lyra** → Phase 3 Place de marché
+- Centre : LYRA · Couche d’IA spécialisée funéraire
+- Quatre capacités :
+  - 01 — Intelligence relationnelle : Relie l’information autorisée dans un graphe structuré.
+  - 02 — Accompagnement administratif et successoral : Organise les étapes et clarifie ce qui demande une attention immédiate.
+  - 03 — Copilote professionnel : Fluidifie la préparation des dossiers et les flux de travail.
+  - 04 — Accompagnement des familles : Clarifie les services, les coûts et les choix éclairés.
+- Boucle d’intelligence (bandeau bas) : Médias + documents + interactions → Agents IA + graphe structuré → Accompagnement + flux de travail + options pertinentes
+- Pied de page : Consentement, vie privée, recommandations transparentes et supervision humaine. Informations confirmées distinctes des inférences IA.
+
+### 11B — PHASE 2: LYRA, LE MODÈLE D’AFFAIRES (11B) — revenus sans frais fixes pour les salons
+
+Canon Google Slides. **Une idée :** le modèle suit le parcours dans le temps (« par moment, pas par canal », [`../business/LYRA_BUSINESS_MODEL.md`](../business/LYRA_BUSINESS_MODEL.md)). Répond à l’objection : « si le salon ne paie rien, d’où vient l’argent ? »  
+**Mise en page :** timeline en haut (Phase 2 en évidence) · visuel central = 4 moments du parcours · bloc coûts en bas · note « cibles » en pied · closing.  
+Titre et accroche « sans frais fixes » (jamais « gratuit ») : le copilote a un coût pour Odyssey et une offre pro payante reste possible plus tard. Textes visibles courts : contenu de Concierge (succession, fermetures de comptes) et Fonds Commémoratif = notes seulement, tant que le Fonds et sa règle de commission ne sont pas confirmés. Prix = **cibles**, jamais validés. Commission 30 % du net, calcul et Fonds = notes / modèle financier, pas à l’écran. Pas de marge en %.  
+**Avant toute projection de revenus :** trancher le traitement des dossiers payés en crédit Fonds (§4 du doc business).
+
+**EN**
+- Tagline: No fixed fees for the funeral home. Real value for the family.
+- Title: How Lyra Generates Revenue Without Fixed Fees for Funeral Homes
+- Framing: Lyra’s business model follows the family journey. The funeral home uses Lyra at no fixed cost while it serves the family. After the ceremony, the family can choose guidance for what comes next. In the years after, the Sanctuary keeps the memory alive.
+- Visual timeline: Phase 1 Film → **Phase 2 Lyra** → Phase 3 Marketplace
+- The journey in time:
+  - Before & during the funeral · Professional Copilot: Included for partner funeral homes. No fixed fees.
+  - After the ceremony · Lyra Concierge, $99 per case: Target one-time family offering for post-ceremony administrative guidance. Partner homes share in revenue from eligible referred cases.
+  - The years after · Digital Sanctuary, $49/year: Target annual subscription for continued remembrance and anniversary experiences.
+  - Later, Phase 3 · Consent-based referrals & Marketplace: Future opportunity, excluded from current revenue projections.
+- Distribution & unit economics:
+  - Partner-led distribution designed to reduce incremental acquisition costs.
+  - Scalable cloud infrastructure and asynchronous AI processing.
+  - Included Copilot usage tracked through cost per case.
+- Footnote: Phase 2 roadmap targets. Pricing, conversion, retention and unit economics to be validated through deployment.
+- Closing: Odyssey captures the moments. Lyra understands the connections. The platform turns that intelligence into action.
+
+**FR** (adaptation)
+- Accroche: Sans frais fixes pour le salon. Une vraie valeur pour la famille.
+- Titre: Comment Lyra génère des revenus sans frais fixes pour les salons
+- Cadre: Le modèle d’affaires de Lyra suit le parcours de la famille. Le salon utilise Lyra sans frais fixes pendant qu’il accompagne la famille. Après la cérémonie, la famille peut choisir un accompagnement pour la suite. Dans les années qui suivent, le Sanctuaire garde la mémoire vivante.
+- Timeline visuelle : Phase 1 Film → **Phase 2 Lyra** → Phase 3 Place de marché
+- Le parcours dans le temps :
+  - Avant et pendant les funérailles · Copilote professionnel : Inclus pour les salons partenaires. Aucuns frais fixes.
+  - Après la cérémonie · Lyra Concierge, 99 $ par dossier : Offre familiale cible à paiement unique pour accompagner les démarches après la cérémonie. Les salons partenaires participent aux revenus des dossiers admissibles qu’ils réfèrent.
+  - Les années suivantes · Sanctuaire numérique, 49 $/an : Abonnement annuel cible pour prolonger l’hommage et offrir des expériences commémoratives.
+  - Plus tard, Phase 3 · Mises en relation consenties et place de marché : Opportunité future, exclue des projections de revenus actuelles.
+- Distribution et économie unitaire :
+  - Distribution par les partenaires, conçue pour réduire les coûts d’acquisition incrémentaux.
+  - Infrastructure cloud scalable et traitement IA asynchrone.
+  - Usage inclus du copilote suivi par le coût par dossier.
+- Note de bas de page : Prix cibles de la feuille de route Phase 2. Prix, conversion, rétention et économie unitaire à valider lors du déploiement.
+- Closing : Odyssey capture les moments. Lyra comprend les liens. La plateforme transforme cette intelligence en action.
+
+**Note Jon (EN, 11A + 11B, off-slide, plain text for slide comments)**
+- Why two slides: 11A sells the vision and the product. 11B shows the commercial logic. The model is split by moment, not by channel. The closing ends 11B because it concludes the whole Lyra sequence.
+- What Concierge covers: estate-related checklists, account-closure preparation, personalized next steps. It organizes, guides and prepares. It does not close accounts automatically, settle estates or give legal advice. That is why capability 02 does not use the word "Legal".
+- Partner-home share: 30% of net on eligible referred cases, kept off the slide. Example on $99 paid in cash: the 10% platform fee is $9.90, which leaves $89.10 net. The home gets 30% of that net, so $26.73. Odyssey keeps the other 70%, so $62.37, plus the $9.90 fee. Direct B2C families carry no commission. Eligible cases, conditions and the calculation must be written into the partner agreements before we quote the 30%.
+- Memorial Fund, blocking before any revenue forecast: taken off the slide until confirmed. The Fund is built but switched off by default (pilot only). Open question: does the home earn its share when Concierge is paid with Fund credit? My recommendation is no second commission on the part paid with credit, because the home already earned 30% of net on the guest contributions that created that credit.
+- "No fixed fees", never "free": the copilot still costs Odyssey compute. Plan an included usage per case, tracked through cost per case. An Enterprise tier for large groups is a later option, not part of this pitch.
+- What is live: "Phase 2 vision, not all capabilities are live today" stays visible on 11A and covers everything still in development.
+- Consent: contributing to a Sanctuary is not consent to commercial outreach. Referrals need separate, explicit consent (Law 25).
+- To measure, not to show: directors using Lyra may collect more media, which could lift film upgrades at $179 and $349.
 
 ### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
