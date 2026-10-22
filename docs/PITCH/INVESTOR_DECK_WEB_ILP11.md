@@ -4,11 +4,11 @@
 **Dernière MAJ :** 22 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 oct 2026 : Slide **14** traction et prochains jalons (Aujourd’hui honnête : export en validation finale · KPI pilote avec dénominateurs · 5 groupes ou bannières actifs · Phase 3 = conditions). Supersède l’ancienne « 8 - Traction ».
 - 22 oct 2026 : Slide **13** projections 3 ans (scénario central Athos, croissance en pointillé, revenu annualisé ≠ ARR, B2C = jalon An 2 non chiffré) · **07** Athos ≈ 11 % des décès QC (pas 23 %) · **09** 327 k décès CA (StatCan 2024) · **03** bandeau *Built Locally. Designed to Scale Globally.*
 - 22 oct 2026 : Slide **12** Phase 3 place de marché · une slide · chaque budget · salon d’origine si pertinent · hors projections et financement.
 - 22 oct 2026 : Slide **11** scindée : **11A** Lyra produit (4 capacités) · **11B** modèle d’affaires par moment (copilote inclus · Concierge 99 $ · Sanctuaire 49 $/an, cibles).
 - 21 oct 2026 : Slide **10** From Film to Platform · One Foundation / 3 phases · Amazon analogie · fondation = cible.
-- 21 oct 2026 : Slide **09** B2B2C film alone · One Partner · 450–900 k$ Athos full activation · 50/100 = 07.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -505,10 +505,8 @@ Sensibilité : 1 % des décès au Canada (326 779 en 2024) ≈ 270 dossiers / mo
   - Dotted line, growth scenario with additional funeral groups in Québec and across Canada: Phase 1 up to $1.2M–$2.4M by Year 3
   - Phase 3 Marketplace: not quantified
 - Milestones on the curve:
-  - We are here: Studio live. Next: Urgel Bourgie pilot launch.
-  - 90-day go/no-go on the pilot.
-  - Rollout to Espace Memoria and Lépine Cloutier.
-  - Direct-to-family (B2C) opening, organic first.
+  - We are here: Studio live. Next: Urgel Bourgie pilot and 90-day go/no-go.
+  - Rollout to Espace Memoria and Lépine Cloutier. Direct-to-family (B2C) opening, organic first.
   - Lyra first release.
   - Additional funeral groups in Québec and across Canada (growth scenario).
 - Model: Activated cases per month × $50–$100 projected Odyssey revenue per case.
@@ -530,10 +528,8 @@ Sensibilité : 1 % des décès au Canada (326 779 en 2024) ≈ 270 dossiers / mo
   - Pointillé, scénario de croissance avec d'autres groupes funéraires au Québec et au Canada : Phase 1 jusqu'à 1,2–2,4 M$ en An 3
   - Phase 3 Place de marché : non chiffrée
 - Jalons sur la courbe :
-  - Nous sommes ici : Studio en ligne. Prochaine étape : lancement du pilote avec Urgel Bourgie.
-  - Décision à 90 jours sur le pilote.
-  - Déploiement à Espace Memoria et Lépine Cloutier.
-  - Ouverture directe aux familles (B2C), d'abord organique.
+  - Nous sommes ici : Studio en ligne. Prochaine étape : pilote avec Urgel Bourgie et décision à 90 jours.
+  - Déploiement à Espace Memoria et Lépine Cloutier. Ouverture directe aux familles (B2C), d'abord organique.
   - Première version de Lyra.
   - Autres groupes funéraires au Québec et au Canada (scénario de croissance).
 - Modèle : Dossiers activés par mois × 50–100 $ de revenu Odyssey projeté par dossier.
@@ -553,7 +549,7 @@ Sensibilité : 1 % des décès au Canada (326 779 en 2024) ≈ 270 dossiers / mo
 - The "23% of Quebec's funeral market" figure came from the VP and was never verified. With about 9,000 deaths out of 78,800 in Quebec (ISQ, 2024), Athos is about 11%. We use 11% until we know what the 23% measures.
 - Phase 2 layer, targets only, central case (9,000 cases a year): Concierge at 10% to 20% of cases = 900 to 1,800 paid cases x about $72 net to Odyssey on a partner case = $65K to $130K. Sanctuary at 5% to 10% of families = 450 to 900 subscriptions x $49 a year = $22K to $44K. Total about $87K to $174K, shown rounded as $0.1M to $0.2M. That is about $11 to $22 of net Lyra revenue per initial funeral case, on average. Growth case (24,000 cases a year): $0.25M to $0.5M. The $72 assumes a cash payment with the partner share (30% of net). When Concierge is paid with Memorial Fund credit, the home earns no second commission, so $72 is the conservative figure. Conversion, retention and net revenue must be validated before this layer is treated as a projection.
 - Chart reading: the Phase 2 layer stacks on top of Phase 1 (additional revenue). The dotted line is the Phase 1 growth scenario only, not Phase 1 plus Phase 2. Use a distinct color or stroke for the dotted line, with a legend: "Phase 1, growth scenario".
-- Milestones carry no dates on screen. The pilot is expected to start within about a month; Lyra's first release has no date yet. The 90-day go/no-go is an operational step, not a calendar commitment. If space is tight, it is the first milestone to move into these notes.
+- Milestones carry no dates on screen. The pilot is expected to start within about a month; Lyra's first release has no date yet. The 90-day go/no-go is an operational step, not a calendar commitment. Four milestones on purpose, each mapped to the chart: pilot (start), Athos rollout + B2C opening (central scenario), Lyra (start of the Phase 2 layer), additional groups (dotted growth line). Detailed KPIs live on slide 14.
 - The 1% sensitivity line is a theoretical illustration based on total Canadian deaths, not volume the network can necessarily capture.
 - National potential, if asked: Canada had 326,779 deaths in 2024 (Statistics Canada). 5,000 cases per month would be about 18% of deaths and $3M to $6M annualized for Phase 1 alone. Illustration of the market, not a forecast: distribution capacity sets the pace, not market size.
 - Confirmed by Erik: central volumes, Athos rollout order, Phase 2 rates (Concierge 10% to 20%, Sanctuary 5% to 10%), $50 to $100 per case, no second commission on Fund credit. Still open: date of the first Lyra release, volumes of the growth leads.
@@ -562,6 +558,90 @@ Sensibilité : 1 % des décès au Canada (326 779 en 2024) ≈ 270 dossiers / mo
 - B2C acquisition rules: Year 1, no paid ads. Growth comes from the Sanctuary share and word of mouth among guests of partner tributes. Year 2, retargeting of unfinished drafts only, with an ad budget capped at 30% of the previous month's B2C margin. No cold ads until preview-to-pay conversion and film quality are proven.
 - Why B2C matters: every partner tribute introduces Odyssey to the family's wider circle. Those guests are the future direct families. The funeral-home channel feeds the B2C channel. Strategic advantage to validate, not acquired volume. B2C is a complementary sales channel, not a fourth product phase, which is why it is a milestone and not a layer in the chart.
 - Costs and margins stay off the chart. Field team, activation and support costs belong in the financial model and the Ask.
+
+### 14 — TRACTION & NEXT MILESTONES (14) — où nous en sommes, à quoi ressemble la réussite
+
+Canon Google Slides. **Une idée :** la **13** dit jusqu’où ça peut aller (l’argent) ; la **14** dit comment on saura qu’on y arrive (preuves, KPI, conditions). Supersède l’ancienne « 8 - Traction » ci-dessous (« The product is live », Soft Cap à l’écran : ne plus utiliser).  
+**Honnêteté « Aujourd’hui » :** chaque « en ligne » doit être vrai le jour où l’investisseur teste. Export du film = **en validation finale** (STATUS : Creatomate 🟡, recette DA + musique). Fonds = construit, activé pour les pilotes seulement.  
+**KPI pilote :** protocole [`../business/URGEL_ADOPTION_AND_PILOT.md`](../business/URGEL_ADOPTION_AND_PILOT.md) §7.3 et [`../business/BUSINESS_CASE_V3_PITCH_SEP2026.md`](../business/BUSINESS_CASE_V3_PITCH_SEP2026.md) H1. Dénominateurs définis dans la note Jon.  
+**Phases = portes de validation, pas une séquence stricte :** le B2C et le développement de Lyra peuvent avancer pendant la Phase 1. Seule la place de marché attend explicitement les Phases 1 et 2 ([`../VISION_PHASE_2.md`](../VISION_PHASE_2.md) §3ter).  
+Interdits à l’écran : Soft Cap, « fully live », dates qu’on ne tient pas, noms de prospects, durée sur l’objectif des 5 groupes.
+
+**EN**
+- Eyebrow: TRACTION · NEXT MILESTONES
+- Title: Where We Are Today. What Success Looks Like Next.
+- Tagline: Each phase earns the next.
+- Visual timeline: Phase 1 Film → Phase 2 Lyra → Phase 3 Marketplace, with the "We are here" marker at the start of Phase 1
+- Today:
+  - Studio live: a 7-step collaborative tribute experience.
+  - Payments and partner commission dashboard live.
+  - Sanctuary and Memorial Fund built (Fund enabled for pilots only).
+  - Film export in final validation.
+  - Athos Group: current client for classic tribute video.
+  - Next: Urgel Bourgie pilot launch.
+- Phase 1: Prove the channel
+  - Pilot, 2 volunteer counselors: at least 80% of eligible cases receive an invitation, at least 50% of invited families open their link, at least 0.5 guest contributions per invitation sent, measured across the pilot, zero major funeral-day incidents.
+  - Full branch: paid conversion measured on real cases. 90-day go/no-go.
+  - Direct B2C opened, with preview-to-pay conversion measured.
+  - Target outcome: 5 funeral groups or banners live on the platform: the 3 Athos banners plus 2 additional groups, including at least 1 outside Québec.
+- Phase 2: Prove Lyra
+  - Lyra first release with partner funeral homes.
+  - Professional Copilot used on most partner cases, with time saved per case measured.
+  - Concierge chosen by 10% to 20% of families. Sanctuary subscription by 5% to 10% of families after the free first year.
+  - Copilot cost per case within budget.
+  - Target outcome: Lyra in daily use by partner directors, first paying Concierge families and recurring Sanctuary revenue.
+- Phase 3: Conditions to launch
+  - Phase 1 and Phase 2 targets met.
+  - Families consent to referrals at a measurable rate.
+  - A verified provider network in Québec, with published ranking rules.
+  - Revenue sharing written into partner agreements.
+  - Target outcome: a marketplace pilot in Québec, launched only when these conditions are met.
+- Footnote: Targets, not results. Pilot data will replace them as it comes in. Phases are validation gates, not a strict sequence. B2C and Lyra development may advance during Phase 1. Marketplace launch remains conditional on Phase 1 and Phase 2 targets being met.
+- Closing: We measure before we scale.
+
+**FR** (adaptation)
+- Sur-titre : TRACTION · PROCHAINS JALONS
+- Titre : Où nous en sommes. À quoi ressemble la réussite.
+- Accroche : Chaque phase se mérite.
+- Timeline visuelle : Phase 1 Film → Phase 2 Lyra → Phase 3 Place de marché, avec le repère « Nous sommes ici » au début de la Phase 1
+- Aujourd'hui :
+  - Studio en ligne : une expérience d'hommage collaborative en 7 étapes.
+  - Paiement et tableau de commissions des salons en ligne.
+  - Sanctuaire et Fonds Commémoratif construits (Fonds activé pour les pilotes seulement).
+  - Export du film en validation finale.
+  - Groupe Athos : client actuel pour la vidéo d'hommage classique.
+  - Prochaine étape : lancement du pilote avec Urgel Bourgie.
+- Phase 1 : Prouver le canal
+  - Pilote, 2 conseillers volontaires : au moins 80 % des dossiers admissibles reçoivent une invitation, au moins 50 % des familles invitées ouvrent leur lien, au moins 0,5 contribution d'invité par invitation envoyée, mesuré sur l'ensemble du pilote, zéro incident majeur le jour des funérailles.
+  - Succursale complète : conversion payante mesurée sur de vrais dossiers. Décision à 90 jours.
+  - B2C direct ouvert, avec la conversion de l'aperçu au paiement mesurée.
+  - Résultat visé : 5 groupes ou bannières funéraires actifs sur la plateforme : les 3 bannières Athos et 2 groupes additionnels, dont au moins 1 hors Québec.
+- Phase 2 : Prouver Lyra
+  - Première version de Lyra avec les salons partenaires.
+  - Copilote professionnel utilisé sur la majorité des dossiers partenaires, avec le temps gagné par dossier mesuré.
+  - Concierge choisi par 10 à 20 % des familles. Abonnement au Sanctuaire pour 5 à 10 % des familles, après la première année offerte.
+  - Coût du copilote par dossier dans le budget.
+  - Résultat visé : Lyra utilisée au quotidien par les directeurs partenaires, premières familles payantes pour Concierge et revenus récurrents du Sanctuaire.
+- Phase 3 : Conditions de lancement
+  - Objectifs des Phases 1 et 2 atteints.
+  - Consentement des familles aux mises en relation à un taux mesurable.
+  - Un réseau de fournisseurs vérifiés au Québec, avec des règles de classement publiées.
+  - Partage des revenus inscrit dans les ententes partenaires.
+  - Résultat visé : un pilote de place de marché au Québec, lancé seulement quand ces conditions sont réunies.
+- Note de bas de page : Des cibles, pas des résultats. Les données du pilote les remplaceront au fur et à mesure. Les phases sont des étapes de validation, pas une séquence stricte. Le B2C et le développement de Lyra peuvent avancer pendant la Phase 1. Le lancement de la place de marché reste conditionnel à l'atteinte des objectifs des Phases 1 et 2.
+- Closing : On mesure avant d'accélérer.
+
+**Note Jon (EN, off-slide, plain text for slide comments)**
+- Why 14 is separate from 13: slide 13 answers "how big can this get" (money). Slide 14 answers "how do we know you will get there" (proof, KPIs, gates). Slide 13 can keep fewer milestones on the curve; the detail lives here.
+- Today, be precise: the Studio, payments and the partner commission dashboard are live. The Sanctuary and Memorial Fund are built; the Fund is switched on for pilots only. Film export is in final validation (render quality and music). Do not say "fully live" or promise the final film on funeral day until export is reliable.
+- Pilot protocol (Urgel Bourgie): 2 volunteer counselors, Odyssey present on the first cases, then autonomous with the QR kit. Then a full branch for about 2 months. 90-day go/no-go, same as the Ask.
+- KPI definitions, fixed before launch so pilot, branch and future partners compare on the same basis. Invitation rate = cases that received an invitation / eligible cases (target 100%, minimum 80%). Open rate = invited families who opened the link / invited families (at least 50%). Guest contribution rate = guest contributions / invitations sent (at least 0.5). Major funeral-day incident = any failure visible to the family on the day of the funeral: link or Sanctuary unavailable, media lost, or a counselor forced to handle a technical problem in front of the family. Odyssey responds within 30 minutes, post-mortem the same day.
+- "Live" partner = a group or banner using the platform on real cases, not only a signed agreement or a completed onboarding. Track the three stages separately: signed, onboarded, live. The exact threshold for "live" (for example, a minimum share of eligible cases receiving an invitation) is set in the tracking protocol.
+- Phase 1 target outcome echoes "sign our first 5 B2B clients": 5 funeral groups or banners live (3 Athos banners + 2 additional groups, at least one outside Quebec). Leads, oral only: Magnus Poirier (contact who knows the CEO) and the largest Canadian groups. Consistent with the slide 13 growth scenario. No duration on screen.
+- Phases are validation gates, not a strict calendar sequence. B2C can open while Phase 1 is being validated, and Lyra development can advance before every commercial target is met. Only the marketplace explicitly waits for Phases 1 and 2.
+- Phase 2 targets match slides 11B and 13: Concierge 10% to 20%, Sanctuary 5% to 10%. Copilot adoption and time saved per case are the proof for funeral homes; cost per case is the proof for us.
+- Phase 3 has launch conditions, not revenue KPIs, on purpose: it stays outside projections and outside this raise.
+- Never on screen: Soft Cap, "fully live", dates we cannot hold, prospect names.
 
 ### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
