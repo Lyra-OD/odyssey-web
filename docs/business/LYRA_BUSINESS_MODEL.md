@@ -4,6 +4,7 @@
 **Dernière MAJ :** 22 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 oct 2026 : **Décision CEO** : pas de 2e commission salon sur la part de Concierge payée en crédit Fonds (n’est plus bloquant pour les projections).
 - 22 oct 2026 : Concierge = organise / prépare (pas d’exécution ni d’avis juridique) · crédit Fonds : pas de 2e commission (reco) · coût copilote interne.
 - 22 oct 2026 : Création. Décision CEO : découpage **par moment**, pas par canal. Copilote directeur inclus · Lyra Concierge 99 $ famille · Sanctuaire 49 $/an (cibles).
 
@@ -96,16 +97,16 @@ Ne jamais faire payer le salon **et** la famille pour la même valeur. Le copilo
 - Le surplus du Fonds sert à acheter du **produit**, jamais à retirer du cash.
 - Le crédit est porté par la **marge Odyssey**, jamais par la commission du salon.
 
-**Décision ouverte (ne pas présumer) :** quand Concierge est payé en crédit Fonds, le salon touche-t-il ses 26,73 $ ?
+**Question :** quand Concierge est payé en crédit Fonds, le salon touche-t-il ses 26,73 $ ?
 
-**Recommandation : non, pas de deuxième commission sur la part payée en crédit.**
+**Décision CEO (22 oct 2026) : non, pas de deuxième commission sur la part payée en crédit.**
 - Le salon a **déjà touché 30 % du net** sur les contributions des invités qui ont créé ce crédit (`guest_commission_accrual`).
 - Lui verser encore 30 % quand la famille dépense ce crédit reviendrait à **payer deux fois sur le même argent**, entièrement absorbé par la marge Odyssey.
 - Si la famille complète en argent (solde insuffisant), la commission s’applique sur la **partie payée en argent** seulement.
 
-À trancher (CEO + entente partenaire) et à écrire dans les règles comptables et contractuelles avant le pilote.
+**Reste à faire :** écrire la règle dans l’entente partenaire et dans les règles comptables avant le pilote.
 
-**Bloquant :** aucune projection de revenus Lyra ne se présente à un investisseur tant que ce point n’est pas tranché.
+**Effet sur les projections :** les 72 $ Odyssey par Concierge (calcul §3, paiement en argent) sont l’hypothèse **prudente** ; la part payée en crédit ne verse pas de commission au salon.
 
 **À vérifier avant d’en faire une promesse commerciale :**
 1. **Comptabilité :** crédit distinct d’un revenu encaissé et d’une commission payable.

@@ -4,11 +4,11 @@
 **Dernière MAJ :** 22 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 22 oct 2026 : Slide **13** projections 3 ans (scénario central Athos, croissance en pointillé, revenu annualisé ≠ ARR, B2C = jalon An 2 non chiffré) · **07** Athos ≈ 11 % des décès QC (pas 23 %) · **09** 327 k décès CA (StatCan 2024) · **03** ambition géo à intégrer.
 - 22 oct 2026 : Slide **12** Phase 3 place de marché · une slide · chaque budget · salon d’origine si pertinent · hors projections et financement.
 - 22 oct 2026 : Slide **11** scindée : **11A** Lyra produit (4 capacités) · **11B** modèle d’affaires par moment (copilote inclus · Concierge 99 $ · Sanctuaire 49 $/an, cibles).
 - 21 oct 2026 : Slide **10** From Film to Platform · One Foundation / 3 phases · Amazon analogie · fondation = cible.
 - 21 oct 2026 : Slide **09** B2B2C film alone · One Partner · 450–900 k$ Athos full activation · 50/100 = 07.
-- 21 oct 2026 : Slide **08** Platform Strategy (vidéo = porte, ton soft) · Trojan agressif = oral seulement.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -105,7 +105,8 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 
 ### 3 — OPPORTUNITY + MARKET (03) — Why Now chiffré (3 ancres, pas TAM flou)
 
-Canon Google Slides. Séparer industrie funéraire (Phase 1/3) et transfert de patrimoine (macro / Phase 2). Sources publiques. Cerulli = US. Global 120→180 B$ = oral seulement.
+Canon Google Slides. Séparer industrie funéraire (Phase 1/3) et transfert de patrimoine (macro / Phase 2). Sources publiques. Cerulli = US. Global 120→180 B$ = oral seulement.  
+**À intégrer (décidé 22 oct, en attente des commentaires Jon) :** l’ambition géographique vit ici, pas sur la **13**. Accroche candidate : *Built Locally. Designed to Scale Globally.* (FR : *Conçu au Québec. Pensé pour le monde.*). Trajectoire par étapes, sans chiffres : Québec (valider le modèle) → Canada (étendre le réseau) → États-Unis (prochain grand marché) → International (adaptations culturelles, linguistiques, réglementaires). Jamais de projection financière mondiale.
 
 **EN**
 - Tagline: Why now.
@@ -206,12 +207,13 @@ Unit Odyssey ~50→~100 $ + commission salon 22→43 $ + Athos = **07** (scénar
 Canon Google Slides. Distribution B2B2C (pas vente B2B pure, pas ads B2C). Mécanique argent dossier → **06**. Trojan → **08**.  
 Unit econ = **projections** par dossier entrant, deux scénarios (base / cercle) : commission salon ~22→~43 $ · revenu Odyssey ~50→~100 $ (compatibles waterfall 10 % + 30 % net de **06**).  
 Athos ~9 000 = **portée potentielle** (pas volume plateforme activé). Client vidéo classique · discussions modèle plateforme.  
+**~11 % des décès au Québec** = 9 000 / 78 800 (ISQ, décès 2024 provisoires). L’ancien « 23 % du marché » ne tenait pas sur ce dénominateur ; ne le remettre que si on nomme ce qu’il mesure (revenus, nombre de salons).  
 **Règle copy Google :** ne jamais écrire « Soft Cap » / « near-zero CAC » comme fait établi.
 
 **EN**
 - Tagline: We don’t buy families. We borrow the network that already holds them.
 - Title: One Funeral Group. Thousands of Families. A Scalable Distribution Model.
-- Framing: North America represents approximately 3.4 million deaths annually and a $20B–$30B funeral market. Odyssey’s go-to-market starts with funeral groups: established relationships provide a trusted path to families, with low initial customer acquisition cost potential. Athos Group (Urgel Bourgie, Espace Memoria, Lépine Cloutier) is already an Odyssey client for classic tribute video. Discussions are underway to extend that relationship to the platform model: a complimentary tribute space, community participation, and shared revenue. Athos represents an estimated 9,000 deaths annually across three banners, about 23% of Quebec’s funeral market. That is potential reach of the relationship, not yet activated platform volume.
+- Framing: North America represents approximately 3.4 million deaths annually and a $20B–$30B funeral market. Odyssey’s go-to-market starts with funeral groups: established relationships provide a trusted path to families, with low initial customer acquisition cost potential. Athos Group (Urgel Bourgie, Espace Memoria, Lépine Cloutier) is already an Odyssey client for classic tribute video. Discussions are underway to extend that relationship to the platform model: a complimentary tribute space, community participation, and shared revenue. Athos represents an estimated 9,000 deaths annually across three banners, about 11% of deaths in Quebec. That is potential reach of the relationship, not yet activated platform volume.
 - Channel economics:
   - Distribution: Funeral groups and homes provide the initial access to families, reducing reliance on paid advertising. Low initial CAC potential, not zero cost: Odyssey still carries product, support, activation, and service.
   - Beachhead: Build from the existing video relationship toward platform adoption, banner by banner.
@@ -222,7 +224,7 @@ Athos ~9 000 = **portée potentielle** (pas volume plateforme activé). Client v
 **FR** (adaptation)
 - Accroche: On n’achète pas des familles. On emprunte le réseau qui les a déjà.
 - Titre: Un groupe funéraire. Des milliers de familles. Un modèle de distribution scalable.
-- Cadre: L’Amérique du Nord, c’est environ 3,4 millions de décès par an et un marché funéraire de 20 à 30 milliards $. Odyssey entre par les groupes funéraires : des relations établies offrent un chemin de confiance vers les familles, avec un potentiel de coût d’acquisition initial bas. Le Groupe Athos (Urgel Bourgie, Espace Memoria, Lépine Cloutier) est déjà client Odyssey pour la vidéo classique. Les discussions portent sur l’extension au modèle plateforme : espace d’hommage offert, participation du cercle, revenus partagés. Athos représente environ 9 000 décès par an sur trois bannières, soit près de 23 % du marché funéraire québécois. C’est la portée potentielle de la relation, pas encore un volume plateforme activé.
+- Cadre: L’Amérique du Nord, c’est environ 3,4 millions de décès par an et un marché funéraire de 20 à 30 milliards $. Odyssey entre par les groupes funéraires : des relations établies offrent un chemin de confiance vers les familles, avec un potentiel de coût d’acquisition initial bas. Le Groupe Athos (Urgel Bourgie, Espace Memoria, Lépine Cloutier) est déjà client Odyssey pour la vidéo classique. Les discussions portent sur l’extension au modèle plateforme : espace d’hommage offert, participation du cercle, revenus partagés. Athos représente environ 9 000 décès par an sur trois bannières, soit environ 11 % des décès au Québec. C’est la portée potentielle de la relation, pas encore un volume plateforme activé.
 - Économie du canal :
   - Distribution : Les groupes et salons ouvrent l’accès aux familles et réduisent la dépendance à la pub payante. Potentiel de CAC initial bas, pas un coût nul : Odyssey garde du développement, du soutien, de l’activation et du service.
   - Tête de pont : Partir de la relation vidéo existante vers l’adoption plateforme, bannière par bannière.
@@ -262,12 +264,12 @@ Athos / unit econ → **07**. Scale CA → **09**. Synthèse stratégique des ph
 
 Canon Google Slides. **Produit film seul** (pas Lyra / marketplace → **10**). Distinct de **07** : 07 = canal + unit / dossier ; 09 = potentiel annuel.  
 **50–100 $** = **même mesure** que 07 (revenu Odyssey / dossier entrant projeté ; pas brut vs net différent ; pas double comptage cercle). Commission salon 22→43 = **07**.  
-~335k décès CA / an (ordre de grandeur StatCan récent). Athos 9k × 50/100 = **450–900 k$** full activation = scénario, pas run-rate ni forecast engagé. Soft Cap / near-zero CAC interdits comme faits.
+~327k décès CA / an (StatCan : 326 779 en 2024, provisoire, publié janv. 2026). Athos 9k × 50/100 = **450–900 k$** full activation = scénario, pas run-rate ni forecast engagé. Soft Cap / near-zero CAC interdits comme faits.
 
 **EN**
 - Tagline: The funeral home brings the family. The family brings the network.
 - Title: One Partner. Recurring Family Volume. Scalable Video Revenue.
-- Framing: Canada records approximately 335,000 deaths annually. Odyssey does not need to acquire every family through paid advertising. Through funeral-home partnerships, the tribute film creates a repeatable distribution channel: each activated case reaches a family, and each family can engage its wider circle. The economics below reflect the video product alone, using the same projected unit economics as Slide 07. Broader platform revenue is additional upside, not included here.
+- Framing: Canada records approximately 327,000 deaths annually (Statistics Canada, 2024). Odyssey does not need to acquire every family through paid advertising. Through funeral-home partnerships, the tribute film creates a repeatable distribution channel: each activated case reaches a family, and each family can engage its wider circle. The economics below reflect the video product alone, using the same projected unit economics as Slide 07. Broader platform revenue is additional upside, not included here.
 - The B2B2C engine: Funeral home → Family → Community. One trusted partner relationship can activate a recurring flow of families, while each tribute creates opportunities for wider participation.
 - Illustrative partner economics: 100 activated families per month × $50–$100 in projected Odyssey revenue per case = $5,000–$10,000 per month, or $60,000–$120,000 annualized.
 - Beachhead potential: Athos Group: Approximately 9,000 annual deaths across three banners. At full activation, that represents approximately 750 cases per month and $450,000–$900,000 in projected annual Odyssey video revenue. Full-activation scenario, not current revenue or a committed forecast.
@@ -277,7 +279,7 @@ Canon Google Slides. **Produit film seul** (pas Lyra / marketplace → **10**). 
 **FR** (adaptation)
 - Accroche: Le salon amène la famille. La famille amène le réseau.
 - Titre: Un partenaire. Un volume familles récurrent. Un revenu vidéo scalable.
-- Cadre: Le Canada enregistre environ 335 000 décès par an. Odyssey n’a pas besoin d’acquérir chaque famille via la pub payante. Grâce aux partenariats salons, le film d’hommage crée un canal de distribution répétable : chaque dossier activé atteint une famille, et chaque famille peut engager son cercle. Les chiffres ci-dessous = produit vidéo seul, avec les mêmes unit econ projetées que la diapo 07. Les revenus plateforme plus larges sont un upside additionnel, non inclus ici.
+- Cadre: Le Canada enregistre environ 327 000 décès par an (Statistique Canada, 2024). Odyssey n’a pas besoin d’acquérir chaque famille via la pub payante. Grâce aux partenariats salons, le film d’hommage crée un canal de distribution répétable : chaque dossier activé atteint une famille, et chaque famille peut engager son cercle. Les chiffres ci-dessous = produit vidéo seul, avec les mêmes unit econ projetées que la diapo 07. Les revenus plateforme plus larges sont un upside additionnel, non inclus ici.
 - Le moteur B2B2C : Salon → Famille → Communauté. Une relation partenaire de confiance peut activer un flux récurrent de familles, tandis que chaque hommage crée des occasions de participation élargie.
 - Économie partenaire illustrative : 100 familles activées par mois × 50–100 $ de revenu Odyssey projeté par dossier = 5 000–10 000 $ par mois, soit 60 000–120 000 $ annualisés.
 - Potentiel tête de pont : Groupe Athos : environ 9 000 décès annuels sur trois bannières. À pleine activation, cela représente environ 750 dossiers par mois et 450 000–900 000 $ de revenu vidéo Odyssey annuel projeté. Scénario de pleine activation, pas un revenu actuel ni une prévision engagée.
@@ -355,7 +357,7 @@ Canon Google Slides. Slide 11 scindée en **11A (produit)** + **11B (modèle d�
 Canon Google Slides. **Une idée :** le modèle suit le parcours dans le temps (« par moment, pas par canal », [`../business/LYRA_BUSINESS_MODEL.md`](../business/LYRA_BUSINESS_MODEL.md)). Répond à l’objection : « si le salon ne paie rien, d’où vient l’argent ? »  
 **Mise en page :** timeline en haut (Phase 2 en évidence) · visuel central = 4 moments du parcours · bloc coûts en bas · note « cibles » en pied · closing.  
 Titre et accroche « sans frais fixes » (jamais « gratuit ») : le copilote a un coût pour Odyssey et une offre pro payante reste possible plus tard. Textes visibles courts : contenu de Concierge (succession, fermetures de comptes) et Fonds Commémoratif = notes seulement, tant que le Fonds et sa règle de commission ne sont pas confirmés. Prix = **cibles**, jamais validés. Commission 30 % du net, calcul et Fonds = notes / modèle financier, pas à l’écran. Pas de marge en %.  
-**Avant toute projection de revenus :** trancher le traitement des dossiers payés en crédit Fonds (§4 du doc business).
+**Crédit Fonds (tranché 22 oct, décision CEO) :** pas de 2e commission salon sur la part payée en crédit (§4 du doc business). Reste à l’écrire dans l’entente partenaire.
 
 **EN**
 - Tagline: No fixed fees for the funeral home. Real value for the family.
@@ -395,7 +397,7 @@ Titre et accroche « sans frais fixes » (jamais « gratuit ») : le copilote a 
 - Why two slides: 11A sells the vision and the product. 11B shows the commercial logic. The model is split by moment, not by channel. The closing ends 11B because it concludes the whole Lyra sequence.
 - What Concierge covers: estate-related checklists, account-closure preparation, personalized next steps. It organizes, guides and prepares. It does not close accounts automatically, settle estates or give legal advice. That is why capability 02 does not use the word "Legal".
 - Partner-home share: 30% of net on eligible referred cases, kept off the slide. Example on $99 paid in cash: the 10% platform fee is $9.90, which leaves $89.10 net. The home gets 30% of that net, so $26.73. Odyssey keeps the other 70%, so $62.37, plus the $9.90 fee. Direct B2C families carry no commission. Eligible cases, conditions and the calculation must be written into the partner agreements before we quote the 30%.
-- Memorial Fund, blocking before any revenue forecast: taken off the slide until confirmed. The Fund is built but switched off by default (pilot only). Open question: does the home earn its share when Concierge is paid with Fund credit? My recommendation is no second commission on the part paid with credit, because the home already earned 30% of net on the guest contributions that created that credit.
+- Memorial Fund: kept off the slide. The Fund is built but switched off by default (pilot only). Decision: the home earns no second commission on the part of Concierge paid with Fund credit, because it already earned 30% of net on the guest contributions that created that credit. It still earns its share on any part paid in cash. To be written into the partner agreement.
 - "No fixed fees", never "free": the copilot still costs Odyssey compute. Plan an included usage per case, tracked through cost per case. An Enterprise tier for large groups is a later option, not part of this pitch.
 - What is live: "Phase 2 vision, not all capabilities are live today" stays visible on 11A and covers everything still in development.
 - Consent: contributing to a Sanctuary is not consent to commercial outreach. Referrals need separate, explicit consent (Law 25).
@@ -464,6 +466,99 @@ Interdits à l’écran : « opaque » (vise les salons), « tous les budgets »
 - Consent: designed around explicit consent, privacy and transparency. Formal compliance (e.g. Quebec Law 25) to be assessed before launch, not claimed today.
 - Phase 3 is excluded from current projections and from this raise. Expansion potential, not part of the financial case.
 - Spectacular examples (ash diamonds, orbital memorials) for verbal discussion only.
+
+### 13 — ROADMAP & 3-YEAR PROJECTIONS (13) — une plateforme, plusieurs sources de revenus
+
+Canon Google Slides. **Une idée :** les phases se superposent dans le temps ; le graphique en couches suit le **scénario central** (Athos seul), la croissance (groupes adjacents) en pointillé.  
+**Vocabulaire :** « revenu annualisé au rythme de fin d’année », jamais « ARR » pour la Phase 1 (transactionnel : volume répétable, pas un abonnement ; le récurrent commence avec le Sanctuaire). Les fins d’année ne s’additionnent pas : ce n’est pas le revenu encaissé dans l’année.  
+**Formule unique :** dossiers activés / mois × 50–100 $ de revenu Odyssey par dossier (= **07** et **09**). 1 dossier / mois = 600–1 200 $ / an.  
+Interdits à l’écran : « exponentiel », marges en %, chiffre Phase 3, projections mondiales (ambition géographique → **03**), 750 dossiers présentés comme acquis, dates sur les jalons tant que le calendrier n’est pas confirmé. Pas de tiret long.  
+**Lecture du graphique :** la couche Phase 2 s’empile **sur** la Phase 1 (revenu additionnel) ; le pointillé = croissance **Phase 1 seule**, jamais Phase 1 + 2.  
+**B2C direct :** jalon An 2 + une ligne texte, **pas de couche chiffrée** (aucune donnée de volume). « Marge potentiellement supérieure », jamais garantie. Règles d’acquisition : [`../B2C_GO_TO_MARKET.md`](../B2C_GO_TO_MARKET.md) §4.  
+**Validé CEO (22 oct) :** volumes centraux 250 / 500 / 750 réalistes · pilote **Urgel Bourgie** d’ici environ un mois, puis Espace Memoria et Lépine Cloutier ensemble si le pilote fonctionne · Concierge 10–20 %, Sanctuaire 5–10 %, 50–100 $ / dossier · crédit Fonds : pas de 2ᵉ commission ([`../business/LYRA_BUSINESS_MODEL.md`](../business/LYRA_BUSINESS_MODEL.md) §4).  
+**Croissance (pointillé) :** autres groupes au Québec (Magnus Poirier = bon lead via contact du CEO, pas de données) et plus gros groupes canadiens dès l’An 2 (leads probables). **Ne jamais nommer un prospect à l’écran** : oral / note seulement.  
+**Encore ouvert :** date de la 1ʳᵉ version de Lyra (« rapidement », sans date) · volume de Magnus Poirier et des groupes canadiens visés · origine du 23 % Athos (venait du VP, non vérifié ; on garde 11 %).
+
+**Scénarios (modèle interne, volumes de fin d’année)**
+
+| Scénario | An 1 | An 2 | An 3 | Phase 1 annualisée, fin An 3 |
+|---|---|---|---|---|
+| Prudent | 100 / mois | 300 | 500 | 0,3–0,6 M$ |
+| **Central (à l’écran)** | 250 | 500 | 750 (cible pleine activation Athos) | 0,45–0,9 M$ |
+| Croissance (pointillé) | 250 | 750 | 2 000 (+ groupes au Québec et au Canada) | 1,2–2,4 M$ |
+
+Couche Phase 2, fin An 3 (cibles 11B, à valider) : Concierge 10–20 % des dossiers × ~72 $ net Odyssey (dossier partenaire) + Sanctuaire 5–10 % des familles × 49 $/an. Central (9 000 dossiers/an) : Concierge 900–1 800 × 72 $ = 65–130 k$ + Sanctuaire 450–900 × 49 $ = 22–44 k$ ≈ 87–174 k$, arrondi **0,1–0,2 M$** (≈ 11–22 $ net Lyra par dossier initial). Croissance (24 000/an) ≈ 0,25–0,5 M$.  
+Sensibilité : 1 % des décès au Canada (326 779 en 2024) ≈ 270 dossiers / mois ≈ 0,16–0,33 M$ annualisés, Phase 1 seule.
+
+**EN**
+- Eyebrow: ROADMAP · 3-YEAR PROJECTIONS
+- Visual timeline: Phase 1 Film → Phase 2 Lyra → Phase 3 Marketplace, with a "We are here" marker on Phase 1
+- Title: Three Years. One Platform. Multiple Revenue Layers.
+- Tagline: Each phase builds on the one before.
+- Framing: Phase 1 builds a repeatable transactional base through funeral-home partners. Phase 2 adds post-ceremony and recurring revenue from the same families. Phase 3 remains future upside.
+- Chart (stacked area, annualized run-rate at year-end, target scenario):
+  - Phase 1 Film: $0.15M–$0.3M (Year 1) → $0.3M–$0.6M (Year 2) → $0.45M–$0.9M (Year 3, full Athos activation target)
+  - Phase 2 Lyra: additional target layer from Year 2, about $0.1M–$0.2M by Year 3
+  - Dotted line, growth scenario with additional funeral groups in Québec and across Canada: Phase 1 up to $1.2M–$2.4M by Year 3
+  - Phase 3 Marketplace: not quantified
+- Milestones on the curve:
+  - We are here: Studio live. Next: Urgel Bourgie pilot launch.
+  - 90-day go/no-go on the pilot.
+  - Rollout to Espace Memoria and Lépine Cloutier.
+  - Direct-to-family (B2C) opening, organic first.
+  - Lyra first release.
+  - Additional funeral groups in Québec and across Canada (growth scenario).
+- Model: Activated cases per month × $50–$100 projected Odyssey revenue per case.
+- Sensitivity (illustration): Each 1% of Canadian deaths ≈ 270 cases per month ≈ $0.16M–$0.33M annualized, Phase 1 alone.
+- Direct B2C: Potentially higher margin per family, with no partner commission. Initial growth can come from families who discovered Odyssey through a partner tribute. Upside to validate, not included in the central scenario.
+- Footnote: Annualized revenue run-rate at year-end, based on activated monthly cases. Target scenarios, not committed forecasts. Phase 2 figures are targets to validate. Phase 3 excluded.
+- Beyond the projections: Initial deployment in Québec and Canada. The U.S. is the next major market.
+- Closing: Phase 1 builds the base. Phase 2 adds recurring value. Phase 3 is future upside.
+
+**FR** (adaptation)
+- Sur-titre : FEUILLE DE ROUTE · PROJECTIONS SUR 3 ANS
+- Timeline visuelle : Phase 1 Film → Phase 2 Lyra → Phase 3 Place de marché, avec un repère « Nous sommes ici » sur la Phase 1
+- Titre : Trois ans. Une plateforme. Plusieurs sources de revenus.
+- Accroche : Chaque phase s'appuie sur la précédente.
+- Cadre : La Phase 1 bâtit une base transactionnelle répétable grâce aux salons partenaires. La Phase 2 ajoute des revenus post-cérémonie et récurrents auprès des mêmes familles. La Phase 3 demeure un potentiel futur.
+- Graphique (aires empilées, revenu annualisé au rythme de fin d'année, scénario cible) :
+  - Phase 1 Film : 0,15–0,3 M$ (An 1) → 0,3–0,6 M$ (An 2) → 0,45–0,9 M$ (An 3, cible de pleine activation Athos)
+  - Phase 2 Lyra : couche cible additionnelle dès l'An 2, environ 0,1–0,2 M$ en An 3
+  - Pointillé, scénario de croissance avec d'autres groupes funéraires au Québec et au Canada : Phase 1 jusqu'à 1,2–2,4 M$ en An 3
+  - Phase 3 Place de marché : non chiffrée
+- Jalons sur la courbe :
+  - Nous sommes ici : Studio en ligne. Prochaine étape : lancement du pilote avec Urgel Bourgie.
+  - Décision à 90 jours sur le pilote.
+  - Déploiement à Espace Memoria et Lépine Cloutier.
+  - Ouverture directe aux familles (B2C), d'abord organique.
+  - Première version de Lyra.
+  - Autres groupes funéraires au Québec et au Canada (scénario de croissance).
+- Modèle : Dossiers activés par mois × 50–100 $ de revenu Odyssey projeté par dossier.
+- Sensibilité (illustration) : Chaque tranche de 1 % des décès au Canada ≈ 270 dossiers par mois ≈ 0,16–0,33 M$ annualisés, Phase 1 seule.
+- B2C direct : Marge potentiellement supérieure par famille, sans commission partenaire. La croissance initiale peut provenir des proches ayant découvert Odyssey lors d'un hommage réalisé par un salon partenaire. Potentiel à valider, non inclus dans le scénario central.
+- Note de bas de page : Revenu annualisé au rythme de fin d'année, selon les dossiers mensuels activés. Scénarios cibles, pas des prévisions engagées. Chiffres de la Phase 2 : cibles à valider. Phase 3 exclue.
+- Au-delà des projections : Déploiement initial au Québec et au Canada. Les États-Unis sont le prochain grand marché.
+- Closing : La Phase 1 bâtit la base. La Phase 2 ajoute des revenus récurrents. La Phase 3 ouvre un potentiel futur.
+
+**Note Jon (EN, off-slide, plain text for slide comments)**
+- Why "annualized run-rate", not ARR: Phase 1 is transactional. Volume repeats every month, but it is not a subscription. Calling it ARR would cost us credibility the moment an investor asks. Recurring revenue starts with the Sanctuary in Phase 2.
+- Year-end run-rate: each figure is the December pace multiplied by 12, not revenue collected during the year. Do not add the three years together.
+- One formula everywhere: activated cases per month × $50–$100 Odyssey revenue per case, same as slides 07 and 09. One case per month = $600–$1,200 per year.
+- Three internal scenarios (year-end cases per month). Prudent: 100, 300, 500. Central, on screen: 250, 500, 750. Growth, dotted line: 250, 750, 2,000. The central case works with Athos alone; the growth case adds other funeral groups in Quebec and the largest groups in Canada from Year 2.
+- 750 cases per month is the full Athos activation target (about 9,000 deaths a year across three banners, about 11% of deaths in Quebec). Athos is our first client, today for classic video. Platform rollout: pilot with Urgel Bourgie within about a month, then Espace Memoria and Lepine Cloutier together if the pilot works. Not acquired volume until the pilot converts.
+- Growth leads, oral only, never named on screen: Magnus Poirier is a good lead through a contact who knows the CEO; no volume data yet. The largest Canadian groups are probable leads for Year 2. The central case does not depend on any of them.
+- The "23% of Quebec's funeral market" figure came from the VP and was never verified. With about 9,000 deaths out of 78,800 in Quebec (ISQ, 2024), Athos is about 11%. We use 11% until we know what the 23% measures.
+- Phase 2 layer, targets only, central case (9,000 cases a year): Concierge at 10% to 20% of cases = 900 to 1,800 paid cases x about $72 net to Odyssey on a partner case = $65K to $130K. Sanctuary at 5% to 10% of families = 450 to 900 subscriptions x $49 a year = $22K to $44K. Total about $87K to $174K, shown rounded as $0.1M to $0.2M. That is about $11 to $22 of net Lyra revenue per initial funeral case, on average. Growth case (24,000 cases a year): $0.25M to $0.5M. The $72 assumes a cash payment with the partner share (30% of net). When Concierge is paid with Memorial Fund credit, the home earns no second commission, so $72 is the conservative figure. Conversion, retention and net revenue must be validated before this layer is treated as a projection.
+- Chart reading: the Phase 2 layer stacks on top of Phase 1 (additional revenue). The dotted line is the Phase 1 growth scenario only, not Phase 1 plus Phase 2. Use a distinct color or stroke for the dotted line, with a legend: "Phase 1, growth scenario".
+- Milestones carry no dates on screen. The pilot is expected to start within about a month; Lyra's first release has no date yet. The 90-day go/no-go is an operational step, not a calendar commitment. If space is tight, it is the first milestone to move into these notes.
+- The 1% sensitivity line is a theoretical illustration based on total Canadian deaths, not volume the network can necessarily capture.
+- National potential, if asked: Canada had 326,779 deaths in 2024 (Statistics Canada). 5,000 cases per month would be about 18% of deaths and $3M to $6M annualized for Phase 1 alone. Illustration of the market, not a forecast: distribution capacity sets the pace, not market size.
+- Confirmed by Erik: central volumes, Athos rollout order, Phase 2 rates (Concierge 10% to 20%, Sanctuary 5% to 10%), $50 to $100 per case, no second commission on Fund credit. Still open: date of the first Lyra release, volumes of the growth leads.
+- Direct B2C (upside, not in the central case): families who start a tribute without a funeral-home invitation. Product is ready (free draft, watermarked preview, paywall from Heritage at $179). No partner commission, so a potentially higher margin per family, once payment, production and acquisition costs are deducted. Target basket $240 to $280. Conversion is expected to be harder than through a funeral home: about 12% to 20% of accounts paying, versus about 50% assumed in partner cases. These are targets, not observed data; replace them with real Stripe figures as soon as they exist.
+- B2C sensitivity, if asked: each 100 paying direct families per month = about $0.29M to $0.34M annualized, before payment and production costs.
+- B2C acquisition rules: Year 1, no paid ads. Growth comes from the Sanctuary share and word of mouth among guests of partner tributes. Year 2, retargeting of unfinished drafts only, with an ad budget capped at 30% of the previous month's B2C margin. No cold ads until preview-to-pay conversion and film quality are proven.
+- Why B2C matters: every partner tribute introduces Odyssey to the family's wider circle. Those guests are the future direct families. The funeral-home channel feeds the B2C channel. Strategic advantage to validate, not acquired volume. B2C is a complementary sales channel, not a fourth product phase, which is why it is a milestone and not a layer in the chart.
+- Costs and margins stay off the chart. Field team, activation and support costs belong in the financial model and the Ask.
 
 ### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
