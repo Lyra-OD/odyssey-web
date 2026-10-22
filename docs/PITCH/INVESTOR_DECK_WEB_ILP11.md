@@ -4,12 +4,11 @@
 **Dernière MAJ :** 21 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 21 oct 2026 : Slide **06 REVENUE** mix final (choix famille · 0/179/349 · canal acquisition salon · éligible 10/30). Unit 50→100 $ → **07**.
-- 21 oct 2026 : Slide **07 GTM** titre One Funeral Group · CAC = potentiel bas (pas near-zero fait) · 22/43 salon + 50/100 Odyssey = projections deux scénarios · 9k = portée potentielle.
+- 21 oct 2026 : Slide **10** From Film to Platform · One Foundation / 3 phases · Amazon analogie · fondation = cible.
+- 21 oct 2026 : Slide **09** B2B2C film alone · One Partner · 450–900 k$ Athos full activation · 50/100 = 07.
 - 21 oct 2026 : Slide **08** Platform Strategy (vidéo = porte, ton soft) · Trojan agressif = oral seulement.
-- 21 oct 2026 : Slide **05 VIDEO** UX 4 étapes. Pas RevShare / pas « generator ».
-- 21 oct 2026 : Slides **01–04** Intro → Solution VP (rework Jon).
-- 19 oct 2026 : Slides **08–10** Trojan → roadmap Lyra.
+- 21 oct 2026 : Slide **07 GTM** One Funeral Group · CAC potentiel bas · 22/43 + 50/100 projections · 9k = portée.
+- 21 oct 2026 : Slide **06 REVENUE** mix final (0/179/349 · éligible 10/30). Unit 50→100 $ → **07**.
 
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
@@ -259,55 +258,61 @@ Athos / unit econ → **07**. Scale CA → **09**. Synthèse stratégique des ph
   - La vision long terme : D’une expérience d’hommage unique à une plateforme connectée au service des familles, des salons et de leurs communautés élargies.
 - Talk track (hors slide) : On entre par un service que les salons comprennent déjà et que les familles valorisent vraiment. Une fois Odyssey dans cette expérience, on peut étendre progressivement la plateforme à d’autres services. La vidéo est le point de départ ; l’écosystème plus large est l’opportunité. (Logique Trojan sans capture / own / can’t leave.)
 
-### 9 — GO-TO-MARKET B2B2C (09) — volume Canada + moteur + scale géographique
+### 9 — GO-TO-MARKET B2B2C (09) — preuve $ annuelle du film (B2B → B2C)
 
-Canon Google Slides. Pas Athos détaillé (→ **07**). Pas Trojan ownership (→ **08**).  
-Unit econ ici = **revenu Odyssey** / famille entrante (~50 → ~100 $), pas commission salon (22→43 = **07**).  
-Volume : StatCan estimations ~337 000 décès CA 2025–2026. Scale : QC → Canada (US / monde = vision plus loin, pas cette slide).
+Canon Google Slides. **Produit film seul** (pas Lyra / marketplace → **10**). Distinct de **07** : 07 = canal + unit / dossier ; 09 = potentiel annuel.  
+**50–100 $** = **même mesure** que 07 (revenu Odyssey / dossier entrant projeté ; pas brut vs net différent ; pas double comptage cercle). Commission salon 22→43 = **07**.  
+~335k décès CA / an (ordre de grandeur StatCan récent). Athos 9k × 50/100 = **450–900 k$** full activation = scénario, pas run-rate ni forecast engagé. Soft Cap / near-zero CAC interdits comme faits.
 
 **EN**
 - Tagline: The funeral home brings the family. The family brings the network.
-- Title: B2B2C: ~337,000 deaths a year in Canada. We reach them through the funeral home, not ads.
-- Framing: Statistics Canada: about 337,000 estimated deaths in Canada in 2025–2026. Our Athos beachhead (~9,000 deaths / year in Quebec) is only the start. Once Odyssey sits inside the funeral home, each case activates a family, then a circle, without buying grief on Meta. B2B unlocks B2C. That engine scales from the group to the country.
-- Bullets:
-  - Volume market: ~337,000 deaths / year in Canada (StatCan 2025–2026).
-  - Engine: Funeral home → family → circle. Structurally low family CAC.
-  - Odyssey / incoming family: ~$50 conservative baseline. ~$100 when the circle contributes too.
-  - Scale: Quebec → Canada. Same playbook. Video opens. The network grows.
+- Title: One Partner. Recurring Family Volume. Scalable Video Revenue.
+- Framing: Canada records approximately 335,000 deaths annually. Odyssey does not need to acquire every family through paid advertising. Through funeral-home partnerships, the tribute film creates a repeatable distribution channel: each activated case reaches a family, and each family can engage its wider circle. The economics below reflect the video product alone, using the same projected unit economics as Slide 07. Broader platform revenue is additional upside, not included here.
+- The B2B2C engine: Funeral home → Family → Community. One trusted partner relationship can activate a recurring flow of families, while each tribute creates opportunities for wider participation.
+- Illustrative partner economics: 100 activated families per month × $50–$100 in projected Odyssey revenue per case = $5,000–$10,000 per month, or $60,000–$120,000 annualized.
+- Beachhead potential: Athos Group: Approximately 9,000 annual deaths across three banners. At full activation, that represents approximately 750 cases per month and $450,000–$900,000 in projected annual Odyssey video revenue. Full-activation scenario, not current revenue or a committed forecast.
+- The next step: Video establishes the distribution channel. The broader Odyssey platform expands the opportunity.
+- Note Jon / talk track: Stick to the video case on this slide. Do not inflate with Lyra, marketplace, or future platform features. $$$ here = tribute film alone; broader vision = next slide. $50–$100 must match slide 07 Odyssey revenue definition (no gross/net mix, no double-count of circle).
 
 **FR** (adaptation)
 - Accroche: Le salon amène la famille. La famille amène le réseau.
-- Titre: B2B2C : ~337 000 décès par an au Canada. On les atteint par le salon, pas par la pub.
-- Cadre: Statistique Canada : environ 337 000 décès estimés au Canada en 2025–2026. Notre tête de pont Athos (~9 000 décès / an au Québec) n’est que le début. Une fois Odyssey dans le salon, chaque dossier active une famille, puis un cercle, sans acheter du deuil sur Meta. Le B2B ouvre le B2C. Ce moteur scale du groupe au pays.
-- Puces:
-  - Marché volume : ~337 000 décès / an au Canada (StatCan 2025–2026).
-  - Moteur : Salon → famille → cercle. CAC famille structurellement bas.
-  - Odyssey / famille entrante : ~50 $ en base conservatrice. ~100 $ quand le cercle contribue aussi.
-  - Scale : Québec → Canada. Même playbook. La vidéo ouvre. Le réseau grossit.
+- Titre: Un partenaire. Un volume familles récurrent. Un revenu vidéo scalable.
+- Cadre: Le Canada enregistre environ 335 000 décès par an. Odyssey n’a pas besoin d’acquérir chaque famille via la pub payante. Grâce aux partenariats salons, le film d’hommage crée un canal de distribution répétable : chaque dossier activé atteint une famille, et chaque famille peut engager son cercle. Les chiffres ci-dessous = produit vidéo seul, avec les mêmes unit econ projetées que la diapo 07. Les revenus plateforme plus larges sont un upside additionnel, non inclus ici.
+- Le moteur B2B2C : Salon → Famille → Communauté. Une relation partenaire de confiance peut activer un flux récurrent de familles, tandis que chaque hommage crée des occasions de participation élargie.
+- Économie partenaire illustrative : 100 familles activées par mois × 50–100 $ de revenu Odyssey projeté par dossier = 5 000–10 000 $ par mois, soit 60 000–120 000 $ annualisés.
+- Potentiel tête de pont : Groupe Athos : environ 9 000 décès annuels sur trois bannières. À pleine activation, cela représente environ 750 dossiers par mois et 450 000–900 000 $ de revenu vidéo Odyssey annuel projeté. Scénario de pleine activation, pas un revenu actuel ni une prévision engagée.
+- L’étape suivante : La vidéo établit le canal de distribution. La plateforme Odyssey élargit l’opportunité.
+- Note Jon / talk track : Rester sur le cas vidéo sur cette diapo. Ne pas gonfler avec Lyra, marketplace ou features plateforme futures. Les $$$ ici = film d’hommage seul ; vision plus large = slide suivante. 50–100 $ = même définition revenu Odyssey que la 07 (pas mélange brut/net, pas double comptage cercle).
 
-### 10 — PLATFORM ROADMAP (10) — film ouvre → Lyra conduit → place de marché
+### 10 — FROM FILM TO PLATFORM (10) — une fondation, trois phases
 
-Canon Google Slides. Accroche Amazon (doctrine books→film→route). Histoire : inversion de la porte (film = entrée temporaire ; Lyra = porte permanente + chef d’orchestre ; marketplace organique). Lyra **toujours** définie. FR sans anglicismes orphelins. Pas de méta NDA.
+Canon Google Slides. **Une idée :** film = entrée commerciale ; fondation tech/data (architecture cible) → Lyra → marketplace.  
+Amazon = **analogie stratégique**, pas comparaison d’entreprises. Interdit à l’écran : Soft Cap · *route the whole funeral economy* · claim fondation déjà fully live.  
+P2/P3 **nommées**, pas détaillées (rites / admin / features → **11**). Visuel timeline obligatoire.
 
 **EN**
-- Tagline: Amazon started with books. We start with the film. Then we route the whole funeral economy.
-- Title: Today the film opens. Tomorrow Lyra leads. The marketplace follows.
-- Framing: Phase 1: we enter through the film. The funeral home says yes. The channel lights up. Phase 2: Lyra, our funeral-specialized AI, becomes the real front door. Conductor of the journey: legal, legacy, rites, admin, through to the words to write. The film is no longer the door. It is a step she triggers at the right time. Phase 3: if Lyra runs the whole path, bringing the marketplace (every budget, zero inventory) becomes natural. Odyssey routes. Funeral home and family never leave the thread.
-- Bullets:
-  - Wedge (Phase 1): The film opens funeral homes. Distribution. Revenue per case.
-  - Lyra (Phase 2): The new front door. Funeral-specialized AI. She leads every step. The film comes after, inside the flow.
-  - Marketplace (Phase 3): Plugged into Lyra’s journey. Full supply, every budget. Take-rate on the flow.
-  - Sequence: Capture the channel with the film. Keep it with Lyra. Monetize it with the marketplace.
+- Tagline: Amazon started with books. Odyssey starts with the film.
+- Title: One Foundation. Three Phases. A Connected Funeral Ecosystem.
+- Framing: The film opens the door through trusted funeral-home partnerships. A shared technology and data foundation, built over time as the target architecture, creates the potential to expand from tribute films into specialized AI and, ultimately, a connected marketplace. As the partner network grows, so does Odyssey’s reach and its ability to serve families throughout the journey.
+- Visual timeline: PHASE 1 — FILM → PHASE 2 — LYRA → PHASE 3 — MARKETPLACE
+- Phase 1 — Film | Commercial entry point: Establishes distribution through funeral-home partners. Generates revenue per case. Begins building the structured foundation for future services.
+- Phase 2 — Lyra | AI coordination layer: Funeral-specialized AI designed to coordinate the family journey. Connects services and steps at the right moment. Builds on the foundation established in Phase 1. (Named here; detail on next slide.)
+- Phase 3 — Marketplace | Connected services: Connects families with services across different needs and budgets. Expands choice without requiring Odyssey to hold inventory. Creates future transaction-based revenue opportunities.
+- Long-term value example: AI-supported recommendations can help operators streamline costs and improve margins while presenting families with options aligned with their needs and budgets.
+- Closing: The film is the entry point. The platform is the long-term opportunity.
+- Note Jon: One Foundation = target architecture / under construction, not a fully operational asset claim. Stick: name P2/P3, don’t deep-dive (→ 11). No “route the whole funeral economy” on-slide.
 
 **FR** (adaptation)
-- Accroche: Amazon a commencé par les livres. Nous, par le film. Ensuite on relie toute l’économie funéraire.
-- Titre: Aujourd’hui le film ouvre. Demain Lyra conduit. La place de marché suit.
-- Cadre: Phase 1 : on entre par le film. Le salon dit oui. Le canal s’allume. Phase 2 : Lyra, notre IA spécialisée funéraire, devient la vraie porte d’entrée. Chef d’orchestre du parcours : légal, héritage, rites, démarches, jusqu’au mot à écrire. Le film n’est plus la porte : c’est une étape qu’elle déclenche au bon moment. Phase 3 : si Lyra gère tout le chemin, amener la place de marché (tous les budgets, sans stock) devient naturel. Odyssey met en relation l’offre et la demande. Le salon et la famille ne quittent plus le fil.
-- Puces:
-  - Tête de pont (Phase 1) : Le film ouvre les salons. Distribution. Revenus sur chaque dossier.
-  - Lyra (Phase 2) : La nouvelle porte. IA spécialisée funéraire. Elle conduit chaque étape. Le film vient après, dans le flux.
-  - Place de marché (Phase 3) : Branchée sur le parcours Lyra. Offre complète, tous les budgets. Commission sur le flux.
-  - Séquence : On capture le canal avec le film. On le garde avec Lyra. On l’exploite avec la place de marché.
+- Accroche: Amazon a commencé par les livres. Odyssey commence par le film.
+- Titre: Une fondation. Trois phases. Un écosystème funéraire connecté.
+- Cadre: Le film ouvre la porte via des partenariats salons de confiance. Une fondation technologique et de données partagée, construite dans le temps comme architecture cible, crée le potentiel d’élargir des films d’hommage vers une IA spécialisée, puis une place de marché connectée. À mesure que le réseau partenaires grandit, la portée d’Odyssey et sa capacité à servir les familles sur tout le parcours grandissent aussi.
+- Timeline visuelle : PHASE 1 — FILM → PHASE 2 — LYRA → PHASE 3 — PLACE DE MARCHÉ
+- Phase 1 — Film | Point d’entrée commercial : Établit la distribution via les partenaires salons. Génère un revenu par dossier. Commence à bâtir la fondation structurée pour les services futurs.
+- Phase 2 — Lyra | Couche de coordination IA : IA spécialisée funéraire conçue pour coordonner le parcours famille. Relie services et étapes au bon moment. S’appuie sur la fondation de la Phase 1. (Nommée ici ; détail à la slide suivante.)
+- Phase 3 — Place de marché | Services connectés : Relie les familles à des services selon besoins et budgets. Élargit le choix sans stock Odyssey. Crée des opportunités futures de revenus transactionnels.
+- Exemple de valeur long terme : Des recommandations assistées par IA peuvent aider les opérateurs à fluidifier les coûts et améliorer les marges, tout en proposant aux familles des options alignées sur leurs besoins et budgets.
+- Closing : Le film est le point d’entrée. La plateforme est l’opportunité long terme.
+- Note Jon : One Foundation = architecture cible / en construction, pas un actif déjà fully live. Nommer P2/P3 sans deep-dive (→ 11). Pas de « route the whole funeral economy » à l’écran.
 
 ### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
