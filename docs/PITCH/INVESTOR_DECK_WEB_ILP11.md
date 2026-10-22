@@ -4,7 +4,7 @@
 **Dernière MAJ :** 22 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 22 oct 2026 : Slide **13** projections 3 ans (scénario central Athos, croissance en pointillé, revenu annualisé ≠ ARR, B2C = jalon An 2 non chiffré) · **07** Athos ≈ 11 % des décès QC (pas 23 %) · **09** 327 k décès CA (StatCan 2024) · **03** ambition géo à intégrer.
+- 22 oct 2026 : Slide **13** projections 3 ans (scénario central Athos, croissance en pointillé, revenu annualisé ≠ ARR, B2C = jalon An 2 non chiffré) · **07** Athos ≈ 11 % des décès QC (pas 23 %) · **09** 327 k décès CA (StatCan 2024) · **03** bandeau *Built Locally. Designed to Scale Globally.*
 - 22 oct 2026 : Slide **12** Phase 3 place de marché · une slide · chaque budget · salon d’origine si pertinent · hors projections et financement.
 - 22 oct 2026 : Slide **11** scindée : **11A** Lyra produit (4 capacités) · **11B** modèle d’affaires par moment (copilote inclus · Concierge 99 $ · Sanctuaire 49 $/an, cibles).
 - 21 oct 2026 : Slide **10** From Film to Platform · One Foundation / 3 phases · Amazon analogie · fondation = cible.
@@ -106,7 +106,7 @@ Salons = **canal**. Marketplace = Endgame. P2–P3 = roadmap, pas « déjà live
 ### 3 — OPPORTUNITY + MARKET (03) — Why Now chiffré (3 ancres, pas TAM flou)
 
 Canon Google Slides. Séparer industrie funéraire (Phase 1/3) et transfert de patrimoine (macro / Phase 2). Sources publiques. Cerulli = US. Global 120→180 B$ = oral seulement.  
-**À intégrer (décidé 22 oct, en attente des commentaires Jon) :** l’ambition géographique vit ici, pas sur la **13**. Accroche candidate : *Built Locally. Designed to Scale Globally.* (FR : *Conçu au Québec. Pensé pour le monde.*). Trajectoire par étapes, sans chiffres : Québec (valider le modèle) → Canada (étendre le réseau) → États-Unis (prochain grand marché) → International (adaptations culturelles, linguistiques, réglementaires). Jamais de projection financière mondiale.
+**Ambition géographique (validée CEO 22 oct) :** vit ici, pas sur la **13** (qui garde une ligne courte). Bandeau en bas, sous les 4 puces (pas de 5ᵉ puce). Aucun chiffre, jamais de projection financière mondiale.
 
 **EN**
 - Tagline: Why now.
@@ -117,6 +117,8 @@ Canon Google Slides. Séparer industrie funéraire (Phase 1/3) et transfert de p
   - Industry valuation: A ~$20B North American funeral market today, projected to reach ~$30B over the next 10 years (NFDA & IBISWorld).
   - Wealth in motion: $84T in U.S. family wealth (Cerulli) and $1T+ in Canada (CPA Canada) will change hands over the next 20 years, while the estate process around it still runs on paper.
   - Decision-makers & window: Digital natives now choose the funeral home and manage the estate. They reject fax, USB sticks, and paper. The winning platform gets built before the peak, not during it.
+- Bottom strip: **Built Locally. Designed to Scale Globally.** Québec → Canada → United States → International
+- Note Jon (plain text): Bottom strip under the four bullets: "Built Locally. Designed to Scale Globally." with the path Quebec -> Canada -> United States -> International. No figures, no global projections. This is where the geographic ambition lives; slide 13 only keeps one short line ("Initial deployment in Quebec and Canada. The U.S. is the next major market."). Talk track: Quebec validates the model, Canada extends the network, the U.S. is the next major market, international comes with cultural, language and regulatory adaptation.
 
 **FR** (adaptation)
 - Accroche: Pourquoi maintenant.
@@ -127,6 +129,7 @@ Canon Google Slides. Séparer industrie funéraire (Phase 1/3) et transfert de p
   - Taille de l’industrie : Un marché funéraire nord-américain d’environ 20 milliards $ aujourd’hui, projeté à près de 30 milliards $ d’ici 10 ans (NFDA et IBISWorld).
   - Patrimoine en mouvement : 84 000 milliards $ aux États-Unis (Cerulli) et plus de 1 000 milliards $ au Canada (CPA Canada) changeront de mains d’ici 20 ans, alors que les démarches entourant le décès se font encore sur papier.
   - Décideurs et fenêtre : Les natifs du numérique choisissent désormais le salon et règlent la succession. Ils refusent le fax, les clés USB et le papier. La plateforme gagnante se bâtit avant le pic, pas pendant.
+- Bandeau du bas : **Conçu au Québec. Pensé pour le monde.** Québec → Canada → États-Unis → International
 
 ### 4 — ODYSSEY SOLUTION (04) — VP plateforme (pas How / pas éco)
 
