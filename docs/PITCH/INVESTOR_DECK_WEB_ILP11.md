@@ -4,11 +4,11 @@
 **Dernière MAJ :** 26 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 26 oct 2026 : Slide **18** Endgame (place de marché = destination · cette levée prépare la preuve · prochain capital probablement des millions · 3 catégories d'acquéreurs = hypothèses · pas d'Exit ni de valorisation à l'écran).
 - 26 oct 2026 : Slide **17** Use of Funds (5 postes · $600K CAD / 18 mois · équipe 50 % · Lyra 17,5 % · réserve 15 % · place de marché exclue). Allocation de travail à valider avec le plan de trésorerie. Complète la **16**.
 - 26 oct 2026 : Slide **16** Ask ($600K CAD · 18 mois · distribution d'abord, Lyra ensuite · critères 90 jours · place de marché hors levée). Supersède l'ancienne « 10 - Ask & Use of Funds » pour le montant et le pourquoi.
 - 22 oct 2026 : Slide **15** équipe (Erik fondateur et CEO · ≈ 7 000 films · produit construit seul par le fondateur · rôle de Jon à valider par Jon · priorités du financement, pas d'embauches figées). Supersède l'ancienne « 9 - Team ».
 - 22 oct 2026 : Slide **14** traction et prochains jalons (Aujourd’hui honnête : export en validation finale · KPI pilote avec dénominateurs · 5 groupes ou bannières actifs · Phase 3 = conditions). Supersède l’ancienne « 8 - Traction ».
-- 22 oct 2026 : Slide **13** projections 3 ans (scénario central Athos, croissance en pointillé, revenu annualisé ≠ ARR, B2C = jalon An 2 non chiffré) · **07** Athos ≈ 11 % des décès QC (pas 23 %) · **09** 327 k décès CA (StatCan 2024) · **03** bandeau *Built Locally. Designed to Scale Globally.*
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
 
@@ -776,6 +776,49 @@ Supersède l'ancienne « 10 - Ask & Use of Funds » pour le détail budgétaire.
 - Before locking the slide, we need to validate the fully loaded founder compensation, partner operations costs and the 18-month cash plan. We should not assume future Athos revenue will cover a shortfall until activation and revenue are demonstrated.
 - The $90K contingency remains a reserve, not a substitute for the operating forecast. Marketplace development remains outside this raise.
 - Please confirm the allocation against the actual month-by-month budget before we finalize the investor deck.
+
+### 18 — ENDGAME (18) — aboutissement et issues stratégiques
+
+Canon Google Slides. Brief Jon : *Endgame or Exit scenarios · Possible outcomes.*  
+**Doctrine :** à l'écran **ENDGAME** / **ABOUTISSEMENT** et **Strategic outcomes** / **Issues stratégiques**. Pas le mot **Exit**. Pas de valorisation ni de prix de vente. Pas de logos ni de noms d'acquéreurs. Les 3 catégories = **hypothèses stratégiques**, pas un intérêt confirmé.  
+**Lien 16–17–18 :** 600 k$ CAD prouvent la distribution et lancent Lyra · la place de marché reste hors de cette levée · capital suivant **probablement** des millions, montant exact après un périmètre validé de la place de marché.  
+Interdits à l'écran : Exit, billions comme prix de sortie, Soft Cap, noms de prospects / acheteurs, « Amazon » (oral seulement).
+
+**EN**
+- Eyebrow: ENDGAME
+- Title: The Marketplace Is the Destination. This Raise Earns the Right to Build It.
+- Tagline: We prove distribution first. Then we scale with evidence.
+- The path:
+  1. This raise ($600K CAD): Prove distribution, launch Lyra, and unlock the path to 5 live partners.
+  2. Next capital (likely millions): Build the trusted marketplace at national scale: verified providers, matching, payments, compliance, and support. Exact size follows a validated marketplace scope.
+  3. Strategic outcomes: Once the channel and a defensible data advantage are proven, Odyssey becomes a strategic platform asset, not just a tribute tool.
+- Who may want this platform (strategic hypotheses, not confirmed interest):
+  - Funeral consolidators and major groups: Extend their digital relationship with families across their entire network.
+  - Insurers, banks, and wealth platforms: Meet families with dignity at the exact moment estate and care decisions begin.
+  - Vertical software and AI platforms: Acquire funeral-native data, rites intelligence, and embedded partner distribution.
+- Closing: We are building toward the marketplace. We finance each stage only when the last one has earned it.
+
+**FR** (adaptation)
+- Sur-titre : ABOUTISSEMENT
+- Titre : La place de marché est notre ambition. Cette levée prépare sa construction.
+- Accroche : Nous validons d'abord la distribution. Ensuite, nous passons à l'échelle sur la base de résultats concrets.
+- Le chemin :
+  1. Cette levée (600 k$ CAD) : Valider la distribution, lancer Lyra et ouvrir la trajectoire vers 5 partenaires actifs.
+  2. Capital suivant (probablement des millions) : Bâtir la place de marché de confiance à l'échelle nationale : fournisseurs vérifiés, mise en relation, paiements, conformité et soutien. Le montant exact suivra un périmètre validé de la place de marché.
+  3. Issues stratégiques : Une fois le canal et l'avantage concurrentiel fondé sur les données prouvés, Odyssey devient une plateforme stratégique, bien au-delà d'un outil vidéo.
+- Qui peut vouloir cette plateforme (hypothèses stratégiques, pas un intérêt confirmé) :
+  - Consolidateurs et grands groupes funéraires : Développer la relation numérique avec les familles à l'échelle de leur réseau.
+  - Assureurs, banques et gestionnaires de patrimoine : Accompagner les familles au moment précis où commencent les décisions de succession et de prévoyance.
+  - Éditeurs logiciels et plateformes d'IA verticales : Acquérir des données funéraires natives, l'intelligence des rites et la distribution en salon.
+- Conclusion : On construit vers la place de marché. On ne finance chaque étape que lorsque la précédente l'a méritée.
+
+**Note Jon (EN, off-slide, plain text for slide comments)**
+- Slide 18 is endgame and strategic outcomes, not an exit-valuation slide. Do not put "Exit" or billion-dollar sale prices on screen. Market size in billions already lives on slide 03. Exit price is unknown at this stage.
+- Oral line to keep: we are not raising $600K CAD to build Amazon. We are raising $600K CAD to prove we deserve the millions, or the strategic acquirer, that will make it possible to build it. (FR oral: On ne lève pas 600 k$ pour construire Amazon. On lève 600 k$ pour prouver qu'on mérite les millions, ou l'acheteur stratégique, qui permettront de le construire.)
+- Path staging: this raise proves distribution and launches Lyra. Next capital is likely millions to build the marketplace at national scale, but the exact ask follows a validated marketplace scope. Do not present millions as a locked ticket today.
+- Acquirer categories on screen are strategic hypotheses for possible outcomes, not confirmed buyer interest. No logos and no company names. Three logics: funeral consolidators extending the digital family relationship across their network, insurers/banks/wealth at estate moment zero, vertical software/AI buying funeral-native data and partner distribution. Big Tech is a late oral option only.
+- Strategic outcomes means optionality after proof: raise a growth round to build the marketplace ourselves, or accept a strategic acquisition because we hold channel and a defensible data advantage. That optionality is stronger than a forced "we will sell" narrative.
+- Discipline line matches slides 16 and 17: we finance each stage only when the last one has earned it. Marketplace spend stays outside this raise.
 
 ### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
