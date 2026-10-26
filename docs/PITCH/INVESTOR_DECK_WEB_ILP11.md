@@ -4,11 +4,11 @@
 **Dernière MAJ :** 26 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 26 oct 2026 : Slide **08B** Competition (4 catégories · What Sets Odyssey Apart · Studio B2B2C + commissions intégrées · fondation privacy pour Lyra · pas de Soft Cap / Loi 25 / exclusivité · place après la **08**).
 - 26 oct 2026 : Slide **18** Endgame (place de marché = destination · cette levée prépare la preuve · prochain capital probablement des millions · 3 catégories d'acquéreurs = hypothèses · pas d'Exit ni de valorisation à l'écran).
 - 26 oct 2026 : Slide **17** Use of Funds (5 postes · $600K CAD / 18 mois · équipe 50 % · Lyra 17,5 % · réserve 15 % · place de marché exclue). Allocation de travail à valider avec le plan de trésorerie. Complète la **16**.
 - 26 oct 2026 : Slide **16** Ask ($600K CAD · 18 mois · distribution d'abord, Lyra ensuite · critères 90 jours · place de marché hors levée). Supersède l'ancienne « 10 - Ask & Use of Funds » pour le montant et le pourquoi.
 - 22 oct 2026 : Slide **15** équipe (Erik fondateur et CEO · ≈ 7 000 films · produit construit seul par le fondateur · rôle de Jon à valider par Jon · priorités du financement, pas d'embauches figées). Supersède l'ancienne « 9 - Team ».
-- 22 oct 2026 : Slide **14** traction et prochains jalons (Aujourd’hui honnête : export en validation finale · KPI pilote avec dénominateurs · 5 groupes ou bannières actifs · Phase 3 = conditions). Supersède l’ancienne « 8 - Traction ».
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
 
@@ -261,6 +261,52 @@ Athos / unit econ → **07**. Scale CA → **09**. Synthèse stratégique des ph
   - L’expansion : Ajouter des services autour de la relation existante, avec consentement approprié et alignement partenaire.
   - La vision long terme : D’une expérience d’hommage unique à une plateforme connectée au service des familles, des salons et de leurs communautés élargies.
 - Talk track (hors slide) : On entre par un service que les salons comprennent déjà et que les familles valorisent vraiment. Une fois Odyssey dans cette expérience, on peut étendre progressivement la plateforme à d’autres services. La vidéo est le point de départ ; l’écosystème plus large est l’opportunité. (Logique Trojan sans capture / own / can’t leave.)
+
+### 8B — COMPETITION (08B) — catégories de solutions et différenciation
+
+Canon Google Slides. **Placement :** immédiatement après la **08**. La **08** = comment on entre chez les salons · la **08B** = pourquoi Odyssey est plus qu’un outil vidéo · ensuite **09+** / Lyra / marketplace.  
+**Une idée :** 4 catégories (1 ligne chacune) + 3 piliers « What Sets Odyssey Apart ». Si la mise en page est dense, raccourcir les catégories, jamais les 3 piliers.  
+**Faits à valider avant envoi investisseur :** ~7 000 films · Athos = vidéo classique (pas plateforme live) · Studio 7 étapes + contributions + commissions intégrées réellement dans le produit · formulation privacy (pas « conforme Loi 25 »).  
+Ne pas répéter RevShare / « la vidéo ouvre la porte » (c’est la **08**). Ledger / Soft Cap / Stingray / Supabase / Data Firewall → diligence technique, pas cette slide.  
+Interdits à l’écran : Soft Cap, « seuls dans ce quadrant », effet réseau comme acquis, logos concurrents non vérifiés, mot *moat*, « Cumulative Advantage », conformité Loi 25 comme fait.
+
+**EN**
+- Eyebrow: COMPETITION
+- Title: Not Another Video App. A Partner-Distributed Platform.
+- Tagline: Others create videos, host memorials or manage funeral operations. Odyssey connects the tribute experience, the family circle and the funeral-home channel.
+- Four categories of solutions:
+  - Consumer video tools: Built primarily for individual video creation.
+  - Memorial and obituary platforms: Focused on publishing notices, preserving memories and sharing tributes.
+  - Funeral management software: Designed to support funeral-home administration and operations.
+  - Traditional tribute production: Delivers personalized films, often through a service-led production process.
+- What Sets Odyssey Apart:
+  - Industry-built experience: Approximately 7,000 tribute films produced, with Athos as an existing client for traditional tribute videos.
+  - Purpose-built B2B2C platform: A seven-step collaborative Studio combining media creation, family contributions, partner workflows and integrated commission management.
+  - Privacy-conscious foundation for Lyra: A platform designed to distinguish private family content from separately authorized uses, creating a foundation for Lyra to connect family needs and next steps over time.
+- Footnote: Illustrative categories reflecting typical solution focus; not an exhaustive competitor assessment.
+
+**FR** (adaptation)
+- Sur-titre : CONCURRENCE
+- Titre : Pas une application vidéo de plus. Une plateforme distribuée par les salons.
+- Accroche : D'autres créent des vidéos, hébergent des mémoriaux ou gèrent les opérations funéraires. Odyssey relie l'expérience hommage, le cercle familial et le canal des salons funéraires.
+- Quatre catégories de solutions :
+  - Outils vidéo grand public : Principalement conçus pour la création vidéo individuelle.
+  - Plateformes de mémoriaux et d'avis de décès : Axées sur la publication d'avis, la préservation des souvenirs et le partage d'hommages.
+  - Logiciels de gestion funéraire : Conçus pour soutenir l'administration et les opérations des salons.
+  - Production traditionnelle de films hommage : Offre des films personnalisés, souvent dans le cadre d'un processus de production sur mesure.
+- Ce qui distingue Odyssey :
+  - Une expérience bâtie sur le terrain : Environ 7 000 films hommage produits, et Athos comme client pour les films hommage traditionnels.
+  - Une plateforme B2B2C conçue pour le secteur : Un Studio collaboratif en sept étapes qui réunit création audiovisuelle, contributions familiales, processus partenaires et gestion intégrée des commissions.
+  - Une fondation axée sur la confidentialité pour Lyra : Une plateforme conçue pour distinguer les contenus privés des familles des usages autorisés séparément, afin de préparer Lyra à relier les besoins des familles aux prochaines étapes.
+- Note de bas de page : Catégories illustratives reflétant le cœur de métier des solutions ; cette comparaison n'est pas exhaustive.
+
+**Note Jon (EN, off-slide, plain text for slide comments)**
+- This slide is category comparison, not Trojan. Slide 08 answers how we enter funeral homes. This slide answers why we are more than a video tool. Do not repeat RevShare or "video opens the door" here.
+- Keep "What Sets Odyssey Apart" (not Competitive Advantage or Cumulative Advantage). Keep "integrated commission management" only while the partner commission dashboard is live; otherwise say "partner commission workflows."
+- Substance without overclaim: B2B2C stack (Studio, contributions, partner workflows, integrated commissions) and privacy-conscious separation of private content vs separately authorized uses. Do not put Soft Cap, 30% net, ledger names, Supabase, Stingray or "Law 25 compliant" on this slide. Those belong in tech diligence.
+- Do not say competitors "lack" features or "cannot copy us in a weekend." Describe what each category is primarily built for. Athos = traditional video client today, not platform live. "~7,000" stays "about / environ." Lyra = foundation path, not shipped intelligence.
+- Layout: if dense, shorten the four category lines first. Never cut the three pillars. Footnote stays short.
+- Oral: hard to copy is the combination assembled in one partner-distributed product, not a single feature.
 
 ### 9 — GO-TO-MARKET B2B2C (09) — preuve $ annuelle du film (B2B → B2C)
 
@@ -843,7 +889,7 @@ Interdits à l'écran : Exit, billions comme prix de sortie, Soft Cap, noms de p
 
 ---
 
-### 5bis — Competitive / Trojan (ancien deck 11 · **supersédé par Google 08** ci-dessus ; garder pour remap `/deck`)
+### 5bis — Competitive / Trojan (ancien deck 11 · **supersédé par Google 08** + **08B Competition** ; garder pour remap `/deck`)
 
 **EN**
 - Tagline: Distribution is the product.
