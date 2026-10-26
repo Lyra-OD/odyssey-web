@@ -1,14 +1,14 @@
 # Odyssey — Investor deck web (ILP 11)
 
 **Type :** business / pitch · **Vérité pour :** copy + doctrine du deck capital (investisseurs, banques, mentors).  
-**Dernière MAJ :** 22 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
+**Dernière MAJ :** 26 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 26 oct 2026 : Slide **16** Ask ($600K CAD · 18 mois · distribution d'abord, Lyra ensuite · critères 90 jours · place de marché hors levée). Supersède l'ancienne « 10 - Ask & Use of Funds » pour le montant et le pourquoi. La **17** portera le détail budgétaire.
 - 22 oct 2026 : Slide **15** équipe (Erik fondateur et CEO · ≈ 7 000 films · produit construit seul par le fondateur · rôle de Jon à valider par Jon · priorités du financement, pas d'embauches figées). Supersède l'ancienne « 9 - Team ».
 - 22 oct 2026 : Slide **14** traction et prochains jalons (Aujourd’hui honnête : export en validation finale · KPI pilote avec dénominateurs · 5 groupes ou bannières actifs · Phase 3 = conditions). Supersède l’ancienne « 8 - Traction ».
 - 22 oct 2026 : Slide **13** projections 3 ans (scénario central Athos, croissance en pointillé, revenu annualisé ≠ ARR, B2C = jalon An 2 non chiffré) · **07** Athos ≈ 11 % des décès QC (pas 23 %) · **09** 327 k décès CA (StatCan 2024) · **03** bandeau *Built Locally. Designed to Scale Globally.*
 - 22 oct 2026 : Slide **12** Phase 3 place de marché · une slide · chaque budget · salon d’origine si pertinent · hors projections et financement.
-- 22 oct 2026 : Slide **11** scindée : **11A** Lyra produit (4 capacités) · **11B** modèle d’affaires par moment (copilote inclus · Concierge 99 $ · Sanctuaire 49 $/an, cibles).
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
 
@@ -695,6 +695,48 @@ Interdits à l’écran : « the only team » littéral, Collège LaSalle (quest
 - Key-person risk: since one person built the product, be ready to explain how the raise reduces that dependency: knowledge transfer, technical documentation, clearly split responsibilities and more execution capacity. "What the raise unlocks" lists priorities, not hires already decided.
 - Photos: one professional headshot each, same style and framing.
 
+### 16 — THE ASK (16) — combien et pourquoi
+
+Canon Google Slides. Brief Jon : *How much are we raising and why. Do this calculation for 12 months + 6 months buffer. Calculate it based on how much you want to grow.*  
+**Montant de travail :** **$600K CAD** pour 18 mois (~$33,300 CAD / mois tout compris). Justifié par les résultats à 18 mois, pas par « raisonnable pour le Québec ».  
+**Règle de découpe :** la **16** = montant + pourquoi · la **17** = détail budgétaire (doit prouver que $600K CAD tient : salaires fondateurs + charges, embauche terrain, coûts techniques, réserve).  
+Supersède l'ancienne « 10 - Ask & Use of Funds » ci-dessous pour le montant et le pourquoi (ancien texte : pas de montant à l'écran, corridor ADN : ne plus utiliser pour Google 16).  
+Interdits à l'écran : Soft Cap, place de marché dans cette levée, fourchette de montant, justification « raisonnable pour le Québec », noms de prospects.
+
+**EN**
+- Eyebrow: THE ASK
+- Title: Raising $600K CAD to Prove Distribution and Launch Lyra.
+- Tagline: 18 months of runway: 12 months of execution, plus 6 months of buffer.
+- What this capital buys:
+  1. Urgel Bourgie pilot converted, followed by Athos banners live on the platform.
+  2. A clear path to 5 funeral groups or banners live, starting with Athos.
+  3. Lyra's first release deployed with partner funeral homes.
+- How we spend with discipline:
+  - If a pilot fails its predefined 90-day conversion criteria, we stop and reassess before scaling.
+  - The Marketplace remains strictly outside this raise.
+- Closing: Growth we can measure. Capital we deploy with discipline.
+
+**FR** (adaptation)
+- Sur-titre : LA LEVÉE
+- Titre : Levée de 600 k$ CAD pour valider la distribution et lancer Lyra.
+- Accroche : 18 mois de piste : 12 mois d'exécution, plus 6 mois de marge de sécurité.
+- Ce que ce capital finance :
+  1. Conversion du pilote Urgel Bourgie, puis activation des bannières Athos sur la plateforme.
+  2. Une trajectoire vers 5 groupes ou bannières actifs, en commençant par Athos.
+  3. Lancement de la première version de Lyra auprès des salons partenaires.
+- Une utilisation disciplinée du capital :
+  - Si un pilote n'atteint pas ses critères de conversion prédéfinis après 90 jours, nous arrêtons et réévaluons avant de passer à l'échelle.
+  - La place de marché reste strictement exclue de cette levée.
+- Conclusion : Une croissance mesurable. Un capital déployé avec discipline.
+
+**Note Jon (EN, off-slide, plain text for slide comments)**
+- Slide 16 is the ask amount and why. Working amount: $600K CAD for 18 months (12 + 6 buffer), about $33,300 CAD per month all-in. Chosen so both founders can stay operational, one field activation hire can start, and Lyra can launch with a strict first-release scope, without putting the company under cash pressure from month one. Slide 17 must prove the math: founder pay plus employer costs, field hire, technical costs, and a reserve for partner conversion delays.
+- Context only, off-slide: CVCA data shows Canadian pre-seed companies raised about $830K CAD on average in H1 2025. That is market context, not our justification. On screen and in the room, justify $600K by the 18-month outcomes, not by "reasonable for Quebec."
+- "Live" means using the platform on real cases, not only signed or onboarded. Same definition as slide 14.
+- Path to 5: the 3 Athos banners plus 2 additional groups, including at least 1 outside Québec. Same target outcome as slide 14.
+- 90-day conversion criteria are predefined before launch, same as the Urgel pilot protocol on slide 14: invitation rate, open rate, guest contribution rate, zero major funeral-day incidents. "Convert" does not mean "signed contract only." If those criteria fail, we stop and reassess before scaling.
+- What this capital buys: distribution first, then Lyra first release. Marketplace stays strictly outside this raise. Currency on slide: $600K CAD.
+
 ### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
 **EN**
@@ -845,6 +887,8 @@ Interdits à l’écran : « the only team » littéral, Collège LaSalle (quest
 ---
 
 ### 10 - Ask & Use of Funds
+
+> **Supersédé par la slide 16** (montant + pourquoi) et la **17** à venir (détail budgétaire). Garder pour remap `/deck` seulement.
 
 **EN**
 - Tagline: Fund growth. Seed Phase 2.
