@@ -4,11 +4,11 @@
 **Dernière MAJ :** 26 oct 2026 · **Carte :** [`../README.md`](../README.md) · dossier [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 26 oct 2026 : Slide **16** Ask ($600K CAD · 18 mois · distribution d'abord, Lyra ensuite · critères 90 jours · place de marché hors levée). Supersède l'ancienne « 10 - Ask & Use of Funds » pour le montant et le pourquoi. La **17** portera le détail budgétaire.
+- 26 oct 2026 : Slide **17** Use of Funds (5 postes · $600K CAD / 18 mois · équipe 50 % · Lyra 17,5 % · réserve 15 % · place de marché exclue). Allocation de travail à valider avec le plan de trésorerie. Complète la **16**.
+- 26 oct 2026 : Slide **16** Ask ($600K CAD · 18 mois · distribution d'abord, Lyra ensuite · critères 90 jours · place de marché hors levée). Supersède l'ancienne « 10 - Ask & Use of Funds » pour le montant et le pourquoi.
 - 22 oct 2026 : Slide **15** équipe (Erik fondateur et CEO · ≈ 7 000 films · produit construit seul par le fondateur · rôle de Jon à valider par Jon · priorités du financement, pas d'embauches figées). Supersède l'ancienne « 9 - Team ».
 - 22 oct 2026 : Slide **14** traction et prochains jalons (Aujourd’hui honnête : export en validation finale · KPI pilote avec dénominateurs · 5 groupes ou bannières actifs · Phase 3 = conditions). Supersède l’ancienne « 8 - Traction ».
 - 22 oct 2026 : Slide **13** projections 3 ans (scénario central Athos, croissance en pointillé, revenu annualisé ≠ ARR, B2C = jalon An 2 non chiffré) · **07** Athos ≈ 11 % des décès QC (pas 23 %) · **09** 327 k décès CA (StatCan 2024) · **03** bandeau *Built Locally. Designed to Scale Globally.*
-- 22 oct 2026 : Slide **12** Phase 3 place de marché · une slide · chaque budget · salon d’origine si pertinent · hors projections et financement.
 **Audience :** futurs investisseurs, banques, family offices, mentors ILP.  
 **Pas :** VP salon / Athos (→ [`../business/NARRATIVE_VP_ATHOS_SEP2026.md`](../business/NARRATIVE_VP_ATHOS_SEP2026.md)).
 
@@ -737,6 +737,46 @@ Interdits à l'écran : Soft Cap, place de marché dans cette levée, fourchette
 - 90-day conversion criteria are predefined before launch, same as the Urgel pilot protocol on slide 14: invitation rate, open rate, guest contribution rate, zero major funeral-day incidents. "Convert" does not mean "signed contract only." If those criteria fail, we stop and reassess before scaling.
 - What this capital buys: distribution first, then Lyra first release. Marketplace stays strictly outside this raise. Currency on slide: $600K CAD.
 
+### 17 — USE OF FUNDS (17) — où va l'argent sur 18 mois
+
+Canon Google Slides. Brief Jon : *Show costs in terms of infrastructure, payroll, marketing etc. Identify how much you want to grow your team in that first year, why and how it will accelerate the roadmap. This may include work to optimize costs.*  
+**Prouve la 16 :** $600K CAD · 18 mois · 5 postes qui totalisent 100 %. Allocation de **travail** jusqu'à validation du plan de trésorerie mois par mois.  
+**Distinction clé :** $300K = direction fondatrice, ingénierie du produit actuel, ops partenaires allégées · $105K = livrables Lyra définis, spécialistes externes IA/données, QA, fiabilisation. Ne pas double-compter le tech.  
+**Interdits à l'écran :** Soft Cap, dépenses Marketplace, % de marge, revenus Athos présentés comme financement acquis, « conformité Loi 25 » comme fait (dire privacy / protection des renseignements).  
+Supersède l'ancienne « 10 - Ask & Use of Funds » pour le détail budgétaire.
+
+**EN**
+- Eyebrow: USE OF FUNDS
+- Title: Built to Execute. Funded to Validate.
+- Tagline: $600,000 CAD · 18-month operating plan
+- Allocation:
+  - Core Team & Execution ($300K · 50%): Founder leadership, core engineering and lean partner operations
+  - Product & Lyra Development ($105K · 17.5%): Lyra's first release, specialized AI/data contractors, QA and product hardening
+  - Partner Activation & Pilot ($60K · 10%): Urgel Bourgie pilot, Athos rollout and activation toward 5 live funeral groups or banners
+  - Infrastructure, Security & Legal ($45K · 7.5%): Cloud and AI costs, privacy safeguards, security and essential legal support
+  - Contingency Reserve ($90K · 15%): Protection against rollout delays and unexpected operating costs
+- Total raise: $600K CAD
+- Closing: Capital is deployed against measurable milestones. Marketplace development is excluded from this raise.
+
+**FR** (adaptation)
+- Sur-titre : UTILISATION DES FONDS
+- Titre : Les moyens d'exécuter. Le capital pour valider.
+- Accroche : 600 000 $ CAD · Plan opérationnel de 18 mois
+- Répartition :
+  - Équipe clé et exécution (300 k$ · 50 %) : Direction fondatrice, ingénierie du produit actuel et opérations partenaires allégées
+  - Produit et développement de Lyra (105 k$ · 17,5 %) : Première version de Lyra, spécialistes externes en IA et données, assurance qualité et fiabilisation
+  - Activation des partenaires et pilote (60 k$ · 10 %) : Pilote Urgel Bourgie, déploiement chez Athos et progression vers 5 groupes ou bannières actifs
+  - Infrastructure, sécurité et juridique (45 k$ · 7,5 %) : Infonuagique, coûts d'IA, protection des renseignements personnels, sécurité et soutien juridique essentiel
+  - Réserve de contingence (90 k$ · 15 %) : Marge de sécurité face aux retards de déploiement et aux imprévus opérationnels
+- Total de la levée : 600 k$ CAD
+- Conclusion : Le capital est déployé selon des jalons mesurables. Le développement de la place de marché est exclu de cette levée.
+
+**Note Jon (EN, off-slide, plain text for slide comments)**
+- I recommend keeping the five allocations, with one important distinction: the $300K Core Team budget covers founder leadership, core engineering and lean partner operations. The $105K Product & Lyra budget is reserved for defined Lyra deliverables, specialized external AI/data support, QA and product hardening.
+- Before locking the slide, we need to validate the fully loaded founder compensation, partner operations costs and the 18-month cash plan. We should not assume future Athos revenue will cover a shortfall until activation and revenue are demonstrated.
+- The $90K contingency remains a reserve, not a substitute for the operating forecast. Marketplace development remains outside this raise.
+- Please confirm the allocation against the actual month-by-month budget before we finalize the investor deck.
+
 ### 4bis — Ecosystem & User Profile (ancien slot deck 11, à réordonner)
 
 **EN**
@@ -888,7 +928,7 @@ Interdits à l'écran : Soft Cap, place de marché dans cette levée, fourchette
 
 ### 10 - Ask & Use of Funds
 
-> **Supersédé par la slide 16** (montant + pourquoi) et la **17** à venir (détail budgétaire). Garder pour remap `/deck` seulement.
+> **Supersédé par les slides 16** (montant + pourquoi) **et 17** (détail budgétaire). Garder pour remap `/deck` seulement.
 
 **EN**
 - Tagline: Fund growth. Seed Phase 2.
