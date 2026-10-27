@@ -6,11 +6,11 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
-- 27 oct 2026 : **Commit 5** encode WebCodecs (`mediabunny`) + durée effective post-mux · S7 ⏳.
+- 27 oct 2026 : **Commit 6** fallback MediaRecorder + AudioContext silencieux · normalisation MP4 · S7 ⏳.
+- 27 oct 2026 : **Commit 5** encode WebCodecs (`mediabunny`) + durée effective post-mux.
 - 27 oct 2026 : **Commit 4** décodage navigateur + dimensions orientées V1.
 - 27 oct 2026 : **Commit 3** probe MP4 (`mp4box` + moov début/fin).
 - 27 oct 2026 : **contrat S7 v2.3** (§7) · trois durées · fail-closed · limites V1.
-- 27 oct 2026 : **fix orphelins Storage** (hors S7) · `discard` + `register` · §5b.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
@@ -143,6 +143,7 @@ S7 = le plus gros. S1–S3 déjà verts. Rien ne change pour les familles tant q
 | Probe conteneur MP4 | [`probeMp4Container.ts`](../../src/lib/media/probeMp4Container.ts) · dep `mp4box` · fixtures `tests/fixtures/mp4/` |
 | Décodage + dimensions S7 | [`verifyBrowserVideoDecode.ts`](../../src/lib/media/verifyBrowserVideoDecode.ts) · [`orientedVideoDimensions.ts`](../../src/lib/media/orientedVideoDimensions.ts) (indépendant du probe) |
 | Encode WebCodecs S7 | [`encodeVideoWithWebCodecs.ts`](../../src/lib/media/encodeVideoWithWebCodecs.ts) · mux `mediabunny` · mesure [`measurePreparedVideoDuration.ts`](../../src/lib/media/measurePreparedVideoDuration.ts) |
+| Fallback MediaRecorder S7 | [`encodeVideoWithMediaRecorder.ts`](../../src/lib/media/encodeVideoWithMediaRecorder.ts) · MP4 via [`ensurePreparedMp4Bytes.ts`](../../src/lib/media/ensurePreparedMp4Bytes.ts) (jamais WebM nu) |
 
 ### 5b. Nettoyage Storage après échec d'enregistrement
 
@@ -224,9 +225,12 @@ L’extension `.mp4` ne prouve pas le codec.
 
 - Chemin principal (**Commit 5**) : WebCodecs via [`mediabunny`](https://mediabunny.dev) `Conversion` → MP4 (`Mp4OutputFormat` + `BufferTarget`). Résolution V1 sans déformation (`fitVideoEncodeSize` + `fit: 'contain'`). Audio AAC préservé quand présent. Orientation bakée (`allowTransformationMetadata: false`).
 - Après mux : durée **effective** lue dans le moov (`measurePreparedVideoDuration` / mp4box), puis `assessOutputDuration`. Une consigne de 10 s ou un compte de frames **ne suffit pas**. Si non mesurable → refus (`video_duration_unknown`), jamais l’original brut.
-- Réserve suivi : tests Node mockent `encodeToMp4` ; ils ne prouvent pas WebCodecs réel (Chrome/Safari). E2E encode = porte QA / commits ultérieurs.
-- Secours : MediaRecorder + routage `AudioContext` silencieux (Commit 6).
+- Réserve suivi Commit 5 : tests Node mockent `encodeToMp4` ; ils ne prouvent pas WebCodecs réel (Chrome/Safari). E2E encode = porte QA / commits ultérieurs.
+- Secours (**Commit 6**) : [`encodeVideoWithMediaRecorder.ts`](../../src/lib/media/encodeVideoWithMediaRecorder.ts). Mime préféré `video/mp4`, sinon WebM. Piste audio silencieuse via `AudioContext` (GainNode à 0 → `MediaStreamDestination`, **jamais** `destination` haut-parleurs) ; `resume()` uniquement dans ce chemin, à invoquer depuis un geste utilisateur. Annulation : stop recorder + pistes + fermeture AudioContext.
+- **Contrat MP4 après MediaRecorder :** le blob brut n’est jamais le fichier préparé. [`ensurePreparedMp4Bytes`](../../src/lib/media/ensurePreparedMp4Bytes.ts) exige un ISO-BMFF **et** un `probeMp4Container` admissible (`eligibleForFastPath` : H.264, AAC optionnel, moov présent). Un `ftyp` seul ne suffit pas. WebM (ou autre) → remux/transcode mediabunny → MP4 + même probe ; échec de conversion → `video_encode_failed`, jamais le blob brut. Durée effective mesurée ensuite sur ce MP4 final.
+- Réserve suivi Commit 6 : les tests unitaires mockent `host.record` / `ensureMp4` / `measureDuration` sous Node. Ils valident le contrat (indisponible, échec, annulation, durée inconnue ou &gt; 10 s, refus WebM nu). Ils **ne prouvent pas** MediaRecorder réel ni Safari sur iPhone. Validation device = porte QA tranche 1 / Commit 12.
 - Creatomate : `trim_start` = 0 (le clip stocké est déjà court).
+- Pas encore de branchement `prepareVideoForUpload` (Commit 7) : ce commit n’altère pas le Coffre visible.
 
 ### 7.6 Annulation
 
