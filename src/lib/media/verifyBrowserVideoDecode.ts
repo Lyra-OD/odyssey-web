@@ -16,6 +16,7 @@
 import {
   applyRotationToDimensions,
   assessOrientedDimensions,
+  classifyFrameOrientation,
   type VideoFrameOrientation,
 } from "@/src/lib/media/orientedVideoDimensions";
 
@@ -93,6 +94,12 @@ export type VerifyBrowserVideoDecodeOptions = {
   signal?: AbortSignal;
   /** Rotation conteneur en degrés (0/90/180/270). Défaut 0 = faire confiance au moteur. */
   rotationDegrees?: number;
+  /**
+   * Si false, une source trop grande (4K…) reste ok après preuve de frame :
+   * l’orchestrateur pourra encoder pour rentrer dans les limites V1.
+   * Défaut true (validation stricte Commit 4 / validation finale).
+   */
+  enforceDimensionLimits?: boolean;
   /** Injection tests. Défaut = APIs document/URL du navigateur. */
   host?: BrowserVideoDecodeHost;
 };
@@ -214,7 +221,11 @@ export async function verifyBrowserVideoDecode(
   source: Blob,
   options: VerifyBrowserVideoDecodeOptions = {},
 ): Promise<VideoDecodeResult> {
-  const { signal, rotationDegrees = 0 } = options;
+  const {
+    signal,
+    rotationDegrees = 0,
+    enforceDimensionLimits = true,
+  } = options;
 
   if (aborted(signal)) return cancelled();
 
@@ -243,16 +254,25 @@ export async function verifyBrowserVideoDecode(
     const oriented = applyRotationToDimensions(rawW, rawH, rotationDegrees);
     const dims = assessOrientedDimensions(oriented.width, oriented.height);
     if (!dims.ok) {
-      return { ok: false, error: dims.error };
+      if (enforceDimensionLimits || dims.error === "video_dimensions_invalid") {
+        return { ok: false, error: dims.error };
+      }
+      // Trop grand pour V1 : on prouve quand même le décodage pour permettre l'encode.
     }
+
+    const orientedWidth = dims.ok ? dims.width : Math.round(oriented.width);
+    const orientedHeight = dims.ok ? dims.height : Math.round(oriented.height);
+    const orientation = dims.ok
+      ? dims.orientation
+      : classifyFrameOrientation(orientedWidth, orientedHeight);
 
     if (aborted(signal)) return cancelled();
 
     const frameDecoded = proveFrameDecoded(
       host,
       video,
-      dims.width,
-      dims.height,
+      orientedWidth,
+      orientedHeight,
     );
     if (!frameDecoded) {
       return { ok: false, error: "video_decode_failed" };
@@ -267,9 +287,9 @@ export async function verifyBrowserVideoDecode(
 
     return {
       ok: true,
-      orientedWidth: dims.width,
-      orientedHeight: dims.height,
-      orientation: dims.orientation,
+      orientedWidth,
+      orientedHeight,
+      orientation,
       frameDecoded: true,
       durationSec,
     };

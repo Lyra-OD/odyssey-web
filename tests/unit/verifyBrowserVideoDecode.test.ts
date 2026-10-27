@@ -148,6 +148,20 @@ describe("verifyBrowserVideoDecode", () => {
     });
   });
 
+  it("enforceDimensionLimits=false : 4K décodable → ok (encode ultérieur)", async () => {
+    const { host } = mockHost({ videoWidth: 3840, videoHeight: 2160 });
+    const result = await verifyBrowserVideoDecode(new Blob(), {
+      host,
+      enforceDimensionLimits: false,
+    });
+    expect(result).toMatchObject({
+      ok: true,
+      orientedWidth: 3840,
+      orientedHeight: 2160,
+      frameDecoded: true,
+    });
+  });
+
   it("métadonnées invalides (0×0) → video_decode_failed", async () => {
     const { host } = mockHost({ videoWidth: 0, videoHeight: 0 });
     const result = await verifyBrowserVideoDecode(new Blob(), { host });
