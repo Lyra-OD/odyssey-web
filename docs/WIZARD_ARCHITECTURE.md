@@ -1,14 +1,14 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 8 oct 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 27 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 8 oct 2026 — Orchestrateur `TributeWizard.tsx` ~**3462** L · chantier découpage Coffre/Livre : [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md).
-- 29 sept 2026 — **Étape 6 DA** : sas affiche N&B sombre + CTA éditoriaux (typo / lien Passer) — plus de boutons verre.
+- 27 oct 2026 — Phase 1 Coffre ✅ (`src/surfaces/coffre/`) · orchestrateur ~**3312** L · Quiet Luxury chrome · S7 ingest ⏳.
+- 8 oct 2026 — Orchestrateur ~3462 L · chantier découpage Coffre/Livre : [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md).
+- 29 sept 2026 — **Étape 6 DA** : sas affiche N&B sombre + CTA éditoriaux (typo / lien Passer) ; plus de boutons verre.
 - 29 sept 2026 — **Étape 6 immersif** : `data-odyssey-cinema` sur sas (ref-count) · masque Navbar studio + Aide · chrome wizard déjà hors shell.
-- 29 sept 2026 — **Étape 6 immersif** : early return hors `wizard-shell` (pas de stacking context / chrome / prix) · ✕ → 5 · Passer → 7.
-- 29 sept 2026 — **Étape 6** : sas cinéma plein écran (`SessionCinemaGate`) · poster portrait/dernière photo · projection / checkout · plus de `PreviewStep`.
+- 29 sept 2026 — **Étape 6 immersif** : early return hors `wizard-shell` · ✕ → 5 · Passer → 7.
 
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
@@ -24,7 +24,7 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 
 | File | Role |
 |------|------|
-| `src/components/tribute/TributeWizard.tsx` | Orchestrateur ~**3462** L — step routing, gates, autosave, checkout, header (Dossier + fil + tiroir Coffre hors étape 3, [`src/surfaces/coffre/`](../src/surfaces/coffre/)) ; barre bas N3 : 2–5 Retour\|Suivant · 7 Préserver {forfait}·prix · **étape 6 = early return immersif** (`SessionCinemaGate` hors shell). **Découpage cible :** [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) (Coffre tiroir · Livre package · ingest). |
+| `src/components/tribute/TributeWizard.tsx` | Orchestrateur ~**3312** L — step routing, gates, autosave, checkout, header (Dossier + fil + tiroir Coffre hors étape 3, [`src/surfaces/coffre/`](../src/surfaces/coffre/) **Phase 1 ✅**) ; barre bas N3 : 2–5 Retour\|Suivant · 7 Préserver {forfait}·prix · **étape 6 = early return immersif** (`SessionCinemaGate` hors shell). **Suite :** S7 ingest ⏳ · Livre Phase 3 après cadrage — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md). |
 | `src/components/tribute/SanctuaryWizardStep1Sky.tsx` | **Step 1 (J2)** — ciel fullscreen + panneau verre ; `SanctuaryUniverse` background · birth live · reveal contrôlé |
 | `src/hooks/useWizardStep1Reveal.ts` | Phase reveal étape 1 (`idle` → `birth` → `reward` → `done`) · orchestration `playReward()` |
 | `src/lib/wizard/wizardBirthReveal.ts` | Courbes / beats C0–C2 pour naissance Hero au prénom (pont craft → wizard) |

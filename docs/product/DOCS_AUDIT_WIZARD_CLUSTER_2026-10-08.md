@@ -1,13 +1,16 @@
 # Audit docs — cluster Wizard / Coffre / Livre
 
-**Type :** living · **Vérité pour :** quels docs du cluster sont à jour, partiels, ou en retard (snapshot **8 oct 2026**).  
-**Dernière MAJ :** 8 oct 2026 · **Carte :** [`../README.md`](../README.md)
+> **SUPERSEDÉ (27 oct 2026).** Snapshot 8 oct **faux** aujourd’hui (`src/surfaces/coffre/` existe, S5–S6 livrés). Vérité : [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) · [`../PROJECT_STATUS.md`](../PROJECT_STATUS.md). Ne plus piloter le sprint depuis ce fichier.
+
+**Type :** archive · **Vérité pour :** snapshot historique 8 oct 2026 (ne plus exécuter).  
+**Dernière MAJ :** 27 oct 2026 (bandeau) · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 27 oct 2026 — Bandeau supersédé · Coffre Phase 1 + S5–S6 livrés depuis.
 - 8 oct 2026 — Premier passage post-deck ILP 11 · chantier packages Coffre/Livre.
 
 Plan actif : [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md).  
-Méthode : en-tête doc vs réalité code (`TributeWizard` ~3462 L, pas de `src/surfaces/`, pas de tiroir Coffre global, ingest S5–S7 non livrés).
+Méthode (historique 8 oct) : en-tête doc vs réalité code alors (`TributeWizard` ~3462 L, pas de `src/surfaces/`, pas de tiroir, ingest S5–S7 non livrés).
 
 ---
 

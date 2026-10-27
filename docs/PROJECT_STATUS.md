@@ -1,13 +1,13 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 13 oct 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 27 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 27 oct 2026 — Sync post-Coffre : Phase 1 tiroir ✅ · P0 = **S7 ingest** ⏳ · Quiet Luxury chrome wizard · cadrage Livre doc.
 - 13 oct 2026 — **S6b ✅** Sanctuaire dépôt photo = resize ≤2048 (même lib que Coffre).
-- 13 oct 2026 — **S6 ✅** resize photo ≤2048 JPEG preflight (HEIC skip) — suite S7 + copy · package Coffre.
-- 13 oct 2026 — CI : test `quiet-luxury-player` aligné sur `preMemoryBlack: 0.8` · docs badges Coffre.
-- 13 oct 2026 — Badges tuile Coffre : Photo mauve · Vidéo ambre · Souvenir teal · Scanner indigo.
+- 13 oct 2026 — **S6 ✅** resize photo ≤2048 JPEG preflight (HEIC skip).
+- 13 oct 2026 — CI : test `quiet-luxury-player` aligné sur `preMemoryBlack: 0.8` · badges Coffre.
 - 13 oct 2026 — **S5 ✅** poster frame vidéo à l’upload (tuile Coffre/banque = image).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
@@ -21,7 +21,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 | Dimension | Status | Notes |
 |-----------|--------|-------|
-| **Family Studio (wizard)** | 🟢 | **7** étapes (`TOTAL_STEPS = 7` — plus d’étape 8 boutique). Extensions au checkout. Autosave, Stingray, Livre Ouvert, Soft Cap, Inviter, Co-Créateur |
+| **Family Studio (wizard)** | 🟢 | **7** étapes (`TOTAL_STEPS = 7`). Extensions au checkout. Autosave, Stingray, Livre Ouvert, Soft Cap, Inviter, Co-Créateur. Chrome Quiet Luxury (en-tête / stepper / footer) post-Coffre |
 | **Partner Salon** | 🟢 | Invitation Souvenir-only · mes perfs conseiller · solde = **commissions** admin |
 | **Freemium V1 commerce** | 🟢 Phases 0–5 | Soft Cap + entitlements + gate export + MP3/ToS — [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Héritage **1080p** · 4K dès Éternité · Phase 6 QA ⏳ |
 | **Checkout Stripe** | 🟢 | `/api/checkout` B2C + B2B2C Soft Cap + webhook entitlements / accrual / **`charge.refunded`**. QA replay `checkout.session.completed` ✅ (P17 `submitted`). |
@@ -29,13 +29,14 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Export Creatomate** | 🟡 | **C0–C4** ✅ · **C4 V1.5** ✅ · **C5 focale auto** ✅ · **C11–C13** cash cercle ✅ · **C7/depth** reportés — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
 | **UX mobile** | 🟡 | Wizard : [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md). **Sanctuaire invité** : HTML still immédiat, WebGL en amélioration |
-| **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** (titre d’étape OK ; titres chapitre défaut encore Étincelle / Épopée / Héritage) · S5-J/K ⏳ |
+| **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** · S5-J/K ⏳ · extraction Livre après S7 (cadrage figé) |
+| **Coffre / ingest** | 🟡 | Phase 1 package + tiroir ✅ · **S5–S6 ✅** · **S7** trim/encode ⏳ — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
 | **Scanner** | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Marque Éclipse** | 🟢 | Play A–B KEEP · mark + exports · brancher UI ⚪ · wormhole = lab |
 | **Tests & CI** | 🟢 | `next build` 🟢 · `npm test` aligné `preMemoryBlack: 0.8` |
 | **Security** | 🟡 | RLS, gate Salon, entitlements never-trust, webhook Creatomate fail-closed |
 
-**Suite :** chantier [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) (Coffre tiroir → S7 + copy → Livre). **S5–S6** ✅. Démo 18 sept **passée**.
+**Suite :** **P0 S7 ingest** (trim 10 s + encode + copy) → cadrage Livre déjà écrit → Phase 3a `surfaces/livre/`. Démo 18 sept **passée**.
 
 ---
 
@@ -47,7 +48,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Wizard **7** étapes | 🟢 | 1 Essentiels · 2 Inviter · 3 Coffre · 4 Son · 5 Livre Ouvert · 6 Aperçu · 7 Checkout. **Plus d’étape 8.** Co-Créateur 3–5 |
 | Marque Éclipse + ODYSSEY | 🟢 | [`ODYSSEY_ECLIPSE_LOGO.md`](ODYSSEY_ECLIPSE_LOGO.md) · brancher produit ⚪ |
 | Ciel Sanctuaire / intro | 🟡 | Craft ✅ · **J2** wizard étape 1 (ciel + birth + reveal) 🟡 · hub J3 ⏳ · prologue J1 labs · `scene.intro` OFF |
-| Médias / Storage | 🟡 | Thumbs + **S5–S6b ✅** (poster · resize Coffre + Sanctuaire photo) · badges ✅ · **S7** ⏳ — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
+| Médias / Storage | 🟡 | Thumbs + **S5–S6b ✅** · badges ✅ · tiroir Coffre ✅ · **S7** ⏳ — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
 | Stingray preview | 🟢 | MAPI + mock |
 | Checkout famille (Stripe) | 🟢 | Soft Cap, `freemium_free`, entitlements |
 | Checkout jetons B2B | — | **N/A** — purgé P8. Ne plus planifier |
@@ -70,9 +71,9 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 
 | Priorité | Quoi | Done when |
 |----------|------|-----------|
-| **P0** | Packages **Coffre** + tiroir chrome · même banque que l’étape 3 | Surface extrait · drawer wizard · [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 1 |
-| **P1** | Ingest S7 + copy « versions allégées seulement » (S5–S6 ✅) | Trim 10 s · encode 1080p · copy rétention · 1 objet Storage |
-| **P2** | Package **Livre** + polish (après cadrage) | `surfaces/livre` · UX listée avec Erik |
+| **P0** | Ingest **S7** + copy « versions allégées seulement » (S5–S6 ✅ · Phase 1 Coffre ✅) | Trim 10,0 s · encode 1080p · fail closed · 1 objet Storage · [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) |
+| **P1** | Package **Livre** Phase 3a (après cadrage) | `surfaces/livre` · orphelins purgés · [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
+| **P2** | Livre polish Phase 3b | S5-L2 → S5-K → S5-J |
 | **Later** | Étape 6 **mix BA** (bande-annonce + voir un chapitre) — pas le teaser-film actuel | Plan dédié · [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) |
 | **Later** | Étape 6 bandeau Soft Cap **« pourquoi »** (faits, pas alerte générique) | Plan dédié · [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) |
 | **Ops** | Stripe CLI `stripe login` + `stripe listen` local · activer `charge.refunded` endpoint prod | Webhook local sans script replay |
@@ -92,7 +93,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 - Le checkout Stripe **sérialise encore** `act_tracks` (compact) en plus de `storyboard` — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 - Cible aperçu : mix BA, plan plus tard — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
 
-**Dette acceptée (reste) :** S5-L titres 3 actes par défaut · mark Éclipse pas partout · intro ciel OFF · étape 1 code exige **nom** vs D1 CEO (prénom + 2 dates) — [`SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b.
+**Dette acceptée (reste) :** S5-L titres chapitre défaut · mark Éclipse pas partout · intro ciel OFF · étape 1 code exige **nom** vs D1 CEO (prénom + 2 dates) — [`SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b. · Médias legacy Coffre (pas de backfill S7) · Sanctuaire `guest_video` hors S7.
 
 **Différé :** Stripe Connect auto-payout · Scanner Phase B · Gants Blancs ops · Lyra produit · verticales pets UI.
 

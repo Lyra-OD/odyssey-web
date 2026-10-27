@@ -1,17 +1,17 @@
 # Wizard — packages Coffre / Livre + ingest
 
 **Type :** living · **Vérité pour :** chantier post-deck — découpage Coffre/Livre en packages, tiroir global, ingest trim/compress.  
-**Dernière MAJ :** 14 oct 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 27 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 14 oct 2026 — **C3.2** tiroir : barre compacte collante (compteur + « Ajouter des souvenirs ») au lieu de la grande zone · dépôt n’importe où dans le tiroir (voile « Déposez vos souvenirs ») · Scanner inclus dans la zone. Étape 3 : même grille selon la largeur (≈ 3 colonnes au lieu de 5), zone de dépôt inchangée. Bloc Numérisation (Scanner) **en haut** du Coffre (étape 3 + tiroir).
-- 14 oct 2026 — **C3.1** tiroir Coffre **à gauche**, 75 % de l’écran, grille selon la largeur du tiroir · déclencheur = pastille teal + compteur signature (bulle cyan qui respire, chiffre glow comme FR/EN), ligne propre au bord gauche de l’en-tête (pilier, distinct de Dossier / Co-Créateur à droite) · chip d’aide masqué tiroir ouvert.
-- 14 oct 2026 — **Phase 1 C3 ✅** tiroir Coffre dans l’en-tête (dès l’étape 3 atteinte, hors étape 3) = **même** `CoffreBody` · un seul monté à la fois · upload continue tiroir fermé · étape 5 recharge la banque à la fermeture.
-- 14 oct 2026 — Phase 1 C1–C2 : corps étape 3 → `src/surfaces/coffre/CoffreBody` (contrat `CoffreHostProps`). Compteur selon le forfait : « 50 inclus dans le forfait Souvenir · jusqu’à 125 avec Héritage ».
-- 13 oct 2026 — **S6 / S6b ✅** resize photo ≤2048 JPEG preflight (`resizeImageForUploadFile`, HEIC skip) · Sanctuaire invité idem.
+- 27 oct 2026 — État code resync : Phase 1 Coffre ✅ · orchestrateur ~3312 L · S7 ⏳ · audit 8 oct supersédé.
+- 14 oct 2026 — **C3.2** tiroir : barre compacte collante · dépôt n’importe où · Scanner en haut du Coffre.
+- 14 oct 2026 — **C3.1** tiroir Coffre à gauche 75 % · pastille + compteur signature en-tête.
+- 14 oct 2026 — **Phase 1 C3 ✅** tiroir = même `CoffreBody` · un seul monté · upload continue tiroir fermé.
+- 14 oct 2026 — Phase 1 C1–C2 : `src/surfaces/coffre/CoffreBody` + compteur forfait.
 
 Canon liés : [`COFFRE_MONTAGE_MEDIA_INGEST.md`](COFFRE_MONTAGE_MEDIA_INGEST.md) · [`../WIZARD_ARCHITECTURE.md`](../WIZARD_ARCHITECTURE.md) · [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md) · tiroir J5 [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md).  
-Audit docs cluster : [`DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md).
+Audit docs cluster oct : [`DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md) (**supersédé** 27 oct ; vérité = ce fichier + [`../PROJECT_STATUS.md`](../PROJECT_STATUS.md)).
 
 ---
 
@@ -44,14 +44,14 @@ Sélection / « Envoyé » restent teal (état) — [`DESIGN_SYSTEM.md`](../DESI
 
 ---
 
-## État code (8 oct 2026)
+## État code (27 oct 2026)
 
 | Surface | Réalité | Cible chantier |
 |---------|---------|----------------|
-| Orchestrateur | [`TributeWizard.tsx`](../../src/components/tribute/TributeWizard.tsx) **~3462 L** | Orchestrateur (nav, gates, chrome, wiring) |
-| Coffre | ✅ (14 oct) [`src/surfaces/coffre/`](../../src/surfaces/coffre/) — `CoffreBody` (étape 3 `onboarding` + tiroir `drawer`) · `CoffreDrawerShell` (gauche, 75 vw · sheet bas en mobile) · `CoffreDrawerTrigger` (pastille, en-tête gauche) | Règle : un seul `CoffreBody` monté (étape 3 **ou** tiroir) · tiroir monté tant qu’un upload tourne |
-| Livre | [`StoryboardMontageStep.tsx`](../../src/components/tribute/StoryboardMontageStep.tsx) + `montage/*` | `src/surfaces/livre/` après Coffre |
-| Vidéo | Export = 10 premières s · `videoTrims` non écrit par l’UI · originaux lourds | S7 : picker 10 s + encode 1080p client |
+| Orchestrateur | [`TributeWizard.tsx`](../../src/components/tribute/TributeWizard.tsx) **~3312 L** | Alléger encore (nav, gates, chrome, wiring) |
+| Coffre | **Phase 1 ✅** [`src/surfaces/coffre/`](../../src/surfaces/coffre/) — `CoffreBody` (étape 3 `onboarding` + tiroir `drawer`) · `CoffreDrawerShell` · `CoffreDrawerTrigger` | Un seul `CoffreBody` monté · tiroir monté tant qu’un upload tourne |
+| Livre | [`StoryboardMontageStep.tsx`](../../src/components/tribute/StoryboardMontageStep.tsx) ~723 L + `montage/*` + `storyboard/*` | `src/surfaces/livre/` après S7 (cadrage § Phase 3) |
+| Vidéo | S5 poster ✅ · upload **as-is** · `videoTrims` non écrit par l’UI | **S7 ⏳** : picker 10,0 s + encode 1080p client |
 | Photo | **S6 ✅** resize ≤2048 JPEG avant upload + thumb WebP · HEIC = original (canvas) | Copy « allégé » avec S7 |
 
 ```mermaid
@@ -72,17 +72,11 @@ flowchart TB
 
 ---
 
-## Phase 1 — Package Coffre + tiroir
+## Phase 1 — Package Coffre + tiroir ✅
 
-1. Extraire le corps étape 3 (dropzone, grille, Scanner, états upload) vers surface Coffre avec API host :
-   - `projectId` / user / tenant
-   - `media[]` + callbacks upload / delete / refresh
-   - mode `onboarding` (étape 3 + « Plus tard ») vs `drawer` (toujours)
-2. Icône Coffre dans le chrome wizard (puis ciel / studio — J5) : drawer = **même banque** que l’étape 3.
-3. Étape 3 = première rencontre du tiroir, pas un 2ᵉ Coffre.
-4. Doc architecture + copy FR/EN si nouveau libellé → dictionnaires + catalog.
+Livré 14 oct : extraction `CoffreBody` · tiroir chrome wizard · même banque étape 3 · Scanner en haut · compteur forfait.
 
-**Hors scope P1 :** redesign Livre · worker ffmpeg serveur · conservation d’originaux.
+Reste vision Journey : unifier tiroir ciel / studio (J5 partiel : wizard OK, ciel/studio non).
 
 ---
 

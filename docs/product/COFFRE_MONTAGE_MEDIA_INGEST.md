@@ -1,16 +1,16 @@
 # Coffre · montage · ingest médias
 
 **Type :** living · **Vérité pour :** audit Coffre + Livre Ouvert + décision ingest client (trim 10 s + compress).  
-**Dernière MAJ :** 13 oct 2026 · **Carte :** [`../README.md`](../README.md)  
-**Chantier actif :** [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 2 (= **S7** ; S5–S6 ✅).  
-**Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · P1 ingest **ouvert** (S5–S6 livrés).
+**Dernière MAJ :** 27 oct 2026 · **Carte :** [`../README.md`](../README.md)  
+**Chantier actif :** [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 2 (= **S7** ⏳ ; S5–S6 ✅).  
+**Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
+- 27 oct 2026 — §2 Coffre aligné S5 poster (`generateVideoPoster.ts`) · S7 toujours ⏳ · contrats durée/codec/originaux (plan v2.1).
 - 13 oct 2026 — **S6b ✅** : Sanctuaire dépôt photo = même resize ≤2048 — [`SanctuaryDepositForm`](../../src/components/contribute/SanctuaryDepositForm.tsx).
 - 13 oct 2026 — **S6 ✅** : resize photo ≤2048 JPEG preflight · HEIC skip · [`resizeImageForUpload.ts`](../../src/lib/media/resizeImageForUpload.ts).
 - 13 oct 2026 — Badges tuile : Photo / Vidéo / Souvenir / Scanner — canon [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) § Badges.
 - 13 oct 2026 — **S5 ✅** : poster WebP client · hydrate/delete `*-thumb.webp` vidéo · tuiles = image.
-- 8 oct 2026 — Démo 18 sept clôturée · S5–S7 = Phase 2 packages Coffre/Livre.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
@@ -34,13 +34,14 @@ Pacing : `VIDEO_TRIM_DURATION_SEC` = 10 s dans [`src/lib/wizard/storyboardPacing
 
 ### Coffre (étape 3)
 
-Fichiers : [`TributeWizard.tsx`](../../src/components/tribute/TributeWizard.tsx) · [`MediaQueueGrid.tsx`](../../src/components/media/MediaQueueGrid.tsx) · [`MediaDropzoneAdapter.tsx`](../../src/components/media/MediaDropzoneAdapter.tsx) · [`mediaUploadService.ts`](../../src/lib/uploads/mediaUploadService.ts).
+Fichiers : [`TributeWizard.tsx`](../../src/components/tribute/TributeWizard.tsx) · [`src/surfaces/coffre/`](../../src/surfaces/coffre/) · [`MediaQueueGrid.tsx`](../../src/components/media/MediaQueueGrid.tsx) · [`MediaDropzoneAdapter.tsx`](../../src/components/media/MediaDropzoneAdapter.tsx) · [`mediaUploadService.ts`](../../src/lib/uploads/mediaUploadService.ts).
 
 - Accept : `video/mp4`, `video/quicktime`. Fallback extension **HEIC/HEIF + `.mp4`/`.mov`** si `file.type === ""` (S3).
-- Thumb : [`generateImageThumbnail.ts`](../../src/lib/media/generateImageThumbnail.ts) no-op si pas `image/*` → **aucun poster** vidéo.
-- Grille : `isVideoItem` → icône Film, pas de `<video>`. Upload OK ≠ aperçu.
+- Thumb photo : [`generateImageThumbnail.ts`](../../src/lib/media/generateImageThumbnail.ts). **S5 ✅** poster vidéo : [`generateVideoPoster.ts`](../../src/lib/media/generateVideoPoster.ts) → `*-thumb.webp` (legacy sans thumb = Film / preview metadata).
+- Grille : tuile image si thumb ; sinon fallback Film. Upload vidéo encore **as-is** jusqu’à S7.
 - Soft Cap / `excludedIds` : **ne filtrent pas** la grille Coffre.
-- Scanner compagnon : photos seulement.
+- Scanner compagnon : photos seulement (aussi dans le tiroir).
+- **S7 ⏳** : trim 10,0 s + encode 1080p client avant upload (pas encore de picker UI).
 
 ### Livre Ouvert / table de montage (étape 5)
 

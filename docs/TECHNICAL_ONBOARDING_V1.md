@@ -1,14 +1,14 @@
 # Odyssey — Technical Onboarding V1
 
 **Type :** canon · **Vérité pour :** hub onboarding (stack, env, chemins code).  
-**Dernière MAJ :** 18 août 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 27 oct 2026 (en-tête) · juillet 2026 (contenu) · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 27 oct 2026 — Pointeurs : `src/surfaces/coffre/` · ingest S5–S6 (`resizeImageForUpload`, `generateVideoPoster`) · S7 ⏳ · [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md).
 - 18 août 2026 — env lead `/partners` : `ODYSSEY_HQ_LEAD_EMAIL` (alerte Resend HQ).
 - 17 août 2026 — HQ : table `hq_allowlist` (P13), plus d’env opérateurs.
 - 17 août 2026 — env Relance salon : `RESEND_API_KEY` · `RESEND_FROM_EMAIL`.
 - 17 août 2026 — en-tête type + carte.
-- juillet 2026 — hub post-purge jetons.
 
 Hub d’entrée pour développeurs. Canon produit : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md).  
 Ancien hub (pré-purge) : [`_archive/TECHNICAL_ONBOARDING_ODYSSEY_PRE_FREEMIUM.md`](_archive/TECHNICAL_ONBOARDING_ODYSSEY_PRE_FREEMIUM.md) — **ne plus onboards dessus**.
@@ -17,7 +17,9 @@ Ancien hub (pré-purge) : [`_archive/TECHNICAL_ONBOARDING_ODYSSEY_PRE_FREEMIUM.m
 
 ## 1. En 60 secondes
 
-Odyssey = wizard **7** étapes (famille) + Salon partenaire (invitations) + checkout Stripe + Sanctuaire / Co-Créateur. HQ : [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) — allowlist SQL `hq_allowlist` (P13).
+Odyssey = wizard **7** étapes (famille) + Salon partenaire (invitations) + checkout Stripe + Sanctuaire / Co-Créateur. HQ : [`HQ_ODYSSEY.md`](HQ_ODYSSEY.md) · allowlist SQL `hq_allowlist` (P13).
+
+**Surfaces médias :** Coffre extrait dans [`src/surfaces/coffre/`](../src/surfaces/coffre/) (étape 3 + tiroir chrome). Ingest photo/poster : [`src/lib/media/resizeImageForUpload.ts`](../src/lib/media/resizeImageForUpload.ts) · [`src/lib/media/generateVideoPoster.ts`](../src/lib/media/generateVideoPoster.ts). S7 trim vidéo ⏳. Chantier : [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md).
 
 | Canal | Flux |
 |-------|------|

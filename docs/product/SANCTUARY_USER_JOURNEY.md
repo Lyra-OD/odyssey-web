@@ -1,14 +1,16 @@
 # Odyssey — Parcours Sanctuaire (User X · première visite)
 
 **Type :** produit · **Vérité pour :** prologue cinéma · hub ciel · séparation wizard · tiroir média · navigation.  
-**Dernière MAJ :** 5 sept 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 27 oct 2026 · **Carte :** [`../README.md`](../README.md)
+
+> **J5 partiel (27 oct) :** tiroir Coffre dans le **chrome wizard** livré (`src/surfaces/coffre/`). Ciel / studio global = pas encore. Ne pas lire le tableau J5–J9 comme STATUS d’implémentation.
 
 **Changelog** (max 5)
-- 5 sept 2026 — **Étape 2 conforme §5c** : `CollabInviteInlineCard` retirée (anti-pattern D2, co-org reste Studio-only) · priorité CTA corrigée — **Copier le message** prend le pas sur **Copier le lien** en desktop.
-- 31 août 2026 — **Figé** : hub WebGL animé ↔ gel 2D (clic Hero · fermer · Continuer) · Chemins A/B — [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §1b §2b.
-- 31 août 2026 — **G1 tranché** : prénom (Hero) + **nom de famille obligatoire** (hommage) + 2 dates — aligné code `canProceedEssential`.
-- 31 août 2026 — Chemin 1 Traversée + audit trous [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md) · impl active vs §4.
-- 31 août 2026 — T1 placeholder : `SkyBackdrop` · hub Hero · `useParcoursUx` — cible T1b hub WebGL lite.
+- 27 oct 2026 — Bandeau J5 partiel : tiroir wizard ✅ · ciel/studio ⏳.
+- 5 sept 2026 — **Étape 2 conforme §5c** : `CollabInviteInlineCard` retirée · priorité CTA Copier le message (desktop).
+- 31 août 2026 — **Figé** : hub WebGL ↔ gel 2D · Chemins A/B — [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md).
+- 31 août 2026 — **G1 tranché** : prénom + nom obligatoire + 2 dates (`canProceedEssential`).
+- 31 août 2026 — Chemin 1 Traversée + audit trous [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md).
 
 **Liens :**
 - **Chemin 1 (spec impl)** : [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`PARCOURS_UX_REGISTRY.md`](PARCOURS_UX_REGISTRY.md) · **trous** [`PARCOURS_UX_GAPS.md`](PARCOURS_UX_GAPS.md)
