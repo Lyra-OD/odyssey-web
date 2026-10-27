@@ -6,11 +6,11 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
-- 27 oct 2026 : **Commit 4** décodage navigateur + dimensions orientées V1 · S7 ⏳.
+- 27 oct 2026 : **Commit 5** encode WebCodecs (`mediabunny`) + durée effective post-mux · S7 ⏳.
+- 27 oct 2026 : **Commit 4** décodage navigateur + dimensions orientées V1.
 - 27 oct 2026 : **Commit 3** probe MP4 (`mp4box` + moov début/fin).
 - 27 oct 2026 : **contrat S7 v2.3** (§7) · trois durées · fail-closed · limites V1.
 - 27 oct 2026 : **fix orphelins Storage** (hors S7) · `discard` + `register` · §5b.
-- 27 oct 2026 : §2 Coffre aligné S5 poster · S7 ⏳.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
@@ -142,6 +142,7 @@ S7 = le plus gros. S1–S3 déjà verts. Rien ne change pour les familles tant q
 | Contrat durée S7 | [`videoDurationContract.ts`](../../src/lib/media/videoDurationContract.ts) (helpers + tests ; pas encore branché) |
 | Probe conteneur MP4 | [`probeMp4Container.ts`](../../src/lib/media/probeMp4Container.ts) · dep `mp4box` · fixtures `tests/fixtures/mp4/` |
 | Décodage + dimensions S7 | [`verifyBrowserVideoDecode.ts`](../../src/lib/media/verifyBrowserVideoDecode.ts) · [`orientedVideoDimensions.ts`](../../src/lib/media/orientedVideoDimensions.ts) (indépendant du probe) |
+| Encode WebCodecs S7 | [`encodeVideoWithWebCodecs.ts`](../../src/lib/media/encodeVideoWithWebCodecs.ts) · mux `mediabunny` · mesure [`measurePreparedVideoDuration.ts`](../../src/lib/media/measurePreparedVideoDuration.ts) |
 
 ### 5b. Nettoyage Storage après échec d'enregistrement
 
@@ -221,8 +222,10 @@ L’extension `.mp4` ne prouve pas le codec.
 
 ### 7.5 Encodeurs (intentions V1)
 
-- Chemin principal : WebCodecs, sortie 1080p max, plafond 10,0 s.
-- Secours : MediaRecorder + routage `AudioContext` silencieux (`resume()` au geste utilisateur ; aucun son dans les haut-parleurs pendant la préparation).
+- Chemin principal (**Commit 5**) : WebCodecs via [`mediabunny`](https://mediabunny.dev) `Conversion` → MP4 (`Mp4OutputFormat` + `BufferTarget`). Résolution V1 sans déformation (`fitVideoEncodeSize` + `fit: 'contain'`). Audio AAC préservé quand présent. Orientation bakée (`allowTransformationMetadata: false`).
+- Après mux : durée **effective** lue dans le moov (`measurePreparedVideoDuration` / mp4box), puis `assessOutputDuration`. Une consigne de 10 s ou un compte de frames **ne suffit pas**. Si non mesurable → refus (`video_duration_unknown`), jamais l’original brut.
+- Réserve suivi : tests Node mockent `encodeToMp4` ; ils ne prouvent pas WebCodecs réel (Chrome/Safari). E2E encode = porte QA / commits ultérieurs.
+- Secours : MediaRecorder + routage `AudioContext` silencieux (Commit 6).
 - Creatomate : `trim_start` = 0 (le clip stocké est déjà court).
 
 ### 7.6 Annulation
