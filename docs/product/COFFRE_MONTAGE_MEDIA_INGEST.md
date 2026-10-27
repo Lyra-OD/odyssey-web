@@ -6,14 +6,15 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
+- 27 oct 2026 : **contrat S7 v2.3** (§7) · trois durées · fail-closed · limites V1 · S7 toujours ⏳.
 - 27 oct 2026 : **fix orphelins Storage** (hors S7) · échec `media_assets` après upload → nettoyage serveur `POST …/media/discard` + `register` · voir §5b.
-- 27 oct 2026 — §2 Coffre aligné S5 poster (`generateVideoPoster.ts`) · S7 toujours ⏳ · contrats durée/codec/originaux (plan v2.1).
-- 13 oct 2026 — **S6b ✅** : Sanctuaire dépôt photo = même resize ≤2048 — [`SanctuaryDepositForm`](../../src/components/contribute/SanctuaryDepositForm.tsx).
-- 13 oct 2026 — **S6 ✅** : resize photo ≤2048 JPEG preflight · HEIC skip · [`resizeImageForUpload.ts`](../../src/lib/media/resizeImageForUpload.ts).
-- 13 oct 2026 — Badges tuile : Photo / Vidéo / Souvenir / Scanner — canon [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) § Badges.
+- 27 oct 2026 : §2 Coffre aligné S5 poster (`generateVideoPoster.ts`) · S7 ⏳.
+- 13 oct 2026 : **S6b ✅** : Sanctuaire dépôt photo = même resize ≤2048 ([`SanctuaryDepositForm`](../../src/components/contribute/SanctuaryDepositForm.tsx)).
+- 13 oct 2026 : **S6 ✅** : resize photo ≤2048 JPEG preflight · HEIC skip · [`resizeImageForUpload.ts`](../../src/lib/media/resizeImageForUpload.ts).
+
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
-Pacing : `VIDEO_TRIM_DURATION_SEC` = 10 s dans [`src/lib/wizard/storyboardPacing.ts`](../../src/lib/wizard/storyboardPacing.ts).
+Pacing : `VIDEO_TRIM_DURATION_SEC` = 10 dans [`src/lib/wizard/storyboardPacing.ts`](../../src/lib/wizard/storyboardPacing.ts).
 
 ---
 
@@ -40,7 +41,7 @@ Fichiers : [`TributeWizard.tsx`](../../src/components/tribute/TributeWizard.tsx)
 - Grille : tuile image si thumb ; sinon fallback Film. Upload vidéo encore **as-is** jusqu’à S7.
 - Soft Cap / `excludedIds` : **ne filtrent pas** la grille Coffre.
 - Scanner compagnon : photos seulement (aussi dans le tiroir).
-- **S7 ⏳** : trim 10,0 s + encode 1080p client avant upload (pas encore de picker UI).
+- **S7 ⏳** : préparation client avant upload (contrat §7). Pas encore de picker UI ni de branchement.
 
 ### Livre Ouvert / table de montage (étape 5)
 
@@ -62,30 +63,32 @@ Legacy **orphelin** : [`MontageTimeline.tsx`](../../src/components/tribute/story
 
 ## 3. Décision ingest (après la démo)
 
-**Le client trimme et compresse avant upload.** Un seul objet Storage (pas d’original V1).
+**Le client prépare avant upload.** Un seul objet Storage (pas d’original V1). Détail vidéo : **§7 Contrat S7 v2.3**.
 
 | Média | Cible |
 |--------|--------|
-| Vidéo | Fenêtre **10 s** (défaut 0→10, range dans la file Coffre) + re-encode **1080p** H.264/AAC, fichier typiquement **≪ 80 Mo** |
+| Vidéo | Fenêtre **10,0 s** max (durée **effective** du fichier préparé) + 1080p H.264/AAC · voir §7 |
 | Photo | Côté long max **2048 px**, JPEG/WebP ~0.82 |
 | Hors V1 | Scanner, musique MP3 (déjà ~40 Mo), worker ffmpeg serveur · Sanctuaire **photo** = S6b ✅ (même `resizeImageForUploadFile`) |
 
-Creatomate : clip déjà court → `trim_start` = 0. Re-trim directeur = phase plus tard **seulement si** on stocke plus que 10 s (on ne le fait pas en V1).
+Creatomate : clip déjà court → `trim_start` = 0. Re-trim directeur = plus tard **seulement si** on stocke plus que 10 s (hors V1).
 
 ```mermaid
 flowchart LR
   drop[Drop Coffre] --> preflight[Preflight client]
   preflight -->|photo| resize[Resize 2048]
-  preflight -->|video| pick[Range 10s] --> encode[Encode 1080p]
+  preflight -->|video| prepare[Prepare 10s 1080p]
+  prepare --> validate[Validate effective duration]
+  validate -->|fail closed| reject[Refuse upload]
+  validate -->|ok| poster[Poster WebP from prepared]
   resize --> upload[uploadMediaBatch]
-  encode --> poster[Poster WebP]
   poster --> upload
   upload --> coffre[Coffre]
   coffre --> livre[Livre Ouvert]
   livre --> film[Assembleur Creatomate]
 ```
 
-Ops parallèle : **Dashboard Supabase → Storage → global file size** 100–300 Mo (filet avant le P1 encode).
+Ops parallèle : **Dashboard Supabase → Storage → global file size** 100–300 Mo (filet).
 
 ---
 
@@ -112,9 +115,9 @@ Copy FR/EN si nouveau texte écran (ex. « Souvenir filmé ») — dictionnaires
 |---|------|
 | **S5** | ✅ Poster frame client à l’upload (canvas), même pipeline que thumb photo |
 | **S6** | ✅ Resize photos 2048 px preflight (JPEG 0.82 · HEIC skip) |
-| **S7** | Trim 10 s + encode 1080p client (file Coffre) + copy « Préparation de la vidéo… » |
+| **S7** | ⏳ Contrat §7 · trim/encode client · copy préparation (UI aux commits 8+) |
 
-S7 = le plus gros ; ne pas commencer avant S1–S3 verts.
+S7 = le plus gros. S1–S3 déjà verts. Rien ne change pour les familles tant que le branchement (commit 11) n’est pas livré.
 
 ### Hors démo
 
@@ -158,3 +161,85 @@ Limites connues :
 2. Vidéo courte (&lt; limite Storage) → tuile **lisible** (pas icône morte).
 3. Étape 5 desktop : vidéo dans la banque, **drag** souris vers un chapitre, aperçu directeur = **image ou lecture**, pas rectangle cassé.
 4. Export drain (si temps) : intro 27 s + clip photo + clip vidéo 10 s + outro sans Odyssey.
+
+---
+
+## 7. Contrat S7 v2.3 (garanties produit)
+
+Statut : **S7 ⏳**. Ce paragraphe fixe le contrat. Les helpers, encodeurs, UI et branchement sont des commits ultérieurs. Aucun comportement production modifié par ce document seul.
+
+### 7.1 Trois durées
+
+| Concept | Définition | Règle |
+|---------|------------|--------|
+| Durée source | Mesurée sur le fichier choisi par la famille | 9,98 s admissible si les autres contrôles passent ; 10,02 s → découpe ou réencodage obligatoire ; inconnue ou incohérente → refus |
+| Durée demandée | Consigne passée à l’encodeur (`VIDEO_TRIM_DURATION_SEC` = 10) | Une consigne de 10 s **ne prouve pas** que le fichier produit respecte le plafond |
+| Durée effective | Mesurée sur le **fichier préparé** (sortie) | **Rejet absolu si &gt; 10,0 s**, même si l’encodeur a reçu 10 s |
+
+La durée effective fait foi. Aucune vidéo n’est remise à l’upload si sa durée effective dépasse 10,0 s.
+
+### 7.2 Fail-closed
+
+- Fast-path (conteneur + décodage) **et** validation de sortie après préparation : les deux existent ; une consigne d’encodage ne remplace pas la mesure de sortie.
+- Si la durée ou le contenu ne peut pas être vérifié → la préparation **échoue**.
+- Métadonnée ambiguë ≠ validation → refus du fast-path, passage par l’encodage (ou rejet).
+- Échec de préparation → **jamais** d’upload de l’`originalFile` brut. L’original n’est pas un fallback.
+- Soft Cap / quota : comptés seulement après succès d’enregistrement `media_assets` (voir aussi §5b).
+
+### 7.3 Résolution V1
+
+- Portrait : au plus **1080×1920** (après orientation).
+- Paysage : au plus **1920×1080** (après orientation).
+- Zéro déformation (pas d’étirement pour « forcer » le cadre).
+
+### 7.4 Conteneur et codecs (contrat)
+
+Conditions de fast-path, toutes vérifiables de façon fiable :
+
+- 1 piste vidéo **H.264 8-bit** ;
+- 0 ou 1 piste audio **AAC** (vidéo muette acceptée) ;
+- rotation / orientation lisible ;
+- boîte `moov` en début **ou** en fin de fichier.
+
+Refus du fast-path (encode ou rejet propre) notamment si :
+
+- HEVC (`hvc1` / `hev1`) ;
+- profondeur ou codec non vérifiable ;
+- piste / rotation / `moov` ambigus.
+
+L’extension `.mp4` ne prouve pas le codec. Le choix de la bibliothèque de probe et le détail des helpers relèvent des commits suivants (pas de parseur maison par défaut).
+
+### 7.5 Encodeurs (intentions V1)
+
+- Chemin principal : WebCodecs, sortie 1080p max, plafond 10,0 s.
+- Secours : MediaRecorder + routage `AudioContext` silencieux (`resume()` au geste utilisateur ; aucun son dans les haut-parleurs pendant la préparation).
+- Creatomate : `trim_start` = 0 (le clip stocké est déjà court).
+
+### 7.6 Annulation
+
+- Toute annulation (`AbortSignal` ou annulation d’item) **invalide** immédiatement les résultats asynchrones tardifs (encodage, poster, lecture métadonnées).
+- Un résultat qui arrive après annulation est jeté et ne déclenche **jamais** l’étape suivante (poster, upload, register).
+- Les barrières réseau détaillées (après prepare, après poster, avant Storage, avant DB) sont livrées aux commits d’intégration ; le contrat les exige déjà.
+
+### 7.7 Erreurs typées (stables)
+
+Noms pour le code des commits 2–7. Messages écran FR/EN : commits UI.
+
+| Code | Quand |
+|------|--------|
+| `video_duration_unknown` | Durée source absente, NaN, ≤ 0 ou incohérente |
+| `video_duration_exceeds_limit` | Source &gt; 10,0 s et découpe/encode impossible ou refusé en amont |
+| `video_output_duration_exceeds_limit` | Fichier préparé mesuré &gt; 10,0 s |
+| `video_fast_path_ineligible` | Conteneur / codec / métadonnées ne passent pas le fast-path |
+| `video_decode_failed` | Métadonnées ou frame de preuve non décodables |
+| `video_encode_failed` | WebCodecs et secours MediaRecorder ont échoué |
+| `video_prepare_cancelled` | Annulation ; tout résultat tardif ignoré |
+
+### 7.8 Limites V1
+
+- Un seul objet Storage par souvenir filmé (pas d’original conservé à côté).
+- Pas de backfill des vidéos legacy déjà dans le Coffre.
+- Sanctuaire `guest_video` hors S7.
+- Pas de worker ffmpeg serveur en V1.
+- Poster S5 généré depuis le **fichier préparé** (même image, même orientation), au branchement.
+- S7 reste ⏳ jusqu’aux preuves E2E (iPhone + Storage/DB) prévues en fin de chantier.

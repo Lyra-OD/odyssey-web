@@ -4,11 +4,11 @@
 **Dernière MAJ :** 27 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 27 oct 2026 — Sync post-Coffre : Phase 1 tiroir ✅ · P0 = **S7 ingest** ⏳ · Quiet Luxury chrome wizard · cadrage Livre doc.
-- 13 oct 2026 — **S6b ✅** Sanctuaire dépôt photo = resize ≤2048 (même lib que Coffre).
-- 13 oct 2026 — **S6 ✅** resize photo ≤2048 JPEG preflight (HEIC skip).
-- 13 oct 2026 — CI : test `quiet-luxury-player` aligné sur `preMemoryBlack: 0.8` · badges Coffre.
-- 13 oct 2026 — **S5 ✅** poster frame vidéo à l’upload (tuile Coffre/banque = image).
+- 27 oct 2026 : dette Soft Cap SQL (prod ≠ `odyssey_p7_…sql`) · S7 ⏳ · contrat ingest v2.3 (doc).
+- 27 oct 2026 : Sync post-Coffre : Phase 1 tiroir ✅ · P0 = **S7 ingest** ⏳ · Quiet Luxury chrome · cadrage Livre.
+- 13 oct 2026 : **S6b ✅** Sanctuaire dépôt photo = resize ≤2048 (même lib que Coffre).
+- 13 oct 2026 : **S6 ✅** resize photo ≤2048 JPEG preflight (HEIC skip).
+- 13 oct 2026 : CI : test `quiet-luxury-player` aligné sur `preMemoryBlack: 0.8` · badges Coffre.
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
@@ -93,7 +93,9 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 - Le checkout Stripe **sérialise encore** `act_tracks` (compact) en plus de `storyboard` — [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md).
 - Cible aperçu : mix BA, plan plus tard — [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
 
-**Dette acceptée (reste) :** S5-L titres chapitre défaut · mark Éclipse pas partout · intro ciel OFF · étape 1 code exige **nom** vs D1 CEO (prénom + 2 dates) — [`SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b. · Médias legacy Coffre (pas de backfill S7) · Sanctuaire `guest_video` hors S7.
+**Dette acceptée (reste) :** S5-L titres chapitre défaut · mark Éclipse pas partout · intro ciel OFF · étape 1 code exige **nom** vs D1 CEO (prénom + 2 dates) ([`SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b) · Médias legacy Coffre (pas de backfill S7) · Sanctuaire `guest_video` hors S7.
+
+**Dette acceptée — Soft Cap SQL (doc) :** le trigger prod `enforce_media_asset_quota()` applique un plafond runtime **125** lorsque `grantedPackage = essential` (freemium). Le fichier de référence [`docs/sql/odyssey_p7_media_quota_guard.sql`](sql/odyssey_p7_media_quota_guard.sql) est en retard (lit surtout `basePackage`, sans ce bump). À synchroniser SQL ↔ prod sans toucher au correctif orphelins Storage. Hors chantier S7.
 
 **Différé :** Stripe Connect auto-payout · Scanner Phase B · Gants Blancs ops · Lyra produit · verticales pets UI.
 
