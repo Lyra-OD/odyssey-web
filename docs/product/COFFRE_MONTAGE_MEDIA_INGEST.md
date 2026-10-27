@@ -6,11 +6,11 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
-- 27 oct 2026 : **contrat S7 v2.3** (§7) · trois durées · fail-closed · limites V1 · S7 toujours ⏳.
-- 27 oct 2026 : **fix orphelins Storage** (hors S7) · échec `media_assets` après upload → nettoyage serveur `POST …/media/discard` + `register` · voir §5b.
-- 27 oct 2026 : §2 Coffre aligné S5 poster (`generateVideoPoster.ts`) · S7 ⏳.
-- 13 oct 2026 : **S6b ✅** : Sanctuaire dépôt photo = même resize ≤2048 ([`SanctuaryDepositForm`](../../src/components/contribute/SanctuaryDepositForm.tsx)).
-- 13 oct 2026 : **S6 ✅** : resize photo ≤2048 JPEG preflight · HEIC skip · [`resizeImageForUpload.ts`](../../src/lib/media/resizeImageForUpload.ts).
+- 27 oct 2026 : **Commit 3** probe MP4 (`mp4box` + moov début/fin) · S7 ⏳.
+- 27 oct 2026 : **contrat S7 v2.3** (§7) · trois durées · fail-closed · limites V1.
+- 27 oct 2026 : **fix orphelins Storage** (hors S7) · `discard` + `register` · §5b.
+- 27 oct 2026 : §2 Coffre aligné S5 poster · S7 ⏳.
+- 13 oct 2026 : **S6b ✅** Sanctuaire dépôt photo = resize ≤2048.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
@@ -140,6 +140,7 @@ S7 = le plus gros. S1–S3 déjà verts. Rien ne change pour les familles tant q
 | Plafond API | [`upload-url/route.ts`](../../app/api/projects/[id]/media/upload-url/route.ts) (zod 300 Mo) |
 | Nettoyage orphelins | [`discardStorageObjects.ts`](../../src/lib/uploads/discardStorageObjects.ts) · [`discard/route.ts`](../../app/api/projects/[id]/media/discard/route.ts) |
 | Contrat durée S7 | [`videoDurationContract.ts`](../../src/lib/media/videoDurationContract.ts) (helpers + tests ; pas encore branché) |
+| Probe conteneur MP4 | [`probeMp4Container.ts`](../../src/lib/media/probeMp4Container.ts) · dep `mp4box` · fixtures `tests/fixtures/mp4/` |
 
 ### 5b. Nettoyage Storage après échec d'enregistrement
 
@@ -208,7 +209,9 @@ Refus du fast-path (encode ou rejet propre) notamment si :
 - profondeur ou codec non vérifiable ;
 - piste / rotation / `moov` ambigus.
 
-L’extension `.mp4` ne prouve pas le codec. Le choix de la bibliothèque de probe et le détail des helpers relèvent des commits suivants (pas de parseur maison par défaut).
+L’extension `.mp4` ne prouve pas le codec.
+
+**Dépendance probe (Commit 3) :** [`mp4box`](https://www.npmjs.com/package/mp4box) (GPAC) pour pistes/codecs + localisateur d’atomes top-level dans [`probeMp4Container.ts`](../../src/lib/media/probeMp4Container.ts) (position `moov` début/fin). Pas de parseur codec maison. `eligibleForFastPath` = « assez vérifiable pour envisager le fast-path » (ensuite Commit 4 décodage) ; **pas** « prêt à uploader ». Profondeur de bits 8 non prouvée par le conteneur seul → listée dans `unverifiedFields`.
 
 ### 7.5 Encodeurs (intentions V1)
 
