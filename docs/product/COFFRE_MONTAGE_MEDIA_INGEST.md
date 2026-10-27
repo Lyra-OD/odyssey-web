@@ -6,12 +6,11 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
+- 27 oct 2026 : **fix orphelins Storage** (hors S7) · échec `media_assets` après upload → nettoyage serveur `POST …/media/discard` + `register` · voir §5b.
 - 27 oct 2026 — §2 Coffre aligné S5 poster (`generateVideoPoster.ts`) · S7 toujours ⏳ · contrats durée/codec/originaux (plan v2.1).
 - 13 oct 2026 — **S6b ✅** : Sanctuaire dépôt photo = même resize ≤2048 — [`SanctuaryDepositForm`](../../src/components/contribute/SanctuaryDepositForm.tsx).
 - 13 oct 2026 — **S6 ✅** : resize photo ≤2048 JPEG preflight · HEIC skip · [`resizeImageForUpload.ts`](../../src/lib/media/resizeImageForUpload.ts).
 - 13 oct 2026 — Badges tuile : Photo / Vidéo / Souvenir / Scanner — canon [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) § Badges.
-- 13 oct 2026 — **S5 ✅** : poster WebP client · hydrate/delete `*-thumb.webp` vidéo · tuiles = image.
-
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
 Pacing : `VIDEO_TRIM_DURATION_SEC` = 10 s dans [`src/lib/wizard/storyboardPacing.ts`](../../src/lib/wizard/storyboardPacing.ts).
@@ -136,6 +135,20 @@ S7 = le plus gros ; ne pas commencer avant S1–S3 verts.
 | DnD | [`useMontageDnd.ts`](../../src/hooks/useMontageDnd.ts) · [`useFinePointer.ts`](../../src/hooks/useFinePointer.ts) |
 | Directeur | [`MontageDirectorModal.tsx`](../../src/components/tribute/montage/MontageDirectorModal.tsx) |
 | Plafond API | [`upload-url/route.ts`](../../app/api/projects/[id]/media/upload-url/route.ts) (zod 300 Mo) |
+| Nettoyage orphelins | [`discardStorageObjects.ts`](../../src/lib/uploads/discardStorageObjects.ts) · [`discard/route.ts`](../../app/api/projects/[id]/media/discard/route.ts) |
+
+### 5b. Nettoyage Storage après échec d'enregistrement
+
+Le bucket `user-assets` n'a pas de policy DELETE pour `authenticated` : le navigateur ne peut pas supprimer. Si l'upload Storage réussit mais que `media_assets` échoue (quota, RLS, réseau), le client appelle `POST /api/projects/[id]/media/discard` à **chaque tentative ratée** ; `register` nettoie aussi côté serveur. L'erreur initiale reste toujours celle remontée.
+
+Garde-fous serveur (client admin) : accès `resolveWizardCraftAccess` (Titulaire ou Co-Créateur) · chemins sous `projects/{id}/` uniquement · miniature dérivée côté serveur, jamais acceptée en entrée · **un chemin référencé par `media_assets` n'est jamais supprimé** (le trigger quota est `BEFORE INSERT` et se déclenche aussi sur un upsert en conflit ; une réponse perdue après insertion réussie arrive au même cas).
+
+Validation sur Supabase réel (quota atteint sur un projet test, objets absents du bucket ensuite) : **reste à faire**. Les tests du dépôt sont des mocks.
+
+Limites connues :
+- Un fichier envoyé mais pas encore enregistré n'est pas protégé par le contrôle de référence (chemin à UUID non devinable). Accepté en V1.
+- Réponse perdue après une insertion réussie : le fichier est conservé, mais la tentative suivante crée un **doublon** du média. Problème distinct, non traité ici.
+- Orphelins déjà présents dans le bucket : pas de rattrapage.
 
 ---
 

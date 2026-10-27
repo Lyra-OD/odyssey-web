@@ -197,6 +197,35 @@ async function registerMediaAsset(params: {
   return body.assetId ?? null;
 }
 
+/**
+ * Demande au serveur de supprimer l'original (et sa miniature dérivée) après
+ * un échec post-upload. Le client n'a pas de droit DELETE sur Storage.
+ * Ne lève jamais : l'erreur initiale doit rester celle propagée.
+ */
+export async function discardUploadedObjectsBestEffort(
+  projectId: string,
+  storagePaths: ReadonlyArray<string | null | undefined>,
+): Promise<void> {
+  const paths = storagePaths.filter(
+    (p, i, all): p is string =>
+      typeof p === "string" && p.trim().length > 0 && all.indexOf(p) === i,
+  );
+  if (paths.length === 0) return;
+  try {
+    const res = await fetch(`/api/projects/${projectId}/media/discard`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ storagePaths: paths }),
+    });
+    if (!res.ok) {
+      console.warn("[mediaUpload] storage cleanup failed:", res.status);
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.warn("[mediaUpload] storage cleanup failed:", message);
+  }
+}
+
 async function uploadAndInsertSigned(params: {
   item: UploadQueueItem;
   projectId: string;
@@ -228,6 +257,30 @@ async function uploadAndInsertSigned(params: {
     throw new Error(`Storage upload failed: ${uploadError.message}`);
   }
 
+  try {
+    const assetId = await uploadThumbAndRegisterSigned({
+      ...params,
+      supabase,
+      uploadFile,
+      storagePath: signed.path,
+    });
+    return { storagePath: signed.path, assetId };
+  } catch (error) {
+    await discardUploadedObjectsBestEffort(params.projectId, [signed.path]);
+    throw error;
+  }
+}
+
+async function uploadThumbAndRegisterSigned(params: {
+  item: UploadQueueItem;
+  projectId: string;
+  source: MediaUploadSource;
+  bucket: string;
+  supabase: ReturnType<typeof createClient>;
+  uploadFile: File;
+  storagePath: string;
+}): Promise<string | null> {
+  const { supabase, uploadFile } = params;
   const thumbBlob =
     (await generateImageThumbnailBlob(uploadFile)) ??
     (await generateVideoPosterBlob(uploadFile));
@@ -240,7 +293,7 @@ async function uploadAndInsertSigned(params: {
         sizeBytes: thumbBlob.size,
         orderIndex: params.item.orderIndex ?? 0,
         kind: "thumb",
-        baseStoragePath: signed.path,
+        baseStoragePath: params.storagePath,
       });
       const { error: thumbError } = await supabase.storage
         .from(params.bucket)
@@ -261,16 +314,14 @@ async function uploadAndInsertSigned(params: {
     }
   }
 
-  const assetId = await registerMediaAsset({
+  return registerMediaAsset({
     projectId: params.projectId,
-    storagePath: signed.path,
+    storagePath: params.storagePath,
     mimeType: uploadFile.type || null,
     sizeBytes: uploadFile.size,
     orderIndex: params.item.orderIndex ?? 0,
     source: params.source,
   });
-
-  return { storagePath: signed.path, assetId };
 }
 
 async function uploadAndInsert(
@@ -315,6 +366,35 @@ async function uploadAndInsert(
     throw new Error(`Storage upload failed: ${uploadError.message}`);
   }
 
+  try {
+    const assetId = await uploadThumbAndInsertDirect({
+      ...params,
+      supabase,
+      uploadFile,
+      itemForUpload,
+      storagePath,
+    });
+    return { storagePath, assetId };
+  } catch (error) {
+    await discardUploadedObjectsBestEffort(params.projectId, [storagePath]);
+    throw error;
+  }
+}
+
+async function uploadThumbAndInsertDirect(params: {
+  item: UploadQueueItem;
+  projectId: string;
+  userId?: string;
+  tenantId?: string;
+  source: MediaUploadSource;
+  bucket: string;
+  insertRowFactory?: UploadBatchParams["insertRowFactory"];
+  supabase: ReturnType<typeof createClient>;
+  uploadFile: File;
+  itemForUpload: UploadQueueItem;
+  storagePath: string;
+}): Promise<string | null> {
+  const { supabase, uploadFile, itemForUpload, storagePath } = params;
   const thumbBlob =
     (await generateImageThumbnailBlob(uploadFile)) ??
     (await generateVideoPosterBlob(uploadFile));
@@ -371,10 +451,7 @@ async function uploadAndInsert(
     throw new Error(`media_assets upsert failed: ${insertError.message}`);
   }
 
-  return {
-    storagePath,
-    assetId: inserted?.id ?? null,
-  };
+  return inserted?.id ?? null;
 }
 
 async function uploadWithRetries(

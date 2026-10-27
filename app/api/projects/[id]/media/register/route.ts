@@ -4,8 +4,11 @@ import { z } from "zod";
 import { resolveWizardCraftAccess } from "@/src/lib/api/projectAccess";
 import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 import { ProjectIdSchema } from "@/src/lib/api/projectIdSchema";
+import { discardUnreferencedStorageObjects } from "@/src/lib/uploads/discardStorageObjects";
 
 export const runtime = "nodejs";
+
+const BUCKET = "user-assets";
 
 const BodySchema = z
   .object({
@@ -95,6 +98,12 @@ export async function POST(
     .maybeSingle();
 
   if (insertError) {
+    await discardUnreferencedStorageObjects({
+      admin,
+      bucket: BUCKET,
+      projectId,
+      storagePaths: [parsed.data.storagePath],
+    });
     const msg = insertError.message.toLowerCase();
     if (msg.includes("media_quota_exceeded")) {
       return NextResponse.json({ error: "media_quota_exceeded" }, { status: 400 });
