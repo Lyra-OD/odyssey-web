@@ -8,14 +8,14 @@
 - 26 août 2026 — Chiffres pitch : **$/famille** · 5,5–11 k$ = hyp. **bannière** · plan TEMP renommé.
 - 26 août 2026 — Bloc business = **Fonds / achat collaboratif** (cercle + famille).
 - 25 août 2026 — §1 stratégie · §2 Mode A · §3 Mode B vision prologue.
-- 21 août 2026 — rush opérationnel : [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md).
+- 21 août 2026 — rush opérationnel : [`_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md`](_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md).
 
 **Audience :** Patrice (VP Urgel Bourgie) · **Durée :** 60 min · **Auteur :** Erik  
-**Rush jour J (6 beats, Figma Paul, checklist) :** [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) — **ne pas remplacer** ce playbook.
+**Rush jour J (6 beats, Figma Paul, checklist) :** [`_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md`](_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md) — **ne pas remplacer** ce playbook.
 
 **Complète :** [`BUSINESS_CASE_V2.md`](BUSINESS_CASE_V2.md) · [`SANCTUARY_STRATEGY.md`](SANCTUARY_STRATEGY.md) · [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`business/URGEL_ADOPTION_AND_PILOT.md`](business/URGEL_ADOPTION_AND_PILOT.md) · [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) · [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) §2.
 
-**Plan opérationnel (TEMP) :** [`TEMP/PLAN_DEMO_PATRICE.md`](TEMP/PLAN_DEMO_PATRICE.md)  
+**Plan opérationnel (TEMP) :** [`_archive/TEMP_SEP2026/PLAN_DEMO_PATRICE.md`](_archive/TEMP_SEP2026/PLAN_DEMO_PATRICE.md)  
 **Murder Board VP :** [`business/PATRICE_MURDER_BOARD_PITCH.md`](business/PATRICE_MURDER_BOARD_PITCH.md)  
 **Script oral (apprendre) :** [`business/SCRIPT_DE_FER_PATRICE.md`](business/SCRIPT_DE_FER_PATRICE.md)
 
@@ -34,7 +34,7 @@ Deux couches — **ne pas fusionner** :
 | Couche | Où | Rôle |
 |--------|-----|------|
 | **Produit (canon)** | [`product/SANCTUARY_USER_JOURNEY.md`](product/SANCTUARY_USER_JOURNEY.md) §11b · [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) | Vision J1–J9 + **vérité code** · mis à jour à chaque milestone |
-| **Présentation (démo VP)** | Ce playbook · [`TEMP/PLAN_DEMO_PATRICE.md`](TEMP/PLAN_DEMO_PATRICE.md) | Ce qu’on **montre** · live vs vidéo · checklists J-7 / J-1 · **date session** |
+| **Présentation (démo VP)** | Ce playbook · [`_archive/TEMP_SEP2026/PLAN_DEMO_PATRICE.md`](_archive/TEMP_SEP2026/PLAN_DEMO_PATRICE.md) | Ce qu’on **montre** · live vs vidéo · checklists J-7 / J-1 · **date session** |
 
 Mettre à jour le **canon** quand le code change. Mettre à jour le **plan TEMP** quand la date ou le script oral change — sans réécrire le journey.
 
@@ -147,7 +147,7 @@ Dire : *« **30 % du net distribuable** — contractuel, tracé, mensuel. Invisi
 
 **Par défaut devant Patrice.** Prod/staging vert. Prouve que **le système existe**.
 
-**Rush opérationnel (6 beats, durées, Figma secours) :** [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) §2.
+**Rush opérationnel (6 beats, durées, Figma secours) :** [`_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md`](_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md) §2.
 
 ### 2.1 Accroche (0–2 min) — écran noir ou logo
 
@@ -275,7 +275,7 @@ Si le temps file : **couper Lyra**, jamais Salon + mobile + share.
 | **Vidéo Mode B** (MP4 60–90 s) si prologue pas branché | |
 | PDF waterfall · hotspot | |
 
-Détail checklist : [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) §5.
+Détail checklist : [`_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md`](_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md) §5.
 
 ---
 

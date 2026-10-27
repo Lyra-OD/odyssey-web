@@ -12,7 +12,7 @@
 
 **Liens :**
 - Spec Traversée : [`../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](../product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) §2b
-- Plan B capture gel : [`../TEMP/PLAN_B_HUB_CAPTURE_CANVAS.md`](../TEMP/PLAN_B_HUB_CAPTURE_CANVAS.md)
+- Plan B capture gel : [`../_archive/TEMP_SEP2026/PLAN_B_HUB_CAPTURE_CANVAS.md`](../_archive/TEMP_SEP2026/PLAN_B_HUB_CAPTURE_CANVAS.md)
 - Timeline freeze : [`../../src/lib/parcours/hubFreezeTimeline.ts`](../../src/lib/parcours/hubFreezeTimeline.ts)
 - CSS source : [`../../app/globals.css`](../../app/globals.css) (`.parcours-monolith-*`)
 - Bouton login : [`../../src/components/salon/SalonCyanGlowText.tsx`](../../src/components/salon/SalonCyanGlowText.tsx) · `connexionSubmitButtonClass`
@@ -118,7 +118,7 @@
 ## 7. Travail ouvert (ordre recommandé)
 
 ### P0 — Plan B (gel pixel-perfect) ✅
-→ [`PLAN_B_HUB_CAPTURE_CANVAS.md`](../TEMP/PLAN_B_HUB_CAPTURE_CANVAS.md) — **livré 1 sept 2026**
+→ [`PLAN_B_HUB_CAPTURE_CANVAS.md`](../_archive/TEMP_SEP2026/PLAN_B_HUB_CAPTURE_CANVAS.md) — **livré 1 sept 2026**
 
 ### P0b — Fermeture tranche 1 (D1 + pre-warm) ✅
 → Thaw @ `onHubCanvasReady` + panneau sorti · loop pre-warm · voile off close · **livré 1 sept 2026**

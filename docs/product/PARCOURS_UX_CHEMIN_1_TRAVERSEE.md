@@ -101,7 +101,7 @@
 
 ### Implémentation (cible)
 
-1. Gel 2D : **Plan B** capture canvas @ clic (`hubFreezeCapture.ts`) · fallback `hub-freeze-v1.jpg` — voir [`../TEMP/PLAN_B_HUB_CAPTURE_CANVAS.md`](../TEMP/PLAN_B_HUB_CAPTURE_CANVAS.md).
+1. Gel 2D : **Plan B** capture canvas @ clic (`hubFreezeCapture.ts`) · fallback `hub-freeze-v1.jpg` — voir [`../_archive/TEMP_SEP2026/PLAN_B_HUB_CAPTURE_CANVAS.md`](../_archive/TEMP_SEP2026/PLAN_B_HUB_CAPTURE_CANVAS.md).
 2. Timeline : `hubFreezeTimeline.ts` (hold → fade → panel · miroir close).
 3. `ForceRenderLoop` on pendant hold (flash) · **off** en saisie · **unmount** WebGL en `panel.essentials`.
 4. Ancre étoile hub = **ref** · FX freeze = `hubFreezeFxRef` (flash / holdBreath / inviteMul).

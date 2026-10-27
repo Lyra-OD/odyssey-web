@@ -4,7 +4,7 @@
 **Dernière MAJ :** 27 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 27 oct 2026 — État code resync : Phase 1 Coffre ✅ · orchestrateur ~3312 L · S7 ⏳ · audit 8 oct supersédé.
+- 27 oct 2026 — **Cadrage Livre** figé (3a extraction → 3b L2/K/J) · labels S5-L2 universels · état code Phase 1 ✅ / S7 ⏳.
 - 14 oct 2026 — **C3.2** tiroir : barre compacte collante · dépôt n’importe où · Scanner en haut du Coffre.
 - 14 oct 2026 — **C3.1** tiroir Coffre à gauche 75 % · pastille + compteur signature en-tête.
 - 14 oct 2026 — **Phase 1 C3 ✅** tiroir = même `CoffreBody` · un seul monté · upload continue tiroir fermé.
@@ -97,8 +97,31 @@ Ancrage : [`mediaUploadService.ts`](../../src/lib/uploads/mediaUploadService.ts)
 
 ## Phase 3 — Package Livre + polish
 
-1. Extraire montage + libs storyboard/DnD/magie vers `src/surfaces/livre/`.
-2. **Cadrage Erik** (liste prioritaire des changements Livre) **avant** commits UX.
+### Cadrage Erik (27 oct 2026) — priorités figées
+
+Zéro commit UX Livre tant que S7 n’est pas derrière la porte QA. Décisions :
+
+| # | Décision |
+|---|----------|
+| 1 Scope | **3a** extraction pure (`surfaces/livre/` + cleanup orphelins) ; **3b** polish ensuite. Pas mélanger refactor DnD et UI/audio. |
+| 2 Priorité polish | **S5-L2** → **S5-K** → **S5-J** → (4) matière/mobile |
+| 3 Labels S5-L2 | Ch1 Racines & Premiers Pas / Roots & Early Days · Ch2 Au Cœur de la Vie / At the Heart of Life · Ch3 Passions & Lumière / Passions & Light · Ch4 Liens & Partages / Bonds & Shared Moments · Ch5 Empreinte & Souvenir / Lasting Imprint. Progression universelle, non chronologique forcée. Plus de Legacy/Horizons. |
+| 4 Gate co-créateur | Assez visible ; pas de refonte avant extraction |
+| 5 filmBridge | Hors scope Livre ; beat entrée **étape 4** |
+| 6 Copy host | Blob copy typé injecté par TributeWizard (miroir Coffre) |
+| 7 Coffre↔Livre | `coffreMediaRevision` + refetch `{ force: true }` ; pas de store global |
+| 8 Hors Phase 3 | Warnings pacing UI · mix BA · purge `actTracks` (S8–S10) |
+
+| Priorité | Chantier Livre | Dépendance |
+| :--- | :--- | :--- |
+| **P0 — Phase 3a** | Extraction vers `src/surfaces/livre/` (contrat host + copy injectée + `coffreMediaRevision`) et suppression des orphelins (`MontageTimeline`, `MediaBankPanel`) | Après S7 ingest |
+| **P1 — Phase 3b** | S5-L2 (labels chapitres universels) → S5-K (Focus organique) → S5-J (Audio chapitre au montage) | Après 3a |
+| **Later** | Polish tactile mobile M0–M6, Gate co-créateur, warnings pacing UI et purge `actTracks` | Post-V1 / S8–S10 |
+
+### Implémentation (après S7)
+
+1. Extraire montage + libs storyboard/DnD/magie vers `src/surfaces/livre/` (3a).
+2. Polish L2 → K → J (3b) selon le tableau ci-dessus.
 3. Contrat host assez propre pour un futur consommateur hors Odyssey — sans 2ᵉ deploy maintenant.
 
 ---

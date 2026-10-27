@@ -4,7 +4,7 @@
 **Dernière MAJ :** 19 août 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 21 août 2026 — rush VP Patrice (Salon inclus) : [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md) · Figma = 2 pages max (gratuit).
+- 21 août 2026 — rush VP Patrice (Salon inclus) : [`_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md`](_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md) · Figma = 2 pages max (gratuit).
 - 19 août 2026 — Session Figma + B2C : ordre du jour [`B2C_GO_TO_MARKET.md`](B2C_GO_TO_MARKET.md) §1.
 - 19 août 2026 — Réf. Paul `Odysee Rev-2.pdf` : mapping 8→7 étapes, layout seulement.
 - 19 août 2026 — Vague 1 : 18 frames famille + variantes. Figma = wire ; copy = catalogue.
@@ -44,7 +44,7 @@ Pas de lab HTML `docs/da/`. Pas de squellette CSS de tout le site avant Figma. P
 
 Si plan payant un jour : on peut ré-éclater en pages Marketing / Auth / Studio / etc. Noms de **frames** inchangés.
 
-Rush démo Patrice (Salon + 6 beats) : [`TEMP/DEMO_PATRICE_URGEL_RUSH.md`](TEMP/DEMO_PATRICE_URGEL_RUSH.md).
+Rush démo Patrice (Salon + 6 beats) : [`_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md`](_archive/TEMP_SEP2026/DEMO_PATRICE_URGEL_RUSH.md).
 
 ~~Pages (plan multi-pages, si quota OK) :~~
 
