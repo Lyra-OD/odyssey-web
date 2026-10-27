@@ -21,7 +21,7 @@
 - Craft prologue / ciel : [`SANCTUARY_SKY_CRAFT.md`](../SANCTUARY_SKY_CRAFT.md) · [`ODYSSEY_LUEUR_CRAFT.md`](../ODYSSEY_LUEUR_CRAFT.md)
 
 **Statut :** vision produit **figée** (étapes 1–3 tranchées). **Implémentation active** = Chemin 1 [`PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · matrice code §11b.  
-**Présentation démo VP** (live vs vidéo, timing oral) : [`MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) · plan opérationnel [`TEMP/PLAN_DEMO_PATRICE.md`](../TEMP/PLAN_DEMO_PATRICE.md) — **ne pas** confondre avec ce canon.
+**Présentation démo VP** (live vs vidéo, timing oral) : [`MEETING_PATRICE_VP.md`](../MEETING_PATRICE_VP.md) · plan opérationnel archivé [`_archive/TEMP_SEP2026/PLAN_DEMO_PATRICE.md`](../_archive/TEMP_SEP2026/PLAN_DEMO_PATRICE.md). **Ne pas** confondre avec ce canon.
 
 ---
 
