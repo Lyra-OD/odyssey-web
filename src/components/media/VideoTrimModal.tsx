@@ -8,6 +8,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import { createPortal } from "react-dom";
 
 import {
   clampTrimStartSec,
@@ -271,13 +272,14 @@ export function VideoTrimModal({
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        stopPlayback();
-        onCancel();
-      }
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      stopPlayback();
+      onCancel();
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
   }, [open, onCancel, stopPlayback]);
 
   useEffect(() => {
@@ -453,9 +455,9 @@ export function VideoTrimModal({
   const playheadLeftRatio =
     frameLeftRatio + playheadRatio * frameWidthRatio;
 
-  return (
+  const dialog = (
     <div
-      className="fixed inset-0 z-[90] flex flex-col bg-[#020202]/98 backdrop-blur-3xl"
+      className="fixed inset-0 z-[120] flex flex-col bg-[#020202]"
       role="dialog"
       aria-modal="true"
       aria-label={copy.title}
@@ -652,4 +654,7 @@ export function VideoTrimModal({
       </div>
     </div>
   );
+
+  if (typeof document === "undefined") return dialog;
+  return createPortal(dialog, document.body);
 }
