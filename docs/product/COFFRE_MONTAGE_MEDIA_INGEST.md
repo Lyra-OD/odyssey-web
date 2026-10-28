@@ -6,15 +6,11 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
-- 28 oct 2026 : **Commit 8** modale « Choisis tes 10 secondes » isolée lab (`VideoTrimModal`) · pas de Coffre · S7 ⏳.
-- 28 oct 2026 : HEVC Safari : conteneur hors contrat refusé + fallback `<video>`/canvas → H.264 (iOS sans `captureStream`).
-- 28 oct 2026 : secours canvas muxe aussi l’AAC source (fenêtre trim) ; soft-fail → vidéo seule si audio indécodable.
-- 28 oct 2026 : QA lab : `path=webcodecs` + `audioTrackCount=0` sur MOV H.264/AAC (ex. IMG_4679) = Conversion tombaient sur `{ discard: true }` pour passer le plafond 10 s. Correctif : plus de discard si la source a de l’audio ; retries marges ; sinon canvas + AAC.
-- 28 oct 2026 : ProRes (`videoCanDecode: false`, ex. IMG_4728) : skip Conversion (anti-hang) → canvas ; abort seek/playback + pause `<video>` à l’Annuler.
-- 28 oct 2026 : H.264 ~120 fps : preuve decode via **WebCodecs/mediabunny** (plus de `play()` HTML — geste perdu après await ; preview noire avant Play = normal iOS HFR).
-- 27 oct 2026 : **Commit 7** orchestrateur `prepareVideoForUpload` (fast-path / encode) · S7 ⏳ · pas de Coffre.
-- 27 oct 2026 : **Commit 6** fallback MediaRecorder + AudioContext silencieux · normalisation MP4.
-- 27 oct 2026 : **Commit 5** encode WebCodecs (`mediabunny`) + durée effective post-mux.
+- 28 oct 2026 : porte QA pré-Coffre consignée (H.264/HFR/trim/AAC/annuler OK lab ; HEVC device différé) · prérequis Commit 11 écrits · pas de branchement.
+- 28 oct 2026 : politique encode verrouillée : pas de discard audio si source sonore · sortie 30 fps.
+- 28 oct 2026 : **Commit 8** modale trim isolée lab · S7 ⏳.
+- 28 oct 2026 : H.264 ~120 fps : preuve decode WebCodecs (preview noire avant Play = normal iOS HFR).
+- 27 oct 2026 : **Commit 7** orchestrateur `prepareVideoForUpload` · pas de Coffre.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
@@ -273,3 +269,28 @@ Noms pour le code des commits 2–7. Messages écran FR/EN : commits UI.
 - Pas de worker ffmpeg serveur en V1.
 - Poster S5 généré depuis le **fichier préparé** (même image, même orientation), au branchement.
 - S7 reste ⏳ jusqu’aux preuves E2E (iPhone + Storage/DB) prévues en fin de chantier.
+
+### 7.9 Prérequis Commit 11 (branchement Coffre)
+
+Porte QA lab (28 oct, Safari iPhone, pas encore Coffre) :
+
+| Cas | Statut |
+|-----|--------|
+| H.264 + AAC, trim > 10 s, son rendu | OK (ex. IMG_4679, `path=webcodecs`, `audioTracks=1`) |
+| 60 / 120 fps → sortie ~30, même durée | OK côté lab (décision A). Preview noire avant Play = normal iOS. |
+| Annuler pendant prepare | OK après correctif (l’effet React ne doit plus abort tout seul) |
+| HEVC device (Photos, Haute efficacité) | Différé : le picker Safari re-encode souvent en H.264 (`looksHevc: false`). Fixture [`hevc-silent-moov-start.mp4`](../../tests/fixtures/mp4/hevc-silent-moov-start.mp4) pour un vrai HEVC hors Photos. |
+| ProRes | Hors contrat V1 |
+
+**Ne pas appeler `prepareVideoForUpload` dans `uploadAndInsert` tant que ces règles ne sont pas dans le code Coffre :**
+
+1. Si la durée source dépasse 10 s : ouvrir `VideoTrimModal` **avant** l’enqueue, sur un geste utilisateur. Pas de `trimStartSec=0` silencieux sur un long clip.
+2. Remplacer `item.file` par `preparedFile` (nom `.mp4`, MIME, taille) **avant** Storage et signed URL.
+3. Poster S5 : `generateVideoPosterBlob` sur le fichier **préparé**, pas l’original.
+4. Propager l’`AbortSignal` de la file jusqu’à `prepareVideoForUpload`. Un résultat tardif après annulation ne déclenche pas l’upload.
+5. Copy FR et EN pour les codes `video_*` et l’état « Préparation ». Pas de phrase en dur dans un `.tsx`.
+6. Limiter les encodes WebCodecs concurrents (1 à 2). Les photos S6 ne doivent pas attendre une file de 4 encodes.
+7. Échec prepare : pas d’upload de l’original. Tuile en erreur, retry possible.
+8. Hors Commit 11 : Sanctuaire `guest_video`, backfill des vidéos déjà dans le Coffre, MediaRecorder iOS.
+
+Point d’insertion prévu : [`mediaUploadService.ts`](../../src/lib/uploads/mediaUploadService.ts), après le no-op vidéo de `resizeImageForUploadFile`, avant `buildStoragePath` / `upload-url`. API à brancher : [`prepareVideoForUpload.ts`](../../src/lib/media/prepareVideoForUpload.ts) + [`VideoTrimModal.tsx`](../../src/components/media/VideoTrimModal.tsx). Pas un package séparé.
