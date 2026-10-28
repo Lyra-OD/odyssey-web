@@ -44,6 +44,25 @@ function aborted(signal?: AbortSignal): boolean {
   return Boolean(signal?.aborted);
 }
 
+/** Sortie V1 : ~30 fps (sources 60/120 downsamplées, même durée). */
+export const PREPARE_OUTPUT_FRAME_RATE = 30;
+
+/**
+ * Politique Conversion : ne jamais discard l’audio si la source en a
+ * (QA IMG_4679 : discard pour passer 10 s → MP4 muet).
+ */
+export function conversionEncodePolicy(sourceHasAudio: boolean): {
+  discardAudio: boolean;
+  durationMarginsSec: number[];
+  outputFrameRate: number;
+} {
+  return {
+    discardAudio: !sourceHasAudio,
+    durationMarginsSec: sourceHasAudio ? [0.05, 0.12, 0.25, 0.4] : [0.05],
+    outputFrameRate: PREPARE_OUTPUT_FRAME_RATE,
+  };
+}
+
 function bytesToMp4Blob(bytes: Uint8Array): Blob {
   return new Blob(
     [
@@ -163,6 +182,7 @@ async function encodeMp4ViaConversion(
   // la source n’a pas d’audio.
   const sourceAudio = await input.getPrimaryAudioTrack();
   const sourceHasAudio = Boolean(sourceAudio);
+  const policy = conversionEncodePolicy(sourceHasAudio);
 
   // V1 : plafonner à 30 fps (sources iPhone 60/120). Sans ça, Conversion
   // conserve le framerate source → encode lourd / preview bizarre.
@@ -175,27 +195,24 @@ async function encodeMp4ViaConversion(
     rotate: plan.rotationDegrees,
     allowTransformationMetadata: false,
     forceTranscode: true,
-    frameRate: 30,
+    frameRate: policy.outputFrameRate,
   };
 
   type AudioAttempt =
     | { codec: "aac"; quality: typeof QUALITY_HIGH; forceTranscode: true }
     | { discard: true };
 
-  const audioAttempts: AudioAttempt[] = sourceHasAudio
-    ? [
+  const audioAttempts: AudioAttempt[] = policy.discardAudio
+    ? [{ discard: true }]
+    : [
         {
           codec: "aac",
           quality: QUALITY_HIGH,
           forceTranscode: true,
         },
-      ]
-    : [{ discard: true }];
+      ];
 
-  // Marges anti-dépassement moov (AAC / timestamps) sous le plafond 10,0 s.
-  const durationMarginsSec = sourceHasAudio
-    ? [0.05, 0.12, 0.25, 0.4]
-    : [0.05];
+  const durationMarginsSec = policy.durationMarginsSec;
 
   let lastReasons = "unknown";
 

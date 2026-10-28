@@ -5,7 +5,9 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 import {
+  conversionEncodePolicy,
   encodeVideoWithWebCodecs,
+  PREPARE_OUTPUT_FRAME_RATE,
   type WebCodecsEncodePlan,
 } from "@/src/lib/media/encodeVideoWithWebCodecs";
 import { VIDEO_DURATION_CEILING_SEC } from "@/src/lib/media/videoDurationContract";
@@ -18,6 +20,23 @@ const FIXTURES = join(
 function loadBytes(name: string): Uint8Array {
   return new Uint8Array(readFileSync(join(FIXTURES, name)));
 }
+
+describe("conversionEncodePolicy", () => {
+  it("source avec audio : ne discard pas, marges sous 10 s, sortie 30 fps", () => {
+    const policy = conversionEncodePolicy(true);
+    expect(policy.discardAudio).toBe(false);
+    expect(policy.outputFrameRate).toBe(PREPARE_OUTPUT_FRAME_RATE);
+    expect(policy.outputFrameRate).toBe(30);
+    expect(policy.durationMarginsSec.every((m) => m > 0 && m < 1)).toBe(true);
+    expect(policy.durationMarginsSec.length).toBeGreaterThan(1);
+  });
+
+  it("source muette : discard audio autorisé", () => {
+    const policy = conversionEncodePolicy(false);
+    expect(policy.discardAudio).toBe(true);
+    expect(policy.durationMarginsSec).toEqual([0.05]);
+  });
+});
 
 describe("encodeVideoWithWebCodecs", () => {
   it("valide la durée effective du fichier muxé, pas la consigne encodeur", async () => {
