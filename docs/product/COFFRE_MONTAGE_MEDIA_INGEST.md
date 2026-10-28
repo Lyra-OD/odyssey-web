@@ -6,7 +6,7 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
-- 28 oct 2026 : porte QA pré-Coffre consignée (H.264/HFR/trim/AAC/annuler OK lab ; HEVC device différé) · prérequis Commit 11 écrits · pas de branchement.
+- 28 oct 2026 : porte QA pré-Coffre verte (H.264/HFR/trim/AAC/annuler + fixture HEVC OK ; Photos HEVC différé) · prérequis Commit 11 · pas de branchement.
 - 28 oct 2026 : politique encode verrouillée : pas de discard audio si source sonore · sortie 30 fps.
 - 28 oct 2026 : **Commit 8** modale trim isolée lab · S7 ⏳.
 - 28 oct 2026 : H.264 ~120 fps : preuve decode WebCodecs (preview noire avant Play = normal iOS HFR).
@@ -279,7 +279,8 @@ Porte QA lab (28 oct, Safari iPhone, pas encore Coffre) :
 | H.264 + AAC, trim > 10 s, son rendu | OK (ex. IMG_4679, `path=webcodecs`, `audioTracks=1`) |
 | 60 / 120 fps → sortie ~30, même durée | OK côté lab (décision A). Preview noire avant Play = normal iOS. |
 | Annuler pendant prepare | OK après correctif (l’effet React ne doit plus abort tout seul) |
-| HEVC device (Photos, Haute efficacité) | Différé : le picker Safari re-encode souvent en H.264 (`looksHevc: false`). Fixture [`hevc-silent-moov-start.mp4`](../../tests/fixtures/mp4/hevc-silent-moov-start.mp4) pour un vrai HEVC hors Photos. |
+| HEVC fixture desktop | OK (confirmé) : [`hevc-silent-moov-start.mp4`](../../tests/fixtures/mp4/hevc-silent-moov-start.mp4). |
+| HEVC via Photos iPhone | Différé : le picker Safari re-encode souvent en H.264 (`looksHevc: false` malgré Haute efficacité). |
 | ProRes | Hors contrat V1 |
 
 **Ne pas appeler `prepareVideoForUpload` dans `uploadAndInsert` tant que ces règles ne sont pas dans le code Coffre :**
