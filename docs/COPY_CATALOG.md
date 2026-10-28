@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-19 · **Entrées :** 1138
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-28 · **Entrées :** 1144
 
 ## `common`
 
@@ -478,6 +478,12 @@
 | `tributeWizard.montageLoading` | Chargement de vos souvenirs… | Loading your memories… |
 | `tributeWizard.montageEmpty` | Aucun souvenir pour l’instant. Revenez au Coffre à souvenirs pour en déposer. | No memories yet. Return to the Memory Chest to add some. |
 | `tributeWizard.montageFocalHint` | Cliquez sur l’image pour placer le point de focus | Click the image to set the focal point |
+| `tributeWizard.videoTrimTitle` | Choisis tes 10 secondes | Choose your 10 seconds |
+| `tributeWizard.videoTrimHint` | Glisse la fenêtre pour garder le passage qui compte pour le film. | Slide the window to keep the moment that belongs in the film. |
+| `tributeWizard.videoTrimWindowLabel` | Extrait : {start} → {end} | Clip: {start} → {end} |
+| `tributeWizard.videoTrimConfirm` | Garder cet extrait | Keep this clip |
+| `tributeWizard.videoTrimCancel` | Annuler | Cancel |
+| `tributeWizard.videoTrimCloseAria` | Fermer le choix de l’extrait | Close clip selection |
 | `tributeWizard.montageShortcutSelect` | {modifier} + Clic pour sélectionner | {modifier} + Click to select |
 | `tributeWizard.montageShortcutSelectAll` | {modifier} + A pour tout sélectionner | {modifier} + A to select all |
 | `tributeWizard.montageShortcutDrag` | Glisser la poignée pour réordonner | Drag the handle to reorder |
