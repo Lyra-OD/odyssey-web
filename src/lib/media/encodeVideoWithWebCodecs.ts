@@ -25,6 +25,11 @@ import {
   QUALITY_HIGH,
 } from "mediabunny";
 
+import { encodeMp4ViaHtmlVideoCanvas } from "@/src/lib/media/encodeMp4ViaHtmlVideoCanvas";
+import {
+  assertPreparedMp4Container,
+  remuxBlobToMp4,
+} from "@/src/lib/media/ensurePreparedMp4Bytes";
 import { fitVideoEncodeSize } from "@/src/lib/media/fitVideoEncodeSize";
 import { measurePreparedVideoDuration } from "@/src/lib/media/measurePreparedVideoDuration";
 import {
@@ -33,6 +38,46 @@ import {
   assessSourceDuration,
   requestedEncodeDurationSec,
 } from "@/src/lib/media/videoDurationContract";
+
+function aborted(signal?: AbortSignal): boolean {
+  return Boolean(signal?.aborted);
+}
+
+function bytesToMp4Blob(bytes: Uint8Array): Blob {
+  return new Blob(
+    [
+      bytes.buffer.slice(
+        bytes.byteOffset,
+        bytes.byteOffset + bytes.byteLength,
+      ) as ArrayBuffer,
+    ],
+    { type: "video/mp4" },
+  );
+}
+
+/**
+ * Garantit un MP4 H.264 admissible. Si le mux WebCodecs sort du HEVC
+ * (ou autre hors contrat), tente un remux/transcode forcé ; sinon échec
+ * pour laisser le fallback MediaRecorder tourner.
+ */
+async function ensureAdmissibleMp4Bytes(
+  mp4Bytes: Uint8Array,
+  signal?: AbortSignal,
+): Promise<Uint8Array> {
+  try {
+    await assertPreparedMp4Container(mp4Bytes);
+    return mp4Bytes;
+  } catch (err) {
+    if (
+      aborted(signal) ||
+      (err instanceof Error && err.message === "video_prepare_cancelled")
+    ) {
+      throw new Error("video_prepare_cancelled");
+    }
+  }
+
+  return remuxBlobToMp4(bytesToMp4Blob(mp4Bytes), signal);
+}
 
 export type WebCodecsEncodeErrorCode =
   | "video_duration_unknown"
@@ -56,6 +101,8 @@ export type WebCodecsEncodeSuccess = {
 export type WebCodecsEncodeFailure = {
   ok: false;
   error: WebCodecsEncodeErrorCode;
+  /** Message technique (lab / logs) ; jamais affiché famille. */
+  detail?: string;
 };
 
 export type WebCodecsEncodeResult = WebCodecsEncodeSuccess | WebCodecsEncodeFailure;
@@ -94,85 +141,156 @@ export type EncodeVideoWithWebCodecsOptions = {
   measureDuration?: typeof measurePreparedVideoDuration;
 };
 
-function aborted(signal?: AbortSignal): boolean {
-  return Boolean(signal?.aborted);
+function discardedReasons(conversion: Conversion): string {
+  return conversion.discardedTracks
+    .map((d) => d.reason)
+    .filter(Boolean)
+    .join(",");
 }
 
-async function defaultEncodeToMp4(plan: WebCodecsEncodePlan): Promise<Uint8Array> {
-  if (typeof VideoEncoder === "undefined") {
-    throw new Error("webcodecs_unavailable");
-  }
-
+async function encodeMp4ViaConversion(
+  plan: WebCodecsEncodePlan,
+): Promise<Uint8Array> {
   const trimEnd = plan.trimStartSec + plan.requestedEncodeSec;
-  const target = new BufferTarget();
-  const output = new Output({
-    format: new Mp4OutputFormat({ fastStart: "in-memory" }),
-    target,
-  });
 
   const input = new Input({
     source: new BlobSource(plan.source),
     formats: ALL_FORMATS,
   });
 
-  const conversion = await Conversion.init({
-    input,
-    output,
-    tracks: "primary",
-    showWarnings: false,
-    // Toujours repasser par WebCodecs pour une sortie bornée / normalisée.
-    copy: false,
-    trim: {
-      start: plan.trimStartSec,
-      end: trimEnd,
-    },
-    video: {
-      width: plan.outputWidth,
-      height: plan.outputHeight,
-      // Ratio déjà calculé par fitVideoEncodeSize → pas d'étirement.
-      fit: "contain",
-      codec: "avc",
-      quality: QUALITY_HIGH,
-      rotate: plan.rotationDegrees,
-      // Orientation affichable sans dépendre seulement des métadonnées.
-      allowTransformationMetadata: false,
-      forceTranscode: true,
-    },
-    audio: {
-      codec: "aac",
-      quality: QUALITY_HIGH,
-    },
-  });
-
-  if (!conversion.isValid) {
-    throw new Error("conversion_invalid");
-  }
-
-  if (aborted(plan.signal)) {
-    conversion.cancel();
-    throw new Error("video_prepare_cancelled");
-  }
-
-  const onAbort = () => {
-    void conversion.cancel();
+  const baseVideo = {
+    width: plan.outputWidth,
+    height: plan.outputHeight,
+    fit: "contain" as const,
+    codec: "avc" as const,
+    quality: QUALITY_HIGH,
+    rotate: plan.rotationDegrees,
+    allowTransformationMetadata: false,
+    forceTranscode: true,
   };
-  plan.signal?.addEventListener("abort", onAbort, { once: true });
+
+  const attempts: Array<{ audio: { codec: "aac"; quality: typeof QUALITY_HIGH } | { discard: true } }> =
+    [
+      { audio: { codec: "aac", quality: QUALITY_HIGH } },
+      { audio: { discard: true } },
+    ];
+
+  let lastReasons = "unknown";
+
+  for (const attempt of attempts) {
+    const target = new BufferTarget();
+    const output = new Output({
+      format: new Mp4OutputFormat({ fastStart: "in-memory" }),
+      target,
+    });
+
+    const conversion = await Conversion.init({
+      input,
+      output,
+      tracks: "primary",
+      showWarnings: false,
+      copy: false,
+      trim: {
+        start: plan.trimStartSec,
+        end: trimEnd,
+      },
+      video: baseVideo,
+      audio: attempt.audio,
+    });
+
+    if (!conversion.isValid) {
+      lastReasons = discardedReasons(conversion) || lastReasons;
+      continue;
+    }
+
+    // HEVC souvent : vidéo discardée, seule l’audio reste → isValid true
+    // mais MP4 sans piste vidéo (QA : video_track_count_invalid).
+    const hasVideoTrack = conversion.utilizedTracks.some((t) =>
+      t.isVideoTrack(),
+    );
+    if (!hasVideoTrack) {
+      lastReasons =
+        discardedReasons(conversion) || "no_utilized_video_track";
+      continue;
+    }
+
+    if (aborted(plan.signal)) {
+      void conversion.cancel();
+      throw new Error("video_prepare_cancelled");
+    }
+
+    const onAbort = () => {
+      void conversion.cancel();
+    };
+    plan.signal?.addEventListener("abort", onAbort, { once: true });
+
+    try {
+      await conversion.execute();
+    } finally {
+      plan.signal?.removeEventListener("abort", onAbort);
+    }
+
+    if (aborted(plan.signal)) {
+      throw new Error("video_prepare_cancelled");
+    }
+
+    const buffer = target.buffer;
+    if (!buffer || buffer.byteLength < 8) {
+      throw new Error("empty_output");
+    }
+
+    const bytes = new Uint8Array(buffer);
+    // Refuse un mux « réussi » hors contrat (ex. audio-only) → canvas.
+    await assertPreparedMp4Container(bytes);
+    return bytes;
+  }
+
+  throw new Error(`conversion_invalid:${lastReasons}`);
+}
+
+/**
+ * 1) Conversion mediabunny (demux WebCodecs) + conteneur H.264 admissible.
+ * 2) Sinon `<video>` + canvas (HEVC iOS : VideoDecoder KO, HTML OK).
+ */
+async function defaultEncodeToMp4(plan: WebCodecsEncodePlan): Promise<Uint8Array> {
+  if (typeof VideoEncoder === "undefined") {
+    throw new Error("webcodecs_unavailable");
+  }
+
+  let conversionError = "conversion_failed";
+  try {
+    return await encodeMp4ViaConversion(plan);
+  } catch (err) {
+    if (
+      aborted(plan.signal) ||
+      (err instanceof Error && err.message === "video_prepare_cancelled")
+    ) {
+      throw new Error("video_prepare_cancelled");
+    }
+    conversionError = err instanceof Error ? err.message : String(err);
+  }
 
   try {
-    await conversion.execute();
-  } finally {
-    plan.signal?.removeEventListener("abort", onAbort);
+    const bytes = await encodeMp4ViaHtmlVideoCanvas({
+      source: plan.source,
+      trimStartSec: plan.trimStartSec,
+      requestedEncodeSec: plan.requestedEncodeSec,
+      outputWidth: plan.outputWidth,
+      outputHeight: plan.outputHeight,
+      signal: plan.signal,
+    });
+    await assertPreparedMp4Container(bytes);
+    return bytes;
+  } catch (err) {
+    if (
+      aborted(plan.signal) ||
+      (err instanceof Error && err.message === "video_prepare_cancelled")
+    ) {
+      throw new Error("video_prepare_cancelled");
+    }
+    const canvasError = err instanceof Error ? err.message : String(err);
+    throw new Error(`${conversionError} || canvas:${canvasError}`);
   }
-
-  if (aborted(plan.signal)) {
-    throw new Error("video_prepare_cancelled");
-  }
-
-  const buffer = target.buffer;
-  if (!buffer || buffer.byteLength < 8) {
-    throw new Error("empty_output");
-  }
-  return new Uint8Array(buffer);
 }
 
 /**
@@ -245,6 +363,7 @@ export async function encodeVideoWithWebCodecs(
       rotationDegrees,
       signal,
     });
+    mp4Bytes = await ensureAdmissibleMp4Bytes(mp4Bytes, signal);
   } catch (err) {
     if (
       aborted(signal) ||
@@ -252,7 +371,11 @@ export async function encodeVideoWithWebCodecs(
     ) {
       return { ok: false, error: "video_prepare_cancelled" };
     }
-    return { ok: false, error: "video_encode_failed" };
+    return {
+      ok: false,
+      error: "video_encode_failed",
+      detail: err instanceof Error ? err.message : String(err),
+    };
   }
 
   if (aborted(signal)) {

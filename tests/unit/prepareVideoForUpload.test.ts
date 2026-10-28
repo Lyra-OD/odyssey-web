@@ -253,7 +253,7 @@ describe("prepareVideoForUpload", () => {
         }),
       },
     });
-    expect(result).toEqual({ ok: false, error: "video_encode_failed" });
+    expect(result).toMatchObject({ ok: false, error: "video_encode_failed" });
     expect(result).not.toHaveProperty("preparedFile");
   });
 

@@ -125,6 +125,8 @@ export async function remuxBlobToMp4(
 
 /**
  * Normalise le blob MediaRecorder en octets MP4 contractuels.
+ * Safari peut produire un MP4 **HEVC** : on ne l'accepte pas brut,
+ * on tente un remux/transcode H.264 (`remuxBlobToMp4`).
  */
 export async function ensurePreparedMp4Bytes(
   blob: Blob,
@@ -135,13 +137,26 @@ export async function ensurePreparedMp4Bytes(
   }
 
   const bytes = new Uint8Array(await blob.arrayBuffer());
-  if (looksLikeIsoBmff(bytes) || blobSuggestsMp4(blob)) {
-    if (!looksLikeIsoBmff(bytes)) {
-      // mime dit mp4 mais pas de ftyp → pas un MP4 fiable
-      throw new Error("recorder_not_mp4");
+
+  if (looksLikeIsoBmff(bytes)) {
+    try {
+      await assertPreparedMp4Container(bytes);
+      return bytes;
+    } catch (err) {
+      if (
+        signal?.aborted ||
+        (err instanceof Error && err.message === "video_prepare_cancelled")
+      ) {
+        throw new Error("video_prepare_cancelled");
+      }
+      // ISO-BMFF hors contrat (HEVC, ftyp seul, audio KO, …) → transcode.
+      return remuxBlobToMp4(blob, signal);
     }
-    await assertPreparedMp4Container(bytes);
-    return bytes;
+  }
+
+  if (blobSuggestsMp4(blob)) {
+    // mime dit mp4 mais pas de ftyp → pas un MP4 fiable
+    throw new Error("recorder_not_mp4");
   }
 
   if (blobSuggestsWebm(blob) || bytes.byteLength > 0) {

@@ -75,6 +75,8 @@ export type PrepareVideoSuccess = {
 export type PrepareVideoFailure = {
   ok: false;
   error: PrepareVideoErrorCode;
+  /** Message technique (lab / logs) ; jamais affiché famille. */
+  detail?: string;
 };
 
 export type PrepareVideoResult = PrepareVideoSuccess | PrepareVideoFailure;
@@ -292,7 +294,11 @@ export async function prepareVideoForUpload(
       return { ok: false, error: "video_prepare_cancelled" };
     } else if (!isRecoverableWebCodecsFailure(web.error)) {
       // Échec de contrat (durée / dims) : propager, pas de secours MediaRecorder.
-      return { ok: false, error: web.error };
+      return {
+        ok: false,
+        error: web.error,
+        detail: "detail" in web ? web.detail : undefined,
+      };
     } else {
       if (aborted(signal)) {
         return { ok: false, error: "video_prepare_cancelled" };
@@ -310,7 +316,13 @@ export async function prepareVideoForUpload(
       } else if (rec.error === "video_duration_unknown") {
         return { ok: false, error: "video_duration_unknown" };
       } else {
-        return { ok: false, error: "video_encode_failed" };
+        const webDetail = "detail" in web ? web.detail : undefined;
+        const recDetail = "detail" in rec ? rec.detail : undefined;
+        return {
+          ok: false,
+          error: "video_encode_failed",
+          detail: [webDetail, recDetail].filter(Boolean).join(" | ") || undefined,
+        };
       }
     }
   }

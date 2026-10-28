@@ -162,7 +162,7 @@ describe("encodeVideoWithMediaRecorder", () => {
         throw new Error("remux_invalid");
       },
     });
-    expect(result).toEqual({ ok: false, error: "video_encode_failed" });
+    expect(result).toMatchObject({ ok: false, error: "video_encode_failed" });
     expect(result).not.toHaveProperty("preparedFile");
   });
 
@@ -176,7 +176,7 @@ describe("encodeVideoWithMediaRecorder", () => {
         record: async () => mp4Blob(),
       },
     });
-    expect(result).toEqual({ ok: false, error: "video_encode_failed" });
+    expect(result).toMatchObject({ ok: false, error: "video_encode_failed" });
   });
 
   it("échec d'enregistrement → video_encode_failed, pas d'original", async () => {
@@ -191,7 +191,7 @@ describe("encodeVideoWithMediaRecorder", () => {
         },
       },
     });
-    expect(result).toEqual({ ok: false, error: "video_encode_failed" });
+    expect(result).toMatchObject({ ok: false, error: "video_encode_failed" });
     expect(result).not.toHaveProperty("preparedFile");
   });
 
@@ -212,7 +212,7 @@ describe("encodeVideoWithMediaRecorder", () => {
         throw new Error("remux_failed");
       },
     });
-    expect(result).toEqual({ ok: false, error: "video_encode_failed" });
+    expect(result).toMatchObject({ ok: false, error: "video_encode_failed" });
   });
 
   it("annulation pendant l'enregistrement → video_prepare_cancelled", async () => {

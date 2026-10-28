@@ -86,7 +86,8 @@ describe("encodeVideoWithWebCodecs", () => {
       orientedWidth: 640,
       orientedHeight: 360,
       host: {
-        encodeToMp4: async () => new Uint8Array([0, 0, 0, 8, 102, 116, 121, 112]),
+        // Conteneur H.264 admissible : on isole l'échec de mesure durée.
+        encodeToMp4: async () => loadBytes("h264-landscape-1280x720.mp4"),
       },
       measureDuration: async () => ({ ok: false, error: "video_duration_unknown" }),
     });
@@ -116,6 +117,21 @@ describe("encodeVideoWithWebCodecs", () => {
         },
       },
     });
-    expect(result).toEqual({ ok: false, error: "video_encode_failed" });
+    expect(result).toMatchObject({ ok: false, error: "video_encode_failed" });
+  });
+
+  it("sortie muxée HEVC → video_encode_failed (pas d'ok hors contrat)", async () => {
+    // Repro QA Safari : durée mesurable mais conteneur hvc1.
+    // Avant correctif → ok:true puis video_fast_path_ineligible en validation finale.
+    const result = await encodeVideoWithWebCodecs(new Blob(), {
+      sourceDurationSec: 2,
+      orientedWidth: 320,
+      orientedHeight: 240,
+      host: {
+        encodeToMp4: async () => loadBytes("hevc-silent-moov-start.mp4"),
+      },
+    });
+    expect(result).toMatchObject({ ok: false, error: "video_encode_failed" });
   });
 });
+

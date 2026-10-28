@@ -44,6 +44,8 @@ export type MediaRecorderEncodeSuccess = {
 export type MediaRecorderEncodeFailure = {
   ok: false;
   error: MediaRecorderEncodeErrorCode;
+  /** Message technique (lab / logs) ; jamais affiché famille. */
+  detail?: string;
 };
 
 export type MediaRecorderEncodeResult =
@@ -345,7 +347,11 @@ export async function encodeVideoWithMediaRecorder(
   };
 
   if (!host.isSupported()) {
-    return { ok: false, error: "video_encode_failed" };
+    return {
+      ok: false,
+      error: "video_encode_failed",
+      detail: "mediarecorder_unsupported",
+    };
   }
 
   const sourceAssessment = assessSourceDuration(sourceDurationSec);
@@ -401,7 +407,11 @@ export async function encodeVideoWithMediaRecorder(
     ) {
       return { ok: false, error: "video_prepare_cancelled" };
     }
-    return { ok: false, error: "video_encode_failed" };
+    return {
+      ok: false,
+      error: "video_encode_failed",
+      detail: err instanceof Error ? err.message : String(err),
+    };
   }
 
   if (aborted(signal)) {
@@ -418,7 +428,11 @@ export async function encodeVideoWithMediaRecorder(
     ) {
       return { ok: false, error: "video_prepare_cancelled" };
     }
-    return { ok: false, error: "video_encode_failed" };
+    return {
+      ok: false,
+      error: "video_encode_failed",
+      detail: err instanceof Error ? err.message : String(err),
+    };
   }
 
   if (aborted(signal)) {

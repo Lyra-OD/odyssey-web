@@ -52,7 +52,7 @@ describe("ensurePreparedMp4Bytes", () => {
     ).rejects.toThrow(/recorder_not_mp4/);
   });
 
-  it("refuse un ftyp seul sans conteneur S7 admissible", async () => {
+  it("ftyp seul → tente remux puis échoue (pas d'acceptation brute)", async () => {
     // boîte ftyp minimale, sans moov / piste H.264
     const ftypOnly = new Uint8Array([
       0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70, // ftyp
@@ -62,7 +62,25 @@ describe("ensurePreparedMp4Bytes", () => {
     expect(looksLikeIsoBmff(ftypOnly)).toBe(true);
     await expect(
       ensurePreparedMp4Bytes(new Blob([ftypOnly], { type: "video/mp4" })),
-    ).rejects.toThrow(/prepared_container_invalid/);
+    ).rejects.toThrow();
+  });
+
+  it("MP4 HEVC → refuse le brut (tente remux, échoue hors navigateur encode)", async () => {
+    const bytes = load("hevc-silent-moov-start.mp4");
+    expect(looksLikeIsoBmff(bytes)).toBe(true);
+    await expect(
+      ensurePreparedMp4Bytes(
+        new Blob(
+          [
+            bytes.buffer.slice(
+              bytes.byteOffset,
+              bytes.byteOffset + bytes.byteLength,
+            ) as ArrayBuffer,
+          ],
+          { type: "video/mp4" },
+        ),
+      ),
+    ).rejects.toThrow();
   });
 
   it("annulation avant remux → video_prepare_cancelled", async () => {
