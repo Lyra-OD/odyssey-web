@@ -45,10 +45,19 @@ export default async function TestS7PreparePage({ params }: PageProps) {
       trimCopy={{
         title: tw.videoTrimTitle,
         hint: tw.videoTrimHint,
-        windowLabel: tw.videoTrimWindowLabel,
+        previewHint: tw.videoTrimPreviewHint,
+        filmstripLabel: tw.videoTrimFilmstripLabel,
+        startLabel: tw.videoTrimStartLabel,
+        endLabel: tw.videoTrimEndLabel,
+        fixedDurationLabel: tw.videoTrimFixedDuration,
         confirm: tw.videoTrimConfirm,
         cancel: tw.videoTrimCancel,
         closeAria: tw.videoTrimCloseAria,
+        filmstripAria: tw.videoTrimFilmstripAria,
+        play: tw.videoTrimPlay,
+        pause: tw.videoTrimPause,
+        playAria: tw.videoTrimPlayAria,
+        pauseAria: tw.videoTrimPauseAria,
       }}
     />
   );

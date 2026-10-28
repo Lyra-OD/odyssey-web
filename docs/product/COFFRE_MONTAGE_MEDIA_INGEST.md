@@ -8,6 +8,10 @@
 **Changelog** (max 5)
 - 28 oct 2026 : **Commit 8** modale « Choisis tes 10 secondes » isolée lab (`VideoTrimModal`) · pas de Coffre · S7 ⏳.
 - 28 oct 2026 : HEVC Safari : conteneur hors contrat refusé + fallback `<video>`/canvas → H.264 (iOS sans `captureStream`).
+- 28 oct 2026 : secours canvas muxe aussi l’AAC source (fenêtre trim) ; soft-fail → vidéo seule si audio indécodable.
+- 28 oct 2026 : QA lab : `path=webcodecs` + `audioTrackCount=0` sur MOV H.264/AAC (ex. IMG_4679) = Conversion tombaient sur `{ discard: true }` pour passer le plafond 10 s. Correctif : plus de discard si la source a de l’audio ; retries marges ; sinon canvas + AAC.
+- 28 oct 2026 : ProRes (`videoCanDecode: false`, ex. IMG_4728) : skip Conversion (anti-hang) → canvas ; abort seek/playback + pause `<video>` à l’Annuler.
+- 28 oct 2026 : H.264 ~120 fps : preuve decode via **WebCodecs/mediabunny** (plus de `play()` HTML — geste perdu après await ; preview noire avant Play = normal iOS HFR).
 - 27 oct 2026 : **Commit 7** orchestrateur `prepareVideoForUpload` (fast-path / encode) · S7 ⏳ · pas de Coffre.
 - 27 oct 2026 : **Commit 6** fallback MediaRecorder + AudioContext silencieux · normalisation MP4.
 - 27 oct 2026 : **Commit 5** encode WebCodecs (`mediabunny`) + durée effective post-mux.
@@ -146,7 +150,7 @@ S7 = le plus gros. S1–S3 déjà verts. Rien ne change pour les familles tant q
 | Fallback MediaRecorder S7 | [`encodeVideoWithMediaRecorder.ts`](../../src/lib/media/encodeVideoWithMediaRecorder.ts) · MP4 via [`ensurePreparedMp4Bytes.ts`](../../src/lib/media/ensurePreparedMp4Bytes.ts) (jamais WebM nu) |
 | Orchestrateur S7 | [`prepareVideoForUpload.ts`](../../src/lib/media/prepareVideoForUpload.ts) (Commits 2–7 ; pas branché Coffre) |
 | Modale trim 10 s (Commit 8) | [`VideoTrimModal.tsx`](../../src/components/media/VideoTrimModal.tsx) · lab [`test-s7-prepare`](../../app/[lang]/test-s7-prepare/page.tsx) seulement |
-| Secours HEVC canvas | [`encodeMp4ViaHtmlVideoCanvas.ts`](../../src/lib/media/encodeMp4ViaHtmlVideoCanvas.ts) (**vidéo seule** V1) |
+| Secours HEVC canvas | [`encodeMp4ViaHtmlVideoCanvas.ts`](../../src/lib/media/encodeMp4ViaHtmlVideoCanvas.ts) (H.264 + AAC trim si décodable) |
 
 ### 5b. Nettoyage Storage après échec d'enregistrement
 
@@ -200,6 +204,7 @@ La durée effective fait foi. Aucune vidéo n’est remise à l’upload si sa d
 - Paysage : au plus **1920×1080** (après orientation).
 - Carré : chaque côté ≤ **1080**.
 - Zéro déformation (pas d’étirement pour « forcer » le cadre).
+- Framerate V1 (**décision CEO 28 oct = option A**) : **accepter** les sources 60/120 fps ; **sortie forcée ~30 fps** (downsample, même durée timeline = pas de ralenti). Pas de conservation 60/120. Conversion : `frameRate: 30`. Secours canvas : sample pendant lecture temps réel. Slo-mo iPhone (présentation ralentie) = cas à part, hors cette décision.
 
 **Commit 4 :** [`verifyBrowserVideoDecode.ts`](../../src/lib/media/verifyBrowserVideoDecode.ts) prouve une frame décodée (seek + canvas) et valide les dimensions orientées. Indépendant de `probeMp4Container` : un conteneur admissible ne suffit pas. Annulation → `video_prepare_cancelled` (résultat tardif ignoré). Pas encore branché à l’upload.
 
@@ -229,14 +234,14 @@ L’extension `.mp4` ne prouve pas le codec.
 - Chemin principal (**Commit 5**) : WebCodecs via [`mediabunny`](https://mediabunny.dev) `Conversion` → MP4 (`Mp4OutputFormat` + `BufferTarget`). Résolution V1 sans déformation (`fitVideoEncodeSize` + `fit: 'contain'`). Audio AAC préservé quand présent. Orientation bakée (`allowTransformationMetadata: false`).
 - Après mux : durée **effective** lue dans le moov (`measurePreparedVideoDuration` / mp4box), puis `assessOutputDuration`. Une consigne de 10 s ou un compte de frames **ne suffit pas**. Si non mesurable → refus (`video_duration_unknown`), jamais l’original brut.
 - **Contrat conteneur après WebCodecs :** le mux ne peut pas renvoyer un HEVC / hors contrat en `ok`. [`assertPreparedMp4Container`](../../src/lib/media/ensurePreparedMp4Bytes.ts) ; si KO → remux/transcode forcé (`remuxBlobToMp4`, `avc`) ; si encore KO → `video_encode_failed` pour déclencher MediaRecorder. Évite le faux positif QA (`ok` puis `video_fast_path_ineligible` en validation finale).
-- **HEVC iPhone :** `Conversion` peut rester `isValid` avec **audio seul** si la vidéo HEVC est indécodable par `VideoDecoder` → on exige une piste vidéo utilisée + conteneur H.264 admissible, sinon secours [`encodeMp4ViaHtmlVideoCanvas`](../../src/lib/media/encodeMp4ViaHtmlVideoCanvas.ts) (`<video>` natif → canvas → H.264). **Limite V1 :** ce secours canvas est **vidéo seule** ; l’audio peut être perdu. Ne pas affirmer « audio préservé » tant que non corrigé / non retesté (HEVC + son, preview Safari démutée). MediaRecorder fichier inutilisable sur iOS (`captureStream` absent).
+- **HEVC iPhone :** `Conversion` peut rester `isValid` avec **audio seul** si la vidéo HEVC est indécodable par `VideoDecoder` → on exige une piste vidéo utilisée + conteneur H.264 admissible, sinon secours [`encodeMp4ViaHtmlVideoCanvas`](../../src/lib/media/encodeMp4ViaHtmlVideoCanvas.ts) (`<video>` natif → canvas → H.264 + AAC source trimé). Si l’audio source est indécodable : soft-fail vidéo seule. **À retester :** HEVC + son, preview Safari démutée. MediaRecorder fichier inutilisable sur iOS (`captureStream` absent).
 - Réserve suivi Commit 5 : tests Node mockent `encodeToMp4` ; ils ne prouvent pas WebCodecs réel (Chrome/Safari). E2E encode = porte QA / commits ultérieurs.
 - Secours (**Commit 6**) : [`encodeVideoWithMediaRecorder.ts`](../../src/lib/media/encodeVideoWithMediaRecorder.ts). Mime préféré `video/mp4`, sinon WebM. Piste audio silencieuse via `AudioContext` (GainNode à 0 → `MediaStreamDestination`, **jamais** `destination` haut-parleurs) ; `resume()` uniquement dans ce chemin, à invoquer depuis un geste utilisateur. Annulation : stop recorder + pistes + fermeture AudioContext.
 - **Contrat MP4 après MediaRecorder :** le blob brut n’est jamais le fichier préparé. [`ensurePreparedMp4Bytes`](../../src/lib/media/ensurePreparedMp4Bytes.ts) exige un ISO-BMFF **et** un `probeMp4Container` admissible (`eligibleForFastPath` : H.264, AAC optionnel, moov présent). Un `ftyp` seul ne suffit pas. ISO-BMFF hors contrat (ex. **HEVC Safari**) ou WebM → remux/transcode mediabunny → MP4 + même probe ; échec de conversion → `video_encode_failed`, jamais le blob brut. Durée effective mesurée ensuite sur ce MP4 final.
 - Réserve suivi Commit 6 : les tests unitaires mockent `host.record` / `ensureMp4` / `measureDuration` sous Node. Ils valident le contrat (indisponible, échec, annulation, durée inconnue ou &gt; 10 s, refus WebM nu). Ils **ne prouvent pas** MediaRecorder réel ni Safari sur iPhone. Validation device = porte QA tranche 1 / Commit 12.
 - Creatomate : `trim_start` = 0 (le clip stocké est déjà court).
 - Orchestrateur (**Commit 7**) : [`prepareVideoForUpload`](../../src/lib/media/prepareVideoForUpload.ts). Enchaîne probe → décodage source → choix fast-path **ou** WebCodecs puis MediaRecorder → **validation finale obligatoire** (probe + décodage + dimensions V1 + durée effective ≤ 10,0 s). Fast-path seulement si les quatre sont vrais **et** `trimStart = 0` ; un conteneur admissible ne suffit pas. Durée source inconnue → refus. MediaRecorder uniquement après `video_encode_failed` WebCodecs (pas après annulation ni échec de contrat durée). Échec → jamais l’original brut. `AbortSignal` vérifié à chaque étape.
-- **Tranche 1 QA device (28 oct) :** Safari iPhone suffisamment verte pour ouvrir Slice 2 : portrait/paysage/muette ≤ 10 s `fast` OK ; > 10 s refus OK ; annulation OK ; HEVC court → `path=webcodecs` / `prepared.mp4` OK après correctif. **Reste à consigner :** HEVC avec audio (secours canvas) + preview Safari démutée. **S7 ⏳** : pas livré tant que Coffre / Storage / DB E2E non faits (Commit 12).
+- **Tranche 1 QA device (28 oct) :** Safari iPhone : H.264 (dont 60/120 → sortie ~30), trim 10 s, AAC, annuler, preview Play OK. **HEVC device différé** : picker Photos Safari re-encode souvent en H.264 (`looksHevc: false` malgré Haute efficacité) ; retester via Fichiers / fixture `hevc-silent-moov-start.mp4`. **S7 ⏳** : pas livré tant que Coffre / Storage / DB E2E non faits (Commit 12).
 - **Commit 8 :** modale trim isolée dans le lab ; `trimStartSec` passé à `prepareVideoForUpload`. Aucun branchement Coffre / upload. Échec prepare → pas d’original présenté comme succès.
 - Pas de changement visible pour les familles (parcours Coffre) dans Commit 8.
 

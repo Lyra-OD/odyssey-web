@@ -4,14 +4,19 @@
  * Indépendant du probe conteneur (Commit 3) : un conteneur admissible
  * ne garantit pas un décodage réussi.
  *
- * - Charge métadonnées via `<video>`
- * - Seek + drawImage d'une frame (preuve de décodage)
- * - Dimensions = videoWidth/videoHeight (déjà orientées par le moteur)
- *   ou rotation optionnelle fournie (métadonnée conteneur)
- * - AbortSignal : résultat tardif ignoré → `video_prepare_cancelled`
+ * 1) **WebCodecs / mediabunny** (prioritaire) : décode 1 frame sans `play()`
+ *    → indispensable HFR iOS (geste utilisateur perdu après await).
+ * 2) Fallback `<video>` + play + paint (HEVC HTML-only, tests host mock).
  *
  * @see docs/product/COFFRE_MONTAGE_MEDIA_INGEST.md §7.2–7.3
  */
+
+import {
+  ALL_FORMATS,
+  BlobSource,
+  Input,
+  VideoSampleSink,
+} from "mediabunny";
 
 import {
   applyRotationToDimensions,
@@ -20,7 +25,9 @@ import {
   type VideoFrameOrientation,
 } from "@/src/lib/media/orientedVideoDimensions";
 
-const DECODE_TIMEOUT_MS = 12_000;
+const DECODE_TIMEOUT_MS = 20_000;
+/** Attente max des videoWidth/Height après nudge (HFR iOS). */
+const DIMS_POLL_MS = 2_500;
 
 export type VideoDecodeErrorCode =
   | "video_decode_failed"
@@ -88,6 +95,9 @@ export type BrowserVideoElementLike = {
   removeEventListener: (type: "seeked", listener: () => void) => void;
   removeAttribute: (name: string) => void;
   load: () => void;
+  /** Optionnel : HTMLVideoElement réel (HFR iOS). */
+  play?: () => Promise<void>;
+  pause?: () => void;
 };
 
 export type VerifyBrowserVideoDecodeOptions = {
@@ -113,6 +123,10 @@ function defaultHost(): BrowserVideoDecodeHost | null {
     revokeObjectURL: (url) => URL.revokeObjectURL(url),
     createVideoElement: () => {
       const video = document.createElement("video");
+      video.muted = true;
+      video.playsInline = true;
+      video.setAttribute("playsinline", "true");
+      video.setAttribute("webkit-playsinline", "true");
       return video as unknown as BrowserVideoElementLike;
     },
     createCanvas: (width, height) => {
@@ -135,7 +149,43 @@ function cancelled(): VideoDecodeFailure {
   return { ok: false, error: "video_prepare_cancelled" };
 }
 
-function loadAndSeekVideo(
+function hasDimensions(video: BrowserVideoElementLike): boolean {
+  return (
+    Number.isFinite(video.videoWidth) &&
+    Number.isFinite(video.videoHeight) &&
+    video.videoWidth > 0 &&
+    video.videoHeight > 0
+  );
+}
+
+function delay(
+  host: BrowserVideoDecodeHost,
+  ms: number,
+  signal?: AbortSignal,
+): Promise<void> {
+  const setTimeoutFn = host.setTimeout ?? setTimeout;
+  const clearTimeoutFn = host.clearTimeout ?? clearTimeout;
+  return new Promise((resolve, reject) => {
+    if (aborted(signal)) {
+      reject(new Error("video_prepare_cancelled"));
+      return;
+    }
+    const id = setTimeoutFn(() => {
+      signal?.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+    const onAbort = () => {
+      clearTimeoutFn(id);
+      reject(new Error("video_prepare_cancelled"));
+    };
+    signal?.addEventListener("abort", onAbort, { once: true });
+  });
+}
+
+/**
+ * Charge loadeddata (ou error / timeout).
+ */
+function waitLoadedData(
   video: BrowserVideoElementLike,
   objectUrl: string,
   host: BrowserVideoDecodeHost,
@@ -157,6 +207,8 @@ function loadAndSeekVideo(
       settled = true;
       clearTimeoutFn(timeoutId);
       signal?.removeEventListener("abort", onAbort);
+      video.onloadeddata = null;
+      video.onerror = null;
       if (err) reject(err);
       else resolve();
     };
@@ -168,31 +220,110 @@ function loadAndSeekVideo(
     }
 
     video.onerror = () => finish(new Error("video_decode_failed"));
-    video.onloadeddata = () => {
-      if (aborted(signal)) {
-        finish(new Error("video_prepare_cancelled"));
-        return;
-      }
-      const duration = Number.isFinite(video.duration) ? video.duration : 0;
-      const seekTo =
-        duration > 0 ? Math.min(0.1, Math.max(0.01, duration * 0.01)) : 0.1;
-
-      const onSeeked = () => {
-        video.removeEventListener("seeked", onSeeked);
-        finish();
-      };
-      video.addEventListener("seeked", onSeeked);
-      try {
-        video.currentTime = seekTo;
-      } catch {
-        video.removeEventListener("seeked", onSeeked);
-        // Certains moteurs livrent déjà une frame sur loadeddata.
-        finish();
-      }
-    };
-
+    video.onloadeddata = () => finish();
     video.src = objectUrl;
   });
+}
+
+/**
+ * Attend qu’au moins une frame soit présentée (HFR iOS = noir tant que pas play).
+ */
+async function waitForPresentedFrame(
+  video: BrowserVideoElementLike,
+  host: BrowserVideoDecodeHost,
+  signal?: AbortSignal,
+): Promise<void> {
+  if (aborted(signal)) throw new Error("video_prepare_cancelled");
+
+  const el = video as BrowserVideoElementLike & {
+    requestVideoFrameCallback?: (
+      cb: (now: number, meta: unknown) => void,
+    ) => number;
+    cancelVideoFrameCallback?: (id: number) => void;
+  };
+
+  if (typeof el.requestVideoFrameCallback === "function") {
+    await new Promise<void>((resolve, reject) => {
+      const setTimeoutFn = host.setTimeout ?? setTimeout;
+      const clearTimeoutFn = host.clearTimeout ?? clearTimeout;
+      let done = false;
+      const finish = (err?: Error) => {
+        if (done) return;
+        done = true;
+        clearTimeoutFn(timer);
+        signal?.removeEventListener("abort", onAbort);
+        if (typeof id === "number") {
+          try {
+            el.cancelVideoFrameCallback?.(id);
+          } catch {
+            // ignore
+          }
+        }
+        if (err) reject(err);
+        else resolve();
+      };
+      const onAbort = () => finish(new Error("video_prepare_cancelled"));
+      signal?.addEventListener("abort", onAbort, { once: true });
+      const timer = setTimeoutFn(
+        () => finish(), // timeout soft : on tentera paint quand même
+        2_500,
+      );
+      const id = el.requestVideoFrameCallback!(() => finish());
+    });
+    return;
+  }
+
+  // Fallback : quelques frames rAF pendant lecture.
+  for (let i = 0; i < 18; i += 1) {
+    if (aborted(signal)) throw new Error("video_prepare_cancelled");
+    await delay(host, 32, signal);
+    if (hasDimensions(video)) return;
+  }
+}
+
+/**
+ * HFR iOS : play obligatoire (preview noire sinon), puis frame présentée.
+ * Pas de dépendance au `seeked` (souvent mort à ~120 fps).
+ */
+async function ensureDecodableFrame(
+  video: BrowserVideoElementLike,
+  host: BrowserVideoDecodeHost,
+  signal?: AbortSignal,
+): Promise<void> {
+  if (aborted(signal)) throw new Error("video_prepare_cancelled");
+
+  if (typeof video.play !== "function") {
+    // Host de test : dims déjà là ou échec plus bas.
+    if (hasDimensions(video)) return;
+    throw new Error("video_decode_failed");
+  }
+
+  try {
+    await video.play();
+  } catch {
+    throw new Error("video_decode_failed");
+  }
+
+  try {
+    await waitForPresentedFrame(video, host, signal);
+
+    const nowFn = host.now ?? (() => Date.now());
+    const deadline = nowFn() + DIMS_POLL_MS;
+    while (!hasDimensions(video) && nowFn() < deadline) {
+      if (aborted(signal)) throw new Error("video_prepare_cancelled");
+      await delay(host, 50, signal);
+    }
+  } finally {
+    try {
+      video.pause?.();
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!hasDimensions(video)) {
+    throw new Error("video_decode_failed");
+  }
 }
 
 function proveFrameDecoded(
@@ -201,15 +332,140 @@ function proveFrameDecoded(
   width: number,
   height: number,
 ): boolean {
-  const canvas = host.createCanvas(Math.min(width, 16), Math.min(height, 16));
+  const canvas = host.createCanvas(Math.min(width, 64), Math.min(height, 64));
   const ctx = canvas.getContext("2d");
   if (!ctx) return false;
   try {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const sample = ctx.getImageData(0, 0, 1, 1);
-    return sample.data.byteLength >= 4;
+    try {
+      const sample = ctx.getImageData(0, 0, 1, 1);
+      return sample.data.byteLength >= 4;
+    } catch {
+      // iOS parfois bloque getImageData ; drawImage sans throw = frame OK.
+      return true;
+    }
   } catch {
     return false;
+  }
+}
+
+function finalizeOrientedResult(
+  rawW: number,
+  rawH: number,
+  rotationDegrees: number,
+  enforceDimensionLimits: boolean,
+  durationSec: number | null,
+): VideoDecodeResult {
+  if (!Number.isFinite(rawW) || !Number.isFinite(rawH) || rawW < 1 || rawH < 1) {
+    return { ok: false, error: "video_decode_failed" };
+  }
+
+  const oriented = applyRotationToDimensions(rawW, rawH, rotationDegrees);
+  const dims = assessOrientedDimensions(oriented.width, oriented.height);
+  if (!dims.ok) {
+    if (enforceDimensionLimits || dims.error === "video_dimensions_invalid") {
+      return { ok: false, error: dims.error };
+    }
+  }
+
+  const orientedWidth = dims.ok ? dims.width : Math.round(oriented.width);
+  const orientedHeight = dims.ok ? dims.height : Math.round(oriented.height);
+  const orientation = dims.ok
+    ? dims.orientation
+    : classifyFrameOrientation(orientedWidth, orientedHeight);
+
+  return {
+    ok: true,
+    orientedWidth,
+    orientedHeight,
+    orientation,
+    frameDecoded: true,
+    durationSec,
+  };
+}
+
+/**
+ * Preuve frame via VideoDecoder (mediabunny). Pas de geste / play HTML.
+ * Retourne null si indécodable → fallback `<video>`.
+ */
+async function tryVerifyViaWebCodecs(
+  source: Blob,
+  options: {
+    signal?: AbortSignal;
+    rotationDegrees: number;
+    enforceDimensionLimits: boolean;
+  },
+): Promise<VideoDecodeResult | null> {
+  if (aborted(options.signal)) return cancelled();
+  if (typeof VideoDecoder === "undefined") return null;
+
+  try {
+    const input = new Input({
+      source: new BlobSource(source),
+      formats: ALL_FORMATS,
+    });
+    const track = await input.getPrimaryVideoTrack();
+    if (!track) return null;
+    if (!(await track.canDecode())) return null;
+    if (aborted(options.signal)) return cancelled();
+
+    const displayW = await track.getDisplayWidth();
+    const displayH = await track.getDisplayHeight();
+    if (aborted(options.signal)) return cancelled();
+
+    // getSample sur ~120 fps peut rester bloqué (iOS) : plafond 5 s,
+    // puis dimensions d’affichage si le décodeur est quand même capable.
+    const sink = new VideoSampleSink(track);
+    const sample = await new Promise<Awaited<
+      ReturnType<VideoSampleSink["getSample"]>
+    > | null>((resolve, reject) => {
+      const timer = setTimeout(() => resolve(null), 5_000);
+      const onAbort = () => {
+        clearTimeout(timer);
+        reject(new Error("video_prepare_cancelled"));
+      };
+      options.signal?.addEventListener("abort", onAbort, { once: true });
+      void sink
+        .getSample(0)
+        .then((value) => {
+          clearTimeout(timer);
+          options.signal?.removeEventListener("abort", onAbort);
+          resolve(value);
+        })
+        .catch(() => {
+          clearTimeout(timer);
+          options.signal?.removeEventListener("abort", onAbort);
+          resolve(null);
+        });
+    });
+
+    if (aborted(options.signal)) {
+      sample?.close();
+      return cancelled();
+    }
+
+    const rawW = sample?.displayWidth || displayW;
+    const rawH = sample?.displayHeight || displayH;
+    sample?.close();
+    if (!(rawW > 0) || !(rawH > 0)) return null;
+
+    let durationSec: number | null = null;
+    try {
+      const d = await input.computeDuration();
+      if (Number.isFinite(d) && d > 0) durationSec = d;
+    } catch {
+      durationSec = null;
+    }
+
+    return finalizeOrientedResult(
+      rawW,
+      rawH,
+      options.rotationDegrees,
+      options.enforceDimensionLimits,
+      durationSec,
+    );
+  } catch {
+    return null;
   }
 }
 
@@ -229,6 +485,17 @@ export async function verifyBrowserVideoDecode(
 
   if (aborted(signal)) return cancelled();
 
+  // Prod : WebCodecs d’abord (HFR 60/120 iOS — play() HTML échoue sans geste).
+  // Tests : `host` injecté → chemin mock HTML uniquement.
+  if (!options.host) {
+    const viaWc = await tryVerifyViaWebCodecs(source, {
+      signal,
+      rotationDegrees,
+      enforceDimensionLimits,
+    });
+    if (viaWc) return viaWc;
+  }
+
   const host = options.host ?? defaultHost();
   if (!host) {
     return { ok: false, error: "video_decode_failed" };
@@ -241,65 +508,69 @@ export async function verifyBrowserVideoDecode(
   video.preload = "auto";
 
   try {
-    await loadAndSeekVideo(video, objectUrl, host, signal);
+    await waitLoadedData(video, objectUrl, host, signal);
+    if (aborted(signal)) return cancelled();
 
+    await ensureDecodableFrame(video, host, signal);
     if (aborted(signal)) return cancelled();
 
     const rawW = video.videoWidth;
     const rawH = video.videoHeight;
-    if (!Number.isFinite(rawW) || !Number.isFinite(rawH) || rawW < 1 || rawH < 1) {
-      return { ok: false, error: "video_decode_failed" };
-    }
 
-    const oriented = applyRotationToDimensions(rawW, rawH, rotationDegrees);
-    const dims = assessOrientedDimensions(oriented.width, oriented.height);
-    if (!dims.ok) {
-      if (enforceDimensionLimits || dims.error === "video_dimensions_invalid") {
-        return { ok: false, error: dims.error };
+    // Paint pendant play (HFR : frame noire avant lecture).
+    let frameDecoded = false;
+    if (typeof video.play === "function") {
+      try {
+        await video.play();
+        await waitForPresentedFrame(video, host, signal);
+        frameDecoded = proveFrameDecoded(host, video, rawW || 64, rawH || 64);
+      } catch (err) {
+        if (
+          aborted(signal) ||
+          (err instanceof Error && err.message === "video_prepare_cancelled")
+        ) {
+          return cancelled();
+        }
+        frameDecoded = proveFrameDecoded(host, video, rawW || 64, rawH || 64);
+      } finally {
+        try {
+          video.pause?.();
+        } catch {
+          // ignore
+        }
       }
-      // Trop grand pour V1 : on prouve quand même le décodage pour permettre l'encode.
+    } else {
+      frameDecoded = proveFrameDecoded(host, video, rawW || 64, rawH || 64);
     }
-
-    const orientedWidth = dims.ok ? dims.width : Math.round(oriented.width);
-    const orientedHeight = dims.ok ? dims.height : Math.round(oriented.height);
-    const orientation = dims.ok
-      ? dims.orientation
-      : classifyFrameOrientation(orientedWidth, orientedHeight);
-
-    if (aborted(signal)) return cancelled();
-
-    const frameDecoded = proveFrameDecoded(
-      host,
-      video,
-      orientedWidth,
-      orientedHeight,
-    );
     if (!frameDecoded) {
       return { ok: false, error: "video_decode_failed" };
     }
 
-    // Résultat tardif après annulation : ne jamais renvoyer ok.
     if (aborted(signal)) return cancelled();
 
-    const durationSec = Number.isFinite(video.duration) && video.duration > 0
-      ? video.duration
-      : null;
+    const durationSec =
+      Number.isFinite(video.duration) && video.duration > 0
+        ? video.duration
+        : null;
 
-    return {
-      ok: true,
-      orientedWidth,
-      orientedHeight,
-      orientation,
-      frameDecoded: true,
+    return finalizeOrientedResult(
+      video.videoWidth,
+      video.videoHeight,
+      rotationDegrees,
+      enforceDimensionLimits,
       durationSec,
-    };
+    );
   } catch (err) {
-    if (aborted(signal) || (err instanceof Error && err.message === "video_prepare_cancelled")) {
+    if (
+      aborted(signal) ||
+      (err instanceof Error && err.message === "video_prepare_cancelled")
+    ) {
       return cancelled();
     }
     return { ok: false, error: "video_decode_failed" };
   } finally {
     try {
+      video.pause?.();
       video.removeAttribute("src");
       video.load();
     } catch {

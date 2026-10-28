@@ -211,14 +211,9 @@ export async function prepareVideoForUpload(
   const encodeMediaRecorder =
     injected?.encodeMediaRecorder ?? encodeVideoWithMediaRecorder;
 
-  // --- 1. Probe + décodage source (dimensions : pas encore plafond V1) ---
-  const sourceBytes = new Uint8Array(await source.arrayBuffer());
-  const sourceProbe = await probe(sourceBytes);
-
-  if (aborted(signal)) {
-    return { ok: false, error: "video_prepare_cancelled" };
-  }
-
+  // --- 1. Décodage d’abord (WebCodecs, sans geste play), puis probe bytes ---
+  // Ne pas lire arrayBuffer() avant : gros fichiers + await tuent le geste iOS
+  // si un fallback HTML play était encore nécessaire.
   const sourceDecode = await decode(source, {
     signal,
     enforceDimensionLimits: false,
@@ -227,6 +222,13 @@ export async function prepareVideoForUpload(
   if (!sourceDecode.ok) {
     return { ok: false, error: sourceDecode.error };
   }
+
+  if (aborted(signal)) {
+    return { ok: false, error: "video_prepare_cancelled" };
+  }
+
+  const sourceBytes = new Uint8Array(await source.arrayBuffer());
+  const sourceProbe = await probe(sourceBytes);
 
   if (aborted(signal)) {
     return { ok: false, error: "video_prepare_cancelled" };

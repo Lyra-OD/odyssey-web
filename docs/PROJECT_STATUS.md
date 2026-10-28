@@ -4,11 +4,11 @@
 **Dernière MAJ :** 27 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 28 oct 2026 : S7 fps **A** : entrée 60/120 OK → sortie ~30 (pas de refus HFR).
+- 28 oct 2026 : S7 lab : trim + AAC canvas + decode HFR Safari.
 - 27 oct 2026 : dette Soft Cap SQL (prod ≠ `odyssey_p7_…sql`) · S7 ⏳ · contrat ingest v2.3 (doc).
 - 27 oct 2026 : Sync post-Coffre : Phase 1 tiroir ✅ · P0 = **S7 ingest** ⏳ · Quiet Luxury chrome · cadrage Livre.
 - 13 oct 2026 : **S6b ✅** Sanctuaire dépôt photo = resize ≤2048 (même lib que Coffre).
-- 13 oct 2026 : **S6 ✅** resize photo ≤2048 JPEG preflight (HEIC skip).
-- 13 oct 2026 : CI : test `quiet-luxury-player` aligné sur `preMemoryBlack: 0.8` · badges Coffre.
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

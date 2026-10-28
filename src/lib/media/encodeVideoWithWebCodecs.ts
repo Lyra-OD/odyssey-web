@@ -32,6 +32,7 @@ import {
 } from "@/src/lib/media/ensurePreparedMp4Bytes";
 import { fitVideoEncodeSize } from "@/src/lib/media/fitVideoEncodeSize";
 import { measurePreparedVideoDuration } from "@/src/lib/media/measurePreparedVideoDuration";
+import { probeMp4Container } from "@/src/lib/media/probeMp4Container";
 import {
   VIDEO_DURATION_CEILING_SEC,
   assessOutputDuration,
@@ -151,13 +152,20 @@ function discardedReasons(conversion: Conversion): string {
 async function encodeMp4ViaConversion(
   plan: WebCodecsEncodePlan,
 ): Promise<Uint8Array> {
-  const trimEnd = plan.trimStartSec + plan.requestedEncodeSec;
-
   const input = new Input({
     source: new BlobSource(plan.source),
     formats: ALL_FORMATS,
   });
 
+  // QA lab IMG_4679 : discard audio pour « sauver » la durée → MP4 muet.
+  // Si la source a de l’audio, on ne jette plus la piste : marges plus
+  // serrées, puis échec → secours canvas (copie AAC). Muet seulement si
+  // la source n’a pas d’audio.
+  const sourceAudio = await input.getPrimaryAudioTrack();
+  const sourceHasAudio = Boolean(sourceAudio);
+
+  // V1 : plafonner à 30 fps (sources iPhone 60/120). Sans ça, Conversion
+  // conserve le framerate source → encode lourd / preview bizarre.
   const baseVideo = {
     width: plan.outputWidth,
     height: plan.outputHeight,
@@ -167,107 +175,185 @@ async function encodeMp4ViaConversion(
     rotate: plan.rotationDegrees,
     allowTransformationMetadata: false,
     forceTranscode: true,
+    frameRate: 30,
   };
 
-  const attempts: Array<{ audio: { codec: "aac"; quality: typeof QUALITY_HIGH } | { discard: true } }> =
-    [
-      { audio: { codec: "aac", quality: QUALITY_HIGH } },
-      { audio: { discard: true } },
-    ];
+  type AudioAttempt =
+    | { codec: "aac"; quality: typeof QUALITY_HIGH; forceTranscode: true }
+    | { discard: true };
+
+  const audioAttempts: AudioAttempt[] = sourceHasAudio
+    ? [
+        {
+          codec: "aac",
+          quality: QUALITY_HIGH,
+          forceTranscode: true,
+        },
+      ]
+    : [{ discard: true }];
+
+  // Marges anti-dépassement moov (AAC / timestamps) sous le plafond 10,0 s.
+  const durationMarginsSec = sourceHasAudio
+    ? [0.05, 0.12, 0.25, 0.4]
+    : [0.05];
 
   let lastReasons = "unknown";
 
-  for (const attempt of attempts) {
-    const target = new BufferTarget();
-    const output = new Output({
-      format: new Mp4OutputFormat({ fastStart: "in-memory" }),
-      target,
-    });
-
-    const conversion = await Conversion.init({
-      input,
-      output,
-      tracks: "primary",
-      showWarnings: false,
-      copy: false,
-      trim: {
-        start: plan.trimStartSec,
-        end: trimEnd,
-      },
-      video: baseVideo,
-      audio: attempt.audio,
-    });
-
-    if (!conversion.isValid) {
-      lastReasons = discardedReasons(conversion) || lastReasons;
-      continue;
-    }
-
-    // HEVC souvent : vidéo discardée, seule l’audio reste → isValid true
-    // mais MP4 sans piste vidéo (QA : video_track_count_invalid).
-    const hasVideoTrack = conversion.utilizedTracks.some((t) =>
-      t.isVideoTrack(),
+  for (const margin of durationMarginsSec) {
+    const safeEncodeSec = Math.min(
+      plan.requestedEncodeSec,
+      VIDEO_DURATION_CEILING_SEC - margin,
     );
-    if (!hasVideoTrack) {
-      lastReasons =
-        discardedReasons(conversion) || "no_utilized_video_track";
-      continue;
+    if (!(safeEncodeSec > 0)) continue;
+    const trimEnd = plan.trimStartSec + safeEncodeSec;
+
+    for (const audio of audioAttempts) {
+      const target = new BufferTarget();
+      const output = new Output({
+        format: new Mp4OutputFormat({ fastStart: "in-memory" }),
+        target,
+      });
+
+      const conversion = await Conversion.init({
+        input,
+        output,
+        tracks: "primary",
+        showWarnings: false,
+        copy: false,
+        trim: {
+          start: plan.trimStartSec,
+          end: trimEnd,
+        },
+        video: baseVideo,
+        audio,
+      });
+
+      if (!conversion.isValid) {
+        lastReasons = discardedReasons(conversion) || lastReasons;
+        continue;
+      }
+
+      // HEVC souvent : vidéo discardée, seule l’audio reste → isValid true
+      // mais MP4 sans piste vidéo (QA : video_track_count_invalid).
+      const hasVideoTrack = conversion.utilizedTracks.some((t) =>
+        t.isVideoTrack(),
+      );
+      if (!hasVideoTrack) {
+        lastReasons =
+          discardedReasons(conversion) || "no_utilized_video_track";
+        continue;
+      }
+
+      if (aborted(plan.signal)) {
+        void conversion.cancel();
+        throw new Error("video_prepare_cancelled");
+      }
+
+      const onAbort = () => {
+        void conversion.cancel();
+      };
+      plan.signal?.addEventListener("abort", onAbort, { once: true });
+
+      try {
+        await conversion.execute();
+      } finally {
+        plan.signal?.removeEventListener("abort", onAbort);
+      }
+
+      if (aborted(plan.signal)) {
+        throw new Error("video_prepare_cancelled");
+      }
+
+      const buffer = target.buffer;
+      if (!buffer || buffer.byteLength < 8) {
+        throw new Error("empty_output");
+      }
+
+      const bytes = new Uint8Array(buffer);
+      // Refuse un mux « réussi » hors contrat (ex. audio-only) → canvas.
+      try {
+        await assertPreparedMp4Container(bytes);
+      } catch {
+        lastReasons = discardedReasons(conversion) || "container_ineligible";
+        continue;
+      }
+
+      const measured = await measurePreparedVideoDuration(bytes);
+      if (
+        !measured.ok ||
+        measured.seconds > VIDEO_DURATION_CEILING_SEC
+      ) {
+        lastReasons = measured.ok
+          ? `output_duration:${measured.seconds.toFixed(3)}`
+          : "output_duration_unknown";
+        continue;
+      }
+
+      // Garde-fou : source sonore → refuse un succès sans piste audio.
+      if (sourceHasAudio) {
+        const probe = await probeMp4Container(bytes);
+        if (probe.audioTrackCount < 1) {
+          lastReasons = "audio_stripped";
+          continue;
+        }
+      }
+
+      return bytes;
     }
-
-    if (aborted(plan.signal)) {
-      void conversion.cancel();
-      throw new Error("video_prepare_cancelled");
-    }
-
-    const onAbort = () => {
-      void conversion.cancel();
-    };
-    plan.signal?.addEventListener("abort", onAbort, { once: true });
-
-    try {
-      await conversion.execute();
-    } finally {
-      plan.signal?.removeEventListener("abort", onAbort);
-    }
-
-    if (aborted(plan.signal)) {
-      throw new Error("video_prepare_cancelled");
-    }
-
-    const buffer = target.buffer;
-    if (!buffer || buffer.byteLength < 8) {
-      throw new Error("empty_output");
-    }
-
-    const bytes = new Uint8Array(buffer);
-    // Refuse un mux « réussi » hors contrat (ex. audio-only) → canvas.
-    await assertPreparedMp4Container(bytes);
-    return bytes;
   }
 
   throw new Error(`conversion_invalid:${lastReasons}`);
 }
 
 /**
- * 1) Conversion mediabunny (demux WebCodecs) + conteneur H.264 admissible.
- * 2) Sinon `<video>` + canvas (HEVC iOS : VideoDecoder KO, HTML OK).
+ * 1) Conversion mediabunny si VideoDecoder OK (H.264/HEVC selon device).
+ * 2) Sinon `<video>` + canvas (HEVC/ProRes HTML-only : VideoDecoder KO).
+ * ProRes / codecs hors WebCodecs : on saute Conversion (évite hang) → canvas.
  */
 async function defaultEncodeToMp4(plan: WebCodecsEncodePlan): Promise<Uint8Array> {
   if (typeof VideoEncoder === "undefined") {
     throw new Error("webcodecs_unavailable");
   }
 
-  let conversionError = "conversion_failed";
+  if (aborted(plan.signal)) {
+    throw new Error("video_prepare_cancelled");
+  }
+
+  let webCodecsVideoDecodable = true;
+  let sourceVideoCodec: string | null = null;
   try {
-    return await encodeMp4ViaConversion(plan);
-  } catch (err) {
-    if (
-      aborted(plan.signal) ||
-      (err instanceof Error && err.message === "video_prepare_cancelled")
-    ) {
-      throw new Error("video_prepare_cancelled");
+    const probeInput = new Input({
+      source: new BlobSource(plan.source),
+      formats: ALL_FORMATS,
+    });
+    const videoTrack = await probeInput.getPrimaryVideoTrack();
+    if (videoTrack) {
+      sourceVideoCodec = await videoTrack.getCodec();
+      webCodecsVideoDecodable = await videoTrack.canDecode();
     }
-    conversionError = err instanceof Error ? err.message : String(err);
+  } catch {
+    webCodecsVideoDecodable = true; // tenter Conversion quand même
+  }
+
+  let conversionError = "conversion_skipped";
+  if (webCodecsVideoDecodable) {
+    try {
+      return await encodeMp4ViaConversion(plan);
+    } catch (err) {
+      if (
+        aborted(plan.signal) ||
+        (err instanceof Error && err.message === "video_prepare_cancelled")
+      ) {
+        throw new Error("video_prepare_cancelled");
+      }
+      conversionError = err instanceof Error ? err.message : String(err);
+    }
+  } else {
+    conversionError = `video_undecodable_webcodecs:${sourceVideoCodec ?? "unknown"}`;
+  }
+
+  if (aborted(plan.signal)) {
+    throw new Error("video_prepare_cancelled");
   }
 
   try {
