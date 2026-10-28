@@ -2,15 +2,15 @@
 
 **Type :** living · **Vérité pour :** audit Coffre + Livre Ouvert + décision ingest client (trim 10 s + compress).  
 **Dernière MAJ :** 28 oct 2026 · **Carte :** [`../README.md`](../README.md)  
-**Chantier actif :** [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 2 (= **S7** ⏳ ; S5–S6 ✅).  
-**Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
+**Chantier :** [`WIZARD_COFFRE_LIVRE_PACKAGES.md`](WIZARD_COFFRE_LIVRE_PACKAGES.md) Phase 2 (= **S7 ✅** ; S5–S6 ✅).  
+**Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S7 ✅.
 
 **Changelog** (max 5)
-- 28 oct 2026 : Doublon exact : SHA-256 du fichier original avant préparation. Choix d’ajouter ou non, photos comprises. S7 ⏳.
-- 28 oct 2026 : Commit 11 : le Coffre prépare la vidéo depuis l’original, envoie seulement le fichier préparé, choisit l’extrait si le film dépasse 10 secondes. S7 ⏳.
-- 28 oct 2026 : Commit 10 : annuler avant le POST jette l’objet. POST réussi : on garde. POST incertain : réconcilier avant discard ou retry. S7 ⏳.
-- 28 oct 2026 : Commit 9 file : statut `preparing`, original en mémoire, reprise sur l’original. Pas encore d’encode dans l’upload.
-- 28 oct 2026 : porte QA pré-Coffre verte (H.264/HFR/trim/AAC/annuler + fixture HEVC OK ; Photos HEVC différé) · prérequis Commit 11 · pas de branchement.
+- 28 oct 2026 : **S7 ✅** validation Coffre réelle (préparation, annulation, photo indépendante, doublon exact P20).
+- 28 oct 2026 : Doublon exact : SHA-256 du fichier original avant préparation. Choix d’ajouter ou non, photos comprises.
+- 28 oct 2026 : Commit 11 : le Coffre prépare la vidéo depuis l’original, envoie seulement le fichier préparé, choisit l’extrait si le film dépasse 10 secondes.
+- 28 oct 2026 : Commit 10 : annuler avant le POST jette l’objet. POST réussi : on garde. POST incertain : réconcilier avant discard ou retry.
+- 28 oct 2026 : Commit 9 file : statut `preparing`, original en mémoire, reprise sur l’original.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
@@ -38,10 +38,10 @@ Fichiers : [`TributeWizard.tsx`](../../src/components/tribute/TributeWizard.tsx)
 
 - Accept : `video/mp4`, `video/quicktime`. Fallback extension **HEIC/HEIF + `.mp4`/`.mov`** si `file.type === ""` (S3).
 - Thumb photo : [`generateImageThumbnail.ts`](../../src/lib/media/generateImageThumbnail.ts). **S5 ✅** poster vidéo : [`generateVideoPoster.ts`](../../src/lib/media/generateVideoPoster.ts) → `*-thumb.webp` (legacy sans thumb = Film / preview metadata).
-- Grille : tuile image si thumb ; sinon fallback Film. Upload vidéo encore **as-is** jusqu’à S7.
+- Grille : tuile image si thumb ; sinon fallback Film. Upload vidéo : **S7 ✅** préparation avant Storage.
 - Soft Cap / `excludedIds` : **ne filtrent pas** la grille Coffre.
 - Scanner compagnon : photos seulement (aussi dans le tiroir).
-- **S7 ⏳** : préparation client avant upload (contrat §7). Pas encore de picker UI ni de branchement.
+- **S7 ✅** : préparation client avant upload (contrat §7), modale d’extrait, branchement Coffre.
 
 ### Livre Ouvert / table de montage (étape 5)
 
@@ -115,9 +115,9 @@ Copy FR/EN si nouveau texte écran (ex. « Souvenir filmé ») — dictionnaires
 |---|------|
 | **S5** | ✅ Poster frame client à l’upload (canvas), même pipeline que thumb photo |
 | **S6** | ✅ Resize photos 2048 px preflight (JPEG 0.82 · HEIC skip) |
-| **S7** | ⏳ Contrat §7 · trim/encode client · copy préparation (UI aux commits 8+) |
+| **S7** | ✅ Contrat §7 · trim/encode client · copy · branchement Coffre · E2E validé |
 
-S7 = le plus gros. S1–S3 déjà verts. Rien ne change pour les familles tant que le branchement (commit 11) n’est pas livré.
+S5–S7 verts. Suite produit : Livre (`surfaces/livre/`), hors ingest.
 
 ### Hors démo
 
@@ -144,7 +144,7 @@ S7 = le plus gros. S1–S3 déjà verts. Rien ne change pour les familles tant q
 | Décodage + dimensions S7 | [`verifyBrowserVideoDecode.ts`](../../src/lib/media/verifyBrowserVideoDecode.ts) · [`orientedVideoDimensions.ts`](../../src/lib/media/orientedVideoDimensions.ts) (indépendant du probe) |
 | Encode WebCodecs S7 | [`encodeVideoWithWebCodecs.ts`](../../src/lib/media/encodeVideoWithWebCodecs.ts) · mux `mediabunny` · mesure [`measurePreparedVideoDuration.ts`](../../src/lib/media/measurePreparedVideoDuration.ts) |
 | Fallback MediaRecorder S7 | [`encodeVideoWithMediaRecorder.ts`](../../src/lib/media/encodeVideoWithMediaRecorder.ts) · MP4 via [`ensurePreparedMp4Bytes.ts`](../../src/lib/media/ensurePreparedMp4Bytes.ts) (jamais WebM nu) |
-| Orchestrateur S7 | [`prepareVideoForUpload.ts`](../../src/lib/media/prepareVideoForUpload.ts) (Commits 2–7 ; pas branché Coffre) |
+| Orchestrateur S7 | [`prepareVideoForUpload.ts`](../../src/lib/media/prepareVideoForUpload.ts) (branché Coffre, Commit 11) |
 | Modale trim 10 s (Commit 8) | [`VideoTrimModal.tsx`](../../src/components/media/VideoTrimModal.tsx) · lab [`test-s7-prepare`](../../app/[lang]/test-s7-prepare/page.tsx) seulement |
 | Secours HEVC canvas | [`encodeMp4ViaHtmlVideoCanvas.ts`](../../src/lib/media/encodeMp4ViaHtmlVideoCanvas.ts) (H.264 + AAC trim si décodable) |
 
@@ -174,7 +174,7 @@ Limites connues :
 
 ## 7. Contrat S7 v2.3 (garanties produit)
 
-Statut : **S7 ⏳**. Ce paragraphe fixe le contrat. Les helpers, encodeurs, UI et branchement sont des commits ultérieurs. Aucun comportement production modifié par ce document seul.
+Statut : **S7 ✅**. Ce paragraphe fixe le contrat livré dans le parcours Coffre.
 
 ### 7.1 Trois durées
 
@@ -237,7 +237,7 @@ L’extension `.mp4` ne prouve pas le codec.
 - Réserve suivi Commit 6 : les tests unitaires mockent `host.record` / `ensureMp4` / `measureDuration` sous Node. Ils valident le contrat (indisponible, échec, annulation, durée inconnue ou &gt; 10 s, refus WebM nu). Ils **ne prouvent pas** MediaRecorder réel ni Safari sur iPhone. Validation device = porte QA tranche 1 / Commit 12.
 - Creatomate : `trim_start` = 0 (le clip stocké est déjà court).
 - Orchestrateur (**Commit 7**) : [`prepareVideoForUpload`](../../src/lib/media/prepareVideoForUpload.ts). Enchaîne probe → décodage source → choix fast-path **ou** WebCodecs puis MediaRecorder → **validation finale obligatoire** (probe + décodage + dimensions V1 + durée effective ≤ 10,0 s). Fast-path seulement si les quatre sont vrais **et** `trimStart = 0` ; un conteneur admissible ne suffit pas. Durée source inconnue → refus. MediaRecorder uniquement après `video_encode_failed` WebCodecs (pas après annulation ni échec de contrat durée). Échec → jamais l’original brut. `AbortSignal` vérifié à chaque étape.
-- **Tranche 1 QA device (28 oct) :** Safari iPhone : H.264 (dont 60/120 → sortie ~30), trim 10 s, AAC, annuler, preview Play OK. **HEVC device différé** : picker Photos Safari re-encode souvent en H.264 (`looksHevc: false` malgré Haute efficacité) ; retester via Fichiers / fixture `hevc-silent-moov-start.mp4`. **S7 ⏳** : pas livré tant que Coffre / Storage / DB E2E non faits (Commit 12).
+- **Tranche 1 QA device (28 oct) :** Safari iPhone : H.264 (dont 60/120 → sortie ~30), trim 10 s, AAC, annuler, preview Play OK. **HEVC device différé** : picker Photos Safari re-encode souvent en H.264 (`looksHevc: false` malgré Haute efficacité) ; retester via Fichiers / fixture `hevc-silent-moov-start.mp4`. **S7 ✅** : Coffre / Storage / DB validés (vidéo préparée, annulation, photo indépendante).
 - **Commit 8 :** modale trim isolée dans le lab ; `trimStartSec` passé à `prepareVideoForUpload`. Aucun branchement Coffre / upload. Échec prepare → pas d’original présenté comme succès.
 - Pas de changement visible pour les familles (parcours Coffre) dans Commit 8.
 
@@ -268,7 +268,7 @@ Noms pour le code des commits 2–7. Messages écran FR/EN : commits UI.
 - Sanctuaire `guest_video` hors S7.
 - Pas de worker ffmpeg serveur en V1.
 - Poster S5 généré depuis le **fichier préparé** (même image, même orientation), au branchement.
-- S7 reste ⏳ jusqu’aux preuves E2E (iPhone + Storage/DB) prévues en fin de chantier.
+- Preuves E2E Coffre / Storage / DB : ✅ (28 oct).
 
 ### 7.9 Prérequis Commit 11 (branchement Coffre)
 
@@ -283,7 +283,7 @@ Porte QA lab (28 oct, Safari iPhone, pas encore Coffre) :
 | HEVC via Photos iPhone | Différé : le picker Safari re-encode souvent en H.264 (`looksHevc: false` malgré Haute efficacité). |
 | ProRes | Hors contrat V1 |
 
-Les règles ci-dessous sont dans le parcours Coffre (Commit 11). S7 reste ⏳ tant que l’épreuve iPhone, Storage et base n’est pas faite.
+Les règles ci-dessous sont dans le parcours Coffre (Commit 11). Epreuve Coffre / Storage / base : ✅.
 
 1. Si la durée source dépasse 10 s : ouvrir `VideoTrimModal` **avant** l’enqueue, sur un geste utilisateur. Pas de `trimStartSec=0` silencieux sur un long clip.
 2. Remplacer `item.file` par `preparedFile` (nom `.mp4`, MIME, taille) **avant** Storage et signed URL.
@@ -312,7 +312,7 @@ Après préparation, `item.file` est le MP4 préparé. `originalFile` reste la s
 
 Côté serveur, `discard` relit `media_assets` juste avant `remove`. Une ligne apparue entre les deux lectures n’est pas supprimée. Si la relecture échoue, rien n’est supprimé. Il reste une fenêtre après cette relecture : Storage n’est pas dans la même transaction que Postgres.
 
-S7 reste ⏳ : ces barrières ne prouvent pas le parcours iPhone, Storage et base de bout en bout.
+Ces barrières sont en production. Le parcours Coffre / Storage / base a été validé (28 oct).
 
 ### 7.11 Doublon exact (photos et vidéos)
 
@@ -320,4 +320,4 @@ Avant la préparation, le Coffre calcule le SHA-256 du fichier original. Il comp
 
 Même empreinte : « Cette vidéo semble déjà se trouver dans votre Coffre. » ou la phrase photo. « Ne pas ajouter » ne prépare rien, n’envoie rien, n’écrit aucune ligne. « Ajouter quand même » suit le parcours habituel, y compris une deuxième copie.
 
-Même nom, autre contenu : pas un doublon. Fichier réexporté ou compressé : empreinte différente, pas de blocage. Lecture serveur impossible : ce n’est pas une absence. La colonne `content_sha256` (P20) est indexée par projet, sans contrainte d’unicité. S7 reste ⏳.
+Même nom, autre contenu : pas un doublon. Fichier réexporté ou compressé : empreinte différente, pas de blocage. Lecture serveur impossible : ce n’est pas une absence. La colonne `content_sha256` (P20) est indexée par projet, sans contrainte d’unicité.

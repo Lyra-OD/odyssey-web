@@ -1,9 +1,10 @@
 # Carte documentation Odyssey
 
 **Type :** living · **Vérité pour :** index des docs, types, « ne pas copier ».  
-**Dernière MAJ :** 27 oct 2026 · **Carte :** ce fichier.
+**Dernière MAJ :** 28 oct 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 28 oct 2026 — Sync état : ingest **S5–S7 ✅** · Coffre tiroir ✅.
 - 27 oct 2026 — Sync état : Coffre tiroir ✅ · ingest S5–S6 ✅ / S7 ⏳ · deck ILP élargi (→18 + 08B).
 - 8 oct 2026 — Plan packages Coffre/Livre + audit docs cluster — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md).
 - 5 oct 2026 — **PITCH/** : canon deck capital ILP 11 — [`PITCH/INVESTOR_DECK_WEB_ILP11.md`](PITCH/INVESTOR_DECK_WEB_ILP11.md).
@@ -169,8 +170,8 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) | canon | **Chemin 1** — Traversée UX (spec impl active) |
 | [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) | canon | Beats Parcours UX · craft · stubs |
 | [`product/PARCOURS_UX_GAPS.md`](product/PARCOURS_UX_GAPS.md) | living | Audit trous Chemin 1 · gate T1 |
-| [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) | living | Coffre + montage : ingest S5–S6 ✅ · S7 trim/encode ⏳ |
-| [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) | living | Package Coffre + tiroir ✅ · S7 ⏳ · cadrage Livre Phase 3 |
+| [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) | living | Coffre + montage : ingest **S5–S7 ✅** |
+| [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) | living | Package Coffre + tiroir ✅ · S7 ✅ · cadrage Livre Phase 3 |
 | [`product/DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](product/DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md) | living | Audit fraîcheur docs Wizard / Coffre / Livre |
 | [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) | canon | Étape 6 aperçu — mix BA (historique) ; cadeau Souvenir → [`SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
 | [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) | canon | Souvenir stream 0 $ · master 49 $ · **moteur cercle** C0–C14 |

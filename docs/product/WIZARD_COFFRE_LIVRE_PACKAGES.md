@@ -1,10 +1,11 @@
 # Wizard — packages Coffre / Livre + ingest
 
 **Type :** living · **Vérité pour :** chantier post-deck — découpage Coffre/Livre en packages, tiroir global, ingest trim/compress.  
-**Dernière MAJ :** 27 oct 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 28 oct 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 27 oct 2026 — **Cadrage Livre** figé (3a extraction → 3b L2/K/J) · labels S5-L2 universels · état code Phase 1 ✅ / S7 ⏳.
+- 28 oct 2026 — **S7 ✅** ingest Coffre validé (trim, encode, annulation, photo, doublon).
+- 27 oct 2026 — **Cadrage Livre** figé (3a extraction → 3b L2/K/J) · labels S5-L2 universels · état code Phase 1 ✅.
 - 14 oct 2026 — **C3.2** tiroir : barre compacte collante · dépôt n’importe où · Scanner en haut du Coffre.
 - 14 oct 2026 — **C3.1** tiroir Coffre à gauche 75 % · pastille + compteur signature en-tête.
 - 14 oct 2026 — **Phase 1 C3 ✅** tiroir = même `CoffreBody` · un seul monté · upload continue tiroir fermé.
@@ -50,9 +51,9 @@ Sélection / « Envoyé » restent teal (état) — [`DESIGN_SYSTEM.md`](../DESI
 |---------|---------|----------------|
 | Orchestrateur | [`TributeWizard.tsx`](../../src/components/tribute/TributeWizard.tsx) **~3312 L** | Alléger encore (nav, gates, chrome, wiring) |
 | Coffre | **Phase 1 ✅** [`src/surfaces/coffre/`](../../src/surfaces/coffre/) — `CoffreBody` (étape 3 `onboarding` + tiroir `drawer`) · `CoffreDrawerShell` · `CoffreDrawerTrigger` | Un seul `CoffreBody` monté · tiroir monté tant qu’un upload tourne |
-| Livre | [`StoryboardMontageStep.tsx`](../../src/components/tribute/StoryboardMontageStep.tsx) ~723 L + `montage/*` + `storyboard/*` | `src/surfaces/livre/` après S7 (cadrage § Phase 3) |
-| Vidéo | S5 poster ✅ · upload **as-is** · `videoTrims` non écrit par l’UI | **S7 ⏳** : picker 10,0 s + encode 1080p client |
-| Photo | **S6 ✅** resize ≤2048 JPEG avant upload + thumb WebP · HEIC = original (canvas) | Copy « allégé » avec S7 |
+| Livre | [`StoryboardMontageStep.tsx`](../../src/components/tribute/StoryboardMontageStep.tsx) ~723 L + `montage/*` + `storyboard/*` | `src/surfaces/livre/` (cadrage § Phase 3) |
+| Vidéo | S5 poster ✅ · **S7 ✅** trim 10 s + encode 1080p avant Storage · `videoTrims` UI à écrire pour l’export | Creatomate : clip déjà court |
+| Photo | **S6 ✅** resize ≤2048 JPEG avant upload + thumb WebP · HEIC = original (canvas) | Copy « allégé » |
 
 ```mermaid
 flowchart TB
