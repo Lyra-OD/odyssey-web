@@ -7,6 +7,12 @@ import {
 } from "@/src/lib/media/storageEgressPolicy";
 import { thumbStoragePathFor } from "@/src/lib/media/thumbnailPath";
 import {
+  isVideoPrepareFailure,
+  prepareCoffreVideoFile,
+} from "@/src/lib/media/coffreVideoPrepare";
+import { isQueueVideoFile } from "@/src/lib/media/videoPrepareQueue";
+import { withVideoEncodeSlot } from "@/src/lib/media/videoEncodeSlot";
+import {
   UploadChainCancelledError,
   UploadCommitUncertainError,
   assertUploadChainOpen,
@@ -318,22 +324,68 @@ async function finishAfterStorageObject(params: {
   return assetId;
 }
 
+async function resolveUploadFile(
+  item: UploadQueueItem,
+  signal: AbortSignal | undefined,
+  notify?: (item: UploadQueueItem) => void,
+): Promise<File> {
+  if (!isLocalMediaItem(item)) {
+    throw new Error("Upload requires a local file item");
+  }
+  if (!isQueueVideoFile(item.file)) {
+    return runPrepareStep({
+      file: item.file,
+      originalFile: item.originalFile,
+      signal,
+    });
+  }
+
+  const source = item.originalFile ?? item.file;
+  item.originalFile = source;
+  item.status = "preparing";
+  item.error = null;
+  notify?.(item);
+
+  const prepared = await runPrepareStep({
+    file: item.file,
+    originalFile: source,
+    signal,
+    prepare: (file, prepareSignal) =>
+      withVideoEncodeSlot(prepareSignal, () =>
+        prepareCoffreVideoFile({
+          source: file,
+          trimStartSec: item.trimStartSec,
+          signal: prepareSignal,
+        }),
+      ),
+  });
+
+  item.file = prepared;
+  item.displayName = prepared.name;
+  item.mimeType = prepared.type || "video/mp4";
+  item.sizeBytes = prepared.size;
+  item.status = "uploading";
+  notify?.(item);
+  return prepared;
+}
+
 async function uploadAndInsertSigned(params: {
   item: UploadQueueItem;
   projectId: string;
   source: MediaUploadSource;
   bucket: string;
   signal?: AbortSignal;
+  notify?: (item: UploadQueueItem) => void;
 }): Promise<{ storagePath: string; assetId: string | null }> {
   if (!isLocalMediaItem(params.item)) {
     throw new Error("Upload requires a local file item");
   }
 
-  const prepared = await runPrepareStep({
-    file: params.item.file,
-    originalFile: params.item.originalFile,
-    signal: params.signal,
-  });
+  const prepared = await resolveUploadFile(
+    params.item,
+    params.signal,
+    params.notify,
+  );
   const uploadFile = await resizeImageForUploadFile(prepared);
   assertUploadChainOpen(params.signal, "storage");
   const supabase = createClient();
@@ -439,6 +491,7 @@ async function uploadAndInsert(
     uploadStrategy?: "direct" | "signed";
     insertRowFactory?: UploadBatchParams["insertRowFactory"];
     signal?: AbortSignal;
+    notify?: (item: UploadQueueItem) => void;
   },
 ): Promise<{ storagePath: string; assetId: string | null }> {
   if (params.uploadStrategy === "signed") {
@@ -448,6 +501,7 @@ async function uploadAndInsert(
       source: params.source,
       bucket: params.bucket,
       signal: params.signal,
+      notify: params.notify,
     });
   }
 
@@ -455,11 +509,11 @@ async function uploadAndInsert(
     throw new Error("Upload requires a local file item");
   }
 
-  const prepared = await runPrepareStep({
-    file: params.item.file,
-    originalFile: params.item.originalFile,
-    signal: params.signal,
-  });
+  const prepared = await resolveUploadFile(
+    params.item,
+    params.signal,
+    params.notify,
+  );
   const uploadFile = await resizeImageForUploadFile(prepared);
   assertUploadChainOpen(params.signal, "storage");
   const itemForUpload = { ...params.item, file: uploadFile };
@@ -582,6 +636,7 @@ async function uploadWithRetries(
     signal?: AbortSignal;
     insertRowFactory?: UploadBatchParams["insertRowFactory"];
     uploadStrategy?: UploadBatchParams["uploadStrategy"];
+    notify?: (item: UploadQueueItem) => void;
   },
 ): Promise<{ storagePath: string; assetId: string | null }> {
   let lastError: unknown = null;
@@ -600,6 +655,7 @@ async function uploadWithRetries(
         insertRowFactory: params.insertRowFactory,
         uploadStrategy: params.uploadStrategy,
         signal: params.signal,
+        notify: params.notify,
       });
     } catch (error) {
       lastError = error;
@@ -613,6 +669,7 @@ async function uploadWithRetries(
       if (
         isUploadCommitUncertain(error) ||
         isUploadChainCancelled(error) ||
+        isVideoPrepareFailure(error) ||
         params.signal?.aborted
       ) {
         break;
@@ -683,7 +740,9 @@ export async function uploadMediaBatch(
         continue;
       }
 
-      item.status = "uploading";
+      const video = isQueueVideoFile(item.file);
+      if (video) item.originalFile = item.originalFile ?? item.file;
+      item.status = video ? "preparing" : "uploading";
       item.error = null;
       params.onItemUpdate?.({ ...item });
       emit();
@@ -700,6 +759,10 @@ export async function uploadMediaBatch(
           signal: params.signal,
           insertRowFactory: params.insertRowFactory,
           uploadStrategy: params.uploadStrategy,
+          notify: (updated) => {
+            params.onItemUpdate?.({ ...updated });
+            emit();
+          },
         });
 
         item.status = "uploaded";

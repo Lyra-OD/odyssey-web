@@ -13,6 +13,15 @@ import {
   type UseMassMediaUploadReturn,
 } from "@/src/hooks/useMassMediaUpload";
 import { isRemoteMediaItem } from "@/src/lib/media/mediaTypes";
+import {
+  readLocalVideoDurationSec,
+  splitDropForCoffre,
+} from "@/src/lib/media/coffreVideoPrepare";
+import { isQueueVideoFile } from "@/src/lib/media/videoPrepareQueue";
+import {
+  VideoTrimModal,
+  type VideoTrimModalCopy,
+} from "@/src/components/media/VideoTrimModal";
 import type { MediaUploadSource } from "@/src/lib/uploads/mediaUploadService";
 
 const DEFAULT_MAX_FILES = 150;
@@ -135,6 +144,8 @@ export type MediaDropzoneAdapterProps = {
    * que le message anglais par défaut.
    */
   overflowRejectionMessage?: string;
+  /** Modale d’extrait. Sans elle, un film trop long n’entre pas dans la file. */
+  videoTrimCopy?: VideoTrimModalCopy;
 
   /**
    * Recharge silencieuse des médias distants (Scanner QR → grille).
@@ -186,6 +197,7 @@ export function MediaDropzoneAdapter({
   disabled = false,
   autoStart = false,
   overflowRejectionMessage,
+  videoTrimCopy,
   pollIntervalMs,
   onFilesRejected,
   onUploadComplete,
@@ -201,6 +213,9 @@ export function MediaDropzoneAdapter({
   });
 
   const [rejections, setRejections] = useState<MediaDropzoneRejection[]>([]);
+  const [trimQueue, setTrimQueue] = useState<
+    Array<{ file: File; durationSec: number }>
+  >([]);
   const wasRunningRef = useRef(false);
   const hydratedProjectRef = useRef<string | null>(null);
   const notifiedAssetsRef = useRef<Set<string>>(new Set());
@@ -285,9 +300,21 @@ export function MediaDropzoneAdapter({
 
       if (!allowed.length) return;
 
-      upload.enqueue(allowed);
+      const measured = await Promise.all(
+        allowed.map(async (file) => ({
+          file,
+          durationSec: isQueueVideoFile(file)
+            ? await readLocalVideoDurationSec(file)
+            : null,
+        })),
+      );
+      const split = splitDropForCoffre(measured);
+      if (split.immediate.length) upload.enqueue(split.immediate);
+      if (videoTrimCopy && split.needsTrim.length) {
+        setTrimQueue((prev) => [...prev, ...split.needsTrim]);
+      }
 
-      if (autoStart) {
+      if (autoStart && split.immediate.length) {
         await start();
       }
     },
@@ -299,6 +326,7 @@ export function MediaDropzoneAdapter({
       remainingSlots,
       start,
       upload,
+      videoTrimCopy,
     ],
   );
 
@@ -432,6 +460,31 @@ export function MediaDropzoneAdapter({
     clearAll: upload.clearAll,
   };
 
-  return <>{children(context)}</>;
+  const currentTrim = trimQueue[0] ?? null;
+
+  return (
+    <>
+      {children(context)}
+      {currentTrim && videoTrimCopy ? (
+        <VideoTrimModal
+          file={currentTrim.file}
+          sourceDurationSec={currentTrim.durationSec}
+          open
+          copy={videoTrimCopy}
+          onConfirm={(selection) => {
+            upload.enqueue([
+              {
+                file: currentTrim.file,
+                trimStartSec: selection.trimStartSec,
+              },
+            ]);
+            setTrimQueue((prev) => prev.slice(1));
+            if (autoStart) void start();
+          }}
+          onCancel={() => setTrimQueue((prev) => prev.slice(1))}
+        />
+      ) : null}
+    </>
+  );
 }
 

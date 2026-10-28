@@ -106,6 +106,28 @@ describe("prepareVideoForUpload", () => {
     expect(result.preparedFile).toBe(file);
     expect(result.effectiveDurationSec).toBe(5);
     expect(result.effectiveDurationSec).toBeLessThanOrEqual(10);
+    expect(result.audioPreserved).toBe(true);
+  });
+
+  it("source sonore dont la sortie n’a plus d’audio : aucun fichier à envoyer", async () => {
+    const file = mp4File();
+    let probeCalls = 0;
+    const result = await prepareVideoForUpload(file, {
+      deps: {
+        probe: async () => {
+          probeCalls += 1;
+          const sourcePass = probeCalls === 1;
+          return eligibleProbe({
+            audioTrackCount: sourcePass ? 1 : 0,
+            audioCodec: sourcePass ? "mp4a.40.2" : null,
+          });
+        },
+        decode: async () => decodeOk({ durationSec: 5 }),
+        measureDuration: async () => ({ ok: true, seconds: 5 }),
+      },
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toBe("video_encode_failed");
   });
 
   it("source > 10 s → encode WebCodecs (pas fast-path)", async () => {

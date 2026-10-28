@@ -49,6 +49,8 @@ export type MediaQueueGridCopy = {
   restorePreview?: string;
   /** Message affiché quand item.error === MEDIA_QUOTA_EXCEEDED_ERROR (support `{max}`). */
   quotaExceededError?: string;
+  /** Messages des codes `video_*` affichés sur une tuile en échec. */
+  videoPrepareErrors?: Record<string, string>;
   /** Message affiché quand l’écriture en base a un résultat incertain. */
   commitUncertain?: string;
 };
@@ -117,6 +119,7 @@ function displayItemError(
   error: string,
   quotaExceededMessage: string | undefined,
   commitUncertainMessage: string | undefined,
+  videoPrepareErrors: Record<string, string> | undefined,
 ): string {
   if (error === MEDIA_QUOTA_EXCEEDED_ERROR && quotaExceededMessage) {
     return quotaExceededMessage;
@@ -124,6 +127,7 @@ function displayItemError(
   if (error === UPLOAD_COMMIT_UNCERTAIN && commitUncertainMessage) {
     return commitUncertainMessage;
   }
+  if (videoPrepareErrors?.[error]) return videoPrepareErrors[error];
   return error;
 }
 
@@ -427,6 +431,7 @@ export function MediaQueueGrid({
                       item.error,
                       copy.quotaExceededError,
                       copy.commitUncertain,
+                      copy.videoPrepareErrors,
                     )}
                   </p>
                   <button

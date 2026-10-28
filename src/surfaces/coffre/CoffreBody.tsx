@@ -8,6 +8,7 @@ import { MediaQueueGrid } from "@/src/components/media/MediaQueueGrid";
 import { ScannerCompanionPanel } from "@/src/components/scanner/ScannerCompanionPanel";
 import { ScannerCompanionPlaceholder } from "@/src/components/scanner/ScannerCompanionPlaceholder";
 import { WIZARD_MEDIA_POLL_INTERVAL_MS } from "@/src/lib/wizard/wizardMediaPoll";
+import { videoPrepareErrorMessages } from "@/src/lib/media/coffreVideoPrepare";
 import type { CoffreHostProps } from "./types";
 
 export function CoffreBody({
@@ -58,6 +59,23 @@ export function CoffreBody({
           maxFiles={maxFiles}
           maxFileSizeBytes={300 * 1024 * 1024}
           overflowRejectionMessage={copy.uploadLimitOverflowRejection}
+          videoTrimCopy={{
+            title: copy.videoTrimTitle,
+            hint: copy.videoTrimHint,
+            previewHint: copy.videoTrimPreviewHint,
+            filmstripLabel: copy.videoTrimFilmstripLabel,
+            startLabel: copy.videoTrimStartLabel,
+            endLabel: copy.videoTrimEndLabel,
+            fixedDurationLabel: copy.videoTrimFixedDuration,
+            confirm: copy.videoTrimConfirm,
+            cancel: copy.videoTrimCancel,
+            closeAria: copy.videoTrimCloseAria,
+            filmstripAria: copy.videoTrimFilmstripAria,
+            play: copy.videoTrimPlay,
+            pause: copy.videoTrimPause,
+            playAria: copy.videoTrimPlayAria,
+            pauseAria: copy.videoTrimPauseAria,
+          }}
           onAssetUploaded={onAssetUploaded}
           onUploadError={(error) => {
             if (error.message === "unauthenticated") {
@@ -337,6 +355,7 @@ export function CoffreBody({
                             "{max}",
                             String(maxFiles),
                           ),
+                        videoPrepareErrors: videoPrepareErrorMessages(copy),
                       }}
                       onPreviewScanner={(item) => {
                         const url =

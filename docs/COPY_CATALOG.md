@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-28 · **Entrées :** 1155
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-28 · **Entrées :** 1163
 
 ## `common`
 
@@ -495,6 +495,14 @@
 | `tributeWizard.videoTrimPause` | Pause | Pause |
 | `tributeWizard.videoTrimPlayAria` | Lire l’extrait sélectionné | Play the selected clip |
 | `tributeWizard.videoTrimPauseAria` | Mettre l’extrait en pause | Pause the selected clip |
+| `tributeWizard.videoPrepareErrorDurationUnknown` | On ne peut pas lire la durée de ce film. | The length of this film could not be read. |
+| `tributeWizard.videoPrepareErrorDurationExceeds` | Ce film dépasse 10 secondes. Choisis un extrait. | This film is longer than 10 seconds. Choose a clip. |
+| `tributeWizard.videoPrepareErrorOutputExceeds` | L’extrait préparé dépasse 10 secondes. | The prepared clip is longer than 10 seconds. |
+| `tributeWizard.videoPrepareErrorFastPath` | Ce film n’a pas pu être préparé. | This film could not be prepared. |
+| `tributeWizard.videoPrepareErrorDecode` | Ce film n’a pas pu être lu sur cet appareil. | This film could not be read on this device. |
+| `tributeWizard.videoPrepareErrorDimensionsInvalid` | Les dimensions de ce film sont illisibles. | The dimensions of this film could not be read. |
+| `tributeWizard.videoPrepareErrorDimensionsExceed` | Ce film est trop grand pour être préparé ici. | This film is too large to prepare here. |
+| `tributeWizard.videoPrepareErrorEncode` | La préparation de ce film a échoué. Réessaie. | Preparing this film failed. Try again. |
 | `tributeWizard.montageShortcutSelect` | {modifier} + Clic pour sélectionner | {modifier} + Click to select |
 | `tributeWizard.montageShortcutSelectAll` | {modifier} + A pour tout sélectionner | {modifier} + A to select all |
 | `tributeWizard.montageShortcutDrag` | Glisser la poignée pour réordonner | Drag the handle to reorder |

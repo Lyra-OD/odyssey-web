@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { resetVideoEncodeSlotForTests, videoEncodeSlotsInUse } from "@/src/lib/media/videoEncodeSlot";
+
 const PROJECT = "11111111-1111-4111-8111-111111111111";
 
 const state = {
@@ -11,6 +13,13 @@ const state = {
   onPoster: null as (() => void) | null,
   insertThrows: null as Error | null,
   uploadedNames: [] as string[],
+  prepareCalls: [] as Array<{ name: string; trimStartSec: number }>,
+  prepareImpl: null as
+    | ((
+        source: Blob,
+        options?: { trimStartSec?: number; signal?: AbortSignal },
+      ) => Promise<unknown>)
+    | null,
 };
 
 vi.mock("@/utils/supabase/client", () => ({
@@ -60,6 +69,28 @@ vi.mock("@/src/lib/media/generateVideoPoster", () => ({
   generateVideoPosterBlob: async () => {
     state.onPoster?.();
     return null;
+  },
+}));
+vi.mock("@/src/lib/media/prepareVideoForUpload", () => ({
+  prepareVideoForUpload: async (
+    source: Blob,
+    options?: { trimStartSec?: number },
+  ) => {
+    state.prepareCalls.push({
+      name: source instanceof File ? source.name : "blob",
+      trimStartSec: options?.trimStartSec ?? 0,
+    });
+    if (state.prepareImpl) return state.prepareImpl(source, options);
+    const file =
+      source instanceof File
+        ? source
+        : new File([source], "prepared.mp4", { type: "video/mp4" });
+    return {
+      ok: true,
+      preparedFile: file,
+      effectiveDurationSec: 5,
+      audioPreserved: true,
+    };
   },
 }));
 
@@ -112,6 +143,9 @@ beforeEach(() => {
   state.onPoster = null;
   state.insertThrows = null;
   state.uploadedNames = [];
+  state.prepareCalls = [];
+  state.prepareImpl = null;
+  resetVideoEncodeSlotForTests();
   fetchCalls = [];
   signedCounter = 0;
   registerResponse = async () => {
@@ -461,24 +495,188 @@ describe.each(["direct", "signed"] as const)(
   },
 );
 
-describe("fichier envoyé", () => {
-  it("envoie item.file et laisse originalFile de côté", async () => {
-    const prepared = new File([new Uint8Array([1])], "prepared.mp4", {
-      type: "video/mp4",
+describe.each(["direct", "signed"] as const)(
+  "préparation vidéo Coffre (%s)",
+  (uploadStrategy) => {
+    function clip() {
+      const original = new File([new Uint8Array([2])], "clip.mov", {
+        type: "video/quicktime",
+      });
+      const item = createLocalQueueItem(original, 0);
+      item.originalFile = original;
+      item.trimStartSec = 4;
+      return item;
+    }
+
+    it("envoie le fichier préparé, jamais l’original", async () => {
+      const prepared = new File([new Uint8Array([9])], "prepared.mp4", {
+        type: "video/mp4",
+      });
+      state.prepareImpl = async (source) => {
+        expect(source).toBeInstanceOf(File);
+        expect((source as File).name).toBe("clip.mov");
+        return {
+          ok: true,
+          preparedFile: prepared,
+          effectiveDurationSec: 9.5,
+          audioPreserved: true,
+        };
+      };
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [clip()],
+        uploadStrategy,
+        maxRetries: 2,
+      });
+      expect(items[0].status).toBe("uploaded");
+      expect(items[0].file?.name).toBe("prepared.mp4");
+      expect(items[0].originalFile?.name).toBe("clip.mov");
+      expect(state.uploadedNames).toContain("prepared.mp4");
+      expect(state.uploadedNames).not.toContain("clip.mov");
+      expect(state.prepareCalls).toEqual([{ name: "clip.mov", trimStartSec: 4 }]);
+      expect(discardCalls()).toHaveLength(0);
     });
-    const original = new File([new Uint8Array([2])], "clip.mov", {
-      type: "video/quicktime",
+
+    it("échec de préparation : pas de Storage, pas de retry", async () => {
+      state.prepareImpl = async () => ({ ok: false, error: "video_encode_failed" });
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [clip()],
+        uploadStrategy,
+        maxRetries: 2,
+      });
+      expect(items[0].status).toBe("failed");
+      expect(items[0].error).toBe("video_encode_failed");
+      expect(items[0].originalFile?.name).toBe("clip.mov");
+      expect(state.storageUploads).toEqual([]);
+      expect(state.prepareCalls).toHaveLength(1);
+      expect(discardCalls()).toHaveLength(0);
     });
-    const item = createLocalQueueItem(prepared, 0);
-    item.originalFile = original;
+
+    it("annulation pendant la préparation : pas de Storage", async () => {
+      state.prepareImpl = async () => ({
+        ok: false,
+        error: "video_prepare_cancelled",
+      });
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [clip()],
+        uploadStrategy,
+        maxRetries: 2,
+      });
+      expect(items[0].status).toBe("cancelled");
+      expect(state.storageUploads).toEqual([]);
+      expect(state.prepareCalls).toHaveLength(1);
+      expect(discardCalls()).toHaveLength(0);
+    });
+
+    it.each([
+      ["échec", { ok: false, error: "video_encode_failed" }, "failed"],
+      ["annulation", { ok: false, error: "video_prepare_cancelled" }, "cancelled"],
+      [
+        "durée effective trop longue",
+        {
+          ok: true,
+          preparedFile: new File([new Uint8Array([3])], "clip.mov", {
+            type: "video/quicktime",
+          }),
+          effectiveDurationSec: 10.4,
+          audioPreserved: true,
+        },
+        "failed",
+      ],
+      [
+        "audio perdu",
+        {
+          ok: true,
+          preparedFile: new File([new Uint8Array([4])], "prepared.mp4", {
+            type: "video/mp4",
+          }),
+          effectiveDurationSec: 8,
+          audioPreserved: false,
+        },
+        "failed",
+      ],
+      [
+        "fichier absent",
+        {
+          ok: true,
+          preparedFile: undefined,
+          effectiveDurationSec: 5,
+          audioPreserved: true,
+        },
+        "failed",
+      ],
+    ] as const)(
+      "%s : ni l’original ni un fichier invalide ne part au Storage",
+      async (_label, payload, status) => {
+        state.prepareImpl = async () => payload as never;
+        const { items } = await uploadMediaBatch({
+          projectId: PROJECT,
+          items: [clip()],
+          uploadStrategy,
+          maxRetries: 2,
+        });
+        expect(items[0].status).toBe(status);
+        expect(items[0].status).not.toBe("queued");
+        expect(items[0].status).not.toBe("uploaded");
+        expect(state.storageUploads).toEqual([]);
+        expect(state.uploadedNames).not.toContain("clip.mov");
+        expect(state.prepareCalls).toHaveLength(1);
+        expect(discardCalls()).toHaveLength(0);
+        if (uploadStrategy === "signed") expect(registerCount()).toBe(0);
+      },
+    );
+
+    it("un résultat tardif après annulation ne part pas au Storage et libère le créneau seulement à la fin", async () => {
+      const controller = new AbortController();
+      let release: ((value: unknown) => void) | undefined;
+      state.prepareImpl = () =>
+        new Promise((resolve) => {
+          release = resolve;
+        });
+      const pending = uploadMediaBatch({
+        projectId: PROJECT,
+        items: [clip()],
+        uploadStrategy,
+        maxRetries: 2,
+        signal: controller.signal,
+      });
+      await vi.waitUntil(() => videoEncodeSlotsInUse() === 1);
+      controller.abort();
+      await Promise.resolve();
+      expect(videoEncodeSlotsInUse()).toBe(1);
+      expect(state.storageUploads).toEqual([]);
+
+      release?.({
+        ok: true,
+        preparedFile: new File([new Uint8Array([9])], "prepared.mp4", {
+          type: "video/mp4",
+        }),
+        effectiveDurationSec: 9,
+        audioPreserved: true,
+      });
+      const { items } = await pending;
+      expect(items[0].status).toBe("cancelled");
+      expect(items[0].status).not.toBe("queued");
+      expect(state.storageUploads).toEqual([]);
+      expect(state.uploadedNames).not.toContain("prepared.mp4");
+      expect(state.uploadedNames).not.toContain("clip.mov");
+      expect(videoEncodeSlotsInUse()).toBe(0);
+      if (uploadStrategy === "signed") expect(registerCount()).toBe(0);
+    });
+  },
+);
+
+describe("photo", () => {
+  it("ne passe pas par la préparation vidéo", async () => {
     const { items } = await uploadMediaBatch({
       projectId: PROJECT,
-      items: [item],
+      items: [photoItem()],
       uploadStrategy: "direct",
       maxRetries: 0,
     });
     expect(items[0].status).toBe("uploaded");
-    expect(state.uploadedNames).toContain("prepared.mp4");
-    expect(state.uploadedNames).not.toContain("clip.mov");
+    expect(state.prepareCalls).toEqual([]);
   });
 });

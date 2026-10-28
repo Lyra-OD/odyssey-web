@@ -1,6 +1,6 @@
 /**
  * Commit 9 S7 — états de file par vidéo (préparation / annulation / reprise).
- * Pas d’appel encode ici : le branchement upload est le Commit 11.
+ * Pas d’appel encode ici : le créneau et l’appel vivent dans le parcours Coffre.
  */
 
 import type { MediaGridItem } from "@/src/lib/media/mediaTypes";

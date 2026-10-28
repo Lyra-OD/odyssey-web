@@ -10,7 +10,8 @@ import {
   fetchProjectMediaCached,
   invalidateProjectMediaCache,
 } from "@/src/lib/media/projectMediaCache";
-import { requeueVideoAfterFailure } from "@/src/lib/media/videoPrepareQueue";
+import { isQueueVideoFile, requeueVideoAfterFailure } from "@/src/lib/media/videoPrepareQueue";
+import type { CoffreEnqueueEntry } from "@/src/lib/media/coffreVideoPrepare";
 import {
   uploadMediaBatch,
   createLocalQueueItem,
@@ -49,7 +50,7 @@ export type UseMassMediaUploadReturn = {
   isHydrating: boolean;
   isPersistingOrder: boolean;
   deletingId: string | null;
-  enqueue: (files: FileList | File[]) => void;
+  enqueue: (files: FileList | Array<File | CoffreEnqueueEntry>) => void;
   start: (options: StartOptions) => Promise<void>;
   retryFailed: () => Promise<void>;
   retryItem: (id: string) => Promise<void>;
@@ -127,15 +128,22 @@ export function useMassMediaUpload(
     });
   }, []);
 
-  const enqueue = useCallback((files: FileList | File[]) => {
+  const enqueue = useCallback((files: FileList | Array<File | CoffreEnqueueEntry>) => {
     const list = Array.isArray(files) ? files : Array.from(files);
     if (!list.length) return;
 
     setItems((prev) => {
       const baseOrder = prev.length;
-      const next = list.map((file, idx) =>
-        createLocalQueueItem(file, baseOrder + idx),
-      );
+      const next = list.map((entry, idx) => {
+        const file = entry instanceof File ? entry : entry.file;
+        const trimStartSec = entry instanceof File ? undefined : entry.trimStartSec;
+        const item = createLocalQueueItem(file, baseOrder + idx);
+        if (isQueueVideoFile(file)) {
+          item.originalFile = file;
+          if (trimStartSec !== undefined) item.trimStartSec = trimStartSec;
+        }
+        return item;
+      });
       return normalizeOrder([...prev, ...next]);
     });
   }, []);

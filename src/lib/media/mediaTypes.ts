@@ -44,6 +44,11 @@ export type MediaGridItem = {
    * `file` peut devenir le MP4 préparé (Commit 11) ; la reprise repart d’ici.
    */
   originalFile?: File;
+  /**
+   * Début d’extrait choisi dans la modale, en secondes.
+   * `0` seulement si la durée source est déjà dans les 10 secondes.
+   */
+  trimStartSec?: number;
   /** `media_assets.id` — set after DB insert or server hydration. */
   assetId?: string;
   mimeType?: string | null;

@@ -14,7 +14,7 @@
  * - Annulation : aucun résultat tardif ne devient un succès.
  *
  * Tranche 1 QA device (Safari iPhone) : **non validée** par ce module seul.
- * Pas de branchement Coffre (Commit 11) tant que cette porte n’est pas verte.
+ * Branché au Coffre (Commit 11). S7 reste ⏳ jusqu’à l’épreuve Storage et base.
  *
  * @see docs/product/COFFRE_MONTAGE_MEDIA_INGEST.md §7
  */
@@ -70,6 +70,8 @@ export type PrepareVideoSuccess = {
   orientedHeight: number;
   /** true seulement si le File d’entrée a été réutilisé (fast-path). */
   reusedOriginal: boolean;
+  /** true si la source était muette, ou si la sortie a encore une piste audio. */
+  audioPreserved: boolean;
 };
 
 export type PrepareVideoFailure = {
@@ -94,6 +96,11 @@ export type PrepareVideoDeps = {
 export type PrepareVideoForUploadOptions = {
   signal?: AbortSignal;
   trimStartSec?: number;
+  /**
+   * Coffre : `false` tant que la famille n’a pas choisi l’extrait.
+   * Un film trop long ne démarre pas à 0 en silence.
+   */
+  explicitTrimStart?: boolean;
   deps?: PrepareVideoDeps;
 };
 
@@ -138,6 +145,7 @@ async function validatePreparedOutput(
       effectiveDurationSec: number;
       orientedWidth: number;
       orientedHeight: number;
+      audioTrackCount: number;
     }
   | { ok: false; error: PrepareVideoErrorCode }
 > {
@@ -186,6 +194,7 @@ async function validatePreparedOutput(
     effectiveDurationSec: output.effectiveSec,
     orientedWidth: decode.orientedWidth,
     orientedHeight: decode.orientedHeight,
+    audioTrackCount: probe.audioTrackCount,
   };
 }
 
@@ -197,7 +206,7 @@ export async function prepareVideoForUpload(
   source: Blob,
   options: PrepareVideoForUploadOptions = {},
 ): Promise<PrepareVideoResult> {
-  const { signal, trimStartSec = 0, deps: injected } = options;
+  const { signal, trimStartSec = 0, explicitTrimStart = true, deps: injected } = options;
 
   if (aborted(signal)) {
     return { ok: false, error: "video_prepare_cancelled" };
@@ -249,6 +258,9 @@ export async function prepareVideoForUpload(
   const sourceAssessment = assessSourceDuration(sourceDurationSec);
   if (!sourceAssessment.ok) {
     return { ok: false, error: sourceAssessment.error };
+  }
+  if (sourceAssessment.requiresTrim && !explicitTrimStart) {
+    return { ok: false, error: "video_duration_exceeds_limit" };
   }
 
   const dimsOk = assessOrientedDimensions(
@@ -349,6 +361,11 @@ export async function prepareVideoForUpload(
     return { ok: false, error: "video_prepare_cancelled" };
   }
 
+  const sourceHadAudio = sourceProbe.audioTrackCount >= 1;
+  if (sourceHadAudio && final.audioTrackCount < 1) {
+    return { ok: false, error: "video_encode_failed" };
+  }
+
   return {
     ok: true,
     preparedFile: candidate,
@@ -358,5 +375,6 @@ export async function prepareVideoForUpload(
     orientedWidth: final.orientedWidth,
     orientedHeight: final.orientedHeight,
     reusedOriginal,
+    audioPreserved: true,
   };
 }
