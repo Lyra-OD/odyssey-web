@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-28 · **Entrées :** 1154
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-28 · **Entrées :** 1155
 
 ## `common`
 
@@ -466,6 +466,7 @@
 | `tributeWizard.queueStatusUploaded` | Envoyé | Uploaded |
 | `tributeWizard.queueStatusFailed` | Échec | Failed |
 | `tributeWizard.queueStatusCancelled` | Annulé | Cancelled |
+| `tributeWizard.queueCommitUncertain` | Ce souvenir est peut-être déjà enregistré. Il n’a pas été retiré. Réessaie dans un moment. | This memory may already be saved. It was not removed. Try again in a moment. |
 | `tributeWizard.queueRemove` | Supprimer | Remove |
 | `tributeWizard.queueRetry` | Réessayer | Retry |
 | `tributeWizard.projectDraftLoading` | Préparation de votre espace privé… | Preparing your private space… |

@@ -7,6 +7,18 @@ import {
 } from "@/src/lib/media/storageEgressPolicy";
 import { thumbStoragePathFor } from "@/src/lib/media/thumbnailPath";
 import {
+  UploadChainCancelledError,
+  UploadCommitUncertainError,
+  assertUploadChainOpen,
+  classifyDatabaseCommitFailure,
+  databaseGateDecision,
+  isUploadChainCancelled,
+  isUploadCommitUncertain,
+  runPrepareStep,
+  storageGateDecision,
+  UPLOAD_CHAIN_CANCELLED,
+} from "@/src/lib/uploads/uploadChainGate";
+import {
   computeUploadProgress,
   isLocalMediaItem,
   type MediaAssetInsertRow,
@@ -189,6 +201,7 @@ async function registerMediaAsset(params: {
     error?: string;
   };
   if (!res.ok || !body.ok) {
+    if (res.status >= 500) throw new UploadCommitUncertainError();
     if (body.error === MEDIA_QUOTA_EXCEEDED_ERROR) {
       throw new Error(MEDIA_QUOTA_EXCEEDED_ERROR);
     }
@@ -226,17 +239,103 @@ export async function discardUploadedObjectsBestEffort(
   }
 }
 
+async function reconcileMediaAsset(
+  projectId: string,
+  storagePath: string,
+): Promise<
+  | { status: "present"; assetId: string | null }
+  | { status: "absent" }
+  | { status: "unknown" }
+> {
+  try {
+    const res = await fetch(`/api/projects/${projectId}/media/reconcile`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ storagePath }),
+    });
+    const body = (await res.json().catch(() => ({}))) as {
+      status?: string;
+      assetId?: string | null;
+    };
+    if (!res.ok) return { status: "unknown" };
+    if (body.status === "present") {
+      return { status: "present", assetId: body.assetId ?? null };
+    }
+    if (body.status === "absent") return { status: "absent" };
+    return { status: "unknown" };
+  } catch {
+    return { status: "unknown" };
+  }
+}
+
+/**
+ * L’objet est déjà dans le bucket. On n’ouvre la base que si la file est
+ * encore ouverte. Sinon discard, sans retry. Une base qui a répondu OK
+ * n’est pas annulée (chemin référencé).
+ */
+async function finishAfterStorageObject(params: {
+  signal?: AbortSignal;
+  projectId: string;
+  storagePath: string;
+  commit: () => Promise<string | null>;
+}): Promise<string | null> {
+  if (storageGateDecision(params.signal) === "discard") {
+    await discardUploadedObjectsBestEffort(params.projectId, [params.storagePath]);
+    throw new UploadChainCancelledError("storage");
+  }
+
+  let assetId: string | null;
+  try {
+    assetId = await params.commit();
+  } catch (error) {
+    if (classifyDatabaseCommitFailure(error) === "certain") {
+      await discardUploadedObjectsBestEffort(params.projectId, [
+        params.storagePath,
+      ]);
+      throw error;
+    }
+
+    const reconciled = await reconcileMediaAsset(
+      params.projectId,
+      params.storagePath,
+    );
+    if (reconciled.status === "present") return reconciled.assetId;
+    if (reconciled.status === "absent") {
+      await discardUploadedObjectsBestEffort(params.projectId, [
+        params.storagePath,
+      ]);
+      if (params.signal?.aborted) throw new UploadChainCancelledError("database");
+      throw error;
+    }
+    throw new UploadCommitUncertainError();
+  }
+
+  const decision = databaseGateDecision(params.signal);
+  if (decision.discardStorage) {
+    await discardUploadedObjectsBestEffort(params.projectId, [params.storagePath]);
+    throw new UploadChainCancelledError("database");
+  }
+  return assetId;
+}
+
 async function uploadAndInsertSigned(params: {
   item: UploadQueueItem;
   projectId: string;
   source: MediaUploadSource;
   bucket: string;
+  signal?: AbortSignal;
 }): Promise<{ storagePath: string; assetId: string | null }> {
   if (!isLocalMediaItem(params.item)) {
     throw new Error("Upload requires a local file item");
   }
 
-  const uploadFile = await resizeImageForUploadFile(params.item.file);
+  const prepared = await runPrepareStep({
+    file: params.item.file,
+    originalFile: params.item.originalFile,
+    signal: params.signal,
+  });
+  const uploadFile = await resizeImageForUploadFile(prepared);
+  assertUploadChainOpen(params.signal, "storage");
   const supabase = createClient();
   const signed = await requestSignedUploadUrl({
     projectId: params.projectId,
@@ -245,6 +344,7 @@ async function uploadAndInsertSigned(params: {
     sizeBytes: uploadFile.size,
     orderIndex: params.item.orderIndex ?? 0,
   });
+  assertUploadChainOpen(params.signal, "storage");
 
   const { error: uploadError } = await supabase.storage
     .from(params.bucket)
@@ -257,18 +357,19 @@ async function uploadAndInsertSigned(params: {
     throw new Error(`Storage upload failed: ${uploadError.message}`);
   }
 
-  try {
-    const assetId = await uploadThumbAndRegisterSigned({
-      ...params,
-      supabase,
-      uploadFile,
-      storagePath: signed.path,
-    });
-    return { storagePath: signed.path, assetId };
-  } catch (error) {
-    await discardUploadedObjectsBestEffort(params.projectId, [signed.path]);
-    throw error;
-  }
+  const assetId = await finishAfterStorageObject({
+    signal: params.signal,
+    projectId: params.projectId,
+    storagePath: signed.path,
+    commit: () =>
+      uploadThumbAndRegisterSigned({
+        ...params,
+        supabase,
+        uploadFile,
+        storagePath: signed.path,
+      }),
+  });
+  return { storagePath: signed.path, assetId };
 }
 
 async function uploadThumbAndRegisterSigned(params: {
@@ -279,7 +380,9 @@ async function uploadThumbAndRegisterSigned(params: {
   supabase: ReturnType<typeof createClient>;
   uploadFile: File;
   storagePath: string;
+  signal?: AbortSignal;
 }): Promise<string | null> {
+  assertUploadChainOpen(params.signal, "poster");
   const { supabase, uploadFile } = params;
   const thumbBlob =
     (await generateImageThumbnailBlob(uploadFile)) ??
@@ -314,6 +417,7 @@ async function uploadThumbAndRegisterSigned(params: {
     }
   }
 
+  assertUploadChainOpen(params.signal, "database");
   return registerMediaAsset({
     projectId: params.projectId,
     storagePath: params.storagePath,
@@ -334,6 +438,7 @@ async function uploadAndInsert(
     bucket: string;
     uploadStrategy?: "direct" | "signed";
     insertRowFactory?: UploadBatchParams["insertRowFactory"];
+    signal?: AbortSignal;
   },
 ): Promise<{ storagePath: string; assetId: string | null }> {
   if (params.uploadStrategy === "signed") {
@@ -342,6 +447,7 @@ async function uploadAndInsert(
       projectId: params.projectId,
       source: params.source,
       bucket: params.bucket,
+      signal: params.signal,
     });
   }
 
@@ -349,7 +455,13 @@ async function uploadAndInsert(
     throw new Error("Upload requires a local file item");
   }
 
-  const uploadFile = await resizeImageForUploadFile(params.item.file);
+  const prepared = await runPrepareStep({
+    file: params.item.file,
+    originalFile: params.item.originalFile,
+    signal: params.signal,
+  });
+  const uploadFile = await resizeImageForUploadFile(prepared);
+  assertUploadChainOpen(params.signal, "storage");
   const itemForUpload = { ...params.item, file: uploadFile };
   const supabase = createClient();
   const storagePath = buildStoragePath(params.projectId, itemForUpload);
@@ -366,19 +478,20 @@ async function uploadAndInsert(
     throw new Error(`Storage upload failed: ${uploadError.message}`);
   }
 
-  try {
-    const assetId = await uploadThumbAndInsertDirect({
-      ...params,
-      supabase,
-      uploadFile,
-      itemForUpload,
-      storagePath,
-    });
-    return { storagePath, assetId };
-  } catch (error) {
-    await discardUploadedObjectsBestEffort(params.projectId, [storagePath]);
-    throw error;
-  }
+  const assetId = await finishAfterStorageObject({
+    signal: params.signal,
+    projectId: params.projectId,
+    storagePath,
+    commit: () =>
+      uploadThumbAndInsertDirect({
+        ...params,
+        supabase,
+        uploadFile,
+        itemForUpload,
+        storagePath,
+      }),
+  });
+  return { storagePath, assetId };
 }
 
 async function uploadThumbAndInsertDirect(params: {
@@ -393,7 +506,9 @@ async function uploadThumbAndInsertDirect(params: {
   uploadFile: File;
   itemForUpload: UploadQueueItem;
   storagePath: string;
+  signal?: AbortSignal;
 }): Promise<string | null> {
+  assertUploadChainOpen(params.signal, "poster");
   const { supabase, uploadFile, itemForUpload, storagePath } = params;
   const thumbBlob =
     (await generateImageThumbnailBlob(uploadFile)) ??
@@ -415,6 +530,7 @@ async function uploadThumbAndInsertDirect(params: {
     }
   }
 
+  assertUploadChainOpen(params.signal, "database");
   const row =
     params.insertRowFactory?.({
       projectId: params.projectId,
@@ -471,9 +587,7 @@ async function uploadWithRetries(
   let lastError: unknown = null;
 
   for (let attempt = 1; attempt <= params.maxRetries + 1; attempt += 1) {
-    if (params.signal?.aborted) {
-      throw new Error("Upload cancelled");
-    }
+    assertUploadChainOpen(params.signal, "prepare");
 
     try {
       return await uploadAndInsert({
@@ -485,6 +599,7 @@ async function uploadWithRetries(
         bucket: params.bucket,
         insertRowFactory: params.insertRowFactory,
         uploadStrategy: params.uploadStrategy,
+        signal: params.signal,
       });
     } catch (error) {
       lastError = error;
@@ -492,6 +607,14 @@ async function uploadWithRetries(
       // Rejet de quota déterministe (pas transitoire) : inutile de retenter,
       // la limite ne bougera pas pendant les retries.
       if (error instanceof Error && error.message === MEDIA_QUOTA_EXCEEDED_ERROR) {
+        break;
+      }
+
+      if (
+        isUploadCommitUncertain(error) ||
+        isUploadChainCancelled(error) ||
+        params.signal?.aborted
+      ) {
         break;
       }
 
@@ -530,7 +653,19 @@ export async function uploadMediaBatch(
 
   const worker = async () => {
     while (cursor < items.length) {
-      if (params.signal?.aborted) return;
+      if (params.signal?.aborted) {
+        for (let i = cursor; i < items.length; i += 1) {
+          const pending = items[i];
+          if (pending.status !== "queued" && pending.status !== "preparing") {
+            continue;
+          }
+          pending.status = "cancelled";
+          pending.error = UPLOAD_CHAIN_CANCELLED;
+          params.onItemUpdate?.({ ...pending });
+        }
+        emit();
+        return;
+      }
 
       const currentIndex = cursor;
       cursor += 1;
@@ -578,7 +713,12 @@ export async function uploadMediaBatch(
         item.error = null;
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown error";
-        item.status = params.signal?.aborted ? "cancelled" : "failed";
+        const quota =
+          error instanceof Error && error.message === MEDIA_QUOTA_EXCEEDED_ERROR;
+        item.status =
+          !quota && (isUploadChainCancelled(error) || params.signal?.aborted)
+            ? "cancelled"
+            : "failed";
         item.attempts += 1;
         item.error = message;
       }

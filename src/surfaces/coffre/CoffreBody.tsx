@@ -324,6 +324,7 @@ export function CoffreBody({
                         statusUploaded: copy.queueStatusUploaded,
                         statusFailed: copy.queueStatusFailed,
                         statusCancelled: copy.queueStatusCancelled,
+                        commitUncertain: copy.queueCommitUncertain,
                         remove: copy.queueRemove,
                         retry: copy.queueRetry,
                         viaScanner: copy.queueViaScanner,

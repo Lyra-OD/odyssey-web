@@ -6,10 +6,10 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
+- 28 oct 2026 : Commit 10 : annuler avant le POST jette l’objet. POST réussi : on garde. POST incertain : réconcilier avant discard ou retry. S7 ⏳.
 - 28 oct 2026 : Commit 9 file : statut `preparing`, original en mémoire, reprise sur l’original. Pas encore d’encode dans l’upload.
 - 28 oct 2026 : porte QA pré-Coffre verte (H.264/HFR/trim/AAC/annuler + fixture HEVC OK ; Photos HEVC différé) · prérequis Commit 11 · pas de branchement.
 - 28 oct 2026 : politique encode verrouillée : pas de discard audio si source sonore · sortie 30 fps.
-- 28 oct 2026 : **Commit 8** modale trim isolée lab · S7 ⏳.
 - 28 oct 2026 : H.264 ~120 fps : preuve decode WebCodecs (preview noire avant Play = normal iOS HFR).
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
@@ -295,3 +295,21 @@ Porte QA lab (28 oct, Safari iPhone, pas encore Coffre) :
 8. Hors Commit 11 : Sanctuaire `guest_video`, backfill des vidéos déjà dans le Coffre, MediaRecorder iOS.
 
 Point d’insertion prévu : [`mediaUploadService.ts`](../../src/lib/uploads/mediaUploadService.ts), après le no-op vidéo de `resizeImageForUploadFile`, avant `buildStoragePath` / `upload-url`. API à brancher : [`prepareVideoForUpload.ts`](../../src/lib/media/prepareVideoForUpload.ts) + [`VideoTrimModal.tsx`](../../src/components/media/VideoTrimModal.tsx). Pas un package séparé.
+
+### 7.10 Annulation de la chaîne (Commit 10)
+
+`prepareVideoForUpload` n’est pas appelé. Les barrières sont dans l’upload existant (photos comprises), pour que le Commit 11 s’insère au milieu sans rouvrir la course.
+
+| Moment | Suite |
+|---|---|
+| Annulation avant Storage | Stop. Aucun objet, aucune ligne, pas de retry. |
+| Storage terminé, POST pas commencé, annulation reçue | Discard. Aucune ligne. Pas de retry. |
+| POST en cours, réponse positive (même si l’annulation est tombée pendant l’attente) | La ligne et l’objet restent. Statut envoyé. Un seul enregistrement. |
+| POST en cours, échec certain (4xx, quota, message d’upsert) | Discard. Si la file est annulée : statut annulé, pas de retry. |
+| POST en erreur réseau ou 5xx, résultat incertain | Lecture `media/reconcile` d’abord. Ligne trouvée : on garde, statut envoyé. Lecture impossible : pas de discard, pas de second essai. Ligne absente : discard seulement après cette lecture. |
+
+Le fichier envoyé reste `item.file`. `originalFile` ne part pas vers Storage. Il devient la source seulement quand un `prepare` est branché (Commit 11).
+
+Côté serveur, `discard` relit `media_assets` juste avant `remove`. Une ligne apparue entre les deux lectures n’est pas supprimée. Si la relecture échoue, rien n’est supprimé. Il reste une fenêtre après cette relecture : Storage n’est pas dans la même transaction que Postgres.
+
+S7 reste ⏳ : ces barrières ne prouvent pas le parcours iPhone, Storage et base de bout en bout.

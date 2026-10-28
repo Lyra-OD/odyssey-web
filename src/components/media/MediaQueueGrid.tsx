@@ -16,6 +16,7 @@ import {
   MEDIA_QUOTA_EXCEEDED_ERROR,
   type UploadQueueItem,
 } from "@/src/lib/uploads/mediaUploadService";
+import { UPLOAD_COMMIT_UNCERTAIN } from "@/src/lib/uploads/uploadChainGate";
 import { StoragePreviewImage } from "@/src/components/media/StoragePreviewImage";
 import { MediaVideoPreview } from "@/src/components/media/MediaVideoPreview";
 import { looksLikeImageSrc } from "@/src/lib/media/thumbnailPath";
@@ -48,6 +49,8 @@ export type MediaQueueGridCopy = {
   restorePreview?: string;
   /** Message affiché quand item.error === MEDIA_QUOTA_EXCEEDED_ERROR (support `{max}`). */
   quotaExceededError?: string;
+  /** Message affiché quand l’écriture en base a un résultat incertain. */
+  commitUncertain?: string;
 };
 
 type TileBadgeKind = "scanner" | "guest" | "video" | "photo";
@@ -113,9 +116,13 @@ type Props = {
 function displayItemError(
   error: string,
   quotaExceededMessage: string | undefined,
+  commitUncertainMessage: string | undefined,
 ): string {
   if (error === MEDIA_QUOTA_EXCEEDED_ERROR && quotaExceededMessage) {
     return quotaExceededMessage;
+  }
+  if (error === UPLOAD_COMMIT_UNCERTAIN && commitUncertainMessage) {
+    return commitUncertainMessage;
   }
   return error;
 }
@@ -416,7 +423,11 @@ export function MediaQueueGrid({
                     className="max-h-28 overflow-y-auto whitespace-pre-wrap break-words text-[11px] leading-snug text-fuchsia-200/90"
                     title={item.error}
                   >
-                    {displayItemError(item.error, copy.quotaExceededError)}
+                    {displayItemError(
+                      item.error,
+                      copy.quotaExceededError,
+                      copy.commitUncertain,
+                    )}
                   </p>
                   <button
                     type="button"

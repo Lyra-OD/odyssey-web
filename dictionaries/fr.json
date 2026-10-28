@@ -487,6 +487,7 @@
     "queueStatusUploaded": "Envoyé",
     "queueStatusFailed": "Échec",
     "queueStatusCancelled": "Annulé",
+    "queueCommitUncertain": "Ce souvenir est peut-être déjà enregistré. Il n’a pas été retiré. Réessaie dans un moment.",
     "queueRemove": "Supprimer",
     "queueRetry": "Réessayer",
     "projectDraftLoading": "Préparation de votre espace privé…",

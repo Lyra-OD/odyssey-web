@@ -62,6 +62,58 @@ export type DiscardResult = {
   failed: boolean;
 };
 
+type AssetRef = { storage_path: string; id: string | null };
+
+type AssetRefRead =
+  | { ok: true; rows: AssetRef[] }
+  | { ok: false; message: string };
+
+async function readAssetRefs(
+  admin: Pick<SupabaseClient, "from">,
+  projectId: string,
+  storagePaths: readonly string[],
+): Promise<AssetRefRead> {
+  const { data, error } = await admin
+    .from("media_assets")
+    .select("id, storage_path")
+    .eq("project_id", projectId)
+    .in("storage_path", [...storagePaths]);
+
+  if (error) return { ok: false, message: error.message };
+  const rows = ((data ?? []) as Array<{
+    id?: string | null;
+    storage_path?: string | null;
+  }>)
+    .filter(
+      (row): row is { id?: string | null; storage_path: string } =>
+        typeof row.storage_path === "string" && row.storage_path.length > 0,
+    )
+    .map((row) => ({
+      id: typeof row.id === "string" ? row.id : null,
+      storage_path: row.storage_path,
+    }));
+  return { ok: true, rows };
+}
+
+/** Lecture seule. `unknown` si la base ne répond pas : ne rien supprimer. */
+export async function lookupMediaAssetReference(params: {
+  admin: Pick<SupabaseClient, "from">;
+  projectId: string;
+  storagePath: string;
+}): Promise<
+  | { status: "present"; assetId: string | null }
+  | { status: "absent" }
+  | { status: "unknown" }
+> {
+  const read = await readAssetRefs(params.admin, params.projectId, [
+    params.storagePath,
+  ]);
+  if (!read.ok) return { status: "unknown" };
+  const row = read.rows.find((item) => item.storage_path === params.storagePath);
+  if (!row) return { status: "absent" };
+  return { status: "present", assetId: row.id };
+}
+
 export async function discardUnreferencedStorageObjects(params: {
   admin: Pick<SupabaseClient, "from" | "storage">;
   bucket: string;
@@ -86,33 +138,40 @@ export async function discardUnreferencedStorageObjects(params: {
   if (candidates.length === 0) return result;
 
   try {
-    const { data, error } = await params.admin
-      .from("media_assets")
-      .select("storage_path")
-      .eq("project_id", params.projectId)
-      .in("storage_path", candidates);
-
-    if (error) {
-      console.warn("[discardStorage] reference lookup failed:", error.message);
+    const first = await readAssetRefs(params.admin, params.projectId, candidates);
+    if (!first.ok) {
+      console.warn("[discardStorage] reference lookup failed:", first.message);
       result.failed = true;
       return result;
     }
 
-    const referenced = new Set(
-      ((data ?? []) as Array<{ storage_path: string | null }>)
-        .map((row) => row.storage_path)
-        .filter((p): p is string => typeof p === "string"),
-    );
-
-    const toRemove: string[] = [];
+    const referenced = new Set(first.rows.map((row) => row.storage_path));
+    const orphans: string[] = [];
     for (const path of candidates) {
-      if (referenced.has(path)) {
-        result.skippedReferenced.push(path);
-        continue;
-      }
-      toRemove.push(path, thumbStoragePathFor(path));
+      if (referenced.has(path)) result.skippedReferenced.push(path);
+      else orphans.push(path);
     }
-    if (toRemove.length === 0) return result;
+    if (orphans.length === 0) return result;
+
+    // Deuxième lecture : une ligne validée entre-temps ne part pas au remove.
+    const second = await readAssetRefs(params.admin, params.projectId, orphans);
+    if (!second.ok) {
+      console.warn("[discardStorage] reference recheck failed:", second.message);
+      result.failed = true;
+      return result;
+    }
+    const nowReferenced = new Set(second.rows.map((row) => row.storage_path));
+    const stillOrphan: string[] = [];
+    for (const path of orphans) {
+      if (nowReferenced.has(path)) result.skippedReferenced.push(path);
+      else stillOrphan.push(path);
+    }
+    if (stillOrphan.length === 0) return result;
+
+    const toRemove = stillOrphan.flatMap((path) => [
+      path,
+      thumbStoragePathFor(path),
+    ]);
 
     const { error: removeError } = await params.admin.storage
       .from(params.bucket)

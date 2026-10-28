@@ -487,6 +487,7 @@
     "queueStatusUploaded": "Uploaded",
     "queueStatusFailed": "Failed",
     "queueStatusCancelled": "Cancelled",
+    "queueCommitUncertain": "This memory may already be saved. It was not removed. Try again in a moment.",
     "queueRemove": "Remove",
     "queueRetry": "Retry",
     "projectDraftLoading": "Preparing your private space…",

@@ -18,6 +18,7 @@ export type CoffreCopy = Pick<
   | "queueEmpty"
   | "queueRemove"
   | "queueRetry"
+  | "queueCommitUncertain"
   | "queueStatusCancelled"
   | "queueStatusFailed"
   | "queueStatusPreparing"

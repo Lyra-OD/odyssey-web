@@ -6,18 +6,31 @@ const state = {
   insertError: null as { message: string } | null,
   storageUploads: [] as string[],
   thumbBlob: null as Blob | null,
+  onStorageUpload: null as (() => void) | null,
+  onDbWrite: null as (() => void) | null,
+  onPoster: null as (() => void) | null,
+  insertThrows: null as Error | null,
+  uploadedNames: [] as string[],
 };
 
 vi.mock("@/utils/supabase/client", () => ({
   createClient: () => ({
     storage: {
       from: () => ({
-        upload: async (path: string) => {
+        upload: async (path: string, file?: { name?: string }) => {
           state.storageUploads.push(path);
+          if (file?.name) state.uploadedNames.push(file.name);
+          state.onStorageUpload?.();
           return { error: null };
         },
-        uploadToSignedUrl: async (path: string) => {
+        uploadToSignedUrl: async (
+          path: string,
+          _token: string,
+          file?: { name?: string },
+        ) => {
           state.storageUploads.push(path);
+          if (file?.name) state.uploadedNames.push(file.name);
+          state.onStorageUpload?.();
           return { error: null };
         },
       }),
@@ -25,10 +38,13 @@ vi.mock("@/utils/supabase/client", () => ({
     from: () => ({
       upsert: () => ({
         select: () => ({
-          maybeSingle: async () =>
-            state.insertError
+          maybeSingle: async () => {
+            state.onDbWrite?.();
+            if (state.insertThrows) throw state.insertThrows;
+            return state.insertError
               ? { data: null, error: state.insertError }
-              : { data: { id: "asset-1" }, error: null },
+              : { data: { id: "asset-1" }, error: null };
+          },
         }),
       }),
     }),
@@ -41,7 +57,10 @@ vi.mock("@/src/lib/media/generateImageThumbnail", () => ({
   generateImageThumbnailBlob: async () => state.thumbBlob,
 }));
 vi.mock("@/src/lib/media/generateVideoPoster", () => ({
-  generateVideoPosterBlob: async () => null,
+  generateVideoPosterBlob: async () => {
+    state.onPoster?.();
+    return null;
+  },
 }));
 
 const {
@@ -56,10 +75,19 @@ type FetchCall = { url: string; body: Record<string, unknown> };
 let fetchCalls: FetchCall[] = [];
 let registerResponse: () => Promise<Response>;
 let discardResponse: () => Promise<Response>;
+let reconcileResponse: () => Promise<Response>;
 let signedCounter = 0;
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status });
+}
+
+function registerCount(): number {
+  return fetchCalls.filter((c) => c.url.endsWith("/media/register")).length;
+}
+
+function reconcileCount(): number {
+  return fetchCalls.filter((c) => c.url.endsWith("/media/reconcile")).length;
 }
 
 function discardCalls(): string[][] {
@@ -79,10 +107,19 @@ beforeEach(() => {
   state.insertError = null;
   state.storageUploads = [];
   state.thumbBlob = null;
+  state.onStorageUpload = null;
+  state.onDbWrite = null;
+  state.onPoster = null;
+  state.insertThrows = null;
+  state.uploadedNames = [];
   fetchCalls = [];
   signedCounter = 0;
-  registerResponse = async () => json({ ok: true, assetId: "asset-1" });
+  registerResponse = async () => {
+    state.onDbWrite?.();
+    return json({ ok: true, assetId: "asset-1" });
+  };
   discardResponse = async () => json({ ok: true });
+  reconcileResponse = async () => json({ status: "absent" });
   vi.spyOn(console, "warn").mockImplementation(() => {});
   vi.stubGlobal(
     "fetch",
@@ -98,6 +135,7 @@ beforeEach(() => {
         return json({ ok: true, path, token: "t" });
       }
       if (url.endsWith("/media/register")) return registerResponse();
+      if (url.endsWith("/media/reconcile")) return reconcileResponse();
       if (url.endsWith("/media/discard")) return discardResponse();
       return json({}, 404);
     }),
@@ -212,9 +250,14 @@ describe.each(["direct", "signed"] as const)("flux %s", (uploadStrategy) => {
 });
 
 describe("flux signed : enregistrement ambigu", () => {
-  it("réponse perdue après register : le client demande le nettoyage, le serveur arbitre", async () => {
+  it("réponse perdue : réconcilie avant discard, et ne retente pas avant", async () => {
     registerResponse = async () => {
       throw new TypeError("Failed to fetch");
+    };
+    reconcileResponse = async () => {
+      expect(discardCalls()).toHaveLength(0);
+      expect(registerCount()).toBe(1);
+      return json({ status: "absent" });
     };
     const { items } = await uploadMediaBatch({
       projectId: PROJECT,
@@ -222,8 +265,12 @@ describe("flux signed : enregistrement ambigu", () => {
       uploadStrategy: "signed",
       maxRetries: 0,
     });
+    expect(items[0].status).toBe("failed");
     expect(items[0].error).toBe("Failed to fetch");
+    expect(registerCount()).toBe(1);
+    expect(reconcileCount()).toBe(1);
     expect(discardCalls()).toEqual([[state.storageUploads[0]]]);
+    expect(state.storageUploads).toHaveLength(1);
   });
 });
 
@@ -244,5 +291,194 @@ describe("échec avant tout upload Storage", () => {
     });
     expect(items[0].error).toBe("signed_url_failed");
     expect(discardCalls()).toHaveLength(0);
+  });
+});
+
+describe.each(["direct", "signed"] as const)(
+  "annulation de chaîne (%s)",
+  (uploadStrategy) => {
+    function videoItem() {
+      const file = new File([new Uint8Array([1])], "clip.mov", {
+        type: "video/quicktime",
+      });
+      return createLocalQueueItem(file, 0);
+    }
+
+    it("déjà annulé : Storage et la base ne démarrent pas", async () => {
+      const controller = new AbortController();
+      controller.abort();
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [photoItem()],
+        uploadStrategy,
+        maxRetries: 2,
+        signal: controller.signal,
+      });
+      expect(items[0].status).toBe("cancelled");
+      expect(state.storageUploads).toEqual([]);
+      expect(discardCalls()).toHaveLength(0);
+      expect(fetchCalls.some((c) => c.url.endsWith("/media/register"))).toBe(
+        false,
+      );
+    });
+
+    it("Storage répondu puis annulation : discard, pas de base, pas de retry", async () => {
+      const controller = new AbortController();
+      state.onStorageUpload = () => controller.abort();
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [photoItem()],
+        uploadStrategy,
+        maxRetries: 2,
+        signal: controller.signal,
+      });
+      expect(items[0].status).toBe("cancelled");
+      expect(items[0].error).toBe("upload_chain_cancelled");
+      expect(state.storageUploads).toHaveLength(1);
+      expect(discardCalls()).toEqual([[state.storageUploads[0]]]);
+      expect(fetchCalls.some((c) => c.url.endsWith("/media/register"))).toBe(
+        false,
+      );
+    });
+
+    it("annulation pendant le poster : l’objet Storage est jeté, la base ne s’ouvre pas", async () => {
+      const controller = new AbortController();
+      state.onPoster = () => controller.abort();
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [videoItem()],
+        uploadStrategy,
+        maxRetries: 2,
+        signal: controller.signal,
+      });
+      expect(items[0].status).toBe("cancelled");
+      expect(state.storageUploads).toHaveLength(1);
+      expect(discardCalls()).toEqual([[state.storageUploads[0]]]);
+      expect(fetchCalls.some((c) => c.url.endsWith("/media/register"))).toBe(
+        false,
+      );
+    });
+
+    it("annulation pendant l’écriture base : la ligne reste, pas de discard", async () => {
+      const controller = new AbortController();
+      state.onDbWrite = () => controller.abort();
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [photoItem()],
+        uploadStrategy,
+        maxRetries: 2,
+        signal: controller.signal,
+      });
+      expect(items[0].status).toBe("uploaded");
+      expect(items[0].assetId).toBe("asset-1");
+      expect(discardCalls()).toHaveLength(0);
+      expect(state.storageUploads).toHaveLength(1);
+      if (uploadStrategy === "signed") expect(registerCount()).toBe(1);
+      expect(reconcileCount()).toBe(0);
+    });
+
+    it("annulation pendant un POST qui aboutit quand même : une ligne, objet conservé", async () => {
+      const controller = new AbortController();
+      if (uploadStrategy === "signed") {
+        registerResponse = async () => {
+          controller.abort();
+          return json({ ok: true, assetId: "asset-1" });
+        };
+      } else {
+        state.onDbWrite = () => controller.abort();
+      }
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [photoItem()],
+        uploadStrategy,
+        maxRetries: 2,
+        signal: controller.signal,
+      });
+      expect(items[0].status).toBe("uploaded");
+      expect(items[0].assetId).toBe("asset-1");
+      expect(items[0].error).toBeNull();
+      expect(discardCalls()).toHaveLength(0);
+      expect(state.storageUploads).toHaveLength(1);
+      if (uploadStrategy === "signed") expect(registerCount()).toBe(1);
+    });
+
+    it("POST incertain : pas de discard ni de second essai avant une réconciliation inconnue", async () => {
+      const controller = new AbortController();
+      reconcileResponse = async () => {
+        expect(discardCalls()).toHaveLength(0);
+        if (uploadStrategy === "signed") expect(registerCount()).toBe(1);
+        expect(state.storageUploads).toHaveLength(1);
+        return json({ error: "reconcile_failed" }, 500);
+      };
+      if (uploadStrategy === "signed") {
+        registerResponse = async () => {
+          controller.abort();
+          throw new TypeError("Failed to fetch");
+        };
+      } else {
+        state.insertThrows = new TypeError("Failed to fetch");
+        state.onDbWrite = () => controller.abort();
+      }
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [photoItem()],
+        uploadStrategy,
+        maxRetries: 2,
+        signal: controller.signal,
+      });
+      expect(items[0].status).toBe("cancelled");
+      expect(items[0].error).toBe("upload_commit_uncertain");
+      expect(discardCalls()).toHaveLength(0);
+      expect(state.storageUploads).toHaveLength(1);
+      expect(reconcileCount()).toBe(1);
+      if (uploadStrategy === "signed") expect(registerCount()).toBe(1);
+    });
+
+    it("échec certain du POST après annulation : discard, pas de retry", async () => {
+      const controller = new AbortController();
+      if (uploadStrategy === "signed") {
+        registerResponse = async () => {
+          controller.abort();
+          return json({ error: "media_register_failed" }, 400);
+        };
+      } else {
+        state.insertError = { message: "media_assets upsert failed: boom" };
+        state.onDbWrite = () => controller.abort();
+      }
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [photoItem()],
+        uploadStrategy,
+        maxRetries: 2,
+        signal: controller.signal,
+      });
+      expect(items[0].status).toBe("cancelled");
+      expect(discardCalls()).toHaveLength(1);
+      expect(state.storageUploads).toHaveLength(1);
+      expect(reconcileCount()).toBe(0);
+      if (uploadStrategy === "signed") expect(registerCount()).toBe(1);
+    });
+  },
+);
+
+describe("fichier envoyé", () => {
+  it("envoie item.file et laisse originalFile de côté", async () => {
+    const prepared = new File([new Uint8Array([1])], "prepared.mp4", {
+      type: "video/mp4",
+    });
+    const original = new File([new Uint8Array([2])], "clip.mov", {
+      type: "video/quicktime",
+    });
+    const item = createLocalQueueItem(prepared, 0);
+    item.originalFile = original;
+    const { items } = await uploadMediaBatch({
+      projectId: PROJECT,
+      items: [item],
+      uploadStrategy: "direct",
+      maxRetries: 0,
+    });
+    expect(items[0].status).toBe("uploaded");
+    expect(state.uploadedNames).toContain("prepared.mp4");
+    expect(state.uploadedNames).not.toContain("clip.mov");
   });
 });

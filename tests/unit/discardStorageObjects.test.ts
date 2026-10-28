@@ -98,6 +98,59 @@ describe("discardUnreferencedStorageObjects", () => {
     expect(result.skippedReferenced).toEqual([ORIGINAL]);
   });
 
+  it("une ligne apparue entre les deux lectures n’est pas supprimée", async () => {
+    let reads = 0;
+    const remove = vi.fn(async () => ({ data: [], error: null }));
+    const inFilter = vi.fn(async () => {
+      reads += 1;
+      if (reads === 1) return { data: [], error: null };
+      return {
+        data: [{ storage_path: ORIGINAL, id: "asset-1" }],
+        error: null,
+      };
+    });
+    const admin = {
+      from: vi.fn(() => ({
+        select: vi.fn(() => ({ eq: vi.fn(() => ({ in: inFilter })) })),
+      })),
+      storage: { from: vi.fn(() => ({ remove })) },
+    };
+    const result = await discardUnreferencedStorageObjects({
+      admin: admin as never,
+      bucket: "user-assets",
+      projectId: PROJECT,
+      storagePaths: [ORIGINAL],
+    });
+    expect(remove).not.toHaveBeenCalled();
+    expect(result.skippedReferenced).toEqual([ORIGINAL]);
+    expect(result.removed).toEqual([]);
+  });
+
+  it("ne supprime rien si la relecture des références échoue", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    let reads = 0;
+    const remove = vi.fn(async () => ({ data: [], error: null }));
+    const inFilter = vi.fn(async () => {
+      reads += 1;
+      if (reads === 1) return { data: [], error: null };
+      return { data: null, error: { message: "db down" } };
+    });
+    const admin = {
+      from: vi.fn(() => ({
+        select: vi.fn(() => ({ eq: vi.fn(() => ({ in: inFilter })) })),
+      })),
+      storage: { from: vi.fn(() => ({ remove })) },
+    };
+    const result = await discardUnreferencedStorageObjects({
+      admin: admin as never,
+      bucket: "user-assets",
+      projectId: PROJECT,
+      storagePaths: [ORIGINAL],
+    });
+    expect(remove).not.toHaveBeenCalled();
+    expect(result.failed).toBe(true);
+  });
+
   it("ne supprime rien si la lecture des références échoue", async () => {
     vi.spyOn(console, "warn").mockImplementation(() => {});
     const { admin, remove } = fakeAdmin({ lookupError: "db down" });
