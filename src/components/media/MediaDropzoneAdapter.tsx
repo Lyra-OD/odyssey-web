@@ -17,7 +17,17 @@ import {
   readLocalVideoDurationSec,
   splitDropForCoffre,
 } from "@/src/lib/media/coffreVideoPrepare";
+import {
+  lookupProjectContentSha256,
+  reviewCoffreDrop,
+  type DuplicateChoice,
+  type DuplicateReason,
+} from "@/src/lib/media/coffreExactDuplicate";
 import { isQueueVideoFile } from "@/src/lib/media/videoPrepareQueue";
+import {
+  CoffreDuplicatePrompt,
+  type CoffreDuplicatePromptCopy,
+} from "@/src/components/media/CoffreDuplicatePrompt";
 import {
   VideoTrimModal,
   type VideoTrimModalCopy,
@@ -146,6 +156,8 @@ export type MediaDropzoneAdapterProps = {
   overflowRejectionMessage?: string;
   /** Modale d’extrait. Sans elle, un film trop long n’entre pas dans la file. */
   videoTrimCopy?: VideoTrimModalCopy;
+  /** Choix explicite si l’empreinte est déjà dans la file ou le Coffre. */
+  duplicateCopy?: CoffreDuplicatePromptCopy;
 
   /**
    * Recharge silencieuse des médias distants (Scanner QR → grille).
@@ -198,6 +210,7 @@ export function MediaDropzoneAdapter({
   autoStart = false,
   overflowRejectionMessage,
   videoTrimCopy,
+  duplicateCopy,
   pollIntervalMs,
   onFilesRejected,
   onUploadComplete,
@@ -214,8 +227,20 @@ export function MediaDropzoneAdapter({
 
   const [rejections, setRejections] = useState<MediaDropzoneRejection[]>([]);
   const [trimQueue, setTrimQueue] = useState<
-    Array<{ file: File; durationSec: number }>
+    Array<{ file: File; durationSec: number; contentSha256: string | null }>
   >([]);
+  const [duplicatePrompt, setDuplicatePrompt] = useState<{
+    kind: "video" | "photo";
+    reason: DuplicateReason;
+  } | null>(null);
+  const trimQueueRef = useRef(trimQueue);
+  const itemsRef = useRef(upload.items);
+  const reservedHashesRef = useRef(new Set<string>());
+  const promptResolveRef = useRef<((choice: DuplicateChoice) => void) | null>(
+    null,
+  );
+  trimQueueRef.current = trimQueue;
+  itemsRef.current = upload.items;
   const wasRunningRef = useRef(false);
   const hydratedProjectRef = useRef<string | null>(null);
   const notifiedAssetsRef = useRef<Set<string>>(new Set());
@@ -272,6 +297,27 @@ export function MediaDropzoneAdapter({
     }
   }, [onUploadError, upload]);
 
+  const chooseDuplicate = useCallback(
+    (input: {
+      file: File;
+      kind: "video" | "photo";
+      reason: DuplicateReason;
+    }) => {
+      if (!duplicateCopy) return Promise.resolve<DuplicateChoice>("skip");
+      return new Promise<DuplicateChoice>((resolve) => {
+        promptResolveRef.current = resolve;
+        setDuplicatePrompt({ kind: input.kind, reason: input.reason });
+      });
+    },
+    [duplicateCopy],
+  );
+
+  const settleDuplicate = useCallback((choice: DuplicateChoice) => {
+    promptResolveRef.current?.(choice);
+    promptResolveRef.current = null;
+    setDuplicatePrompt(null);
+  }, []);
+
   const onDrop = useCallback(
     async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       const normalized = normalizeDropzoneRejections(fileRejections);
@@ -300,18 +346,63 @@ export function MediaDropzoneAdapter({
 
       if (!allowed.length) return;
 
+      const queueHashes = new Set(reservedHashesRef.current);
+      for (const item of itemsRef.current) {
+        if (!item.contentSha256) continue;
+        if (item.status === "cancelled") {
+          reservedHashesRef.current.delete(item.contentSha256);
+          continue;
+        }
+        queueHashes.add(item.contentSha256);
+      }
+      for (const pending of trimQueueRef.current) {
+        if (pending.contentSha256) queueHashes.add(pending.contentSha256);
+      }
+
+      const accepted = await reviewCoffreDrop({
+        files: allowed,
+        queueHashes,
+        lookup: (sha256) => lookupProjectContentSha256(projectId, sha256),
+        choose: chooseDuplicate,
+      });
+      if (!accepted.length) return;
+
+      for (const entry of accepted) {
+        if (entry.contentSha256) {
+          reservedHashesRef.current.add(entry.contentSha256);
+        }
+      }
+
       const measured = await Promise.all(
-        allowed.map(async (file) => ({
-          file,
-          durationSec: isQueueVideoFile(file)
-            ? await readLocalVideoDurationSec(file)
+        accepted.map(async (entry) => ({
+          file: entry.file,
+          durationSec: isQueueVideoFile(entry.file)
+            ? await readLocalVideoDurationSec(entry.file)
             : null,
+          contentSha256: entry.contentSha256,
         })),
       );
       const split = splitDropForCoffre(measured);
-      if (split.immediate.length) upload.enqueue(split.immediate);
+      const shaByFile = new Map(
+        measured.map((entry) => [entry.file, entry.contentSha256]),
+      );
+      if (split.immediate.length) {
+        upload.enqueue(
+          split.immediate.map((entry) => ({
+            ...entry,
+            contentSha256: shaByFile.get(entry.file) ?? null,
+          })),
+        );
+      }
       if (videoTrimCopy && split.needsTrim.length) {
-        setTrimQueue((prev) => [...prev, ...split.needsTrim]);
+        setTrimQueue((prev) => [
+          ...prev,
+          ...split.needsTrim.map((entry) => ({
+            file: entry.file,
+            durationSec: entry.durationSec,
+            contentSha256: shaByFile.get(entry.file) ?? null,
+          })),
+        ]);
       }
 
       if (autoStart && split.immediate.length) {
@@ -321,8 +412,10 @@ export function MediaDropzoneAdapter({
     [
       appendRejections,
       autoStart,
+      chooseDuplicate,
       maxFiles,
       overflowRejectionMessage,
+      projectId,
       remainingSlots,
       start,
       upload,
@@ -476,12 +569,33 @@ export function MediaDropzoneAdapter({
               {
                 file: currentTrim.file,
                 trimStartSec: selection.trimStartSec,
+                contentSha256: currentTrim.contentSha256,
               },
             ]);
             setTrimQueue((prev) => prev.slice(1));
             if (autoStart) void start();
           }}
-          onCancel={() => setTrimQueue((prev) => prev.slice(1))}
+          onCancel={() => {
+            const sha = currentTrim.contentSha256;
+            if (sha) {
+              const stillQueued = itemsRef.current.some(
+                (item) =>
+                  item.status !== "cancelled" && item.contentSha256 === sha,
+              );
+              if (!stillQueued) reservedHashesRef.current.delete(sha);
+            }
+            setTrimQueue((prev) => prev.slice(1));
+          }}
+        />
+      ) : null}
+      {duplicatePrompt && duplicateCopy ? (
+        <CoffreDuplicatePrompt
+          open
+          kind={duplicatePrompt.kind}
+          reason={duplicatePrompt.reason}
+          copy={duplicateCopy}
+          onSkip={() => settleDuplicate("skip")}
+          onKeep={() => settleDuplicate("keep")}
         />
       ) : null}
     </>

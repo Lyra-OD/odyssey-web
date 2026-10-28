@@ -19,6 +19,12 @@ const BodySchema = z
     source: z
       .enum(["local", "facebook", "instagram", "tiktok", "google_photos"])
       .optional(),
+    contentSha256: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .regex(/^[0-9a-f]{64}$/)
+      .optional(),
   })
   .strict();
 
@@ -86,6 +92,9 @@ export async function POST(
     order_index: parsed.data.orderIndex,
     owner_user_id: project.user_id,
     ...(project.tenant_id ? { tenant_id: project.tenant_id } : {}),
+    ...(parsed.data.contentSha256
+      ? { content_sha256: parsed.data.contentSha256 }
+      : {}),
   };
 
   const { data: inserted, error: insertError } = await admin

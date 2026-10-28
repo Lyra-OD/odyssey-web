@@ -76,6 +76,13 @@ export function CoffreBody({
             playAria: copy.videoTrimPlayAria,
             pauseAria: copy.videoTrimPauseAria,
           }}
+          duplicateCopy={{
+            video: copy.coffreDuplicateVideo,
+            photo: copy.coffreDuplicatePhoto,
+            unknown: copy.coffreDuplicateUnknown,
+            skip: copy.coffreDuplicateSkip,
+            keep: copy.coffreDuplicateKeep,
+          }}
           onAssetUploaded={onAssetUploaded}
           onUploadError={(error) => {
             if (error.message === "unauthenticated") {

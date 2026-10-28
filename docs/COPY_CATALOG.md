@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-28 · **Entrées :** 1163
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-28 · **Entrées :** 1168
 
 ## `common`
 
@@ -495,6 +495,11 @@
 | `tributeWizard.videoTrimPause` | Pause | Pause |
 | `tributeWizard.videoTrimPlayAria` | Lire l’extrait sélectionné | Play the selected clip |
 | `tributeWizard.videoTrimPauseAria` | Mettre l’extrait en pause | Pause the selected clip |
+| `tributeWizard.coffreDuplicateVideo` | Cette vidéo semble déjà se trouver dans votre Coffre. | This video already seems to be in your Memory Chest. |
+| `tributeWizard.coffreDuplicatePhoto` | Cette photo semble déjà se trouver dans votre Coffre. | This photo already seems to be in your Memory Chest. |
+| `tributeWizard.coffreDuplicateUnknown` | Nous n’avons pas pu vérifier si ce souvenir est déjà dans le Coffre. | We could not check whether this memory is already in your Memory Chest. |
+| `tributeWizard.coffreDuplicateSkip` | Ne pas ajouter | Do not add |
+| `tributeWizard.coffreDuplicateKeep` | Ajouter quand même | Add anyway |
 | `tributeWizard.videoPrepareErrorDurationUnknown` | On ne peut pas lire la durée de ce film. | The length of this film could not be read. |
 | `tributeWizard.videoPrepareErrorDurationExceeds` | Ce film dépasse 10 secondes. Choisis un extrait. | This film is longer than 10 seconds. Choose a clip. |
 | `tributeWizard.videoPrepareErrorOutputExceeds` | L’extrait préparé dépasse 10 secondes. | The prepared clip is longer than 10 seconds. |

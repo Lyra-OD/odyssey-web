@@ -51,6 +51,8 @@ export type MediaGridItem = {
   trimStartSec?: number;
   /** `media_assets.id` — set after DB insert or server hydration. */
   assetId?: string;
+  /** SHA-256 du fichier original. Absent sur les souvenirs déposés avant P20. */
+  contentSha256?: string | null;
   mimeType?: string | null;
   sizeBytes?: number;
   displayName?: string;
@@ -87,6 +89,7 @@ export type MediaAssetInsertRow = {
   order_index: number;
   owner_user_id?: string;
   tenant_id?: string;
+  content_sha256?: string | null;
 };
 
 /** Row shape returned by GET /api/projects/[id]/media */

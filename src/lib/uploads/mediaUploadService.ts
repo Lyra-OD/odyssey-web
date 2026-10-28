@@ -10,6 +10,7 @@ import {
   isVideoPrepareFailure,
   prepareCoffreVideoFile,
 } from "@/src/lib/media/coffreVideoPrepare";
+import { contentSha256ForRow } from "@/src/lib/media/coffreExactDuplicate";
 import { isQueueVideoFile } from "@/src/lib/media/videoPrepareQueue";
 import { withVideoEncodeSlot } from "@/src/lib/media/videoEncodeSlot";
 import {
@@ -189,7 +190,9 @@ async function registerMediaAsset(params: {
   sizeBytes: number;
   orderIndex: number;
   source: MediaUploadSource;
+  contentSha256?: string | null;
 }): Promise<string | null> {
+  const contentSha256 = contentSha256ForRow(params.contentSha256);
   const res = await fetch(`/api/projects/${params.projectId}/media/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -199,6 +202,7 @@ async function registerMediaAsset(params: {
       sizeBytes: params.sizeBytes,
       orderIndex: params.orderIndex,
       source: params.source,
+      ...(contentSha256 ? { contentSha256 } : {}),
     }),
   });
   const body = (await res.json().catch(() => ({}))) as {
@@ -477,6 +481,7 @@ async function uploadThumbAndRegisterSigned(params: {
     sizeBytes: uploadFile.size,
     orderIndex: params.item.orderIndex ?? 0,
     source: params.source,
+    contentSha256: params.item.contentSha256,
   });
 }
 
@@ -585,6 +590,7 @@ async function uploadThumbAndInsertDirect(params: {
   }
 
   assertUploadChainOpen(params.signal, "database");
+  const contentSha256 = contentSha256ForRow(params.item.contentSha256);
   const row =
     params.insertRowFactory?.({
       projectId: params.projectId,
@@ -604,6 +610,7 @@ async function uploadThumbAndInsertDirect(params: {
       order_index: params.item.orderIndex ?? 0,
       ...(params.userId ? { owner_user_id: params.userId } : {}),
       ...(params.tenantId ? { tenant_id: params.tenantId } : {}),
+      ...(contentSha256 ? { content_sha256: contentSha256 } : {}),
     } satisfies MediaAssetInsertRow);
 
   const { data: inserted, error: insertError } = await supabase

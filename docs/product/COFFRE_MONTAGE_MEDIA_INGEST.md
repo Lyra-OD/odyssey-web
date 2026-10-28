@@ -6,11 +6,11 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
+- 28 oct 2026 : Doublon exact : SHA-256 du fichier original avant préparation. Choix d’ajouter ou non, photos comprises. S7 ⏳.
 - 28 oct 2026 : Commit 11 : le Coffre prépare la vidéo depuis l’original, envoie seulement le fichier préparé, choisit l’extrait si le film dépasse 10 secondes. S7 ⏳.
 - 28 oct 2026 : Commit 10 : annuler avant le POST jette l’objet. POST réussi : on garde. POST incertain : réconcilier avant discard ou retry. S7 ⏳.
 - 28 oct 2026 : Commit 9 file : statut `preparing`, original en mémoire, reprise sur l’original. Pas encore d’encode dans l’upload.
 - 28 oct 2026 : porte QA pré-Coffre verte (H.264/HFR/trim/AAC/annuler + fixture HEVC OK ; Photos HEVC différé) · prérequis Commit 11 · pas de branchement.
-- 28 oct 2026 : politique encode verrouillée : pas de discard audio si source sonore · sortie 30 fps.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  
@@ -313,3 +313,11 @@ Après préparation, `item.file` est le MP4 préparé. `originalFile` reste la s
 Côté serveur, `discard` relit `media_assets` juste avant `remove`. Une ligne apparue entre les deux lectures n’est pas supprimée. Si la relecture échoue, rien n’est supprimé. Il reste une fenêtre après cette relecture : Storage n’est pas dans la même transaction que Postgres.
 
 S7 reste ⏳ : ces barrières ne prouvent pas le parcours iPhone, Storage et base de bout en bout.
+
+### 7.11 Doublon exact (photos et vidéos)
+
+Avant la préparation, le Coffre calcule le SHA-256 du fichier original. Il compare d’abord la file locale, puis les souvenirs déjà envoyés du projet (`POST /api/projects/:id/media/content-hash`).
+
+Même empreinte : « Cette vidéo semble déjà se trouver dans votre Coffre. » ou la phrase photo. « Ne pas ajouter » ne prépare rien, n’envoie rien, n’écrit aucune ligne. « Ajouter quand même » suit le parcours habituel, y compris une deuxième copie.
+
+Même nom, autre contenu : pas un doublon. Fichier réexporté ou compressé : empreinte différente, pas de blocage. Lecture serveur impossible : ce n’est pas une absence. La colonne `content_sha256` (P20) est indexée par projet, sans contrainte d’unicité. S7 reste ⏳.

@@ -137,7 +137,10 @@ export function useMassMediaUpload(
       const next = list.map((entry, idx) => {
         const file = entry instanceof File ? entry : entry.file;
         const trimStartSec = entry instanceof File ? undefined : entry.trimStartSec;
+        const contentSha256 =
+          entry instanceof File ? undefined : entry.contentSha256;
         const item = createLocalQueueItem(file, baseOrder + idx);
+        if (contentSha256) item.contentSha256 = contentSha256;
         if (isQueueVideoFile(file)) {
           item.originalFile = file;
           if (trimStartSec !== undefined) item.trimStartSec = trimStartSec;

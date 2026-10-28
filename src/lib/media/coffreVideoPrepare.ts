@@ -18,6 +18,7 @@ import { UploadChainCancelledError } from "@/src/lib/uploads/uploadChainGate";
 export type CoffreEnqueueEntry = {
   file: File;
   trimStartSec?: number;
+  contentSha256?: string | null;
 };
 
 export type CoffreDropMeasure = {

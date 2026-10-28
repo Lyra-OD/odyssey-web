@@ -4,11 +4,11 @@
 **Dernière MAJ :** 28 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 28 oct 2026 : S7 : doublon exact par SHA-256 du fichier original, avec choix. La préparation et l’annulation ne changent pas. S7 ⏳.
 - 28 oct 2026 : S7 Commit 11 : préparation branchée au Coffre. L’original ne part pas si la préparation échoue. S7 ⏳.
 - 28 oct 2026 : S7 Commit 10 : POST incertain réconcilié avant discard. Ligne déjà écrite : on la garde. S7 ⏳.
 - 28 oct 2026 : S7 Commit 9 : état « Préparation… » par vidéo (pas encore branché à l’encode).
 - 28 oct 2026 : S7 fps **A** : entrée 60/120 OK → sortie ~30.
-- 27 oct 2026 : dette Soft Cap SQL (prod ≠ `odyssey_p7_…sql`) · S7 ⏳ · contrat ingest v2.3 (doc).
 
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).

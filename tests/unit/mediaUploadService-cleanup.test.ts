@@ -13,6 +13,7 @@ const state = {
   onPoster: null as (() => void) | null,
   insertThrows: null as Error | null,
   uploadedNames: [] as string[],
+  upsertRows: [] as Array<Record<string, unknown>>,
   prepareCalls: [] as Array<{ name: string; trimStartSec: number }>,
   prepareImpl: null as
     | ((
@@ -45,9 +46,10 @@ vi.mock("@/utils/supabase/client", () => ({
       }),
     },
     from: () => ({
-      upsert: () => ({
+      upsert: (row: Record<string, unknown>) => ({
         select: () => ({
           maybeSingle: async () => {
+            state.upsertRows.push(row);
             state.onDbWrite?.();
             if (state.insertThrows) throw state.insertThrows;
             return state.insertError
@@ -143,6 +145,7 @@ beforeEach(() => {
   state.onPoster = null;
   state.insertThrows = null;
   state.uploadedNames = [];
+  state.upsertRows = [];
   state.prepareCalls = [];
   state.prepareImpl = null;
   resetVideoEncodeSlotForTests();
@@ -680,3 +683,43 @@ describe("photo", () => {
     expect(state.prepareCalls).toEqual([]);
   });
 });
+
+describe.each(["direct", "signed"] as const)(
+  "empreinte conservée (%s)",
+  (uploadStrategy) => {
+    it("écrit le SHA-256 de l’original et laisse la préparation se faire", async () => {
+      const sha = "ab".repeat(32);
+      const original = new File([new Uint8Array([2])], "clip.mov", {
+        type: "video/quicktime",
+      });
+      const item = createLocalQueueItem(original, 0);
+      item.originalFile = original;
+      item.trimStartSec = 0;
+      item.contentSha256 = sha;
+      state.prepareImpl = async () => ({
+        ok: true,
+        preparedFile: new File([new Uint8Array([9])], "prepared.mp4", {
+          type: "video/mp4",
+        }),
+        effectiveDurationSec: 4,
+        audioPreserved: true,
+      });
+      const { items } = await uploadMediaBatch({
+        projectId: PROJECT,
+        items: [item],
+        uploadStrategy,
+        maxRetries: 0,
+      });
+      expect(items[0].status).toBe("uploaded");
+      expect(state.prepareCalls).toHaveLength(1);
+      if (uploadStrategy === "direct") {
+        expect(state.upsertRows[0]?.content_sha256).toBe(sha);
+      } else {
+        const register = fetchCalls.find((call) =>
+          call.url.endsWith("/media/register"),
+        );
+        expect(register?.body.contentSha256).toBe(sha);
+      }
+    });
+  },
+);

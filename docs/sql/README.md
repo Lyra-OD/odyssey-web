@@ -76,6 +76,7 @@ Ce dossier contient les scripts SQL de la **vérité actuelle** (et l’historiq
 | 29 | `odyssey_p17_project_status_submitted.sql` | **Patch** | **Checkout** — enum `project_status` + valeur `submitted` (webhook / panier 0 $) |
 | 30 | `odyssey_p18_guest_session_photo_quota.sql` | **Patch** | **Sanctuaire** — plafond 5 photos / **session** invité (même lien, appareils distincts). **À jouer** sinon le trigger P10.3 rebloque tout le monde. |
 | 31 | `odyssey_p19_soft_cap_media_ceiling.sql` | **Patch** | **Soft Cap** — accordé Souvenir → quota 125 (plus de blocage à 50) · rétablit `intended ?? base ?? granted` (régression P10.2) — voir [§ P19](#p19--soft-cap-plafond-média-héritage) |
+| 32 | `odyssey_p20_media_content_sha256.sql` | **Patch** | **Coffre** — `media_assets.content_sha256`, index par projet, sans unicité. **À jouer** avant le dépôt qui écrit l’empreinte. |
 | — | `odyssey_p6_1_waterfall_qa_assert.sql` | **QA** | Assert waterfall pur S1–S3 + clawback S5 (lecture seule). |
 | — | `odyssey_p6_qa_revshare_accrual.sql` | **QA** | Accrual RevShare E2E (solde +30 % net · idempotence · 0 jeton) — transactionnel ROLLBACK. |
 | — | `odyssey_p0_storage_policies_REFERENCE.sql` | **Référence** | Policies bucket `user-assets` — **Dashboard Storage uniquement** (pas SQL Editor). |
