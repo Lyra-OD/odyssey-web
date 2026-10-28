@@ -319,6 +319,7 @@ export function CoffreBody({
                       copy={{
                         emptyTitle: copy.queueEmpty,
                         statusQueued: copy.queueStatusQueued,
+                        statusPreparing: copy.queueStatusPreparing,
                         statusUploading: copy.queueStatusUploading,
                         statusUploaded: copy.queueStatusUploaded,
                         statusFailed: copy.queueStatusFailed,

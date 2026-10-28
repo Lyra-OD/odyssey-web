@@ -482,6 +482,7 @@
     "rejectionsClear": "Clear",
     "queueEmpty": "No file added yet.",
     "queueStatusQueued": "Queued",
+    "queueStatusPreparing": "Preparing…",
     "queueStatusUploading": "Uploading…",
     "queueStatusUploaded": "Uploaded",
     "queueStatusFailed": "Failed",

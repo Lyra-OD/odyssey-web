@@ -29,6 +29,7 @@ import {
 export type MediaQueueGridCopy = {
   emptyTitle: string;
   statusQueued: string;
+  statusPreparing: string;
   statusUploading: string;
   statusUploaded: string;
   statusFailed: string;
@@ -268,14 +269,17 @@ export function MediaQueueGrid({
           /\.(heic|heif)$/i.test(displayName) ||
           getItemMimeType(item) === "image/heic" ||
           getItemMimeType(item) === "image/heif";
-        const removable = item.status !== "uploading";
+        const removable =
+          item.status !== "uploading" && item.status !== "preparing";
         const retryable = item.status === "failed" || item.status === "cancelled";
         const isDeleting = deletingId === item.id;
 
         const statusLabel =
           item.status === "queued"
             ? copy.statusQueued
-            : item.status === "uploading"
+            : item.status === "preparing"
+              ? copy.statusPreparing
+              : item.status === "uploading"
               ? copy.statusUploading
               : item.status === "uploaded"
                 ? copy.statusUploaded
@@ -288,7 +292,7 @@ export function MediaQueueGrid({
             ? "ring-1 ring-fuchsia-400/50"
             : item.status === "uploaded"
               ? "ring-1 ring-teal-400/40"
-              : item.status === "uploading"
+              : item.status === "uploading" || item.status === "preparing"
                 ? "ring-1 ring-indigo-400/40"
                 : "ring-1 ring-white/8";
 
@@ -349,7 +353,7 @@ export function MediaQueueGrid({
 
               <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-2 pb-1.5 pt-4">
                 <span className="flex items-center gap-1 text-[10px] uppercase tracking-wider text-zinc-200">
-                  {item.status === "uploading" ? (
+                  {item.status === "uploading" || item.status === "preparing" ? (
                     <Loader2 className="h-3 w-3 animate-spin" strokeWidth={1.5} />
                   ) : item.status === "uploaded" ? (
                     <CheckCircle2 className="h-3 w-3 text-teal-300" strokeWidth={1.5} />

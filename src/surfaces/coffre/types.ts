@@ -20,6 +20,7 @@ export type CoffreCopy = Pick<
   | "queueRetry"
   | "queueStatusCancelled"
   | "queueStatusFailed"
+  | "queueStatusPreparing"
   | "queueStatusQueued"
   | "queueStatusUploaded"
   | "queueStatusUploading"

@@ -10,6 +10,7 @@ import {
   fetchProjectMediaCached,
   invalidateProjectMediaCache,
 } from "@/src/lib/media/projectMediaCache";
+import { requeueVideoAfterFailure } from "@/src/lib/media/videoPrepareQueue";
 import {
   uploadMediaBatch,
   createLocalQueueItem,
@@ -377,9 +378,7 @@ export function useMassMediaUpload(
 
     setItems((prev) =>
       prev.map((item) =>
-        item.status === "failed"
-          ? { ...item, status: "queued", error: null }
-          : item,
+        item.status === "failed" ? requeueVideoAfterFailure(item) : item,
       ),
     );
 
@@ -400,7 +399,7 @@ export function useMassMediaUpload(
             return item;
           }
           found = true;
-          return { ...item, status: "queued", error: null };
+          return requeueVideoAfterFailure(item);
         }),
       );
       if (!found) return;
@@ -430,7 +429,9 @@ export function useMassMediaUpload(
     abortRef.current?.abort();
     setItems((prev) =>
       prev.map((item) =>
-        item.status === "queued" || item.status === "uploading"
+        item.status === "queued" ||
+        item.status === "preparing" ||
+        item.status === "uploading"
           ? { ...item, status: "cancelled", error: "Upload cancelled by user" }
           : item,
       ),

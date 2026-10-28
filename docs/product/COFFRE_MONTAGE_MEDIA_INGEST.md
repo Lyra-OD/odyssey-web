@@ -6,11 +6,11 @@
 **Démo 18 sept 2026 :** passée — P0 S1–S3 ✅ · S5–S6 ✅ · S7 ouvert.
 
 **Changelog** (max 5)
+- 28 oct 2026 : Commit 9 file : statut `preparing`, original en mémoire, reprise sur l’original. Pas encore d’encode dans l’upload.
 - 28 oct 2026 : porte QA pré-Coffre verte (H.264/HFR/trim/AAC/annuler + fixture HEVC OK ; Photos HEVC différé) · prérequis Commit 11 · pas de branchement.
 - 28 oct 2026 : politique encode verrouillée : pas de discard audio si source sonore · sortie 30 fps.
 - 28 oct 2026 : **Commit 8** modale trim isolée lab · S7 ⏳.
 - 28 oct 2026 : H.264 ~120 fps : preuve decode WebCodecs (preview noire avant Play = normal iOS HFR).
-- 27 oct 2026 : **Commit 7** orchestrateur `prepareVideoForUpload` · pas de Coffre.
 
 Canon étape 5 : [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md).  
 Export film : [`../craft/CREATOMATE_RECIPE.md`](../craft/CREATOMATE_RECIPE.md).  

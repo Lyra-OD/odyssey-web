@@ -4,7 +4,7 @@
 **Dernière MAJ :** 27 oct 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 28 oct 2026 : S7 porte QA pré-Coffre écrite · prérequis Commit 11 · S7 toujours ⏳ (pas branché).
+- 28 oct 2026 : S7 Commit 9 : état « Préparation… » par vidéo (pas encore branché à l’encode).
 - 28 oct 2026 : S7 fps **A** : entrée 60/120 OK → sortie ~30.
 - 27 oct 2026 : dette Soft Cap SQL (prod ≠ `odyssey_p7_…sql`) · S7 ⏳ · contrat ingest v2.3 (doc).
 - 27 oct 2026 : Sync post-Coffre : Phase 1 tiroir ✅ · P0 = **S7 ingest** ⏳ · Quiet Luxury chrome · cadrage Livre.

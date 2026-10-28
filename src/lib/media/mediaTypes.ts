@@ -8,6 +8,7 @@
 
 export type MediaUploadStatus =
   | "queued"
+  | "preparing"
   | "uploading"
   | "uploaded"
   | "failed"
@@ -38,6 +39,11 @@ export type MediaGridItem = {
   storagePath?: string | null;
   /** Present for local queue items awaiting or during upload. */
   file?: File;
+  /**
+   * Fichier choisi par la famille, conservé en mémoire de session.
+   * `file` peut devenir le MP4 préparé (Commit 11) ; la reprise repart d’ici.
+   */
+  originalFile?: File;
   /** `media_assets.id` — set after DB insert or server hydration. */
   assetId?: string;
   mimeType?: string | null;
@@ -59,6 +65,7 @@ export type UploadQueueItem = MediaGridItem;
 export type UploadProgress = {
   total: number;
   queued: number;
+  preparing: number;
   uploading: number;
   uploaded: number;
   failed: number;
@@ -187,6 +194,7 @@ export function computeUploadProgress(items: MediaGridItem[]): UploadProgress {
   return {
     total: items.length,
     queued: items.filter((i) => i.status === "queued").length,
+    preparing: items.filter((i) => i.status === "preparing").length,
     uploading: items.filter((i) => i.status === "uploading").length,
     uploaded: items.filter((i) => i.status === "uploaded").length,
     failed: items.filter((i) => i.status === "failed").length,

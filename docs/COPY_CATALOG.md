@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-28 · **Entrées :** 1153
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-28 · **Entrées :** 1154
 
 ## `common`
 
@@ -461,6 +461,7 @@
 | `tributeWizard.rejectionsClear` | Effacer | Clear |
 | `tributeWizard.queueEmpty` | Aucun fichier ajouté pour le moment. | No file added yet. |
 | `tributeWizard.queueStatusQueued` | En attente | Queued |
+| `tributeWizard.queueStatusPreparing` | Préparation… | Preparing… |
 | `tributeWizard.queueStatusUploading` | Envoi… | Uploading… |
 | `tributeWizard.queueStatusUploaded` | Envoyé | Uploaded |
 | `tributeWizard.queueStatusFailed` | Échec | Failed |

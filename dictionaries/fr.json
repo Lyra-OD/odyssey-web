@@ -482,6 +482,7 @@
     "rejectionsClear": "Effacer",
     "queueEmpty": "Aucun fichier ajouté pour le moment.",
     "queueStatusQueued": "En attente",
+    "queueStatusPreparing": "Préparation…",
     "queueStatusUploading": "Envoi…",
     "queueStatusUploaded": "Envoyé",
     "queueStatusFailed": "Échec",
