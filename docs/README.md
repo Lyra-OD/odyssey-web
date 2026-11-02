@@ -1,13 +1,14 @@
 # Carte documentation Odyssey
 
 **Type :** living · **Vérité pour :** index des docs, types, « ne pas copier ».  
-**Dernière MAJ :** 28 oct 2026 · **Carte :** ce fichier.
+**Dernière MAJ :** 2 nov 2026 · **Carte :** ce fichier.
 
 **Changelog** (max 5)
+- 2 nov 2026 — PITCH : variante Google Slides "slides-ready light" pour le deck 12 slides V1.4.
+- 2 nov 2026 — PITCH : draft 12 slides EN/FR parallèle au canon ILP11.
 - 28 oct 2026 — Sync état : ingest **S5–S7 ✅** · Coffre tiroir ✅.
 - 27 oct 2026 — Sync état : Coffre tiroir ✅ · ingest S5–S6 ✅ / S7 ⏳ · deck ILP élargi (→18 + 08B).
 - 8 oct 2026 — Plan packages Coffre/Livre + audit docs cluster — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md).
-- 5 oct 2026 — **PITCH/** : canon deck capital ILP 11 — [`PITCH/INVESTOR_DECK_WEB_ILP11.md`](PITCH/INVESTOR_DECK_WEB_ILP11.md).
 - 30 sept 2026 — **C4 V1.5** player fermée (KB · Breath · leaks · deep-to-black) — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 - 23 sept 2026 — **C13** Social Cut 19 $ — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md).
 
@@ -170,6 +171,7 @@ Ne **jamais** créer un 2ᵉ FREEMIUM / COPY dans un sous-dossier.
 | [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) | canon | **Chemin 1** — Traversée UX (spec impl active) |
 | [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) | canon | Beats Parcours UX · craft · stubs |
 | [`product/PARCOURS_UX_GAPS.md`](product/PARCOURS_UX_GAPS.md) | living | Audit trous Chemin 1 · gate T1 |
+| [`PITCH/INVESTOR_DECK_12_SLIDES_V1.md`](PITCH/INVESTOR_DECK_12_SLIDES_V1.md) | business / pitch | Draft 12 slides EN/FR, posture hub central, parallèle au canon ILP11 |
 | [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) | living | Coffre + montage : ingest **S5–S7 ✅** |
 | [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) | living | Package Coffre + tiroir ✅ · S7 ✅ · cadrage Livre Phase 3 |
 | [`product/DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](product/DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md) | living | Audit fraîcheur docs Wizard / Coffre / Livre |
