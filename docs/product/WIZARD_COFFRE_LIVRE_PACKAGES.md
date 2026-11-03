@@ -4,11 +4,11 @@
 **Dernière MAJ :** 3 nov 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 nov 2026 : **S5-K ✅** Focus organique Livre (dwell 500 ms, dim/blur autres chapitres seulement, sortie scroll 48 px / clic extérieur, off Magic).
 - 3 nov 2026 : **S5-L2 ✅** titres chapitre défaut universels (Racines & Premiers Pas → Souvenirs & Héritage / Roots & Early Days → Memories & Legacy) · formes courtes sans articles · custom prioritaire.
 - 3 nov 2026 : **Phase 3a ✅** package Livre [`src/surfaces/livre/`](../../src/surfaces/livre/) (`LivreSurface` · `LivreHostProps` · `LivreCopyBlob` · `coffreMediaRevision`), 3 orphelins supprimés, garde `livreSurfaceBoundary.test.ts` · backlog UX post-3a figé (8 points, dont sélection multiple + ajout groupé de l’ancien `MediaBankPanel`).
 - 28 oct 2026 — **S7 ✅** ingest Coffre validé (trim, encode, annulation, photo, doublon).
 - 27 oct 2026 — **Cadrage Livre** figé (3a extraction → 3b L2/K/J) · labels S5-L2 universels · état code Phase 1 ✅.
-- 14 oct 2026 — **C3.2** tiroir : barre compacte collante · dépôt n’importe où · Scanner en haut du Coffre.
 
 Canon liés : [`COFFRE_MONTAGE_MEDIA_INGEST.md`](COFFRE_MONTAGE_MEDIA_INGEST.md) · [`../WIZARD_ARCHITECTURE.md`](../WIZARD_ARCHITECTURE.md) · [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md) · tiroir J5 [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md).  
 Audit docs cluster oct : [`DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md) (**supersédé** 27 oct ; vérité = ce fichier + [`../PROJECT_STATUS.md`](../PROJECT_STATUS.md)).
@@ -104,7 +104,7 @@ Zéro commit UX Livre tant que S7 n’est pas derrière la porte QA. Décisions 
 | # | Décision |
 |---|----------|
 | 1 Scope | **3a** extraction pure (`surfaces/livre/` + cleanup orphelins) ; **3b** polish ensuite. Pas mélanger refactor DnD et UI/audio. |
-| 2 Priorité polish | **S5-L2** → **S5-K** → **S5-J** → (4) matière/mobile |
+| 2 Priorité polish | ~~S5-L2~~ ✅ → ~~S5-K~~ ✅ → **S5-J** → (4) matière/mobile |
 | 3 Labels S5-L2 | Ch1 Racines & Premiers Pas / Roots & Early Days · Ch2 Au Cœur de la Vie / At the Heart of Life · Ch3 Passions & Lumière / Passions & Light · Ch4 Liens & Partages / Bonds & Shared Moments · Ch5 Souvenirs & Héritage / Memories & Legacy. Formes courtes, sans articles. Progression universelle, non chronologique forcée. Plus de Legacy/Horizons. |
 | 4 Gate co-créateur | Assez visible ; pas de refonte avant extraction |
 | 5 filmBridge | Hors scope Livre ; beat entrée **étape 4** |
@@ -115,7 +115,7 @@ Zéro commit UX Livre tant que S7 n’est pas derrière la porte QA. Décisions 
 | Priorité | Chantier Livre | Dépendance |
 | :--- | :--- | :--- |
 | **P0 — Phase 3a** | Extraction vers `src/surfaces/livre/` (contrat host + copy injectée + `coffreMediaRevision`) et suppression des orphelins (`MontageTimeline`, `MediaBankPanel`) | Après S7 ingest |
-| **P1 — Phase 3b** | S5-L2 (labels chapitres universels) → S5-K (Focus organique) → S5-J (Audio chapitre au montage) | Après 3a |
+| **P1 — Phase 3b** | ~~S5-L2~~ ✅ · ~~S5-K~~ ✅ → S5-J (Audio chapitre au montage) | Après 3a |
 | **Later** | Polish tactile mobile M0–M6, Gate co-créateur, warnings pacing UI et purge `actTracks` | Post-V1 / S8–S10 |
 
 ### Backlog UX Livre post-3a

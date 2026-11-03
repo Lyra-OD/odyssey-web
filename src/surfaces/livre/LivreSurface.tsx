@@ -28,6 +28,7 @@ import { StoryboardOpenBookLayout } from "@/src/surfaces/livre/storyboard/Storyb
 import { StoryboardChapterStack } from "@/src/surfaces/livre/storyboard/StoryboardChapterStack";
 import { MagicCinematicOverlay } from "@/src/surfaces/livre/storyboard/MagicCinematicOverlay";
 import { MontageOnboardingGate } from "@/src/surfaces/livre/storyboard/MontageOnboardingGate";
+import { useOrganicChapterFocus } from "@/src/surfaces/livre/storyboard/useOrganicChapterFocus";
 import type { LivreHostProps } from "./types";
 import {
   ensureChapterDisplayIdentity,
@@ -343,6 +344,18 @@ export function LivreSurface({
     onMagicSequenceComplete,
   });
 
+  const organicFocusSurfaceRef = useRef<HTMLDivElement | null>(null);
+  const {
+    focusChapterId,
+    activateFocus,
+    startDwell,
+    cancelDwell,
+  } = useOrganicChapterFocus({
+    isMagicRunning,
+    isDndActive: activeDragIds.length > 0,
+    surfaceRef: organicFocusSurfaceRef,
+  });
+
   const {
     handleTitleChange,
     handleCreditLabelChange,
@@ -432,7 +445,7 @@ export function LivreSurface({
     dragOverChapterIndex ?? overlaySourceChapterIndex;
 
   return (
-    <div className="space-y-8 pb-10">
+    <div ref={organicFocusSurfaceRef} className="space-y-8 pb-10">
       <header className="space-y-3">
         <h2 className={wizardStepTitle}>
           {copy.title}
@@ -510,6 +523,7 @@ export function LivreSurface({
               magicEntranceMediaIds={magicEntranceMediaIdsRef.current}
               magicEntranceStaggerByMediaId={magicEntranceStaggerRef.current}
               refinementChapterId={refinementChapterId}
+              focusChapterId={focusChapterId}
               hasUnassignedMedia={storyboard.unassignedIds.length > 0}
               capacityCopy={{
                 recommended: copy.capacityRecommended,
@@ -539,6 +553,9 @@ export function LivreSurface({
               onClear={handleClear}
               onManage={handleManage}
               resolveChapterDragMediaIds={resolveChapterDragMediaIds}
+              onOrganicFocusActivate={activateFocus}
+              onOrganicFocusDwellStart={startDwell}
+              onOrganicFocusDwellCancel={cancelDwell}
             />
           </StoryboardOpenBookLayout>
           </div>

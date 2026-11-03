@@ -46,6 +46,8 @@ type Props = {
   magicEntranceMediaIds: ReadonlySet<string>;
   magicEntranceStaggerByMediaId: ReadonlyMap<string, number>;
   refinementChapterId: string | null;
+  /** S5-K — chapitre en focus organique (`null` = aucun). */
+  focusChapterId: string | null;
   hasUnassignedMedia: boolean;
   capacityCopy: {
     recommended: string;
@@ -71,6 +73,9 @@ type Props = {
     assetId: string,
     chapterId: string,
   ) => readonly string[];
+  onOrganicFocusActivate: (chapterId: string) => void;
+  onOrganicFocusDwellStart: (chapterId: string) => void;
+  onOrganicFocusDwellCancel: () => void;
 };
 
 export function StoryboardChapterStack({
@@ -86,6 +91,7 @@ export function StoryboardChapterStack({
   magicEntranceMediaIds,
   magicEntranceStaggerByMediaId,
   refinementChapterId,
+  focusChapterId,
   hasUnassignedMedia,
   capacityCopy,
   gridCopy,
@@ -105,6 +111,9 @@ export function StoryboardChapterStack({
   onClear,
   onManage,
   resolveChapterDragMediaIds,
+  onOrganicFocusActivate,
+  onOrganicFocusDwellStart,
+  onOrganicFocusDwellCancel,
 }: Props) {
   const chapterSortableIds = chapters.map((c) =>
     storyboardChapterSortableId(c.chapter.id),
@@ -155,6 +164,7 @@ export function StoryboardChapterStack({
               isMagicHighlighted={magicHighlightChapterId === chapter.id}
               magicEntranceMediaIds={magicEntranceMediaIds}
               magicEntranceStaggerByMediaId={magicEntranceStaggerByMediaId}
+              focusChapterId={focusChapterId}
               hasUnassignedMedia={hasUnassignedMedia}
               onMediaClick={(assetId, event) => onMediaClick(assetId, event)}
               onToggleMediaSelect={(assetId) =>
@@ -180,6 +190,11 @@ export function StoryboardChapterStack({
               resolveChapterDragMediaIds={(assetId) =>
                 resolveChapterDragMediaIds(assetId, chapter.id)
               }
+              onOrganicFocusActivate={() => onOrganicFocusActivate(chapter.id)}
+              onOrganicFocusDwellStart={() =>
+                onOrganicFocusDwellStart(chapter.id)
+              }
+              onOrganicFocusDwellCancel={onOrganicFocusDwellCancel}
             />
           );
         })}

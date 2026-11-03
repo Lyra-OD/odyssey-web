@@ -1,14 +1,14 @@
 # Étape 5 — Le Livre Ouvert (Table de Montage)
 
-**Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L2 ✅ · S5-J/K ⏳.  
+**Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L2 ✅ · S5-K ✅ · S5-J ⏳.  
 **Dernière MAJ :** 3 nov 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 3 nov 2026 : **S5-K ✅** Focus organique : dwell 500 ms / clic grille · dim ~40 % + blur 2px sur les autres chapitres · sortie scroll 48 px ou clic extérieur · off pendant Composition Magique · `DURATION_BREATH` + `EASE_OUT_LUXE`.
 - 3 nov 2026 : **S5-L2 ✅** titres chapitre défaut universels (formes courtes FR/EN, sans articles) · custom `chapter.label` prioritaire · clés `montageAct*` / Horizons / LegacyMemory inchangées.
 - 3 nov 2026 : **Phase 3a ✅** Étape 5 = package [`src/surfaces/livre/`](../src/surfaces/livre/) (`LivreSurface`, `storyboard/`, `montage/`, contrat `types.ts`, copy `copy.ts`) · orphelins `MontageTimeline` / `MediaBankPanel` / `MediaBankTrigger` supprimés · `MediaInstantTile` corrigé (actif) · `storyboardChapterDomId` → `lib/wizard/storyboardDom.ts`.
 - 22 sept 2026 — Crédit musical Quiet Luxury (ligne unique) · réordonnancement chapitres : `label` + `paletteIndex` suivent le bac · DnD collision hors soi.
 - 17 sept 2026 — **D0 freeze** : S5-L partiel (titres 3 actes encore à l’écran) ; §11 commerce = Freemium V1, saga jetons morte.
-- 17 sept 2026 — Composition Magique (banque) : paille `#E4D96F` (`--wizard-magic-wheat`), plus d’amber.
 
 Document canonique de l'Étape 5 du wizard hommage. Complète [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (ticket S5) et [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) (§ Step 5).
 
@@ -308,18 +308,23 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 
 **Fichiers probables :** `ChapterNarrativeHeader.tsx`, réutilisation logique `ChapterMusicPanel` / `HTMLAudioElement`.
 
-### 10.2 Mode Focus organique (S5-K) — ⏳ non implémenté
+### 10.2 Mode Focus organique (S5-K) — ✅
 
 **Intention :** quand l'utilisateur travaille un chapitre, le reste de l'écran s'efface (dim ~40 % + blur 2px).
 
-| Élément spec | Cible |
-|--------------|-------|
-| Déclencheur | Hover prolongé ou clic dans la grille chapitre |
-| Sortie | Scroll vers autre chapitre ou clic extérieur |
+| Élément | Livré |
+|---------|-------|
+| Déclencheur | Dwell **500 ms** sur la grille, ou clic / tap grille (mobile sans hover) |
+| Dwell | Annulé immédiatement à la sortie de grille ou au `pointerdown` (DnD) |
+| Sortie | Scroll cumulé **48 px** (reset après sortie) · clic hors shell chapitre (banque, FilmMap, header) |
+| Rendu | Autres chapitres : opacity `0.6` · blur `2px` sur **couche décorative** derrière le contenu (vignettes/contrôles nets) · banque non atténuée |
 | Motion | `DURATION_BREATH` 320 ms, `EASE_OUT_LUXE` |
-| Exclusion | Désactivé pendant Composition Magique (`isMagicRunning`) |
+| Scroll | Parent Studio = `.parcours-monolith-scroll` · seuil **48 px** utilisateur · **ignore** pendant DnD (`autoScroll` dnd-kit) |
+| Exclusion | `isMagicRunning` → `focusChapterId = null` immédiat · garde Magic aussi dans le callback dwell |
+| a11y | Pas de `pointer-events: none` sur le chapitre actif · focus clavier intact |
+| État | Local `LivreSurface` via `useOrganicChapterFocus` · **pas** de persistance storyboard |
 
-**Fichiers probables :** `StoryboardChapterBlock.tsx`, état `focusChapterId` dans `LivreSurface`.
+**Fichiers :** `useOrganicChapterFocus.ts`, `organicChapterFocus.ts`, `StoryboardChapterBlock.tsx`, `ChapterCanvasGrid.tsx`.
 
 ### 10.3 Vocabulaire narratif (S5-L) — 🟡 partiel
 
@@ -364,7 +369,7 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 | Ticket | Contenu | Effort estimé |
 |--------|---------|---------------|
 | **S5-J** | Audio chapitre pendant montage | 0,5–1 j |
-| **S5-K** | Mode Focus organique | 0,5–1 j |
+| **S5-K** | Mode Focus organique | ✅ dwell 500 ms / dim shell / magic gate |
 | **S5-L** | Copy narrative + polish matière | **S5-L2 ✅** titres chapitre défaut universels · matière reste partielle |
 | **Tests** | Unitaires `storyboardMagicTimeline.ts` | 0,5 j |
 | **Cleanup** | Suppression fichiers orphelins `storyboard/` | 0,25 j |

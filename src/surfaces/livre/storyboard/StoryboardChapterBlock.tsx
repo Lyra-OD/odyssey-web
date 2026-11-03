@@ -34,6 +34,13 @@ import type {
   MontageFocalPoint,
   WizardStoryboardChapter,
 } from "@/src/lib/wizard/wizardState";
+import { DURATION_BREATH, EASE_OUT_LUXE } from "@/src/lib/motion/easing";
+import {
+  ORGANIC_FOCUS_BLUR_PX,
+  ORGANIC_FOCUS_DIM_OPACITY,
+  ORGANIC_FOCUS_SHELL_ATTR,
+  resolveChapterFocusPresentation,
+} from "@/src/surfaces/livre/storyboard/organicChapterFocus";
 
 type Props = {
   chapter: WizardStoryboardChapter;
@@ -62,6 +69,7 @@ type Props = {
   isMagicHighlighted: boolean;
   magicEntranceMediaIds: ReadonlySet<string>;
   magicEntranceStaggerByMediaId: ReadonlyMap<string, number>;
+  focusChapterId: string | null;
   hasUnassignedMedia: boolean;
   onMediaClick: (assetId: string, event?: React.MouseEvent) => void;
   onToggleMediaSelect: (assetId: string) => void;
@@ -73,6 +81,9 @@ type Props = {
   onClear: () => void;
   onManage: () => void;
   resolveChapterDragMediaIds: (assetId: string) => readonly string[];
+  onOrganicFocusActivate: () => void;
+  onOrganicFocusDwellStart: () => void;
+  onOrganicFocusDwellCancel: () => void;
 };
 
 export function StoryboardChapterBlock({
@@ -99,6 +110,7 @@ export function StoryboardChapterBlock({
   isMagicHighlighted,
   magicEntranceMediaIds,
   magicEntranceStaggerByMediaId,
+  focusChapterId,
   hasUnassignedMedia,
   onMediaClick,
   onToggleMediaSelect,
@@ -110,8 +122,17 @@ export function StoryboardChapterBlock({
   onClear,
   onManage,
   resolveChapterDragMediaIds,
+  onOrganicFocusActivate,
+  onOrganicFocusDwellStart,
+  onOrganicFocusDwellCancel,
 }: Props) {
   const theme = getChapterTheme(chapter.paletteIndex ?? chapterIndex);
+  const focusPresentation = resolveChapterFocusPresentation(
+    focusChapterId,
+    chapter.id,
+  );
+  const isDimmed = focusPresentation === "dimmed";
+  const focusMotion = `${DURATION_BREATH}s cubic-bezier(${EASE_OUT_LUXE.join(",")})`;
 
   const {
     attributes: chapterSortAttributes,
@@ -141,9 +162,12 @@ export function StoryboardChapterBlock({
       : "idle";
   const chapterStyle = {
     transform: CSS.Transform.toString(chapterTransform),
-    transition: chapterTransition,
+    transition: [chapterTransition, `opacity ${focusMotion}`]
+      .filter(Boolean)
+      .join(", "),
     scrollMarginTop: MAGIC_SCROLL_MARGIN_TOP_PX,
     boxShadow: chapterGlowShadow(theme.glowRgb, glowIntensity),
+    opacity: isChapterDragging ? 0.5 : isDimmed ? ORGANIC_FOCUS_DIM_OPACITY : 1,
   };
 
   const setRefs = (node: HTMLElement | null) => {
@@ -164,13 +188,25 @@ export function StoryboardChapterBlock({
     <article
       ref={setRefs}
       id={storyboardChapterDomId(chapter.id)}
+      {...{ [ORGANIC_FOCUS_SHELL_ATTR]: chapter.id }}
       style={chapterStyle}
-      className={`rounded-2xl border p-6 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:p-8 ${chapterShellClass(
+      className={`relative rounded-2xl border p-6 md:p-8 ${chapterShellClass(
         theme,
         isMagicHighlighted || isDropHighlighted ? "drop" : "rest",
-      )} ${isChapterDragging ? "opacity-50" : ""}`}
+      )}`}
     >
-      <div className="space-y-6">
+      {isDimmed ? (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-2xl"
+          style={{
+            backdropFilter: `blur(${ORGANIC_FOCUS_BLUR_PX}px)`,
+            WebkitBackdropFilter: `blur(${ORGANIC_FOCUS_BLUR_PX}px)`,
+            transition: `backdrop-filter ${focusMotion}, -webkit-backdrop-filter ${focusMotion}`,
+          }}
+        />
+      ) : null}
+      <div className="relative z-[1] space-y-6">
         <ChapterNarrativeHeader
           chapterIndex={chapter.paletteIndex ?? chapterIndex}
           title={title}
@@ -238,6 +274,9 @@ export function StoryboardChapterBlock({
           onToggleMediaSelect={onToggleMediaSelect}
           onShiftMediaSelect={onShiftMediaSelect}
           resolveChapterDragMediaIds={resolveChapterDragMediaIds}
+          onOrganicFocusActivate={onOrganicFocusActivate}
+          onOrganicFocusDwellStart={onOrganicFocusDwellStart}
+          onOrganicFocusDwellCancel={onOrganicFocusDwellCancel}
         />
       </div>
     </article>

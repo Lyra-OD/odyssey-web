@@ -317,7 +317,7 @@ Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage
 - **Chrome S4 :** halo **bloc entier** + compteur = couleur du chapitre (`chapterShellClass`) — repos lisible, pas un trait blanc.
 - **Chrome S5 :** CTA Composition Magique banque = paille `--wizard-magic-wheat` (plus d’amber). Overlay capsule inchangée.
 - **Chrome S6 :** titres 1–7 = `wizardStepTitle` (24/26 · medium · mini-caps) + `wizardStepLead` (16/18 · zinc-300). Boutons d’action mini-caps.
-- **Remaining (S5-J/K):** chapter audio during montage, organic focus mode — see Step 5 doc §10–11. **S5-L partiel** : titre d’étape « Le film de sa vie » ✅ ; titres chapitre **défaut** encore Étincelle / Épopée / Héritage (S5-L2).
+- **Remaining (S5-J):** chapter audio during montage — see Step 5 doc §10–11. **S5-K ✅** Focus organique. **S5-L2 ✅** titres chapitre défaut universels.
 - **Legacy orphan files:** `MontageTimeline.tsx`, `MontageChapterTabs.tsx` — candidate removal in S10 cleanup.
 
 ---

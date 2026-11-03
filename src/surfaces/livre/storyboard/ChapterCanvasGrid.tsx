@@ -46,6 +46,10 @@ type Props = {
   onToggleMediaSelect: (assetId: string) => void;
   onShiftMediaSelect: (assetId: string) => void;
   resolveChapterDragMediaIds: (assetId: string) => readonly string[];
+  /** S5-K — clic / tap grille active le focus (sans bloquer onMediaClick). */
+  onOrganicFocusActivate: () => void;
+  onOrganicFocusDwellStart: () => void;
+  onOrganicFocusDwellCancel: () => void;
 };
 
 const MAX_VISIBLE_GHOSTS = 6;
@@ -69,6 +73,9 @@ export function ChapterCanvasGrid({
   onToggleMediaSelect,
   onShiftMediaSelect,
   resolveChapterDragMediaIds,
+  onOrganicFocusActivate,
+  onOrganicFocusDwellStart,
+  onOrganicFocusDwellCancel,
 }: Props) {
   const assignedCount = items.length;
   const ghostCount =
@@ -92,7 +99,13 @@ export function ChapterCanvasGrid({
   } satisfies Partial<StoryboardMediaDragData>;
 
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      onPointerEnter={onOrganicFocusDwellStart}
+      onPointerLeave={onOrganicFocusDwellCancel}
+      onPointerDown={onOrganicFocusDwellCancel}
+      onClick={onOrganicFocusActivate}
+    >
       {isEmpty ? (
         <p className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] -translate-y-1/2 text-center text-sm font-light text-zinc-400">
           {copy.emptyHint}
@@ -134,7 +147,10 @@ export function ChapterCanvasGrid({
                   }}
                   onCardClick={(assetId, event) => {
                     if (event.shiftKey) {
+                      // Garde la sélection multiple ; stopPropagation évite le
+                      // onClick grille, donc on active le focus explicitement.
                       event.stopPropagation();
+                      onOrganicFocusActivate();
                       onShiftMediaSelect(assetId);
                       return;
                     }

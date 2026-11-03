@@ -166,7 +166,7 @@ Remplacer les 3 colonnes fixes par des chapitres dynamiques — devient **l'Éta
 | Sous-ticket | Contenu | Statut |
 |-------------|---------|--------|
 | **S5-J** | Immersion sonore — play chanson par chapitre pendant montage | ⏳ |
-| **S5-K** | Mode Focus organique (dim 40 % + blur hors chapitre actif) | ⏳ |
+| **S5-K** | Mode Focus organique (dim 40 % + blur hors chapitre actif) | ✅ |
 | **S5-L** | Vocabulaire narratif final + polish matière & toucher | 🟡 partiel |
 | **S5-tests** | Unitaires `storyboardMagicTimeline.ts` | ⏳ |
 | **S5-cleanup** | Suppression `MontageTimeline.tsx`, `MontageChapterTabs.tsx`, ancien tiroir banque | ⏳ |
@@ -182,7 +182,7 @@ Remplacer les 3 colonnes fixes par des chapitres dynamiques — devient **l'Éta
 - ✅ Drag & drop fonctionnel desktop (+ correctifs QA drop target, sélection fantôme)
 - ✅ Composition Magique cinématographique (batch chapitre, < 3 s ~20 photos)
 - ⏳ Audio chapitre pendant montage (S5-J)
-- ⏳ Mode Focus organique (S5-K)
+- ✅ Mode Focus organique (S5-K)
 - ⏳ Proposition UX mobile validée formellement (layout stack livré, polish à confirmer)
 
 ### Ticket S6 - Refondre l'étape Musique en chapitres dynamiques (devient l'Étape 4) ✅ livré
