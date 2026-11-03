@@ -2,7 +2,7 @@
 
 **Type :** living · **Vérité pour :** liste FR/EN de tout le copy dictionnaire.  
 **Ne pas éditer.** Source : `dictionaries/fr.json` + `en.json`. Régénérer : `node scripts/export-copy-catalog.mjs`.  
-**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-10-28 · **Entrées :** 1168
+**Canon :** [COPY.md](COPY.md) · **Généré :** 2026-11-03 · **Entrées :** 1157
 
 ## `common`
 
@@ -692,23 +692,12 @@
 | `tributeWizard.montageRefinementCapacityDivider` | {count} souvenirs recommandés | {count} memories recommended |
 | `tributeWizard.montageRefinementReturnToBank` | Remettre en attente | Return to waiting |
 | `tributeWizard.montageRefinementMoveToNext` | Déplacer au chapitre suivant | Move to next chapter |
-| `tributeWizard.mediaBankTriggerLabel` | Souvenirs en attente | Waiting memories |
-| `tributeWizard.mediaBankTriggerValue` | {count} à placer | {count} to place |
-| `tributeWizard.mediaBankOpenAria` | Ouvrir les souvenirs en attente · {count} à placer | Open waiting memories · {count} to place |
-| `tributeWizard.mediaBankTitle` | Souvenirs en attente | Waiting memories |
-| `tributeWizard.mediaBankHint` | Choisissez un ou plusieurs souvenirs, puis confirmez en bas de l’écran. | Choose one or more memories, then confirm at the bottom of the screen. |
-| `tributeWizard.mediaBankEmpty` | Chaque souvenir a trouvé sa place. | Every memory has found its place. |
-| `tributeWizard.mediaBankCloseAria` | Fermer les souvenirs en attente | Close waiting memories |
 | `tributeWizard.mediaBankSelectAll` | Tout sélectionner | Select all |
 | `tributeWizard.mediaBankDeselectAll` | Tout désélectionner | Deselect all |
 | `tributeWizard.mediaBankSelectedCount` | {count} souvenir(s) choisi(s) | {count} memories chosen |
-| `tributeWizard.mediaBankAssignCta` | Ajouter {count} souvenir(s) à {chapter} | Add {count} memories to {chapter} |
 | `tributeWizard.mediaBankToggleSelectAria` | Choisir ou retirer ce souvenir | Choose or remove this memory |
 | `tributeWizard.mediaBankMagicComposition` | ✨ Composition Magique | ✨ Magic Composition |
 | `tributeWizard.montageChapterTabsAria` | Chapitres du film | Film chapters |
-| `tributeWizard.montageTimelineEmptyTitle` | Ce chapitre est prêt | This chapter is ready |
-| `tributeWizard.montageTimelineEmptyHint` | Mettez en scène un premier souvenir ici. | Set the scene with a first memory here. |
-| `tributeWizard.montageTimelineSequenceAria` | Ordre de lecture du chapitre actif | Playback order for the active chapter |
 | `tributeWizard.soundSearchPlaceholder` | Recherchez un artiste ou une chanson (ex: Charles Aznavour) | Search for an artist or song (e.g. Charles Aznavour) |
 | `tributeWizard.soundSearchHint` | Des milliers de titres licenciés, prêts pour votre film. | Thousands of licensed tracks, ready for your film. |
 | `tributeWizard.soundSearching` | Recherche en cours… | Searching… |
