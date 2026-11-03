@@ -8,7 +8,7 @@ import {
 import {
   MontageMediaCard,
   type MontageMediaCardCopy,
-} from "@/src/components/tribute/montage/MontageMediaCard";
+} from "@/src/surfaces/livre/montage/MontageMediaCard";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import {
   STORYBOARD_CHAPTER_GRID_ATTR,
@@ -18,8 +18,8 @@ import {
 } from "@/src/lib/wizard/storyboardDnd";
 import type { MontageFocalPoint } from "@/src/lib/wizard/wizardState";
 
-import { CanvasGhostSlot } from "@/src/components/tribute/storyboard/CanvasGhostSlot";
-import { MediaInstantTile } from "@/src/components/tribute/storyboard/MediaInstantTile";
+import { CanvasGhostSlot } from "@/src/surfaces/livre/storyboard/CanvasGhostSlot";
+import { MediaInstantTile } from "@/src/surfaces/livre/storyboard/MediaInstantTile";
 
 export type ChapterCanvasGridCopy = {
   emptyHint: string;

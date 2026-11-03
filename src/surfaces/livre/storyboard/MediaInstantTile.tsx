@@ -6,7 +6,7 @@ import {
   getUnassignedCardTheme,
 } from "@/src/lib/wizard/chapterTheme";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
-import type { MontageMediaCardCopy } from "@/src/components/tribute/montage/MontageMediaCard";
+import type { MontageMediaCardCopy } from "@/src/surfaces/livre/montage/MontageMediaCard";
 
 type Props = {
   item: MontageMediaItem;

@@ -5,13 +5,13 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import type { MontageMediaCardCopy } from "@/src/components/tribute/montage/MontageMediaCard";
+import type { MontageMediaCardCopy } from "@/src/surfaces/livre/montage/MontageMediaCard";
 import {
   StoryboardChapterBlock,
-} from "@/src/components/tribute/storyboard/StoryboardChapterBlock";
-import type { ChapterActionClusterCopy } from "@/src/components/tribute/storyboard/ChapterActionCluster";
-import type { ChapterCanvasGridCopy } from "@/src/components/tribute/storyboard/ChapterCanvasGrid";
-import type { ChapterNarrativeHeaderCreditCopy } from "@/src/components/tribute/storyboard/ChapterNarrativeHeader";
+} from "@/src/surfaces/livre/storyboard/StoryboardChapterBlock";
+import type { ChapterActionClusterCopy } from "@/src/surfaces/livre/storyboard/ChapterActionCluster";
+import type { ChapterCanvasGridCopy } from "@/src/surfaces/livre/storyboard/ChapterCanvasGrid";
+import type { ChapterNarrativeHeaderCreditCopy } from "@/src/surfaces/livre/storyboard/ChapterNarrativeHeader";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import {
   chapterPacingRole,

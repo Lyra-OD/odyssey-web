@@ -12,7 +12,7 @@ import {
   STORYBOARD_MEDIA_DND_TYPE,
   type StoryboardMediaDragData,
 } from "@/src/lib/wizard/storyboardDnd";
-import type { MontageMediaCardCopy } from "@/src/components/tribute/montage/MontageMediaCard";
+import type { MontageMediaCardCopy } from "@/src/surfaces/livre/montage/MontageMediaCard";
 
 type Props = {
   item: MontageMediaItem;

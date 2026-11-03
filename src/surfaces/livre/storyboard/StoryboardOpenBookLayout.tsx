@@ -2,9 +2,9 @@
 
 import type { ReactNode } from "react";
 
-import { MediaBankColumn } from "@/src/components/tribute/storyboard/MediaBankColumn";
-import type { MediaBankColumnCopy } from "@/src/components/tribute/storyboard/MediaBankColumn";
-import type { MontageMediaCardCopy } from "@/src/components/tribute/montage/MontageMediaCard";
+import { MediaBankColumn } from "@/src/surfaces/livre/storyboard/MediaBankColumn";
+import type { MediaBankColumnCopy } from "@/src/surfaces/livre/storyboard/MediaBankColumn";
+import type { MontageMediaCardCopy } from "@/src/surfaces/livre/montage/MontageMediaCard";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 
 type Props = {

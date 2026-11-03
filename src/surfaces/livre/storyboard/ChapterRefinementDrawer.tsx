@@ -12,7 +12,7 @@ import { X } from "lucide-react";
 import {
   MontageMediaCard,
   type MontageMediaCardCopy,
-} from "@/src/components/tribute/montage/MontageMediaCard";
+} from "@/src/surfaces/livre/montage/MontageMediaCard";
 import { StoryboardCapacityBadge } from "@/src/components/tribute/storyboard/StoryboardCapacityBadge";
 import { EASE_OUT_LUXE } from "@/src/lib/motion/easing";
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";

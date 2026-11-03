@@ -1,0 +1,43 @@
+import type { MontageDirectorModalCopy } from "@/src/surfaces/livre/montage/MontageDirectorModal";
+import type { MontageMediaCardCopy } from "@/src/surfaces/livre/montage/MontageMediaCard";
+import type { ChapterActionClusterCopy } from "@/src/surfaces/livre/storyboard/ChapterActionCluster";
+import type { ChapterCanvasGridCopy } from "@/src/surfaces/livre/storyboard/ChapterCanvasGrid";
+import type { ChapterRefinementDrawerCopy } from "@/src/surfaces/livre/storyboard/ChapterRefinementDrawer";
+import type { MagicCinematicOverlayCopy } from "@/src/surfaces/livre/storyboard/MagicCinematicOverlay";
+import type { MediaBankColumnCopy } from "@/src/surfaces/livre/storyboard/MediaBankColumn";
+import type { MontageChapterTabsCopy } from "@/src/surfaces/livre/storyboard/MontageChapterTabs";
+import type { MontageOnboardingGateCopy } from "@/src/surfaces/livre/storyboard/MontageOnboardingGate";
+import type { StoryboardFilmMapCopy } from "@/src/surfaces/livre/storyboard/StoryboardFilmMap";
+
+export type StoryboardMontageStepCopy = {
+  title: string;
+  description: string;
+  loading: string;
+  chapterTabs: MontageChapterTabsCopy;
+  card: MontageMediaCardCopy;
+  director: MontageDirectorModalCopy;
+  capacityRecommended: string;
+  capacityPending: string;
+  bankColumn: MediaBankColumnCopy;
+  chapterGrid: ChapterCanvasGridCopy;
+  chapterActions: ChapterActionClusterCopy;
+  chapterTitleEditAria: string;
+  chapterReorderAria: string;
+  toggleSelectAria: string;
+  filmMap: StoryboardFilmMapCopy;
+  creditEditAria: string;
+  creditShowAria: string;
+  creditHideAria: string;
+  creditModify: string;
+  creditDisplayedTitleLabel: string;
+  creditDisplayedTitlePlaceholder: string;
+  creditSave: string;
+  creditCancel: string;
+  creditShowInSession: string;
+  refinement: ChapterRefinementDrawerCopy;
+  multiDragLabel: string;
+  onboarding: MontageOnboardingGateCopy;
+  magicComposition: MagicCinematicOverlayCopy;
+};
+
+export type LivreCopyBlob = StoryboardMontageStepCopy;

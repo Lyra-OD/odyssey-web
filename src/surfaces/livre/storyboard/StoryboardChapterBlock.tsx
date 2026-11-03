@@ -6,17 +6,17 @@ import { useDroppable } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import type { MontageMediaCardCopy } from "@/src/components/tribute/montage/MontageMediaCard";
+import type { MontageMediaCardCopy } from "@/src/surfaces/livre/montage/MontageMediaCard";
 import {
   ChapterActionCluster,
   type ChapterActionClusterCopy,
-} from "@/src/components/tribute/storyboard/ChapterActionCluster";
+} from "@/src/surfaces/livre/storyboard/ChapterActionCluster";
 import {
   ChapterCanvasGrid,
   type ChapterCanvasGridCopy,
-} from "@/src/components/tribute/storyboard/ChapterCanvasGrid";
-import { ChapterNarrativeHeader } from "@/src/components/tribute/storyboard/ChapterNarrativeHeader";
-import type { ChapterNarrativeHeaderCreditCopy } from "@/src/components/tribute/storyboard/ChapterNarrativeHeader";
+} from "@/src/surfaces/livre/storyboard/ChapterCanvasGrid";
+import { ChapterNarrativeHeader } from "@/src/surfaces/livre/storyboard/ChapterNarrativeHeader";
+import type { ChapterNarrativeHeaderCreditCopy } from "@/src/surfaces/livre/storyboard/ChapterNarrativeHeader";
 import {
   chapterGlowShadow,
   chapterShellClass,

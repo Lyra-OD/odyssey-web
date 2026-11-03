@@ -2,8 +2,8 @@
 
 import { useDroppable } from "@dnd-kit/core";
 
-import type { MontageMediaCardCopy } from "@/src/components/tribute/montage/MontageMediaCard";
-import { BankDraggableMediaTile } from "@/src/components/tribute/storyboard/BankDraggableMediaTile";
+import type { MontageMediaCardCopy } from "@/src/surfaces/livre/montage/MontageMediaCard";
+import { BankDraggableMediaTile } from "@/src/surfaces/livre/storyboard/BankDraggableMediaTile";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import {
   sanctuaryMagicWheatButton,

@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 
-import { MontageFocalReticle } from "@/src/components/tribute/montage/MontageFocalReticle";
+import { MontageFocalReticle } from "@/src/surfaces/livre/montage/MontageFocalReticle";
 import { MediaVideoPreview } from "@/src/components/media/MediaVideoPreview";
 import type { MontageMediaItem } from "@/src/lib/wizard/montageHelpers";
 import type { MontageFocalPoint } from "@/src/lib/wizard/wizardState";

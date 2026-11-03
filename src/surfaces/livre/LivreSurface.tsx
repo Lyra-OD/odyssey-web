@@ -1,0 +1,676 @@
+"use client";
+
+import { DndContext, DragOverlay } from "@dnd-kit/core";
+import { AnimatePresence } from "framer-motion";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import { fetchProjectMedia } from "@/src/hooks/useMassMediaUpload";
+import { useMagicComposition } from "@/src/hooks/useMagicComposition";
+import { useMontageChapterActions } from "@/src/hooks/useMontageChapterActions";
+import { useMontageDnd } from "@/src/hooks/useMontageDnd";
+import { useMontageMediaSelection } from "@/src/hooks/useMontageMediaSelection";
+import { MontageDirectorModal } from "@/src/surfaces/livre/montage/MontageDirectorModal";
+import {
+  MontageMediaCardDragOverlay,
+  MontageMultiDragOverlay,
+} from "@/src/surfaces/livre/montage/MontageMediaCard";
+import { CanvasInsertLine } from "@/src/surfaces/livre/storyboard/CanvasInsertLine";
+import { ChapterRefinementDrawer } from "@/src/surfaces/livre/storyboard/ChapterRefinementDrawer";
+import {
+  resolveMontageChapterTabLabel,
+  type MontageChapterTabsCopy,
+} from "@/src/surfaces/livre/storyboard/MontageChapterTabs";
+import {
+  StoryboardFilmMap,
+  type StoryboardFilmMapSegment,
+  type StoryboardFilmMapWatchSession,
+} from "@/src/surfaces/livre/storyboard/StoryboardFilmMap";
+import { StoryboardOpenBookLayout } from "@/src/surfaces/livre/storyboard/StoryboardOpenBookLayout";
+import { StoryboardChapterStack } from "@/src/surfaces/livre/storyboard/StoryboardChapterStack";
+import { MagicCinematicOverlay } from "@/src/surfaces/livre/storyboard/MagicCinematicOverlay";
+import { MontageOnboardingGate } from "@/src/surfaces/livre/storyboard/MontageOnboardingGate";
+import type { StoryboardMontageStepCopy } from "./copy";
+import {
+  ensureChapterDisplayIdentity,
+  findChapterForMedia,
+} from "@/src/lib/wizard/storyboardHelpers";
+import { wizardStepLead, wizardStepTitle } from "@/src/lib/contribute/sanctuaryChrome";
+import { storyboardCollisionDetection } from "@/src/lib/wizard/storyboardDnd";
+import {
+  assignManyMediaToChapter,
+  assignMediaToChapter,
+  clearStoryboardFocalPoint,
+  mergeStoryboardWithMedia,
+  setStoryboardFocalPoint,
+  toggleStoryboardMediaExclude,
+  unassignManyMediaFromChapters,
+  unassignMediaFromChapter,
+} from "@/src/lib/wizard/storyboardMedia";
+import {
+  chapterPacingRole,
+  chapterRecommendedCapacity,
+  resolveTargetSecondsPerMedia,
+} from "@/src/lib/wizard/storyboardPacing";
+import {
+  mediaApiToMontageItems,
+  type MontageMediaItem,
+} from "@/src/lib/wizard/montageHelpers";
+import type { PackageId } from "@/src/lib/wizard/wizardDeliverables";
+import type {
+  MontageFocalPoint,
+  WizardStoryboardState,
+} from "@/src/lib/wizard/wizardState";
+
+type Props = {
+  packageId: PackageId;
+  projectId: string | null;
+  /** Incrémenté par le host quand le tiroir Coffre a modifié la banque → refetch. */
+  mediaRevision?: number;
+  storyboard: WizardStoryboardState;
+  onStoryboardChange: (next: WizardStoryboardState) => void;
+  onMagicPerformingChange?: (performing: boolean) => void;
+  onMagicSequenceComplete?: () => void;
+  /** Lien discret « déléguer » de la porte d’onboarding → panneau Co-Créateur existant. */
+  onOpenCollab?: () => void;
+  onWatchSession?: (mediaItems: MontageMediaItem[]) => void;
+  watchSessionCopy?: StoryboardFilmMapWatchSession;
+  copy: StoryboardMontageStepCopy;
+};
+
+function resolveChapterTitle(
+  chapter: WizardStoryboardState["chapters"][number],
+  index: number,
+  chapterTabsCopy: MontageChapterTabsCopy,
+): string {
+  const paletteIndex = chapter.paletteIndex ?? index;
+  return (
+    chapter.label?.trim() ||
+    resolveMontageChapterTabLabel(paletteIndex, chapterTabsCopy)
+  );
+}
+
+function resolveChapterThemeIndex(
+  chapter: WizardStoryboardState["chapters"][number],
+  index: number,
+): number {
+  return chapter.paletteIndex ?? index;
+}
+
+export function LivreSurface({
+  packageId,
+  projectId,
+  mediaRevision = 0,
+  storyboard,
+  onStoryboardChange,
+  onMagicPerformingChange,
+  onMagicSequenceComplete,
+  onOpenCollab,
+  onWatchSession,
+  watchSessionCopy,
+  copy,
+}: Props) {
+  const [mediaItems, setMediaItems] = useState<MontageMediaItem[]>([]);
+  const [isLoadingMedia, setIsLoadingMedia] = useState(false);
+  const [directorAssetId, setDirectorAssetId] = useState<string | null>(null);
+  const [refinementChapterId, setRefinementChapterId] = useState<string | null>(
+    null,
+  );
+  const storyboardRef = useRef(storyboard);
+  storyboardRef.current = storyboard;
+
+  useEffect(() => {
+    if (!projectId) return;
+    let aborted = false;
+    setIsLoadingMedia(true);
+    void fetchProjectMedia(projectId, { force: true })
+      .then((items) => {
+        if (aborted) return;
+        const montageItems = mediaApiToMontageItems(items);
+        setMediaItems(montageItems);
+        onStoryboardChange(
+          mergeStoryboardWithMedia(
+            storyboardRef.current,
+            montageItems.map((item) => item.assetId),
+          ),
+        );
+      })
+      .catch(() => {
+        // Best-effort — les grilles restent vides si le fetch échoue.
+      })
+      .finally(() => {
+        if (!aborted) setIsLoadingMedia(false);
+      });
+    return () => {
+      aborted = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, mediaRevision]);
+
+  const mediaById = useMemo(
+    () => new Map(mediaItems.map((item) => [item.assetId, item])),
+    [mediaItems],
+  );
+
+  const unassignedItems = useMemo(
+    () =>
+      storyboard.unassignedIds
+        .map((id) => mediaById.get(id))
+        .filter((item): item is MontageMediaItem => Boolean(item)),
+    [storyboard.unassignedIds, mediaById],
+  );
+
+  const chapterViewModels = useMemo(
+    () =>
+      storyboard.chapters.map((chapter, index) => ({
+        chapter,
+        index,
+        title: resolveChapterTitle(chapter, index, copy.chapterTabs),
+        items: chapter.mediaIds
+          .map((id) => mediaById.get(id))
+          .filter((item): item is MontageMediaItem => Boolean(item)),
+      })),
+    [storyboard.chapters, mediaById, copy.chapterTabs],
+  );
+
+  useEffect(() => {
+    const next = ensureChapterDisplayIdentity(storyboard, (index) =>
+      resolveMontageChapterTabLabel(index, copy.chapterTabs),
+    );
+    if (next !== storyboard) onStoryboardChange(next);
+  }, [copy.chapterTabs, onStoryboardChange, storyboard]);
+
+  const filmMapSegments = useMemo((): StoryboardFilmMapSegment[] => {
+    const n = storyboard.chapters.length;
+    return storyboard.chapters.map((chapter, index) => ({
+      chapterId: chapter.id,
+      index: resolveChapterThemeIndex(chapter, index),
+      label: resolveChapterTitle(chapter, index, copy.chapterTabs),
+      assignedCount: chapter.mediaIds.length,
+      recommendedCapacity: chapterRecommendedCapacity(
+        chapter.song?.durationSec,
+        resolveTargetSecondsPerMedia(packageId, chapter.mood),
+        chapterPacingRole(index, n),
+      ),
+    }));
+  }, [storyboard.chapters, copy.chapterTabs, packageId]);
+
+  const chapterCapacities = useMemo(
+    () =>
+      storyboard.chapters.map((chapter, index) =>
+        chapterRecommendedCapacity(
+          chapter.song?.durationSec,
+          resolveTargetSecondsPerMedia(packageId, chapter.mood),
+          chapterPacingRole(index, storyboard.chapters.length),
+        ),
+      ),
+    [packageId, storyboard.chapters],
+  );
+
+  const refinementChapter = useMemo(() => {
+    if (!refinementChapterId) return null;
+    const index = storyboard.chapters.findIndex(
+      (c) => c.id === refinementChapterId,
+    );
+    if (index < 0) return null;
+    const chapter = storyboard.chapters[index];
+    const capacity = chapterRecommendedCapacity(
+      chapter.song?.durationSec,
+      resolveTargetSecondsPerMedia(packageId, chapter.mood),
+      chapterPacingRole(index, storyboard.chapters.length),
+    );
+    const items = chapter.mediaIds
+      .map((id) => mediaById.get(id))
+      .filter((item): item is MontageMediaItem => Boolean(item));
+    const inCapacity =
+      capacity === null ? items : items.slice(0, Math.max(capacity, 0));
+    const beyondCapacity =
+      capacity === null ? [] : items.slice(Math.max(capacity, 0));
+
+    return {
+      chapter,
+      index,
+      themeIndex: resolveChapterThemeIndex(chapter, index),
+      title: resolveChapterTitle(chapter, index, copy.chapterTabs),
+      capacity,
+      inCapacity,
+      beyondCapacity,
+      songLine: [chapter.song?.title, chapter.song?.artist]
+        .filter(Boolean)
+        .join(" · "),
+    };
+  }, [
+    refinementChapterId,
+    storyboard.chapters,
+    mediaById,
+    packageId,
+    copy.chapterTabs,
+  ]);
+
+  const directorChapters = useMemo(
+    () =>
+      storyboard.chapters.map((chapter, index) => ({
+        id: chapter.id,
+        label: resolveChapterTitle(chapter, index, copy.chapterTabs),
+      })),
+    [storyboard.chapters, copy.chapterTabs],
+  );
+
+  const directorNavigationOrder = useMemo(() => {
+    if (!directorAssetId) return [];
+    const chapterId = findChapterForMedia(storyboard.chapters, directorAssetId);
+    const chapter = storyboard.chapters.find((c) => c.id === chapterId);
+    return chapter?.mediaIds ?? [];
+  }, [directorAssetId, storyboard.chapters]);
+
+  const directorItem = directorAssetId
+    ? (mediaById.get(directorAssetId) ?? null)
+    : null;
+
+  const {
+    selectedMediaIds,
+    selectionScope,
+    clearMediaSelection,
+    handleToggleMediaSelect,
+    handleShiftMediaSelect,
+    handleSelectAllBank,
+    handleDeselectAll,
+    resolveBankDragMediaIds,
+    resolveChapterDragMediaIds,
+    visibleBankSelection,
+  } = useMontageMediaSelection({ storyboard });
+
+  const {
+    sensors,
+    autoScroll,
+    activeDragIds,
+    dropTargetChapterId,
+    dropTargetBank,
+    dragOverChapterIndex,
+    insertPreview,
+    handleDragStart,
+    handleDragOver,
+    handleDragMove,
+    handleDragEnd,
+    handleDragCancel,
+  } = useMontageDnd({
+    storyboard,
+    onStoryboardChange,
+    selectedMediaIds,
+    selectionScope,
+    clearMediaSelection,
+  });
+
+  const overlayItems = useMemo(
+    () =>
+      activeDragIds
+        .map((id) => mediaById.get(id))
+        .filter((item): item is MontageMediaItem => Boolean(item)),
+    [activeDragIds, mediaById],
+  );
+
+  const ignoreDirectorClickRef = useRef(false);
+
+  const releaseDirectorClick = useCallback(() => {
+    window.setTimeout(() => {
+      ignoreDirectorClickRef.current = false;
+    }, 80);
+  }, []);
+
+  const handleDragStartGuarded = useCallback(
+    (...args: Parameters<typeof handleDragStart>) => {
+      ignoreDirectorClickRef.current = true;
+      handleDragStart(...args);
+    },
+    [handleDragStart],
+  );
+
+  const handleDragEndGuarded = useCallback(
+    (...args: Parameters<typeof handleDragEnd>) => {
+      handleDragEnd(...args);
+      releaseDirectorClick();
+    },
+    [handleDragEnd, releaseDirectorClick],
+  );
+
+  const handleDragCancelGuarded = useCallback(() => {
+    handleDragCancel();
+    releaseDirectorClick();
+  }, [handleDragCancel, releaseDirectorClick]);
+
+  const handleMediaClick = useCallback((assetId: string) => {
+    if (ignoreDirectorClickRef.current) return;
+    setDirectorAssetId(assetId);
+  }, []);
+
+  const {
+    isMagicRunning,
+    magicPhase,
+    magicHighlightChapterId,
+    magicEntranceMediaIdsRef,
+    magicEntranceStaggerRef,
+    showOnboardingGate,
+    handleChooseMagic,
+    handleChooseManual,
+  } = useMagicComposition({
+    storyboard,
+    onStoryboardChange,
+    chapterCapacities,
+    clearMediaSelection,
+    isLoadingMedia,
+    onMagicPerformingChange,
+    onMagicSequenceComplete,
+  });
+
+  const {
+    handleTitleChange,
+    handleCreditLabelChange,
+    handleShowCreditInSessionChange,
+    handleAutoFill,
+    handleClear,
+    handleManage,
+  } = useMontageChapterActions({
+      storyboard,
+      onStoryboardChange,
+      packageId,
+      setRefinementChapterId,
+    });
+
+  const handleReturnToBank = useCallback(
+    (mediaIds: readonly string[]) => {
+      onStoryboardChange(unassignManyMediaFromChapters(storyboard, mediaIds));
+    },
+    [onStoryboardChange, storyboard],
+  );
+
+  const handleMoveToNextChapter = useCallback(
+    (mediaIds: readonly string[]) => {
+      if (!refinementChapterId) return;
+      const index = storyboard.chapters.findIndex(
+        (c) => c.id === refinementChapterId,
+      );
+      const nextChapter = storyboard.chapters[index + 1];
+      if (!nextChapter) return;
+      onStoryboardChange(
+        assignManyMediaToChapter(storyboard, nextChapter.id, mediaIds),
+      );
+    },
+    [onStoryboardChange, refinementChapterId, storyboard],
+  );
+
+  const handleDirectorAssignChapter = useCallback(
+    (assetId: string, chapterId: string) => {
+      onStoryboardChange(assignMediaToChapter(storyboard, chapterId, assetId));
+    },
+    [onStoryboardChange, storyboard],
+  );
+
+  const handleDirectorRemove = useCallback(
+    (assetId: string) => {
+      onStoryboardChange(unassignMediaFromChapter(storyboard, assetId));
+      setDirectorAssetId(null);
+    },
+    [onStoryboardChange, storyboard],
+  );
+
+  const handleDirectorSetFocal = useCallback(
+    (assetId: string, point: MontageFocalPoint) => {
+      onStoryboardChange(setStoryboardFocalPoint(storyboard, assetId, point));
+    },
+    [onStoryboardChange, storyboard],
+  );
+
+  const handleDirectorClearFocal = useCallback(
+    (assetId: string) => {
+      onStoryboardChange(clearStoryboardFocalPoint(storyboard, assetId));
+    },
+    [onStoryboardChange, storyboard],
+  );
+
+  const handleDirectorToggleExclude = useCallback(
+    (assetId: string) => {
+      onStoryboardChange(toggleStoryboardMediaExclude(storyboard, assetId));
+    },
+    [onStoryboardChange, storyboard],
+  );
+
+  const overlaySourceChapterIndex =
+    activeDragIds.length > 0
+      ? (() => {
+          const chapterId = findChapterForMedia(
+            storyboard.chapters,
+            activeDragIds[0],
+          );
+          if (!chapterId) return 0;
+          const index = storyboard.chapters.findIndex((c) => c.id === chapterId);
+          return index >= 0 ? index : 0;
+        })()
+      : 0;
+
+  const overlayAccentChapterIndex =
+    dragOverChapterIndex ?? overlaySourceChapterIndex;
+
+  return (
+    <div className="space-y-8 pb-10">
+      <header className="space-y-3">
+        <h2 className={wizardStepTitle}>
+          {copy.title}
+        </h2>
+        <p className={`max-w-2xl ${wizardStepLead}`}>
+          {copy.description}
+        </p>
+      </header>
+
+      {isLoadingMedia ? (
+        <p className="text-sm font-light text-zinc-400" role="status">
+          {copy.loading}
+        </p>
+      ) : null}
+
+      <DndContext
+        id="storyboard-montage"
+        sensors={sensors}
+        collisionDetection={storyboardCollisionDetection}
+        autoScroll={autoScroll}
+        onDragStart={handleDragStartGuarded}
+        onDragOver={handleDragOver}
+        onDragMove={handleDragMove}
+        onDragEnd={handleDragEndGuarded}
+        onDragCancel={handleDragCancelGuarded}
+      >
+        {storyboard.chapters.length > 0 ? (
+          <div
+            className={
+              isMagicRunning ? "pointer-events-none select-none" : undefined
+            }
+            aria-hidden={isMagicRunning}
+          >
+          <StoryboardOpenBookLayout
+            bankItems={unassignedItems}
+            selectedMediaIds={visibleBankSelection}
+            activeDragIds={activeDragIds}
+            isBankDropHighlighted={dropTargetBank}
+            bankCopy={copy.bankColumn}
+            cardCopy={copy.card}
+            resolveBankDragMediaIds={resolveBankDragMediaIds}
+            onBankMediaClick={handleMediaClick}
+            onToggleMediaSelect={(assetId) => handleToggleMediaSelect(assetId)}
+            onShiftMediaSelect={(assetId) => handleShiftMediaSelect(assetId)}
+            onSelectAllBank={handleSelectAllBank}
+            onDeselectAllBank={handleDeselectAll}
+            isMagicRunning={isMagicRunning}
+            hasUnassignedMedia={storyboard.unassignedIds.length > 0}
+            onMagicComposition={handleChooseMagic}
+            filmMap={
+              <StoryboardFilmMap
+                segments={filmMapSegments}
+                copy={copy.filmMap}
+                watchSession={watchSessionCopy}
+                onWatchSession={
+                  onWatchSession
+                    ? () => {
+                        onWatchSession(mediaItems);
+                      }
+                    : undefined
+                }
+              />
+            }
+          >
+            <StoryboardChapterStack
+              chapters={chapterViewModels}
+              packageId={packageId}
+              excludedIds={storyboard.excludedIds}
+              focalPoints={storyboard.focalPoints}
+              activeDragIds={activeDragIds}
+              selectedMediaIds={selectedMediaIds}
+              selectionScope={selectionScope}
+              dropTargetChapterId={dropTargetChapterId}
+              magicHighlightChapterId={magicHighlightChapterId}
+              magicEntranceMediaIds={magicEntranceMediaIdsRef.current}
+              magicEntranceStaggerByMediaId={magicEntranceStaggerRef.current}
+              refinementChapterId={refinementChapterId}
+              hasUnassignedMedia={storyboard.unassignedIds.length > 0}
+              capacityCopy={{
+                recommended: copy.capacityRecommended,
+                pending: copy.capacityPending,
+              }}
+              gridCopy={copy.chapterGrid}
+              actionsCopy={copy.chapterActions}
+              cardCopy={copy.card}
+              titleEditAria={copy.chapterTitleEditAria}
+              chapterReorderAria={copy.chapterReorderAria}
+              creditCopy={{
+                modify: copy.creditModify,
+                displayedTitleLabel: copy.creditDisplayedTitleLabel,
+                displayedTitlePlaceholder: copy.creditDisplayedTitlePlaceholder,
+                save: copy.creditSave,
+                cancel: copy.creditCancel,
+                showInSession: copy.creditShowInSession,
+              }}
+              toggleSelectAria={copy.toggleSelectAria}
+              onMediaClick={handleMediaClick}
+              onToggleMediaSelect={handleToggleMediaSelect}
+              onShiftMediaSelect={handleShiftMediaSelect}
+              onTitleChange={handleTitleChange}
+              onCreditLabelChange={handleCreditLabelChange}
+              onShowCreditInSessionChange={handleShowCreditInSessionChange}
+              onAutoFill={handleAutoFill}
+              onClear={handleClear}
+              onManage={handleManage}
+              resolveChapterDragMediaIds={resolveChapterDragMediaIds}
+            />
+          </StoryboardOpenBookLayout>
+          </div>
+        ) : null}
+
+        {insertPreview?.line ? (
+          <CanvasInsertLine
+            chapterIndex={dragOverChapterIndex ?? overlaySourceChapterIndex}
+            line={insertPreview.line}
+          />
+        ) : null}
+
+        <DragOverlay
+          style={{ zIndex: 200 }}
+          dropAnimation={{
+            duration: 280,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
+        >
+          {overlayItems.length > 1 ? (
+            <MontageMultiDragOverlay
+              count={overlayItems.length}
+              label={copy.multiDragLabel}
+              items={overlayItems}
+              chapterIndex={overlaySourceChapterIndex}
+              accentChapterIndex={overlayAccentChapterIndex}
+              copy={copy.card}
+            />
+          ) : overlayItems[0] ? (
+            <MontageMediaCardDragOverlay
+              item={overlayItems[0]}
+              chapterIndex={overlaySourceChapterIndex}
+              accentChapterIndex={overlayAccentChapterIndex}
+              index={0}
+              isExcluded={storyboard.excludedIds.includes(
+                overlayItems[0].assetId,
+              )}
+              hasFocalPoint={Boolean(
+                storyboard.focalPoints[overlayItems[0].assetId],
+              )}
+              copy={copy.card}
+              elevated
+            />
+          ) : null}
+        </DragOverlay>
+
+        {refinementChapter ? (
+          <ChapterRefinementDrawer
+            isOpen
+            chapterId={refinementChapter.chapter.id}
+            chapterIndex={refinementChapter.themeIndex}
+            chapterTitle={refinementChapter.title}
+            songLine={refinementChapter.songLine || undefined}
+            recommendedCapacity={refinementChapter.capacity}
+            inCapacityItems={refinementChapter.inCapacity}
+            beyondCapacityItems={refinementChapter.beyondCapacity}
+            excludedIds={storyboard.excludedIds}
+            focalPoints={storyboard.focalPoints}
+            activeDragIds={activeDragIds}
+            cardCopy={copy.card}
+            copy={copy.refinement}
+            onClose={() => setRefinementChapterId(null)}
+            onMediaClick={handleMediaClick}
+            onReturnToBank={handleReturnToBank}
+            onMoveToNextChapter={handleMoveToNextChapter}
+          />
+        ) : null}
+      </DndContext>
+
+      <MagicCinematicOverlay
+        phase={magicPhase}
+        message={copy.magicComposition.message}
+      />
+
+      <AnimatePresence>
+        {showOnboardingGate ? (
+          <MontageOnboardingGate
+            key="montage-onboarding"
+            copy={copy.onboarding}
+            onChooseMagic={handleChooseMagic}
+            onChooseManual={handleChooseManual}
+            onChooseDelegate={onOpenCollab}
+          />
+        ) : null}
+      </AnimatePresence>
+
+      <AnimatePresence
+        onExitComplete={() => {
+          document.body.style.overflow = "";
+        }}
+      >
+        {directorItem ? (
+          <MontageDirectorModal
+            key="montage-director"
+            item={directorItem}
+            chapters={directorChapters}
+            currentChapterId={findChapterForMedia(
+              storyboard.chapters,
+              directorItem.assetId,
+            )}
+            excludedIds={storyboard.excludedIds}
+            focalPoints={storyboard.focalPoints}
+            navigationOrder={directorNavigationOrder}
+            copy={copy.director}
+            onClose={() => setDirectorAssetId(null)}
+            onNavigate={setDirectorAssetId}
+            onAssignChapter={handleDirectorAssignChapter}
+            onToggleExclude={handleDirectorToggleExclude}
+            onSetFocalPoint={handleDirectorSetFocal}
+            onClearFocalPoint={handleDirectorClearFocal}
+            onRemoveMedia={handleDirectorRemove}
+          />
+        ) : null}
+      </AnimatePresence>
+    </div>
+  );
+}
