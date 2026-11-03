@@ -1,14 +1,14 @@
 # Étape 5 — Le Livre Ouvert (Table de Montage)
 
 **Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L **partiel** · S5-J/K ⏳.  
-**Dernière MAJ :** 22 sept 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 3 nov 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 3 nov 2026 : Phase 3a A1, orphelins `MontageTimeline` / `MediaBankPanel` / `MediaBankTrigger` supprimés · `MediaInstantTile` corrigé (actif).
 - 22 sept 2026 — Crédit musical Quiet Luxury (ligne unique) · réordonnancement chapitres : `label` + `paletteIndex` suivent le bac · DnD collision hors soi.
 - 17 sept 2026 — **D0 freeze** : S5-L partiel (titres 3 actes encore à l’écran) ; §11 commerce = Freemium V1, saga jetons morte.
 - 17 sept 2026 — Composition Magique (banque) : paille `#E4D96F` (`--wizard-magic-wheat`), plus d’amber.
 - 17 sept 2026 — Composer + Musique : halo **bloc entier** couleur chapitre (repos = même force que la carte ouverte ; drop/magie = ring +).
-- 17 sept 2026 — S8 preview → mix BA (décision) : [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md).
 
 Document canonique de l'Étape 5 du wizard hommage. Complète [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (ticket S5) et [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) (§ Step 5).
 
@@ -121,10 +121,10 @@ StoryboardMontageStep.tsx          ← orchestrateur (DnDContext, magic, fetch m
 | `MagicCinematicOverlay.tsx` | Overlay cinématographique | ✅ actif |
 | `ChapterRefinementDrawer.tsx` | Tiroir Gérer (surplus, tri) | ✅ actif |
 | `ChapterMusicPanel.tsx` | Panneau musique (Étape 4) | ✅ (hors Étape 5) |
-| `MontageTimeline.tsx` | Timeline horizontale pré-pivot | ⚠️ orphelin — candidat suppression S10 |
-| `MontageChapterTabs.tsx` | Onglets pré-pivot | ⚠️ types/copy seulement — candidat suppression |
-| `MediaBankPanel.tsx` / `MediaBankTrigger.tsx` | Ancien tiroir banque | ⚠️ legacy — candidat suppression |
-| `MediaInstantTile.tsx` | Tuile read-only PR-1 | ⚠️ remplacée par `BankDraggableMediaTile` en PR-2 |
+| `MontageTimeline.tsx` | Timeline horizontale pré-pivot | Supprimé (Phase 3a, commit A1) |
+| `MontageChapterTabs.tsx` | Onglets pré-pivot | Composant mort, fichier conservé : type `MontageChapterTabsCopy` + `resolveMontageChapterTabLabel` vivants |
+| `MediaBankPanel.tsx` / `MediaBankTrigger.tsx` | Ancien tiroir banque (sélection multiple + ajout groupé à un chapitre) | Supprimés (Phase 3a, commit A1). L’interaction groupée reste au backlog UX post-3a : [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
+| `MediaInstantTile.tsx` | Tuile image d’un chapitre | ✅ actif : rendue par `ChapterCanvasGrid` (la banque utilise `BankDraggableMediaTile`) |
 
 ### Fichiers domaine `src/lib/wizard/`
 
@@ -279,9 +279,9 @@ Namespace principal : `dictionaries/fr.json` / `en.json` — clés `montage*`, `
 
 | Élément | Action recommandée |
 |---------|-------------------|
-| `MontageTimeline.tsx` | Supprimer quand confirmé 0 import (ticket S10 ou cleanup dédié) |
-| `MontageChapterTabs.tsx` | Idem |
-| `MediaBankPanel.tsx`, `MediaBankTrigger.tsx` | Idem (ancien tiroir) |
+| `MontageTimeline.tsx` | Fait : supprimé (Phase 3a, commit A1) |
+| `MontageChapterTabs.tsx` | Retirer le composant mort en 3b ; garder le type et `resolveMontageChapterTabLabel` |
+| `MediaBankPanel.tsx`, `MediaBankTrigger.tsx` | Fait : supprimés (Phase 3a, commit A1). Sélection multiple + ajout groupé non remplacés par le DnD, au backlog UX post-3a |
 | Duplication timing TS/CSS | Documenter ; envisager variables CSS `--magic-*` centralisées |
 | `TributeWizard.tsx` ~3030 lignes | Découpage futur (identité, forfait) — pas un ticket S5 |
 | Tests unitaires | `storyboardMagicTimeline.ts` — 0 test aujourd'hui |

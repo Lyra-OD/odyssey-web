@@ -1,15 +1,14 @@
 # Wizard — packages Coffre / Livre + ingest
 
 **Type :** living · **Vérité pour :** chantier post-deck — découpage Coffre/Livre en packages, tiroir global, ingest trim/compress.  
-**Dernière MAJ :** 28 oct 2026 · **Carte :** [`../README.md`](../README.md)
+**Dernière MAJ :** 3 nov 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
+- 3 nov 2026 : Phase 3a A1, 3 orphelins Livre supprimés · sélection multiple + ajout groupé de l’ancien `MediaBankPanel` gardés au backlog UX post-3a.
 - 28 oct 2026 — **S7 ✅** ingest Coffre validé (trim, encode, annulation, photo, doublon).
 - 27 oct 2026 — **Cadrage Livre** figé (3a extraction → 3b L2/K/J) · labels S5-L2 universels · état code Phase 1 ✅.
 - 14 oct 2026 — **C3.2** tiroir : barre compacte collante · dépôt n’importe où · Scanner en haut du Coffre.
 - 14 oct 2026 — **C3.1** tiroir Coffre à gauche 75 % · pastille + compteur signature en-tête.
-- 14 oct 2026 — **Phase 1 C3 ✅** tiroir = même `CoffreBody` · un seul monté · upload continue tiroir fermé.
-- 14 oct 2026 — Phase 1 C1–C2 : `src/surfaces/coffre/CoffreBody` + compteur forfait.
 
 Canon liés : [`COFFRE_MONTAGE_MEDIA_INGEST.md`](COFFRE_MONTAGE_MEDIA_INGEST.md) · [`../WIZARD_ARCHITECTURE.md`](../WIZARD_ARCHITECTURE.md) · [`../STORYBOARD_STEP5_LIVRE_OUVERT.md`](../STORYBOARD_STEP5_LIVRE_OUVERT.md) · tiroir J5 [`SANCTUARY_USER_JOURNEY.md`](SANCTUARY_USER_JOURNEY.md).  
 Audit docs cluster oct : [`DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md`](DOCS_AUDIT_WIZARD_CLUSTER_2026-10-08.md) (**supersédé** 27 oct ; vérité = ce fichier + [`../PROJECT_STATUS.md`](../PROJECT_STATUS.md)).
@@ -118,6 +117,12 @@ Zéro commit UX Livre tant que S7 n’est pas derrière la porte QA. Décisions 
 | **P0 — Phase 3a** | Extraction vers `src/surfaces/livre/` (contrat host + copy injectée + `coffreMediaRevision`) et suppression des orphelins (`MontageTimeline`, `MediaBankPanel`) | Après S7 ingest |
 | **P1 — Phase 3b** | S5-L2 (labels chapitres universels) → S5-K (Focus organique) → S5-J (Audio chapitre au montage) | Après 3a |
 | **Later** | Polish tactile mobile M0–M6, Gate co-créateur, warnings pacing UI et purge `actTracks` | Post-V1 / S8–S10 |
+
+### Backlog UX Livre post-3a
+
+> The legacy MediaBankPanel included a multi-select and batch-assignment interaction ("Ajouter N souvenir(s) à {chapitre}"). This behavior is not considered replaced by drag-and-drop. It remains part of the post-3a UX backlog. The legacy implementation is recoverable from Git history at the parent of the A1 commit.
+
+Liste complète du chantier UX post-3a : figée au commit C de la Phase 3a.
 
 ### Implémentation (après S7)
 
