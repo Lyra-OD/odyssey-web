@@ -120,7 +120,7 @@ Zéro commit UX Livre tant que S7 n’est pas derrière la porte QA. Décisions 
 
 ### Backlog UX Livre post-3a
 
-> The legacy MediaBankPanel included a multi-select and batch-assignment interaction ("Ajouter N souvenir(s) à {chapitre}"). This behavior is not considered replaced by drag-and-drop. It remains part of the post-3a UX backlog. The legacy implementation is recoverable from Git history at the parent of the A1 commit.
+> The legacy MediaBankPanel included a multi-select and batch-assignment interaction ("Ajouter N souvenir(s) à {chapitre}"). This behavior is not considered replaced by drag-and-drop. It remains part of the post-3a UX backlog. The legacy implementation is recoverable from Git history at commit `c1e8a75` (`git show c1e8a75:src/components/tribute/storyboard/MediaBankPanel.tsx`).
 
 Liste complète du chantier UX post-3a : figée au commit C de la Phase 3a.
 
