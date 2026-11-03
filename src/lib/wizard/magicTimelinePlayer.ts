@@ -4,7 +4,7 @@
 
 import { flushSync } from "react-dom";
 
-import { storyboardChapterDomId } from "@/src/components/tribute/storyboard/StoryboardChapterBlock";
+import { storyboardChapterDomId } from "@/src/lib/wizard/storyboardDom";
 import type { MagicTimelineEvent } from "@/src/lib/wizard/storyboardMagicTimeline";
 import {
   MAGIC_BATCH_INTER_CHAPTER_MS,

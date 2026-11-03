@@ -29,13 +29,11 @@ import {
   storyboardChapterDroppableId,
   storyboardChapterSortableId,
 } from "@/src/lib/wizard/storyboardDnd";
+import { storyboardChapterDomId } from "@/src/lib/wizard/storyboardDom";
 import type {
   MontageFocalPoint,
   WizardStoryboardChapter,
 } from "@/src/lib/wizard/wizardState";
-
-export const storyboardChapterDomId = (chapterId: string) =>
-  `storyboard-chapter-${chapterId}`;
 
 type Props = {
   chapter: WizardStoryboardChapter;

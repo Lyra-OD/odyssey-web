@@ -5,7 +5,7 @@ import { Play } from "lucide-react";
 
 import { getChapterTheme } from "@/src/lib/wizard/chapterTheme";
 
-import { storyboardChapterDomId } from "@/src/components/tribute/storyboard/StoryboardChapterBlock";
+import { storyboardChapterDomId } from "@/src/lib/wizard/storyboardDom";
 
 export type StoryboardFilmMapSegment = {
   chapterId: string;
