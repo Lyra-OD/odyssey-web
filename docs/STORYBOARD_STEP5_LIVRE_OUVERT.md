@@ -1,14 +1,14 @@
 # Étape 5 — Le Livre Ouvert (Table de Montage)
 
-**Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L **partiel** · S5-J/K ⏳.  
+**Type :** canon · **Vérité pour :** Étape 5 + Composition Magique. S5-L2 ✅ · S5-J/K ⏳.  
 **Dernière MAJ :** 3 nov 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 3 nov 2026 : **S5-L2 ✅** titres chapitre défaut universels (formes courtes FR/EN, sans articles) · custom `chapter.label` prioritaire · clés `montageAct*` / Horizons / LegacyMemory inchangées.
 - 3 nov 2026 : **Phase 3a ✅** Étape 5 = package [`src/surfaces/livre/`](../src/surfaces/livre/) (`LivreSurface`, `storyboard/`, `montage/`, contrat `types.ts`, copy `copy.ts`) · orphelins `MontageTimeline` / `MediaBankPanel` / `MediaBankTrigger` supprimés · `MediaInstantTile` corrigé (actif) · `storyboardChapterDomId` → `lib/wizard/storyboardDom.ts`.
 - 22 sept 2026 — Crédit musical Quiet Luxury (ligne unique) · réordonnancement chapitres : `label` + `paletteIndex` suivent le bac · DnD collision hors soi.
 - 17 sept 2026 — **D0 freeze** : S5-L partiel (titres 3 actes encore à l’écran) ; §11 commerce = Freemium V1, saga jetons morte.
 - 17 sept 2026 — Composition Magique (banque) : paille `#E4D96F` (`--wizard-magic-wheat`), plus d’amber.
-- 17 sept 2026 — Composer + Musique : halo **bloc entier** couleur chapitre (repos = même force que la carte ouverte ; drop/magie = ring +).
 
 Document canonique de l'Étape 5 du wizard hommage. Complète [`STORYBOARD_REFACTOR.md`](STORYBOARD_REFACTOR.md) (ticket S5) et [`WIZARD_ARCHITECTURE.md`](WIZARD_ARCHITECTURE.md) (§ Step 5).
 
@@ -327,7 +327,7 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 
 | Fait | Reste (S5-L2) |
 |------|----------------|
-| Titre / sous-titre d’étape, colonne souvenirs, tiroir « Composer », états vides | Titres chapitre **défaut** cinéma : Racines & Enfance → Empreinte & Souvenir (`montageAct*` + Horizons / LegacyMemory via `resolveMontageChapterTabLabel`) |
+| Titre / sous-titre d’étape, colonne souvenirs, tiroir « Composer », états vides | Titres chapitre **défaut** universels S5-L2 : Racines & Premiers Pas → Souvenirs & Héritage (`montageAct*` + Horizons / LegacyMemory via `resolveMontageChapterTabLabel` ; custom `chapter.label` prioritaire) |
 | Purge UI « Gérer » → « Composer » | Clés techniques `acte1` (ne pas afficher) |
 
 ### 10.4 Matière & toucher — 🟡 partiel
@@ -365,7 +365,7 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 |--------|---------|---------------|
 | **S5-J** | Audio chapitre pendant montage | 0,5–1 j |
 | **S5-K** | Mode Focus organique | 0,5–1 j |
-| **S5-L** | Copy narrative + polish matière | 🟡 partiel — S5-L2 titres chapitre défaut |
+| **S5-L** | Copy narrative + polish matière | **S5-L2 ✅** titres chapitre défaut universels · matière reste partielle |
 | **Tests** | Unitaires `storyboardMagicTimeline.ts` | 0,5 j |
 | **Cleanup** | Suppression fichiers orphelins `storyboard/` | 0,25 j |
 

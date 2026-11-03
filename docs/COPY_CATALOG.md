@@ -533,14 +533,14 @@
 | `tributeWizard.montageDirectorPrevious` | Précédent | Previous |
 | `tributeWizard.montageDirectorNext` | Suivant | Next |
 | `tributeWizard.montageDirectorCounter` | {current} / {total} | {current} / {total} |
-| `tributeWizard.montageActSparkLabel` | Les Racines & L’Enfance | Roots & Beginnings |
+| `tributeWizard.montageActSparkLabel` | Racines & Premiers Pas | Roots & Early Days |
 | `tributeWizard.montageActSparkSubtitle` | Premier chapitre | First chapter |
-| `tributeWizard.montageActEpicLabel` | Le Chemin & Les Passions | The Journey & Passions |
+| `tributeWizard.montageActEpicLabel` | Au Cœur de la Vie | At the Heart of Life |
 | `tributeWizard.montageActEpicSubtitle` | Deuxième chapitre | Second chapter |
-| `tributeWizard.montageActLegacyLabel` | Les Liens & La Famille | Ties & Family |
+| `tributeWizard.montageActLegacyLabel` | Passions & Lumière | Passions & Light |
 | `tributeWizard.montageActLegacySubtitle` | Troisième chapitre | Third chapter |
-| `tributeWizard.montageChapterHorizonsLabel` | Les Horizons | Horizons & Milestones |
-| `tributeWizard.montageChapterLegacyMemoryLabel` | L’Empreinte & Le Souvenir | Legacy & Memories |
+| `tributeWizard.montageChapterHorizonsLabel` | Liens & Partages | Bonds & Shared Moments |
+| `tributeWizard.montageChapterLegacyMemoryLabel` | Souvenirs & Héritage | Memories & Legacy |
 | `tributeWizard.watchSessionTrackCredit` | Piste : {title} — {artist} | Track: {title} — {artist} |
 | `tributeWizard.watchSessionTrackCreditTitleOnly` | Piste : {title} | Track: {title} |
 | `tributeWizard.montageCreditEditAria` | Renommer le crédit musical affiché | Rename the displayed music credit |
