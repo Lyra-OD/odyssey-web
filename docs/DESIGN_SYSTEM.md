@@ -386,7 +386,7 @@ Source TypeScript : `storyboardMagicTimeline.ts`. Toute modification → mettre 
 
 | Sujet | Fichier |
 |-------|---------|
-| Overlay React | `src/components/tribute/storyboard/MagicCinematicOverlay.tsx` |
+| Overlay React | `src/surfaces/livre/storyboard/MagicCinematicOverlay.tsx` |
 | CSS magic | `app/globals.css` (`.magic-*`) |
 | Timeline domaine | `src/lib/wizard/storyboardMagicTimeline.ts` |
 | Player | `src/lib/wizard/magicTimelinePlayer.ts` |

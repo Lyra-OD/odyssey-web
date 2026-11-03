@@ -109,7 +109,7 @@ Specs : [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · [`DELIVERABLES_AND_P
 | Livrables (quotas, 1080p/4K) | `src/lib/wizard/wizardDeliverables.ts` |
 | Export Creatomate | `src/lib/creatomate/` · `src/lib/export/processExportJob.ts` |
 | Étape 4 musique | `StoryboardChaptersStep.tsx` · `ChapterMusicPanel.tsx` |
-| Étape 5 Livre Ouvert | `StoryboardMontageStep.tsx` · `src/components/tribute/storyboard/*` |
+| Étape 5 Livre Ouvert | `src/surfaces/livre/` (`LivreSurface` · `storyboard/*` · `montage/*` · contrat `types.ts` · copy `copy.ts`) · partagés étape 4 dans `src/components/tribute/storyboard/*` |
 | Checkout API | `app/api/checkout/route.ts` |
 | Webhook Stripe | `app/api/stripe/webhook/route.ts` (`checkout.session.completed`, `charge.refunded`) |
 | Musique proxy | `app/api/music/*` · `src/lib/music/stingrayClient.ts` |

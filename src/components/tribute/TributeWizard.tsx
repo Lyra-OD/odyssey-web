@@ -35,7 +35,7 @@ import {
   CoffreDrawerTrigger,
   type CoffreHostProps,
 } from "@/src/surfaces/coffre";
-import { StoryboardMontageStep } from "@/src/components/tribute/StoryboardMontageStep";
+import { LivreSurface } from "@/src/surfaces/livre";
 import { StoryboardChaptersStep } from "@/src/components/tribute/StoryboardChaptersStep";
 import { WizardCartSummary } from "@/src/components/tribute/WizardCartSummary";
 import { StickyPriceBar } from "@/src/components/StickyPriceBar";
@@ -2910,10 +2910,10 @@ export function TributeWizard({
 
           {currentStep === 5 ? (
             <>
-            <StoryboardMontageStep
+            <LivreSurface
               packageId={currentPackageId}
               projectId={uploadProjectId}
-              mediaRevision={coffreMediaRevision}
+              coffreMediaRevision={coffreMediaRevision}
               storyboard={wizardStoryboard.storyboard}
               onStoryboardChange={wizardStoryboard.setStoryboard}
               onMagicPerformingChange={(performing) => {

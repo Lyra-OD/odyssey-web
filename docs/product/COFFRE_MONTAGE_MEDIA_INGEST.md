@@ -45,12 +45,12 @@ Fichiers : [`TributeWizard.tsx`](../../src/components/tribute/TributeWizard.tsx)
 
 ### Livre Ouvert / table de montage (étape 5)
 
-Composer **actif** : [`StoryboardMontageStep.tsx`](../../src/components/tribute/StoryboardMontageStep.tsx) + `@dnd-kit`.  
-Legacy **orphelin** : [`MontageTimeline.tsx`](../../src/components/tribute/storyboard/MontageTimeline.tsx), [`MediaBankPanel.tsx`](../../src/components/tribute/storyboard/MediaBankPanel.tsx).
+Composer **actif** : [`LivreSurface.tsx`](../../src/surfaces/livre/LivreSurface.tsx) + `@dnd-kit`.  
+Legacy **orphelins supprimés** (Phase 3a, 3 nov 2026) : `MontageTimeline.tsx`, `MediaBankPanel.tsx`, `MediaBankTrigger.tsx`. Récupérables via `git show c1e8a75:src/components/tribute/storyboard/<fichier>`.
 
 - Nouveaux médias → `unassignedIds` via [`storyboardMedia.ts`](../../src/lib/wizard/storyboardMedia.ts) (banque). L’ID peut être là, la **vignette** cassée.
 - Hydratation : pas de thumb signé pour vidéo → `previewUrl` = fichier MP4 ([`hydrateMediaSignedUrls.server.ts`](../../src/lib/media/hydrateMediaSignedUrls.server.ts)).
-- `<img src={previewUrl}>` : [`BankDraggableMediaTile.tsx`](../../src/components/tribute/storyboard/BankDraggableMediaTile.tsx), [`MontageMediaCard.tsx`](../../src/components/tribute/montage/MontageMediaCard.tsx), [`MontageDirectorModal.tsx`](../../src/components/tribute/montage/MontageDirectorModal.tsx) (~219).
+- `<img src={previewUrl}>` : [`BankDraggableMediaTile.tsx`](../../src/surfaces/livre/storyboard/BankDraggableMediaTile.tsx), [`MontageMediaCard.tsx`](../../src/surfaces/livre/montage/MontageMediaCard.tsx), [`MontageDirectorModal.tsx`](../../src/surfaces/livre/montage/MontageDirectorModal.tsx) (~219).
 - Fetch étape 5 avec `{ force: true }` à l’entrée (S3) — évite le cache Coffre périmé. `catch` toujours best-effort.
 - [`useFinePointer.ts`](../../src/hooks/useFinePointer.ts) : `useState(false)` → premier paint desktop = capteur **Touch** + poignées mobile ([`useMontageDnd.ts`](../../src/hooks/useMontageDnd.ts), commit ~`222bde4`).
 - `videoTrims` : modèle + autosave + Creatomate OK ; picker UI = lab Commit 8 seulement (pas encore Coffre).
@@ -104,7 +104,7 @@ Objectif démo : **déposer une vidéo, la voir dans le Coffre, la glisser dans 
 | **S2** | Desktop DnD | `useFinePointer` via `useSyncExternalStore` | **Fait** — souris dès le 1er paint client |
 | **S2b** | Drag tuile | Listeners PointerSensor sur l’aperçu (banque + cartes) | **Fait** — clic ouvre le directeur, glisser dépose ; pas de double fantôme |
 | **S2c** | Largeur + modal | Shell Étape 5 `max-w-7xl` ; fade sans `transform` ; directeur/composition portés au body | **Fait** — Livre Ouvert + salle de visionnement plein écran desktop |
-| **S3** | Banque à jour + drop | `StoryboardMontageStep` fetch `force` à l’entrée étape 5 ; fallback `.mp4`/`.mov` dropzone | **Fait** — refetch Coffre ; iPhone/Finder sans MIME acceptés |
+| **S3** | Banque à jour + drop | `LivreSurface` fetch `force` à l’entrée étape 5 ; fallback `.mp4`/`.mov` dropzone | **Fait** — refetch Coffre ; iPhone/Finder sans MIME acceptés |
 | **S4** | Ops (pas de code) | Supabase file size limit | Une vidéo test ~80–150 Mo passe **ou** on démo avec un fichier &lt; limite actuelle |
 
 Copy FR/EN si nouveau texte écran (ex. « Souvenir filmé ») — dictionnaires + catalog.
@@ -134,9 +134,9 @@ S5–S7 verts. Suite produit : Livre (`surfaces/livre/`), hors ingest.
 | Preflight upload | [`mediaUploadService.ts`](../../src/lib/uploads/mediaUploadService.ts) |
 | Dropzone | [`MediaDropzoneAdapter.tsx`](../../src/components/media/MediaDropzoneAdapter.tsx) |
 | Grille Coffre | [`MediaQueueGrid.tsx`](../../src/components/media/MediaQueueGrid.tsx) |
-| Étape 5 | [`StoryboardMontageStep.tsx`](../../src/components/tribute/StoryboardMontageStep.tsx) |
+| Étape 5 | [`LivreSurface.tsx`](../../src/surfaces/livre/LivreSurface.tsx) (package [`src/surfaces/livre/`](../../src/surfaces/livre/), refetch via `coffreMediaRevision`) |
 | DnD | [`useMontageDnd.ts`](../../src/hooks/useMontageDnd.ts) · [`useFinePointer.ts`](../../src/hooks/useFinePointer.ts) |
-| Directeur | [`MontageDirectorModal.tsx`](../../src/components/tribute/montage/MontageDirectorModal.tsx) |
+| Directeur | [`MontageDirectorModal.tsx`](../../src/surfaces/livre/montage/MontageDirectorModal.tsx) |
 | Plafond API | [`upload-url/route.ts`](../../app/api/projects/[id]/media/upload-url/route.ts) (zod 300 Mo) |
 | Nettoyage orphelins | [`discardStorageObjects.ts`](../../src/lib/uploads/discardStorageObjects.ts) · [`discard/route.ts`](../../app/api/projects/[id]/media/discard/route.ts) |
 | Contrat durée S7 | [`videoDurationContract.ts`](../../src/lib/media/videoDurationContract.ts) (helpers + tests ; pas encore branché) |

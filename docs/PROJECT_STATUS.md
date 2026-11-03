@@ -1,15 +1,14 @@
 # Odyssey Frontend — Project Status
 
 **Type :** living · **Vérité pour :** où on en est, dette acceptée, prochain sprint.  
-**Dernière MAJ :** 28 oct 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 3 nov 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 3 nov 2026 : **Livre Phase 3a ✅** étape 5 extraite dans `src/surfaces/livre/` (`LivreSurface`), zéro changement UX · garde de frontières en test · backlog UX post-3a figé.
 - 28 oct 2026 : **S7 ✅** parcours Coffre réel : vidéo préparée, annulation, photo indépendante, doublon exact (P20).
 - 28 oct 2026 : S7 : doublon exact par SHA-256 du fichier original, avec choix.
 - 28 oct 2026 : S7 Commit 11 : préparation branchée au Coffre. L’original ne part pas si la préparation échoue.
 - 28 oct 2026 : S7 Commit 10 : POST incertain réconcilié avant discard. Ligne déjà écrite : on la garde.
-- 28 oct 2026 : S7 Commit 9 : état « Préparation… » par vidéo.
-
 Onboarding : [`TECHNICAL_ONBOARDING_V1.md`](TECHNICAL_ONBOARDING_V1.md) · Canon : [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Carte : [`README.md`](README.md).  
 **Histoire (juin–août, rien jeté) :** [`_archive/PROJECT_STATUS_LOG.md`](_archive/PROJECT_STATUS_LOG.md).
 
@@ -29,14 +28,14 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | **Export Creatomate** | 🟡 | **C0–C4** ✅ · **C4 V1.5** ✅ · **C5 focale auto** ✅ · **C11–C13** cash cercle ✅ · **C7/depth** reportés — [`product/SOUVENIR_STREAM_MASTER_49.md`](product/SOUVENIR_STREAM_MASTER_49.md) |
 | **Boucle virale** | 🟢 produit | Sanctuaire, dépôts, Fonds, share invité = **livrés**. Flag tenant `viral_loop_enabled` = opt-in (défaut SQL `false`). « Viral OFF » du Business Case = *what-if*, pas l’état produit |
 | **UX mobile** | 🟡 | Wizard : [`MOBILE_WIZARD_STRATEGY.md`](MOBILE_WIZARD_STRATEGY.md). **Sanctuaire invité** : HTML still immédiat, WebGL en amélioration |
-| **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** · S5-J/K ⏳ · extraction Livre (cadrage figé) |
+| **Étape 5 polish** | 🟡 | PR-1/2/3 ✅ · **S5-L partiel** · S5-J/K ⏳ · extraction Livre **3a ✅** (`src/surfaces/livre/`) |
 | **Coffre / ingest** | 🟢 | Phase 1 package + tiroir ✅ · **S5–S7 ✅** — [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
 | **Scanner** | 🟡 | Phase A+B (QR, aperçu → `aiRetouch`) 🟡 · job IA serveur ⏳ |
 | **Marque Éclipse** | 🟢 | Play A–B KEEP · mark + exports · brancher UI ⚪ · wormhole = lab |
 | **Tests & CI** | 🟢 | `next build` 🟢 · `npm test` aligné `preMemoryBlack: 0.8` |
 | **Security** | 🟡 | RLS, gate Salon, entitlements never-trust, webhook Creatomate fail-closed |
 
-**Suite :** cadrage Livre déjà écrit → Phase 3a `surfaces/livre/`. Démo 18 sept **passée**. S7 ingest ✅.
+**Suite :** Phase 3a Livre ✅ (`surfaces/livre/`) → polish 3b + backlog UX post-3a ([`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md)). Démo 18 sept **passée**. S7 ingest ✅.
 
 ---
 
@@ -72,7 +71,7 @@ Mettre à jour **ce fichier** après un milestone. Le récit long va dans le log
 | Priorité | Quoi | Done when |
 |----------|------|-----------|
 | **P0** | Ingest **S7 ✅** + copy « versions allégées seulement » (S5–S7 · Phase 1 Coffre ✅) | Trim 10,0 s · encode 1080p · fail closed · 1 objet Storage · [`product/COFFRE_MONTAGE_MEDIA_INGEST.md`](product/COFFRE_MONTAGE_MEDIA_INGEST.md) |
-| **P1** | Package **Livre** Phase 3a (après cadrage) | `surfaces/livre` · orphelins purgés · [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
+| **P1** | ~~Package **Livre** Phase 3a~~ ✅ 3 nov 2026 | `surfaces/livre` · orphelins purgés · [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
 | **P2** | Livre polish Phase 3b | S5-L2 → S5-K → S5-J |
 | **Later** | Étape 6 **mix BA** (bande-annonce + voir un chapitre) — pas le teaser-film actuel | Plan dédié · [`product/WIZARD_PREVIEW_BA.md`](product/WIZARD_PREVIEW_BA.md) |
 | **Later** | Étape 6 bandeau Soft Cap **« pourquoi »** (faits, pas alerte générique) | Plan dédié · [`product/WIZARD_PREVIEW_SOFTCAP.md`](product/WIZARD_PREVIEW_SOFTCAP.md) |

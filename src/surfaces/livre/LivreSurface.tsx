@@ -23,13 +23,12 @@ import {
 import {
   StoryboardFilmMap,
   type StoryboardFilmMapSegment,
-  type StoryboardFilmMapWatchSession,
 } from "@/src/surfaces/livre/storyboard/StoryboardFilmMap";
 import { StoryboardOpenBookLayout } from "@/src/surfaces/livre/storyboard/StoryboardOpenBookLayout";
 import { StoryboardChapterStack } from "@/src/surfaces/livre/storyboard/StoryboardChapterStack";
 import { MagicCinematicOverlay } from "@/src/surfaces/livre/storyboard/MagicCinematicOverlay";
 import { MontageOnboardingGate } from "@/src/surfaces/livre/storyboard/MontageOnboardingGate";
-import type { StoryboardMontageStepCopy } from "./copy";
+import type { LivreHostProps } from "./types";
 import {
   ensureChapterDisplayIdentity,
   findChapterForMedia,
@@ -55,27 +54,10 @@ import {
   mediaApiToMontageItems,
   type MontageMediaItem,
 } from "@/src/lib/wizard/montageHelpers";
-import type { PackageId } from "@/src/lib/wizard/wizardDeliverables";
 import type {
   MontageFocalPoint,
   WizardStoryboardState,
 } from "@/src/lib/wizard/wizardState";
-
-type Props = {
-  packageId: PackageId;
-  projectId: string | null;
-  /** Incrémenté par le host quand le tiroir Coffre a modifié la banque → refetch. */
-  mediaRevision?: number;
-  storyboard: WizardStoryboardState;
-  onStoryboardChange: (next: WizardStoryboardState) => void;
-  onMagicPerformingChange?: (performing: boolean) => void;
-  onMagicSequenceComplete?: () => void;
-  /** Lien discret « déléguer » de la porte d’onboarding → panneau Co-Créateur existant. */
-  onOpenCollab?: () => void;
-  onWatchSession?: (mediaItems: MontageMediaItem[]) => void;
-  watchSessionCopy?: StoryboardFilmMapWatchSession;
-  copy: StoryboardMontageStepCopy;
-};
 
 function resolveChapterTitle(
   chapter: WizardStoryboardState["chapters"][number],
@@ -99,7 +81,7 @@ function resolveChapterThemeIndex(
 export function LivreSurface({
   packageId,
   projectId,
-  mediaRevision = 0,
+  coffreMediaRevision = 0,
   storyboard,
   onStoryboardChange,
   onMagicPerformingChange,
@@ -108,7 +90,7 @@ export function LivreSurface({
   onWatchSession,
   watchSessionCopy,
   copy,
-}: Props) {
+}: LivreHostProps) {
   const [mediaItems, setMediaItems] = useState<MontageMediaItem[]>([]);
   const [isLoadingMedia, setIsLoadingMedia] = useState(false);
   const [directorAssetId, setDirectorAssetId] = useState<string | null>(null);
@@ -144,7 +126,7 @@ export function LivreSurface({
       aborted = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, mediaRevision]);
+  }, [projectId, coffreMediaRevision]);
 
   const mediaById = useMemo(
     () => new Map(mediaItems.map((item) => [item.assetId, item])),

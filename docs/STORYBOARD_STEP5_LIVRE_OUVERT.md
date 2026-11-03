@@ -4,7 +4,7 @@
 **Dernière MAJ :** 3 nov 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
-- 3 nov 2026 : Phase 3a A1, orphelins `MontageTimeline` / `MediaBankPanel` / `MediaBankTrigger` supprimés · `MediaInstantTile` corrigé (actif).
+- 3 nov 2026 : **Phase 3a ✅** Étape 5 = package [`src/surfaces/livre/`](../src/surfaces/livre/) (`LivreSurface`, `storyboard/`, `montage/`, contrat `types.ts`, copy `copy.ts`) · orphelins `MontageTimeline` / `MediaBankPanel` / `MediaBankTrigger` supprimés · `MediaInstantTile` corrigé (actif) · `storyboardChapterDomId` → `lib/wizard/storyboardDom.ts`.
 - 22 sept 2026 — Crédit musical Quiet Luxury (ligne unique) · réordonnancement chapitres : `label` + `paletteIndex` suivent le bac · DnD collision hors soi.
 - 17 sept 2026 — **D0 freeze** : S5-L partiel (titres 3 actes encore à l’écran) ; §11 commerce = Freemium V1, saga jetons morte.
 - 17 sept 2026 — Composition Magique (banque) : paille `#E4D96F` (`--wizard-magic-wheat`), plus d’amber.
@@ -87,7 +87,7 @@ L'ordre **Musique (4) → Montage (5)** est fixe : la capacité recommandée d'u
 ## 3. Architecture composants
 
 ```
-StoryboardMontageStep.tsx          ← orchestrateur (DnDContext, magic, fetch médias)
+LivreSurface.tsx                   ← orchestrateur (DnDContext, magic, fetch médias)
 ├── StoryboardOpenBookLayout
 │   ├── MediaBankColumn            ← banque « Médias non assignés »
 │   ├── StoryboardFilmMap          ← mini-carte sticky (nav chapitres)
@@ -103,7 +103,9 @@ StoryboardMontageStep.tsx          ← orchestrateur (DnDContext, magic, fetch m
 └── MontageDirectorModal           ← édition focal / preview plein écran
 ```
 
-### Fichiers `src/components/tribute/storyboard/`
+Package : [`src/surfaces/livre/`](../src/surfaces/livre/). Le host (`TributeWizard`) importe `LivreSurface` depuis `@/src/surfaces/livre` et lui passe `LivreHostProps` ([`types.ts`](../src/surfaces/livre/types.ts)) avec la copy `LivreCopyBlob` ([`copy.ts`](../src/surfaces/livre/copy.ts)). `coffreMediaRevision` (incrémenté par le tiroir Coffre) relance le fetch médias. Frontières gardées par [`tests/unit/livreSurfaceBoundary.test.ts`](../tests/unit/livreSurfaceBoundary.test.ts) : `src/lib` / `src/hooks` n’importent pas le package, `types.ts` / `copy.ts` n’atteignent pas `LivreSurface`, le package n’importe ni `TributeWizard` ni le dictionnaire global.
+
+### Fichiers `src/surfaces/livre/storyboard/` (et partagés `src/components/tribute/storyboard/`)
 
 | Fichier | Rôle | Statut |
 |---------|------|--------|
@@ -120,7 +122,7 @@ StoryboardMontageStep.tsx          ← orchestrateur (DnDContext, magic, fetch m
 | `MontageOnboardingGate.tsx` | Onboarding magie / manuel | ✅ actif |
 | `MagicCinematicOverlay.tsx` | Overlay cinématographique | ✅ actif |
 | `ChapterRefinementDrawer.tsx` | Tiroir Gérer (surplus, tri) | ✅ actif |
-| `ChapterMusicPanel.tsx` | Panneau musique (Étape 4) | ✅ (hors Étape 5) |
+| `ChapterMusicPanel.tsx` | Panneau musique (Étape 4) | ✅ (hors Étape 5, reste dans `src/components/tribute/storyboard/` avec `StoryboardCapacityBadge` et `StoryboardChapterStats`) |
 | `MontageTimeline.tsx` | Timeline horizontale pré-pivot | Supprimé (Phase 3a, commit A1) |
 | `MontageChapterTabs.tsx` | Onglets pré-pivot | Composant mort, fichier conservé : type `MontageChapterTabsCopy` + `resolveMontageChapterTabLabel` vivants |
 | `MediaBankPanel.tsx` / `MediaBankTrigger.tsx` | Ancien tiroir banque (sélection multiple + ajout groupé à un chapitre) | Supprimés (Phase 3a, commit A1). L’interaction groupée reste au backlog UX post-3a : [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md) |
@@ -133,13 +135,14 @@ StoryboardMontageStep.tsx          ← orchestrateur (DnDContext, magic, fetch m
 | `storyboardMedia.ts` | Assignation, désassignation, réordonnancement médias |
 | `storyboardAutoFill.ts` | `autoFillChapter`, `clearChapterMedia`, `isStoryboardMontageVirgin` |
 | `storyboardDnd.ts` | IDs droppables, collision detection (`storyboardCollisionDetection`) |
+| `storyboardDom.ts` | `storyboardChapterDomId` (ancres DOM chapitres : FilmMap + scroll magie) |
 | `storyboardMagicTimeline.ts` | Partition magique — shuffle, batches, constantes timing |
 | `magicTimelinePlayer.ts` | Lecteur async — scroll, `flushSync`, phases overlay |
 | `storyboardPacing.ts` | Capacité recommandée par chapitre (utilisée par magic + UI) |
 | `storyboardHelpers.ts` | `setChapterLabel`, validation, `findChapterForMedia` |
 | `chapterTheme.ts` | Palette couleur par index chapitre |
 
-### Fichiers partagés `montage/`
+### Fichiers `src/surfaces/livre/montage/`
 
 | Fichier | Rôle Étape 5 |
 |---------|--------------|
@@ -155,7 +158,7 @@ StoryboardMontageStep.tsx          ← orchestrateur (DnDContext, magic, fetch m
 sequenceDiagram
   participant U as Utilisateur
   participant G as MontageOnboardingGate
-  participant S as StoryboardMontageStep
+  participant S as LivreSurface
   participant T as buildMagicTimeline
   participant P as playMagicTimeline
   participant O as MagicCinematicOverlay
@@ -254,7 +257,7 @@ Détail tokens : [`DESIGN_SYSTEM.md` §4.2](DESIGN_SYSTEM.md#42-composition-magi
 | GPU | `will-change` retiré post-animation (`.magic-media-enter-done`) ; `backdrop-filter` off en `prefers-reduced-motion` |
 | Callback stable | `onMagicComposition={handleChooseMagic}` |
 
-**Goulet connu :** chaque lot re-rend l'arbre `StoryboardMontageStep` complet (DnD + toutes grilles). Acceptable (~2 passes/chapitre). Optimisations P2 optionnelles : memo `MontageMediaCard` / `StoryboardChapterBlock`.
+**Goulet connu :** chaque lot re-rend l'arbre `LivreSurface` complet (DnD + toutes grilles). Acceptable (~2 passes/chapitre). Optimisations P2 optionnelles : memo `MontageMediaCard` / `StoryboardChapterBlock`.
 
 ---
 
@@ -316,7 +319,7 @@ Spec produit validée en session design. **État d'implémentation juillet 2026.
 | Motion | `DURATION_BREATH` 320 ms, `EASE_OUT_LUXE` |
 | Exclusion | Désactivé pendant Composition Magique (`isMagicRunning`) |
 
-**Fichiers probables :** `StoryboardChapterBlock.tsx`, état `focusChapterId` dans `StoryboardMontageStep`.
+**Fichiers probables :** `StoryboardChapterBlock.tsx`, état `focusChapterId` dans `LivreSurface`.
 
 ### 10.3 Vocabulaire narratif (S5-L) — 🟡 partiel
 

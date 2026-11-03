@@ -4,7 +4,7 @@
 **Dernière MAJ :** 3 nov 2026 · **Carte :** [`../README.md`](../README.md)
 
 **Changelog** (max 5)
-- 3 nov 2026 : Phase 3a A1, 3 orphelins Livre supprimés · sélection multiple + ajout groupé de l’ancien `MediaBankPanel` gardés au backlog UX post-3a.
+- 3 nov 2026 : **Phase 3a ✅** package Livre [`src/surfaces/livre/`](../../src/surfaces/livre/) (`LivreSurface` · `LivreHostProps` · `LivreCopyBlob` · `coffreMediaRevision`), 3 orphelins supprimés, garde `livreSurfaceBoundary.test.ts` · backlog UX post-3a figé (8 points, dont sélection multiple + ajout groupé de l’ancien `MediaBankPanel`).
 - 28 oct 2026 — **S7 ✅** ingest Coffre validé (trim, encode, annulation, photo, doublon).
 - 27 oct 2026 — **Cadrage Livre** figé (3a extraction → 3b L2/K/J) · labels S5-L2 universels · état code Phase 1 ✅.
 - 14 oct 2026 — **C3.2** tiroir : barre compacte collante · dépôt n’importe où · Scanner en haut du Coffre.
@@ -50,7 +50,7 @@ Sélection / « Envoyé » restent teal (état) — [`DESIGN_SYSTEM.md`](../DESI
 |---------|---------|----------------|
 | Orchestrateur | [`TributeWizard.tsx`](../../src/components/tribute/TributeWizard.tsx) **~3312 L** | Alléger encore (nav, gates, chrome, wiring) |
 | Coffre | **Phase 1 ✅** [`src/surfaces/coffre/`](../../src/surfaces/coffre/) — `CoffreBody` (étape 3 `onboarding` + tiroir `drawer`) · `CoffreDrawerShell` · `CoffreDrawerTrigger` | Un seul `CoffreBody` monté · tiroir monté tant qu’un upload tourne |
-| Livre | [`StoryboardMontageStep.tsx`](../../src/components/tribute/StoryboardMontageStep.tsx) ~723 L + `montage/*` + `storyboard/*` | `src/surfaces/livre/` (cadrage § Phase 3) |
+| Livre | **Phase 3a ✅** [`src/surfaces/livre/`](../../src/surfaces/livre/) : `LivreSurface` (étape 5) + `storyboard/*` + `montage/*` · contrat `LivreHostProps` ([`types.ts`](../../src/surfaces/livre/types.ts)) · copy `LivreCopyBlob` ([`copy.ts`](../../src/surfaces/livre/copy.ts)) | Polish 3b (S5-L2 → K → J) + backlog UX post-3a |
 | Vidéo | S5 poster ✅ · **S7 ✅** trim 10 s + encode 1080p avant Storage · `videoTrims` UI à écrire pour l’export | Creatomate : clip déjà court |
 | Photo | **S6 ✅** resize ≤2048 JPEG avant upload + thumb WebP · HEIC = original (canvas) | Copy « allégé » |
 
@@ -122,11 +122,25 @@ Zéro commit UX Livre tant que S7 n’est pas derrière la porte QA. Décisions 
 
 > The legacy MediaBankPanel included a multi-select and batch-assignment interaction ("Ajouter N souvenir(s) à {chapitre}"). This behavior is not considered replaced by drag-and-drop. It remains part of the post-3a UX backlog. The legacy implementation is recoverable from Git history at commit `c1e8a75` (`git show c1e8a75:src/components/tribute/storyboard/MediaBankPanel.tsx`).
 
-Liste complète du chantier UX post-3a : figée au commit C de la Phase 3a.
+Liste figée au commit C de la Phase 3a :
+
+1. Séparer clairement « choisir » et « regarder » un souvenir.
+2. Un clic sur une image l’agrandit d’abord.
+3. Mode sélection explicite, surtout sur mobile.
+4. Déplacer une sélection vers un autre chapitre sans DnD expert (dont la sélection multiple + ajout groupé de l’ancien `MediaBankPanel` ci-dessus).
+5. Zoom photo au survol.
+6. Aperçu vidéo des ~10 s au survol.
+7. Revalider les bugs DA après 3a. Observations relevées au smoke 3a, à investiguer (comportements constatés, cause non confirmée) :
+   - Désélection : un second clic sur un souvenir sélectionné ne semble pas le désélectionner en environnement de développement. Cause technique à confirmer.
+   - Accessibilité : le libellé du tiroir Composer affiche littéralement `{chapter}` au lieu du nom du chapitre.
+   - Fermeture du tiroir : la touche Échap ne ferme pas le tiroir Composer.
+   - Sélection : un clic sur un second souvenir ne semble pas l'ajouter à la sélection en environnement de développement (comportement identique sur `main` avant 3a). Shift+clic et « Tout sélectionner » fonctionnent. Cause technique à confirmer.
+   - Titre de chapitre : un titre renommé s'affiche aussitôt, mais il n'est plus là après rechargement et n'apparaît pas dans la sauvegarde serveur (comportement identique sur `main` avant 3a). Cause technique à confirmer.
+8. Hors de cette liste : S5-L2, S5-K et S5-J restent le polish canon 3b (tableau ci-dessus).
 
 ### Implémentation (après S7)
 
-1. Extraire montage + libs storyboard/DnD/magie vers `src/surfaces/livre/` (3a).
+1. ✅ Extraire montage + libs storyboard/DnD/magie vers `src/surfaces/livre/` (3a, 3 nov 2026). Helpers `lib/wizard`, hooks et composants partagés étape 4 (`StoryboardCapacityBadge`, `ChapterMusicPanel`, `StoryboardChapterStats`) restent en place.
 2. Polish L2 → K → J (3b) selon le tableau ci-dessus.
 3. Contrat host assez propre pour un futur consommateur hors Odyssey — sans 2ᵉ deploy maintenant.
 

@@ -6,7 +6,7 @@
 
 **Changelog** (max 5)
 - 17 sept 2026 — CTA banque Composition Magique : même paille `--wizard-magic-wheat` (plus d’amber). Gate inchangée (hover teal). Overlay cyan verrouillé.
-- 9 sept 2026 — **décision livrée en code** : paille `#E4D96F` (`--wizard-magic-wheat`) sur Création assistée ; violet sur Création manuelle ; hover/active teal. Tokens dans `sanctuaryChrome.ts` · [`MontageOnboardingGate.tsx`](../../src/components/tribute/storyboard/MontageOnboardingGate.tsx).
+- 9 sept 2026 — **décision livrée en code** : paille `#E4D96F` (`--wizard-magic-wheat`) sur Création assistée ; violet sur Création manuelle ; hover/active teal. Tokens dans `sanctuaryChrome.ts` · [`MontageOnboardingGate.tsx`](../../src/surfaces/livre/storyboard/MontageOnboardingGate.tsx).
 - 6 sept 2026 — **décision figée** pour l'Étape 5 : paille `#E4D96F` pour Composition Magique, violet pour Je compose moi-même, teal/cyan inchangé pour sélection/hover/focus et halos. Voir §7. Code (tokens + composant) prévu le 7 sept.
 - 5 sept 2026 — création : trois bleu-verts mesurés, trois couleurs d'alerte, roue des teintes et quatre candidats pour la couleur chaude.
 
@@ -140,7 +140,7 @@ Cible : **un fichier de tokens nommés par rôle**, et l'interdiction d'écrire 
 **Implémentation prévue (7 sept) :**
 - `#E4D96F` déclarée en variable CSS nommée `--wizard-magic-wheat` dans `app/globals.css` — même patron que `--salon-cyan` — jamais un hex brut dans un `className`.
 - Tokens dédiés dans [`../../src/lib/contribute/sanctuaryChrome.ts`](../../src/lib/contribute/sanctuaryChrome.ts) référençant cette variable.
-- Application dans [`../../src/components/tribute/storyboard/MontageOnboardingGate.tsx`](../../src/components/tribute/storyboard/MontageOnboardingGate.tsx) **et** le CTA banque [`MediaBankColumn.tsx`](../../src/components/tribute/storyboard/MediaBankColumn.tsx) (paille, plus d’amber). Overlay capsule reste cyan verrouillé (`DESIGN_SYSTEM` §4.2).
+- Application dans [`../../src/surfaces/livre/storyboard/MontageOnboardingGate.tsx`](../../src/surfaces/livre/storyboard/MontageOnboardingGate.tsx) **et** le CTA banque [`MediaBankColumn.tsx`](../../src/surfaces/livre/storyboard/MediaBankColumn.tsx) (paille, plus d’amber). Overlay capsule reste cyan verrouillé (`DESIGN_SYSTEM` §4.2).
 
 **Explicitement hors scope de cette décision :**
 - [`../../src/lib/wizard/montageActTheme.ts`](../../src/lib/wizard/montageActTheme.ts) (thème `spark`/`epic`/`legacy`) — colore les **actes narratifs du Studio**, un système à part qui partage l'ambre avec `spark` par coïncidence, pas par lien de sens avec Composition Magique. Non touché.

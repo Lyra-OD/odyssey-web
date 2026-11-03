@@ -73,7 +73,7 @@ function DockDivider() {
 
 /**
  * Modal plein écran « directeur de montage » — référence d'interaction pour
- * `StoryboardMontageStep` (S5). Retypé depuis le modèle 3-actes vers des
+ * `LivreSurface` (S5). Retypé depuis le modèle 3-actes vers des
  * chapitres dynamiques (`storyboard.chapters`).
  */
 export function MontageDirectorModal({

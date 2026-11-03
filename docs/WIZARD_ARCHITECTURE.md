@@ -1,15 +1,14 @@
 # Tribute Wizard — Architecture
 
 **Type :** canon · **Vérité pour :** wizard **7** étapes (navigation, state, autosave, checkout).  
-**Dernière MAJ :** 27 oct 2026 · **Carte :** [`README.md`](README.md)
+**Dernière MAJ :** 3 nov 2026 · **Carte :** [`README.md`](README.md)
 
 **Changelog** (max 5)
+- 3 nov 2026 : Phase 3a Livre ✅ étape 5 = `LivreSurface` ([`src/surfaces/livre/`](../src/surfaces/livre/)), contrat `LivreHostProps` + copy `LivreCopyBlob` injectée par TributeWizard, prop `coffreMediaRevision`.
 - 27 oct 2026 — Phase 1 Coffre ✅ (`src/surfaces/coffre/`) · orchestrateur ~**3312** L · Quiet Luxury chrome · S7 ingest ⏳.
 - 8 oct 2026 — Orchestrateur ~3462 L · chantier découpage Coffre/Livre : [`product/WIZARD_COFFRE_LIVRE_PACKAGES.md`](product/WIZARD_COFFRE_LIVRE_PACKAGES.md).
 - 29 sept 2026 — **Étape 6 DA** : sas affiche N&B sombre + CTA éditoriaux (typo / lien Passer) ; plus de boutons verre.
 - 29 sept 2026 — **Étape 6 immersif** : `data-odyssey-cinema` sur sas (ref-count) · masque Navbar studio + Aide · chrome wizard déjà hors shell.
-- 29 sept 2026 — **Étape 6 immersif** : early return hors `wizard-shell` · ✕ → 5 · Passer → 7.
-
 > **Parcours UX (Chemin 1) :** [`product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md`](product/PARCOURS_UX_CHEMIN_1_TRAVERSEE.md) · beats [`product/PARCOURS_UX_REGISTRY.md`](product/PARCOURS_UX_REGISTRY.md) — **vérité impl** pour surfaces, transitions, stubs craft. Ce doc = wizard métier 7 étapes.
 
 > **Canon V1 :** [`FREEMIUM_V1_PIVOT.md`](FREEMIUM_V1_PIVOT.md) · Soft Cap [`NARRATIVE_SOFT_CAP.md`](NARRATIVE_SOFT_CAP.md) · Commerce [`B2B2C_COMMERCE.md`](B2B2C_COMMERCE.md).  
@@ -46,17 +45,18 @@ This document describes the **7-step** tribute wizard: navigation, state, autosa
 | `src/lib/wizard/storyboardPacing.ts` | Moteur de pacing pur — capacité recommandée, marges intro/outro, coût vidéo fixe, estimation durée totale |
 | `src/lib/wizard/storyboardHelpers.ts` | Gestion des chapitres (ajout/retrait/cap), validation structurelle, détection de doublons, prévision de perte au downgrade, `findChapterForMedia()` |
 | `src/lib/wizard/chapterTheme.ts` | Palette dynamique par chapitre (`getChapterCardTheme`) |
-| `src/components/tribute/StoryboardMontageStep.tsx` | **Step 5 (live)** — Livre Ouvert : banque persistante, DnD, Composition Magique — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
+| `src/surfaces/livre/LivreSurface.tsx` | **Step 5 (live)** — Livre Ouvert : banque persistante, DnD, Composition Magique — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) · package `src/surfaces/livre/` (`index.ts`, contrat `types.ts` `LivreHostProps`, copy `copy.ts` `LivreCopyBlob`) |
 | `src/lib/wizard/storyboardMedia.ts` | Assignation / désassignation / réordonnancement médias (Étape 5) |
 | `src/lib/wizard/storyboardAutoFill.ts` | `autoFillChapter`, `clearChapterMedia`, `isStoryboardMontageVirgin` |
 | `src/lib/wizard/storyboardDnd.ts` | Collision detection et IDs droppables dnd-kit (Étape 5) |
 | `src/lib/wizard/storyboardMagicTimeline.ts` | Partition Composition Magique — shuffle, batches, constantes timing |
 | `src/lib/wizard/magicTimelinePlayer.ts` | Lecteur async timeline magique (`playMagicTimeline`) |
-| `src/components/tribute/storyboard/MagicCinematicOverlay.tsx` | Overlay scrim + capsule (Composition Magique) |
-| `src/components/tribute/storyboard/MontageOnboardingGate.tsx` | Gate onboarding magie / manuel |
-| `src/components/tribute/montage/MontageDirectorModal.tsx` | Modal directeur plein écran — retypé chapitres |
-| `src/components/tribute/montage/MontageMediaCard.tsx` | Carte média drag + entrée CSS magic |
-| `src/components/tribute/montage/MontageFocalReticle.tsx` | Sélecteur point focal |
+| `src/lib/wizard/storyboardDom.ts` | `storyboardChapterDomId` (ancres de scroll chapitres, FilmMap + magie) |
+| `src/surfaces/livre/storyboard/MagicCinematicOverlay.tsx` | Overlay scrim + capsule (Composition Magique) |
+| `src/surfaces/livre/storyboard/MontageOnboardingGate.tsx` | Gate onboarding magie / manuel |
+| `src/surfaces/livre/montage/MontageDirectorModal.tsx` | Modal directeur plein écran — retypé chapitres |
+| `src/surfaces/livre/montage/MontageMediaCard.tsx` | Carte média drag + entrée CSS magic |
+| `src/surfaces/livre/montage/MontageFocalReticle.tsx` | Sélecteur point focal |
 | `src/lib/wizard/softCap.ts` · `SoftCapModal.tsx` | Soft Cap médias / magie / musique dual |
 | `src/lib/partner/resolvePartnerAccess.ts` | Partner role detection (`tenant_members`) |
 | `app/api/projects/[id]/autosave/route.ts` | GET/PATCH with Zod schemas |
@@ -153,7 +153,7 @@ The new canonical model solves this by moving to a **song-based storyboard**:
 **Current transition state (hybrid, temporary)**
 
 - `storyboard` is persisted as the canonical V2 shape
-- **Steps 4–5** use `storyboard` directly (`StoryboardChaptersStep` + `StoryboardMontageStep` Livre Ouvert)
+- **Steps 4–5** use `storyboard` directly (`StoryboardChaptersStep` + `LivreSurface` Livre Ouvert)
 - **Step 6 (Aperçu)** = sas cinéma plein écran (`SessionCinemaGate`) — poster traité + projection officielle ou checkout. **Not** an inline teaser. **Not** the Creatomate master
 - `wizardState.ts` still rebuilds `montage` + `musicalAmbiance` at runtime ; `buildWizardState()` still **PATCHes** those legacy views beside `storyboard`
 - **Step 7 (Checkout)** still serializes compact Stripe `act_tracks` in addition to `storyboard` — until S9
@@ -192,7 +192,7 @@ Package selection is no longer step-bound: the Dossier trigger (`PackageDossierP
 | 2 | `stepperSources` | Social source + URL | `socialSources`, `basePackage` |
 | 3 | `stepperVault` | Dropzone + upload queue + **Scanner Compagnon QR** (cible) | `media_assets` rows; reload `GET /api/projects/[id]/media` · voir [`SCANNER_COMPANION.md`](SCANNER_COMPANION.md) |
 | 4 | `stepperChapters` | **Chapitres musicaux dynamiques** (`StoryboardChaptersStep`, live — ✅ `S6`) | `storyboard.chapters[].song` (canonique, plus de bridge) |
-| 5 | `stepperSound` | **Livre Ouvert** — `StoryboardMontageStep` (DnD, magie, actions chapitre) | `storyboard` (canonique) |
+| 5 | `stepperSound` | **Livre Ouvert** — `LivreSurface` (DnD, magie, actions chapitre) | `storyboard` (canonique) |
 | 6 | `stepperPreview` | Sas cinéma plein écran (`SessionCinemaGate`) | Poster + 2 CTA · projection / checkout |
 | 7 | `stepperCheckout` | Cart Soft Cap + **Extensions** Quiet Luxury + pay CTA | `POST /api/checkout` |
 
@@ -306,7 +306,7 @@ Chapters beyond index 2 are folded into `unassignedIds` on the **runtime montage
 
 **Canon:** [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) · **QA:** [`QA_S5_MONTAGE_STEP.md`](QA_S5_MONTAGE_STEP.md)
 
-- **Component:** `StoryboardMontageStep.tsx` — layout Livre Ouvert, banque persistante, chapitres empilés, `StoryboardFilmMap`, DnD global `dnd-kit`, actions chapitre, onboarding gate, Composition Magique.
+- **Component:** `src/surfaces/livre/LivreSurface.tsx` (import `@/src/surfaces/livre`, props `LivreHostProps`) — layout Livre Ouvert, banque persistante, chapitres empilés, `StoryboardFilmMap`, DnD global `dnd-kit`, actions chapitre, onboarding gate, Composition Magique.
 - **Voir la séance (film map) :** `WizardSessionProjection` `intent: "craft_preview"` — aperçu immersif pour l’artisanat. Fin / Échap / ✕ → retour silencieux sur la table de montage. **Pas de hub C8** (ni achat, ni partage).
 - **Miroir 1:1 Livre Ouvert :** `buildTeaserFromStoryboard` + `storyboardPacing` (tempo photo / `videoTrims`) · titres via `paletteIndex ?? index` · seed médias non-écrasé · chapitres musique-seule conservés (carton + piste).
 - **Stream invité (C14) :** même `WizardSessionProjection` avec `playback="prebuilt"` + `viewerRole="guest"` (payload `/api/stream/[token]`, aucun `fetchProjectMedia`).
@@ -424,7 +424,7 @@ Détail : [`PARTNER_REVSHARE.md`](PARTNER_REVSHARE.md) · [`QA_P6_COMMISSION_WAT
 | `StickyPriceBar` | Sticky under fil, **étapes 6+ seulement** | Live **total** (B2C $) or **tokens** (B2B); absent en craft 1–5 (Quiet Luxury) |
 | `PackageDossierPanel` | Global header, Step 1+ (`hidePrices` when partner) | Off-canvas — inclusions exhaustives + **Éternité savings badge** (67 $) + comparaison cross-fade |
 | `WizardCartSummary` | Steps 5–6 (B2C only) | Line recap |
-| `StoryboardMontageStep` | Step 5 | Livre Ouvert — DnD, Composition Magique — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
+| `LivreSurface` | Step 5 | Livre Ouvert — DnD, Composition Magique — [`STORYBOARD_STEP5_LIVRE_OUVERT.md`](STORYBOARD_STEP5_LIVRE_OUVERT.md) |
 | `MontageExtensionsStep` | Checkout (étape 7) | Extensions + « Déjà inclus » when Heritage |
 
 ### Step 1 — overlay Sanctuaire (J2 → Chemin 1)
